@@ -871,8 +871,6 @@ namespace Glass.UI.Web.Cadastros
                     ((WebControl)sender).Visible = ((WebControl)sender).Visible && Request["manual"] != "1";
                 else if (((WebControl)sender).ID == "chkGerarEstoqueReal")
                     ((WebControl)sender).Visible = (((WebControl)sender).Visible || IsNfImportacao()) && !EstoqueConfig.EntradaEstoqueManual;
-                else if (((WebControl)sender).ID == "chkMovItens" && dtvNf.CurrentMode == DetailsViewMode.Insert)
-                    ((CheckBox)sender).Checked = true;
             }
             else if (sender is System.Web.UI.HtmlControls.HtmlGenericControl)
                 ((System.Web.UI.HtmlControls.HtmlGenericControl)sender).Visible = IsNfEntradaTerceiros();

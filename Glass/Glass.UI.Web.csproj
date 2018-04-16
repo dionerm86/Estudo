@@ -638,7 +638,6 @@
     <Content Include="Cadastros\Producao\CadReporPeca.aspx" />
     <Content Include="Cadastros\Producao\CadRetalhoProducao.aspx" />
     <Content Include="Cadastros\Producao\CadRoteiroProducao.aspx" />
-    <Content Include="Cadastros\Producao\LstAlterarSituacaoProducao.aspx" />
     <Content Include="Cadastros\Producao\LstProducao.aspx" />
     <Content Include="Cadastros\Producao\LstProducaoAgrupada.aspx" />
     <Content Include="Cadastros\Producao\LstRetalhoProducao.aspx" />
@@ -1192,8 +1191,6 @@
     <Content Include="Listas\LstInfoAdicCredito.aspx" />
     <Content Include="Listas\LstInfoAdicNFEExtemporanea.aspx" />
     <Content Include="Listas\LstInfoDiferimento.aspx" />
-    <Content Include="Listas\LstInfoPedidos.aspx" />
-    <Content Include="Listas\LstInfoPedidosPeriodo.aspx" />
     <Content Include="Listas\LstInfoValorAgregado.aspx" />
     <Content Include="Listas\LstInstalacao.aspx" />
     <Content Include="Listas\LstInventarioEstoque.aspx" />
@@ -1302,7 +1299,6 @@
     <Content Include="Relatorios\Administrativos\ListaContasPagarReceber.aspx" />
     <Content Include="Relatorios\Administrativos\LucroAproximado.aspx" />
     <Content Include="Relatorios\Administrativos\MovimentacoesFinanceiras.aspx" />
-    <Content Include="Relatorios\Administrativos\PedidosConferidos.aspx" />
     <Content Include="Relatorios\Administrativos\PrevisaoFinanceira.aspx" />
     <Content Include="Relatorios\Administrativos\RecebimentosTipo.aspx" />
     <Content Include="Relatorios\Administrativos\RelacaoVendas.aspx" />
@@ -1343,13 +1339,11 @@
     <Content Include="Relatorios\ListaContasRecebidas.aspx" />
     <Content Include="Relatorios\ListaCredito.aspx" />
     <Content Include="Relatorios\ListaCreditoFornecedor.aspx" />
-    <Content Include="Relatorios\ListaDeficitEstoque.aspx" />
     <Content Include="Relatorios\ListaDefinicaoCargaRota.aspx" />
     <Content Include="Relatorios\ListaEntregaRota.aspx" />
     <Content Include="Relatorios\ListaEquipesInst.aspx" />
     <Content Include="Relatorios\ListaEstoqueFiscal.aspx" />
     <Content Include="Relatorios\ListaEstoqueMinimo.aspx" />
-    <Content Include="Relatorios\ListaEstoqueProdutos.aspx" />
     <Content Include="Relatorios\ListaFornecedores.aspx" />
     <Content Include="Relatorios\ListaLiberarPedidoMov.aspx" />
     <Content Include="Relatorios\ListaLimiteCliente.aspx" />
@@ -1363,20 +1357,17 @@
     <Content Include="Relatorios\ListaPendenciaCarregamento.aspx" />
     <Content Include="Relatorios\ListaPlanoConta.aspx" />
     <Content Include="Relatorios\ListaPrecoTabCliente.aspx" />
-    <Content Include="Relatorios\ListaProdTrib.aspx" />
     <Content Include="Relatorios\ListaProducaoInst.aspx" />
     <Content Include="Relatorios\ListaProducaoProd.aspx" />
     <Content Include="Relatorios\ListaProdutoInterno.aspx" />
     <Content Include="Relatorios\ListaProdutos.aspx" />
     <Content Include="Relatorios\ListaProdutosComprar.aspx" />
     <Content Include="Relatorios\ListaVariosPedidosPcp.aspx" />
-    <Content Include="Relatorios\ListaVendasAVista.aspx" />
     <Content Include="Relatorios\ListaVendasCliente.aspx" />
     <Content Include="Relatorios\ListaVendasComissionado.aspx" />
     <Content Include="Relatorios\ListaVendasComLucr.aspx" />
     <Content Include="Relatorios\ListaVendasProd.aspx" />
     <Content Include="Relatorios\ListaVendasSemImposto.aspx" />
-    <Content Include="Relatorios\ListaVendasSemLucr.aspx" />
     <Content Include="Relatorios\LstTempoLiberacaoPedido.aspx" />
     <Content Include="Relatorios\MDFe\RelBase.aspx" />
     <Content Include="Relatorios\NFe\LivroRegistro.aspx" />
@@ -4440,13 +4431,6 @@
     <Compile Include="Cadastros\Producao\CadRoteiroProducao.aspx.designer.cs">
       <DependentUpon>CadRoteiroProducao.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Cadastros\Producao\LstAlterarSituacaoProducao.aspx.cs">
-      <DependentUpon>LstAlterarSituacaoProducao.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Cadastros\Producao\LstAlterarSituacaoProducao.aspx.designer.cs">
-      <DependentUpon>LstAlterarSituacaoProducao.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Cadastros\Producao\LstProducao.aspx.cs">
       <DependentUpon>LstProducao.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -5735,20 +5719,6 @@
     <Compile Include="Listas\LstInfoDiferimento.aspx.designer.cs">
       <DependentUpon>LstInfoDiferimento.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Listas\LstInfoPedidos.aspx.cs">
-      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstInfoPedidos.aspx.designer.cs">
-      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.cs">
-      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.designer.cs">
-      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Listas\LstInfoValorAgregado.aspx.cs">
       <DependentUpon>LstInfoValorAgregado.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6483,13 +6453,6 @@
     <Compile Include="Relatorios\Administrativos\MovimentacoesFinanceiras.aspx.designer.cs">
       <DependentUpon>MovimentacoesFinanceiras.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Relatorios\Administrativos\PedidosConferidos.aspx.cs">
-      <DependentUpon>PedidosConferidos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\Administrativos\PedidosConferidos.aspx.designer.cs">
-      <DependentUpon>PedidosConferidos.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Relatorios\Administrativos\PrevisaoFinanceira.aspx.cs">
       <DependentUpon>PrevisaoFinanceira.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6693,13 +6656,6 @@
     <Compile Include="Relatorios\ListaCreditoFornecedor.aspx.designer.cs">
       <DependentUpon>ListaCreditoFornecedor.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Relatorios\ListaDeficitEstoque.aspx.cs">
-      <DependentUpon>ListaDeficitEstoque.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\ListaDeficitEstoque.aspx.designer.cs">
-      <DependentUpon>ListaDeficitEstoque.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Relatorios\ListaDefinicaoCargaRota.aspx.cs">
       <DependentUpon>ListaDefinicaoCargaRota.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6734,13 +6690,6 @@
     </Compile>
     <Compile Include="Relatorios\ListaEstoqueMinimo.aspx.designer.cs">
       <DependentUpon>ListaEstoqueMinimo.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Relatorios\ListaEstoqueProdutos.aspx.cs">
-      <DependentUpon>ListaEstoqueProdutos.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\ListaEstoqueProdutos.aspx.designer.cs">
-      <DependentUpon>ListaEstoqueProdutos.aspx</DependentUpon>
     </Compile>
     <Compile Include="Relatorios\ListaFornecedores.aspx.cs">
       <DependentUpon>ListaFornecedores.aspx</DependentUpon>
@@ -6833,13 +6782,6 @@
     <Compile Include="Relatorios\ListaPrecoTabCliente.aspx.designer.cs">
       <DependentUpon>ListaPrecoTabCliente.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Relatorios\ListaProdTrib.aspx.cs">
-      <DependentUpon>ListaProdTrib.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\ListaProdTrib.aspx.designer.cs">
-      <DependentUpon>ListaProdTrib.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Relatorios\ListaProducaoInst.aspx.cs">
       <DependentUpon>ListaProducaoInst.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6882,13 +6824,6 @@
     <Compile Include="Relatorios\ListaVariosPedidosPcp.aspx.designer.cs">
       <DependentUpon>ListaVariosPedidosPcp.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Relatorios\ListaVendasAVista.aspx.cs">
-      <DependentUpon>ListaVendasAVista.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\ListaVendasAVista.aspx.designer.cs">
-      <DependentUpon>ListaVendasAVista.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Relatorios\ListaVendasCliente.aspx.cs">
       <DependentUpon>ListaVendasCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -6923,13 +6858,6 @@
     </Compile>
     <Compile Include="Relatorios\ListaVendasSemImposto.aspx.designer.cs">
       <DependentUpon>ListaVendasSemImposto.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Relatorios\ListaVendasSemLucr.aspx.cs">
-      <DependentUpon>ListaVendasSemLucr.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Relatorios\ListaVendasSemLucr.aspx.designer.cs">
-      <DependentUpon>ListaVendasSemLucr.aspx</DependentUpon>
     </Compile>
     <Compile Include="Relatorios\LstTempoLiberacaoPedido.aspx.cs">
       <DependentUpon>LstTempoLiberacaoPedido.aspx</DependentUpon>
@@ -8542,7 +8470,6 @@
     <EmbeddedResource Include="Relatorios\Administrativos\rptLucroAproximado.rdlc" />
     <EmbeddedResource Include="Relatorios\Administrativos\rptMovimentacoesFinanceiras.rdlc" />
     <EmbeddedResource Include="Relatorios\Administrativos\rptMovimentacoesFinanceirasDet.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptPedidosConferidos.rdlc" />
     <EmbeddedResource Include="Relatorios\Administrativos\rptPrevisaoFinanceira.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -8899,7 +8826,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptDebitosCliente.rdlc" />
     <EmbeddedResource Include="Relatorios\rptDeclaracaoCheque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDeficitEstoque.rdlc" />
     <EmbeddedResource Include="Relatorios\rptDefinicaoCargaRota.rdlc" />
     <EmbeddedResource Include="Relatorios\rptDeposito.rdlc">
       <SubType>Designer</SubType>
@@ -8938,8 +8864,6 @@
     <EmbeddedResource Include="Relatorios\rptHistoricoFornec.rdlc" />
     <EmbeddedResource Include="Relatorios\rptImpostoServ.rdlc" />
     <EmbeddedResource Include="Relatorios\rptImpressoesPendentes.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptInfoPedidos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptInfoPedidosPeriodo.rdlc" />
     <EmbeddedResource Include="Relatorios\rptInventarioEstoque.rdlc" />
     <EmbeddedResource Include="Relatorios\rptItemPontoEquilibrio.rdlc" />
     <EmbeddedResource Include="Relatorios\rptLiberacaoPedidoMov.rdlc">
@@ -9130,7 +9054,6 @@
     <EmbeddedResource Include="Relatorios\rptProdutosExportacao.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProdutosLiberar.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProdutosPreco.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutosTrib.rdlc" />
     <EmbeddedResource Include="Relatorios\rptResumoDiario.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -9154,7 +9077,6 @@
     <EmbeddedResource Include="Relatorios\rptSugestaoCompra.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptVendasAVista.rdlc" />
     <EmbeddedResource Include="Relatorios\rptVendasClienteComissionado.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -9163,8 +9085,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptVendasSemImposto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptVendasSemLucr.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptVendasSemLucr2.rdlc" />
     <EmbeddedResource Include="Relatorios\rptPosicaoMateriaPrima.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

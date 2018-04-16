@@ -12,7 +12,7 @@ namespace Glass.UI.Web.Utils
     
             var pedidos = PedidoDAO.Instance.GetList(Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idLoja"]), Glass.Conversoes.StrParaUint(Request["idCli"]),
                 Request["nomeCli"], Request["codCliente"], Glass.Conversoes.StrParaUint(Request["idCidade"]), Request["endereco"], Request["bairro"], Request["complemento"], Request["situacao"],
-                Request["situacaoProd"], Request["byVend"], Request["byConf"], Request["maoObra"], Request["maoObraEspecial"], Request["producao"], 
+                Request["situacaoProd"], Request["byVend"], Request["maoObra"], Request["maoObraEspecial"], Request["producao"], 
                 Glass.Conversoes.StrParaUint(Request["idOrcamento"]), Glass.Conversoes.StrParaFloat(Request["altura"]), Glass.Conversoes.StrParaInt(Request["largura"]), 
                 Glass.Conversoes.StrParaInt(Request["diasProntoLib"]), Glass.Conversoes.StrParaFloat(Request["valorDe"]), Glass.Conversoes.StrParaFloat(Request["valorAte"]), Request["dataCadIni"],
                 Request["dataCadFim"], Request["dataFinIni"], Request["dataFinFim"], Request["funcFinalizacao"], Request["tipo"], Glass.Conversoes.StrParaInt(Request["fastDelivery"]),
