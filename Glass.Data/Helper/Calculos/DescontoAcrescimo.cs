@@ -27,7 +27,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            bool aplicado = Aplicar(sessao, estrategia, (TipoValor)tipoAcrescimo, acrescimo, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoAcrescimo, acrescimo);
 
             ReaplicarDesconto(sessao, container, produtos, aplicado);
 
@@ -45,7 +45,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            bool aplicado = Aplicar(sessao, estrategia, (TipoValor)tipoAcrescimo, acrescimo, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoAcrescimo, acrescimo);
 
             ReaplicarComissao(sessao, container, produtos, aplicado);
 
@@ -66,7 +66,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            bool removido = Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, container, produtos);
 
             ReaplicarDesconto(sessao, container, produtos, removido);
 
@@ -83,7 +83,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            bool removido = Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, container, produtos);
 
             ReaplicarDesconto(sessao, container, produtos, removido);
 
@@ -114,7 +114,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            bool aplicado = Aplicar(sessao, estrategia, (TipoValor)tipoDesconto, desconto, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoDesconto, desconto);
 
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado);
 
@@ -141,7 +141,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            bool aplicado = Aplicar(sessao, estrategia, (TipoValor)tipoDesconto, desconto, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoDesconto, desconto);
 
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado);
 
@@ -168,7 +168,7 @@ namespace Glass.Data.Helper.Calculos
                 .Where(p => p.PercDescontoQtde > 0)
                 .ToList();
 
-            bool aplicado = Aplicar(sessao, estrategia, TipoValor.Percentual, 1, produtosAplicar);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtosAplicar, TipoValor.Percentual, 1);
 
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado);
 
@@ -195,7 +195,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            bool removido = Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, container, produtos);
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido);
 
             return removido;
@@ -217,7 +217,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Ambiente
             );
 
-            bool removido = Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, container, produtos);
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido);
 
             return removido;
@@ -239,7 +239,7 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Quantidade
             );
             
-            bool removido = Remover(sessao, estrategia, produtos);
+            bool removido = Remover(sessao, estrategia, container, produtos);
             ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido);
 
             return removido;
@@ -262,7 +262,7 @@ namespace Glass.Data.Helper.Calculos
 
             AplicarDescontosConfiguracao(sessao, container, produtos);
 
-            bool aplicado = Aplicar(sessao, estrategia, TipoValor.Percentual, (decimal)percentualComissao, produtos);
+            bool aplicado = Aplicar(sessao, estrategia, container, produtos, TipoValor.Percentual, (decimal)percentualComissao);
 
             RemoverDescontosConfiguracao(sessao, container, produtos);
 
@@ -283,22 +283,23 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            return Remover(sessao, estrategia, produtos);
+            return Remover(sessao, estrategia, container, produtos);
         }
 
         #endregion
 
         #region Métodos privados
 
-        private bool Aplicar(GDASession sessao, IDescontoAcrescimoStrategy estrategia, TipoValor tipoValor, decimal valor,
-            IEnumerable<IProdutoCalculo> produtos)
+        private bool Aplicar(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos, TipoValor tipoValor, decimal valor)
         {
-            return estrategia.Aplicar(sessao, tipoValor, valor, produtos);
+            return estrategia.Aplicar(sessao, container, produtos, tipoValor, valor);
         }
 
-        private bool Remover(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IEnumerable<IProdutoCalculo> produtos)
+        private bool Remover(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos)
         {
-            return estrategia.Remover(sessao, produtos);
+            return estrategia.Remover(sessao, container, produtos);
         }
 
         private void ReaplicarDesconto(GDASession sessao, IContainerCalculo container,

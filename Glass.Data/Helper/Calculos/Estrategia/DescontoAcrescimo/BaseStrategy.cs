@@ -11,10 +11,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     abstract class BaseStrategy<T> : Singleton<T>, IDescontoAcrescimoStrategy
         where T : BaseStrategy<T>
     {
-        public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos)
+        public bool Aplicar(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos,
+            TipoValor tipo, decimal valorAplicar)
         {
             if (valorAplicar == 0 || !produtos.Any() || !PermiteAplicar())
                 return false;
+
+            produtos.InicializarParaCalculo(sessao, container);
 
             Remover(
                 sessao,
@@ -34,7 +37,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return true;
         }
 
-        public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
+        public bool Remover(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             var produtosRemover = produtos
                 .Where(produto => PermitirRemocaoCalculoProduto(produto))
@@ -42,6 +45,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
             if (!produtosRemover.Any())
                 return false;
+
+            produtos.InicializarParaCalculo(sessao, container);
 
             Remover(
                 sessao,

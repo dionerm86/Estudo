@@ -10,6 +10,16 @@ namespace Glass.Data.Helper.Calculos
     public static class ProdutoCalculoExtensions
     {
         /// <summary>
+        /// Cria em cada produto cálculo da lista as variáveis necessárias para permitir seu uso nos métodos de cálculo.
+        /// </summary>
+        public static void InicializarParaCalculo(this IEnumerable<IProdutoCalculo> produtosCalculo, GDASession sessao,
+            IContainerCalculo container)
+        {
+            foreach (var produto in (produtosCalculo ?? new IProdutoCalculo[0]))
+                InicializarParaCalculo(produto, sessao, container);
+        }
+
+        /// <summary>
         /// Cria no produto cálculo as variáveis necessárias para permitir seu uso nos métodos de cálculo.
         /// </summary>
         public static void InicializarParaCalculo(this IProdutoCalculo produtoCalculo, GDASession sessao,

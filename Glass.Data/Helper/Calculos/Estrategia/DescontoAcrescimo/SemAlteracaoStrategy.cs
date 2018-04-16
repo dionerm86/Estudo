@@ -11,12 +11,13 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
     {
         private SemAlteracaoStrategy() { }
 
-        public bool Aplicar(GDASession sessao, TipoValor tipo, decimal valorAplicar, IEnumerable<IProdutoCalculo> produtos)
+        public bool Aplicar(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos,
+            TipoValor tipo, decimal valorAplicar)
         {
             return false;
         }
 
-        public bool Remover(GDASession sessao, IEnumerable<IProdutoCalculo> produtos)
+        public bool Remover(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             return false;
         }

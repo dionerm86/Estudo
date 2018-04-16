@@ -21,7 +21,7 @@ namespace Glass.Data.Test.Helper.DescontoAcrescimo
             );
 
             // When
-            bool aplicado = estrategia.Aplicar(null, TipoValor.Percentual, 50, produtos);
+            bool aplicado = estrategia.Aplicar(null, container, produtos, TipoValor.Percentual, 50);
 
             // Then
             Assert.True(aplicado);
