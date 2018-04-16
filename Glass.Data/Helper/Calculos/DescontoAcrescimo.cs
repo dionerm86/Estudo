@@ -328,7 +328,10 @@ namespace Glass.Data.Helper.Calculos
                     if (ambiente.Desconto == 0)
                         continue;
 
-                    var produtosAmbiente = produtos.Where(produto => produto.IdAmbiente == ambiente.Id);
+                    var produtosAmbiente = produtos
+                        .Where(produto => produto.IdAmbiente == ambiente.Id)
+                        .ToList();
+
                     AplicarDescontoAmbiente(sessao, container, ambiente.TipoDesconto, ambiente.Desconto, produtosAmbiente, false);
                 }
             }

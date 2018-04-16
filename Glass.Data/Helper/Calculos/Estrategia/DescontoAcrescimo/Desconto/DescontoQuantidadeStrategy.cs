@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Glass.Data.Model;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
