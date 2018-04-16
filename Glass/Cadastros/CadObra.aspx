@@ -253,13 +253,13 @@
                 }
             } else if(tipoPagto && tipoPagto.value == "2") { // À prazo
 
-                var numParcelas = FindControl("drpNumParcel as", "select");
+                var numParcelas = FindControl("drpNumParcelas", "select");
                 var controle = <%= dtvObra.FindControl("ctrlParcelas1") != null ? dtvObra.FindControl("ctrlParcelas1").ClientID : "''" %>;
-
+                var formasPagto = FindControl("drpFormaPagtoPrazo", "select"); 
                 var valores = controle.Valores();
                 var datas = controle.Datas();
 
-                var retornoReceber = CadObra.ReceberAPrazo(idObra, numParcelas.value, valores, datas, cxDiario);
+                var retornoReceber = CadObra.ReceberAPrazo(idObra, numParcelas.value, formasPagto.value, valores, datas, cxDiario);
 
                 if(retornoReceber.error != null) {
                     desbloquearPagina(true);

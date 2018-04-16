@@ -1028,6 +1028,16 @@ namespace Glass.UI.Web.Cadastros
             uint idCliente = Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
             bool reposicao = bool.Parse(((HiddenField)dtvPedido.FindControl("hdfIsReposicao")).Value);
 
+            /* Chamado 71112*/
+            if (!String.IsNullOrEmpty(idAmbiente))
+            {
+                if (AmbientePedidoDAO.Instance.GetElement(Conversoes.StrParaUint(idAmbiente)) == null)
+                {
+                    Glass.MensagemAlerta.ShowMsg("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.", Page);
+                    return;
+                }
+            }
+
             // Cria uma instância do ProdutosPedido
             ProdutosPedido prodPed = new ProdutosPedido();
             prodPed.IdPedido = idPedido;

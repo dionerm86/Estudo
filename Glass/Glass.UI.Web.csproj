@@ -8781,7 +8781,6 @@
     <EmbeddedResource Include="Relatorios\Producao\rptRoteiroProducao.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoImagensAltUmaImg.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjeto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoFTP.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoImagensAlt.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoMateriais.rdlc" />
     <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoMedidasInst.rdlc" />

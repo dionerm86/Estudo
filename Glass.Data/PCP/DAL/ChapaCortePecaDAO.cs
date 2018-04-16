@@ -217,11 +217,11 @@ namespace Glass.Data.DAL
             return ExecuteScalar<bool>(sessao, string.Format(@"SELECT COUNT(*)>0 FROM chapa_corte_peca ccp
                     INNER JOIN produto_impressao pi ON (ccp.IdProdImpressaoChapa=pi.IdProdImpressao)
                     LEFT JOIN produtos_nf pnf ON (pi.IdProdNf=pnf.IdProdNf)
-                    LEFT JOIN produtos_pedido_espelho ppe on (ppe.idprodped = pi.idprodped)
-                    LEFT JOIN pedido ped on (ped.idpedido = ppe.idpedido) And (ped.tipopedido = {0})
-                    INNER JOIN produto p ON (coalesce(pnf.IdProd,ppe.idprod)=p.IdProd)
+                    LEFT JOIN produtos_pedido_espelho ppe on (ppe.IdProdPed = pi.IdProdPed)
+                    LEFT JOIN pedido ped on (ped.IdPedido = ppe.IdPedido) And (ped.TipoPedido = {0})
+                    INNER JOIN produto p ON (coalesce(pnf.IdProd,ppe.IdProd)=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
-                WHERE ccp.IdProdImpressaoChapa IN ({1}) AND sp.TipoSubgrupo IN {2}", Pedido.TipoPedidoEnum.Producao,
+                WHERE ccp.IdProdImpressaoChapa IN ({1}) AND sp.TipoSubgrupo IN {2}", (int)Pedido.TipoPedidoEnum.Producao,
                             string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})", (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado))) || !chapasTrocadasDisponiveis;
         }
 

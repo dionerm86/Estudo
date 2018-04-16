@@ -164,9 +164,9 @@
                             <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                         </asp:GridView>
 
-                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasParentChild" runat="server" SelectMethod="GetListConsultaParent"
+                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasParentChild" runat="server" SelectMethod="PesquisarProdutosProducaoFilho"
                             TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO" EnablePaging="True" MaximumRowsParameterName="pageSize"
-                            SelectCountMethod="GetCountConsultaParent" SortParameterName="sortExpression" StartRowIndexParameterName="startRow">
+                            SelectCountMethod="PesquisarProdutosProducaoFilhoCount" SortParameterName="sortExpression" StartRowIndexParameterName="startRow">
                             <SelectParameters>
                                 <asp:ControlParameter Name="idProdPedProducaoParent" ControlID="hdfIdProdPedProducaoChild" />
                             </SelectParameters>
@@ -180,9 +180,9 @@
     <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
 </asp:GridView>
 
-<colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasParent" runat="server" SelectMethod="GetListConsultaParent"
+<colo:VirtualObjectDataSource Culture="pt-BR" ID="odsPecasParent" runat="server" SelectMethod="PesquisarProdutosProducaoFilho"
     TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO" EnablePaging="True" MaximumRowsParameterName="pageSize"
-    SelectCountMethod="GetCountConsultaParent" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
+    SelectCountMethod="PesquisarProdutosProducaoFilhoCount" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
     DeleteMethod="VoltarPeca">
     <DeleteParameters>
         <asp:Parameter Name="idProdPedProducao" Type="UInt32" />

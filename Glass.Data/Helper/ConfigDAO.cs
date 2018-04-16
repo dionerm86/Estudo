@@ -382,6 +382,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ManterDescontoAdministrador);
             itens.Add(Config.ConfigEnum.BloquearClienteAoDevolverProtestarCheque);
             itens.Add(Config.ConfigEnum.UsarControleCentroCusto);
+            itens.Add(Config.ConfigEnum.ComissaoPorContasRecebidas);
 
             itens.Add(Config.ConfigEnum.TempoAlertaFaturamentoInoperante);
             itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);

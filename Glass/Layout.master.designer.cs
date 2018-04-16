@@ -166,6 +166,15 @@ namespace Glass.UI.Web {
         protected global::System.Web.UI.WebControls.LinkButton lnkMensagensNaoLidas;
         
         /// <summary>
+        /// lnkControleUsuario control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkControleUsuario;
+        
+        /// <summary>
         /// lnkConfiguracao control.
         /// </summary>
         /// <remarks>
@@ -182,15 +191,6 @@ namespace Glass.UI.Web {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkLogout;
-        
-        /// <summary>
-        /// lnkControleUsuario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkControleUsuario;
         
         /// <summary>
         /// linhaMenu control.
