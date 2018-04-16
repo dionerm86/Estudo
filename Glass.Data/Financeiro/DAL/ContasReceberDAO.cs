@@ -3227,13 +3227,16 @@ namespace Glass.Data.DAL
                     }
 
                     // Seleciona a próxima forma de pagamento válida.
-                    while (idsFormaPagamento[++contadorPagamento % idsFormaPagamento.Count()] == 0)
+                    if (idsFormaPagamento.Count() > 0)
                     {
-                        if (contadorPagamento >= idsFormaPagamento.Count())
+                        while (idsFormaPagamento[++contadorPagamento % idsFormaPagamento.Count()] == 0)
                         {
-                            contadorPagamento = -1;
-                            break;
-                        }
+                            if (contadorPagamento >= idsFormaPagamento.Count())
+                            {
+                                contadorPagamento = -1;
+                                break;
+                            }
+                        } 
                     }
 
                     if (contadorPagamento > -1)
@@ -6706,6 +6709,9 @@ namespace Glass.Data.DAL
                 if (!selecionar)
                     sql = "select count(*) from (" + sql + ") as temp";
             }
+
+            if (!agrupar)
+                sql = sql + "Group By c.IdContaR";
 
             return sql.Replace("$$$", criterio);
         }

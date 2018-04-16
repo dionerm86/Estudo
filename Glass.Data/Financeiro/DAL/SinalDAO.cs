@@ -863,7 +863,7 @@ namespace Glass.Data.DAL
             var pedidos = PedidoDAO.Instance.GetBySinal(session, sinal.IdSinal, sinal.IsPagtoAntecipado);
             var usuarioLogado = UserInfo.GetUserInfo;
             var totalPedidos = pedidos.Sum(f => f.TotalPedidoFluxo);
-            var totalPagar = sinal.TotalPagar.GetValueOrDefault();
+            var totalPagar = pedidos.Sum(f =>  !sinal.IsPagtoAntecipado ? f.ValorEntrada : (f.RecebeuSinal ? f.TotalPedidoFluxo - f.ValorEntrada : f.TotalPedidoFluxo));
             var totalPago = sinal.TotalPago.GetValueOrDefault();
             var dataRecebimento = sinal.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
             var idLojaRecebimento = (uint)sinal.IdLojaRecebimento.GetValueOrDefault();
