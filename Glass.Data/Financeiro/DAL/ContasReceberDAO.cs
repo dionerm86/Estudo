@@ -6704,6 +6704,9 @@ namespace Glass.Data.DAL
                     sql = "select count(*) from (" + sql + ") as temp";
             }
 
+            if (!agrupar)
+                sql = sql + "Group By c.IdContaR";
+
             return sql.Replace("$$$", criterio);
         }
 
