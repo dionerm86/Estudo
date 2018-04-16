@@ -15,15 +15,10 @@ namespace Glass.Data.Model
     public enum TipoSetor
     {
         /// <summary>
-        /// Por Benef.
-        /// </summary>
-        [Description("Por Benef.")]
-        PorBenef = 1,
-        /// <summary>
         /// Pendente.
         /// </summary>
         [Description("Pendente")]
-        Pendente,
+        Pendente = 2,
         /// <summary>
         /// Pronto.
         /// </summary>
@@ -441,7 +436,7 @@ namespace Glass.Data.Model
 
         public bool SetorPertenceARoteiro
         {
-            get { return Tipo == TipoSetor.PorRoteiro || Tipo == TipoSetor.PorBenef; }
+            get { return Tipo == TipoSetor.PorRoteiro; }
         }
 
         #endregion
