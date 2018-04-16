@@ -1062,7 +1062,7 @@ namespace Glass.Data.DAL
                 var associacaoProdutosPedidoProdutosPedidoEspelho = new Dictionary<int, int>();
 
                 // Gera os ambientes do pedido
-                foreach (AmbientePedido a in AmbientePedidoDAO.Instance.GetByPedido(transaction, idPedido))
+                foreach (AmbientePedido a in (ped as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
                 {
                     // Se o produto for um cálculo de projeto, faz uma cópia para o pedido
                     if (a.IdItemProjeto.GetValueOrDefault() > 0 && !itensProjeto.ContainsKey(a.IdItemProjeto.GetValueOrDefault()))
@@ -1954,8 +1954,10 @@ namespace Glass.Data.DAL
 
             if (!PedidoConfig.RatearDescontoProdutos)
             {
-                var dadosAmbientes = AmbientePedidoEspelhoDAO.Instance.GetByPedido(sessao, pedidoEspelho.IdPedido).
-                    Select(x => new { x.IdAmbientePedido, x.TotalProdutos }).ToList();
+                var dadosAmbientes = (pedidoEspelho as IContainerCalculo).Ambientes.Obter()
+                    .Cast<AmbientePedidoEspelho>()
+                    .Select(x => new { x.IdAmbientePedido, x.TotalProdutos })
+                    .ToList();
 
                 var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
 
@@ -3661,7 +3663,8 @@ namespace Glass.Data.DAL
         private void RemoveComissaoDescontoAcrescimo(GDASession sessao, PedidoEspelho pedidoEspelho,
             IEnumerable<ProdutosPedidoEspelho> produtosPedidoEspelho)
         {
-            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(sessao, pedidoEspelho.IdPedido)
+            var ambientesPedido = (pedidoEspelho as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedidoEspelho>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -3700,7 +3703,8 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void RemoveComissaoDescontoAcrescimo(GDASession session, PedidoEspelho antigo, PedidoEspelho novo)
         {
-            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido)
+            var ambientesPedido = (novo as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedidoEspelho>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -3746,7 +3750,8 @@ namespace Glass.Data.DAL
 
         public void AplicaComissaoDescontoAcrescimo(GDASession session, PedidoEspelho pedidoEspelho)
         {
-            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, pedidoEspelho.IdPedido)
+            var ambientesPedido = (pedidoEspelho as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedidoEspelho>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -3789,7 +3794,8 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void AplicaComissaoDescontoAcrescimo(GDASession session, PedidoEspelho antigo, PedidoEspelho novo)
         {
-            var ambientesPedido = AmbientePedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido)
+            var ambientesPedido = (novo as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedidoEspelho>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 

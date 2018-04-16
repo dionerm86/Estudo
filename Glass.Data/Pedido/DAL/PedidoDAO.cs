@@ -5884,7 +5884,7 @@ namespace Glass.Data.DAL
 
             if (pedido.MaoDeObra)
             {
-                var ambientes = AmbientePedidoDAO.Instance.GetByPedido(session, idPedido).ToArray();
+                var ambientes = (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>();
                 foreach (var a in ambientes)
                     if (!AmbientePedidoDAO.Instance.PossuiProdutos(session, a.IdAmbientePedido))
                         throw new Exception("O vidro " + a.PecaVidro + " não possui mão-de-obra cadastrada. Cadastre alguma mão-de-obra ou remova o vidro para continuar.");
@@ -5936,8 +5936,10 @@ namespace Glass.Data.DAL
                 if (pedido.Desconto > 0)
                     throw new Exception("O cliente já possui desconto por grupo/subgrupo, não é permitido lançar outro desconto no pedido.");
 
+                var ambientesPedido = (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>();
+
                 string msg;
-                foreach (var amb in AmbientePedidoDAO.Instance.GetByPedido(session, idPedido))
+                foreach (var amb in ambientesPedido)
                     if (amb.Desconto > 0 && !AmbientePedidoDAO.Instance.ValidaDesconto(session, amb, out msg))
                         throw new Exception(msg + " Ambiente " + amb.Ambiente + ".");
             }
@@ -6096,7 +6098,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    var ambientes = AmbientePedidoDAO.Instance.GetByPedido(session, idPedido);
+                    var ambientes = (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>();
 
                     foreach (var a in ambientes)
                     {
@@ -9069,7 +9071,7 @@ namespace Glass.Data.DAL
             if (RemoverDesconto(sessao, pedido, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
-            foreach (AmbientePedido ambiente in AmbientePedidoDAO.Instance.GetByPedido(sessao, idPedido))
+            foreach (AmbientePedido ambiente in (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
             {
                 var produtosAmbiente = produtosPedido.Where(p => p.IdAmbientePedido == ambiente.IdAmbientePedido);
 
@@ -11091,8 +11093,9 @@ namespace Glass.Data.DAL
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {
-                    var dadosAmbientes = AmbientePedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido).
-                        Select(x => new { x.IdAmbientePedido, x.TotalProdutos });
+                    var dadosAmbientes = (pedido as IContainerCalculo).Ambientes.Obter()
+                        .Cast<AmbientePedido>()
+                        .Select(x => new { x.IdAmbientePedido, x.TotalProdutos });
 
                     var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
 
@@ -15371,7 +15374,8 @@ namespace Glass.Data.DAL
         internal void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido pedido,
             IEnumerable<ProdutosPedido> produtosPedido = null)
         {
-            var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido)
+            var ambientesPedido = (pedido as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedido>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -15414,7 +15418,8 @@ namespace Glass.Data.DAL
         private void RemoveComissaoDescontoAcrescimo(GDASession sessao, Pedido antigo, Pedido novo,
             IEnumerable<ProdutosPedido> produtosPedido)
         {
-            var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, novo.IdPedido)
+            var ambientesPedido = (novo as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedido>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -15460,7 +15465,8 @@ namespace Glass.Data.DAL
         public void AplicaComissaoDescontoAcrescimo(GDASession sessao, Pedido pedido, bool manterFuncDesc,
             IEnumerable<ProdutosPedido> produtosPedido = null)
         {
-            var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido)
+            var ambientesPedido = (pedido as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedido>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -15519,7 +15525,8 @@ namespace Glass.Data.DAL
         internal void AplicaComissaoDescontoAcrescimo(GDASession sessao, Pedido antigo, Pedido novo,
             IEnumerable<ProdutosPedido> produtosPedido = null)
         {
-            var ambientesPedido = AmbientePedidoDAO.Instance.GetByPedido(sessao, novo.IdPedido)
+            var ambientesPedido = (novo as IContainerCalculo).Ambientes.Obter()
+                .Cast<AmbientePedido>()
                 .Where(f => f.Acrescimo > 0)
                 .ToList();
 
@@ -16623,7 +16630,8 @@ namespace Glass.Data.DAL
                         // Busca o orçamento.
                         var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(transaction, idOrcamento);
                         // Produtos do orçamento.
-                        var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, false);
+                        var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, idOrcamento, true);
+                        var ambientesOrcamento = produtosOrcamento.Where(p => !p.IdProdParent.HasValue).ToList();
                         // Verifica se existe algum pedido, gerado através do orçamento atual, que não esteja cancelado, nesse caso, o orçamento não pode gerar um novo pedido.
                         var idPedidoNaoCanceladoAssociadoOrcamento = ExecuteScalar<int?>(transaction, string.Format("SELECT IdPedido FROM pedido WHERE Situacao<>{0} AND IdOrcamento={1}",
                             (int)Pedido.SituacaoPedido.Cancelado, orcamento.IdOrcamento));
@@ -16652,7 +16660,7 @@ namespace Glass.Data.DAL
                         #region Validações
 
                         // Verifica se ao menos um produto do orçamento foi marcado para gerar pedido (Negociar?).
-                        if (OrcamentoConfig.NegociarParcialmente && !produtosOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
+                        if (OrcamentoConfig.NegociarParcialmente && !ambientesOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
                             throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
 
                         // Verifica se o vendedor do orçamento foi selecionado.
@@ -16688,9 +16696,9 @@ namespace Glass.Data.DAL
                             throw new Exception("Insira pelo menos um item neste orçamento antes de gerar pedido.");
 
                         /* Chamado 56301. */
-                        if (produtosOrcamento.Any(f => f.IdProduto > 0 && f.IdSubgrupoProd.GetValueOrDefault() == 0))
+                        if (ambientesOrcamento.Any(f => f.IdProduto > 0 && f.IdSubgrupoProd.GetValueOrDefault() == 0))
                             throw new Exception(string.Format("Informe o subgrupo dos produtos {0} antes de gerar o pedido.",
-                                string.Join(", ", produtosOrcamento.Where(f => f.IdProduto > 0 && f.IdSubgrupoProd == 0).Select(f => f.CodInterno).Distinct().ToList())));
+                                string.Join(", ", ambientesOrcamento.Where(f => f.IdProduto > 0 && f.IdSubgrupoProd == 0).Select(f => f.CodInterno).Distinct().ToList())));
 
                         #endregion
 
@@ -16709,7 +16717,7 @@ namespace Glass.Data.DAL
                                 !materiaisVidroMesmaCorEspessura)
                                 throw new Exception("Não é possível incluir produtos de cor e espessura diferentes.");
 
-                            foreach (var po in produtosOrcamento.Where(f => f.IdProduto > 0))
+                            foreach (var po in ambientesOrcamento.Where(f => f.IdProduto > 0))
                             {
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
@@ -16816,7 +16824,7 @@ namespace Glass.Data.DAL
                         {
                             #region Inserção de produtos para empresas que NÃO VENDEM vidro
 
-                            foreach (var po in produtosOrcamento)
+                            foreach (var po in ambientesOrcamento)
                             {
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
@@ -16891,7 +16899,7 @@ namespace Glass.Data.DAL
                             var pedidoReposicaoGarantia = pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia;
                             var pedidoMaoObraEspecial = pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial;
 
-                            foreach (var po in produtosOrcamento)
+                            foreach (var po in ambientesOrcamento)
                             {
                                 // Não negocia os produtos já negociados ou que não serão negociados
                                 if (OrcamentoConfig.NegociarParcialmente && (po.IdProdPed != null || !po.Negociar))
@@ -16947,7 +16955,7 @@ namespace Glass.Data.DAL
                                 // Adiciona os itens internos como os produtos do pedido
                                 if (po.TemItensProdutoSession(transaction))
                                 {
-                                    foreach (var poChild in ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(transaction, po.IdProd))
+                                    foreach (var poChild in produtosOrcamento.Where(p => p.IdProdParent == po.IdProd))
                                     {
                                         // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
                                         // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
@@ -17106,7 +17114,7 @@ namespace Glass.Data.DAL
                         RemoveComissaoDescontoAcrescimo(transaction, pedido, produtosPedido);
                         AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador, produtosPedido);
 
-                        foreach (var a in AmbientePedidoDAO.Instance.GetByPedido(transaction, idPedido))
+                        foreach (var a in (pedido as IContainerCalculo).Ambientes.Obter().Cast<AmbientePedido>())
                         {
                             if (a.Acrescimo == 0 && a.Desconto == 0)
                                 continue;
