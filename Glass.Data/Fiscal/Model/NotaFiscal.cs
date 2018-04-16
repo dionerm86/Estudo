@@ -531,10 +531,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("NUMFATURA")]
         public string NumFatura { get; set; }
 
-        [Log("Movimenta Itens")]
-        [PersistenceProperty("MOVITENS")]
-        public bool MovItens { get; set; }
-
         [Log("Período Apuração IPI")]
         [PersistenceProperty("PERIODOAPURACAOIPI")]
         public int PeriodoApuracaoIpi { get; set; }
@@ -1294,7 +1290,7 @@ namespace Glass.Data.Model
 
         bool Sync.Fiscal.EFD.Entidade.INFe.MovimentarItens
         {
-            get { return MovItens; }
+            get { return true; }
         }
 
         DateTime? Sync.Fiscal.EFD.Entidade.INFe.DataEntradaSaida

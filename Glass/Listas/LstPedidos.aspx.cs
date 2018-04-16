@@ -15,9 +15,7 @@ namespace Glass.UI.Web.Listas
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Listas.LstPedidos));
     
-            if (Request["byConf"] == "1")
-                Page.Title = "Pedidos Conferidos";
-            else if (Request["maoObra"] == "1")
+            if (Request["maoObra"] == "1")
                 Page.Title = "Pedidos Mão de Obra";
             else if (Request["producao"] == "1")
                 Page.Title = "Pedidos para Produção";
@@ -26,8 +24,6 @@ namespace Glass.UI.Web.Listas
     
             if (Request["byVend"] == "1")
                 Page.Title = "Meus " + Page.Title;
-            
-            lnkImprimir.Visible = Request["byConf"] == "1";
     
             if (!IsPostBack)
             {

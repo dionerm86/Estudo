@@ -523,7 +523,6 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 nfe.GerarContasPagar = dadosImportar.IdCompra > 0 && FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar;
                 nfe.Transporte = false;
                 nfe.GerarEstoqueReal = true;
-                nfe.MovItens = true;
 
                 try
                 {

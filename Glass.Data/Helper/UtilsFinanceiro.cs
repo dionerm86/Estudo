@@ -2534,6 +2534,15 @@ namespace Glass.Data.Helper
                         //if (conta.DataCad.Date == liberacao.DataLiberacao.Date && conta.Recebida)
                         ContasReceberDAO.Instance.DeleteByPrimaryKey(sessao, conta.IdContaR);
                 }
+                else
+                {
+                    /* Chamado 70095. */
+                    foreach (ContasReceber conta in ContasReceberDAO.Instance.GetByLiberacaoPedido(sessao, liberacao.IdLiberarPedido, false))
+                    {
+                        if (conta.IdFormaPagto > 0 && UtilsPlanoConta.GetPlanoSinal(conta.IdFormaPagto.Value) == conta.IdConta)
+                            ContasReceberDAO.Instance.DeleteByPrimaryKey(sessao, conta.IdContaR);
+                    }
+                }
 
                 #endregion
             }

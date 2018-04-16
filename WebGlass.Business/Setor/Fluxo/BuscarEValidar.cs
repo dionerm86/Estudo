@@ -11,8 +11,7 @@ namespace WebGlass.Business.Setor.Fluxo
         public IList<Entidade.SetorParaRoteiro> ObtemSetoresRoteiroProducao()
         {
             var tiposSetores = new List<Glass.Data.Model.TipoSetor>() {
-                Glass.Data.Model.TipoSetor.PorRoteiro,
-                Glass.Data.Model.TipoSetor.PorBenef
+                Glass.Data.Model.TipoSetor.PorRoteiro
             };
 
             var setores = SetorDAO.Instance.GetOrdered()
