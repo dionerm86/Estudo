@@ -4176,6 +4176,13 @@ namespace Glass.Data.DAL
                     throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", objInsert.DescrProduto, aplicacao.CodInterno));
             }
 
+            /* Chamado 71112*/
+            if (objInsert.IdAmbientePedido != null)
+            {
+                if (AmbientePedidoDAO.Instance.GetElement(objInsert.IdAmbientePedido.GetValueOrDefault()) == null)
+                    throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
+            }
+
             //Valida processo
             if (objInsert.IdSubgrupoProd > 0 && objInsert.IdProcesso.GetValueOrDefault(0) > 0 && !ClassificacaoSubgrupoDAO.Instance.VerificarAssociacaoExistente((int)objInsert.IdSubgrupoProd, (int)objInsert.IdProcesso.GetValueOrDefault(0)))
                 throw new Exception("Este processo não pode ser selecionado para este produto.");
@@ -4701,6 +4708,13 @@ namespace Glass.Data.DAL
                 }
 
                 objUpdate.BuscarBenefImportacao = false;
+
+                /* Chamado 71112*/
+                if (objUpdate.IdAmbientePedido != null)
+                {
+                    if (AmbientePedidoDAO.Instance.GetElement(objUpdate.IdAmbientePedido.GetValueOrDefault()) == null)
+                        throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
+                }
 
                 // Carrega os beneficiamentos do produto anterior
                 if (objUpdate.IdProdPedAnterior != null)
