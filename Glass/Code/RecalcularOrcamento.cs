@@ -4,7 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.DAL;
 using System.Text;
 using Glass.Data.Helper;
-using Glass.Configuracoes;
+using Glass.Comum.Cache;
 
 /// <summary>
 /// Classe com os métodos Ajax para recalcular o orçamento.
@@ -13,6 +13,13 @@ namespace Glass.UI.Web
 {
     public static class RecalcularOrcamento
     {
+        private static CacheMemoria<Data.Model.Orcamento, string> cacheOrcamentos;
+
+        static RecalcularOrcamento()
+        {
+            cacheOrcamentos = new CacheMemoria<Data.Model.Orcamento, string>("orcamentos");
+        }
+
         [Ajax.AjaxMethod]
         public static string Recalcular(string idOrcamentoStr, string tipoEntregaNovoStr, string idClienteNovoStr)
         {
@@ -29,8 +36,9 @@ namespace Glass.UI.Web
                 float percComissao;
                 Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd;
 
+                var orcamento = ObterOrcamento((uint)idOrcamento);
                 OrcamentoDAO.Instance.RecalcularOrcamentoComTransacao(idOrcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo,
-                    out idComissionado, out percComissao, out dadosProd);
+                    out idComissionado, out percComissao, out dadosProd, orcamento);
 
                 return OrcamentoDAO.Instance.ObterDadosOrcamentoRecalcular(tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosProd);
             }
@@ -43,7 +51,7 @@ namespace Glass.UI.Web
         [Ajax.AjaxMethod]
         public static string GetDadosProdutosRecalcular(string idOrcamentoStr, string idClienteNovoStr)
         {
-            uint idOrcamento = Glass.Conversoes.StrParaUint(idOrcamentoStr);
+            uint idOrcamento = Conversoes.StrParaUint(idOrcamentoStr);
             StringBuilder retorno = new StringBuilder();
     
             object[] dadosFormato = new object[9];
@@ -58,8 +66,8 @@ namespace Glass.UI.Web
                 "ValorUnitario: '{7}', " +
                 "Quantidade: {8}";
     
-            uint? idCliente = String.IsNullOrEmpty(idClienteNovoStr) ? OrcamentoDAO.Instance.ObtemIdCliente(idOrcamento) :
-                Glass.Conversoes.StrParaUintNullable(idClienteNovoStr);
+            uint? idCliente = Conversoes.StrParaUintNullable(idClienteNovoStr)
+                ?? ObterOrcamento(idOrcamento).IdCliente;
     
             foreach (ProdutosOrcamento p in ProdutosOrcamentoDAO.Instance.GetByOrcamento(idOrcamento, true))
             {
@@ -107,22 +115,25 @@ namespace Glass.UI.Web
         }
     
         [Ajax.AjaxMethod]
-        public static string AtualizaBenef(string idProdStr, string tipo, string servicosInfo)
+        public static string AtualizaBenef(string idOrcamentoStr, string idProdStr, string tipo, string servicosInfo)
         {
             try
             {
-                uint idProd = Glass.Conversoes.StrParaUint(idProdStr);
+                uint idProd = Conversoes.StrParaUint(idProdStr);
+                uint idOrcamento = Conversoes.StrParaUint(idOrcamentoStr);
+                var orcamento = ObterOrcamento(idOrcamento);
+
                 GenericBenefCollection beneficiamentos = new GenericBenefCollection();
                 beneficiamentos.AddBenefFromServicosInfo(servicosInfo);
     
                 switch (tipo.ToLower())
                 {
                     case "orçamento":
-                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(null, idProd, beneficiamentos);
+                        ProdutosOrcamentoDAO.Instance.AtualizaBenef(null, idProd, beneficiamentos, orcamento);
                         break;
     
                     case "material":
-                        MaterialItemProjetoDAO.Instance.AtualizaBenef(idProd, beneficiamentos);
+                        MaterialItemProjetoDAO.Instance.AtualizaBenef(null, idProd, beneficiamentos, orcamento);
                         break;
                 }
     
@@ -148,7 +159,8 @@ namespace Glass.UI.Web
                 var idComissionado = idComissionadoStr.StrParaIntNullable();
                 var percComissao = percComissaoStr.Replace(".", ",").StrParaFloat();
 
-                OrcamentoDAO.Instance.FinalizarRecalcularComTransacao(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes);
+                var orcamento = ObterOrcamento((uint)idOrcamento);
+                OrcamentoDAO.Instance.FinalizarRecalcularComTransacao(idOrcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes, orcamento);
             }
             catch (Exception ex)
             {
@@ -156,6 +168,25 @@ namespace Glass.UI.Web
             }
     
             return "Ok";
+        }
+
+        private static Data.Model.Orcamento ObterOrcamento(uint idOrcamento)
+        {
+            string idCache = string.Format(
+                "{0}-{1}",
+                UserInfo.GetUserInfo.CodUser,
+                idOrcamento
+            );
+
+            var orcamento = cacheOrcamentos.RecuperarDoCache(idCache);
+
+            if (orcamento == null)
+            {
+                orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(idOrcamento);
+                cacheOrcamentos.AtualizarItemNoCache(orcamento, idCache);
+            }
+
+            return orcamento;
         }
     }
 }

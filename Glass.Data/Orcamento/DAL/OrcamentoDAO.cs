@@ -2784,7 +2784,8 @@ namespace Glass.Data.DAL
         #region Recalcular orçamento
         
         public void RecalcularOrcamentoComTransacao(int idOrcamento, int? tipoEntregaNovo, int? idClienteNovo, out int tipoDesconto, out decimal desconto, out int tipoAcrescimo,
-            out decimal acrescimo, out uint? idComissionado, out float percComissao, out Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd)
+            out decimal acrescimo, out uint? idComissionado, out float percComissao, out Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd,
+            Orcamento orcamento)
         {
             lock (RecalcularOrcamentoLock)
             {
@@ -2793,8 +2794,7 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
-
-                        var orcamento = GetElementByPrimaryKey(transaction, idOrcamento);
+                        
                         RecalcularOrcamento(transaction, orcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo, out idComissionado,
                             out percComissao, out dadosProd);
 
@@ -2911,7 +2911,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Finaliza o recálculo do orçamento.
         /// </summary>
-        public void FinalizarRecalcularComTransacao(int idOrcamento, int tipoDesconto, decimal desconto, int tipoAcrescimo, decimal acrescimo, int? idComissionado, float percComissao, string dadosAmbientes)
+        public void FinalizarRecalcularComTransacao(int idOrcamento, int tipoDesconto, decimal desconto, int tipoAcrescimo, decimal acrescimo, int? idComissionado, float percComissao, string dadosAmbientes,
+            Orcamento orcamento)
         {
             using (var transaction = new GDATransaction())
             {
@@ -2919,7 +2920,6 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var orcamento = GetElementByPrimaryKey(transaction, idOrcamento);
                     FinalizarRecalcular(transaction, orcamento, tipoDesconto, desconto, tipoAcrescimo, acrescimo, idComissionado, percComissao, dadosAmbientes, true);
 
                     transaction.Commit();

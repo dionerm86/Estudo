@@ -556,21 +556,7 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idProd"></param>
         /// <param name="beneficiamentos"></param>
-        public void AtualizaBenef(GDASession sessao, uint idProd, GenericBenefCollection beneficiamentos)
-        {
-            var idOrcamento = ObtemValorCampo<uint>("idOrcamento", "idProd=" + idProd);
-            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(sessao, idOrcamento);
-
-            AtualizaBenef(sessao, idProd, beneficiamentos, orcamento);
-        }
-
-        /// <summary>
-        /// Atualiza os beneficiamentos de um produto.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProd"></param>
-        /// <param name="beneficiamentos"></param>
-        internal void AtualizaBenef(GDASession sessao, uint idProd, GenericBenefCollection beneficiamentos, Orcamento orcamento)
+        public void AtualizaBenef(GDASession sessao, uint idProd, GenericBenefCollection beneficiamentos, Orcamento orcamento)
         {
             bool temItens = objPersistence.ExecuteSqlQueryCount(sessao, @"select count(*) from produtos_orcamento
                 where idProdParent=" + idProd) > 0;
@@ -1160,7 +1146,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao,
                     "update produtos_orcamento set negociar=true where idProd=" + returnValue);
 
-                AtualizaBenef(sessao, returnValue, objInsert.Beneficiamentos);
+                AtualizaBenef(sessao, returnValue, objInsert.Beneficiamentos, orcamento);
                 objInsert.RefreshBeneficiamentos();
 
                 if (objInsert.NumSeq == 0)
@@ -1192,12 +1178,6 @@ namespace Glass.Data.DAL
             }
 
             return returnValue;
-        }
-
-        public int UpdateBase(ProdutosOrcamento objUpdate)
-        {
-            var orcamento = OrcamentoDAO.Instance.GetElementByPrimaryKey(null, objUpdate.IdOrcamento);
-            return UpdateBase(null, objUpdate, orcamento);
         }
 
         public int UpdateBase(GDASession sessao, ProdutosOrcamento objUpdate, Orcamento orcamento)
@@ -1378,7 +1358,7 @@ namespace Glass.Data.DAL
                     UpdateTotaisProdutoOrcamento(session, prodOrca);
                 }
 
-                AtualizaBenef(session, objUpdate.IdProd, objUpdate.Beneficiamentos);
+                AtualizaBenef(session, objUpdate.IdProd, objUpdate.Beneficiamentos, orca);
                 objUpdate.RefreshBeneficiamentos();
             }
             catch (Exception ex)

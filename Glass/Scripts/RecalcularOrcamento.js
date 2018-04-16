@@ -80,7 +80,7 @@ function recalcularOrcamento(idOrcamento, perguntar, nomeImagemLoad, nomeControl
             var promises = [];
             var promiseAtualizarBeneficiamento = function (idProd, tipo, servicos) {
                 return new Promise(function (resolve, reject) {
-                    RecalcularOrcamento.AtualizaBenef(idProd, tipo, servicos, function (resposta_ajax) {
+                    RecalcularOrcamento.AtualizaBenef(idOrcamento, idProd, tipo, servicos, function (resposta_ajax) {
                         var resposta = resposta_ajax.value.split(';');
 
                         if (resposta[0] == "Erro") {
