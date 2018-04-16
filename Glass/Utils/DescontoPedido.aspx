@@ -595,7 +595,7 @@
                                                     <td>
                                                         <asp:DropDownList ID="drpFormaPagto" runat="server" AppendDataBoundItems="true" DataSourceID="odsFormaPagto"
                                                             DataTextField="Descricao" DataValueField="IdFormaPagto" SelectedValue='<%# Bind("IdFormaPagto") %>'
-                                                            onchange="formaPagtoChanged();">
+                                                            onchange="formaPagtoChanged();" OnDataBinding="drpFormaPagto_DataBinding" >
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>

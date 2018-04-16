@@ -11582,6 +11582,10 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var pedido = Instance.GetElement(transaction, idPedido);
+
+                    if (pedido == null)
+                        throw new Exception("Pedido não encontrado.");
+                         
                     pedido.IgnorarComissao = ignorar;
                     pedido.MotivoIgnorarComissao = motivo;
 
@@ -15926,7 +15930,7 @@ namespace Glass.Data.DAL
                 objInsert.TipoVenda = (int)Pedido.TipoVendaPedido.AVista;
 
             // Se o pedido for à vista, não é necessário informar a forma de pagamento
-            if (objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.AVista)
+            if (objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.AVista && !Glass.Configuracoes.FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 objInsert.IdFormaPagto = null;
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia

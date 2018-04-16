@@ -675,5 +675,22 @@ namespace Glass.UI.Web.Utils
                 ((WebControl)sender).Enabled = tipoEntregaEntrega && !deveTransferir;
             }
         }
+
+        protected void drpFormaPagto_DataBinding(object sender, EventArgs e)
+        {
+            uint idPedido = Conversoes.StrParaUint(Request["idPedido"]);
+            var idCliente = PedidoDAO.Instance.GetIdCliente(idPedido);
+            var idFormaPagto = PedidoDAO.Instance.GetFormaPagto(null, idPedido);
+
+            if (idFormaPagto > 0)
+            {
+                var formaPagto = FormaPagtoDAO.Instance.GetElement(idFormaPagto.Value);
+
+                var formas = FormaPagtoDAO.Instance.GetForPedido((int)idCliente);
+
+                if (!formas.Contains(formaPagto))
+                    ((DropDownList)sender).Items.Add(new ListItem(formaPagto.Descricao, formaPagto.IdFormaPagto.ToString()));
+            }            
+        }
     }
 }
