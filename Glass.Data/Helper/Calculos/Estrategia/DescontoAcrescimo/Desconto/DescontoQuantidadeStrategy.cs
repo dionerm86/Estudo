@@ -27,6 +27,8 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
         protected override decimal AplicarProduto(decimal percentual, IProdutoCalculo produto)
         {
             var baseCalculo = BaseCalculoTotalProduto(produto);
+            percentual = (decimal)produto.PercDescontoQtde;
+
             decimal valorCalculado = Math.Round(baseCalculo * percentual, 2);
 
             AplicarValorProduto(produto, valorCalculado);
