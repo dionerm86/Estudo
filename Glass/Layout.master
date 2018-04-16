@@ -35,8 +35,8 @@
         <script type="text/javascript">
             var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
             Tawk_API.visitor = {
-                name  : '<%= ObterNomeUsuario() %>',
-                email : '<%= ObterEmailUsuario() %>'
+                name  : "<%= ObterNomeUsuario() %>",
+                email : "<%= ObterEmailUsuario() %>"
             };
             (function(){
             var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
@@ -216,11 +216,13 @@
                             <asp:LinkButton ID="lnkMensagens" runat="server" OnClick="lnkMensagens_Click" ToolTip="Mensagens Recebidas"> <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
                             <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" OnClick="lnkMensagens_Click"
                                 ToolTip="Mensagens Recebidas" Visible="false"> <img src='<%= ResolveUrl("~/Images/mail_received.png") %>' border="0" /></asp:LinkButton>
+                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" ToolTip="Controle de Usuários" PostBackUrl="~/Utils/ControleUsuario.aspx">
+                                <img border="0" src='<%= ResolveUrl("~/Images/controlUser.png") %>' /></asp:LinkButton>
                             <asp:HyperLink ID="lnkConfiguracao" runat="server" OnLoad="lnkConfiguracao_Load"
                                 NavigateUrl="~/Utils/Config.aspx"> <img border="0" src='<%= ResolveUrl("~/Images/Configuracoes.png") %>' /></asp:HyperLink>
                             <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLgout_Click" CausesValidation="False"> <img border="0" src='<%= ResolveUrl("~/Images/Logout.png") %>' /></asp:LinkButton>
                             <br/>
-                            <asp:LinkButton ID="lnkControleUsuario" runat="server" CausesValidation="False" PostBackUrl="~/Utils/ControleUsuario.aspx">Controle de Usuários</asp:LinkButton>
+                            
                         </td>
                     </tr>
                 </table>

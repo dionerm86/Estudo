@@ -3848,7 +3848,7 @@ namespace Glass.Data.DAL
             var desconto = ObtemValorCampo<decimal>(sessao, "desconto", "idPedido=" + idPedido);
             RemoveDesconto(sessao, idPedido, tipoDesconto, desconto);
 
-            objPersistence.ExecuteCommand(sessao, @"update pedido set percComissao=0, desconto=0,
+            objPersistence.ExecuteCommand(sessao, @"update pedido_espelho set percComissao=0, desconto=0,
                 acrescimo=0 where idPedido=" + idPedido);
         }
 
