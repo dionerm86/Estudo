@@ -14403,8 +14403,14 @@ namespace Glass.Data.DAL
 
                     if (existeEspelho)
                     {
-                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
+                        var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
+
+                        if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                            situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
+                        {
+                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
                             objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                        }
                     }
                 }
 

@@ -2582,8 +2582,8 @@ namespace Glass.Data.DAL
                 if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido))
                 {
                     // Atualiza os produtos do pedido original, indicando-os como invisíveis para o fluxo
-                    objPersistence.ExecuteCommand(sessao, "update produtos_pedido set invisivelFluxo=true where idPedido=" + idPedido +
-                        " and idAmbientePedido=" + idAmbientePedido);
+                    objPersistence.ExecuteCommand(sessao, string.Format(@"UPDATE produtos_pedido SET InvisivelFluxo=1 WHERE IdPedido={0} AND IdAmbientePedido={1}
+                        AND (InvisivelPedido IS NULL OR InvisivelPedido=0)", idPedido, idAmbientePedido));
                 }
 
                 // Verifica se o itemProjeto possui referência do idPedido (Ocorreu de não estar associado)
