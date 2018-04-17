@@ -8567,7 +8567,7 @@ namespace Glass.Data.DAL
             #region Atualiza o saldo da obra do pedido
 
             if (ped.IdObra > 0)
-                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false);
+                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false, false);
 
             #endregion
 
