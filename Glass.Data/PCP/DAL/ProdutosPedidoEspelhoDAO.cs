@@ -2499,10 +2499,10 @@ namespace Glass.Data.DAL
         {
             try
             {
-                var situacao = PedidoDAO.Instance.ObtemSituacao(sessao, idPedidoEspelho);
+                var situacao = PedidoEspelhoDAO.Instance.ObtemSituacao(sessao, idPedidoEspelho);
 
                 // Os produtos do pedido espelho não devem ser atualizados caso o comercial já esteja liberado parcialmente ou liberado.
-                if (situacao == Pedido.SituacaoPedido.Confirmado || situacao == Pedido.SituacaoPedido.LiberadoParcialmente)
+                if (situacao != PedidoEspelho.SituacaoPedido.Processando && situacao != PedidoEspelho.SituacaoPedido.Aberto && situacao != PedidoEspelho.SituacaoPedido.ImpressoComum)
                 {
                     return idAmbientePedidoEsp.GetValueOrDefault();
                 }

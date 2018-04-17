@@ -440,23 +440,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se há bloqueio de forma de pagamento
-
-        /// <summary>
-        /// Verifica se um fornecedor tem as formas de pagamento bloqueadas.
-        /// </summary>
-        /// <param name="idFornecedor"></param>
-        /// <returns></returns>
-        public bool IsBloquearPagto(uint idFornecedor)
-        {
-            string sql = "select bloquearPagto from fornecedor where idFornec=" + idFornecedor;
-            object retorno = objPersistence.ExecuteScalar(sql);
-
-            return retorno != null && retorno != DBNull.Value && Convert.ToBoolean(retorno);
-        }
-
-        #endregion
-
         #region Verifica se o fornecedor é a própria empresa
 
         /// <summary>

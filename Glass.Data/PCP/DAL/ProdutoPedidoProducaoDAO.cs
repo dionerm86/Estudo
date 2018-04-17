@@ -1092,49 +1092,6 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public List<uint> GetListIdsPedidos(int idCarregamento, string idLiberarPedido, uint idPedido,
-            string idPedidoImportado, uint idImpressao, string codPedCli, string codRota, uint idCliente, string nomeCliente,
-            string numEtiqueta, string dataIni, string dataFim, string dataIniEnt, string dataFimEnt, string dataIniFabr,
-            string dataFimFabr, string dataIniConfPed, string dataFimConfPed, int idSetor, string situacao, int situacaoPedido,
-            int tipoSituacoes, string idsSubgrupos, uint tipoEntrega, string pecasProdCanc, uint idFunc, string tipoPedido,
-            uint idCorVidro, int altura, int largura, float espessura, string idsProc, string idsApl, bool aguardExpedicao,
-            bool aguardEntrEstoque, string idsBenef, string planoCorte, string numEtiquetaChapa, uint fastDelivery,
-            bool pecaParadaProducao, bool pecasRepostas, uint idLoja, int? produtoComposicao)
-        {
-            var listaVazia = ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao;
-
-            // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido
-            if (listaVazia && FiltrosVazios(idCarregamento, idLiberarPedido.StrParaUint(), idPedido, idPedidoImportado, idImpressao,
-                codRota, codPedCli, idCliente, nomeCliente, numEtiqueta, dataIni, dataFim, dataIniEnt, dataFimEnt, dataIniFabr,
-                dataFimFabr, dataIniConfPed, dataFimConfPed, idSetor, situacao, situacaoPedido, tipoSituacoes, idsSubgrupos, tipoEntrega,
-                pecasProdCanc, idFunc, tipoPedido, idCorVidro, altura, largura, espessura, idsProc, idsApl, aguardExpedicao,
-                aguardEntrEstoque, idsBenef, planoCorte, numEtiquetaChapa, fastDelivery, pecaParadaProducao, pecasRepostas, idLoja,
-                0))
-                return new List<uint>();
-
-            bool situacoesAnteriores = tipoSituacoes == 1;
-            bool situacoesPosteriores = tipoSituacoes == 2;
-            bool disponiveisLeituraSetor = tipoSituacoes == 3;
-
-            bool temFiltro;
-            string filtroAdicional;
-
-            string sql = Sql(0, null, idCarregamento, idLiberarPedido, idPedido.ToString(), idPedidoImportado, 0, numEtiqueta, codRota,
-                idImpressao, codPedCli, idCliente, nomeCliente, dataIni, dataFim, dataIniEnt, dataFimEnt, dataIniFabr, dataFimFabr,
-                dataIniConfPed, dataFimConfPed, idSetor, situacao, situacaoPedido, tipoPedido, situacoesAnteriores, situacoesPosteriores,
-                disponiveisLeituraSetor, idsSubgrupos, tipoEntrega, pecasProdCanc, idFunc, idCorVidro, altura, largura, espessura, idsProc,
-                idsApl, idsBenef,
-                aguardExpedicao ? TipoRetorno.AguardandoExpedicao : aguardEntrEstoque ? TipoRetorno.EntradaEstoque : TipoRetorno.Normal, 0,
-                planoCorte, numEtiquetaChapa, fastDelivery, false, true, pecaParadaProducao, pecasRepostas, idLoja,
-                (ProdutoComposicao)produtoComposicao.GetValueOrDefault(), 0, 0, null, false, true, out temFiltro,
-                out filtroAdicional).Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : "");
-
-            GDAParameter[] lstParam = GetParam(idPedidoImportado, numEtiqueta, codRota, dataIni, dataFim, dataIniEnt, dataFimEnt, dataIniFabr, dataFimFabr,
-                nomeCliente, codPedCli, planoCorte, numEtiquetaChapa, espessura);
-
-            return ExecuteMultipleScalar<uint>(sql, lstParam);
-        }
-
         private string GetListaConsultaSort(uint idPedido, string codRota, string pecasProdCanc, string sortExpression, bool temFiltro, ref string filtroAdicional)
         {
             var sort = string.IsNullOrEmpty(sortExpression) ? (ProducaoConfig.TelaConsulta.OrdenarPeloNumSeqSetor && temFiltro ? "s.NumSeq ASC" : "ppp.IdProdPedProducao DESC") : sortExpression;
@@ -1781,6 +1738,623 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Recuperação dos ids de pedidos para o relatório de produção
+
+        /// <summary>
+        /// SQL da consulta que retorna os IDs dos pedidos através dos produtos de produção.
+        /// </summary>
+        internal string SqlIdsPedidoRelatorioProducao(int altura, string codigoEtiqueta, string codigoEtiquetaChapa, string codigoPedidoCliente, DateTime? dataConfirmacaoPedidoFim,
+            DateTime? dataConfirmacaoPedidoInicio, DateTime? dataEntregaFim, DateTime? dataEntregaInicio, DateTime? dataFabricaFim, DateTime? dataFabricaInicio, DateTime? dataLeituraFim,
+            DateTime? dataLeituraInicio, bool disponiveisLeituraSetor, float espessura, int fastDelivery, out string filtroAdicional, int idCarregamento, int idCliente, int idCorVidro,
+            int idFuncionario, int idImpressao, int idLiberarPedido, int idLoja, int idPedido, int idPedidoImportado, IEnumerable<int> idsAplicacao, IEnumerable<int> idsBeneficiamento, int idSetor,
+            IEnumerable<int> idsProcesso, IEnumerable<int> idsRota, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, bool pecaParadaProducao, string pecasProducaoCanceladas,
+            bool pecasRepostas, string planoCorte, ProdutoComposicao produtoComposicao, bool setoresAnteriores, bool setoresPosteriores, int situacaoPedido, int situacao, int tipoEntrega,
+            TipoRetorno tipoRetorno, IEnumerable<int> tiposPedido)
+        {
+            // Define se ao filtrar pela data de entrega será filtrado também pela data de fábrica
+            var filtrarDataFabrica = ProducaoConfig.BuscarDataFabricaConsultaProducao;
+            var buscarNomeFantasia = ProducaoConfig.TelaConsulta.BuscarNomeFantasiaConsultaProducao;
+            var usarJoin = idSetor > 0 && ((dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue) || (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue));
+            var temp = new ProdutoPedidoProducao();
+            filtroAdicional = string.Empty;
+            var filtroPedido = string.Empty;
+            var sql = string.Empty;
+
+            sql = string.Format(@"SELECT ped.IdPedido FROM produto_pedido_producao ppp
+                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN cliente cli ON (ped.IdCli = cli.Id_Cli)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                    LEFT JOIN setor s ON (ppp.IdSetor = s.IdSetor)
+                    LEFT JOIN liberarpedido lp ON (ped.IdLiberarPedido = lp.IdLiberarPedido)
+                    LEFT JOIN etiqueta_aplicacao apl ON (IF(ped.TipoPedido={0}, a.IdAplicacao, pp.IdAplicacao) = apl.IdAplicacao)
+                    LEFT JOIN etiqueta_processo prc ON (IF(ped.TipoPedido={0}, a.IdProcesso, pp.IdProcesso) = prc.IdProcesso) ", (int)Pedido.TipoPedidoEnum.MaoDeObra);
+
+            if (filtrarDataFabrica || (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue) || (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue))
+            {
+                sql += " LEFT JOIN pedido_espelho pedEsp ON (ped.IdPedido = pedEsp.IdPedido)";
+            }
+
+            if (usarJoin)
+            {
+                sql += " LEFT JOIN leitura_producao lp1 ON (ppp.IdProdPedProducao = lp1.IdProdPedProducao)";
+            }
+            
+            sql += " WHERE 1 ?filtroAdicional?";
+            
+            if (idCarregamento > 0)
+            {
+                filtroAdicional += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM item_carregamento WHERE IdCarregamento={0})", idCarregamento);
+            }
+
+            if (idCarregamento > 0)
+            {
+                filtroAdicional += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM item_carregamento WHERE IdCarregamento={0})", idCarregamento);
+            }
+
+            if (idLiberarPedido > 0)
+            {
+                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao((uint)idLiberarPedido);
+
+                if (idsPedidoPelaLiberacao?.Count() > 0)
+                {
+                    filtroAdicional += string.Format(" AND ped.IdPedido IN ({0})", string.Join(",", idsPedidoPelaLiberacao));
+                }
+            }
+
+            if (idLoja > 0)
+            {
+                filtroAdicional += string.Format(" AND ped.IdLoja={0}", idLoja);
+            }
+
+            if (idPedido > 0)
+            {
+                filtroPedido += string.Format(" AND (ped.IdPedido={0}", idPedido);
+
+                // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
+                // teria que mudar totalmente a forma de fazer o count
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                {
+                    filtroPedido += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
+                }
+
+                sql += filtroPedido;
+                filtroPedido += ")";
+
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                {
+                    sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
+                }
+
+                sql += ")";
+            }
+
+            if (idPedidoImportado > 0)
+            {
+                sql += " AND (ped.CodCliente=?idPedidoImportado AND ped.Importado IS NOT NULL AND ped.Importado=1";
+            }
+
+            if (!string.IsNullOrEmpty(codigoEtiqueta))
+            {
+                var idProdPedProducaoPelaEtiqueta = ObtemIdProdPedProducao(codigoEtiqueta) ?? ObtemIdProdPedProducaoCanc(null, codigoEtiqueta);
+
+                filtroAdicional += idProdPedProducaoPelaEtiqueta > 0 ? string.Format(" AND ppp.IdProdPedProducao={0}", idProdPedProducaoPelaEtiqueta) : " AND 0=1";
+            }
+
+            if (!string.IsNullOrEmpty(codigoPedidoCliente))
+            {
+                sql += " AND (ped.CodCliente LIKE ?codigoPedidoCliente OR pp.PedCli LIKE ?codigoPedidoCliente OR a.Ambiente LIKE ?codigoPedidoCliente) ";
+                filtroPedido += " AND ped.CodCliente LIKE ?codigoPedidoCliente";
+            }
+
+            if (idsRota?.Count() > 0)
+            {
+                filtroPedido += string.Format(" AND ped.IdCli IN (SELECT * FROM (SELECT IdCliente FROM rota_cliente WHERE IdRota IN ({0})) AS temp1)", string.Join(",", idsRota));
+                sql += string.Format(" AND ped.IdCli IN (SELECT * FROM (SELECT IdCliente FROM rota_cliente WHERE IdRota IN ({0})) AS temp1)", string.Join(",", idsRota));
+            }
+
+            if (idImpressao > 0)
+            {
+                filtroAdicional += string.Format(@" AND IF(!COALESCE(ppp.PecaReposta, 0), ppp.IdImpressao={0}, COALESCE(ppp.NumEtiqueta, ppp.NumEtiquetaCanc) IN
+                    (SELECT * FROM (SELECT CONCAT(IdPedido, '-', PosicaoProd, '.', ItemEtiqueta, '/', QtdeProd)
+                        FROM produto_impressao WHERE !COALESCE(Cancelado, 0) AND IdImpressao={0}) AS temp))", idImpressao);
+            }
+
+            if (idCliente > 0)
+            {
+                sql += string.Format(" AND ped.IdCli={0}", idCliente);
+                filtroPedido += string.Format(" AND ped.IdCli={0}", idCliente);
+            }
+            else if (!string.IsNullOrEmpty(nomeCliente))
+            {
+                var ids = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
+
+                sql += string.Format(" AND ped.IdCli IN ({0})", ids);
+                filtroPedido += string.Format(" AND ped.IdCli IN ({0})", ids);
+            }
+
+            if (idFuncionario > 0)
+            {
+                sql += string.Format(" AND ped.IdFunc={0}", idFuncionario);
+                filtroPedido += string.Format(" AND ped.IdFunc={0}", idFuncionario);
+            }
+
+            if (situacao > 0)
+            {
+                if (situacao == 1 || situacao == 2)
+                {
+                    sql += string.Format(" AND ppp.Situacao={0}", situacao);
+                }
+                else if (situacao == 3)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+                else if (situacao == 4)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+                else if (situacao == 5)
+                {
+                    sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                }
+            }
+
+            if (situacaoPedido > 0)
+            {
+                sql += string.Format(" AND ped.Situacao={0}", situacaoPedido);
+                filtroPedido += string.Format(" AND ped.Situacao={0}", situacaoPedido);
+            }
+
+            /* Chamado 49413. */
+            if (produtoComposicao > 0)
+            {
+                switch (produtoComposicao)
+                {
+                    case ProdutoComposicao.ProdutoComIdProdPedParent:
+                        {
+                            sql += " AND pp.IdProdPedParent IS NOT NULL";
+                            break;
+                        }
+
+                    case ProdutoComposicao.ProdutoSemIdProdPedParent:
+                        {
+                            sql += " AND pp.IdProdPedParent IS NULL";
+                            break;
+                        }
+                }
+            }
+
+            var descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao : idSetor == -1 ? "Etiqueta não impressa" : string.Empty;
+
+            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            {
+                if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
+                {
+                    filtroAdicional += " AND ppp.DataPerda>=?dataLeituraInicio";
+                }
+                else if (idSetor > 0)
+                {
+                    sql += string.Format(" AND lp1.IdSetor={0} AND lp1.DataLeitura>=?dataLeituraInicio", idSetor);
+                }
+            }
+
+            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            {
+                if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
+                {
+                    filtroAdicional += " And ppp.DataPerda<=?dataLeituraFim";
+                }
+                else if (idSetor > 0)
+                {
+                    sql += string.Format(" AND lp1.IdSetor={0} AND lp1.DataLeitura<=?dataLeituraFim", idSetor);
+                }
+            }
+
+            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            {
+                sql += " AND ped.DataEntrega>=?dataEntregaInicio";
+                filtroPedido += " AND ped.DataEntrega>=?dataEntregaInicio";
+            }
+
+            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            {
+                sql += " AND ped.DataEntrega<=?dataEntregaFim";
+                filtroPedido += " AND ped.DataEntrega<=?dataEntregaFim";
+            }
+
+            if (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue)
+            {
+                sql += " AND (pedEsp.DataFabrica>=?dataFabricaInicio)";
+                filtroPedido += " AND (pedEsp.DataFabrica>=?dataFabricaInicio)";
+            }
+
+            if (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue)
+            {
+                sql += " AND pedEsp.DataFabrica<=?dataFabricaFim";
+                filtroPedido += " AND pedEsp.DataFabrica<=?dataFabricaFim";
+            }
+
+            if ((dataConfirmacaoPedidoInicio.HasValue && dataConfirmacaoPedidoInicio > DateTime.MinValue) || (dataConfirmacaoPedidoFim.HasValue && dataConfirmacaoPedidoFim > DateTime.MinValue))
+            {
+                var idsPedidoPelaDataConfirmacao = PedidoDAO.Instance.ObtemIdsPelaDataConf(dataConfirmacaoPedidoInicio, dataConfirmacaoPedidoFim);
+
+                if (!string.IsNullOrEmpty(idsPedidoPelaDataConfirmacao))
+                {
+                    sql += string.Format(" AND ped.IdPedido IN ({0})", idsPedidoPelaDataConfirmacao);
+                    filtroPedido += string.Format(" AND ped.IdPedido IN ({0})", idsPedidoPelaDataConfirmacao);
+                }
+            }
+
+            if (idsBeneficiamento?.Count() > 0)
+            {
+                var redondo = BenefConfigDAO.Instance.TemBenefRedondo(idsBeneficiamento) ? " OR pp.Redondo=1" : string.Empty;
+                filtroAdicional += string.Format(" AND (ppp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_espelho_benef WHERE IdBenefConfig IN ({0})) {1})",
+                    string.Join(",",  idsBeneficiamento), redondo);
+            }
+
+            if ((idsSubgrupo?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                sql += string.Format(" AND p.IdSubgrupoProd IN ({0})", idsSubgrupo);
+            }
+
+            if (tipoEntrega > 0)
+            {
+                sql += string.Format(" AND ped.TipoEntrega={0}", tipoEntrega);
+                filtroPedido += string.Format(" AND ped.TipoEntrega={0}", tipoEntrega);
+            }
+
+            if (tiposPedido?.Count() > 0)
+            {
+                var tiposPedidoFiltrar = new List<Pedido.TipoPedidoEnum>();
+
+                if (tiposPedido.Any(f => f == 1))
+                {
+                    tiposPedidoFiltrar.Add(Pedido.TipoPedidoEnum.Venda);
+                    tiposPedidoFiltrar.Add(Pedido.TipoPedidoEnum.Revenda);
+                }
+
+                if (tiposPedido.Any(f => f == 2))
+                {
+                    tiposPedidoFiltrar.Add(Pedido.TipoPedidoEnum.Producao);
+                }
+
+                if (tiposPedido.Any(f => f == 3))
+                {
+                    tiposPedidoFiltrar.Add(Pedido.TipoPedidoEnum.MaoDeObra);
+                }
+
+                if (tiposPedido.Any(f => f == 4))
+                {
+                    tiposPedidoFiltrar.Add(Pedido.TipoPedidoEnum.MaoDeObraEspecial);
+                }
+
+                if (tiposPedidoFiltrar.Count > 0)
+                {
+                    sql += string.Format(" AND ped.TipoPedido IN ({0})", string.Join(",", tiposPedidoFiltrar.Select(f => (int)f)));
+                }
+            }
+
+            if (altura > 0)
+            {
+                sql += string.Format(" AND IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura))={1}", (int)Pedido.TipoPedidoEnum.MaoDeObra, altura);
+            }
+
+            if (largura > 0)
+            {
+                sql += string.Format(" AND IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF(pp.LarguraReal > 0, pp.LarguraReal, pp.Largura)))={1}", (int)Pedido.TipoPedidoEnum.MaoDeObra, largura);
+            }
+
+            if (idCorVidro > 0)
+            {
+                sql += string.Format(" AND p.IdCorVidro={0}", idCorVidro);
+            }
+
+            if (espessura > 0)
+            {
+                sql += " AND p.Espessura=?espessura";
+            }
+
+            if ((idsProcesso?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                sql += string.Format(" AND pp.IdProcesso IN ({0})", idsProcesso);
+            }
+
+            if ((idsAplicacao?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                sql += string.Format(" AND pp.IdAplicacao IN ({0})", idsAplicacao);
+            }
+
+            if (tipoRetorno == TipoRetorno.EntradaEstoque)
+            {
+                sql += string.Format(" AND COALESCE(ppp.EntrouEstoque, 0)=0 AND ped.TipoPedido={0}", (int)Pedido.TipoPedidoEnum.Producao);
+            }
+            else if (tipoRetorno == TipoRetorno.AguardandoExpedicao)
+            {
+                sql += string.Format(@" AND ped.TipoPedido<>{0} AND ped.IdPedido IN
+                    (SELECT * FROM (SELECT IdPedido FROM produtos_liberar_pedido plp 
+                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                    WHERE lp.Situacao<>{1}) AS temp) AND ppp.SituacaoProducao<>{2} AND ppp.Situacao={3}",
+                    (int)Pedido.TipoPedidoEnum.Producao, (int)LiberarPedido.SituacaoLiberarPedido.Cancelado, (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+            }
+
+            if (!string.IsNullOrEmpty(pecasProducaoCanceladas))
+            {
+                var situacoesProducao = new List<ProdutoPedidoProducao.SituacaoEnum>();
+
+                if (pecasProducaoCanceladas.Split(',').Any(f => f == "0"))
+                {
+                    situacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.Producao);
+                    situacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.Perda);
+                }
+
+                if (pecasProducaoCanceladas.Split(',').Any(f => f == "1"))
+                {
+                    situacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra);
+                }
+
+                if (pecasProducaoCanceladas.Split(',').Any(f => f == "2"))
+                {
+                    situacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda);
+                }
+
+                filtroAdicional += string.Format(" AND ppp.Situacao IN ({0})", string.Join(",", situacoesProducao.Select(f => (int)f)));
+            }
+            else
+            {
+                sql += " AND 0=1";
+            }
+            
+            if (!string.IsNullOrEmpty(planoCorte))
+            {
+                sql += " AND ppp.PlanoCorte=?planoCorte";
+            }
+
+            if (!string.IsNullOrEmpty(codigoEtiquetaChapa))
+            {
+                sql += @" AND COALESCE(ppp.NumEtiqueta, ppp.NumEtiquetaCanc) IN (SELECT * FROM (
+                    SELECT pip.NumEtiqueta
+                    FROM produto_impressao pip
+                        INNER JOIN chapa_corte_peca ccp ON (pip.IdProdImpressao=ccp.IdProdImpressaoPeca)
+                        INNER JOIN produto_impressao pic ON (ccp.IdProdImpressaoChapa=pic.IdProdImpressao)
+                    WHERE pic.NumEtiqueta=?codigoEtiquetaChapa) AS temp)";
+            }
+
+            if (fastDelivery > 0)
+            {
+                sql += string.Format(" AND COALESCE(ped.FastDelivery, 0)={0}", fastDelivery == 1 ? "1" : "0");
+            }
+
+            if (pecaParadaProducao)
+            {
+                sql += " AND ppp.PecaParadaProducao IS NOT NULL AND ppp.PecaParadaProducao=1";
+            }
+
+            if (pecasRepostas)
+            {
+                sql += " AND ppp.PecaReposta";
+            }
+            
+            if (idSetor > 0 || idSetor == -1)
+            {
+                if (!setoresPosteriores && !setoresAnteriores && !disponiveisLeituraSetor)
+                {
+                    if (idSetor > 0)
+                    {
+                        filtroAdicional += string.Format(" AND ppp.IdSetor={0}", idSetor);
+
+                        // Filtro para impressão de etiqueta.
+                        if (Utils.ObtemSetor((uint)idSetor).NumeroSequencia == 1)
+                        {
+                            sql += string.Format(" AND EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0} AND DataLeitura IS NOT NULL)", idSetor);
+                        }
+                    }
+                    // Etiqueta não impressa.
+                    else if (idSetor == -1)
+                    {
+                        sql += " AND ppp.IdSetor=1 AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                    }
+                }
+                else
+                {
+                    if (setoresAnteriores)
+                    {
+                        if (idSetor == 1)
+                        {
+                            sql += " AND ppp.IdSetor=1 AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                        }
+                        else
+                        {
+                            sql += string.Format(" AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
+                        }
+
+                        // Retorna apenas as peças de roteiro se o setor for de roteiro
+                        if (Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
+                        {
+                            sql += string.Format(" AND EXISTS (SELECT * FROM roteiro_producao_etiqueta WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
+                        }
+                    }
+                    else if (setoresPosteriores)
+                    {
+                        if (idSetor == 1)
+                        {
+                            sql += " AND EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                        }
+
+                        filtroAdicional += string.Format(@" AND {0} <= ALL (SELECT NumSeq FROM setor WHERE IdSetor=ppp.IdSetor) AND
+                            (SELECT COUNT(*) FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={1}) > 0", Utils.ObtemSetor((uint)idSetor).NumeroSequencia, idSetor);
+                    }
+                    else if (disponiveisLeituraSetor)
+                    {
+                        if (idSetor <= 1)
+                        {
+                            sql += " AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
+                        }
+                        else
+                        {
+                            sql +=
+                                string.Format(@"
+                                    AND EXISTS
+                                    (
+                                        SELECT ppp1.*
+                                        FROM produto_pedido_producao ppp1
+	                                        INNER JOIN roteiro_producao_etiqueta rpe ON (rpe.IdProdPedProducao = ppp1.IdProdPedProducao)
+                                        WHERE rpe.IdSetor = {0}
+	                                        AND ppp1.IdProdPedProducao = ppp.IdProdPedProducao
+                                            AND ppp1.IdSetor =
+                                                /* Se o setor filtrado for o primeiro setor do roteiro, busca somente as peças que estiverem no setor Impressão de Etiqueta. */
+                                                IF ({0} =
+                                                    (
+    	                                                SELECT rpe.IdSetor
+		                                                FROM produto_pedido_producao ppp2
+			                                                INNER JOIN roteiro_producao_etiqueta rpe ON (rpe.IdProdPedProducao = ppp2.IdProdPedProducao)
+    		                                                INNER JOIN setor s ON (rpe.IdSetor = s.IdSetor)
+		                                                WHERE ppp2.IdProdPedProducao = ppp.IdProdPedProducao
+                                                            AND ppp2.IdProdPedProducao IN (SELECT lp1.IdProdPedProducao FROM leitura_producao lp1)
+		                                                ORDER BY s.NumSeq ASC
+		                                                LIMIT 1
+                                                    ), 1,
+                                                    /* Senão, busca o próximo setor a ser lido no roteiro. */
+                                                    (
+    	                                                SELECT rpe.IdSetor
+		                                                FROM produto_pedido_producao ppp2
+			                                                INNER JOIN roteiro_producao_etiqueta rpe ON (rpe.IdProdPedProducao = ppp2.IdProdPedProducao)
+    		                                                INNER JOIN setor s ON (rpe.IdSetor = s.IdSetor)
+		                                                WHERE ppp2.IdProdPedProducao = ppp.IdProdPedProducao
+			                                                AND s.NumSeq < (SELECT NumSeq FROM setor WHERE IdSetor = {0})
+		                                                ORDER BY s.NumSeq DESC
+		                                                LIMIT 1
+                                                    ))
+                                    )", idSetor);
+                        }
+                    }
+                }
+            }
+
+            sql += " GROUP BY ped.IdPedido";
+
+            return sql;
+        }
+
+        /// <summary>
+        /// Consulta que retorna os IDs dos pedidos através dos produtos de produção.
+        /// </summary>
+        public List<int> ObterIdsPedidoRelatorioProducao(bool aguardandoEntradaEstoque, bool aguardandoExpedicao, int altura, string codigoEtiqueta, string codigoEtiquetaChapa,
+            string codigoPedidoCliente, DateTime? dataConfirmacaoPedidoFim, DateTime? dataConfirmacaoPedidoInicio, DateTime? dataEntregaFim, DateTime? dataEntregaInicio, DateTime? dataFabricaFim,
+            DateTime? dataFabricaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, float espessura, int fastDelivery, int idCarregamento, int idCliente, int idCorVidro,
+            int idFuncionario, int idImpressao, int idLiberarPedido, int idLoja, int idPedido, int idPedidoImportado, IEnumerable<int> idsAplicacao, IEnumerable<int> idsBeneficiamento, int idSetor,
+            IEnumerable<int> idsProcesso, IEnumerable<int> idsRota, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, bool pecaParadaProducao, string pecasProducaoCanceladas,
+            bool pecasRepostas, string planoCorte, ProdutoComposicao produtoComposicao, int situacaoPedido, int situacao, int tipoEntrega, IEnumerable<int> tiposPedido, int tipoSituacao)
+        {
+            var listaVazia = ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao;
+            var setoresAnteriores = tipoSituacao == 1;
+            var setoresPosteriores = tipoSituacao == 2;
+            var disponiveisLeituraSetor = tipoSituacao == 3;
+            var tipoRetorno = aguardandoExpedicao ? TipoRetorno.AguardandoExpedicao : aguardandoEntradaEstoque ? TipoRetorno.EntradaEstoque : TipoRetorno.Normal;
+            var filtroAdicional = string.Empty;
+            var sql = string.Empty;
+            GDAParameter[] parametros;
+
+            // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
+            if (listaVazia && FiltrosVazios(idCarregamento, (uint)idLiberarPedido, (uint)idPedido, idPedidoImportado.ToString(), (uint)idImpressao,
+                idsRota?.Count() > 0 ? string.Join(",", idsRota) : string.Empty, codigoPedidoCliente, (uint)idCliente, nomeCliente, codigoEtiqueta,
+                dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue ? dataLeituraInicio.Value.ToString("dd/MM/yyyy hh:MM:ss") : string.Empty,
+                dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue ? dataEntregaFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue ? dataFabricaInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataConfirmacaoPedidoInicio.HasValue && dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataConfirmacaoPedidoFim.HasValue && dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                idSetor, situacao.ToString(), situacaoPedido, tipoSituacao, idsSubgrupo?.Count() > 0 ? string.Join(",", idsSubgrupo) : string.Empty, (uint)tipoEntrega, pecasProducaoCanceladas,
+                (uint)idFuncionario, tiposPedido.Count() > 0 ? string.Join(",", tiposPedido) : string.Empty, (uint)idCorVidro, altura, largura, espessura,
+                idsProcesso?.Count() > 0 ? string.Join(",", idsProcesso) : string.Empty, idsAplicacao?.Count() > 0 ? string.Join(",", idsAplicacao) : string.Empty, aguardandoExpedicao,
+                aguardandoEntradaEstoque, idsBeneficiamento?.Count() > 0 ? string.Join(",", idsBeneficiamento) : string.Empty, planoCorte, codigoEtiquetaChapa, (uint)fastDelivery, pecaParadaProducao,
+                pecasRepostas, (uint)idLoja, 0))
+            {
+                return new List<int>();
+            }
+
+            sql = SqlIdsPedidoRelatorioProducao(altura, codigoEtiqueta, codigoEtiquetaChapa, codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim,
+                dataEntregaInicio, dataFabricaFim, dataFabricaInicio, dataLeituraFim, dataLeituraInicio, disponiveisLeituraSetor, espessura, fastDelivery, out filtroAdicional, idCarregamento,
+                idCliente, idCorVidro, idFuncionario, idImpressao, idLiberarPedido, idLoja, idPedido, idPedidoImportado, idsAplicacao, idsBeneficiamento, idSetor, idsProcesso, idsRota, idsSubgrupo,
+                largura, nomeCliente, pecaParadaProducao, pecasProducaoCanceladas, pecasRepostas, planoCorte, produtoComposicao, setoresAnteriores, setoresPosteriores, situacaoPedido, situacao,
+                tipoEntrega, tipoRetorno, tiposPedido).Replace(FILTRO_ADICIONAL, filtroAdicional);
+
+            parametros = ObterParametrosIdsPedidoRelatorioProducao(codigoEtiquetaChapa, codigoPedidoCliente, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio,
+                dataLeituraFim, dataLeituraInicio, espessura, idPedidoImportado, planoCorte);
+
+            return ExecuteMultipleScalar<int>(sql, parametros);
+        }
+
+        /// <summary>
+        /// Preenche os parâmetros da consulta que retorna os IDs dos pedidos através dos produtos de produção.
+        /// </summary>
+        internal GDAParameter[] ObterParametrosIdsPedidoRelatorioProducao(string codigoEtiquetaChapa, string codigoPedidoCliente, DateTime? dataEntregaFim, DateTime? dataEntregaInicio,
+            DateTime? dataFabricaFim, DateTime? dataFabricaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, float espessura, int idPedidoImportado, string planoCorte)
+        {
+            var parametros = new List<GDAParameter>();
+            
+            if (!string.IsNullOrEmpty(codigoEtiquetaChapa))
+            {
+                parametros.Add(new GDAParameter("?codigoEtiquetaChapa", codigoEtiquetaChapa));
+            }
+
+            if (!string.IsNullOrEmpty(codigoPedidoCliente))
+            {
+                parametros.Add(new GDAParameter("?codigoPedidoCliente", "%" + codigoPedidoCliente + "%"));
+            }
+
+            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataEntregaFim", DateTime.Parse(dataEntregaFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+            }
+
+            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataEntregaInicio", DateTime.Parse(dataEntregaInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+            }
+
+            if (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataFabricaFim", DateTime.Parse(dataFabricaFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+            }
+
+            if (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataFabricaInicio", DateTime.Parse(dataFabricaInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+            }
+
+            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value));
+            }
+
+            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            {
+                parametros.Add(new GDAParameter("?dataLeituraInicio", dataLeituraInicio.Value));
+            }
+
+            if (espessura > 0)
+            {
+                parametros.Add(new GDAParameter("?espessura", espessura));
+            }
+
+            if (idPedidoImportado > 0)
+            {
+                parametros.Add(new GDAParameter("?idPedidoImportado", idPedidoImportado));
+            }
+
+            if (!string.IsNullOrEmpty(planoCorte))
+            {
+                parametros.Add(new GDAParameter("?planoCorte", planoCorte));
+            }
+
+            return parametros.Count > 0 ? parametros.ToArray() : null;
+        }
+
+        #endregion
+
         #region Pesquisa produtos de produção filhos
 
         /// <summary>
@@ -2229,7 +2803,7 @@ namespace Glass.Data.DAL
                     temFiltro = true;
                 }
 
-                // Retorna apenas as peças de roteiro se o setor for de roteiro
+                // Retorna apenas as peças de roteiro se o setor for de roteiro.
                 if (Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
                 {
                     sql += string.Format(" AND EXISTS (SELECT * FROM roteiro_producao_etiqueta WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);

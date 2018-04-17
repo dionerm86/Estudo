@@ -1244,7 +1244,6 @@
                                                             <asp:Parameter DefaultValue="2" Name="tipo" Type="Object" />
                                                         </SelectParameters>
                                                     </colo:VirtualObjectDataSource>
-                                                    <asp:HiddenField ID="hdfNumParcCli" runat="server" OnLoad="hdfNumParcCli_Load" />
                                                 </td>
                                             </tr>
                                         </table>

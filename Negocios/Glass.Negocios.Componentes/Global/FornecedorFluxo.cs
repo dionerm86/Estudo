@@ -31,7 +31,7 @@ namespace Glass.Global.Negocios.Componentes
                     @"f.IdFornec, f.TipoPessoa, f.Nomefantasia, f.Razaosocial,
                       f.CpfCnpj, f.RgInscEst, f.Suframa, f.Crt, f.Endereco,
                       f.Numero, f.Compl, f.Bairro, f.Cep, f.Email, f.Telcont,
-                      f.Fax, f.Dtultcompra, f.Situacao, f.BloquearPagto, f.Vendedor, f.Telcelvend, 
+                      f.Fax, f.Dtultcompra, f.Situacao, f.Vendedor, f.Telcelvend, 
                       f.Credito, f.Obs, c.NomeCidade AS Cidade, c.NomeUf AS Uf,
                       p.NomePais AS Pais, pc.Descricao AS PlanoContas, par.Descricao AS Parcela");
 
@@ -140,7 +140,7 @@ namespace Glass.Global.Negocios.Componentes
                     @"f.IdFornec, f.TipoPessoa, f.Nomefantasia, f.Razaosocial,
                       f.CpfCnpj, f.RgInscEst, f.Suframa, f.Crt, f.Endereco,
                       f.Numero, f.Compl, f.Bairro, f.Cep, f.Email, f.Telcont,
-                      f.Fax, f.Dtultcompra, f.Situacao, f.BloquearPagto, f.Vendedor, f.Telcelvend, 
+                      f.Fax, f.Dtultcompra, f.Situacao, f.Vendedor, f.Telcelvend, 
                       f.Credito, f.Obs, c.NomeCidade AS Cidade, c.NomeUf AS Uf,
                       p.NomePais AS Pais, pc.Descricao AS PlanoContas, par.Descricao AS Parcela")                                        
                 .Execute<Entidades.FornecedorPesquisa>()

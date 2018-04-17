@@ -588,23 +588,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Identifica se é para bloquear o pagamento.
-        /// </summary>
-        public bool BloquearPagto
-        {
-            get { return DataModel.BloquearPagto; }
-            set
-            {
-                if (DataModel.BloquearPagto != value &&
-                    RaisePropertyChanging("BloquearPagto", value))
-                {
-                    DataModel.BloquearPagto = value;
-                    RaisePropertyChanged("BloquearPagto");
-                }
-            }
-        }
-
-        /// <summary>
         /// Endereço do web service do cliente.
         /// </summary>
         public string UrlSistema

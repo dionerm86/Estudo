@@ -5298,11 +5298,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Buscar os pedidos para a consulta produção
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idsPedidos"></param>
-        /// <returns></returns>
-        public List<Pedido> ObterPedidosProducao(GDASession sessao, List<uint> idsPedidos)
+        public List<Pedido> ObterPedidosProducao(GDASession sessao, List<uint> idsPedido)
         {
+            if (idsPedido?.Count(f => f > 0) == 0)
+            {
+                return new List<Pedido>();
+            }
+
             var sql = @"
                 SELECT p.*, c.Id_cli as IdCli, c.Nome as NomeCliente
                 FROM pedido p
@@ -5310,7 +5312,7 @@ namespace Glass.Data.DAL
                 WHERE p.idPedido IN ({0})
                 ORDER BY p.DataEntrega, c.Nome";
 
-            return objPersistence.LoadData(sessao, string.Format(sql, string.Join(",", idsPedidos)));
+            return objPersistence.LoadData(sessao, string.Format(sql, string.Join(",", idsPedido)));
         }
 
         /// <summary>
@@ -8565,7 +8567,7 @@ namespace Glass.Data.DAL
             #region Atualiza o saldo da obra do pedido
 
             if (ped.IdObra > 0)
-                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false);
+                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false, false);
 
             #endregion
 
@@ -14405,8 +14407,14 @@ namespace Glass.Data.DAL
 
                     if (existeEspelho)
                     {
-                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
+                        var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
+
+                        if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                            situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
+                        {
+                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
                             objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                        }
                     }
                 }
                 

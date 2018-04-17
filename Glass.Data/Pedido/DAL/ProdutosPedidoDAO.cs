@@ -2582,8 +2582,8 @@ namespace Glass.Data.DAL
                 if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido))
                 {
                     // Atualiza os produtos do pedido original, indicando-os como invisíveis para o fluxo
-                    objPersistence.ExecuteCommand(sessao, "update produtos_pedido set invisivelFluxo=true where idPedido=" + idPedido +
-                        " and idAmbientePedido=" + idAmbientePedido);
+                    objPersistence.ExecuteCommand(sessao, string.Format(@"UPDATE produtos_pedido SET InvisivelFluxo=1 WHERE IdPedido={0} AND IdAmbientePedido={1}
+                        AND (InvisivelPedido IS NULL OR InvisivelPedido=0)", idPedido, idAmbientePedido));
                 }
 
                 // Verifica se o itemProjeto possui referência do idPedido (Ocorreu de não estar associado)
@@ -4174,9 +4174,9 @@ namespace Glass.Data.DAL
             }
 
             /* Chamado 71112*/
-            if (objInsert.IdAmbientePedido != null)
+            if (objInsert.IdAmbientePedido > 0)
             {
-                if (AmbientePedidoDAO.Instance.GetElement(objInsert.IdAmbientePedido.GetValueOrDefault()) == null)
+                if (!AmbientePedidoDAO.Instance.Exists(session, objInsert.IdAmbientePedido.GetValueOrDefault()))
                     throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
             }
 
@@ -4720,9 +4720,9 @@ namespace Glass.Data.DAL
                 objUpdate.BuscarBenefImportacao = false;
 
                 /* Chamado 71112*/
-                if (objUpdate.IdAmbientePedido != null)
+                if (objUpdate.IdAmbientePedido > 0)
                 {
-                    if (AmbientePedidoDAO.Instance.GetElement(objUpdate.IdAmbientePedido.GetValueOrDefault()) == null)
+                    if (!AmbientePedidoDAO.Instance.Exists(sessao, objUpdate.IdAmbientePedido.GetValueOrDefault()))
                         throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
                 }
 
