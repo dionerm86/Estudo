@@ -2293,14 +2293,20 @@ namespace Glass.Data.DAL
                     !TipoClienteDAO.Instance.CobrarAreaMinima(session, orcaAntigo.IdCliente.GetValueOrDefault()))))
                 {
                     Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd;
-                    
-                    RecalcularOrcamento(session, objUpdate, objUpdate.TipoEntrega, (int?)objUpdate.IdCliente, out dadosProd);
 
-                    var dadosAmbientes = ObterDadosOrcamentoRecalcular(objUpdate.TipoDesconto, objUpdate.Desconto, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, objUpdate.IdComissionado,
-                        objUpdate.PercComissao, dadosProd).Split(';')[7];
+                    int tipoDesconto, tipoAcrescimo;
+                    decimal desconto, acrescimo;
+                    float percComissao;
+                    uint? idComissionado;
 
-                    FinalizarRecalcular(session, objUpdate, objUpdate.TipoDesconto, objUpdate.Desconto, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, (int?)objUpdate.IdComissionado,
-                        objUpdate.PercComissao, dadosAmbientes, false);
+                    RecalcularOrcamento(session, objUpdate, objUpdate.TipoEntrega, (int?)objUpdate.IdCliente, out tipoDesconto,
+                        out desconto, out tipoAcrescimo, out acrescimo, out idComissionado, out percComissao, out dadosProd);
+
+                    string dadosAmbientes = ObterDadosOrcamentoRecalcular(tipoDesconto, desconto, tipoAcrescimo, acrescimo,
+                        idComissionado, percComissao, dadosProd).Split(';')[7];
+
+                    FinalizarRecalcular(session, objUpdate, tipoDesconto, desconto, tipoAcrescimo, acrescimo, (int?)idComissionado,
+                        percComissao, dadosAmbientes, false);
                     
                     /* Chamado 61744. */
                     if (objUpdate.Desconto > 0 && (objUpdate.Desconto != orcaAntigo.Desconto || objUpdate.TipoDesconto != orcaAntigo.TipoDesconto))
