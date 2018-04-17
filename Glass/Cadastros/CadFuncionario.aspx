@@ -58,16 +58,6 @@
                 return false;
             }
 
-            if (FindControl("ctrlDataNasc_txtData", "input").value == "") {
-                alert("Informe a data de nascimento do funcionário.");
-                return false;
-            }
-
-            if (FindControl("ctrlDataEntr_txtData", "input").value == "") {
-                alert("Informe a data de entrada do funcionário.");
-                return false;
-            }
-
             if (FindControl("drpLoja", "select").value == "") {
                 alert("Informe a Loja do funcionário.");
                 return false;

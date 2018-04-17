@@ -1137,23 +1137,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Bloquear pagamento usando apenas as parcelas permitidas?
-        /// </summary>
-        public bool BloquearPagto
-        {
-            get { return DataModel.BloquearPagto; }
-            set
-            {
-                if (DataModel.BloquearPagto != value &&
-                    RaisePropertyChanging("BloquearPagto", value))
-                {
-                    DataModel.BloquearPagto = value;
-                    RaisePropertyChanged("BloquearPagto");
-                }
-            }
-        }
-
-        /// <summary>
         /// O cliente calcula ICMS ST no pedido?
         /// </summary>
         public bool CobrarIcmsSt

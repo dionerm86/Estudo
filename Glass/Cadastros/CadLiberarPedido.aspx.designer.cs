@@ -589,15 +589,6 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsPagto;
         
         /// <summary>
-        /// hdfNumParcCli control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField hdfNumParcCli;
-        
-        /// <summary>
         /// btnConfirmar control.
         /// </summary>
         /// <remarks>

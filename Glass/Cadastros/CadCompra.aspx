@@ -242,7 +242,6 @@ function formaPagtoChange(control) {
 
     var inserindo = false;
     function onInsert() {
-        debugger;
         /* Chamado 15918.
          * Evita que a compra seja inserida duplicadamente. */
         if (!inserindo)
