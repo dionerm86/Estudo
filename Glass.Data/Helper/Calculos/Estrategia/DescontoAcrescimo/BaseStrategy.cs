@@ -40,13 +40,12 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         public bool Remover(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
             var produtosRemover = produtos
-                .Where(produto => PermitirRemocaoCalculoProduto(produto))
-                .ToList();
+                .Where(produto => PermitirRemocaoCalculoProduto(produto));
 
             if (!produtosRemover.Any())
                 return false;
 
-            produtos.InicializarParaCalculo(sessao, container);
+            produtosRemover.InicializarParaCalculo(sessao, container);
 
             Remover(
                 sessao,

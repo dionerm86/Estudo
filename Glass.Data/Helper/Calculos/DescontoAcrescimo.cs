@@ -196,7 +196,7 @@ namespace Glass.Data.Helper.Calculos
             );
 
             bool removido = Remover(sessao, estrategia, container, produtos);
-            ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido);
+            ReaplicarComissao(sessao, container, produtos, reaplicarComissao && (removido || !PedidoConfig.RatearDescontoProdutos));
 
             return removido;
         }
@@ -218,7 +218,7 @@ namespace Glass.Data.Helper.Calculos
             );
 
             bool removido = Remover(sessao, estrategia, container, produtos);
-            ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido);
+            ReaplicarComissao(sessao, container, produtos, reaplicarComissao && (removido || !PedidoConfig.RatearDescontoProdutos));
 
             return removido;
         }

@@ -1396,11 +1396,29 @@ namespace Glass.Data.DAL
         {
             if (atualizar)
             {
+                var idsParentsBuscar = new List<uint>();
+                var parents = new List<ProdutosOrcamento>();
+
                 foreach (var produto in produtosOrcamento)
                 {
                     ProdutosOrcamentoDAO.Instance.UpdateBase(sessao, produto, orcamento);
                     ProdutosOrcamentoDAO.Instance.AtualizaBenef(sessao, produto.IdProd, produto.Beneficiamentos, orcamento);
-                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, produto);
+
+                    if (!produto.IdProdParent.HasValue)
+                        parents.Add(produto);
+                    else if (!parents.Any(p => p.IdProd == produto.IdProdParent.Value) && !idsParentsBuscar.Any(id => id == produto.IdProdParent.Value))
+                        idsParentsBuscar.Add(produto.IdProdParent.Value);
+                }
+
+                if (idsParentsBuscar.Any())
+                {
+                    string idsBuscar = string.Join(",", idsParentsBuscar);
+                    parents.AddRange(ProdutosOrcamentoDAO.Instance.GetByIds(idsBuscar));
+                }
+
+                foreach (var prodParent in parents)
+                {
+                    ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(sessao, prodParent);
                 }
             }
 
@@ -1955,8 +1973,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RemoveComissaoDescontoAcrescimo(GDASession session, Orcamento orcamento)
         {
-            var produtosOrcamento = (orcamento as IContainerCalculo).Ambientes.Obter()
-                .Cast<ProdutosOrcamento>()
+            var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(orcamento.IdOrcamento, true)
                 .Where(f => !f.TemItensProdutoSession(session))
                 .ToList();
 
@@ -1991,8 +2008,7 @@ namespace Glass.Data.DAL
 
             if (alterarAcrescimo || alterarComissao || alterarDesconto)
             {
-                var produtosOrcamento = (novo as IContainerCalculo).Ambientes.Obter()
-                    .Cast<ProdutosOrcamento>()
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(novo.IdOrcamento, true)
                     .Where(f => !f.TemItensProdutoSession(session))
                     .ToList();
 
@@ -2033,8 +2049,7 @@ namespace Glass.Data.DAL
 
             if (percComissao > 0 || acrescimo > 0 || desconto > 0)
             {
-                var produtosOrcamento = (orcamento as IContainerCalculo).Ambientes.Obter()
-                    .Cast<ProdutosOrcamento>()
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(orcamento.IdOrcamento, true)
                     .Where(f => !f.TemItensProdutoSession(session))
                     .ToList();
 
@@ -2070,8 +2085,7 @@ namespace Glass.Data.DAL
 
             if (alterarAcrescimo || alterarComissao || alterarDesconto)
             {
-                var produtosOrcamento = (novo as IContainerCalculo).Ambientes.Obter()
-                    .Cast<ProdutosOrcamento>()
+                var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(novo.IdOrcamento, true)
                     .Where(f => !f.TemItensProdutoSession(session))
                     .ToList();
 
@@ -2385,8 +2399,7 @@ namespace Glass.Data.DAL
                             orca.IdOrcamento = idOrca;
                         }
 
-                        var produtosOrcamento = (orca as IContainerCalculo).Ambientes.Obter()
-                            .Cast<ProdutosOrcamento>()
+                        var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(transaction, orca.IdOrcamento, true)
                             .Where(f => !f.TemItensProdutoSession(transaction))
                             .ToList();
 
@@ -2846,10 +2859,13 @@ namespace Glass.Data.DAL
 
             orcamento.IdCliente = (uint?)idClienteNovo ?? orcamento.IdCliente;
             orcamento.TipoEntrega = tipoEntregaNovo ?? orcamento.TipoEntrega;
+            orcamento.PercComissao = 0;
+            orcamento.Desconto = 0;
+            orcamento.Acrescimo = 0;
 
-            RemoveComissaoDescontoAcrescimo(session, orcamento);
             RemovePercComissao(session, orcamento.IdOrcamento, true);
-
+            RemoveComissaoDescontoAcrescimo(session, orcamento);
+            
             var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, orcamento.IdOrcamento, true);
 
             foreach (var p in produtosOrcamento.Where(p => !p.IdProdParent.HasValue))
