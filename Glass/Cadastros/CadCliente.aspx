@@ -982,7 +982,7 @@
                                                         <asp:Label ID="Label56" runat="server" Text="Parcelas"></asp:Label>
                                                     </td>
                                                     <td align="left">
-                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" BloquearPagto='<%# Bind("BloquearPagto") %>'
+                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server"
                                                             FormaPagtoPadrao='<%# Bind("TipoPagto") %>' ParcelasNaoUsar='<%# Bind("Parcelas") %>' />
                                                     </td>
                                                 </tr>
@@ -1994,7 +1994,7 @@
                                                         <asp:Label ID="Label56" runat="server" Text="Parcelas"></asp:Label>
                                                     </td>
                                                     <td align="left">
-                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" BloquearPagto='<%# Bind("BloquearPagto") %>'
+                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" 
                                                             ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' IdCliente='<%# Eval("IdCli") %>' />
                                                     </td>
                                                 </tr>

@@ -3098,13 +3098,24 @@ namespace Glass.Data.DAL
                 AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={1} AND QtdeCalc>0);", (int)Instalacao.SituacaoInst.Cancelada, idLiberarPedido)) > 0)
                 throw new Exception("Um ou mais pedidos desta liberação possuem instalações geradas, cancele as instalações antes de cancelar esta liberação.");
 
+            /* Chamado 70095. */
+            var contasReceberLiberacao = ContasReceberDAO.Instance.GetByLiberacaoPedido(session, liberacaoPedido.IdLiberarPedido, false);
+            foreach (var contasReceber in contasReceberLiberacao)
+            {
+                if (liberacaoPedido.TipoPagto != (int)LiberarPedido.TipoPagtoEnum.AVista && contasReceber.Recebida == true)
+                {
+                    if (contasReceber.IdFormaPagto > 0 && UtilsPlanoConta.GetPlanoSinal(contasReceber.IdFormaPagto.Value) != contasReceber.IdConta)
+                        throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
+                }
+            }
+
             UtilsFinanceiro.CancelaRecebimento(session, UtilsFinanceiro.TipoReceb.LiberacaoAVista, null,
                 null, liberacaoPedido, null, null, 0,
                 null, null, null, null, dataEstornoBanco, cancelamentoErroCapptaTef, gerarCredito);
 
             /* Chamado 64417. */
-            if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
-                throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
+            //if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
+            //    throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
 
             lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);
 

@@ -25,7 +25,7 @@
 
         public bool Beneficiamento
         {
-            get { return _setor.Tipo == Glass.Data.Model.TipoSetor.PorBenef; }
+            get { return false; }
         }
     }
 }

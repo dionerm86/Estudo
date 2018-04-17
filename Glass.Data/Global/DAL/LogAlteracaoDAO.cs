@@ -500,7 +500,7 @@ namespace Glass.Data.DAL
         /// <param name="idFunc"></param>
         /// <param name="situacao"></param>
         /// <param name="idsCli"></param>
-        public void LogSituacaoCliente(GDASession sessao, uint idFunc, string situacao, string idsCli)
+        public void LogSituacaoCliente(GDASession sessao, string situacao, string idsCli)
         {
             var tabela = (int)LogAlteracao.TabelaAlteracao.Cliente;
 
@@ -512,7 +512,7 @@ namespace Glass.Data.DAL
                 WHERE c.Id_Cli IN ({3})
                 GROUP by c.Id_Cli";
 
-            sql = string.Format(sql, tabela, idFunc, situacao, idsCli);
+            sql = string.Format(sql, tabela, 0, situacao, idsCli);
 
             objPersistence.ExecuteCommand(sessao, sql);
         }

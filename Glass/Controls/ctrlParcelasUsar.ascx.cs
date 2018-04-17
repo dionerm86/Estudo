@@ -30,12 +30,6 @@ namespace Glass.UI.Web.Controls
             get { return drpTipoPagto.SelectedValue.StrParaIntNullable(); }
             set { _formaPagtoPadrao = value; }
         }
-    
-        public bool BloquearPagto
-        {
-            get { return chkBloquearPagto.Checked; }
-            set { chkBloquearPagto.Checked = value; }
-        }
 
         public int? IdFornec
         {

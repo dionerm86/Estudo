@@ -18,47 +18,6 @@
             return false;
         }
 
-        function openRptLista(idPedido, isReposicao, tipo) {
-            var idPedido = FindControl("txtNumPedido", "input").value;
-            var idLoja = FindControl("drpLoja", "select").value;
-            var idCliente = FindControl("txtNumCli", "input").value;
-            var nomeCliente = FindControl("txtNome", "input").value;
-            var codPedCliente = FindControl("txtNumPedCli", "input").value;
-            var idCidade = FindControl("hdfCidade", "input").value;
-            var endereco = FindControl("txtEndereco", "input").value;
-            var bairro = FindControl("txtBairro", "input").value;
-            var complemento = FindControl("txtComplemento", "input").value;
-            var byVend = '<%= Request["byVend"] %>';
-            var byConf = '<%= Request["byConf"] %>';
-            var altura = FindControl("txtAltura", "input").value;
-            var largura = FindControl("txtLargura", "input").value;
-            var diasProntoLib = FindControl("txtDiasProntoLib", "input").value;
-            var valorDe = FindControl("txtValorDe", "input") != null ? FindControl("txtValorDe", "input").value : 0;
-            var valorAte = FindControl("txtValorAte", "input") != null ? FindControl("txtValorAte", "input").value : 0;
-            var dataCadIni = FindControl("ctrlDataCadIni_txtData", "input").value;
-            var dataCadFim = FindControl("ctrlDataCadFim_txtData", "input").value;
-            var tipo = FindControl("cblTipoPedido", "select").itens();
-            var fastDelivery = FindControl("drpFastDelivery", "select");
-            fastDelivery = fastDelivery != null ? fastDelivery.value : "0";
-            var tipoVenda = FindControl("drpTipoVenda", "select");
-            tipoVenda = tipoVenda != null ? tipoVenda.value : "0";
-            var origemPedido = FindControl("drpOrigemPedido", "select").value;
-            var obs = FindControl("txtObs", "input").value != null ? FindControl("txtObs", "input").value : "";
-
-            if (idPedido == "") idPedido = 0;
-            if (idCliente == "") idCliente = 0;
-            if (idCidade == "") idCidade = 0;
-
-            openWindow(600, 700, "../Relatorios/RelBase.aspx?rel=Pedidos&idPedido=" + idPedido + "&idCliente=" + idCliente +
-                "&nomeCliente=" + nomeCliente + "&codPedCliente=" + codPedCliente + "&idCidade=" + idCidade + "&endereco=" + endereco +
-                "&bairro=" + bairro + "&complemento=" + complemento + "&idLoja=" + idLoja + "&byVend=" + byVend + "&byConf=" + byConf + "&altura=" + altura +
-                "&largura=" + largura + "&diasProntoLib=" + diasProntoLib + "&valorDe=" + valorDe + "&valorAte=" + valorAte +
-                "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim + "&tipo=" + tipo + "&fastDelivery=" + fastDelivery +
-                "&tipoVenda=" + tipoVenda + "&origemPedido=" + origemPedido + "&obs=" + obs);
-                
-            return false;
-        }
-
         function openGraficoTotaisDiarios() {
            
             var idPedido = FindControl("txtNumPedido", "input").value;
@@ -71,7 +30,6 @@
             var bairro = FindControl("txtBairro", "input").value;
             var complemento = FindControl("txtComplemento", "input").value;
             var byVend = '';
-            var byConf = '';
             var altura = FindControl("txtAltura", "input").value;
             var largura = FindControl("txtLargura", "input").value;
             var situacao = FindControl("drpSituacao", "select").value;
@@ -107,7 +65,7 @@
 
             openWindow(600, 800, "../Relatorios/GraficoTotaisDiariosPedido.aspx?idPedido=" + idPedido + "&idLoja=" + idLoja + "&idCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&codCliente=" + codCliente + "&idCidade=" + idCidade + "&endereco=" + endereco +
-                "&bairro=" + bairro + "&complemento=" + complemento + "&byVend=" + byVend + "&byConf=" + byConf + "&altura=" + altura + "&largura=" + largura +
+                "&bairro=" + bairro + "&complemento=" + complemento + "&byVend=" + byVend + "&altura=" + altura + "&largura=" + largura +
                 "&situacao=" + situacao + "&situacaoProd=" + situacaoProd + "&idOrcamento=" + idOrcamento + "&maoObra=" + maoObra +
                 "&maoObraEspecial=" + maoObraEspecial + "&producao=" + producao + "&diasProntoLib=" + diasProntoLib +
                 "&valorDe=" + valorDe + "&valorAte=" + valorAte + "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim +
@@ -165,7 +123,6 @@
             var bairro = FindControl("txtBairro", "input").value;
             var complemento = FindControl("txtComplemento", "input").value;
             var byVend = '<%= Request["byVend"] %>';
-            var byConf = '<%= Request["byConf"] %>';
             var altura = FindControl("txtAltura", "input").value;
             var largura = FindControl("txtLargura", "input").value;
             var situacao = FindControl("drpSituacao", "select").value;
@@ -203,7 +160,7 @@
 
             openWindow(140, 320, "../Utils/ListaTotalPedido.aspx?idPedido=" + idPedido + "&idLoja=" + idLoja + "&idCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&codCliente=" + codCliente + "&idCidade=" + idCidade + "&endereco=" + endereco +
-                "&bairro=" + bairro + "&complemento=" + complemento + "&byVend=" + byVend + "&byConf=" + byConf + "&altura=" + altura + "&largura=" + largura +
+                "&bairro=" + bairro + "&complemento=" + complemento + "&byVend=" + byVend + "&altura=" + altura + "&largura=" + largura +
                 "&situacao=" + situacao + "&situacaoProd=" + situacaoProd + "&idOrcamento=" + idOrcamento + "&maoObra=" + maoObra +
                 "&maoObraEspecial=" + maoObraEspecial + "&producao=" + producao + "&diasProntoLib=" + diasProntoLib +
                 "&valorDe=" + valorDe + "&valorAte=" + valorAte + "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim +
@@ -805,7 +762,6 @@
                             Type="String" />
                         <asp:QueryStringParameter DefaultValue="" Name="byVend" QueryStringField="ByVend"
                             Type="String" />
-                        <asp:QueryStringParameter Name="byConf" QueryStringField="ByConf" Type="String" />
                         <asp:QueryStringParameter Name="maoObra" QueryStringField="maoObra" Type="String" />
                         <asp:QueryStringParameter Name="maoObraEspecial" 
                             QueryStringField="maoObraEspecial" Type="String" />
@@ -875,7 +831,6 @@
                 <asp:Image ID="Image1" runat="server" ImageUrl="../Images/Clipe.gif" />
                 <asp:LinkButton ID="lnkAnexos" runat="server" OnClientClick="openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=0&tipo=pedido&#039;); return false;"
                     ToolTip="Anexar arquivos à vários pedidos">Anexar arquivos à vários pedidos</asp:LinkButton>
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRptLista();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;
                 <asp:LinkButton ID="lnkTotais" runat="server" OnClientClick="return openListaTotal();"
                     ToolTip="Exibe os valores de preço, peso e m² totais dos pedidos listados."> <img 

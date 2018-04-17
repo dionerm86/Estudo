@@ -329,16 +329,9 @@ namespace Glass.UI.Web.Cadastros
                 drpTipoPagto.Items[1].Enabled = true;
                 chkReceberEntrada.Visible = false;
             }
-    
-            // Não permite liberar pedido à prazo se houver pedidos à vista ou se for para usar o menor prazo
-            // de liberação ou se a opção de desconto apenas para pedidos à vista estiver marcada
-            // Só permitiria liberar pedidos à prazo se somente houver pedidos à prazo na lista de pedidos que serão liberados
-            // e se houver pagamento a ser realizado (se os pedidos não estiverem pagos antecipadamente)
-            else if (idCliente > 0 && (ClienteDAO.Instance.IsBloquearPagto(idCliente) ||
-                PedidoConfig.Desconto.DescontoPedidoApenasAVista || Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido))
+            else if (idCliente > 0)
             {
                 chkReceberEntrada.Visible = true;
-                bool isAVista = true;
                 bool isAPrazo = valorPagar > 0;
     
                 if (isAPrazo && (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido || PedidoConfig.Desconto.DescontoPedidoApenasAVista ||
@@ -352,14 +345,8 @@ namespace Glass.UI.Web.Cadastros
                 }
     
                 // Verifica as parcelas do cliente se o cliente só puder pagar nas parcelas que ele tem atribuídas
-                // (bloquear pagto.)
-                if (ClienteDAO.Instance.IsBloquearPagto(idCliente))
-                {
-                    isAVista = isAVista && ParcelasDAO.Instance.GetCountByCliente(idCliente, ParcelasDAO.TipoConsulta.Vista) > 0;
-                    isAPrazo = isAPrazo && ParcelasDAO.Instance.GetCountByCliente(idCliente, ParcelasDAO.TipoConsulta.Prazo) > 0;
-                }
+                isAPrazo = isAPrazo && ParcelasDAO.Instance.GetCountByCliente(idCliente, ParcelasDAO.TipoConsulta.Prazo) > 0;
     
-                drpTipoPagto.Items[0].Enabled = isAVista;
                 drpTipoPagto.Items[1].Enabled = isAPrazo;
 
                 if (isAPrazo)
@@ -380,12 +367,6 @@ namespace Glass.UI.Web.Cadastros
     
             if (valorPagar < 0)
                 Page.ClientScript.RegisterStartupScript(GetType(), "esconderDescAcresc", "escondeDescontoAcrescimo();\n", true);
-        }
-    
-        protected void hdfNumParcCli_Load(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrEmpty(hdfIdCliente.Value))
-                hdfNumParcCli.Value = ParcelasDAO.Instance.GetNumParcByCliente(Conversoes.StrParaUint(hdfIdCliente.Value)).ToString();
         }
     
         #endregion
@@ -930,8 +911,6 @@ namespace Glass.UI.Web.Cadastros
             // Guarda o id do cliente no HiddenField
             hdfIdCliente.Value = idCliente.ToString();
             drpTipoPagto_Load(null, EventArgs.Empty);
-            hdfNumParcCli_Load(null, EventArgs.Empty);
-            //drpFormaPagtoPrazo_Load(null, EventArgs.Empty);
     
             // Guarda o id dos pedidos que serão liberados
             hdfIdsPedido.Value = idsPedido;

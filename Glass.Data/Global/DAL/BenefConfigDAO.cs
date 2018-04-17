@@ -422,12 +422,22 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se um dos beneficiamentos selecionados é o 'Redondo'.
         /// </summary>
-        /// <param name="idsBenefConfig"></param>
-        /// <returns></returns>
         public bool TemBenefRedondo(string idsBenefConfig)
         {
-            var sql = "select count(*) from benef_config where (lower(descricao)='redondo' or lower(nome)='redondo') " +
-                "and idBenefConfig in (" + idsBenefConfig + ")";
+            return TemBenefRedondo(idsBenefConfig?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>());
+        }
+
+        /// <summary>
+        /// Verifica se um dos beneficiamentos selecionados é o 'Redondo'.
+        /// </summary>
+        public bool TemBenefRedondo(IEnumerable<int> idsBenefConfig)
+        {
+            if (!(idsBenefConfig?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                return false;
+            }
+
+            var sql = string.Format("SELECT COUNT(*) FROM benef_config WHERE (LOWER(Descricao)='redondo' OR LOWER(Nome)='redondo') AND IdBenefConfig IN ({0})", idsBenefConfig);
 
             return objPersistence.ExecuteSqlQueryCount(sql) > 0;
         }

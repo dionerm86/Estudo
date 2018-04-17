@@ -547,6 +547,9 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string VerificaDescontoFormaPagtoDadosProduto(string idPedido, string tipoVenda, string idFormaPagto, string idTipoCartao, string idParcela)
         {
+            if (string.IsNullOrEmpty(idPedido) || string.IsNullOrEmpty(idFormaPagto))
+                return "0";
+
             if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
             {
                 uint? _idGrupoProd = null;

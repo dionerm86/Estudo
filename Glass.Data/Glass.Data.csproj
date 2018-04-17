@@ -1527,7 +1527,6 @@
     <Compile Include="RelDAL\GraficoVendasDAO.cs" />
     <Compile Include="RelDAL\LucroAproximadoDAO.cs" />
     <Compile Include="RelDAL\NFeDAO.cs" />
-    <Compile Include="RelDAL\PedidoConferidoDAO.cs" />
     <Compile Include="RelDAL\PlanoContasDAO.cs" />
     <Compile Include="RelDAL\FluxoCaixaDAO.cs" />
     <Compile Include="RelDAL\ProducaoInstDAO.cs" />
@@ -1543,7 +1542,6 @@
     <Compile Include="RelModel\Metragem.cs" />
     <Compile Include="RelModel\NFe.cs" />
     <Compile Include="RelModel\LiberarPedidoMov.cs" />
-    <Compile Include="RelModel\PedidoConferido.cs" />
     <Compile Include="RelModel\PlanoContas.cs" />
     <Compile Include="RelModel\FluxoCaixa.cs" />
     <Compile Include="RelModel\ProducaoForno.cs" />

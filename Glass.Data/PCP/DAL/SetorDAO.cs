@@ -712,51 +712,11 @@ namespace Glass.Data.DAL
 
         public override uint Insert(Setor objInsert)
         {
-            // Gera um novo número de sequência para este novo setor
-            /*object numSeq = objPersistence.ExecuteScalar("Select Coalesce(Max(numSeq), 0) + 1 From setor");
-            objInsert.NumeroSequencia = numSeq != null && numSeq.ToString() != String.Empty ? Glass.Conversoes.StrParaInt(numSeq.ToString()) : 1;
-
-            uint idSetor = base.Insert(objInsert);
-
-            // Recarrega listagem de setores
-            Utils.GetSetores = SetorDAO.Instance.GetOrdered();
-
-            // Cadastra os beneficiamentos associados
-            if (objInsert.Tipo == TipoSetor.PorBenef)
-                foreach (uint b in objInsert.Beneficiamentos)
-                {
-                    SetorBenef novo = new SetorBenef();
-                    novo.IdSetor = idSetor;
-                    novo.IdBenefConfig = b;
-                    SetorBenefDAO.Instance.Insert(novo);
-                }
-
-            return idSetor;*/
             throw new NotImplementedException();
         }
 
         public override int Update(Setor objUpdate)
         {
-            /*LogAlteracaoDAO.Instance.LogSetor(objUpdate);
-            int retorno = base.Update(objUpdate);
-
-            // Recarrega listagem de setores
-            Utils.GetSetores = SetorDAO.Instance.GetOrdered();
-
-            // Apaga os beneficiamentos
-            SetorBenefDAO.Instance.DeleteBySetor(objUpdate.IdSetor);
-
-            // Cadastra os beneficiamentos associados
-            if (objUpdate.Tipo == TipoSetor.PorBenef)
-                foreach (uint b in objUpdate.Beneficiamentos)
-                {
-                    SetorBenef novo = new SetorBenef();
-                    novo.IdSetor = objUpdate.IdSetor;
-                    novo.IdBenefConfig = (int)b;
-                    SetorBenefDAO.Instance.Insert(novo);
-                }
-
-            return retorno;*/
             throw new NotImplementedException();
         }
 

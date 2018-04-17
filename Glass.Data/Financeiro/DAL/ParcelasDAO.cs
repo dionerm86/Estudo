@@ -19,7 +19,7 @@ namespace Glass.Data.DAL
         }
 
         private string Sql(uint idParcela, uint idCliente, uint idFornecedor, bool apenasUsar, TipoConsulta tipo, 
-            int numeroParcelas, bool bloquear, bool selecionar)
+            int numeroParcelas, bool selecionar)
         {
             string campos = selecionar ? "*" : "count(*)";
             bool usar = idCliente > 0 || idFornecedor > 0;
@@ -37,14 +37,6 @@ namespace Glass.Data.DAL
             }
 
             string sql = "select " + campos + " from parcelas where 1";
-
-            if (bloquear)
-            {
-                if (idCliente > 0)
-                    sql += " and (select bloquearPagto from cliente where id_Cli=" + idCliente + ")=true";
-                else if (idFornecedor > 0)
-                    sql += " and (select bloquearPagto from fornecedor where idFornec=" + idFornecedor + ")=true";
-            }
 
             if (idParcela > 0)
                 sql += " and idParcela=" + idParcela;
@@ -70,22 +62,22 @@ namespace Glass.Data.DAL
 
         public Parcelas GetElement(GDASession session, uint idParcela)
         {
-            return objPersistence.LoadOneData(session, Sql(idParcela, 0, 0, false, TipoConsulta.Todos, 0, false, true));
+            return objPersistence.LoadOneData(session, Sql(idParcela, 0, 0, false, TipoConsulta.Todos, 0, true));
         }
 
         public Parcelas GetElement(uint idParcela, uint idCliente, uint idFornecedor)
         {
-            return objPersistence.LoadOneData(Sql(idParcela, idCliente, idFornecedor, false, TipoConsulta.Todos, 0, false, true));
+            return objPersistence.LoadOneData(Sql(idParcela, idCliente, idFornecedor, false, TipoConsulta.Todos, 0, true));
         }
 
         public IList<Parcelas> GetList(string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(0, 0, 0, false, TipoConsulta.Todos, 0, false, true), sortExpression, startRow, pageSize);
+            return LoadDataWithSortExpression(Sql(0, 0, 0, false, TipoConsulta.Todos, 0, true), sortExpression, startRow, pageSize);
         }
 
         public int GetListCount()
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, 0, false, TipoConsulta.Todos, 0, false, false));
+            return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, 0, false, TipoConsulta.Todos, 0, false));
         }
 
         public Parcelas[] GetByClienteFornecedor(uint idCliente, uint idFornecedor, bool apenasUsar, TipoConsulta tipo)
@@ -95,7 +87,7 @@ namespace Glass.Data.DAL
 
         public Parcelas[] GetByClienteFornecedor(uint idCliente, uint idFornecedor, bool apenasUsar, TipoConsulta tipo, int numeroParcelas)
         {
-            return objPersistence.LoadData(Sql(0, idCliente, idFornecedor, apenasUsar, tipo, numeroParcelas, false, true)).ToList().ToArray();
+            return objPersistence.LoadData(Sql(0, idCliente, idFornecedor, apenasUsar, tipo, numeroParcelas, true)).ToList().ToArray();
         }
 
         public IList<Parcelas> GetByCliente(uint idCliente, TipoConsulta tipo)
@@ -105,7 +97,7 @@ namespace Glass.Data.DAL
 
         public IList<Parcelas> GetByCliente(GDASession session, uint idCliente, TipoConsulta tipo)
         {
-            return objPersistence.LoadData(session, Sql(0, idCliente, 0, true, tipo, 0, false, true)).ToList();
+            return objPersistence.LoadData(session, Sql(0, idCliente, 0, true, tipo, 0, true)).ToList();
         }
 
         public int GetCountByCliente(uint idCliente, TipoConsulta tipo)
@@ -115,7 +107,7 @@ namespace Glass.Data.DAL
 
         public int GetCountByCliente(GDASession session, uint idCliente, TipoConsulta tipo)
         {
-            return objPersistence.ExecuteSqlQueryCount(session, Sql(0, idCliente, 0, true, tipo, 0, false, false));
+            return objPersistence.ExecuteSqlQueryCount(session, Sql(0, idCliente, 0, true, tipo, 0, false));
         }
 
         public Parcelas GetPadraoCliente(uint idCliente)
@@ -125,49 +117,21 @@ namespace Glass.Data.DAL
 
         public Parcelas GetPadraoCliente(GDASession sessao, uint idCliente)
         {
-            string sql = Sql(0, 0, 0, false, TipoConsulta.Todos, 0, false, true);
+            string sql = Sql(0, 0, 0, false, TipoConsulta.Todos, 0, true);
             sql += " and idParcela=(select tipoPagto from cliente where id_Cli=" + idCliente + ")";
 
             List<Parcelas> itens = objPersistence.LoadData(sessao, sql);
             return itens.Count > 0 ? itens[0] : null;
         }
 
-        public int GetNumParcByCliente(uint idCliente)
-        {
-            if (ClienteDAO.Instance.IsBloquearPagto(idCliente))
-            {
-                string sql = Sql(0, idCliente, 0, true, TipoConsulta.Todos, 0, true, true);
-                sql += " order by numParcelas desc limit 1";
-
-                var parc = objPersistence.LoadData(sql).ToList();
-                return parc.Count > 0 ? parc[0].NumParcelas : 0;
-            }
-            else
-                return int.MaxValue;
-        }
-
         public IList<Parcelas> GetByFornecedor(uint idFornecedor, TipoConsulta tipo)
         {
-            return objPersistence.LoadData(Sql(0, 0, idFornecedor, true, tipo, 0, false, true)).ToList();
+            return objPersistence.LoadData(Sql(0, 0, idFornecedor, true, tipo, 0, true)).ToList();
         }
 
         public int GetCountByFornecedor(uint idFornecedor, TipoConsulta tipo)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, idFornecedor, true, tipo, 0, false, false));
-        }
-
-        public int GetNumParcByFornecedor(uint idFornecedor)
-        {
-            if (FornecedorDAO.Instance.IsBloquearPagto(idFornecedor))
-            {
-                string sql = Sql(0, 0, idFornecedor, true, TipoConsulta.Todos, 0, true, true);
-                sql += " order by numParcelas desc limit 1";
-
-                var parc = objPersistence.LoadData(sql).ToList();
-                return parc.Count > 0 ? parc[0].NumParcelas : 0;
-            }
-            else
-                return int.MaxValue;
+            return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, idFornecedor, true, tipo, 0, false));
         }
 
         public string ObtemDescricao(uint idParcela)
@@ -256,7 +220,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public Parcelas GetByNumeroParcelas(int numParc)
         {
-            List<Parcelas> parc = objPersistence.LoadData(Sql(0, 0, 0, false, TipoConsulta.Prazo, numParc, false, true));
+            List<Parcelas> parc = objPersistence.LoadData(Sql(0, 0, 0, false, TipoConsulta.Prazo, numParc, true));
             return parc.Count > 0 ? parc[0] : null;
         }
 

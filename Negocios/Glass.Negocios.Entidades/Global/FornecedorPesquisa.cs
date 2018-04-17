@@ -87,11 +87,6 @@ namespace Glass.Global.Negocios.Entidades
         public Data.Model.SituacaoFornecedor Situacao { get; set; }
 
         /// <summary>
-        /// Identifica se é para bloquear o pagamento.
-        /// </summary>
-        public bool BloquearPagto { get; set; }
-
-        /// <summary>
         /// Nome do vendedor.
         /// </summary>
         public string Vendedor { get; set; }
