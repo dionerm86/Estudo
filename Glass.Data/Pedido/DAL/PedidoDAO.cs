@@ -5523,11 +5523,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Buscar os pedidos para a consulta produção
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idsPedidos"></param>
-        /// <returns></returns>
-        public List<Pedido> ObterPedidosProducao(GDASession sessao, List<uint> idsPedidos)
+        public List<Pedido> ObterPedidosProducao(GDASession sessao, List<uint> idsPedido)
         {
+            if (idsPedido?.Count(f => f > 0) == 0)
+            {
+                return new List<Pedido>();
+            }
+
             var sql = @"
                 SELECT p.*, c.Id_cli as IdCli, c.Nome as NomeCliente
                 FROM pedido p
@@ -5535,7 +5537,7 @@ namespace Glass.Data.DAL
                 WHERE p.idPedido IN ({0})
                 ORDER BY p.DataEntrega, c.Nome";
 
-            return objPersistence.LoadData(sessao, string.Format(sql, string.Join(",", idsPedidos)));
+            return objPersistence.LoadData(sessao, string.Format(sql, string.Join(",", idsPedido)));
         }
 
         /// <summary>
