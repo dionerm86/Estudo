@@ -10917,7 +10917,7 @@ namespace Glass.Data.DAL
                     sql = "update pedido set AliquotaIpi=0, ValorIpi=0 where idPedido=" + idPedido;
                     objPersistence.ExecuteCommand(sessao, sql);
                 }
-
+               
                 // Atualiza o campo ValorComissao
                 sql = @"update pedido set valorComissao=total*coalesce(percComissao,0)/100 where idPedido=" + idPedido;
                 objPersistence.ExecuteCommand(sessao, sql);
@@ -10949,7 +10949,7 @@ namespace Glass.Data.DAL
                     }
                     GeraParcelaParceiro(sessao, ref ped);
                 }
-
+ 
                 if (criarLogDeAlteracao)
                     LogAlteracaoDAO.Instance.LogPedido(sessao, pedido, GetElementByPrimaryKey(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
             }
@@ -12017,7 +12017,8 @@ namespace Glass.Data.DAL
                 if (!alterado && PCPConfig.ControlarProducao)
                 {
                     //LogArquivo.InsereLogSitProdPedido("Não Alterado");
-                    situacao = !PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido) ? Pedido.SituacaoProducaoEnum.NaoEntregue : Pedido.SituacaoProducaoEnum.Pendente;
+                    situacao = !PedidoEspelhoDAO.Instance.IsPedidoImpresso(sessao, idPedido) ? Pedido.SituacaoProducaoEnum.NaoEntregue : Pedido.SituacaoProducaoEnum.Pendente;
+
                     objPersistence.ExecuteCommand(sessao, "update pedido set dataPronto=null where idPedido=" + idPedido);
                 }
 
@@ -14052,6 +14053,9 @@ namespace Glass.Data.DAL
                     {
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
+                   
+                    if(DateTime.Now > objUpdate.DataEntrega)
+                        throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());                   
 
                     // Atualiza a data de entrega do pedido.
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
@@ -14364,7 +14368,7 @@ namespace Glass.Data.DAL
                         {
                             AplicaAcrescimo(session, objUpdate.IdPedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, true);
                         }
-
+                        
                         PedidoEspelhoDAO.Instance.AplicaAcrescimo(session, objUpdate.IdPedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo);
                     }
 
@@ -14405,7 +14409,7 @@ namespace Glass.Data.DAL
                             objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
                     }
                 }
-
+                
                 #endregion
 
                 #region Atualização das parcelas do pedido
@@ -14416,7 +14420,7 @@ namespace Glass.Data.DAL
                     SalvarParcelas(session, objUpdate);
                 }
 
-                #endregion
+                #endregion                    
 
                 #region Atualização da obra
 
@@ -17737,28 +17741,12 @@ namespace Glass.Data.DAL
                 }
             }
 
-            #endregion
-
-            #region Atualização dos totais dos produtos do pedido
-
-            // Percorre cada produto, do pedido, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
-            foreach (var produtoPedido in produtosPedido)
-            {
-                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedido, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
-                {
-                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
-
-                    ProdutosPedidoDAO.Instance.RecalcularValores(session, produtoPedido, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
-                    ProdutosPedidoDAO.Instance.UpdateBase(session, produtoPedido, false);
-                }
-            }
-
-            #endregion
+            #endregion           
 
             #region Atualização dos totais do pedido espelho
 
-            AplicaComissaoDescontoAcrescimo(session, (uint)idPedido, idComissionado, percComissao, tipoAcrescimo, acrescimo, tipoDesconto, desconto, Geral.ManterDescontoAdministrador);
-            UpdateTotalPedido(session, (uint)idPedido, false, false, alterouDesconto);
+            AplicaComissaoDescontoAcrescimo(session, (uint)idPedido, idComissionado, percComissao, tipoAcrescimo, acrescimo, tipoDesconto, desconto, Geral.ManterDescontoAdministrador);            
+            UpdateTotalPedido(session, (uint)idPedido, false, false, alterouDesconto);          
 
             #endregion
         }
