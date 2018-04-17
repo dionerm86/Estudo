@@ -644,10 +644,8 @@ namespace Glass.PCP.Negocios.Entidades
         /// <returns></returns>
         public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
         {
-            // Verifica se o setor não for do tipo por beneficiamento
-            if (Tipo != Glass.Data.Model.TipoSetor.PorBenef)
-                // Limpa os beneficiamentos do setor
-                SetorBeneficiamentos.Clear();
+            // Limpa os beneficiamentos do setor
+            SetorBeneficiamentos.Clear();
 
             //So pode gerenciar a fornada se o setor for forno
             if (!Forno)

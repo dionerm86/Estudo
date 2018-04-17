@@ -56,7 +56,6 @@
             <asp:QueryStringParameter QueryStringField="situacao" Name="situacao" Type="String" />
             <asp:QueryStringParameter QueryStringField="situacaoProd" Name="situacaoProd" Type="String" />
             <asp:QueryStringParameter QueryStringField="ByVend" Name="byVend" Type="String" />
-            <asp:QueryStringParameter QueryStringField="ByConf" Name="byConf" Type="String" />
             <asp:QueryStringParameter QueryStringField="maoObra"  Name="maoObra" Type="String" />
             <asp:QueryStringParameter QueryStringField="maoObraEspecial" Name="maoObraEspecial" Type="String" />
             <asp:QueryStringParameter QueryStringField="producao" Name="producao" Type="String" />

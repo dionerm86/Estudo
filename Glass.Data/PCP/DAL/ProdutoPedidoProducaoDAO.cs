@@ -7536,13 +7536,12 @@ namespace Glass.Data.DAL
                 from setor s
                     left join leitura_producao lp on (lp.idProdPedProducao={0} and lp.idSetor=s.idSetor)
                     left join produto_pedido_producao ppp on (ppp.idProdPedProducao={0} and ppp.situacao={1})
-                where s.idSetor in ({2}) and s.tipo in ({3},{4})",
+                where s.idSetor in ({2}) and s.tipo in ({3})",
 
                 idProdPedProducao,
                 (int)ProdutoPedidoProducao.SituacaoEnum.Producao,
                 string.Join(",", setores.Select(x => x.IdSetor.ToString()).ToArray()),
-                (int)TipoSetor.PorRoteiro,
-                (int)TipoSetor.PorBenef);
+                (int)TipoSetor.PorRoteiro);
 
             return ExecuteScalar<int>(sessao, sql) == 1;
         }
@@ -7611,7 +7610,6 @@ namespace Glass.Data.DAL
                     break;
 
                 case TipoSetor.PorRoteiro:
-                case TipoSetor.PorBenef:
                     situacaoProducao = PecaEstaProntaRoteiro(sessao, idProdPedProducao, Utils.ObtemSetor(idSetor).NumeroSequencia == 1) ?
                         SituacaoProdutoProducao.Pronto :
                         SituacaoProdutoProducao.Pendente;

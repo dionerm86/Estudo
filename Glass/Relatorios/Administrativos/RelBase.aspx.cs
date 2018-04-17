@@ -152,16 +152,8 @@ namespace Glass.UI.Web.Relatorios.Administrativos
                     report.DataSources.Add(new ReportDataSource("GraficoProdutosImagem",
                         new GraficoProdutosImagem[1] {graficoProdutosImagem}));
 
-
                     break;
                 }
-                case "PedidoConferido":
-                    report.ReportPath = "Relatorios/Administrativos/rptPedidosConferidos.rdlc";
-                    var lstPedConf = PedidoConferidoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idLoja"]),
-                        Glass.Conversoes.StrParaUint(Request["idConferente"]), Glass.Conversoes.StrParaUint(Request["idFunc"]), Glass.Conversoes.StrParaInt(Request["situacao"]),
-                        Request["dataIni"], Request["dataFim"]);
-                    report.DataSources.Add(new ReportDataSource("PedidoConferido", lstPedConf));
-                    break;
                 case "ListaBenef":
                     report.ReportPath = "Relatorios/Administrativos/rptBeneficiamentos.rdlc";
                     uint Benef_IdFunc = Glass.Conversoes.StrParaUint(Request["idFunc"]);

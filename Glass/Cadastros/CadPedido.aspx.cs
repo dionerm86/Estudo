@@ -547,6 +547,9 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string VerificaDescontoFormaPagtoDadosProduto(string idPedido, string tipoVenda, string idFormaPagto, string idTipoCartao, string idParcela)
         {
+            if (string.IsNullOrEmpty(idPedido) || string.IsNullOrEmpty(idFormaPagto))
+                return "0";
+
             if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
             {
                 uint? _idGrupoProd = null;
@@ -1027,16 +1030,6 @@ namespace Glass.UI.Web.Cadastros
             int tipoEntrega = Conversoes.StrParaInt(((HiddenField)dtvPedido.FindControl("hdfTipoEntrega")).Value);
             uint idCliente = Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
             bool reposicao = bool.Parse(((HiddenField)dtvPedido.FindControl("hdfIsReposicao")).Value);
-
-            /* Chamado 71112*/
-            if (!String.IsNullOrEmpty(idAmbiente))
-            {
-                if (AmbientePedidoDAO.Instance.GetElement(Conversoes.StrParaUint(idAmbiente)) == null)
-                {
-                    Glass.MensagemAlerta.ShowMsg("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.", Page);
-                    return;
-                }
-            }
 
             // Cria uma instância do ProdutosPedido
             ProdutosPedido prodPed = new ProdutosPedido();

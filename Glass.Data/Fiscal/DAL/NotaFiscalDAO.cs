@@ -1493,7 +1493,6 @@ namespace Glass.Data.DAL
             nf.FormaPagto = tipoCompra;
             if (!String.IsNullOrEmpty(nomeCidadeLoja)) nf.MunicOcor = nomeCidadeLoja;
             nf.ModalidadeFrete = ModalidadeFrete.ContaDoDestinatario; // Por conta do destinatário
-            nf.MovItens = true;
             nf.PeriodoApuracaoIpi = (int)FiscalConfig.NotaFiscalConfig.PeriodoApuracaoIpi;
             nf.OutrasDespesas = compras.Sum(x => x.OutrasDespesas);
             nf.GerarContasPagar = FinanceiroConfig.SepararValoresFiscaisEReaisContasPagar;

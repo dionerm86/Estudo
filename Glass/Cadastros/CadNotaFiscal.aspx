@@ -1894,8 +1894,6 @@
                                                 <asp:CheckBox ID="chkGerarEstoqueReal" runat="server" Checked='<%# Bind("GerarEstoqueReal") %>'
                                                     Style="padding-right: 8px" OnLoad="GerarEstoqueReal_Load" Text="Gerar estoque real?" />
                                             </span>
-                                            <asp:CheckBox ID="chkMovItens" runat="server" Checked='<%# Bind("MovItens") %>' OnLoad="EntradaTerceiros_Load"
-                                                Text="Movimenta Itens?" />
                                              <asp:CheckBox ID="chkGerarEtiqueta" runat="server" Checked='<%# Bind("GerarEtiqueta") %>' OnLoad="chkGerarEtiqueta_Load"
                                                 Text="Gerar etiqueta de nota fiscal?" />
                                         </td>
@@ -2594,8 +2592,6 @@
                                                 Checked='<%# Bind("GerarContasPagar") %>' Text="Gerar contas a pagar?" Style="padding-right: 8px" />
                                             <asp:CheckBox ID="chkGerarEstoqueReal" runat="server" Checked='<%# Bind("GerarEstoqueReal") %>'
                                                 OnLoad="GerarEstoqueReal_Load" Text="Gerar estoque real?" Style="padding-right: 8px" />
-                                            <asp:CheckBox ID="chkMovItens" runat="server" Checked='<%# Bind("MovItens") %>' OnLoad="EntradaTerceiros_Load"
-                                                Text="Movimenta Itens?" />
                                             <asp:CheckBox ID="chkGerarEtiqueta" runat="server" Checked='<%# Bind("GerarEtiqueta") %>' OnLoad="chkGerarEtiqueta_Load"
                                                 Text="Gerar etiqueta de nota fiscal?" />
                                         </td>
@@ -3075,8 +3071,7 @@
                                                 Visible='<%# (bool)Eval("Transporte") || (bool)Eval("Complementar") || (bool)Eval("Servico") %>'></asp:Label></td>
                                                     <td><asp:Label ID="Label16" runat="server" Font-Bold="False" ForeColor="Blue" Style="padding-right: 8px"
                                                 OnLoad="EntradaTerceiros_Load" Text='<%# Eval("DescrGerarContasPagar") %>'></asp:Label></td>
-                                                    <td><asp:Label ID="Label25" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
-                                                Text='<%# (bool)Eval("MovItens") ? "Movimentar Itens" : "" %>'></asp:Label></td>
+                                                    <td></td>
                                                     <td><asp:Label ID="lblGerarEtiqueta" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
                                                 Text='<%# (bool)Eval("GerarEtiqueta") ? "Gerar etiqueta de nota fiscal" : "" %>'></asp:Label></td>
                                                     <td><asp:Label ID="lblGerarEstoqueReal" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
