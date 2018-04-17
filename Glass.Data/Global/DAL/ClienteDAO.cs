@@ -3090,10 +3090,10 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var idFunc = UserInfo.GetUserInfo.CodUser;
+                    //var idFunc = UserInfo.GetUserInfo.CodUser;
 
-                    if (idFunc == 0)
-                        throw new Exception("Falha ao alterar situação do cliente, funcionário da alteração nulo.");
+                    //if (idFunc == 0)
+                    //    throw new Exception("Falha ao alterar situação do cliente, funcionário da alteração nulo.");
 
                     if (string.IsNullOrWhiteSpace(idsCliente))
                         throw new Exception("Falha ao alterar situação do cliente, nenhum cliente foi informado.");
@@ -3103,7 +3103,7 @@ namespace Glass.Data.DAL
 
                     var situacaoStr = string.Format("{0} - {1}", situacao.Translate().Format(), motivo);
 
-                    LogAlteracaoDAO.Instance.LogSituacaoCliente(transaction, idFunc, situacaoStr, idsCliente);
+                    LogAlteracaoDAO.Instance.LogSituacaoCliente(transaction, situacaoStr, idsCliente);
 
                     objPersistence.ExecuteCommand(transaction, string.Format("UPDATE cliente SET Situacao = {0}, Obs=IF(INSTR(COALESCE(Obs, ''), '{1}') > 0, Obs, CONCAT(COALESCE(Obs, ''), ' {1}')) WHERE Id_Cli IN ({2})",
                         (int)situacao, motivo, idsCliente));
