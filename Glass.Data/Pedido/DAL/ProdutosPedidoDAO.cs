@@ -4176,7 +4176,7 @@ namespace Glass.Data.DAL
             /* Chamado 71112*/
             if (objInsert.IdAmbientePedido > 0)
             {
-                if (!AmbientePedidoDAO.Instance.Exists(objInsert.IdAmbientePedido.GetValueOrDefault()))
+                if (!AmbientePedidoDAO.Instance.Exists(session, objInsert.IdAmbientePedido.GetValueOrDefault()))
                     throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
             }
 
@@ -4722,7 +4722,7 @@ namespace Glass.Data.DAL
                 /* Chamado 71112*/
                 if (objUpdate.IdAmbientePedido > 0)
                 {
-                    if (!AmbientePedidoDAO.Instance.Exists(objUpdate.IdAmbientePedido.GetValueOrDefault()))
+                    if (!AmbientePedidoDAO.Instance.Exists(sessao, objUpdate.IdAmbientePedido.GetValueOrDefault()))
                         throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
                 }
 

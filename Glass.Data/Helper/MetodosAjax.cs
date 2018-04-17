@@ -164,7 +164,7 @@ namespace Glass.Data.Helper
                 {
                     string nome = FornecedorDAO.Instance.GetNome(id);
                     uint? idConta = FornecedorDAO.Instance.ObtemIdConta(null, id);
-                    return "Ok;" + nome + ";" + ParcelasDAO.Instance.GetNumParcByFornecedor(id).ToString() + ";" + idConta;
+                    return "Ok;" + nome + ";999;" + idConta;
                 }
             }
             catch
@@ -212,7 +212,7 @@ namespace Glass.Data.Helper
                 {
                     string nome = FornecedorDAO.Instance.GetNome(id);
                     uint? idConta = FornecedorDAO.Instance.ObtemIdConta(null, id);
-                    return "Ok;" + nome + ";" + ParcelasDAO.Instance.GetNumParcByFornecedor(id).ToString() + ";" + idConta;
+                    return "Ok;" + nome + ";999;" + idConta;
                 }
             }
             catch
