@@ -17726,15 +17726,6 @@ namespace Glass.Data.DAL
             var tipoDesconto = 0;
 
             #endregion
-
-            #region Validações
-
-            if ((produtosPedido?.Count()).GetValueOrDefault() == 0)
-            {
-                return;
-            }
-
-            #endregion
             
             #region Remoção do acréscimo, comissão e desconto
 
@@ -17745,7 +17736,7 @@ namespace Glass.Data.DAL
 
             #region Atualização dos itens de projeto
 
-            itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, (uint)idPedido).ToList();
+            itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, (uint)idPedido)?.ToList();
 
             // Marca os projetos como não conferido, pois é mais complicado recalcular os projetos.
             foreach (var itemProjeto in itensProjeto)
@@ -17767,7 +17758,7 @@ namespace Glass.Data.DAL
 
             #region Atualização dos totais dos produtos do pedido
 
-            produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedido).ToList();
+            produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedido)?.ToList();
 
             // Percorre cada produto, do pedido, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
             foreach (var produtoPedido in produtosPedido)
