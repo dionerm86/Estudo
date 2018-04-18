@@ -12019,7 +12019,19 @@ namespace Glass.Data.DAL
                 if (!alterado && PCPConfig.ControlarProducao)
                 {
                     //LogArquivo.InsereLogSitProdPedido("Não Alterado");
-                    situacao = !PedidoEspelhoDAO.Instance.IsPedidoImpresso(sessao, idPedido) ? Pedido.SituacaoProducaoEnum.NaoEntregue : Pedido.SituacaoProducaoEnum.Pendente;
+
+                    if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido))
+                    {
+                        var situacaoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(sessao, idPedido);
+
+                        if(situacaoEspelho == PedidoEspelho.SituacaoPedido.Aberto || situacaoEspelho == PedidoEspelho.SituacaoPedido.Cancelado ||
+                           situacaoEspelho == PedidoEspelho.SituacaoPedido.Processando)
+                            situacao = Pedido.SituacaoProducaoEnum.NaoEntregue;
+                        else
+                            situacao = Pedido.SituacaoProducaoEnum.Pendente;
+                    }
+                    else
+                        situacao = Pedido.SituacaoProducaoEnum.NaoEntregue;
 
                     objPersistence.ExecuteCommand(sessao, "update pedido set dataPronto=null where idPedido=" + idPedido);
                 }
@@ -13805,9 +13817,9 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
-
+                    
                     UpdateDesconto(transaction, objUpdate, true);
-
+            
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -17704,8 +17716,8 @@ namespace Glass.Data.DAL
         {
             #region Declaração de variáveis
 
-            var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedido).ToArray();
-            var itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, (uint)idPedido);
+            var produtosPedido = new List<ProdutosPedido>();
+            var itensProjeto = new List<ItemProjeto>(); 
             decimal acrescimo = 0;
             decimal desconto = 0;
             uint? idComissionado = null;
@@ -17733,6 +17745,8 @@ namespace Glass.Data.DAL
 
             #region Atualização dos itens de projeto
 
+            itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, (uint)idPedido).ToList();
+
             // Marca os projetos como não conferido, pois é mais complicado recalcular os projetos.
             foreach (var itemProjeto in itensProjeto)
             {
@@ -17749,7 +17763,25 @@ namespace Glass.Data.DAL
                 }
             }
 
-            #endregion           
+            #endregion
+
+            #region Atualização dos totais dos produtos do pedido
+
+            produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, (uint)idPedido).ToList();
+
+            // Percorre cada produto, do pedido, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
+            foreach (var produtoPedido in produtosPedido)
+            {
+                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedido, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
+                {
+                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
+
+                    ProdutosPedidoDAO.Instance.RecalcularValores(session, produtoPedido, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
+                    ProdutosPedidoDAO.Instance.UpdateBase(session, produtoPedido, false);
+                }
+            }
+
+            #endregion
 
             #region Atualização dos totais do pedido espelho
 

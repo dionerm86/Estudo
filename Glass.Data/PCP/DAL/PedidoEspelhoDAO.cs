@@ -4544,8 +4544,8 @@ namespace Glass.Data.DAL
         {
             #region Declaração de variáveis
 
-            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)idPedido, false).ToArray();
-            var itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)idPedido);
+            var produtosPedidoEspelho = new List<ProdutosPedidoEspelho>();
+            var itensProjeto = new List<ItemProjeto>();
             decimal acrescimo = 0;
             decimal desconto = 0;
             float percComissao = 0;
@@ -4572,6 +4572,8 @@ namespace Glass.Data.DAL
 
             #region Atualização dos itens de projeto
 
+            itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)idPedido).ToList();
+
             foreach (var itemProjeto in itensProjeto)
             {
                 var idAmbientePedidoEspelho = AmbientePedidoEspelhoDAO.Instance.GetIdByItemProjeto(session, itemProjeto.IdItemProjeto);
@@ -4584,6 +4586,24 @@ namespace Glass.Data.DAL
                 if (itemProjetoConferido)
                 {
                     ItemProjetoDAO.Instance.CalculoConferido(session, itemProjeto.IdItemProjeto);
+                }
+            }
+
+            #endregion
+
+            #region Atualização dos totais dos produtos do pedido espelho
+
+            produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)idPedido, false).ToList();
+
+            // Percorre cada produto, do pedido espelho, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
+            foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
+            {
+                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedidoEspelho, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
+                {
+                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
+
+                    ProdutosPedidoEspelhoDAO.Instance.RecalcularValores(session, produtoPedidoEspelho, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
+                    ProdutosPedidoEspelhoDAO.Instance.UpdateCompleto(session, produtoPedidoEspelho, true, false);
                 }
             }
 
