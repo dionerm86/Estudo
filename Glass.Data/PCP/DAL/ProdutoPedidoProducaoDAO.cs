@@ -3869,11 +3869,19 @@ namespace Glass.Data.DAL
                     {
                         /* Chamado 49829. */
                         var idLojaChapa = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                        var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
 
-                        if (Geral.ConsiderarLojaClientePedidoFluxoSistema)
+                        if (Geral.ConsiderarLojaClientePedidoFluxoSistema && !EstoqueConfig.EntradaEstoqueManual)
                         {
-                            var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
                             idLojaChapa = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
+                        }
+                        /* Chamado 71268. */
+                        else if (EstoqueConfig.EntradaEstoqueManual)
+                        {
+                            //Verifica se a chapa teve entrada e recupera a loja que foi feito a movimentação pois a loja que deu entrada manual pode não ser é a mesma da nota fiscal
+                            var idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao, string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2}",
+                                idNf.GetValueOrDefault(0), idProdBaixa, (int)MovEstoque.TipoMovEnum.Entrada));
+                            idLojaChapa = idLojaMovEstoque ?? NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
                         }
 
                         /* Chamado 63113.
