@@ -181,10 +181,6 @@ namespace Glass.Data.Model
         [PersistenceProperty("TIPOPAGTO")]
         public int? TipoPagto { get; set; }
 
-        [Log("Bloquear Pagamento")]
-        [PersistenceProperty("BLOQUEARPAGTO")]
-        public bool BloquearPagto { get; set; }
-
         /// <summary>
         /// Define o endereço do web service do cliente
         /// </summary>

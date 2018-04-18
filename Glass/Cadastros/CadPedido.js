@@ -1391,6 +1391,8 @@ function validarProduto() {
         var_SaveProdClicked = resultadoVerificacaoObrigatoriedade;
         return resultadoVerificacaoObrigatoriedade;
     }
+
+    return true;
 }
 
 // Chamado quando um produto está para ser inserido no pedido

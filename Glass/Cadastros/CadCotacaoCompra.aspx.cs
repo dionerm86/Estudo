@@ -184,13 +184,6 @@ namespace Glass.UI.Web.Cadastros
             (ctrl.CampoDataBase as HiddenField).Value = DateTime.Now.ToString("dd/MM/yyyy");
         }
     
-        protected void hdfNumParcFornec_Load(object sender, EventArgs e)
-        {
-            HiddenField fornec = (sender as HiddenField).Parent.Parent.FindControl("hdfCodigoFornecedor") as HiddenField;
-            if (!String.IsNullOrEmpty(fornec.Value))
-                (sender as HiddenField).Value = ParcelasDAO.Instance.GetNumParcByFornecedor(Glass.Conversoes.StrParaUint(fornec.Value)).ToString();
-        }
-    
         /// <summary>
         /// Calcula o Metro quadrado do produto em tempo real utilizando 3 casas decimais
         /// </summary>

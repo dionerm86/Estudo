@@ -1540,23 +1540,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se há bloqueio de forma de pagamento
-
-        /// <summary>
-        /// Verifica se um cliente tem as formas de pagamento bloqueadas.
-        /// </summary>
-        /// <param name="idCliente"></param>
-        /// <returns></returns>
-        public bool IsBloquearPagto(uint idCliente)
-        {
-            string sql = "select bloquearPagto from cliente where id_Cli=" + idCliente;
-            object retorno = objPersistence.ExecuteScalar(sql);
-
-            return retorno != null && retorno != DBNull.Value && Convert.ToBoolean(retorno);
-        }
-
-        #endregion
-
         #region Verifica se o cliente paga ICMS
 
         public bool IsCobrarIcmsSt(uint idCliente)

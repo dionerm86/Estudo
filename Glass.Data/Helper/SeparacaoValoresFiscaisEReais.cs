@@ -189,7 +189,7 @@ namespace Glass.Data.Helper
                     if (FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip && valoresAntecipados.Sum(x => x.Valor) > 0)
                         throw new Exception("Um ou mais pedidos da liberação associada à nota fiscal possuem valores recebidos, portanto, a separação não pode ser feita.");
 
-                    NotaFiscalDAO.Instance.ReferenciaPedidosAntecipados(null,NotaFiscalDAO.Instance.GetElementByPrimaryKey(IdNf));
+                    NotaFiscalDAO.Instance.ReferenciaPedidosAntecipados(session, NotaFiscalDAO.Instance.GetElementByPrimaryKey(session, IdNf));
 
                     /* Chamado 68466. */
                     if ((valorFiscal - valoresAntecipados.Sum(x => x.Valor)) <= TOLERANCIA_SEPARACAO)

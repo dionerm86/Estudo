@@ -646,7 +646,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Pagto." SortExpression="TipoPagto">
                             <EditItemTemplate>
-                                <uc1:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server"  IdFornec='<%# Bind("IdFornec") %>'  BloquearPagto='<%# Bind("BloquearPagto") %>'
+                                <uc1:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" IdFornec='<%# Bind("IdFornec") %>' 
                                     ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>

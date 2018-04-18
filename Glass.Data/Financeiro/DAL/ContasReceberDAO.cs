@@ -3154,11 +3154,11 @@ namespace Glass.Data.DAL
             {
                 #region Recebimento integral
 
-                if (idsFormaPagamento.Count() != 0)
+                foreach (var contaReceber in contasReceber?.Where(f => !f.Recebida).ToList())
                 {
-                    foreach (var contaReceber in contasReceber?.Where(f => !f.Recebida).ToList())
+                    // Seleciona a próxima forma de pagamento válida
+                    if (idsFormaPagamento.Count() > 0)
                     {
-                        // Seleciona a próxima forma de pagamento válida
                         while (idsFormaPagamento.ElementAtOrDefault(++contadorPagamento % idsFormaPagamento.Count()) == 0)
                         {
                             if (contadorPagamento >= idsFormaPagamento.Count())
@@ -3166,36 +3166,36 @@ namespace Glass.Data.DAL
                                 contadorPagamento = -1;
                                 break;
                             }
-                        }
-
-                        if (contadorPagamento > -1)
-                        {
-                            contadorPagamento = contadorPagamento % idsFormaPagamento.Count();
-                        }
-
-                        // Atualiza esta conta a receber.
-                        contaReceber.UsuRec = usuarioLogado.CodUser;
-                        contaReceber.ValorRec = contaReceber.ValorVec;
-                        contaReceber.Recebida = true;
-                        contaReceber.IdConta = contadorPagamento > -1 ?
-                            (uint?)(idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Cartao ?
-                                UtilsPlanoConta.GetPlanoRecebTipoCartao((uint?)idsTipoCartao.ElementAtOrDefault(contadorPagamento) ?? 0) :
-                                idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Boleto ?
-                                    UtilsPlanoConta.GetPlanoRecebTipoBoleto((uint?)tiposBoleto.ElementAtOrDefault(contadorPagamento) ?? 0) :
-                                    UtilsPlanoConta.GetPlanoReceb((uint?)idsFormaPagamento.ElementAtOrDefault(contadorPagamento) ?? 0)) :
-                                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
-                        contaReceber.IdAcerto = acerto.IdAcerto;
-                        contaReceber.DataRec = acerto.DataRecebimento.GetValueOrDefault(DateTime.Now);
-
-                        if (contaReceber.DataRec.Value.Hour == 0)
-                        {
-                            contaReceber.DataRec.Value.AddHours(DateTime.Now.Hour);
-                            contaReceber.DataRec.Value.AddMinutes(DateTime.Now.Minute);
-                            contaReceber.DataRec.Value.AddSeconds(DateTime.Now.Hour);
-                        }
-
-                        Update(session, contaReceber);
+                        } 
                     }
+
+                    if (contadorPagamento > -1)
+                    {
+                        contadorPagamento = contadorPagamento % idsFormaPagamento.Count();
+                    }
+
+                    // Atualiza esta conta a receber.
+                    contaReceber.UsuRec = usuarioLogado.CodUser;
+                    contaReceber.ValorRec = contaReceber.ValorVec;
+                    contaReceber.Recebida = true;
+                    contaReceber.IdConta = contadorPagamento > -1 ?
+                        (uint?)(idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Cartao ?
+                            UtilsPlanoConta.GetPlanoRecebTipoCartao((uint?)idsTipoCartao.ElementAtOrDefault(contadorPagamento) ?? 0) :
+                            idsFormaPagamento.ElementAtOrDefault(contadorPagamento) == (uint)Pagto.FormaPagto.Boleto ?
+                                UtilsPlanoConta.GetPlanoRecebTipoBoleto((uint?)tiposBoleto.ElementAtOrDefault(contadorPagamento) ?? 0) :
+                                UtilsPlanoConta.GetPlanoReceb((uint?)idsFormaPagamento.ElementAtOrDefault(contadorPagamento) ?? 0)) :
+                                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecPrazoCredito);
+                    contaReceber.IdAcerto = acerto.IdAcerto;
+                    contaReceber.DataRec = acerto.DataRecebimento.GetValueOrDefault(DateTime.Now);
+
+                    if (contaReceber.DataRec.Value.Hour == 0)
+                    {
+                        contaReceber.DataRec.Value.AddHours(DateTime.Now.Hour);
+                        contaReceber.DataRec.Value.AddMinutes(DateTime.Now.Minute);
+                        contaReceber.DataRec.Value.AddSeconds(DateTime.Now.Hour);
+                    }
+
+                    Update(session, contaReceber);
                 }
 
                 #endregion

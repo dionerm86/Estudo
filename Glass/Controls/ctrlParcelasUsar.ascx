@@ -18,7 +18,7 @@
                         </asp:CheckBoxList>
                     </td>
                     <td nowrap="nowrap" style="padding-left: 3px">
-                        <asp:CheckBox ID="chkBloquearPagto" runat="server" Text="Bloquear parcelas?" />
+                        
                     </td>
                 </tr>
             </table>

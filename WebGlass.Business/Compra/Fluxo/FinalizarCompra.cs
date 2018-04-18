@@ -22,12 +22,6 @@ namespace WebGlass.Business.Compra.Fluxo
                 pagtoFornecedor = ParcelasDAO.Instance.GetCountByFornecedor(compra.IdFornec.GetValueOrDefault(), ParcelasDAO.TipoConsulta.Prazo);
                 if (pagtoFornecedor == 0 && compra.TipoCompra != (int)Glass.Data.Model.Compra.TipoCompraEnum.AVista)
                     throw new Exception("Esse fornecedor aceita apenas compras à vista.");
-                else
-                {
-                    pagtoFornecedor = ParcelasDAO.Instance.GetNumParcByFornecedor(compra.IdFornec.GetValueOrDefault());
-                    if (pagtoFornecedor < compra.NumParc)
-                        throw new Exception("Esse fornecedor aceita apenas " + pagtoFornecedor + " parcela(s).");
-                }
             }
 
             // Se for compra à prazo

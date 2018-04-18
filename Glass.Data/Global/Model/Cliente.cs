@@ -416,10 +416,6 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(Parcelas), "IdParcela")]
         public int? TipoPagto { get; set; }
 
-        [Log("Bloquear Pagamento")]
-        [PersistenceProperty("BLOQUEARPAGTO")]
-        public bool BloquearPagto { get; set; }
-
         [Log("Cobrar ICMS ST")]
         [PersistenceProperty("COBRARICMSST")]
         public bool CobrarIcmsSt { get; set; }

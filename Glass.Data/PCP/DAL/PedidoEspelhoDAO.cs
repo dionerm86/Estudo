@@ -4589,22 +4589,6 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Atualização dos totais dos produtos do pedido espelho
-
-            // Percorre cada produto, do pedido espelho, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
-            foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
-            {
-                if (ProdutoDAO.Instance.VerificarAtualizarValorTabelaProduto(session, idClienteAntigo, idClienteNovo, idPedido, produtoPedidoEspelho, tipoEntregaAntigo, tipoEntregaNovo, tipoVenda))
-                {
-                    var tipoEntregaCalculo = tipoEntregaNovo == 0 ? (int)Pedido.TipoEntregaPedido.Balcao : tipoEntregaNovo;
-
-                    ProdutosPedidoEspelhoDAO.Instance.RecalcularValores(session, produtoPedidoEspelho, (uint)idClienteNovo, tipoEntregaCalculo, false, (Pedido.TipoVendaPedido?)tipoVenda);
-                    ProdutosPedidoEspelhoDAO.Instance.UpdateBase(session, produtoPedidoEspelho);
-                }
-            }
-
-            #endregion
-
             #region Atualização dos totais do pedido espelho
 
             AplicaComissaoDescontoAcrescimo(session, (uint)idPedido, percComissao, tipoAcrescimo, acrescimo, tipoDesconto, desconto);
