@@ -34,6 +34,11 @@ function confirmDelete(numItens)
             return false;
 }
 
+function openRptProj(idProjeto) {
+    openWindow(600, 800, "../Cadastros/Projeto/ImprimirProjeto.aspx?idProjeto=" + idProjeto);
+    return false;
+}
+
     </script>
 
     <table>
@@ -93,6 +98,9 @@ function confirmDelete(numItens)
                                 <asp:LinkButton ID="lnkExcluir" CommandName="Delete" runat="server" Visible='<%# Eval("DeleteVisible") %>'
                                     OnClientClick='<%# "return confirmDelete(" + Eval("NumeroItensProjeto") + ")" %>'>
                                     <img border="0" src="../Images/ExcluirGrid.gif" /></asp:LinkButton>
+                                <asp:PlaceHolder ID="pchImprProj" runat="server" Visible='<%# (int)Eval("TipoVenda") == 1 && (int)Eval("NumeroItensProjeto") > 0 %>'>
+                                    <a href="#" onclick="openRptProj('<%# Eval("IdProjeto") %>');">
+                                        <img border="0" src="../Images/clipboard.gif" title="Projeto" /></a> </asp:PlaceHolder>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
