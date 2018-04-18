@@ -16583,6 +16583,9 @@ namespace Glass.Data.DAL
                         if (OrcamentoConfig.NegociarParcialmente && !produtosOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
                             throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
 
+                        if (orcamento.TipoVenda == null && PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+                            throw new Exception("Selecione tipo de venda para este orçamento antes de gerar pedido.");
+
                         // Verifica se o vendedor do orçamento foi selecionado.
                         if (orcamento.IdFuncionario.GetValueOrDefault() == 0)
                             throw new Exception("Selecione um vendedor para este orçamento antes de gerar pedido.");
