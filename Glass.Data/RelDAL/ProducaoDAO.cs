@@ -74,6 +74,8 @@ namespace Glass.Data.RelDAL
             int idLiberarPedido, int idPedido, int idPedidoImportado, int idSetor, int idSubgrupo, int largura, string nomeCliente, bool pecasCanceladas, bool selecionar, bool setoresAnteriores,
             bool setoresPosteriores, int situacao, int tipoEntrega, IEnumerable<int> tiposPedido)
         {
+            #region Declaração de variáveis
+
             var filtro = string.Empty;
             var filtroInterno = string.Empty;
             var criterio = string.Empty;
@@ -81,6 +83,10 @@ namespace Glass.Data.RelDAL
             var camposUnion = string.Empty;
             var sql = string.Empty;
             var temp = new ProdutoPedidoProducao();
+
+            #endregion
+
+            #region Filtros
 
             if (idCarregamento > 0)
             {
@@ -405,6 +411,10 @@ namespace Glass.Data.RelDAL
                 criterio += string.Format("Largura da peça: {0}    ", largura);
             }
 
+            #endregion
+
+            #region Consulta
+
             camposUnion = selecionar ? @"ppp1.IdProdPedProducao, NULL AS IdSetor, s1.Tipo AS TipoSetor, (SELECT MAX(NumSeq)+2 FROM setor) AS NumSeqSetor, 'Prev. Entrega' AS NomeSetor,
                 ppp1.SituacaoProducao, CONCAT(DATE_FORMAT(ped1.DataEntrega, '%d-%m-%Y'), IF(ped1.DataEntregaOriginal IS NOT NULL AND ped1.DataEntrega<>ped1.DataEntregaOriginal,
                 CONCAT(' (', DATE_FORMAT(ped1.DataEntregaOriginal, '%d-%m-%Y'), ')'), '')) AS DataSetor, ped1.IdFunc, ped1.IdPedido" : "ppp1.IdProdPedProducao, ppe.IdPedido, NULL AS IdSetor";
@@ -436,7 +446,9 @@ namespace Glass.Data.RelDAL
 
             sql = string.Format(sql, filtro, filtroInterno);
             sql = !selecionar ? string.Format("SELECT COUNT(*) FROM ({0}) AS temp", sql) : sql;
-            
+
+            #endregion
+
             return sql.Replace("$$$", criterio);
         }
         

@@ -2360,11 +2360,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// SQL da consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
         /// </summary>
-        internal string SqlProdutosProducaoFilho(int idProdPedProducaoParent, bool selecionar, out string filtroAdicional)
+        internal string SqlProdutosProducaoFilho(int idProdPedProducaoParent, bool selecionar)
         {
             #region Declaração de variáveis
 
-            filtroAdicional = string.Empty;
             var campos = string.Empty;
             var sql = string.Empty;
 
@@ -2374,7 +2373,7 @@ namespace Glass.Data.DAL
 
             campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.Situacao, ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta,
                     pp.IdPedido, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao, ppp.Obs,
-                    ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, p.CodInterno, CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', ''))) AS DescrProduto,
+                    ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, p.CodInterno, CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', '')) AS DescrProduto,
                     IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                     IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
                     apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso",
@@ -2388,19 +2387,18 @@ namespace Glass.Data.DAL
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                     LEFT JOIN etiqueta_aplicacao apl ON (if(ped.tipoPedido={1}, a.idAplicacao, pp.idAplicacao) = apl.idAplicacao)
                     LEFT JOIN etiqueta_processo prc ON (if(ped.tipoPedido={1}, a.idProcesso, pp.idProcesso) = prc.idProcesso)
-                WHERE 1 ?filtroAdicional?",
+                WHERE 1",
                 campos, (int)Pedido.TipoPedidoEnum.MaoDeObra);
 
             #endregion
 
             #region Filtros
 
-            filtroAdicional += string.Format(" AND pp.IdProdPedParent IS NOT NULL AND ppp.Situacao IN ({2}, {3})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao,
-                (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+            sql += string.Format(" AND pp.IdProdPedParent IS NOT NULL AND ppp.Situacao IN ({0}, {1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
 
             if (idProdPedProducaoParent > 0)
             {
-                filtroAdicional += string.Format(" AND ppp.IdProdPedProducaoParent={0}", idProdPedProducaoParent);
+                sql += string.Format(" AND ppp.IdProdPedProducaoParent={0}", idProdPedProducaoParent);
             }
 
             #endregion
@@ -2413,25 +2411,20 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
         {
-            var filtroAdicional = string.Empty;
             var sql = string.Empty;
-            var sort = string.Empty;
             var numeroRegistros = 0;
             ProdutoPedidoProducao[] produtosPedidoProducao;
 
             // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
-            if (ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao && idProdPedProducaoParent <= 0)
+            if (idProdPedProducaoParent <= 0)
             {
                 return new List<ProdutoPedidoProducao>();
             }
+            
+            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
+                !string.IsNullOrEmpty(sortExpression), out numeroRegistros)).ToArray();
 
-            sql = SqlProdutosProducaoFilho(idProdPedProducaoParent, true, out filtroAdicional).Replace(FILTRO_ADICIONAL, filtroAdicional);
-            sort = GetListaConsultaSort(0, string.Empty, "0", sortExpression, true, ref filtroAdicional);
-            sql = GetSqlWithLimit(sql, sort, 0, pageSize, "ppp", filtroAdicional, false, !string.IsNullOrEmpty(sortExpression), out numeroRegistros);
-
-            produtosPedidoProducao = objPersistence.LoadData(sql).ToArray();
-
-            SetInfoPaging(sort, 0, pageSize);
+            SetInfoPaging(sortExpression, 0, pageSize);
             GetSetores(ref produtosPedidoProducao);
             GetNumChapaCorte(ref produtosPedidoProducao);
 
@@ -2443,17 +2436,13 @@ namespace Glass.Data.DAL
         /// </summary>
         public int PesquisarProdutosProducaoFilhoCount(int idProdPedProducaoParent)
         {
-            var temFiltro = false;
-            var filtroAdicional = string.Empty;
-
-            if (ProducaoConfig.TelaConsulta.TelaVaziaPorPadrao && idProdPedProducaoParent <= 0)
+            if (idProdPedProducaoParent <= 0)
             {
                 return 10000;
             }
 
             // Fica muito mais rápido sem usar a otimização (GetCountWithInfoPaging())
-            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoFilho(idProdPedProducaoParent, false, out filtroAdicional)
-                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : string.Empty));
+            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoFilho(idProdPedProducaoParent, false));
         }
 
         #endregion
@@ -2479,7 +2468,7 @@ namespace Glass.Data.DAL
             #region Consulta
 
             campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, s.Descricao AS DescrSetor, CONCAT(p.Descricao,
-                IF(pp.Redondo AND {0}, ' REDONDO', ''))) AS DescrProduto, IF(ped.TipoPedido={1}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
+                IF(pp.Redondo AND {0}, ' REDONDO', '')) AS DescrProduto, IF(ped.TipoPedido={1}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                 IF(ped.TipoPedido={1}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
                 ROUND(IF(ped.TipoPedido={1}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
                     ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, pp.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={1}, a.Qtde, 1)), 4) AS TotM2",
@@ -2542,18 +2531,22 @@ namespace Glass.Data.DAL
                 if (situacao == 1 || situacao == 2)
                 {
                     sql += string.Format(" AND ppp.Situacao={0}", situacao.Value);
+                    temFiltro = true;
                 }
                 else if (situacao == 3)
                 {
                     sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                    temFiltro = true;
                 }
                 else if (situacao == 4)
                 {
                     sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                    temFiltro = true;
                 }
                 else if (situacao == 5)
                 {
                     sql += string.Format(" AND ppp.SituacaoProducao={0} AND ppp.Situacao={1}", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                    temFiltro = true;
                 }
             }
 
@@ -2673,12 +2666,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// SQL da consulta que retorna os produtos de produção para a tela de marcação de peça pronta.
         /// </summary>
-        internal string SqlProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, out string filtroAdicional, int idPedido, int idSetor, bool perda, bool selecionar, out bool temFiltro)
+        internal string SqlProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, int idPedido, int idSetor, bool perda, bool selecionar)
         {
             #region Declaração de variáveis
-
-            temFiltro = !selecionar;
-            filtroAdicional = string.Empty;
+            
             // Mostra as peças em todos os setores, se for marcação de perda.
             idSetor = perda ? 0 : idSetor;
             var situacao = perda ? ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString() : null;
@@ -2693,7 +2684,7 @@ namespace Glass.Data.DAL
             campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.NumEtiqueta, ppp.IdProdPed,
                 IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                 IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF(pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
-                CONCAT(p.Descricao, IF(pp.Redondo AND {1}, ' REDONDO', ''))) AS DescrProduto,
+                CONCAT(p.Descricao, IF(pp.Redondo AND {1}, ' REDONDO', '')) AS DescrProduto,
                 ROUND(IF(ped.TipoPedido={0}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
                     ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) *
                     a.Qtde, pp.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={0}, a.Qtde, 1)), 4) AS TotM2,
@@ -2707,8 +2698,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                     LEFT JOIN setor s ON (ppp.IdSetor = s.IdSetor)
-                WHERE 1 ?filtroAdicional?",
-                campos, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                WHERE ppp.Situacao IN ({1}, {2})", campos, (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
 
             #endregion
 
@@ -2733,19 +2723,17 @@ namespace Glass.Data.DAL
                 }
 
                 sql += ")";
-
-                temFiltro = true;
             }
 
             if (!string.IsNullOrEmpty(codigoEtiqueta))
             {
-                var idProdPedProducao = ObtemIdProdPedProducao(codigoEtiqueta) ?? ObtemIdProdPedProducaoCanc(null, codigoEtiqueta);
-                filtroAdicional += idProdPedProducao > 0 ? string.Format(" AND ppp.IdProdPedProducao={0}", idProdPedProducao) : " AND FALSE";
+                var idProdPedProducao = ObtemIdProdPedProducao(null, codigoEtiqueta) ?? ObtemIdProdPedProducaoCanc(null, codigoEtiqueta);
+                sql += idProdPedProducao > 0 ? string.Format(" AND ppp.IdProdPedProducao={0}", idProdPedProducao) : " AND 0=1";
             }
 
             if (!string.IsNullOrEmpty(situacao))
             {
-                var where = " AND (0";
+                var filtroSituacao = " AND (0";
                 var situacoes = new List<string>(situacao.Split(','));
 
                 foreach (var s in situacoes)
@@ -2755,59 +2743,46 @@ namespace Glass.Data.DAL
                         case "1":
                         case "2":
                             {
-                                where += string.Format(" OR ppp.Situacao={0}", s);
+                                filtroSituacao += string.Format(" OR ppp.Situacao={0}", s);
                                 break;
                             }
                         case "3":
                             {
-                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                                 break;
                             }
                         case "4":
                             {
-                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                                 break;
                             }
                         case "5":
                             {
-                                where += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                                filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                                 break;
                             }
                     }
                 }
 
-                where += ")";
-
-                if (temFiltro)
-                {
-                    sql += where;
-                }
-                else
-                {
-                    filtroAdicional += where;
-                }
+                filtroSituacao += ")";                
+                sql += filtroSituacao;
             }
-
-            filtroAdicional += string.Format(" AND ppp.Situacao IN ({0},{1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
 
             if (idSetor > 0 || idSetor == -1)
             {
                 if (idSetor == 1)
                 {
                     sql += " AND ppp.IdSetor=1 AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND DataLeitura IS NOT NULL)";
-                    temFiltro = true;
                 }
                 else
                 {
                     sql += string.Format(" AND NOT EXISTS (SELECT * FROM leitura_producao WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
-                    temFiltro = true;
                 }
 
                 // Retorna apenas as peças de roteiro se o setor for de roteiro.
                 if (Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
                 {
                     sql += string.Format(" AND EXISTS (SELECT * FROM roteiro_producao_etiqueta WHERE IdProdPedProducao=ppp.IdProdPedProducao AND IdSetor={0})", idSetor);
-                    temFiltro = true;
                 }
             }
 
@@ -2821,29 +2796,19 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, int idPedido, int idSetor, int pageSize, bool perda, string sortExpression, int startRow)
         {
-            var temFiltro = false;
-            var filtroAdicional = string.Empty;
             var sql = string.Empty;
             var numeroRegistros = 0;
             ProdutoPedidoProducao[] produtosPedidoProducao;
 
-            sql = SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, perda, true, out temFiltro)
-                .Replace(FILTRO_ADICIONAL, temFiltro ? filtroAdicional : string.Empty);
-
+            sql = SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, idPedido, idSetor, perda, true);
             sortExpression = string.IsNullOrEmpty(sortExpression) ? "ppp.IdProdPedProducao DESC" : sortExpression;
 
-            if (sortExpression.ToUpper() == "PP.IDPEDIDO DESC" && !temFiltro)
-            {
-                filtroAdicional = "pp.IdProdPed IN (SELECT DISTINCT IdProdPed FROM produto_pedido_producao)";
-            }
-
-            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(sql, sortExpression, !string.IsNullOrEmpty(codigoEtiqueta) ? 0 : startRow, pageSize, "ppp", filtroAdicional, !temFiltro,
-                false, out numeroRegistros)).ToArray();
+            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(sql, sortExpression, !string.IsNullOrEmpty(codigoEtiqueta) ? 0 : startRow, pageSize, "ppp", string.Empty, false, false,
+                out numeroRegistros)).ToArray();
             SetInfoPaging(sortExpression, startRow, pageSize);
             GetSetores(ref produtosPedidoProducao);
 
             return produtosPedidoProducao.ToList();
-
         }
 
         /// <summary>
@@ -2851,13 +2816,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public int PesquisarProdutosProducaoMarcarPecaProntaCount(string codigoEtiqueta, int idPedido, int idSetor, bool perda)
         {
-            var temFiltro = false;
-            var filtroAdicional = string.Empty;
-
-            var sql = SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, out filtroAdicional, idPedido, idSetor, perda, false, out temFiltro)
-                .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
-
-            return objPersistence.ExecuteSqlQueryCount(sql);
+            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoMarcarPecaPronta(codigoEtiqueta, idPedido, idSetor, perda, false));
         }
 
         #endregion
@@ -2869,8 +2828,14 @@ namespace Glass.Data.DAL
         /// </summary>
         internal string SqlProdutosProducaoRelatorioLiberacao(string idsProdPedProducao)
         {
+            #region Declaração de variáveis
+
             var campos = string.Empty;
             var sql = string.Empty;
+
+            #endregion
+
+            #region Consulta
 
             campos = string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, pp.IdPedido, ppp.IdImpressao, ppp.Situacao, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.PecaReposta, ppp.Obs,
                     ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, CONCAT(p.Descricao, IF(pp.Redondo AND {0}, ' REDONDO', ''))) AS DescrProduto,
@@ -2887,10 +2852,16 @@ namespace Glass.Data.DAL
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                 WHERE pp.IdProdPedParent IS NULL AND ppp.Situacao IN ({1})", campos, (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra);
 
+            #endregion
+
+            #region Filtros
+
             if (!string.IsNullOrEmpty(idsProdPedProducao))
             {
                 sql += string.Format(" AND ppp.IdProdPedProducao IN ({0})", idsProdPedProducao);
             }
+
+            #endregion
 
             return sql;
         }
