@@ -4554,15 +4554,6 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Validações
-
-            if ((produtosPedidoEspelho?.Count()).GetValueOrDefault() == 0)
-            {
-                return;
-            }
-
-            #endregion
-
             #region Remoção do acréscimo, comissão e desconto
 
             ObterDadosComissaoDescontoAcrescimo(session, out acrescimo, out desconto, idPedido, out percComissao, out tipoAcrescimo, out tipoDesconto);
@@ -4572,7 +4563,7 @@ namespace Glass.Data.DAL
 
             #region Atualização dos itens de projeto
 
-            itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)idPedido).ToList();
+            itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)idPedido)?.ToList();
 
             foreach (var itemProjeto in itensProjeto)
             {
@@ -4593,7 +4584,7 @@ namespace Glass.Data.DAL
 
             #region Atualização dos totais dos produtos do pedido espelho
 
-            produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)idPedido, false).ToList();
+            produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)idPedido, false)?.ToList();
 
             // Percorre cada produto, do pedido espelho, e recalcula seu valor unitário, com base no valor de tabela e no desconto/acréscimo do cliente.
             foreach (var produtoPedidoEspelho in produtosPedidoEspelho)
