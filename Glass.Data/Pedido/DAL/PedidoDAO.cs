@@ -8567,7 +8567,7 @@ namespace Glass.Data.DAL
             #region Atualiza o saldo da obra do pedido
 
             if (ped.IdObra > 0)
-                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false, false);
+                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false);
 
             #endregion
 
@@ -16208,7 +16208,7 @@ namespace Glass.Data.DAL
             // Se o pagamento era obra e nao é mais atualiza o saldo da mesma.
             if (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)
             {
-                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false);
+                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false, false);
             }
 
             #endregion
