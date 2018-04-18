@@ -223,33 +223,16 @@ namespace Glass.Data.DAL
                 // Chamado 18364: Impede que a movimentação seja inserida no mesmo segundo que outra.
                 // Só será resolvido em definitivo criando trigger na versão Migração
                 if (Math.Abs(FuncoesData.DateDiff(DateInterval.Second, ultimaMovimentacao, DateTime.Now)) <= 1)
+                {
                     Thread.Sleep(2500);
+                }
 
                 ultimaMovimentacao = DateTime.Now;
 
                 // Se for utilização de crédito, não gera movimentação no caixa
                 if (new List<uint>(UtilsPlanoConta.GetLstCredito(3)).Contains(idConta))
-                    mudarSaldo = false;
-                
-                /* Chamado 42430. */
-                if (tipoMov == 2)
                 {
-                    var idsPlanoContasEstornoDinheiro = UtilsPlanoConta.ContasEstornoDinheiro().Split(',').Select(f => f.StrParaUint()).ToList();
-                    var idsPlanoContasEstornoCheque = UtilsPlanoConta.ContasEstornoCheque().Split(',').Select(f => f.StrParaUint()).ToList();
-                    var idPlanoContaEstornoDevolucaoPagto = UtilsPlanoConta.ContasDevolucaoPagto().Split(',').Any(f => f.StrParaUint() == idConta) ? UtilsPlanoConta.GetEstornoDevolucaoPagto(idConta) : 0;
-
-                    // Verifica se há saldo para realizar a saída desejada.
-                    if (idsPlanoContasEstornoDinheiro.Any(f => f == idConta || f == idPlanoContaEstornoDevolucaoPagto) &&
-                        GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valorMov)
-                        throw new Exception("Não há saldo, em dinheiro, suficiente para efetuar essa saí­da.");
-
-                    if (idsPlanoContasEstornoCheque.Any(f => f == idConta || f == idPlanoContaEstornoDevolucaoPagto) &&
-                        GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, UserInfo.GetUserInfo.IdLoja, 0, DateTime.Now, 1) < valorMov)
-                        throw new Exception("Não há saldo, em cheque, suficiente para efetuar essa saí­da.");
-
-                    if(GetSaldoByLoja(sessao, idLoja) < valorMov)
-                        throw new Exception("Não há saldo suficiente para efetuar essa saí­da.");
-
+                    mudarSaldo = false;
                 }
 
                 CaixaDiario caixaDiario = new CaixaDiario();
@@ -277,15 +260,17 @@ namespace Glass.Data.DAL
                 caixaDiario.MudarSaldo = mudarSaldo;
 
                 if (formaSaida > 0)
+                {
                     caixaDiario.FormaSaida = formaSaida;
+                }
 
                 var idCaixaDiario = Insert(sessao, caixaDiario);
 
                 /* Chamado 29589. */
                 if (contadorDataUnica.HasValue)
-                    objPersistence.ExecuteCommand(sessao,
-                        string.Format("UPDATE caixa_diario SET DataUnica=CONCAT(DataUnica, '_', {0}) WHERE IdCaixaDiario={1};",
-                            contadorDataUnica, idCaixaDiario));
+                {
+                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE caixa_diario SET DataUnica=CONCAT(DataUnica, '_', {0}) WHERE IdCaixaDiario={1};", contadorDataUnica, idCaixaDiario));
+                }
 
                 return idCaixaDiario;
             }
