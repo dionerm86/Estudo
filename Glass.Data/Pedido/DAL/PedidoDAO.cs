@@ -14414,19 +14414,21 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
-                        objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                    var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
 
-                    if (existeEspelho)
+                    if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
                     {
-                        var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
+                        AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
+                    objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
 
-                        if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
-                            situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
+                        if (existeEspelho)
                         {
+
                             PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
                             objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
-                        }
+
+                        } 
                     }
                 }
                 
