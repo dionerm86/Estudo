@@ -33,6 +33,7 @@
         var tipoEntrega;
         var idCliente;
         var numProd = <%= GetNumeroProdutos() %>;
+        var usarTabelaDescontoAcrescimoPedidoAVista = <%=(Glass.Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista).ToString().ToLower() %>;
     
         function mensagemProdutoComDesconto(editar)
         {
@@ -276,7 +277,7 @@
             var txtPercentual = FindControl("txtPercentual", "input");
             var hdfIdComissionado = FindControl("hdfIdComissionado", "input");
 
-            if(FindControl("drpTipoVenda", "select").value == "")
+            if(usarTabelaDescontoAcrescimoPedidoAVista && FindControl("drpTipoVenda", "select").value == "")
             {
                 alert("Selecione o tipo de Venda.");
                 botaoAtualizarClicado = false;
@@ -325,7 +326,7 @@
                 return false;
             }            
             
-            if(FindControl("DropDownList1", "select").value == "")
+            if(usarTabelaDescontoAcrescimoPedidoAVista && FindControl("DropDownList1", "select").value == "")
             {
                 alert("Selecione o tipo de Venda.");
                 return false;

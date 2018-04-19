@@ -334,18 +334,13 @@ namespace Glass.Projeto.Negocios.Componentes
         private static ResultadoImportacao SalvarItens(List<ExportarFerragem.Item> itens, bool substituirFerragemExistente)
         {
             #region Declaração de variáveis
-
-            // Instancia o fluxo de ferragem.
+            
             var ferragemFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IFerragemFluxo>();
-            // Variável criada para salvar o ID da ferragem exportada e a entidade da ferragem correspondente (no sistema atual), ou seja, caso a ferragem exista, ela será salva nessa variável.
             var ferragemId = new List<Tuple<int, Entidades.Ferragem>>();
-            // Variável criada para salvar o ID do fabricante exportado e a entidade do fabricante correspondente (no sistema atual), ou seja, caso o fabricante exista, ele será salvo nessa variável.
             var fabricanteFerragemId = new List<Tuple<int, Entidades.FabricanteFerragem>>();
-            // Instancia o repositório de imagem de ferragem.
+            var fabricantesFerragemInseridos = new List<Entidades.FabricanteFerragem>();
             var repositorioImagemFerragem = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Entidades.IFerragemRepositorioImagens>();
-            // Instancia o repositório de CalcPackage de ferragem.
             var repositorioCalcPackageFerragem = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Entidades.IFerragemRepositorioCalcPackage>();
-            // Variável onde serão salvos os nomes das ferragens importadas e não importadas.
             var resultadoImportacao = new ResultadoImportacao();
 
             #endregion
@@ -430,6 +425,10 @@ namespace Glass.Projeto.Negocios.Componentes
                         // Recupera o fabricante. Os dados não devem ser atualizados.
                         fabricanteFerragem = fabricanteFerragemId.FirstOrDefault(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem).Item2;
                     }
+                    else if (fabricantesFerragemInseridos.Any(f => f.Nome == itens[i].FabricanteFerragem.Nome))
+                    {
+                        fabricanteFerragem = fabricantesFerragemInseridos.FirstOrDefault(f => f.Nome == itens[i].FabricanteFerragem.Nome);
+                    }
                     else
                     {
                         // Cria um novo fabricante.
@@ -444,6 +443,10 @@ namespace Glass.Projeto.Negocios.Componentes
                         if (!retornoFabricanteFerragem)
                         {
                             throw new Exception(retornoFabricanteFerragem.Message.ToString());
+                        }
+                        else
+                        {
+                            fabricantesFerragemInseridos.Add(fabricanteFerragem);
                         }
                     }
 

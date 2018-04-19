@@ -14414,18 +14414,21 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
-                        objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+                    var situacaoPedidoEspelho = existeEspelho ? PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido) : (PedidoEspelho.SituacaoPedido?)null;
+                    var podeAtualizar = situacaoPedidoEspelho == null ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum;
 
-                    if (existeEspelho)
+                    if (podeAtualizar)
                     {
-                        var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
-
-                        if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
-                            situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
-                        {
-                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
+                        AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido, ped.TipoEntrega.GetValueOrDefault(),
                             objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
+
+                        if (existeEspelho)
+                        {
+                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, (int)ped.IdCli, (int)objUpdate.IdCli, (int)objUpdate.IdPedido,
+                                ped.TipoEntrega.GetValueOrDefault(), objUpdate.TipoEntrega.GetValueOrDefault(), objUpdate.TipoVenda.GetValueOrDefault());
                         }
                     }
                 }
@@ -16582,6 +16585,9 @@ namespace Glass.Data.DAL
                         // Verifica se ao menos um produto do orçamento foi marcado para gerar pedido (Negociar?).
                         if (OrcamentoConfig.NegociarParcialmente && !produtosOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
                             throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
+
+                        if (orcamento.TipoVenda == null && PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+                            throw new Exception("Selecione tipo de venda para este orçamento antes de gerar pedido.");
 
                         // Verifica se o vendedor do orçamento foi selecionado.
                         if (orcamento.IdFuncionario.GetValueOrDefault() == 0)

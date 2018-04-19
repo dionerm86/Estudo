@@ -178,16 +178,22 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (Pedidos.Count == 0)
-                    return string.Empty;
-
                 var idsPedidoObsLiberacao = string.Empty;
-                foreach (var p in Pedidos.GroupBy(l => l.IdLiberarPedido))
+
+                if (Pedidos.Count == 0)
+                {
+                    return string.Empty;
+                }
+                
+                foreach (var pedidoLiberacao in Pedidos.GroupBy(l => l.IdLiberarPedido))
                 {
                     // (IdLiberação) IdPedido [CodCliente] - ObsLiberacao
-                    idsPedidoObsLiberacao += (p.Key != null ? string.Format(" ({0}) ", p.Key.Value) : " ") + string.Join(", ", p.Select(f => string.Format("{0}", f.IdPedido) +
-                    (Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" [{0}]", f.CodCliente) : string.Empty) +
-                    (!string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty)));
+                    idsPedidoObsLiberacao += string.Format("{0}{1}",
+                        pedidoLiberacao.Key != null ? string.Format(" ({0}) ", pedidoLiberacao.Key.Value) : string.Empty,
+                        string.Join(", ", pedidoLiberacao.Select(f => string.Format("{0}{1}{2}",
+                            f.IdPedido,
+                            Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" [{0}]", f.CodCliente) : string.Empty,
+                            !string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty))));
                 }
 
                 return idsPedidoObsLiberacao;
