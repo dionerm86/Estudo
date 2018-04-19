@@ -8205,10 +8205,49 @@ namespace Glass.Data.DAL
                         // Atualiza os números das parcelas da NF
                         ContasPagarDAO.Instance.AtualizaNumParcNf(transaction, idNf);
 
+                        var mensagemLog = string.Empty;
+
+                        if (!nf.GerarEstoqueReal)
+                            mensagemLog += "Nota não está marcada para geração de estoque Real. ";
+                        if (EstoqueConfig.EntradaEstoqueManual)
+                            mensagemLog += "Nota não gerou Estoque real pois a Configuração(Entrada de Estoque Manual) Está marcada. ";
+
+                        if (!string.IsNullOrEmpty(mensagemLog))
+                        {
+                            var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                            logMovNotaFiscal.IdNf = nf.IdNf;
+                            logMovNotaFiscal.MensagemLog = mensagemLog;
+                            LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
+                        }
+
                         foreach (ProdutosNf p in lstProdNf)
                         {
                             if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.EntradaTerceiros)
                             {
+
+                                var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd((int)p.IdProd);
+                                var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)p.IdProd);
+
+                                mensagemLog = string.Empty;
+
+                                // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e 
+                                // se o tipo de ambiente da NFe estiver em produção
+                                if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
+                                    mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
+                                if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+                                    mensagemLog += "O tipo de ambiente da nota está configurado como Homologação, o que impede a geração estoque fiscal. ";
+                                if ((nf.IdNaturezaOperacao != null && !NaturezaOperacaoDAO.Instance.AlterarEstoqueFiscal(nf.IdNaturezaOperacao.Value)))
+                                    mensagemLog += "A natureza de operação da nota está configurada para não gerar estoque fiscal. ";
+
+                                if (!string.IsNullOrEmpty(mensagemLog))
+                                {
+                                    var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                                    logMovNotaFiscal.IdNf = nf.IdNf;
+                                    logMovNotaFiscal.IdProdNf = p.IdProdNf;
+                                    logMovNotaFiscal.MensagemLog = mensagemLog;
+                                    LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
+                                }
+
                                 // Credita o estoque fiscal
                                 MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(transaction, p.IdProd, nf.IdLoja.Value,
                                     p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
@@ -8216,6 +8255,15 @@ namespace Glass.Data.DAL
                             }
                             else if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.NotaCliente)
                             {
+                                if(!EstoqueConfig.ControlarEstoqueVidrosClientes)
+                                {
+                                    var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                                    logMovNotaFiscal.IdNf = nf.IdNf;
+                                    logMovNotaFiscal.IdProdNf = p.IdProdNf;
+                                    logMovNotaFiscal.MensagemLog = "O sistema não está configurado para controlar estoque de clientes.";
+                                    LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
+                                }
+
                                 // Credita o estoque do cliente
                                 MovEstoqueClienteDAO.Instance.CreditaEstoqueNotaFiscal(transaction, nf.IdCliente.Value, p.IdProd,
                                     nf.IdLoja.Value, p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value,
@@ -8225,6 +8273,15 @@ namespace Glass.Data.DAL
                             // Credita o estoque real
                             if (nf.GerarEstoqueReal && !EstoqueConfig.EntradaEstoqueManual)
                             {
+                                if(!MovEstoqueDAO.Instance.AlteraEstoque(transaction, p.IdProd))
+                                {
+                                    var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
+                                    logMovNotaFiscal.IdNf = nf.IdNf;
+                                    logMovNotaFiscal.IdProdNf = p.IdProdNf;
+                                    logMovNotaFiscal.MensagemLog = "Grupo/Subgrupo do produto está configurado para não gerar estoque real. ";
+                                    LogMovimentacaoNotaFiscalDAO.Instance.Insert(transaction, logMovNotaFiscal);
+                                }
+
                                 bool m2 = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
                                     Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
 
@@ -8371,6 +8428,8 @@ namespace Glass.Data.DAL
                             // Faz o cancelamento da separação de valores.
                             new SeparacaoValoresFiscaisEReaisContasPagar().Cancelar(transaction, idNf);
                         }
+
+                        LogMovimentacaoNotaFiscalDAO.Instance.DeleteFromNf(transaction, idNf);
 
                         transaction.Commit();
                         transaction.Close();

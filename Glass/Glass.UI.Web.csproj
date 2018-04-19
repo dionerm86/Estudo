@@ -1435,6 +1435,7 @@
     <Content Include="Utils\AtrasarPedidoFunc.aspx" />
     <Content Include="Utils\AtribuirRetalhos.aspx" />
     <Content Include="Utils\ImportarCartaoNaoIdentificado.aspx" />
+    <Content Include="Utils\LogMovimentacaoNotaFiscal.aspx" />
     <Content Include="Utils\SelCartaoNaoIdentificado.aspx" />
     <Content Include="Utils\Config.aspx" />
     <Content Include="Utils\ConsultaEnvio.aspx" />
@@ -7194,6 +7195,13 @@
     </Compile>
     <Compile Include="Utils\ImportarCartaoNaoIdentificado.aspx.designer.cs">
       <DependentUpon>ImportarCartaoNaoIdentificado.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\LogMovimentacaoNotaFiscal.aspx.cs">
+      <DependentUpon>LogMovimentacaoNotaFiscal.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\LogMovimentacaoNotaFiscal.aspx.designer.cs">
+      <DependentUpon>LogMovimentacaoNotaFiscal.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\SelCartaoNaoIdentificado.aspx.cs">
       <DependentUpon>SelCartaoNaoIdentificado.aspx</DependentUpon>

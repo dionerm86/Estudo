@@ -23,8 +23,7 @@ namespace Glass.UI.Web.Cadastros
                 {
                     ((Label) dtvPedidoInterno.FindControl("lblData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
                     ((Label) dtvPedidoInterno.FindControl("lblSituacao")).Text = "Aberto";
-                    ((DropDownList) dtvPedidoInterno.FindControl("drpLoja")).SelectedValue =
-                        UserInfo.GetUserInfo.IdLoja.ToString();
+
                     if ((Label) dtvPedidoInterno.FindControl("lblFuncionarioCad") != null)
                         ((Label) dtvPedidoInterno.FindControl("lblFuncionarioCad")).Text = UserInfo.GetUserInfo.Nome;
 

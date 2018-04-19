@@ -801,6 +801,14 @@
                                     CommandName="EmitirNFCe"></asp:ImageButton>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:ImageButton ID="imgInfoNota" runat="server" ImageUrl="~/Images/info.gif"
+                                    OnClientClick='<%# "openWindow(600, 800, \"../Utils/LogMovimentacaoNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
+                                    ToolTip="Log Movimentações de Estoque da NFe " 
+                                    Visible='<%# (int)Eval("Situacao") == (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.Autorizada || (int)Eval("Situacao") == (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.FinalizadaTerceiros  %>' />
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />
