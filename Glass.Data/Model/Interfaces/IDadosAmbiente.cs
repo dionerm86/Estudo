@@ -4,6 +4,6 @@ namespace Glass.Data.Model
 {
     public interface IDadosAmbiente
     {
-        IEnumerable<IAmbienteCalculo> Obter();
+        IEnumerable<IAmbienteCalculo> Obter(bool forcarAtualizacao = false);
     }
 }

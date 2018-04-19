@@ -10842,10 +10842,11 @@ namespace Glass.Data.DAL
                 }
 
                 string descontoRateadoImpostos = "0";
+                pedido.Total = GetTotal(sessao, pedido.IdPedido);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {
-                    var dadosAmbientes = (pedido as IContainerCalculo).Ambientes.Obter()
+                    var dadosAmbientes = (pedido as IContainerCalculo).Ambientes.Obter(true)
                         .Cast<AmbientePedido>()
                         .Select(x => new { x.IdAmbientePedido, x.TotalProdutos });
 

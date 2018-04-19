@@ -12,10 +12,11 @@ namespace Glass.Data.Model.Calculos
         /// Recupera um item a partir do cache, se existir. Caso não exista, cria um mecanismo para recuperação do
         /// dado a partir do banco e depois atualiza o cache.
         /// </summary>
-        protected Lazy<T> ObterUsandoCache<T, ID>(CacheMemoria<T, ID> cache, ID id, Func<T> recuperarDoBanco)
+        protected Lazy<T> ObterUsandoCache<T, ID>(CacheMemoria<T, ID> cache, ID id, Func<T> recuperarDoBanco,
+            bool forcarAtualizacao = false)
             where T : class, new()
         {
-            var itemCache = cache.RecuperarDoCache(id);
+            T itemCache = RecuperarDoCache(cache, id, forcarAtualizacao);
 
             if (itemCache != null)
             {
@@ -24,7 +25,7 @@ namespace Glass.Data.Model.Calculos
 
             return new Lazy<T>(() =>
             {
-                itemCache = cache.RecuperarDoCache(id);
+                itemCache = RecuperarDoCache(cache, id, forcarAtualizacao);
 
                 if (itemCache == null)
                 {
@@ -42,6 +43,14 @@ namespace Glass.Data.Model.Calculos
 
                 return itemCache;
             });
+        }
+
+        private T RecuperarDoCache<T, ID>(CacheMemoria<T, ID> cache, ID id, bool forcarAtualizacao)
+            where T : class, new()
+        {
+            return forcarAtualizacao
+                ? null
+                : cache.RecuperarDoCache(id);
         }
     }
 }

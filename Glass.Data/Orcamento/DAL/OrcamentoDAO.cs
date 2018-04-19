@@ -795,7 +795,7 @@ namespace Glass.Data.DAL
                     if (tipoDesconto == 2)
                         percDesconto = Orcamento.GetValorPerc(1, tipoDesconto, percDesconto,
                             GetTotalSemDesconto(sessao, orca.IdOrcamento,
-                            GetTotal(sessao, orca.IdOrcamento)));
+                            orca.Total));
 
                     if (percDesconto > (decimal)OrcamentoConfig.Desconto.GetDescMaxOrcamentoConfigurado)
                         Email.EnviaEmailDescontoMaior(sessao, 0, orca.IdOrcamento, idFuncDesc, (float)percDesconto,
@@ -812,21 +812,19 @@ namespace Glass.Data.DAL
                     @"-if(TipoDesconto=1, (?total*(o.Desconto/100)), o.Desconto) " : "") + ") where idOrcamento=" + orca.IdOrcamento;
 
                 objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?custo", custo), new GDAParameter("?total", total));
-
-                var idLoja = ObtemValorCampo<uint>(sessao, "idLoja", "idOrcamento=" + orca.IdOrcamento);
-                uint? idCliente = ObtemIdCliente(sessao, orca.IdOrcamento);
-
+                
                 string descontoRateadoImpostos = "0";
+                orca.Total = GetTotal(sessao, orca.IdOrcamento);
 
                 if (!PedidoConfig.RatearDescontoProdutos)
                 {
-                    var dadosAmbientes = (orca as IContainerCalculo).Ambientes.Obter()
+                    var dadosAmbientes = (orca as IContainerCalculo).Ambientes.Obter(true)
                         .Cast<ProdutosOrcamento>()
                         .Select(x => new { x.IdProd, Total = x.Total.GetValueOrDefault() });
 
                     var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
 
-                    decimal totalSemDesconto = GetTotalSemDesconto(sessao, orca.IdOrcamento, GetTotal(sessao, orca.IdOrcamento));
+                    decimal totalSemDesconto = GetTotalSemDesconto(sessao, orca.IdOrcamento, orca.Total);
                     string selectAmbientes = dadosAmbientes.Count() == 0 ? "select null as idProd, 1 as total" :
                         String.Join(" union all ", dadosAmbientes.Select(x =>
                             String.Format("select {0} as idProd, {1} as total",
@@ -839,12 +837,12 @@ namespace Glass.Data.DAL
                 }
 
                 // Calcula o valor do ICMS do orçamento
-                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, idLoja) && idCliente != null && ClienteDAO.Instance.IsCobrarIcmsSt(sessao, idCliente.Value))
+                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, orca.IdLoja ?? 0) && orca.IdCliente != null && ClienteDAO.Instance.IsCobrarIcmsSt(sessao, orca.IdCliente.Value))
                 {
                     string descontoRateadoMaterial = String.Format(descontoRateadoImpostos, "mip");
                     string descontoRateadoProduto = String.Format(descontoRateadoImpostos, "po");
 
-                    var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int?)orca.IdLoja ?? 0, (int?)idCliente, null, null, null, null);
+                    var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int?)orca.IdLoja ?? 0, (int?)orca.IdCliente, null, null, null, null);
 
                     string idProd = "mip.idProd";
                     string totalProd = "mip.Total + coalesce(mip.ValorBenef, 0)";
@@ -908,7 +906,7 @@ namespace Glass.Data.DAL
                 }
 
                 // Calcula o valor do IPI do orçamento
-                if (LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, idLoja) && idCliente != null && ClienteDAO.Instance.IsCobrarIpi(sessao, idCliente.Value))
+                if (LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, orca.IdLoja ?? 0) && orca.IdCliente != null && ClienteDAO.Instance.IsCobrarIpi(sessao, orca.IdCliente.Value))
                 {
                     string descontoRateadoMaterial = String.Format(descontoRateadoImpostos, "mip");
                     string descontoRateadoProduto = String.Format(descontoRateadoImpostos, "po");

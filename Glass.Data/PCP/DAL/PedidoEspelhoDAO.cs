@@ -1937,7 +1937,7 @@ namespace Glass.Data.DAL
             bool pedFastDelivery = pedidoEspelho.FastDelivery;
             float pedTaxaFastDelivery = PedidoDAO.Instance.ObtemTaxaFastDelivery(sessao, pedidoEspelho.IdPedido);
             uint pedIdLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, pedidoEspelho.IdPedido);
-            uint pedIdCli = pedidoEspelho.IdCli;
+            uint pedIdCli = PedidoDAO.Instance.ObtemIdCliente(sessao, pedidoEspelho.IdPedido);
 
             float percFastDelivery = 1;
 
@@ -1951,13 +1951,13 @@ namespace Glass.Data.DAL
             }
 
             string descontoRateadoImpostos = "0";
+            pedidoEspelho.Total = GetTotal(sessao, pedidoEspelho.IdPedido);
 
             if (!PedidoConfig.RatearDescontoProdutos)
             {
-                var dadosAmbientes = (pedidoEspelho as IContainerCalculo).Ambientes.Obter()
+                var dadosAmbientes = (pedidoEspelho as IContainerCalculo).Ambientes.Obter(true)
                     .Cast<AmbientePedidoEspelho>()
-                    .Select(x => new { x.IdAmbientePedido, x.TotalProdutos })
-                    .ToList();
+                    .Select(x => new { x.IdAmbientePedido, x.TotalProdutos });
 
                 var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
 
