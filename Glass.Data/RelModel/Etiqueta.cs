@@ -342,18 +342,18 @@ namespace Glass.Data.RelModel
         /// <summary>
         /// Dados do Cód. de Barras.
         /// </summary>
-        public string BarCodeIntermac
+        public string BarCodeDataIntermac
         {
             get
             {
-                var barCodeIntermac = string.Empty;
+                var barCodeDataIntermac = string.Empty;
 
                 if (!string.IsNullOrEmpty(NumEtiqueta) && IdProdPedEsp > 0 && PossuiIntermac)
                 {
-                    barCodeIntermac = string.Format("{0}.cni{1}00010000", BarCodeData.Replace(" ", string.Empty).Replace("/", ";"), Espessura.ToString().PadLeft(4, '0'));
+                    barCodeDataIntermac = string.Format("{0}.cni{1}00010000", BarCodeData.Replace(" ", string.Empty).Replace("/", ";"), Espessura.ToString().PadLeft(4, '0'));
                 }
 
-                return barCodeIntermac;
+                return barCodeDataIntermac;
             }
         }
 
@@ -366,7 +366,7 @@ namespace Glass.Data.RelModel
             get
             {
                 var girar = (EtiquetaConfig.Girar90GrausCodigoDeBarras && (IdRetalhoProducao != null || IdPedido != null || IdNf != null)) ? Utils.GirarImagem.Girar90Graus : Utils.GirarImagem.Normal;
-                return Utils.GetBarCode(BarCodeIntermac, girar);
+                return Utils.GetBarCode(BarCodeDataIntermac, girar);
             }
         }
 
