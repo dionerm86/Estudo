@@ -249,7 +249,15 @@ namespace Glass.Data.DAL
         {
             return AtualizaSaldo(sessao, null, idObra, cxDiario, true);
         }
-        
+
+        /// <summary>
+        /// Atualiza o saldo de uma obra.
+        /// </summary>
+        public decimal AtualizaSaldo(GDASession sessao, uint idObra, bool cxDiario, bool finalizarObraSeSaldoZero)
+        {
+            return AtualizaSaldo(sessao, null, idObra, cxDiario, finalizarObraSeSaldoZero);
+        }
+
         /// <summary>
         /// Atualiza o saldo de uma obra.
         /// </summary>

@@ -324,7 +324,7 @@ function Parc_getExibirParcelas(nomeControle)
     }
     catch (err)
     {
-        return true;
+        return false;
     }
 }
 

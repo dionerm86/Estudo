@@ -602,7 +602,7 @@ namespace Glass.Data.DAL
             sinal.IsPagtoAntecipado = !isSinal;
             sinal.Obs = observacao;
             sinal.DataRecebimento = dataRecebimento;
-            sinal.TotalPagar = Math.Max(totalPagar, !gerarCredito ? totalPago : 0);
+            sinal.TotalPagar = totalPagar;
             sinal.TotalPago = totalPago;
             sinal.IdLojaRecebimento = idLoja;
             sinal.DescontarComissao = descontarComissao;
@@ -816,7 +816,7 @@ namespace Glass.Data.DAL
 
             UtilsFinanceiro.ValidarRecebimento(session, sinal.RecebimentoCaixaDiario.GetValueOrDefault(), (int)sinal.IdCliente, sinal.IdLojaRecebimento.GetValueOrDefault(), idsCartaoNaoIdentificado,
                 idsContaBanco, idsFormaPagamento, sinal.RecebimentoGerarCredito.GetValueOrDefault(), 0, false, UtilsFinanceiro.TipoReceb.SinalPedido, sinal.TotalPago.GetValueOrDefault(),
-                sinal.TotalPagar.GetValueOrDefault());
+                Math.Max(sinal.TotalPagar.GetValueOrDefault(), !sinal.RecebimentoGerarCredito.GetValueOrDefault() ? sinal.TotalPago.GetValueOrDefault() : 0));
 
             #endregion
         }
@@ -863,7 +863,7 @@ namespace Glass.Data.DAL
             var pedidos = PedidoDAO.Instance.GetBySinal(session, sinal.IdSinal, sinal.IsPagtoAntecipado);
             var usuarioLogado = UserInfo.GetUserInfo;
             var totalPedidos = pedidos.Sum(f => f.TotalPedidoFluxo);
-            var totalPagar = pedidos.Sum(f =>  !sinal.IsPagtoAntecipado ? f.ValorEntrada : (f.RecebeuSinal ? f.TotalPedidoFluxo - f.ValorEntrada : f.TotalPedidoFluxo));
+            var totalPagar = sinal.TotalPagar.GetValueOrDefault();
             var totalPago = sinal.TotalPago.GetValueOrDefault();
             var dataRecebimento = sinal.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
             var idLojaRecebimento = (uint)sinal.IdLojaRecebimento.GetValueOrDefault();

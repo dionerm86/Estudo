@@ -33,6 +33,7 @@
         var tipoEntrega;
         var idCliente;
         var numProd = <%= GetNumeroProdutos() %>;
+        var usarTabelaDescontoAcrescimoPedidoAVista = <%=(Glass.Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista).ToString().ToLower() %>;
     
         function mensagemProdutoComDesconto(editar)
         {
@@ -275,7 +276,13 @@
 
             var txtPercentual = FindControl("txtPercentual", "input");
             var hdfIdComissionado = FindControl("hdfIdComissionado", "input");
-        
+
+            if(usarTabelaDescontoAcrescimoPedidoAVista && FindControl("drpTipoVenda", "select").value == "")
+            {
+                alert("Selecione o tipo de Venda.");
+                botaoAtualizarClicado = false;
+                return false;
+            }
             // Se o percentual de comissão a ser cobrado for > 0, verifica se o comissionado foi informado
             if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" && 
                 parseFloat(txtPercentual.value.replace(',', '.')) > 0 && hdfIdComissionado.value == "") {
@@ -316,6 +323,12 @@
             if (FindControl("ddlTipoEntrega", "select").value == "")
             {
                 alert("Selecione o tipo de entrega.");
+                return false;
+            }            
+            
+            if(usarTabelaDescontoAcrescimoPedidoAVista && FindControl("DropDownList1", "select").value == "")
+            {
+                alert("Selecione o tipo de Venda.");
                 return false;
             }
         
@@ -2198,6 +2211,7 @@
         // Esconde tabela de comissionado
         var hdfComissaoVisible = FindControl("hdfComissaoVisible", "input");
         var tbComissionado = FindControl("tbComissionado", "table");
+        var loading = true;
         if (hdfComissaoVisible != null && tbComissionado != null && hdfComissaoVisible.value == "false")
             tbComissionado.style.display = "none";
             
@@ -2259,6 +2273,8 @@
             if (FindControl("hdfCalcularParcela", "input") != null)
                 FindControl("hdfCalcularParcela", "input").value = false;
         }
+
+        loading = false;
 
     </script>
 

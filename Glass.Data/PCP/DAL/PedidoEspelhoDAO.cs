@@ -4448,18 +4448,9 @@ namespace Glass.Data.DAL
         {
             #region Declaração de variáveis
 
-            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, (uint)novo.IdPedido, false).ToArray();
-            var itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, (uint)novo.IdPedido);
+            var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido, false);
+            var itensProjeto = ItemProjetoDAO.Instance.GetByPedidoEspelho(session, novo.IdPedido);
             
-            #endregion
-
-            #region Validações
-
-            if ((produtosPedidoEspelho?.Count()).GetValueOrDefault() == 0)
-            {
-                return;
-            }
-
             #endregion
 
             #region Remoção do acréscimo, comissão e desconto

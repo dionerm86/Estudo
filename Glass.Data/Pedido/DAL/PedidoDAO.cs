@@ -10932,7 +10932,7 @@ namespace Glass.Data.DAL
                     sql = "update pedido set AliquotaIpi=0, ValorIpi=0 where idPedido=" + pedido.IdPedido;
                     objPersistence.ExecuteCommand(sessao, sql);
                 }
-
+               
                 // Atualiza o campo ValorComissao
                 sql = @"update pedido set valorComissao=total*coalesce(percComissao,0)/100 where idPedido=" + pedido.IdPedido;
                 objPersistence.ExecuteCommand(sessao, sql);
@@ -10964,7 +10964,7 @@ namespace Glass.Data.DAL
                     }
                     GeraParcelaParceiro(sessao, ref ped);
                 }
-
+ 
                 if (criarLogDeAlteracao)
                     LogAlteracaoDAO.Instance.LogPedido(sessao, pedido, GetElementByPrimaryKey(sessao, pedido.IdPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
             }
@@ -11775,7 +11775,20 @@ namespace Glass.Data.DAL
                 if (!alterado && PCPConfig.ControlarProducao)
                 {
                     //LogArquivo.InsereLogSitProdPedido("Não Alterado");
-                    situacao = !PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido) ? Pedido.SituacaoProducaoEnum.NaoEntregue : Pedido.SituacaoProducaoEnum.Pendente;
+
+                    if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, idPedido))
+                    {
+                        var situacaoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(sessao, idPedido);
+
+                        if(situacaoEspelho == PedidoEspelho.SituacaoPedido.Aberto || situacaoEspelho == PedidoEspelho.SituacaoPedido.Cancelado ||
+                           situacaoEspelho == PedidoEspelho.SituacaoPedido.Processando)
+                            situacao = Pedido.SituacaoProducaoEnum.NaoEntregue;
+                        else
+                            situacao = Pedido.SituacaoProducaoEnum.Pendente;
+                    }
+                    else
+                        situacao = Pedido.SituacaoProducaoEnum.NaoEntregue;
+
                     objPersistence.ExecuteCommand(sessao, "update pedido set dataPronto=null where idPedido=" + idPedido);
                 }
 
@@ -13561,9 +13574,9 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
-
+                    
                     UpdateDesconto(transaction, objUpdate, true);
-
+            
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -13811,6 +13824,9 @@ namespace Glass.Data.DAL
                     {
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
+                   
+                    if(DateTime.Now > objUpdate.DataEntrega)
+                        throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());                   
 
                     // Atualiza a data de entrega do pedido.
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
@@ -14168,14 +14184,20 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
+                    var situacaoPedidoEspelho = PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido);
 
-                    if (existeEspelho)
+                    if (situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando || situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum)
                     {
-                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
+                        AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
+
+                        if (existeEspelho)
+                        {
+                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
+                        }
                     }
                 }
-
+                
                 #endregion
 
                 #region Atualização do total do pedido
@@ -14192,7 +14214,7 @@ namespace Glass.Data.DAL
                     SalvarParcelas(session, objUpdate);
                 }
 
-                #endregion
+                #endregion                    
 
                 #region Atualização da obra
 
@@ -16056,7 +16078,7 @@ namespace Glass.Data.DAL
             // Se o pagamento era obra e nao é mais atualiza o saldo da mesma.
             if (ped.TipoVenda == (int)Pedido.TipoVendaPedido.Obra && objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)
             {
-                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false);
+                ObraDAO.Instance.AtualizaSaldo(session, ped.IdObra.Value, false, false);
             }
 
             #endregion
@@ -16419,6 +16441,9 @@ namespace Glass.Data.DAL
                         // Verifica se ao menos um produto do orçamento foi marcado para gerar pedido (Negociar?).
                         if (OrcamentoConfig.NegociarParcialmente && !ambientesOrcamento.Any(f => f.IdProdPed.GetValueOrDefault() == 0 && f.Negociar))
                             throw new Exception("Selecione pelo menos 1 produto para ser negociado.");
+
+                        if (orcamento.TipoVenda == null && PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+                            throw new Exception("Selecione tipo de venda para este orçamento antes de gerar pedido.");
 
                         // Verifica se o vendedor do orçamento foi selecionado.
                         if (orcamento.IdFuncionario.GetValueOrDefault() == 0)
@@ -17597,15 +17622,6 @@ namespace Glass.Data.DAL
             var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, novo.IdPedido);
             var itensProjeto = ItemProjetoDAO.Instance.GetByPedido(session, novo.IdPedido);
             
-            #endregion
-
-            #region Validações
-
-            if (!produtosPedido?.Any() ?? true)
-            {
-                return;
-            }
-
             #endregion
 
             #region Remoção do acréscimo, comissão e desconto

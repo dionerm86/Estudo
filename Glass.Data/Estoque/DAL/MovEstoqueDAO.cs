@@ -1353,6 +1353,14 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void DeleteByNf(GDASession sessao, uint idNf)
         {
+            var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf);
+
+            foreach (var produtoNotaFiscal in ProdutosNfDAO.Instance.GetByNf(idNf))
+                MovEstoqueDAO.Instance.ValidarMovimentarEstoque(null, (int)produtoNotaFiscal.IdProd, (int)idLoja, DateTime.Now,
+                    MovEstoque.TipoMovEnum.Saida,
+                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(produtoNotaFiscal.IdProd, produtoNotaFiscal.TotM,
+                        produtoNotaFiscal.Qtde, produtoNotaFiscal.Altura, produtoNotaFiscal.Largura, false, false), true);
+
             foreach (var movEstoque in ExecuteMultipleScalar<uint>(sessao, "select idMovEstoque from mov_estoque where idNf=" + idNf))
                 DeleteByPrimaryKey(sessao, movEstoque);
         }
