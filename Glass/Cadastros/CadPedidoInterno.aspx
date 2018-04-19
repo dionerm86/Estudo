@@ -1,6 +1,8 @@
 <%@ Page Title="Cadastro de Pedido Interno" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedidoInterno.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadPedidoInterno" %>
 
+<%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
@@ -112,10 +114,8 @@
                                         <td align="left" class="dtvHeader">
                                             Loja
                                         </td>
-                                        <td align="left">
-                                            <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
-                                                DataTextField="NomeFantasia" DataValueField="IdLoja" SelectedValue='<%# Bind("IdLoja") %>'>
-                                            </asp:DropDownList>                                                                                        
+                                        <td>
+                                            <uc1:ctrlLoja runat="server" ID="drpLoja" AutoPostBack="true" MostrarTodas="false" SomenteAtivas ="true"  />
                                         </td>
                                     </tr>
                                     <tr>
