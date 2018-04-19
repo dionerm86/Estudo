@@ -513,8 +513,7 @@
                         receberEntrada = receberEntrada ? receberEntrada.checked : false;
                         var diasParcelas = FindControl("ctrlParcelasSelecionar1_hdfDiasParcelas", "input").value;
                         var drpFormaPagtoPrazo = FindControl("drpFormaPagtoPrazo", "select");
-                        var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();
-                        var juros = <%= ctrlParcelas1.ClientID %>.Juros();
+                        var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();                        
                         var idParcela = drpParcelas != null && drpParcelas.value > 0 ? drpParcelas.value : "";
                     
                         retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
