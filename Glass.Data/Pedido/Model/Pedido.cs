@@ -1223,6 +1223,9 @@ namespace Glass.Data.Model
         {
             get
             {
+                if (IdObra > 0)
+                    return "";
+
                 var valorNegativoLiberar = new System.Text.StringBuilder("Valor Negativo para liberar. ");
 
                 decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
@@ -1231,15 +1234,18 @@ namespace Glass.Data.Model
                     valorNegativoLiberar.Append("Sistema está configurado para considerar o valor confirmado para liberação. ");
 
                 if (IdPagamentoAntecipado > 0 && total > 0 && total - ValorPagamentoAntecipado < 0)
+                {
+                    total -= ValorPagamentoAntecipado;
                     valorNegativoLiberar.Append("O valor do pagamento antecipado do pedido supera o valor a liberar. ");
+                }
 
                 if (IdSinal > 0 && total > 0 && total - ValorEntrada < 0)
+                {
+                    total -= ValorEntrada;
                     valorNegativoLiberar.Append("O valor da entrada do pedido supera o valor a liberar. ");
+                }
 
-                if (IdObra > 0)
-                    return "";
-
-                if (total - DescontoTotal < 0)
+                if (DescontoTotal > 0 && total - DescontoTotal < 0)
                     valorNegativoLiberar.Append("O valor do desconto total aplicado ao pedido supera o valor a liberar. ");
 
                 return valorNegativoLiberar.ToString();
