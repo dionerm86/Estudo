@@ -382,37 +382,8 @@ function Parc_getValorObra(nomeControle)
 function Parc_getValorParcelas(nomeControle)
 {
     var retorno = Parc_getValorTotal(nomeControle) - Parc_getValorEntrada(nomeControle) - Parc_getValorObra(nomeControle);
-    if (!getVar(nomeControle).AplicarJuros)
-        retorno += Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle);
-    else if (getVar(nomeControle).JurosCompostos)
-    {
-        var juros = getJurosParcelas(nomeControle, false);
-        
-        if (Parc_getParcelasVisiveis(nomeControle) > 1)
-        {
-            var aplicarJuros = false;
-            for (n = 0; n < juros.length; n++)
-                if (juros[n])
-                {
-                    aplicarJuros = true;
-                    break;
-                }
-            
-            var valorTotal = retorno * (1 + ((aplicarJuros ? Parc_getTaxaJurosParcela(nomeControle) : 0) / 100));
-            var valorBaseParcela = (valorTotal / Parc_getParcelasVisiveis(nomeControle));
-            
-            retorno = aplicarJuros ? valorBaseParcela : 0;
-            for (n = (aplicarJuros ? 1 : 0); n < Parc_getParcelasVisiveis(nomeControle); n++)
-            {
-                var valorParcela = valorBaseParcela * (1 + ((juros[n] ? Parc_getTaxaJurosParcela(nomeControle) : 0) / 100));
-                retorno += valorParcela;
-            }
-        }
-        else
-            retorno = retorno * (1 + ((juros[0] ? Parc_getTaxaJurosParcela(nomeControle) : 0) / 100));
-        
-        retorno += Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle);
-    }
+    
+    retorno += Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle);
     
     return retorno;
 }
@@ -450,22 +421,6 @@ function Parc_getDataBase(nomeControle)
     catch (err)
     {
         return null;
-    }
-}
-
-// -----------------------------------------------
-// Função que retorna a taxa de juros por parcela.
-// -----------------------------------------------
-function Parc_getTaxaJurosParcela(nomeControle)
-{
-    try
-    {
-        var campo = document.getElementById(getVar(nomeControle).CampoTaxaJurosParcela);
-        return Parc_getValorCampo(campo, "float");
-    }
-    catch (err)
-    {
-        return 0;
     }
 }
 
@@ -580,20 +535,10 @@ function Parc_calcularValorParcela(nomeControle, inicio, splitChar)
     {
         var valor = nomeParcelas + (n + 1).toString() + "_txtValor";
         var data = nomeParcelas + (n + 1).toString() + "_txtData";
-        var calcularJuros = nomeParcelas + (n + 1).toString() + "_chkJuros";
 
         if (getVar(nomeControle).ExibirValores)
         {
             var valorAplicar = valorParcela;
-            if (!getVar(nomeControle).JurosCompostos)
-            {
-                if (document.getElementById(calcularJuros) != null && document.getElementById(calcularJuros).checked)
-                    valorAplicar = valorAplicar * (1 + (Parc_getTaxaJurosParcela(nomeControle) * (getVar(nomeControle).JurosCompostos ? (n + 1) : 1) / 100));
-
-                if (getVar(nomeControle).AplicarJuros)
-                    valorAplicar += (Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle)) / Parc_getParcelasVisiveis(nomeControle);
-            }
-
             document.getElementById(valor).value = n < Parc_getParcelasVisiveis(nomeControle) ? valorAplicar.toFixed(2).replace('.', ',') : "0";
         }
         
@@ -651,17 +596,8 @@ function Parc_ajustarValorUltimaParcela(nomeControle, inicio)
 
     var valorParcela = parseFloat(((Parc_getValorParcelas(nomeControle) - valorParcelasIgnorar) / (Parc_getParcelasVisiveis(nomeControle) - inicio)).toFixed(2));
     var valor = nomeParcelas + Parc_getParcelasVisiveis(nomeControle) + "_txtValor";
-    var calcularJuros = nomeParcelas + Parc_getParcelasVisiveis(nomeControle) + "_chkJuros";
     
     var valorAplicar = valorParcela + parseFloat(Parc_getValorParcelas(nomeControle).toFixed(2)) - valorParcelasIgnorar - (valorParcela * (Parc_getParcelasVisiveis(nomeControle) - inicio));
-    if (!getVar(nomeControle).JurosCompostos)
-    {
-        if (document.getElementById(calcularJuros) != null && document.getElementById(calcularJuros).checked)
-            valorAplicar = valorAplicar * (1 + (Parc_getTaxaJurosParcela(nomeControle) / 100));
-        
-        if (getVar(nomeControle).AplicarJuros)
-            valorAplicar += (Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle)) / Parc_getParcelasVisiveis(nomeControle);
-    }
     
     document.getElementById(valor).value = valorAplicar.toFixed(2).replace('.', ',');
 }
@@ -696,17 +632,6 @@ function Parc_atualizarValorTotal(nomeControle, callback)
         eval(callback + "()");
     
     atualizandoTotal = false;
-}
-
-// ------------------------------------------------------------------
-// Função que calcula o valor das parcelas e depois chama o callback.
-// ------------------------------------------------------------------
-function Parc_calculaJuros(nomeControle, callbackTotal, callback)
-{
-    Parc_calcularValorParcela(nomeControle, 0);
-    Parc_atualizarValorTotal(nomeControle, callbackTotal);
-    if (callback != "")
-        eval(callback + "()");
 }
 
 // --------------------------------------------------------
@@ -782,14 +707,6 @@ function getDatasParcelas(nomeControle, asString)
 function getAdicionaisParcelas(nomeControle, asString)
 {
     return getValoresFromControleParc(nomeControle, "txtAdicional", "", "", asString);
-}
-
-// ---------------------------------------------------------
-// Função que retorna se as parcelas estão calculando juros.
-// ---------------------------------------------------------
-function getJurosParcelas(nomeControle, asString)
-{
-    return getValoresFromControleParc(nomeControle, "chkJuros", "bool", false, asString);
 }
 
 // ------------------------------------------------------------
@@ -1029,7 +946,7 @@ function validaValorTotal(val, args)
 
     valorParcelas = parseFloat(valorParcelas.toFixed(2));
     /* Chamado 56167. */
-    var valorParcelasComparar = Parc_getValorParcelas(nomeControle) + (getVar(nomeControle).AplicarJuros && !getVar(nomeControle).JurosCompostos ? Parc_getValorAcrescimo(nomeControle) - Parc_getValorDesconto(nomeControle) : 0);
+    var valorParcelasComparar = Parc_getValorParcelas(nomeControle);
 
     args.IsValid = valorParcelas >= 0 && valorParcelas == valorParcelasComparar.toFixed(2);
         
