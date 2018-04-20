@@ -3148,8 +3148,8 @@ namespace Glass.Data.DAL
                         // Esconde a quantidade desejada do produto do pedido
                         objPersistence.ExecuteCommand(transaction, string.Format(@"update produtos_pedido set qtde=greatest(qtde-?rem, 0), 
                         qtdeInvisivel=coalesce(qtdeInvisivel,0)+?rem, invisivelAdmin=(qtde=0), 
-                        invisivel{0}=(COALESCE(invisivel{0},0) or COALESCE(invisivelAdmin,0)) {1} where idProdPed=" + idProdPed,
-                            PedidoConfig.LiberarPedido && isPcp ? "Fluxo" : "Pedido", !isPcp ? ", invisivelFluxo = 1" : ""), rem);
+                        invisivel{0}=(COALESCE(invisivel{0},0) or COALESCE(invisivelAdmin,0)) where idProdPed=" + idProdPed,
+                            PedidoConfig.LiberarPedido && isPcp ? "Fluxo" : "Pedido"), rem);
 
                         if (isPcp)
                         {
@@ -3337,8 +3337,8 @@ namespace Glass.Data.DAL
                         // Restaura a quantidade desejada do produto do pedido
                         objPersistence.ExecuteCommand(transaction, string.Format(@"update produtos_pedido set qtde=qtde+?rest, 
                         qtdeInvisivel=coalesce(qtdeInvisivel,0)-?rest, invisivel{0}=false,
-                        invisivelAdmin=false {1} where idProdPed=" + idProdPed,
-                            PedidoConfig.LiberarPedido && isPcp ? "Fluxo" : "Pedido", !isPcp ? ", invisivelFluxo = 0" : ""), rest);
+                        invisivelAdmin=false where idProdPed=" + idProdPed,
+                            PedidoConfig.LiberarPedido && isPcp ? "Fluxo" : "Pedido"), rest);
 
                         if (isPcp)
                         {
@@ -4178,6 +4178,19 @@ namespace Glass.Data.DAL
             {
                 if (!AmbientePedidoDAO.Instance.Exists(session, objInsert.IdAmbientePedido.GetValueOrDefault()))
                     throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
+            }
+
+            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
+                (objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd,
+                (int)objInsert.IdSubgrupoProd))) && (int)objInsert.IdGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
+            {
+                throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
+            }
+            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
+                !SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd, (int)objInsert.IdSubgrupoProd)) ||
+                objInsert.IdGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
+            {
+                throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
             }
 
             //Valida processo
