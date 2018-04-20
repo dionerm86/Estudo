@@ -97,7 +97,7 @@
             return false;
         }
 
-        function setContaReceber(idContaR, idPedido, idLiberarPedido, cliente, valor, dataVenc, idCli, juros, multa, obs, control){
+        function setContaReceber(idContaR, idPedido, idLiberarPedido, cliente, valor, dataVenc, idCli, juros, multa, obs, control, renegociar){
 
             // Limpa o que estiver na tela, pois caso cadastre o cheque antes, o mesmo não terá referência do pedido
             limpar(); 
@@ -116,6 +116,9 @@
             <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(parseFloat(juros.replace(',', '.')) + parseFloat(multa.replace(',', '.')));
             usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
     
+            if (renegociar)
+                FindControl("chkRenegociar", "input").checked= true;
+                
             chkRenegociarChecked(FindControl("chkRenegociar", "input"));
 
             var row = $(control).parent().parent();
@@ -780,12 +783,20 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible='<%# !(bool)Eval("IsParcelaCartao") && Eval("IdAntecipContaRec") == null %>'>
-                                    <a href="#" onclick="setContaReceber('<%# Eval("IdContaR") %>', '<%# Eval("IdPedido") %>', '<%# Eval("IdLiberarPedido") %>', '<%# Eval("NomeCli").ToString().Replace("'", "") %>', '<%# Eval("ValorVec", "{0:C}") %>', '<%# Eval("DataVec", "{0:d}") %>', '<%# Eval("IdCliente") %>', '<%# Eval("Juros") %>', '<%# Eval("Multa") %>', '<%# Eval("ObsScript") %>', this);">
+                                    <a href="#" onclick="setContaReceber('<%# Eval("IdContaR") %>', '<%# Eval("IdPedido") %>', '<%# Eval("IdLiberarPedido") %>', '<%# Eval("NomeCli").ToString().Replace("'", "") %>', '<%# Eval("ValorVec", "{0:C}") %>', '<%# Eval("DataVec", "{0:d}") %>', '<%# Eval("IdCliente") %>', '<%# Eval("Juros") %>', '<%# Eval("Multa") %>', '<%# Eval("ObsScript") %>', this, false);">
                                         <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                                 </asp:PlaceHolder>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:PlaceHolder ID="btnRenegociar" runat="server" Visible='<%# !(bool)Eval("IsParcelaCartao") && Eval("IdAntecipContaRec") == null %>'>
+                                    <a href="#" onclick="setContaReceber('<%# Eval("IdContaR") %>', '<%# Eval("IdPedido") %>', '<%# Eval("IdLiberarPedido") %>', '<%# Eval("NomeCli").ToString().Replace("'", "") %>', '<%# Eval("ValorVec", "{0:C}") %>', '<%# Eval("DataVec", "{0:d}") %>', '<%# Eval("IdCliente") %>', '<%# Eval("Juros") %>', '<%# Eval("Multa") %>', '<%# Eval("ObsScript") %>', this, true);">
+                                        <img src="../Images/handshakesmall.png" border="0" title="Renegociar" alt="Renegociar" /></a>
+                                </asp:PlaceHolder>
+                            </ItemTemplate>
+                        </asp:TemplateField>  
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbRelatorio" runat="server" ImageUrl="~/Images/Relatorio.gif"
