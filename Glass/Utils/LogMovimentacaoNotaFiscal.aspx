@@ -20,6 +20,7 @@
                                     <asp:BoundField DataField="NumeroNfe" HeaderText="NFE" />
                                     <asp:BoundField DataField="DescricaoProd" HeaderText="Descrição Prod." />
                                     <asp:BoundField DataField="MensagemLog" HeaderText="Mensagem" />
+                                    <asp:BoundField DataField="DataCad" HeaderText="Data Cad. Log." ItemStyle-HorizontalAlign="Center" DataFormatString="{0:d}" />
                                 </Columns>
                                 <PagerStyle />
                                 <EditRowStyle />
