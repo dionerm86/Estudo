@@ -15,12 +15,12 @@ namespace Glass.Data.DAL
         public List<LogMovimentacaoNotaFiscal> ObtemLogsNotaFiscal(uint idNf)
         {
             var sql = string.Format(@"SELECT * FROM 
-                            (SELECT nf.NUMERONFE, NULL AS DESCRICAOPROD, lmnf.MENSAGEMLOG  
+                            (SELECT nf.NUMERONFE, NULL AS DESCRICAOPROD, lmnf.MENSAGEMLOG, lmnf.DataCad
                                 FROM nota_fiscal nf
                                 INNER JOIN log_movimentacao_nota_fiscal lmnf ON lmnf.IDNF=nf.IDNF
                                 where nf.idnf = {0}
                             UNION 
-                                SELECT NULL AS NUMERONFE, p.DESCRICAO AS DESCRICAOPROD, lmnf.MENSAGEMLOG  
+                                SELECT NULL AS NUMERONFE, p.DESCRICAO AS DESCRICAOPROD, lmnf.MENSAGEMLOG, lmnf.DataCad
                                 FROM  produtos_nf pnf 
                                 INNER JOIN produto p ON pnf.IDPROD=p.IDPROD
                                 INNER JOIN log_movimentacao_nota_fiscal lmnf ON lmnf.IDNF=pnf.IDNF AND lmnf.IDPRODNF=pnf.IDPRODNF
