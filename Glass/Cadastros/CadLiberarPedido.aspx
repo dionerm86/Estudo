@@ -830,8 +830,15 @@
                             DataFormatString="{0:C}">
                             <ItemStyle Wrap="False" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="ValorASerPagoLiberacao" DataFormatString="{0:C}" 
-                            HeaderText="Total a ser pago" SortExpression="TotalParaLiberacao" />
+                        <asp:TemplateField HeaderText="Total a ser pago" SortExpression="TotalParaLiberacao" ItemStyle-HorizontalAlign="Center">
+                            <ItemTemplate>
+                                <asp:Label runat="server" Text='<%# Math.Round(((decimal)Eval("ValorASerPagoLiberacao")), 2) %>'></asp:Label>
+                                <br/>
+                                <asp:ImageButton ID="imbAviso" runat="server" ImageUrl="~/Images/help.gif" Visible='<%# Math.Round(((decimal)Eval("ValorASerPagoLiberacao")), 2) < 0 %>' 
+                                    ToolTip='<%# Eval("ValorNegativoLiberar") %>' />
+                            </ItemTemplate>
+                            <ItemStyle Wrap="False" />
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Pagto" SortExpression="DescrTipoVenda">
                             <ItemTemplate>
                                 <asp:Label ID="Label2" runat="server" Text='<%# Eval("DescrTipoVenda").ToString() + Eval("DescricaoParcelas").ToString() %>'></asp:Label>
