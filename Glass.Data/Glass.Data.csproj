@@ -452,6 +452,7 @@
     <Compile Include="Fiscal\DAL\DetalhamentoDebitosPisCofinsDAO.cs" />
     <Compile Include="Fiscal\DAL\EncontroContasDAO.cs" />
     <Compile Include="Fiscal\DAL\IestUfLojaDAO.cs" />
+    <Compile Include="Fiscal\DAL\LogMovimentacaoNotaFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\CidadeCargaMDFeDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\CidadeDescargaMDFeDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\CiotRodoviarioMDFeDAO.cs" />
@@ -479,6 +480,7 @@
     <Compile Include="Fiscal\Model\DetalhamentoDebitosPisCofins.cs" />
     <Compile Include="Fiscal\Model\IestUfLoja.cs" />
     <Compile Include="Fiscal\Model\ImpostoNcmUF.cs" />
+    <Compile Include="Fiscal\Model\LogMovimentacaoNotaFiscal.cs" />
     <Compile Include="Fiscal\Model\MargemLucroCnaeMT.cs" />
     <Compile Include="Fiscal\Model\MDFe\CidadeCargaMDFe.cs" />
     <Compile Include="Fiscal\Model\MDFe\CidadeDescargaMDFe.cs" />
@@ -1082,6 +1084,7 @@
     <Compile Include="RelDAL\ItemProduzidoEFDDAO.cs" />
     <Compile Include="RelDAL\ItemSaidaDAO.cs" />
     <Compile Include="RelDAL\MDFeDAO.cs" />
+    <Compile Include="RelDAL\MovEstoquesLogDAO.cs" />
     <Compile Include="RelDAL\PosicaoMateriaPrimaChapaDAO.cs" />
     <Compile Include="RelDAL\PosicaoMateriaPrimaDAO.cs" />
     <Compile Include="RelDAL\CTeDAO.cs" />
@@ -1105,6 +1108,7 @@
     <Compile Include="RelModel\GraficoDataEntrega.cs" />
     <Compile Include="RelModel\ItemProduzidoEFD.cs" />
     <Compile Include="RelModel\MDFe.cs" />
+    <Compile Include="RelModel\MovEstoquesLog.cs" />
     <Compile Include="RelModel\PosicaoMateriaPrima.cs" />
     <Compile Include="RelModel\LinhaComponenteValor.cs" />
     <Compile Include="RelModel\ContasPagarReceber.cs" />

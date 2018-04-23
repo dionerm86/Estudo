@@ -1187,7 +1187,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             if (hdfMedidasAlteradas != null)
                 hdfMedidasAlteradas.Value = "false";
 
-            LimpaCalculo();
+           //LimpaCalculo();
 
             grdItemProjeto.DataBind();
 

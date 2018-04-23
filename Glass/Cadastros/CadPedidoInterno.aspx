@@ -113,9 +113,10 @@
                                             Loja
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
-                                                DataTextField="NomeFantasia" DataValueField="IdLoja" SelectedValue='<%# Bind("IdLoja") %>'>
-                                            </asp:DropDownList>                                                                                        
+                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name"
+                                                DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>' OnLoad="drpLoja_Load" onchange="onChangeLoja(this)">
+                                            </asp:DropDownList>
+                                            <asp:HiddenField ID="hdfIdLoja" runat="server" Value='<%# Eval("IdLoja") %>' />
                                         </td>
                                     </tr>
                                     <tr>
@@ -388,9 +389,8 @@
                     Culture="pt-BR" MaximumRowsParameterName="" SelectMethod="GetOrdered" SkinID="" 
                     StartRowIndexParameterName="" TypeName="Glass.Data.DAL.FuncionarioDAO">
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll"
-                    TypeName="Glass.Data.DAL.LojaDAO">
-                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
+                    SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCentroCusto" runat="server" SelectMethod="ObtemParaSelecao"
                     TypeName="Glass.Data.DAL.CentroCustoDAO" DataObjectTypeName="Glass.Data.Model.CentroCusto">
                     <SelectParameters>

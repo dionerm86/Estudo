@@ -1,5 +1,6 @@
 ﻿using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Model;
 using Glass.Data.RelDAL;
 
 namespace Glass.Data.RelModel
@@ -19,9 +20,6 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("IDSETOR")]
         public uint IdSetor { get; set; }
 
-        [PersistenceProperty("NOMESETOR")]
-        public string NomeSetor { get; set; }
-
         [PersistenceProperty("TOTM2")]
         public double TotM2 { get; set; }
 
@@ -34,6 +32,11 @@ namespace Glass.Data.RelModel
         #endregion
 
         #region Propriedades de Suporte
+
+        public string NomeSetor
+        {
+            get { return Utils.ObtemSetor(IdSetor).Descricao; }
+        }
 
         public int NumSeqSetor
         {

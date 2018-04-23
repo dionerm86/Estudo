@@ -4168,6 +4168,20 @@ namespace Glass.Data.DAL
 
             var pedido = PedidoDAO.Instance.GetElement(session, objInsert.IdPedido);
 
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
+                (objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd,
+                (int)objInsert.IdSubgrupoProd))) && (int)objInsert.IdGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
+            {
+                throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
+            }
+
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
+                !SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd, (int)objInsert.IdSubgrupoProd)) ||
+                objInsert.IdGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
+            {
+                throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
+            }
+
             if (pedido.FastDelivery && objInsert.IdAplicacao > 0)
             {
                 var aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(session, objInsert.IdAplicacao.Value);
@@ -4181,6 +4195,19 @@ namespace Glass.Data.DAL
             {
                 if (!AmbientePedidoDAO.Instance.Exists(session, objInsert.IdAmbientePedido.GetValueOrDefault()))
                     throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
+            }
+
+            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
+                (objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd,
+                (int)objInsert.IdSubgrupoProd))) && (int)objInsert.IdGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
+            {
+                throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
+            }
+            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
+                !SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd, (int)objInsert.IdSubgrupoProd)) ||
+                objInsert.IdGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
+            {
+                throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
             }
 
             //Valida processo

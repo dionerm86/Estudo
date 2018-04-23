@@ -171,7 +171,8 @@ namespace Glass.Data.DAL
 
             // Só separa as contas se ainda não houver parcela recebida para esses pedidos/liberações
             if (objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from contas_receber where " +
-                nomeCampo + " in (" + idsString + ") and !isParcelaCartao and recebida") > 0)
+                nomeCampo + " in (" + idsString + ") and !isParcelaCartao and recebida " +
+                (!FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? @"and idSinal is Null" : "")) > 0)
                 throw new Exception("Existe pelo menos uma conta recebida que seria utilizada na separação.");
 
             // Verifica se alguma conta a receber já possui a coluna IDNF preenchida para

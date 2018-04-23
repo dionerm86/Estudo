@@ -2384,8 +2384,14 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "PedidoInterno":
                     {
-                        report.ReportPath = "Relatorios/rptPedidoInterno.rdlc";
                         var idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
+
+                        var caminhoRelatorio = string.Format("Relatorios/rptPedidoInterno{0}.rdlc", ControleSistema.GetSite().ToString());
+
+                        if (System.IO.File.Exists(System.Web.HttpContext.Current.Server.MapPath(string.Format("~/{0}", caminhoRelatorio))))
+                            report.ReportPath = caminhoRelatorio;
+                        else
+                            report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptPedidoInterno.rdlc");
 
                         report.DataSources.Add(new ReportDataSource("PedidoInterno", new Glass.Data.Model.PedidoInterno[] { PedidoInternoDAO.Instance.GetElement(idPedido) }));
                         report.DataSources.Add(new ReportDataSource("ProdutoPedidoInterno", ProdutoPedidoInternoDAO.Instance.GetByPedidoInterno(idPedido).ToArray()));

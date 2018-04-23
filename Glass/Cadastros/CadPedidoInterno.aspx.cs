@@ -23,7 +23,7 @@ namespace Glass.UI.Web.Cadastros
                 {
                     ((Label) dtvPedidoInterno.FindControl("lblData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
                     ((Label) dtvPedidoInterno.FindControl("lblSituacao")).Text = "Aberto";
-                    ((DropDownList) dtvPedidoInterno.FindControl("drpLoja")).SelectedValue =
+                    ((DropDownList)dtvPedidoInterno.FindControl("drpLoja")).SelectedValue =
                         UserInfo.GetUserInfo.IdLoja.ToString();
                     if ((Label) dtvPedidoInterno.FindControl("lblFuncionarioCad") != null)
                         ((Label) dtvPedidoInterno.FindControl("lblFuncionarioCad")).Text = UserInfo.GetUserInfo.Nome;
@@ -147,5 +147,12 @@ namespace Glass.UI.Web.Cadastros
         }
 
         #endregion
+
+        protected void drpLoja_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+                ((DropDownList)sender).SelectedIndex = (int)UserInfo.GetUserInfo.IdLoja;
+        }
+
     }
 }
