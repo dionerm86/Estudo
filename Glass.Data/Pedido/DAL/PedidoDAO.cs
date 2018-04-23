@@ -10848,7 +10848,7 @@ namespace Glass.Data.DAL
                 {
                     var dadosAmbientes = (pedido as IContainerCalculo).Ambientes.Obter(true)
                         .Cast<AmbientePedido>()
-                        .Select(x => new { x.IdAmbientePedido, x.TotalProdutos });
+                        .Select(x => new { x.IdAmbientePedido, TotalProdutos = x.TotalProdutos + x.ValorDescontoAtual });
 
                     var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
 
@@ -14200,11 +14200,11 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
-                
+
                 #endregion
 
                 #region Atualização do total do pedido
-
+                
                 UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
 
                 #endregion
@@ -17669,8 +17669,7 @@ namespace Glass.Data.DAL
 
             #region Atualização dos totais do pedido espelho
 
-            AplicaComissaoDescontoAcrescimo(session, novo, Geral.ManterDescontoAdministrador);
-
+            AplicaComissaoDescontoAcrescimo(session, novo, Geral.ManterDescontoAdministrador, produtosPedido);
             UpdateTotalPedido(session, novo, false, false, alterouDesconto, true);
 
             #endregion

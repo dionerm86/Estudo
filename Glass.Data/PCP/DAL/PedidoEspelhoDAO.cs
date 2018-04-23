@@ -1934,7 +1934,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, sql);
             }
 
-            bool pedFastDelivery = pedidoEspelho.FastDelivery;
+            bool pedFastDelivery = PedidoDAO.Instance.IsFastDelivery(sessao, pedidoEspelho.IdPedido);
             float pedTaxaFastDelivery = PedidoDAO.Instance.ObtemTaxaFastDelivery(sessao, pedidoEspelho.IdPedido);
             uint pedIdLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, pedidoEspelho.IdPedido);
             uint pedIdCli = PedidoDAO.Instance.ObtemIdCliente(sessao, pedidoEspelho.IdPedido);
@@ -3694,7 +3694,7 @@ namespace Glass.Data.DAL
             FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, pedidoEspelho, produtosAtualizar, true);
             UpdateTotalPedido(sessao, pedidoEspelho);
 
-            objPersistence.ExecuteCommand(sessao, @"update pedido set percComissao=0, desconto=0,
+            objPersistence.ExecuteCommand(sessao, @"update pedido_espelho set percComissao=0, desconto=0,
                 acrescimo=0 where idPedido=" + pedidoEspelho.IdPedido);
         }
         
@@ -4456,6 +4456,8 @@ namespace Glass.Data.DAL
             #region Remoção do acréscimo, comissão e desconto
 
             var pedidoEspelho = GetElement(session, novo.IdPedido);
+            AtualizaPedidoEspelhoComDadosPedido(pedidoEspelho, novo);
+
             RemoveComissaoDescontoAcrescimo(session, pedidoEspelho, produtosPedidoEspelho);
 
             #endregion
@@ -4499,6 +4501,24 @@ namespace Glass.Data.DAL
             UpdateTotalPedido(session, pedidoEspelho);
 
             #endregion
+        }
+
+        private void AtualizaPedidoEspelhoComDadosPedido(PedidoEspelho pedidoEspelho, Pedido pedido)
+        {
+            pedidoEspelho.TipoVenda = pedido.TipoVenda ?? 0;
+            pedidoEspelho.IdFormaPagto = pedido.IdFormaPagto ?? 0;
+            pedidoEspelho.ValorEntrada = pedido.ValorEntrada;
+            pedidoEspelho.IdComissionado = pedido.IdComissionado;
+            pedidoEspelho.PercComissao = pedido.PercComissao;
+            pedidoEspelho.TipoDesconto = pedido.TipoDesconto;
+            pedidoEspelho.Desconto = pedido.Desconto;
+            pedidoEspelho.TipoAcrescimo = pedido.TipoAcrescimo;
+            pedidoEspelho.Acrescimo = pedido.Acrescimo;
+            pedidoEspelho.Obs = pedido.Obs;
+            pedidoEspelho.DataEntrega = pedido.DataEntrega;
+            pedidoEspelho.TipoEntrega = pedido.TipoEntrega ?? 0;
+            pedidoEspelho.FastDelivery = pedido.FastDelivery;
+            pedidoEspelho.IdLoja = pedido.IdLoja;
         }
 
         #endregion
