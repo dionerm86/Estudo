@@ -1197,6 +1197,7 @@ namespace Glass.Data.Model
             }
         }
 
+
         [XmlIgnore]
         public decimal ValorASerPagoLiberacao
         {
@@ -1214,6 +1215,40 @@ namespace Glass.Data.Model
                     return 0;
 
                 return total - DescontoTotal;
+            }
+        }
+
+        [XmlIgnore]
+        public string ValorNegativoLiberar
+        {
+            get
+            {
+                if (IdObra > 0)
+                    return "";
+
+                var valorNegativoLiberar = new System.Text.StringBuilder("Valor Negativo para liberar. ");
+
+                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+
+                if (PCPConfig.UsarConferenciaFluxo)
+                    valorNegativoLiberar.Append("Sistema está configurado para considerar o valor confirmado para liberação. ");
+
+                if (IdPagamentoAntecipado > 0 && total > 0 && total - ValorPagamentoAntecipado < 0)
+                {
+                    total -= ValorPagamentoAntecipado;
+                    valorNegativoLiberar.Append("O valor do pagamento antecipado do pedido supera o valor a liberar. ");
+                }
+
+                if (IdSinal > 0 && total > 0 && total - ValorEntrada < 0)
+                {
+                    total -= ValorEntrada;
+                    valorNegativoLiberar.Append("O valor da entrada do pedido supera o valor a liberar. ");
+                }
+
+                if (DescontoTotal > 0 && total - DescontoTotal < 0)
+                    valorNegativoLiberar.Append("O valor do desconto total aplicado ao pedido supera o valor a liberar. ");
+
+                return valorNegativoLiberar.ToString();
             }
         }
 

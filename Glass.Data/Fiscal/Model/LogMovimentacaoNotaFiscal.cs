@@ -9,7 +9,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(LogMovimentacaoNotaFiscalDAO))]
     [PersistenceClass("log_movimentacao_nota_fiscal")]
-    public class LogMovimentacaoNotaFiscal
+    public class LogMovimentacaoNotaFiscal : ModelBaseCadastro
     {
         [PersistenceProperty("IDNF")]
         public uint IdNf { get; set; }

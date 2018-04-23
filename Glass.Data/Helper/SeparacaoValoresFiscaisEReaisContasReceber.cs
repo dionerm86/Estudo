@@ -66,7 +66,8 @@ namespace Glass.Data.Helper
                 contasReceber.Where(f => f.IdLoja > 0).ToList()[0].IdLoja : UserInfo.GetUserInfo.IdLoja;
 
             return contasReceber != null && contasReceber.Length > 0 &&
-                contasReceber.Count(x => x.Recebida) == 0;
+                contasReceber.Count(x => x.IdSinal == (!FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? null : x.IdSinal)
+                && x.Recebida) == 0;
         }
         
         protected override bool CarregarContasPagar(GDASession sessao, ref ContasPagar[] contasPagar, ref string nomeCampo, out uint idLoja)
