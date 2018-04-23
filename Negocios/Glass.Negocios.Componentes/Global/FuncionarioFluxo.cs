@@ -186,13 +186,13 @@ namespace Glass.Global.Negocios.Componentes
                             .FirstOrDefault()));
             }
 
-            if (dataNascInicio.HasValue)
+            if (dataNascInicio > DateTime.MinValue)
                 whereClause
                     .And("f.DataNasc >= ?dataNascInicio")
                     .Add("?dataNascInicio", dataNascInicio.Value.Date)
                     .AddDescription(string.Format("Data de Nasc. Inicial: {0:dd/MM/yyyy}", dataNascInicio.Value));
 
-            if (dataNascFim.HasValue)
+            if (dataNascFim > DateTime.MinValue)
                 whereClause
                     .And("f.DataNasc <= ?dataNascFim")
                     .Add("?dataNascFim", dataNascFim.Value.Date.AddDays(1).AddSeconds(-1))

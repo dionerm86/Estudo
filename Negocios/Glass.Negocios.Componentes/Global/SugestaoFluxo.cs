@@ -96,13 +96,13 @@ namespace Glass.Global.Negocios.Componentes
                         .Add("?descricao", string.Format("%{0}%", descricao))
                         .AddDescription(string.Format("Descrição: {0} ", descricao));
 
-                if (dataInicio.HasValue)
+                if (dataInicio > DateTime.MinValue)
                     whereClause
                         .And("sc.DataCad>=?dataInicio")
                         .Add("?dataInicio", dataInicio.Value.Date)
                         .AddDescription(string.Format("Data inicial: {0} ", dataInicio.Value.ToString("dd-MM-yyyy")));
 
-                if (dataFim.HasValue)
+                if (dataFim > DateTime.MinValue)
                     whereClause
                         .And("sc.DataCad<=?dataFim")
                         .Add("?dataFim", dataFim.Value.Date.AddDays(1).AddMinutes(-1))

@@ -1754,7 +1754,7 @@ namespace Glass.Data.DAL
             // Define se ao filtrar pela data de entrega será filtrado também pela data de fábrica
             var filtrarDataFabrica = ProducaoConfig.BuscarDataFabricaConsultaProducao;
             var buscarNomeFantasia = ProducaoConfig.TelaConsulta.BuscarNomeFantasiaConsultaProducao;
-            var usarJoin = idSetor > 0 && ((dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue) || (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue));
+            var usarJoin = idSetor > 0 && (dataLeituraInicio > DateTime.MinValue || dataLeituraFim > DateTime.MinValue);
             var temp = new ProdutoPedidoProducao();
             filtroAdicional = string.Empty;
             var filtroPedido = string.Empty;
@@ -1771,7 +1771,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN etiqueta_aplicacao apl ON (IF(ped.TipoPedido={0}, a.IdAplicacao, pp.IdAplicacao) = apl.IdAplicacao)
                     LEFT JOIN etiqueta_processo prc ON (IF(ped.TipoPedido={0}, a.IdProcesso, pp.IdProcesso) = prc.IdProcesso) ", (int)Pedido.TipoPedidoEnum.MaoDeObra);
 
-            if (filtrarDataFabrica || (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue) || (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue))
+            if (filtrarDataFabrica || dataFabricaInicio > DateTime.MinValue|| dataFabricaFim > DateTime.MinValue)
             {
                 sql += " LEFT JOIN pedido_espelho pedEsp ON (ped.IdPedido = pedEsp.IdPedido)";
             }
@@ -1927,7 +1927,7 @@ namespace Glass.Data.DAL
 
             var descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao : idSetor == -1 ? "Etiqueta não impressa" : string.Empty;
 
-            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            if (dataLeituraInicio > DateTime.MinValue)
             {
                 if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
                 {
@@ -1939,7 +1939,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            if (dataLeituraFim > DateTime.MinValue)
             {
                 if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
                 {
@@ -1951,31 +1951,31 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            if (dataEntregaInicio > DateTime.MinValue)
             {
                 sql += " AND ped.DataEntrega>=?dataEntregaInicio";
                 filtroPedido += " AND ped.DataEntrega>=?dataEntregaInicio";
             }
 
-            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            if (dataEntregaFim > DateTime.MinValue)
             {
                 sql += " AND ped.DataEntrega<=?dataEntregaFim";
                 filtroPedido += " AND ped.DataEntrega<=?dataEntregaFim";
             }
 
-            if (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue)
+            if (dataFabricaInicio > DateTime.MinValue)
             {
                 sql += " AND (pedEsp.DataFabrica>=?dataFabricaInicio)";
                 filtroPedido += " AND (pedEsp.DataFabrica>=?dataFabricaInicio)";
             }
 
-            if (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue)
+            if (dataFabricaFim > DateTime.MinValue)
             {
                 sql += " AND pedEsp.DataFabrica<=?dataFabricaFim";
                 filtroPedido += " AND pedEsp.DataFabrica<=?dataFabricaFim";
             }
 
-            if ((dataConfirmacaoPedidoInicio.HasValue && dataConfirmacaoPedidoInicio > DateTime.MinValue) || (dataConfirmacaoPedidoFim.HasValue && dataConfirmacaoPedidoFim > DateTime.MinValue))
+            if (dataConfirmacaoPedidoInicio > DateTime.MinValue || dataConfirmacaoPedidoFim > DateTime.MinValue)
             {
                 var idsPedidoPelaDataConfirmacao = PedidoDAO.Instance.ObtemIdsPelaDataConf(dataConfirmacaoPedidoInicio, dataConfirmacaoPedidoFim);
 
@@ -2258,14 +2258,14 @@ namespace Glass.Data.DAL
             // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
             if (listaVazia && FiltrosVazios(idCarregamento, (uint)idLiberarPedido, (uint)idPedido, idPedidoImportado.ToString(), (uint)idImpressao,
                 idsRota?.Count() > 0 ? string.Join(",", idsRota) : string.Empty, codigoPedidoCliente, (uint)idCliente, nomeCliente, codigoEtiqueta,
-                dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue ? dataLeituraInicio.Value.ToString("dd/MM/yyyy hh:MM:ss") : string.Empty,
-                dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue ? dataEntregaFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue ? dataFabricaInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataConfirmacaoPedidoInicio.HasValue && dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
-                dataConfirmacaoPedidoFim.HasValue && dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy hh:MM:ss"): string.Empty,
+                dataLeituraInicio > DateTime.MinValue ? dataLeituraInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
+                dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataEntregaFim > DateTime.MinValue ? dataEntregaFim.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataFabricaInicio > DateTime.MinValue ? dataFabricaInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
+                dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy"): string.Empty,
                 idSetor, situacao.ToString(), situacaoPedido, tipoSituacao, idsSubgrupo?.Count() > 0 ? string.Join(",", idsSubgrupo) : string.Empty, (uint)tipoEntrega, pecasProducaoCanceladas,
                 (uint)idFuncionario, tiposPedido.Count() > 0 ? string.Join(",", tiposPedido) : string.Empty, (uint)idCorVidro, altura, largura, espessura,
                 idsProcesso?.Count() > 0 ? string.Join(",", idsProcesso) : string.Empty, idsAplicacao?.Count() > 0 ? string.Join(",", idsAplicacao) : string.Empty, aguardandoExpedicao,
@@ -2302,37 +2302,40 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(codigoPedidoCliente))
             {
-                parametros.Add(new GDAParameter("?codigoPedidoCliente", "%" + codigoPedidoCliente + "%"));
+                parametros.Add(new GDAParameter("?codigoPedidoCliente", string.Format("%{0}%", codigoPedidoCliente)));
             }
 
-            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            if (dataEntregaFim > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataEntregaFim", DateTime.Parse(dataEntregaFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+                var formatoDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
+                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim)));
             }
 
-            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            if (dataEntregaInicio > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataEntregaInicio", DateTime.Parse(dataEntregaInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+                parametros.Add(new GDAParameter("?dataEntregaInicio", dataEntregaInicio));
             }
 
-            if (dataFabricaFim.HasValue && dataFabricaFim > DateTime.MinValue)
+            if (dataFabricaFim > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataFabricaFim", DateTime.Parse(dataFabricaFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+                var formatoDataFabricaFim = dataFabricaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
+                parametros.Add(new GDAParameter("?dataFabricaFim", dataFabricaFim.Value.ToString(formatoDataFabricaFim)));
             }
 
-            if (dataFabricaInicio.HasValue && dataFabricaInicio > DateTime.MinValue)
+            if (dataFabricaInicio > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataFabricaInicio", DateTime.Parse(dataFabricaInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+                parametros.Add(new GDAParameter("?dataFabricaInicio", dataFabricaInicio));
             }
 
-            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            if (dataLeituraFim > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value));
+                var formatoDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
+                parametros.Add(new GDAParameter("?dataLeituraFim", dataLeituraFim.Value.ToString(formatoDataLeituraFim)));
             }
 
-            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            if (dataLeituraInicio > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataLeituraInicio", dataLeituraInicio.Value));
+                parametros.Add(new GDAParameter("?dataLeituraInicio", dataLeituraInicio));
             }
 
             if (espessura > 0)
