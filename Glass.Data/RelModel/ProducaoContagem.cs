@@ -2,6 +2,7 @@
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using Glass.Data.RelDAL;
+using System.Xml.Serialization;
 
 namespace Glass.Data.RelModel
 {
@@ -31,17 +32,15 @@ namespace Glass.Data.RelModel
 
         #endregion
 
-        #region Propriedades de Suporte
+        #region Propriedades estendidas
 
-        public string NomeSetor
-        {
-            get { return Utils.ObtemSetor(IdSetor).Descricao; }
-        }
+        [XmlIgnore]
+        [PersistenceProperty("NOMESETOR", DirectionParameter.InputOptional)]
+        public string NomeSetor { get; set; }
 
-        public int NumSeqSetor
-        {
-            get { return Utils.ObtemSetor(IdSetor).NumeroSequencia; }
-        }
+        [XmlIgnore]
+        [PersistenceProperty("NUMSEQSETOR", DirectionParameter.InputOptional)]
+        public int NumSeqSetor { get; set; }
 
         #endregion
     }
