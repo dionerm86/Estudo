@@ -187,26 +187,26 @@ namespace Glass.UI.Web.Relatorios.Producao
                         var idFuncionario = Request["idFunc"].StrParaInt();
                         var idImpressao = Request["idImpressao"].StrParaInt();
                         var idPedido = Request["idPedido"].StrParaInt();
-                        var idsAplicacao = !string.IsNullOrWhiteSpace(Request["idsApl"]) ? Request["idsApl"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
+                        var idsAplicacao = Request["idsApl"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
                         var idSetor = Request["idSetor"].StrParaInt();
-                        var idsProcesso = !string.IsNullOrWhiteSpace(Request["idsProc"]) ? Request["idsProc"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
-                        var idsRota = !string.IsNullOrWhiteSpace(Request["codRota"]) ? Request["codRota"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
-                        var idsSubgrupo = !string.IsNullOrWhiteSpace(Request["idsSubgrupos"]) ? Request["idsSubgrupos"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
+                        var idsProcesso = Request["idsProc"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var idsRota = Request["codRota"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var idsSubgrupo = Request["idsSubgrupos"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
                         var largura = Request["largura"].StrParaInt();
                         var nomeCliente = Request["nomeCliente"];
-                        var pecasProducaoCanceladas = Request["pecasProdCanc"];
-                        var situacao = Request["situacao"];
+                        var pecasProducaoCanceladas = Request["pecasProdCanc"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var situacoes = Request["situacao"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
                         var situacaoPedido = Request["situacaoPedido"].StrParaInt();
                         var tipoEntrega = Request["tipoEntrega"].StrParaInt();
-                        var tipoPedido = Request["tipoPedido"];
                         var tipoSituacao = Request["tiposSituacoes"].StrParaInt();
+                        var tiposPedido = Request["tipoPedido"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
 
                         #endregion
 
                         var producoesContagem = ProducaoContagemDAO.Instance.PesquisarProducaoContagemRelatorio(aguardandoEntradaEstoque, aguardandoExpedicao, altura, codigoEtiqueta,
                             codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio, dataLeituraFim,
                             dataLeituraInicio, espessura, fastDelivery, idCarregamento, idCliente, idFuncionario, idImpressao, idPedido, idsAplicacao, idSetor, idsProcesso, idsRota, idsSubgrupo,
-                            largura, nomeCliente, pecasProducaoCanceladas, situacao, situacaoPedido, tipoEntrega, tipoPedido, tipoSituacao);
+                            largura, nomeCliente, pecasProducaoCanceladas, situacaoPedido, situacoes, tipoEntrega, tipoSituacao, tiposPedido);
 
                         report.DataSources.Add(new ReportDataSource("ProducaoContagem", producoesContagem));
                         break;
