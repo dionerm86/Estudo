@@ -45,22 +45,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Buscar endereço do cliente automaticamente se os campos estiverem vazios?
-            /// </summary>
-            public static bool BuscarEnderecoClienteSeEstiverVazio
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.BuscarEnderecoClienteSeEstiverVazio); }
-            }
-
-            /// <summary>
-            /// Define que será exibido o valor do m² da chapa ao buscar produto para ser inserido no pedido
-            /// </summary>
-            public static bool ExibirM2ChapaDeVidro
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirM2ChapaDeVidro); }
-            }
-
-            /// <summary>
             /// Define que caso o controle de data de entrega mínima não retorne uma data, busca a data de hoje no campo
             /// </summary>
             public static bool BuscarDataEntregaDeHojeSeDataVazia

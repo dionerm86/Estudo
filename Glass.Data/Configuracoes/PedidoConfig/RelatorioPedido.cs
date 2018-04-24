@@ -46,14 +46,6 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Indica se o relatório de pedidos só aparece para pedidos confirmados.
-            /// </summary>
-            public static bool SoImprimirPedidoConfirmado
-            {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.SoImprimirPedidoConfirmado); }
-            }
-
-            /// <summary>
             /// Identifica se os itens dos produtos do pedido serão exibidos no relatório.
             /// </summary>
             public static bool ExibirItensProdutosPedido

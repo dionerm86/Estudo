@@ -201,7 +201,7 @@
                             <asp:Label ID="Label10" runat="server" Text="Loja" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="True" OnDataBound="drpLoja_DataBound"/>
+                            <uc3:ctrlLoja runat="server" ID="drpLoja" SomenteAtivas="true" AutoPostBack="True" />
                         </td>
                         <td>
                             <asp:Label ID="Label9" runat="server" Text="Período Entrega" ForeColor="#0066FF"></asp:Label>
@@ -277,8 +277,7 @@
                 <asp:GridView GridLines="None" ID="grdColocacoes" runat="server" AllowPaging="True"
                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                     EditRowStyle-CssClass="edit" AutoGenerateColumns="False" DataSourceID="odsInstalacao"
-                    DataKeyNames="IdInstalacao" EmptyDataText="Nenhuma instalação encontrada." AllowSorting="True"
-                    OnRowDataBound="grdColocacoes_RowDataBound">
+                    DataKeyNames="IdInstalacao" EmptyDataText="Nenhuma instalação encontrada." AllowSorting="True">
                     <PagerSettings PageButtonCount="20" />
                     <Columns>
 

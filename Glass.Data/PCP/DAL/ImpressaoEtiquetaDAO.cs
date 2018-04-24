@@ -353,7 +353,7 @@ namespace Glass.Data.DAL
                                     ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                                 lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp,
-                                    prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd));
+                                    prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd, false));
                             }
                         }
                         else
@@ -362,7 +362,7 @@ namespace Glass.Data.DAL
                                 ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
 
                             lstEtiqueta.Add(Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(null, idFunc, prodImp, prodPedEsp.DescrBeneficiamentos,
-                                null, ref temp, ref dicPedidos, ref dicProd));
+                                null, ref temp, ref dicPedidos, ref dicProd, false));
                         }
                     }
                 }
@@ -870,7 +870,7 @@ namespace Glass.Data.DAL
                                         }
 
                                         var etiquetaRep = Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(transaction, idFunc, prodImp,
-                                            prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd);
+                                            prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd, true);
 
                                         // Chamado 47948 - Necessário pois no MontaEtiqueta essas informações são utilizadas de forma diferente.
                                         // As etiquetas de peças repostas estavam saindo sem Rota e Data no arquivo de otimização.
@@ -900,7 +900,7 @@ namespace Glass.Data.DAL
                                     }
 
                                     var etiquetaRep = Glass.Data.RelDAL.EtiquetaDAO.Instance.MontaEtiqueta(transaction, idFunc, prodImp,
-                                        prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd);
+                                        prodPedEsp.DescrBeneficiamentos, null, ref temp, ref dicPedidos, ref dicProd,false);
 
                                     // Chamado 47948 - Necessário pois no MontaEtiqueta essas informações são utilizadas de forma diferente.
                                     // As etiquetas de peças repostas estavam saindo sem Rota e Data no arquivo de otimização.

@@ -12,16 +12,8 @@ namespace Glass.UI.Web.Relatorios.Producao
 
             if (!IsPostBack)
             {
-                if (Configuracoes.PCPConfig.FiltroPadraoDiaAtualTelaReposicao)
-                {
-                    ctrlDataIni.Data = DateTime.Today;
-                    ctrlDataFim.Data = DateTime.Today;
-                }
-                else
-                {
-                    ctrlDataIni.Data = DateTime.Today.AddMonths(-1);
-                    ctrlDataFim.Data = DateTime.Today;
-                }
+                ctrlDataIni.Data = DateTime.Today.AddMonths(-1);
+                ctrlDataFim.Data = DateTime.Today;
             }
         }
 

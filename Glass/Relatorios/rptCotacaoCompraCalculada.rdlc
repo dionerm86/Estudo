@@ -9,7 +9,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>="Cálculo da Cotação de Compra - Cód. " + First(Fields!CodigoCotacaoCompra.Value, "CotacaoCompraCalculada").ToString()</Value>
+                <Value>="Cálculo da Cotação de Compra - Cód. " + Fields!CodigoCotacaoCompra.Value.ToString()</Value>
                 <Style>
                   <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
