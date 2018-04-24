@@ -205,14 +205,6 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PodeReabrirPedidoGeradoParceiro); }
         }
- 
-        /// <summary>
-        /// Verifica se é permitido, ao parceiro, reabrir pedidos gerados por ele que estejam conferidos.
-        /// </summary>
-        public static bool ParceiroPodeReabrirPedidoConferido
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ParceiroPodeReabrirPedidoConferido); }
-        }
 
         /// <summary>
         /// Define que mesmo que o pedido possua pagamento antecipado o mesmo pode ser reaberto para alteração

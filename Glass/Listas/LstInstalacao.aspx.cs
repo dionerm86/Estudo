@@ -26,15 +26,6 @@ namespace Glass.UI.Web.Listas
             grdColocacoes.PageIndex = 0;
         }
     
-        protected void drpLoja_DataBound(object sender, EventArgs e)
-        {
-            if (!IsPostBack && InstalacaoConfig.TelaListagem.FiltrarPorLojaComoPadrao)
-            {
-                drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-                grdColocacoes.DataBind();
-            }
-        }
-    
         #region Métodos AJAX
     
         /// <summary>
@@ -73,10 +64,5 @@ namespace Glass.UI.Web.Listas
         }
     
         #endregion
-    
-        protected void grdColocacoes_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-
-        }
     }
 }

@@ -457,7 +457,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.NumeroFormasPagto);
             itens.Add(Config.ConfigEnum.NumParcelasPedido);
             itens.Add(Config.ConfigEnum.CalcularAreaMinimaApenasVidroBeneficiado);
-            itens.Add(Config.ConfigEnum.SoImprimirPedidoConfirmado);
             
             itens.Add(Config.ConfigEnum.UsarTamanhoMaximoVidro);
             if (PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro)
