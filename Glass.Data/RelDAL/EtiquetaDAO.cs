@@ -444,7 +444,7 @@ namespace Glass.Data.RelDAL
                 // com todas as etiquetas relacionadas à impressão correta, e não há mais
                 // necessidade de controle de impressão de etiquetas
                 var etiq = MontaEtiqueta(session, idFunc, prodImp, descrBenef, PedidoEspelhoDAO.Instance.ObtemDataFabrica(session, prodImp.IdPedido.Value),
-                    IsPecaReposta(session, prodImp.NumEtiqueta, ref dicEtiquetaReposta), ref planosCorte, ref dicPedidos, ref dicProd);
+                    IsPecaReposta(session, prodImp.NumEtiqueta, ref dicEtiquetaReposta), ref planosCorte, ref dicPedidos, ref dicProd, false);
 
                 if (lstEtiq.All(f => f.BarCodeData != etiq.BarCodeData))
                     lstEtiq.Add(etiq);
@@ -811,7 +811,7 @@ namespace Glass.Data.RelDAL
                         // Imprime a etiqueta diretamente, uma vez que as impressões estão corretas
                         // com todas as etiquetas relacionadas à impressão correta, e não há mais
                         // necessidade de controle de impressão de etiquetas
-                        lstEtiq.Add(MontaEtiqueta(transaction, idFunc, prodImp, "", null, false, ref planosCorte, ref dicPedidos, ref dicProd));
+                        lstEtiq.Add(MontaEtiqueta(transaction, idFunc, prodImp, "", null, false, ref planosCorte, ref dicPedidos, ref dicProd, false));
                     }
 
                     if (!reImpressao)
@@ -887,7 +887,7 @@ namespace Glass.Data.RelDAL
                         // Imprime a etiqueta diretamente, uma vez que as impressões estão corretas
                         // com todas as etiquetas relacionadas à impressão correta, e não há mais
                         // necessidade de controle de impressão de etiquetas
-                        lstEtiq.Add(MontaEtiqueta(sessao, idFunc, prodImp, "", null, false, ref planosCorte, ref dicPedidos, ref dicProd));
+                        lstEtiq.Add(MontaEtiqueta(sessao, idFunc, prodImp, "", null, false, ref planosCorte, ref dicPedidos, ref dicProd, false));
                     }
 
                     if (!reImpressao)
@@ -944,14 +944,14 @@ namespace Glass.Data.RelDAL
         #region Monta Etiqueta
 
         internal Etiqueta MontaEtiqueta(GDASession session, uint idFunc, ProdutoImpressao prodImp, string descrBenef, DateTime? dataFabrica,
-            ref List<KeyValuePair<string, string>> planosCorte, ref Dictionary<uint, Pedido> dicPedidos, ref Dictionary<uint, Produto> dicProd)
+            ref List<KeyValuePair<string, string>> planosCorte, ref Dictionary<uint, Pedido> dicPedidos, ref Dictionary<uint, Produto> dicProd, bool isArquivoOtimizacao)
         {
             return MontaEtiqueta(session, idFunc, prodImp, descrBenef, dataFabrica,
-                ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(prodImp.NumEtiqueta, false), ref planosCorte, ref dicPedidos, ref dicProd);
+                ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(prodImp.NumEtiqueta, false), ref planosCorte, ref dicPedidos, ref dicProd, isArquivoOtimizacao);
         }
 
         internal Etiqueta MontaEtiqueta(GDASession session, uint idFunc, ProdutoImpressao prodImp, string descrBenef, DateTime? dataFabrica,
-            bool isPecaReposta, ref List<KeyValuePair<string, string>> planosCorte, ref Dictionary<uint, Pedido> dicPedidos, ref Dictionary<uint, Produto> dicProd)
+            bool isPecaReposta, ref List<KeyValuePair<string, string>> planosCorte, ref Dictionary<uint, Pedido> dicPedidos, ref Dictionary<uint, Produto> dicProd, bool isArquivoOtimizacao)
         {
             // Salva os pedidos no dicionário, para não precisar buscar sempre os mesmos dados
             Pedido pedido = null;
