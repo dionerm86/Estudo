@@ -17,18 +17,22 @@ namespace Glass.Data.RelDAL
         internal string SqlProducaoContagem(int altura, string codigoEtiqueta, string codigoPedidoCliente, DateTime? dataConfirmacaoPedidoFim, DateTime? dataConfirmacaoPedidoInicio,
             DateTime? dataEntregaFim, DateTime? dataEntregaInicio, DateTime? dataFabricaFim, DateTime? dataFabricaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, float espessura,
             int fastDelivery, int idCarregamento, int idCliente, int idFuncionario, int idImpressao, int idPedido, IEnumerable<int> idsAplicacao, int idSetor, IEnumerable<int> idsProcesso,
-            IEnumerable<int> idsRota, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, string pecasProducaoCanceladas, bool setoresAnteriores, bool setoresPosteriores, string situacao,
-            int situacaoPedido, int tipoEntrega, string tipoPedido, ProdutoPedidoProducaoDAO.TipoRetorno tipoRetorno)
+            IEnumerable<int> idsRota, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, IEnumerable<int> pecasProducaoCanceladas, bool setoresAnteriores, bool setoresPosteriores,
+            int situacaoPedido, IEnumerable<int> situacoes, int tipoEntrega, ProdutoPedidoProducaoDAO.TipoRetorno tipoRetorno, IEnumerable<int> tiposPedido)
         {
+            #region Declaração de variáveis
+
             // Define se ao filtrar pela data de entrega será filtrado também pela data de fábrica
             var filtrarDataFabrica = Configuracoes.ProducaoConfig.BuscarDataFabricaConsultaProducao;
             var buscarNomeFantasia = Configuracoes.ProducaoConfig.TelaConsulta.BuscarNomeFantasiaConsultaProducao;
             var usarJoin = idSetor > 0 && (dataLeituraInicio > DateTime.MinValue || dataLeituraFim > DateTime.MinValue);
             var campos = string.Empty;
             var sql = string.Empty;
-            var filtroPedido = string.Empty;
             var criterio = string.Empty;
-            var temp = new ProdutoPedidoProducao();
+
+            #endregion
+
+            #region Consulta
 
             campos = string.Format(@"
                 pp.IdPedido, ppp.IdSetor,
@@ -50,7 +54,11 @@ namespace Glass.Data.RelDAL
                 campos,
                 dataFabricaInicio > DateTime.MinValue || dataFabricaFim > DateTime.MinValue || filtrarDataFabrica ? "LEFT JOIN pedido_espelho pedEsp ON (ped.IdPedido = pedEsp.IdPedido)" : string.Empty,
                 usarJoin ? "LEFT JOIN leitura_producao lp1 ON (ppp.IdProdPedProducao = lp1.IdProdPedProducao)" : string.Empty);
-            
+
+            #endregion
+
+            #region Filtros
+
             if (idCarregamento > 0)
             {
                 sql += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM item_carregamento WHERE IdCarregamento={0})", idCarregamento);
@@ -65,16 +73,13 @@ namespace Glass.Data.RelDAL
 
             if (idPedido > 0)
             {
-                filtroPedido += string.Format(" AND (ped.IdPedido={0}", idPedido);
+                sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
                 if (Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
                 {
-                    filtroPedido += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
+                    sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
-
-                sql += filtroPedido;
-                filtroPedido += ")";
 
                 if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
                 {
@@ -82,7 +87,6 @@ namespace Glass.Data.RelDAL
                 }
 
                 sql += ")";
-
                 criterio += string.Format("Pedido: {0}    ", idPedido);
             }
 
@@ -97,15 +101,12 @@ namespace Glass.Data.RelDAL
             if (!string.IsNullOrEmpty(codigoPedidoCliente))
             {
                 sql += " AND (ped.CodCliente LIKE ?codigoPedidoCliente OR pp.PedCli LIKE ?codigoPedidoCliente OR a.Ambiente LIKE ?codigoPedidoCliente) ";
-                filtroPedido += " AND ped.CodCliente LIKE ?codigoPedidoCliente";
                 criterio += string.Format("Pedido Cliente/Ambiente: {0}    ", codigoPedidoCliente);
             }
 
             if ((idsRota?.Any(f => f > 0)).GetValueOrDefault())
             {
-                filtroPedido += string.Format(" AND ped.IdCli IN (SELECT * FROM (SELECT IdCliente FROM rota_cliente WHERE IdRota IN ({0})) AS temp1)", string.Join(",", idsRota));
                 sql += string.Format(" AND ped.IdCli IN (SELECT * FROM (SELECT IdCliente FROM rota_cliente WHERE IdRota IN ({0})) AS temp1)", string.Join(",", idsRota));
-
                 criterio += string.Format("Rota: {0}    ", RotaDAO.Instance.ObtemCodRotas(string.Join(",", idsRota)));
             }
 
@@ -114,89 +115,83 @@ namespace Glass.Data.RelDAL
                 sql += string.Format(@" AND IF(!COALESCE(ppp.PecaReposta, 0), ppp.IdImpressao={0}, COALESCE(ppp.NumEtiqueta, ppp.NumEtiquetaCanc) IN (SELECT * FROM (
                     SELECT CONCAT(IdPedido, '-', PosicaoProd, '.', ItemEtiqueta, '/', QtdeProd)
                     FROM produto_impressao WHERE !COALESCE(Cancelado, 0) AND IdImpressao={0}) AS temp))", idImpressao);
-
                 criterio += string.Format("Num. Impressão: {0}    ", idImpressao);
             }
 
             if (idCliente > 0)
             {
                 sql += string.Format(" AND ped.IdCli={0}", idCliente);
-                filtroPedido += string.Format(" AND ped.IdCli={0}", idCliente);
-
                 criterio += string.Format("Cliente: {0} - {1}    ", idCliente, ClienteDAO.Instance.GetNome((uint)idCliente));
             }
             else if (!string.IsNullOrEmpty(nomeCliente))
             {
-                var ids = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
-                sql += string.Format(" AND ped.IdCli IN ({0})", ids);
-                filtroPedido += string.Format(" AND ped.IdCli IN ({0})", ids);
+                var idsCliente = ClienteDAO.Instance.GetIds(null, nomeCliente, null, 0, null, null, null, null, 0);
+
+                sql += string.Format(" AND ped.IdCli IN ({0})", idsCliente);
                 criterio += string.Format("Cliente: {0}    ", nomeCliente);
             }
 
             if (idFuncionario > 0)
             {
                 sql += string.Format(" AND ped.IdFunc={0}", idFuncionario);
-                filtroPedido += string.Format(" AND ped.IdFunc={0}", idFuncionario);
                 criterio += string.Format("Funcionário: {0}    ", FuncionarioDAO.Instance.GetNome((uint)idFuncionario));
             }
-
-            if (!string.IsNullOrEmpty(situacao))
+            
+            if (situacoes?.Count() > 0)
             {
-                var filtroSituacao = " AND (0=1";
-                var situacoes = new List<string>(situacao.Split(','));
+                var filtroSituacoes = " AND (0=1 ";
+                var produtoPedidoProducaoFiltroSituacao = new ProdutoPedidoProducao();
 
-                foreach (string s in situacoes)
+                foreach (var situacao in situacoes)
                 {
-                    switch (s)
+                    switch (situacao)
                     {
-                        case "1":
-                        case "2":
-                            filtroSituacao += string.Format(" OR ppp.Situacao={0}", s);
-                            temp.Situacao = long.Parse(s);
-                            criterio += string.Format("Situação: {0}    ", temp.DescrSituacao);
+                        case 1:
+                        case 2:
+                            filtroSituacoes += string.Format(" OR ppp.Situacao={0}", situacao);
+                            produtoPedidoProducaoFiltroSituacao.Situacao = situacao;
+                            criterio += string.Format("Situação: {0}    ", produtoPedidoProducaoFiltroSituacao.DescrSituacao);
                             break;
-                        case "3":
-                            filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                        case 3:
+                            filtroSituacoes += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pendente, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                             criterio += "Tipo: Peças pendentes    ";
                             break;
-                        case "4":
-                            filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} And ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                        case 4:
+                            filtroSituacoes += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Pronto, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                             criterio += "Tipo: Peças prontas    ";
                             break;
-                        case "5":
-                            filtroSituacao += string.Format(" OR (ppp.SituacaoProducao={0} And ppp.Situacao={1})", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
+                        case 5:
+                            filtroSituacoes += string.Format(" OR (ppp.SituacaoProducao={0} AND ppp.Situacao={1})", (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
                             criterio += "Tipo: Peças entregues    ";
                             break;
                     }
                 }
 
-                filtroSituacao += ")";
-
-                sql += filtroSituacao;
+                filtroSituacoes += ")";
+                sql += filtroSituacoes;
             }
 
             if (situacaoPedido > 0)
             {
                 sql += string.Format(" AND ped.Situacao={0}", situacaoPedido);
-                filtroPedido += string.Format(" AND ped.Situacao={0}", situacaoPedido);
                 criterio += string.Format("Situação Pedido: {0}    ", PedidoDAO.Instance.GetSituacaoPedido(situacaoPedido));
             }
 
             sql += string.Format(" AND pp.IdProdPedParent IS NULL");
 
-            var descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao :
-                idSetor == -1 ? "Etiqueta não impressa" : string.Empty;
+            var descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao : idSetor == -1 ? "Etiqueta não impressa" : string.Empty;
 
             if (dataLeituraInicio > DateTime.MinValue)
             {
                 var formatoCriterioDataLeituraInicio = dataLeituraInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
 
-                if (string.Format(",{0},", situacao).Contains(string.Format(",{0},", (int)ProdutoPedidoProducao.SituacaoEnum.Perda)))
+                if (situacoes?.Any(f => f == (int)ProdutoPedidoProducao.SituacaoEnum.Perda) ?? false)
                 {
                     sql += " AND ppp.DataPerda>=?dataLeituraInicio";
                     criterio += string.Format("Data perda início: {0}    ", dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
                 }
-                else if (idSetor > 0)
+
+                if (idSetor > 0)
                 {
                     sql += string.Format(" AND lp1.IdSetor={0} AND lp1.DataLeitura>=?dataLeituraInicio", idSetor);
                     criterio += string.Format("Data {0}: a partir de {1}    ", descricaoSetor, dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
@@ -207,12 +202,13 @@ namespace Glass.Data.RelDAL
             {
                 var formatoCriterioDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
 
-                if ((string.Format(",{0},", situacao)).Contains(string.Format(",{0},", (int)ProdutoPedidoProducao.SituacaoEnum.Perda)))
+                if (situacoes?.Any(f => f == (int)ProdutoPedidoProducao.SituacaoEnum.Perda) ?? false)
                 {
                     sql += " AND ppp.DataPerda<=?dataLeituraFim";
                     criterio += string.Format("Data perda término: {0}    ", dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
                 }
-                else if (idSetor > 0)
+
+                if (idSetor > 0)
                 {
                     sql += string.Format(" AND lp1.IdSetor={0} AND lp1.DataLeitura<=?dataLeituraFim", idSetor);
                     criterio += string.Format("Data {0}: até {1}    ", descricaoSetor, dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
@@ -222,32 +218,32 @@ namespace Glass.Data.RelDAL
             if (dataEntregaInicio > DateTime.MinValue)
             {
                 var formatoCriterioDataEntregaInicio = dataEntregaInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 sql += " AND ped.DataEntrega>=?dataEntregaInicio";
-                filtroPedido += " AND ped.DataEntrega>=?dataEntregaInicio";
                 criterio += string.Format("Data Entrega início: {0}    ", dataEntregaInicio.Value.ToString(formatoCriterioDataEntregaInicio));
             }
 
             if (dataEntregaFim > DateTime.MinValue)
             {
                 var formatoCriterioDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 sql += " AND ped.DataEntrega<=?dataEntregaFim";
-                filtroPedido += " AND ped.DataEntrega<=?dataEntregaFim";
                 criterio += string.Format("Data Entrega término: {0}    ", dataEntregaFim.Value.ToString(formatoCriterioDataEntregaFim));
             }
 
             if (dataFabricaInicio > DateTime.MinValue)
             {
                 var formatoCriterioDataFabricaInicio = dataFabricaInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 sql += " AND pedEsp.DataFabrica>=?dataFabricaInicio";
-                filtroPedido += " AND pedEsp.DataFabrica>=?dataFabricaInicio";
                 criterio += string.Format("Data fábrica início: {0}    ", dataFabricaInicio.Value.ToString(formatoCriterioDataFabricaInicio));
             }
 
             if (dataFabricaFim > DateTime.MinValue)
             {
                 var formatoCriterioDataFabricaFim = dataFabricaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 sql += " AND pedEsp.DataFabrica<=?dataFabricaFim";
-                filtroPedido += " AND pedEsp.DataFabrica<=?dataFabricaFim";
                 criterio += string.Format("Data fábrica término: {0}    ", dataFabricaFim.Value.ToString(formatoCriterioDataFabricaFim));
             }
 
@@ -273,7 +269,6 @@ namespace Glass.Data.RelDAL
                 if (!string.IsNullOrEmpty(idsPedido))
                 {
                     sql += string.Format(" AND ped.IdPedido IN ({0})", idsPedido);
-                    filtroPedido += string.Format(" AND ped.IdPedido IN ({0})", idsPedido);
                 }
             }
 
@@ -286,7 +281,6 @@ namespace Glass.Data.RelDAL
             if (tipoEntrega > 0)
             {
                 sql += string.Format(" AND ped.TipoEntrega={0}", tipoEntrega);
-                filtroPedido += string.Format(" AND ped.TipoEntrega={0}", tipoEntrega);
 
                 foreach (GenericModel te in DataSources.Instance.GetTipoEntrega())
                 {
@@ -298,39 +292,37 @@ namespace Glass.Data.RelDAL
                 }
             }
 
-            if (!string.IsNullOrEmpty(tipoPedido) && tipoPedido != "0")
+            if (tiposPedido?.Count() > 0)
             {
-                var tiposPedido = new List<int>();
                 var critetioTipoPedido = new List<string>();
-
-                tipoPedido = string.Format(",{0},", tipoPedido);
-
-                if (tipoPedido.Contains(",1,"))
+                var filtroTiposPedido = new List<Pedido.TipoPedidoEnum>();
+                
+                if (tiposPedido.Any(f => f == 1))
                 {
-                    tiposPedido.Add((int)Pedido.TipoPedidoEnum.Venda);
-                    tiposPedido.Add((int)Pedido.TipoPedidoEnum.Revenda);
+                    filtroTiposPedido.Add(Pedido.TipoPedidoEnum.Venda);
+                    filtroTiposPedido.Add(Pedido.TipoPedidoEnum.Revenda);
                     critetioTipoPedido.Add("Venda/Revenda");
                 }
-
-                if (tipoPedido.Contains(",2,"))
+                
+                if (tiposPedido.Any(f => f == 2))
                 {
-                    tiposPedido.Add((int)Pedido.TipoPedidoEnum.Producao);
+                    filtroTiposPedido.Add(Pedido.TipoPedidoEnum.Producao);
                     critetioTipoPedido.Add("Produção");
                 }
-
-                if (tipoPedido.Contains(",3,"))
+                
+                if (tiposPedido.Any(f => f == 3))
                 {
-                    tiposPedido.Add((int)Pedido.TipoPedidoEnum.MaoDeObra);
+                    filtroTiposPedido.Add(Pedido.TipoPedidoEnum.MaoDeObra);
                     critetioTipoPedido.Add("Mão-de-obra");
                 }
-
-                if (tipoPedido.Contains(",4,"))
+                
+                if (tiposPedido.Any(f => f == 4))
                 {
-                    tiposPedido.Add((int)Pedido.TipoPedidoEnum.MaoDeObraEspecial);
+                    filtroTiposPedido.Add(Pedido.TipoPedidoEnum.MaoDeObraEspecial);
                     critetioTipoPedido.Add("Mão-de-obra Especial");
                 }
 
-                sql += string.Format(" AND ped.TipoPedido IN ({0})", string.Join(",", tiposPedido.Select(f => f.ToString()).ToArray()));
+                sql += string.Format(" AND ped.TipoPedido IN ({0})", string.Join(",", filtroTiposPedido.Select(f => (int)f)));
                 criterio += string.Format("Tipo Pedido: {0}    ", string.Join(", ", critetioTipoPedido.ToArray()));
             }
 
@@ -378,31 +370,32 @@ namespace Glass.Data.RelDAL
                     (int)Pedido.TipoPedidoEnum.Producao, (int)LiberarPedido.SituacaoLiberarPedido.Cancelado, (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
             }
 
-            if (!string.IsNullOrEmpty(pecasProducaoCanceladas))
+            if (pecasProducaoCanceladas?.Count() > 0)
             {
-                var criterioPecasProd = string.Empty;
-                var situacaoProd = string.Empty;
+                var criterioPecasProducaoCanceladas = new List<string>();
+                var filtroSituacoesProducao = new List<ProdutoPedidoProducao.SituacaoEnum>();
 
-                if ((string.Format(",{0},", pecasProducaoCanceladas)).Contains(",0,"))
+                if (pecasProducaoCanceladas.Any(f => f == 0))
                 {
-                    situacaoProd += string.Format(",{0},{1}", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
-                    criterioPecasProd += ", em produção";
+                    filtroSituacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.Producao);
+                    filtroSituacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.Perda);
+                    criterioPecasProducaoCanceladas.Add("em produção");
                 }
 
-                if ((string.Format(",{0},", pecasProducaoCanceladas)).Contains(",1,"))
+                if (pecasProducaoCanceladas.Any(f => f == 1))
                 {
-                    situacaoProd += string.Format(",{0}", (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra);
-                    criterioPecasProd += ", canceladas (mão-de-obra)";
+                    filtroSituacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra);
+                    criterioPecasProducaoCanceladas.Add("canceladas (mão-de-obra)");
                 }
 
-                if ((string.Format(",{0},", pecasProducaoCanceladas)).Contains(",2,"))
+                if (pecasProducaoCanceladas.Any(f => f == 2))
                 {
-                    situacaoProd += string.Format(",{0}", (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda);
-                    criterioPecasProd += ", canceladas (venda)";
+                    filtroSituacoesProducao.Add(ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda);
+                    criterioPecasProducaoCanceladas.Add("canceladas (venda)");
                 }
 
-                sql += string.Format(" AND ppp.Situacao IN ({0})", situacaoProd.TrimStart(','));
-                criterio += string.Format("Peças {0}    ", criterioPecasProd.Substring(", ".Length));
+                sql += string.Format(" AND ppp.Situacao IN ({0})", string.Join(",", filtroSituacoesProducao.Select(f => (int)f)));
+                criterio += string.Format("Peças {0}    ", string.Join(", ", criterioPecasProducaoCanceladas));
             }
             else
             {
@@ -476,6 +469,8 @@ namespace Glass.Data.RelDAL
                 sql += " GROUP BY ppp.IdProdPedProducao";
             }
 
+            #endregion
+
             sql = string.Format(@"SELECT IdPedido, IdPedidoExibir, IdSetor, COUNT(*) AS NumeroPecas, SUM(TotM2) AS TotM2, Criterio
                 FROM ({0}) AS producao_contagem
                 GROUP BY IdPedidoExibir, IdSetor", sql.Replace("$$$", criterio.Trim()));
@@ -490,7 +485,7 @@ namespace Glass.Data.RelDAL
             DateTime? dataConfirmacaoPedidoFim, DateTime? dataConfirmacaoPedidoInicio, DateTime? dataEntregaFim, DateTime? dataEntregaInicio, DateTime? dataFabricaFim, DateTime? dataFabricaInicio,
             DateTime? dataLeituraFim, DateTime? dataLeituraInicio, float espessura, int fastDelivery, int idCarregamento, int idCliente, int idFuncionario, int idImpressao, int idPedido,
             IEnumerable<int> idsAplicacao, int idSetor, IEnumerable<int> idsProcesso, IEnumerable<int> idsRota, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente,
-            string pecasProducaoCanceladas, string situacao, int situacaoPedido, int tipoEntrega, string tipoPedido, int tipoSituacoes)
+            IEnumerable<int> pecasProducaoCanceladas, int situacaoPedido, IEnumerable<int> situacoes, int tipoEntrega, int tipoSituacoes, IEnumerable<int> tiposPedido)
         {
             var setoresAnteriores = tipoSituacoes == 1;
             var setoresPosteriores = tipoSituacoes == 2;
@@ -499,10 +494,10 @@ namespace Glass.Data.RelDAL
 
             var retorno = objPersistence.LoadData(SqlProducaoContagem(altura, codigoEtiqueta, codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim,
                 dataEntregaInicio, dataFabricaFim, dataFabricaInicio, dataLeituraFim, dataLeituraInicio, espessura, fastDelivery, idCarregamento, idCliente, idFuncionario, idImpressao, idPedido,
-                idsAplicacao, idSetor, idsProcesso, idsRota, idsSubgrupo, largura, nomeCliente, pecasProducaoCanceladas, setoresAnteriores, setoresPosteriores, situacao, situacaoPedido, tipoEntrega,
-                tipoPedido, tipoRetorno),
+                idsAplicacao, idSetor, idsProcesso, idsRota, idsSubgrupo, largura, nomeCliente, pecasProducaoCanceladas, setoresAnteriores, setoresPosteriores, situacaoPedido, situacoes, tipoEntrega,
+                tipoRetorno, tiposPedido),
                 ObterParametrosProducaoContagem(codigoEtiqueta, dataLeituraFim, dataLeituraInicio, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio, nomeCliente,
-                codigoPedidoCliente, espessura)).ToList();
+                    codigoPedidoCliente, espessura)).ToList();
 
             if (retorno.Count > 0)
             {
