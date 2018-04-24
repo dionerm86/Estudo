@@ -314,7 +314,6 @@
     <Compile Include="Configuracoes\Geral\Geral.cs" />
     <Compile Include="Configuracoes\Geral\MenuConfig.cs" />
     <Compile Include="Configuracoes\InstalacaoConfig\InstalacaoConfig.cs" />
-    <Compile Include="Configuracoes\InstalacaoConfig\TelaListagem.cs" />
     <Compile Include="Configuracoes\Liberacao\DadosLiberacao.cs" />
     <Compile Include="Configuracoes\Liberacao\Estoque.cs" />
     <Compile Include="Configuracoes\Liberacao\FormaPagamento.cs" />

@@ -64,22 +64,22 @@ namespace Glass.Financeiro.Negocios.Componentes
                     .And("cp.ValorPago <= ?valorPagtoFim")
                     .Add("valorPagtoFim", valorPagtoIni);
 
-            if (dataVencIni.HasValue)
+            if (dataVencIni > DateTime.MinValue)
                 consulta.WhereClause
                     .And("cp.DataVenc >= ?dataVencIni")
                     .Add("dataVencIni", dataVencIni.Value.Date);
 
-            if (dataVencFim.HasValue)
+            if (dataVencFim > DateTime.MinValue)
                 consulta.WhereClause
                     .And("cp.DataVenc <= ?dataVencFim")
                     .Add("dataVencFim", dataVencFim.Value.Date.AddDays(1).AddMinutes(-1));
 
-            if (dataPagtoIni.HasValue)
+            if (dataPagtoIni > DateTime.MinValue)
                 consulta.WhereClause
                     .And("cp.DataPagto >= ?dataPagtoIni")
                     .Add("dataPagtoIni", dataPagtoIni.Value.Date);
 
-            if (dataPagtoFim.HasValue)
+            if (dataPagtoFim > DateTime.MinValue)
                 consulta.WhereClause
                     .And("cp.DataPagto <= ?dataPagtoFim")
                     .Add("dataPagtoFim", dataPagtoFim.Value.Date.AddDays(1).AddMinutes(-1));

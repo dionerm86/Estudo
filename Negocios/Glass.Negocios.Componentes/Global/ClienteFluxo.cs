@@ -198,20 +198,20 @@ namespace Glass.Global.Negocios.Componentes
                             .Execute().Select(f => f.GetString(0)).ToList())));
             }
 
-            if (dataCadastroIni.HasValue)
+            if (dataCadastroIni > DateTime.MinValue)
                 consulta.WhereClause
                     .And("c.DataCad>=?dataCadIni")
                     .Add("?dataCadIni", dataCadastroIni.Value)
                     .AddDescription(String.Format("Data início cad.: {0:d}", dataCadastroIni.Value));
 
-            if (dataCadastroFim.HasValue)
+            if (dataCadastroFim > DateTime.MinValue)
                 consulta.WhereClause
                     .And("c.DataCad<=?dataCadFim")
                     .Add("?dataCadFim", dataCadastroFim.Value.AddDays(1))
                     .AddDescription(String.Format("Data fim cad.: {0:d}", dataCadastroFim.Value));
 
             // Período sem compra
-            if (dataSemCompraIni.HasValue || dataSemCompraFim.HasValue)
+            if (dataSemCompraIni > DateTime.MinValue || dataSemCompraFim > DateTime.MinValue)
             {
                 // Empresas que trabalham com liberação de pedidos.
                 if (PedidoConfig.LiberarPedido)
@@ -222,12 +222,12 @@ namespace Glass.Global.Negocios.Componentes
                         .From<Data.Model.LiberarPedido>("lp")
                         .SelectDistinct("lp.IdCliente");
 
-                    if (dataSemCompraIni.HasValue)
+                    if (dataSemCompraIni > DateTime.MinValue)
                         consultaPedidoLiberado
                             .WhereClause.And("lp.DataLiberacao>=?dataSemCompraIni")
                             .Add("?dataSemCompraIni", dataSemCompraIni);
 
-                    if (dataSemCompraFim.HasValue)
+                    if (dataSemCompraFim > DateTime.MinValue)
                         consultaPedidoLiberado
                             .WhereClause.And("lp.DataLiberacao<=?dataSemCompraFim")
                             .Add("?dataSemCompraFim", dataSemCompraFim.Value.AddHours(23).AddMinutes(59).AddSeconds(59));
@@ -247,12 +247,12 @@ namespace Glass.Global.Negocios.Componentes
                         .From<Data.Model.Pedido>("p")
                         .SelectDistinct("p.IdCli");
 
-                    if (dataSemCompraIni.HasValue)
+                    if (dataSemCompraIni > DateTime.MinValue)
                         consultaPedidoConfirmado
                             .WhereClause.And("p.DataConf>=?dataSemCompraIni")
                             .Add("?dataSemCompraIni", dataSemCompraIni);
 
-                    if (dataSemCompraFim.HasValue)
+                    if (dataSemCompraFim > DateTime.MinValue)
                         consultaPedidoConfirmado
                             .WhereClause.And("p.DataConf<=?dataSemCompraFim")
                             .Add("?dataSemCompraFim", dataSemCompraFim.Value.AddHours(23).AddMinutes(59).AddSeconds(59));
@@ -264,17 +264,17 @@ namespace Glass.Global.Negocios.Componentes
                         .And(string.Format("IdCli NOT IN ({0})", retornoClientePedidoConfirmado.Count() > 0 ? string.Join(",", retornoClientePedidoConfirmado) : "0"));
                 }
                 
-                if (dataSemCompraIni.HasValue)
+                if (dataSemCompraIni > DateTime.MinValue)
                     consulta.WhereClause
                         .AddDescription(string.Format("Data início sem compra: {0:d}", dataSemCompraIni.Value));
 
-                if (dataSemCompraFim.HasValue)
+                if (dataSemCompraFim > DateTime.MinValue)
                     consulta.WhereClause
                         .AddDescription(string.Format("Data fim sem compra: {0:d}", dataSemCompraFim.Value.AddHours(23).AddMinutes(59).AddSeconds(59)));
             }
             
             // Adiciona o JOIN para buscar a data de inativação
-            if (dataInativadoIni.HasValue || dataInativadoFim.HasValue)
+            if (dataInativadoIni > DateTime.MinValue || dataInativadoFim > DateTime.MinValue)
             {
                 consulta
                     .LeftJoin(SourceContext.Instance.CreateQuery()
@@ -288,31 +288,31 @@ namespace Glass.Global.Negocios.Componentes
                         .Select("IdRegistroAlt, DataAlt"), "c.IdCli=l.IdRegistroAlt", "l");
             }
 
-            if (dataInativadoIni.HasValue)
+            if (dataInativadoIni > DateTime.MinValue)
                 consulta.WhereClause
                     .And("l.DataAlt>=?dataInativadoIni")
                     .Add("?dataInativadoIni", dataInativadoIni.Value)
                     .AddDescription(String.Format("Data início inativado: {0:d}", dataInativadoIni.Value));
 
-            if (dataInativadoFim.HasValue)
+            if (dataInativadoFim > DateTime.MinValue)
                 consulta.WhereClause
                     .And("l.DataAlt<=?dataInativadoFim")
                     .Add("?dataInativadoFim", dataInativadoFim.Value)
                     .AddDescription(String.Format("Data fim inativado: {0:d}", dataInativadoFim.Value));
 
-            if (dataNascimentoIni.HasValue)
+            if (dataNascimentoIni > DateTime.MinValue)
                 consulta.WhereClause
                     .And("c.DataNasc>=?dataNiverIni")
                     .Add("?dataNiverIni", dataNascimentoIni.Value)
                     .AddDescription(String.Format("Data início Aniversario: {0:d}", dataNascimentoIni.Value));
 
-            if (dataNascimentoFim.HasValue)
+            if (dataNascimentoFim > DateTime.MinValue)
                 consulta.WhereClause
                     .And("c.DataNasc<=?dataNiverFim")
                     .Add("?dataNiverFim", dataNascimentoFim.Value)
                     .AddDescription(String.Format("Data fim Aniversario: {0:d}", dataNascimentoFim.Value));
 
-            if (idTabelaDescontoAcrescimo.HasValue && idTabelaDescontoAcrescimo.Value > 0)
+            if (idTabelaDescontoAcrescimo > 0)
                 consulta.WhereClause
                     .And("c.IdTabelaDesconto=?tabelaDesconto")
                     .Add("?tabelaDesconto", idTabelaDescontoAcrescimo.Value)

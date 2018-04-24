@@ -7,6 +7,7 @@ using Glass.Data.RelDAL;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Relatorios.Producao
 {
@@ -171,14 +172,14 @@ namespace Glass.UI.Web.Relatorios.Producao
                         var altura = Request["altura"].StrParaInt();
                         var codigoEtiqueta = Request["numEtiqueta"];
                         var codigoPedidoCliente = Request["codCliente"];
-                        var dataConfirmacaoPedidoFim = Request["dataFimConfPed"];
-                        var dataConfirmacaoPedidoInicio = Request["dataIniConfPed"];
-                        var dataEntregaFim = Request["dataFimEnt"];
-                        var dataEntregaInicio = Request["dataIniEnt"];
-                        var dataFabricaFim = Request["dataFimFabr"];
-                        var dataFabricaInicio = Request["dataIniFabr"];
-                        var dataLeituraFim = Request["dataFim"];
-                        var dataLeituraInicio = Request["dataIni"];
+                        var dataConfirmacaoPedidoFim = Request["dataFimConfPed"].StrParaDate();
+                        var dataConfirmacaoPedidoInicio = Request["dataIniConfPed"].StrParaDate();
+                        var dataEntregaFim = Request["dataFimEnt"].StrParaDate();
+                        var dataEntregaInicio = Request["dataIniEnt"].StrParaDate();
+                        var dataFabricaFim = Request["dataFimFabr"].StrParaDate();
+                        var dataFabricaInicio = Request["dataIniFabr"].StrParaDate();
+                        var dataLeituraFim = Request["dataFim"].StrParaDate();
+                        var dataLeituraInicio = Request["dataIni"].StrParaDate();
                         var espessura = Request["espessura"].StrParaInt();
                         var fastDelivery = Request["fastDelivery"].StrParaInt();
                         var idCarregamento = Request["idCarregamento"].StrParaInt();
@@ -186,11 +187,11 @@ namespace Glass.UI.Web.Relatorios.Producao
                         var idFuncionario = Request["idFunc"].StrParaInt();
                         var idImpressao = Request["idImpressao"].StrParaInt();
                         var idPedido = Request["idPedido"].StrParaInt();
-                        var idsAplicacao = Request["idsApl"];
+                        var idsAplicacao = !string.IsNullOrWhiteSpace(Request["idsApl"]) ? Request["idsApl"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
                         var idSetor = Request["idSetor"].StrParaInt();
-                        var idsProcesso = Request["idsProc"];
-                        var idsRota = Request["codRota"];
-                        var idsSubgrupo = Request["idsSubgrupos"];
+                        var idsProcesso = !string.IsNullOrWhiteSpace(Request["idsProc"]) ? Request["idsProc"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
+                        var idsRota = !string.IsNullOrWhiteSpace(Request["codRota"]) ? Request["codRota"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
+                        var idsSubgrupo = !string.IsNullOrWhiteSpace(Request["idsSubgrupos"]) ? Request["idsSubgrupos"].Split(',').Select(f => f.StrParaInt()) : new List<int>();
                         var largura = Request["largura"].StrParaInt();
                         var nomeCliente = Request["nomeCliente"];
                         var pecasProducaoCanceladas = Request["pecasProdCanc"];
@@ -206,7 +207,7 @@ namespace Glass.UI.Web.Relatorios.Producao
                             codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio, dataLeituraFim,
                             dataLeituraInicio, espessura, fastDelivery, idCarregamento, idCliente, idFuncionario, idImpressao, idPedido, idsAplicacao, idSetor, idsProcesso, idsRota, idsSubgrupo,
                             largura, nomeCliente, pecasProducaoCanceladas, situacao, situacaoPedido, tipoEntrega, tipoPedido, tipoSituacao);
-                         
+
                         report.DataSources.Add(new ReportDataSource("ProducaoContagem", producoesContagem));
                         break;
                     }

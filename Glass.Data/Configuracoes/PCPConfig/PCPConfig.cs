@@ -579,14 +579,6 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define se o filtro padrão na tela de reposição de peças será o dia atual e não o período de hoje até um mês atrás
-        /// </summary>
-        public static bool FiltroPadraoDiaAtualTelaReposicao
-        {
-            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.FiltroPadraoDiaAtualTelaReposicao); }
-        }
-
-        /// <summary>
         /// Define se no nome de arquivo de mesa deverá ser trocada a "/" por ";"
         /// </summary>
         public static bool NomeArquivoMesaBarraPorPontoVirgula

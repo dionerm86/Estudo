@@ -1744,7 +1744,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirRelatorio
         {
-            get { return PedidoDAO.ExibirRelatorioPedido(IdPedido); }
+            get { return true; }
         }
 
         [XmlIgnore]
@@ -1925,7 +1925,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirImpressaoPcp
         {
-            get { return PCPConfig.ExibirImpressaoPcpListaPedidos && TemEspelho && (ExibirTotalEspelho || ExibirRelatorio); }
+            get { return PCPConfig.ExibirImpressaoPcpListaPedidos && TemEspelho; }
         }
 
         [XmlIgnore]

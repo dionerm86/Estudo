@@ -255,52 +255,58 @@ namespace Glass.Data.RelDAL
                 filtroInterno += string.Format(" AND ped1.Situacao<>{0}", (int)Pedido.SituacaoPedido.Cancelado);
             }
 
-            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            if (dataLeituraInicio > DateTime.MinValue)
             {
+                var formatoCriterioDataLeituraInicio = dataLeituraInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
                 {
                     filtro += " AND ppp.DataPerda>=?dataLeituraInicio";
                     filtroInterno += " AND ppp1.DataPerda>=?dataLeituraInicio";
-                    criterio += string.Format("Data perda início: {0}    ", dataLeituraInicio.Value.ToString("dd/MM/yyyy"));
+                    criterio += string.Format("Data perda início: {0}    ", dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
                 }
                 else if (idSetor > 0)
                 {
                     filtro += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura>=?dataLeituraInicio)", idSetor);
                     filtroInterno += string.Format(" AND ppp1.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura>=?dataLeituraInicio)", idSetor);
-                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraInicio.Value.ToString("dd/MM/yyyy"));
+                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
                 }
             }
 
-            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            if (dataLeituraFim > DateTime.MinValue)
             {
+                var formatoCriterioDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
                 {
                     filtro += " AND ppp.DataPerda<=?dataLeituraFim";
                     filtroInterno += " AND ppp1.DataPerda<=?dataLeituraFim";
-                    criterio += string.Format("Data perda término: {0}    ", dataLeituraFim.Value.ToString("dd/MM/yyyy"));
+                    criterio += string.Format("Data perda término: {0}    ", dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
                 }
                 else if (idSetor > 0)
                 {
-                    filtro = dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtro.TrimEnd(')')) :
+                    filtro = dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtro.TrimEnd(')')) :
                         string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura<=?dataLeituraFim)", idSetor);
-                    filtroInterno = dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtroInterno.TrimEnd(')')) :
+                    filtroInterno = dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtroInterno.TrimEnd(')')) :
                         string.Format(" AND ppp1.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura<=?dataLeituraFim)", idSetor);
-                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraFim.Value.ToString("dd/MM/yyyy"));
+                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
                 }
             }
 
-            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            if (dataEntregaInicio > DateTime.MinValue)
             {
+                var formatoCriterioDataEntregaInicio = dataEntregaInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
                 filtro += " AND ped.DataEntrega>=?dataEntregaInicio";
                 filtroInterno += " AND ped1.DataEntrega>=?dataEntregaInicio";
-                criterio += string.Format("Data entrega início: {0}    ", dataEntregaInicio.Value.ToString("dd/MM/yyyy"));
+                criterio += string.Format("Data entrega início: {0}    ", dataEntregaInicio.Value.ToString(formatoCriterioDataEntregaInicio));
             }
 
-            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            if (dataEntregaFim > DateTime.MinValue)
             {
+                var formatoCriterioDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
                 filtro += " AND ped.DataEntrega<=?dataEntregaFim";
                 filtroInterno += " AND ped1.DataEntrega<=?dataEntregaFim";
-                criterio += string.Format("Data Entrega término: {0}    ", dataEntregaFim.Value.ToString("dd/MM/yyyy"));
+                criterio += string.Format("Data Entrega término: {0}    ", dataEntregaFim.Value.ToString(formatoCriterioDataEntregaFim));
             }
 
             if (idSubgrupo > 0)
@@ -491,24 +497,26 @@ namespace Glass.Data.RelDAL
                 parametros.Add(new GDAParameter("?codigoRota", codigoRota));
             }
 
-            if (dataEntregaFim.HasValue && dataEntregaFim > DateTime.MinValue)
+            if (dataEntregaFim > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataEntregaFim", DateTime.Parse(dataEntregaFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+                var formatoDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
+                parametros.Add(new GDAParameter("?dataEntregaFim", dataEntregaFim.Value.ToString(formatoDataEntregaFim)));
             }
 
-            if (dataEntregaInicio.HasValue && dataEntregaInicio > DateTime.MinValue)
+            if (dataEntregaInicio > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataEntregaInicio", DateTime.Parse(dataEntregaInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+                parametros.Add(new GDAParameter("?dataEntregaInicio", dataEntregaInicio));
             }
 
-            if (dataLeituraFim.HasValue && dataLeituraFim > DateTime.MinValue)
+            if (dataLeituraFim > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataLeituraFim", DateTime.Parse(dataLeituraFim.Value.ToString("dd/MM/yyyy 23:59:59"))));
+                var formatoDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy 23:59:59" : "dd/MM/yyyy HH:mm:ss";
+                parametros.Add(new GDAParameter("?dataLeituraFim", DateTime.Parse(dataLeituraFim.Value.ToString(formatoDataLeituraFim))));
             }
 
-            if (dataLeituraInicio.HasValue && dataLeituraInicio > DateTime.MinValue)
+            if (dataLeituraInicio > DateTime.MinValue)
             {
-                parametros.Add(new GDAParameter("?dataLeituraInicio", DateTime.Parse(dataLeituraInicio.Value.ToString("dd/MM/yyyy 00:00:00"))));
+                parametros.Add(new GDAParameter("?dataLeituraInicio", dataLeituraInicio));
             }
 
             if (idPedidoImportado > 0)

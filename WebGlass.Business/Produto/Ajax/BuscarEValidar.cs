@@ -602,20 +602,17 @@ namespace WebGlass.Business.Produto.Ajax
                 retorno += ";" + ProdutoLojaDAO.Instance.GetEstoque(Glass.Conversoes.StrParaUint(idLoja), (uint)prod.IdProd, isPedidoProducao);
 
                 // Retornar aplicação e processo associados
-                if (prod.IdAplicacao > 0) retorno += ";" + prod.IdAplicacao.Value + ";" + EtiquetaAplicacaoDAO.Instance.ObtemCodInterno((uint)prod.IdAplicacao.Value);
-                else retorno += ";;";
+                if (prod.IdAplicacao > 0)
+                    retorno += ";" + prod.IdAplicacao.Value + ";" + EtiquetaAplicacaoDAO.Instance.ObtemCodInterno((uint)prod.IdAplicacao.Value);
+                else
+                    retorno += ";;";
 
-                // var idRoteiroProduto = RoteiroProducaoDAO.Instance.ObtemRoteiroProduto(prod.IdProd);
-                int? idProcesso = /*idRoteiroProduto > 0 ? RoteiroProducaoDAO.Instance.ObtemIdProcesso(idRoteiroProduto.Value) :*/ null;
-
-                if ((prod.IdProcesso ?? idProcesso) > 0) retorno += ";" + (prod.IdProcesso ?? idProcesso).Value + ";" + EtiquetaProcessoDAO.Instance.ObtemCodInterno((uint)(prod.IdProcesso ?? idProcesso).Value);
-                else retorno += ";;";
+                if (prod.IdProcesso > 0)
+                    retorno += ";" + prod.IdProcesso + ";" + EtiquetaProcessoDAO.Instance.ObtemCodInterno((uint)prod.IdProcesso);
+                else
+                    retorno += ";;";
 
                 retorno += ";" + ProdutoDAO.Instance.ObtemCustoCompra(prod.IdProd);
-
-                if (PedidoConfig.TelaCadastro.ExibirM2ChapaDeVidro && 
-                    SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(prod.IdProd) == Glass.Data.Model.TipoSubgrupoProd.ChapasVidro)
-                    retorno += ";" + Math.Round(valorProduto / (decimal)Glass.Global.CalculosFluxo.ArredondaM2(null, (int)prod.Largura, (int)prod.Altura, 1, prod.IdProd, false, prod.Espessura, false), 2);
 
                 return retorno;
             }

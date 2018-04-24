@@ -132,7 +132,7 @@ namespace WebGlass.Business.Pedido.Entidade
 
         public bool ExibirRelatorio
         {
-            get { return _pedido.ExibirRelatorio; }
+            get { return true; }
         }
 
         public bool ExibirRelatorioCalculo

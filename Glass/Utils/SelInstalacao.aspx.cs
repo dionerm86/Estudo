@@ -12,12 +12,6 @@ namespace Glass.UI.Web.Utils
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
 
             Ajax.Utility.RegisterTypeForAjax(typeof(SelInstalacao));
-
-            if (!IsPostBack && InstalacaoConfig.TelaListagem.FiltrarPorLojaComoPadrao)
-            {
-                drpLoja.DataBind();
-                drpLoja.SelectedValue = UserInfo.GetUserInfo.IdLoja.ToString();
-            }
         }
     
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)

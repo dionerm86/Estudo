@@ -171,8 +171,7 @@ namespace Glass.Data.DAL
 
             // Só separa as contas se ainda não houver parcela recebida para esses pedidos/liberações
             if (objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from contas_receber where " +
-                nomeCampo + " in (" + idsString + ") and !isParcelaCartao and recebida " +
-                (!FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? @"and idSinal is Null" : "")) > 0)
+                nomeCampo + " in (" + idsString + ") and !isParcelaCartao and recebida") > 0)
                 throw new Exception("Existe pelo menos uma conta recebida que seria utilizada na separação.");
 
             // Verifica se alguma conta a receber já possui a coluna IDNF preenchida para
@@ -181,7 +180,7 @@ namespace Glass.Data.DAL
                 " in (" + idsString + ")", "idNf");
 
             if (objPersistence.ExecuteSqlQueryCount(sessao, @"select count(*) from contas_receber
-                where !isParcelaCartao and idNf in (" + idsString + ") " + (FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? @"and idSinal is Null":"")) > 0)
+                where !isParcelaCartao and idNf in (" + idsString + ") " + (FinanceiroConfig.FinanceiroRec.ImpedirSeparacaoValorSePossuirPagtoAntecip ? @"and idSinal is Null" : "")) > 0)
                 throw new Exception(String.Format("Já houve uma separação de valores para pelo menos um{0} pedido desta nota fiscal.",
                     PedidoConfig.LiberarPedido ? "a liberação de" : ""));
         }

@@ -121,13 +121,13 @@ namespace Glass.Data.DAL
                 temFiltro = true;
             }
 
-            if(dataInicio.HasValue)
+            if (dataInicio > DateTime.MinValue)
             {
                 sql.Append(" AND o.DataCad >=?dataInicio");
                 temFiltro = true;
             }
 
-            if (dataFim.HasValue)
+            if (dataFim > DateTime.MinValue)
             {
                 sql.Append(" AND o.DataCad <=?dataFim");
                 temFiltro = true;
@@ -215,10 +215,10 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(bairro))
                 lstParam.Add(new GDAParameter("?bairro", "%" + bairro + "%"));
 
-            if (dataInicio.HasValue)
+            if (dataInicio > DateTime.MinValue)
                 lstParam.Add(new GDAParameter("?dataInicio",  dataInicio));
 
-            if(dataFim.HasValue)
+            if(dataFim > DateTime.MinValue)
                 lstParam.Add(new GDAParameter("?dataFim", dataFim.Value.AddDays(1).AddSeconds(-1)));
 
             return lstParam.Count == 0 ? null : lstParam.ToArray();

@@ -7489,13 +7489,8 @@ namespace Glass.Data.DAL
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (geradoParceiro)
-            {
-                if (!PedidoConfig.ParceiroPodeReabrirPedidoConferido && idCli == UserInfo.GetUserInfo.IdCliente && situacao == Pedido.SituacaoPedido.Conferido)
-                    return false;
-                else if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
-                    return false;
-            }
+            if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+                return false;
 
             // Não deixa reabrir se recebeu sinal
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
@@ -13148,19 +13143,6 @@ namespace Glass.Data.DAL
                 default:
                     return "Etiqueta não impressa";
             }
-        }
-
-        /// <summary>
-        /// Define a visibilidade dos ícones do relatório de pedidos.
-        /// </summary>
-        /// <returns></returns>
-        public static bool ExibirRelatorioPedido(uint idPedido)
-        {
-            if (!PedidoConfig.RelatorioPedido.SoImprimirPedidoConfirmado ||
-                UserInfo.GetUserInfo.TipoUsuario == (uint)Utils.TipoFuncionario.Administrador)
-                return true;
-
-            return PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido);
         }
 
         /// <summary>
