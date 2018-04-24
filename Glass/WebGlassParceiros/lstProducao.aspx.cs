@@ -45,19 +45,22 @@ namespace Glass.UI.Web.WebGlassParceiros
     
             if (grdPecas.Columns.Count <= QTD_COLUNAS_GRID)
             {
-                if (UserInfo.GetUserInfo.TipoUsuario != (int)Data.Helper.Utils.TipoFuncionario.Vendedor ||
-                    !ProducaoConfig.TelaConsulta.EsconderPecasParaVendedores)
-                    for (int i = 0; i < lstSetor.Length; i++)
+                if (UserInfo.GetUserInfo.TipoUsuario != (int)Data.Helper.Utils.TipoFuncionario.Vendedor || !ProducaoConfig.TelaConsulta.EsconderPecasParaVendedores)
+                {
+                    for (var i = 0; i < lstSetor.Length; i++)
                     {
                         if (!Data.Helper.Utils.GetSetores[i].ExibirRelatorio)
+                        {
                             continue;
-    
+                        }
+
                         TemplateField tf = new TemplateField();
                         tf.HeaderText = lstSetor[i].Descricao;
                         grdPecas.Columns.Add(tf);
                     }
+                }
     
-                if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca)
+                if (ProducaoConfig.TipoControleReposicao != DataSources.TipoReposicaoEnum.Peca)
                 {
                     BoundField bfDataPerda = new BoundField();
                     bfDataPerda.DataField = "DataPerda";
@@ -66,7 +69,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                     grdPecas.Columns.Add(bfDataPerda);
                 }
     
-                if (Glass.Configuracoes.ProducaoConfig.BuscarDataFabricaConsultaProducao)
+                if (ProducaoConfig.BuscarDataFabricaConsultaProducao)
                 {
                     BoundField bfPrevEntrega = new BoundField();
                     bfPrevEntrega.DataField = "DataEntregaFabrica";
