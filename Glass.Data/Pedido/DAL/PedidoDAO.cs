@@ -13601,6 +13601,8 @@ namespace Glass.Data.DAL
                 #region Declaração de variáveis
 
                 var ped = GetElementByPrimaryKey(session, objUpdate.IdPedido);
+                objUpdate = CarregarPedidoComDadosAtualizacao(session, objUpdate);
+
                 objUpdate.DataEntrega = !PedidoConfig.LiberarPedido && !objUpdate.DataEntrega.HasValue ? ped.DataEntrega : objUpdate.DataEntrega;
                 // Pega a data de entrega da fábrica.
                 DateTime dataFabrica = PedidoEspelhoDAO.Instance.CalculaDataFabrica(objUpdate.DataEntrega.Value);
@@ -14253,6 +14255,39 @@ namespace Glass.Data.DAL
             {
                 FilaOperacoes.AtualizarPedido.ProximoFila();
             }
+        }
+
+        private Pedido CarregarPedidoComDadosAtualizacao(GDASession sessao, Pedido pedido)
+        {
+            var pedidoNovo = GetElementByPrimaryKey(sessao, pedido.IdPedido);
+
+            pedidoNovo.Acrescimo = pedido.Acrescimo;
+            pedidoNovo.CodCliente = pedido.CodCliente;
+            pedidoNovo.Desconto = pedido.Desconto;
+            pedidoNovo.DeveTransferir = pedido.DeveTransferir;
+            pedidoNovo.FastDelivery = pedido.FastDelivery;
+            pedidoNovo.IdFormaPagto = pedido.IdFormaPagto;
+            pedidoNovo.IdFunc = pedido.IdFunc;
+            pedidoNovo.IdFuncVenda = pedido.IdFuncVenda;
+            pedidoNovo.IdLoja = pedido.IdLoja;
+            pedidoNovo.IdObra = pedido.IdObra;
+            pedidoNovo.IdParcela = pedido.IdParcela;
+            pedidoNovo.IdTipoCartao = pedido.IdTipoCartao;
+            pedidoNovo.NumParc = pedido.NumParc;
+            pedidoNovo.ObsLiberacao = pedido.ObsLiberacao;
+            pedidoNovo.Obs = pedido.Obs;
+            pedidoNovo.OrdemCargaParcial = pedido.OrdemCargaParcial;
+            pedidoNovo.PercentualComissao = pedido.PercentualComissao;
+            pedidoNovo.TipoAcrescimo = pedido.TipoAcrescimo;
+            pedidoNovo.TipoDesconto = pedido.TipoDesconto;
+            pedidoNovo.TipoEntrega = pedido.TipoEntrega;
+            pedidoNovo.TipoVenda = pedido.TipoVenda;
+            pedidoNovo.ValorEntrada = pedido.ValorEntrada;
+            pedidoNovo.IdComissionado = pedido.IdComissionado;
+            pedidoNovo.PercComissao = pedido.PercComissao;
+            pedidoNovo.DataEntrega = pedido.DataEntrega;
+
+            return pedidoNovo;
         }
 
         #endregion
