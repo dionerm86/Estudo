@@ -8750,7 +8750,7 @@ namespace Glass.Data.DAL
             if (idFunc == 0)
                 idFunc = pedido.IdFunc;
 
-            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)GetTipoVenda(sessao, idPedido));
+            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0);
 
             if (descontoMaximoPermitido == 100)
                 return true;
