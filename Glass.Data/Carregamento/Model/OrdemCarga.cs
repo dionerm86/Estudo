@@ -178,7 +178,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                var idsPedidoObsLiberacao = string.Empty;
+                var idsPedidoObsLiberacao = new List<string>();
 
                 if (Pedidos.Count == 0)
                 {
@@ -188,15 +188,20 @@ namespace Glass.Data.Model
                 foreach (var pedidoLiberacao in Pedidos.GroupBy(l => l.IdLiberarPedido))
                 {
                     // (IdLiberação) IdPedido [CodCliente] - ObsLiberacao
-                    idsPedidoObsLiberacao += string.Format("{0}{1}",
-                        pedidoLiberacao.Key != null ? string.Format(" ({0}) ", pedidoLiberacao.Key.Value) : string.Empty,
+                    idsPedidoObsLiberacao.Add(string.Format("{0}{1}",
+                        // Posição 0.
+                        pedidoLiberacao.Key != null ? string.Format("(Lib.: {0}) ", pedidoLiberacao.Key.Value) : string.Empty,
+                        // Posição 1.
                         string.Join(", ", pedidoLiberacao.Select(f => string.Format("{0}{1}{2}",
+                            // Posição 0.
                             f.IdPedido,
+                            // Posição 1.
                             Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" [{0}]", f.CodCliente) : string.Empty,
-                            !string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty))));
+                            // Posição 2.
+                            !string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty)))));
                 }
 
-                return idsPedidoObsLiberacao;
+                return string.Join("; ", idsPedidoObsLiberacao);
             }
         }
 
