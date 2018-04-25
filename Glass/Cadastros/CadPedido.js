@@ -1715,7 +1715,7 @@ function setLocalObra(forcarAlteracaoDataEntrega) {
     if (cCep != null) cCep.disabled = disable;
 
     // Se os campos estiverem habilitados, busca o endereço do cliente como endereço de entrega
-    if (config_BuscarEnderecoClienteSeEstiverVazio && cEndereco.value == "" && cBairro.value == "" && cCidade.value == "")
+    if (cEndereco.value == "" && cBairro.value == "" && cCidade.value == "")
         getEnderecoCli();
 
     alteraDataEntrega(forcarAlteracaoDataEntrega);

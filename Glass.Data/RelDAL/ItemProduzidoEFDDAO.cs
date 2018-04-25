@@ -110,13 +110,13 @@ namespace Glass.Data.RelDAL
         {
             var parameters = new List<GDAParameter>();
 
-            if (dtIni.HasValue)
+            if (dtIni > DateTime.MinValue)
                 parameters.Add(new GDAParameter("?dtIni", DateTime.Parse(dtIni.Value.ToShortDateString() + " 00:00:00")));
 
-            if (dtFim.HasValue)
+            if (dtFim > DateTime.MinValue)
                 parameters.Add(new GDAParameter("?dtFim", DateTime.Parse(dtFim.Value.ToShortDateString() + " 23:59:59")));
 
-            if (dtAnteriorIni.HasValue)
+            if (dtAnteriorIni > DateTime.MinValue)
                 parameters.Add(new GDAParameter("?dtAnteriorIni", DateTime.Parse(dtAnteriorIni.Value.ToShortDateString() + " 23:59:59")));
 
             return parameters.ToArray();

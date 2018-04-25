@@ -502,7 +502,7 @@ namespace Glass.Data.Model
 
         public bool ExibirRelatorioPedido
         {
-            get { return Situacao != (int)SituacaoPedido.Processando && PedidoDAO.ExibirRelatorioPedido(IdPedido); }
+            get { return Situacao != (int)SituacaoPedido.Processando; }
         }
 
         public bool ExibirRelatorioCalculo

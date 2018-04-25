@@ -4162,6 +4162,20 @@ namespace Glass.Data.DAL
 
             var pedido = PedidoDAO.Instance.GetElement(session, objInsert.IdPedido);
 
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
+                (objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd,
+                (int)objInsert.IdSubgrupoProd))) && (int)objInsert.IdGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
+            {
+                throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
+            }
+
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
+                !SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd, (int)objInsert.IdSubgrupoProd)) ||
+                objInsert.IdGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
+            {
+                throw new Exception("Não é possível incluir produtos de venda em um pedido de revenda.");
+            }
+
             if (pedido != null && pedido.FastDelivery)
             {
                 if (objInsert.IdAplicacao > 0)

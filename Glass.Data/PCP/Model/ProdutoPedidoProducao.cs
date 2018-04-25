@@ -595,7 +595,7 @@ namespace Glass.Data.Model
 
         public bool ExibirRelatorioPedido
         {
-            get { return PedidoDAO.ExibirRelatorioPedido(IdPedido) && (ProducaoConfig.TelaConsulta.ExibirImpressaoPedidoTelaConsulta || UserInfo.GetUserInfo.IsAdministrador); }
+            get { return (ProducaoConfig.TelaConsulta.ExibirImpressaoPedidoTelaConsulta || UserInfo.GetUserInfo.IsAdministrador); }
         }
 
         public bool ExibirPararPecaProducao

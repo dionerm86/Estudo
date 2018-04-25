@@ -7343,6 +7343,12 @@ namespace Glass.Data.DAL
                             produtosPedidosEstoque[idPedido][idProd] += qtdProd;
                         }
 
+                        if (idGrupo == 0 || idSubGrupo.GetValueOrDefault() == 0)
+                        {
+                            var descricaoProd = ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd);
+                            throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == 0 ? "Grupo" : "Subgrupo"));
+                        }
+
                         //Verifica se o produto possui estoque para inserir na reserva 
                         if (GrupoProdDAO.Instance.BloquearEstoque(sessao, (int)idGrupo, (int)idSubGrupo))
                         {
@@ -7486,13 +7492,8 @@ namespace Glass.Data.DAL
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (geradoParceiro)
-            {
-                if (!PedidoConfig.ParceiroPodeReabrirPedidoConferido && idCli == UserInfo.GetUserInfo.IdCliente && situacao == Pedido.SituacaoPedido.Conferido)
-                    return false;
-                else if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
-                    return false;
-            }
+            if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+                return false;
 
             // Não deixa reabrir se recebeu sinal
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
@@ -13391,19 +13392,6 @@ namespace Glass.Data.DAL
                 default:
                     return "Etiqueta não impressa";
             }
-        }
-
-        /// <summary>
-        /// Define a visibilidade dos ícones do relatório de pedidos.
-        /// </summary>
-        /// <returns></returns>
-        public static bool ExibirRelatorioPedido(uint idPedido)
-        {
-            if (!PedidoConfig.RelatorioPedido.SoImprimirPedidoConfirmado ||
-                UserInfo.GetUserInfo.TipoUsuario == (uint)Utils.TipoFuncionario.Administrador)
-                return true;
-
-            return PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido);
         }
 
         /// <summary>

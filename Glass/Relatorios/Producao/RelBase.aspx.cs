@@ -7,6 +7,7 @@ using Glass.Data.RelDAL;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Relatorios.Producao
 {
@@ -162,16 +163,54 @@ namespace Glass.UI.Web.Relatorios.Producao
                         break;
                     }
                 case "ProducaoContagem":
-                    report.ReportPath = "Relatorios/Producao/rptProducaoContagem.rdlc";
-                    ProducaoContagem[] lstProdCont = ProducaoContagemDAO.Instance.GetForRpt(Request["idCarregamento"].StrParaInt(), Request["idPedido"].StrParaUint(), Request["idImpressao"].StrParaUint(),
-                        Request["codCliente"], Request["codRota"], Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], Request["numEtiqueta"],
-                        Request["dataIni"], Request["dataFim"], Request["dataIniEnt"], Request["dataFimEnt"], Request["dataIniFabr"], Request["dataFimFabr"], Request["dataIniConfPed"], Request["dataFimConfPed"], Glass.Conversoes.StrParaInt(Request["idSetor"]), Request["situacao"],
-                        Glass.Conversoes.StrParaInt(Request["situacaoPedido"]), Glass.Conversoes.StrParaInt(Request["tiposSituacoes"]), Request["idsSubgrupos"], Glass.Conversoes.StrParaUint(Request["tipoEntrega"]),
-                        Request["pecasProdCanc"], Glass.Conversoes.StrParaUint(Request["idFunc"]), Request["tipoPedido"], 0, Glass.Conversoes.StrParaInt(Request["altura"]),
-                        Glass.Conversoes.StrParaInt(Request["largura"]), Glass.Conversoes.StrParaInt(Request["espessura"]), Request["idsProc"], Request["idsApl"],
-                        Request["aguardExpedicao"] == "true", Request["aguardEntrEstoque"] == "true", Glass.Conversoes.StrParaUint(Request["fastDelivery"]));
-                    report.DataSources.Add(new ReportDataSource("ProducaoContagem", lstProdCont));
-                    break;
+                    {
+                        #region Declaração de variáveis
+
+                        report.ReportPath = "Relatorios/Producao/rptProducaoContagem.rdlc";
+                        var aguardandoEntradaEstoque = Request["aguardEntrEstoque"] == "true";
+                        var aguardandoExpedicao = Request["aguardExpedicao"] == "true";
+                        var altura = Request["altura"].StrParaInt();
+                        var codigoEtiqueta = Request["numEtiqueta"];
+                        var codigoPedidoCliente = Request["codCliente"];
+                        var dataConfirmacaoPedidoFim = Request["dataFimConfPed"].StrParaDate();
+                        var dataConfirmacaoPedidoInicio = Request["dataIniConfPed"].StrParaDate();
+                        var dataEntregaFim = Request["dataFimEnt"].StrParaDate();
+                        var dataEntregaInicio = Request["dataIniEnt"].StrParaDate();
+                        var dataFabricaFim = Request["dataFimFabr"].StrParaDate();
+                        var dataFabricaInicio = Request["dataIniFabr"].StrParaDate();
+                        var dataLeituraFim = Request["dataFim"].StrParaDate();
+                        var dataLeituraInicio = Request["dataIni"].StrParaDate();
+                        var espessura = Request["espessura"].StrParaInt();
+                        var fastDelivery = Request["fastDelivery"].StrParaInt();
+                        var idCarregamento = Request["idCarregamento"].StrParaInt();
+                        var idCliente = Request["idCliente"].StrParaInt();
+                        var idFuncionario = Request["idFunc"].StrParaInt();
+                        var idImpressao = Request["idImpressao"].StrParaInt();
+                        var idPedido = Request["idPedido"].StrParaInt();
+                        var idsAplicacao = Request["idsApl"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var idSetor = Request["idSetor"].StrParaInt();
+                        var idsProcesso = Request["idsProc"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var idsRota = Request["codRota"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var idsSubgrupo = Request["idsSubgrupos"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var largura = Request["largura"].StrParaInt();
+                        var nomeCliente = Request["nomeCliente"];
+                        var pecasProducaoCanceladas = Request["pecasProdCanc"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var situacoes = Request["situacao"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+                        var situacaoPedido = Request["situacaoPedido"].StrParaInt();
+                        var tipoEntrega = Request["tipoEntrega"].StrParaInt();
+                        var tipoSituacao = Request["tiposSituacoes"].StrParaInt();
+                        var tiposPedido = Request["tipoPedido"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
+
+                        #endregion
+
+                        var producoesContagem = ProducaoContagemDAO.Instance.PesquisarProducaoContagemRelatorio(aguardandoEntradaEstoque, aguardandoExpedicao, altura, codigoEtiqueta,
+                            codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio, dataLeituraFim,
+                            dataLeituraInicio, espessura, fastDelivery, idCarregamento, idCliente, idFuncionario, idImpressao, idPedido, idsAplicacao, idSetor, idsProcesso, idsRota, idsSubgrupo,
+                            largura, nomeCliente, pecasProducaoCanceladas, situacaoPedido, situacoes, tipoEntrega, tipoSituacao, tiposPedido);
+
+                        report.DataSources.Add(new ReportDataSource("ProducaoContagem", producoesContagem));
+                        break;
+                    }
                 case "ProducaoData":
                     report.ReportPath = "Relatorios/Producao/rptProducaoData.rdlc";
                     report.DataSources.Add(new ReportDataSource("ProducaoData", ProducaoDataDAO.Instance.GetForRpt(Glass.Conversoes.StrParaInt(Request["tipoData"]), Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaUint(Request["idProcesso"]),

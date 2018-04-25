@@ -144,12 +144,12 @@ namespace Glass.Data.RelDAL
                 // Posição 5.
                 idClassificacao > 0 ? string.Format(" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao={0}) ", idClassificacao.Value) : string.Empty);
 
-            if (dataIni.HasValue)
+            if (dataIni > DateTime.MinValue)
             {
                 where += " AND lp.DataLeitura>=?dataIni";
             }
 
-            if (dataFim.HasValue)
+            if (dataFim > DateTime.MinValue)
             {
                 where += " AND lp.DataLeitura<=?dataFim";
             }
@@ -192,12 +192,12 @@ namespace Glass.Data.RelDAL
                 // Posição 4.
                 idClassificacao > 0 ? string.Format(" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao={0}) ", idClassificacao.Value) : string.Empty);
 
-            if (dataIni.HasValue)
+            if (dataIni > DateTime.MinValue)
             {
                 filtro += " AND lp.DataLeitura>=?dataIni";
             }
 
-            if (dataFim.HasValue)
+            if (dataFim > DateTime.MinValue)
             {
                 filtro += " AND lp.DataLeitura<=?dataFim";
             }
