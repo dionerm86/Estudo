@@ -3,7 +3,6 @@
 
 <%@ Register Src="../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlBenefSetor.ascx" TagName="ctrlBenefSetor" TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
@@ -52,22 +51,6 @@
                         <asp:TextBox ID="txtCodPedCli" runat="server" Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                         <asp:ImageButton ID="imgPesq4" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClick="imgPesq_Click"
                             ToolTip="Pesquisar" />
-                    </td>
-                    <td class="tituloCampos">
-                        <asp:Label ID="Label10" runat="server" Text="Período (Setor)" ForeColor="#0066FF"></asp:Label>
-                    </td>
-                    <td>
-                        <asp:TextBox ID="txtDataIni" runat="server" onkeypress="return false;" Width="70px"></asp:TextBox>
-                        <asp:ImageButton ID="imgDataRecebido0" runat="server" ImageAlign="AbsMiddle" ImageUrl="~/Images/calendario.gif"
-                            OnClientClick="return SelecionaData('txtDataIni', this)" ToolTip="Alterar" />
-                    </td>
-                    <td>
-                        <asp:TextBox ID="txtDataFim" runat="server" onkeypress="return false;" Width="70px"></asp:TextBox>
-                        <asp:ImageButton ID="imgDataRecebido1" runat="server" ImageAlign="AbsMiddle" ImageUrl="~/Images/calendario.gif"
-                            OnClientClick="return SelecionaData('txtDataFim', this)" ToolTip="Alterar" />
-                        <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                            ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
-                            OnClick="imgPesq_Click" />
                     </td>
                 </tr>
             </table>
@@ -153,15 +136,11 @@
             </asp:GridView>
             <div>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsPecas" runat="server" MaximumRowsParameterName="pageSize"
-                    SelectMethod="GetListAcessoExterno" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO"
-                    EnablePaging="True" SelectCountMethod="GetCountAcessoExterno" SortParameterName="sortExpression">
+                    SelectMethod="PesquisarProdutosProducaoAcessoExterno" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutoPedidoProducaoDAO"
+                    EnablePaging="True" SelectCountMethod="PesquisarProdutosProducaoAcessoExternoCount" SortParameterName="sortExpression">
                     <SelectParameters>
-                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text"
-                            Type="UInt32" />
-                        <asp:ControlParameter ControlID="txtCodPedCli" Name="codPedCli" PropertyName="Text"
-                            Type="String" />
-                        <asp:ControlParameter ControlID="txtDataIni" Name="dataIni" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="txtDataFim" Name="dataFim" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtCodPedCli" Name="codigoPedidoCliente" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtNumPedido" Name="idPedido" PropertyName="Text" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </div>

@@ -390,7 +390,7 @@
                     StartRowIndexParameterName="" TypeName="Glass.Data.DAL.FuncionarioDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
-                    SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
+                    SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo"></colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCentroCusto" runat="server" SelectMethod="ObtemParaSelecao"
                     TypeName="Glass.Data.DAL.CentroCustoDAO" DataObjectTypeName="Glass.Data.Model.CentroCusto">
                     <SelectParameters>

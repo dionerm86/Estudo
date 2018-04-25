@@ -71,8 +71,8 @@ namespace Glass.Data.RelDAL
         /// </summary>
         private string SqlProducao(bool aguardandoEntradaEstoque, bool aguardandoExpedicao, int altura, string codigoEtiqueta, string codigoPedidoCliente, string codigoRota, DateTime? dataEntregaFim,
             DateTime? dataEntregaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, int idCarregamento, int idCliente, int idCorVidro, int idFuncionario, int idImpressao,
-            int idLiberarPedido, int idPedido, int idPedidoImportado, int idSetor, int idSubgrupo, int largura, string nomeCliente, bool pecasCanceladas, bool selecionar, bool setoresAnteriores,
-            bool setoresPosteriores, int situacao, int tipoEntrega, IEnumerable<int> tiposPedido)
+            int idLiberarPedido, int idPedido, int idPedidoImportado, int idSetor, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, bool pecasCanceladas, bool selecionar,
+            bool setoresAnteriores, bool setoresPosteriores, int tipoEntrega, IEnumerable<int> tiposPedido)
         {
             #region Declaração de variáveis
 
@@ -165,25 +165,11 @@ namespace Glass.Data.RelDAL
                 filtroInterno += string.Format(" AND ped1.IdFunc={0}", idFuncionario);
                 criterio += string.Format("Funcionário: {0}    ", FuncionarioDAO.Instance.GetNome((uint)idFuncionario));
             }
-
-            if (situacao > 0)
-            {
-                if (situacao <= 2)
-                {
-                    filtro += string.Format(" AND ppp.Situacao={0}", situacao);
-                    filtroInterno += string.Format(" AND ppp1.Situacao={0}", situacao);
-                    temp.Situacao = situacao;
-                    criterio += string.Format("Situação: {0}    ", temp.DescrSituacao);
-                }
-                else
-                {
-                    var filtroSituacao = situacao == 3 ? (int)SituacaoProdutoProducao.Pendente : situacao == 4 ? (int)SituacaoProdutoProducao.Pronto : situacao == 5 ? (int)SituacaoProdutoProducao.Entregue : 0;
-
-                    filtro += string.Format(" AND ppp.Situacao={0} AND dados.SituacaoProducao IN ({1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, filtroSituacao);
-                    filtroInterno += string.Format(" AND ppp1.Situacao={0} AND ppp1.SituacaoProducao IN ({1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, filtroSituacao);                                        
-                    criterio += string.Format("Situação: {0}    ", situacao == 3 ? "Pendente" : situacao == 4 ? "Pronta" : situacao == 5 ? "Entregue" : string.Empty);
-                }
-            }
+            
+            // O SQL é chamado somente quando a situação filtrada for Perda.
+            filtro += string.Format(" AND ppp.Situacao={0}", (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+            filtroInterno += string.Format(" AND ppp1.Situacao={0}", (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+            criterio += "Situação: Perda    ";
 
             descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao : idSetor == -1 ? "Etiqueta não impressa" : string.Empty;
 
@@ -258,44 +244,25 @@ namespace Glass.Data.RelDAL
             if (dataLeituraInicio > DateTime.MinValue)
             {
                 var formatoCriterioDataLeituraInicio = dataLeituraInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
-
-                if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
-                {
-                    filtro += " AND ppp.DataPerda>=?dataLeituraInicio";
-                    filtroInterno += " AND ppp1.DataPerda>=?dataLeituraInicio";
-                    criterio += string.Format("Data perda início: {0}    ", dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
-                }
-                else if (idSetor > 0)
-                {
-                    filtro += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura>=?dataLeituraInicio)", idSetor);
-                    filtroInterno += string.Format(" AND ppp1.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura>=?dataLeituraInicio)", idSetor);
-                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
-                }
+                
+                filtro += " AND ppp.DataPerda>=?dataLeituraInicio";
+                filtroInterno += " AND ppp1.DataPerda>=?dataLeituraInicio";
+                criterio += string.Format("Data perda início: {0}    ", dataLeituraInicio.Value.ToString(formatoCriterioDataLeituraInicio));
             }
 
             if (dataLeituraFim > DateTime.MinValue)
             {
                 var formatoCriterioDataLeituraFim = dataLeituraFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
-
-                if (situacao == (int)ProdutoPedidoProducao.SituacaoEnum.Perda)
-                {
-                    filtro += " AND ppp.DataPerda<=?dataLeituraFim";
-                    filtroInterno += " AND ppp1.DataPerda<=?dataLeituraFim";
-                    criterio += string.Format("Data perda término: {0}    ", dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
-                }
-                else if (idSetor > 0)
-                {
-                    filtro = dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtro.TrimEnd(')')) :
-                        string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura<=?dataLeituraFim)", idSetor);
-                    filtroInterno = dataLeituraInicio > DateTime.MinValue ? string.Format("{0} AND DataLeitura<=?dataLeituraFim)", filtroInterno.TrimEnd(')')) :
-                        string.Format(" AND ppp1.IdProdPedProducao IN (SELECT IdProdPedProducao FROM leitura_producao WHERE IdSetor={0} AND DataLeitura<=?dataLeituraFim)", idSetor);
-                    criterio += string.Format("Data {0} início: {1}    ", descricaoSetor, dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
-                }
+                
+                filtro += " AND ppp.DataPerda<=?dataLeituraFim";
+                filtroInterno += " AND ppp1.DataPerda<=?dataLeituraFim";
+                criterio += string.Format("Data perda término: {0}    ", dataLeituraFim.Value.ToString(formatoCriterioDataLeituraFim));
             }
 
             if (dataEntregaInicio > DateTime.MinValue)
             {
                 var formatoCriterioDataEntregaInicio = dataEntregaInicio.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 filtro += " AND ped.DataEntrega>=?dataEntregaInicio";
                 filtroInterno += " AND ped1.DataEntrega>=?dataEntregaInicio";
                 criterio += string.Format("Data entrega início: {0}    ", dataEntregaInicio.Value.ToString(formatoCriterioDataEntregaInicio));
@@ -304,16 +271,17 @@ namespace Glass.Data.RelDAL
             if (dataEntregaFim > DateTime.MinValue)
             {
                 var formatoCriterioDataEntregaFim = dataEntregaFim.Value.ToString("HH:mm:ss") == "00:00:00" ? "dd/MM/yyyy" : "dd/MM/yyyy HH:mm:ss";
+
                 filtro += " AND ped.DataEntrega<=?dataEntregaFim";
                 filtroInterno += " AND ped1.DataEntrega<=?dataEntregaFim";
                 criterio += string.Format("Data Entrega término: {0}    ", dataEntregaFim.Value.ToString(formatoCriterioDataEntregaFim));
             }
 
-            if (idSubgrupo > 0)
+            if (idsSubgrupo?.Count() > 0)
             {
-                filtro += string.Format(" AND p.IdSubgrupoProd={0}", idSubgrupo);
-                filtroInterno += string.Format(" AND p1.IdSubgrupoProd={0}", idSubgrupo);
-                criterio += string.Format("Subgrupo: {0}    ", SubgrupoProdDAO.Instance.GetDescricao((int)idSubgrupo));
+                filtro += string.Format(" AND p.IdSubgrupoProd IN ({0})", string.Join(",", idsSubgrupo));
+                filtroInterno += string.Format(" AND p1.IdSubgrupoProd IN ({0})", string.Join(",", idsSubgrupo));
+                criterio += string.Format("Subgrupo(s): {0}    ", SubgrupoProdDAO.Instance.GetDescricao(string.Join(",", idsSubgrupo)));
             }
 
             if (tipoEntrega > 0)
@@ -446,9 +414,16 @@ namespace Glass.Data.RelDAL
                         WHERE 1 {1}
                     ) AS dados ON (ppp.IdProdPedProducao=dados.IdProdPedProducao)
                     INNER JOIN setor s ON (ppp.IdSetor=s.IdSetor)
-                WHERE 1 {0}", (int)Pedido.TipoPedidoEnum.MaoDeObra, (int)Pedido.TipoPedidoEnum.Producao,
+                WHERE 1 {0}",
+                // Posição 0.
+                (int)Pedido.TipoPedidoEnum.MaoDeObra,
+                // Posição 1.
+                (int)Pedido.TipoPedidoEnum.Producao,
+                // Posição 2.
                 SqlSetores(true, true, filtroInterno, ObterParametrosProducao(codigoEtiqueta, codigoPedidoCliente, codigoRota, dataEntregaFim, dataEntregaInicio, dataLeituraFim, dataLeituraInicio,
-                    idPedidoImportado, nomeCliente), selecionar), camposUnion);
+                    idPedidoImportado, nomeCliente), selecionar),
+                // Posição 3.
+                camposUnion);
 
             sql = string.Format(sql, filtro, filtroInterno);
             sql = !selecionar ? string.Format("SELECT COUNT(*) FROM ({0}) AS temp", sql) : sql;
@@ -463,15 +438,15 @@ namespace Glass.Data.RelDAL
         /// </summary>
         public IList<Producao> PesquisarProducaoRelatorio(bool aguardandoEntradaEstoque, bool aguardandoExpedicao, int altura, string codigoEtiqueta, string codigoPedidoCliente, string codigoRota,
             DateTime? dataEntregaFim, DateTime? dataEntregaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, int idCarregamento, int idCliente, int idCorVidro, int idFuncionario,
-            int idImpressao, int idLiberarPedido, int idPedido, int idPedidoImportado, int idSetor, int idSubgrupo, int largura, string nomeCliente, bool pecasCanceladas, int situacao,
+            int idImpressao, int idLiberarPedido, int idPedido, int idPedidoImportado, int idSetor, IEnumerable<int> idsSubgrupo, int largura, string nomeCliente, bool pecasCanceladas,
             int tipoEntrega, IEnumerable<int> tiposPedido, int tipoSituacao)
         {
             var setoresAnteriores = tipoSituacao == 1;
             var setoresPosteriores = tipoSituacao == 2;
 
             return objPersistence.LoadData(SqlProducao(aguardandoEntradaEstoque, aguardandoExpedicao, altura, codigoEtiqueta, codigoPedidoCliente, codigoRota, dataEntregaFim, dataEntregaInicio,
-                dataLeituraFim, dataLeituraInicio, idCarregamento, idCliente, idCorVidro, idFuncionario, idImpressao, idLiberarPedido, idPedido, idPedidoImportado, idSetor, idSubgrupo, largura,
-                nomeCliente, pecasCanceladas, true, setoresAnteriores, setoresPosteriores, situacao, tipoEntrega, tiposPedido)).ToList();
+                dataLeituraFim, dataLeituraInicio, idCarregamento, idCliente, idCorVidro, idFuncionario, idImpressao, idLiberarPedido, idPedido, idPedidoImportado, idSetor, idsSubgrupo, largura,
+                nomeCliente, pecasCanceladas, true, setoresAnteriores, setoresPosteriores, tipoEntrega, tiposPedido)).ToList();
         }
 
         /// <summary>

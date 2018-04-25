@@ -7346,6 +7346,12 @@ namespace Glass.Data.DAL
                             produtosPedidosEstoque[idPedido][idProd] += qtdProd;
                         }
 
+                        if (idGrupo == 0 || idSubGrupo.GetValueOrDefault() == 0)
+                        {
+                            var descricaoProd = ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd);
+                            throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == 0 ? "Grupo" : "Subgrupo"));
+                        }
+
                         //Verifica se o produto possui estoque para inserir na reserva 
                         if (GrupoProdDAO.Instance.BloquearEstoque(sessao, (int)idGrupo, (int)idSubGrupo))
                         {

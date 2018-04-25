@@ -1874,13 +1874,13 @@ namespace Glass.UI.Web.Relatorios
                         var pecasRepostas = Request["pecasRepostas"] == "true";
                         var planoCorte = Request["planoCorte"];
                         var produtoComposicao = (ProdutoPedidoProducaoDAO.ProdutoComposicao)Request["produtoComposicao"].StrParaIntNullable().GetValueOrDefault();
-                        var situacao = Request["situacao"].StrParaInt();
                         var situacaoPedido = Request["situacaoPedido"].StrParaInt();
+                        var situacoes = Request["situacao"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
                         var tipoEntrega = Request["tipoEntrega"].StrParaInt();
                         var tipoSituacao = Request["tiposSituacoes"].StrParaInt();
                         var tiposPedido = Request["tipoPedido"]?.Split(',')?.Select(f => f.StrParaInt()) ?? new List<int>();
 
-                        var relatorioPerda = Request["situacao"].StrParaInt() == (int)ProdutoPedidoProducao.SituacaoEnum.Perda && Request["rel"] == "Producao";
+                        var relatorioPerda = Request["rel"] == "Producao" && situacoes?.Count() == 1 && situacoes?.FirstOrDefault() == (int)ProdutoPedidoProducao.SituacaoEnum.Perda;
                         var relatorioSetor = Request["setorFiltrado"] == "true";
 
                         #endregion
@@ -1888,10 +1888,11 @@ namespace Glass.UI.Web.Relatorios
                         if (relatorioPerda)
                         {
                             report.ReportPath = report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Producao/rptProducaoAltLarg{0}.rdlc");
+
+                            // O filtro de situação foi removido, pois esse método será chamado somente caso a situação filtrada seja Perda.
                             var perdasProducao = ProducaoDAO.Instance.PesquisarProducaoRelatorio(aguardandoEntradaEstoque, aguardandoExpedicao, altura, codigoEtiqueta, codigoPedidoCliente,
                                 Request["codRota"], dataEntregaFim, dataEntregaInicio, dataLeituraFim, dataLeituraInicio, idCarregamento, idCliente, idCorVidro, idFuncionario, idImpressao,
-                                idLiberarPedido, idPedido, idPedidoImportado, idSetor, Request["idSubgrupo"].StrParaInt(), largura, nomeCliente, pecasCanceladas, situacao, tipoEntrega, tiposPedido,
-                                tipoSituacao);
+                                idLiberarPedido, idPedido, idPedidoImportado, idSetor, idsSubgrupo, largura, nomeCliente, pecasCanceladas, tipoEntrega, tiposPedido, tipoSituacao);
 
                             report.DataSources.Add(new ReportDataSource("Producao", perdasProducao.ToArray()));
                         }
@@ -1959,7 +1960,7 @@ namespace Glass.UI.Web.Relatorios
                                 codigoEtiquetaChapa, codigoPedidoCliente, dataConfirmacaoPedidoFim, dataConfirmacaoPedidoInicio, dataEntregaFim, dataEntregaInicio, dataFabricaFim, dataFabricaInicio,
                                 dataLeituraFim, dataLeituraInicio, espessura, fastDelivery, idCarregamento, idCliente, idCorVidro, idFuncionario, idImpressao, idLiberarPedido, idLoja, idPedido,
                                 idPedidoImportado, idsAplicacao, idsBeneficiamento, idSetor, idsProcesso, idsRota, idsSubgrupo, largura, nomeCliente, pecaParadaProducao, pecasProducaoCanceladas,
-                                pecasRepostas, planoCorte, produtoComposicao, situacaoPedido, situacao, tipoEntrega, tiposPedido, tipoSituacao);
+                                pecasRepostas, planoCorte, produtoComposicao, situacaoPedido, situacoes, tipoEntrega, tiposPedido, tipoSituacao);
                             var pedidos = PedidoDAO.Instance.ObterPedidosProducao(null, idsPedido?.Select(f => (uint)f)?.ToList() ?? new List<uint>());
                             
                             lstParam.Add(new ReportParameter("Titulo", "Pedidos produção"));
