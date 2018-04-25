@@ -8729,30 +8729,20 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o desconto do pedido está dentro do permitido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool DescontoPermitido(uint idPedido)
-        {
-            return DescontoPermitido(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se o desconto do pedido está dentro do permitido
-        /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        public bool DescontoPermitido(GDASession sessao, uint idPedido)
+        private bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
                 "") + ") from produtos_pedido where idPedido=p.idPedido)";
 
             uint idFunc = UserInfo.GetUserInfo.CodUser;
             if (Geral.ManterDescontoAdministrador)
-                idFunc = ObtemIdFuncDesc(sessao, idPedido).GetValueOrDefault(idFunc);
+                idFunc = pedido.IdFuncDesc.GetValueOrDefault(idFunc);
 
             if (idFunc == 0)
-                idFunc = ObtemIdFunc(sessao, idPedido);
+                idFunc = pedido.IdFunc;
 
             float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)GetTipoVenda(sessao, idPedido));
 
@@ -8761,24 +8751,24 @@ namespace Glass.Data.DAL
 
             if (FinanceiroConfig.UsarDescontoEmParcela)
             {
-                var idParcela = ObtemIdParcela(sessao, idPedido);
+                var idParcela = pedido.IdParcela;
                 if (idParcela.GetValueOrDefault(0) > 0)
                 {
                     var desconto = ParcelasDAO.Instance.ObtemDesconto(sessao, idParcela.Value);
-                    if (desconto == ObtemDescontoCalculado(sessao, idPedido))
+                    if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
                         return true;
                 }
             }
             else if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
             {
-                uint tipoVenda = (uint)ObtemTipoVenda(sessao, idPedido);
-                uint? idFormaPagto = ObtemFormaPagto(sessao, idPedido);
-                uint? idTipoCartao = ObtemTipoCartao(sessao, idPedido);
-                uint? idParcela = ObtemIdParcela(sessao, idPedido);
+                uint tipoVenda = (uint?)pedido.TipoVenda ?? 0;
+                uint? idFormaPagto = pedido.IdFormaPagto;
+                uint? idTipoCartao = pedido.IdTipoCartao;
+                uint? idParcela = pedido.IdParcela;
                 uint? idGrupoProd = null;
                 uint? idSubgrupoProd = null;
 
-                var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedido);
+                var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido);
                 if (produtosPedido != null && produtosPedido.Count > 0)
                 {
                     idGrupoProd = produtosPedido[0].IdGrupoProd;
@@ -8786,11 +8776,11 @@ namespace Glass.Data.DAL
                 }
 
                 var desconto = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDesconto(tipoVenda, idFormaPagto, idTipoCartao, idParcela, idGrupoProd, idSubgrupoProd);
-                if (desconto == ObtemDescontoCalculado(sessao, idPedido))
+                if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
                     return true;
             }
 
-            string sql = "Select Count(*) from pedido p Where idPedido=" + idPedido + @" And (
+            string sql = "Select Count(*) from pedido p Where idPedido=" + pedido.IdPedido + @" And (
                 (tipoDesconto=1 And desconto<=" + descontoMaximoPermitido.ToString().Replace(",", ".") + @") Or
                 (tipoDesconto=2 And Coalesce(round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2),0)<=(" +
                 descontoMaximoPermitido.ToString().Replace(",", ".") + @"/100))
@@ -8799,15 +8789,8 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int>(sessao, sql) > 0;
         }
 
-        private void RemoveDescontoNaoPermitido(GDASession sessao, uint idPedido)
+        private void RemoveDescontoNaoPermitido(GDASession sessao, Pedido pedido)
         {
-            // Chamado 23794: Caso passasse neste método, a busca por ambientes abaixo buscaria todos os ambientes e atualizaria todos os pedidos no sistema,
-            // caso algum possuísse desconto acima do permitido, o mesmo seria desfeito.
-            if (idPedido == 0)
-                return;
-
-            var pedido = GetElement(sessao, idPedido);
-
             if (pedido == null)
                 return;
 
@@ -8834,22 +8817,22 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, @"
                 Update pedido set desconto=0 
-                Where idPedido=" + idPedido + @";
+                Where idPedido=" + pedido.IdPedido + @";
                 Update pedido p set Total=Round((   
                     Select Sum(Total + coalesce(valorBenef, 0)) 
                     From produtos_pedido 
                     Where IdPedido=p.IdPedido 
                         And (InvisivelPedido = false or InvisivelPedido is null)), 2) 
-                Where p.IdPedido=" + idPedido);
+                Where p.IdPedido=" + pedido.IdPedido);
 
             // Chamado 21923: Não deve salvar log se pedido já estiver liberado, pois a alteração de desconto não será salva.
             if (pedido.Situacao != Pedido.SituacaoPedido.Confirmado)
             {
                 Erro novo = new Erro();
-                novo.UrlErro = "Desconto Pedido " + idPedido;
+                novo.UrlErro = "Desconto Pedido " + pedido.IdPedido;
                 novo.DataErro = DateTime.Now;
                 novo.IdFuncErro = UserInfo.GetUserInfo.CodUser;
-                novo.Mensagem = "Removido desconto do pedido " + idPedido;
+                novo.Mensagem = "Removido desconto do pedido " + pedido.IdPedido;
 
                 ErroDAO.Instance.Insert(novo);
             }
@@ -10806,8 +10789,8 @@ namespace Glass.Data.DAL
                 // Verifica se o desconto dado no pedido é permitido, se não for, zera o desconto
                 if (!liberando)
                 {
-                    if (!DescontoPermitido(sessao, pedido.IdPedido))
-                        RemoveDescontoNaoPermitido(sessao, pedido.IdPedido);
+                    if (!DescontoPermitido(sessao, pedido))
+                        RemoveDescontoNaoPermitido(sessao, pedido);
                     else if (alterouDesconto)
                     {
                         decimal percDesconto = pedido.Desconto;
@@ -13650,7 +13633,7 @@ namespace Glass.Data.DAL
 
                 // Verifica se o desconto que já exista no pedido pode ser mantido pelo usuário que está atualizando o pedido, 
                 // tendo em vista que o mesmo possa ter sido lançado por um administrador.
-                if (objUpdate.Desconto == ped.Desconto && ped.Desconto > 0 && !DescontoPermitido(session, objUpdate.IdPedido))
+                if (objUpdate.Desconto == ped.Desconto && ped.Desconto > 0 && !DescontoPermitido(session, objUpdate))
                 {
                     throw new Exception("O desconto lançado anteriormente está acima do permitido para este login.");
                 }
@@ -13905,7 +13888,7 @@ namespace Glass.Data.DAL
                         objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET idFuncDesc=NULL WHERE IdPedido={0}", objUpdate.IdPedido));
                     }
 
-                    bool descontoRemovido = !DescontoPermitido(session, objUpdate.IdPedido);
+                    bool descontoRemovido = !DescontoPermitido(session, objUpdate);
                     if (descontoRemovido)
                     {
                         RemoverDesconto(session, objUpdate, produtosPedido);
@@ -15845,7 +15828,7 @@ namespace Glass.Data.DAL
 
             // Verifica se o desconto que já exista no pedido pode ser mantido pelo usuário que está atualizando o pedido, 
             // tendo em vista que o mesmo possa ter sido lançado por um administrador
-            if (objUpdate.Desconto == ped.Desconto && ped.Desconto > 0 && !DescontoPermitido(session, objUpdate.IdPedido))
+            if (objUpdate.Desconto == ped.Desconto && ped.Desconto > 0 && !DescontoPermitido(session, objUpdate))
             {
                 throw new Exception("O desconto lançado anteriormente está acima do permitido para este login.");
             }
