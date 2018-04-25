@@ -712,6 +712,12 @@ namespace Glass.Data.DAL
                         if (antecip.Situacao == (int)AntecipacaoFornecedor.SituacaoAntecipFornec.Cancelada)
                             throw new Exception("A antecipação de fornecedor informada já está cancelada.");
 
+                        if (antecip.Saldo < antecip.ValorAntecip)
+                        {
+                            throw new Exception(string.Format(@"Não há saldo suficiente para cancelar a antecipação.Saldo atual {0} , valor total antecipação {1}",
+                                antecip.Saldo.ToString("C"), antecip.ValorAntecip.ToString("C")));
+                        }
+
                         ContasPagar[] lstContasPg = ContasPagarDAO.Instance.GetByAntecipFornec(transaction, antecip.IdAntecipFornec);
 
                         #region Estorna Crédito
@@ -745,6 +751,13 @@ namespace Glass.Data.DAL
 
                                 if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoAntecipFornecGerado))
                                 {
+                                    var saldoCreditoFornec = FornecedorDAO.Instance.GetCredito(transaction, antecip.IdFornec);
+                                    if (saldoCreditoFornec < cx.ValorMov)
+                                    {
+                                        throw new Exception(string.Format(@"O fornecedor não possui crédito suficiente para cancelar a antecipação. Crédito atual {0} , valor a ser estornado {1}",
+                                                saldoCreditoFornec.ToString("C"), cx.ValorMov.ToString("C")));
+                                    }
+
                                     FornecedorDAO.Instance.DebitaCredito(transaction, antecip.IdFornec, cx.ValorMov);
 
                                     // Estorna crédito venda gerado
