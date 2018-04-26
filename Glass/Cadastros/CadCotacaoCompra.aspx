@@ -459,11 +459,6 @@
                                 <asp:Label ID="Label1" runat="server" 
                                     Text='<%# Eval("CodigoDescricaoProduto") %>'></asp:Label>
                                 <asp:HiddenField ID="hdfTipoCalc" runat="server" Value='<%# Eval("TipoCalc") %>' />
-
-                                <script type="text/javascript">
-                                    habilitaCamposProduto("", "");
-                                </script>
-
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <uc1:ctrlSelProduto ID="ctrlSelProduto1" runat="server" PermitirVazio="false" Callback="habilitaCamposProduto"
@@ -601,6 +596,8 @@
     <script type="text/javascript">
         $(document).ready(function()
         {
+            habilitaCamposProduto("", "");
+
             var tabela = document.getElementById("<%= grdProdutoFornecedorCotacaoCompra.ClientID %>");
             
             if (tabela != null) {

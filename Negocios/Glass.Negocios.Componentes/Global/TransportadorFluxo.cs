@@ -136,6 +136,12 @@ namespace Glass.Global.Negocios.Componentes
                     .Add("?id", transportador.IdTransportador)
                     .Count(),
                     tratarResultado("Há CTe's associados ao mesmo."))
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.Cliente>()
+                    .Where("IdTransportador=?id")
+                    .Add("?id", transportador.IdTransportador)
+                    .Count(),
+                    tratarResultado("Há clientes associados ao mesmo."))
                     .Execute();
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();
