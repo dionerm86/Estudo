@@ -2326,23 +2326,30 @@ namespace Glass.Data.DAL
 
             var campos = string.Empty;
             var sql = string.Empty;
+            // Define se ao filtrar pela data de entrega será filtrado também pela data de fábrica.
+            var filtrarDataFabrica = ProducaoConfig.BuscarDataFabricaConsultaProducao;
 
             #endregion
 
             #region Consulta
-
-            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.Situacao, ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta,
-                    pp.IdPedido, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao, ppp.Obs,
-                    ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, p.CodInterno, CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', '')) AS DescrProduto,
+            
+            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, ppp.IdImpressao, ppp.PlanoCorte, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.DataPerda, ppp.Obs,
+                    ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao,
+                    ped.IdPedido, ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, ped.DataEntrega, ped.DataEntregaOriginal, p.CodInterno,
+                    CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', '')) AS DescrProduto,
                     IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                     IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
-                    apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso",
+                    IF(lp.Situacao={4}, lp.DataLiberacao, NULL) AS DataLiberacaoPedido, apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso{3}",
                 // Posição 0.
                 (int)Pedido.TipoPedidoEnum.MaoDeObra,
                 // Posição 1.
                 (int)Pedido.SituacaoPedido.Cancelado,
                 // Posição 2.
-                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString()) :
+                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString(),
+                // Posição 3.
+                filtrarDataFabrica ? ", ped_esp.DataFabrica AS DataEntregaFabrica" : string.Empty,
+                // Posição 4.
+                (int)LiberarPedido.SituacaoLiberarPedido.Liberado) :
                 "COUNT(DISTINCT ppp.IdProdPedProducao)";
 
             sql = string.Format(@"SELECT {0}
@@ -2350,14 +2357,18 @@ namespace Glass.Data.DAL
                     LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
                     LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
                     LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN liberarpedido lp ON (ped.IdLiberarPedido = lp.IdLiberarPedido)
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                     LEFT JOIN etiqueta_aplicacao apl ON (if(ped.tipoPedido={1}, a.idAplicacao, pp.idAplicacao) = apl.idAplicacao)
                     LEFT JOIN etiqueta_processo prc ON (if(ped.tipoPedido={1}, a.idProcesso, pp.idProcesso) = prc.idProcesso)
+                    {2}
                 WHERE 1",
                 // Posição 0.
                 campos,
                 // Posição 1.
-                (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                (int)Pedido.TipoPedidoEnum.MaoDeObra,
+                // Posição 2.
+                filtrarDataFabrica ? "LEFT JOIN pedido_espelho ped_esp ON (ped.IdPedido = pedEsp.IdPedido)" : string.Empty);
 
             #endregion
 
