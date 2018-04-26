@@ -3962,18 +3962,19 @@ namespace Glass.Data.DAL
                     // Verifica se tem estoque do produto que irá ser efetuada a baixa (Exceto se for retalho)
                     if ((!setor.Corte || codMateriaPrima[0] != 'R') && (idProdImpressaoChapa == 0 || (idProdImpressaoChapa > 0 && !ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressaoChapa))))
                     {
-                        /* Chamado 49829. */
-                        var idLojaChapa = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                        var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
+                        var idLojaNotaFiscal = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
+                        var idLojaFuncionario = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
 
-                        if (Geral.ConsiderarLojaClientePedidoFluxoSistema)
-                        {
-                            var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                            idLojaChapa = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
-                        }
+                        //Verifica se a chapa teve entrada e recupera a loja que foi feito a movimentação pois a loja que deu entrada manual pode não ser é a mesma da nota fiscal
+                        var idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao, string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2}",
+                            idNf.GetValueOrDefault(0), idProdBaixa, (int)MovEstoque.TipoMovEnum.Entrada));
+
+                        var idLojaMovEstoqueChapa = idLojaMovEstoque ?? (idLojaNotaFiscal == 0 ? idLojaFuncionario : idLojaNotaFiscal);
 
                         /* Chamado 63113.
                          * Busca o pedido de revenda associado ao pedido de produção, para que a reserva do pedido seja considerada no momento de verificar se o produto possui estoque ou não. */
-                        if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
+                        if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaMovEstoqueChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
                             throw new Exception(string.Format("Não há estoque da matéria-prima ({0}) da peça ({1}).", ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProdBaixa),
                                 ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd)));
                     }
