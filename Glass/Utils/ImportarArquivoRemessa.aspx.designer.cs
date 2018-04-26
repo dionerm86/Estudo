@@ -58,6 +58,24 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.Button btnImportarArquivo;
         
         /// <summary>
+        /// btnVerificarArquivo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnVerificarArquivo;
+        
+        /// <summary>
+        /// grdItensCNAB control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView grdItensCNAB;
+        
+        /// <summary>
         /// odsContaBanco control.
         /// </summary>
         /// <remarks>
