@@ -83,18 +83,15 @@ namespace Glass.Data.DAL
                 uint? idProdPedProd = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(sessao, codEtiqueta);
                 uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
                 uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                uint idLoja = 0;
 
-                if (idNf > 0 && Geral.ConsiderarLojaClientePedidoFluxoSistema)
-                {
-                    var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.Value);
+                uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
+                    string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
+                                        idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
 
-                    if (idLojaNf > 0)
-                        idLoja = idLojaNf;
-                }
+                var idLojaFuncionario = UserInfo.GetUserInfo.IdLoja;
+                var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
 
-                if (idLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
-                    idLoja = UserInfo.GetUserInfo.IdLoja;
+                var idLoja = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaFuncionario : idLojaNf);
 
                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, idProd.Value, idLoja, idProdPedProd.Value, 1, 0, false, false, false);
             }
