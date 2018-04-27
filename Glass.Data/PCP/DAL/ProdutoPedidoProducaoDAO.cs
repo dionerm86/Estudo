@@ -6451,6 +6451,15 @@ namespace Glass.Data.DAL
                     //Se não houver mais leituras para chapa volta o estoque da mesma
                     if (quantidadeLeiturasChapa == 1)
                     {
+                        uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
+                        uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
+                            string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
+                                                idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
+
+                        var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
+
+                        idLojaConsiderar = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaConsiderar : idLojaNf);
+
                         if (idProd > 0)
                             MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, idProd.Value, idLojaConsiderar, idProdPedProducao, 1, false, false);
                     }
