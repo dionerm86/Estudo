@@ -364,8 +364,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<decimal>(sesssao, "saldoValorMov", "idMovEstoque=" + idMovEstoque.GetValueOrDefault());
         }
 
-        #endregion
-
         #region Recupera o valor total das movimentações
 
         /// <summary>

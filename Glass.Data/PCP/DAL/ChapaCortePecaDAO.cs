@@ -325,6 +325,10 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque in ({0})", string.Join(",", idsMovEstoque)),
                         new GDAParameter("?obs", string.Format("Etiqueta: {0}|{1}.", numEtiquetaChapa, ObtemPlanoCorteVinculado(numEtiquetaChapa) ?? ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdPedProducao) ?? "").Replace("|.", ".")));
             }
+
+            #endregion
+        }
+
         /// <summary>
         /// Remove a leitura da chapa das peças informadas.
         /// </summary>
