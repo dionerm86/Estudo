@@ -52,5 +52,12 @@ namespace Glass.Rentabilidade.Test
         /// <param name="valor">Valor do registro</param>
         /// <returns></returns>
         public IRegistroRentabilidade CriarRegistro(TipoRegistroRentabilidade tipo, string nome, decimal valor) => null;
+
+        /// <summary>
+        /// Limpa os registros
+        /// </summary>
+        public void LimparRegistros()
+        {   
+        }
     }
 }
