@@ -14,8 +14,6 @@ namespace Glass.Data.Helper
         #region Variáveis Locais
 
         private static Func<LoginUsuario> _loginUsuarioGetter;
-
-        private static object syncRoot = new object();
         internal static volatile List<LoginUsuario> _usuario = new List<LoginUsuario>();
 
         #endregion
@@ -247,6 +245,15 @@ namespace Glass.Data.Helper
                     _usuario.RemoveAt(i);
                     return;
                 }
+        }
+
+        /// <summary>
+        /// Recupera o método que será usado para recuperar as informações do usuário logado no sistema.
+        /// </summary>
+        /// <returns></returns>
+        public static Func<LoginUsuario> ObterLoginUsuarioGetter()
+        {
+            return _loginUsuarioGetter;
         }
 
         #endregion
