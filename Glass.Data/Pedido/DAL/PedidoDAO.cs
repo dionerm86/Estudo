@@ -2130,7 +2130,7 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM {1}p 
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_liberar_pedido plp ON (p.IdPedido=plp.IdPedido)
@@ -2140,8 +2140,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
-                    {1}
-                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos);
+                    {2}
+                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), temFiltro ? "pedido " : "(SELECT * FROM pedido ORDER BY DataPedido DESC, DataCad DESC LIMIT 1000) AS ", dadosVendidos);
 
             // Recupera o tipo de usuário
             uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
@@ -10953,7 +10953,11 @@ namespace Glass.Data.DAL
                     }
                     GeraParcelaParceiro(sessao, ref ped);
                 }
- 
+
+                var rentabilidade = RentabilidadeHelper.ObterCalculadora<Data.Model.Pedido>().Calcular(sessao, idPedido);
+                if (rentabilidade.Executado)
+                    rentabilidade.Salvar(sessao);
+
                 if (criarLogDeAlteracao)
                     LogAlteracaoDAO.Instance.LogPedido(sessao, pedido, GetElementByPrimaryKey(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
             }
@@ -15609,6 +15613,25 @@ namespace Glass.Data.DAL
                         ParcelasPedidoDAO.Instance.Insert(session, parcela);
                     }
             }
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Atualiza a rentabilidade do pedido.
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao, 
+            uint idPedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdPedido=?idPedido",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?idPedido", idPedido));
         }
 
         #endregion

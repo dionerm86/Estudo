@@ -36,7 +36,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <HintPath>..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
@@ -84,6 +84,7 @@
     <Reference Include="System.Core">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq">
       <Private>True</Private>
     </Reference>
@@ -164,6 +165,8 @@
     <Compile Include="Projeto\IFlagArqMesaFluxo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProvedorControleAlteracao.cs" />
+    <Compile Include="Rentabilidade\IProvedorItemRentabilidade.cs" />
+    <Compile Include="Rentabilidade\IRentabilidadeFluxo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
@@ -173,6 +176,10 @@
     <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
       <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
       <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rentabilidade\Glass.Rentabilidade\Glass.Rentabilidade.csproj">
+      <Project>{049560e8-0306-483c-a782-8be14118a6ed}</Project>
+      <Name>Glass.Rentabilidade</Name>
     </ProjectReference>
     <ProjectReference Include="..\Glass.Negocios.Entidades\Glass.Negocios.Entidades.csproj">
       <Project>{de1a9b49-0710-4fa1-bbfb-1c83f9e9533c}</Project>

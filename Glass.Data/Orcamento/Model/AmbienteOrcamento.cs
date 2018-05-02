@@ -21,6 +21,19 @@ namespace Glass.Data.Model
         [PersistenceProperty("DESCRICAO", 1000)]
         public string Descricao { get; set; }
 
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE")]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA")]
+        public decimal RentabilidadeFinanceira { get; set; }
+
+
         #endregion
 
         #region Propriedades Estendidas

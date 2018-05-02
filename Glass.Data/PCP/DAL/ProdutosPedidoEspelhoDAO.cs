@@ -3410,6 +3410,36 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os produtos do pedido para o calculo da rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public IList<ProdutosPedidoEspelho> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadData(sessao, "SELECT * FROM produtos_pedido_espelho WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+        }
+
+        /// <summary>
+        /// Atualiza a rentabilidade do produto do pedido..
+        /// </summary>
+        /// <param name="idProdPed"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idProdPed, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_pedido_espelho SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdPed=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idProdPed));
+        }
+
+        #endregion
+
         #region Métodos sobrescritos
 
         #region Clone
@@ -3428,18 +3458,26 @@ namespace Glass.Data.DAL
 
             if (string.IsNullOrEmpty(idsProdPed))
                 idsProdPed = "0";
-            
+
+            // Remove os registros de rentabilidade associados com todos os clones que não fazem referência a nenhum produto no PCP 
+            objPersistence.ExecuteCommand(sessao,
+                string.Format(@"DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN 
+                                (SELECT IdProdPed FROM produtos_pedido WHERE InvisivelPedido=1 AND IdProdPedEsp IS NOT NULL AND IdProdPedEsp NOT IN ({0}) AND IdPedido={1})",
+                    idsProdPed, idPedido));
+
             // Remove todos os clones que não fazem referência a nenhum produto no PCP
             objPersistence.ExecuteCommand(sessao, 
                 string.Format(@"delete from produtos_pedido where invisivelPedido=true and idProdPedEsp is not null and
                     idProdPedEsp not in ({0}) And idPedido={1}", idsProdPed, idPedido));
 
-            ProdutosPedido clone = ProdutosPedidoDAO.Instance.GetByProdPedEsp(sessao, idProdPed, false);
-
             // Se o produto do pedido espelho não estiver invisível e se o clone não for o produto original do pedido exclui o clone
             if (objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from produtos_pedido where invisivelPedido=true and idProdPedEsp=" + idProdPed) > 0 &&
                 objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from produtos_pedido_espelho where idItemProjeto is null and invisivelFluxo=true and idProdPed=" + idProdPed) == 0)
             {
+                objPersistence.ExecuteCommand(sessao, 
+                    @"DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (
+                        SELECT IdProdPed FROM produtos_pedido WHERE IdProdPedEsp=" + idProdPed + ")");
+
                 objPersistence.ExecuteCommand(sessao, "delete from produtos_pedido where idProdPedEsp=" + idProdPed);
             }
             else
@@ -3831,8 +3869,11 @@ namespace Glass.Data.DAL
                 {
                     RemoverClone(sessao, objDelete.IdProdPed);
 
-                    returnValue = base.Delete(sessao, objDelete);
                     ProdutoPedidoEspelhoBenefDAO.Instance.DeleteByProdPed(sessao, objDelete.IdProdPed);
+                    ProdutoPedidoEspelhoRentabilidadeDAO.Instance.ApagarPorProdutoPedido(sessao, objDelete.IdProdPed);
+                    
+                    returnValue = base.Delete(sessao, objDelete);
+                    
                 }
                 else
                 {

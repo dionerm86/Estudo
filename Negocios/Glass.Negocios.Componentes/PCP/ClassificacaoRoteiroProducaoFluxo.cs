@@ -57,7 +57,7 @@ namespace Glass.PCP.Negocios.Componentes
         public IList<Entidades.ClassificacaoRoteiroProducao> PesquisarClassificacao()
         {
             return SourceContext.Instance.CreateQuery()
-                .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>()
+                .From<Data.Model.ClassificacaoRoteiroProducao>()
                 .ToVirtualResultLazy<Entidades.ClassificacaoRoteiroProducao>();
         }
 
@@ -68,7 +68,7 @@ namespace Glass.PCP.Negocios.Componentes
         public IList<IEntityDescriptor> ObtemClassificacao()
         {
             return SourceContext.Instance.CreateQuery()
-               .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>()
+               .From<Data.Model.ClassificacaoRoteiroProducao>()
                .OrderBy("Descricao")
                .ProcessResultDescriptor<Entidades.ClassificacaoRoteiroProducao>()
                .ToList();
@@ -82,7 +82,7 @@ namespace Glass.PCP.Negocios.Componentes
         public Entidades.ClassificacaoRoteiroProducao ObtemClassificacao(int idClassificacaoRoteiroProducao)
         {
             return SourceContext.Instance.CreateQuery()
-               .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>()
+               .From<Data.Model.ClassificacaoRoteiroProducao>()
                .Where("IdClassificacaoRoteiroProducao=?id")
                .Add("?id", idClassificacaoRoteiroProducao)
                .ProcessLazyResult<Entidades.ClassificacaoRoteiroProducao>()
@@ -97,7 +97,7 @@ namespace Glass.PCP.Negocios.Componentes
         public int ObtemCapacidadeDiaria(int idClassificacao)
         {
             return SourceContext.Instance.CreateQuery()
-                .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>()
+                .From<Data.Model.ClassificacaoRoteiroProducao>()
                .Where("IdClassificacaoRoteiroProducao=?id")
                .Add("?id", idClassificacao)
                .Select("CapacidadeDiaria")
@@ -114,7 +114,7 @@ namespace Glass.PCP.Negocios.Componentes
         public string ObtemDescricao(int idClassificacao)
         {
             return SourceContext.Instance.CreateQuery()
-               .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>("crp")
+               .From<Data.Model.ClassificacaoRoteiroProducao>("crp")
                .Where("crp.IdClassificacaoRoteiroProducao=?id")
                .Add("?id", idClassificacao)
                .Select("crp.Descricao as Descricao")
@@ -131,7 +131,7 @@ namespace Glass.PCP.Negocios.Componentes
         public List<Entidades.ClassificacaoRoteiroProducao> ObtemClassificacoes(string idsClassificacoes)
         {
             return !String.IsNullOrEmpty(idsClassificacoes) ? SourceContext.Instance.CreateQuery()
-               .From<Glass.PCP.Data.Model.ClassificacaoRoteiroProducao>("crp")
+               .From<Data.Model.ClassificacaoRoteiroProducao>("crp")
                .Where("crp.IdClassificacaoRoteiroProducao IN ("+idsClassificacoes+")")
                .ProcessResult<Entidades.ClassificacaoRoteiroProducao>()
                .ToList() : new List<Entidades.ClassificacaoRoteiroProducao>();

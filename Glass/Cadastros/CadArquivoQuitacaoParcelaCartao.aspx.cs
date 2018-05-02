@@ -13,13 +13,15 @@ namespace Glass.UI.Web.Cadastros
 {
     public partial class CadArquivoQuitacaoParcelaCartao : System.Web.UI.Page
     {
-        private static List<QuitacaoParcelaCartaoPesquisa> _quitacaoParcelaCartaoPesquisa;
-        private static Byte[] arquivo;
-        private static string nomeArquivo;
-
         protected void Page_Load(object sender, EventArgs e)
         {
             var idArquivoQuitacaoParcelaCartao = Conversoes.StrParaInt(Request["IdArquivoQuitacaoParcelaCartao"]);
+
+            if (!IsPostBack)
+            {
+                Session["QuitacaoParcelaCartao"] = null;
+                Session["FluArquivoQuitacaoParcelaCartao"] = null;
+            }
 
             // Se for para visualizar informações do arquivo
             if(idArquivoQuitacaoParcelaCartao > 0)
@@ -60,15 +62,16 @@ namespace Glass.UI.Web.Cadastros
                 lblArquivo.Visible = false;
                 fluArquivo.Visible = false;
                 btnEnviarArquivo.Visible = false;
-                arquivo = fluArquivo.FileBytes;
-                nomeArquivo = fluArquivo.FileName;
+
+                Session["FluArquivoQuitacaoParcelaCartao"] = fluArquivo;
 
                 var quitacaoParcelaCartaoFluxo = ServiceLocator.Current.GetInstance<IQuitacaoParcelaCartaoFluxo>();
 
-                _quitacaoParcelaCartaoPesquisa = quitacaoParcelaCartaoFluxo.CarregarArquivo(new MemoryStream(arquivo));
-                grdQuitacaoParcelaCartao.DataSource = _quitacaoParcelaCartaoPesquisa;
+                var quitacaoParcelaCartaoPesquisa = quitacaoParcelaCartaoFluxo.CarregarArquivo(new MemoryStream(fluArquivo.FileBytes));
+                Session["QuitacaoParcelaCartao"] = quitacaoParcelaCartaoPesquisa;
+                grdQuitacaoParcelaCartao.DataSource = quitacaoParcelaCartaoPesquisa;
                 grdQuitacaoParcelaCartao.DataBind();
-                btnImportarArquivo.Visible = _quitacaoParcelaCartaoPesquisa.Any(f => f.Quitada);
+                btnImportarArquivo.Visible = quitacaoParcelaCartaoPesquisa.Any(f => f.Quitada);
                 btnCancelar.Visible = true;
                 if (grdQuitacaoParcelaCartao.Rows.Count > 0)
                     grdQuitacaoParcelaCartao.Columns[0].Visible = false;
@@ -83,9 +86,11 @@ namespace Glass.UI.Web.Cadastros
         {
             var quitacaoParcelaCartaoFluxo = ServiceLocator.Current.GetInstance<IQuitacaoParcelaCartaoFluxo>();
 
+            fluArquivo = (System.Web.UI.WebControls.FileUpload)Session["FluArquivoQuitacaoParcelaCartao"];
+
             // Insere o registro do arquivo e salva o mesmo na pasta
-            var stream = new MemoryStream(arquivo);
-            var extensao = Path.GetExtension(nomeArquivo);
+            var stream = new MemoryStream(fluArquivo.FileBytes);
+            var extensao = Path.GetExtension(fluArquivo.FileName);
             var resultado = quitacaoParcelaCartaoFluxo.InserirNovoArquivo(stream, extensao);
 
             if (!resultado)
@@ -95,9 +100,12 @@ namespace Glass.UI.Web.Cadastros
             }
 
             var idArquivoQuitacaoParcelaCartao = Conversoes.StrParaInt(resultado.Message.Format());
+
+            var quitacaoParcelaCartaoPesquisa = (List<QuitacaoParcelaCartaoPesquisa>)Session["QuitacaoParcelaCartao"];
+
             // Atualiza o idArquivoQuitacaoParcelaCartao
-            if (_quitacaoParcelaCartaoPesquisa != null && _quitacaoParcelaCartaoPesquisa.Count() > 0)
-                foreach (var q in _quitacaoParcelaCartaoPesquisa)
+            if (quitacaoParcelaCartaoPesquisa != null && quitacaoParcelaCartaoPesquisa.Count() > 0)
+                foreach (var q in quitacaoParcelaCartaoPesquisa)
                     q.IdArquivoQuitacaoParcelaCartao = idArquivoQuitacaoParcelaCartao;
 
             try
@@ -124,6 +132,8 @@ namespace Glass.UI.Web.Cadastros
                 MensagemAlerta.ErrorMsg("Falha ao importar arquivo.", ex, Page);
             }
 
+            Session["QuitacaoParcelaCartao"] = null;
+            Session["FluArquivoQuitacaoParcelaCartao"] = null;
             btnCancelar_Click(sender, e);
         }
 
@@ -131,7 +141,9 @@ namespace Glass.UI.Web.Cadastros
         {
             var quitacao = new QuitacaoParcelaCartao();
             List<QuitacaoParcelaCartao> quitacaoParcelaCartao = new List<QuitacaoParcelaCartao>();
-            foreach (var q in _quitacaoParcelaCartaoPesquisa)
+            var quitacaoParcelaCartaoPesquisa = (List<QuitacaoParcelaCartaoPesquisa>)Session["QuitacaoParcelaCartao"];
+
+            foreach (var q in quitacaoParcelaCartaoPesquisa)
             {
                 quitacao = new QuitacaoParcelaCartao();
                 quitacao.IdArquivoQuitacaoParcelaCartao = q.IdArquivoQuitacaoParcelaCartao;
@@ -155,6 +167,8 @@ namespace Glass.UI.Web.Cadastros
 
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
+            Session["QuitacaoParcelaCartao"] = null;
+            Session["FluArquivoQuitacaoParcelaCartao"] = null;
             Response.Redirect("../Cadastros/CadArquivoQuitacaoParcelaCartao.aspx");
         }
     }

@@ -594,6 +594,27 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Recuperar os produtos pelos identificadores
+
+        /// <summary>
+        /// Recupera os produtos com base no identificadores informados
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idsProd"></param>
+        /// <returns></returns>
+        public IEnumerable<Produto> ObterProdutos(GDA.GDASession sessao, IEnumerable<uint> idsProd)
+        {
+            var ids = string.Join(",", idsProd);
+
+            if (!string.IsNullOrEmpty(ids))
+                return objPersistence.LoadData(sessao,
+                    string.Format("SELECT * FROM produto WHERE IdProd IN ({0})", ids));
+            else
+                return new Produto[0];
+        }
+
+        #endregion
+
         #region Busca os produtos com a qtde que foram vendidos
 
         internal enum TipoBuscaMateriaPrima
@@ -2402,7 +2423,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public string GetFirstProdutoCodInterno(int? idGrupoProd)
         {
-            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where situacao=1 and idGrupoProd=" + idGrupoProd +
+            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where idGrupoProd=" + idGrupoProd + " AND SITUACAO=1 " +
                 (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(idGrupoProd.Value) ? " and espessura is not null and espessura>0" : "") : "") + " limit 1";
 
             object retorno = objPersistence.ExecuteScalar(sql);
