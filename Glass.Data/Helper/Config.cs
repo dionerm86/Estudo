@@ -736,7 +736,8 @@ namespace Glass.Data.Helper
             UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528,
             NomeArquivoDxfComAspasECedilha = 1529,
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
-            NomeArquivoMesaBarraPorCeCedilha = 1531
+            NomeArquivoMesaBarraPorCeCedilha = 1531,
+            ListaVendasPedidosVaziaPorPadrao = 1532
 
             #endregion
         }
