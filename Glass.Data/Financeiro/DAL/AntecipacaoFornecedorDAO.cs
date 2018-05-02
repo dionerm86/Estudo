@@ -712,7 +712,7 @@ namespace Glass.Data.DAL
                         if (antecip.Situacao == (int)AntecipacaoFornecedor.SituacaoAntecipFornec.Cancelada)
                             throw new Exception("A antecipação de fornecedor informada já está cancelada.");
 
-                        if (antecip.Saldo < antecip.ValorAntecip)
+                        if (antecip.Saldo < antecip.ValorAntecip && antecip.Situacao == 4)
                         {
                             throw new Exception(string.Format(@"Não há saldo suficiente para cancelar a antecipação.Saldo atual {0} , valor total antecipação {1}",
                                 antecip.Saldo.ToString("C"), antecip.ValorAntecip.ToString("C")));

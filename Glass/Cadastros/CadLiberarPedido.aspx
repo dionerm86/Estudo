@@ -242,7 +242,9 @@
             return;
            
         var idPedido = FindControl("txtNumPedido", "input").value;
-                
+
+        idPedido = idPedido.replace(" ", "");
+
         if (Trim(idPedido) == "")
         {
             alert("Selecione um pedido para continuar.");
