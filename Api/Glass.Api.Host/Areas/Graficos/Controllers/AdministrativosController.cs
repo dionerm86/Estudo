@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Glass.Api.Host.Filters;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Web.Http;
 
@@ -12,7 +13,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Administrativos/DRE
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult Dre()
         {
             try
@@ -33,7 +34,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Administrativos/PontoEquilibrio
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PontoEquilibrio()
         {
             try
@@ -54,7 +55,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Administrativos/TempoGastoPorEtapa
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult TempoGastoPorEtapa()
         {
             try
@@ -75,7 +76,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Administrativos/MetragemProduzir
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult MetragemProduzir()
         {
             try

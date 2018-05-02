@@ -39,8 +39,10 @@ namespace Glass.Data.RelDAL
                 CONCAT(CAST(ped.IdPedido AS CHAR), IF(ped.IdPedidoAnterior IS NOT NULL, CONCAT(' (', CONCAT(CAST(ped.IdPedidoAnterior AS CHAR), 'R)')), ''),
                     IF(ppp.IdPedidoExpedicao IS NOT NULL, CONCAT(' (Exp. ', CAST(ppp.IdPedidoExpedicao AS CHAR), ')'), '')) AS IdPedidoExibir,
                 ROUND(IF(ped.TipoPedido={0}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) * ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) *
-                    a.Qtde, pp.TotM2Calc)/(pp.Qtde*IF(ped.TipoPedido={1}, a.Qtde, 1)), 4) AS TotM2,
-                '$$$' AS Criterio", (int)Pedido.TipoPedidoEnum.MaoDeObra, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                    a.Qtde, pp.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={0}, a.Qtde, 1)), 4) AS TotM2,
+                '$$$' AS Criterio",
+                // Posição 0.
+                (int)Pedido.TipoPedidoEnum.MaoDeObra);
 
             sql = string.Format(@"SELECT {0} FROM produto_pedido_producao ppp
                     LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
@@ -51,8 +53,11 @@ namespace Glass.Data.RelDAL
                     {1}
                     {2}
                 WHERE 1 ",
+                // Posição 0.
                 campos,
+                // Posição 1.
                 dataFabricaInicio > DateTime.MinValue || dataFabricaFim > DateTime.MinValue || filtrarDataFabrica ? "LEFT JOIN pedido_espelho pedEsp ON (ped.IdPedido = pedEsp.IdPedido)" : string.Empty,
+                // Posição 2.
                 usarJoin ? "LEFT JOIN leitura_producao lp1 ON (ppp.IdProdPedProducao = lp1.IdProdPedProducao)" : string.Empty);
 
             #endregion

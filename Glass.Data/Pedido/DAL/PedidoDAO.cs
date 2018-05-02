@@ -324,7 +324,8 @@ namespace Glass.Data.DAL
                 if (buscarPedidoProducao)
                 {
                     // Otimização necessária para deixar o sistema mais rápido, select in no SQL é extremamente pesado e deve ser evitado ao máximo
-                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format("SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0", idPedido)));
+                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format(@"SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0 
+                                           UNION ALL SELECT IdPedido FROM Pedido WHERE IdPedidoRevenda={0}", idPedido)));
                     if (!string.IsNullOrEmpty(ids))
                         idsPedidoFiltro += "," + ids;
                 }
@@ -2129,7 +2130,7 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM {1}p 
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_liberar_pedido plp ON (p.IdPedido=plp.IdPedido)
@@ -2139,8 +2140,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
-                    {1}
-                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos);
+                    {2}
+                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), temFiltro ? "pedido " : "(SELECT * FROM pedido ORDER BY DataPedido DESC, DataCad DESC LIMIT 1000) AS ", dadosVendidos);
 
             // Recupera o tipo de usuário
             uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
@@ -7343,10 +7344,10 @@ namespace Glass.Data.DAL
                             produtosPedidosEstoque[idPedido][idProd] += qtdProd;
                         }
 
-                        if (idGrupo == null || idSubGrupo == null)
+                        if (idGrupo == 0 || idSubGrupo.GetValueOrDefault() == 0)
                         {
-                            var descricaoProd = ProdutoDAO.Instance.ObtemDescricao((int)idProd);
-                            throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == null ? "Grupo" : "Sub-grupo"));
+                            var descricaoProd = ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd);
+                            throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == 0 ? "Grupo" : "Subgrupo"));
                         }
 
                         //Verifica se o produto possui estoque para inserir na reserva 

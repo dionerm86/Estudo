@@ -2960,7 +2960,7 @@ namespace Glass.Data.DAL
 
                 // Apaga arquivos gerados pela intermac
                 var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
-                var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}'*.CNI", idPedido));
+                var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}*.CNI", idPedido));
                 foreach (var foundFile in arquivosIntermac)
                     File.Delete(foundFile.FullName);
             }

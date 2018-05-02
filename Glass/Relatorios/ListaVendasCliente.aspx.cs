@@ -87,15 +87,16 @@ namespace Glass.UI.Web.Relatorios
             string[] mesVenda = VendasDAO.Instance.GetMesesVenda(idCliente, txtNome.Text, idRota.ToString(), revenda, 0, null, mesInicio, anoInicio, 
                 mesFim, anoFim, tipoMedia, 0, idsFunc, null, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, situacaoCliente, tipoPedido);
     
-            if (mesVenda.Length + 7 != grdVendas.Columns.Count)
+            if (mesVenda.Length + 8 != grdVendas.Columns.Count)
             {
                 DataControlField cod = grdVendas.Columns[0];
                 DataControlField nomeCliente = grdVendas.Columns[1];
                 DataControlField vendedor = grdVendas.Columns[2];
                 DataControlField media = grdVendas.Columns[3];
-                DataControlField total = grdVendas.Columns[grdVendas.Columns.Count - 3];
-                DataControlField totM2 = grdVendas.Columns[grdVendas.Columns.Count - 2];
-                DataControlField totalItens = grdVendas.Columns[grdVendas.Columns.Count - 1];
+                DataControlField total = grdVendas.Columns[grdVendas.Columns.Count - 4];
+                DataControlField totM2 = grdVendas.Columns[grdVendas.Columns.Count - 3];
+                DataControlField totalItens = grdVendas.Columns[grdVendas.Columns.Count - 2];
+                DataControlField DescricaoTabelaDescontoAcrescimo = grdVendas.Columns[grdVendas.Columns.Count - 1];
                 grdVendas.Columns.Clear();
                 grdVendas.Columns.Add(cod);
                 grdVendas.Columns.Add(nomeCliente);
@@ -104,10 +105,11 @@ namespace Glass.UI.Web.Relatorios
                 grdVendas.Columns.Add(total);
                 grdVendas.Columns.Add(totM2);
                 grdVendas.Columns.Add(totalItens);
-    
+                grdVendas.Columns.Add(DescricaoTabelaDescontoAcrescimo);
+
                 foreach (string mesAno in mesVenda)
                 {
-                    int index = grdVendas.Columns.Count - 3;
+                    int index = grdVendas.Columns.Count - 4;
                     grdVendas.Columns.Insert(index, new TemplateField());
                     grdVendas.Columns[index].HeaderText = mesAno;
                     grdVendas.Columns[index].ItemStyle.Wrap = false;
@@ -124,7 +126,7 @@ namespace Glass.UI.Web.Relatorios
             if (item == null)
                 return;
     
-            for (int i = 4; i < grdVendas.Columns.Count - 3; i++)
+            for (int i = 4; i < grdVendas.Columns.Count - 4; i++)
             {
                 e.Row.Cells[i].Text = "";
     

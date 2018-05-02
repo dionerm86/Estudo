@@ -877,9 +877,10 @@ namespace Glass.Data.DAL
                  * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido. */
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
+                    var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, (uint)idPedido);
                     var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, (uint)idPedido);
 
-                    if (idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
+                    if (tipoVenda != (int)Data.Model.Pedido.TipoVendaPedido.AVista || !idsFormaPagamento.Any(f => f > 0) || idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
                     {
                         throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
                     }
@@ -2214,7 +2215,7 @@ namespace Glass.Data.DAL
                     IdConta = UtilsPlanoConta.GetPlanoPrazo(formaPagtoPrazo),
                     NumParc = numParc++,
                     NumParcMax = numParcelas,
-                    IdFormaPagto = formasPagto[0] > 0 ? formasPagto[0] : formaPagtoPrazo,
+                    IdFormaPagto = formaPagtoPrazo,
                     IdFuncComissaoRec = idCliente > 0 ? (int?)ClienteDAO.Instance.ObtemIdFunc(idCliente) : null
                 };
 
@@ -2239,11 +2240,12 @@ namespace Glass.Data.DAL
                  * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
                  * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido.
                  * Nesse caso, impede o recebimento da entrada no ato da liberação do pedido. */
-                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto && receberEntrada && totalPago > 0)
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
+                    var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, idPedido);
                     var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, idPedido);
 
-                    if (formasPagto.Any(f => f > 0 && f != idFormaPagtoPedido))
+                    if (tipoVenda != (int)Data.Model.Pedido.TipoVendaPedido.APrazo || formaPagtoPrazo != idFormaPagtoPedido)
                         throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
                 }
 
@@ -2917,31 +2919,34 @@ namespace Glass.Data.DAL
                 /* Chamado 64689. */
                 if (!pedidoPossuiVolumeExpedido && !pedidoGerarProducaoParaCorte)
                 {
-
-                    // Marca quantos produtos do pedido foi marcado como saída, se o pedido não tiver que transferir
-                    if (!transferencia)
+                    if (((saidaNaoVidro || saidaBox) && naoVolume) || transferencia)
                     {
-                        var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
+                        // Marca quantos produtos do pedido foi marcado como saída, se o pedido não tiver que transferir
+                        if (!transferencia)
+                        {
+                            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
 
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque);
+                        }
+
+                        MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
+                            prodPed.IdPedido, ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, idLiberarPedido,
+                            prodPed.IdProdPed), m2 ? (decimal)m2Calc : (decimal)qtdSaidaEstoque, m2 ? (decimal)m2CalcAreaMinima : 0);
                     }
-
-                    MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
-                        prodPed.IdPedido, ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(sessao, idLiberarPedido,
-                        prodPed.IdProdPed), m2 ? (decimal)m2Calc : (decimal)qtdSaidaEstoque, m2 ? (decimal)m2CalcAreaMinima : 0);
-
-                    #region Salva dados para alterar o campo LIBERACAO do produto loja
-
-                    // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
-                    if (!idsProdQtdeLiberacao.ContainsKey((int)idLoja))
-                        idsProdQtdeLiberacao.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
-                    else if (!idsProdQtdeLiberacao[(int)idLoja].ContainsKey((int)prodPed.IdProd))
-                        idsProdQtdeLiberacao[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
                     else
-                        idsProdQtdeLiberacao[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
+                    {
+                        #region Salva dados para alterar o campo LIBERACAO do produto loja
 
-                    #endregion
+                        // Salva o produto e a quantidade dele que deve entrar da coluna LIBERACAO.
+                        if (!idsProdQtdeLiberacao.ContainsKey((int)idLoja))
+                            idsProdQtdeLiberacao.Add((int)idLoja, new Dictionary<int, float> { { (int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque } });
+                        else if (!idsProdQtdeLiberacao[(int)idLoja].ContainsKey((int)prodPed.IdProd))
+                            idsProdQtdeLiberacao[(int)idLoja].Add((int)prodPed.IdProd, m2 ? m2Calc : qtdSaidaEstoque);
+                        else
+                            idsProdQtdeLiberacao[(int)idLoja][(int)prodPed.IdProd] += m2 ? m2Calc : qtdSaidaEstoque;
 
+                        #endregion
+                    }
 
                     #region Salva dados para alterar o campo RESERVA do produto loja
 

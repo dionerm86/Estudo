@@ -1181,7 +1181,7 @@ namespace Glass.UI.Web.Cadastros
         {
             var idsPedidos = hdfBuscarIdsPedidos.Value;
     
-            if (string.IsNullOrEmpty(idsPedidos) || drpFormaPagtoPrazo.Items.Count == 1)
+            if (string.IsNullOrEmpty(idsPedidos))
             {
                 drpFormaPagtoPrazo.Items.Clear();
                 return;

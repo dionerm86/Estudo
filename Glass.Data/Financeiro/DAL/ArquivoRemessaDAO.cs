@@ -638,76 +638,7 @@ namespace Glass.Data.DAL
 
                 foreach (DetalheRetornoCNAB240 d in retorno.ListaDetalhes)
                 {
-                    string numDocCnab;
-
-                    using (var transaction = new GDATransaction())
-                    {
-                        try
-                        {
-                            transaction.BeginTransaction();
-
-                            if (d == null || banco == null || d.SegmentoT == null)
-                                throw new Exception("Dados incompletos para a recuperação da conta a receber.");
-
-                            uint idContaR = ContasReceberDAO.Instance.GetIdByNumeroDocumentoCnab(transaction, banco.Codigo, d.SegmentoT.NumeroDocumento, d.SegmentoT.NossoNumero,
-                                d.SegmentoT.IdentificacaoTituloEmpresa, out numDocCnab);
-
-                            if (idContaR == 0)
-                                continue;
-
-                            // Se o banco for Banco do Brasil so recebe se for ocorrencia de liquidação.
-                            if (banco.Codigo == (int)CodigoBanco.BancoBrasil && d.SegmentoT.IdCodigoMovimento != (int)CodigoOcorrenciaBancoBrasil.Liquidacao &&
-                                d.SegmentoT.IdCodigoMovimento != (int)CodigoOcorrenciaBancoBrasil.LiquidacaoAposBaixa)
-                            {
-                                RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
-                                    d.SegmentoU.DataCredito, d.SegmentoT.IdCodigoMovimento, d.SegmentoT.NossoNumero, d.SegmentoT.IdentificacaoTituloEmpresa,
-                                    d.SegmentoU.ValorPagoPeloSacado, d.SegmentoU.JurosMultaEncargos, 0, d.SegmentoT.NumeroDocumento, banco.Codigo);
-
-                                if (d.SegmentoT.IdCodigoMovimento == (int)CodigoOcorrenciaBancoBrasil.EntradaConfirmada)
-                                    tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, 1, d.SegmentoT.ValorTarifas, d.SegmentoU.DataOcorrencia));
-                                else if (d.SegmentoT.IdCodigoMovimento == (int)CodigoOcorrenciaBancoBrasil.ConfirmacaoProtesto)
-                                    tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, 2, d.SegmentoT.ValorTarifas, d.SegmentoU.DataOcorrencia));
-
-                                transaction.Commit();
-                                transaction.Close();
-
-                                continue;
-                            }
-
-                            if (d.SegmentoU == null)
-                                throw new Exception("Dados incompletos para efetuar o recebimento da conta.");
-
-                            if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
-                                ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, d.SegmentoU.DataCredito.ToShortDateString());
-                            else
-                                ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, d.SegmentoU.DataCredito, d.SegmentoU.ValorPagoPeloSacado,
-                                    d.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario, ref contadorDataUnica);
-
-                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
-                                d.SegmentoU.DataCredito, d.SegmentoT.IdCodigoMovimento, d.SegmentoT.NossoNumero, d.SegmentoT.IdentificacaoTituloEmpresa,
-                                d.SegmentoU.ValorPagoPeloSacado, d.SegmentoU.JurosMultaEncargos, 0, d.SegmentoT.NumeroDocumento, banco.Codigo);
-
-                            transaction.Commit();
-                            transaction.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            transaction.Close();
-
-                            retornoRecebimento += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
-
-                            if (!ex.Message.Contains("Não há valor pago para o boleto") &&
-                                !ex.Message.Contains("Boleto não encontrado") &&
-                                !ex.Message.Contains("Data de recebimento não informada") &&
-                                !ex.Message.Contains("Não foi possível encontrar a conta a receber para o documento") &&
-                                !ex.Message.Contains("Esta conta já foi recebida") &&
-                                !ex.Message.Contains("Não é possível importar o retorno de contas renegociadas."))
-                            {
-                                ErroDAO.Instance.InserirFromException("Importação arquivo remessa", ex);
-                            }
-                        }
-                    }
+                    ProcessamentoItemCNAB240(d, banco, ar, tarifas, idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica);
                 }
             }
 
@@ -722,125 +653,8 @@ namespace Glass.Data.DAL
 
                 foreach (DetalheRetorno d in retorno.ListaDetalhe)
                 {
-                    using (var transaction = new GDATransaction())
-                    {
-                        try
-                        {
-                            transaction.BeginTransaction();
-
-                            string numDocCnab = "";
-
-                            if (d == null ||
-                                banco == null)
-                                throw new Exception("Dados incompletos para a recuperação da conta a receber.");
-
-                            //Busca a conta a receber
-                            uint idContaR = ContasReceberDAO.Instance.GetIdByNumeroDocumentoCnab(transaction, banco.Codigo, d.NumeroDocumento,
-                                d.NossoNumero + d.DACNossoNumero, d.UsoEmpresa, out numDocCnab);
-
-                            if (idContaR == 0)
-                                continue;
-
-                            #region Não Liquidado
-
-                            #region Sicredi
-
-                            //Se o banco for sicredi so recebe se for ocorrencia de liquidação.
-                            if (banco.Codigo == (int)CodigoBanco.Sicredi && d.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoNormal &&
-                                d.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoCartorio &&
-                                d.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoAposBaixa)
-                            {
-                                RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
-                                    d.DataCredito, d.CodigoOcorrencia, d.NossoNumero + "-" + d.DACNossoNumero, d.UsoEmpresa, d.ValorPago, d.Juros, d.JurosMora, d.NumeroDocumento, banco.Codigo);
-
-                                if (d.CodigoOcorrencia == (int)CodOcorrenciaSicredi.Tarifa)
-                                {
-                                    var aux = retorno.ListaDetalhe.Where(f => (f.NossoNumero + f.DACNossoNumero) == numDocCnab).ToList();
-                                    var tafEntrada = aux.Where(f => f.CodigoOcorrencia == (int)CodOcorrenciaSicredi.EntradaConfirmada).Count() > 0;
-                                    var tafCartorio = aux.Where(f => f.CodigoOcorrencia == (int)CodOcorrenciaSicredi.EntradaTituloCartorio).Count() > 0;
-
-                                    tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, tafEntrada ? 1 : tafCartorio ? 2 : 0, d.ValorPago, d.DataCredito));
-                                }
-
-                                transaction.Commit();
-                                transaction.Close();
-
-                                continue;
-                            }
-
-                            #endregion
-
-                            #region Bradesco
-
-                            else if (banco.Codigo == (int)CodigoBanco.Bradesco && d.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoNormal &&
-                                d.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoCartorio &&
-                                d.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoAposBaixa)
-                            {
-                                RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
-                                    d.DataCredito, d.CodigoOcorrencia, d.NossoNumero + "-" + d.DACNossoNumero, d.UsoEmpresa, d.ValorPago, d.Juros, d.JurosMora, d.NumeroDocumento, banco.Codigo);
-
-                                transaction.Commit();
-                                transaction.Close();
-
-                                if (d.CodigoOcorrencia == (int)CodOcorrenciaBradesco.EntradaConfirmada)
-                                    continue;
-
-                                throw new Exception(string.Format("A conta {0} não foi recebida. Ocorrência: {1} - Motivo: {2}.", idContaR,
-                                    d.DescricaoOcorrencia, d.MotivosRejeicao.IndexOf("71") >= 0 && d.MotivosRejeicao.IndexOf("71") % 2 == 0 ?
-                                        "71 - Débito não agendado - Cedente não participa da modalidade de débito automático" :
-                                        "Não implementado"));
-                            }
-
-                            #endregion
-
-                            #endregion
-
-                            //Em alguns casos o itau já desconta a tarifa de uso do boleto, sendo assim é necessario somar essa tarifa
-                            //ao valor pago para chegar ao valor a conta a receber
-                            if (banco.Codigo == (int)CodigoBanco.Itau)
-                                d.ValorPago = d.ValorPago + d.TarifaCobranca;
-
-                            var jurosMulta = d.Juros + d.JurosMora;
-
-                            if (banco.Codigo == (int)CodigoBanco.Sicredi || banco.Codigo == (int)CodigoBanco.Itau)
-                            {
-                                var valorContaR = ContasReceberDAO.Instance.ObtemValorCampo<decimal?>(transaction, "valorVec", "idContaR=" + idContaR).GetValueOrDefault();
-                                if (d.ValorPago > valorContaR)
-                                {
-                                    jurosMulta = (decimal)d.ValorPago - valorContaR;
-                                }
-                            }
-
-                            if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
-                                ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, d.DataCredito.ToShortDateString());
-                            else
-                                ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, d.DataCredito, d.ValorPago, jurosMulta, idContaBanco, caixaDiario, ref contadorDataUnica);
-
-                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, ar.IdArquivoRemessa, idContaR, idContaBanco,
-                                d.DataCredito, d.CodigoOcorrencia, d.NossoNumero + "-" + d.DACNossoNumero, d.UsoEmpresa, d.ValorPago, d.Juros, d.JurosMora, d.NumeroDocumento, banco.Codigo);
-
-                            transaction.Commit();
-                            transaction.Close();
-                        }
-                        catch (Exception ex)
-                        {
-                            transaction.Rollback();
-                            transaction.Close();
-
-                            retornoRecebimento += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
-
-                            if (!ex.Message.Contains("Não há valor pago para o boleto") &&
-                                !ex.Message.Contains("Boleto não encontrado") &&
-                                !ex.Message.Contains("Data de recebimento não informada") &&
-                                !ex.Message.Contains("Não foi possível encontrar a conta a receber para o documento") &&
-                                !ex.Message.Contains("Esta conta já foi recebida") &&
-                                !ex.Message.Contains("Não é possível importar o retorno de contas renegociadas."))
-                            {
-                                ErroDAO.Instance.InserirFromException("Importação arquivo remessa", ex);
-                            }
-
-                        }
-                    }
+                    ProcessamentoItemCNAB400(d, banco, retorno, ar, tarifas,
+                        idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica);
                 }
             }
 
@@ -902,6 +716,387 @@ namespace Glass.Data.DAL
             #endregion
 
             return null;
+        }
+
+        /// <summary>
+        /// Valida o arquivo CNAB de retorno para importação
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="arquivo"></param>
+        /// <param name="tipoCnab"></param>
+        /// <param name="idContaBanco"></param>
+        /// <param name="caixaDiario"></param>
+        /// <returns></returns>
+        public Dictionary<string, bool> VerificarImportarArquivoRemessa(byte[] arquivo, int tipoCnab, uint idContaBanco, bool caixaDiario)
+        {
+            // Gera um registro na tabela
+            var ar = new ArquivoRemessa();
+            ar.Tipo = Glass.Data.Model.ArquivoRemessa.TipoEnum.Retorno;
+            ar.IdContaBanco = idContaBanco;
+            ar.Situacao = ArquivoRemessa.SituacaoEnum.Ativo;
+
+            var contasRec = new Dictionary<string, bool>();
+            var conta = ContaBancoDAO.Instance.GetElement(idContaBanco);
+            var banco = new Banco(conta.CodBanco.Value);
+            int contadorDataUnica = 0;
+            var retornoRecebimento = "";
+
+            var contador = 1;
+
+            #region 240
+
+            if (tipoCnab == (int)TipoArquivo.CNAB240)
+            {
+                ArquivoRetornoCNAB240 retorno = new ArquivoRetornoCNAB240();
+                retorno.LerArquivoRetorno(banco, new MemoryStream(arquivo));
+
+                foreach (DetalheRetornoCNAB240 d in retorno.ListaDetalhes)
+                {
+                    var quitada = ProcessamentoItemCNAB240(d, banco, ar, new List<Tuple<uint, int, decimal, DateTime>>(), idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica, true);
+
+                    var descricaoConta = string.Format(@"{8} Agencia: {0}, Conta: {1}, NossoNumero: {2}, NumeroDocumento: {3}, ValorTitulo: {4}, ValorPago: {5}, Juros: {6}, DataVencimento: {7}",
+                        d.SegmentoT.Agencia, d.SegmentoT.Conta, d.SegmentoT.NossoNumero, d.SegmentoT.NumeroDocumento, 
+                        d.SegmentoT.ValorTitulo, d.SegmentoU.ValorPagoPeloSacado, d.SegmentoU.JurosMultaEncargos, d.SegmentoT.DataVencimento.Date, contador);
+
+                    contasRec.Add(descricaoConta, quitada);
+                    contador++;
+                }
+            }
+
+            #endregion
+
+            #region 400
+
+            if (tipoCnab == (int)TipoArquivo.CNAB400)
+            {
+                ArquivoRetornoCNAB400 retorno = new ArquivoRetornoCNAB400();
+                retorno.LerArquivoRetorno(banco, new MemoryStream(arquivo));
+
+                foreach (DetalheRetorno d in retorno.ListaDetalhe)
+                {
+                    var quitada = ProcessamentoItemCNAB400(d, banco, retorno, ar, new List<Tuple<uint, int, decimal, DateTime>>(), 
+                        idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica, true);
+
+                    var descricaoConta = string.Format(@"{8} Agencia: {0}, Conta: {1}, NossoNumero: {2}, NumeroDocumento: {3}, ValorTitulo: {4}, ValorPago: {5}, Juros: {6}, DataVencimento: {7}", 
+                        d.Agencia, d.Conta, d.NossoNumero,d.NumeroDocumento, d.ValorTitulo, d.ValorPago, d.Juros, d.DataVencimento.Date, contador);
+
+                    contasRec.Add(descricaoConta, quitada);
+                    contador++;
+                }                
+            }
+
+            #endregion
+
+            return contasRec;
+        }
+
+        /// <summary>
+        /// Processa a linha do arquivo de retorno
+        /// </summary>
+        /// <param name="somenteValidacao">(IMPORTANTE) ESTE PARAMETRO MARCADO COMO TRUE NÃO SALVA ALTERAÇÕES</param>
+        /// <returns></returns>
+        private bool ProcessamentoItemCNAB240(DetalheRetornoCNAB240 detalhe, Banco banco, ArquivoRemessa arquivoRemessa,
+            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco, bool caixaDiario, ref string retornoRecebimento, 
+            ref int contadorDataUnica, bool somenteValidacao = false)
+        {
+            string numDocCnab;
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    if (detalhe == null || banco == null || detalhe.SegmentoT == null)
+                    {
+                        if (!somenteValidacao)
+                            throw new Exception("Dados incompletos para a recuperação da conta a receber.");
+                        else
+                            return false;
+                    }
+
+                    uint idContaR = ContasReceberDAO.Instance.GetIdByNumeroDocumentoCnab(transaction, banco.Codigo, detalhe.SegmentoT.NumeroDocumento, detalhe.SegmentoT.NossoNumero,
+                        detalhe.SegmentoT.IdentificacaoTituloEmpresa, out numDocCnab);
+
+                    if (idContaR == 0)
+                        return false;
+
+                    // Se o banco for Banco do Brasil so recebe se for ocorrencia de liquidação.
+                    if (banco.Codigo == (int)CodigoBanco.BancoBrasil && detalhe.SegmentoT.IdCodigoMovimento != (int)CodigoOcorrenciaBancoBrasil.Liquidacao &&
+                        detalhe.SegmentoT.IdCodigoMovimento != (int)CodigoOcorrenciaBancoBrasil.LiquidacaoAposBaixa)
+                    {
+                        if (!somenteValidacao)
+                        {
+                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                                detalhe.SegmentoU.DataCredito, detalhe.SegmentoT.IdCodigoMovimento, detalhe.SegmentoT.NossoNumero, detalhe.SegmentoT.IdentificacaoTituloEmpresa,
+                                detalhe.SegmentoU.ValorPagoPeloSacado, detalhe.SegmentoU.JurosMultaEncargos, 0, detalhe.SegmentoT.NumeroDocumento, banco.Codigo);
+
+                            if (detalhe.SegmentoT.IdCodigoMovimento == (int)CodigoOcorrenciaBancoBrasil.EntradaConfirmada)
+                                tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, 1, detalhe.SegmentoT.ValorTarifas, detalhe.SegmentoU.DataOcorrencia));
+                            else if (detalhe.SegmentoT.IdCodigoMovimento == (int)CodigoOcorrenciaBancoBrasil.ConfirmacaoProtesto)
+                                tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, 2, detalhe.SegmentoT.ValorTarifas, detalhe.SegmentoU.DataOcorrencia));
+
+                            transaction.Commit();
+                            transaction.Close();
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            transaction.Close();
+                        }
+
+                        return false;
+                    }
+
+                    if (detalhe.SegmentoU == null)
+                    {
+                        if (!somenteValidacao)
+                            throw new Exception("Dados incompletos para efetuar o recebimento da conta.");
+                        else
+                            return false;
+                    }
+
+                    if (!somenteValidacao)
+                    {
+                        if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
+                            ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, detalhe.SegmentoU.DataCredito.ToShortDateString());
+                        else
+                            ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado,
+                                detalhe.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario, ref contadorDataUnica);
+                   
+                        RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                            detalhe.SegmentoU.DataCredito, detalhe.SegmentoT.IdCodigoMovimento, detalhe.SegmentoT.NossoNumero, detalhe.SegmentoT.IdentificacaoTituloEmpresa,
+                            detalhe.SegmentoU.ValorPagoPeloSacado, detalhe.SegmentoU.JurosMultaEncargos, 0, detalhe.SegmentoT.NumeroDocumento, banco.Codigo);
+
+                        transaction.Commit();                        
+                    }
+                    else
+                    {
+                        ValidarRecebimentoItemCNAB(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado, 
+                            detalhe.SegmentoU.JurosMultaEncargos, idContaBanco, caixaDiario);
+
+                        transaction.Rollback();
+                    }
+
+                    transaction.Close();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    if (somenteValidacao)
+                        return false;
+
+                    retornoRecebimento += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+
+                    if (!ex.Message.Contains("Não há valor pago para o boleto") &&
+                        !ex.Message.Contains("Boleto não encontrado") &&
+                        !ex.Message.Contains("Data de recebimento não informada") &&
+                        !ex.Message.Contains("Não foi possível encontrar a conta a receber para o documento") &&
+                        !ex.Message.Contains("Esta conta já foi recebida") &&
+                        !ex.Message.Contains("Não é possível importar o retorno de contas renegociadas."))
+                    {
+                        ErroDAO.Instance.InserirFromException("Importação arquivo remessa", ex);
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processa a linha do arquivo de retorno
+        /// </summary>
+        /// <param name="somenteValidacao">(IMPORTANTE) ESTE PARAMETRO MARCADO COMO TRUE NÃO SALVA ALTERAÇÕES</param>
+        /// <returns></returns>
+        private bool ProcessamentoItemCNAB400(DetalheRetorno detalhe, Banco banco, ArquivoRetornoCNAB400 retorno, ArquivoRemessa arquivoRemessa, 
+            List<Tuple<uint, int, decimal, DateTime>> tarifas, uint idContaBanco,  bool caixaDiario, ref string retornoRecebimento, 
+            ref int contadorDataUnica, bool somenteValidacao = false)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    string numDocCnab = "";
+
+                    if (detalhe == null || banco == null)
+                    {
+                        if (!somenteValidacao)
+                            throw new Exception("Dados incompletos para a recuperação da conta a receber.");
+                        else
+                            return false;
+                    }
+
+                    //Busca a conta a receber
+                    uint idContaR = ContasReceberDAO.Instance.GetIdByNumeroDocumentoCnab(transaction, banco.Codigo, detalhe.NumeroDocumento,
+                        detalhe.NossoNumero + detalhe.DACNossoNumero, detalhe.UsoEmpresa, out numDocCnab);
+
+                    if (idContaR == 0)
+                        return false;
+
+                    #region Não Liquidado
+
+                    #region Sicredi
+
+                    //Se o banco for sicredi so recebe se for ocorrencia de liquidação.
+                    if (banco.Codigo == (int)CodigoBanco.Sicredi && detalhe.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoNormal &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoCartorio &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaSicredi.LiquidacaoAposBaixa)
+                    {
+                        if (!somenteValidacao)
+                        {
+                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                                detalhe.DataCredito, detalhe.CodigoOcorrencia, detalhe.NossoNumero + "-" + detalhe.DACNossoNumero, detalhe.UsoEmpresa, detalhe.ValorPago,
+                                detalhe.Juros, detalhe.JurosMora, detalhe.NumeroDocumento, banco.Codigo);
+
+                            if (detalhe.CodigoOcorrencia == (int)CodOcorrenciaSicredi.Tarifa)
+                            {
+                                var aux = retorno.ListaDetalhe.Where(f => (f.NossoNumero + f.DACNossoNumero) == numDocCnab).ToList();
+                                var tafEntrada = aux.Any(f => f.CodigoOcorrencia == (int)CodOcorrenciaSicredi.EntradaConfirmada);
+                                var tafCartorio = aux.Any(f => f.CodigoOcorrencia == (int)CodOcorrenciaSicredi.EntradaTituloCartorio);
+
+                                tarifas.Add(new Tuple<uint, int, decimal, DateTime>(idContaR, tafEntrada ? 1 : tafCartorio ? 2 : 0, detalhe.ValorPago, detalhe.DataCredito));
+                            }
+
+                            transaction.Commit();
+                            transaction.Close();
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            transaction.Close();
+                        }
+
+                        return false;                        
+                    }
+
+                    #endregion
+
+                    #region Bradesco
+
+                    else if (banco.Codigo == (int)CodigoBanco.Bradesco && detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoNormal &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoCartorio &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoAposBaixa)
+                    {
+                        if (!somenteValidacao)
+                        {
+                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                                detalhe.DataCredito, detalhe.CodigoOcorrencia, detalhe.NossoNumero + "-" + detalhe.DACNossoNumero, detalhe.UsoEmpresa,
+                                detalhe.ValorPago, detalhe.Juros, detalhe.JurosMora, detalhe.NumeroDocumento, banco.Codigo);
+
+                            transaction.Commit();
+                            transaction.Close();
+
+                            if (detalhe.CodigoOcorrencia == (int)CodOcorrenciaBradesco.EntradaConfirmada)
+                                return false;
+
+
+                            throw new Exception(string.Format("A conta {0} não foi recebida. Ocorrência: {1} - Motivo: {2}.", idContaR,
+                                detalhe.DescricaoOcorrencia, detalhe.MotivosRejeicao.IndexOf("71") >= 0 && detalhe.MotivosRejeicao.IndexOf("71") % 2 == 0 ?
+                                    "71 - Débito não agendado - Cedente não participa da modalidade de débito automático" :
+                                    "Não implementado"));
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            transaction.Close();
+                            return false;
+                        }
+                    }
+
+                    #endregion
+
+                    #endregion
+
+                    //Em alguns casos o itau já desconta a tarifa de uso do boleto, sendo assim é necessario somar essa tarifa
+                    //ao valor pago para chegar ao valor a conta a receber
+                    if (banco.Codigo == (int)CodigoBanco.Itau)
+                        detalhe.ValorPago = detalhe.ValorPago + detalhe.TarifaCobranca;
+
+                    var jurosMulta = detalhe.Juros + detalhe.JurosMora;
+
+                    if (banco.Codigo == (int)CodigoBanco.Sicredi || banco.Codigo == (int)CodigoBanco.Itau)
+                    {
+                        var valorContaR = ContasReceberDAO.Instance.ObtemValorCampo<decimal?>(transaction, "valorVec", "idContaR=" + idContaR).GetValueOrDefault();
+                        if (detalhe.ValorPago > valorContaR)
+                        {
+                            jurosMulta = (decimal)detalhe.ValorPago - valorContaR;
+                        }
+                    }
+
+                    if (!somenteValidacao)
+                    {
+                        if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
+                            ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, detalhe.DataCredito.ToShortDateString());
+                        else
+                            ContasReceberDAO.Instance.PagaByCnab(transaction, numDocCnab, idContaR, detalhe.DataCredito, detalhe.ValorPago, jurosMulta, idContaBanco, caixaDiario, ref contadorDataUnica);
+
+                        RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                            detalhe.DataCredito, detalhe.CodigoOcorrencia, detalhe.NossoNumero + "-" + detalhe.DACNossoNumero, detalhe.UsoEmpresa,
+                            detalhe.ValorPago, detalhe.Juros, detalhe.JurosMora, detalhe.NumeroDocumento, banco.Codigo);
+
+                        transaction.Commit();
+                    }
+                    else
+                    {
+                        ValidarRecebimentoItemCNAB(transaction, numDocCnab, idContaR, detalhe.DataCredito, detalhe.ValorPago, jurosMulta, idContaBanco, caixaDiario);
+                        transaction.Rollback();
+                    }
+
+                    transaction.Close();
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    if (somenteValidacao)
+                        return false;
+
+                    retornoRecebimento += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+
+                    if (!ex.Message.Contains("Não há valor pago para o boleto") &&
+                        !ex.Message.Contains("Boleto não encontrado") &&
+                        !ex.Message.Contains("Data de recebimento não informada") &&
+                        !ex.Message.Contains("Não foi possível encontrar a conta a receber para o documento") &&
+                        !ex.Message.Contains("Esta conta já foi recebida") &&
+                        !ex.Message.Contains("Não é possível importar o retorno de contas renegociadas."))
+                    {
+                        ErroDAO.Instance.InserirFromException("Importação arquivo remessa", ex);
+                    }
+
+                    return false;
+                }
+            }
+        }
+
+        private void ValidarRecebimentoItemCNAB(GDASession session, string numDocCnab, uint idContaR, DateTime dataRec, decimal valorRec,
+            decimal jurosMulta, uint idContaBanco, bool caixaDiario)
+        {
+            var dataValida = DateTime.Now;
+
+            ContasReceberDAO.Instance.ValidarReceberContaAntecipada(dataRec.ToShortDateString(), ref dataValida);
+
+            ContasReceberDAO.Instance.ValidarPagaByCnab(session, numDocCnab, idContaR, dataRec, valorRec, jurosMulta);
+
+            var valorReceber = ContasReceberDAO.Instance.ObtemValorCampo<decimal>(session, "ValorVec", string.Format("IdContaR={0}", idContaR));
+            /* Chamado 28317. */
+            var juros = ContasReceberDAO.Instance.ObtemValorCampo<decimal>(session, "Juros", string.Format("IdContaR={0}", idContaR));
+            var vazio = new List<int>();
+
+            var contaReceber = ContasReceberDAO.Instance.PrepararContaRecebimento(session, caixaDiario, 0, dataRec,
+                false, false, (int)idContaR, new List<int> { (int)Pagto.FormaPagto.Boleto }, vazio, juros,
+                null, vazio, valorRec - jurosMulta < valorReceber, new List<decimal> { valorRec });
+
+            ContasReceberDAO.Instance.ValidarRecebimentoConta(session, contaReceber, 0,
+                 new List<string>(), vazio, new List<int> { (int)idContaBanco }, vazio, new List<int> { (int)Pagto.FormaPagto.Boleto }, vazio,
+                new List<string> { string.Empty }, null, vazio, new List<decimal> { 0 }, vazio, new List<decimal> { valorRec });
         }
 
         #endregion

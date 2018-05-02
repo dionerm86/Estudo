@@ -414,9 +414,16 @@ namespace Glass.Data.RelDAL
                         WHERE 1 {1}
                     ) AS dados ON (ppp.IdProdPedProducao=dados.IdProdPedProducao)
                     INNER JOIN setor s ON (ppp.IdSetor=s.IdSetor)
-                WHERE 1 {0}", (int)Pedido.TipoPedidoEnum.MaoDeObra, (int)Pedido.TipoPedidoEnum.Producao,
+                WHERE 1 {0}",
+                // Posição 0.
+                (int)Pedido.TipoPedidoEnum.MaoDeObra,
+                // Posição 1.
+                (int)Pedido.TipoPedidoEnum.Producao,
+                // Posição 2.
                 SqlSetores(true, true, filtroInterno, ObterParametrosProducao(codigoEtiqueta, codigoPedidoCliente, codigoRota, dataEntregaFim, dataEntregaInicio, dataLeituraFim, dataLeituraInicio,
-                    idPedidoImportado, nomeCliente), selecionar), camposUnion);
+                    idPedidoImportado, nomeCliente), selecionar),
+                // Posição 3.
+                camposUnion);
 
             sql = string.Format(sql, filtro, filtroInterno);
             sql = !selecionar ? string.Format("SELECT COUNT(*) FROM ({0}) AS temp", sql) : sql;

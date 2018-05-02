@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Glass.Api.Host.Filters;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Web.Http;
 
@@ -11,7 +12,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/PrevisaoReceberVencida
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PrevisaoReceberVencida()
         {
             try
@@ -32,7 +33,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/PrevisaoPagarVencida
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PrevisaoPagarVencida()
         {
             try
@@ -53,7 +54,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/PrevisaoReceber
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PrevisaoReceber()
         {
             try
@@ -74,7 +75,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/PrevisaoPagar
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PrevisaoPagar()
         {
             try
@@ -95,7 +96,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/RecebimentosPorTipo
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult RecebimentosPorTipo()
         {
             try
@@ -116,7 +117,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Financeiros/Pagamentos
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult Pagamentos()
         {
             try

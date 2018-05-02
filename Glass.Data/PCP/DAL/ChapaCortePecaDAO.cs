@@ -83,18 +83,15 @@ namespace Glass.Data.DAL
                 uint? idProdPedProd = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(sessao, codEtiqueta);
                 uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
                 uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                uint idLoja = 0;
 
-                if (idNf > 0 && Geral.ConsiderarLojaClientePedidoFluxoSistema)
-                {
-                    var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.Value);
+                uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
+                    string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
+                                        idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
 
-                    if (idLojaNf > 0)
-                        idLoja = idLojaNf;
-                }
+                var idLojaFuncionario = UserInfo.GetUserInfo.IdLoja;
+                var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
 
-                if (idLoja == 0 && UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdLoja > 0)
-                    idLoja = UserInfo.GetUserInfo.IdLoja;
+                var idLoja = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaFuncionario : idLojaNf);
 
                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, idProd.Value, idLoja, idProdPedProd.Value, 1, 0, false, false, false);
             }
@@ -287,13 +284,14 @@ namespace Glass.Data.DAL
         public void DeleteByIdProdImpressaoPeca(GDASession sessao, uint idProdImpressaoPeca, uint idProdPedProducao)
         {
             var idProdImpressaoChapa = ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
+            var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, (uint)idProdImpressaoChapa);
             // Obtém a movimentação de estoque associada ao produto de produção.
-            var idMovEstoque = MovEstoqueDAO.Instance.ObtemValorCampo<int?>(sessao, "IdMovEstoque", string.Format("IdProdPedProducao={0}", idProdPedProducao));
+            var idsMovEstoque = MovEstoqueDAO.Instance.ObtemMovEstoqueChapaCortePeca(sessao, idProdPedProducao, numEtiquetaChapa);
 
             #region Associa a movimentação de estoque da chapa à outro produto de produção
 
             /* Chamado 58239. */
-            if (idProdImpressaoChapa > 0 && idMovEstoque > 0)
+            if (idProdImpressaoChapa > 0 && idsMovEstoque.Count > 0)
             {
                 // Caso o produto esteja associado à movimentação de estoque e a chapa tenha sido recuperada, troca a referência de produto de produção na movimentação de estoque,
                 // para que ela não fique sem referência. Portanto, a movimentação de estoque irá ficar sem referência somente se a última peça for estornada. */
@@ -316,24 +314,19 @@ namespace Glass.Data.DAL
 
                             if (idProdPedProducaoAssiciarMovEstoque > 0)
                                 // Associa a movimentação de estoque ao novo produto de produção.
-                                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao={0} WHERE IdMovEstoque={1}", idProdPedProducaoAssiciarMovEstoque.Value,
-                                    idMovEstoque.Value));
+                                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao={0} WHERE IdMovEstoque in ({1})", idProdPedProducaoAssiciarMovEstoque.Value,
+                                    string.Join(",", idsMovEstoque)));
                         }
                     }
                 }
                 // Na movimentação de estoque, salva no campo OBS o número da etiqueta da chapa. Pois, a referência da chapa é recuperada através do produto de produção,
                 // caso ele seja apagado ou seja associado à outra chapa, esta movimentação ficará com a referência incorreta.
                 else
-                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque={0}", idMovEstoque),
-                        new GDAParameter("?obs", string.Format("Etiqueta: {0}", ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, (uint)idProdImpressaoChapa))));
+                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque in ({0})", string.Join(",", idsMovEstoque)),
+                        new GDAParameter("?obs", string.Format("Etiqueta: {0}|{1}.", numEtiquetaChapa, ObtemPlanoCorteVinculado(numEtiquetaChapa) ?? ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdPedProducao) ?? "").Replace("|.", ".")));
             }
 
             #endregion
-
-            DeleteByIdsProdImpressaoPeca(sessao, new List<int> { (int)idProdImpressaoPeca });
-
-            MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(sessao, idProdImpressaoChapa, MovEstoque.TipoMovEnum.Entrada);
-            MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaCorte(sessao, (int)idProdImpressaoPeca, MovEstoque.TipoMovEnum.Saida);
         }
 
         /// <summary>

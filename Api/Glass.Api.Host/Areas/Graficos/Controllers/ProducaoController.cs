@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Glass.Api.Host.Filters;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Web.Http;
 
@@ -11,7 +12,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Producao/PainelProducao
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PainelProducao()
         {
             try
@@ -32,7 +33,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Producao/ProducaoDiariaPrevistaRealizada
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult ProducaoDiariaPrevistaRealizada()
         {
             try
@@ -53,7 +54,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Producao/PerdaPorSetor
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult PerdaPorSetor()
         {
             try
@@ -74,7 +75,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Producao/ProducaoDoDia
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult ProducaoDoDia()
         {
             try
@@ -95,7 +96,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Producao/ProducaoDiariaPorSetor
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult ProducaoDiariaPorSetor()
         {
             try
