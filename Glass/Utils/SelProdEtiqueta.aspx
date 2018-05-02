@@ -12,6 +12,11 @@
  
         function setProdEtiqueta(idProdPed, idAmbiente, idPedido, descrProd, codProc, codApl, qtd, qtdImpresso, altura, largura, totM, obs, numEtiqueta, calcularTotM, atualizarTotais, totM2Calc)
         {
+            if (SelProdEtiqueta.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
+                alert("O pedido importado ainda não foi conferido, confira o mesmo antes de imprimir");
+                return false;
+            }
+
             if (calcularTotM) {
                 if (qtd == 0 && qtdImpresso == 0) {
                     totM = 0;

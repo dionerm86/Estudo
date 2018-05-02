@@ -50,6 +50,10 @@ namespace Glass.UI.Web.Utils
             // Gera o script para adicionar todas elas na tela
             string script = String.Empty;
 
+            //Nome e id do fornecedor filtrado na tela
+            var nomeFornecFiltro = txtNome == null ? string.Empty : txtNome.Text;
+            var idFornecFiltro = txtFornecedor == null ? string.Empty : txtFornecedor.Text;
+
             foreach (ContasPagar conta in lstContaPag)
                 script += "window.opener.setContaPagar(" +
                     conta.IdContaPg + ",'" +
@@ -60,8 +64,9 @@ namespace Glass.UI.Web.Utils
                     (!String.IsNullOrEmpty(conta.NomeFornec) ? conta.NomeFornec.ToString().Replace("'", "") : "") + "','" +
                     conta.ValorVenc.ToString("C") + "','" +
                     conta.DataVenc.ToString("d") + "', '" +
-                    (conta.DescrPlanoConta != null ? conta.DescrPlanoConta.ToString().Replace("'", "") : String.Empty) + "', window);";
-    
+                    (conta.DescrPlanoConta != null ? conta.DescrPlanoConta.ToString().Replace("'", "") : String.Empty) + "', window, '" +
+                    idFornecFiltro + "','" + nomeFornecFiltro + "');";
+
             if (Request["encontroContas"] == "1")
                 script += "window.opener.redirectUrl(window.opener.location.href); ";
     
