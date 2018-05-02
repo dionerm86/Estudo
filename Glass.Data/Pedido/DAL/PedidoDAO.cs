@@ -2130,7 +2130,7 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM {1}p 
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_liberar_pedido plp ON (p.IdPedido=plp.IdPedido)
@@ -2140,8 +2140,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
-                    {1}
-                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), dadosVendidos);
+                    {2}
+                WHERE 1 ?filtroAdicional?", totaisListaPedidos ? camposFluxo : string.Format("{0}{1}", campos, campoDadosVendidos), temFiltro ? "pedido " : "(SELECT * FROM pedido ORDER BY DataPedido DESC, DataCad DESC LIMIT 1000) AS ", dadosVendidos);
 
             // Recupera o tipo de usuário
             uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
