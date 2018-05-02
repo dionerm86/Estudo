@@ -177,9 +177,9 @@ function setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec
         return false;
     }
 
-    if((nomeFornecFiltro != null && idFornecFiltro != null) && (nomeFornecFiltro.value != "" && idFornecFiltro.value != "")) {       
-        fornec = nomeFornecFiltro.value;
-        idFornec = idFornecFiltro.value;
+    if((nomeFornecFiltro != null && idFornecFiltro != null) && (nomeFornecFiltro != "" && idFornecFiltro != "")) {       
+        fornec = nomeFornecFiltro;
+        idFornec = idFornecFiltro;
     }
 
     utilizaCredito(fornec, idFornec);
