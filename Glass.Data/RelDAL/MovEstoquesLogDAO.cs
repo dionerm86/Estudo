@@ -19,7 +19,7 @@ namespace Glass.Data.RelDAL
 			                                    mef.QTDEMOV AS QTDEMOVFISCAL, mef.DATAMOV AS DATAMOVFISCAL
 		                                    FROM produtos_nf pnf
 		                                    LEFT JOIN produto p ON pnf.IDPROD=p.IDPROD
-		                                    INNER JOIN mov_estoque_fiscal mef ON pnf.IDNF=mef.IDNF AND pnf.IDPROD=mef.IDPROD
+		                                    INNER JOIN mov_estoque_fiscal mef ON pnf.IDNF=mef.IDNF AND (pnf.IDPROD=mef.IDPROD OR p.IDPRODBASE=mef.IDPROD)
 		                                    WHERE pnf.IDNF = {0} 
 		                                    group by pnf.IDPRODNF) tmp 
 	                                     LEFT JOIN 
@@ -27,7 +27,7 @@ namespace Glass.Data.RelDAL
 			                                    me.QTDEMOV AS QTDEMOVREAL, me.DATAMOV AS DATAMOVREAL
 		                                    FROM produtos_nf pnf
 		                                    LEFT JOIN produto p ON pnf.IDPROD=p.IDPROD
-		                                    INNER JOIN mov_estoque me ON pnf.IDNF=me.IDNF AND pnf.IDPROD=me.IDPROD
+		                                    INNER JOIN mov_estoque me ON pnf.IDNF=me.IDNF AND (pnf.IDPROD=me.IDPROD OR p.IDPRODBASE=me.IDPROD)
 		                                    WHERE pnf.IDNF = {0}
 		                                    group by pnf.IDPRODNF) tmp2 ON tmp.IDPRODNF=tmp2.IDPRODNF
 	                                    UNION
@@ -37,7 +37,7 @@ namespace Glass.Data.RelDAL
 			                                    mef.QTDEMOV AS QTDEMOVFISCAL, mef.DATAMOV AS DATAMOVFISCAL
 		                                    FROM produtos_nf pnf
 		                                    LEFT JOIN produto p ON pnf.IDPROD=p.IDPROD
-		                                    INNER JOIN mov_estoque_fiscal mef ON pnf.IDNF=mef.IDNF AND pnf.IDPROD=mef.IDPROD
+		                                    INNER JOIN mov_estoque_fiscal mef ON pnf.IDNF=mef.IDNF AND (pnf.IDPROD=mef.IDPROD OR p.IDPRODBASE=mef.IDPROD)
 		                                    WHERE pnf.IDNF = {0} 
 		                                    group by pnf.IDPRODNF) tmp 
 	                                     RIGHT JOIN 
@@ -45,7 +45,7 @@ namespace Glass.Data.RelDAL
 			                                    me.QTDEMOV AS QTDEMOVREAL, me.DATAMOV AS DATAMOVREAL
 		                                    FROM produtos_nf pnf
 		                                    LEFT JOIN produto p ON pnf.IDPROD=p.IDPROD
-		                                    INNER JOIN mov_estoque me ON pnf.IDNF=me.IDNF AND pnf.IDPROD=me.IDPROD
+		                                    INNER JOIN mov_estoque me ON pnf.IDNF=me.IDNF AND (pnf.IDPROD=me.IDPROD OR p.IDPRODBASE=me.IDPROD)
 		                                    WHERE pnf.IDNF = {0}
 		                                    group by pnf.IDPRODNF) tmp2 ON tmp.IDPRODNF=tmp2.IDPRODNF", idNf);
 

@@ -2052,20 +2052,18 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria o pré recebimento da conta a receber.
+        /// Recupera a conta e atualiza com os dados inseridos para o recebimento
         /// </summary>
-        public void CriarPreRecebimentoConta(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
-            bool gerarCredito, int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
-            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
-            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
+        /// <returns></returns>
+        public ContasReceber PrepararContaRecebimento(GDASession session, bool caixaDiario, decimal creditoUtilizado, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idContaR, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, string numeroAutorizacaoConstrucard,
+            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial,  IEnumerable<decimal> valoresRecebimento)
         {
             #region Declaração de variáveis
 
             var usuarioLogado = UserInfo.GetUserInfo;
             var contaReceber = GetElementByPrimaryKey(session, idContaR);
             var pedido = contaReceber.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdPedido.Value) : new Pedido();
-            var liberacao = contaReceber.IdLiberarPedido > 0 ? LiberarPedidoDAO.Instance.GetElementByPrimaryKey(session, contaReceber.IdLiberarPedido.Value) : new LiberarPedido();
-            var idContaAntigo = contaReceber.IdConta;
             decimal totalPago = 0;
 
             #endregion
@@ -2105,6 +2103,21 @@ namespace Glass.Data.DAL
             contaReceber.RecebimentoGerarCredito = gerarCredito;
 
             #endregion
+
+            return contaReceber;
+        }
+
+        /// <summary>
+        /// Cria o pré recebimento da conta a receber.
+        /// </summary>
+        public void CriarPreRecebimentoConta(GDASession session, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, DateTime dataRecebimento, bool descontarComissao,
+            bool gerarCredito, int idContaR, int? idPedido, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
+            IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsTipoCartao, decimal juros, IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard,
+            IEnumerable<int> quantidadesParcelaCartao, bool recebimentoParcial, IEnumerable<decimal> taxasAntecipacao, IEnumerable<int> tiposBoleto, IEnumerable<decimal> valoresRecebimento)
+        {
+            var contaReceber = PrepararContaRecebimento(session, caixaDiario, creditoUtilizado, dataRecebimento, 
+                descontarComissao, gerarCredito, idContaR, idsFormaPagamento, idsTipoCartao, juros, 
+                numeroAutorizacaoConstrucard, quantidadesParcelaCartao, recebimentoParcial, valoresRecebimento);
 
             #region Validações do recebimento da conta
 
@@ -3570,6 +3583,13 @@ namespace Glass.Data.DAL
             }
         }
 
+        public void ValidarReceberContaAntecipada(string data, ref DateTime dataValida)
+        {
+            /* Chamado 57329. */
+            if (!string.IsNullOrWhiteSpace(data) && !DateTime.TryParse(data, out dataValida))
+                throw new Exception("Data de recebimento inválida. Informe a data correta.");
+        }
+
         /// <summary>
         /// Recebimento de conta antecipada
         /// </summary>
@@ -3577,9 +3597,7 @@ namespace Glass.Data.DAL
         {
             var dataValida = DateTime.Now;
 
-            /* Chamado 57329. */
-            if (!string.IsNullOrWhiteSpace(data) && !DateTime.TryParse(data, out dataValida))
-                throw new Exception("Data de recebimento inválida. Informe a data correta.");
+            ValidarReceberContaAntecipada(data, ref dataValida);
             
             // Atualiza esta conta a receber
             ContasReceber conta = GetElementByPrimaryKey(sessao, idContaR);
@@ -7977,6 +7995,25 @@ namespace Glass.Data.DAL
             return idContaR;
         }
 
+        public void ValidarPagaByCnab(GDASession sessao, string numeroDocumentoCnab, uint idContaR,
+            DateTime dataRec, decimal valorRec, decimal jurosMulta)
+        {
+            if (valorRec + jurosMulta <= 0)
+            {
+                throw new Exception(string.Format("Não há valor pago para o boleto {0}.", numeroDocumentoCnab));
+            }
+
+            if (!Exists(sessao, idContaR))
+            {
+                throw new Exception(string.Format("Boleto não encontrado: {0}.", numeroDocumentoCnab));
+            }
+
+            if (dataRec == DateTime.Parse("01/01/0001 00:00:00"))
+            {
+                throw new Exception(string.Format("Data de recebimento não informada no boleto {0}.", numeroDocumentoCnab));
+            }
+        }
+
         /// <summary>
         /// Marca uma conta como recebida através da importação do CNAB.
         /// </summary>
@@ -7987,21 +8024,8 @@ namespace Glass.Data.DAL
             {
                 FilaOperacoes.RecebimentosGerais.AguardarVez();
 
-                if (valorRec + jurosMulta <= 0)
-                {
-                    throw new Exception(string.Format("Não há valor pago para o boleto {0}.", numeroDocumentoCnab));
-                }
+                ValidarPagaByCnab(sessao, numeroDocumentoCnab, idContaR, dataRec, valorRec, jurosMulta);
 
-                if (!Exists(sessao, idContaR))
-                {
-                    throw new Exception(string.Format("Boleto não encontrado: {0}.", numeroDocumentoCnab));
-                }
-
-                if (dataRec == DateTime.Parse("01/01/0001 00:00:00"))
-                {
-                    throw new Exception(string.Format("Data de recebimento não informada no boleto {0}.", numeroDocumentoCnab));
-                }
-                
                 var valorReceber = ObtemValorCampo<decimal>(sessao, "ValorVec", string.Format("IdContaR={0}", idContaR));
                 /* Chamado 28317. */
                 var juros = ObtemValorCampo<decimal>(sessao, "Juros", string.Format("IdContaR={0}", idContaR));

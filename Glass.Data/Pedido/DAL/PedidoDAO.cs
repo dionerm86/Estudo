@@ -325,7 +325,8 @@ namespace Glass.Data.DAL
                 if (buscarPedidoProducao)
                 {
                     // Otimização necessária para deixar o sistema mais rápido, select in no SQL é extremamente pesado e deve ser evitado ao máximo
-                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format("SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0", idPedido)));
+                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format(@"SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0 
+                                           UNION ALL SELECT IdPedido FROM Pedido WHERE IdPedidoRevenda={0}", idPedido)));
                     if (!string.IsNullOrEmpty(ids))
                         idsPedidoFiltro += "," + ids;
                 }

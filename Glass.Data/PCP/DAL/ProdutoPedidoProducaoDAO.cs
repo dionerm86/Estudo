@@ -2327,23 +2327,30 @@ namespace Glass.Data.DAL
 
             var campos = string.Empty;
             var sql = string.Empty;
+            // Define se ao filtrar pela data de entrega será filtrado também pela data de fábrica.
+            var filtrarDataFabrica = ProducaoConfig.BuscarDataFabricaConsultaProducao;
 
             #endregion
 
             #region Consulta
-
-            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.Situacao, ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta,
-                    pp.IdPedido, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao, ppp.Obs,
-                    ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, p.CodInterno, CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', '')) AS DescrProduto,
+            
+            campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, ppp.IdImpressao, ppp.PlanoCorte, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.DataPerda, ppp.Obs,
+                    ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao,
+                    ped.IdPedido, ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, ped.DataEntrega, ped.DataEntregaOriginal, p.CodInterno,
+                    CONCAT(p.Descricao, IF(pp.Redondo AND {2}, ' REDONDO', '')) AS DescrProduto,
                     IF(ped.TipoPedido={0}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                     IF(ped.TipoPedido={0}, a.Largura, IF(pp.Redondo, 0, IF (pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
-                    apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso",
+                    IF(lp.Situacao={4}, lp.DataLiberacao, NULL) AS DataLiberacaoPedido, apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso{3}",
                 // Posição 0.
                 (int)Pedido.TipoPedidoEnum.MaoDeObra,
                 // Posição 1.
                 (int)Pedido.SituacaoPedido.Cancelado,
                 // Posição 2.
-                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString()) :
+                (!BenefConfigDAO.Instance.CobrarRedondo()).ToString(),
+                // Posição 3.
+                filtrarDataFabrica ? ", ped_esp.DataFabrica AS DataEntregaFabrica" : string.Empty,
+                // Posição 4.
+                (int)LiberarPedido.SituacaoLiberarPedido.Liberado) :
                 "COUNT(DISTINCT ppp.IdProdPedProducao)";
 
             sql = string.Format(@"SELECT {0}
@@ -2351,14 +2358,18 @@ namespace Glass.Data.DAL
                     LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
                     LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
                     LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                    LEFT JOIN liberarpedido lp ON (ped.IdLiberarPedido = lp.IdLiberarPedido)
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                     LEFT JOIN etiqueta_aplicacao apl ON (if(ped.tipoPedido={1}, a.idAplicacao, pp.idAplicacao) = apl.idAplicacao)
                     LEFT JOIN etiqueta_processo prc ON (if(ped.tipoPedido={1}, a.idProcesso, pp.idProcesso) = prc.idProcesso)
+                    {2}
                 WHERE 1",
                 // Posição 0.
                 campos,
                 // Posição 1.
-                (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                (int)Pedido.TipoPedidoEnum.MaoDeObra,
+                // Posição 2.
+                filtrarDataFabrica ? "LEFT JOIN pedido_espelho ped_esp ON (ped.IdPedido = pedEsp.IdPedido)" : string.Empty);
 
             #endregion
 
@@ -3952,18 +3963,19 @@ namespace Glass.Data.DAL
                     // Verifica se tem estoque do produto que irá ser efetuada a baixa (Exceto se for retalho)
                     if ((!setor.Corte || codMateriaPrima[0] != 'R') && (idProdImpressaoChapa == 0 || (idProdImpressaoChapa > 0 && !ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressaoChapa))))
                     {
-                        /* Chamado 49829. */
-                        var idLojaChapa = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+                        var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
+                        var idLojaNotaFiscal = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
+                        var idLojaFuncionario = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
 
-                        if (Geral.ConsiderarLojaClientePedidoFluxoSistema)
-                        {
-                            var idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                            idLojaChapa = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault(0));
-                        }
+                        //Verifica se a chapa teve entrada e recupera a loja que foi feito a movimentação pois a loja que deu entrada manual pode não ser é a mesma da nota fiscal
+                        var idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao, string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2}",
+                            idNf.GetValueOrDefault(0), idProdBaixa, (int)MovEstoque.TipoMovEnum.Entrada));
+
+                        var idLojaMovEstoqueChapa = idLojaMovEstoque ?? (idLojaNotaFiscal == 0 ? idLojaFuncionario : idLojaNotaFiscal);
 
                         /* Chamado 63113.
                          * Busca o pedido de revenda associado ao pedido de produção, para que a reserva do pedido seja considerada no momento de verificar se o produto possui estoque ou não. */
-                        if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
+                        if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaMovEstoqueChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
                             throw new Exception(string.Format("Não há estoque da matéria-prima ({0}) da peça ({1}).", ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProdBaixa),
                                 ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd)));
                     }
@@ -6451,8 +6463,17 @@ namespace Glass.Data.DAL
                     //Se não houver mais leituras para chapa volta o estoque da mesma
                     if (quantidadeLeiturasChapa == 1)
                     {
+                        uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
+                        uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
+                            string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
+                                                idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
+
+                        var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
+
+                        var idLojaMovChapa = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaConsiderar : idLojaNf);
+
                         if (idProd > 0)
-                            MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, idProd.Value, idLojaConsiderar, idProdPedProducao, 1, false, false);
+                            MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, idProd.Value, idLojaMovChapa, idProdPedProducao, 1, false, false);
                     }
                     #region Ajusta o estoque e a Reserva da chapa no pedido de revenda
 

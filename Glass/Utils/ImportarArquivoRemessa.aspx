@@ -68,7 +68,22 @@
         <tr>
             <td align="center">
                 <asp:Button ID="btnImportarArquivo" runat="server" onclick="btnImportarArquivo_Click" 
-                    Text="Importar Arquivo" OnClientClick="return validaCampos()" />
+                    Text="Importar Arquivo" />
+                <asp:Button ID="btnVerificarArquivo" runat="server" onclick="btnVerificarArquivo_Click"
+                    Text="Verificar Arquivo" OnClientClick="return validaCampos()" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:GridView GridLines="None" ID="grdItensCNAB" runat="server" CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" AutoGenerateColumns="False" Visible="false">
+                    <Columns>
+                        <asp:TemplateField HeaderText="Registro de Arquivos">
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Eval("Key") %>' ForeColor='<%# Eval("Value").ToString() == "true" ? System.Drawing.Color.Green : System.Drawing.Color.Red %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                    </Columns>
+                </asp:GridView>
             </td>
         </tr>
     </table>
