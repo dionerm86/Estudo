@@ -243,8 +243,6 @@
            
         var idPedido = FindControl("txtNumPedido", "input").value;
 
-        idPedido = idPedido.replace(" ", "");
-
         if (Trim(idPedido) == "")
         {
             alert("Selecione um pedido para continuar.");
@@ -253,6 +251,8 @@
             return;
         }
         
+        idPedido = parseInt(idPedido);
+
         var tipoVenda = FindControl("hdfBloqueioTipoVenda", "input").value;
         var idFormaPagto = FindControl("hdfBloqueioIdFormaPagto", "input").value;
         var cxDiario = FindControl("hdfCxDiario", "input").value;        
