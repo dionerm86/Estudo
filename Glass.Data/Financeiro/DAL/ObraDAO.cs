@@ -1217,15 +1217,11 @@ namespace Glass.Data.DAL
                         if (obra.FormasPagto != null && obra.FormasPagto[0] == 0)
                             throw new Exception("Informe a forma de pagamento da obra!");
 
-                        /* Chamado 71522. */
-                        if (!obra.GerarCredito && obra.NumParcelas > 0)
+                        /* Chamado 71786. */
+                        if (obra.NumParcelas > 0 && obra.ValorObra != obra.ValoresParcelas?.Sum())
                         {
-                            if (obra.ValorObra != obra.ValoresParcelas?.Sum())
-                            {
-                                throw new Exception("Os valor das parcelas não confere com o valor a pagar. Valor total das parcelas: " +
-                                                       obra.ValoresParcelas?.Sum() ?? 0 + " Valor a pagar: " +
-                                                       (!obra.GerarCredito ? obra.ValorObra.ToString("C") : obra.TotalProdutos.ToString("C")));
-                            }
+                            throw new Exception(string.Format(@"Os valor das parcelas não confere com o valor a pagar. Valor total das parcelas: R${0} Valor a pagar: {1} ",
+                                                 obra.ValoresParcelas?.Sum() ?? 0, obra.ValorObra.ToString("C")));
                         }
 
                         #region Insere as informações sobre pagamentos
