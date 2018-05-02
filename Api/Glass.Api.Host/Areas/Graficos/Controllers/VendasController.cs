@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Glass.Api.Host.Filters;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Web.Http;
 
@@ -11,7 +12,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Vendas/VendasCurvaAbc
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult VendasCurvaAbc()
         {
             try
@@ -32,7 +33,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Vendas/VendasPorClienteCurvaAbc
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult VendasPorClienteCurvaAbc()
         {
             try
@@ -53,7 +54,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Vendas/VendasPorPedido
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult VendasPorPedido()
         {
             try
@@ -74,7 +75,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Vendas/VendasPorVendedor
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult VendasPorVendedor()
         {
             try
@@ -95,7 +96,7 @@ namespace Glass.Api.Host.Areas.Graficos.Controllers
         /// Graficos/Vendas/VendasPorProduto
         /// </summary>
         /// <returns></returns>
-        [HttpGet, Authorize]
+        [HttpGet, AppGraficoAuthAttribute]
         public IHttpActionResult VendasPorProduto()
         {
             try
