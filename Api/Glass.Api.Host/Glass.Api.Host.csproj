@@ -353,7 +353,6 @@
     <Compile Include="Areas\Graficos\Controllers\VendasController.cs" />
     <Compile Include="Areas\Seguranca\Controllers\AutenticacaoController.cs" />
     <Compile Include="Controllers\IndexController.cs" />
-    <Compile Include="Controllers\TesteController.cs" />
     <Compile Include="Filters\AppGraficoAuthAttribute.cs" />
     <Compile Include="Filters\RequireHttpsAttribute.cs" />
     <Compile Include="Global.asax.cs">

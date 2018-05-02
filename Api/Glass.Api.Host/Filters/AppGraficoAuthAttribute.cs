@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Glass.Data.Helper;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +13,8 @@ namespace Glass.Api.Host.Filters
 {
     public class AppGraficoAuthAttribute : ActionFilterAttribute
     {
+        private Func<LoginUsuario> _loginUsuarioGetter;
+
         public override void OnActionExecuting(HttpActionContext actionContext)
         {
             try
@@ -23,7 +25,12 @@ namespace Glass.Api.Host.Filters
                 if (aspAuth == null)
                     actionContext.Response = CriarResposta(HttpStatusCode.Unauthorized, Newtonsoft.Json.JsonConvert.SerializeObject(new { Message = "Não autorizado." }));
                 else
-                    FormsAuthentication.Decrypt(aspAuth.Value);
+                {
+                    var auth = FormsAuthentication.Decrypt(aspAuth.Value);
+                    HttpContext.Current.User = new Colosoft.Security.Principal.DefaultPrincipal(new Colosoft.Security.Principal.DefaultIdentity(auth.Name, null, !auth.Expired));
+                    _loginUsuarioGetter = UserInfo.ObterLoginUsuarioGetter();
+                    UserInfo.ConfigurarLoginUsuarioGetter(null);
+                }
             }
             catch (ArgumentException)
             {
@@ -34,6 +41,11 @@ namespace Glass.Api.Host.Filters
                 actionContext.Response = CriarResposta(HttpStatusCode.InternalServerError, Newtonsoft.Json.JsonConvert.SerializeObject(new { Message = ex.Message }));
             }
 
+        }
+
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            UserInfo.ConfigurarLoginUsuarioGetter(_loginUsuarioGetter);
         }
 
         private HttpResponseMessage CriarResposta(HttpStatusCode status, string content)
