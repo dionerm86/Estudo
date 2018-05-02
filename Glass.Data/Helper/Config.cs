@@ -327,6 +327,7 @@ namespace Glass.Data.Helper
             DescontoMaximoPedidoAPrazo = 365,
             DescontoMaximoPedidoAPrazoGerente = 366,
             PermitirEmitirNotaParaClienteBloqueadoOuInativo = 367,
+            CalcularRentabilidade = 368,
 
             #region Configs Suporte (Antiga config interna)
 

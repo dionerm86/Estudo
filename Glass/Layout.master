@@ -25,6 +25,9 @@
         <meta http-equiv="Refresh" content="1; url=http://www.enable-javascript.com/pt/"/>
     </noscript>
 
+    <asp:ContentPlaceHolder ID="Header" runat="server">
+    </asp:ContentPlaceHolder>
+
     <asp:ContentPlaceHolder ID="javaScript" runat="server">
     </asp:ContentPlaceHolder>
 

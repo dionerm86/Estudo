@@ -1,6 +1,6 @@
 ﻿using GDA;
 
-namespace Glass.PCP.Data.Model
+namespace Glass.Data.Model
 {
     [PersistenceClass("Classificacao_Roteiro_Producao")]
     public class ClassificacaoRoteiroProducao : Colosoft.Data.BaseModel

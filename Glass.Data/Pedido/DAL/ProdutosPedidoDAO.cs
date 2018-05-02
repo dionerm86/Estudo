@@ -4486,6 +4486,7 @@ namespace Glass.Data.DAL
 
                     // Exclui os beneficiamentos feitos neste produto
                     ProdutoPedidoBenefDAO.Instance.DeleteByProdPed(transaction, objDelete.IdProdPed);
+                    ProdutoPedidoRentabilidadeDAO.Instance.ApagarPorProdutoPedido(transaction, objDelete.IdProdPed);
 
                     returnValue = base.Delete(transaction, objDelete);
 
@@ -5187,6 +5188,36 @@ namespace Glass.Data.DAL
                     ValorIcms = f["ValorIcms"],
                     QtdeVolume = f["QtdeVolume"]
                 });
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os produtos do pedido para o calculo da rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public IList<ProdutosPedido> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadData(sessao, "SELECT * FROM produtos_pedido WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+        }
+        
+        /// <summary>
+        /// Atualiza a rentabilidade do produto do pedido..
+        /// </summary>
+        /// <param name="idProdPed"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idProdPed, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdPed=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idProdPed));
         }
 
         #endregion

@@ -10952,7 +10952,11 @@ namespace Glass.Data.DAL
                     }
                     GeraParcelaParceiro(sessao, ref ped);
                 }
- 
+
+                var rentabilidade = RentabilidadeHelper.ObterCalculadora<Data.Model.Pedido>().Calcular(sessao, idPedido);
+                if (rentabilidade.Executado)
+                    rentabilidade.Salvar(sessao);
+
                 if (criarLogDeAlteracao)
                     LogAlteracaoDAO.Instance.LogPedido(sessao, pedido, GetElementByPrimaryKey(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
             }
@@ -15608,6 +15612,25 @@ namespace Glass.Data.DAL
                         ParcelasPedidoDAO.Instance.Insert(session, parcela);
                     }
             }
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Atualiza a rentabilidade do pedido.
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao, 
+            uint idPedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdPedido=?idPedido",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?idPedido", idPedido));
         }
 
         #endregion

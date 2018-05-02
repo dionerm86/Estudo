@@ -1,7 +1,7 @@
 ﻿using GDA;
 using System;
 
-namespace Glass.PCP.Data.Model
+namespace Glass.Data.Model
 {
     [Serializable,
     PersistenceClass("capacidade_producao_diaria_classificacao")]

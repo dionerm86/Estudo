@@ -384,6 +384,18 @@ namespace Glass.Data.Model
             set { _numParc = value; }
         }
 
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE")]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA")]
+        public decimal RentabilidadeFinanceira { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
