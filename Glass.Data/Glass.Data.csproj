@@ -381,12 +381,12 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
-    <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
+    <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />    
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
     <Compile Include="Estoque\DAL\MovMateriaPrimaDAO.cs" />
     <Compile Include="Estoque\DAL\MovReservaLiberacaoDAO.cs" />
-    <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />
+    <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />    
     <Compile Include="Estoque\Model\MovEstoqueCentroCusto.cs" />
     <Compile Include="Estoque\Model\MovInternaEstoqueFiscal.cs" />
     <Compile Include="Estoque\Model\MovMateriaPrima.cs" />
@@ -513,6 +513,7 @@
     <Compile Include="Global\DAL\MenuDAO.cs" />
     <Compile Include="Global\DAL\FotosSugestaoDAO.cs" />
     <Compile Include="Global\DAL\NotificacaoDAO.cs" />
+    <Compile Include="Global\DAL\ProdutoBaixaEstoqueBenefDAO.cs" />
     <Compile Include="Global\DAL\TipoInstalacaoDAO.cs" />
     <Compile Include="Global\DAL\TipoEntregaDAO.cs" />
     <Compile Include="Global\Model\AvaliacaoAtendimento.cs" />
@@ -530,6 +531,7 @@
     <Compile Include="Global\Model\Menu\ConfigMenuTipoFunc.cs" />
     <Compile Include="Global\Model\FotosSugestao.cs" />
     <Compile Include="Global\Model\Notificacao.cs" />
+    <Compile Include="Global\Model\ProdutoBaixaEstoqueBenef.cs" />
     <Compile Include="Global\Model\ProdutoNCM.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoIcone.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoFiltro.cs" />

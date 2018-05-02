@@ -1475,6 +1475,7 @@
     <Content Include="Utils\SelCidade.aspx" />
     <Content Include="Utils\AvaliacaoAtendimento.aspx" />
     <Content Include="Utils\SelNotaFiscalConsumidorReferenciada.aspx" />
+    <Content Include="Utils\SelProdMateriaPrima.aspx" />
     <Content Include="Utils\VersaoDLLs.aspx" />
     <Content Include="Utils\SelCliente.aspx" />
     <Content Include="Utils\SelColocador.aspx" />
@@ -7474,6 +7475,13 @@
     </Compile>
     <Compile Include="Utils\SelNotaFiscalConsumidorReferenciada.aspx.designer.cs">
       <DependentUpon>SelNotaFiscalConsumidorReferenciada.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\SelProdMateriaPrima.aspx.cs">
+      <DependentUpon>SelProdMateriaPrima.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\SelProdMateriaPrima.aspx.designer.cs">
+      <DependentUpon>SelProdMateriaPrima.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\VersaoDLLs.aspx.cs">
       <DependentUpon>VersaoDLLs.aspx</DependentUpon>

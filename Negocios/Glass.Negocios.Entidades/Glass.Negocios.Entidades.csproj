@@ -107,6 +107,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Estoque\ProdutoBaixaEstoquePesquisa.cs" />
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\ArquivoQuitacaoParcelaCartao.cs" />
     <Compile Include="Financeiro\BandeiraCartao.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Global\OrigemTrocaDescontoPesquisa.cs" />
     <Compile Include="Global\Pais.cs" />
     <Compile Include="Global\Produto.cs" />
+    <Compile Include="Global\ProdutoBaixaEstoqueBenef.cs" />
     <Compile Include="Global\ProdutoBenef.cs" />
     <Compile Include="Global\ProdutoFornecedor.cs" />
     <Compile Include="Global\ProdutoFornecedorPesquisa.cs" />

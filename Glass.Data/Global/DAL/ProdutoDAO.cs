@@ -2402,7 +2402,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public string GetFirstProdutoCodInterno(int? idGrupoProd)
         {
-            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where idGrupoProd=" + idGrupoProd +
+            string sql = "select CodInterno from produto " + (idGrupoProd > 0 ? "where situacao=1 and idGrupoProd=" + idGrupoProd +
                 (Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(idGrupoProd.Value) ? " and espessura is not null and espessura>0" : "") : "") + " limit 1";
 
             object retorno = objPersistence.ExecuteScalar(sql);

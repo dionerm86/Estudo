@@ -114,6 +114,13 @@ namespace Glass.Data.Helper
                 Add(new GenericBenef(p));
         }
 
+        public GenericBenefCollection(IEnumerable<ProdutoBaixaEstoqueBenef> produtosBaixaEst)
+        {
+            _tipo = TipoProdutoBeneficiamento.ProdutoBaixaEst;
+            foreach (ProdutoBaixaEstoqueBenef p in produtosBaixaEst)
+                Add(new GenericBenef(p));
+        }
+
         #endregion
 
         #region Propriedades
@@ -186,6 +193,10 @@ namespace Glass.Data.Helper
 
                     case TipoProdutoBeneficiamento.PecaModeloProjeto:
                         qtdeProduto = PecaProjetoModeloDAO.Instance.ObtemValorCampo<float>("qtde", "idPecaProjMod=" + this[0].IdPecaProjetoModelo);
+                        break;
+
+                    case TipoProdutoBeneficiamento.ProdutoBaixaEst:
+                        qtdeProduto = ProdutoBaixaEstoqueDAO.Instance.ObtemValorCampo<float>("qtde", "idProdBaixaEst=" + this[0].IdProdBaixaEst);
                         break;
 
                     default:
@@ -499,6 +510,21 @@ namespace Glass.Data.Helper
             return retorno;
         }
 
+        public ProdutoBaixaEstoqueBenef[] ToProdutoBaixaEst()
+        {
+            return ToProdutoBaixaEst(0);
+        }
+
+        public ProdutoBaixaEstoqueBenef[] ToProdutoBaixaEst(uint idProdBaixaEst)
+        {
+            ProdutoBaixaEstoqueBenef[] retorno = new ProdutoBaixaEstoqueBenef[Count];
+            int i = 0;
+            foreach (GenericBenef b in this)
+                retorno[i++] = b.ToProdutoBaixaEst(idProdBaixaEst);
+
+            return retorno;
+        }
+
         #endregion
 
         #region Cast Implícito
@@ -605,6 +631,16 @@ namespace Glass.Data.Helper
             return new GenericBenefCollection(produtosTrocado);
         }
 
+        public static implicit operator GenericBenefCollection(ProdutoBaixaEstoqueBenef[] produtosBaixaEstBenef)
+        {
+            return new GenericBenefCollection(produtosBaixaEstBenef);
+        }
+
+        public static implicit operator GenericBenefCollection(List<ProdutoBaixaEstoqueBenef> produtosBaixaEstBenef)
+        {
+            return new GenericBenefCollection(produtosBaixaEstBenef);
+        }
+
         #endregion
 
         #region Saída
@@ -707,6 +743,16 @@ namespace Glass.Data.Helper
         public static implicit operator List<ProdutoTrocadoBenef>(GenericBenefCollection colecao)
         {
             return new List<ProdutoTrocadoBenef>(colecao.ToProdutosTrocado());
+        }
+
+        public static implicit operator ProdutoBaixaEstoqueBenef[] (GenericBenefCollection colecao)
+        {
+            return colecao.ToProdutoBaixaEst();
+        }
+
+        public static implicit operator List<ProdutoBaixaEstoqueBenef>(GenericBenefCollection colecao)
+        {
+            return new List<ProdutoBaixaEstoqueBenef>(colecao.ToProdutoBaixaEst());
         }
 
         #endregion

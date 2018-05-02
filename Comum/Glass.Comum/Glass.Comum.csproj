@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="IndicadorIEDestinatario.cs" />
     <Compile Include="IGeradorBoleto.cs" />
+    <Compile Include="IProdutoBaixaEstoqueRepositorioImagens.cs" />
     <Compile Include="IProvedorFeriados.cs" />
     <Compile Include="IProvedorTraducao.cs" />
     <Compile Include="Log\LogAttribute.cs" />
