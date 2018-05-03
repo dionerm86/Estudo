@@ -15,13 +15,14 @@ namespace Glass.Financeiro.Negocios.Entidades.GCon
         public enum TipoContabilEnum
         {
             ChequesDinheiro = 6,
-            JurosPagos = 3002,
-            JurosRecebidos = 3022,
-            DescontosObtidos = 3021,
-            DescontosConcedidos = 3003,
+            JurosPagos = 5101,
+            JurosRecebidos = 5313,
+            DescontosObtidos = 5314,
+            DescontosConcedidos = 5102,
             BancoBrasil = 21,
             Banrisul = 22,
-            Sicredi = 24,
+            Sicredi = 28,
+            Bradesco = 23,
             AdiantadosPagamento = 171,
             AdiantadosRecebimento = 103
         }
@@ -179,6 +180,10 @@ namespace Glass.Financeiro.Negocios.Entidades.GCon
         public decimal ValorSicredi { get; set; }
 
         public decimal ValorJurosSicredi { get; set; }
+
+        public decimal ValorBradesco { get; set; }
+
+        public decimal ValorJurosBradesco { get; set; }
 
         public decimal ValorDinheiroCheque { get; set; }
 
