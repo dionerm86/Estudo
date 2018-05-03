@@ -304,6 +304,7 @@
                             </FooterTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label9" runat="server" Text='<%# Eval("CodAplicacao")%>'></asp:Label>
+                                <asp:HiddenField ID="hdfIdProdBaixaEst" runat="server" Value='<%# Bind("IdProdBaixaEst") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
@@ -349,7 +350,12 @@
                             <EditItemTemplate>
                                 <asp:FileUpload ID="filImagem" runat="server" accept="image/*"/>
                                 <uc4:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.ProdutoBaixaEstoqueRepositorioImagens.Instance.ObtemUrl((int)Eval("IdProdBaixaEst")) %>' />
+                                <asp:ImageButton ID="imbExcluirImagem" runat="server" OnClick="imbExcluirImagem_Click" ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir Imagem" Visible='<%# Eval("PossuiImagem") %>' />
                             </EditItemTemplate>
+                            <ItemTemplate >
+                                <uc4:ctrlImagemPopup ID="ctrlImagemPopup2" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.ProdutoBaixaEstoqueRepositorioImagens.Instance.ObtemUrl((int)Eval("IdProdBaixaEst")) %>' />
+                                <asp:ImageButton ID="ImageButton1" runat="server" OnClick="imbExcluirImagem_Click" ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir Imagem" Visible='<%# Eval("PossuiImagem") %>' />
+                            </ItemTemplate>  
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <FooterTemplate>
