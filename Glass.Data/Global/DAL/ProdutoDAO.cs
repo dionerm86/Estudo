@@ -4524,6 +4524,219 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Estoque de Chapas
+
+        /// <summary>
+        /// Monta o arquivo do estoque de chapas associadas com os produtos informados.
+        /// </summary>
+        /// <param name="idsProd"></param>
+        /// <returns></returns>
+        public string ArquivoEstoqueChapas(IEnumerable<uint> idsProd)
+        {
+            using (var session = new GDASession())
+                return ArquivoEstoqueChapas(session, idsProd);
+        }
+
+        /// <summary>
+        /// Monta o arquivo do estoque de chapas associadas com os produtos informados.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idsProd"></param>
+        /// <returns></returns>
+        public string ArquivoEstoqueChapas(GDA.GDASession session, IEnumerable<uint> idsProd)
+        {
+            var idsProd2 = string.Join(",", idsProd);
+
+            if (string.IsNullOrEmpty(idsProd2))
+            {
+                // Monta o cabeçalho
+                return new System.Text.StringBuilder()
+                    .Append("Arquivo gerado via WebGlass".PadRight(32))
+                    .Append(DateTime.Now.ToString("ddMMyyyy"))
+                    .Append("".PadLeft(8))
+                    .Append("0".PadLeft(8))
+                    .Append($"V1")
+                    .ToString();
+            }
+
+            // Recupera os identificadores dos produtos de baixa
+            var idsProdBaixa = objPersistence.LoadResult(session,
+                string.Format("SELECT IdProdBaixa FROM produto_baixa_estoque where IdProd IN ({0})", idsProd2))
+                .Select(f => f.GetUInt32(0))
+                .ToArray();
+
+            var consultas = new List<string>();
+
+            // Verifica se foram encontrados produtos de baixa para localizar os retalhos
+            if (idsProdBaixa.Any())
+            {
+                consultas.Add(
+                    string.Format(@"SELECT p.CodOtimizacao, p.Altura, p.Largura, COUNT(r.IdProd) AS Qtde, 1 AS Desperdicio
+                    FROM retalho_producao r 
+	                    INNER JOIN produto p ON (r.IdProd=p.IdProd)
+	                    LEFT JOIN produto_pedido_producao ppp on(r.IdProdPedProducaoOrig = ppp.IdProdPedProducao)
+	                    LEFT JOIN
+		                    (SELECT ur1.IdUsoRetalhoProducao, ur1.IdRetalhoProducao
+		                     FROM uso_retalho_producao ur1
+		                     GROUP BY ur1.IdRetalhoProducao)
+	                    ur ON (r.IdRetalhoProducao = ur.IdRetalhoProducao)
+                    WHERE r.Situacao=?situacaoRetalho AND (p.IdProdOrig IN ({0}) OR p.IdProdBase IN ({0}))
+                    GROUP BY r.IdProd", string.Join(",", idsProdBaixa)));
+            }
+
+            consultas.Add(
+                string.Format(@"SELECT 
+                        IFNULL(p.CodOtimizacao, IFNULL(pbase.CodOtimizacao, porig.CodOtimizacao)) AS CodOtimizacao, 
+                        p.Altura, p.Largura, SUM(pl.QtdEstoque) AS Qtde, 0 AS Desperdicio
+                    FROM produto p
+                    INNER JOIN subgrupo_prod sg ON (p.IdSubGrupoProd=sg.IdSubGrupoProd AND (sg.TipoSubGrupo=1 OR sg.TipoSubGrupo=3))
+                    LEFT JOIN retalho_producao rp ON (p.IdProd=rp.IdProd AND rp.Situacao=?situacaoRetalho)
+                    INNER JOIN produto_loja pl ON (p.IdProd=pl.IdProd)
+                    LEFT JOIN produto pbase ON (p.IdProdBase=pbase.IdProd)
+                    LEFT JOIN produto porig ON (p.IdProdOrig=porig.IdProd)
+                    WHERE rp.IdRetalhoProducao IS NULL AND (p.IdProd IN ({0}) OR p.IdProdOrig IN ({0}) OR p.IdProdBase IN ({0})) 
+                    GROUP BY IFNULL(p.CodOtimizacao, IFNULL(pbase.CodOtimizacao, porig.CodOtimizacao)), Altura, Largura
+                    HAVING SUM(pl.QtdEstoque) > 0
+                    ORDER BY CodOtimizacao, Altura, Largura",
+                    string.Join(",", idsProd.Concat(idsProdBaixa))
+                ));
+
+            var posicao = 0;
+
+            // Carrega as entradas do estoque
+            var entradas = objPersistence.LoadResult(session, string.Join(" UNION ALL ", consultas),
+                new GDAParameter("?situacaoRetalho", SituacaoRetalhoProducao.Disponivel))
+                .Select(f => new
+                {
+                    CodOtimizacao = f.GetString("CodOtimizacao"),
+                    Altura = f.GetInt32("Altura"),
+                    Largura = f.GetInt32("Largura"),
+                    Qtde = (int)f.GetFloat("Qtde"),
+                    Desperdicio = f.GetBoolean("Desperdicio"),
+                    Posicao = posicao++,
+                    Rack = "",
+                    Priority = f.GetBoolean("Desperdicio") ? 999 : 1,
+                    CrosscutType = "XY"
+                }).ToList();
+
+            var conteudo = new System.Text.StringBuilder();
+
+            // Monta o cabeçalho
+            conteudo
+                .Append("Arquivo gerado via WebGlass".PadRight(32))
+                .Append(DateTime.Now.ToString("ddMMyyyy"))
+                .Append("".PadLeft(8))
+                .Append(entradas.Count.ToString().PadLeft(8))
+                .Append($"V1")
+                .AppendLine();
+
+
+            foreach (var entrada in entradas)
+                conteudo
+                    .Append(entrada.CodOtimizacao.PadRight(16))
+                    .Append(entrada.Posicao.ToString().PadLeft(8))
+                    .Append(entrada.Qtde.ToString().PadLeft(8))
+                    .Append(entrada.Largura.ToString().PadLeft(8))
+                    .Append(entrada.Altura.ToString().PadLeft(8))
+                    .Append((entrada.Rack ?? "").PadRight(16))
+                    .Append(entrada.Priority.ToString().PadLeft(8))
+                    .Append((entrada.CrosscutType ?? "").PadRight(2))
+                    .Append(entrada.Desperdicio ? "Y" : "N")
+                    .AppendLine();
+
+            return conteudo.ToString();
+        }
+
+        #endregion
+
+        #region Repositorio Materiais Otimização
+
+        /// <summary>
+        /// Monta o arquivo do repositório de materiais.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idsProd">Identificadores dos produtos que serão usados no repositório.</param>
+        /// <returns></returns>
+        public string ArquivoRepositorioMateriais(IEnumerable<uint> idsProd)
+        {
+            return ArquivoRepositorioMateriais(null, idsProd);
+        }
+
+        /// <summary>
+        /// Monta o arquivo do repositório de materiais.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idsProd">Identificadores dos produtos que serão usados no repositório.</param>
+        /// <returns></returns>
+        public string ArquivoRepositorioMateriais(GDASession session, IEnumerable<uint> idsProd)
+        {
+            var idsProd2 = string.Join(",", idsProd);
+
+            if (string.IsNullOrEmpty(idsProd2))
+            {
+                // Monta o cabeçalho
+                return new System.Text.StringBuilder()
+                    .Append("Arquivo gerado via WebGlass".PadRight(32))
+                    .Append(DateTime.Now.ToString("ddMMyyyy"))
+                    .Append("".PadLeft(8))
+                    .Append("0".PadLeft(8))
+                    .Append($"V1")
+                    .ToString();
+            }
+
+
+            var produtos = objPersistence.LoadResult(session,
+                string.Format(
+                    @"SELECT CodOtimizacao, Descricao, Espessura 
+                     FROM produto
+                     WHERE IdProd IN ({0})", idsProd2))
+                  .Select(f => new
+                  {
+                      CodOtimizacao = f.GetString("CodOtimizacao"),
+                      Descricao = f.GetString("Descricao"),
+                      Espessura = f.GetFloat("Espessura")
+                  }).ToList();
+
+            var conteudo = new System.Text.StringBuilder();
+
+            // Monta o cabeçalho
+            conteudo
+                .Append("Arquivo gerado via WebGlass".PadRight(32))
+                .Append(DateTime.Now.ToString("ddMMyyyy"))
+                .Append("".PadLeft(8))
+                .Append(produtos.Count.ToString().PadLeft(8))
+                .Append($"V1")
+                .AppendLine();
+
+
+            var culture = System.Globalization.CultureInfo.InvariantCulture;
+            foreach (var produto in produtos)
+                conteudo
+                    .Append(produto.CodOtimizacao.PadRight(16))
+                    .Append((produto.Descricao ?? "").PadRight(32))
+                    .Append("Monolithic".PadLeft(16))
+                    .Append(produto.Espessura.ToString(culture).PadLeft(8)) // Espessura 1
+                    .Append("0.0".PadLeft(8)) // Espessura 2
+                    .Append("0.0".PadLeft(8)) // Espessura 3
+                    .Append("0.0".PadLeft(8)) // Espessura 4
+                    .Append("0.0".PadLeft(8)) // Distancia mínima
+                    .Append("0.0".PadLeft(8)) // TrimX1
+                    .Append("0.0".PadLeft(8)) // TrimY1
+                    .Append("0.0".PadLeft(8)) // TrimX2
+                    .Append("0.0".PadLeft(8)) // TrimY1
+                    .Append("0.0".PadLeft(8)) // XCrosscut
+                    .Append("0.0".PadLeft(8)) // YCrosscut
+                    .Append("0.0".PadLeft(8)) // MinXOffcut
+                    .Append("0.0".PadLeft(8)) // MinYOffcut
+                    .Append("0.0".PadLeft(8)) // AutoShapeTrim
+                    .Append("0.0".PadLeft(8)) // AutoShapeTrimAngle
+                    .AppendLine();
+
+            return conteudo.ToString();
+        }
+
+        #endregion
+
         #region Métodos Sobrescritos
 
         public override uint Insert(Produto objInsert)

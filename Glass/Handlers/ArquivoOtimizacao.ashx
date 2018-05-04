@@ -20,9 +20,10 @@ public class ArquivoOtimizacao : IHttpHandler
             context.Response.End();
             return;
         }
-
+        
         // Define que apenas o Arquivo de Mesa será gerado
         bool apenasArqMesa = context.Request["apenasArqMesa"] == "true";
+        var arquivoECutter = context.Request["ecutter"] == "true" || Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter;
 
         string material = !String.IsNullOrEmpty(context.Request["material"]) ?
             " " + context.Request["material"].Replace("/", "") : String.Empty;
@@ -58,7 +59,8 @@ public class ArquivoOtimizacao : IHttpHandler
             ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, Glass.Conversoes.StrParaUint(context.Request["idSetor"]), true, false);
         }
         // Recupera as etiquetas e os arquivos de mesa
-        else if (Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay)
+        else if (Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+                 Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
             arquivo = ImpressaoEtiquetaDAO.Instance.ArquivoOtimizacaoOptyWay(UserInfo.GetUserInfo.CodUser, idImpressao, context.Request["etiquetas"],
                 ref lstEtiqueta, ref lstArqMesa, ref lstCodArq, ref lstErrosArq, ignorarExportadas, ignorarSag);
         else
@@ -86,7 +88,7 @@ public class ArquivoOtimizacao : IHttpHandler
         }
 
         // Se não houver arquivos de mesa de corte, salva sem zipar
-        if (lstArqMesa.Count == 0 && string.IsNullOrEmpty(errosGeracaoMarcacao) && !apenasArqMesa)
+        if (lstArqMesa.Count == 0 && string.IsNullOrEmpty(errosGeracaoMarcacao) && !apenasArqMesa && !arquivoECutter)
         {
             // Indica que será feito um download do arquivo
             context.Response.ContentType = "application/octet-stream";
@@ -105,6 +107,17 @@ public class ArquivoOtimizacao : IHttpHandler
                 // Adiciona os arquivos SAG
                 using (ZipFile zip = new ZipFile(stream))
                 {
+                    if (arquivoECutter)
+                    {
+                        // Recupera os produtos associado com as etiquetas
+                        var idsProd = Glass.Data.DAL.ProdutosPedidoEspelhoDAO.Instance.ObterIdsProd(lstEtiqueta.Select(f => f.IdProdPedEsp).Distinct());
+
+                        var arquivoEstoqueChapas = ProdutoDAO.Instance.ArquivoEstoqueChapas(idsProd);
+                        zip.AddStringAsFile(arquivoEstoqueChapas, "stock.data", "");
+
+                        var arquivoMateriais = ProdutoDAO.Instance.ArquivoRepositorioMateriais(idsProd);
+                        zip.AddStringAsFile(arquivoMateriais, "materials.data", "");
+                    }
 
                     if (!apenasArqMesa)
                         zip.AddFile(Utils.GetArquivoOtimizacaoPath + a.NomeArquivo, "");
@@ -118,9 +131,10 @@ public class ArquivoOtimizacao : IHttpHandler
                         }
                         catch
                         {
+                            // Ignora esse falha
                         }
                     }
-                    
+
                     if (!string.IsNullOrWhiteSpace(errosGeracaoMarcacao))
                         zip.AddStringAsFile(errosGeracaoMarcacao, "Situações com arquivos de mesa.error", string.Empty);
 
@@ -134,7 +148,23 @@ public class ArquivoOtimizacao : IHttpHandler
                 arq.Flush();
             }
 
-            aux(context.Response.OutputStream);
+            if (arquivoECutter)
+            {
+                var url = context.Request.Url;
+                var address = url.AbsoluteUri;
+                // Altera o protocolo do endereço
+                address = string.Format("ecutter-opt{0}", address.Substring(url.Scheme.Length));
+                // Remove o nome da página da requisiaç
+                address = address.Substring(0,  address.IndexOf("arquivootimizacao.ashx", 0, StringComparison.InvariantCultureIgnoreCase));
+                var nome = System.IO.Path.GetFileNameWithoutExtension(a.NomeArquivo);
+
+                // Monta o endereço redirecionando para o servido do ecutter
+                address = string.Format("{0}ecutterservice.ashx?id={1}", address, nome);
+
+                context.Response.Redirect(address);
+            }
+            else
+                aux(context.Response.OutputStream);
         }
     }
 
