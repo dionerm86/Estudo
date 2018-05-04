@@ -378,12 +378,12 @@
     <Compile Include="EFD\DataSourcesEFD.cs" />
     <Compile Include="EFD\EFD.cs" />
     <Compile Include="EFD\RecuperaDados.cs" />
-    <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />    
+    <Compile Include="Estoque\DAL\ChapaTrocadaDevolvidaDAO.cs" />
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
     <Compile Include="Estoque\DAL\MovMateriaPrimaDAO.cs" />
     <Compile Include="Estoque\DAL\MovReservaLiberacaoDAO.cs" />
-    <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />    
+    <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />
     <Compile Include="Estoque\Model\MovEstoqueCentroCusto.cs" />
     <Compile Include="Estoque\Model\MovInternaEstoqueFiscal.cs" />
     <Compile Include="Estoque\Model\MovMateriaPrima.cs" />
@@ -1037,6 +1037,7 @@
     <Compile Include="RelDAL\PrevisaoProducaoDAO.cs" />
     <Compile Include="RelDAL\ProducaoDiariaRealizadaDAO.cs" />
     <Compile Include="RelDAL\ProdutosCortadosRptDAO.cs" />
+    <Compile Include="RelModel\ArquivoRemessaRetorno.cs" />
     <Compile Include="RelModel\CapacidadeProducao.cs" />
     <Compile Include="RelModel\ChapasDisponiveis.cs" />
     <Compile Include="RelModel\ControleMvaProdutoPorUf.cs" />

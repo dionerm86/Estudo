@@ -75,11 +75,52 @@
         </tr>
         <tr>
             <td>
-                <asp:GridView GridLines="None" ID="grdItensCNAB" runat="server" CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" AutoGenerateColumns="False" Visible="false">
+                <asp:GridView GridLines="None" ID="grdItensCNAB" runat="server" CssClass="gridStyle" PagerStyle-CssClass="pgr" 
+                    AlternatingRowStyle-CssClass="alt" AutoGenerateColumns="False" Visible="false" OnRowDataBound="grdItensCNAB_RowDataBound" >
                     <Columns>
-                        <asp:TemplateField HeaderText="Registro de Arquivos">
+                        <asp:TemplateField HeaderText="Nº Registro">
                             <ItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Eval("Key") %>' ForeColor='<%# Eval("Value").ToString() == "true" ? System.Drawing.Color.Green : System.Drawing.Color.Red %>' ></asp:Label>
+                                <asp:Label ID="Label1" runat="server" Text='<%# Eval("NumeroLinha") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Agencia">
+                            <ItemTemplate>
+                                <asp:Label ID="Label2" runat="server" Text='<%# Eval("Agencia") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Conta">
+                            <ItemTemplate>
+                                <asp:Label ID="Label3" runat="server" Text='<%# Eval("Conta") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Nosso Numero">
+                            <ItemTemplate>
+                                <asp:Label ID="Label4" runat="server" Text='<%# Eval("NossoNumero") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Numero Documento">
+                            <ItemTemplate>
+                                <asp:Label ID="Label5" runat="server" Text='<%# Eval("NumeroDocumento") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Valor Titulo">
+                            <ItemTemplate>
+                                <asp:Label ID="Label6" runat="server" Text='<%# Eval("ValorTitulo") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Valor Pago">
+                            <ItemTemplate>
+                                <asp:Label ID="Label7" runat="server" Text='<%# Eval("ValorPagoPeloSacado") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Juros">
+                            <ItemTemplate>
+                                <asp:Label ID="Label8" runat="server" Text='<%# Eval("JurosMultaEncargos") %>' ></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Data de Vencimento">
+                            <ItemTemplate>
+                                <asp:Label ID="Label9" runat="server" Text='<%# Eval("DataVencimento") %>' ></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
