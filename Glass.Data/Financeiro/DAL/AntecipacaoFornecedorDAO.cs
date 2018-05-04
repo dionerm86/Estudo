@@ -738,7 +738,7 @@ namespace Glass.Data.DAL
 
                                     // Estorna crédito utilizado pelo fornecedor
                                     CaixaGeralDAO.Instance.MovCxAntecipFornec(transaction, antecip.IdAntecipFornec, antecip.IdFornec,
-                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoAntencipFornecEstorno), 2,
+                                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.EstornoPagtoCreditoFornecedor), 2,
                                         cx.ValorMov, null, 0, false, null);
                                 }
 
@@ -772,7 +772,7 @@ namespace Glass.Data.DAL
                         foreach (PagtoAntecipacaoFornecedor paf in pagtoAntecipFornec)
                         {
                             // Não estorna os cheques ou crédito no loop (crédito: idFormaPagto = 0);
-                            if (paf.IdFormaPagto == 0 || paf.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || paf.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro)
+                            if (paf.IdFormaPagto == 0 || paf.IdFormaPagto == (uint)Pagto.FormaPagto.Credito || paf.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || paf.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro)
                                 continue;
 
                             // Recupera o plano de contas
