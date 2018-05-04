@@ -2620,15 +2620,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             string filtroAdicional;
-
-            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao && FiltrosVazios(altura, cidade, codCliente, codigoProduto, comSemNF, dataFimEntrega, dataFimInstalacao,
- dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto,
- dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, fastDelivery, idCliente, idFunc, idMedidor, idOrcamento, idOC,
- idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente, nomeUsuarioCadastro,
- numeroDiasDiferencaProntoLib, ordenacao, origemPedido, pedidosSemAnexos, situacao, situacaoProducao, tiposPedido, tipoCliente,
- tipoEntrega, tipoFiscal, tiposVenda, trazerPedCliVinculado))
-                return new List<Pedido>().ToArray();
-
+            
             var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao,
                 dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery, out filtroAdicional, idCarregamento,
                 idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo, loja, nomeCliente,

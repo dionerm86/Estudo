@@ -186,5 +186,22 @@ namespace Glass.UI.Web.Utils
         {
             grdProdMateriaPrima.ShowFooter = false;
         }
+
+        protected void imbExcluirImagem_Click(object sender, ImageClickEventArgs e)
+        {
+            var idProdBaixaEst = ((HiddenField)((ImageButton)sender).Parent.FindControl("hdfIdProdBaixaEst")).Value.StrParaInt();
+
+            var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                   .Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+
+            var caminhoImagem = repositorio.ObtemCaminho(idProdBaixaEst);
+
+            if (!string.IsNullOrEmpty(caminhoImagem))
+                System.IO.File.Delete(caminhoImagem);
+
+            grdProdMateriaPrima.DataBind();
+            grdProdMateriaPrima.EditIndex = -1;
+            grdProdMateriaPrima.ShowFooter = true;
+        }
     }
 }

@@ -36,5 +36,15 @@ namespace Glass.Estoque.Negocios.Entidades
             get;
             set;
         }
+
+        public bool PossuiImagem
+        {
+            get
+            {
+                var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                       .Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+                return repositorio.PossuiImagem(IdProdBaixaEst);
+            }
+        }
     }
 }
