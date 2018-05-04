@@ -9,6 +9,20 @@
       </ConnectionProperties>
       <rd:DataSourceID>3705bd73-a2b8-4e70-a86b-6a90c645272b</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="GlassDataRelModel">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>2dceeb66-a399-450e-8bbf-30b7bf65b3ae</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="GlassDataRelModel1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>ee942f13-fbe3-42f6-96f1-3d45dc22dd8d</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="ResumoCorte">
@@ -663,6 +677,55 @@
         <rd:ObjectDataSourceType>Glass.Data.DAL.LiberarPedidoDAO, Glass.Data, Version=3.3.1.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
+    <DataSet Name="ProdutosCortados">
+      <Query>
+        <DataSourceName>GlassDataRelModel1</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AlturaProd">
+          <DataField>AlturaProd</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="CodInternoProd">
+          <DataField>CodInternoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoRevenda">
+          <DataField>IdPedidoRevenda</DataField>
+          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="LarguraProd">
+          <DataField>LarguraProd</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="PedCli">
+          <DataField>PedCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Glass.Data.RelModel</rd:DataSetName>
+        <rd:TableName>ProdutosCortadosRpt</rd:TableName>
+        <rd:ObjectDataSourceType>Glass.Data.RelModel.ProdutosCortadosRpt, Glass.Data, Version=5.18.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -687,7 +750,7 @@
                         </Style>
                       </Paragraph>
                     </Paragraphs>
-                    <Top>2.13644cm</Top>
+                    <Top>1.50144cm</Top>
                     <Left>1.2cm</Left>
                     <Height>0.63492cm</Height>
                     <Width>6.8cm</Width>
@@ -721,7 +784,7 @@
                         </Style>
                       </Paragraph>
                     </Paragraphs>
-                    <Top>2.13644cm</Top>
+                    <Top>1.50144cm</Top>
                     <Left>10.9cm</Left>
                     <Height>1.04164cm</Height>
                     <Width>6.8cm</Width>
@@ -780,7 +843,7 @@
                       </Paragraph>
                     </Paragraphs>
                     <rd:DefaultName>textbox7</rd:DefaultName>
-                    <Top>3.25922cm</Top>
+                    <Top>2.62422cm</Top>
                     <Left>11.75556cm</Left>
                     <Height>0.63492cm</Height>
                     <Width>5.31746cm</Width>
@@ -807,7 +870,7 @@
                         </Style>
                       </Paragraph>
                     </Paragraphs>
-                    <Top>4.81846cm</Top>
+                    <Top>3.86596cm</Top>
                     <Left>6.05cm</Left>
                     <Height>0.63492cm</Height>
                     <Width>6.8cm</Width>
@@ -828,8 +891,8 @@
                 </ReportItems>
                 <KeepTogether>true</KeepTogether>
                 <DataElementOutput>ContentsOnly</DataElementOutput>
-                <Top>12.14712cm</Top>
-                <Height>5.45338cm</Height>
+                <Top>13.09962cm</Top>
+                <Height>4.50088cm</Height>
                 <Width>18.9cm</Width>
                 <Style>
                   <Border>
@@ -1770,7 +1833,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                       </TablixCells>
                     </TablixRow>
                     <TablixRow>
-                      <Height>0.07937cm</Height>
+                      <Height>0.55562cm</Height>
                       <TablixCells>
                         <TablixCell>
                           <CellContents>
@@ -1807,11 +1870,35 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                       </TablixCells>
                     </TablixRow>
                     <TablixRow>
-                      <Height>0.21164cm</Height>
+                      <Height>0.6704cm</Height>
                       <TablixCells>
                         <TablixCell>
                           <CellContents>
                             <Rectangle Name="rectangle1">
+                              <ReportItems>
+                                <Subreport Name="subreport2">
+                                  <ReportName>rptLiberacaoProdutosCorte</ReportName>
+                                  <Parameters>
+                                    <Parameter Name="NumeroCasasDecimaisTotM">
+                                      <Value>=Parameters!NumeroCasasDecimaisTotM.Value</Value>
+                                    </Parameter>
+                                  </Parameters>
+                                  <Top>0.01749cm</Top>
+                                  <Left>0.02334cm</Left>
+                                  <Height>0.6cm</Height>
+                                  <Width>18.8cm</Width>
+                                  <Visibility>
+                                    <Hidden>=Parameters!ExibirProdutosCortados.Value</Hidden>
+                                  </Visibility>
+                                  <Style>
+                                    <Border>
+                                      <Style>None</Style>
+                                    </Border>
+                                    <TextAlign>Center</TextAlign>
+                                    <Language>pt-BR</Language>
+                                  </Style>
+                                </Subreport>
+                              </ReportItems>
                               <DataElementOutput>ContentsOnly</DataElementOutput>
                               <Style>
                                 <TopBorder>
@@ -1976,7 +2063,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                 <DataSetName>PedidoRpt</DataSetName>
                 <Top>5.63734cm</Top>
                 <Left>0.05331cm</Left>
-                <Height>3.88106cm</Height>
+                <Height>4.81607cm</Height>
                 <Width>18.84669cm</Width>
                 <ZIndex>4</ZIndex>
                 <Style />
@@ -2737,7 +2824,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                   </TablixMembers>
                 </TablixRowHierarchy>
                 <DataSetName>ResumoCorte</DataSetName>
-                <Top>9.66558cm</Top>
+                <Top>10.61808cm</Top>
                 <Left>0.16627cm</Left>
                 <Height>2.24868cm</Height>
                 <Width>18.57407cm</Width>
@@ -2838,6 +2925,10 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
       <DataType>Integer</DataType>
       <Prompt>ReportParameter1</Prompt>
       <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutosCortados">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

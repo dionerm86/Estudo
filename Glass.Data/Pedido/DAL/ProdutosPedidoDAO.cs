@@ -45,7 +45,7 @@ namespace Glass.Data.DAL
             var naoIgnorar = idLoja > 0 ? !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja) : true;
             bool liberarProdutosProntos = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && !(Liberacao.DadosLiberacao.LiberarClienteRota && isClienteRota);
 
-            bool usarTabelasAdicionais = (fluxo && forcarTabelasAdicionais) || (liberacao && fluxo && liberarProdutosProntos && 
+            bool usarTabelasAdicionais = (fluxo && forcarTabelasAdicionais) || (liberacao && fluxo && liberarProdutosProntos &&
                 PCPConfig.ControlarProducao);
 
             string sqlProdutoTabela = "if(ped.TipoEntrega in (" + (int)Pedido.TipoEntregaPedido.Balcao + ", " +
@@ -60,7 +60,7 @@ namespace Glass.Data.DAL
                 Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, 
                 Round(0, 2) as AliqICMSProd, p.Cst, ap.Ambiente, ap.Descricao as DescrAmbiente, 
                 " + sqlProdutoTabela + @" as ValorProdutoTabela, p.custoCompra as custoCompraProduto,
-                (Select Sum(Coalesce(pi.qtdeInstalada, 0)) From produtos_instalacao pi Where pi.idProdPed=pp.idProdPed) as qtdeInstalada" + (usarTabelasAdicionais ? 
+                (Select Sum(Coalesce(pi.qtdeInstalada, 0)) From produtos_instalacao pi Where pi.idProdPed=pp.idProdPed) as qtdeInstalada" + (usarTabelasAdicionais ?
                 ", ppe.idAmbientePedido as idAmbientePedidoEspelho, cast(" + campoTipoSetorProducao + @" as signed) as TipoSetorProducao, 
                 cast(if(ppp.numEtiqueta is not null, 1, null) as signed) as qtdeEtiquetas" : "" + ", c.Nome as NomeCliente") : "Count(*)";
 
@@ -295,7 +295,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca todos os produtos relacionados ao pedido
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Busca todos os produtos relacionados ao pedido
@@ -312,7 +312,7 @@ namespace Glass.Data.DAL
         {
             return GetByPedido(sessao, idPedido, false);
         }
-        
+
         /// <summary>
         /// Busca todos os produtos relacionados ao pedido
         /// </summary>
@@ -437,7 +437,7 @@ namespace Glass.Data.DAL
                     And (invisivelPedido=false or invisivelPedido is null)
                     And p.TipoPedido Not In ({1})",
 
-                idsPedidos, 
+                idsPedidos,
                 (int)Pedido.TipoPedidoEnum.Producao);
 
             return objPersistence.LoadResult(sessao, sql, null).Select(f => f.GetUInt32(0)).ToList();
@@ -541,7 +541,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca produtos relacionados à vários pedidos
         /// </summary>
-        public ProdutosPedido[] GetByVariosPedidos(string idsPedido, string idsLiberarPedido, 
+        public ProdutosPedido[] GetByVariosPedidos(string idsPedido, string idsLiberarPedido,
             bool agruparProdutos, bool agruparSomentePorProduto)
         {
             return GetByVariosPedidos(idsPedido, idsLiberarPedido, agruparProdutos, agruparSomentePorProduto, false);
@@ -550,7 +550,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca produtos relacionados à vários pedidos
         /// </summary>
-        public ProdutosPedido[] GetByVariosPedidos(string idsPedido, string idsLiberarPedido, 
+        public ProdutosPedido[] GetByVariosPedidos(string idsPedido, string idsLiberarPedido,
             bool agruparProdutos, bool agruparSomentePorProduto, bool agruparProjetosAoAgruparProdutos)
         {
             var liberacaoParcial = PedidoConfig.LiberarPedido && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
@@ -580,7 +580,7 @@ namespace Glass.Data.DAL
             var where = string.Format("{0} pp.IdPedido IN ({1}) AND pp.IdProdPedParent IS NULL",
                 idsLiberarPedido.Length > 0 ? string.Format("plp.IdLiberarPedido IN ({0}) AND ", idsLiberarPedido) : string.Empty,
                 idsPedido);
-            
+
             if (!agruparProdutos)
             {
                 sql = string.Format(@"
@@ -743,7 +743,7 @@ namespace Glass.Data.DAL
             var lstRetorno = new List<ProdutosPedido>();
 
             decimal total = 0;
-            
+
             foreach (var pp in lstProd)
             {
                 var qtdOriginal = pp.Qtde;
@@ -769,7 +769,7 @@ namespace Glass.Data.DAL
 
                 if (pp.Qtde <= 0)
                     continue;
-                
+
                 if (pp.TotM2Nf > 0)
                     pp.TotM = (float)pp.TotM2Nf;
 
@@ -810,7 +810,7 @@ namespace Glass.Data.DAL
                 SELECT pp.* FROM produtos_pedido pp
                 WHERE pp.IdProdPed IN (" + idsProdutosPedido + @")
                     AND (pp.InvisivelPedido=FALSE OR pp.InvisivelPedido IS NULL)";
-            
+
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -945,7 +945,7 @@ namespace Glass.Data.DAL
         private string SqlForOCRpt(uint idOrdemCarga, string idsPedidos)
         {
             var campoQtde = "IF(ic1.IdProdPed IS NULL, pp.qtde - COALESCE(ic.Qtde, 0), ic1.Qtde)";
-            
+
             var campos = string.Format(@"pp.IdPedido, p.CodCliente AS CodPedCliente, CONCAT(prod.CodInterno, ' - ', prod.Descricao) AS DescrProduto, CAST(({0}) AS DECIMAL(12, 2)) AS Qtde,
                 pp.Altura, pp.Largura, CAST(ROUND(((pp.TotM2Calc / pp.Qtde) * {0}), 2) AS DECIMAL(12, 2)) AS TotM2Calc,
                 CAST(ROUND(IF(sgp.TipoSubgrupo IN ({1},{2}),
@@ -1001,9 +1001,9 @@ namespace Glass.Data.DAL
                     AND pp.idPedido IN(" + idsPedidos + @")
                     AND pp.IdProdPedParent IS NULL";
 
-                sql += " GROUP BY pp.idProdPed";
+            sql += " GROUP BY pp.idProdPed";
 
-                return "SELECT * FROM (" + sql + ") as tmp WHERE IdPedido IS NOT NULL";
+            return "SELECT * FROM (" + sql + ") as tmp WHERE IdPedido IS NOT NULL";
         }
 
         /// <summary>
@@ -1084,7 +1084,7 @@ namespace Glass.Data.DAL
             if (idSubgrupoProd > 0)
                 where += " And p.idSubgrupoProd=" + idSubgrupoProd;
 
-            string filtroApenasVidros = " And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + 
+            string filtroApenasVidros = " And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro +
                 " And (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Revenda + " Or " + produtoRevenda + ")";
 
             string sql = "Select " + campos + @"
@@ -1144,7 +1144,7 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 UPDATE produtos_pedido 
-                SET qtdeBoxImpresso = coalesce(qtdeBoxImpresso, 0) + " + qtdImpresso +@"
+                SET qtdeBoxImpresso = coalesce(qtdeBoxImpresso, 0) + " + qtdImpresso + @"
                 WHERE IdProdPed = " + idProdPed;
 
             objPersistence.ExecuteCommand(session, sql);
@@ -1168,7 +1168,7 @@ namespace Glass.Data.DAL
         public ProdutosPedido[] GetForRpt(uint idPedido, bool isRelatorioPcp, bool incluirBeneficiamentos)
         {
             string sql = String.Empty;
-            
+
             // se a empresa trabalha com inserção de ambiente no pedido
             if (PedidoConfig.DadosPedido.AmbientePedido)
             {
@@ -1403,7 +1403,7 @@ namespace Glass.Data.DAL
                 retorno.Add(novo);
             }
 
-            retorno.Sort(new Comparison<ProdutosPedido>(delegate(ProdutosPedido x, ProdutosPedido y)
+            retorno.Sort(new Comparison<ProdutosPedido>(delegate (ProdutosPedido x, ProdutosPedido y)
             {
                 int ambiente = Comparer<string>.Default.Compare(x.Ambiente, y.Ambiente);
                 if (ambiente == 0)
@@ -1428,7 +1428,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutosPedido> GetForConfirmation(uint idPedido, string sortExpression, int startRow, int pageSize)
         {
-            if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) || 
+            if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
                 PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
@@ -1490,7 +1490,7 @@ namespace Glass.Data.DAL
                 PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
-            string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, true) + 
+            string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, true) +
                 (PCPConfig.ControlarProducao ? " and p.idGrupoProd<>" + (int)Glass.Data.Model.NomeGrupoProd.Vidro : "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, null);
@@ -1498,11 +1498,11 @@ namespace Glass.Data.DAL
 
         public int GetForSaidaEstoqueCount(uint idPedido)
         {
-            if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) || 
+            if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
                 PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return 0;
 
-            string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, false) + 
+            string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, false) +
                 (PCPConfig.ControlarProducao ? " and p.idGrupoProd<>" + (int)Glass.Data.Model.NomeGrupoProd.Vidro : "");
 
             return objPersistence.ExecuteSqlQueryCount(sql, null);
@@ -1521,7 +1521,7 @@ namespace Glass.Data.DAL
             if (VerifyPedidoForCorte(idPedido, situacao) == null)
                 return null;
 
-            return LoadDataWithSortExpression(Sql(null, idPedido, 0, 0, 0, false, false, false, false, false, false, false, false, 0, true), 
+            return LoadDataWithSortExpression(Sql(null, idPedido, 0, 0, 0, false, false, false, false, false, false, false, false, 0, true),
                 sortExpression, startRow, pageSize, null);
         }
 
@@ -1530,7 +1530,7 @@ namespace Glass.Data.DAL
             if (VerifyPedidoForCorte(idPedido, situacao) == null)
                 return 0;
 
-            return objPersistence.ExecuteSqlQueryCount(Sql(null, idPedido, 0, 0, 0, false, false, false, false, 
+            return objPersistence.ExecuteSqlQueryCount(Sql(null, idPedido, 0, 0, 0, false, false, false, false,
                 false, false, false, false, 0, false), null);
         }
 
@@ -1615,7 +1615,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool ExistsInPedido(uint idPedido, uint idProd, Single altura, int largura, uint? idProcesso, uint? idAplicacao)
         {
-            string sql = "Select count(*) From produtos_pedido where idPedido=" + idPedido + " And idProd=" + idProd + 
+            string sql = "Select count(*) From produtos_pedido where idPedido=" + idPedido + " And idProd=" + idProd +
                 " And altura=" + altura.ToString().Replace(',', '.') + " And largura=" + largura + " and (InvisivelPedido=false or InvisivelPedido is null)";
 
             return objPersistence.ExecuteSqlQueryCount(sql, null) > 0;
@@ -1761,7 +1761,7 @@ namespace Glass.Data.DAL
         {
             UpdateValorBenef(null, idProdPed);
         }
-        
+
         /// <summary>
         /// Calcula o valor total do produto com o beneficiamento aplicado
         /// </summary>
@@ -1770,7 +1770,7 @@ namespace Glass.Data.DAL
             var idProd = ObtemIdProd(sessao, idProdPed);
             if (Glass.Configuracoes.Geral.NaoVendeVidro() || !ProdutoDAO.Instance.CalculaBeneficiamento(sessao, (int)idProd))
                 return;
-            
+
             string sql = @"Update produtos_pedido pp set pp.valorBenef=
                 Coalesce(Round((Select Sum(ppb.Valor) from produto_pedido_benef ppb Where ppb.idProdPed=" + idProdPed + @"), 2), 0) 
                 Where pp.idProdPed=" + idProdPed;
@@ -1810,7 +1810,7 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sql);
         }
-            
+
         #endregion
 
         #region Fast Delivery
@@ -1939,7 +1939,7 @@ namespace Glass.Data.DAL
             var idPedidoVerificarLiberacaoPedidosProntos = idPedido > 0 ? idPedido : !String.IsNullOrEmpty(idsPedidos) ? idsPedidos.Split(',').FirstOrDefault().StrParaUint() : 0;
 
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedidoVerificarLiberacaoPedidosProntos);
-            var naoIgnorar =  idLoja > 0 ? !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja) : true;
+            var naoIgnorar = idLoja > 0 ? !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja) : true;
             bool isClienteRota = RotaClienteDAO.Instance.IsClienteAssociado(idCliente);
             bool liberarProdutosProntos = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && !(Liberacao.DadosLiberacao.LiberarClienteRota && isClienteRota);
 
@@ -1958,8 +1958,8 @@ namespace Glass.Data.DAL
             string campos = @"pp.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, g.descricao as descrGrupoProd,
                 mip.idMaterProjMod, mip.IdPecaItemProj, p.idSubgrupoProd, if(p.AtivarAreaMinima=1,
                 Cast(p.AreaMinima as char), '0') as AreaMinima, Round(0, 2) as AliqICMSProd, p.Cst, 
-                ap.Ambiente, ap.Descricao as DescrAmbiente, " + sqlProdutoTabela + @" as ValorProdutoTabela, " + 
-                isClienteRota.ToString().ToLower() + @" as isClienteRota, ped.OrdemCargaParcial" + (liberarProdutosProntos ? ", cast(" + 
+                ap.Ambiente, ap.Descricao as DescrAmbiente, " + sqlProdutoTabela + @" as ValorProdutoTabela, " +
+                isClienteRota.ToString().ToLower() + @" as isClienteRota, ped.OrdemCargaParcial" + (liberarProdutosProntos ? ", cast(" +
                 campoTipoSetorProducao + @" as signed) as TipoSetorProducao, cast(if(ppp.numEtiqueta is not null, 1, null) 
                 as signed) as qtdeEtiquetas, ppp.numEtiqueta as numEtiquetaConsulta, ppp.idProdPedProducao as idProdPedProducaoConsulta, 
                 (plp.idProdLiberarPedido is not null or (select count(*) from produtos_liberar_pedido plpselect where plpselect.qtdeCalc>0
@@ -2017,7 +2017,7 @@ namespace Glass.Data.DAL
                 sql += " and (" + ignoraRota +
                     (tipoReposicaoPedido ?
                         "if(ppp1.situacao is not null, ppp1.situacao, ppp.situacao)=" :
-                        "ppp.situacao=") + 
+                        "ppp.situacao=") +
                     (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
                     Or (ppp.situacao is null and (g.idgrupoprod<>" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" Or sg.produtosEstoque=true)))
                     group by ppp.idProdPedProducao, " +
@@ -2217,9 +2217,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint GetIdProdPedByProdPedEsp(uint idPedido, ProdutosPedidoEspelho prodPedEsp)
         {
-            object retorno = objPersistence.ExecuteScalar("select idProdPed from produtos_pedido where idPedido=" + idPedido + " and idItemProjeto" + 
-                (prodPedEsp.IdItemProjeto != null ? "=" + prodPedEsp.IdItemProjeto.Value : " is null") +" and idProd=" + prodPedEsp.IdProd + 
-                " and altura=" + prodPedEsp.Altura.ToString().Replace(',', '.') + " and largura=" + prodPedEsp.Largura + " and qtde=" + prodPedEsp.Qtde + 
+            object retorno = objPersistence.ExecuteScalar("select idProdPed from produtos_pedido where idPedido=" + idPedido + " and idItemProjeto" +
+                (prodPedEsp.IdItemProjeto != null ? "=" + prodPedEsp.IdItemProjeto.Value : " is null") + " and idProd=" + prodPedEsp.IdProd +
+                " and altura=" + prodPedEsp.Altura.ToString().Replace(',', '.') + " and largura=" + prodPedEsp.Largura + " and qtde=" + prodPedEsp.Qtde +
                 " and idProdPedEsp is null");
 
             return retorno != null && retorno.ToString() != "" ? Glass.Conversoes.StrParaUint(retorno.ToString()) : 0;
@@ -2258,14 +2258,14 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand("delete from produtos_pedido where invisivelPedido=true and idPedido=" + idPedido + @" 
                 and idProdPedEsp not in (select idProdPed from produto_impressao pi
                 inner join impressao_etiqueta ie on (pi.idImpressao=ie.idImpressao)
-                where pi.idPedido=" + idPedido + " and !coalesce(pi.cancelado,false) and ie.situacao=" + 
+                where pi.idPedido=" + idPedido + " and !coalesce(pi.cancelado,false) and ie.situacao=" +
                 (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa + ")");
 
             objPersistence.ExecuteCommand(@"update produtos_pedido set invisivelFluxo=false, invisivelPedido=false, 
                 idProdPedEsp=null where idPedido=" + idPedido + @"
                 and idProdPedEsp not in (select idProdPed from produto_impressao pi
                 inner join impressao_etiqueta ie on (pi.idImpressao=ie.idImpressao)
-                where pi.idPedido=" + idPedido + " and !coalesce(pi.cancelado,false) and ie.situacao=" + 
+                where pi.idPedido=" + idPedido + " and !coalesce(pi.cancelado,false) and ie.situacao=" +
                 (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa + ")");
         }
 
@@ -2406,7 +2406,7 @@ namespace Glass.Data.DAL
                 Where idPedido=" + idPedido + @" 
                     And (p.idGrupoProd=" + (int)NomeGrupoProd.MaoDeObra + @"
                     Or (p.idGrupoProd=" + (int)NomeGrupoProd.Vidro + @"
-                    And coalesce(sg.tipoCalculo, g.tipoCalculo, " + (int)TipoCalculoGrupoProd.Qtd + ") in (" + 
+                    And coalesce(sg.tipoCalculo, g.tipoCalculo, " + (int)TipoCalculoGrupoProd.Qtd + ") in (" +
                     (int)TipoCalculoGrupoProd.M2 + "," + (int)TipoCalculoGrupoProd.M2Direto + ")))";
 
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
@@ -2445,13 +2445,13 @@ namespace Glass.Data.DAL
                 var tipoDesconto = new int();
                 var acrescimo = new decimal();
                 var desconto = new decimal();
-                
+
                 /* Chamado 51998. */
                 if (atualizarTotalPedido)
                 {
                     PedidoDAO.Instance.ObtemDadosComissaoDescontoAcrescimo(sessao, idPedido, out tipoDesconto, out desconto, out tipoAcrescimo,
                         out acrescimo, out percComissao, out idComissionado);
- 
+
                     // Remove acréscimo, desconto e comissão.
                     objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
                     PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(sessao, idPedido, (int?)idAmbientePedido);
@@ -2966,13 +2966,13 @@ namespace Glass.Data.DAL
         {
             sortExpression = null;
 
-            return objPersistence.LoadDataWithSortExpression(SqlPecasSemSaida(idCliente, nomeCliente, idPedido, dataIni, dataFim, idLoja, true), 
+            return objPersistence.LoadDataWithSortExpression(SqlPecasSemSaida(idCliente, nomeCliente, idPedido, dataIni, dataFim, idLoja, true),
                 new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize), GetParamsSemSaida(nomeCliente, dataIni, dataFim));
         }
 
         public int GetCountPecasSemSaida(uint idCliente, string nomeCliente, uint idPedido, string dataIni, string dataFim, uint idLoja)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlPecasSemSaida(idCliente, nomeCliente, idPedido, dataIni, dataFim, idLoja, false), 
+            return objPersistence.ExecuteSqlQueryCount(SqlPecasSemSaida(idCliente, nomeCliente, idPedido, dataIni, dataFim, idLoja, false),
                 GetParamsSemSaida(nomeCliente, dataIni, dataFim));
         }
 
@@ -3009,7 +3009,7 @@ namespace Glass.Data.DAL
                     Or (pp.invisivelFluxo Is Null Or pp.invisivelFluxo=false))";
             else
                 sql += "(pp.invisivelPedido Is Null Or pp.invisivelPedido=False)";
-            
+
             return float.Parse(objPersistence.ExecuteScalar(sessao, sql, new GDAParameter("?codInterno", codInterno)).ToString());
         }
 
@@ -3041,13 +3041,13 @@ namespace Glass.Data.DAL
                     left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
                     left join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
                     " + (PedidoConfig.LiberarPedido ? @"
-                        left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)" : 
+                        left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)" :
                     "") + @"
                 where 1";
 
             if (idProdPed > 0)
                 sql += " and pp.idProdPed=" + idProdPed;
-            
+
             if (idPedido > 0)
                 sql += " and pp.idPedido=" + idPedido;
 
@@ -3089,7 +3089,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RemoverProdutoDescontoAdmin(ref uint idProdPed, float qtdeRemover)
         {
-            lock(_removerProdutoDescontoAdminLock)
+            lock (_removerProdutoDescontoAdminLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -3115,7 +3115,7 @@ namespace Glass.Data.DAL
                         if (objPersistence.ExecuteSqlQueryCount(transaction, @"
                             SELECT COUNT(*) FROM volume_produtos_pedido
                             WHERE idProdPed=" + idProdPed) > 0)
-                        throw new Exception("Esse produto não pode ser removido do pedido porque esta vinculado a um volume. Para Proseguir, remova-o do volume.");
+                            throw new Exception("Esse produto não pode ser removido do pedido porque esta vinculado a um volume. Para Proseguir, remova-o do volume.");
 
                         var prodPed = objPersistence.LoadOneData(transaction, SqlDescontoAdmin(transaction, idProdPed, ObtemIdPedido(transaction, idProdPed), 0, true, true, true, 0, true));
                         var isPcp = PedidoEspelhoDAO.Instance.ExisteEspelho(transaction, prodPed.IdPedido) && prodPed.IdProdPedEsp > 0;
@@ -3273,7 +3273,7 @@ namespace Glass.Data.DAL
 
                         // Atualiza o desconto na comissão
                         DebitoComissaoDAO.Instance.AtualizaDebitoPedido(transaction, prodPed.IdPedido);
-                        
+
                         transaction.Commit();
                         transaction.Close();
                     }
@@ -3297,7 +3297,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RestaurarProdutoDescontoAdmin(ref uint idProdPed, float qtdeRestaurar)
         {
-            lock(_restaurarProdutoDescontoAdminLock)
+            lock (_restaurarProdutoDescontoAdminLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -3447,7 +3447,7 @@ namespace Glass.Data.DAL
 
                         // Atualiza o desconto na comissão
                         DebitoComissaoDAO.Instance.AtualizaDebitoPedido(transaction, prodPed.IdPedido);
-                        
+
                         transaction.Commit();
                         transaction.Close();
                     }
@@ -3481,7 +3481,7 @@ namespace Glass.Data.DAL
                     left join cliente c on (ped.idCli=c.id_Cli)
                 where pp.idProd=" + idProd + @"
                     and ped.tipoPedido in (" + (int)Pedido.TipoPedidoEnum.Venda + "," + (int)Pedido.TipoPedidoEnum.Revenda + @")
-                    and ped.situacao in (" + (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente + "," + 
+                    and ped.situacao in (" + (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente + "," +
                         (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + @")";
 
             return objPersistence.LoadData(sql).ToList();
@@ -3717,7 +3717,7 @@ namespace Glass.Data.DAL
                 where p.idPedidoAnterior=?idPedido and numEtiquetaRepos=?numEtiqueta and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado;
 
             string idPedido = numEtiqueta.Split('-')[0];
-            return objPersistence.ExecuteSqlQueryCount(sql, new GDAParameter("?idPedido", idPedido), 
+            return objPersistence.ExecuteSqlQueryCount(sql, new GDAParameter("?idPedido", idPedido),
                 new GDAParameter("?numEtiqueta", numEtiqueta)) > 0;
         }
 
@@ -3884,7 +3884,7 @@ namespace Glass.Data.DAL
 
             // Garante que haja apenas um tipo de produto
             string sql = "select distinct idProd from produtos_pedido where idPedido=" + idPedido;
-            
+
             IList<uint> idProd = ExecuteMultipleScalar<uint>(sql);
             if (idProd.Count != 1)
                 return false;
@@ -3911,7 +3911,7 @@ namespace Glass.Data.DAL
 
             public float DescontoProd { get; private set; }
             public float DescontoCliente { get; private set; }
-            
+
             public float DescontoMax
             {
                 get { return Math.Max(DescontoProd - DescontoCliente, 0); }
@@ -3948,7 +3948,7 @@ namespace Glass.Data.DAL
                     descontoProd = d.PercDescontoMax;
                 else
                     break;
-            
+
             // Recupera o desconto do cliente (calculado)
             sql = @"select 100 * sum(coalesce(valorDescontoCliente,0)) / 
                 sum((coalesce(valorVendido,0)+coalesce(valorDescontoCliente,0)))
@@ -4035,7 +4035,7 @@ namespace Glass.Data.DAL
                 decimal total = objInsert.Total, custoProd = objInsert.CustoProd;
                 Single totM2 = objInsert.TotM, altura = objInsert.Altura;
 
-                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorVendido, objInsert.Espessura, 
+                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(sessao, idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorVendido, objInsert.Espessura,
                     objInsert.Redondo, 1, false, ref custoProd, ref altura, ref totM2, ref total, false, objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
 
                 objInsert.CustoProd = custoProd;
@@ -4073,7 +4073,7 @@ namespace Glass.Data.DAL
             DescontoAcrescimo.Instance.AplicaDescontoQtde(sessao, objInsert, (int)objInsert.IdPedido, null, null);
             DescontoAcrescimo.Instance.DiferencaCliente(sessao, objInsert, (int)objInsert.IdPedido, null, null);
             DescontoAcrescimo.Instance.CalculaValorBruto(sessao, objInsert);
-            
+
             objInsert.IdProdPed = base.Insert(sessao, objInsert);
 
             AtualizaBenef(sessao, objInsert.IdProdPed, objInsert.Beneficiamentos);
@@ -4254,8 +4254,8 @@ namespace Glass.Data.DAL
                     descontoFormPagtoProd = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(session, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
                         produtoPedidoInserido[0].IdGrupoProd, produtoPedidoInserido[0].IdSubgrupoProd);
 
-                        if ((descontoFormPagtoProd?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault() != (descontoFormPagtoProdNovo?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault())
-                            throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
+                    if ((descontoFormPagtoProd?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault() != (descontoFormPagtoProdNovo?.IdDescontoFormaPagamentoDadosProduto).GetValueOrDefault())
+                        throw new Exception("O desconto por forma de pagamento e dados do produto novo é diferente do desconto de um dos produtos já inserido no pedido.");
 
                     // Valida o Grupo e Subgrupo dos produtos
                     if (descontoFormPagtoProdNovo != null)
@@ -4604,7 +4604,7 @@ namespace Glass.Data.DAL
 
             return base.Update(sessao, objUpdate);
         }
-        
+
         public int UpdateComTransacao(ProdutosPedido objUpdate)
         {
             FilaOperacoes.AtualizarProdutoPedido.AguardarVez();
@@ -4616,7 +4616,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Update(transaction, objUpdate);
-                    
+
                     transaction.Commit();
                     transaction.Close();
 
@@ -4738,7 +4738,7 @@ namespace Glass.Data.DAL
                     if (objUpdate.IdAplicacao > 0)
                     {
                         var aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdAplicacao.Value);
-                        
+
                         if (aplicacao != null && aplicacao.NaoPermitirFastDelivery)
                             throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", objUpdate.DescrProduto, aplicacao.CodInterno));
                     }
@@ -4834,7 +4834,7 @@ namespace Glass.Data.DAL
                 objUpdate.CustoProd = custoProd;
                 objUpdate.TotM2Calc = totM2Calc;
                 objUpdate.TipoCalculoUsadoPedido = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)objUpdate.IdProd);
-                objUpdate.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(sessao, (int)objUpdate.IdProd, PedidoDAO.Instance.ObtemTipoEntrega(sessao, objUpdate.IdPedido), 
+                objUpdate.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(sessao, (int)objUpdate.IdProd, PedidoDAO.Instance.ObtemTipoEntrega(sessao, objUpdate.IdPedido),
                     idCliente, false, PedidoDAO.Instance.ObtemTipoVenda(sessao, objUpdate.IdPedido) == (int)Pedido.TipoVendaPedido.Reposição, objUpdate.PercDescontoQtde, (int?)objUpdate.IdPedido, null, null);
 
                 if (ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)objUpdate.IdProd) == (int)Glass.Data.Model.NomeGrupoProd.Vidro && objUpdate.Espessura == 0)
@@ -5094,7 +5094,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Obtém os produtos de pedido das ordens de carga
 
         /// <summary>
@@ -5199,7 +5199,7 @@ namespace Glass.Data.DAL
             {
                 string sqlPadrao = Sql(null, idPedido, 0, 0, 0, false, true, false, true, false, false, false, false, 0, true);
                 string sql = @"select distinct temp.* from (" + sqlPadrao + @") as temp ";
-                
+
                 sql += @" where temp.IdGrupoProd = 1 and temp.IdProd 
                     not in(select IdProd from produtos_pedido_exportacao where idPedido=" + idPedido + @")
                     And (temp.idSubgrupoProd is null Or temp.idSubgrupoProd not in 
@@ -5259,17 +5259,17 @@ namespace Glass.Data.DAL
                 benefObrigatorios = beneficiamentos
                     .Where(f => !string.IsNullOrWhiteSpace(f.IdsSubGrupoPreenchimentoObrigatorio)
                         && f.IdsSubGrupoPreenchimentoObrigatorio.Split(',').Select(x => x.StrParaInt()).ToList().Contains(idSubGrupoProd.GetValueOrDefault(0))
-                        && (f.TipoControle == TipoControleBenef.ListaSelecao || 
-                            f.TipoControle == TipoControleBenef.Lapidacao || 
-                            f.TipoControle == TipoControleBenef.Quantidade || 
+                        && (f.TipoControle == TipoControleBenef.ListaSelecao ||
+                            f.TipoControle == TipoControleBenef.Lapidacao ||
+                            f.TipoControle == TipoControleBenef.Quantidade ||
                             f.TipoControle == TipoControleBenef.Bisote ||
-                            f.TipoControle == TipoControleBenef.ListaSelecaoQtd) ).ToList();
+                            f.TipoControle == TipoControleBenef.ListaSelecaoQtd)).ToList();
 
                 var mensagemProd = string.Empty;
 
                 foreach (var benef in benefObrigatorios)
                 {
-                    if (!produtoPedido.Beneficiamentos.Any(f => (BenefConfigDAO.Instance.GetElement(f.IdBenefConfig).IdParent == benef.IdBenefConfig || f.IdBenefConfig == benef.IdBenefConfig )   ))
+                    if (!produtoPedido.Beneficiamentos.Any(f => (BenefConfigDAO.Instance.GetElement(f.IdBenefConfig).IdParent == benef.IdBenefConfig || f.IdBenefConfig == benef.IdBenefConfig)))
                     {
                         if (string.IsNullOrEmpty(mensagemProd))
                         {
@@ -5279,14 +5279,43 @@ namespace Glass.Data.DAL
                                 mensagemProd += string.Format("Ambiente ({0}) ", AmbientePedidoDAO.Instance.GetElement(produtoPedido.IdAmbientePedido.Value).Ambiente);
 
                             mensagemProd += string.Format("Produto ({0})\n", produtoPedido.DescricaoProdutoComBenef);
-                }
-            }
+                        }
+                    }
                 }
 
                 mensagem += mensagemProd;
             }
 
             return mensagem;
+        }
+
+        /// <summary>
+        /// Recupera as peças cortadas do pedido de produção associado aos de revenda (pedido de produção para corte)
+        /// </summary>
+        /// <param name="idLiberarPedido">Id da liberação dos pedidos de revenda associados</param>
+        /// <returns></returns>
+        public List<ProdutosPedido> ObterProdutosCortados( uint idLiberarPedido)
+        {
+            return ObterProdutosCortados(null, idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Recupera as peças cortadas do pedido de produção associado aos de revenda (pedido de produção para corte)
+        /// </summary>
+        /// <param name="idLiberarPedido">Id da liberação dos pedidos de revenda associados</param>
+        /// <returns></returns>
+        public List<ProdutosPedido> ObterProdutosCortados(GDASession session, uint idLiberarPedido)
+        {
+            var sql = @"SELECT pp.*, prod.CodInterno, prod.Descricao AS DescrProduto FROM produtos_pedido pp
+                        INNER JOIN produto prod ON pp.IdProd=prod.IdProd
+                        INNER JOIN pedido p on pp.IdPedido=p.IdPedido
+                        WHERE IdPedidoRevenda IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido=?idLiberarPedido)";
+
+            var parameter = new GDAParameter("?idLiberarPedido", idLiberarPedido);
+
+            var retorno = objPersistence.LoadData(session, sql, parameter);
+
+            return retorno;
         }
     }
 }

@@ -332,6 +332,7 @@
     <None Include="Properties\DataSources\Glass.Data.Model.TransacaoCapptaTef.datasource" />
     <None Include="Properties\DataSources\Glass.Data.RelModel.PecasPendentes.datasource" />
     <None Include="Properties\DataSources\Glass.Data.RelModel.PedidoRpt.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.RelModel.ProdutosCortadosRpt.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ArquivoCartaoNaoIdentificadoPesquisa.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.CartaoNaoIdentificadoPesquisa.datasource" />
     <None Include="Properties\DataSources\Glass.Global.Negocios.Entidades.FichaCliente.datasource" />

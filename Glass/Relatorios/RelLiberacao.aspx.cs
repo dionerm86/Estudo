@@ -161,8 +161,11 @@ namespace Glass.UI.Web.Relatorios
                     viaAlmoxarifadoIgualCliente = "true";
 
                 var produtosLib = ProdutosLiberarPedidoDAO.Instance.GetForRpt(liberacao.IdLiberarPedido);
+                var produtosCortados = ProdutosPedidoDAO.Instance.ObterProdutosCortados(liberacao.IdLiberarPedido);
+
                 // Carrega Datasets para o relatório                
                 var parcelasLiberacao = ParcelaLiberacaoDAO.Instance.ObtemParcelasLiberacao(liberacao.IdLiberarPedido);
+                var produtosCortadosRpt = ProdutosCortadosRptDAO.Instance.CopiaLista(produtosCortados.ToArray());
                 var lstPedidoRpt = PedidoRptDAL.Instance.CopiaLista(lstPedidosLib.ToArray(), PedidoRpt.TipoConstrutor.RelatorioLiberacao, false, login);
                 var lstProdLib = ProdutosLiberarPedidoRptDAL.Instance.CopiaLista(produtosLib);
                 var pecasCanceladas = ProdutoPedidoProducaoRptDAL.Instance.CopiaLista(ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoRelatorioLiberacao((int)liberacao.IdLiberarPedido, true).ToArray());
@@ -250,6 +253,7 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("NumeroVidros", numeroVidros));
                 lstParam.Add(new ReportParameter("NumeroMateriais", numeroMateriais));
                 lstParam.Add(new ReportParameter("ExibirSaldoDevedor", FinanceiroConfig.FinanceiroRec.ExibirSaldoDevedorRelsRecebimento.ToString()));
+                lstParam.Add(new ReportParameter("ExibirProdutosCortados", (!produtosCortadosRpt.Any()).ToString()));
 
                 report.DataSources.Add(new ReportDataSource("LiberarPedido", new LiberarPedido[] { liberacao }));
                 report.DataSources.Add(new ReportDataSource("ParcelaLiberacao", parcelasLiberacao));
@@ -259,6 +263,7 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("ResumoCorte", resumoCorte));
                 report.DataSources.Add(new ReportDataSource("ResumoCorteComRevenda", resumoCorteComRevenda));
                 report.DataSources.Add(new ReportDataSource("ProdutoPedidoProducaoRpt", pecasCanceladas));
+                report.DataSources.Add(new ReportDataSource("ProdutosCortados", produtosCortadosRpt));
             }
 
             #endregion
