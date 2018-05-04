@@ -35,7 +35,9 @@ namespace Glass.Data.RelModel
             TotM2 = produto.TotM;
 
             Qtde = produto.Qtde;
-    }
+
+            Peso = produto.Peso;
+        }
 
         public uint IdPedido { get; set; }
 
@@ -54,5 +56,7 @@ namespace Glass.Data.RelModel
         public double TotM2 { get; set; }
 
         public float Qtde { get; set; }
+
+        public float Peso { get; set; }
     }
 }

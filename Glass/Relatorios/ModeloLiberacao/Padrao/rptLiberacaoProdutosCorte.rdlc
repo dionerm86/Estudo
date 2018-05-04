@@ -32,6 +32,9 @@
             <TablixColumn>
               <Width>1.15639cm</Width>
             </TablixColumn>
+            <TablixColumn>
+              <Width>1.23cm</Width>
+            </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
@@ -284,13 +287,50 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>textbox10</rd:DefaultName>
                       <ZIndex>96</ZIndex>
                       <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox11">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value EvaluationMode="Constant">Peso</Value>
+                              <Style>
+                                <FontSize>9pt</FontSize>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox11</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
@@ -598,12 +638,46 @@
                     </Textbox>
                   </CellContents>
                 </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox13">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!Peso.Value.ToString() + "kg"</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox13</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>0.5pt</PaddingTop>
+                        <PaddingBottom>0.5pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
               </TablixCells>
             </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
           <TablixMembers>
+            <TablixMember />
             <TablixMember />
             <TablixMember />
             <TablixMember />
@@ -636,7 +710,7 @@
         <Top>0.92604cm</Top>
         <Left>0.3175cm</Left>
         <Height>1.02911cm</Height>
-        <Width>15.55334cm</Width>
+        <Width>16.78334cm</Width>
         <Style>
           <BackgroundColor>="White"</BackgroundColor>
           <FontSize>8pt</FontSize>
@@ -679,7 +753,7 @@
     <Height>2.1138cm</Height>
     <Style />
   </Body>
-  <Width>15.94172cm</Width>
+  <Width>17.15376cm</Width>
   <Page>
     <PageHeight>29.7cm</PageHeight>
     <PageWidth>21cm</PageWidth>
@@ -713,11 +787,18 @@
       </ConnectionProperties>
       <rd:DataSourceID>f2c2c940-d7c9-4a73-a27b-ccae38d06cc8</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="GlassDataRelModel2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>39f8f1f3-fa03-4455-a950-cda4849addbb</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="ProdutosCortados">
       <Query>
-        <DataSourceName>GlassDataRelModel1</DataSourceName>
+        <DataSourceName>GlassDataRelModel2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -748,6 +829,10 @@
         <Field Name="PedCli">
           <DataField>PedCli</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
         <Field Name="Qtde">
           <DataField>Qtde</DataField>

@@ -23,6 +23,13 @@
       </ConnectionProperties>
       <rd:DataSourceID>ee942f13-fbe3-42f6-96f1-3d45dc22dd8d</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="GlassDataRelModel2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>7152e13a-e648-43f9-a352-35e4343665d4</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="ResumoCorte">
@@ -679,7 +686,7 @@
     </DataSet>
     <DataSet Name="ProdutosCortados">
       <Query>
-        <DataSourceName>GlassDataRelModel1</DataSourceName>
+        <DataSourceName>GlassDataRelModel2</DataSourceName>
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
@@ -710,6 +717,10 @@
         <Field Name="PedCli">
           <DataField>PedCli</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
         </Field>
         <Field Name="Qtde">
           <DataField>Qtde</DataField>
