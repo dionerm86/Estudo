@@ -48,10 +48,6 @@
     <Reference Include="Boleto.Net">
       <HintPath>..\Dlls\Boleto.Net.dll</HintPath>
     </Reference>
-    <Reference Include="CADImport, Version=8.0.0.25264, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\CADImport.dll</HintPath>
-    </Reference>
     <Reference Include="CalcEngine, Version=1.7.1.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.1.7.2.232\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
@@ -93,7 +89,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
@@ -267,6 +263,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\ReportViewer\Microsoft.SqlServer.Types.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data, Version=6.9.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.11\lib\net40\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="netDxf, Version=0.6.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\netDxf.dll</HintPath>
@@ -341,6 +341,7 @@
       <HintPath>..\packages\CalcEngine.1.7.2.232\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.ApplicationServices">
       <Private>True</Private>
     </Reference>
@@ -420,6 +421,7 @@
     <Content Include="Cadastros\CadClassificacaoRoteiroProducao.aspx" />
     <Content Include="Cadastros\CadCliente.aspx" />
     <Content Include="Cadastros\CadClienteMulti.aspx" />
+    <Content Include="Cadastros\CadExpressaoRentabilidade.aspx" />
     <Content Include="Cadastros\CadFornecedorVinculos.aspx" />
     <Content Include="Cadastros\CadClienteVinculos.aspx" />
     <Content Include="Cadastros\CadComissao.aspx" />
@@ -449,6 +451,7 @@
     <Content Include="Cadastros\CadCartaoNaoIdentificado.aspx" />
     <Content Include="Cadastros\CadDescontoFormaPagtoDadosProduto.aspx" />
     <Content Include="Cadastros\CadIestUfLoja.aspx" />
+    <Content Include="Cadastros\CadIndicadorFinanceiro.aspx" />
     <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
@@ -505,6 +508,7 @@
     <Content Include="Listas\LstBandeiraCartao.aspx" />
     <Content Include="Listas\LstChapasDisponiveis.aspx" />
     <Content Include="Listas\LstComissaoContaRecebida.aspx" />
+    <Content Include="Listas\LstConfigRegistroRentabilidade.aspx" />
     <Content Include="Listas\LstCustoFixoGerados.aspx" />
     <Content Include="Cadastros\CadCustoFixoGerar.aspx" />
     <Content Include="Cadastros\CadCustoFixoRetificar.aspx" />
@@ -1408,6 +1412,7 @@
     <Content Include="Relatorios\RelPedido.aspx" />
     <Content Include="Relatorios\RelPedidoRepos.aspx" />
     <Content Include="Relatorios\RelRetalhosAssociados.aspx" />
+    <Content Include="Relatorios\Rentabilidade\VisualizacaoItemRentabilidade.aspx" />
     <Content Include="Relatorios\ResumoDiario.aspx" />
     <Content Include="Scripts\Carregamento.js" />
     <Content Include="Scripts\CNI.js" />
@@ -1424,6 +1429,7 @@
     <Content Include="Scripts\MDFe\ctrlCondutorVeiculoMDFe.js" />
     <Content Include="Scripts\MDFe\ctrlLacreRodoviarioMDFe.js" />
     <Content Include="Scripts\MDFe\ctrlPedagioRodoviarioMDFe.js" />
+    <Content Include="Scripts\Rentabilidade\itemrentabilidadedatasourceview.js" />
     <Content Include="Scripts\svg-pan-zoom.js" />
     <Content Include="Scripts\cappta-tef.js" />
     <Content Include="Style\cappta-tef.css" />
@@ -1475,6 +1481,7 @@
     <Content Include="Utils\SelCidade.aspx" />
     <Content Include="Utils\AvaliacaoAtendimento.aspx" />
     <Content Include="Utils\SelNotaFiscalConsumidorReferenciada.aspx" />
+    <Content Include="Utils\SelProdMateriaPrima.aspx" />
     <Content Include="Utils\VersaoDLLs.aspx" />
     <Content Include="Utils\SelCliente.aspx" />
     <Content Include="Utils\SelColocador.aspx" />
@@ -3050,6 +3057,13 @@
     <Compile Include="Cadastros\CadClienteMulti.aspx.designer.cs">
       <DependentUpon>CadClienteMulti.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Cadastros\CadExpressaoRentabilidade.aspx.cs">
+      <DependentUpon>CadExpressaoRentabilidade.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadExpressaoRentabilidade.aspx.designer.cs">
+      <DependentUpon>CadExpressaoRentabilidade.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Cadastros\CadFornecedorVinculos.aspx.cs">
       <DependentUpon>CadFornecedorVinculos.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3245,6 +3259,13 @@
     </Compile>
     <Compile Include="Cadastros\CadIestUfLoja.aspx.designer.cs">
       <DependentUpon>CadIestUfLoja.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadIndicadorFinanceiro.aspx.cs">
+      <DependentUpon>CadIndicadorFinanceiro.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadIndicadorFinanceiro.aspx.designer.cs">
+      <DependentUpon>CadIndicadorFinanceiro.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadManifestoEletronico.aspx.cs">
       <DependentUpon>CadManifestoEletronico.aspx</DependentUpon>
@@ -3576,6 +3597,13 @@
     </Compile>
     <Compile Include="Listas\LstComissaoContaRecebida.aspx.designer.cs">
       <DependentUpon>LstComissaoContaRecebida.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstConfigRegistroRentabilidade.aspx.cs">
+      <DependentUpon>LstConfigRegistroRentabilidade.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstConfigRegistroRentabilidade.aspx.designer.cs">
+      <DependentUpon>LstConfigRegistroRentabilidade.aspx</DependentUpon>
     </Compile>
     <Compile Include="Listas\LstCustoFixoGerados.aspx.cs">
       <DependentUpon>LstCustoFixoGerados.aspx</DependentUpon>
@@ -7140,6 +7168,13 @@
     <Compile Include="Relatorios\RelRetalhosAssociados.aspx.designer.cs">
       <DependentUpon>RelRetalhosAssociados.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Relatorios\Rentabilidade\VisualizacaoItemRentabilidade.aspx.cs">
+      <DependentUpon>VisualizacaoItemRentabilidade.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Relatorios\Rentabilidade\VisualizacaoItemRentabilidade.aspx.designer.cs">
+      <DependentUpon>VisualizacaoItemRentabilidade.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Relatorios\ResumoDiario.aspx.cs">
       <DependentUpon>ResumoDiario.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -7474,6 +7509,13 @@
     </Compile>
     <Compile Include="Utils\SelNotaFiscalConsumidorReferenciada.aspx.designer.cs">
       <DependentUpon>SelNotaFiscalConsumidorReferenciada.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\SelProdMateriaPrima.aspx.cs">
+      <DependentUpon>SelProdMateriaPrima.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Utils\SelProdMateriaPrima.aspx.designer.cs">
+      <DependentUpon>SelProdMateriaPrima.aspx</DependentUpon>
     </Compile>
     <Compile Include="Utils\VersaoDLLs.aspx.cs">
       <DependentUpon>VersaoDLLs.aspx</DependentUpon>
@@ -8425,6 +8467,10 @@
       <Project>{53e0ef88-b812-45fe-9f91-f4f7889bd6cb}</Project>
       <Name>Glass.Global.UI.Web.Process</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Mathematical\Glass.Mathematical\Glass.Mathematical.csproj">
+      <Project>{79bba571-e0aa-4861-a91d-c6732c94b83a}</Project>
+      <Name>Glass.Mathematical</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Negocios\Glass.Negocios.Componentes\Glass.Negocios.Componentes.csproj">
       <Project>{064ef0a2-6634-480e-ad8b-1f866a2a7b5b}</Project>
       <Name>Glass.Negocios.Componentes</Name>
@@ -8444,6 +8490,10 @@
     <ProjectReference Include="..\Relatorios\UI\Glass.Relatorios.UI.Web\Glass.Relatorios.UI.Web.csproj">
       <Project>{2dd004e3-b976-48eb-898a-86283bc13a55}</Project>
       <Name>Glass.Relatorios.UI.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Rentabilidade\Glass.Rentabilidade\Glass.Rentabilidade.csproj">
+      <Project>{049560e8-0306-483c-a782-8be14118a6ed}</Project>
+      <Name>Glass.Rentabilidade</Name>
     </ProjectReference>
     <ProjectReference Include="..\UI\Web\Glass.UI.Web.Process\Glass.UI.Web.Process.csproj">
       <Project>{e621367f-3fd6-4ef9-8824-c0dae2d3da11}</Project>

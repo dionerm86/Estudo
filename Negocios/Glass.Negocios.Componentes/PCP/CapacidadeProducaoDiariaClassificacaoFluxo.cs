@@ -62,7 +62,7 @@ namespace Glass.PCP.Negocios.Componentes
 
             using (var session = SourceContext.Instance.CreateSession())
             {
-                session.Delete<Glass.PCP.Data.Model.CapacidadeProducaoDiariaClassificacao>
+                session.Delete<Data.Model.CapacidadeProducaoDiariaClassificacao>
                     (Colosoft.Query.ConditionalContainer.Parse("Date(Data)=?data")
                     .Add("?data", data.Date));
 

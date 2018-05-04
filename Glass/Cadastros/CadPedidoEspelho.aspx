@@ -1118,6 +1118,23 @@
                                             <asp:Label ID="lblValorIpi" runat="server" Text='<%# Eval("ValorIpi", "{0:C}") %>'></asp:Label>
                                         </td>
                                     </tr>
+                                    <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'> 
+                                        <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                            <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label> 
+                                        </td>
+                                        <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                            <asp:Label runat="server" Text="Rent. Financeira"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label> 
+                                            <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=pedidoespelho&id=<%# Eval("IdPedido") %>"); return false;'>
+                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a> 
+                                        </td>
+                                        <td align="left" nowrap="nowrap" colspan="4"></td>
+                                    </tr>
                                 </table>
                                 <asp:HiddenField ID="hdfTipoEntrega" runat="server" Value='<%# Eval("TipoEntrega") %>' />
                                 <asp:HiddenField ID="hdfCliRevenda" runat="server" Value='<%# Eval("CliRevenda") %>' />

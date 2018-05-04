@@ -551,6 +551,11 @@
                                     Visible='<%# Eval("AlterarProcessoAplicacaoVisible") %>' NavigateUrl='<%# ResolveUrl("~/Utils/AlterarProcessoAplicacao.aspx?idPedido=" + Eval("IdPedido")) %>'>
                                     <img border="0" src="../Images/application_edit.gif"/></asp:HyperLink>
                                 <asp:HiddenField ID="hdfMaoDeObra" runat="server" Value='<%# (int)Eval("TipoPedido") == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra %>' />
+
+                                <asp:PlaceHolder ID="pchRentabillidade" runat="server" Visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                    <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=pedido&id=<%# Eval("IdPedido") %>"); return false;'>
+                                        <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
+                                </asp:PlaceHolder>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>

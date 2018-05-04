@@ -27,7 +27,8 @@
             var nomeFornecFiltro = FindControl("txtNome", "input");
             var idFornecFiltro = FindControl("txtFornecedor", "input");
 
-            window.opener.setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, nomeFornec, valorVenc, dataVenc, descrPlanoConta, window, idFornecFiltro, nomeFornecFiltro);
+            window.opener.setContaPagar(idContaPg, idCompra, idCustoFixo, idImpostoServ, idFornec, nomeFornec, valorVenc, dataVenc, descrPlanoConta, window,
+                idFornecFiltro.value, nomeFornecFiltro.value);
         }
     
         function escondeConta(controle) {

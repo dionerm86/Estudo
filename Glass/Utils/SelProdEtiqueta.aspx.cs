@@ -128,5 +128,13 @@ namespace Glass.UI.Web.Utils
         {
             return ProdutosPedidoEspelhoDAO.Instance.IsProdutoLaminadoComposicao(idProdPed.StrParaUint()).ToString().ToLower();
         }
+
+        [Ajax.AjaxMethod()]
+        public string PodeImprimirPedidoImportado(string idPedido)
+        {
+            if (Glass.Configuracoes.PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(idPedido.StrParaUint()))
+                return PedidoEspelhoDAO.Instance.IsPedidoConferido(idPedido.StrParaUint()).ToString();
+            return "true";
+        }
     }
 }

@@ -20,6 +20,8 @@
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
+    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+
     <script type="text/javascript">
         function exibirBenef(botao) {
             var tabela = document.getElementById("tbConfigVidro");
@@ -441,6 +443,10 @@
                 alert("O caractere ( ; ) não é permitido nesse campo.");
                 e.currentTarget.value = "";
             }
+        }
+
+        function openProdMateriaPrima() {
+            openWindow(600, 1000, "../Utils/SelProdMateriaPrima.aspx?idprod=" + GetQueryString("idProd"));
         }
 
     </script>
@@ -1017,13 +1023,16 @@
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Matéria Prima">
-                            <EditItemTemplate>
-                                <div runat="server" id="divProdBaixaEstoque" clientidmode="Static">
-                                    <uc6:ctrlProdutoBaixaEstoque ID="ctrlProdutoBaixaEstoque1" runat="server"
-                                        BaixasEstoque='<%# Bind("BaixasEstoque") %>' />
-                                </div>
+                            <EditItemTemplate>                                
+                                <asp:ImageButton ID="imbOpenProdMateriaPrima" Style="float: left" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                    OnClientClick="openProdMateriaPrima(); return false;" />
+                                <asp:Label Text="Adicionar Matéria Prima" runat="server" />
+<%--                            <div runat="server" id="divProdBaixaEstoque" clientidmode="Static">
+                                <uc6:ctrlProdutoBaixaEstoque ID="ctrlProdutoBaixaEstoque1" runat="server"
+                                    BaixasEstoque='<%# Bind("BaixasEstoque") %>' />
+                            </div>--%>
                             </EditItemTemplate>
-                        </asp:TemplateField>
+                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Altura" SortExpression="Altura">
                             <ItemTemplate>
                                 <asp:Label ID="Label18" runat="server" Text='<%# Bind("Altura") %>'></asp:Label>

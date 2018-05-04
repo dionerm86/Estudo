@@ -1101,6 +1101,99 @@ namespace Glass.Global.Negocios.Componentes
 
         #endregion
 
+        #region Produto Baixa Estoque
+
+        /// <summary>
+        /// Cria a instancia de um novo produto.
+        /// </summary>
+        /// <returns></returns>
+        public Estoque.Negocios.Entidades.ProdutoBaixaEstoque CriarProdutoBaixaEstoque()
+        {
+            return SourceContext.Instance.Create<Estoque.Negocios.Entidades.ProdutoBaixaEstoque>();
+        }
+
+        public IList<Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoquePesquisa> ObterProdBaixaEst(int idProd)
+        {
+            var consulta = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.ProdutoBaixaEstoque>("pbe")
+                .LeftJoin<Data.Model.Produto>("pbe.IdProdBaixa=prod.IdProd", "prod")
+                .LeftJoin<Data.Model.EtiquetaAplicacao>("pbe.IdAplicacao=ea.IdAplicacao", "ea")
+                .LeftJoin<Data.Model.EtiquetaProcesso>("pbe.IdProcesso=ep.IdProcesso", "ep")
+                .Select(@"pbe.IdProdBaixaEst, pbe.IdProd, pbe.IdProdBaixa, pbe.Qtde, pbe.IdAplicacao, pbe.IdProcesso,
+                        pbe.Altura, pbe.Largura, pbe.Forma, ep.Descricao AS CodProcesso, ea.Descricao AS CodAplicacao, prod.CodInterno AS CodInternoProduto")
+                .Where("pbe.IdProd=?idProd")
+                .Add("?idProd", idProd);
+
+            var resultado = consulta.ToVirtualResult<Estoque.Negocios.Entidades.ProdutoBaixaEstoquePesquisa>();
+
+            resultado.DataPageLoaded += (sender, e) =>
+            {
+                foreach (var i in e.Page)
+                {
+                    i.ProdutoBaixaEstBeneficiamentos = SourceContext.Instance.CreateQuery()
+                .From<Glass.Data.Model.ProdutoBaixaEstoqueBenef>()
+                .Where("IdProdBaixaEst=?idProdBaixaEst")
+                .Add("?idProdBaixaEst", i.IdProdBaixaEst)
+                .Execute().ProcessResult<Entidades.ProdutoBaixaEstoqueBenef>().ToList();
+                }
+            };
+
+            return resultado;
+        }
+
+
+        public IList<Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoque> ObterProdutoBaixaEstoque(int idProdBaixaEst)
+        {
+            var consulta = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.ProdutoBaixaEstoque>("pbe")
+                .Where("pbe.IdProdBaixaEst=?idProdBaixaEst")
+                .Add("?idProdBaixaEst", idProdBaixaEst);
+
+            return consulta.ProcessResult<Estoque.Negocios.Entidades.ProdutoBaixaEstoque>().ToList();
+        }
+
+        public Colosoft.Business.SaveResult SalvarProdutoBaixaEstoque(Estoque.Negocios.Entidades.ProdutoBaixaEstoque produtoBaixaEstoque)
+        {
+            produtoBaixaEstoque.Require("produtoBaixaEstoque").NotNull();
+
+            var produto = ObtemProduto(produtoBaixaEstoque.IdProd);
+
+            if (!produtoBaixaEstoque.ExistsInStorage && !produto.BaixasEstoque.Contains(produtoBaixaEstoque))
+                produto.BaixasEstoque.Add(produtoBaixaEstoque);
+
+            else if(produto.BaixasEstoque.Contains(produtoBaixaEstoque))
+            {
+                produto.BaixasEstoque.Remove(produtoBaixaEstoque);
+                produto.BaixasEstoque.Add(produtoBaixaEstoque);
+            }
+
+            var retorno = SalvarProduto(produto);
+
+            return retorno;
+        }
+
+        /// <summary>
+        /// Apaga os dados do produto do pedido.
+        /// </summary>
+        /// <param name="produtoPedido"></param>
+        /// <returns></returns>
+        public Colosoft.Business.DeleteResult ApagarProdutoBaixaEstoque(Estoque.Negocios.Entidades.ProdutoBaixaEstoque produtoBaixaEstoque)
+        {
+            produtoBaixaEstoque.Require("produtoBaixaEstoque").NotNull();
+
+            var produto = ObtemProduto(produtoBaixaEstoque.IdProd);
+
+            if (produto.BaixasEstoque.Remove(produtoBaixaEstoque))
+            {
+                var resultado = SalvarProduto(produto);
+                return new Colosoft.Business.DeleteResult(resultado.Success, resultado.Message);
+            }
+
+            return new Colosoft.Business.DeleteResult(false, "Matéria prima não encontrada no produto.".GetFormatter());
+        }
+
+        #endregion
+
         #region Membros de IValidadorProduto
 
         /// <summary>

@@ -48,6 +48,10 @@
         /// <summary>
         /// Produto trocado.
         /// </summary>
-        ProdutoTrocado
+        ProdutoTrocado,
+        /// <summary>
+        /// Produto baixa estoque
+        /// </summary>
+        ProdutoBaixaEst
     }
 }

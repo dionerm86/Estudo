@@ -94,6 +94,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDAPLICACAO")]
         public uint? IdAplicacao { get; set; }
 
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE", Direction = DirectionParameter.OutputOnlyInsert)]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.OutputOnlyInsert)]
+        public decimal RentabilidadeFinanceira { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

@@ -179,6 +179,7 @@ namespace Glass.Data.DAL
                         JurosParcelaCartao novo = new JurosParcelaCartao();
                         novo.IdTipoCartao = (int)idTipoCartao;
                         novo.NumParc = i;
+                        novo.IdLoja = idLoja;
                         JurosParcelaCartaoDAO.Instance.Insert(novo);
                     }
         }

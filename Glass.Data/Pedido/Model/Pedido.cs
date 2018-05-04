@@ -496,6 +496,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDTRANSPORTADOR")]
         public int? IdTransportador { get; set; }
 
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE", Direction = DirectionParameter.Input)]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.Input)]
+        public decimal RentabilidadeFinanceira { get; set; }
+
         #region Dados para exportação
 
         [PersistenceProperty("IdPedidoExterno")]

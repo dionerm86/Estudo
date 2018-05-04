@@ -278,8 +278,7 @@ namespace Glass.Data.DAL
                         foreach (decimal v in antecip.ValoresPagto)
                             total += v;
 
-                        if (Math.Round(total, 2) < Math.Round(antecip.ValorAntecip, 2) ||
-                            (!FinanceiroConfig.FormaPagamento.CreditoFornecedor && Math.Round(total, 2) != Math.Round(antecip.ValorAntecip, 2)))
+                        if (Math.Round(total, 2) != Math.Round(antecip.ValorAntecip, 2))
                             throw new Exception("O valor pago não confere com o valor a pagar. Valor pago: " + total.ToString("C") +
                                 " Valor a pagar: " + antecip.ValorAntecip.ToString("C"));
 
@@ -703,7 +702,7 @@ namespace Glass.Data.DAL
                         // Verifica se existe alguma compra associada à esta antecipação
                         if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(transaction, "Select count(*) From compra Where idAntecipFornec=" + idAntecipFornec +
                             " And situacao IN(" + (int)Compra.SituacaoEnum.AguardandoEntrega + "," + (int)Compra.SituacaoEnum.Finalizada + ")").ToString()) > 0)
-                            throw new Exception("Cancele todas as notas associadas à esta antecipação antes de cancelar a mesma.");
+                            throw new Exception("Cancele todas as compras associadas à esta antecipação antes de cancelar a mesma.");
 
                         // Verifica se alguma parcela desta antecipação já foi paga
                         if (ContasPagarDAO.Instance.ExistePagaAntecipFornec(transaction, idAntecipFornec))
@@ -711,12 +710,6 @@ namespace Glass.Data.DAL
 
                         if (antecip.Situacao == (int)AntecipacaoFornecedor.SituacaoAntecipFornec.Cancelada)
                             throw new Exception("A antecipação de fornecedor informada já está cancelada.");
-
-                        if (antecip.Saldo < antecip.ValorAntecip && antecip.Situacao == 4)
-                        {
-                            throw new Exception(string.Format(@"Não há saldo suficiente para cancelar a antecipação.Saldo atual {0} , valor total antecipação {1}",
-                                antecip.Saldo.ToString("C"), antecip.ValorAntecip.ToString("C")));
-                        }
 
                         ContasPagar[] lstContasPg = ContasPagarDAO.Instance.GetByAntecipFornec(transaction, antecip.IdAntecipFornec);
 
@@ -751,6 +744,7 @@ namespace Glass.Data.DAL
 
                                 if (cx.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoAntecipFornecGerado))
                                 {
+                                    //Verifica se o fornecedor possui credito para estornar
                                     var saldoCreditoFornec = FornecedorDAO.Instance.GetCredito(transaction, antecip.IdFornec);
                                     if (saldoCreditoFornec < cx.ValorMov)
                                     {

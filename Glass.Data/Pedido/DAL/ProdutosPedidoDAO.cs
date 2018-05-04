@@ -4194,13 +4194,13 @@ namespace Glass.Data.DAL
                     throw new Exception("Falha ao incluir produto. Ambiente não encontrado. Atualize a pagina e tente novamente.");
             }
 
-            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda && (objInsert.IdGrupoProd != (uint)NomeGrupoProd.Vidro ||
                 (objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd,
                 (int)objInsert.IdSubgrupoProd))) && (int)objInsert.IdGrupoProd != (uint)NomeGrupoProd.MaoDeObra)
             {
                 throw new Exception("Não é possível incluir produtos de revenda em um pedido de venda.");
             }
-            if (pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
+            if (objInsert.IdGrupoProd > 0 && pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && ((objInsert.IdGrupoProd == (uint)NomeGrupoProd.Vidro &&
                 !SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)objInsert.IdGrupoProd, (int)objInsert.IdSubgrupoProd)) ||
                 objInsert.IdGrupoProd == (uint)NomeGrupoProd.MaoDeObra))
             {
@@ -4349,7 +4349,7 @@ namespace Glass.Data.DAL
                     var alturaFilho = p.Altura > 0 ? p.Altura : objInsert.Altura;
                     var larguraFilho = p.Largura > 0 ? p.Largura : objInsert.Largura;
 
-                    Insert(session, new ProdutosPedido()
+                   var idProdPed = Insert(session, new ProdutosPedido()
                     {
                         IdProdPedParent = objInsert.IdProdPed,
                         IdProd = (uint)p.IdProdBaixa,
@@ -4362,7 +4362,37 @@ namespace Glass.Data.DAL
                         Largura = larguraFilho,
                         IdProdBaixaEst = p.IdProdBaixaEst,
                         ValorVendido = ProdutoDAO.Instance.GetValorTabela(session, p.IdProdBaixa, tipoEntrega, idCliente, cliRevenda, tipoVenda == (int)Pedido.TipoVendaPedido.Reposição, 0, (int?)objInsert.IdPedido, null, null),
+                        Beneficiamentos = p.Beneficiamentos,
                     }, true, false);
+
+                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
+                            .Current.GetInstance <Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+
+                    var stream = new System.IO.MemoryStream();
+
+                    //Verifica se a matéria prima possui imagem
+                    var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
+
+                    if (possuiImagem)
+                    {
+                        //atribui a imagem da matéria prima na peça filha
+                        var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(session, idProdPed);
+                        ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
+
+                        // Cria Log de alteração da Imagem do Produto Pedido
+                        //Apenas para controle
+                        LogAlteracaoDAO.Instance.Insert(new LogAlteracao
+                        {
+                            Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
+                            IdRegistroAlt = (int)pp.IdProdPed,
+                            Campo = "Imagem Produto Pedido",
+                            ValorAtual = "Imagem da matéria prima",
+                            DataAlt = DateTime.Now,
+                            IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                            Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
+                            NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
+                        });
+                    }
                 }
             }
 
@@ -4486,6 +4516,7 @@ namespace Glass.Data.DAL
 
                     // Exclui os beneficiamentos feitos neste produto
                     ProdutoPedidoBenefDAO.Instance.DeleteByProdPed(transaction, objDelete.IdProdPed);
+                    ProdutoPedidoRentabilidadeDAO.Instance.ApagarPorProdutoPedido(transaction, objDelete.IdProdPed);
 
                     returnValue = base.Delete(transaction, objDelete);
 
@@ -5187,6 +5218,36 @@ namespace Glass.Data.DAL
                     ValorIcms = f["ValorIcms"],
                     QtdeVolume = f["QtdeVolume"]
                 });
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os produtos do pedido para o calculo da rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public IList<ProdutosPedido> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadData(sessao, "SELECT * FROM produtos_pedido WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+        }
+        
+        /// <summary>
+        /// Atualiza a rentabilidade do produto do pedido..
+        /// </summary>
+        /// <param name="idProdPed"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idProdPed, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdPed=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idProdPed));
         }
 
         #endregion
