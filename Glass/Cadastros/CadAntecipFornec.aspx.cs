@@ -48,6 +48,7 @@ namespace Glass.UI.Web.Cadastros
             ctrlFormaPagto.CampoValorConta = dtvAntecipFornec.FindControl("hdfTotalAntecipFornec");
             ctrlFormaPagto.ExibirDataRecebimento = false;
             ctrlFormaPagto.ExibirGerarCredito = false;
+            ctrlFormaPagto.ExibirUsarCredito = false;
         }
     
         #endregion
