@@ -271,9 +271,12 @@ namespace Glass.Data.DAL
         /// </summary>
         public void DeleteByPedido(uint idPedido)
         {
-            string sql = "Delete From ambiente_pedido Where idPedido=" + idPedido;
-
-            objPersistence.ExecuteCommand(sql);
+            using (var sessao = new GDASession())
+            {
+                objPersistence.ExecuteCommand(sessao, 
+                    "DELETE FROM ambiente_pedido_rentabilidade WHERE IdAmbientePedido IN (SELECT IdAmbientePedido FROM ambiente_pedido WHERE IdPedido=" + idPedido + ")");
+                objPersistence.ExecuteCommand(sessao, "Delete From ambiente_pedido Where idPedido=" + idPedido);
+            }
         }
 
         #endregion
@@ -656,6 +659,36 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os ambientes do pedido para a rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public IList<AmbientePedido> ObterAmbientesParaRentabilidade(GDA.GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadData(sessao, "SELECT * FROM ambiente_pedido WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+        }
+
+        /// <summary>
+        /// Atualiza a rentabilidade do ambiente do pedido..
+        /// </summary>
+        /// <param name="idAmbientePedido"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idAmbientePedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE ambiente_pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdAmbientePedido=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idAmbientePedido));
+        }
+
+        #endregion
+
         #region Métodos sobrescritos
 
         public override int Update(AmbientePedido objUpdate)
@@ -792,6 +825,7 @@ namespace Glass.Data.DAL
                     // Exclui os produtos deste ambiente
                     objPersistence.ExecuteCommand(session, @"
                         Delete From produto_pedido_benef Where idProdPed In (" + idsProdPed + @");
+                        DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPed + @");
                         Delete From produtos_pedido Where idAmbientePedido=" + Key);
                 }
                 else
@@ -802,6 +836,7 @@ namespace Glass.Data.DAL
                     // Exclui os produtos deste ambiente
                     objPersistence.ExecuteCommand(session, @"
                         Delete From produto_pedido_benef Where idProdPed In (" + idsProdPed + @");
+                        DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPed + @");
                         Delete From produtos_pedido Where idAmbientePedido=" + Key);
                 }
 

@@ -573,6 +573,10 @@
                                         ToolTip="Produtos que ainda não foram comprados" Visible='<%# Eval("ComprarVisible") %>'
                                         OnClientClick='<%# "openRptComprar(" + Eval("IdPedido") + "); return false" %>' />
                                 </asp:PlaceHolder>
+                                <asp:PlaceHolder ID="pchRentabillidade" runat="server" Visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                    <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=pedidoespelho&id=<%# Eval("IdPedido") %>"); return false;'>
+                                        <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
+                                </asp:PlaceHolder>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>

@@ -112,7 +112,10 @@ namespace Glass.Data.Model
             ImagemProdPed = 101,
             ImagemProdPedEsp = 102,
             Compra = 103,
-            ImpostoServico = 104
+            ImpostoServico = 104,
+            IndicadorFinanceiro,
+            ExpressaoRentabilidade,
+            ConfigRegistroRentabilidade
         }
 
         public static string GetDescrTabela(int tabela)

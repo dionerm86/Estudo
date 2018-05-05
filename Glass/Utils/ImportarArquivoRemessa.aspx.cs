@@ -78,5 +78,15 @@ namespace Glass.UI.Web.Utils
             grdItensCNAB.DataSource = retorno;
             grdItensCNAB.DataBind();
         }
+
+        protected void grdItensCNAB_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            var item = e.Row.DataItem as Data.RelModel.LinhaRemessaRetorno;
+            if (item == null)
+                return;
+
+            foreach (TableCell c in e.Row.Cells)
+                c.ForeColor = item.Quitada ? System.Drawing.Color.Green : System.Drawing.Color.Red;
+        }
     }
 }

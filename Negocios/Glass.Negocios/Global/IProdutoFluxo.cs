@@ -147,5 +147,19 @@ namespace Glass.Global.Negocios
         Colosoft.Business.DeleteResult ApagarProduto(Entidades.Produto produto);
 
         #endregion
+
+        #region Produto Baixa Estoque
+
+        Estoque.Negocios.Entidades.ProdutoBaixaEstoque CriarProdutoBaixaEstoque();
+
+        IList<Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoque> ObterProdutoBaixaEstoque(int idProdBaixaEst);
+
+        IList<Glass.Estoque.Negocios.Entidades.ProdutoBaixaEstoquePesquisa> ObterProdBaixaEst(int idProd);
+
+        Colosoft.Business.SaveResult SalvarProdutoBaixaEstoque(Estoque.Negocios.Entidades.ProdutoBaixaEstoque produtoBaixaEstoque);
+
+        Colosoft.Business.DeleteResult ApagarProdutoBaixaEstoque(Estoque.Negocios.Entidades.ProdutoBaixaEstoque produtoBaixaEstoque);
+
+        #endregion
     }
 }

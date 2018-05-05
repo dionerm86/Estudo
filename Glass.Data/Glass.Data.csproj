@@ -46,10 +46,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\Ajax.dll</HintPath>
     </Reference>
-    <Reference Include="CADImport, Version=8.0.0.25264, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dlls\CADImport.dll</HintPath>
-    </Reference>
     <Reference Include="CADProject.Remote.Client, Version=1.0.3.0, Culture=neutral, PublicKeyToken=164a088420ede1a1, processorArchitecture=MSIL">
       <HintPath>..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
@@ -91,7 +87,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <HintPath>..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
@@ -167,8 +163,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\ReportViewer\Microsoft.ReportViewer.WebForms.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.8\lib\net40\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.9.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.11\lib\net40\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MySqlBackup, Version=2.0.9.2, Culture=neutral, processorArchitecture=MSIL">
@@ -369,6 +365,7 @@
     <Compile Include="Configuracoes\ProjetoConfig\TelaCadastroAvulso.cs" />
     <Compile Include="Configuracoes\ProjetoConfig\TelaCadastroParceiros.cs" />
     <Compile Include="Configuracoes\ReciboConfig\Relatorio.cs" />
+    <Compile Include="Configuracoes\RentabilidadeConfig\RentabilidadeConfig.cs" />
     <Compile Include="Configuracoes\RotaConfig\RotaConfig.cs" />
     <Compile Include="CTeUtils\AssinaturaDigital.cs" />
     <Compile Include="CTeUtils\Certificado.cs" />
@@ -514,6 +511,7 @@
     <Compile Include="Global\DAL\MenuDAO.cs" />
     <Compile Include="Global\DAL\FotosSugestaoDAO.cs" />
     <Compile Include="Global\DAL\NotificacaoDAO.cs" />
+    <Compile Include="Global\DAL\ProdutoBaixaEstoqueBenefDAO.cs" />
     <Compile Include="Global\DAL\TipoInstalacaoDAO.cs" />
     <Compile Include="Global\DAL\TipoEntregaDAO.cs" />
     <Compile Include="Global\Model\AvaliacaoAtendimento.cs" />
@@ -531,6 +529,7 @@
     <Compile Include="Global\Model\Menu\ConfigMenuTipoFunc.cs" />
     <Compile Include="Global\Model\FotosSugestao.cs" />
     <Compile Include="Global\Model\Notificacao.cs" />
+    <Compile Include="Global\Model\ProdutoBaixaEstoqueBenef.cs" />
     <Compile Include="Global\Model\ProdutoNCM.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoIcone.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoFiltro.cs" />
@@ -726,6 +725,10 @@
     <Compile Include="Model\Calculos\ContainerCalculoDTO.cs" />
     <Compile Include="Model\Calculos\ProdutoCalculoDTO.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
+    <Compile Include="Orcamento\Model\AmbienteOrcamentoRentabilidade.cs" />
+    <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
+    <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
+    <Compile Include="PCP\DAL\AmbientePedidoEspelhoRentabilidadeDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineVariavelDAO.cs" />
     <Compile Include="PCP\DAL\CavaleteDAO.cs" />
@@ -733,7 +736,10 @@
     <Compile Include="PCP\DAL\ContadorPlanoCorteDAO.cs" />
     <Compile Include="PCP\DAL\ExpedicaoChapaDAO.cs" />
     <Compile Include="PCP\DAL\FornadaDAO.cs" />
+    <Compile Include="PCP\DAL\PedidoEspelhoRentabilidadeDAO.cs" />
+    <Compile Include="PCP\DAL\ProdutoPedidoEspelhoRentabilidadeDAO.cs" />
     <Compile Include="PCP\DAL\UsoRetalhoProducaoDAO.cs" />
+    <Compile Include="PCP\Model\AmbientePedidoEspelhoRentabilidade.cs" />
     <Compile Include="PCP\Model\ArquivoCalcEngine.cs" />
     <Compile Include="PCP\Model\ArquivoCalcEngineVariavel.cs" />
     <Compile Include="PCP\Model\CapacidadeProducaoDiariaClassificacao.cs" />
@@ -747,8 +753,11 @@
     <Compile Include="PCP\Model\Otimizacao.cs" />
     <Compile Include="PCP\Model\PacoteArquivosMesa.cs" />
     <Compile Include="PCP\Model\PecaOtimizada.cs" />
+    <Compile Include="PCP\Model\PedidoEspelhoRentabilidade.cs" />
+    <Compile Include="PCP\Model\ProdutoPedidoEspelhoRentabilidade.cs" />
     <Compile Include="PCP\Model\TotaisSetor.cs" />
     <Compile Include="PCP\Model\UsoRetalhoProducao.cs" />
+    <Compile Include="Pedido\DAL\AmbientePedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\FotosPedidoDAO.cs" />
     <Compile Include="Estoque\DAL\FotosTrocaDevolucaoDAO.cs" />
     <Compile Include="Global\DAL\FuncDepartamentoDAO.cs" />
@@ -788,6 +797,7 @@
     <Compile Include="Financeiro\DAL\ProdutoFornecedorCotacaoCompraDAO.cs" />
     <Compile Include="Global\DAL\ProdutoFornecedorDAO.cs" />
     <Compile Include="Estoque\DAL\ProdutoInventarioEstoqueDAO.cs" />
+    <Compile Include="Pedido\DAL\PedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\ProdutoMoldeDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfAdicaoDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfBenefDAO.cs" />
@@ -869,6 +879,7 @@
     <Compile Include="PCP\Model\SetorProducao.cs" />
     <Compile Include="PCP\Model\SubtipoPerda.cs" />
     <Compile Include="PCP\Model\TipoPerda.cs" />
+    <Compile Include="Pedido\DAL\ProdutoPedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\TextoImprPedidoDAO.cs" />
     <Compile Include="Pedido\DAL\TextoPedidoDAO.cs" />
     <Compile Include="Financeiro\DAL\PagtoObraDAO.cs" />
@@ -1030,7 +1041,10 @@
     <Compile Include="PCP\Model\DadosReposicao.cs" />
     <Compile Include="PCP\Model\EtiquetaArquivoOtimizacao.cs" />
     <Compile Include="PCP\Model\Exportacao.cs" />
+    <Compile Include="Pedido\Model\AmbientePedidoRentabilidade.cs" />
+    <Compile Include="Pedido\Model\PedidoRentabilidade.cs" />
     <Compile Include="Pedido\Model\PedidoTotalDiario.cs" />
+    <Compile Include="Pedido\Model\ProdutoPedidoRentabilidade.cs" />
     <Compile Include="Projeto\DAL\AppDAO.cs" />
     <Compile Include="Projeto\DAL\FiguraPecaItemProjetoDAO.cs" />
     <Compile Include="Projeto\DAL\FiguraProjetoDAO.cs" />
@@ -1097,6 +1111,8 @@
     <Compile Include="RelDAL\LinhaLacreCteDAO.cs" />
     <Compile Include="RelDAL\PrevisaoProducaoDAO.cs" />
     <Compile Include="RelDAL\ProducaoDiariaRealizadaDAO.cs" />
+    <Compile Include="RelDAL\ProdutosCortadosRptDAO.cs" />
+    <Compile Include="RelModel\ArquivoRemessaRetorno.cs" />
     <Compile Include="RelModel\CapacidadeProducao.cs" />
     <Compile Include="RelModel\ChapasDisponiveis.cs" />
     <Compile Include="RelModel\ControleMvaProdutoPorUf.cs" />
@@ -1552,6 +1568,7 @@
     <Compile Include="RelModel\ProducaoInst.cs" />
     <Compile Include="RelModel\ProdutoEntradaEstoque.cs" />
     <Compile Include="RelModel\ProdutoPedidoProducaoRpt.cs" />
+    <Compile Include="RelModel\ProdutosCortadosRpt.cs" />
     <Compile Include="RelModel\ProdutosLiberarPedidoRpt.cs" />
     <Compile Include="RelModel\ProdutosPedidoEspelhoRpt.cs" />
     <Compile Include="RelModel\ProdutosPedidoRpt.cs" />
@@ -1571,6 +1588,11 @@
     <Compile Include="RelModel\TitulosIFD.cs" />
     <Compile Include="RelModel\Vendas.cs" />
     <Compile Include="RelModel\VendasMeses.cs" />
+    <Compile Include="Rentabilidade\ICalculoRentabilidadeResultado.cs" />
+    <Compile Include="Rentabilidade\ICalculadoraRentabilidade.cs" />
+    <Compile Include="Rentabilidade\Model\ConfigRegistroRentabilidade.cs" />
+    <Compile Include="Rentabilidade\Model\ExpressaoRentabilidade.cs" />
+    <Compile Include="Rentabilidade\Model\IndicadorFinanceiro.cs" />
     <Compile Include="Seguranca\Model\Token.cs" />
     <Compile Include="SIntegra\Registro61R.cs" />
     <Compile Include="SIntegra\Registro.cs" />
@@ -6690,6 +6712,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuracoes\RelatorioConfig\" />
+    <Folder Include="Rentabilidade\DAL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

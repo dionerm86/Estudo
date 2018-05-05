@@ -2590,7 +2590,7 @@ namespace Glass.UI.Web.Controls
         /// </summary>
         /// <param name="beneficiamentos"></param>
         /// <returns></returns>
-        private IEnumerable<Glass.Global.Negocios.Entidades.IBeneficiamento> Converter(IEnumerable<GenericBenef> beneficiamentos)
+        public IEnumerable<Glass.Global.Negocios.Entidades.IBeneficiamento> Converter(IEnumerable<GenericBenef> beneficiamentos)
         {
             foreach (var i in beneficiamentos)
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Practices.ServiceLocation;
+﻿using Glass.Data.Helper;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Web.Http;
 using System.Web.Security;
@@ -19,11 +20,15 @@ namespace Glass.Api.Host.Areas.Seguranca.Controllers
         {
             try
             {
+                var loginUsuarioGetter = UserInfo.ObterLoginUsuarioGetter();
+                UserInfo.ConfigurarLoginUsuarioGetter(null);
+
                 var result = ServiceLocator.Current.GetInstance<Api.Seguranca.IAutenticacaoFluxo>()
                     .Autenticar(usuario, senha.HexParaStr(), cliente);
 
-                // Concatena 
                 FormsAuthentication.SetAuthCookie(GetUserName(result, cliente), false);
+
+                UserInfo.ConfigurarLoginUsuarioGetter(loginUsuarioGetter);
 
                 return Ok(result);
             }

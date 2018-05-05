@@ -573,6 +573,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                                     item.ValorBanrisul += valorRec;
                                 else if (codigoBanco == 748)
                                     item.ValorSicredi += valorRec;
+                                else if (codigoBanco == 237)
+                                    item.ValorBradesco += valorRec;
                             }
                             else if (a.FormaPagto == Data.Model.Pagto.FormaPagto.Credito)
                             {
@@ -620,6 +622,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                                     item.ValorBanrisul += valorRec;
                                 else if (a.CodBanco == 748)
                                     item.ValorSicredi += valorRec;
+                                else if (a.CodBanco == 237)
+                                    item.ValorBradesco += valorRec;
                             }
                             else if (a.FormaPagto == Data.Model.Pagto.FormaPagto.Credito)
                             {
@@ -759,6 +763,11 @@ namespace Glass.Financeiro.Negocios.Componentes
                                 item.ValorSicredi += mb.ValorMov - juros;
                                 item.ValorJurosSicredi += juros;
                             }
+                            else if (mb.CodBanco == 237)
+                            {
+                                item.ValorBradesco += mb.ValorMov - juros;
+                                item.ValorJurosBradesco += juros;
+                            }
                         }
                     }
 
@@ -790,6 +799,11 @@ namespace Glass.Financeiro.Negocios.Componentes
                                 item.ValorSicredi -= mb.ValorMov - juros;
                                 item.ValorJurosSicredi -= juros;
                             }
+                            else if (mb.CodBanco == 237)
+                            {
+                                item.ValorBradesco -= mb.ValorMov - juros;
+                                item.ValorJurosBradesco -= juros;
+                            }
                         }
                     }
 
@@ -802,6 +816,8 @@ namespace Glass.Financeiro.Negocios.Componentes
                             item.ValorBanrisul += depositoNaoIdentificado.ValorMov;
                         else if (depositoNaoIdentificado.CodBanco == 748)
                             item.ValorSicredi += depositoNaoIdentificado.ValorMov;
+                        else if (depositoNaoIdentificado.CodBanco == 237)
+                            item.ValorBradesco += depositoNaoIdentificado.ValorMov;
                     }
                 }
 
@@ -1066,6 +1082,9 @@ namespace Glass.Financeiro.Negocios.Componentes
                                     case 748:
                                         item.ValorSicredi += pg.ValorMov;
                                         break;
+                                    case 237:
+                                        item.ValorBradesco += pg.ValorMov;
+                                        break;
                                 }
 
                                 break;
@@ -1197,6 +1216,24 @@ namespace Glass.Financeiro.Negocios.Componentes
                         TipoRegistro = receber ? Entidades.GCon.Item.TipoRegistroEnum.TotalRecebimento : Entidades.GCon.Item.TipoRegistroEnum.TotalPagamento,
                         TipoContabil = ((int)Entidades.GCon.Item.TipoContabilEnum.Sicredi).ToString(),
                         Valor = valorSicredi + jurosSicredi,
+
+                    });
+
+                #endregion
+
+                #region Banco Bradesco
+
+                var valorBradesco = i.Sum(f => f.ValorBradesco);
+                var jurosBradesco = i.Sum(f => f.ValorJurosBradesco);
+
+                if (valorBradesco > 0 || jurosBradesco > 0)
+                    itensProcessados.Add(new Entidades.GCon.Item()
+                    {
+                        DataLiquidacao = d,
+                        TipoArquivo = receber ? Entidades.GCon.Item.TipoArquivoEnum.Receber : Entidades.GCon.Item.TipoArquivoEnum.Pagar,
+                        TipoRegistro = receber ? Entidades.GCon.Item.TipoRegistroEnum.TotalRecebimento : Entidades.GCon.Item.TipoRegistroEnum.TotalPagamento,
+                        TipoContabil = ((int)Entidades.GCon.Item.TipoContabilEnum.Bradesco).ToString(),
+                        Valor = valorBradesco + jurosBradesco,
 
                     });
 

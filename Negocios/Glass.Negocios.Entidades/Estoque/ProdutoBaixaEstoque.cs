@@ -15,6 +15,7 @@
                 Configure()
                     .Uid(f => f.IdProdBaixaEst)
                     .FindName(new ProdutoBaixaEstoqueFindNameConverter(), f => f.IdProdBaixa, f => f.Qtde)
+                    .Child<Global.Negocios.Entidades.ProdutoBaixaEstoqueBenef, Data.Model.ProdutoBaixaEstoqueBenef>("ProdutoBaixaEstBeneficiamentos", f => f.ProdutoBaixaEstBeneficiamentos, f => f.IdProdBaixaEst)
                     .Creator(f => new ProdutoBaixaEstoque(f));
             }
         }
@@ -43,7 +44,21 @@
 
         #endregion
 
+        #region Variáveis Locais
+
+        private Colosoft.Business.IEntityChildrenList<Global.Negocios.Entidades.ProdutoBaixaEstoqueBenef> _produtoBaixaEstBeneficiamentos;
+
+        #endregion
+
         #region Propriedades
+
+        /// <summary>
+        /// Relação dos beneficiamentos do produto.
+        /// </summary>
+        public Colosoft.Business.IEntityChildrenList<Global.Negocios.Entidades.ProdutoBaixaEstoqueBenef> ProdutoBaixaEstBeneficiamentos
+        {
+            get { return _produtoBaixaEstBeneficiamentos; }
+        }
 
         /// <summary>
         /// Identificador da baixa.
@@ -218,7 +233,7 @@
         protected ProdutoBaixaEstoque(Colosoft.Business.EntityLoaderCreatorArgs<Data.Model.ProdutoBaixaEstoque> args)
             : base(args.DataModel, args.UIContext, args.TypeManager)
         {
-
+            _produtoBaixaEstBeneficiamentos = GetChild<Global.Negocios.Entidades.ProdutoBaixaEstoqueBenef>(args.Children, "ProdutoBaixaEstBeneficiamentos");
         }
 
         /// <summary>
@@ -230,7 +245,7 @@
         public ProdutoBaixaEstoque(Data.Model.ProdutoBaixaEstoque dataModel, string uiContext, Colosoft.Business.IEntityTypeManager entityTypeManager)
             : base(dataModel, uiContext, entityTypeManager)
         {
-
+            _produtoBaixaEstBeneficiamentos = CreateChild<Colosoft.Business.IEntityChildrenList<Global.Negocios.Entidades.ProdutoBaixaEstoqueBenef>>("ProdutoBaixaEstBeneficiamentos");
         }
 
         #endregion

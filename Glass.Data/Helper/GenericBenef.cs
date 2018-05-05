@@ -105,6 +105,10 @@ namespace Glass.Data.Helper
 
         public uint IdProdutoTrocado { get; set; }
 
+        public uint IdProdBaixaEstBenef { get; set; }
+
+        public uint IdProdBaixaEst { get; set; }
+
         #endregion
 
         public uint IdBenefConfig { get; set; }
@@ -435,6 +439,25 @@ namespace Glass.Data.Helper
             Custo = ptb.Custo;
         }
 
+        /// <summary>
+        /// Cria uma classe genérica de beneficiamento a partir de uma classe ProdutoTrocadoBenef.
+        /// </summary>
+        /// <param name="ptdb"></param>
+        public GenericBenef(ProdutoBaixaEstoqueBenef pbeb)
+        {
+            _tipo = TipoProdutoBeneficiamento.ProdutoBaixaEst;
+            IdProdBaixaEstBenef = (uint)pbeb.IdProdBaixaEstBenef;
+            IdProdBaixaEst = (uint)pbeb.IdProdBaixaEst;
+            IdBenefConfig = (uint)pbeb.IdBenefConfig;
+            BisAlt = pbeb.BisAlt;
+            BisLarg = pbeb.BisLarg;
+            EspBisote = pbeb.EspBisote;
+            EspFuro = pbeb.EspFuro;
+            LapAlt = pbeb.LapAlt;
+            LapLarg = pbeb.LapLarg;
+            Qtd = pbeb.Qtd;
+        }
+
         #endregion
 
         #region Conversores
@@ -720,6 +743,30 @@ namespace Glass.Data.Helper
             return ptb;
         }
 
+        /// <summary>
+        /// Converte essa classe genérica em uma classe ProdutoBaixaEstoqueBenef.
+        /// </summary>
+        /// <returns></returns>
+        public ProdutoBaixaEstoqueBenef ToProdutoBaixaEst(uint idProdBaixaEst)
+        {
+            if (idProdBaixaEst > 0)
+                IdProdBaixaEst = idProdBaixaEst;
+
+            ProdutoBaixaEstoqueBenef pbeb = new ProdutoBaixaEstoqueBenef();
+            pbeb.IdProdBaixaEstBenef = (int)IdProdBaixaEstBenef;
+            pbeb.IdProdBaixaEst = (int)IdProdBaixaEst;
+            pbeb.IdBenefConfig = (int)IdBenefConfig;
+            pbeb.BisAlt = BisAlt;
+            pbeb.BisLarg = BisLarg;
+            pbeb.EspBisote = EspBisote;
+            pbeb.EspFuro = EspFuro;
+            pbeb.LapAlt = LapAlt;
+            pbeb.LapLarg = LapLarg;
+            pbeb.Qtd = Qtd;
+
+            return pbeb;
+        }
+
         #endregion
 
         #region Recupera o valor unitário do beneficiamento
@@ -860,6 +907,17 @@ namespace Glass.Data.Helper
                     retorno.Altura = ProdutoTrocadoDAO.Instance.ObtemValorCampo<float>("altura", where);
                     retorno.Largura = ProdutoTrocadoDAO.Instance.ObtemValorCampo<int>("largura", where);
                     retorno.TotalM2 = ProdutoTrocadoDAO.Instance.ObtemValorCampo<float>("totM2Calc", where);
+                    break;
+
+                case TipoProdutoBeneficiamento.ProdutoBaixaEst:
+                    where = "IdProdBaixaEst=" + IdProdBaixaEst;
+                    retorno.Id = IdProdBaixaEst;
+                    retorno.Qtd = ProdutoBaixaEstoqueDAO.Instance.ObtemValorCampo<float>("qtde", where); ;
+                    retorno.ValorUnit = 0;
+                    retorno.ValorTotal = 0;
+                    retorno.Altura = 0;
+                    retorno.Largura = 0;
+                    retorno.TotalM2 = 0;
                     break;
             }
 

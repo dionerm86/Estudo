@@ -302,5 +302,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTabelaDescontoAcrescimoPedidoAVista); }
         }
+
+        /// <summary>
+        /// Buscar lista de vendas pedidos vazia por padrão?
+        /// </summary>
+        public static bool ListaVendasPedidosVaziaPorPadrao
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ListaVendasPedidosVaziaPorPadrao); }
+        }
     }
 }

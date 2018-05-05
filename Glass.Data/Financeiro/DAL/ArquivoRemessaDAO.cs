@@ -12,6 +12,7 @@ using Sync.Utils.Boleto.ArquivoRetorno;
 using Sync.Utils.Boleto.CodigoOcorrencia;
 using System.Linq;
 using Glass.Configuracoes;
+using Glass.Data.RelModel;
 
 namespace Glass.Data.DAL
 {
@@ -727,20 +728,21 @@ namespace Glass.Data.DAL
         /// <param name="idContaBanco"></param>
         /// <param name="caixaDiario"></param>
         /// <returns></returns>
-        public Dictionary<string, bool> VerificarImportarArquivoRemessa(byte[] arquivo, int tipoCnab, uint idContaBanco, bool caixaDiario)
+        public List<LinhaRemessaRetorno> VerificarImportarArquivoRemessa(byte[] arquivo, int tipoCnab, uint idContaBanco, bool caixaDiario)
         {
+            var contasRec = new List<LinhaRemessaRetorno>();
+
             // Gera um registro na tabela
             var ar = new ArquivoRemessa();
             ar.Tipo = Glass.Data.Model.ArquivoRemessa.TipoEnum.Retorno;
             ar.IdContaBanco = idContaBanco;
             ar.Situacao = ArquivoRemessa.SituacaoEnum.Ativo;
-
-            var contasRec = new Dictionary<string, bool>();
+            
             var conta = ContaBancoDAO.Instance.GetElement(idContaBanco);
             var banco = new Banco(conta.CodBanco.Value);
             int contadorDataUnica = 0;
             var retornoRecebimento = "";
-
+            
             var contador = 1;
 
             #region 240
@@ -754,11 +756,19 @@ namespace Glass.Data.DAL
                 {
                     var quitada = ProcessamentoItemCNAB240(d, banco, ar, new List<Tuple<uint, int, decimal, DateTime>>(), idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica, true);
 
-                    var descricaoConta = string.Format(@"{8} Agencia: {0}, Conta: {1}, NossoNumero: {2}, NumeroDocumento: {3}, ValorTitulo: {4}, ValorPago: {5}, Juros: {6}, DataVencimento: {7}",
-                        d.SegmentoT.Agencia, d.SegmentoT.Conta, d.SegmentoT.NossoNumero, d.SegmentoT.NumeroDocumento, 
-                        d.SegmentoT.ValorTitulo, d.SegmentoU.ValorPagoPeloSacado, d.SegmentoU.JurosMultaEncargos, d.SegmentoT.DataVencimento.Date, contador);
+                    var novaLinha = new LinhaRemessaRetorno();
+                    novaLinha.NumeroLinha = contador;
+                    novaLinha.Agencia = d.SegmentoT.Agencia;
+                    novaLinha.Conta = d.SegmentoT.Conta;
+                    novaLinha.NossoNumero = d.SegmentoT.NossoNumero;
+                    novaLinha.NumeroDocumento = d.SegmentoT.NumeroDocumento;
+                    novaLinha.ValorTitulo = d.SegmentoT.ValorTitulo;
+                    novaLinha.ValorPagoPeloSacado = d.SegmentoU.ValorPagoPeloSacado;
+                    novaLinha.JurosMultaEncargos = d.SegmentoU.JurosMultaEncargos;
+                    novaLinha.DataVencimento = d.SegmentoT.DataVencimento.Date;
+                    novaLinha.Quitada = quitada;
 
-                    contasRec.Add(descricaoConta, quitada);
+                    contasRec.Add(novaLinha);
                     contador++;
                 }
             }
@@ -777,10 +787,19 @@ namespace Glass.Data.DAL
                     var quitada = ProcessamentoItemCNAB400(d, banco, retorno, ar, new List<Tuple<uint, int, decimal, DateTime>>(), 
                         idContaBanco, caixaDiario, ref retornoRecebimento, ref contadorDataUnica, true);
 
-                    var descricaoConta = string.Format(@"{8} Agencia: {0}, Conta: {1}, NossoNumero: {2}, NumeroDocumento: {3}, ValorTitulo: {4}, ValorPago: {5}, Juros: {6}, DataVencimento: {7}", 
-                        d.Agencia, d.Conta, d.NossoNumero,d.NumeroDocumento, d.ValorTitulo, d.ValorPago, d.Juros, d.DataVencimento.Date, contador);
+                    var novaLinha = new LinhaRemessaRetorno();
+                    novaLinha.NumeroLinha = contador;
+                    novaLinha.Agencia = d.Agencia;
+                    novaLinha.Conta = d.Conta;
+                    novaLinha.NossoNumero = d.NossoNumero;
+                    novaLinha.NumeroDocumento = d.NumeroDocumento;
+                    novaLinha.ValorTitulo = d.ValorTitulo;
+                    novaLinha.ValorPagoPeloSacado = d.ValorPago;
+                    novaLinha.JurosMultaEncargos = d.Juros;
+                    novaLinha.DataVencimento = d.DataVencimento.Date;
+                    novaLinha.Quitada = quitada;
 
-                    contasRec.Add(descricaoConta, quitada);
+                    contasRec.Add(novaLinha);
                     contador++;
                 }                
             }

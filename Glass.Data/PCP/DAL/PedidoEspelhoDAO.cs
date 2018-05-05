@@ -1047,9 +1047,21 @@ namespace Glass.Data.DAL
                     IdComissionado = ped.IdComissionado,
                     PercComissao = ped.PercComissao,
                     ValorComissao = ped.ValorComissao,
-                    ValorEntrega = ped.ValorEntrega
+                    ValorEntrega = ped.ValorEntrega,
+                    PercentualRentabilidade = ped.PercentualRentabilidade,
+                    RentabilidadeFinanceira = ped.RentabilidadeFinanceira
                 };
                 Insert(transaction, pedEsp);
+
+                // Salva os registro da rentabilidade
+                foreach (var registro in PedidoRentabilidadeDAO.Instance.ObterPorPedido(transaction, idPedido))
+                    PedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new PedidoEspelhoRentabilidade
+                    {
+                        IdPedido = (int)idPedido,
+                        Tipo = registro.Tipo,
+                        IdRegistro = registro.IdRegistro,
+                        Valor = registro.Valor
+                    });
 
                 var lstProdPed = ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, idPedido).ToArray();
 
@@ -1089,9 +1101,21 @@ namespace Glass.Data.DAL
                     novo.Acrescimo = a.Acrescimo;
                     novo.IdAplicacao = a.IdAplicacao;
                     novo.IdProcesso = a.IdProcesso;
+                    novo.PercentualRentabilidade = a.PercentualRentabilidade;
+                    novo.RentabilidadeFinanceira = a.RentabilidadeFinanceira;
 
                     uint idNovo = AmbientePedidoEspelhoDAO.Instance.Insert(transaction, novo);
                     ambientes.Add(a.IdAmbientePedido, idNovo);
+
+                    // Salva os registro da rentabilidade
+                    foreach (var registro in AmbientePedidoRentabilidadeDAO.Instance.ObterPorAmbiente(transaction, a.IdAmbientePedido))
+                        AmbientePedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new AmbientePedidoEspelhoRentabilidade
+                        {
+                            IdAmbientePedido = (int)idNovo,
+                            Tipo = registro.Tipo,
+                            IdRegistro = registro.IdRegistro,
+                            Valor = registro.Valor
+                        });
 
                     if (novo.IdItemProjeto > 0)
                     {
@@ -1157,6 +1181,8 @@ namespace Glass.Data.DAL
                     pe.IdItemProjeto = p.IdItemProjeto != null && itensProjeto.ContainsKey(p.IdItemProjeto.Value) ? itensProjeto[p.IdItemProjeto.Value] : p.IdItemProjeto;
                     pe.Qtde = p.Qtde;
                     pe.ValorVendido = p.ValorVendido;
+                    pe.PercentualRentabilidade = p.PercentualRentabilidade;
+                    pe.RentabilidadeFinanceira = p.RentabilidadeFinanceira;
 
                     // Busca medidas reais calculadas no projeto 
                     // (Apenas se tiver sido inserido projeto dentro do orçamento que gerou este pedido)
@@ -1212,6 +1238,16 @@ namespace Glass.Data.DAL
                     pe.PedidoMaoObra = isMaoDeObra;
 
                     uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.InsertBase(transaction, pe, pedEsp);
+
+                    // Salva os registro da rentabilidade
+                    foreach (var registro in ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(transaction, p.IdProdPed))
+                        ProdutoPedidoEspelhoRentabilidadeDAO.Instance.Insert(transaction, new ProdutoPedidoEspelhoRentabilidade
+                        {
+                            IdProdPed = (int)idProdPedEsp,
+                            Tipo = registro.Tipo,
+                            IdRegistro = registro.IdRegistro,
+                            Valor = registro.Valor
+                        });
 
                     /* Chamado 50709. */
                     associacaoProdutosPedidoProdutosPedidoEspelho.Add((int)p.IdProdPed, (int)idProdPedEsp);
@@ -2083,6 +2119,10 @@ namespace Glass.Data.DAL
             // Atualiza peso e total de m²
             PedidoDAO.Instance.AtualizaTotM(sessao, pedidoEspelho.IdPedido, true);
             AtualizaPeso(sessao, pedidoEspelho.IdPedido);
+
+            var rentabilidade = RentabilidadeHelper.ObterCalculadora<PedidoEspelho>().Calcular(sessao, pedidoEspelho);
+            if (rentabilidade.Executado)
+                rentabilidade.Salvar(sessao);
         }
 
         #endregion
@@ -3078,12 +3118,19 @@ namespace Glass.Data.DAL
 
             // Exclui dados relacionadas à conferência do pedido
             objPersistence.ExecuteCommand(session, "delete from produto_pedido_benef where idProdPed in  (" + idsProdPedClone + @")");
+            objPersistence.ExecuteCommand(session, "delete from produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPedClone + @")");
             objPersistence.ExecuteCommand(session, "delete from produtos_pedido where invisivelPedido=true and idProdPedEsp in (" + idsProdPedEsp + @")");
             objPersistence.ExecuteCommand(session, "update produtos_pedido set invisivelFluxo=false, idProdPedEsp=null where idPedido=?id", new GDAParameter("?id", idPedido));
             objPersistence.ExecuteCommand(session, "delete from produto_pedido_espelho_benef where idProdPed in (" + idsProdPedEsp + @")");
             objPersistence.ExecuteCommand(session, "delete from pecas_excluidas_sistema where idProdPed in (" + idsProdPedEsp + @")");
+            objPersistence.ExecuteCommand(session, "delete from produto_pedido_espelho_rentabilidade WHERE IdProdPed in (" + idsProdPedEsp + ")");
             objPersistence.ExecuteCommand(session, "delete from produtos_pedido_espelho where idPedido=?id", new GDAParameter("?id", idPedido));
+            objPersistence.ExecuteCommand(session, 
+                @"DELETE FROM ambiente_pedido_espelho_rentabilidade WHERE IdAmbientePedido IN 
+                    (SELECT IdAmbientePedido FROM ambiente_pedido_espelho WHERE IdPedido=?id)", 
+                new GDAParameter("?id", idPedido));
             objPersistence.ExecuteCommand(session, "delete from ambiente_pedido_espelho where idPedido=?id;", new GDAParameter("?id", idPedido));
+            objPersistence.ExecuteCommand(session, "delete from pedido_espelho_rentabilidade where idPedido=?id;", new GDAParameter("?id", idPedido));
 
             // Exclui dados relacionados à cálculos de projeto
             if (!String.IsNullOrEmpty(idsItemProjeto))
@@ -4519,6 +4566,25 @@ namespace Glass.Data.DAL
             pedidoEspelho.TipoEntrega = pedido.TipoEntrega ?? 0;
             pedidoEspelho.FastDelivery = pedido.FastDelivery;
             pedidoEspelho.IdLoja = pedido.IdLoja;
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Atualiza a rentabilidade do pedido.
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idPedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE pedido_espelho SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdPedido=?idPedido",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?idPedido", idPedido));
         }
 
         #endregion

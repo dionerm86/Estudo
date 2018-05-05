@@ -184,12 +184,14 @@ namespace Glass.UI.Web.Listas
                 .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)UserInfo.GetUserInfo.CodUser);
 
             // Verificar se ele possui acesso ao menu de preço de tabela
-            var possuiMenuPrecoTabela = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+            var menusFunc = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                 .GetInstance<Glass.Global.Negocios.IMenuFluxo>()
-                .ObterMenusPorFuncionario(funcionario)
-                .Any(f => f.Url.ToLower().Contains("listaprecotabcliente"));
+                .ObterMenusPorFuncionario(funcionario);
 
-            return possuiMenuPrecoTabela;
+            if (menusFunc != null && menusFunc.Any(f => !string.IsNullOrEmpty(f.Url) && f.Url.ToLower().Contains("listaprecotabcliente")))
+                return true;
+
+            return false;
         }
 
         #endregion

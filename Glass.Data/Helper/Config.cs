@@ -327,6 +327,7 @@ namespace Glass.Data.Helper
             DescontoMaximoPedidoAPrazo = 365,
             DescontoMaximoPedidoAPrazoGerente = 366,
             PermitirEmitirNotaParaClienteBloqueadoOuInativo = 367,
+            CalcularRentabilidade = 368,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -735,7 +736,8 @@ namespace Glass.Data.Helper
             UsarCreditoMarcadoTelaPagamentoAntecipadoPedido = 1528,
             NomeArquivoDxfComAspasECedilha = 1529,
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
-            NomeArquivoMesaBarraPorCeCedilha = 1531
+            NomeArquivoMesaBarraPorCeCedilha = 1531,
+            ListaVendasPedidosVaziaPorPadrao = 1532
 
             #endregion
         }

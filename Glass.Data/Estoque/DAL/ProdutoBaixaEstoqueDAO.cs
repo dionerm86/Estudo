@@ -101,6 +101,13 @@ namespace Glass.Data.DAL
             return GetByProd(sessao, idProd, baixarProdutoSeNaoHouverProdBaixa, 0);
         }
 
+        public bool IsRedondo(uint idProdBaixaEst)
+        {
+            var idProd = ObtemValorCampo<uint?>("idProd", "idProdBaixaEst=" + idProdBaixaEst);
+
+            return ObtemValorCampo<bool>("redondo", "idProd=" + idProd);
+        }
+
         public enum TipoBuscaProduto
         {
             Todos,
@@ -153,10 +160,13 @@ namespace Glass.Data.DAL
         public ProdutoBaixaEstoque[] GetByProd(GDASession sessao, uint idProd, bool baixarProdutoSeNaoHouverProdBaixa, TipoBuscaProduto tipoBuscaProduto)
         {
             string sql = @"
-                SELECT pbe.* 
+                SELECT pbe.*, p.CodInterno AS CodInternoProduto, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao
                 FROM produto_baixa_estoque pbe
                     " + (tipoBuscaProduto == TipoBuscaProduto.ApenasProducao ? @"INNER JOIN produto p ON (pbe.idProdBaixa = p.idProd)
-                    LEFT JOIN subgrupo_prod s ON (p.idSubgrupoProd=s.idSubgrupoProd)" : "") + @"
+                        LEFT JOIN subgrupo_prod s ON (p.idSubgrupoProd=s.idSubgrupoProd)" :
+                      @"Left Join produto p ON (pbe.idProdBaixa = p.idProd)
+                        LEFT JOIN Etiqueta_Processo ep ON (pbe.idProcesso=ep.idProcesso)
+                        LEFT JOIN etiqueta_Aplicacao ea ON (pbe.idAplicacao=ea.idAplicacao)") + @"
                 WHERE pbe.idProd=" + idProd;
 
             if (tipoBuscaProduto == TipoBuscaProduto.ApenasProducao)
@@ -202,20 +212,34 @@ namespace Glass.Data.DAL
 
         public override uint Insert(GDASession session, ProdutoBaixaEstoque objInsert)
         {
-            if (objPersistence.ExecuteSqlQueryCount(session, @"select count(*) from produto_baixa_estoque
-                where idProd=" + objInsert.IdProd + " and idProdBaixa=" + objInsert.IdProdBaixa) > 0)
-                return 0;
+            //if (objPersistence.ExecuteSqlQueryCount(session, @"select count(*) from produto_baixa_estoque
+            //    where idProd=" + objInsert.IdProd + " and idProdBaixa=" + objInsert.IdProdBaixa) > 0)
+            //    return 0;
 
-            return objInsert.IdProd != objInsert.IdProdBaixa && objInsert.Qtde > 0 ? base.Insert(session, objInsert) : 0;
+            var retorno = objInsert.IdProd != objInsert.IdProdBaixa && objInsert.Qtde > 0 ? base.Insert(session, objInsert) : 0;
+
+            foreach (ProdutoBaixaEstoqueBenef b in objInsert.Beneficiamentos.ToProdutoBaixaEst(retorno))
+                ProdutoBaixaEstoqueBenefDAO.Instance.Insert(session, b);
+
+            objInsert.RefreshBeneficiamentos();
+
+            return retorno;
         }
 
         public override int Update(ProdutoBaixaEstoque objUpdate)
         {
-            if (objPersistence.ExecuteSqlQueryCount(@"select count(*) from produto_baixa_estoque
-                where idProd=" + objUpdate.IdProd + " and idProdBaixa=" + objUpdate.IdProdBaixa) > 0)
-                return base.Delete(objUpdate);
+            //if (objPersistence.ExecuteSqlQueryCount(@"select count(*) from produto_baixa_estoque
+            //    where idProd=" + objUpdate.IdProd + " and idProdBaixa=" + objUpdate.IdProdBaixa) > 0)
+            //    return base.Delete(objUpdate);
 
-            return objUpdate.IdProd != objUpdate.IdProdBaixa && objUpdate.Qtde > 0 ? base.Update(objUpdate) : base.Delete(objUpdate);
+            var retorno = objUpdate.IdProd != objUpdate.IdProdBaixa && objUpdate.Qtde > 0 ? base.Update(objUpdate) : base.Delete(objUpdate);
+
+            foreach (ProdutoBaixaEstoqueBenef b in objUpdate.Beneficiamentos.ToProdutoBaixaEst((uint)objUpdate.IdProdBaixaEst))
+                ProdutoBaixaEstoqueBenefDAO.Instance.Insert(b);
+
+            objUpdate.RefreshBeneficiamentos();
+
+            return retorno;
         }
 
         public uint ObterIdProdBaixa(uint idProd)

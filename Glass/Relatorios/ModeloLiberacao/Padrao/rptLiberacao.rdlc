@@ -16,6 +16,27 @@
       </ConnectionProperties>
       <rd:DataSourceID>26285b06-67a0-4073-8a62-fa3de038fd1c</rd:DataSourceID>
     </DataSource>
+    <DataSource Name="GlassDataRelModel">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>3ea7b8a2-1027-42b8-86c3-39342defb36e</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="GlassDataRelModel1">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>b60032b0-73ac-4601-ab9a-5ac94301ac8a</rd:DataSourceID>
+    </DataSource>
+    <DataSource Name="GlassDataRelModel2">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString>/* Local Connection */</ConnectString>
+      </ConnectionProperties>
+      <rd:DataSourceID>eba8f3b2-8766-41b7-815b-c2a05bd0cf50</rd:DataSourceID>
+    </DataSource>
   </DataSources>
   <DataSets>
     <DataSet Name="Cheques">
@@ -739,6 +760,59 @@
         <rd:ObjectDataSourceType>Glass.Data.Model.LiberarPedido, Glass.Data, Version=5.7.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
       </rd:DataSetInfo>
     </DataSet>
+    <DataSet Name="ProdutosCortados">
+      <Query>
+        <DataSourceName>GlassDataRelModel2</DataSourceName>
+        <CommandText>/* Local Query */</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AlturaProd">
+          <DataField>AlturaProd</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="CodInternoProd">
+          <DataField>CodInternoProd</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrProduto">
+          <DataField>DescrProduto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdPedido">
+          <DataField>IdPedido</DataField>
+          <rd:TypeName>System.UInt32</rd:TypeName>
+        </Field>
+        <Field Name="IdPedidoRevenda">
+          <DataField>IdPedidoRevenda</DataField>
+          <rd:TypeName>System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</rd:TypeName>
+        </Field>
+        <Field Name="LarguraProd">
+          <DataField>LarguraProd</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="PedCli">
+          <DataField>PedCli</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Peso">
+          <DataField>Peso</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="Qtde">
+          <DataField>Qtde</DataField>
+          <rd:TypeName>System.Single</rd:TypeName>
+        </Field>
+        <Field Name="TotM2">
+          <DataField>TotM2</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+      <rd:DataSetInfo>
+        <rd:DataSetName>Glass.Data.RelModel</rd:DataSetName>
+        <rd:TableName>ProdutosCortadosRpt</rd:TableName>
+        <rd:ObjectDataSourceType>Glass.Data.RelModel.ProdutosCortadosRpt, Glass.Data, Version=5.18.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+      </rd:DataSetInfo>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -969,6 +1043,9 @@
                   <Parameter Name="NumeroMateriais">
                     <Value>=Parameters!NumeroMateriais.Value</Value>
                   </Parameter>
+                  <Parameter Name="ExibirProdutosCortados">
+                    <Value>=Parameters!ExibirProdutosCortados.Value</Value>
+                  </Parameter>
                 </Parameters>
                 <MergeTransactions>true</MergeTransactions>
                 <Top>0.03175cm</Top>
@@ -1038,6 +1115,9 @@
                   </Parameter>
                   <Parameter Name="NumeroVidros">
                     <Value>=Parameters!NumeroVidros.Value</Value>
+                  </Parameter>
+                  <Parameter Name="ExibirProdutosCortados">
+                    <Value>=Parameters!ExibirProdutosCortados.Value</Value>
                   </Parameter>
                 </Parameters>
                 <MergeTransactions>true</MergeTransactions>
@@ -1536,6 +1616,10 @@
       <MultiValue>true</MultiValue>
     </ReportParameter>
     <ReportParameter Name="ExibirSaldoDevedor">
+      <DataType>Boolean</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="ExibirProdutosCortados">
       <DataType>Boolean</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>

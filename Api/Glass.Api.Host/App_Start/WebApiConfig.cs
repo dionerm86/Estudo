@@ -95,7 +95,7 @@ namespace Glass.Api.Host
             );
 
             // Enforce HTTPS
-           config.Filters.Add(new Filters.RequireHttpsAttribute());
+           //config.Filters.Add(new Filters.RequireHttpsAttribute());
         }
 
         /// <summary>

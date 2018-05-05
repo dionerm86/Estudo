@@ -36,7 +36,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d3b3c440aed9b980, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Colosoft.Core.1.0.0\lib\net40\Colosoft.Core.dll</HintPath>
+      <HintPath>..\..\..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a9a1c7003d571595, processorArchitecture=MSIL">
@@ -110,6 +110,7 @@
     <Compile Include="Handlers\LoadSvg.cs" />
     <Compile Include="Loja\LojaRepositorioImagens.cs" />
     <Compile Include="Mensagens\LeituraMensagens.cs" />
+    <Compile Include="ProdutoBaixaEstoqueRepositorioImagens.cs" />
     <Compile Include="ProdutoRepositorioImagens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelatorioDinamico\CadastroRelatorioDinamicoFluxo.cs" />

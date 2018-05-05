@@ -733,6 +733,36 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os ambientes do pedido para a rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public IList<AmbientePedidoEspelho> ObterAmbientesParaRentabilidade(GDA.GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadData(sessao, "SELECT * FROM ambiente_pedido_espelho WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+        }
+
+        /// <summary>
+        /// Atualiza a rentabilidade do ambiente do pedido.
+        /// </summary>
+        /// <param name="idAmbientePedido"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idAmbientePedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE ambiente_pedido_espelho SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdAmbientePedido=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idAmbientePedido));
+        }
+
+        #endregion
+
         #region Métodos sobrescritos
 
         public override int Update(AmbientePedidoEspelho objUpdate)
