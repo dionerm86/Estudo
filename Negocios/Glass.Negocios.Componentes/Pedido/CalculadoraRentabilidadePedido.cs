@@ -472,39 +472,6 @@ namespace Glass.Pedido.Negocios.Componentes
                 ProvedorDescritoresRegistro.ObterDescritor(tipo, produtoPedidoRentabilidade.IdRegistro), tipo, produtoPedidoRentabilidade.Valor);
         }
 
-        /// <summary>
-        /// Executa o calculo da rentabilidade para o pedido.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="pedido">Instancia do pedido que será salva.</param>
-        private Data.ICalculoRentabilidadeResultado Calcular(GDA.GDASession sessao, Data.Model.Pedido pedido)
-        {
-            var item = ObterItemPedido(sessao, pedido);
-            return Calcular(item);
-        }
-
-        /// <summary>
-        /// Executa o cálculo de rentabilidade para o ambiente do pedido.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="ambiente"></param>
-        private Data.ICalculoRentabilidadeResultado Calcular(GDA.GDASession sessao, Data.Model.AmbientePedido ambiente)
-        {
-            var item = ObterItemAmbientePedido(sessao, ambiente);
-            return Calcular(item);
-        }
-
-        /// <summary>
-        /// Executa o cálculo de rentabilidade para o produto do pedido.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="produtoPedido"></param>
-        private Data.ICalculoRentabilidadeResultado Calcular(GDA.GDASession sessao, Data.Model.ProdutosPedido produtoPedido)
-        {
-            var item = ObterItemProdutoPedido(sessao, produtoPedido);
-            return Calcular(item);
-        }
-
         #endregion
 
         #region Membros IProvedorItemRentabilidade
@@ -598,7 +565,20 @@ namespace Glass.Pedido.Negocios.Componentes
                 return CriarResultadoNaoExecutado();
 
             var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(id);
-            return Calcular(sessao, pedido);
+            return (this as Data.ICalculadoraRentabilidade<Data.Model.Pedido>).Calcular(sessao, pedido);
+        }
+
+        /// <summary>
+        /// Executa o calculo da rentabilidade para o tipo principal da calculadora..
+        /// </summary>
+        /// <param name="instancia">Instancia principal.</param>
+        Data.ICalculoRentabilidadeResultado Data.ICalculadoraRentabilidade<Data.Model.Pedido>.Calcular(GDA.GDASession sessao, Data.Model.Pedido instancia)
+        {
+            if (!CalculoHabilitado)
+                return CriarResultadoNaoExecutado();
+
+            var item = ObterItemPedido(sessao, instancia);
+            return Calcular(item);
         }
 
         /// <summary>
@@ -613,7 +593,22 @@ namespace Glass.Pedido.Negocios.Componentes
                 return CriarResultadoNaoExecutado();
 
             var produtoPedido = Data.DAL.ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(id);
-            return Calcular(sessao, produtoPedido);
+            return (this as Data.ICalculadoraRentabilidade<Data.Model.ProdutosPedido>).Calcular(sessao, produtoPedido);
+        }
+
+        /// <summary>
+        /// Executa o calculo da rentabilidade para o produto do tipo principal.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="instancia">Instância do produto.</param>
+        /// <returns></returns>
+        Data.ICalculoRentabilidadeResultado Data.ICalculadoraRentabilidade<Data.Model.ProdutosPedido>.Calcular(GDA.GDASession sessao, Data.Model.ProdutosPedido instancia)
+        {
+            if (!CalculoHabilitado)
+                return CriarResultadoNaoExecutado();
+
+            var item = ObterItemProdutoPedido(sessao, instancia);
+            return Calcular(item);
         }
 
         /// <summary>
@@ -628,7 +623,22 @@ namespace Glass.Pedido.Negocios.Componentes
                 return CriarResultadoNaoExecutado();
 
             var ambiente = Data.DAL.AmbientePedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
-            return Calcular(sessao, ambiente);
+            return (this as Data.ICalculadoraRentabilidade<Data.Model.AmbientePedido>).Calcular(sessao, ambiente);
+        }
+
+        /// <summary>
+        /// Executa o calculo da rentabilidade para o ambiente do tipo principal.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="instancia">Instância do ambiente.</param>
+        /// <returns></returns>
+        Data.ICalculoRentabilidadeResultado Data.ICalculadoraRentabilidade<Data.Model.AmbientePedido>.Calcular(GDA.GDASession sessao, Data.Model.AmbientePedido instancia)
+        {
+            if (!CalculoHabilitado)
+                return CriarResultadoNaoExecutado();
+
+            var item = ObterItemAmbientePedido(sessao, instancia);
+            return Calcular(item);
         }
 
         #endregion

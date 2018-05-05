@@ -244,7 +244,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProdPed">De qual produto de pedido importar</param>
         /// <param name="idProdPedEsp">Qual produto do pedido espelho será beneficiado</param>
-        public void ImportaProdPedBenef(GDASession sessao, uint idProdPed, uint idProdPedEsp)
+        internal void ImportaProdPedBenef(GDASession sessao, uint idProdPed, uint idProdPedEsp, PedidoEspelho pedidoEspelho)
         {
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sessao, "Select Count(*) From produto_pedido_benef Where idProdPed=" + idProdPed).ToString()) <= 0)
                 return;
@@ -256,26 +256,7 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, String.Format(sql, idProdPedEsp, idProdPed));
 
-            ProdutosPedidoEspelhoDAO.Instance.UpdateValorBenef(sessao, idProdPedEsp);
-        }
-
-        /// <summary>
-        /// Importa os beneficiamentos do materialItemProjeto
-        /// </summary>
-        /// <param name="idMaterItemProj">De qual materialItemProjeto importar</param>
-        /// <param name="idProdPedEsp">Qual produto do pedido espelho será beneficiado</param>
-        public void ImportaMaterialProjBenef(uint idMaterItemProj, uint idProdPedEsp)
-        {
-            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select Count(*) From material_projeto_benef Where idMaterItemProj=" + idMaterItemProj).ToString()) <= 0)
-                return;
-
-            string sql = @"Insert Into produto_pedido_espelho_benef (IdBenefConfig, IdProdPed, Qtd, Valor, LapLarg, LapAlt, 
-                BisLarg, BisAlt, EspBisote, EspFuro) Select IdBenefConfig, {0} as IdProdPed, Qtd, Valor, 
-                LapLarg, LapAlt, BisLarg, BisAlt, EspBisote, EspFuro From material_projeto_benef Where idMaterItemProj={1}";
-
-            objPersistence.ExecuteCommand(String.Format(sql, idProdPedEsp, idMaterItemProj));
-
-            ProdutosPedidoEspelhoDAO.Instance.UpdateValorBenef(idProdPedEsp);
+            ProdutosPedidoEspelhoDAO.Instance.UpdateValorBenef(sessao, idProdPedEsp, pedidoEspelho);
         }
 
         /// <summary>

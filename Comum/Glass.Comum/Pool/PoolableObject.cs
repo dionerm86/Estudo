@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Glass.Pool
 {
     public abstract class PoolableObject<T> : IDisposable
-        where T : class
+        where T : PoolableObject<T>
     {
         static PoolableObject()
         {
@@ -39,15 +39,13 @@ namespace Glass.Pool
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            //if (!disposing)
-            //    GC.ReRegisterForFinalize(this);
-
             if (Pool.IsRegistered<T>())
-                Pool.Release<T>(this as T);
+                Pool.Release(this as T);
         }
 
         #endregion

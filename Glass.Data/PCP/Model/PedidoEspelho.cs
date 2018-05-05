@@ -5,12 +5,13 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PedidoEspelhoDAO))]
 	[PersistenceClass("pedido_espelho")]
-	public class PedidoEspelho
+	public class PedidoEspelho : IContainerCalculo
     {
         #region Enumeradores
 
@@ -650,6 +651,116 @@ namespace Glass.Data.Model
         public bool ConferirPedidoVisible
         {
             get { return PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && Importado && Situacao == (int)PedidoEspelho.SituacaoPedido.Finalizado; }
+        }
+
+        #endregion
+
+        #region IContainerCalculo
+
+        uint IContainerCalculo.Id
+        {
+            get { return IdPedido; }
+        }
+
+        private IDadosCliente cliente;
+
+        IDadosCliente IContainerCalculo.Cliente
+        {
+            get
+            {
+                if (cliente == null)
+                {
+                    cliente = new ClienteDTO(() => IdCli);
+                }
+
+                return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(
+                        this,
+                        () => AmbientePedidoEspelhoDAO.Instance.GetByPedido(IdPedido)
+                    );
+                }
+
+                return ambientes;
+            }
+        }
+
+        private Lazy<uint?> idObra;
+
+        uint? IContainerCalculo.IdObra
+        {
+            get
+            {
+                if (idObra == null)
+                {
+                    idObra = new Lazy<uint?>(() => PedidoDAO.Instance.GetIdObra(IdPedido));
+                }
+
+                return idObra.Value;
+            }
+        }
+
+        int? IContainerCalculo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerCalculo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerCalculo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerCalculo.MaoDeObra
+        {
+            get { return TipoPedido == Pedido.TipoPedidoEnum.MaoDeObra; }
+        }
+
+        private Lazy<bool> isPedidoProducaoCorte;
+
+        bool IContainerCalculo.IsPedidoProducaoCorte
+        {
+            get
+            {
+                if (isPedidoProducaoCorte == null)
+                {
+                    isPedidoProducaoCorte = new Lazy<bool>(() => {
+                        return TipoPedido == Pedido.TipoPedidoEnum.Producao
+                            && PedidoDAO.Instance.ObtemValorCampo<uint?>("idPedidoRevenda", "idPedido=" + IdPedido).HasValue;
+                    });
+                }
+
+                return isPedidoProducaoCorte.Value;
+            }
+        }
+
+        private Lazy<uint?> idParcela;
+
+        uint? IContainerCalculo.IdParcela
+        {
+            get
+            {
+                if (idParcela == null)
+                {
+                    idParcela = new Lazy<uint?>(() => PedidoDAO.Instance.ObtemIdParcela(IdPedido));
+                }
+
+                return idParcela.Value;
+            }
         }
 
         #endregion

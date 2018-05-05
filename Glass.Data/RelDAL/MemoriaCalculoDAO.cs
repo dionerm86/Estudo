@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using Glass.Data.RelModel;
 using Glass.Data.Model;
-using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.RelDAL
 {
@@ -44,7 +45,7 @@ namespace Glass.Data.RelDAL
         public DadosMemoriaCalculo[] GetDadosMemoriaCalculo(Orcamento orca)
         {
             List<DadosMemoriaCalculo> retorno = new List<DadosMemoriaCalculo>();
-
+            
             decimal totalAcrescimo = 0;
             decimal totalDesconto = 0;
 
@@ -53,12 +54,17 @@ namespace Glass.Data.RelDAL
             var produtos = ProdutosOrcamentoDAO.Instance.GetForMemoriaCalculo(orca.IdOrcamento);
             List<MaterialItemProjeto> itensProjeto = new List<MaterialItemProjeto>();
 
-            int tipoEntregaCalculo = orca.TipoEntrega != null ? orca.TipoEntrega.Value : (int)Orcamento.TipoEntregaOrcamento.Balcao;
+            bool orcamentoSemTipoEntrega = false;
+            if (orca.TipoEntrega == null)
+            {
+                orcamentoSemTipoEntrega = true;
+                orca.TipoEntrega = (int)Orcamento.TipoEntregaOrcamento.Balcao;
+            }
 
             foreach (ProdutosOrcamento po in produtos)
                 if (po.IdItemProjeto == null)
                 {
-                    retorno.Add(new DadosMemoriaCalculo(po, (Orcamento.TipoEntregaOrcamento)tipoEntregaCalculo, orca.IdCliente));
+                    retorno.Add(new DadosMemoriaCalculo(po, orca));
                     foreach (ProdutoOrcamentoBenef pob in po.Beneficiamentos.ToProdutosOrcamento())
                         retorno.Add(new DadosMemoriaCalculo(pob));
                 }
@@ -67,9 +73,10 @@ namespace Glass.Data.RelDAL
                     totalAcrescimo += po.ValorAcrescimo;
                     totalDesconto += PedidoConfig.RatearDescontoProdutos ? po.ValorDesconto : 0;
 
-                    var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value).ToArray();
-                    DescontoAcrescimo.Instance.AplicaAcrescimoAmbiente(po.TipoAcrescimo, po.Acrescimo, itens, null, null, (int?)orca.IdOrcamento);
-                    DescontoAcrescimo.Instance.AplicaDescontoAmbiente(po.TipoDesconto, po.Desconto, itens, null, null, (int?)orca.IdOrcamento);
+                    var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value);
+                    
+                    DescontoAcrescimo.Instance.AplicarAcrescimoAmbiente(null, orca, po.TipoAcrescimo, po.Acrescimo, itens);
+                    DescontoAcrescimo.Instance.AplicarDescontoAmbiente(null, orca, po.TipoDesconto, po.Desconto, itens);
 
                     foreach (MaterialItemProjeto mip in itens)
                     {
@@ -102,20 +109,25 @@ namespace Glass.Data.RelDAL
 
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                DescontoAcrescimo.Instance.AplicaComissao(null, orca.PercComissao, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
-            DescontoAcrescimo.Instance.AplicaAcrescimo(null, 2, totalAcrescimo, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
-            DescontoAcrescimo.Instance.AplicaDesconto(null, 2, totalDesconto, materiaisItemProjeto, null, null, (int?)orca.IdOrcamento);
+                DescontoAcrescimo.Instance.AplicarComissao(null, orca, orca.PercComissao, materiaisItemProjeto);
+            
+            DescontoAcrescimo.Instance.AplicarAcrescimo(null, orca, 2, totalAcrescimo, materiaisItemProjeto);
+            DescontoAcrescimo.Instance.AplicarDesconto(null, orca, 2, totalDesconto, materiaisItemProjeto);
 
             foreach (MaterialItemProjeto mip in materiaisItemProjeto)
             {
-                retorno.Add(new DadosMemoriaCalculo(mip, (Orcamento.TipoEntregaOrcamento)tipoEntregaCalculo, orca.PercComissao, mip.Ambiente, 
-                    mip.DescrAmbiente, orca.IdCliente, false));
+                retorno.Add(new DadosMemoriaCalculo(mip, orca.PercComissao, mip.Ambiente, mip.DescrAmbiente, false, orca));
 
                 foreach (MaterialProjetoBenef mpb in mip.Beneficiamentos.ToMateriaisProjeto())
                 {
-                    retorno.Add(new DadosMemoriaCalculo(mpb, (Orcamento.TipoEntregaOrcamento)tipoEntregaCalculo, orca.PercComissao, mip.Ambiente,
+                    retorno.Add(new DadosMemoriaCalculo(mpb, (Orcamento.TipoEntregaOrcamento)orca.TipoEntrega, orca.PercComissao, mip.Ambiente,
                         mip.DescrAmbiente, orca.IdCliente));
                 }
+            }
+
+            if (orcamentoSemTipoEntrega)
+            {
+                orca.TipoEntrega = null;
             }
 
             return retorno.ToArray();
@@ -136,8 +148,7 @@ namespace Glass.Data.RelDAL
                     ambientesSomados.Add(pp.IdAmbientePedido.Value);
                 }
 
-                retorno.Add(new DadosMemoriaCalculo(pp, ped.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra, qtdeSomar, 
-                    (Pedido.TipoEntregaPedido?)ped.TipoEntrega, ped.IdCli, ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição));
+                retorno.Add(new DadosMemoriaCalculo(pp, ped, qtdeSomar));
 
                 foreach (ProdutoPedidoBenef ppb in pp.Beneficiamentos.ToProdutosPedido())
                     retorno.Add(new DadosMemoriaCalculo(ppb));
@@ -163,8 +174,7 @@ namespace Glass.Data.RelDAL
                     ambientesSomados.Add(ppe.IdAmbientePedido.Value);
                 }
 
-                retorno.Add(new DadosMemoriaCalculo(ppe, ped.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra, qtdeSomar,
-                    (Pedido.TipoEntregaPedido?)ped.TipoEntrega, ped.IdCli, ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição));
+                retorno.Add(new DadosMemoriaCalculo(ppe, ped, qtdeSomar));
 
                 foreach (ProdutoPedidoEspelhoBenef ppeb in ppe.Beneficiamentos.ToProdutosPedidoEspelho())
                     retorno.Add(new DadosMemoriaCalculo(ppeb));

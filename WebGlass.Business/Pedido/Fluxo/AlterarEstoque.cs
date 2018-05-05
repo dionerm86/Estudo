@@ -151,19 +151,17 @@ namespace WebGlass.Business.Pedido.Fluxo
         public void EstornaBaixaEstoque(GDASession sessao, uint idLoja, IEnumerable<DetalhesBaixaEstoque> dadosEstornoEstoque, uint? idVolume, uint? idProdImpressaoChapa)
         {
             var lstProdPed = new List<Glass.Data.Model.ProdutosPedido>();
-            Glass.Data.Model.Produto prod;
 
             foreach (var d in dadosEstornoEstoque)
             {
                 var prodPed = ProdutosPedidoDAO.Instance.GetElement(sessao, (uint)d.IdProdPed);
-                prod = ProdutoDAO.Instance.GetElement(sessao, prodPed.IdProd);
 
                 // Se a quantidade a ser marcado estornado for maior do que já saiu, não permite marcar o estorno
                 if (d.Qtde > prodPed.QtdSaida)
                     throw new Exception("Operação cancelada. O produto " + d.DescricaoBaixa + " está tendo um estono maior do que a quantidade que já joi dado saída.");
                 else
                 {
-                    int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd);
+                    int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd);
 
                     // Se a empresa trabalha com venda de alumínio no metro e se produto for alumínio, 
                     // coloca o metro linear baixado no campo m²
