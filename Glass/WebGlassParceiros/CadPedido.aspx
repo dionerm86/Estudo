@@ -150,8 +150,9 @@
             return true;
         }
 
+        var parcela = FindControl("drpParcelas", "select");
         var tipoVenda = FindControl("hdfTipoVendaAtual", "input").value;
-        var descontoMaximo = MetodosAjax.GetDescMaxPedido(<%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>, tipoVenda).value;
+        var descontoMaximo = MetodosAjax.GetDescMaxPedido(<%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>, tipoVenda, parcela.value).value;
         var tipo = FindControl("drpTipoDesconto", "select").value;
         var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
         var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;

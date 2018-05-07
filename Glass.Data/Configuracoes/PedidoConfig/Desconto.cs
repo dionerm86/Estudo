@@ -13,7 +13,7 @@ namespace Glass.Configuracoes
             /// <returns></returns>
             public static float GetDescMaxPedido
             {
-                get { return GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser, 0); }
+                get { return GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser, 0, 0); }
             }
 
             /// <summary>
@@ -68,12 +68,12 @@ namespace Glass.Configuracoes
                 }
             }
 
-            public static float GetDescontoMaximoPedido(uint idFunc, int tipoVendaPedido)
+            public static float GetDescontoMaximoPedido(uint idFunc, int tipoVendaPedido, int? idParcela)
             {
-                return GetDescontoMaximoPedido(null, idFunc, tipoVendaPedido);
+                return GetDescontoMaximoPedido(null, idFunc, tipoVendaPedido, idParcela);
             }
 
-            public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido)
+            public static float GetDescontoMaximoPedido(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido, int? idParcela)
             {
                 // Se o funcionário tiver permissão de ignorar bloqueio de desconto no orçamento e pedido
                 if (Config.PossuiPermissao((int)idFunc, Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
@@ -81,7 +81,7 @@ namespace Glass.Configuracoes
                 // Se o funcionário for gerente, retorna o desconto máximo para gerente no pedido.
                 else if (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
                 {
-                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo)
+                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo && !Data.DAL.ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela ?? 0))
                     {
                         return ObterDescontoMaximoPedidoAPrazoGerenteConfigurado;
                     }
@@ -90,7 +90,7 @@ namespace Glass.Configuracoes
                 }
                 else
                 {
-                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo)
+                    if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo && !Data.DAL.ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela ?? 0))
                     {
                         return GetDescMaxPedidoAPrazoConfigurado;
                     }

@@ -277,15 +277,15 @@ namespace Glass.UI.Web.Utils
         }
 
         [Ajax.AjaxMethod]
-        public string PercDesconto(string idPedidoStr, string idFuncAtualStr, string alterouDesconto)
+        public string PercDesconto(string idPedidoStr, string idFuncAtualStr, string alterouDesconto, string idParcela)
         {
             var idPedido = idPedidoStr.StrParaUint();
             var idFuncAtual = idFuncAtualStr.StrParaUint();
             var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido))).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt()) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt())).ToString().Replace(",", ".");
         }
 
         [Ajax.AjaxMethod()]
