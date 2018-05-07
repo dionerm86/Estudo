@@ -639,8 +639,8 @@ namespace Glass.Data.DAL
                 //
                 // Foi colocado o agrupamento por plp.idLiberarPedido para corrigir problema no cálculo que ocorreu ao gerar nota a partir
                 // de várias liberaçãoes na vidrocel
-                sql += string.Format(" GROUP BY pp.IdProdPed{0} HAVING pp.Qtde - IF({1}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0) > 0",
-                    idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty, FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower());
+                sql += string.Format(" GROUP BY pp.IdProdPed{0} HAVING pp.Qtde{1}> 0",
+                    idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty, FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ? " - IF(plp.idLiberarPedido > 0, COALESCE(pt.QtdeTrocaDevolucao, 0), 0) > 0" : string.Empty);
             }
             else
             {
