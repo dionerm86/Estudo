@@ -18,6 +18,12 @@ namespace Glass.Data
         /// <param name="id">Identificador da instancia principal.</param>
         ICalculoRentabilidadeResultado Calcular(GDA.GDASession sessao, uint id);
 
+        /// <summary>
+        /// Executa o calculo da rentabilidade para o tipo principal da calculadora..
+        /// </summary>
+        /// <param name="instancia">Instancia principal.</param>
+        ICalculoRentabilidadeResultado Calcular(GDA.GDASession sessao, T instancia);
+
         #endregion
     }
 

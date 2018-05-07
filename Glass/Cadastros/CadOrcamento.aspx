@@ -220,15 +220,15 @@
             var campoTotM = "<%= hdfBenefTotM.ClientID %>";
             var campoValorUnit = "<%= hdfBenefValorUnit.ClientID %>";
         
-            if (recalcularOrcamento(idOrcamento, perguntar, "loading", nomeControleBenef, campoAltura, campoEspessura, campoLargura,
-                campoIdProd, campoQtde, campoTotM, campoValorUnit, tipoEntregaNovo, idClienteNovo))
-            {
-                if (lnkGerarPedido == null)
-                {
-                    alert("Orçamento recalculado com sucesso!");
-                    redirectUrl(window.location.href);
-                }
-            }
+            recalcularOrcamento(idOrcamento, perguntar, "loading", nomeControleBenef, campoAltura, campoEspessura, campoLargura,
+                campoIdProd, campoQtde, campoTotM, campoValorUnit, tipoEntregaNovo, idClienteNovo)
+                .then(executado => {
+                    if (executado && lnkGerarPedido == null)
+                    {
+                        alert("Orçamento recalculado com sucesso!");
+                        redirectUrl(window.location.href);
+                    }
+                });
         }
     
         function limparComissionado()

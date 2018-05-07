@@ -1706,7 +1706,7 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string PercDesconto(string idPedidoStr, string alterouDesconto)
+        public string PercDesconto(string idPedidoStr, string alterouDesconto, string idParcela)
         {
             if (string.IsNullOrWhiteSpace(idPedidoStr))
                 idPedidoStr = "0";
@@ -1716,8 +1716,8 @@ namespace Glass.UI.Web.Cadastros
             uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido))).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt()) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt())).ToString().Replace(",", ".");
         }
 
         //Valida se pode marcar a opção de fast delivery

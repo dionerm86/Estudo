@@ -648,6 +648,22 @@
                                                                         <asp:Label ID="lblSaldoObra" runat="server" Text='<%# Eval("SaldoObra", "{0:C}") %>'></asp:Label>
                                                                         <asp:HiddenField ID="hdfIdObra" runat="server" Value='<%# Bind("IdObra") %>' />
                                                                     </div>
+                                                                    <td>
+                                                                        <div id="divNumParc">
+                                                                            <table>
+                                                                                <tr>
+                                                                                    <td nowrap="nowrap" style="font-weight: bold">Num Parc.:
+                                                                                    </td>
+                                                                                    <td nowrap="nowrap">
+                                                                                        <uc6:ctrlParcelasSelecionar ID="ctrlParcelasSelecionar1" runat="server" ParcelaPadrao='<%# Bind("IdParcela") %>'
+                                                                                            NumeroParcelas='<%# Bind("NumParc") %>' OnLoad="ctrlParcelasSelecionar1_Load"
+                                                                                            CallbackSelecaoParcelas="callbackSetParcelas" />
+                                                                                        <asp:HiddenField ID="hdfDataBase" runat="server" OnLoad="hdfDataBase_Load" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </div>
+                                                                    </td>
                                                                 </td>
                                                             </tr>
                                                         </table>

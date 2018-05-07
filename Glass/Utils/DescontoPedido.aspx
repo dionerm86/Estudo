@@ -155,9 +155,10 @@
         var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
         var alterou = tipo != tipoAtual || desconto != descontoAtual;
         
+        var idParcela = FindControl("drpParcelas", "select").value;
         var descontoMaximo = FindControl('lblDescMaximo', 'span');
         if (descontoMaximo != null && FindControl("hdfUsarDescontoMax", "input").value != "true")
-            descontoMaximo = DescontoPedido.PercDesconto(idPedido, idFuncAtual, alterou).value.replace(',', '.');
+            descontoMaximo = DescontoPedido.PercDesconto(idPedido, idFuncAtual, alterou, idParcela).value.replace(',', '.');
         else
             descontoMaximo = parseFloat(descontoMaximo.innerHTML.replace("%", "").replace(",", "."));
         
@@ -1675,7 +1676,7 @@
                         tipoCartao != null ? tipoCartao.value : "", parcelas != null ? parcelas.value : "");
                 }
 
-                if (retDesconto.error != null)
+                if ( retDesconto != null && retDesconto.error != null)
                 {
                     alert(retDesconto.error.description);
                     return false;

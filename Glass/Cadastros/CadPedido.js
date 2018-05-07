@@ -282,7 +282,7 @@ function calcularDesconto(tipoCalculo) {
         descontoAtual = 0;
 
     var alterou = tipo != tipoAtual || desconto != descontoAtual;
-    var descontoMaximo = CadPedido.PercDesconto(var_IdPedido, alterou).value.replace(',', '.');
+    var descontoMaximo = CadPedido.PercDesconto(var_IdPedido, alterou, FindControl("drpParcelas", "select").value).value.replace(',', '.');
 
     //Busca o Desconto por parcela ou por Forma de pagamento e dados do produto
     var retDesconto = 0;

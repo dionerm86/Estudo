@@ -367,7 +367,7 @@ namespace Glass.Data.DAL
                                 ProdutoPedidoBenefDAO.Instance.Insert(transaction, ppb);
                             }
 
-                            ProdutosPedidoDAO.Instance.UpdateValorBenef(transaction, idProdPed);
+                            ProdutosPedidoDAO.Instance.UpdateValorBenef(transaction, idProdPed, pedido);
                         }
                     }
 
@@ -441,7 +441,7 @@ namespace Glass.Data.DAL
                             ProdutoPedidoBenefDAO.Instance.Insert(transaction, ppb);
                         }
 
-                        ProdutosPedidoDAO.Instance.UpdateValorBenef(transaction, idProdPed);
+                        ProdutosPedidoDAO.Instance.UpdateValorBenef(transaction, idProdPed, pedido);
                     }
 
                     #endregion

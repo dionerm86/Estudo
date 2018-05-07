@@ -5,12 +5,14 @@ using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
 using System.Xml.Serialization;
+using Glass.Data.Model.Calculos;
+using System.Collections.Generic;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(OrcamentoDAO))]
 	[PersistenceClass("orcamento")]
-	public class Orcamento : ModelBaseCadastro
+	public class Orcamento : ModelBaseCadastro, IContainerCalculo
     {
         #region Construtores
 
@@ -910,6 +912,83 @@ namespace Glass.Data.Model
 
                 return obs;
             }
+        }
+
+        #endregion
+
+        #region IContainerCalculo
+
+        uint IContainerCalculo.Id
+        {
+            get { return IdOrcamento; }
+        }
+
+        private IDadosCliente cliente;
+
+        IDadosCliente IContainerCalculo.Cliente
+        {
+            get
+            {
+                if (cliente == null)
+                {
+                    cliente = new ClienteDTO(() => IdCliente ?? 0);
+                }
+
+                return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(
+                        this,
+                        () => ProdutosOrcamentoDAO.Instance.GetByOrcamento(IdOrcamento, false)
+                    );
+                }
+
+                return ambientes;
+            }
+        }
+
+        uint? IContainerCalculo.IdObra
+        {
+            get { return null; }
+        }
+
+        int? IContainerCalculo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerCalculo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerCalculo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerCalculo.MaoDeObra
+        {
+            get { return false; }
+        }
+
+        bool IContainerCalculo.IsPedidoProducaoCorte
+        {
+            get { return false; }
+        }
+
+        uint? IContainerCalculo.IdParcela
+        {
+            get { return IdParcela; }
         }
 
         #endregion

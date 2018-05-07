@@ -6,12 +6,13 @@ using Glass.Data.DAL;
 using System.IO;
 using Glass.Configuracoes;
 using System.Xml.Serialization;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosOrcamentoDAO))]
 	[PersistenceClass("produtos_orcamento")]
-	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IDescontoAcrescimo
+	public class ProdutosOrcamento : Colosoft.Data.BaseModel, IProdutoCalculo, IAmbienteCalculo
     {
         #region Construtores
 
@@ -321,10 +322,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (NumChild == null)
-                    NumChild = ProdutosOrcamentoDAO.Instance.ContainsChildItems(IdProd) ? 1 : 0;
-
-                return NumChild > 0;
+                return TemItensProdutoSession(null);
             }
         }
 
@@ -496,41 +494,47 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
 
-        uint IDescontoAcrescimo.Id
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
+
+        uint IProdutoCalculo.Id
         {
             get { return IdProd; }
         }
 
-        uint IDescontoAcrescimo.IdParent
+        uint? IProdutoCalculo.IdAmbiente
         {
-            get { return IdOrcamento; }
+            get { return IdProdParent; }
         }
 
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorProd != null ? ValorProd.Value : 0; }
             set { ValorProd = value; }
         }
 
-        decimal IDescontoAcrescimo.Total
+        decimal IProdutoCalculo.Total
         {
             get { return _total != null ? _total.Value : 0; }
             set { _total = value; }
         }
 
-        float IDescontoAcrescimo.Qtde
+        float IProdutoCalculo.Qtde
         {
             get { return Qtde != null ? Qtde.Value : 0; }
+            set { this.Qtde = value; }
         }
 
-        float IDescontoAcrescimo.TotM2Calc
+        float IProdutoCalculo.TotM2Calc
         {
             get { return TotMCalc; }
+            set { this.TotMCalc = value; }
         }
 
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProduto != null ? IdProduto.Value : 0; }
         }
@@ -540,32 +544,54 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        private bool _removerDescontoQtde = false;
-
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
-
-        uint? IDescontoAcrescimo.IdObra
-        {
-            get { return null; }
-        }
-
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
         }
 
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
         }
 
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
+        }
+
+        decimal IProdutoCalculo.CustoProd
+        {
+            get { return Custo; }
+            set { Custo = value; }
+        }
+
+        #endregion
+
+        #region IAmbienteCalculo
+
+        uint IAmbienteCalculo.Id
+        {
+            get { return IdProd; }
+        }
+
+        int IAmbienteCalculo.TipoDesconto
+        {
+            get { return TipoDesconto; }
+        }
+
+        decimal IAmbienteCalculo.Desconto
+        {
+            get { return Desconto; }
+        }
+
+        int IAmbienteCalculo.TipoAcrescimo
+        {
+            get { return TipoAcrescimo; }
+        }
+
+        decimal IAmbienteCalculo.Acrescimo
+        {
+            get { return Acrescimo; }
         }
 
         #endregion

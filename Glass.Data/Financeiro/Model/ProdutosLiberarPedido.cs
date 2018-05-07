@@ -5,6 +5,8 @@ using Glass.Data.DAL;
 using System.Linq;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
@@ -310,6 +312,21 @@ namespace Glass.Data.Model
             get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd); }
         }
 
+        private ProdutosPedido produtoPedido = null;
+
+        private ProdutosPedido ProdutoPedido
+        {
+            get
+            {
+                if (produtoPedido == null)
+                {
+                    produtoPedido = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(IdProdPed);
+                }
+
+                return produtoPedido;
+            }
+        }
+
         private List<ProdutoPedidoBenef> _beneficiamentos = null;
 
         public GenericBenefCollection Beneficiamentos
@@ -317,7 +334,7 @@ namespace Glass.Data.Model
             get 
             {
                 if (_beneficiamentos == null)
-                    _beneficiamentos = ProdutosPedidoDAO.Instance.GetBeneficiamentos(null, IdProdPed);
+                    _beneficiamentos = ProdutoPedido.Beneficiamentos;
 
                 return _beneficiamentos; 
             }
@@ -335,21 +352,21 @@ namespace Glass.Data.Model
                     // Recupera o valor unitário do beneficiamento e soma ao valor unitário final, o motivo disso é evitar que o cálculo do
                     // valor unitário fique incorreto caso esteja usando área mínima, situação na qual o beneficiamento calculado por m²
                     // considera a área real e o cálculo do vidro considera a área mínima
-                    var valorUnitBenef = Beneficiamentos.
-                        Sum(b => b.TipoCalculo != TipoCalculoBenef.Porcentagem ? b.ValorUnit : b.Valor / (TotM2 > 0 ? (decimal)TotM2 : 1));
+                    var valorUnitBenef = Beneficiamentos.Sum(b => {
+                        var divisor = TotM2 > 0 ? (decimal)TotM2 : 1;
+                        return b.TipoCalculo != TipoCalculoBenef.Porcentagem ? b.ValorUnit : b.Valor / divisor;
+                    });
+                    
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
-                    // Caso a mão de obra seja em vidro redondo, o campo largura deve ser informado com o valor do campo altura, pois é assim
-                    // que se calcula o m² ao emitir o pedido
-                    var larguraProd = PedidoMaoDeObra && Redondo && LarguraProd == 0 ? (int)Altura : LarguraProd;
-
-                    decimal valorUnit = 0;
-                    CalculosFluxo.CalcValorUnitItemProd(null, IdCliente, (int)IdProd, larguraProd, QtdeProd, QtdeAmbiente, ValorProd - ValorBenefProd, (int)Espessura, Redondo, 2, 
-                        false, true, AlturaProd, (float)TotM2, ref valorUnit, Beneficiamentos.CountAreaMinima, AlturaBenef, LarguraBenef);
-
-                    _valorUnit = valorUnit + valorUnitBenef;
+                    decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(null, pedido, ProdutoPedido, ValorProd - ValorBenefProd);
+                    if (valorUnitario.HasValue)
+                    {
+                        _valorUnit = valorUnitario + valorUnitBenef;
+                    }
                 }
 
-                return _valorUnit != null ? _valorUnit.Value : 0;
+                return _valorUnit ?? 0;
             }
         }
 

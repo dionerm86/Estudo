@@ -5,12 +5,13 @@ using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosPedidoEspelhoDAO))]
 	[PersistenceClass("produtos_pedido_espelho")]
-	public class ProdutosPedidoEspelho : IResumoCorte, IDescontoAcrescimo
+	public class ProdutosPedidoEspelho : IResumoCorte, IProdutoCalculo
     {
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlProdEtiq() e SqlImpIndiv(), na ProdutosPedidoEspelhoDAO
@@ -764,33 +765,37 @@ namespace Glass.Data.Model
         {
             get { return Beneficiamentos.DescricaoBeneficiamentos; }
         }
- 
+
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
 
         uint IResumoCorte.Id
         {
             get { return IdProdPed; }
         }
 
-        uint IDescontoAcrescimo.Id
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
+
+        uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
         }
 
-        uint IDescontoAcrescimo.IdParent
+        uint? IProdutoCalculo.IdAmbiente
         {
-            get { return IdPedido; }
+            get { return IdAmbientePedido; }
         }
 
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
@@ -800,38 +805,27 @@ namespace Glass.Data.Model
             get { return PedidoMaoObra ? AmbientePedidoEspelhoDAO.Instance.GetQtde(IdAmbientePedido) : 1; }
         }
 
-        float IDescontoAcrescimo.AlturaCalc
+        float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }
         }
 
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return AlturaBenef; }
         }
 
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return LarguraBenef; }
         }
 
-        private bool _removerDescontoQtde = false;
-
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
-
-        uint? IDescontoAcrescimo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
-        }
-
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
         }
+
+        decimal IProdutoCalculo.CustoProd { get; set; }
 
         #endregion
     }

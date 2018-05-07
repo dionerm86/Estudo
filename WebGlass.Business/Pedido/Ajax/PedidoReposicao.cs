@@ -18,6 +18,7 @@ namespace WebGlass.Business.Pedido.Ajax
                 uint idProdPed;
                 uint idProdPedAnterior = Glass.Conversoes.StrParaUint(idProduto);
                 uint idPedido = Glass.Conversoes.StrParaUint(pedido);
+                var ped = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido);
 
                 var produtoNovo = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(idProdPedAnterior);
 
@@ -77,10 +78,10 @@ namespace WebGlass.Business.Pedido.Ajax
                 #endregion
 
                 // Calcula novamente o valor dos beneficiamentos
-                ProdutosPedidoDAO.Instance.UpdateValorBenef(idProdPed);
+                ProdutosPedidoDAO.Instance.UpdateValorBenef(null, idProdPed, ped);
 
                 // Calcula novamente o valor do total do pedido
-                PedidoDAO.Instance.UpdateTotalPedido(Glass.Conversoes.StrParaUint(pedido));
+                PedidoDAO.Instance.UpdateTotalPedido(ped);
 
                 return "";
             }

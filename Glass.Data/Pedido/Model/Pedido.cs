@@ -8,12 +8,13 @@ using System.Xml.Serialization;
 using Glass.Configuracoes;
 using Glass.Log;
 using System.ComponentModel;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PedidoDAO))]
 	[PersistenceClass("pedido")]
-	public class Pedido : ModelBaseCadastro
+	public class Pedido : ModelBaseCadastro, IContainerCalculo
 	{
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlComissao() e SqlRptSit(), na PedidoDAO
@@ -2947,6 +2948,87 @@ namespace Glass.Data.Model
             {
                 return TemProdutoLamComposicao || TemEspelho;
             }
+        }
+
+        #endregion
+
+        #region IContainerCalculo
+
+        uint IContainerCalculo.Id
+        {
+            get { return IdPedido; }
+        }
+
+        private IDadosCliente cliente;
+
+        IDadosCliente IContainerCalculo.Cliente
+        {
+            get
+            {
+                if (cliente == null)
+                {
+                    cliente = new ClienteDTO(() => IdCli);
+                }
+
+                return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(
+                        this,
+                        () => AmbientePedidoDAO.Instance.GetByPedido(IdPedido)
+                    );
+                }
+
+                return ambientes;
+            }
+        }
+
+        uint? IContainerCalculo.IdObra
+        {
+            get { return IdObra; }
+        }
+
+        int? IContainerCalculo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerCalculo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerCalculo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerCalculo.MaoDeObra
+        {
+            get { return MaoDeObra; }
+        }
+
+        bool IContainerCalculo.IsPedidoProducaoCorte
+        {
+            get
+            {
+                return IdPedidoRevenda.HasValue
+                    && TipoPedido == (int)TipoPedidoEnum.Producao;
+            }
+        }
+
+        uint? IContainerCalculo.IdParcela
+        {
+            get { return IdParcela; }
         }
 
         #endregion

@@ -110,6 +110,7 @@
     <Reference Include="System.Drawing">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Security">
       <Private>True</Private>
     </Reference>
@@ -131,6 +132,7 @@
     <Compile Include="Armazenamento\ArmazenamentoIsolado.cs" />
     <Compile Include="Arquivos.cs" />
     <Compile Include="AssinaturaDigital.cs" />
+    <Compile Include="Cache\CacheMemoria.cs" />
     <Compile Include="Calculos.cs" />
     <Compile Include="ConsultaCep.cs" />
     <Compile Include="DBUtils.cs" />
@@ -155,9 +157,14 @@
     <Compile Include="Medidas.cs" />
     <Compile Include="MensagemAlerta.cs" />
     <Compile Include="MetodosExtensao.cs" />
+    <Compile Include="Pool\CircularStore.cs" />
+    <Compile Include="Pool\IItemStore.cs" />
     <Compile Include="Pool\Pool.cs" />
     <Compile Include="Pool\PoolableObject.cs" />
+    <Compile Include="Pool\PoolObject.cs" />
+    <Compile Include="Pool\QueueStore.cs" />
     <Compile Include="Pool\Singleton.cs" />
+    <Compile Include="Pool\StackStore.cs" />
     <Compile Include="ProvedorContexto.cs" />
     <Compile Include="Conversoes.cs" />
     <Compile Include="Globalizacao\Cultura.cs" />

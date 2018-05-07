@@ -1442,7 +1442,7 @@ namespace Glass.UI.Web.Controls
         /// </summary>
         /// <param name="beneficiamentos">Os beneficiamentos que serão usados pelo controle.</param>
         /// <param name="celula">A célula que receberá os beneficiamentos.</param>
-        private void SetBeneficiamentosToCell(List<GenericBenef> beneficiamentos, TableCell celula)
+        private void SetBeneficiamentosToCell(IList<GenericBenef> beneficiamentos, TableCell celula)
         {
             // Variável com o beneficiamento
             BenefConfig benef = null;
@@ -1458,11 +1458,11 @@ namespace Glass.UI.Web.Controls
             }
     
             // Procura o beneficiamento na lista
-            GenericBenef item = beneficiamentos.Find(new Predicate<GenericBenef>(delegate(GenericBenef b)
+            GenericBenef item = beneficiamentos.FirstOrDefault(b =>
             {
                 return b.IdBenefConfig == benef.IdBenefConfig;
     
-            }));
+            });
     
             // Variável com os beneficiamentos aplicados à célula
             GenericBenef[] dados = null;
@@ -1482,7 +1482,7 @@ namespace Glass.UI.Web.Controls
                 BenefConfig[] child = BenefConfigDAO.Instance.GetByBenefConfigItens((uint)benef.IdBenefConfig);
     
                 // Procura entre os filhos o beneficiamento aplicado
-                dados = beneficiamentos.FindAll(new Predicate<GenericBenef>(delegate(GenericBenef b)
+                dados = beneficiamentos.Where(b =>
                 {
                     foreach (BenefConfig bc in child)
                         if (b.IdBenefConfig == bc.IdBenefConfig)
@@ -1490,7 +1490,7 @@ namespace Glass.UI.Web.Controls
     
                     return false;
     
-                })).ToArray();
+                }).ToArray();
             }
     
             // Se o beneficiamento não foi encontrado sai do método
@@ -2270,14 +2270,16 @@ namespace Glass.UI.Web.Controls
                 for (int i = 0; i < tblBenef.Rows.Count; i++)
                 {
                     // Inclui no retorno os beneficiamentos da primeira célula
-                    retorno.AddRange(GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[1]));
+                    foreach (var beneficiamento in GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[1]))
+                        retorno.Add(beneficiamento);
                     
                     // Garante que haja a próxima célula
                     if (tblBenef.Rows[i].Cells[3].Controls.Count == 0)
                         break;
-    
+
                     // Inclui no retorno os beneficiamentos da segunda célula
-                    retorno.AddRange(GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[3]));
+                    foreach (var beneficiamento in GetBeneficiamentosFromCell(tblBenef.Rows[i].Cells[3]))
+                        retorno.Add(beneficiamento);
                 }
     
                 return retorno;

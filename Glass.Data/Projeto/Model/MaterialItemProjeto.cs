@@ -10,7 +10,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(MaterialItemProjetoDAO))]
 	[PersistenceClass("material_item_projeto")]
-	public class MaterialItemProjeto : IDescontoAcrescimo, IMaterialItemProjeto
+	public class MaterialItemProjeto : IProdutoCalculo, IMaterialItemProjeto
     {
         #region Propriedades
 
@@ -458,28 +458,37 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.Id
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+
+        [XmlIgnore]
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+
+        [XmlIgnore]
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
+
+        [XmlIgnore]
+        uint IProdutoCalculo.Id
         {
             get { return IdMaterItemProj; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdParent
+        uint? IProdutoCalculo.IdAmbiente
         {
-            get { return IdItemProjeto; }
+            get { return null; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return Valor; }
             set { Valor = value; }
@@ -501,7 +510,10 @@ namespace Glass.Data.Model
         public decimal ValorDescontoQtde
         {
             get { return 0; }
-            set { }
+            set
+            {
+                // não faz nada
+            }
         }
 
         [XmlIgnore]
@@ -511,50 +523,29 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorComissao
+        decimal IProdutoCalculo.ValorComissao
         {
             get { return 0; }
-            set { }
-        }
-
-        private bool _removerDescontoQtde = false;
-
-        [XmlIgnore]
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
-
-        [XmlIgnore]
-        uint? IDescontoAcrescimo.IdObra
-        {
-            get
+            set
             {
-                uint? idPedido = null;
-
-                if ((idPedido = ItemProjetoDAO.Instance.ObtemIdPedido(IdItemProjeto)) > 0 ||
-                    (idPedido = ItemProjetoDAO.Instance.ObtemIdPedidoEspelho(IdItemProjeto)) > 0)
-                    return PedidoDAO.Instance.GetIdObra(idPedido.Value);
-                else
-                    return null;
+                // não faz nada
             }
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorTabelaPedido
+        decimal IProdutoCalculo.ValorTabelaPedido
         {
             get { return 0; }
         }
@@ -570,6 +561,13 @@ namespace Glass.Data.Model
             {
                 throw new NotImplementedException();
             }
+        }
+
+        [XmlIgnore]
+        decimal IProdutoCalculo.CustoProd
+        {
+            get { return Custo; }
+            set { Custo = value; }
         }
 
         #endregion

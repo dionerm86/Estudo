@@ -9,7 +9,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(AmbientePedidoDAO))]
     [PersistenceClass("ambiente_pedido")]
-    public class AmbientePedido
+    public class AmbientePedido : IAmbienteCalculo
     {
         #region Construtores
 
@@ -243,6 +243,35 @@ namespace Glass.Data.Model
 
         [XmlIgnore]
         public string ImagemProjModPath { get; set; }
+
+        #endregion
+
+        #region IAmbienteCalculo
+
+        uint IAmbienteCalculo.Id
+        {
+            get { return IdAmbientePedido; }
+        }
+
+        int IAmbienteCalculo.TipoDesconto
+        {
+            get { return TipoDesconto; }
+        }
+
+        decimal IAmbienteCalculo.Desconto
+        {
+            get { return Desconto; }
+        }
+
+        int IAmbienteCalculo.TipoAcrescimo
+        {
+            get { return TipoAcrescimo; }
+        }
+
+        decimal IAmbienteCalculo.Acrescimo
+        {
+            get { return Acrescimo; }
+        }
 
         #endregion
     }

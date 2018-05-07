@@ -2934,9 +2934,7 @@ namespace Glass.Data.DAL
                                     ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdPedProducao), true);
 
                                 float m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
-                                bool m2 = new List<int> { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
-                                    .Contains(GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
-
+                                
                                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, 1, 0, false, false, true);
 
                                 // Só baixa apenas se a peça possuir produto para baixa associado

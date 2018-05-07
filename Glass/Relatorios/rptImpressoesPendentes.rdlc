@@ -3070,10 +3070,6 @@
           <DataField>QtdeAmbiente</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="RemoverDescontoQtde">
-          <DataField>RemoverDescontoQtde</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
         <Field Name="AtualizarTotalPedido">
           <DataField>AtualizarTotalPedido</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
