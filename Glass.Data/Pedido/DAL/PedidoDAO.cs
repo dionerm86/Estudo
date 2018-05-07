@@ -8770,7 +8770,7 @@ namespace Glass.Data.DAL
             if (idFunc == 0)
                 idFunc = pedido.IdFunc;
 
-            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0);
+            float descontoMaximoPermitido = PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela);
 
             if (descontoMaximoPermitido == 100)
                 return true;
@@ -10829,8 +10829,8 @@ namespace Glass.Data.DAL
                                 GetTotalSemDesconto(sessao, pedido.IdPedido, pedido.Total));
                         }
 
-                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0))
-                            Email.EnviaEmailDescontoMaior(sessao, pedido.IdPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0));
+                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela))
+                            Email.EnviaEmailDescontoMaior(sessao, pedido.IdPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela));
                     }
                 }
 
