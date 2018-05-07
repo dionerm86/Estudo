@@ -314,8 +314,11 @@ namespace Glass.Data.DAL
             string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            return objPersistence.LoadDataWithSortExpression(Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
-                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro),
+
+            string sql = "Select e.* From (" + Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
+                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro) + ") as e Where e.Compra = 0";
+
+            return objPersistence.LoadDataWithSortExpression(sql,
                 new InfoSortExpression(sortExpression),
                 new InfoPaging(startRow, pageSize), GetParam(codInterno, descricao, dataIni, dataFim, dataIniLib, dataFimLib, null, null)).ToList();
         }
