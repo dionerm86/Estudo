@@ -4124,8 +4124,8 @@ namespace Glass.Data.DAL
                         if ((PedidoConfig.DadosPedido.BloquearItensCorEspessura && !LojaDAO.Instance.GetIgnorarBloquearItensCorEspessura(null, pedido.IdLoja)) &&
                             ((Pedido.TipoPedidoEnum)pedido.TipoPedido == Pedido.TipoPedidoEnum.Venda ||
                             (Pedido.TipoPedidoEnum)pedido.TipoPedido == Pedido.TipoPedidoEnum.MaoDeObraEspecial))
-                            if ((ProdutoDAO.Instance.ObtemIdCorVidro(sessao, (int)produtosPedidoEspelho[0].IdProd) != ProdutoDAO.Instance.ObtemIdCorVidro(sessao, (int)produtoPedidoEspelho.IdProd) ||
-                                ProdutoDAO.Instance.ObtemEspessura(sessao, (int)produtosPedidoEspelho[0].IdProd) != ProdutoDAO.Instance.ObtemEspessura(sessao, (int)produtoPedidoEspelho.IdProd)) &&
+                            if ((ProdutoDAO.Instance.ObtemIdCorVidro(sessao, (int)produtosPedidoEspelho.FirstOrDefault(f => f.IdProdPedParent.GetValueOrDefault(0) == 0)?.IdProd) != ProdutoDAO.Instance.ObtemIdCorVidro(sessao, (int)produtoPedidoEspelho.IdProd) ||
+                                ProdutoDAO.Instance.ObtemEspessura(sessao, (int)produtosPedidoEspelho.FirstOrDefault(f => f.IdProdPedParent.GetValueOrDefault(0) == 0)?.IdProd) != ProdutoDAO.Instance.ObtemEspessura(sessao, (int)produtoPedidoEspelho.IdProd)) &&
                                 produtoPedidoEspelho.IdProdPedParent.GetValueOrDefault() == 0)
                                 throw new Exception("Todos produtos devem ter a mesma cor e espessura.");
                     }
