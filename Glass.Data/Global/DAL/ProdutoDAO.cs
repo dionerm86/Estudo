@@ -6,6 +6,9 @@ using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
 using Glass.Global;
+using Glass.Data.Model.Calculos;
+using Glass.Data.Helper.Calculos;
+using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 
 namespace Glass.Data.DAL
 {
@@ -3054,110 +3057,62 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            #region Declaração de variáveis
+            if ((idCliente ?? 0) == 0)
+            {
+                idCliente = idPedido > 0
+                    ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido)
+                    : 0;
+            }
 
-            var idClientePedido = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(sessao, (uint)idPedido) : 0;
-            idCliente = idCliente > 0 ? idCliente.Value : idClientePedido > 0 ? idClientePedido : 0;
-            var idGrupoProd = ObtemValorCampo<int>(sessao, "IdGrupoProd", string.Format("IdProd={0}", idProd));
-            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "IdSubgrupoProd", string.Format("IdProd={0}", idProd));
-            var valorAtacado = ObtemValorCampo<decimal>(sessao, "ValorAtacado", string.Format("IdProd={0}", idProd));
-            var valorBalcao = ObtemValorCampo<decimal>(sessao, "ValorBalcao", string.Format("IdProd={0}", idProd));
-            var valorObra = ObtemValorCampo<decimal>(sessao, "ValorObra", string.Format("IdProd={0}", idProd));
-            var clienteRevenda = idCliente > 0 ? ClienteDAO.Instance.IsRevenda(sessao, idCliente) : false;
-            var descontoAcrescimoCliente = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-            var percentualMultiplicar = descontoAcrescimoCliente.PercMultiplicar;
+            int id = 0;
+            ContainerCalculoDTO.TipoContainer? tipo = null;
+            var tipoVenda = 0;
+            var idParcela = 0;
+            
+            #region Recuperação dos dados do pedido, projeto e orçamento
+
+            if (idPedido > 0)
+            {
+                id = idPedido.Value;
+                tipo = ContainerCalculoDTO.TipoContainer.Pedido;
+                tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
+                idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
+            }
+            else if (idProjeto > 0)
+            {
+                id = idProjeto.Value;
+                tipo = ContainerCalculoDTO.TipoContainer.Projeto;
+                var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
+                tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
+                idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
+            }
+            else if (idOrcamento > 0)
+            {
+                id = idOrcamento.Value;
+                tipo = ContainerCalculoDTO.TipoContainer.Orcamento;
+                tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
+                idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
+            }
 
             #endregion
 
-            if (reposicao && !Liberacao.TelaLiberacao.CobrarPedidoReposicao)
+            var containerCalculo = new ContainerCalculoDTO()
             {
-                return GetValorReposicao(sessao, idProd, descontoAcrescimoCliente);
-            }
+                Id = (uint)id,
+                Tipo = tipo,
+                TipoVenda = tipoVenda,
+                IdParcela = (uint)idParcela,
+                Cliente = new ClienteDTO(() => idCliente ?? 0)
+            };
 
-            if (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista)
+            var produtoCalculo = new ProdutoCalculoDTO()
             {
+                IdProduto = (uint)idProd
+            };
 
-                #region Declaração de variáveis
+            produtoCalculo.InicializarParaCalculo(sessao, containerCalculo);
 
-                var tipoVenda = 0;
-                var idParcela = 0;
-                var parcelaAVista = false;
-
-                #endregion
-
-                #region Recuperação dos dados do pedido, projeto e orçamento
-
-                if (idPedido > 0)
-                {
-                    tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, (uint)idPedido.Value);
-                    idParcela = (int)PedidoDAO.Instance.ObtemIdParcela(sessao, (uint)idPedido.Value).GetValueOrDefault();
-                }
-                else if (idProjeto > 0)
-                {
-                    var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
-                    tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
-                    idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
-                }
-                else if (idOrcamento > 0)
-                {
-                    tipoVenda = OrcamentoDAO.Instance.ObterTipoVenda(sessao, idOrcamento.Value).GetValueOrDefault();
-                    idParcela = OrcamentoDAO.Instance.ObterIdParcela(sessao, idOrcamento.Value).GetValueOrDefault();
-                }
-
-                #endregion
-
-                #region Recuperação do percentual de desconto
-
-                if (idParcela > 0)
-                {
-                    parcelaAVista = ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela);
-                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista || parcelaAVista ? descontoAcrescimoCliente.PercMultiplicarAVista :
-                        descontoAcrescimoCliente.PercMultiplicar;
-                }
-                else
-                {
-                    percentualMultiplicar = tipoVenda == (int)Pedido.TipoVendaPedido.AVista ? descontoAcrescimoCliente.PercMultiplicarAVista : descontoAcrescimoCliente.PercMultiplicar;
-                }
-
-                #endregion
-            }
-
-            if (revenda || clienteRevenda)
-            {
-                return Math.Round(valorAtacado * percentualMultiplicar, 2);
-            }
-
-            if (tipoEntrega == null || tipoEntrega == 0)
-            {
-                tipoEntrega = 1;
-            }
-
-            switch (tipoEntrega)
-            {
-                case 1: // Balcão
-                case 4: // Entrega
-                    {
-                        return Math.Round(valorBalcao * percentualMultiplicar, 2);
-                    }
-                default:
-                    {
-                        return Math.Round(valorObra * percentualMultiplicar, 2);
-                    }
-            }
-        }
-
-        /// <summary>
-        /// Recupera o valor de reposição de um produto.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="desc"></param>
-        /// <returns></returns>
-        private decimal GetValorReposicao(GDASession sessao, int idProd, DescontoAcrescimoCliente desc)
-        {
-            decimal valor = PedidoConfig.UsarValorReposicaoProduto ?
-                ObtemValorCampo<decimal>(sessao, "valorReposicao", "idProd=" + idProd) : ObtemCustoCompra(sessao, idProd);
-
-            return Math.Round(valor * desc.PercMultiplicar, 2);
+            return produtoCalculo.DadosProduto.ValorTabela();
         }
 
         #endregion
@@ -4874,37 +4829,6 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
-        #region Verifica se um produto terá a área mínima calculada
-
-        /// <summary>
-        /// Indica se a área mínima será calculada para um vidro.
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="redondo"></param>
-        /// <param name="numeroBeneficiamentos"></param>
-        /// <returns></returns>
-        public bool CalcularAreaMinima(GDASession sessao, uint idCliente, int idProd, bool redondo, int numeroBeneficiamentos)
-        {
-            bool ativarAreaMinima = ProdutoDAO.Instance.ObtemAtivarAreaMinima(sessao, idProd) &&
-                TipoClienteDAO.Instance.CobrarAreaMinima(sessao, idCliente);
-
-            if (PedidoConfig.DadosPedido.CalcularAreaMinimaApenasVidroBeneficiado)
-            {
-                if (!IsVidro(sessao, idProd) || !ativarAreaMinima)
-                    return false;
-
-                if (GrupoProdDAO.Instance.IsVidroTemperado(sessao, ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, idProd),
-                    ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd)))
-                    return true;
-
-                return ativarAreaMinima && (redondo || numeroBeneficiamentos > 0);
-            }
-            else
-                return ativarAreaMinima;
-        }
-
-        #endregion
-
         #region Calcula totais de um item produto
 
         /// <summary>
@@ -4956,56 +4880,6 @@ namespace Glass.Data.DAL
         /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
         /// Pedido, ItemProjeto, PedidoEspelho, NF
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura, bool redondo,
-            int arredondarAluminio, bool compra, ref decimal custoProd, ref Single altura, ref Single totM2, ref decimal total, bool nf, int numeroBenef)
-        {
-            float totM2Calc = 0;
-            CalcTotaisItemProd(sessao, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true, ref custoProd, ref altura,
-                ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true);
-        }
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="calcMult5">Verifica se produtos com cálculo de m² será calculado o mult. de 5</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        public void CalcTotaisItemProd(uint idCliente, int idProd, int largura, int qtde, int qtdeAmbiente, decimal valorVendido, float espessura,
-            bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
-            ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
-        {
-            CalcTotaisItemProd(idCliente, idProd, largura, (float)qtde, (float)qtdeAmbiente, valorVendido, espessura, redondo,
-                arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
-                ref totM2Calc, ref total, nf, numeroBenef);
-        }
-
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
         /// <param name="idProd"></param>
         /// <param name="largura"></param>
         /// <param name="qtde"></param>
@@ -5023,8 +4897,8 @@ namespace Glass.Data.DAL
             ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
         {
             CalcTotaisItemProd(null, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura,
-            redondo, arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
-            ref totM2Calc, ref total, nf, numeroBenef);
+                redondo, arredondarAluminio, compra, calcMult5, ref custoProd, ref altura, ref totM2,
+                ref totM2Calc, ref total, nf, numeroBenef);
         }
 
         /// <summary>
@@ -5043,36 +4917,12 @@ namespace Glass.Data.DAL
         /// <param name="altura"></param>
         /// <param name="totM2"></param>
         /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
+        internal void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
             bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, bool nf, int numeroBenef)
         {
             CalcTotaisItemProd(sessao, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true,
                 ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true);
-        }
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="calcMult5">Verifica se produtos com cálculo de m² será calculado o mult. de 5</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        internal void CalcTotaisItemProd(uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido, float espessura,
-            bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
-            ref float totM2Calc, ref decimal total, bool nf, int numeroBenef, bool calcularAreaMinima)
-        {
-            CalcTotaisItemProd(null, idCliente, idProd, largura, qtde, qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra, true,
-                ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, 2, 2, nf, numeroBenef, true, calcularAreaMinima);
         }
 
         /// <summary>
@@ -5116,31 +4966,7 @@ namespace Glass.Data.DAL
         /// <param name="altura"></param>
         /// <param name="totM2"></param>
         /// <param name="total"></param>
-        public void CalcTotaisItemProd(uint idCliente, int idProd, int largura, int qtde, int qtdeAmbiente, decimal valorVendido, float espessura,
-            bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
-            ref float totM2Calc, ref decimal total, int alturaBenef, int larguraBenef, bool nf, int numeroBenef)
-        {
-            CalcTotaisItemProd(null, idCliente, idProd, largura, (float)qtde, (float)qtdeAmbiente, valorVendido, espessura, redondo, arredondarAluminio, compra,
-                calcMult5, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, alturaBenef, larguraBenef, nf, numeroBenef, true);
-        }
-
-        /// <summary>
-        /// Método utilizado para calcular o valor total e o total de m² de um produto que é item de um:
-        /// Pedido, ItemProjeto, PedidoEspelho, NF
-        /// </summary>
-        /// <param name="idProd"></param>
-        /// <param name="largura"></param>
-        /// <param name="qtde"></param>
-        /// <param name="valorVendido"></param>
-        /// <param name="redondo">Identifica se o vidro é redondo</param>
-        /// <param name="arredondarAluminio">0-Não arredondar  1-Arredondar alterando a altura  2-Arredondar apenas para cálculo</param>
-        /// <param name="compra">identifica se o produto vem de compra</param>
-        /// <param name="calcMult5">Verifica se produtos com cálculo de m² será calculado o mult. de 5</param>
-        /// <param name="custoProd"></param>
-        /// <param name="altura"></param>
-        /// <param name="totM2"></param>
-        /// <param name="total"></param>
-        public void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido,
+        internal void CalcTotaisItemProd(GDASession sessao, uint idCliente, int idProd, int largura, float qtde, float qtdeAmbiente, decimal valorVendido,
             float espessura, bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, int alturaML, int larguraML, bool nf, int numeroBenef, bool usarChapaVidro)
         {
@@ -5169,134 +4995,44 @@ namespace Glass.Data.DAL
             bool redondo, int arredondarAluminio, bool compra, bool calcMult5, ref decimal custoProd, ref Single altura, ref Single totM2,
             ref float totM2Calc, ref decimal total, int alturaML, int larguraML, bool nf, int numeroBenef, bool usarChapaVidro, bool calcularAreaMinima)
         {
-            // Busca os dados do produto escolhido
-            int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, idProd, nf || (compra && CompraConfig.UsarTipoCalculoNfParaCompra));
-
-            /* Chamado 41410. */
-            if (tipoCalc != (int)TipoCalculoGrupoProd.QtdDecimal && qtde % 1 > 0)
-                throw new Exception("Somente produtos calculados por Qtd. decimal podem possuir números decimais no campo Quantidade.");
-
-            decimal custoCompraProd = ProdutoDAO.Instance.ObtemCustoCompra(sessao, idProd);
-            float areaMinimaProd = ProdutoDAO.Instance.ObtemAreaMinima(sessao, idProd);
-
-            // Corrige a qtdeAmbiente
-            qtdeAmbiente = qtdeAmbiente > 0 ? qtdeAmbiente : 1;
-
-            // Verifica se o produto deve ser calculado m², se for, mutiplica o valor pela área quadrada
-            if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
+            var produto = new ProdutoCalculoDTO()
             {
-                float totM2Temp = totM2;
+                IdProduto = (uint)idProd,
+                Largura = largura,
+                Qtde = qtde,
+                QtdeAmbiente = (int)qtdeAmbiente,
+                ValorUnit = valorVendido,
+                Espessura = espessura,
+                Redondo = redondo,
+                CustoProd = custoProd,
+                Altura = altura,
+                TotM = totM2,
+                TotM2Calc = totM2Calc,
+                Total = total,
+                AlturaBenef = alturaML,
+                LarguraBenef = larguraML
+            };
 
-                // Calcula a área total do produto, se a largura for 0, qr dizer q o vidro é redondo, nesse caso,
-                // subtitui a largura por 1000, apenas no cálculo (Apenas se não for compra)
-                if (!compra)
-                    totM2 = Glass.Global.CalculosFluxo.ArredondaM2(sessao, largura, (int)altura, qtde, idProd, redondo, espessura,
-                        calcMult5 && tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2);
-
-                // Calcula o m² de cálculo
-                totM2Calc = Glass.Global.CalculosFluxo.CalcM2Calculo(sessao, idCliente, (int)altura, largura, qtde * qtdeAmbiente, idProd, redondo,
-                    numeroBenef > 0 ? numeroBenef : calcularAreaMinima ? 1 : 0, areaMinimaProd, usarChapaVidro, espessura,
-                    calcMult5 && tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2);
-
-                // Se o produto for quantidade e metro quadrado então o cálculo do custo e do valor total é diferenciado.
-                if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto)
-                {
-                    var prod = ProdutoDAO.Instance.GetByIdProd((uint)idProd);
-                    var subGrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd);
-                    if (PedidoConfig.NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura && prod.Altura > 0 && prod.Largura > 0 && subGrupo == TipoSubgrupoProd.VidroDuplo)
-                    {
-                        total = (decimal)qtde * valorVendido;
-                    }
-                    else
-                    {
-                        float totM2Preco = totM2;
-
-                        // Calcula o m² apenas se não for compra
-                        if (!compra)
-                            totM2Preco = totM2Calc;
-
-                        totM2 = !nf ? totM2 : totM2Temp;
-                        totM2Preco = !nf ? totM2Preco : totM2Temp;
-
-                        // Se o m2 deste produto for menor que o valor mínimo estabelecido para esse produto,
-                        // utiliza o valor mínimo para calcular o produto, se AtivarAreaMinima estiver marcado
-                        Single m2Minimo = !nf && !compra && CalcularAreaMinima(sessao, idCliente, idProd, redondo, numeroBenef) ? areaMinimaProd : 0;
-                        totM2Calc = totM2Preco < (m2Minimo * qtde * qtdeAmbiente) ? (m2Minimo * qtde * qtdeAmbiente) : totM2Preco;
-
-                        // Calcula o custo do Produto
-                        custoProd = (decimal)totM2 * custoCompraProd;
-
-                        // Calcula o total do produto
-                        total = valorVendido * (decimal)totM2Calc;
-                    }
-                }
-                else
-                {
-                    // Calcula o custo do Produto
-                    custoProd = (decimal)qtde * custoCompraProd;
-
-                    // Calcula o total do produto
-                    total = valorVendido * (decimal)qtde;
-                }
-            }
-            else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.Perimetro) // ML
+            var container = new ContainerCalculoDTO()
             {
-                var metroLinear = (altura * alturaML) + (largura * larguraML);
-                float baseCalc = (metroLinear / 1000F) * qtde * qtdeAmbiente;
-                custoProd = custoCompraProd * (decimal)baseCalc;
-                total = valorVendido * (decimal)baseCalc;
-            }
-            else if ((tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 ||
-                tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6))
-            {
-                CalculosFluxo.CalcTamanhoAluminio(sessao, (int)idProd, ref altura, tipoCalc, arredondarAluminio, valorVendido, qtde * qtdeAmbiente,
-                    ref total, ref custoProd);
-            }
-            else if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML) // ML Direto
-            {
-                float baseCalc = altura * qtde * qtdeAmbiente;
-                total = (decimal)baseCalc * valorVendido;
-                custoProd = (decimal)baseCalc * custoCompraProd;
-            }
-            else
-            {
-                if (altura > 0 && largura > 0)
-                {
-                    var quantidadeCalcularM2 = qtde;
+                Cliente = new ClienteDTO(() => idCliente)
+            };
 
-                    // Se for box padrão deve calcular o m²
-                    if (totM2 == 0 || ProdutoDAO.Instance.IsVidro(sessao, idProd))
-                    {
-                        #region Calcula a quantidade do produto Modulado
+            ValorTotal.Instance.Calcular(
+                sessao,
+                container,
+                produto,
+                (ArredondarAluminio)arredondarAluminio,
+                calcMult5,
+                numeroBenef,
+                usarChapaVidro
+            );
 
-                        var idSubgrupoProd = ObtemIdSubgrupoProd(sessao, idProd);
-
-                        if (idSubgrupoProd > 0)
-                        {
-                            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, idProd);
-
-                            if (tipoSubgrupo == TipoSubgrupoProd.Modulado)
-                                if (ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa(sessao, (uint)idProd))
-                                    foreach (var pbe in ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, (uint)idProd))
-                                        quantidadeCalcularM2 *= pbe.Qtde;
-                        }
-
-                        #endregion
-
-                        // Caso o produto seja chapa (altura ou largura > 2500), seja vendido por qtd e seja produto de produção, 
-                        // não calcula múltiplo de 5
-                        calcMult5 = !(altura > 2500 || largura > 2500) && calcMult5;
-
-                        totM2 = Glass.Global.CalculosFluxo.ArredondaM2(sessao, largura, (int)altura, quantidadeCalcularM2 * qtdeAmbiente, idProd, redondo, espessura, calcMult5);
-
-                        // Calcula o m² de cálculo
-                        totM2Calc = Glass.Global.CalculosFluxo.CalcM2Calculo(sessao, idCliente, (int)altura, largura, quantidadeCalcularM2 * qtdeAmbiente, (int)idProd, redondo, numeroBenef, areaMinimaProd, true, espessura, calcMult5);
-                    }
-                }
-
-                custoProd = (decimal)(qtde * qtdeAmbiente) * custoCompraProd;
-                total = valorVendido * (decimal)(qtde * qtdeAmbiente);
-            }
+            custoProd = produto.CustoProd;
+            altura = produto.Altura;
+            totM2 = produto.TotM;
+            totM2Calc = produto.TotM2Calc;
+            total = produto.Total;
         }
 
         #endregion
@@ -5345,15 +5081,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o valor de tabela do produto e verifica se ele deve ser atualizado.
         /// </summary>
-        public bool VerificarAtualizarValorTabelaProduto(GDASession session, int idClienteAntigo, int idClienteNovo, int idPedido, IDescontoAcrescimo produto, int tipoEntregaAntigo,
-            int tipoEntregaNovo, int tipoVenda)
+        internal bool VerificarAtualizarValorTabelaProduto(GDASession session, Pedido antigo, Pedido novo, IProdutoCalculo produto)
         {
             #region Declaração de variáveis
 
-            var clienteRevenda = ClienteDAO.Instance.IsRevenda(session, (uint)idClienteNovo);
-            var clienteAntigoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteAntigo);
-            var clienteNovoCobraAreaMinima = TipoClienteDAO.Instance.CobrarAreaMinima(session, (uint)idClienteNovo);
-            var atualizarProdutoPedido = clienteAntigoCobraAreaMinima != clienteNovoCobraAreaMinima;
             decimal valorAtacado = 0;
             decimal valorBalcao = 0;
             decimal valorObra = 0;
@@ -5362,9 +5093,11 @@ namespace Glass.Data.DAL
 
             #region Recuperação do valor de tabela com base no tipo de entrega do pedido
 
-            if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
+            if (novo.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
             {
-                produto.ValorUnit = GetValorTabela(session, (int)produto.IdProduto, tipoEntregaAntigo, (uint)idClienteNovo, clienteRevenda, true, produto.PercDescontoQtde, idPedido, null, null);
+                produto.InicializarParaCalculo(session, antigo);
+
+                produto.ValorUnit = produto.DadosProduto.ValorTabela();
                 produto.ValorAcrescimoCliente = 0;
                 produto.ValorDescontoCliente = 0;
 
@@ -5372,49 +5105,62 @@ namespace Glass.Data.DAL
             }
             else
             {
-                valorAtacado = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, true, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
-                valorBalcao = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Balcao, (uint)idClienteNovo, clienteRevenda, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
-                valorObra = GetValorTabela(session, (int)produto.IdProduto, (int)Pedido.TipoEntregaPedido.Comum, (uint)idClienteNovo, clienteRevenda, false,
-                    produto.PercDescontoQtde, idPedido, null, null);
-                
+                var container = new ContainerCalculoDTO(novo);
+                int? tipoEntregaOriginal = novo.TipoEntrega;
+                bool revendaOriginal = container.Cliente.Revenda;
+
+                produto.InicializarParaCalculo(session, container);
+
+                Func <int, bool, decimal> valorTabelaTipoEntregaERevenda = (tipoEntrega, revenda) =>
+                {
+                    container.TipoEntrega = tipoEntrega;
+                    (container.Cliente as ClienteDTO).Revenda = revenda;
+
+                    var valor = produto.DadosProduto.ValorTabela();
+
+                    (container.Cliente as ClienteDTO).Revenda = revendaOriginal;
+                    container.TipoEntrega = tipoEntregaOriginal;
+
+                    return valor;
+                };
+
+                valorAtacado = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, true);
+                valorBalcao = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, revendaOriginal);
+                valorObra = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Comum, revendaOriginal);
+
+                var tipoEntregaDiferencaCliente = novo.TipoEntrega;
+
                 // Se o cliente é revenda.
-                if (clienteRevenda && (produto.ValorUnit < valorAtacado || idClienteAntigo != idClienteNovo))
+                if (container.Cliente.Revenda && (produto.ValorUnit < valorAtacado || antigo.IdCli != novo.IdCli))
                 {
                     produto.ValorUnit = valorAtacado;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, tipoEntregaNovo, false, idPedido, null, null);
-
-                    return true;
                 }
                 // Se o tipo de entrega for balcão, traz preço de balcão.
-                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Balcao)
+                else if (novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Balcao)
                 {
                     produto.ValorUnit = valorBalcao;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Balcao, false, idPedido, null, null);
-
-                    return true;
                 }
                 // Se o tipo de entrega for entrega, traz preço de obra.
-                else if (tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Entrega || tipoEntregaNovo == (int)Pedido.TipoEntregaPedido.Temperado)
+                else if (novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Entrega || novo.TipoEntrega == (int)Pedido.TipoEntregaPedido.Temperado)
                 {
                     produto.ValorUnit = valorObra;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Entrega, false, idPedido, null, null);
-
-                    return true;
+                    tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Entrega;
                 }
                 // Verifica se o valor é permitido, se não for atualiza o valor para o mínimo.
                 else if (produto.ValorUnit < valorObra)
                 {
                     produto.ValorUnit = valorObra;
-                    DescontoAcrescimo.Instance.DiferencaCliente(session, produto, (uint)idClienteNovo, (int)Pedido.TipoEntregaPedido.Comum, false, idPedido, null, null);
-
-                    return true;
+                    tipoEntregaDiferencaCliente = (int)Pedido.TipoEntregaPedido.Comum;
                 }
                 else
                 {
                     return false;
                 }
+
+                container.TipoEntrega = tipoEntregaDiferencaCliente;
+                DiferencaCliente.Instance.Calcular(session, container, produto);
+
+                return true;
             }
 
             #endregion

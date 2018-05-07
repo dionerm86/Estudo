@@ -3,12 +3,13 @@ using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutoTrocadoDAO))]
     [PersistenceClass("produto_trocado")]
-    public class ProdutoTrocado : IDescontoAcrescimo
+    public class ProdutoTrocado : IProdutoCalculo
     {
         #region Propriedades
 
@@ -325,25 +326,29 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo Members
+        #region IProdutoCalculo Members
 
-        uint IDescontoAcrescimo.Id
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
+
+        uint IProdutoCalculo.Id
         {
             get { return IdProdTrocado; }
         }
 
-        uint IDescontoAcrescimo.IdParent
+        uint? IProdutoCalculo.IdAmbiente
         {
-            get { return IdTrocaDevolucao; }
+            get { return null; }
         }
 
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
@@ -353,42 +358,23 @@ namespace Glass.Data.Model
             get { return 1; }
         }
 
-        decimal IDescontoAcrescimo.ValorComissao
+        decimal IProdutoCalculo.ValorComissao
         {
             get { return 0; }
             set { }
         }
 
-        float IDescontoAcrescimo.AlturaCalc
+        float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }
         }
 
-        public bool RemoverDescontoQtde { get; set; }
-
-        uint? IDescontoAcrescimo.IdObra
-        {
-            get
-            {
-                uint? ret = null;
-                if (IdPedido > 0)
-                    ret = PedidoDAO.Instance.GetIdObra(IdPedido.Value);
-                else if (IdProdPed > 0)
-                {
-                    IdPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(IdProdPed.Value);
-                    return (this as IDescontoAcrescimo).IdObra;
-                }
-
-                return ret;
-            }
-        }
-
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return 0; }
         }
 
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return 0; }
         }

@@ -8581,13 +8581,16 @@
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutos.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutosCorte.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaAlmoxarife.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaCliente.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido.rdlc" />

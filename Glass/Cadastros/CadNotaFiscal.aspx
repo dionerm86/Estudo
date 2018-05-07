@@ -3765,16 +3765,18 @@
                                                     Width="200px">
                                                     <asp:ListItem Value="0" Text=""></asp:ListItem>
                                                     <asp:ListItem Value="1" Text="Táxi"></asp:ListItem>
-                                                    <asp:ListItem Value="3" Text="Uso na agropecuária"></asp:ListItem>
+                                                    <asp:ListItem Value="3" Text="Produtor Agropecuário"></asp:ListItem>
                                                     <asp:ListItem Value="4" Text="Frotista/Locadora"></asp:ListItem>
                                                     <asp:ListItem Value="5" Text="Diplomático/Consular"></asp:ListItem>
-                                                    <asp:ListItem Value="6" Text="Utilit. e Motocic. da Amazônia Ocidental e Áreas de Livre Com."></asp:ListItem>
+                                                    <asp:ListItem Value="6" Text="Utilitários e Motocicletas da Amazônia Ocidental e 
+                                                           Áreas de Livre Comércio (Resolução 714/88 e 790/94 – CONTRAN e suas alterações)"></asp:ListItem>
                                                     <asp:ListItem Value="7" Text="SUFRAMA"></asp:ListItem>
                                                     <asp:ListItem Value="8" Text="Venda a Órgão Público"></asp:ListItem>
-                                                    <asp:ListItem Value="9" Text="Outros"></asp:ListItem>
-                                                    <asp:ListItem Value="10" Text="Deficiente Condutor"></asp:ListItem>
-                                                    <asp:ListItem Value="11" Text="Deficiente Não Condutor"></asp:ListItem>
-                                                    <asp:ListItem Value="12" Text="Órgão de fomento e desenv. agropecuário"></asp:ListItem>
+                                                    <asp:ListItem Value="9" Text="Outros. (NT 2011/004)"></asp:ListItem>
+                                                    <asp:ListItem Value="10" Text="Deficiente Condutor (Convênio ICMS 38/12)"></asp:ListItem>
+                                                    <asp:ListItem Value="11" Text="Deficiente Não Condutor (Convênio ICMS 38/12)"></asp:ListItem>
+                                                    <asp:ListItem Value="16" Text="Olimpíadas Rio 2016 (NT 2015.002)"></asp:ListItem>
+                                                    <asp:ListItem Value="90" Text="Solicitado pelo Fisco"></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
                                         </tr>

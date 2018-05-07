@@ -140,8 +140,8 @@ namespace Glass.UI.Web.Cadastros
     
                     if (!chkPerda.Checked)
                     {
-                        ProdutoPedidoProducao[] lstProdPed = ((ProdutoPedidoProducao[])odsProdPedProducao.Select());
-                        for (int i = 0; i < lstProdPed.Length; i++)
+                        var lstProdPed = ((List<ProdutoPedidoProducao>)odsProdPedProducao.Select());
+                        for (int i = 0; i < lstProdPed.Count; i++)
                             try
                             {
                                 ProdutoPedidoProducaoDAO.Instance.AtualizaSituacaoComTransacao(UserInfo.GetUserInfo.CodUser, txtCodChapa.Text, lstProdPed[i].NumEtiqueta,

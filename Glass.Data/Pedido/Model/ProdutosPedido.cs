@@ -12,7 +12,7 @@ namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProdutosPedidoDAO))]
     [PersistenceClass("produtos_pedido")]
-	public class ProdutosPedido : Colosoft.Data.BaseModel, IResumoCorte, IDescontoAcrescimo
+	public class ProdutosPedido : Colosoft.Data.BaseModel, IResumoCorte, IProdutoCalculo
     {
         public ProdutosPedido()
         {
@@ -1276,7 +1276,7 @@ namespace Glass.Data.Model
 
         #endregion
 
-        #region IDescontoAcrescimo
+        #region IProdutoCalculo
 
         [XmlIgnore]
         uint IResumoCorte.Id
@@ -1285,44 +1285,53 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.Id
+        IContainerCalculo IProdutoCalculo.Container { get; set; }
+
+        [XmlIgnore]
+        IAmbienteCalculo IProdutoCalculo.Ambiente { get; set; }
+
+        [XmlIgnore]
+        IDadosProduto IProdutoCalculo.DadosProduto { get; set; }
+
+        [XmlIgnore]
+        uint IProdutoCalculo.Id
         {
             get { return IdProdPed; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdParent
+        uint? IProdutoCalculo.IdAmbiente
         {
-            get { return IdPedido; }
+            get { return IdAmbientePedido; }
         }
 
         [XmlIgnore]
-        uint IDescontoAcrescimo.IdProduto
+        uint IProdutoCalculo.IdProduto
         {
             get { return IdProd; }
         }
 
         [XmlIgnore]
-        decimal IDescontoAcrescimo.ValorUnit
+        decimal IProdutoCalculo.ValorUnit
         {
             get { return ValorVendido; }
             set { ValorVendido = value; }
         }
 
         [XmlIgnore]
-        float IDescontoAcrescimo.AlturaCalc
+        float IProdutoCalculo.AlturaCalc
         {
             get { return Altura; }
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.AlturaBenef
+        int? IProdutoCalculo.AlturaBenef
         {
             get { return AlturaBenef; }
         }
 
         [XmlIgnore]
-        int? IDescontoAcrescimo.LarguraBenef
+        int? IProdutoCalculo.LarguraBenef
         {
             get { return LarguraBenef; }
         }
@@ -1364,21 +1373,6 @@ namespace Glass.Data.Model
                         AmbientePedidoDAO.Instance.GetQtde(IdAmbientePedido);
                 }
             }
-        }
-
-        private bool _removerDescontoQtde = false;
-
-        [XmlIgnore]
-        public bool RemoverDescontoQtde
-        {
-            get { return _removerDescontoQtde; }
-            set { _removerDescontoQtde = value; }
-        }
-
-        [XmlIgnore]
-        uint? IDescontoAcrescimo.IdObra
-        {
-            get { return PedidoDAO.Instance.GetIdObra(IdPedido); }
         }
 
         #endregion

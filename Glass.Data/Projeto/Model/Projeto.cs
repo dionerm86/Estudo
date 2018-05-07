@@ -2,12 +2,13 @@ using System;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Data.DAL;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(ProjetoDAO))]
 	[PersistenceClass("projeto")]
-	public class Projeto
+	public class Projeto : IContainerCalculo
     {
         #region Enumeradores
 
@@ -230,6 +231,105 @@ namespace Glass.Data.Model
 
                 return "";
             }
+        }
+
+        #endregion
+
+        #region IContainerCalculo
+
+        uint IContainerCalculo.Id
+        {
+            get { return IdProjeto; }
+        }
+
+        private IDadosCliente cliente;
+
+        IDadosCliente IContainerCalculo.Cliente
+        {
+            get
+            {
+                if (cliente == null)
+                {
+                    cliente = new ClienteDTO(() => IdCliente ?? 0);
+                }
+
+                return cliente;
+            }
+        }
+
+        private IDadosAmbiente ambientes;
+
+        IDadosAmbiente IContainerCalculo.Ambientes
+        {
+            get
+            {
+                if (ambientes == null)
+                {
+                    ambientes = new DadosAmbienteDTO(this, () => new IAmbienteCalculo[0]);
+                }
+
+                return ambientes;
+            }
+        }
+
+        uint? IContainerCalculo.IdObra
+        {
+            get { return null; }
+        }
+
+        int? IContainerCalculo.TipoEntrega
+        {
+            get { return TipoEntrega; }
+        }
+
+        int? IContainerCalculo.TipoVenda
+        {
+            get { return TipoVenda; }
+        }
+
+        bool IContainerCalculo.Reposicao
+        {
+            get { return TipoVenda == (int)Pedido.TipoVendaPedido.Reposição; }
+        }
+
+        bool IContainerCalculo.MaoDeObra
+        {
+            get { return false; }
+        }
+
+        bool IContainerCalculo.IsPedidoProducaoCorte
+        {
+            get { return false; }
+        }
+
+        uint? IContainerCalculo.IdParcela
+        {
+            get { return null; }
+        }
+
+        int IContainerCalculo.TipoAcrescimo
+        {
+            get { return 0; }
+        }
+
+        decimal IContainerCalculo.Acrescimo
+        {
+            get { return 0; }
+        }
+
+        int IContainerCalculo.TipoDesconto
+        {
+            get { return 0; }
+        }
+
+        decimal IContainerCalculo.Desconto
+        {
+            get { return 0; }
+        }
+
+        float IContainerCalculo.PercComissao
+        {
+            get { return 0; }
         }
 
         #endregion

@@ -743,7 +743,7 @@ namespace Glass.Data.DAL
 
                     if (idOrcamento > 0)
                         idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, idAmbienteOrca, itemProjeto);
-
+                    
                     if (idPedido > 0)
                     {
                         /* Chamado 52637.
@@ -752,29 +752,20 @@ namespace Glass.Data.DAL
                         #region Remove acréscimo/desconto/comissão do pedido
 
                         var idsAmbientePedido = new List<uint>();
-                        var idComissionado = new uint?();
-                        var percComissao = new float();
-                        var tipoAcrescimo = new int();
-                        var tipoDesconto = new int();
-                        var acrescimo = new decimal();
-                        var desconto = new decimal();
-
-                        PedidoDAO.Instance.ObtemDadosComissaoDescontoAcrescimo(transaction, idPedido, out tipoDesconto,
-                            out desconto, out tipoAcrescimo, out acrescimo, out percComissao, out idComissionado);
+                        var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, idPedido);
 
                         // Remove acréscimo, desconto e comissão.
                         objPersistence.ExecuteCommand(transaction, "UPDATE pedido SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
-                        PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, idPedido);
+                        PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(transaction, pedido);
 
                         #endregion
 
-                        idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, idPedido, idAmbientePedido, itemProjeto, pecasAlteradas || medidasAlteradas, false, true);
+                        idAmbienteNovo = ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, pedido, idAmbientePedido, itemProjeto, pecasAlteradas || medidasAlteradas, false, true);
 
                         #region Aplica acréscimo/desconto/comissão do pedido
 
                         // Aplica acréscimo, desconto e comissão.
-                        PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(transaction, idPedido, idComissionado, percComissao,
-                            tipoAcrescimo, acrescimo, tipoDesconto, desconto, Geral.ManterDescontoAdministrador);
+                        PedidoDAO.Instance.AplicaComissaoDescontoAcrescimo(transaction, pedido, Geral.ManterDescontoAdministrador);
 
                         // Aplica acréscimo e desconto no ambiente.
                         if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento && idsAmbientePedido.Count > 0)
@@ -783,15 +774,40 @@ namespace Glass.Data.DAL
                                 var acrescimoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(transaction, idAmbPed);
                                 var descontoAmbiente = AmbientePedidoDAO.Instance.ObterAcrescimo(transaction, idAmbPed);
 
+                                if (acrescimoAmbiente == 0 && descontoAmbiente == 0)
+                                    continue;
+
+                                var produtosPedido = ProdutosPedidoDAO.Instance.GetByAmbiente(transaction, idAmbPed);
+
                                 if (acrescimoAmbiente > 0)
-                                    AmbientePedidoDAO.Instance.AplicaAcrescimo(transaction, idAmbPed, AmbientePedidoDAO.Instance.ObterTipoAcrescimo(transaction, idAmbPed), acrescimoAmbiente);
+                                {
+                                    AmbientePedidoDAO.Instance.AplicarAcrescimo(
+                                        transaction,
+                                        pedido,
+                                        idAmbPed,
+                                        AmbientePedidoDAO.Instance.ObterTipoAcrescimo(transaction, idAmbPed),
+                                        acrescimoAmbiente,
+                                        produtosPedido
+                                    );
+                                }
 
                                 if (descontoAmbiente > 0)
-                                    AmbientePedidoDAO.Instance.AplicaDesconto(transaction, idAmbPed, AmbientePedidoDAO.Instance.ObterTipoDesconto(transaction, idAmbPed), descontoAmbiente);
+                                {
+                                    AmbientePedidoDAO.Instance.AplicarDesconto(
+                                        transaction,
+                                        pedido,
+                                        idAmbPed,
+                                        AmbientePedidoDAO.Instance.ObterTipoDesconto(transaction, idAmbPed),
+                                        descontoAmbiente,
+                                        produtosPedido
+                                    );
+                                }
+
+                                AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(transaction, pedido, produtosPedido, true);
                             }
 
                         // Atualiza o total do pedido.
-                        PedidoDAO.Instance.UpdateTotalPedido(transaction, idPedido);
+                        PedidoDAO.Instance.UpdateTotalPedido(transaction, pedido);
 
                         #endregion
                     }

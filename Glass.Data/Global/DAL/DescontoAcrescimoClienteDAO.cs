@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
+using Glass.Data.Helper.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -191,6 +192,23 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Recupera o desconto/acréscimo por cliente, grupo, subgrupo e produto
+
+        internal DescontoAcrescimoCliente GetDescontoAcrescimo(GDASession sessao, IContainerCalculo container, Produto produto)
+        {
+            var idCliente = container.Cliente != null
+                ? container.Cliente.Id
+                : default(uint);
+
+            return GetDescontoAcrescimo(
+                sessao,
+                idCliente,
+                produto.IdGrupoProd,
+                produto.IdSubgrupoProd,
+                produto.IdProd,
+                container.IdPedido(),
+                container.IdProjeto()
+            );
+        }
 
         /// <summary>
         /// Busca o desconto que o cliente passado possui no grupo passado
