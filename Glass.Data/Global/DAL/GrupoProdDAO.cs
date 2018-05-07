@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using Glass.Data.Helper;
 
 namespace Glass.Data.DAL
 {
@@ -91,10 +92,14 @@ namespace Glass.Data.DAL
 
         public GrupoProd[] GetForFilter(bool incluirTodos, bool paraPedidoInterno)
         {
-            string sql = "Select * From grupo_prod Where 1 " +
-                (paraPedidoInterno ? "and idGrupoProd in (select idGrupoProd from produto where compra=true) " : "") + 
-                "Order By Descricao";
-            
+            var bloquearGrupo = UserInfo.GetUserInfo.IsCliente && Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido ? 
+                @" AND (SELECT COUNT(*) FROM subgrupo_prod sgp WHERE sgp.IdGrupoProd=gp.IdGrupoProd AND BloquearEcommerce = 0) > 0 " : 
+                string.Empty;
+
+            string sql = "Select * From grupo_prod gp Where 1 " + bloquearGrupo +
+                (paraPedidoInterno ? "and gp.idGrupoProd in (select idGrupoProd from produto where compra=true) " : "") + 
+                "Order By Descricao";          
+
             List<GrupoProd> lst = objPersistence.LoadData(sql);
 
             if (incluirTodos)
