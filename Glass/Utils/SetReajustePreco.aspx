@@ -19,12 +19,7 @@
             var obra = FindControl("chkObra", "input").checked;
             var atacado = FindControl("chkAtacado", "input").checked;
             var reposicao = FindControl("chkReposicao", "input").checked;
-            var fiscal = FindControl("chkFiscal", "input").checked;
-
-            if (!confirm("Tem certeza que deseja aplicar o reajuste informado nos produtos?")) {
-                clicked = false;
-                return false;
-            }
+            var fiscal = FindControl("chkFiscal", "input").checked;           
 
             if (FindControl("txtReajuste", "input").value == "") {
                 alert("Informe o reajuste que será aplicado.");
@@ -32,8 +27,25 @@
                 return false;
             }
 
+            if (FindControl("drpGrupo", "select").value == 0) {
+                alert("Informe o grupo para realizar o reajuste.");
+                clicked = false;
+                return false;
+            }
+
+            if (FindControl("drpSubgrupo", "select").value == 0) {
+                alert("Informe o subgrupo para realizar o reajuste.");
+                clicked = false;
+                return false;
+            }
+
             if (!custoFab && !custoCompra && !balcao && !obra && !atacado && !reposicao && !fiscal) {
                 alert("Selecione um preço.");
+                clicked = false;
+                return false;
+            }
+
+            if (!confirm("Tem certeza que deseja aplicar o reajuste informado nos produtos?")) {
                 clicked = false;
                 return false;
             }

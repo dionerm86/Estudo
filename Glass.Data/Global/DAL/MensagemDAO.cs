@@ -13,6 +13,10 @@ namespace Glass.Data.DAL
         {
             try
             {
+                var idAdminEnvio = EmailConfig.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado;
+                if (idAdminEnvio == null)
+                    return;
+
                 if (prodOld.Custofabbase == prodNew.Custofabbase && prodOld.CustoCompra == prodNew.CustoCompra && prodOld.ValorAtacado == prodNew.ValorAtacado &&
                     prodOld.ValorBalcao == prodNew.ValorBalcao && prodOld.ValorObra == prodNew.ValorObra)
                     return;
@@ -30,11 +34,7 @@ namespace Glass.Data.DAL
                     Assunto = assunto,
                     Descricao = mensagem,
                     IdRemetente = (int)UserInfo.GetUserInfo.CodUser
-                };
-
-                var idAdminEnvio = EmailConfig.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado;
-                if (idAdminEnvio == null)
-                    return;
+                };               
 
                 if (idAdminEnvio > 0)
                 {
@@ -45,7 +45,10 @@ namespace Glass.Data.DAL
 
                 Insert(msg);
             }
-            catch { }
+            catch (Exception ex)
+            {
+                ErroDAO.Instance.InserirFromException("Mensagem administrador preço produto alterado", ex);
+            }
         }
 
         public void EnviarMsgPrecoListProdutoAlterado(IList<Produto> produtosOld, IList<Produto> produtosNew)
