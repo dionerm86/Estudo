@@ -329,7 +329,10 @@ namespace Glass.Global.Negocios.Componentes
                 filtro += string.Format(" ORDER BY {0}", ordenacao.Item2);
 
             // Monta o SQL
-            var comandoSql = relatorio.ComandoSql.Replace("[where]", filtro);
+            var comandoSql = relatorio.ComandoSql
+                .Replace("[where]", filtro)
+                .Replace("{@IdFunc}", Data.Helper.UserInfo.GetUserInfo.CodUser.ToString())
+                .Replace("{@IdRelDinamico}", idRelatorioDinamico.ToString());
 
             //Determina se a consulta deve ser preparada antes de executada
             var prepare = false;
