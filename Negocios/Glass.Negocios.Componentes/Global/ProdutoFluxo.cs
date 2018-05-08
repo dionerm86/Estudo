@@ -1120,7 +1120,7 @@ namespace Glass.Global.Negocios.Componentes
                 .LeftJoin<Data.Model.EtiquetaAplicacao>("pbe.IdAplicacao=ea.IdAplicacao", "ea")
                 .LeftJoin<Data.Model.EtiquetaProcesso>("pbe.IdProcesso=ep.IdProcesso", "ep")
                 .Select(@"pbe.IdProdBaixaEst, pbe.IdProd, pbe.IdProdBaixa, pbe.Qtde, pbe.IdAplicacao, pbe.IdProcesso,
-                        pbe.Altura, pbe.Largura, pbe.Forma, ep.Descricao AS CodProcesso, ea.Descricao AS CodAplicacao, prod.CodInterno AS CodInternoProduto")
+                        pbe.Altura, pbe.Largura, pbe.Forma, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao, prod.CodInterno AS CodInternoProduto")
                 .Where("pbe.IdProd=?idProd")
                 .Add("?idProd", idProd);
 
