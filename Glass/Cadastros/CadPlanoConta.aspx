@@ -57,7 +57,7 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpGrupoContaFiltro" runat="server" DataSourceID="odsGrupoConta"
-                                DataTextField="Name" DataValueField="Id" AppendDataBoundItems="True"
+                                DataTextField="Name" DataValueField="Id" AppendDataBoundItems="True" AutoPostBack="true"
                                 OnDataBound="drpGrupoContaFiltro_DataBound">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
@@ -91,7 +91,7 @@
         <tr>
             <td align="center">
                 <asp:GridView SkinID="gridViewEditable" ID="grdPlanoConta" runat="server"
-                              DataKeyNames="IdConta" DataSourceID="odsPlanoConta" EnableViewState="false">
+                              DataKeyNames="IdConta" DataSourceID="odsPlanoConta">
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>

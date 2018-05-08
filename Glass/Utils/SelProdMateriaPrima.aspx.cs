@@ -37,8 +37,8 @@ namespace Glass.UI.Web.Utils
         {
             var produto = grdProdMateriaPrima.FooterRow.FindControl("ctrlSelProd") as Glass.UI.Web.Controls.ctrlSelProduto;
 
-            var alturaString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtLargura")).Text;
-            var larguraString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtAltura")).Text;
+            var alturaString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtAltura")).Text; 
+            var larguraString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtLargura")).Text;
             var qtdeString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtQtde")).Text;
             var formaString = ((TextBox)grdProdMateriaPrima.FooterRow.FindControl("txtForma")).Text;
             var idProcessoString = ((HiddenField)grdProdMateriaPrima.FooterRow.FindControl("hdfIdProcesso")).Value;
@@ -118,8 +118,8 @@ namespace Glass.UI.Web.Utils
         {
             var produto = ((ImageButton)sender).Parent.FindControl("ctrlSelProd") as Glass.UI.Web.Controls.ctrlSelProduto;
 
-            var alturaString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtLargura")).Text;
-            var larguraString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtAltura")).Text;
+            var alturaString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtAltura")).Text; 
+            var larguraString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtLargura")).Text;
             var qtdeString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtQtde")).Text;
             var formaString = ((TextBox)((ImageButton)sender).Parent.FindControl("txtForma")).Text;
             var idProcessoString = ((HiddenField)((ImageButton)sender).Parent.FindControl("hdfIdProcesso")).Value;
@@ -170,11 +170,11 @@ namespace Glass.UI.Web.Utils
                     var imagem = (FileUpload)((ImageButton)sender).Parent.FindControl("filImagem");
 
                     ProdutoSalvo(imagem);
-                }
 
-                grdProdMateriaPrima.DataBind();
-                grdProdMateriaPrima.EditIndex = -1;
-                grdProdMateriaPrima.ShowFooter = true;
+                    grdProdMateriaPrima.DataBind();
+                    grdProdMateriaPrima.EditIndex = -1;
+                    grdProdMateriaPrima.ShowFooter = true;
+                }
             }
             catch (Exception ex)
             {

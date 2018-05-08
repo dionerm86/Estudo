@@ -9,6 +9,9 @@
 
     <script type="text/javascript">
 
+        var usarNumNfBoletoSemSeparacao = <%= Glass.Configuracoes.FinanceiroConfig.UsarNumNfBoletoSemSeparacao.ToString().ToLower() %>;
+        var separarValoresFiscaisEReaisContasReceber = <%= Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber.ToString().ToLower() %>;
+
         var clientes = new Array();
         var buscandoCliente = false;
 
@@ -78,6 +81,12 @@
         }
 
         function removePedido(idPedido, atualiza) {
+
+            if (!separarValoresFiscaisEReaisContasReceber && usarNumNfBoletoSemSeparacao
+                && !confirm("Se você remover o pedido não será possível gerar boletos para as contas a receber da " + 
+                "NF - e gerada, caso existam outras notas para o(s) Pedido(s)/Liberação(ões). Mesmo assim deseja excluir o pedido da listagem ? "))
+                return false;
+            
             var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
             var novosIds = new Array();
 

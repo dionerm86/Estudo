@@ -279,7 +279,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Situacao != 3;
+                return Situacao != (int)SituacaoLiberarPedido.Processando;
             }
         }
 
