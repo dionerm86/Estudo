@@ -274,7 +274,7 @@
                             <ItemTemplate>
                                 <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Relatorio.gif"
                                     OnClientClick='<%# "openRpt(" + Eval("IdLiberarPedido") + ", false, false" + "); return false" %>'
-                                    ToolTip="Relatório" />
+                                    ToolTip="Relatório"  Visible='<%# (bool)Eval("ImprimirRelatorioLiberacaoVisible") %>' />
                                 <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Report.png"
                                     OnClientClick='<%# "openRpt(" + Eval("IdLiberarPedido") + ", true, false" + "); return false" %>'
                                     ToolTip="Relatório Completo" Visible='<%# ExibirRelatorioCompleto() %>' />
