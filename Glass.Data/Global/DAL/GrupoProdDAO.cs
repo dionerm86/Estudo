@@ -92,7 +92,7 @@ namespace Glass.Data.DAL
 
         public GrupoProd[] GetForFilter(bool incluirTodos, bool paraPedidoInterno)
         {
-            var bloquearGrupo = UserInfo.GetUserInfo.IsCliente && Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido ? 
+            var bloquearGrupo = UserInfo.GetUserInfo.IsCliente ? 
                 @" AND (SELECT COUNT(*) FROM subgrupo_prod sgp WHERE sgp.IdGrupoProd=gp.IdGrupoProd AND BloquearEcommerce = 0) > 0 " : 
                 string.Empty;
 

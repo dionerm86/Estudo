@@ -25,6 +25,19 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("Producao")]
         public bool Producao { get; set; }
 
+        [PersistenceProperty("NumSeqTurno")]
+        public uint NumSeqTurno { get; set; }
+
+        [PersistenceProperty("Turno")]
+        public string Turno { get; set; }
+
+        [PersistenceProperty("Criterio")]
+        public string Criterio { get; set; }
+
+        #endregion
+
+        #region Propriedades estendidas
+
         [PersistenceProperty("TotM2Turno1", DirectionParameter.InputOptional)]
         public double TotM2Turno1 { get; set; }
 
@@ -40,14 +53,20 @@ namespace Glass.Data.RelModel
         [PersistenceProperty("TotM2Turno5", DirectionParameter.InputOptional)]
         public double TotM2Turno5 { get; set; }
 
-        [PersistenceProperty("NumSeqTurno")]
-        public uint NumSeqTurno { get; set; }
+        [PersistenceProperty("QtdeTurno1", DirectionParameter.InputOptional)]
+        public double QtdeTurno1 { get; set; }
 
-        [PersistenceProperty("Turno")]
-        public string Turno { get; set; }
+        [PersistenceProperty("QtdeTurno2", DirectionParameter.InputOptional)]
+        public double QtdeTurno2 { get; set; }
 
-        [PersistenceProperty("Criterio")]
-        public string Criterio { get; set; }
+        [PersistenceProperty("QtdeTurno3", DirectionParameter.InputOptional)]
+        public double QtdeTurno3 { get; set; }
+
+        [PersistenceProperty("QtdeTurno4", DirectionParameter.InputOptional)]
+        public double QtdeTurno4 { get; set; }
+
+        [PersistenceProperty("QtdeTurno5", DirectionParameter.InputOptional)]
+        public double QtdeTurno5 { get; set; }
 
         #endregion
 
@@ -66,6 +85,11 @@ namespace Glass.Data.RelModel
         public double TotM2
         {
             get { return Math.Round(TotM2Turno1 + TotM2Turno2 + TotM2Turno3 + TotM2Turno4 + TotM2Turno5, 2); }
+        }
+
+        public double Qtde
+        {
+            get { return Math.Round(QtdeTurno1 + QtdeTurno2 + QtdeTurno3 + QtdeTurno4 + QtdeTurno5, 2); }
         }
 
         #endregion

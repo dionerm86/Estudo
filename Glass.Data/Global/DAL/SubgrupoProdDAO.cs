@@ -119,7 +119,7 @@ namespace Glass.Data.DAL
                 lst.Insert(0, subgrupo);
             }
 
-            if (UserInfo.GetUserInfo.IsCliente && Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido)
+            if (UserInfo.GetUserInfo.IsCliente)
                 lst = lst.Where(f => !f.BloquearEcommerce).ToList();
 
             return lst.ToArray();
