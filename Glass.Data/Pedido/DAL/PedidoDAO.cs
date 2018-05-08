@@ -1204,7 +1204,7 @@ namespace Glass.Data.DAL
 
                 //Busca apenas os pedidos que foram finalizados, pois ao finalizar o pedido o mesmo é alterado para conferido
                 //somente quando for filtrado a situação conferido/conferido Com
-                if ((string.IsNullOrEmpty(situacao) || vetSituacao.Contains(((int)Pedido.SituacaoPedido.Conferido).ToString()))
+                if ((string.IsNullOrEmpty(situacao) || vetSituacao.Contains(((int)Pedido.SituacaoPedido.Conferido).ToString())))
                 {
                     where += " Or (";
                     if (!string.IsNullOrEmpty(dataIni))
