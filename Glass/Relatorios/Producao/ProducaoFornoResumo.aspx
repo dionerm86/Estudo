@@ -99,6 +99,7 @@
                         <asp:BoundField DataField="Espessura" HeaderText="Espessura" SortExpression="Espessura" />
                         <asp:BoundField DataField="Tipo" HeaderText="Tipo" SortExpression="Tipo" />
                         <asp:BoundField DataField="TotM2" HeaderText="Total m²" SortExpression="TotM2" />
+                        <asp:BoundField DataField="Qtde" HeaderText="Qtde" SortExpression="Qtde" />
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />

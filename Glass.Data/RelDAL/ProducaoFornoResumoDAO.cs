@@ -22,9 +22,11 @@ namespace Glass.Data.RelDAL
                 turnos = turnos.Where(f => f.IdTurno == (uint)idTurno).ToList();
 
             string campoTurno = "case";
-            string m2Turno = "";
+            string m2QtdeTurno = "";
             string campoTotM2 = (PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? "pp.TotM2Calc" : "pp.TotM") + 
                 "/(pp.qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))";
+
+            string campoQtde = "(pp.qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))";
 
             foreach (Turno t in turnos)
             {
@@ -36,7 +38,7 @@ namespace Glass.Data.RelDAL
                 else
                     campoTurno += " when dataLeitura>=cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Inicio + "') as datetime) or dataLeitura<cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Termino + "') as datetime) then " + t.IdTurno + Environment.NewLine;
 
-                m2Turno += "sum(if(lp.turno=" + t.IdTurno + ", " + campoTotM2 + ", 0)) as TotM2" + t.NumSeq + ", " + Environment.NewLine;
+                m2QtdeTurno += "sum(if(lp.turno=" + t.IdTurno + ", " + campoTotM2 + ", 0)) as TotM2" + t.NumSeq + ", " + "sum(if(lp.turno=" + t.IdTurno + ", " + campoQtde + ", 0)) AS Qtde" + t.NumSeq + ", " + Environment.NewLine;
             }
 
             campoTurno += " end";
@@ -44,7 +46,7 @@ namespace Glass.Data.RelDAL
             string sqlBase = @"
                 select lp.DataLeitura as Data, prod.idCorVidro, cv.Descricao as DescrCorVidro, prod.espessura, 
                     (p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @") as Producao,
-                    " + m2Turno + @"t.descricao as Turno, t.numSeq as numSeqTurno, '$$$' as Criterio {0}
+                    " + m2QtdeTurno + @"t.descricao as Turno, t.numSeq as numSeqTurno, '$$$' as Criterio {0}
                 from (
                     select * from (
                         select idProdPedProducao, dataLeitura, " + campoTurno + @" as turno
