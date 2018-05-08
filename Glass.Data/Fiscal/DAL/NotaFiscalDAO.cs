@@ -9298,21 +9298,15 @@ namespace Glass.Data.DAL
             if (old.IdCfop > 0 && objUpdate.IdCfop > 0 && old.IdCfop != objUpdate.IdCfop)
             {
                 var obsCfopNovo = CfopDAO.Instance.GetObs(session, objUpdate.IdCfop.Value);
-                var obsCfopAntigo = CfopDAO.Instance.GetObs(session, old.IdCfop.Value);
 
-                if (!string.IsNullOrEmpty(obsCfopNovo) || !string.IsNullOrEmpty(obsCfopAntigo))
+                var podeInserirObs = VerificarInserirInformacaoComplementar(objUpdate.InfCompl, obsCfopNovo);
+
+                if (podeInserirObs && !string.IsNullOrEmpty(obsCfopNovo))
                 {
                     obsCfopNovo =
                         !string.IsNullOrEmpty(obsCfopNovo) ?
                             string.Format("{0}.", Formatacoes.TrataTextoDocFiscal(obsCfopNovo).Replace("$", "S")) :
                             string.Empty;
-                    obsCfopAntigo =
-                        !string.IsNullOrEmpty(obsCfopAntigo) ?
-                            string.Format("{0}. ", Formatacoes.TrataTextoDocFiscal(obsCfopAntigo).Replace("$", "S")) :
-                            string.Empty;
-
-                    if (!string.IsNullOrEmpty(obsCfopAntigo) && !string.IsNullOrEmpty(objUpdate.InfCompl))
-                        objUpdate.InfCompl = objUpdate.InfCompl.Replace(obsCfopAntigo, "");
 
                     objUpdate.InfCompl =
                         string.Format("{0} {1}",
@@ -9405,6 +9399,18 @@ namespace Glass.Data.DAL
         public override int DeleteByPrimaryKey(uint idNf)
         {
             return DeleteNotaFiscal(null, idNf);
+        }
+
+        private bool VerificarInserirInformacaoComplementar(string infCompl, string obsNova)
+        {
+            var informacaoCompl = Formatacoes.TrataTextoDocFiscal(infCompl).TrimEnd('.');
+
+            var observacaoNova = Formatacoes.TrataTextoDocFiscal(obsNova);
+
+            if (informacaoCompl.Contains(observacaoNova))
+                return false;
+
+           return true;
         }
 
         #endregion

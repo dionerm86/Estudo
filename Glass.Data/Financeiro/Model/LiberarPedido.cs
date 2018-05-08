@@ -275,6 +275,14 @@ namespace Glass.Data.Model
 
         public string DescricaoPagto { get; set; }
 
+        public bool ImprimirRelatorioLiberacaoVisible
+        {
+            get
+            {
+                return Situacao != 3;
+            }
+        }
+
         public bool CancelarVisible
         {
             get 
