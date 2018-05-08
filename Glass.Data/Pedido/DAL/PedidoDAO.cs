@@ -10793,6 +10793,14 @@ namespace Glass.Data.DAL
             if (!forcarAtualizacao && _atualizando[UserInfo.GetUserInfo.CodUser])
                 return;
 
+            if (forcarAtualizacao)
+            {
+                var atual = GetElementByPrimaryKey(sessao, pedido.IdPedido);
+                var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
+                RemoveComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
+                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido);
+            }
+
             try
             {
                 // Define que o usuário está atualizando o total
@@ -15252,10 +15260,6 @@ namespace Glass.Data.DAL
 
             var removidos = new List<uint>();
 
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
-
             /* Chamado 62763. */
             foreach (var ambientePedido in ambientesPedido)
             {
@@ -15266,15 +15270,15 @@ namespace Glass.Data.DAL
             }
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && RemoverComissao(sessao, novo, produtosPedido))
+            if ( RemoverComissao(sessao, novo, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && RemoverAcrescimo(sessao, novo, produtosPedido))
+            if ( RemoverAcrescimo(sessao, novo, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto && RemoverDesconto(sessao, novo, produtosPedido))
+            if ( RemoverDesconto(sessao, novo, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
             
             var produtosAtualizar = produtosPedido

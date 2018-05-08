@@ -1940,6 +1940,13 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void UpdateTotalPedido(GDASession sessao, PedidoEspelho pedidoEspelho, bool forcarAtualizacao)
         {
+            if (forcarAtualizacao)
+            {
+                PedidoEspelho atual = GetElementByPrimaryKey(sessao, pedidoEspelho.IdPedido);
+                RemoveComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
+                AplicaComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
+            }
+
             // Atualiza valor do pedido
             string sql = "update pedido_espelho p set Total=Round((Select Sum(Total + coalesce(valorBenef, 0)) From produtos_pedido_espelho " +
                 "Where IdPedido=p.IdPedido and (invisivelFluxo=false or invisivelFluxo is null) AND IdProdPedParent IS NULL), 2) Where IdPedido=" + pedidoEspelho.IdPedido;
@@ -3765,22 +3772,19 @@ namespace Glass.Data.DAL
                     removidos.AddRange(produtosAmbiente.Select(p => p.IdProdPed));
             }
 
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
 
             var produtosPedidoEspelho = ProdutosPedidoEspelhoDAO.Instance.GetByPedido(session, novo.IdPedido, false, false, true);
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && RemoverComissao(session, novo, produtosPedidoEspelho))
+            if (RemoverComissao(session, novo, produtosPedidoEspelho))
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && RemoverAcrescimo(session, novo, produtosPedidoEspelho))
+            if (RemoverAcrescimo(session, novo, produtosPedidoEspelho))
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto && RemoverDesconto(session, novo, produtosPedidoEspelho))
+            if (RemoverDesconto(session, novo, produtosPedidoEspelho))
                 removidos.AddRange(produtosPedidoEspelho.Select(p => p.IdProdPed));
 
             var produtosAtualizar = produtosPedidoEspelho
