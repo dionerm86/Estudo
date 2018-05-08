@@ -39,11 +39,20 @@ namespace Glass.UI.Web.Controls
                     throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois a liberação: {0} não esta vinculada a mesma.", idLiberarPedido));
 
                 foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao((uint)idLiberarPedido))
-                    if(!idsPedidosNf.Contains(idPedLib))
-                        throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} não esta vinculado a mesma.", idPedLib));
-            }
+                {
+                    if (!idsPedidosNf.Contains(idPedLib))
+                    {
+                        var notasPedido = PedidosNotaFiscalDAO.Instance
+                            .GetByPedido(idPedLib)
+                            .Where(f => f.IdPedido.GetValueOrDefault(0) > 0 && f.IdNf.ToString() != codigoNotaFiscal)
+                            .Select(f => f.IdNf).ToList();
 
-            return null;
+                        if (notasPedido.Count() > 0)
+                            throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} da Liberação: {1} esta vinculado a outras Notas Fiscais. NF-e's: {2}.", idPedLib, idLiberarPedido, NotaFiscalDAO.Instance.ObtemNumerosNFePeloIdNf(String.Join(",", notasPedido))));
+                    }
+                }
+            }
+                return null;
         }
 
         #endregion
