@@ -1202,19 +1202,22 @@ namespace Glass.Data.DAL
 
                 var vetSituacao = new List<string>(!string.IsNullOrEmpty(situacao) ? situacao.Split(',') : new string[0]);
 
-                //Busca apenas os pedidos que foram finalizados, pois ao finalizar o pedido o mesmo é alterado para conferido
-                //somente quando for filtrado a situação conferido/conferido Com
-                if ((string.IsNullOrEmpty(situacao) || vetSituacao.Contains(((int)Pedido.SituacaoPedido.Conferido).ToString())))
+                if (string.IsNullOrEmpty(situacao) || vetSituacao.Contains(((int)Pedido.SituacaoPedido.Conferido).ToString()))
                 {
+                    //Busca apenas os pedidos que foram finalizados, pois ao finalizar o pedido o mesmo é alterado para conferido
+                    //somente quando for filtrado a situação conferido/conferido Com
                     where += " Or (";
+
                     if (!string.IsNullOrEmpty(dataIni))
                     {
-                        where += " And " + aliasPedido + ".DataFin>=" + nomeParamDataIni;
+                        where += string.Format(" And {0}.DataFin>={1}", aliasPedido, nomeParamDataIni);
                     }
+
                     if (!string.IsNullOrEmpty(dataFim))
                     {
-                        where += " And " + aliasPedido + ".DataFin<=" + nomeParamDataFim;
+                        where += string.Format(" And {0}.DataFin<={1}", aliasPedido, nomeParamDataFim);
                     }
+
                     where += ")";
                 }
 
