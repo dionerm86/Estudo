@@ -1083,6 +1083,23 @@
 
         $(document).ready(function()
         {
+            <% if (ItensOtimizacao != null)
+            { %>
+            var itensOtimizacao = <%= Newtonsoft.Json.JsonConvert.SerializeObject(ItensOtimizacao) %>;
+
+            for(var i=0; i<itensOtimizacao.length; i++) {
+                var item = itensOtimizacao[i];
+                setProdEtiqueta(
+                    item.IdProdPed, item.IdAmbiente, item.IdPedido, item.IdProdNf, item.IdNf, 
+                    item.DescricaoProduto, item.CodProcesso, item.CodAplicacao, item.Qtd,
+                    item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura, 
+                    item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado, 
+                    item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote);
+            }
+
+            <%}
+            %>
+
             criarTabelaProducaoDataSemana();
         });
 

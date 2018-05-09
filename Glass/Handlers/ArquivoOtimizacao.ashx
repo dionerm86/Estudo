@@ -20,7 +20,7 @@ public class ArquivoOtimizacao : IHttpHandler
             context.Response.End();
             return;
         }
-        
+
         // Define que apenas o Arquivo de Mesa será gerado
         bool apenasArqMesa = context.Request["apenasArqMesa"] == "true";
         var arquivoECutter = context.Request["ecutter"] == "true" || Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter;
@@ -107,18 +107,6 @@ public class ArquivoOtimizacao : IHttpHandler
                 // Adiciona os arquivos SAG
                 using (ZipFile zip = new ZipFile(stream))
                 {
-                    if (arquivoECutter)
-                    {
-                        // Recupera os produtos associado com as etiquetas
-                        var idsProd = Glass.Data.DAL.ProdutosPedidoEspelhoDAO.Instance.ObterIdsProd(lstEtiqueta.Select(f => f.IdProdPedEsp).Distinct());
-
-                        var arquivoEstoqueChapas = ProdutoDAO.Instance.ArquivoEstoqueChapas(idsProd);
-                        zip.AddStringAsFile(arquivoEstoqueChapas, "stock.data", "");
-
-                        var arquivoMateriais = ProdutoDAO.Instance.ArquivoRepositorioMateriais(idsProd);
-                        zip.AddStringAsFile(arquivoMateriais, "materials.data", "");
-                    }
-
                     if (!apenasArqMesa)
                         zip.AddFile(Utils.GetArquivoOtimizacaoPath + a.NomeArquivo, "");
 
@@ -156,10 +144,15 @@ public class ArquivoOtimizacao : IHttpHandler
                 address = string.Format("ecutter-opt{0}", address.Substring(url.Scheme.Length));
                 // Remove o nome da página da requisiaç
                 address = address.Substring(0,  address.IndexOf("arquivootimizacao.ashx", 0, StringComparison.InvariantCultureIgnoreCase));
-                var nome = System.IO.Path.GetFileNameWithoutExtension(a.NomeArquivo);
+
+                var token = "";
+                var authCookie = context.Request.Cookies[System.Web.Security.FormsAuthentication.FormsCookieName];
+
+                if (authCookie != null)
+                    token = authCookie.Value;
 
                 // Monta o endereço redirecionando para o servido do ecutter
-                address = string.Format("{0}ecutterservice.ashx?id={1}", address, nome);
+                address = string.Format("{0}ecutteroptimizationservice.ashx?id={1}&token={2}", address, a.IdArquivoOtimizacao, token);
 
                 context.Response.Redirect(address);
             }

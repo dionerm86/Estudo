@@ -172,7 +172,6 @@
     <Compile Include="Behaviors\GridViewBehavior.cs" />
     <Compile Include="Behaviors\GridViewExtensions.cs" />
     <Compile Include="Handlers\CalcEngineReferencesService.cs" />
-    <Compile Include="Handlers\ECutterService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="ServiceLocatorAccessor.cs" />
