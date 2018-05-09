@@ -20,7 +20,10 @@ namespace Glass.UI.Web.Cadastros
             {
                 string qtde = ((TextBox)grdDescontoQtde.FooterRow.FindControl("txtQtde")).Text;
                 string percDesconto = ((TextBox)grdDescontoQtde.FooterRow.FindControl("txtPercDesconto")).Text;
-    
+
+                if (float.Parse(percDesconto) > 100)
+                    throw new Exception("Não são permitidos valores maiores que 100%.");
+
                 DescontoQtde desc = new DescontoQtde();
                 desc.IdProd = Glass.Conversoes.StrParaUint(Request["idProd"]);
                 desc.Qtde = Glass.Conversoes.StrParaInt(qtde);

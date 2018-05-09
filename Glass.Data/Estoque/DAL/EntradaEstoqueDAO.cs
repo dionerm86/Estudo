@@ -212,6 +212,9 @@ namespace Glass.Data.DAL
                             }
                         }
 
+                        if (entrada.IdCompra > 0)
+                            CompraDAO.Instance.DesmarcaEstoqueBaixado(transaction, entrada.IdCompra.Value);
+
                         transaction.Commit();
                         transaction.Close();
                     }
