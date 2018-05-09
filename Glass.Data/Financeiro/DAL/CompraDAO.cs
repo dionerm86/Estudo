@@ -1910,6 +1910,25 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(session, "Update compra Set estoqueBaixado=True Where idCompra=" + idCompra);
         }
 
+        /// <summary>
+        /// Marca a compra como estoque creditado
+        /// </summary>
+        public void DesmarcaEstoqueBaixado(GDASession session, uint idCompra)
+        {
+            bool estoqueBaixado = true;
+            var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(session, idCompra);
+
+            foreach (ProdutosCompra p in lstProdCompra)
+                if (p.Qtde != p.QtdeEntrada)
+                {
+                    estoqueBaixado = false;
+                    break;
+                }
+
+            if (!estoqueBaixado)
+                objPersistence.ExecuteCommand(session, "Update compra Set estoqueBaixado=False Where idCompra=" + idCompra);
+        }
+
         #endregion
 
         #region Cadastra a partir da cotação de compra

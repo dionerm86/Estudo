@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using GDA;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -123,6 +124,12 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
+                    var valorTotal = valores.Sum(f => f);
+                    if (caixaDiario && valorTotal > CaixaDiarioDAO.Instance.GetSaldoByLoja(transaction, UserInfo.GetUserInfo.IdLoja))
+                        throw new Exception("O valor da devolução é maior que o saldo do caixa diário.");
+                    else if (!caixaDiario && valorTotal > CaixaGeralDAO.Instance.GetSaldo(transaction))
+                        throw new Exception("O valor da devolução é maior que o saldo do caixa geral.");
 
                     UtilsFinanceiro.DadosRecebimento retorno = null;
 
