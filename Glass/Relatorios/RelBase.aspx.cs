@@ -1191,9 +1191,12 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaPlanoContasDet":
                     {
+                        uint trocador = 0;
+                        var idsPlanoConta = (Request["idsPlanoConta"].Split(',')).Select(f => uint.TryParse(f, out trocador)).Select(f => trocador).Where(f => f > 0).ToArray();
+
                         report.ReportPath = "Relatorios/rptListaPlanoContasDet" + (Request["agruparDetalhes"].ToLower() == "true" ? "Agrupar" : "") + ".rdlc";
                         var lstPlanoContasDet = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetForRptDetalhes(
-                            Glass.Conversoes.StrParaUint(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaUint(Request["IdGrupoConta"]), Glass.Conversoes.StrParaUint(Request["IdPlanoConta"]),
+                            Glass.Conversoes.StrParaUint(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaUint(Request["IdGrupoConta"]), idsPlanoConta,
                             Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]),
                             Glass.Conversoes.StrParaInt(Request["tipoConta"]), Request["ajustado"].ToLower() == "true",
                             Request["exibirChequeDevolvido"].ToLower() == "true", Request["ordenar"].StrParaInt());
