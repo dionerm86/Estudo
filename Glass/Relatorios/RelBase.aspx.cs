@@ -1139,8 +1139,11 @@ namespace Glass.UI.Web.Relatorios
                         else
                             report.ReportPath = String.Format(report.ReportPath, "");
 
-                        uint trocador = 0;
-                        var idsPlanoConta = (Request["idsPlanoConta"].Split(',')).Select(f => uint.TryParse(f, out trocador)).Select(f => trocador).Where(f => f > 0).ToArray();
+                        var idsPlanoConta = (Request["idsPlanoConta"]?.Split(',')).Select(f => {
+                            uint trocador = 0;
+                            uint.TryParse(f, out trocador);
+                            return trocador;
+                        }).Where(f => f > 0).ToArray();
 
                         var lstPlanoContas = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetForRpt(
                             Glass.Conversoes.StrParaUint(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaUint(Request["IdGrupoConta"]), idsPlanoConta,
@@ -1191,12 +1194,11 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaPlanoContasDet":
                     {
-                        uint trocador = 0;
-                        var idsPlanoConta = (Request["idsPlanoConta"].Split(',')).Select(f => uint.TryParse(f, out trocador)).Select(f => trocador).Where(f => f > 0).ToArray();
+                        var idsPlanoConta = Request["idsPlanoConta"]?.Split(',')?.Select(f => f.StrParaUint()) ?? new List<uint>();
 
                         report.ReportPath = "Relatorios/rptListaPlanoContasDet" + (Request["agruparDetalhes"].ToLower() == "true" ? "Agrupar" : "") + ".rdlc";
                         var lstPlanoContasDet = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetForRptDetalhes(
-                            Glass.Conversoes.StrParaUint(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaUint(Request["IdGrupoConta"]), idsPlanoConta,
+                            Glass.Conversoes.StrParaUint(Request["IdCategoriaConta"]), Glass.Conversoes.StrParaUint(Request["IdGrupoConta"]), idsPlanoConta.ToList(),
                             Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["dataIni"], Request["dataFim"], Glass.Conversoes.StrParaInt(Request["tipoMov"]),
                             Glass.Conversoes.StrParaInt(Request["tipoConta"]), Request["ajustado"].ToLower() == "true",
                             Request["exibirChequeDevolvido"].ToLower() == "true", Request["ordenar"].StrParaInt());
