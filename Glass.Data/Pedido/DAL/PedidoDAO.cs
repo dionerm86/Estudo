@@ -39,6 +39,7 @@ namespace Glass.Data.DAL
             Peso = 0;
             PesoPendente = 0;
             ValorTotal = 0;
+            FastDelivery = 0;
         }
 
         /// <summary>
@@ -55,6 +56,7 @@ namespace Glass.Data.DAL
             Peso = 0;
             PesoPendente = 0;
             ValorTotal = 0;
+            FastDelivery = 0;
         }
 
         /// <summary>
@@ -71,7 +73,8 @@ namespace Glass.Data.DAL
             TotM2Pendente = Math.Round(totM2Pendente, 2, MidpointRounding.AwayFromZero);
             Peso = peso;
             PesoPendente = Math.Round(pesoPendente, 2, MidpointRounding.AwayFromZero);
-            ValorTotal = Math.Round(valorTotal, 2, MidpointRounding.AwayFromZero);
+            FastDelivery = (valorTotal * (decimal)pedido.TaxaFastDelivery) / 100;
+            ValorTotal = Math.Round(valorTotal + FastDelivery, 2, MidpointRounding.AwayFromZero);
         }
 
         #endregion
@@ -122,6 +125,11 @@ namespace Glass.Data.DAL
         /// Valor total das peças da OC.
         /// </summary>
         public decimal ValorTotal { get; set; }
+
+        /// <summary>
+        /// Valor do Fast Delivery do pedido da OC.
+        /// </summary>
+        public decimal FastDelivery { get; set; }
 
         #endregion
     }
