@@ -49,11 +49,12 @@ namespace Glass.UI.Web.Utils
             {
                 var ultimoRegistro = ((List<ProdutosPedidoEspelho>)lstProdPedEsp).IndexOf(ppe) == ((List<ProdutosPedidoEspelho>)lstProdPedEsp).Count - 1;
 
-                double totM2 = ppe.PecaReposta ? (ppe.TotM / ppe.Qtde) : (ppe.TotM / ppe.Qtde) * (ppe.Qtde - ppe.QtdImpresso);
+                double totM2 = ppe.PecaReposta ? (ppe.TotM / ppe.Qtde) * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent) : 1)
+                    : (ppe.TotM / ppe.Qtde) * (ppe.Qtde * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent) : 1) - ppe.QtdImpresso);
                 totM2 = Math.Round(totM2, 2);
 
-                double totM2Calc = ppe.PecaReposta ? (ppe.TotM2Calc / ppe.Qtde) : (ppe.TotM2Calc / ppe.Qtde) * (ppe.Qtde - ppe.QtdImpresso);
-                totM2Calc = Math.Round(totM2Calc, 2);
+                double totM2Calc = ppe.PecaReposta ? (ppe.TotM2Calc / ppe.Qtde) * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent))
+                    : (ppe.TotM2Calc / ppe.Qtde) * (ppe.Qtde * (ppe.IdProdPedParent.GetValueOrDefault() == 0 ? 1 : ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent)) - ppe.QtdImpresso);
 
                 var qtde = ppe.Qtde;
 
