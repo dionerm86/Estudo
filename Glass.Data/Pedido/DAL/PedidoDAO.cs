@@ -12268,7 +12268,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     if (novaDataEntrega < DateTime.Now)
-                        throw new Exception("A nova Data não pode ser inferior a hoje"); 
+                        throw new Exception(string.Format("A data selecionada não pode ser inferior a {0}.", DateTime.Now.ToShortDateString())); 
 
                     var ped = objPersistence.LoadData(transaction, "select * from pedido where idPedido in (" + idsPedidos + ")").ToArray();
 

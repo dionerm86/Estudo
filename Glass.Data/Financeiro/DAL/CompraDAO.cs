@@ -1913,20 +1913,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Marca a compra como estoque creditado
         /// </summary>
-        public void DesmarcaEstoqueBaixado(GDASession session, uint idCompra)
+        public void DesmarcarEstoqueBaixado(GDASession session, uint idCompra)
         {
-            bool estoqueBaixado = true;
             var lstProdCompra = ProdutosCompraDAO.Instance.GetByCompra(session, idCompra);
 
-            foreach (ProdutosCompra p in lstProdCompra)
-                if (p.Qtde != p.QtdeEntrada)
-                {
-                    estoqueBaixado = false;
-                    break;
-                }
-
-            if (!estoqueBaixado)
-                objPersistence.ExecuteCommand(session, "Update compra Set estoqueBaixado=False Where idCompra=" + idCompra);
+            if(lstProdCompra.Any(f => f.Qtde != f.QtdeEntrada))
+                objPersistence.ExecuteCommand(session, string.Format("Update compra Set estoqueBaixado=False Where idCompra={0}", idCompra));
         }
 
         #endregion

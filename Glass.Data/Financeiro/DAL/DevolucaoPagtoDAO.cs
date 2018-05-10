@@ -123,13 +123,7 @@ namespace Glass.Data.DAL
             {
                 try
                 {
-                    transaction.BeginTransaction();
-
-                    var valorTotal = valores.Sum(f => f);
-                    if (caixaDiario && valorTotal > CaixaDiarioDAO.Instance.GetSaldoByLoja(transaction, UserInfo.GetUserInfo.IdLoja))
-                        throw new Exception("O valor da devolução é maior que o saldo do caixa diário.");
-                    else if (!caixaDiario && valorTotal > CaixaGeralDAO.Instance.GetSaldo(transaction))
-                        throw new Exception("O valor da devolução é maior que o saldo do caixa geral.");
+                    transaction.BeginTransaction();                    
 
                     UtilsFinanceiro.DadosRecebimento retorno = null;
 
