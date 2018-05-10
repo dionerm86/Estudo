@@ -172,6 +172,11 @@ namespace Glass.UI.Web.Listas
                     if (pedEsp == null)
                         throw new Exception("Pedido não encontrado.");
 
+                    if (pedEsp.PedidoConferido && PedidoEspelhoDAO.Instance.IsPedidoImpresso(null, idPedido))
+                    {
+                        throw new Exception("Existe pelo menos uma peça impressa para este pedido");
+                    }
+
                     if (pedEsp.PedidoConferido)
                         pedEsp.PedidoConferido = false;
                     else
