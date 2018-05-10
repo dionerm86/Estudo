@@ -86,7 +86,7 @@ namespace Glass.Data.DAL
         private string Sql(uint idProd, uint idLoja, string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, int ordenar,
             string dataIni, string dataFim, string dataIniLib, string dataFimLib, bool apenasProdutosEstoqueBaixa,
             bool agruparEstoqueLoja, string ncmInicio, string ncmFim, decimal alturaInicio, decimal alturaFim,
-            decimal larguraInicio, decimal larguraFim, bool selecionar, TipoBusca tipoBusca, out bool temFiltro)
+            decimal larguraInicio, decimal larguraFim, bool selecionar, TipoBusca tipoBusca, bool mostrarProdutosCompra, out bool temFiltro)
         {
             temFiltro = true;
             var campos = selecionar ? @"
@@ -220,6 +220,9 @@ namespace Glass.Data.DAL
                     break;
             }
 
+            if (!mostrarProdutosCompra)
+                sql += " And p.Compra=0";
+
             switch (ordenar)
             {
                 case 1:
@@ -242,7 +245,7 @@ namespace Glass.Data.DAL
 
             bool temFiltro;
             string sql = Sql(0, 0, null, descricao, 0, (int)Glass.Data.Model.NomeGrupoProd.Vidro, 0, 0, null, null, null, null, false, false, null, null,
-                0, 0, 0, 0, true, TipoBusca.Normal,
+                0, 0, 0, 0, true, TipoBusca.Normal, true,
                 out temFiltro) + " and (p.IdSubgrupoProd in (select idSubgrupoProd from subgrupo_prod where IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro +
                 " and produtosEstoque=true) or p.IdSubgrupoProd is null)";
 
@@ -254,7 +257,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             string sql = Sql(0, 0, null, descricao, 0, (int)Glass.Data.Model.NomeGrupoProd.Vidro, 0, 0, null,
-                null, null, null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal,
+                null, null, null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true,
                 out temFiltro) + " and (p.IdSubgrupoProd in (select idSubgrupoProd from subgrupo_prod where IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro +
                 " and produtosEstoque=true) or p.IdSubgrupoProd is null)";
 
@@ -269,7 +272,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return LoadDataWithSortExpression(Sql(0, 0, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, null, null, null, null, false,
-                false, null, null, alturaInicio, alturaFim, larguraInicio, larguraFim, true, TipoBusca.Normal, out temFiltro), ordenar > 0 ? null : sortExpression, startRow, pageSize, temFiltro,
+                false, null, null, alturaInicio, alturaFim, larguraInicio, larguraFim, true, TipoBusca.Normal, true, out temFiltro), ordenar > 0 ? null : sortExpression, startRow, pageSize, temFiltro,
                 GetParam(codInterno, descricao, null, null, null, null, null, null));
         }
 
@@ -278,7 +281,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return GetCountWithInfoPaging(Sql(0, 0, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, null, null, null, null,
-                false, false, null, null, alturaInicio, alturaFim, larguraInicio, larguraFim, true, TipoBusca.Normal, out temFiltro), temFiltro, GetParam(codInterno, descricao, null, null, null, null, null, null));
+                false, false, null, null, alturaInicio, alturaFim, larguraInicio, larguraFim, true, TipoBusca.Normal, true, out temFiltro), temFiltro, GetParam(codInterno, descricao, null, null, null, null, null, null));
         }
 
         #endregion
@@ -287,7 +290,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.LoadData(Sql(0, 0, null, null, 0, 0, 0, 0, null, null, null,
-                null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro)).ToList();
+                null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro)).ToList();
         }
 
         public IList<Produto> GetList(string codInterno, string descricao, int situacao, int idGrupo, int idSubgrupo, int ordenar,
@@ -296,7 +299,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return LoadDataWithSortExpression(Sql(0, 0, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
-                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro), ordenar > 0 ? null : sortExpression, startRow, pageSize,
+                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro), ordenar > 0 ? null : sortExpression, startRow, pageSize,
                 temFiltro, GetParam(codInterno, descricao, dataIni, dataFim, dataIniLib, dataFimLib, null, null));
         }
 
@@ -305,7 +308,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.ExecuteSqlQueryCount(Sql(0, 0, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib, dataFimLib,
-                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao, dataIni, dataFim,
+                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, true, out temFiltro), GetParam(codInterno, descricao, dataIni, dataFim,
                 dataIniLib, dataFimLib, null, null));
         }
 
@@ -315,10 +318,8 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
 
-            string sql = "Select e.* From (" + Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
-                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro) + ") as e Where e.Compra = 0";
-
-            return objPersistence.LoadDataWithSortExpression(sql,
+            return objPersistence.LoadDataWithSortExpression(Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib,
+                dataFimLib, apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, false, out temFiltro),
                 new InfoSortExpression(sortExpression),
                 new InfoPaging(startRow, pageSize), GetParam(codInterno, descricao, dataIni, dataFim, dataIniLib, dataFimLib, null, null)).ToList();
         }
@@ -328,7 +329,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.ExecuteSqlQueryCount(Sql(0, UserInfo.GetUserInfo.IdLoja, codInterno, descricao, situacao, idGrupo, idSubgrupo, ordenar, dataIni, dataFim, dataIniLib, dataFimLib,
-                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao,
+                apenasProdutosEstoqueBaixa, false, null, null, 0, 0, 0, 0, false, TipoBusca.Normal, false, out temFiltro), GetParam(codInterno, descricao,
                 dataIni, dataFim, dataIniLib, dataFimLib, null, null));
         }
 
@@ -352,7 +353,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.LoadOneData(sessao, Sql(idProd, 0, null, null, 0, 0, 0, 0, null, null, null, null, false,
-                false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro));
+                false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro));
         }
 
         /// <summary>
@@ -390,7 +391,7 @@ namespace Glass.Data.DAL
 
             bool temFiltro;
             List<Produto> lstProd = objPersistence.LoadData(Sql(idProd, 0, null, null, 0, 0, 0, 0, null, null, null,
-                null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro));
+                null, false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro));
             return lstProd.Count > 0 ? lstProd[0] : null;
         }
 
@@ -399,7 +400,7 @@ namespace Glass.Data.DAL
         {
             bool temFiltro;
             return objPersistence.LoadData(Sql(0, 0, codInterno, descricao, 0, idGrupoProd, idSubgrupoProd, 0, null, null,
-                null, null, false, false, ncmInicio, ncmFim, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro), GetParam(codInterno, descricao,
+                null, null, false, false, ncmInicio, ncmFim, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro), GetParam(codInterno, descricao,
                 null, null, null, null, ncmInicio, ncmFim)).ToList();
         }
 
@@ -3913,8 +3914,8 @@ namespace Glass.Data.DAL
 
             bool temFiltro;
             string sql = String.IsNullOrEmpty(idsProd) ?
-                Sql(0, 0, codInterno, descricao, 0, (int)idGrupoProd, (int)idSubgrupoProd, 0, null, null, null, null, false, idLoja > 0, null, null, 0, 0, 0, 0, true, tipoBusca, out temFiltro) :
-                Sql(0, 0, null, null, 0, 0, 0, 0, null, null, null, null, false, idLoja > 0, null, null, 0, 0, 0, 0, true, tipoBusca, out temFiltro);
+                Sql(0, 0, codInterno, descricao, 0, (int)idGrupoProd, (int)idSubgrupoProd, 0, null, null, null, null, false, idLoja > 0, null, null, 0, 0, 0, 0, true, tipoBusca, true, out temFiltro) :
+                Sql(0, 0, null, null, 0, 0, 0, 0, null, null, null, null, false, idLoja > 0, null, null, 0, 0, 0, 0, true, tipoBusca, true, out temFiltro);
 
             string isTipoCalcM2 = "coalesce(sg.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + ") in (" +
                 (int)TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + ")";
@@ -4827,7 +4828,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
 
             string sql = "Select e.* From (" + Sql(0, 0, null, null, 0, 0, 0, 0, null, null, null, null,
-                false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, out temFiltro) + ") as e Where e.IdProd in (Select IdProd From produtos_nf Where IdNf = " + idNf + ")";
+                false, false, null, null, 0, 0, 0, 0, true, TipoBusca.Normal, true, out temFiltro) + ") as e Where e.IdProd in (Select IdProd From produtos_nf Where IdNf = " + idNf + ")";
 
             return objPersistence.LoadData(sql).ToList();
         }

@@ -498,13 +498,13 @@ namespace Glass.Configuracoes
             }
 
             /// <summary>
-            /// Define se o checkbox que define se a produção será contabilizada no EFD poderá ser exibido.
+            /// Percentual de carga tributária a ser cobrado para clientes do simples nacional.
             /// </summary>
-            public static float? PercentualCargaTributariaParaClienteSimplesNacionalCfop5401Cst10
+            public static float? PercentualCargaTributariaParaClienteSimplesNacional
             {
                 get
                 {
-                    var config = Config.GetConfigItem<float>(Config.ConfigEnum.PercentualCargaTributariaParaClienteSimplesNacionalCfop5401Cst10);
+                    var config = Config.GetConfigItem<float>(Config.ConfigEnum.PercentualCargaTributariaParaClienteSimplesNacional);
 
                     return config == 0 ? null : (float?)config;
                 }

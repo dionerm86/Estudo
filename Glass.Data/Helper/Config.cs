@@ -471,7 +471,7 @@ namespace Glass.Data.Helper
             ExibirDescricaoPedidoInfCompl = 1176,
             AcrescentarLapBisProdutoNota = 1178,
             UsarProdutoCestaSeApenasVidros = 1180,
-            PercentualCargaTributariaParaClienteSimplesNacionalCfop5401Cst10 = 1183,            
+            PercentualCargaTributariaParaClienteSimplesNacional = 1183,
             RecuperarTotalCst60 = 1185,
             UsarDataCadNotaLivroRegistro = 1186,
             FormaPagtoPadraoNFCe = 1187,
