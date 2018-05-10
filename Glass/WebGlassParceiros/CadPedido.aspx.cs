@@ -368,7 +368,10 @@ namespace Glass.UI.Web.WebGlassParceiros
                 }
                 else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
                     return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
-    
+
+                if (SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value))
+                    return "Erro;Este produto não pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informações";
+
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
                 decimal valorProduto = 0;
     
