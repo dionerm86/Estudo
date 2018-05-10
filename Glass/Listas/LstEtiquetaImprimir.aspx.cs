@@ -158,10 +158,8 @@ namespace Glass.UI.Web.Listas
 
                         var qtdeCalcular = qtde > 0 ? qtde : p.Qtde;
 
-                        var totM2 = p.PecaReposta ? p.TotM / (p.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : qtdeCalcular) 
-                            : p.TotM / (p.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : qtdeCalcular) * (qtdeCalcular - p.QtdImpresso);
-                        var totM2Calc = p.PecaReposta ? p.TotM2Calc / (p.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : qtdeCalcular) 
-                            : p.TotM2Calc / (p.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : qtdeCalcular) * (qtdeCalcular - p.QtdImpresso);
+                        var totM2 = p.PecaReposta ? p.TotM / p.Qtde : p.TotM / p.Qtde * (qtdeCalcular - p.QtdImpresso);
+                        var totM2Calc = p.PecaReposta ? p.TotM2Calc / p.Qtde : p.TotM2Calc / p.Qtde * (qtdeCalcular - p.QtdImpresso);
 
                         str.Append(p.IdProdPed + ";;");
                         str.Append(p.IdPedido + ";");
