@@ -732,7 +732,7 @@ namespace Glass.Data.RelDAL
             if (idGrupoConta > 0)
                 criterio += "Grupo: " + GrupoContaDAO.Instance.ObtemValorCampo<string>("descricao", "idGrupo=" + idGrupoConta) + "    ";
 
-            if (idsPlanoConta.Any(f => f > 0))
+            if (idsPlanoConta?.Any(f => f > 0) ?? false)
             {
                 criterio += string.Format("Plano(s) Conta: {0}    ", string.Join(", ", ExecuteMultipleScalar<string>(string.Format("SELECT descricao FROM plano_contas WHERE idConta IN ({0})", string.Join(",", idsPlanoConta)))));
             }
