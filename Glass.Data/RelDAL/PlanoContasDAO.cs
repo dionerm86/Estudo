@@ -717,12 +717,12 @@ namespace Glass.Data.RelDAL
             return lstPlanoConta.ToArray();
         }
 
-        public PlanoContas[] GetForRptDetalhes(uint idCategoriaConta, uint idGrupoConta, uint[] idsPlanoConta, uint idLoja,
+        public PlanoContas[] GetForRptDetalhes(uint idCategoriaConta, uint idGrupoConta, List<uint> idsPlanoConta , uint idLoja,
             string dataIni, string dataFim, int tipoMov, int tipoConta, bool ajustado, bool exibirChequeDevolvido, int ordenar)
         {
             var sort = " ORDER BY " + (ordenar == 1 ? "Data" : "NumSeqCateg, NumSeqGrupo, GrupoConta, PlanoConta");
 
-            List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta, idLoja,
+            List<PlanoContas> lstPlanoConta = objPersistence.LoadData(SqlGeral(idCategoriaConta, idGrupoConta, idsPlanoConta.ToArray(), idLoja,
                 dataIni, dataFim, tipoMov, tipoConta, ajustado, exibirChequeDevolvido, false, false, false, true, true, false, true) + sort, GetParams(dataIni, dataFim));
 
             AjustarValorMovimentacaoPagaComCreditoFornecedor(ref lstPlanoConta, true);
@@ -732,11 +732,10 @@ namespace Glass.Data.RelDAL
             if (idGrupoConta > 0)
                 criterio += "Grupo: " + GrupoContaDAO.Instance.ObtemValorCampo<string>("descricao", "idGrupo=" + idGrupoConta) + "    ";
 
-            if (idsPlanoConta.Any())
+            if (idsPlanoConta.Any(f => f > 0))
             {
-                var idsPlanoContaCriterio = ExecuteMultipleScalar<string>(string.Format("SELECT descricao FROM plano_contas WHERE idConta IN ({0})", string.Join(",", idsPlanoConta)));
-                criterio += string.Format("Plano Conta: {0} \n", string.Join("\n", idsPlanoContaCriterio));
-            }                        
+                criterio += string.Format("Plano(s) Conta: {0}    ", string.Join(", ", ExecuteMultipleScalar<string>(string.Format("SELECT descricao FROM plano_contas WHERE idConta IN ({0})", string.Join(",", idsPlanoConta)))));
+            }
 
             if (idLoja > 0)
                 criterio += "Loja: " + LojaDAO.Instance.GetNome(idLoja) + "    ";

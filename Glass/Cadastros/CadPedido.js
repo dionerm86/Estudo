@@ -682,6 +682,9 @@ function loadProduto(codInterno, idProdPed, manterProcessoAplicacao) {
 
             if (retorno.length >= 22)
                 FindControl("lblDescrProd", "span").innerHTML += " (Valor m²: " + retorno[21] + ")";
+
+            if (FindControl("txtComissaoProd", "input") != null)
+                FindControl("txtComissaoProd", "input").value = retorno[22] != undefined ? retorno[22] : retorno[21];
         }
         else {
             FindControl("hdfAmbIdProd", "input").value = retorno[1];
@@ -691,6 +694,29 @@ function loadProduto(codInterno, idProdPed, manterProcessoAplicacao) {
     }
     catch (err) {
         alert(err);
+    }
+
+    if (FindControl("hdfIdItemProjeto", "input") != null && FindControl("hdfIdItemProjeto", "input").value > 0) {
+        if (FindControl("txtQtdeIns", "input") != null)
+            FindControl("txtQtdeIns", "input").disabled = true;
+        if (FindControl("txtAlturaIns", "input") != null)
+            FindControl("txtAlturaIns", "input").disabled = true;
+        if (FindControl("txtLargura", "input") != null)
+            FindControl("txtLargura", "input").disabled = true;
+        if (FindControl("txtValorIns", "input") != null)
+            FindControl("txtValorIns", "input").disabled = true;
+        if (FindControl("txtProcIns", "input") != null) {
+            FindControl("txtProcIns", "input").disabled = true;
+            FindControl("lnkProcesso", "a").style.display = "none";
+        }
+        if (FindControl("txtAplIns", "input") != null) {
+            FindControl("txtAplIns", "input").disabled = true;
+            FindControl("lnkAplicacao", "a").style.display = "none";
+        }
+        if (FindControl("drpLargBenef", "select") != null)
+            FindControl("drpLargBenef", "select").disabled = true;
+        if (FindControl("lnkBenef", "a") != null)
+            FindControl("lnkBenef", "a").style.display = "none";
     }
 
     var_ProdutoAmbiente = false;

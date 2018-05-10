@@ -1026,6 +1026,7 @@ namespace Glass.UI.Web.Cadastros
             float espBenef = isPedidoMaoDeObra ? Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtEspBenef")).Text) : 0;
             int? alturaBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(alturaBenefString) ? (int?)Conversoes.StrParaInt(alturaBenefString) : null;
             int? larguraBenef = isPedidoMaoDeObra && !String.IsNullOrEmpty(larguraBenefString) ? (int?)Conversoes.StrParaInt(larguraBenefString) : null;
+            decimal percComissaoProd = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtComissaoProd")).Text);
 
             int tipoEntrega = Conversoes.StrParaInt(((HiddenField)dtvPedido.FindControl("hdfTipoEntrega")).Value);
             uint idCliente = Conversoes.StrParaUint(((HiddenField)dtvPedido.FindControl("hdfIdCliente")).Value);
@@ -1061,7 +1062,8 @@ namespace Glass.UI.Web.Cadastros
             prodPed.PedCli = ((TextBox)grdProdutos.FooterRow.FindControl("txtPedCli")).Text;
             prodPed.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd(idProd);
             prodPed.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd).GetValueOrDefault(0);
-            
+            prodPed.PercComissao = percComissaoProd;
+
             try
             {
                 // Se o pedido estiver diferente de ativo-ativo/conferência não permite inserir produtos

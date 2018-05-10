@@ -502,13 +502,8 @@ namespace Glass.UI.Web.WebGlassParceiros
                     if(!ClienteDAO.Instance.ValidaSubgrupo(idCliente.StrParaUint(), codInterno))
                         return "Erro;Esse produto não pode ser utilizado, pois o subgrupo não esta vinculado ao cliente.";
 
-                    if(UserInfo.GetUserInfo.IsCliente)
-                    {
-                        var bloquearSubgrupoEcommerce = SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value);
-                        
-                        if(bloquearSubgrupoEcommerce && Glass.Configuracoes.PedidoConfig.DadosPedido.BloquearItensTipoPedido)
-                            return "Erro;Este produto não pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informações";
-                    }
+                    if(SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value))
+                        return "Erro;Este produto não pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informações";
                 }
 
                 if (ProjetoDAO.Instance.GetTipoVenda(null, Conversoes.StrParaUint(idProjeto)) == (uint)Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)
