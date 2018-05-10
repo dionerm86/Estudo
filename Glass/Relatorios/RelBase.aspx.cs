@@ -1194,7 +1194,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaPlanoContasDet":
                     {
-                        var idsPlanoConta = Request["idsPlanoConta"]?.Split(',')?.Select(f => f.StrParaUint()) ?? new List<uint>();
+                        var idsPlanoConta = Request["idsPlanoConta"]?.Split(',')?.Select(f => f.StrParaUint()).Where(f => f > 0) ?? new List<uint>();
 
                         report.ReportPath = "Relatorios/rptListaPlanoContasDet" + (Request["agruparDetalhes"].ToLower() == "true" ? "Agrupar" : "") + ".rdlc";
                         var lstPlanoContasDet = Glass.Data.RelDAL.PlanoContasDAO.Instance.GetForRptDetalhes(
