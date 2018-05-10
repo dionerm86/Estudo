@@ -38,7 +38,7 @@ namespace Glass.Data.DAL
             TotM2Pendente = 0;
             Peso = 0;
             PesoPendente = 0;
-            ValorTotal = 0;
+            ValorTotal = 0;           
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Glass.Data.DAL
             TotM2Pendente = 0;
             Peso = 0;
             PesoPendente = 0;
-            ValorTotal = 0;
+            ValorTotal = 0;            
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Glass.Data.DAL
             TotM = Math.Round(totM, 2, MidpointRounding.AwayFromZero);
             TotM2Pendente = Math.Round(totM2Pendente, 2, MidpointRounding.AwayFromZero);
             Peso = peso;
-            PesoPendente = Math.Round(pesoPendente, 2, MidpointRounding.AwayFromZero);
+            PesoPendente = Math.Round(pesoPendente, 2, MidpointRounding.AwayFromZero);           
             ValorTotal = Math.Round(valorTotal, 2, MidpointRounding.AwayFromZero);
         }
 
@@ -121,7 +121,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valor total das peças da OC.
         /// </summary>
-        public decimal ValorTotal { get; set; }
+        public decimal ValorTotal { get; set; }        
 
         #endregion
     }
