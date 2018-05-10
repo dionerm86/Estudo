@@ -633,6 +633,9 @@ namespace Glass.UI.Web.Cadastros.Projeto
                         return "Erro;Apenas produtos do grupo 'Vidro', e que não são marcados como 'Produtos para Estoque', podem ser utilizados nesse pedido.";
                 }
 
+                if (UserInfo.GetUserInfo.IsCliente && SubgrupoProdDAO.Instance.ObterBloquearEcommerce(null, prod.IdSubgrupoProd.Value))
+                    return "Erro;Este produto não pode ser selecionado na plataforma e-commerce. Entre em contato com a empresa para mais informações";
+
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
 
                 decimal valorProduto = 0;
