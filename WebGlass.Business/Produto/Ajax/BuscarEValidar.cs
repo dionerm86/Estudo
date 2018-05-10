@@ -614,6 +614,26 @@ namespace WebGlass.Business.Produto.Ajax
 
                 retorno += ";" + ProdutoDAO.Instance.ObtemCustoCompra(prod.IdProd);
 
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido);
+                var configuracao = ComissaoConfigDAO.Instance.GetComissaoConfig(pedido.IdFunc);
+                float percFaixa = 0;
+
+                if (PedidoConfig.Comissao.PerComissaoPedido)
+                {
+                    if (pedido.Total < configuracao.FaixaUm)
+                        percFaixa = configuracao.PercFaixaUm;
+                    else if (pedido.Total < configuracao.FaixaDois)
+                        percFaixa = configuracao.PercFaixaDois;
+                    else if (pedido.Total < configuracao.FaixaTres)
+                        percFaixa = configuracao.PercFaixaTres;
+                    else if (pedido.Total < configuracao.FaixaQuatro)
+                        percFaixa = configuracao.PercFaixaQuatro;
+                    else
+                        percFaixa = configuracao.PercFaixaCinco;
+                }
+
+                retorno += ";" + percFaixa;
+
                 return retorno;
             }
             catch (Exception ex)
