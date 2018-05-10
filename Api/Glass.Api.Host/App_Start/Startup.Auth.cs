@@ -69,7 +69,7 @@ namespace Glass.Api.Host
                 Provider = new Providers.ApplicationOAuthProvider(PublicClientId),
                 AuthorizeEndpointPath = new PathString("/api/Account/ExternalLogin"),
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(14),
-                AllowInsecureHttp = false
+                AllowInsecureHttp = true
             };
 
             // Habilita a aplicação user o bearer token para autenticar usuários
