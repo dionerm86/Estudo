@@ -49,13 +49,6 @@ namespace Glass.UI.Web.Utils
             {
                 var ultimoRegistro = ((List<ProdutosPedidoEspelho>)lstProdPedEsp).IndexOf(ppe) == ((List<ProdutosPedidoEspelho>)lstProdPedEsp).Count - 1;
 
-                double totM2 = ppe.PecaReposta ? (ppe.TotM / ppe.Qtde) * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent) : 1)
-                    : (ppe.TotM / ppe.Qtde) * (ppe.Qtde * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent) : 1) - ppe.QtdImpresso);
-                totM2 = Math.Round(totM2, 2);
-
-                double totM2Calc = ppe.PecaReposta ? (ppe.TotM2Calc / ppe.Qtde) * (ppe.IdProdPedParent.GetValueOrDefault() > 0 ? 1 : ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent))
-                    : (ppe.TotM2Calc / ppe.Qtde) * (ppe.Qtde * (ppe.IdProdPedParent.GetValueOrDefault() == 0 ? 1 : ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)ppe.IdProdPedParent)) - ppe.QtdImpresso);
-
                 var qtde = ppe.Qtde;
 
                 if (ppe.PecaReposta)
@@ -72,11 +65,16 @@ namespace Glass.UI.Web.Utils
                         qtde *= ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(idProdPedParentPai.Value);
                 }
 
+                var qtdeCalcular = qtde > 0 ? qtde : ppe.Qtde;
+
+                var totM2 = ppe.PecaReposta ? ppe.TotM / ppe.Qtde : ppe.TotM / ppe.Qtde * (qtdeCalcular - ppe.QtdImpresso);
+                var totM2Calc = ppe.PecaReposta ? ppe.TotM2Calc / ppe.Qtde : ppe.TotM2Calc / ppe.Qtde * (qtdeCalcular - ppe.QtdImpresso);
+
                 script += "setProdEtiqueta(" + ppe.IdProdPed + "," + (ppe.IdAmbientePedido > 0 ? ppe.IdAmbientePedido.ToString() : "null") +
                     "," + ppe.IdPedido + ", '" + ppe.DescrProduto + "','" + ppe.CodProcesso + "','" + ppe.CodAplicacao + "'," + (ppe.PecaReposta ? 1 : qtde) +
-                    "," + (ppe.PecaReposta ? 1 : ppe.QtdImpresso) + "," + ppe.Altura + "," + ppe.Largura + ",'" + totM2 + "', '" +
+                    "," + (ppe.PecaReposta ? 1 : ppe.QtdImpresso) + "," + ppe.Altura + "," + ppe.Largura + ",'" + (totM2).ToString("0.##") + "', '" +
                     (!string.IsNullOrEmpty(ppe.Obs) ? ppe.Obs.Replace("\n", " ").Replace("\t", " ").Replace("\r", " ") : string.Empty) + "', '" + ppe.NumEtiqueta +
-                    "', false, " + ultimoRegistro.ToString().ToLower() + ",'" + totM2Calc + "', null);";
+                    "', false, " + ultimoRegistro.ToString().ToLower() + ",'" + (totM2Calc).ToString("0.##") + "', null);";
             }
 
             script += "closeWindow();";
@@ -122,6 +120,19 @@ namespace Glass.UI.Web.Utils
             }
 
             return qtde.ToString().Replace(",", ".");
+        }
+
+        protected string ObterM2Impressao(object objTotM, object objIdProdPed, object objQtde)
+        {
+            var idProdPed = objIdProdPed != null ? objIdProdPed.ToString().StrParaInt() : 0;
+            var totM = objTotM != null ? objTotM.ToString().StrParaFloat() : 0;
+            var qtde = objQtde != null ? objQtde.ToString().StrParaFloat() : 0;
+
+            var qtdeOriginal = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde((uint)idProdPed);
+
+            var totM2 = totM / qtdeOriginal;
+
+            return (qtde * totM2).ToString().Replace(",", ".");
         }
 
         [Ajax.AjaxMethod]
