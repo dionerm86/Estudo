@@ -502,6 +502,9 @@ namespace Glass.PCP.Negocios.Componentes
                         //Marca no produto_impressão o id do pedido de expedição
                         Glass.Data.DAL.ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(transaction, (uint)idPedidoExp, idProdImpressaoChapa);
 
+                        //Atualiza a chapa_trocada_devolvida marcando a mesma como utilizada
+                        ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoUtilizada(transaction, numEtiqueta);
+
                         //Baixa o estoque
                         ServiceLocator.Current.GetInstance<Glass.Estoque.Negocios.IProvedorBaixaEstoque>()
                             .BaixarEstoque(transaction, idLoja, dados, null, idProdImpressaoChapa, false);
@@ -603,6 +606,9 @@ namespace Glass.PCP.Negocios.Componentes
                                 //Remove o vinculo da chapa no corte para que a mesma possa ser usada novamente
                                 Glass.Data.DAL.ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)item.Key);
 
+                                //Marca a chapa novamente como disponivel
+                                ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(transaction, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta((uint)item.Key));
+
                                 //Remove a exp da chapa
                                 Glass.Data.DAL.ExpedicaoChapaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)item.Key);
 
@@ -655,6 +661,7 @@ namespace Glass.PCP.Negocios.Componentes
         {
             var prodImpressao = Glass.Data.DAL.ProdutoImpressaoDAO.Instance.ObtemProdImpressaoParaExpedicao(session, numEtiqueta);
             var tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numEtiqueta);
+            var chapaTrocadaDisponivel = ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(session, numEtiqueta);
 
             uint idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                Glass.Conversoes.StrParaUint(numEtiqueta.Substring(1, numEtiqueta.IndexOf('-') - 1)) : 0;
@@ -674,11 +681,11 @@ namespace Glass.PCP.Negocios.Componentes
             if (!Glass.Data.DAL.LiberarPedidoDAO.Instance.VerificaPedidoLiberacao(session, idLiberarPedido, idPedidoExp.Value))
                 throw new Exception("O pedido informado não faz parte desta liberação.");
 
-            if(Glass.Data.DAL.ExpedicaoChapaDAO.Instance.VerificaLeitura(session, numEtiqueta))
+            if(Glass.Data.DAL.ExpedicaoChapaDAO.Instance.VerificaLeitura(session, numEtiqueta) && !chapaTrocadaDisponivel)
                 throw new Exception("A etiqueta informada já deu saída na expedição.");
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, prodImpressao.IdProdImpressao))
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, prodImpressao.IdProdImpressao) && !chapaTrocadaDisponivel)
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
             if (Glass.Data.DAL.ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, prodImpressao.IdProdImpressao))
