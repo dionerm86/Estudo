@@ -507,7 +507,7 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.NumeroDiasPedidoProntoAtrasado);
             }
             
-            if (!FiscalConfig.NotaFiscalConfig.PercentualCargaTributariaParaClienteSimplesNacionalCfop5401Cst10.HasValue)
+            if (!FiscalConfig.NotaFiscalConfig.PercentualCargaTributariaParaClienteSimplesNacional.HasValue)
             {
                 itens.Add(Config.ConfigEnum.CalcularIcmsPedido);
                 itens.Add(Config.ConfigEnum.CalcularIpiPedido);
@@ -549,7 +549,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.UsarRelatorioLiberacao4Vias);
             itens.Add(Config.ConfigEnum.AgruparResumoLiberacaoProduto);
 
-            if (!FiscalConfig.NotaFiscalConfig.PercentualCargaTributariaParaClienteSimplesNacionalCfop5401Cst10.HasValue)
+            if (!FiscalConfig.NotaFiscalConfig.PercentualCargaTributariaParaClienteSimplesNacional.HasValue)
             {
                 itens.Add(Config.ConfigEnum.CalcularIcmsLiberacao);
                 itens.Add(Config.ConfigEnum.CalcularIpiLiberacao);
