@@ -291,7 +291,10 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.PerComissaoPedido);
 
             if (PedidoConfig.Comissao.PerComissaoPedido)
+            {
                 itens.Add(Config.ConfigEnum.UsarComissaoPorTipoPedido);
+                itens.Add(Config.ConfigEnum.UsarComissaoPorProduto);
+            }
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }

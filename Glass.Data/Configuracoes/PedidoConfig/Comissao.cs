@@ -47,6 +47,14 @@ namespace Glass.Configuracoes
                 }
             }
 
+            public static bool UsarComissaoPorProduto
+            {
+                get
+                {
+                    return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarComissaoPorProduto);
+                }
+            }
+
             /// <summary>
             /// Define se o percentual de comissão do pedido será exibido com 2 casas decimais (do contrário exibe 4 casas)
             /// </summary>

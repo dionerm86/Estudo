@@ -202,6 +202,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IdProdBaixaEst")]
         public int? IdProdBaixaEst { get; set; }
 
+        [PersistenceProperty("PERCCOMISSAO")]
+        public decimal PercComissao { get; set; }
+
         /// <summary>
         /// Percentual da rentabilidade.
         /// </summary>

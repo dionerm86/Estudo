@@ -1869,6 +1869,17 @@
                                             </ItemTemplate>
                                             <ItemStyle Wrap="False" />
                                         </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Perc.Comissão Prod." >
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblPercComissao" runat="server" Text='<%# Eval("PercComissao") %>'></asp:Label>
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="txtComissaoProd" runat="server" MaxLength="50" onkeypress="return soNumeros(event, true, true)" Text='<%# Bind("PercComissao") %>' Width="50px"></asp:TextBox>
+                                            </EditItemTemplate>
+                                            <FooterTemplate>
+                                                <asp:TextBox ID="txtComissaoProd" runat="server" onkeypress="return soNumeros(event, true, true)" MaxLength="50" Width="50px"></asp:TextBox>
+                                            </FooterTemplate>
+                                        </asp:TemplateField>
                                         <asp:TemplateField>
                                             <EditItemTemplate>
                                                 <div id="benefMaoObra" style='<%# !IsPedidoMaoDeObra() ? "display: none;": "" %> white-space: nowrap'>                                                    

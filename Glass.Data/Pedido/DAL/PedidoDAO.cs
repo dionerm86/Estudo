@@ -10800,6 +10800,25 @@ namespace Glass.Data.DAL
             UpdateTotalPedido(sessao, pedido, false, false, false, true);
         }
 
+
+        /// <summary>
+        /// Atualiza o percentual de comissão do pedido
+        /// </summary>
+        private void AtualizarPercentualComissao(GDASession sessao, Pedido pedido, IEnumerable<ProdutosPedido> produtosPedido)
+        {
+            decimal percComissao = 0;
+
+            if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
+                if (pedido.Total > 0)
+                    foreach (var prod in produtosPedido)
+                        percComissao += ((prod.Total * 100) / pedido.Total) * (prod.PercComissao / 100);
+
+            var parametros = new List<GDAParameter>();
+            parametros.Add(new GDAParameter("?idPedido", pedido.IdPedido));
+            parametros.Add(new GDAParameter("?percComissao", Math.Round(percComissao, 2)));
+            objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET PercentualComissao=?percComissao WHERE IdPedido=?idPedido", parametros.ToArray());
+        }
+
         /// <summary>
         /// Atualiza o valor total do pedido, somando os totais dos produtos relacionados à ele
         /// </summary>
@@ -10817,6 +10836,9 @@ namespace Glass.Data.DAL
             {
                 var atual = GetElementByPrimaryKey(sessao, pedido.IdPedido);
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
+
+                AtualizarPercentualComissao(sessao, pedido, produtos);
+
                 RemoveComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
                 AplicaComissaoDescontoAcrescimo(sessao, atual, pedido);
             }
