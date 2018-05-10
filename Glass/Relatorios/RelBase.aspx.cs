@@ -479,13 +479,15 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = Request["rel"] == "ContasReceber" ? Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasReceberRetrato{0}.rdlc") :
                             "Relatorios/rptContasReceberTotal.rdlc";
 
+                        var formaspagto = !string.IsNullOrEmpty(Request["formaPagto"]) ? (Request["formaPagto"].Split(',')).Select(f => f.StrParaUint()).ToArray() : null;
+
                         var contasReceber = ContasReceberDAO.Instance.GetNaoRecebidasRpt(Glass.Conversoes.StrParaUint(Request["idContaR"]), Glass.Conversoes.StrParaUint(Request["idPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]), Glass.Conversoes.StrParaUint(Request["idAcerto"]), Glass.Conversoes.StrParaUint(Request["idTrocaDev"]),
                             Glass.Conversoes.StrParaUint(Request["numeroNFe"]), Glass.Conversoes.StrParaUint(Request["idLoja"]), Request["lojaCliente"] == "true",
                             Glass.Conversoes.StrParaUint(Request["idCli"]), Glass.Conversoes.StrParaUint(Request["idFunc"]), Glass.Conversoes.StrParaUint(Request["tipoEntrega"]),
                             Request["nomeCli"], Request["dtIni"], Request["dtFim"], Request["dtIniLib"], Request["dtFimLib"], Request["dataCadIni"],
                             Request["dataCadFim"], Glass.Conversoes.StrParaFloat(Request["precoInicial"]), Glass.Conversoes.StrParaFloat(Request["precoFinal"]),
-                            Glass.Conversoes.StrParaUint(Request["formaPagto"]), Glass.Conversoes.StrParaInt(Request["situacaoPedido"]), Request["incluirParcCartao"] == "true",
+                            formaspagto, Glass.Conversoes.StrParaInt(Request["situacaoPedido"]), Request["incluirParcCartao"] == "true",
                             Request["contasRenegociadas"].StrParaIntNullable().GetValueOrDefault(), Request["apenasNfe"] == "true", Glass.Conversoes.StrParaUint(Request["apenasContasAntecipadas"]), Request["agrupar"],
                             Glass.Conversoes.StrParaInt(Request["sort"]), Glass.Conversoes.StrParaInt(Request["contasCnab"]), Request["idsRotas"],
                             Request["obs"], Request["tipoContasBuscar"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]),

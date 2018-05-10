@@ -204,11 +204,7 @@ namespace Glass.Data.DAL
                 (FinanceiroConfig.FormaPagamento.SepararTiposChequesRecebimento ? "FALSE" : "TRUE") +
                 " AS ApenasCheque FROM formapagto WHERE !ApenasSistema AND IdFormaPagto In (" + formasPagto + ") ORDER BY Descricao";
 
-            var lst = objPersistence.LoadData(sql).ToList();
-            FormaPagto formaPagto = new FormaPagto();
-            formaPagto.IdFormaPagto = 0;
-            formaPagto.Descricao = "Todas";
-            lst.Insert(0, formaPagto);
+            var lst = objPersistence.LoadData(sql);
 
             return lst.ToArray();
         }
