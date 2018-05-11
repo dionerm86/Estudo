@@ -17,7 +17,7 @@ namespace Glass.Data.DAL
                     (Select pp.idprod, Coalesce(pp.totM2Calc, 0) As totM2Calc
                         From produtos_pedido pp
                             Inner Join produto p1 On (pp.idProd = p1.idProd)
-                        Where pp.idPedido In (Select idPedido From pedido
+                        Where COALESCE(pp.IdProdPedParent, 0) = 0 AND pp.idPedido In (Select idPedido From pedido
                             Where situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + " And idObra In (" + idObra + @")) And If((Select  Count(*) From pedido_espelho
                                 Where idPedido=pp.idPedido)>0, !Coalesce(pp.invisivelFluxo, False), !Coalesce(pp.invisivelPedido, False))) As temp
                 Where p.idProd=temp.idProd) As Decimal(12,2)) As totM2Utilizado,
@@ -25,7 +25,7 @@ namespace Glass.Data.DAL
                     (Select pp.idprod, Coalesce(pp.total, 0) As totalCalc 
                         From produtos_pedido pp
                             Inner Join produto p1 On (pp.idProd = p1.idProd)
-                        Where pp.idPedido In (Select idPedido From pedido
+                        Where COALESCE(pp.IdProdPedParent, 0) = 0 AND pp.idPedido In (Select idPedido From pedido
                             Where situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + " And idObra In (" + idObra + @")) And If((Select  Count(*) From pedido_espelho
                                 Where idPedido=pp.idPedido)>0, !Coalesce(pp.invisivelFluxo, False), !Coalesce(pp.invisivelPedido, False))) As temp
                 Where p.idProd=temp.idProd) As Decimal(12,2)) As totalCalc" : "Null As totM2Utilizado, Null As totalCalc") : "Count(*)";

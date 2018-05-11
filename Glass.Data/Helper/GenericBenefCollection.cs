@@ -31,7 +31,7 @@ namespace Glass.Data.Helper
 
         #region Campos Privados
 
-        private IList<GenericBenef> lista;
+        private IList<GenericBenef> lista = new List<GenericBenef>();
         private TipoProdutoBeneficiamento _tipo = TipoProdutoBeneficiamento.Nenhum;
         private int? countAreaMinima;
         private int? numeroBeneficiamentos;
@@ -65,11 +65,9 @@ namespace Glass.Data.Helper
 
         public GenericBenefCollection()
         {
-            lista = new List<GenericBenef>();
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoPedidoBenef> produtosPedido)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoPedido;
             foreach (ProdutoPedidoBenef p in produtosPedido)
@@ -77,7 +75,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoOrcamentoBenef> produtosOrcamento)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoOrcamento;
             foreach (ProdutoOrcamentoBenef p in produtosOrcamento)
@@ -85,7 +82,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<MaterialProjetoBenef> materiaisProjeto)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.MaterialProjeto;
             foreach (MaterialProjetoBenef m in materiaisProjeto)
@@ -93,7 +89,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoPedidoEspelhoBenef> produtosPedidoEspelho)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoPedidoEspelho;
             foreach (ProdutoPedidoEspelhoBenef p in produtosPedidoEspelho)
@@ -101,7 +96,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutosCompraBenef> produtosCompra)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoCompra;
             foreach (ProdutosCompraBenef p in produtosCompra)
@@ -109,7 +103,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoBenef> produtos)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.Produto;
             foreach (ProdutoBenef p in produtos)
@@ -117,7 +110,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoTrocaDevolucaoBenef> produtosTrocaDevolucao)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoTrocaDevolucao;
             foreach (ProdutoTrocaDevolucaoBenef p in produtosTrocaDevolucao)
@@ -125,7 +117,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<PecaModeloBenef> pecasProjetoModelo)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.PecaModeloProjeto;
             foreach (PecaModeloBenef p in pecasProjetoModelo)
@@ -133,7 +124,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<PecaItemProjBenef> pecasItemProjeto)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.PecaItemProjeto;
             foreach (PecaItemProjBenef p in pecasItemProjeto)
@@ -141,7 +131,6 @@ namespace Glass.Data.Helper
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoTrocadoBenef> produtosTrocado)
-            : this()
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoTrocado;
             foreach (ProdutoTrocadoBenef p in produtosTrocado)
