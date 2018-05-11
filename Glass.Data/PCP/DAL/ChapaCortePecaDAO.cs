@@ -219,7 +219,7 @@ namespace Glass.Data.DAL
                     INNER JOIN produto p ON (coalesce(pnf.IdProd,ppe.IdProd)=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
                 WHERE ccp.IdProdImpressaoChapa IN ({1}) AND sp.TipoSubgrupo IN {2}", (int)Pedido.TipoPedidoEnum.Producao,
-                            string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})", (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado))) || !chapasTrocadasDisponiveis;
+                            string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})", (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado))) && !chapasTrocadasDisponiveis;
         }
 
         /// <summary>
