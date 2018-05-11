@@ -382,13 +382,13 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.Label Label11;
         
         /// <summary>
-        /// drpFormaPagto control.
+        /// cblFormaPagto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
+        protected global::Sync.Controls.CheckBoxListDropDown cblFormaPagto;
         
         /// <summary>
         /// imgPesq8 control.

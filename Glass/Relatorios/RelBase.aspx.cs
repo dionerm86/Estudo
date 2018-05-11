@@ -596,7 +596,7 @@ namespace Glass.UI.Web.Relatorios
                     {
                         report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptContasPagasRetrato{0}.rdlc");
                         var contasPagas = ContasPagarDAO.Instance.GetPagasForRpt(0, Request["idCompra"].StrParaUint(), Request["nf"], Request["idLoja"].StrParaUint(), Request["idCustoFixo"].StrParaUint(),
-                            Request["IdImpostoServ"].StrParaUint(), Request["idFornec"].StrParaUint(), Request["nomeFornec"], Request["formaPagto"].StrParaUint(), Request["dataIniCad"],
+                            Request["IdImpostoServ"].StrParaUint(), Request["idFornec"].StrParaUint(), Request["nomeFornec"], Request["formaPagto"], Request["dataIniCad"],
                             Request["dataFimCad"], Request["dtIniPago"], Request["dtFimPago"], Request["dtIniVenc"], Request["dtFimVenc"], Request["valorInicial"].StrParaFloat(),
                             Request["valorFinal"].StrParaFloat(), Request["tipo"].StrParaInt(), Request["comissao"] == "true", Request["renegociadas"] == "true", Request["jurosMulta"] == "true",
                             Request["planoConta"], Request["custoFixo"] == "true", Request["exibirAPagar"] == "true", Request["idComissao"].StrParaInt(), Request["numCte"].StrParaInt(), Request["observacao"],

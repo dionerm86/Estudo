@@ -256,7 +256,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
                 case "reciboContaPagar":
                     {
                         var idContaPagar = Request["idContaPagar"] != "0" && Request["idContaPagar"] != "" ? Glass.Conversoes.StrParaInt(Request["idContaPagar"]) : 0;
-                        var contaPg = ContasPagarDAO.Instance.GetPagasForRpt(idContaPagar, 0, null, 0, 0, 0, 0, null, 0, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false,
+                        var contaPg = ContasPagarDAO.Instance.GetPagasForRpt(idContaPagar, 0, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false,
                             false, 0, 0, null, null);
 
                         if (contaPg.Length == 0)

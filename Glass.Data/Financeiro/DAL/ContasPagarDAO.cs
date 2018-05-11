@@ -1448,7 +1448,7 @@ namespace Glass.Data.DAL
 
         #region Busca as contas pagas
 
-        private string SqlPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
+        private string SqlPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto, string dataIniCad,
             string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas, bool jurosMulta,
             string planoConta, bool custoFixo, bool selecionar, string ordenar, bool exibirAPagar, int idComissao, int numCte, string observacao, out bool temFiltro, out string filtroAdicional)
         {
@@ -1590,10 +1590,10 @@ namespace Glass.Data.DAL
                 temFiltro = true;
             }
 
-            if (formaPagto > 0)
+            if (!string.IsNullOrEmpty(formaPagto))
             {
-                sql += " And c.idFormaPagto=" + formaPagto;
-                criterio += "Forma Pagto: " + FormaPagtoDAO.Instance.ObtemValorCampo<string>("Descricao", "idFormaPagto=" + formaPagto);
+                sql += " And c.idFormaPagto IN(" + formaPagto + ")";
+                criterio += "Forma Pagto: " + string.Join(",", FormaPagtoDAO.Instance.ExecuteMultipleScalar<string>("Select Descricao from formapagto where idFormaPagto IN(" + formaPagto + ")"));
                 temFiltro = true;
             }
 
@@ -1691,7 +1691,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca todas as contas a pagar pagas para o relatório
         /// </summary>
-        public ContasPagar[] GetPagasForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto,
+        public ContasPagar[] GetPagasForRpt(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
             bool renegociadas, bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao, string ordenar)
         {
@@ -1712,7 +1712,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca contas pagas
         /// </summary>
-        public IList<ContasPagar> GetPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto,
+        public IList<ContasPagar> GetPagas(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto,
             string dataIniCad, string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao,
             bool renegociadas, bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao, string sortExpression, int startRow, int pageSize)
         {
@@ -1731,7 +1731,7 @@ namespace Glass.Data.DAL
             return lstContasPagar;
         }
 
-        public int GetPagasCount(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, uint formaPagto, string dataIniCad,
+        public int GetPagasCount(int? idContaPg, uint idCompra, string nf, uint idLoja, uint idCustoFixo, uint idImpostoServ, uint idFornec, string nomeFornec, string formaPagto, string dataIniCad,
             string dataFimCad, string dtIniPago, string dtFimPago, string dtIniVenc, string dtFimVenc, Single valorInicial, Single valorFinal, int tipo, bool comissao, bool renegociadas,
             bool jurosMulta, string planoConta, bool custoFixo, bool exibirAPagar, int idComissao, int numCte, string observacao)
         {
@@ -1766,7 +1766,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, 0, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, false, null, false, 0, 0, null, out temFiltro,
+            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, false, null, false, 0, 0, null, out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql, null);
@@ -1782,7 +1782,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, 0, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, true, null, false, 0, 0, null, out temFiltro,
+            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, true, null, false, 0, 0, null, out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             return ExecuteScalar<decimal>(sessao, "select sum(valorPago) from (" + sql + ") as temp");
@@ -1798,7 +1798,7 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, 0, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, true, null, false, 0, 0, null, out temFiltro,
+            string sql = SqlPagas(0, idCompra, null, 0, 0, 0, 0, null, null, null, null, null, null, null, null, 0, 0, 0, false, true, false, null, false, true, null, false, 0, 0, null, out temFiltro,
                 out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
             return objPersistence.ExecuteSqlQueryCount("select count(*) from (" + sql + ") as temp where aVista=true") > 0;
