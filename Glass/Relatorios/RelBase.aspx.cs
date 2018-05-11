@@ -721,9 +721,9 @@ namespace Glass.UI.Web.Relatorios
                 case "ListaPedidosProd":
                 case "ListaPedidosSimples":
                     {
-                        report.ReportPath = Request["rel"] == "ListaPedidosProd" ? "Relatorios/rptListaPedidosProd.rdlc" :
-                            Request["rel"] == "ListaPedidosSimples" ? "Relatorios/rptListaPedidosSimples.rdlc" :
-                            Request["rel"] == "ListaPedidosRota" ? "Relatorios/rptListaPedidosRota.rdlc" :
+                        report.ReportPath = Request["rel"] == "ListaPedidosProd" ? Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosProd{0}.rdlc") :
+                            Request["rel"] == "ListaPedidosSimples" ? Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosSimples{0}.rdlc") :
+                            Request["rel"] == "ListaPedidosRota" ? Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosRota{0}.rdlc") :
                             PedidoConfig.RelatorioListaPedidos.ExibirRelatorioListaPedidosPaisagem;
 
                         if ((report.ReportPath.Contains("ListaPedidos.rdlc") || report.ReportPath.Contains("ListaPedidosPaisagem.rdlc") ||
@@ -759,13 +759,13 @@ namespace Glass.UI.Web.Relatorios
                             lstParam.Add(new ReportParameter("Producao", PCPConfig.ControlarProducao.ToString()));
                             lstParam.Add(new ReportParameter("EsconderTotal", (Request["esconderTotal"] == "true").ToString()));
 
-                            if (report.ReportPath == "Relatorios/rptListaPedidosProd.rdlc")
+                            if (report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosProd{0}.rdlc"))
                                 lstParam.Add(new ReportParameter("FastDelivery", PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString()));
                         }
                         else
                             agrupar = "1";
 
-                        if (report.ReportPath.Contains("rptListaPedidosPaisagem.rdlc"))
+                        if (report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosPaisagem{0}.rdlc"))
                             lstParam.Add(new ReportParameter("ExibirValorIpi", PedidoConfig.TelaListagemRelatorio.ExibirValorIPI.ToString()));
 
                         lstParam.Add(new ReportParameter("Agrupar", !string.IsNullOrEmpty(agrupar) ? agrupar : "0"));
@@ -774,7 +774,7 @@ namespace Glass.UI.Web.Relatorios
                             lstParam.Add(new ReportParameter("ExibirValorCustoVenda", PCPConfig.ExibirCustoVendaRelatoriosProducao.ToString()));
 
                         /* Chamado 41537. */
-                        if (report.ReportPath.Contains("ListaPedidos.rdlc"))
+                        if (report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidos{0}.rdlc"))
                             lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
 
                         report.DataSources.Add(new ReportDataSource("PedidoRpt",
