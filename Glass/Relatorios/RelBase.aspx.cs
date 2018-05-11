@@ -726,8 +726,9 @@ namespace Glass.UI.Web.Relatorios
                             Request["rel"] == "ListaPedidosRota" ? Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosRota{0}.rdlc") :
                             PedidoConfig.RelatorioListaPedidos.ExibirRelatorioListaPedidosPaisagem;
 
-                        if ((report.ReportPath.Contains("ListaPedidos.rdlc") || report.ReportPath.Contains("ListaPedidosPaisagem.rdlc") ||
-                            report.ReportPath.Contains("ListaPedidosRota")) && Request["exibirPronto"] == "true")
+                        if ((report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidos{0}.rdlc") ||
+                            report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosPaisagem{0}.rdlc") ||
+                            report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosRota{0}.rdlc")) && Request["exibirPronto"] == "true")
                         {
                             report.ReportPath = report.ReportPath.Replace(".", "Pronto.");
                             lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
