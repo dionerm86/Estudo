@@ -1044,7 +1044,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.Largura = largura;
             prodPed.IdProd = (uint)idProd;
             prodPed.Espessura = espessura;
-            prodPed.Redondo = redondo;
+            prodPed.Redondo = !redondo ? ProdutoDAO.Instance.IsRedondo((uint)idProd) : redondo;
             if (!String.IsNullOrEmpty(idAmbiente)) prodPed.IdAmbientePedido = Conversoes.StrParaUint(idAmbiente);
             if (!String.IsNullOrEmpty(idAplicacaoStr)) prodPed.IdAplicacao = Conversoes.StrParaUint(idAplicacaoStr);
             if (!String.IsNullOrEmpty(idProcessoStr)) prodPed.IdProcesso = Conversoes.StrParaUint(idProcessoStr);
