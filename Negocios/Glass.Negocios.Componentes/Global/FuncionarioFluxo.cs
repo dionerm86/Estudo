@@ -387,6 +387,18 @@ namespace Glass.Global.Negocios.Componentes
                     };
                 }
 
+                if (funcionario.Situacao == Situacao.Inativo && SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.Cliente>()
+                    .Where("IdFuncAtendente=?id")
+                    .Add("?id", funcionario.IdFunc)
+                    .ExistsResult())
+                {
+                    return new IMessageFormattable[]
+                    {
+                        ("Não é possível Inativar o funcionário pois ele está vinculado como atendente a pelo menos um Cliente.").GetFormatter()
+                    };
+                }
+
                 if (funcionario.IdTipoFunc == (int)Utils.TipoFuncionario.MarcadorProducao && (funcionario.FuncionarioSetores == null || funcionario.FuncionarioSetores.Count() == 0))
                 {
                     return new IMessageFormattable[]
