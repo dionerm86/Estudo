@@ -26,13 +26,14 @@ namespace Glass.Data.RelDAL
                             AND nf1.TipoDocumento IN ({3},{4},{5}) AND nf1.Situacao IN ({6},{7})
                         ) nf ON (pnf.IdNf = nf.IdNf)
                     INNER JOIN fornecedor f ON (nf.IdFornec = f.IdFornec)
+                    LEFT JOIN chapa_trocada_devolvida ctd ON (pi.IdProdImpressao = ctd.IdProdImpressaoChapa)
                     LEFT JOIN cor_vidro cv ON (p.IdCorVidro = cv.IdCorVidro)
                     LEFT JOIN subgrupo_prod s ON (p.IdSubgrupoProd = s.IdSubgrupoProd)
-                WHERE (pi.Cancelado IS NULL OR pi.Cancelado=0)
+                WHERE ((pi.Cancelado IS NULL OR pi.Cancelado=0)
                     AND pi.IdProdNf IS NOT NULL 
-                    AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressaoChapa FROM chapa_corte_peca)
+                    AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressaoChapa FROM chapa_corte_peca) 
                     AND pi.IdProdImpressao NOT IN (SELECT IdProdImpressao FROM perda_chapa_vidro WHERE Cancelado IS NULL OR Cancelado=0)
-                    AND s.TipoSubgrupo IN ({1},{2})
+                    AND s.TipoSubgrupo IN ({1},{2}) OR ctd.Situacao = 1)
                 {8}
                 ORDER BY cv.Descricao, p.Espessura, f.Nomefantasia, nf.NumeroNfe, pi.IdProdImpressao",
                 campos, (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado, (int)NotaFiscal.TipoDoc.EntradaTerceiros,

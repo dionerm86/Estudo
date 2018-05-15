@@ -14,7 +14,8 @@ namespace Glass.Configuracoes
             /// </summary>
             public static string ExibirRelatorioListaPedidosPaisagem
             {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirRelatorioListaPedidosPaisagem) ? "Relatorios/rptListaPedidosPaisagem.rdlc" : "Relatorios/rptListaPedidos.rdlc"; }
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirRelatorioListaPedidosPaisagem) ?
+                        Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidosPaisagem{0}.rdlc") : Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidos{0}.rdlc"); }
             }
         }
     }

@@ -550,6 +550,14 @@
                 alert('Você não tem permissão para imprimir etiquetas.');
                 return false;
             }
+
+            //O replace é necessario -> Expressão regular para remover a última vírgula.
+            var idsPedido = FindControl("hdfIdsPedido", "input").value.replace(/,\s*$/g, "");
+            var idsPedidosImportados = LstEtiquetaImprimir.PodeImprimirPedidosImportados(idsPedido).value.toLowerCase()
+            if (idsPedidosImportados != ""){
+                alert(" O(s) pedido(s) importado(s) " + idsPedidosImportados + " não foi(ram) conferido(s).");
+                return false;
+            }
         
             if (!confirm('Tem certeza que deseja imprimir etiquetas para os produtos ' + 
                 (apenasRetalho ? "com retalhos associados" : "selecionados") + '?'))

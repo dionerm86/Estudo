@@ -101,6 +101,8 @@ namespace Glass.Data.RelModel
 
         public string HoraEntradaSaida { get; set; }
 
+        public string EmailFiscal { get; set; }
+
         #endregion
 
         #region Fatura/Duplicatas

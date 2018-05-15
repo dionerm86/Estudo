@@ -719,7 +719,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.Altura = !String.IsNullOrEmpty(altura) ? (int?)Conversoes.StrParaInt(altura) : null;
                 ambPed.Largura = !String.IsNullOrEmpty(largura) ? (int?)Conversoes.StrParaInt(largura) : null;
                 ambPed.IdProd = !String.IsNullOrEmpty(idProd) ? (uint?)Conversoes.StrParaUint(idProd) : null;
-                ambPed.Redondo = redondo;
+                ambPed.Redondo = ambPed.Redondo = !redondo ? ProdutoDAO.Instance.IsRedondo(Conversoes.StrParaUint(idProd)) : redondo;
                 ambPed.IdAplicacao = !String.IsNullOrEmpty(idAplicacao) ? (uint?)Conversoes.StrParaUint(idAplicacao) : null;
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Conversoes.StrParaUint(idProcesso) : null;
 
@@ -1044,7 +1044,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.Largura = largura;
             prodPed.IdProd = (uint)idProd;
             prodPed.Espessura = espessura;
-            prodPed.Redondo = redondo;
+            prodPed.Redondo = !redondo ? ProdutoDAO.Instance.IsRedondo((uint)idProd) : redondo;
             if (!String.IsNullOrEmpty(idAmbiente)) prodPed.IdAmbientePedido = Conversoes.StrParaUint(idAmbiente);
             if (!String.IsNullOrEmpty(idAplicacaoStr)) prodPed.IdAplicacao = Conversoes.StrParaUint(idAplicacaoStr);
             if (!String.IsNullOrEmpty(idProcessoStr)) prodPed.IdProcesso = Conversoes.StrParaUint(idProcessoStr);

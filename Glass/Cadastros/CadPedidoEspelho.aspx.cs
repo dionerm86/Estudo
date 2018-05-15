@@ -213,7 +213,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.Largura = !String.IsNullOrEmpty(largura) ? (int?)Glass.Conversoes.StrParaInt(largura) : null;
                 ambPed.QtdeImpresso = 0;
                 ambPed.IdProd = !String.IsNullOrEmpty(idProd) ? (uint?)Glass.Conversoes.StrParaUint(idProd) : null;
-                ambPed.Redondo = redondo;
+                ambPed.Redondo = !redondo ? ProdutoDAO.Instance.IsRedondo(Conversoes.StrParaUint(idProd)) : redondo;
                 ambPed.IdAplicacao = !String.IsNullOrEmpty(idAplicacao) ? (uint?)Glass.Conversoes.StrParaUint(idAplicacao) : null;
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 

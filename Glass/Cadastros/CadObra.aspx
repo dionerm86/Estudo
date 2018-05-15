@@ -183,6 +183,8 @@
         }
 
         function onReceber() {
+            if (!validate())
+                return false;
 
             bloquearPagina();
 
