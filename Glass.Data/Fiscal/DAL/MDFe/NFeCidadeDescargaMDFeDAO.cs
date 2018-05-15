@@ -63,16 +63,12 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool VerificarNfeJaInclusa(int idNfe)
         {
-            return objPersistence.ExecuteSqlQueryCount(string.Format(@"SELECT 
-                ncdm.IdCidadeDescarga
-            FROM
-                nfe_cidade_descarga_mdfe ncdm
-                    INNER JOIN
-                cidade_descarga_mdfe cdm ON (ncdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
-                    INNER JOIN
-                manifesto_eletronico me ON (me.Situacao <> 3 AND
+            return objPersistence.ExecuteSqlQueryCount($@"SELECT ncdm.IdCidadeDescarga
+            FROM nfe_cidade_descarga_mdfe ncdm
+                    INNER JOIN cidade_descarga_mdfe cdm ON (ncdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
+                    INNER JOIN manifesto_eletronico me ON (me.Situacao <> {SituacaoEnum.Cancelado} AND
                     me.IdManifestoEletronico = cdm.IdManifestoEletronico)
-            AND ncdm.IdNfe = {0}", idNfe)) > 0;
+            AND ncdm.IdNfe = {idNfe}") > 0;
         }
 
         #region Metodos Sobrescritos
