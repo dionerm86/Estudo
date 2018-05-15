@@ -3196,6 +3196,19 @@ namespace Glass.Data.DAL
                     ProdutoLojaDAO.Instance.TirarReserva(session, (int)idLoja, idsProdQtde, null, null, (int)idPedido, null, null, null,
                         null, "PedidoEspelhoDAO - CancelarEspelho");
                 }
+
+                //Salva cancelamento no log do pedido
+                var logAlteracaoCancelamento = new LogAlteracao();
+                logAlteracaoCancelamento.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
+                logAlteracaoCancelamento.IdRegistroAlt = (int)idPedido;
+                logAlteracaoCancelamento.DataAlt = DateTime.Now;
+                logAlteracaoCancelamento.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
+                logAlteracaoCancelamento.Referencia = LogAlteracao.GetReferencia(session, logAlteracaoCancelamento.Tabela,
+                    (uint)logAlteracaoCancelamento.IdRegistroAlt);
+                logAlteracaoCancelamento.Campo = "Situação";
+                logAlteracaoCancelamento.ValorAnterior = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
+                logAlteracaoCancelamento.ValorAtual = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.Conferido);
+                LogAlteracaoDAO.Instance.Insert(session, logAlteracaoCancelamento);
             }
         }
 
