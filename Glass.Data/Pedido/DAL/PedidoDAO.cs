@@ -15847,11 +15847,11 @@ namespace Glass.Data.DAL
                 foreach (var prodPed in produtosPedido)
                 {
                     // Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.
-                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(session, (int)prodPed.IdProd);
+                    var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)prodPed.IdProd);
 
-                    if (idLojaSubgrupoProd > 0 && idLojaSubgrupoProd.Value != objUpdate.IdLoja)
+                    if (!idsLojaSubgrupoProd.Any(f => f == objUpdate.IdLoja))
                     {
-                        throw new Exception("Não é possível alterar a loja deste pedido, a loja cadastrada para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
+                        throw new Exception("Não é possível alterar a loja deste pedido, as lojas cadastradas para o subgrupo de um ou mais produtos é diferente da loja selecionada para o pedido.");
                     }
 
                     if (GrupoProdDAO.Instance.BloquearEstoque(session, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd))

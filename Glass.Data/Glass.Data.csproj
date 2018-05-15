@@ -533,6 +533,7 @@
     <Compile Include="Global\Model\ProdutoNCM.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoIcone.cs" />
     <Compile Include="Global\Model\RelatorioDinamicoFiltro.cs" />
+    <Compile Include="Global\Model\SubgrupoProdLoja.cs" />
     <Compile Include="Global\Model\TipoCalculoGrupoProd.cs" />
     <Compile Include="Global\Model\TipoInstalacao.cs" />
     <Compile Include="Global\Model\TipoEntrega.cs" />

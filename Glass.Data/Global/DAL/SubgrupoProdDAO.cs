@@ -327,19 +327,19 @@ namespace Glass.Data.DAL
             return subgrupoTemperado != null ? subgrupoTemperado.ToString() : String.Empty;
         }
 
-        public int? ObterIdLojaPeloProduto(GDASession sessao, int idProd)
+        public List<int> ObterIdsLojaPeloProduto(GDASession sessao, int idProd)
         {
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd);
 
             if (idSubgrupoProd.GetValueOrDefault() == 0)
                 return null;
 
-            return ObterIdLoja(sessao, idSubgrupoProd.Value);
+            return ObterIdsLoja(sessao, idSubgrupoProd.Value);
         }
 
-        public int? ObterIdLoja(GDASession sessao, int idSubrupoProd)
+        public List<int> ObterIdsLoja(GDASession sessao, int idSubrupoProd)
         {
-            return ExecuteScalar<int?>(sessao, "SELECT IdLoja FROM subgrupo_prod sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
+            return ExecuteMultipleScalar<int>(sessao, "SELECT IdLoja FROM subgrupoprod_loja sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
         }
 
         public bool ObterBloquearEcommerce(GDASession sessao, int idSubrupoProd)

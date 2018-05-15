@@ -4211,10 +4211,11 @@ namespace Glass.Data.DAL
             }
 
             // Chamado 49537 - Só valida a loja do subgrupo do produto pai com a loja do pedido.
-            var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(session, (int)objInsert.IdProd);
+            var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
+            var lojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
 
-            if (!insersaoComposicao && idLojaSubgrupoProd.GetValueOrDefault() > 0 && idLojaSubgrupoProd.Value != PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido))
-                throw new Exception("Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.");
+            if (!insersaoComposicao && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
+                throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
             /* Chamados 52702 e 52911.
              * A verificação deve ser feita pelo filho, pois, ele pode ser inserido de forma avulsa no pai, através do cadastro do pedido. */

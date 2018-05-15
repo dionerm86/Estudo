@@ -548,19 +548,19 @@ function loadProduto(codInterno, idProdPed, manterProcessoAplicacao) {
                 FindControl("hdfTamanhoMaximoObra", "input").value = "0";
         }
 
-        var idLojaSubgrupo = CadPedido.ObterLojaSubgrupoProd(codInterno);
+        var idsLojaSubgrupo = CadPedido.ObterLojaSubgrupoProd(codInterno);
         var idLoja = FindControl("hdfLoja", "input").value;
 
-        if (idLojaSubgrupo.error != null) {
+        if (idsLojaSubgrupo.error != null) {
 
             if (FindControl("txtCodProd", "input") != null)
                 FindControl("txtCodProd", "input").value = "";
 
-            alert(idLojaSubgrupo.error.description);
+            alert(idsLojaSubgrupo.error.description);
             return false;
         }
 
-        if (idLojaSubgrupo.value != "0" && idLojaSubgrupo.value != idLoja) {
+        if (idsLojaSubgrupo.value != "" && !idsLojaSubgrupo.value.includes(idLoja)) {
 
             if (FindControl("txtCodProd", "input") != null)
                 FindControl("txtCodProd", "input").value = "";
