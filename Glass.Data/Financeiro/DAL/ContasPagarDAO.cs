@@ -1592,7 +1592,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(formaPagto))
             {
-                sql += " And c.idFormaPagto IN(" + formaPagto + ")";
+                sql += " And pagpag.idFormaPagto IN(" + formaPagto + ")";
                 criterio += "Forma Pagto: " + string.Join(",", FormaPagtoDAO.Instance.ExecuteMultipleScalar<string>("Select Descricao from formapagto where idFormaPagto IN(" + formaPagto + ")"));
                 temFiltro = true;
             }
