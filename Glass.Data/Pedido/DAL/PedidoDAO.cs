@@ -13122,12 +13122,14 @@ namespace Glass.Data.DAL
         public int ObtemQuantidadePecas(GDASession session, uint idPedido)
         {
 
-            var sql = string.Format(@"SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER) FROM produtos_pedido pp 
+            var invisivel = PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido";
+
+            var sql = $@"SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER) FROM produtos_pedido pp 
                     LEFT JOIN produto p ON (pp.IdProd=p.IdProd)
-                WHERE IdPedido=?id AND (Invisivel{0} IS NULL OR Invisivel{0}=0) AND p.IdGrupoProd={1}",
-                PCPConfig.UsarConferenciaFluxo && PedidoConfig.LiberarPedido ? "Fluxo" : "Pedido", (int)NomeGrupoProd.Vidro);
+                WHERE IdPedido=?id AND (Invisivel{invisivel} IS NULL OR Invisivel{invisivel}=0) AND p.IdGrupoProd={(int)NomeGrupoProd.Vidro}";
 
             return ExecuteScalar<int>(session, sql, new GDAParameter("?id", idPedido));
+
         }
 
         /// <summary>
