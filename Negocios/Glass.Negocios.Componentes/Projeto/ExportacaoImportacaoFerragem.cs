@@ -361,7 +361,7 @@ namespace Glass.Projeto.Negocios.Componentes
             }
 
             // O fabricante deve ser sempre atualizado, caso exista no sistema de importação. Independentemente da existência da ferragem.
-            if (itens.Any(f => f.FabricanteFerragem != null && f.FabricanteFerragem.IdFabricanteFerragem > 0))
+            if (itens.Any(f => f.FabricanteFerragem?.IdFabricanteFerragem > 0))
             {
                 // No sistema onde o arquivo está sendo importado, recupera os fabricantes que possuem o mesmo nome dos fabricantes inseridos no arquivo de exportação.
                 fabricanteFerragemId = SourceContext.Instance.CreateQuery()
@@ -420,14 +420,14 @@ namespace Glass.Projeto.Negocios.Componentes
                     #region Fabricante ferragem
 
                     // Verifica se o fabricante existe no sistema atual.
-                    if (fabricanteFerragemId != null && fabricanteFerragemId.Any(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem))
+                    if (fabricanteFerragemId?.Any(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem) ?? false)
                     {
                         // Recupera o fabricante. Os dados não devem ser atualizados.
                         fabricanteFerragem = fabricanteFerragemId.FirstOrDefault(f => f.Item1 == itens[i].FabricanteFerragem.IdFabricanteFerragem).Item2;
                     }
-                    else if (fabricantesFerragemInseridos.Any(f => f.Nome == itens[i].FabricanteFerragem.Nome))
+                    else if (fabricantesFerragemInseridos.Any(f => f.Nome.ToLowerInvariant() == itens[i].FabricanteFerragem.Nome.ToLowerInvariant()))
                     {
-                        fabricanteFerragem = fabricantesFerragemInseridos.FirstOrDefault(f => f.Nome == itens[i].FabricanteFerragem.Nome);
+                        fabricanteFerragem = fabricantesFerragemInseridos.FirstOrDefault(f => f.Nome.ToLowerInvariant() == itens[i].FabricanteFerragem.Nome.ToLowerInvariant());
                     }
                     else
                     {
