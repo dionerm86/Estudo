@@ -4089,6 +4089,9 @@ namespace Glass.Data.DAL
 
         public float GetTotalLiberado(string idsLiberacoes)
         {
+            if (string.IsNullOrEmpty(idsLiberacoes))
+                return 0;
+
             string sql = @"select sum(lp.total) from liberarpedido lp
                             where lp.idliberarpedido in (" + idsLiberacoes + ") and lp.situacao=1;";
 
