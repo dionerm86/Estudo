@@ -485,6 +485,9 @@ namespace Glass.Data.NFeUtils
                         var codigo = xmlRetorno["protNFe"]["infProt"]["cStat"].InnerXml.StrParaInt();
                         var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno["protNFe"]["infProt"]["xMotivo"].InnerXml);
 
+                        if (string.IsNullOrWhiteSpace(motivo))
+                            motivo = $"Falha ao emitir NFe. Código de Rejeição: { codigo }.";
+
                         LogNfDAO.Instance.NewLog(idNf, "Emissão", codigo, motivo);
 
                         NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);

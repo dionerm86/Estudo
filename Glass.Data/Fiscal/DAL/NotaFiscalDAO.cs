@@ -3947,7 +3947,9 @@ namespace Glass.Data.DAL
             XmlElement pag = doc.CreateElement("pag");
             infNFe.AppendChild(pag);
 
-            foreach (var p in PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf))
+            var pagamentosNfe = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf);
+
+            foreach (var p in pagamentosNfe)
             {
                 XmlElement detPag = doc.CreateElement("detPag");
                 pag.AppendChild(detPag);
@@ -3967,7 +3969,9 @@ namespace Glass.Data.DAL
                     //ManipulacaoXml.SetNode(doc, card, "cAut", Formatacoes.TrataStringDocFiscal(p.NumAut));
                 }
             }
-            //ManipulacaoXml.SetNode(doc, pag, "vTroco", "");
+
+            if(pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
+                ManipulacaoXml.SetNode(doc, pag, "vTroco", Formatacoes.TrataValorDecimal(pagamentosNfe.Sum(f => f.Valor) - nf.TotalNota, 2));
 
             #endregion
 
