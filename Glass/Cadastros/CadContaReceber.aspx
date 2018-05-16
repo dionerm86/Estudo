@@ -45,7 +45,7 @@
             var dtIniLib = FindControl("ctrlDataIniLib_txtData", "input").value;
             var dtFimLib = FindControl("ctrlDataFimLib_txtData", "input").value;
             var agrupar = FindControl("cbdAgrupar", "select").itens();
-            var formaPagto = FindControl("drpFormaPagto", "select").value;
+            var formaPagto = FindControl("cblFormaPagto", "select").itens();
             var numeroNFe = FindControl("txtNFe", "input").value;
             var incluirParcCartao = FindControl("chkExibirParcCartao", "input").checked;
             var dataCadIni = FindControl("ctrlDataCadIni_txtData", "input").value;
@@ -531,9 +531,9 @@
                             <asp:Label ID="Label16" runat="server" Text="Forma Pagto." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpFormaPagto" runat="server" AutoPostBack="True" DataSourceID="odsFormaPagto"
+                            <sync:CheckBoxListDropDown ID="cblFormaPagto" runat="server" DataSourceID="odsFormaPagto"
                                 DataTextField="Descricao" DataValueField="IdFormaPagto">
-                            </asp:DropDownList>
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:Label ID="Label17" runat="server" Text="Ordenar por:" ForeColor="#0066FF"></asp:Label>
@@ -1115,7 +1115,7 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                         <asp:ControlParameter ControlID="ctrlDataCadFim" Name="dataCadFim" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="txtPrecoInicial" Name="precoInicial" PropertyName="Text" Type="Single" />
                         <asp:ControlParameter ControlID="txtPrecoFinal" Name="precoFinal" PropertyName="Text" Type="Single" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="idFormaPagto" PropertyName="SelectedValue" Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblFormaPagto" Name="idsFormaPagto" PropertyName="SelectedValues" />
                         <asp:Parameter DefaultValue="0" Name="situacaoPedido" Type="Int32" />
                         <asp:ControlParameter ControlID="chkExibirParcCartao" Name="incluirParcCartao" PropertyName="Checked" Type="Boolean" />
                         <asp:ControlParameter ControlID="drpContasRenegociadas" Name="contasRenegociadas" PropertyName="SelectedValue" Type="Int32" />

@@ -50,5 +50,10 @@ namespace Glass.UI.Web.Relatorios
                 drpTipo.Items.Add(new ListItem(FinanceiroConfig.ContasPagarReceber.DescricaoContaNaoContabil, "2"));
             }
         }
+
+        //protected void cblFormaPagto_SelectedIndexChanged(object sender, EventArgs e)
+        //{
+        //    drpTipoBoleto.Visible = cblFormaPagto.SelectedValue == ((uint)Glass.Data.Model.Pagto.FormaPagto.Boleto).ToString();
+        //}
     }
 }

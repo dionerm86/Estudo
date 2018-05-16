@@ -167,23 +167,7 @@ namespace Glass.UI.Web.Listas
                 try
                 {
                     var idPedido = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                    var pedEsp = PedidoEspelhoDAO.Instance.GetElement(idPedido);
-
-                    if (pedEsp == null)
-                        throw new Exception("Pedido não encontrado.");
-
-                    if (pedEsp.PedidoConferido && PedidoEspelhoDAO.Instance.IsPedidoImpresso(null, idPedido))
-                    {
-                        throw new Exception("Existe pelo menos uma peça impressa para este pedido");
-                    }
-
-                    if (pedEsp.PedidoConferido)
-                        pedEsp.PedidoConferido = false;
-                    else
-                        pedEsp.PedidoConferido = true;
-
-                    LogAlteracaoDAO.Instance.LogPedidoEspelho(pedEsp, LogAlteracaoDAO.SequenciaObjeto.Novo);
-                    PedidoEspelhoDAO.Instance.Update(pedEsp);
+                    PedidoEspelhoDAO.Instance.AlteraSituacaoPedidoImportadoConferido(idPedido);
 
                     grdPedido.DataBind();
 

@@ -22,7 +22,7 @@
             var dtFimPago = FindControl("ctrlDataFimPago_txtData", "input").value;
             var dtIniVenc = FindControl("ctrlDataIniVenc_txtData", "input").value;
             var dtFimVenc = FindControl("ctrlDataFimVenc_txtData", "input").value;
-            var formaPagto = FindControl("drpFormaPagto", "select").value;
+            var formaPagto = FindControl("cblFormaPagto", "select").itens();
             var valorIni = FindControl("txtPrecoInicial", "input").value;
             var valorFin = FindControl("txtPrecoFinal", "input").value;
             var tipo = FindControl("drpTipo", "select").value;
@@ -289,9 +289,9 @@
                             <asp:Label ID="Label11" runat="server" Text="Forma Pagto." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto"
-                                DataTextField="Descricao" DataValueField="IdFormaPagto">
-                            </asp:DropDownList>
+                            <sync:CheckBoxListDropDown ID="cblFormaPagto" runat="server" DataSourceID="odsFormaPagto"
+                                DataTextField="Descricao" DataValueField="IdFormaPagto" AutoPostBack="True" >
+                            </sync:CheckBoxListDropDown>
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesq8" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
@@ -588,8 +588,8 @@
                         <asp:ControlParameter ControlID="txtFornecedor" Name="idFornec" PropertyName="Text"
                             Type="UInt32" />
                         <asp:ControlParameter ControlID="txtNome" Name="nomeFornec" PropertyName="Text" Type="String" />
-                        <asp:ControlParameter ControlID="drpFormaPagto" Name="formaPagto" PropertyName="SelectedValue"
-                            Type="UInt32" />
+                        <asp:ControlParameter ControlID="cblFormaPagto" Name="formaPagto" PropertyName="SelectedValue"
+                            Type="string" />
                         <asp:ControlParameter ControlID="ctrlDataIniCad" Name="dataIniCad" PropertyName="DataString"
                             Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataFimCad" Name="dataFimCad" PropertyName="DataString"

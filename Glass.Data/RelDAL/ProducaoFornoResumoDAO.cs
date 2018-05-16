@@ -26,8 +26,6 @@ namespace Glass.Data.RelDAL
             string campoTotM2 = (PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? "pp.TotM2Calc" : "pp.TotM") + 
                 "/(pp.qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))";
 
-            string campoQtde = "(pp.qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))";
-
             foreach (Turno t in turnos)
             {
                 TimeSpan inicio = new TimeSpan(Glass.Conversoes.StrParaInt(t.Inicio.Substring(0, 2)), Glass.Conversoes.StrParaInt(t.Inicio.Substring(3)), 0);
@@ -38,7 +36,7 @@ namespace Glass.Data.RelDAL
                 else
                     campoTurno += " when dataLeitura>=cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Inicio + "') as datetime) or dataLeitura<cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Termino + "') as datetime) then " + t.IdTurno + Environment.NewLine;
 
-                m2QtdeTurno += "sum(if(lp.turno=" + t.IdTurno + ", " + campoTotM2 + ", 0)) as TotM2" + t.NumSeq + ", " + "sum(if(lp.turno=" + t.IdTurno + ", " + campoQtde + ", 0)) AS Qtde" + t.NumSeq + ", " + Environment.NewLine;
+                m2QtdeTurno += "sum(if(lp.turno=" + t.IdTurno + ", " + campoTotM2 + ", 0)) as TotM2" + t.NumSeq + ", " + "sum(if(lp.turno=" + t.IdTurno + ", 1, 0)) AS Qtde" + t.NumSeq + ", " + Environment.NewLine;
             }
 
             campoTurno += " end";

@@ -175,6 +175,7 @@
                         <td nowrap="nowrap">
                             <asp:DropDownList ID="drpFormaPagto" runat="server" AppendDataBoundItems="True" DataSourceID="odsFormaPagto"
                                 DataTextField="Descricao" DataValueField="IdFormaPagto">
+                                  <asp:ListItem Value="0">Todas</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td nowrap="nowrap">

@@ -432,6 +432,15 @@ namespace Glass.UI.Web.Listas
             return "true";
         }
 
+        [Ajax.AjaxMethod()]
+        public string PodeImprimirPedidosImportados(string idsPedido)
+        {
+            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos)
+                return PedidoEspelhoDAO.Instance.VerificarPedidoConferidos(idsPedido).ToString();
+
+            return "";
+        }
+
         public bool PermissaoParaImprimir()
         {
             return Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas);

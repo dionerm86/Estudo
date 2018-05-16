@@ -328,13 +328,13 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.Label Label16;
         
         /// <summary>
-        /// drpFormaPagto control.
+        /// cblFormaPagto control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList drpFormaPagto;
+        protected global::Sync.Controls.CheckBoxListDropDown cblFormaPagto;
         
         /// <summary>
         /// Label17 control.

@@ -261,6 +261,7 @@
     <Compile Include="Global\RotaClientePesquisa.cs" />
     <Compile Include="Global\RotaPesquisa.cs" />
     <Compile Include="Global\SubgrupoProd.cs" />
+    <Compile Include="Global\SubgrupoProdLoja.cs" />
     <Compile Include="Global\SubgrupoProdPesquisa.cs" />
     <Compile Include="Global\SugestaoCliente.cs" />
     <Compile Include="Global\SugestaoClientePesquisa.cs" />

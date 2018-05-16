@@ -138,7 +138,7 @@ namespace Glass.Data.Helper.Calculos
 
         private int ArredondarAlturaBox(IProdutoCalculo produto, int altura)
         {
-            var alturaBox = altura >= 1840 && altura < 1855;
+            var alturaBox = altura >= 1840 && altura < 1900;
             var arredondarAlturaBoxPadrao = Geral.ArredondarBoxPara1900SubgrupoBoxPadrao &&
                 produto.DadosProduto.DadosGrupoSubgrupo.DescricaoSubgrupo() == "BOX PADRÃO";
 

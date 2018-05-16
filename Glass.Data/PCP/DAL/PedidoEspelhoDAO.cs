@@ -2723,6 +2723,9 @@ namespace Glass.Data.DAL
 
             var pedido = GetElementByPrimaryKey(session, idPedido);
 
+            if (pedido.Importado && pedido.PedidoConferido)
+                throw new Exception("Cancele a conferência do pedido importado antes de reabri-lo");
+
             /* Chamado 46871. */
             if (!pedido.ExibirReabrir)
                 throw new Exception("O pedido não pode ser reaberto, para reabrí-lo ele não pode estar liberado ou liberado parcialmente," +
@@ -3193,6 +3196,19 @@ namespace Glass.Data.DAL
                     ProdutoLojaDAO.Instance.TirarReserva(session, (int)idLoja, idsProdQtde, null, null, (int)idPedido, null, null, null,
                         null, "PedidoEspelhoDAO - CancelarEspelho");
                 }
+
+                //Salva cancelamento no log do pedido
+                var logAlteracaoCancelamento = new LogAlteracao();
+                logAlteracaoCancelamento.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
+                logAlteracaoCancelamento.IdRegistroAlt = (int)idPedido;
+                logAlteracaoCancelamento.DataAlt = DateTime.Now;
+                logAlteracaoCancelamento.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
+                logAlteracaoCancelamento.Referencia = LogAlteracao.GetReferencia(session, logAlteracaoCancelamento.Tabela,
+                    (uint)logAlteracaoCancelamento.IdRegistroAlt);
+                logAlteracaoCancelamento.Campo = "Situação";
+                logAlteracaoCancelamento.ValorAnterior = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
+                logAlteracaoCancelamento.ValorAtual = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.Conferido);
+                LogAlteracaoDAO.Instance.Insert(session, logAlteracaoCancelamento);
             }
         }
 
@@ -3240,6 +3256,65 @@ namespace Glass.Data.DAL
         {
             string sql = "select PedidoConferido from pedido_espelho where idPedido=" + idPedido;
             return objPersistence.ExecuteScalar(sql).ToString().ToLower() == "true";
+        }
+
+        #endregion
+
+        #region Verifica se os pedidos está conferido
+
+        /// <summary>
+        ///  Verifica se os pedidos importado está conferido antes de imprimir
+        /// </summary>
+        /// <param name="idsPedido"></param>
+        /// <returns></returns>
+        public string VerificarPedidoConferidos(string idsPedido)
+        {
+            var sql = ExecuteMultipleScalar<string>(string.Format(@"SELECT p.idPedido FROM pedido_espelho pe 
+                                INNER JOIN  pedido p ON (p.idPedido = pe.idPedido) 
+                                WHERE pe.idPedido IN ({0}) AND !pe.PedidoConferido AND p.importado;", idsPedido));
+
+            return string.Join(", ", sql) ?? "";
+        }
+
+        #endregion
+
+        #region Altera a situação conferido do pedido interno
+        /// <summary>
+        /// Altera a situação conferido do pedido interno
+        /// </summary>
+        /// <param name="idPedido"></param>
+        public void AlteraSituacaoPedidoImportadoConferido(uint idPedido)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var pedEsp = GetElement(idPedido);
+                    if (pedEsp == null)
+                        throw new Exception("Pedido não encontrado.");
+
+                    if (pedEsp.PedidoConferido && IsPedidoImpresso(transaction, idPedido))
+                        throw new Exception("Existe pelo menos uma peça impressa para este pedido");
+
+                    if (pedEsp.PedidoConferido)
+                        pedEsp.PedidoConferido = false;
+                    else
+                        pedEsp.PedidoConferido = true;
+
+                    LogAlteracaoDAO.Instance.LogPedidoEspelho(transaction, pedEsp, LogAlteracaoDAO.SequenciaObjeto.Novo);
+                    Update(transaction, pedEsp);
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
         }
 
         #endregion

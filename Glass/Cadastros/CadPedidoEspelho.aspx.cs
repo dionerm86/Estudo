@@ -213,7 +213,7 @@ namespace Glass.UI.Web.Cadastros
                 ambPed.Largura = !String.IsNullOrEmpty(largura) ? (int?)Glass.Conversoes.StrParaInt(largura) : null;
                 ambPed.QtdeImpresso = 0;
                 ambPed.IdProd = !String.IsNullOrEmpty(idProd) ? (uint?)Glass.Conversoes.StrParaUint(idProd) : null;
-                ambPed.Redondo = redondo;
+                ambPed.Redondo = !redondo ? ProdutoDAO.Instance.IsRedondo(Conversoes.StrParaUint(idProd)) : redondo;
                 ambPed.IdAplicacao = !String.IsNullOrEmpty(idAplicacao) ? (uint?)Glass.Conversoes.StrParaUint(idAplicacao) : null;
                 ambPed.IdProcesso = !String.IsNullOrEmpty(idProcesso) ? (uint?)Glass.Conversoes.StrParaUint(idProcesso) : null;
 
@@ -358,8 +358,8 @@ namespace Glass.UI.Web.Cadastros
         public string ObterLojaSubgrupoProd(string codInterno)
         {
             var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
-            var idLoja = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(null, idProd);
-            return idLoja.GetValueOrDefault(0).ToString();
+            var idsLoja = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(null, idProd);
+            return string.Join(",", idsLoja);
         }
 
         /// <summary>

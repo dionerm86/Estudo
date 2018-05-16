@@ -155,8 +155,9 @@ namespace Glass.Data.Handlers
 
                 #region Email
 
-                if (FiscalConfig.NotaFiscalConfig.ExibirEmailFiscalDANFE && nf.IdLoja > 0)
+                if (nf.IdLoja > 0)
                     danfe.EnderecoEmit += " " + LojaDAO.Instance.GetElementByPrimaryKey(nf.IdLoja.Value).EmailFiscal;
+                    danfe.EmailFiscal += " " + LojaDAO.Instance.GetElementByPrimaryKey(nf.IdLoja.Value).EmailFiscal;
 
                 #endregion
 

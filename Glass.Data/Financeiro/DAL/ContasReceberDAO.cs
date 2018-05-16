@@ -170,10 +170,27 @@ namespace Glass.Data.DAL
             return string.Format(retorno, aliasContasReceber);
         }
 
+        private string SqlAReceber(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao, uint numeroNFe,
+            uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, uint idContaBanco, string dtIni, string dtFim,
+            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, string dtIniAntecip, string dtFimAntecip,
+            string sitAntecip, Single precoInicial, Single precoFinal, bool returnAll, bool exibirContasVinculadas, uint idFormaPagto, int situacaoPedido,
+            uint filtroContasAntecipadas, bool simples, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, string agrupar,
+            int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, bool selecionar, bool buscarContasValorZerado,
+            uint numArqRemessa, bool refObra, int protestadas, uint idContaBancoCnab, int numCte, out bool temFiltro, out string filtroAdicional)
+        {
+            return SqlAReceber(idContaR, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe,
+                idLoja, lojaCliente, idCli, idFunc, tipoEntrega, nomeCli, idContaBanco, dtIni, dtFim,
+                dtIniLib, dtFimLib, dataCadIni, dataCadFim, dtIniAntecip, dtFimAntecip,
+                sitAntecip, precoInicial, precoFinal, returnAll, exibirContasVinculadas, new[] { idFormaPagto }, situacaoPedido,
+                filtroContasAntecipadas, simples, incluirParcCartao, contasRenegociadas, apenasNf, agrupar,
+                contasCnab, idsRotas, obs, tipoContasBuscar, tipoContaContabil, selecionar, buscarContasValorZerado,
+                numArqRemessa, refObra, protestadas, idContaBancoCnab, numCte, out temFiltro, out filtroAdicional);
+        }
+
         private string SqlAReceber(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao, uint numeroNFe, 
             uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, uint idContaBanco, string dtIni, string dtFim,
             string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, string dtIniAntecip, string dtFimAntecip, 
-            string sitAntecip, Single precoInicial, Single precoFinal, bool returnAll, bool exibirContasVinculadas, uint idFormaPagto, int situacaoPedido,
+            string sitAntecip, Single precoInicial, Single precoFinal, bool returnAll, bool exibirContasVinculadas, uint[] idsFormaPagto, int situacaoPedido,
             uint filtroContasAntecipadas, bool simples, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, string agrupar,
             int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, bool selecionar, bool buscarContasValorZerado,
             uint numArqRemessa, bool refObra, int protestadas, uint idContaBancoCnab, int numCte, out bool temFiltro, out string filtroAdicional)
@@ -545,14 +562,14 @@ namespace Glass.Data.DAL
                 criterio += precoInicial > 0 ? "" : "Valor Boleto: até " + precoFinal + "    ";
             }
 
-            if (idFormaPagto > 0)
+            if (idsFormaPagto != null && idsFormaPagto.Any())
             {
-                if (idFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto)
+                if (idsFormaPagto.Contains((uint)Pagto.FormaPagto.Boleto))
                     filtroAdicional += " And c.idConta In (" + UtilsPlanoConta.ContasTodosTiposBoleto() + ")";
                 else
-                    filtroAdicional += " And c.idConta in (" + UtilsPlanoConta.ContasTodasPorTipo((Glass.Data.Model.Pagto.FormaPagto)idFormaPagto) + ")";
+                    filtroAdicional += " And c.idConta in (" + string.Join(", ", idsFormaPagto.Select(f => UtilsPlanoConta.ContasTodasPorTipo((Glass.Data.Model.Pagto.FormaPagto)f))) + ")";
 
-                criterio += "Forma Pagto.: " + PagtoDAO.Instance.GetDescrFormaPagto(idFormaPagto);
+                criterio += "Forma Pagto.: " + string.Join(", ", idsFormaPagto.Select(f => PagtoDAO.Instance.GetDescrFormaPagto(f)));
             }
 
             if (situacaoPedido > 0)
@@ -680,7 +697,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ContasReceber> GetNaoRecebidas(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao,
             uint numeroNFe, uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, string dtIni, string dtFim,
-            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint idFormaPagto,
+            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint[] idsFormaPagto,
             int situacaoPedido, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, uint filtroContasAntecipadas, int sort, int contasCnab,
             string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, uint numArqRemessa, bool refObra, int protestadas,
             uint idContaBanco, bool exibirContasVinculadas, int numCte, string sortExpression, int startRow, int pageSize)
@@ -707,7 +724,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlAReceber(idContaR, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, lojaCliente,
                 idCli, idFunc, tipoEntrega, nomeCli, 0, dtIni, dtFim, dtIniLib, dtFimLib, dataCadIni, dataCadFim, null, null, "",
-                precoInicial, precoFinal, true, exibirContasVinculadas, idFormaPagto, situacaoPedido, filtroContasAntecipadas, true, incluirParcCartao,
+                precoInicial, precoFinal, true, exibirContasVinculadas, idsFormaPagto, situacaoPedido, filtroContasAntecipadas, true, incluirParcCartao,
                 contasRenegociadas, apenasNf, "", contasCnab, idsRotas, obs, tipoContasBuscar, tipoContaContabil, true, false, numArqRemessa, refObra,
                 protestadas, idContaBanco, numCte, out temFiltro, out filtroAdicional);
 
@@ -717,7 +734,7 @@ namespace Glass.Data.DAL
 
         public int GetNaoRecebidasCount(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao, uint numeroNFe,
             uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, string dtIni, string dtFim, string dtIniLib,
-            string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint idFormaPagto,
+            string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint[] idsFormaPagto,
             int situacaoPedido, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, uint filtroContasAntecipadas, int sort,
             int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, uint numArqRemessa, bool refObra,
             bool exibirContasVinculadas, int protestadas, uint idContaBanco, int numCte)
@@ -727,7 +744,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlAReceber(idContaR, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, lojaCliente,
                 idCli, idFunc, tipoEntrega, nomeCli, 0, dtIni, dtFim, dtIniLib, dtFimLib, dataCadIni, dataCadFim, null, null, "",
-                precoInicial, precoFinal, true, exibirContasVinculadas, idFormaPagto, situacaoPedido, filtroContasAntecipadas, true,
+                precoInicial, precoFinal, true, exibirContasVinculadas, idsFormaPagto, situacaoPedido, filtroContasAntecipadas, true,
                 incluirParcCartao, contasRenegociadas, apenasNf, "", contasCnab, idsRotas, obs, tipoContasBuscar, tipoContaContabil, true,
                 false, numArqRemessa, refObra, protestadas, idContaBanco, numCte, out temFiltro, out filtroAdicional);
             
@@ -740,7 +757,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ContasReceber> GetNaoRecebidasRpt(uint idContaR, uint idPedido, uint idLiberarPedido, uint idAcerto, uint idTrocaDevolucao,
             uint numeroNFe, uint idLoja, bool lojaCliente, uint idCli, uint idFunc, uint tipoEntrega, string nomeCli, string dtIni, string dtFim,
-            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint idFormaPagto, 
+            string dtIniLib, string dtFimLib, string dataCadIni, string dataCadFim, float precoInicial, float precoFinal, uint[] idsFormaPagto, 
             int situacaoPedido, bool incluirParcCartao, int contasRenegociadas, bool apenasNf, uint filtroContasAntecipadas, string agrupar,
             int sort, int contasCnab, string idsRotas, string obs, string tipoContasBuscar, string tipoContaContabil, uint numArqRemessa,
             bool refObra, bool exibirContasVinculadas, int protestadas, uint idContaBanco, int numCte)
@@ -763,7 +780,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlAReceber(idContaR, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, lojaCliente,
                 idCli, idFunc, tipoEntrega, nomeCli, 0, dtIni, dtFim, dtIniLib, dtFimLib, dataCadIni, dataCadFim, null, null, "",
-                precoInicial, precoFinal, true, exibirContasVinculadas, idFormaPagto, situacaoPedido, filtroContasAntecipadas, true,
+                precoInicial, precoFinal, true, exibirContasVinculadas, idsFormaPagto, situacaoPedido, filtroContasAntecipadas, true,
                 incluirParcCartao, contasRenegociadas, apenasNf, agrupar, contasCnab, idsRotas, obs, tipoContasBuscar, tipoContaContabil,
                 true, false, numArqRemessa, refObra, protestadas, idContaBanco, numCte, out temFiltro, out filtroAdicional).
                 Replace(FILTRO_ADICIONAL, filtroAdicional);
