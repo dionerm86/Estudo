@@ -1067,9 +1067,9 @@ namespace Glass.Data.DAL
                 /* Chamado 55137. */
                 if (idProd != null)
                 {
-                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(session, (int)idProd);
+                    var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)idProd);
 
-                    if (idLojaSubgrupoProd > 0)
+                    if (idsLojaSubgrupoProd.Any())
                     {
                         var idOrcamentoValidacaoLoja = idOrcamento ?? itemProj.IdOrcamento;
                         var idPedidoValidacaoLoja = idPedido ?? itemProj.IdPedido;
@@ -1081,7 +1081,7 @@ namespace Glass.Data.DAL
                                 PedidoDAO.Instance.ObtemIdLoja(session, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                             idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(session, (int)idProjetoValidacaoLoja.Value) : 0;
 
-                        if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                        if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                             continue;
                     }
                 }
@@ -1197,9 +1197,9 @@ namespace Glass.Data.DAL
 
                     if (retIdProd > 0)
                     {
-                        var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(sessao, (int)idProd);
+                        var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(sessao, (int)idProd);
 
-                        if (idLojaSubgrupoProd > 0)
+                        if (idsLojaSubgrupoProd.Any())
                         {
                             var idOrcamentoValidacaoLoja = itemProj.IdOrcamento;
                             var idPedidoValidacaoLoja = itemProj.IdOrcamento;
@@ -1211,11 +1211,11 @@ namespace Glass.Data.DAL
                                     PedidoDAO.Instance.ObtemIdLoja(sessao, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                 idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(sessao, (int)idProjetoValidacaoLoja.Value) : 0;
 
-                            if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                            if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                 continue;
                             /* Chamado 48322. */
                             else if (idLoja == 0 && idProjetoValidacaoLoja > 0)
-                                ProjetoDAO.Instance.AtualizarIdLojaProjeto(sessao, (int)idProjetoValidacaoLoja, (int)idLojaSubgrupoProd);
+                                ProjetoDAO.Instance.AtualizarIdLojaProjeto(sessao, (int)idProjetoValidacaoLoja, (int)idsLojaSubgrupoProd.First());
                         }
 
                         var idsSubgrupoProdCliente = ClienteDAO.Instance.ObtemIdsSubgrupoArr(idCliente.GetValueOrDefault());
@@ -1235,9 +1235,9 @@ namespace Glass.Data.DAL
 
                     if (retIdProd > 0)
                     {
-                        var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(sessao, (int)idProd);
+                        var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(sessao, (int)idProd);
 
-                        if (idLojaSubgrupoProd > 0)
+                        if (idsLojaSubgrupoProd.Any())
                         {
                             var idOrcamentoValidacaoLoja = itemProj.IdOrcamento;
                             var idPedidoValidacaoLoja = itemProj.IdOrcamento;
@@ -1249,11 +1249,11 @@ namespace Glass.Data.DAL
                                     PedidoDAO.Instance.ObtemIdLoja(sessao, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                 idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(sessao, (int)idProjetoValidacaoLoja.Value) : 0;
 
-                            if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                            if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                 continue;
                             /* Chamado 48322. */
                             else if (idLoja == 0 && idProjetoValidacaoLoja > 0)
-                                ProjetoDAO.Instance.AtualizarIdLojaProjeto(sessao, (int)idProjetoValidacaoLoja, (int)idLojaSubgrupoProd);
+                                ProjetoDAO.Instance.AtualizarIdLojaProjeto(sessao, (int)idProjetoValidacaoLoja, (int)idsLojaSubgrupoProd.First());
                         }
 
                         var idsSubgrupoProdCliente = ClienteDAO.Instance.ObtemIdsSubgrupoArr(idCliente.GetValueOrDefault());

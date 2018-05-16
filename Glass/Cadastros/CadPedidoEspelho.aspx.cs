@@ -358,8 +358,8 @@ namespace Glass.UI.Web.Cadastros
         public string ObterLojaSubgrupoProd(string codInterno)
         {
             var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
-            var idLoja = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(null, idProd);
-            return idLoja.GetValueOrDefault(0).ToString();
+            var idsLoja = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(null, idProd);
+            return string.Join(",", idsLoja);
         }
 
         /// <summary>

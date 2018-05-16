@@ -403,13 +403,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 {
                     var idLojaProjeto = ProjetoDAO.Instance.ObterIdLoja(null, idProjeto.StrParaInt());
                     
-                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLoja(null, prod.IdSubgrupoProd.Value);
+                    var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                    if (idLojaProjeto > 0 && idLojaSubgrupoProd > 0 && idLojaProjeto != idLojaSubgrupoProd)
-                        return "Erro;Esse produto não pode ser utilizado, pois, a loja do seu subgrupo é diferente da loja do pedido/projeto.";
+                    if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                        return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                     /* Chamado 48322. */
-                    else if (idLojaProjeto == 0 && idLojaSubgrupoProd > 0)
-                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idLojaSubgrupoProd);
+                    else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())
+                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idsLojaSubgrupoProd.First());
                 }
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
@@ -450,13 +450,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
             {
                 var idLojaProjeto = ProjetoDAO.Instance.ObterIdLoja(null, idProjeto.StrParaInt());
                 
-                var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLoja(null, prod.IdSubgrupoProd.Value);
+                var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                if (idLojaProjeto > 0 && idLojaSubgrupoProd > 0 && idLojaProjeto != idLojaSubgrupoProd)
-                    return "Erro;Esse produto não pode ser utilizado, pois, a loja do seu subgrupo é diferente da loja do pedido/projeto.";
+                if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                    return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                 /* Chamado 48322. */
-                else if (idLojaProjeto == 0 && idLojaSubgrupoProd > 0)
-                    ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idLojaSubgrupoProd);
+                else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())
+                    ProjetoDAO.Instance.AtualizarIdLojaProjeto(null, idProjeto.StrParaInt(), (int)idsLojaSubgrupoProd.First());
             }
 
             return "Prod;" + prod.IdProd + ";" + prod.Descricao;

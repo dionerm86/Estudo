@@ -3,6 +3,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
 using Microsoft.Practices.ServiceLocation;
+using Sync.Controls;
+using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -55,7 +57,6 @@ namespace Glass.UI.Web.Cadastros
                     subGrupo.TipoCalculoNf = tipoCalculoNf;
 
                 subGrupo.IdGrupoProd = Glass.Conversoes.StrParaInt(Request["idGrupoProd"]);
-                subGrupo.IdLoja = ((DropDownList)grdSubgrupoProd.FooterRow.FindControl("drpLoja")).SelectedValue.StrParaUintNullable();
                 subGrupo.BloquearEstoque = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkBloquearEstoque")).Checked;
                 subGrupo.AlterarEstoque = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkAlterarEstoque")).Checked;
                 subGrupo.AlterarEstoqueFiscal = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkAlterarEstoqueFiscal")).Checked;
@@ -66,6 +67,7 @@ namespace Glass.UI.Web.Cadastros
                 subGrupo.GeraVolume = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkGeraVolume")).Checked;
                 subGrupo.LiberarPendenteProducao = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkLibPendenteProducao")).Checked;
                 subGrupo.PermitirItemRevendaNaVenda = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkPermitirItemRevendaNaVenda")).Checked;
+                subGrupo.IdsLojaAssociacao = string.Join(",",((CheckBoxListDropDown)grdSubgrupoProd.FooterRow.FindControl("cblLoja")).SelectedValues);
 
                 subGrupo.TipoSubgrupo = (Data.Model.TipoSubgrupoProd)Enum.Parse(typeof(Data.Model.TipoSubgrupoProd), 
                     ((DropDownList)grdSubgrupoProd.FooterRow.FindControl("drpTipoSubgrupo")).SelectedValue);

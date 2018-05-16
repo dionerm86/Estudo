@@ -611,10 +611,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                     if (idLoja > 0)
                     {
-                        var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLoja(null, prod.IdSubgrupoProd.Value);
+                        var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                        if (idLojaSubgrupoProd > 0 && idLoja != idLojaSubgrupoProd)
-                            return "Erro;Esse produto não pode ser utilizado, pois, a loja do seu subgrupo é diferente da loja do pedido/projeto.";
+                        if (!idsLojaSubgrupoProd.Any(f => f == idLoja))
+                            return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                     }
                 }
 
@@ -689,10 +689,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (idLoja > 0)
                 {
-                    var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLoja(null, prod.IdSubgrupoProd.Value);
+                    var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                    if (idLojaSubgrupoProd > 0 && idLoja != idLojaSubgrupoProd)
-                        return "Erro;Esse produto não pode ser utilizado, pois, a loja do seu subgrupo é diferente da loja do pedido/projeto.";
+                    if (!idsLojaSubgrupoProd.Any(f => f == idLoja))
+                        return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                 }
             }
 

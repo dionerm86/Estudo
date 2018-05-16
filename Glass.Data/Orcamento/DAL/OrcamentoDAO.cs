@@ -2563,9 +2563,9 @@ namespace Glass.Data.DAL
                                 if (idProd == null)
                                     continue;
 
-                                var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(transaction, (int)idProd);
+                                var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(transaction, (int)idProd);
 
-                                if (idLojaSubgrupoProd > 0)
+                                if (idsLojaSubgrupoProd.Any())
                                 {
                                     var idOrcamentoValidacaoLoja = idOrcamentoParam ?? item.IdOrcamento;
                                     var idPedidoValidacaoLoja = idPedidoParam ?? item.IdPedido;
@@ -2577,11 +2577,11 @@ namespace Glass.Data.DAL
                                             PedidoDAO.Instance.ObtemIdLoja(transaction, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                         idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(transaction, (int)idProjetoValidacaoLoja.Value) : 0;
 
-                                    if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                                    if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                         continue;
                                     /* Chamado 48322. */
                                     else if (idLoja == 0 && idProjetoValidacaoLoja > 0)
-                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idLojaSubgrupoProd);
+                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idsLojaSubgrupoProd.First());
                                 }
 
                                 // Altera a cor na peça
@@ -2602,9 +2602,9 @@ namespace Glass.Data.DAL
                                 if (idProd == null)
                                     continue;
 
-                                var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(transaction, (int)idProd);
+                                var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(transaction, (int)idProd);
 
-                                if (idLojaSubgrupoProd > 0)
+                                if (idsLojaSubgrupoProd.Any())
                                 {
                                     var idOrcamentoValidacaoLoja = idOrcamentoParam ?? item.IdOrcamento;
                                     var idPedidoValidacaoLoja = idPedidoParam ?? item.IdPedido;
@@ -2616,11 +2616,11 @@ namespace Glass.Data.DAL
                                             PedidoDAO.Instance.ObtemIdLoja(transaction, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                         idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(transaction, (int)idProjetoValidacaoLoja.Value) : 0;
                                     
-                                    if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                                    if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                         continue;
                                     /* Chamado 48322. */
                                     else if (idLoja == 0 && idProjetoValidacaoLoja > 0)
-                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idLojaSubgrupoProd);
+                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idsLojaSubgrupoProd.First());
                                 }
 
                                 // Altera a cor no material
@@ -2637,9 +2637,9 @@ namespace Glass.Data.DAL
                                 if (idProd == null)
                                     continue;
 
-                                var idLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdLojaPeloProduto(transaction, (int)idProd);
+                                var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(transaction, (int)idProd);
 
-                                if (idLojaSubgrupoProd > 0)
+                                if (idsLojaSubgrupoProd.Any())
                                 {
                                     var idOrcamentoValidacaoLoja = idOrcamentoParam ?? item.IdOrcamento;
                                     var idPedidoValidacaoLoja = idPedidoParam ?? item.IdPedido;
@@ -2651,11 +2651,11 @@ namespace Glass.Data.DAL
                                             PedidoDAO.Instance.ObtemIdLoja(transaction, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                         idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(transaction, (int)idProjetoValidacaoLoja.Value) : 0;
                                     
-                                    if (idLoja > 0 && idLoja != idLojaSubgrupoProd)
+                                    if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                         continue;
                                     /* Chamado 48322. */
                                     else if (idLoja == 0 && idProjetoValidacaoLoja > 0)
-                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idLojaSubgrupoProd);
+                                        ProjetoDAO.Instance.AtualizarIdLojaProjeto(transaction, (int)idProjetoValidacaoLoja, (int)idsLojaSubgrupoProd.First());
                                 }
 
                                 // Altera a cor no material

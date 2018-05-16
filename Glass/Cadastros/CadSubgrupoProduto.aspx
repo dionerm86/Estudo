@@ -363,19 +363,18 @@
 
                         <asp:TemplateField HeaderText="Loja" SortExpression="IdLoja">
                             <ItemTemplate>
-                                <asp:Label ID="LabelLoja" runat="server" Text='<%# Bind("Loja") %>'></asp:Label>
+                                <asp:Label ID="LabelLoja" runat="server" Text='<%# Eval("Lojas") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
-                                    DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>'>
-                                    <asp:ListItem></asp:ListItem>
-                                </asp:DropDownList>
+                                <sync:CheckBoxListDropDown ID="cblLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
+                                    DataTextField="Name" DataValueField="Id" SelectedValues='<%# Bind("IdsLojaAssociacao") %>'>
+                                </sync:CheckBoxListDropDown>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
+                                <sync:CheckBoxListDropDown ID="cblLoja" runat="server" AppendDataBoundItems="True" DataSourceID="odsLoja"
                                     DataTextField="Name" DataValueField="Id">
                                     <asp:ListItem></asp:ListItem>
-                                </asp:DropDownList>
+                                </sync:CheckBoxListDropDown>
                             </FooterTemplate>
                         </asp:TemplateField>
 

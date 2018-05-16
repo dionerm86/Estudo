@@ -37,13 +37,31 @@ namespace Glass.Global.Negocios.Entidades
                 Configure()
                     .Uid(f => f.IdSubgrupoProd)
                     .FindName(f => f.Descricao)
+                    .Child<Glass.Global.Negocios.Entidades.SubgrupoProdLoja, Data.Model.SubgrupoProdLoja>("SubgruposProdLoja", f => f.SubgruposProdLoja, f => f.IdSubgrupoProd)
                     .Creator(f => new SubgrupoProd(f));
             }
         }
 
         #endregion
 
+        #region Variáveis Locais
+
+        private Colosoft.Business.IEntityChildrenList<SubgrupoProdLoja> _subgruposLoja;
+
+        #endregion
+
         #region Propriedades
+
+        public Colosoft.Business.IEntityChildrenList<Glass.Global.Negocios.Entidades.SubgrupoProdLoja> SubgruposProdLoja
+        {
+            get
+            {
+                if(_subgruposLoja != null && _subgruposLoja.Any())
+                    _idsLojaAssociacao = string.Join(",", _subgruposLoja.Select(f => f.IdLoja));
+
+                return _subgruposLoja;
+            }
+        }
 
         /// <summary>
         /// Identificador do subgrupo.
@@ -415,6 +433,32 @@ namespace Glass.Global.Negocios.Entidades
             get { return IdSubgrupoProd > 0 && IdSubgrupoProd <= 8; }
         }
 
+        
+
+        private string _idsLojaAssociacao;
+        public string IdsLojaAssociacao
+        {
+            get
+            {
+                return _idsLojaAssociacao;
+            }
+            set
+            {
+                SubgruposProdLoja.Clear();
+
+                foreach (var loja in value.Split(',').Select(f => f.StrParaInt()))
+                {
+                    var novo = new SubgrupoProdLoja();
+                    novo.IdSubgrupoProd = IdSubgrupoProd;
+                    novo.IdLoja = loja;
+
+                    SubgruposProdLoja.Add(novo);
+                }
+
+                _idsLojaAssociacao = value;
+            }
+        }
+
         #endregion
 
         #region Construtores
@@ -435,7 +479,7 @@ namespace Glass.Global.Negocios.Entidades
 		protected SubgrupoProd(Colosoft.Business.EntityLoaderCreatorArgs<Data.Model.SubgrupoProd> args)
 			: base(args.DataModel, args.UIContext, args.TypeManager)
 		{
-
+            _subgruposLoja = GetChild<Global.Negocios.Entidades.SubgrupoProdLoja>(args.Children, "SubgruposProdLoja");
 		}
 
 		/// <summary>
@@ -447,7 +491,7 @@ namespace Glass.Global.Negocios.Entidades
 		public SubgrupoProd(Data.Model.SubgrupoProd dataModel, string uiContext, Colosoft.Business.IEntityTypeManager entityTypeManager)
 			: base(dataModel, uiContext, entityTypeManager)
 		{
-
+            _subgruposLoja = CreateChild<Colosoft.Business.IEntityChildrenList<Glass.Global.Negocios.Entidades.SubgrupoProdLoja>>("SubgruposProdLoja");
 		}
 
         #endregion

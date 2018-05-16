@@ -66,7 +66,7 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount($@"SELECT ncdm.IdCidadeDescarga
             FROM nfe_cidade_descarga_mdfe ncdm
                     INNER JOIN cidade_descarga_mdfe cdm ON (ncdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
-                    INNER JOIN manifesto_eletronico me ON (me.Situacao <> {SituacaoEnum.Cancelado} AND
+                    INNER JOIN manifesto_eletronico me ON (me.Situacao <> {(int)SituacaoEnum.Cancelado} AND
                     me.IdManifestoEletronico = cdm.IdManifestoEletronico)
             AND ncdm.IdNfe = {idNfe}") > 0;
         }

@@ -18,11 +18,6 @@
         public int IdGrupoProd { get; set; }
 
         /// <summary>
-        /// Identificador da loja.
-        /// </summary>
-        public uint? IdLoja { get; set; }
-
-        /// <summary>
         /// Descrição do subgrupo.
         /// </summary>
         public string Descricao { get; set; }
@@ -144,7 +139,12 @@
         /// <summary>
         /// Loja associada ao subgrupo
         /// </summary>
-        public string Loja { get; set; }
+        public string Lojas { get; set; }
+
+        /// <summary>
+        /// Ids das lojas associadas
+        /// </summary>
+        public int[] IdsLojaAssociacao { get; set; }
 
         /// <summary>
         /// Indica se é permitida a revenda de produtos do tipo venda (solução para inclusão de embalagem no pedido de venda)
