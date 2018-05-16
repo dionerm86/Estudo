@@ -14,7 +14,7 @@ namespace Glass.Data.DAL
         private string Sql(uint idCarregamento, uint idOC, uint idPedido, int idRota, uint idMotorista, string placa, string situacao,
             string dtSaidaIni, string dtSaidaFim, uint idLoja, bool selecionar)
         {
-            string campos = selecionar ? @"c.*, f.nome as NomeMotorista,
+            string campos = selecionar ? @"c.*, f.nome as NomeMotorista, group_concat(Distinct(r.CODINTERNO) SEPARATOR ', ') as DescrRotas,
                 CONCAT(v.placa, ' ', v.modelo, ' ', v.Cor, ' ', v.AnoFab) as Veiculo,
                 l.nomeFantasia as nomeLoja, '$$$' as criterio" : "COUNT(*)";
 
@@ -27,6 +27,8 @@ namespace Glass.Data.DAL
                     INNER JOIN loja l ON (c.idLoja = l.idLoja)
                     LEFT JOIN funcionario f ON (c.idMotorista = f.idFunc)
                     LEFT JOIN veiculo v ON (c.placa = v.placa)
+                    LEFT JOIN ordem_carga oc ON (c.IDCARREGAMENTO = oc.IDCARREGAMENTO)
+                    LEFT JOIN rota r ON (oc.IDROTA = r.IDROTA)
                     WHERE 1", campos);
 
             if (idCarregamento > 0)
@@ -37,7 +39,7 @@ namespace Glass.Data.DAL
 
             if (idRota > 0)
             {
-                sql += string.Format(" AND EXISTS (SELECT oc.* FROM ordem_carga oc WHERE oc.IdCarregamento=c.IdCarregamento AND oc.IdRota={0})", idRota);
+                sql += string.Format($" AND r.idRota={idRota}");
                 criterio += string.Format("Rota: {0}     ", RotaDAO.Instance.ObtemCodRotas(idRota.ToString()));
             }
 
@@ -79,7 +81,7 @@ namespace Glass.Data.DAL
 
             if (idOC > 0)
             {
-                sql += " AND EXISTS (SELECT * FROM ordem_carga where idCarregamento = c.idCarregamento AND idOrdemCarga=" + idOC + ")";
+                sql += $" AND oc.IdOrdemCarga={idOC}";
                 criterio += "Ordem de Carga: " + idOC + "     ";
             }
 
@@ -93,9 +95,11 @@ namespace Glass.Data.DAL
                     )";
             }
 
-            sql += " ORDER BY c.idCarregamento DESC";
+            sql += " GROUP BY c.idCarregamento ORDER BY c.idCarregamento DESC";
 
-            return sql.Replace("$$$", criterio);
+            var seleciona = selecionar ? "temp.*" : "Count(*)";
+
+            return $" Select {seleciona} From ({sql.Replace("$$$", criterio)}) AS temp";
         }
 
         private GDAParameter[] GetParam(string placa, string situacao, string dtSaidaIni, string dtSaidaFim)
