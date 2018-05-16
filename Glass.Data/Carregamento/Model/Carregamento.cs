@@ -112,6 +112,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("NomeLoja", DirectionParameter.InputOptional)]
         public string NomeLoja { get; set; }
 
+        /// <summary>
+        /// Códigos das rotas das ordem de carga vinculadas ao carregamento
+        /// </summary>
+        [PersistenceProperty("DescrRotas", DirectionParameter.InputOptional)]
+        public string DescrRotas { get; set; }
+
         #endregion
 
         #region Propiedades de Suporte

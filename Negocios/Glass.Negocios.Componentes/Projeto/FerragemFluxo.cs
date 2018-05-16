@@ -378,7 +378,7 @@ namespace Glass.Projeto.Negocios.Componentes
                 .Add("?id", fabricanteFerragem.IdFabricanteFerragem)
                 .ExistsResult())
             {
-                return new Colosoft.Business.OperationResult(false, "Já existe um fabricante cadastrado com este nome.".GetFormatter());
+                return new Colosoft.Business.OperationResult(false, $"Já existe um fabricante cadastrado com o nome {fabricanteFerragem.Nome}.".GetFormatter());
             }
 
             return new Colosoft.Business.OperationResult(true, null);

@@ -354,7 +354,7 @@ namespace Glass.Data.Model
                     // considera a área real e o cálculo do vidro considera a área mínima
                     var valorUnitBenef = Beneficiamentos.Sum(b => {
                         var divisor = TotM2 > 0 ? (decimal)TotM2 : 1;
-                        return b.TipoCalculo != TipoCalculoBenef.Porcentagem ? b.ValorUnit : b.Valor / divisor;
+                        return b.Valor / divisor;
                     });
                     
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);

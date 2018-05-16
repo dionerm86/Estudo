@@ -406,6 +406,11 @@
                                 <asp:Label ID="Label17" runat="server" Text='<%# Eval("SituacaoStr") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Rotas">
+                            <ItemTemplate>
+                                <asp:Label ID="Label11" runat="server" Text='<%# Bind("DescrRotas") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Peso">
                             <ItemTemplate>
                                 <asp:Label ID="Label16" runat="server" Text='<%# Eval("Peso") %>'></asp:Label>
