@@ -4,6 +4,7 @@ using System.Text;
 using Glass.Data.Model;
 using GDA;
 using Glass.Data.EFD;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -141,13 +142,37 @@ namespace Glass.Data.DAL
 
         public override uint Insert(ControleCreditoEfd objInsert)
         {
-            uint? idCreditoAtual = ObterCodigoItem(objInsert.IdLoja, objInsert.PeriodoGeracao, (int?)objInsert.CodCred, 
+            uint? idCreditoAtual = ObterCodigoItem(objInsert.IdLoja, objInsert.PeriodoGeracao, (int?)objInsert.CodCred,
                 (int)objInsert.TipoImposto);
-                
+
             if (idCreditoAtual > 0)
-                throw new Exception("Já há um crédito gerado para esse período" + 
-                    (objInsert.CodCred != null ? ", código de crédito" : "") + 
+                throw new Exception("Já há um crédito gerado para esse período" +
+                    (objInsert.CodCred != null ? ", código de crédito" : "") +
                     " e tipo de imposto. Só é possível que exista um registro desse tipo.");
+            
+            var ultimoPeriodo = ExecuteScalar<string>($@"SELECT PeriodoGeracao 
+                FROM controle_credito_efd 
+                WHERE TipoImposto={ objInsert.TipoImposto } AND IdLoja={ objInsert.IdLoja }
+                ORDER BY PERIODOGERACAO DESC 
+                LIMIT 1");
+
+            if (string.IsNullOrWhiteSpace(ultimoPeriodo))
+            {
+                var periodoGeracao = objInsert.PeriodoGeracao.Split('/').Select(f => f.StrParaInt()).ToArray();
+                var ultimoPeriodoGeracao = ultimoPeriodo.Split('/').Select(f => f.StrParaInt()).ToArray();
+
+                var validacaoAno = periodoGeracao[1] < ultimoPeriodoGeracao[1];
+                var validacaoMes = (periodoGeracao[1] == ultimoPeriodoGeracao[1] && (periodoGeracao[0] - ultimoPeriodoGeracao[0]) != 1) ||
+                                   (periodoGeracao[1] > ultimoPeriodoGeracao[1] && periodoGeracao[0] != 1);
+
+                if (validacaoAno || validacaoMes)
+                {
+                    var mensagem = new StringBuilder("Só é possível inserir registros de crédito referentes ao mâs seguinte ao último registro inserido." + Environment.NewLine);
+                    mensagem.Append("Caso seja necessário gerar de meses retroativos, excluír os registros posteriores à data selecionada.");
+
+                    throw new Exception(mensagem.ToString());
+                }
+            }  
 
             return base.Insert(objInsert);
         }
