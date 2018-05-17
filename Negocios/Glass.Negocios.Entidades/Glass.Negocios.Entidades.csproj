@@ -108,6 +108,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Otimizacao\EstoqueChapaEntrada.cs" />
     <Compile Include="Estoque\ProdutoBaixaEstoquePesquisa.cs" />
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />
     <Compile Include="Financeiro\ArquivoQuitacaoParcelaCartao.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="Instalacao\FixacaoVidro.cs" />
     <Compile Include="IObtemDescritor.cs" />
     <Compile Include="Orcamento\ProdutosOrcamento.cs" />
+    <Compile Include="Otimizacao\Material.cs" />
     <Compile Include="PCP\ArquivoMesaCorte.cs" />
     <Compile Include="PCP\CapacidadeDiariaProducaoClassificacao.cs" />
     <Compile Include="PCP\Cavalete.cs" />

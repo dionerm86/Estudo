@@ -1657,6 +1657,7 @@
     <Content Include="Handlers\ValidadorCalcEngine.ashx" />
     <Content Include="Handlers\ExportarFerragem.ashx" />
     <Content Include="Handlers\RetornoRecebimentoCappta.ashx" />
+    <Content Include="Handlers\eCutterOptimizationService.ashx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -8482,6 +8483,14 @@
     <ProjectReference Include="..\Negocios\Glass.Negocios\Glass.Negocios.csproj">
       <Project>{a607c634-74af-4c32-b0b1-3d72b642b859}</Project>
       <Name>Glass.Negocios</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Otimizacao\Glass.Otimizacao\Glass.Otimizacao.csproj">
+      <Project>{876c89c4-d89e-4e70-ab98-52c008f0de85}</Project>
+      <Name>Glass.Otimizacao</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Otimizacao\UI\Web\Glass.Otimizacao.UI.Web.Process\Glass.Otimizacao.UI.Web.Process.csproj">
+      <Project>{b48a8a08-4332-41fc-a6bb-ed85a3a99f9d}</Project>
+      <Name>Glass.Otimizacao.UI.Web.Process</Name>
     </ProjectReference>
     <ProjectReference Include="..\Relatorios\Glass.Relatorios\Glass.Relatorios.csproj">
       <Project>{fe3e730f-5b2d-42dc-b491-d16c7f04b96c}</Project>

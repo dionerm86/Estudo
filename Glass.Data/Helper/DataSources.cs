@@ -901,7 +901,8 @@ namespace Glass.Data.Helper
         {
             Nenhum,
             CorteCerto,
-            OptyWay
+            OptyWay,
+            eCutter
         }
 
         public GenericModel[] GetTipoExportacaoEtiqueta()
@@ -917,6 +918,7 @@ namespace Glass.Data.Helper
                 case (int)TipoExportacaoEtiquetaEnum.Nenhum: return "Nenhum";
                 case (int)TipoExportacaoEtiquetaEnum.CorteCerto: return "Corte Certo";
                 case (int)TipoExportacaoEtiquetaEnum.OptyWay: return "OptyWay";
+                case (int)TipoExportacaoEtiquetaEnum.eCutter: return "eCutter";
                 default: return "";
             }
         }
