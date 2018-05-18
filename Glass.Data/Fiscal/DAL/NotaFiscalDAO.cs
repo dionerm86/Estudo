@@ -2034,14 +2034,9 @@ namespace Glass.Data.DAL
 
             #region Parcelas
 
-            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
-            {
-                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.DuplicataMercantil))
-                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento duplicata.");
-
-                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
-                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
-            }
+            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista && 
+                PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
+                throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
 
             if (!nf.Consumidor && nf.FormaPagto == 2 && lstParcNf.Length == 0)
                 throw new Exception("Informe os valores e os vencimentos das duplicatas.");

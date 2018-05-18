@@ -1194,7 +1194,6 @@ namespace Glass.Data.Helper
         public GenericModel[] ListaEspecieDocumento()
         {
             List<GenericModel> lstRetorno = new List<GenericModel>();
-            lstRetorno.Add(new GenericModel(1, "DUPLICATA MERCANTIL"));
             lstRetorno.Add(new GenericModel(2, "NOTA PROMISSÓRIA"));
             lstRetorno.Add(new GenericModel(3, "NOTA DE SEGURO"));
             lstRetorno.Add(new GenericModel(4, "MENSALIDADE ESCOLAR"));
