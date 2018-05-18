@@ -34,7 +34,8 @@ namespace Glass.UI.Web.Utils
             List<string> lstEtiquetas = new List<string>();
             var pedidosAlteradosAposExportacao = new List<int>();
 
-            if (EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay)
+            if (EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+                EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
             {
                 try
                 {

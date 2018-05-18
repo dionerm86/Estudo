@@ -23,6 +23,10 @@
             redirectUrl("../../Handlers/Download.ashx?filePath=" + arquivo +
                 "&fileName=" + nomeArquivo);
         }
+
+        function ecutter(id) {
+            redirectUrl('<%= MontarEnderecoECutter() %>' + id);
+        }
     </script>
 
     <table>
@@ -116,7 +120,12 @@
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imgRelatorio" runat="server" ImageUrl="~/Images/Relatorio.gif"
+                                    Visible='<%# Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta != Glass.Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter || ((int)Eval("Direcao")) == 2 %>'
                                     OnClientClick='<%# "download(\"" + Eval("NomeFunc") + "\", \"" + Eval("DataCad") + "\", \"" + Eval("CaminhoArquivo") + "\", \"" + Eval("ExtensaoArquivo") + "\"); return false" %>'
+                                    ToolTip="Download do arquivo" />
+                                <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Relatorio.gif"
+                                    Visible='<%# Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == Glass.Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter && ((int)Eval("Direcao")) == 1 %>'
+                                    OnClientClick='<%# "ecutter(\"" + Eval("IdArquivoOtimizacao") + "\"); return false" %>'
                                     ToolTip="Download do arquivo" />
                             </ItemTemplate>
                         </asp:TemplateField>

@@ -344,6 +344,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool ValidaDesconto(GDASession sessao, AmbientePedido ambientePedido, out string msg)
         {
+            var tipoVenda = PedidoDAO.Instance.GetTipoVenda(ambientePedido.IdPedido);
+
+            //Verificar se o pedido possui o tipo Venda antes de validar o desconto
+            if (tipoVenda == null && ambientePedido.Desconto > 0)
+            {
+                msg = "Informe o tipo venda do pedido antes de aplicar desconto";
+                return false;
+            }
+
             // Se permitir desconto apenas em pedidos à vista e o pedido deste ambiente não for à vista, bloqueia
             if (PedidoConfig.Desconto.DescontoPedidoApenasAVista && PedidoDAO.Instance.ObtemTipoVenda(sessao, ambientePedido.IdPedido) != (int)Pedido.TipoVendaPedido.AVista
                 && ambientePedido.Desconto > 0)
@@ -369,10 +378,10 @@ namespace Glass.Data.DAL
 
             // Verifica se o desconto lançado é maior que o máximo configurado no pedido
             if (percDescAmbiente > Conversoes.StrParaDecimal(PedidoConfig.Desconto.GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser,
-                (int)PedidoDAO.Instance.GetTipoVenda(ambientePedido.IdPedido), (int)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)).ToString()))
+                tipoVenda.Value, (int)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)).ToString()))
             {
                 msg = "Não é permitido lançar desconto maior que " + PedidoConfig.Desconto.GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser,
-                    (int)PedidoDAO.Instance.GetTipoVenda(ambientePedido.IdPedido), (int)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)) + "% no pedido.";
+                    tipoVenda.Value, (int)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)) + "% no pedido.";
                 return false;
             }
 
