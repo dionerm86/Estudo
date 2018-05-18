@@ -347,7 +347,7 @@ namespace Glass.Data.DAL
             var tipoVenda = PedidoDAO.Instance.GetTipoVenda(ambientePedido.IdPedido);
 
             //Verificar se o pedido possui o tipo Venda antes de validar o desconto
-            if (tipoVenda == null)
+            if (tipoVenda == null && ambientePedido.Desconto > 0)
             {
                 msg = "Informe o tipo venda do pedido antes de aplicar desconto";
                 return false;
