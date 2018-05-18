@@ -5263,6 +5263,12 @@ namespace Glass.Data.DAL
                                 p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
                                 (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
 
+                            if (nf.GerarEstoqueReal)
+                            {
+                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
+                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
+                            }
+
                             //Altera o estoque da materia-prima
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(session, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Saida);
                         }
