@@ -10840,7 +10840,7 @@ namespace Glass.Data.DAL
                 AtualizarPercentualComissao(sessao, pedido, produtos);
 
                 RemoveComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
-                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido);
+                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
             }
 
             try
@@ -15408,23 +15408,19 @@ namespace Glass.Data.DAL
 
             if (produtosPedido == null)
                 produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, novo.IdPedido, false, true);
-
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-
+            
             var removidos = new List<uint>();
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido))
+            if (AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto && AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido))
+            if (AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido))
+            if (AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             /* Chamado 62763. */
