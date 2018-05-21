@@ -1340,7 +1340,7 @@ namespace Glass.Data.Model
             get 
             { 
                 if (_descontoTotal == null)
-                    _descontoTotal = !_descontoTotalPcp ? PedidoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoDAO.Instance.GetDescontoProdutos(IdPedido) :
+                    _descontoTotal = !_descontoTotalPcp && BuscarDescontoFluxoParaLiberacao ? PedidoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoDAO.Instance.GetDescontoProdutos(IdPedido) :
                         PedidoEspelhoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoEspelhoDAO.Instance.GetDescontoProdutos(IdPedido);
 
                 return _descontoTotal.Value;
@@ -1407,6 +1407,15 @@ namespace Glass.Data.Model
                 decimal valorPerc = GetValorPerc(1, 2, DescontoTotal, TotalRealSemDesconto);
                 return "(" + valorPerc.ToString("0.##") + ")%";
             }
+        }
+
+        private bool _buscarDescontoFluxoParaLiberacao;
+
+        [XmlIgnore]
+        public bool BuscarDescontoFluxoParaLiberacao
+        {
+            get { return _buscarDescontoFluxoParaLiberacao; }
+            set { _buscarDescontoFluxoParaLiberacao = value; }
         }
 
         #region Relatório de comissão
