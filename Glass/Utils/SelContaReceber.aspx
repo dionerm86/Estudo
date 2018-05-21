@@ -130,8 +130,9 @@
                             <asp:Label ID="Label14" runat="server" ForeColor="#0066FF" Text="Forma Pagto."></asp:Label>
                         </td>
                         <td nowrap="nowrap">
-                            <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto"
+                            <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto" AppendDataBoundItems="true"
                                 DataTextField="Descricao" DataValueField="IdFormaPagto">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td nowrap="nowrap">
