@@ -827,7 +827,7 @@ namespace Glass.UI.Web.Cadastros
                     possuiPedidoDescontoCemPorCento = true;
                 }
 
-                    totalPedido = totalPedido - descontoReais;
+                totalPedido = totalPedido - descontoReais;
 
 
                 // Aplica o fast delivery novamente
