@@ -11875,9 +11875,14 @@ namespace Glass.Data.DAL
                 {
                     if ((situacao == Pedido.SituacaoProducaoEnum.Pronto || situacao == Pedido.SituacaoProducaoEnum.Entregue) &&
                         ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.Confirmado)
+                    {
                         AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.Confirmado);
-                    else if (ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    }
+                    else if (ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao
+                             && situacao == Pedido.SituacaoProducaoEnum.Pendente)
+                    {
                         AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.ConfirmadoLiberacao);
+                    }
                 }
 
                 LogAlteracaoDAO.Instance.LogPedido(sessao, pedidoAntigo, PedidoDAO.Instance.GetElement(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
