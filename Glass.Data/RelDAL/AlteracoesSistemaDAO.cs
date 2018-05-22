@@ -109,7 +109,7 @@ namespace Glass.Data.RelDAL
             string sortExpression, int startRow, int pageSize)
         {
 
-            return string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataIni) ? new List<AlteracoesSistema>()
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? new List<AlteracoesSistema>()
                 : LoadDataWithSortExpression(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true),
                 sortExpression, startRow, pageSize, GetParams(tipo, dataIni, dataFim, campo));
         }
@@ -117,14 +117,14 @@ namespace Glass.Data.RelDAL
         public int GetCount(string tipo, string dataIni, string dataFim, int tabela, string campo, uint idFunc)
         {
 
-            return string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataIni) ? 0
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? 0
                 : objPersistence.ExecuteSqlQueryCount(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, false),
                 GetParams(tipo, dataIni, dataFim, campo));
         }
 
         public IList<AlteracoesSistema> GetForRpt(string tipo, string dataIni, string dataFim, int tabela, string campo, uint idFunc)
         {
-            return string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataIni) ? new List<AlteracoesSistema>()
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? new List<AlteracoesSistema>()
                 : objPersistence.LoadData(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true),
                 GetParams(tipo, dataIni, dataFim, campo)).ToList();
         }
