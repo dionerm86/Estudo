@@ -4081,22 +4081,23 @@ namespace Glass.Data.DAL
         #region Busca pedidos para Liberação
 
         private string SqlLiberacao(uint idCliente, string nomeCliente, string idsPedidos, string dataIniEntrega, string dataFimEntrega,
-            int situacaoProd, string tiposPedidos, int? idLoja)
+            int situacaoProd, string tiposPedidos, int? idLoja, bool buscarDescontoFluxoParaLiberacao)
         {
             // O Left Join com funcionário deve ser left porque aconteceu de um pedido ter sido tirado pela web e 
             // ter ficado com idFunc=0
 
             var buscarOcs = OrdemCargaConfig.UsarControleOrdemCarga ? ", CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs " : " ";
 
-            var sql = @"
-                Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, o.saldo as saldoObra, 
-                    (" + ObraDAO.Instance.SqlPedidosAbertos("p.idObra", "p.idPedido", ObraDAO.TipoRetorno.TotalPedido) + @") as totalPedidosAbertosObra, l.NomeFantasia as nomeLoja, 
+            var sql = $@"
+                Select p.*, { ClienteDAO.Instance.GetNomeCliente("c") } as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, o.saldo as saldoObra, 
+                    ({ ObraDAO.Instance.SqlPedidosAbertos("p.idObra", "p.idPedido", ObraDAO.TipoRetorno.TotalPedido) }) as totalPedidosAbertosObra, l.NomeFantasia as nomeLoja, 
                     fp.Descricao as FormaPagto, pe.Total as TotalEspelho, s.dataCad as dataEntrada,
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, 
                     cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, s.isPagtoAntecipado as pagamentoAntecipado,
-                    c.ObsLiberacao as ObsLiberacaoCliente" + buscarOcs +
-                @"From pedido p 
+                    { PCPConfig.UsarConferenciaFluxo && buscarDescontoFluxoParaLiberacao} as BuscarDescontoFluxoParaLiberacao,
+                    c.ObsLiberacao as ObsLiberacaoCliente{ buscarOcs }
+                From pedido p 
                     Left Join pedido_espelho pe On (p.idPedido=pe.idPedido) 
                     Inner Join cliente c On (p.idCli=c.id_Cli) 
                     Left Join funcionario f On (p.IdFunc=f.IdFunc) 
@@ -4104,8 +4105,8 @@ namespace Glass.Data.DAL
                     Left Join obra o On (p.idObra=o.idObra)
                     Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) 
                     Left Join sinal s On (p.idSinal=s.idSinal)
-                Where p.situacao in (" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente +
-                    ") and p.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao;
+                Where p.situacao in ({ (int)Pedido.SituacaoPedido.ConfirmadoLiberacao }, { (int)Pedido.SituacaoPedido.LiberadoParcialmente }) 
+                and p.tipoPedido<>{(int)Pedido.TipoPedidoEnum.Producao}";
 
             if (idCliente > 0)
                 sql += " and p.idCli=" + idCliente;
@@ -4161,7 +4162,7 @@ namespace Glass.Data.DAL
         public string GetIdsPedidosForLiberacao(uint idCliente, string nomeCliente, string idsPedidosRem, string dataIniEntrega,
             string dataFimEntrega, int situacaoProd, string tiposPedidos, int? idLoja)
         {
-            var itens = objPersistence.LoadResult(SqlLiberacao(idCliente, nomeCliente, null, dataIniEntrega, dataFimEntrega, situacaoProd, tiposPedidos, idLoja),
+            var itens = objPersistence.LoadResult(SqlLiberacao(idCliente, nomeCliente, null, dataIniEntrega, dataFimEntrega, situacaoProd, tiposPedidos, idLoja, false),
                 new GDAParameter("?nomeCliente", "%" + nomeCliente + "%"), new GDAParameter("?dataIniEntrega", DateTime.Parse(dataIniEntrega + " 00:00")),
                 new GDAParameter("?dataFimEntrega", DateTime.Parse(dataFimEntrega + " 23:59"))).Select(f => f.GetUInt32(0))
                        .ToList(); ;
@@ -4184,7 +4185,7 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(idsPedidos))
                 return new Pedido[0];
 
-            return objPersistence.LoadData(SqlLiberacao(0, null, idsPedidos, null, null, 0, null, null)).ToArray();
+            return objPersistence.LoadData(SqlLiberacao(0, null, idsPedidos, null, null, 0, null, null, true)).ToArray();
         }
 
         public Pedido[] GetForLiberacao(uint idCliente, uint idPedido)
@@ -4192,7 +4193,7 @@ namespace Glass.Data.DAL
             if (idCliente == 0 && idPedido == 0)
                 return new Pedido[0];
 
-            return objPersistence.LoadData(SqlLiberacao(idCliente, null, idPedido.ToString(), null, null, 0, null, null)).ToArray();
+            return objPersistence.LoadData(SqlLiberacao(idCliente, null, idPedido.ToString(), null, null, 0, null, null, true)).ToArray();
         }
 
         #endregion
@@ -10840,7 +10841,7 @@ namespace Glass.Data.DAL
                 AtualizarPercentualComissao(sessao, pedido, produtos);
 
                 RemoveComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
-                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido);
+                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
             }
 
             try
@@ -11874,9 +11875,14 @@ namespace Glass.Data.DAL
                 {
                     if ((situacao == Pedido.SituacaoProducaoEnum.Pronto || situacao == Pedido.SituacaoProducaoEnum.Entregue) &&
                         ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.Confirmado)
+                    {
                         AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.Confirmado);
-                    else if (ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    }
+                    else if (ObtemSituacao(sessao, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao
+                             && situacao == Pedido.SituacaoProducaoEnum.Pendente)
+                    {
                         AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.ConfirmadoLiberacao);
+                    }
                 }
 
                 LogAlteracaoDAO.Instance.LogPedido(sessao, pedidoAntigo, PedidoDAO.Instance.GetElement(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
@@ -15408,23 +15414,19 @@ namespace Glass.Data.DAL
 
             if (produtosPedido == null)
                 produtosPedido = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, novo.IdPedido, false, true);
-
-            var alteraDesconto = antigo.Desconto != novo.Desconto || antigo.TipoDesconto != novo.TipoDesconto;
-            var alteraComissao = antigo.PercComissao != novo.PercComissao;
-            var alteraAcrescimo = antigo.Acrescimo != novo.Acrescimo || antigo.TipoAcrescimo != novo.TipoAcrescimo;
-
+            
             var removidos = new List<uint>();
 
             // Remove o acréscimo do pedido
-            if (alteraAcrescimo && AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido))
+            if (AplicarAcrescimo(sessao, novo, novo.TipoAcrescimo, novo.Acrescimo, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o desconto do pedido
-            if (alteraDesconto && AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido))
+            if (AplicarDesconto(sessao, novo, novo.TipoDesconto, novo.Desconto, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             // Remove o valor da comissão nos produtos e no pedido
-            if (alteraComissao && AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido))
+            if (AplicarComissao(sessao, novo, novo.PercComissao, produtosPedido))
                 removidos.AddRange(produtosPedido.Select(p => p.IdProdPed));
 
             /* Chamado 62763. */

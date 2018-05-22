@@ -3843,7 +3843,7 @@ namespace Glass.Data.DAL
                 prodPed.ValorTabelaPedido = (prodPed as IProdutoCalculo).DadosProduto.ValorTabela();
 
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
-                prodPed.ValorVendido = valorUnitario ?? prodPed.ValorTabelaPedido;
+                prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
                 ValorTotal.Instance.Calcular(
                     session,

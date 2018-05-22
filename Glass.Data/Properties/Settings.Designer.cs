@@ -86,7 +86,7 @@ namespace Glass.Data.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsulta4")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsultaProtocolo4")]
         public string Glass_Data_wsPMGConsulta_NfeConsulta2 {
             get {
                 return ((string)(this["Glass_Data_wsPMGConsulta_NfeConsulta2"]));

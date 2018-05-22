@@ -29,10 +29,7 @@ namespace Glass.Data.DAL
             // Pega o saldo atual
             var idMovMateriaPrima = ObtemUltimoIdMovMateriaPrima(sessao, idCorVidro, espessura);
 
-            if (idMovMateriaPrima.GetValueOrDefault(0) == 0)
-                return;
-
-            var saldoAtual = ObtemValorCampo<decimal>(sessao, "saldo", "idMovMateriaPrima=" + idMovMateriaPrima.Value);
+            decimal saldoAtual = idMovMateriaPrima == null ? 0 : ObtemValorCampo<decimal>(sessao, "saldo", "idMovMateriaPrima=" + idMovMateriaPrima);
 
             MovMateriaPrima mov = new MovMateriaPrima();
 

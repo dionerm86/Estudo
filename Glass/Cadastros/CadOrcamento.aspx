@@ -2179,7 +2179,7 @@
                     DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     OnDeleted="odsProdXOrc_Deleted" SelectCountMethod="GetCount" SelectMethod="GetList"
                     SortParameterName="sortExpression" StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ProdutosOrcamentoDAO"
-                    InsertMethod="Insert" UpdateMethod="Update" OnUpdated="odsProdXOrc_Updated">
+                    InsertMethod="Insert" UpdateMethod="UpdateComTransacao" OnUpdated="odsProdXOrc_Updated">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idOrca" QueryStringField="idOrca" Type="UInt32" />
                         <asp:ControlParameter ControlID="hdfIdAmbienteOrca" Name="idAmbiente" PropertyName="Value"
