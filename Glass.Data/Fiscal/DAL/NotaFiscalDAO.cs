@@ -4947,17 +4947,17 @@ namespace Glass.Data.DAL
             if (nf.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
                 return;
 
-            string cStat = xmlRetConsSit["cStat"].InnerXml;
+            string cStat = xmlRetConsSit?["cStat"]?.InnerXml ?? xmlRetConsSit?["protNFe"]?["infProt"]?["cStat"]?.InnerXml; ;
 
             // Gera log do ocorrido
-            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", Glass.Conversoes.StrParaInt(cStat), xmlRetConsSit["xMotivo"].InnerXml);
+            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["protNFe"]?["infProt"]?["xMotivo"].InnerXml);
 
             // Atualiza número do protocolo de uso da NFe
             if (cStat == "100" || cStat == "150")
             {
                 // Anexa protocolo de autorizaçã
                 string path = Utils.GetNfeXmlPath + nf.ChaveAcesso + "-nfe.xml";
-                IncluiProtocoloXML(path, xmlRetConsSit["protNFe"]);
+                IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
 
                 AutorizaNotaFiscal(nf, xmlRetConsSit);
             }

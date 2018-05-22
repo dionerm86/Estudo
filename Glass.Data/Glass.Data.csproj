@@ -2134,7 +2134,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPMGNFeConsulta\Reference.cs">
+    <Compile Include="Web References\wsPMGNFeConsultaProtocolo\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2835,7 +2835,7 @@
     <None Include="Web References\wsPGONFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
     <None Include="Web References\wsPGONFeStatusServico\NFeStatusServico4.wsdl" />
     <None Include="Web References\wsPMGNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMGNFeConsulta\NFeConsulta4.wsdl" />
+    <None Include="Web References\wsPMGNFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
     <None Include="Web References\wsPMGNFeInutilizacao\NFeInutilizacao4.wsdl" />
     <None Include="Web References\wsPMGNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
     <None Include="Web References\wsPMGNFeStatus\NFeStatusServico4.wsdl" />
@@ -3139,7 +3139,7 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMGNFeConsulta\Reference.map">
+    <None Include="Web References\wsPMGNFeConsultaProtocolo\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -4600,10 +4600,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPMGAutorizacao_NfeAutorizacao</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsulta4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsultaProtocolo4%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsulta4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsPMGNFeConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
