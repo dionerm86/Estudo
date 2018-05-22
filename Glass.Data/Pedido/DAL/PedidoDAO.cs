@@ -16938,7 +16938,7 @@ namespace Glass.Data.DAL
 
                                             foreach (var p in ProdutoBaixaEstoqueDAO.Instance.GetByProd(transaction, prodPed.IdProd, false))
                                             {
-                                                ProdutosPedidoDAO.Instance.Insert(transaction, new ProdutosPedido()
+                                                var idProdPedFilho = ProdutosPedidoDAO.Instance.Insert(transaction, new ProdutosPedido()
                                                 {
                                                     IdProdPedParent = prodPed.IdProdPed,
                                                     IdProd = (uint)p.IdProdBaixa,
@@ -16947,10 +16947,39 @@ namespace Glass.Data.DAL
                                                     IdPedido = prodPed.IdPedido,
                                                     IdAmbientePedido = prodPed.IdAmbientePedido,
                                                     Qtde = p.Qtde,
+                                                    Beneficiamentos = p.Beneficiamentos,
                                                     Altura = p.Altura > 0 ? p.Altura : prodPed.Altura,
                                                     Largura = p.Largura > 0 ? p.Largura : prodPed.Largura,
                                                     ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, p.IdProdBaixa, tipoEntrega, prodPed.IdCliente, false, false, 0, (int)prodPed.IdPedido, null, null),
                                                 }, false, true);
+
+                                                var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+
+                                                var stream = new System.IO.MemoryStream();
+
+                                                //Verifica se a matéria prima possui imagem
+                                                var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
+
+                                                if (possuiImagem)
+                                                {
+                                                    //atribui a imagem da matéria prima na peça filha
+                                                    var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(transaction, idProdPedFilho);
+                                                    ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
+
+                                                    // Cria Log de alteração da Imagem do Produto Pedido
+                                                    //Apenas para controle
+                                                    LogAlteracaoDAO.Instance.Insert(new LogAlteracao
+                                                    {
+                                                        Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
+                                                        IdRegistroAlt = (int)pp.IdProdPed,
+                                                        Campo = "Imagem Produto Pedido",
+                                                        ValorAtual = "Imagem da matéria prima",
+                                                        DataAlt = DateTime.Now,
+                                                        IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                                                        Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
+                                                        NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
+                                                    });
+                                                }
                                             }
                                         }
 
