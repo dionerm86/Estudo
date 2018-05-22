@@ -270,16 +270,15 @@ namespace Glass.Data.NFeUtils
                                             xmlRetorno = GetWebService.PCEAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
                                         case "MG":
                                             {
-                                                var dadosMsg = new wsPMGNFeAutorizacao.nfeDadosMsg();
+                                                var dadosMsg = new wsPMGNFeAutorizacao.nfeResultMsg();
 
                                                 dadosMsg.Any = new XmlNode[] { xmlLote };
                                                 dadosMsg.Any[0] = xmlLote.DocumentElement;
                                                 var xmlDocument = new XmlDocument();
-                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", "");
+                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
+                                                var retorno = GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(dadosMsg).Any;
 
-                                                var retorno = GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(dadosMsg);
-
-                                                foreach (var node in retorno[0] as XmlNode[])
+                                                foreach (var node in retorno)
                                                     xmlNode.InnerXml += node.OuterXml;
 
                                                 xmlRetorno = xmlNode;
@@ -340,7 +339,7 @@ namespace Glass.Data.NFeUtils
                                                     if (nf.IdLoja > 0)
                                                         LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
 
-                                                    GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(null);
+                                                    GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(null);
                                                 }
                                                 catch
                                                 {
@@ -427,57 +426,43 @@ namespace Glass.Data.NFeUtils
                 }
 
                 // Lê Xml de retorno do envio do lote
-                var status = xmlRetorno["cStat"] != null && xmlRetorno["cStat"].InnerXml != null ? xmlRetorno["cStat"].InnerXml : "0";
+                var status = xmlRetorno?["cStat"]?.InnerXml?.StrParaInt() ?? 0;
+                var statusNoduloFilho = xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml?.StrParaInt() ?? 0;
 
-                if (status == "103") // Lote recebido com sucesso
+                if (status == 103) // Lote recebido com sucesso
                 {
-                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 103, "Lote enviado com sucesso. ");
+                    var numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
 
-                    // Pega o número do recibo do lote
-                    string numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
-
-                    // Salva na nota fiscal o número do recibo do lote
+                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 103, "Lote enviado com sucesso.");
                     NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
 
                     return "Lote enviado com sucesso.";
                 }
-                else if (status == "104")
+                else if (statusNoduloFilho == 104 || statusNoduloFilho == 100)
+                {
+                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote Processado");
+                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(nf.ChaveAcesso, xmlRetorno?.ChildNodes?[0]?["protNFe"]);
+
+                    return xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml;
+                }
+                else if (status == 104)
                 {
                     if (xmlRetorno["protNFe"] == null)
                     {
-                        if (xmlRetorno["cStat"].InnerXml == "104")
-                        {
-                            string mensagem = "Lote processado.";
+                        var numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
 
-                            LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, mensagem);
+                        LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote processado.");
+                        // Salva na nota fiscal o número do recibo do lote
+                        NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
 
-                            // Pega o número do recibo do lote
-                            string numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
-
-                            // Salva na nota fiscal o número do recibo do lote
-                            NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
-
-                            return mensagem;
-                        }
-                        else
-                        {
-                            var motivo = xmlRetorno["xMotivo"].InnerXml;
-
-                            LogNfDAO.Instance.NewLog(idNf, "Emissão",
-                                Convert.ToInt32(xmlRetorno["cStat"].InnerXml),
-                                motivo);
-
-                            NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
-
-                            return motivo;
-                        }
+                        return "Lote processado.";
                     }
                     else if (xmlRetorno["protNFe"]["infProt"]["cStat"].InnerXml == "100")
                     {
                         LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote Processado");
- 
+
                         NotaFiscalDAO.Instance.RetornoEmissaoNFe(nf.ChaveAcesso, xmlRetorno["protNFe"]);
- 
+
                         return xmlRetorno["protNFe"]["infProt"]["xMotivo"].InnerXml;
                     }
                     else
@@ -492,24 +477,23 @@ namespace Glass.Data.NFeUtils
                         return motivo;
                     }
                 }
-                else if (Convert.ToInt32(status) > 200) // Lote foi rejeitado pela SEFAZ
+                else if (status > 200 || statusNoduloFilho > 200) // Lote foi rejeitado pela SEFAZ
                 {
-                    var codigo = status.StrParaInt();
-                    var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno != null && xmlRetorno["xMotivo"] != null && xmlRetorno["xMotivo"].InnerXml != null ?
-                        xmlRetorno["xMotivo"].InnerXml : string.Empty);
+                    var codigo = status > 200 ? status : statusNoduloFilho > 200 ? statusNoduloFilho : 0;
+                    var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? "Não foi possível recuperar o motivo.");
 
                     /* Chamado 36067. */
                     try
                     {
-                        // Salva na tabela de erro os dados do XML de retorno da NF-e.
-                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe,
-                            xmlRetorno != null && xmlRetorno.InnerXml != null ? xmlRetorno.InnerXml : "xmlRetorno nulo"), new Exception());
+                        var uf = xmlRetorno?["cUF"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["cUF"]?.InnerXml ?? string.Empty;
 
-                        // Pega a UF retornada no XML.
-                        var uf = xmlRetorno != null && xmlRetorno["cUF"] != null && xmlRetorno["cUF"].InnerXml != null ? xmlRetorno["cUF"].InnerXml : string.Empty;
+                        // Salva na tabela de erro os dados do XML de retorno da NF-e.
+                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe, xmlRetorno?.InnerXml ?? "xmlRetorno nulo"), new Exception());
 
                         if (!string.IsNullOrEmpty(uf))
+                        {
                             motivo = string.Format("{0} UF: {1}", motivo, CidadeDAO.Instance.GetNomeUf(null, uf.StrParaUintNullable()));
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -524,22 +508,20 @@ namespace Glass.Data.NFeUtils
                 }
                 else
                 {
-                    LogNfDAO.Instance.NewLog(idNf, "Emissão", Convert.ToInt32(status),
-                        xmlRetorno != null && xmlRetorno["xMotivo"] != null && xmlRetorno["xMotivo"].InnerXml != null ? xmlRetorno["xMotivo"].InnerXml : string.Empty);
+                    LogNfDAO.Instance.NewLog(idNf, "Emissão", status, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? string.Empty);
 
                     /* Chamado 36067. */
                     try
                     {
                         // Salva na tabela de erro os dados do XML de retorno da NF-e.
-                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe,
-                            xmlRetorno != null && xmlRetorno.InnerXml != null ? xmlRetorno.InnerXml : "xmlRetorno nulo"), new Exception());
+                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe, xmlRetorno?.InnerXml ?? "xmlRetorno nulo"), new Exception());
                     }
                     catch (Exception ex)
                     {
                         ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0}", numeroNfe), ex);
                     }
 
-                    return xmlRetorno["xMotivo"].InnerXml;
+                    return xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? "Não foi possível recuperar o motivo.";
                 }
 
                 #endregion
@@ -670,7 +652,7 @@ namespace Glass.Data.NFeUtils
                                             if (nf.IdLoja > 0)
                                                 LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
 
-                                            GetWebService.PMGAutorizacao(nf, null).NFeAutorizacao4Lote(null);
+                                            GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(null);
                                         }
                                         catch
                                         {

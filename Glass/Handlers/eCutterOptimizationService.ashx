@@ -1,0 +1,1 @@
+﻿<%@ WebHandler Language="C#" Class="Glass.Otimizacao.UI.Web.Process.Handlers.ECutterOptimizationService" %>

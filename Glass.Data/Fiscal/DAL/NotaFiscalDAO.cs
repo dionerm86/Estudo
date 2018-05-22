@@ -2034,14 +2034,9 @@ namespace Glass.Data.DAL
 
             #region Parcelas
 
-            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
-            {
-                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.DuplicataMercantil))
-                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento duplicata.");
-
-                if (PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
-                    throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
-            }
+            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista && 
+                PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
+                throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
 
             if (!nf.Consumidor && nf.FormaPagto == 2 && lstParcNf.Length == 0)
                 throw new Exception("Informe os valores e os vencimentos das duplicatas.");
@@ -3947,7 +3942,9 @@ namespace Glass.Data.DAL
             XmlElement pag = doc.CreateElement("pag");
             infNFe.AppendChild(pag);
 
-            foreach (var p in PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf))
+            var pagamentosNfe = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf);
+
+            foreach (var p in pagamentosNfe)
             {
                 XmlElement detPag = doc.CreateElement("detPag");
                 pag.AppendChild(detPag);
@@ -3967,7 +3964,9 @@ namespace Glass.Data.DAL
                     //ManipulacaoXml.SetNode(doc, card, "cAut", Formatacoes.TrataStringDocFiscal(p.NumAut));
                 }
             }
-            //ManipulacaoXml.SetNode(doc, pag, "vTroco", "");
+
+            if(pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
+                ManipulacaoXml.SetNode(doc, pag, "vTroco", Formatacoes.TrataValorDecimal(pagamentosNfe.Sum(f => f.Valor) - nf.TotalNota, 2));
 
             #endregion
 
@@ -4948,17 +4947,17 @@ namespace Glass.Data.DAL
             if (nf.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
                 return;
 
-            string cStat = xmlRetConsSit["cStat"].InnerXml;
+            string cStat = xmlRetConsSit?["cStat"]?.InnerXml ?? xmlRetConsSit?["protNFe"]?["infProt"]?["cStat"]?.InnerXml; ;
 
             // Gera log do ocorrido
-            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", Glass.Conversoes.StrParaInt(cStat), xmlRetConsSit["xMotivo"].InnerXml);
+            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["protNFe"]?["infProt"]?["xMotivo"].InnerXml);
 
             // Atualiza número do protocolo de uso da NFe
             if (cStat == "100" || cStat == "150")
             {
                 // Anexa protocolo de autorizaçã
                 string path = Utils.GetNfeXmlPath + nf.ChaveAcesso + "-nfe.xml";
-                IncluiProtocoloXML(path, xmlRetConsSit["protNFe"]);
+                IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
 
                 AutorizaNotaFiscal(nf, xmlRetConsSit);
             }
@@ -5263,6 +5262,12 @@ namespace Glass.Data.DAL
                             MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value,
                                 p.IdNaturezaOperacao > 0 ? p.IdNaturezaOperacao.Value : nf.IdNaturezaOperacao.Value, p.IdNf, p.IdProdNf,
                                 (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p, true), false);
+
+                            if (nf.GerarEstoqueReal)
+                            {
+                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(session, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
+                                    (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(session, p.IdProd, p.TotM, p.Qtde, p.Altura, p.Largura, false, false));
+                            }
 
                             //Altera o estoque da materia-prima
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaNotaFiscal(session, (int)p.IdProd, (int)p.IdNf, (int)p.IdProdNf, (decimal)p.TotM, MovEstoque.TipoMovEnum.Saida);

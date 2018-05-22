@@ -562,7 +562,7 @@ namespace Glass.Data.DAL
                 criterio += precoInicial > 0 ? "" : "Valor Boleto: até " + precoFinal + "    ";
             }
 
-            if (idsFormaPagto != null && idsFormaPagto.Any())
+            if (idsFormaPagto != null && idsFormaPagto.Any(f => f != 0))
             {
                 if (idsFormaPagto.Contains((uint)Pagto.FormaPagto.Boleto))
                     filtroAdicional += " And c.idConta In (" + UtilsPlanoConta.ContasTodosTiposBoleto() + ")";

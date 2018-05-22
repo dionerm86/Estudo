@@ -140,9 +140,9 @@ namespace Glass.Data.NFeUtils
         /// <param name="nota">A nota fiscal que será enviada.</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGNFeConsulta.NFeConsulta4 PMGConsulta(NotaFiscal nota, string caminhoCert)
+        public static wsPMGNFeConsultaProtocolo.NFeConsultaProtocolo4 PMGConsulta(NotaFiscal nota, string caminhoCert)
         {
-           var retorno = new wsPMGNFeConsulta.NFeConsulta4();
+           var retorno = new wsPMGNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             // Define 90 segundos de espera, para evitar timeout
             retorno.Timeout = 90000;

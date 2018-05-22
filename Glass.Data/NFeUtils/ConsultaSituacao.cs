@@ -50,9 +50,6 @@ namespace Glass.Data.NFeUtils
 
             #endregion
 
-            // Guarda o status do lote
-            string status = String.Empty;
-
             XmlNode xmlRetorno = null;
 
             // Salva o callback padrão do WebService
@@ -88,16 +85,17 @@ namespace Glass.Data.NFeUtils
                                 xmlRetorno = GetWebService.PCERetornoAutorizao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
                             case "MG":
                                 {
-                                    var dadosMsg = new wsPMGNFeRetornoAutorizacao.nfeDadosMsg();
+                                    var dadosMsg = new wsPMGNFeConsultaProtocolo.nfeResultMsg();
 
                                     dadosMsg.Any = new XmlNode[] { xmlRetRecep };
                                     dadosMsg.Any[0] = xmlRetRecep.DocumentElement;
                                     var xmlDocument = new XmlDocument();
                                     var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
 
-                                    var retorno = GetWebService.PMGRetornoAutorizacao(nf, null).nfeRetAutorizacao4(dadosMsg);
+                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsultaNF(dadosMsg);
 
-                                    foreach (var node in retorno[0] as XmlNode[])
+                                    // Verificar se retorno.Any está funcionando corretamente
+                                    foreach (var node in retorno.Any as XmlNode[])
                                         xmlNode.InnerXml += node.OuterXml;
 
                                     xmlRetorno = xmlNode;
@@ -174,9 +172,10 @@ namespace Glass.Data.NFeUtils
                 System.Net.ServicePointManager.ServerCertificateValidationCallback = callback;
             }
 
-            // Se o lote já tiver sido processado, sai do loop
-            if (xmlRetorno != null) // Lote processado
-                status = xmlRetorno["cStat"].InnerXml;
+            if (xmlRetorno == null)
+                throw new Exception("Falha ao comunicar com webservice da SEFAZ. Favor consultar a disponibilidade da receita");
+
+            var status = xmlRetorno?["cStat"]?.InnerXml ?? "0";
 
             // Verifica o status do lote
             if (status == "104") // Lote processado
@@ -216,7 +215,7 @@ namespace Glass.Data.NFeUtils
             {
                 NotaFiscalDAO.Instance.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", Glass.Conversoes.StrParaInt(xmlRetorno["cStat"].InnerXml), xmlRetorno["xMotivo"].InnerXml);
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", status.StrParaInt(), xmlRetorno["xMotivo"].InnerXml);
 
                 string msgErro = "Falha na consulta. ";
 
@@ -225,7 +224,7 @@ namespace Glass.Data.NFeUtils
                 else if (status == "225" || status == "565" || status == "567" || status == "568")
                     msgErro += "Lote da NFe é inválido. ";
 
-                return msgErro + xmlRetorno["cStat"].InnerXml + " - " + CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml);
+                return string.Format("{0}{1} - ", msgErro, status, CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml));
             }
         }
 
@@ -455,16 +454,16 @@ namespace Glass.Data.NFeUtils
                                 xmlRetorno = GetWebService.PCEConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
                             case "MG":
                                 {
-                                    var dadosMsg = new wsPMGNFeConsulta.nfeDadosMsg();
+                                    var dadosMsg = new wsPMGNFeConsultaProtocolo.nfeResultMsg();
 
                                     dadosMsg.Any = new XmlNode[] { xmlConsSitNFe };
                                     dadosMsg.Any[0] = xmlConsSitNFe.DocumentElement;
                                     var xmlDocument = new XmlDocument();
                                     var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
 
-                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsulta4(dadosMsg);
+                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsultaNF(dadosMsg);
 
-                                    foreach (var node in retorno[0] as XmlNode[])
+                                    foreach (var node in retorno.Any as XmlNode[])
                                         xmlNode.InnerXml += node.OuterXml;
 
                                     xmlRetorno = xmlNode;
@@ -557,10 +556,10 @@ namespace Glass.Data.NFeUtils
             if (xmlRetorno == null)
                 throw new Exception("Falha ao comunicar com webservice da SEFAZ. Favor consultar a disponibilidade da receita");
 
-            string codStatus = xmlRetorno["cStat"].InnerXml;
+            var codStatus = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
 
             // Executa ações de acordo com o retorno dado
-            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno);
+            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno);
 
             if (codStatus == "100" || codStatus == "150") // NFe Autorizada
                 return "NFe está autorizada para uso.";
@@ -571,7 +570,7 @@ namespace Glass.Data.NFeUtils
                 if (codStatus == "215" || codStatus == "516" || codStatus == "517" || codStatus == "545")
                     msgErro += "Mensagem de consulta inválida. ";
 
-                return msgErro + xmlRetorno["cStat"].InnerXml + " - " + CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml);
+                return string.Format("{0}{1} - {2}", msgErro, codStatus, CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml));
             }
         }
 

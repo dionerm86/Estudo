@@ -1060,7 +1060,7 @@ namespace Glass.Data.RelDAL
                 lote = prodImp.Lote;
                 nomeClienteFornec = FornecedorDAO.Instance.GetNome(session, idClienteFornec);
             }
-            else if (prodImp.IdRetalhoProducao > 0)
+            else if (prodImp.IdRetalhoProducao.GetValueOrDefault() > 0)
             {
                 lote = prodImp.Lote;
 
@@ -1159,7 +1159,7 @@ namespace Glass.Data.RelDAL
             etiqueta.CodInterno = !string.IsNullOrEmpty(produto.CodInterno) ? produto.CodInterno : string.Empty;
 
             /* Chamado 47689. */
-            if (prodImp.IdProdPed > 0)
+            if (prodImp.IdProdPed.GetValueOrDefault() > 0)
             {
                 var idProdPedParent = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, prodImp.IdProdPed.Value);
 
@@ -1251,6 +1251,15 @@ namespace Glass.Data.RelDAL
 
                 if (prodImp.IdProdPed > 0)
                 {
+                    var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint>(session, "idMaterItemProj", "idProdPed=" + prodImp.IdProdPed.Value);
+                    var pecaItemProj = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj);
+
+                    if (pecaItemProj != null)
+                    {
+                        var idArquivoMesaCorte = PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(session, pecaItemProj.IdPecaProjMod);
+                        etiqueta.IdArquivoMesaCorte = idArquivoMesaCorte;
+                    }
+
                     if (PCPConfig.EmpresaGeraArquivoFml)
                     {
                         etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta, true);

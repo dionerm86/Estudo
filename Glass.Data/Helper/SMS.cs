@@ -176,6 +176,9 @@ namespace Glass.Data.Helper
 
         public static void EnviaSMSAsync(GDASession session, string codMensagem, string remetente, string destinatario, string mensagem, bool smsAdmin)
         {
+            if (mensagem.Length > 150)
+                mensagem = mensagem.Substring(0, 149);
+
             FilaSms sms = new FilaSms
             {
                 CodMensagem = codMensagem,

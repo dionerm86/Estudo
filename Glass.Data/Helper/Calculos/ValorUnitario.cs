@@ -86,9 +86,9 @@ namespace Glass.Data.Helper.Calculos
                 valorUnitario = produto.ValorTabelaPedido;
 
             if (!valorBruto)
-                produto.ValorUnit = valorUnitario;
+                produto.ValorUnit = Math.Max(valorUnitario, produto.ValorUnit);
             else
-                produto.ValorUnitarioBruto = valorUnitario;
+                produto.ValorUnitarioBruto = Math.Max(valorUnitario, produto.ValorUnitarioBruto);
         }
 
         private decimal CalcularTotal(GDASession sessao, IProdutoCalculo produto, bool valorBruto)

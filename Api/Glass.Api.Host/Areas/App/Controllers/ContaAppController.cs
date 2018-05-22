@@ -1,12 +1,7 @@
-﻿using Colosoft.Web.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Threading;
 
 namespace Glass.Api.Host.Areas.App.Controllers
 {
@@ -384,26 +379,16 @@ namespace Glass.Api.Host.Areas.App.Controllers
 
             if (!System.IO.Directory.Exists(diretorioModelosProjeto))
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { message = "O caminho do diretório de imagens não existe." });
-                
-            var streamContent = new PushStreamContent((stream, content, context) =>
-            {
-                using (var zipFile = new Ionic.Zip.ZipFile(System.Text.Encoding.UTF8))
-                {
-                    zipFile.AddDirectory(diretorioModelosProjeto);
 
-                    zipFile.Save(stream);
-                    stream.Flush();
-                    stream.Close();
-                }
-            });
+            var zipFile = ImagesConfig.ObterImagensProjeto();
 
-            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/zip");
-            streamContent.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment")
-            {
-                FileName = "projetos.zip"
-            };
+            var httpResponseMessage = Request.CreateResponse(HttpStatusCode.OK);
+            httpResponseMessage.Content = new StreamContent(zipFile);
+            httpResponseMessage.Content.Headers.ContentDisposition = new System.Net.Http.Headers.ContentDispositionHeaderValue("attachment");
+            httpResponseMessage.Content.Headers.ContentDisposition.FileName = "projetos.zip";
+            httpResponseMessage.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/zip");
 
-            return new HttpResponseMessage(HttpStatusCode.OK) { Content = streamContent };
+            return httpResponseMessage;
         }
 
         /// <summary>

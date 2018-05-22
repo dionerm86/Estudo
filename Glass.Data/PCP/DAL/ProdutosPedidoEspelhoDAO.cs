@@ -2193,6 +2193,37 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Recpera os produtos associados com os produtos dos pedido espelho
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idsProdPed">Identificadores dos produtos do pedido espelho.</param>
+        /// <returns></returns>
+        public IEnumerable<uint> ObterIdsProd(IEnumerable<uint> idsProdPed)
+        {
+            return ObterIdsProd(null, idsProdPed);
+        }
+
+        /// <summary>
+        /// Recpera os produtos associados com os produtos dos pedido espelho
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="idsProdPed">Identificadores dos produtos do pedido espelho.</param>
+        /// <returns></returns>
+        public IEnumerable<uint> ObterIdsProd(GDASession session, IEnumerable<uint> idsProdPed)
+        {
+            var ids = string.Join(",", idsProdPed.Distinct());
+
+            if (!string.IsNullOrEmpty(ids))
+                return objPersistence
+                    .LoadResult(session,
+                        string.Format("SELECT DISTINCT IdProd FROM produtos_pedido_espelho WHERE IdProdPed IN ({0})", ids))
+                    .Select(f => f.GetUInt32(0))
+                    .ToList();
+            else
+                return new uint[0];
+        }
+
+        /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>
         /// <param name="idProdPed"></param>

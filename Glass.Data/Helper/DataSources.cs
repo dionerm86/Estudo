@@ -901,7 +901,8 @@ namespace Glass.Data.Helper
         {
             Nenhum,
             CorteCerto,
-            OptyWay
+            OptyWay,
+            eCutter
         }
 
         public GenericModel[] GetTipoExportacaoEtiqueta()
@@ -917,6 +918,7 @@ namespace Glass.Data.Helper
                 case (int)TipoExportacaoEtiquetaEnum.Nenhum: return "Nenhum";
                 case (int)TipoExportacaoEtiquetaEnum.CorteCerto: return "Corte Certo";
                 case (int)TipoExportacaoEtiquetaEnum.OptyWay: return "OptyWay";
+                case (int)TipoExportacaoEtiquetaEnum.eCutter: return "eCutter";
                 default: return "";
             }
         }
@@ -1192,7 +1194,6 @@ namespace Glass.Data.Helper
         public GenericModel[] ListaEspecieDocumento()
         {
             List<GenericModel> lstRetorno = new List<GenericModel>();
-            lstRetorno.Add(new GenericModel(1, "DUPLICATA MERCANTIL"));
             lstRetorno.Add(new GenericModel(2, "NOTA PROMISSÓRIA"));
             lstRetorno.Add(new GenericModel(3, "NOTA DE SEGURO"));
             lstRetorno.Add(new GenericModel(4, "MENSALIDADE ESCOLAR"));

@@ -14,6 +14,15 @@ namespace Glass.UI.Web.Listas
 {
     public partial class LstEtiquetaImprimir : System.Web.UI.Page
     {
+        #region Propriedades
+
+        /// <summary>
+        /// Itens da otimização.
+        /// </summary>
+        public IEnumerable<EtiquetaProducao> ItensOtimizacao { get; set; }
+
+        #endregion
+
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Listas.LstEtiquetaImprimir));
@@ -29,6 +38,15 @@ namespace Glass.UI.Web.Listas
 
                 lnkArqOtimizacaoSemSag.Visible = PCPConfig.PermitirGerarArqOtimizacaoSemSag;
                 lnkArqOtimizacaoSemExportadas.Visible = PCPConfig.ExibirOpcaoExportarApenasNaoExportadasOptyway;
+
+                int idArquivoOtimizacao = 0;
+                if (int.TryParse(Request["idArquivoOtimizacao"], out idArquivoOtimizacao))
+                {
+                    var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                        .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
+
+                    ItensOtimizacao = otimizacaoFluxo.ObterItens(idArquivoOtimizacao).Select(f => new EtiquetaProducao(f));
+                }
             }
     
             if (!String.IsNullOrEmpty(hdfIdsPedidoNFe.Value) && !String.IsNullOrEmpty(hdfIdProdPedNf.Value))
@@ -538,5 +556,80 @@ namespace Glass.UI.Web.Listas
                 }
             }
         }
+
+        #region Tipos Aninhados
+
+        /// <summary>
+        /// Reprsenta o wrapper do item de otimização para a etiqueta de producao.
+        /// </summary>
+        public class EtiquetaProducao
+        {
+            #region Variáveis Locais
+
+            private readonly Glass.Otimizacao.Negocios.ItemOtimizacao _item;
+
+            #endregion
+
+            #region Propriedades
+
+            public int IdProdPed => _item.IdProdPed;
+
+            public int? IdAmbiente => null;
+
+            public int IdPedido => _item.IdPedido;
+
+            public int? IdProdNf => null;
+
+            public int? IdNf => null;
+
+            public string DescricaoProduto => _item.DescricaoProduto;
+
+            public string CodProcesso => _item.CodProcesso;
+
+            public string CodAplicacao => _item.CodAplicacao;
+
+            public int Qtd => _item.Qtde;
+
+            public int QtdImpresso => _item.QtdImpresso;
+
+            public int QtdImprimir => _item.QtdAImprimir;
+
+            public float Altura => _item.AlturaProducao;
+
+            public float Largura => _item.LarguraProducao;
+
+            public string Obs => _item.Obs;
+
+            public float TotM2 => _item.TotM2;
+
+            public string PlanoCorte => _item.PlanoCorteEtiqueta;
+
+            public bool ArquivoOtimizado => true;
+
+            public string Etiquetas => string.Join("_", _item.Etiquetas ?? new string[0]);
+
+            public bool? AtualizarTotais => null;
+
+            public float TotMCalc => _item.TotM2Calc;
+
+            public string Lote => null;
+
+            #endregion
+
+            #region Construtores
+
+            /// <summary>
+            /// Construtor padrão.
+            /// </summary>
+            /// <param name="item"></param>
+            public EtiquetaProducao(Glass.Otimizacao.Negocios.ItemOtimizacao item)
+            {
+                _item = item;
+            }
+
+            #endregion
+        }
+
+        #endregion
     }
 }

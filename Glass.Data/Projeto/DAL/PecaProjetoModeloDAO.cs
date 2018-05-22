@@ -352,7 +352,12 @@ namespace Glass.Data.DAL
 
         public uint? ObtemIdArquivoMesaCorte(uint idPecaProjMod)
         {
-            return ObtemValorCampo<uint?>("idArquivoMesaCorte", "idPecaProjMod=" + idPecaProjMod);
+            return ObtemIdArquivoMesaCorte(null, idPecaProjMod);
+        }
+
+        public uint? ObtemIdArquivoMesaCorte(GDASession session, uint idPecaProjMod)
+        {
+            return ObtemValorCampo<uint?>(session, "idArquivoMesaCorte", "idPecaProjMod=" + idPecaProjMod);
         }
 
         public TipoArquivoMesaCorte? ObtemTipoArquivoMesaCorte(uint idPecaProjMod)

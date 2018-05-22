@@ -36,9 +36,6 @@ namespace Glass.Data.Model
         [Description("Vale Combustível")]
         ValeCombustivel = 13,
 
-        [Description("Duplicata Mercantil")]
-        DuplicataMercantil = 14,
-
         [Description("Boleto Bancário")]
         BoletoBancario = 15,
 

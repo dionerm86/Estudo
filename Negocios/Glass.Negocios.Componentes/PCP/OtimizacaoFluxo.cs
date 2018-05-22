@@ -16,7 +16,7 @@ namespace Glass.PCP.Negocios.Componentes
         /// Pesquisa as otmizações do sistema
         /// </summary>
         /// <returns></returns>
-        public IList<Otimizacao> PesquisarOtimizacoes()
+        public IList<Entidades.Otimizacao> PesquisarOtimizacoes()
         {
             return SourceContext.Instance.CreateQuery()
                  .From<Glass.Data.Model.Otimizacao>()
@@ -29,7 +29,7 @@ namespace Glass.PCP.Negocios.Componentes
         /// </summary>
         /// <param name="idOtimizacao"></param>
         /// <returns></returns>
-        public Otimizacao ObterOtimizacao(int idOtimizacao)
+        public Entidades.Otimizacao ObterOtimizacao(int idOtimizacao)
         {
             return SourceContext.Instance.CreateQuery()
                .From<Glass.Data.Model.Otimizacao>()
@@ -50,7 +50,7 @@ namespace Glass.PCP.Negocios.Componentes
         /// <returns></returns>
         public Colosoft.Business.SaveResult GerarOtimizacaoLinear(int[] lstProdPed, int[] lstProdOrca, int[] lstIdProd, decimal[] lstComprimento, int[] lstGrau, bool projEsquadria)
         {
-            var otimizacao = SourceContext.Instance.Create<Otimizacao>();
+            var otimizacao = SourceContext.Instance.Create<Entidades.Otimizacao>();
             otimizacao.Tipo = Glass.Data.Model.TipoOtimizacao.Aluminio;
 
             if (lstProdPed.IsNullOrEmpty() && lstProdOrca.IsNullOrEmpty())
@@ -199,7 +199,7 @@ namespace Glass.PCP.Negocios.Componentes
         /// <param name="dados"></param>
         /// <param name="otimizacao"></param>
         /// <param name="dicPecas"></param>
-        private void ObterResultadoOtimizacaoLinear(CutEngine cEngine, int idProd, List<PecaOtimizada> pecas, Otimizacao otimizacao)
+        private void ObterResultadoOtimizacaoLinear(CutEngine cEngine, int idProd, List<PecaOtimizada> pecas, Entidades.Otimizacao otimizacao)
         {
             var result = cEngine.GuillotineSheet();
 
