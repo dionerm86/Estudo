@@ -466,6 +466,11 @@ namespace Glass.Data.DAL
                             nf.ModalidadeFrete = ModalidadeFrete.ContaDoRemetente;
                             nf.QtdVol = Convert.ToInt32(PedidoDAO.Instance.GetPedidosForOC(idsPedidos, 0, false).Sum(f => f.QtdePecasVidro + f.QtdeVolume));
                             nf.VeicPlaca = transferencia && idCarregamento.GetValueOrDefault(0) > 0 ? CarregamentoDAO.Instance.ObtemPlaca(idCarregamento.Value) : "";
+                            if (nf.IdTransportador.GetValueOrDefault() == 0)
+                            {
+                                var placa = idCarregamento.GetValueOrDefault(0) > 0 ? CarregamentoDAO.Instance.ObtemPlaca(idCarregamento.Value) : "";
+                                nf.IdTransportador = !string.IsNullOrWhiteSpace(placa) ? (uint?)VeiculoDAO.Instance.ObtemValorCampo<int?>("IdTransportador", $"Placa='{placa}'") : null;
+                            }
                         }
 
                         if (nf.IdTransportador.GetValueOrDefault(0) > 0)

@@ -1380,7 +1380,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         var idLoja = LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido).ToString();
 
                         var retGerarNf = NotaFiscal.Fluxo.Gerar.Ajax.GerarNf(idsPedidoLiberados, idLiberarPedido.ToString(),
-                            "", idLoja, percReducao, percReducaoRevenda, "", "", "false", "", "false", "false", "true").Split(';');
+                            "", idLoja, percReducao, percReducaoRevenda, "", "", "false", idCarregamento.ToString(), "false", "false", "true").Split(';');
 
                         if (retGerarNf[0] == "Erro")
                             throw new Exception(retGerarNf[1]);
