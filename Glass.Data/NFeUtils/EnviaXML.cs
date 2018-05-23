@@ -221,6 +221,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
@@ -242,6 +243,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
@@ -904,6 +906,7 @@ namespace Glass.Data.NFeUtils
                                             case "AC":
                                             case "BA":
                                             case "DF":
+                                            case "MA":
                                             case "PA":
                                             case "PB":
                                             case "RJ":
@@ -929,6 +932,7 @@ namespace Glass.Data.NFeUtils
                                             case "AC":
                                             case "BA":
                                             case "DF":
+                                            case "MA":
                                             case "PA":
                                             case "PB":
                                             case "RJ":
@@ -1225,6 +1229,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
