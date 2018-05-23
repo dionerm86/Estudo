@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="NFeRecepcaoEvento4" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="nfeDadosMsg">
+        <xs:complexType mixed="true">
+          <xs:sequence>
+            <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="nfeResultMsg" type="tns:nFeRecepcaoEvento4Result" />
+      <xs:complexType name="nFeRecepcaoEvento4Result">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="retEnvEvento" type="xs:anyType" />
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="nfeRecepcaoEventoResponse">
+    <wsdl:part name="nfeResultMsg" element="tns:nfeResultMsg" />
+  </wsdl:message>
+  <wsdl:message name="nfeRecepcaoEvento">
+    <wsdl:part name="nfeDadosMsg" element="tns:nfeDadosMsg" />
+  </wsdl:message>
+  <wsdl:portType name="NFeRecepcaoEvento4Soap">
+    <wsdl:operation name="nfeRecepcaoEvento">
+      <wsdl:input name="nfeRecepcaoEvento" message="tns:nfeRecepcaoEvento" />
+      <wsdl:output name="nfeRecepcaoEventoResponse" message="tns:nfeRecepcaoEventoResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="NFeRecepcaoEvento4SoapBinding" type="tns:NFeRecepcaoEvento4Soap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="nfeRecepcaoEvento">
+      <soap12:operation soapAction="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4" style="document" />
+      <wsdl:input name="nfeRecepcaoEvento">
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output name="nfeRecepcaoEventoResponse">
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="NFeRecepcaoEvento4">
+    <wsdl:port name="NFeRecepcaoEvento4Soap12" binding="tns:NFeRecepcaoEvento4SoapBinding">
+      <soap12:address location="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

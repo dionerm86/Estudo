@@ -2562,12 +2562,12 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGRecepcaoEvento.RecepcaoEvento PMGRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPMGRecepcaoEvento.NFeRecepcaoEvento4 PMGRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
 
-                wsPMGRecepcaoEvento.RecepcaoEvento retorno = new wsPMGRecepcaoEvento.RecepcaoEvento();
+                wsPMGRecepcaoEvento.NFeRecepcaoEvento4 retorno = new wsPMGRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
