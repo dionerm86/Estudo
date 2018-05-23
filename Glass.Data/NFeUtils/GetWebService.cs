@@ -2562,12 +2562,12 @@ namespace Glass.Data.NFeUtils
         /// <param name="nf">Nota fiscal da carta de correção</param>
         /// <param name="caminhoCert">O caminho da pasta que contém o certificado. Pode ser null ou vazio para usar a pasta padrão.</param>
         /// <returns></returns>
-        public static wsPMGRecepcaoEvento.RecepcaoEvento PMGRecepcaoEvento(NotaFiscal nf, string caminhoCert)
+        public static wsPMGRecepcaoEvento.NFeRecepcaoEvento4 PMGRecepcaoEvento(NotaFiscal nf, string caminhoCert)
         {
             try
             {
 
-                wsPMGRecepcaoEvento.RecepcaoEvento retorno = new wsPMGRecepcaoEvento.RecepcaoEvento();
+                wsPMGRecepcaoEvento.NFeRecepcaoEvento4 retorno = new wsPMGRecepcaoEvento.NFeRecepcaoEvento4();
 
                 // Define 200 segundos de espera, para evitar timeout
                 retorno.Timeout = 200000;
@@ -3710,16 +3710,16 @@ namespace Glass.Data.NFeUtils
                 switch (uf)
                 {
                     case "AC":
-                        url = @"http://hml.sefaznet.ac.gov.br/nfce/qrcode?";
+                        url = "http://www.sefaznet.ac.gov.br/nfce/qrcode?";
                         break;
                     case "AL":
                         url = "http://nfce.sefaz.al.gov.br/QRCode/consultarNFCe.jsp?";
                         break;
-                    case "AP":
-                        url = "https://www.sefaz.ap.gov.br/nfce/nfcep.php?";
-                        break;
                     case "AM":
                         url = "http://sistemas.sefaz.am.gov.br/nfceweb/consultarNFCe.jsp?";
+                        break;
+                    case "AP":
+                        url = "https://www.sefaz.ap.gov.br/nfce/nfcep.php?";
                         break;
                     case "BA":
                         url = "http://nfe.sefaz.ba.gov.br/servicos/nfce/modulos/geral/NFCEC_consulta_chave_acesso.aspx?";
@@ -3730,27 +3730,27 @@ namespace Glass.Data.NFeUtils
                         url = "http://dec.fazenda.df.gov.br/ConsultarNFCe.aspx?";
                         break;
                     case "ES":
-                        throw new Exception("Endereço QR Code não mapeado para o estado ES.");
-                    case "GO":
-                        throw new Exception("Endereço QR Code não mapeado para o estado GO.");
-                    case "MA":
-                        throw new Exception("Endereço QR Code não mapeado para o estado MA.");
-                    case "MT":
-                        url = "http://www.sefaz.mt.gov.br/nfce/consultanfce?";
+                        url = "http://app.sefaz.es.gov.br/ConsultaNFCe?";
                         break;
-                    case "MS":
-                        url = "http://www.dfe.ms.gov.br/nfce/qrcode?";
+                    case "GO":
+                        url = "http://nfe.sefaz.go.gov.br/nfeweb/sites/nfce/danfeNFCe?";
+                        break;
+                    case "MA":
+                        url = "http://nfce.sefaz.ma.gov.br/portal/consultarNFCe.jsp?";
                         break;
                     case "MG":
                         throw new Exception("Endereço QR Code não mapeado para o estado MG.");
+                    case "MS":
+                        url = "http://www.dfe.ms.gov.br/nfce/qrcode?";
+                        break;
+                    case "MT":
+                        url = "http://www.sefaz.mt.gov.br/nfce/consultanfce?";
+                        break;
                     case "PA":
                         url = "https://appnfc.sefa.pa.gov.br/portal/view/consultas/nfce/nfceForm.seam?";
                         break;
                     case "PB":
                         url = "http://www.receita.pb.gov.br/nfce?";
-                        break;
-                    case "PR":
-                        url = "http://www.dfeportal.fazenda.pr.gov.br/dfe-portal/rest/servico/consultaNFCe?";
                         break;
                     case "PE":
                         url = "http://nfce.sefaz.pe.gov.br/nfce-web/consultarNFCe?";
@@ -3758,14 +3758,14 @@ namespace Glass.Data.NFeUtils
                     case "PI":
                         url = "http://webas.sefaz.pi.gov.br/nfceweb/consultarNFCe.jsf?";
                         break;
+                    case "PR":
+                        url = "http://www.fazenda.pr.gov.br/nfce/qrcode?";
+                        break;
                     case "RJ":
                         url = "http://www4.fazenda.rj.gov.br/consultaNFCe/QRCode?";
                         break;
                     case "RN":
                         url = "http://nfce.set.rn.gov.br/consultarNFCe.aspx?";
-                        break;
-                    case "RS":
-                        url = "https://www.sefaz.rs.gov.br/NFCE/NFCE-COM.aspx?";
                         break;
                     case "RO":
                         url = "http://www.nfce.sefin.ro.gov.br/consultanfce/consulta.jsp?";
@@ -3773,16 +3773,20 @@ namespace Glass.Data.NFeUtils
                     case "RR":
                         url = "https://www.sefaz.rr.gov.br/nfce/servlet/qrcode?";
                         break;
+                    case "RS":
+                        url = "https://www.sefaz.rs.gov.br/NFCE/NFCE-COM.aspx?";
+                        break;
                     case "SC":
                         throw new Exception("Endereço QR Code não mapeado para o estado SC.");
-                    case "SP":
-                        url = "https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaQRCode.aspx?";
-                        break;
                     case "SE":
                         url = "http://www.nfce.se.gov.br/portal/consultarNFCe.jsp?";
                         break;
+                    case "SP":
+                        url = "https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaQRCode.aspx?";
+                        break;
                     case "TO":
-                        throw new Exception("Endereço QR Code não mapeado para o estado TO.");
+                        url = "http://apps.sefaz.to.gov.br/portal-nfce/qrcodeNFCe?";
+                        break;
                 }
             }
             else
@@ -3790,16 +3794,16 @@ namespace Glass.Data.NFeUtils
                 switch (uf)
                 {
                     case "AC":
-                        url = "http://hml.sefaznet.ac.gov.br/nfce/qrcode?";
+                        url = "http://www.hml.sefaznet.ac.gov.br/nfce/qrcode?";
                         break;
                     case "AL":
                         url = "http://nfce.sefaz.al.gov.br/QRCode/consultarNFCe.jsp?";
                         break;
-                    case "AP":
-                        url = "https://www.sefaz.ap.gov.br/nfcehml/nfce.php?";
-                        break;
                     case "AM":
                         url = "http://homnfce.sefaz.am.gov.br/nfceweb/consultarNFCe.jsp?";
+                        break;
+                    case "AP":
+                        url = "https://www.sefaz.ap.gov.br/nfcehml/nfce.php?";
                         break;
                     case "BA":
                         url = "http://hnfe.sefaz.ba.gov.br/servicos/nfce/modulos/geral/NFCEC_consulta_chave_acesso.aspx?";
@@ -3811,13 +3815,16 @@ namespace Glass.Data.NFeUtils
                         url = "http://dec.fazenda.df.gov.br/ConsultarNFCe.aspx?";
                         break;
                     case "ES":
-                        throw new Exception("Endereço QR Code não mapeado para o estado ES.");
+                        url = "http://homologacao.sefaz.es.gov.br/ConsultaNFCe/qrcode.aspx?";
+                        break;
                     case "GO":
-                        throw new Exception("Endereço QR Code não mapeado para o estado GO.");
+                        url = "http://homolog.sefaz.go.gov.br/nfeweb/sites/nfce/danfeNFCe?";
+                        break;
                     case "MA":
-                        throw new Exception("Endereço QR Code não mapeado para o estado MA.");
+                        url = "http://homologacao.sefaz.ma.gov.br/portal/consultarNFCe.jsp?";
+                        break;
                     case "MT":
-                        url = "http://www.sefaz.mt.gov.br/nfce/consultanfce?";
+                        url = "http://homologacao.sefaz.mt.gov.br/nfce/consultanfce?";
                         break;
                     case "MS":
                         url = "http://www.dfe.ms.gov.br/nfce/qrcode?";
@@ -3831,7 +3838,7 @@ namespace Glass.Data.NFeUtils
                         url = "http://www.receita.pb.gov.br/nfcehom?";
                         break;
                     case "PR":
-                        url = "http://www.dfeportal.fazenda.pr.gov.br/dfe-portal/rest/servico/consultaNFCe?";
+                        url = "http://www.fazenda.pr.gov.br/nfce/qrcode?";
                         break;
                     case "PE":
                         url = "http://nfcehomolog.sefaz.pe.gov.br/nfce-web/consultarNFCe?";
@@ -3863,7 +3870,8 @@ namespace Glass.Data.NFeUtils
                         url = "http://www.hom.nfe.se.gov.br/portal/consultarNFCe.jsp?";
                         break;
                     case "TO":
-                        throw new Exception("Endereço QR Code não mapeado para o estado TO.");
+                        url = "http://apps.sefaz.to.gov.br/portal-nfce-homologacao/qrcodeNFCe?";
+                        break;
                 }
             }
 
@@ -3880,44 +3888,86 @@ namespace Glass.Data.NFeUtils
         public static string UrlConsultaPorChaveAcesso(string uf, ConfigNFe.TipoAmbienteNfe tipoAmbiente)
         {
             uf = uf.ToUpper();
-            var url = "";
+            var url = string.Empty;
 
             if (tipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
             {
                 switch (uf)
                 {
                     case "AC":
-                        url = @"http://www.hml.sefaznet.ac.gov.br/nfce/consulta.xhtml?";
+                        url = "http://www.sefaznet.ac.gov.br/nfce/consulta?";
+                        break;
+                    case "AL":
+                        url = "http://www.sefaz.al.gov.br/nfce/consulta?";
                         break;
                     case "AM":
-                        url = @"http://sistemas.sefaz.am.gov.br/nfceweb/formConsulta.do";
+                        url = "http://www.sefaz.am.gov.br/nfce/consulta?";
                         break;
                     case "BA":
-                        url = "http://nfe.sefaz.ba.gov.br/servicos/nfce/Modulos/Geral/NFCEC_consulta_chave_acesso.aspx?";
+                        url = "http://www.sefaz.ba.gov.br/nfce/consulta?";
+                        break;
+                    case "CE":
+                        url = "http://www.sefaz.ce.gov.br/nfce/consulta?";
                         break;
                     case "DF":
-                        url = "http://dec.fazenda.df.gov.br/NFCE";
+                        url = "http://www.fazenda.df.gov.br/nfce/consulta?";
+                        break;
+                    case "ES":
+                        url = "http://www.sefaz.es.gov.br/nfce/consulta?";
+                        break;
+                    case "GO":
+                        url = "http://www.sefaz.go.gov.br/nfce/consulta?";
+                        break;
+                    case "MA":
+                        url = "http://www.sefaz.ma.gov.br/nfce/consulta?";
+                        break;
+                    case "MG":
+                        url = "http://www.fazenda.mg.gov.br/nfce/consulta?";
+                        break;
+                    case "MS":
+                        url = "http://www.dfe.ms.gov.br/nfce/consulta?";
                         break;
                     case "MT":
-                        url = @"https://www.sefaz.mt.gov.br/nfce/consultanfce?";
+                        url = "http://www.sefaz.mt.gov.br/nfce/consulta?";
                         break;
                     case "PA":
-                        url = @"https://appnfc.sefa.pa.gov.br/portal/view/consultas/nfce/consultanfce.seam";
+                        url = "http://www.sefa.pa.gov.br/nfce/consulta?";
                         break;
                     case "PB":
-                        url = @"https://www5.receita.pb.gov.br/atf/seg/SEGf_AcessarFuncao.jsp?cdFuncao=FIS_1410&";
+                        url = "http://www.receita.pb.gov.br/nfce/consulta?";
+                        break;
+                    case "PE":
+                        url = "http://www.sefaz.pe.gov.br/nfce/consulta?";
+                        break;
+                    case "PI":
+                        url = "http://www.sefaz.pi.gov.br/nfce/consulta?";
+                        break;
+                    case "PR":
+                        url = "http://www.fazenda.pr.gov.br/nfce/consulta?";
                         break;
                     case "RJ":
-                        url = @"http://www4.fazenda.rj.gov.br/consultaDFe/paginas/consultaChaveAcesso.faces?";
+                        url = "http://www.fazenda.rj.gov.br/nfce/consulta?";
                         break;
                     case "RN":
-                        url = @"http://nfce.set.rn.gov.br/portalDFE/NFCe/ConsultaNFCe.aspx";
+                        url = "http://www.set.rn.gov.br/nfce/consulta?";
                         break;
                     case "RO":
-                        url = @"http://www.nfce.sefin.ro.gov.br/";
+                        url = "http://www.sefin.ro.gov.br/nfce/consulta?";
+                        break;
+                    case "RR":
+                        url = "http://www.sefaz.rr.gov.br/nfce/consulta?";
                         break;
                     case "RS":
-                        url = @"http://www.nfe.se.gov.br/portal/consultarNFCe.jsp?";
+                        url = "http://www.sefaz.rs.gov.br/nfce/consulta?";
+                        break;
+                    case "SE":
+                        url = "http://www.sefaz.se.gov.br/nfce/consulta?";
+                        break;
+                    case "SP":
+                        url = "https://www.nfce.fazenda.sp.gov.br/consulta?";
+                        break;
+                    case "TO":
+                        url = "http://www.sefaz.to.gov.br/nfce/consulta?";
                         break;
                 }
             }
@@ -3925,20 +3975,80 @@ namespace Glass.Data.NFeUtils
             {
                 switch (uf)
                 {
+                    case "AC":
+                        url = "http://www.sefaznet.ac.gov.br/nfce/consulta?";
+                        break;
+                    case "AL":
+                        url = "http://www.sefaz.al.gov.br/nfce/consulta?";
+                        break;
                     case "AM":
-                        url = @"http://homnfce.sefaz.am.gov.br/nfceweb/formConsulta.do";
+                        url = "http://www.sefaz.am.gov.br/nfce/consulta?";
                         break;
                     case "BA":
-                        url = "http://hnfe.sefaz.ba.gov.br/servicos/nfce/Modulos/Geral/NFCEC_consulta_chave_acesso.aspx?";
+                        url = "http://hinternet.sefaz.ba.gov.br/nfce/consulta?";
+                        break;
+                    case "CE":
+                        url = "http://www.sefaz.ce.gov.br/nfce/consulta?";
+                        break;
+                    case "DF":
+                        url = "http://www.fazenda.df.gov.br/nfce/consulta?";
+                        break;
+                    case "ES":
+                        url = "http://www.sefaz.es.gov.br/nfce/consulta?";
+                        break;
+                    case "GO":
+                        url = "http://www.sefaz.go.gov.br/nfce/consulta?";
+                        break;
+                    case "MA":
+                        url = "http://www.sefaz.ma.gov.br/nfce/consulta?";
+                        break;
+                    case "MG":
+                        url = "http://www.fazenda.mg.gov.br/nfce/consulta?";
+                        break;
+                    case "MS":
+                        url = "http://www.dfe.ms.gov.br/nfce/consulta?";
                         break;
                     case "MT":
-                        url = @"http://homologacao.sefaz.mt.gov.br/nfce/consultanfce?";
+                        url = "http://www.sefaz.mt.gov.br/nfce/consulta?";
                         break;
                     case "PA":
-                        url = @"https://appnfc.sefa.pa.gov.br/portal-homologacao/view/consultas/nfce/consultanfce.seam";
+                        url = "http://www.sefa.pa.gov.br/nfce/consulta?";
+                        break;
+                    case "PB":
+                        url = "http://www.receita.pb.gov.br/nfcehom?";
+                        break;
+                    case "PE":
+                        url = "http://www.sefaz.pe.gov.br/nfce/consulta?";
+                        break;
+                    case "PI":
+                        url = "http://www.sefaz.pi.gov.br/nfce/consulta?";
+                        break;
+                    case "PR":
+                        url = "http://www.fazenda.pr.gov.br/nfce/consulta?";
+                        break;
+                    case "RJ":
+                        url = "http://www.fazenda.rj.gov.br/nfce/consulta?";
+                        break;
+                    case "RN":
+                        url = "http://www.set.rn.gov.br/nfce/consulta?";
                         break;
                     case "RO":
-                        url = @"http://www.nfce.sefin.ro.gov.br/consultaAmbHomologacao.jsp";
+                        url = "http://www.sefin.ro.gov.br/nfce/consulta?";
+                        break;
+                    case "RR":
+                        url = "http://www.sefaz.rr.gov.br/nfce/consulta?";
+                        break;
+                    case "RS":
+                        url = "http://www.sefaz.rs.gov.br/nfce/consulta?";
+                        break;
+                    case "SE":
+                        url = "http://www.sefaz.se.gov.br/nfce/consulta?";
+                        break;
+                    case "SP":
+                        url = "https://www.homologacao.nfce.fazenda.sp.gov.br/consulta?";
+                        break;
+                    case "TO":
+                        url = "http://www.sefaz.to.gov.br/nfce/consulta?";
                         break;
                 }
             }

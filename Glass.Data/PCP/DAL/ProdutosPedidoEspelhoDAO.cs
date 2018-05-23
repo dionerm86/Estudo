@@ -3020,7 +3020,7 @@ namespace Glass.Data.DAL
                 ValorBruto.Instance.Calcular(session, pedidoEspelho, prodPed);
                 
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedidoEspelho, prodPed, !somarAcrescimoDesconto);
-                prodPed.ValorVendido = valorUnitario ?? (prodPed as IProdutoCalculo).DadosProduto.ValorTabela();
+                prodPed.ValorVendido = valorUnitario ?? Math.Max((prodPed as IProdutoCalculo).DadosProduto.ValorTabela(), prodPed.ValorVendido);
 
                 ValorTotal.Instance.Calcular(
                     session,
@@ -3151,18 +3151,20 @@ namespace Glass.Data.DAL
                 var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(sessao, idProdPed);
                 var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(sessao, (int)idProduto);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorProduto(sessao, (int)idProduto, false);
+                var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
-                return (tipoArquivo == TipoArquivoMesaCorte.FML ||
+                return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !Instance.PossuiImagemAssociada(idProdPed);
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
             {
+                var possuiArquivoMesaCorte = PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(sessao, pecaProjMod.IdPecaProjMod) > 0;
                 var tipoArquivo = PecaProjetoModeloDAO.Instance.ObtemTipoArquivoMesaCorte(pecaProjMod.IdPecaProjMod);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, !paraDestaqueEtiqueta);
 
-                return (tipoArquivo == TipoArquivoMesaCorte.FML ||
+                return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !pecaProjMod.ImagemEditada &&
                     !Instance.PossuiImagemAssociada(idProdPed) &&
@@ -3210,18 +3212,20 @@ namespace Glass.Data.DAL
                 var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(sessao, idProdPed);
                 var tipoArquivo = ProdutoDAO.Instance.ObterTipoArquivoMesaCorte(sessao, (int)idProduto);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorProduto(sessao, (int)idProduto, false);
+                var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
-                return (tipoArquivo == TipoArquivoMesaCorte.DXF || flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString())) &&
+                return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.DXF || flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString())) &&
                     ((!PossuiImagemAssociada(idProdPed)) ||
                     File.Exists(string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPed)));
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
             {
+                var possuiArquivoMesaCorte = PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(sessao, pecaProjMod.IdPecaProjMod) > 0;
                 var tipoArquivo = PecaProjetoModeloDAO.Instance.ObtemTipoArquivoMesaCorte(pecaProjMod.IdPecaProjMod);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
 
-                return (tipoArquivo == TipoArquivoMesaCorte.DXF ||
+                return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.DXF ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString())) &&
                     ((!pecaProjMod.ImagemEditada &&
                     !PossuiImagemAssociada(idProdPed) &&
@@ -3259,18 +3263,20 @@ namespace Glass.Data.DAL
 
             // Se não tiver peça projeto modelo verifica pelo produto do pedido.
             if (pecaProjMod == null)
-            {
+            {                
                 var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(sessao, idProdPed);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorProduto(sessao, (int)idProduto, false);
+                var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
-                return flags != null && flags.Any(f => f.Descricao.ToLower() == "sglass") && !PossuiImagemAssociada(sessao, idProdPed);
+                return possuiArquivoMesaCorte && flags != null && flags.Any(f => f.Descricao.ToLower() == "sglass") && !PossuiImagemAssociada(sessao, idProdPed);
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
             {
+                var possuiArquivoMesaCorte = PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(sessao, pecaProjMod.IdPecaProjMod) > 0;
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(sessao, (int)pecaProjMod.IdPecaProjMod, true);
 
-                return flags != null && flags.Any(f => f.Descricao.ToLower() == "sglass") && !pecaProjMod.ImagemEditada && !PossuiImagemAssociada(sessao, idProdPed) &&
+                return possuiArquivoMesaCorte && flags != null && flags.Any(f => f.Descricao.ToLower() == "sglass") && !pecaProjMod.ImagemEditada && !PossuiImagemAssociada(sessao, idProdPed) &&
                     !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(sessao, pecaProjMod.IdPecaItemProj);
             }
         }
@@ -3310,17 +3316,19 @@ namespace Glass.Data.DAL
             {
                 var idProduto = ObtemIdProd(session, (uint)idProdPed);
                 var flags = FlagArqMesaDAO.Instance.ObtemPorProduto(session, (int)idProduto, false);
+                var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(session, idProduto) > 0;
 
-                return flags != null && flags.Any(f => f.Descricao.ToLower() == "intermac") && !PossuiImagemAssociada(session, (uint)idProdPed);
+                return possuiArquivoMesaCorte && flags != null && flags.Any(f => f.Descricao.ToLower() == "intermac") && !PossuiImagemAssociada(session, (uint)idProdPed);
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
             {
+                var possuiArquivoMesaCorte = PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(session, pecaProjMod.IdPecaProjMod) > 0;
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod(session, (int)pecaProjMod.IdPecaProjMod, true);
                 var pecaPossuiImagemAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaProjMod.IdPecaItemProj) || PossuiImagemAssociada(session, (uint)idProdPed);
                 var pecaPossuiFlagIntermac = flags != null && flags.Any(f => f.Descricao.ToLower() == "intermac");
 
-                return pecaPossuiFlagIntermac && !pecaPossuiImagemAssociada && !pecaProjMod.ImagemEditada;
+                return possuiArquivoMesaCorte && pecaPossuiFlagIntermac && !pecaPossuiImagemAssociada && !pecaProjMod.ImagemEditada;
             }
         }
 

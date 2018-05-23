@@ -60,6 +60,7 @@ namespace Glass.Data.Helper
             ArtVidrosMT,
             ArtVidrosRO,
             AtacadaoDoBox,
+            AtacadaoDosVidros,
 
             #endregion
 
@@ -81,6 +82,7 @@ namespace Glass.Data.Helper
             CarboneAmericana,
             CarbonyTemper,
             CasaDosEspelhos,
+            CdFerragens,
             CenterBox,
             Charneca,
             ClearGlass,

@@ -221,6 +221,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
@@ -242,6 +243,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
@@ -610,7 +612,21 @@ namespace Glass.Data.NFeUtils
                                 case "CE":
                                     xmlRetorno = GetWebService.PCERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 case "MG":
-                                    xmlRetorno = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
+                                    {
+                                        var dadosMsg = new wsPMGRecepcaoEvento.nfeResultMsg();
+
+                                        dadosMsg.Any = new XmlNode[] { xmlLote };
+                                        dadosMsg.Any[0] = xmlLote.DocumentElement;
+                                        var xmlDocument = new XmlDocument();
+                                        var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
+                                        var recepcaoEvento = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(dadosMsg).Any;
+
+                                        foreach (var node in recepcaoEvento)
+                                            xmlNode.InnerXml += node.OuterXml;
+
+                                        xmlRetorno = xmlNode;
+                                        break;
+                                    }
                                 case "MT":
                                     xmlRetorno = GetWebService.PMTRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
                                 //case "MS":
@@ -712,21 +728,23 @@ namespace Glass.Data.NFeUtils
                     }
 
                     // Lê Xml de retorno do envio do lote
-                    string status = xmlRetorno["cStat"].InnerText;
-                    string resposta = xmlRetorno["xMotivo"].InnerText;
-                    int statusProcessamento = xmlRetorno["retEvento"] != null ? Glass.Conversoes.StrParaInt(xmlRetorno["retEvento"]["infEvento"]["cStat"].InnerText) : Glass.Conversoes.StrParaInt(status);
-                    string respostaProcessamento = xmlRetorno["retEvento"] != null ? xmlRetorno["retEvento"]["infEvento"]["xMotivo"].InnerText : resposta;
-                    
+                    var status = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
+                    var resposta = xmlRetorno?["xMotivo"]?.InnerText ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? string.Empty;
+                    var statusProcessamento = xmlRetorno?["retEvento"]?["infEvento"]?["cStat"]?.InnerText?.StrParaInt() ?? status.StrParaInt();
+                    var respostaProcessamento = xmlRetorno?["retEvento"]?["infEvento"]?["xMotivo"]?.InnerText ?? resposta;
+
                     // Salva o retorno apenas se tiver sido aceito
                     if (statusProcessamento == 135 || statusProcessamento == 136)
                     {
-                        XmlDocument doc = new XmlDocument();
+                        var doc = new XmlDocument();
                         doc.LoadXml(xmlRetorno.OuterXml);
 
-                        string fileName = Utils.GetCartaCorrecaoXmlPath + idCarta.ToString().PadLeft(9, '0') + "-cce.xml";
+                        var fileName = string.Format("{0}{1}-cce.xml", Utils.GetCartaCorrecaoXmlPath, idCarta.ToString().PadLeft(9, '0'));
 
-                        if (System.IO.File.Exists(fileName))
-                            System.IO.File.Delete(fileName);
+                        if (File.Exists(fileName))
+                        {
+                            File.Delete(fileName);
+                        }
 
                         doc.Save(fileName);
                     }
@@ -735,27 +753,37 @@ namespace Glass.Data.NFeUtils
                     {
                         //Somente os casos 135 e 136 são aceitos
                         case 135:
-                            LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
-                            // Salva o protocolo
-                            CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno["retEvento"]["infEvento"]["nProt"].InnerXml);
-                            CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
-                            break;
+                            {
+                                LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
+                                // Salva o protocolo
+                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
+                                CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
+                                break;
+                            }
                         case 136:
-                            LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
-                            // Salva o protocolo
-                            CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno["retEvento"]["infEvento"]["nProt"].InnerXml);
-                            CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
-                            break;
+                            {
+                                LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
+                                // Salva o protocolo
+                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
+                                CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
+                                break;
+                            }
                         default:
-                            LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
+                            {
+                                LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
 
-                            // Se a rejeição for por causa do código 594, exclui a carta, uma vez que para este caso é isso que o usuário deveria fazer.
-                            if (statusProcessamento != 594)
-                                CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Recusada);
-                            else
-                                CartaCorrecaoDAO.Instance.DeleteByPrimaryKey(carta.IdCarta);
+                                // Se a rejeição for por causa do código 594, exclui a carta, uma vez que para este caso é isso que o usuário deveria fazer.
+                                if (statusProcessamento != 594)
+                                {
+                                    CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Recusada);
+                                }
+                                else
+                                {
+                                    CartaCorrecaoDAO.Instance.DeleteByPrimaryKey(carta.IdCarta);
+                                }
 
-                            break;
+                                break;
+                            }
                     }
 
                     retorno = respostaProcessamento;
@@ -878,6 +906,7 @@ namespace Glass.Data.NFeUtils
                                             case "AC":
                                             case "BA":
                                             case "DF":
+                                            case "MA":
                                             case "PA":
                                             case "PB":
                                             case "RJ":
@@ -903,6 +932,7 @@ namespace Glass.Data.NFeUtils
                                             case "AC":
                                             case "BA":
                                             case "DF":
+                                            case "MA":
                                             case "PA":
                                             case "PB":
                                             case "RJ":
@@ -934,8 +964,21 @@ namespace Glass.Data.NFeUtils
                                                     xmlRetorno = GetWebService.PCERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                     break;
                                                 case "MG":
-                                                    xmlRetorno = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
+                                                    {
+                                                        var dadosMsg = new wsPMGRecepcaoEvento.nfeResultMsg();
+
+                                                        dadosMsg.Any = new XmlNode[] { xmlLote };
+                                                        dadosMsg.Any[0] = xmlLote.DocumentElement;
+                                                        var xmlDocument = new XmlDocument();
+                                                        var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
+                                                        var recepcaoEvento = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(dadosMsg).Any;
+
+                                                        foreach (var node in recepcaoEvento)
+                                                            xmlNode.InnerXml += node.OuterXml;
+
+                                                        xmlRetorno = xmlNode;
+                                                        break;
+                                                    }
                                                 case "MT":
                                                     xmlRetorno = GetWebService.PMTRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
                                                     break;
@@ -1024,7 +1067,7 @@ namespace Glass.Data.NFeUtils
                         #endregion
 
                         // Realiza procedimentos de cancelamento de NFe
-                        retorno = NotaFiscalDAO.Instance.RetornoEvtCancelamentoNFe(transaction, nf.IdNf, justificativa, xmlRetorno, cancelarSeparacaoValores);
+                        retorno = NotaFiscalDAO.Instance.RetornoEvtCancelamentoNFe(transaction, nf.IdNf, justificativa, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno, cancelarSeparacaoValores);
 
                         #region Salva XML de cancelamento com retorno
 
@@ -1032,7 +1075,7 @@ namespace Glass.Data.NFeUtils
                         {
                             if (NotaFiscalDAO.Instance.ObtemSituacao(transaction, nf.IdNf) == (int)NotaFiscal.SituacaoEnum.Cancelada)
                             {
-                                string fileName = Utils.GetNfeXmlPath + "110111" + nf.ChaveAcesso + "-can.xml";
+                                string fileName = string.Format("{0}110111{1}-can.xml", Utils.GetNfeXmlPath, nf.ChaveAcesso);
 
                                 XmlDocument xmlDoc = new XmlDocument();
                                 XmlNode declarationNode = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -1052,10 +1095,12 @@ namespace Glass.Data.NFeUtils
                                 // Insere o resultado do cancelamento no documento xml
                                 procEventoNFe.AppendChild(
                                     procEventoNFe.OwnerDocument.ImportNode(
-                                    xmlRetorno["retEvento"] != null ? xmlRetorno["retEvento"] : xmlRetorno, true));
+                                    xmlRetorno?["retEvento"] ?? xmlRetorno?.ChildNodes?[0]?["retEvento"] ?? xmlRetorno, true));
 
                                 if (File.Exists(fileName))
+                                {
                                     File.Delete(fileName);
+                                }
 
                                 xmlDoc.Save(fileName);
                             }
@@ -1070,7 +1115,10 @@ namespace Glass.Data.NFeUtils
                         situacaoNota = (NotaFiscal.SituacaoEnum)NotaFiscalDAO.Instance.ObtemSituacao(transaction, nf.IdNf);
 
                         if (situacaoNota != NotaFiscal.SituacaoEnum.Cancelada && situacaoNota != NotaFiscal.SituacaoEnum.ProcessoCancelamento)
+                        {
                             transaction.Rollback();
+                            transaction.Close();
+                        }
                         else
                         {
                             LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, string.Format("Funcionário cancelamento: {0}", UserInfo.GetUserInfo.Nome));
@@ -1181,6 +1229,7 @@ namespace Glass.Data.NFeUtils
                                     case "AC":
                                     case "BA":
                                     case "DF":
+                                    case "MA":
                                     case "PA":
                                     case "PB":
                                     case "RJ":
@@ -1331,14 +1380,18 @@ namespace Glass.Data.NFeUtils
                 #region Lê Xml de retorno do envio da inutilização)
 
                 // Realiza procedimentos de inutilização da NFe
-                NotaFiscalDAO.Instance.RetornoInutilizacaoNFe(nf.IdNf, justificativa, xmlRetorno);
+                NotaFiscalDAO.Instance.RetornoInutilizacaoNFe(nf.IdNf, justificativa, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno);
 
-                string codStatus = xmlRetorno["infInut"]["cStat"].InnerXml;
+                string codStatus = xmlRetorno?["infInut"]?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["infInut"]?["cStat"]?.InnerXml;
 
                 if (codStatus == "102")
+                {
                     return "Inutilização efetuada.";
+                }
                 else
-                    return "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["infInut"]["xMotivo"].InnerXml);
+                {
+                    return "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["infInut"]?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["infInut"]?["xMotivo"]?.InnerXml);
+                }
 
                 #endregion
             }

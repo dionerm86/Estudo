@@ -69,7 +69,7 @@
       <Value Profile="(Default)">http://webservice.comunika.com.br:80/WSComunika/WSSend</Value>
     </Setting>
     <Setting Name="Glass_Data_wsPMGRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
-      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/RecepcaoEvento</Value>
+      <Value Profile="(Default)">https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4</Value>
     </Setting>
     <Setting Name="Glass_Data_wsHSPRecepcaoEvento_RecepcaoEvento" Type="(Web Service URL)" Scope="Application">
       <Value Profile="(Default)">https://homologacao.nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx</Value>

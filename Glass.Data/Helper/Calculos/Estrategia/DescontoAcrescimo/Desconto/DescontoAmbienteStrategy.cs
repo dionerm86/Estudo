@@ -9,7 +9,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 
         protected override bool PermitirRemocaoCalculoProduto(IProdutoCalculo produto)
         {
-            return produto.ValorDescontoProd > 0;
+            return produto.ValorDescontoProd != 0;
         }
 
         protected override void AplicarValorBeneficiamento(GenericBenef beneficiamento, decimal valor)

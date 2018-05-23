@@ -2839,6 +2839,7 @@
     <None Include="Web References\wsPMGNFeInutilizacao\NFeInutilizacao4.wsdl" />
     <None Include="Web References\wsPMGNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
     <None Include="Web References\wsPMGNFeStatus\NFeStatusServico4.wsdl" />
+    <None Include="Web References\wsPMGRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
     <None Include="Web References\wsPMSNFeInutilizacao\NFeInutilizacao4.wsdl" />
     <None Include="Web References\wsPMSNFeInutilizacao\NFeInutilizacao4.xsd">
       <SubType>Designer</SubType>
@@ -4644,10 +4645,10 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPMGStatus_NfeStatusServico2</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/RecepcaoEvento%3fwsdl">
+    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\wsPMGRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/RecepcaoEvento%3fwsdl</UpdateFromURL>
+      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -5963,7 +5964,6 @@
     </None>
     <None Include="Web References\SMSSend\WSSend.wsdl" />
     <None Include="Web References\SMSSend\WSSend.xsd" />
-    <None Include="Web References\wsPMGRecepcaoEvento\RecepcaoEvento.wsdl" />
     <None Include="Web References\wsPMGRecepcaoEvento\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>

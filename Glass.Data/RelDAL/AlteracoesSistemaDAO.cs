@@ -108,19 +108,24 @@ namespace Glass.Data.RelDAL
         public IList<AlteracoesSistema> GetList(string tipo, string dataIni, string dataFim, int tabela, string campo, uint idFunc,
             string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true), 
+
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? new List<AlteracoesSistema>()
+                : LoadDataWithSortExpression(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true),
                 sortExpression, startRow, pageSize, GetParams(tipo, dataIni, dataFim, campo));
         }
 
         public int GetCount(string tipo, string dataIni, string dataFim, int tabela, string campo, uint idFunc)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, false),
+
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? 0
+                : objPersistence.ExecuteSqlQueryCount(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, false),
                 GetParams(tipo, dataIni, dataFim, campo));
         }
 
         public IList<AlteracoesSistema> GetForRpt(string tipo, string dataIni, string dataFim, int tabela, string campo, uint idFunc)
         {
-            return objPersistence.LoadData(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true),
+            return string.IsNullOrEmpty(tipo) && string.IsNullOrEmpty(dataIni) && string.IsNullOrEmpty(dataFim) && tabela == 0 && string.IsNullOrEmpty(campo) && idFunc == 0 ? new List<AlteracoesSistema>()
+                : objPersistence.LoadData(Sql(tipo, dataIni, dataFim, tabela, campo, idFunc, null, true),
                 GetParams(tipo, dataIni, dataFim, campo)).ToList();
         }
 
