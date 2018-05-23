@@ -3917,7 +3917,7 @@ namespace Glass.Data.DAL
                     cobr.AppendChild(fat);
 
                     // Busca as parcelas da nota fiscal
-                    if (nf.FormaPagto != 1)
+                    if (nf.FormaPagto == 14)
                     {
                         for (int i = 0; i < lstParcNf.Length; i++)
                         {
