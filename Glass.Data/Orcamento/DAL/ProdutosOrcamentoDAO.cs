@@ -719,7 +719,14 @@ namespace Glass.Data.DAL
                 decimal total = decimal.Parse(objPersistence.ExecuteScalar(sessao, sql).ToString());
 
                 if (!PedidoConfig.RatearDescontoProdutos)
-                    total -= prodOrca.ValorDescontoProd;
+                {
+                    var valorDesconto = prodOrca.Desconto;
+                    if (prodOrca.TipoDesconto == 1)
+                    {
+                        valorDesconto = Math.Round(total * (valorDesconto / 100), 2);
+                    }
+                    total -= valorDesconto;
+                }
 
                 sql = "update produtos_orcamento set custo=?custo, valorProd=?total / Coalesce(qtde, 1), total=?total where idProd=" + prodOrca.IdProd;
                 objPersistence.ExecuteCommand(sessao, sql,  new GDAParameter("?custo", custo), new GDAParameter("?total", total));
