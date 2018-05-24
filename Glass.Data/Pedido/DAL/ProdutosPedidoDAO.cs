@@ -3716,10 +3716,11 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<int> ObterIdsLojaSubgrupoProdPeloPedido(GDASession session, int idPedido)
         {
-            var sql = string.Format(@"SELECT DISTINCT sp.IdLoja FROM produtos_pedido pp
+            var sql = string.Format(@"SELECT DISTINCT spl.IdLoja FROM produtos_pedido pp
                     INNER JOIN produto p ON (pp.IdProd=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
-                WHERE pp.IdPedido={0} AND pp.IdProdPedParent IS NULL AND sp.IdLoja > 0", idPedido);
+                    INNER JOIN subgrupoprod_loja spl ON (sp.IDSUBGRUPOPROD=spl.IDSUBGRUPOPROD)
+                WHERE pp.IdPedido={0} AND pp.IdProdPedParent IS NULL", idPedido);
 
             var retorno = ExecuteMultipleScalar<int>(session, sql);
 
