@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd);
 
             if (idSubgrupoProd.GetValueOrDefault() == 0)
-                return null;
+                return new List<int>();
 
             return ObterIdsLoja(sessao, idSubgrupoProd.Value);
         }
