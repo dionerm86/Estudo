@@ -1125,12 +1125,6 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public string ImagemUrlSalvarItem
-        {
-            get { return Utils.GetPecaComercialPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg"; }
-        }
-
-        [XmlIgnore]
         public float PesoResumoCorte
         {
             get { return Peso; }

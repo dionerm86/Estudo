@@ -8841,12 +8841,12 @@ namespace Glass.Data.DAL
                 if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
                     return true;
             }
+            var valorDescontoConsiderar = (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, UserInfo.GetUserInfo.CodUser) == (int)Glass.Seguranca.TipoFuncionario.Administrador ? "100"
+                : descontoMaximoPermitido.ToString().Replace(",", "."));
 
-            string sql = "Select Count(*) from pedido p Where idPedido=" + pedido.IdPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + descontoMaximoPermitido.ToString().Replace(",", ".") + @") Or
-                (tipoDesconto=2 And Coalesce(round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2),0)<=(" +
-                descontoMaximoPermitido.ToString().Replace(",", ".") + @"/100))
-            )";
+            string sql = $@"Select Count(*) from pedido p Where idPedido={pedido.IdPedido} And (
+                (tipoDesconto=1 And desconto<={valorDescontoConsiderar}) Or
+                (tipoDesconto=2 And Coalesce(round(desconto/(total+{(somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : ""))}),2),0)<=({valorDescontoConsiderar}/100)))";
 
             return ExecuteScalar<int>(sessao, sql) > 0;
         }
@@ -16961,25 +16961,7 @@ namespace Glass.Data.DAL
                                                 var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
 
                                                 if (possuiImagem)
-                                                {
-                                                    //atribui a imagem da matéria prima na peça filha
-                                                    var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(transaction, idProdPedFilho);
-                                                    ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
-
-                                                    // Cria Log de alteração da Imagem do Produto Pedido
-                                                    //Apenas para controle
-                                                    LogAlteracaoDAO.Instance.Insert(new LogAlteracao
-                                                    {
-                                                        Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                                                        IdRegistroAlt = (int)pp.IdProdPed,
-                                                        Campo = "Imagem Produto Pedido",
-                                                        ValorAtual = "Imagem da matéria prima",
-                                                        DataAlt = DateTime.Now,
-                                                        IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                                                        Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
-                                                        NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
-                                                    });
-                                                }
+                                                    ProdutosPedidoDAO.Instance.SalvarImagemProdutoPedido(transaction, idProdPedFilho, stream);
                                             }
                                         }
 

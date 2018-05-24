@@ -4356,34 +4356,15 @@ namespace Glass.Data.DAL
                         Beneficiamentos = p.Beneficiamentos
                     }, true, false);
 
-                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                            .Current.GetInstance <Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoBaixaEstoqueRepositorioImagens>();
 
                     var stream = new System.IO.MemoryStream();
-
+                    
                     //Verifica se a matéria prima possui imagem
                     var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
 
                     if (possuiImagem)
-                    {
-                        //atribui a imagem da matéria prima na peça filha
-                        var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(session, idProdPed);
-                        ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
-
-                        // Cria Log de alteração da Imagem do Produto Pedido
-                        //Apenas para controle
-                        LogAlteracaoDAO.Instance.Insert(new LogAlteracao
-                        {
-                            Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                            IdRegistroAlt = (int)pp.IdProdPed,
-                            Campo = "Imagem Produto Pedido",
-                            ValorAtual = "Imagem da matéria prima",
-                            DataAlt = DateTime.Now,
-                            IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                            Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
-                            NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
-                        });
-                    }
+                        SalvarImagemProdutoPedido(session, idProdPed, stream);
                 }
             }
 
@@ -5380,6 +5361,36 @@ namespace Glass.Data.DAL
             var retorno = objPersistence.LoadData(session, sql, parameter);
 
             return retorno;
+        }
+
+        public string ObterUrlImagemSalvar(uint idProdPed)
+        {
+            return Utils.GetPecaComercialPath + idProdPed.ToString().PadLeft(10, '0') + "_0.jpg";
+        }
+        public void SalvarImagemProdutoPedido(GDASession session, uint idProdPedFilho, MemoryStream stream)
+        {
+            try
+            {
+                var ImagemUrlSalvarItem = ObterUrlImagemSalvar(idProdPedFilho);
+                ManipulacaoImagem.SalvarImagem(ImagemUrlSalvarItem, stream);
+                // Cria Log de alteração da Imagem do Produto Pedido
+                //Apenas para controle
+                LogAlteracaoDAO.Instance.Insert(new LogAlteracao
+                {
+                    Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
+                    IdRegistroAlt = (int)idProdPedFilho,
+                    Campo = "Imagem Produto Pedido",
+                    ValorAtual = "Imagem da matéria prima",
+                    DataAlt = DateTime.Now,
+                    IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                    Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
+                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
+                });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

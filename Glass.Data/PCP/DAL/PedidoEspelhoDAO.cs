@@ -1256,10 +1256,11 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, "update produtos_pedido set idProdPedEsp=" + idProdPedEsp + " where idProdPed=" + p.IdProdPed);
 
                     //Copia as imagens de vidros duplos ou laminados
-                    if (File.Exists(p.ImagemUrlSalvarItem))
+                    var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(p.IdProdPed);
+                    if (File.Exists(urlImagem))
                     {
                         var caminhoImagemPCP = Utils.GetPecaProducaoPath + idProdPedEsp.ToString().PadLeft(10, '0') + "_0.jpg";
-                        File.Copy(p.ImagemUrlSalvarItem, caminhoImagemPCP, true);
+                        File.Copy(urlImagem, caminhoImagemPCP, true);
                     }
 
                     if (pe.IdProdPedParent.GetValueOrDefault(0) > 0 && string.IsNullOrEmpty(pe.ImagemUrl))
