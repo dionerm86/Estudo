@@ -4028,13 +4028,15 @@ namespace Glass.Data.DAL
             if (tipoPedido > 0)
                 tipoPedidoStr = tipoPedido.ToString();
 
-            var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, null, null, null, "1",
-                String.Empty, String.Empty, "2", dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
+            var situacaoPedido = (int)Pedido.SituacaoPedido.Conferido;
+
+            var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, null, null, null, situacaoPedido.ToString(),
+                String.Empty, String.Empty, null, dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
                 tipoPedidoStr, 0, 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sortExpression = !sortExpression.IsNullOrEmpty() ? sortExpression : "IdPedido";
 
-            return objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression), new InfoPaging(0, 1500), GetParam(nomeCli, codCliente, null, null, null, null, dataIni, dataFim, null, null, null)).ToArray();
+            return objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(sortExpression), new InfoPaging(0, 1500), GetParam(nomeCli, codCliente, null, null, situacaoPedido.ToString(), null, dataIni, dataFim, null, null, null)).ToArray();
         }
 
         /// <summary>
