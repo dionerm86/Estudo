@@ -8841,12 +8841,12 @@ namespace Glass.Data.DAL
                 if (desconto == ObtemDescontoCalculado(sessao, pedido.IdPedido))
                     return true;
             }
+            var valorDescontoConsiderar = (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, UserInfo.GetUserInfo.CodUser) == (int)Glass.Seguranca.TipoFuncionario.Administrador ? "100"
+                : descontoMaximoPermitido.ToString().Replace(",", "."));
 
-            string sql = "Select Count(*) from pedido p Where idPedido=" + pedido.IdPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + descontoMaximoPermitido.ToString().Replace(",", ".") + @") Or
-                (tipoDesconto=2 And Coalesce(round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2),0)<=(" +
-                descontoMaximoPermitido.ToString().Replace(",", ".") + @"/100))
-            )";
+            string sql = $@"Select Count(*) from pedido p Where idPedido={pedido.IdPedido} And (
+                (tipoDesconto=1 And desconto<={valorDescontoConsiderar}) Or
+                (tipoDesconto=2 And Coalesce(round(desconto/(total+{(somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : ""))}),2),0)<=({valorDescontoConsiderar}/100)))";
 
             return ExecuteScalar<int>(sessao, sql) > 0;
         }
