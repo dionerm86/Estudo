@@ -5370,28 +5370,22 @@ namespace Glass.Data.DAL
         }
         public void SalvarImagemProdutoPedido(GDASession session, uint idProdPedFilho, MemoryStream stream)
         {
-            try
+
+            var imagemUrlSalvarItem = ObterUrlImagemSalvar(idProdPedFilho);
+            ManipulacaoImagem.SalvarImagem(imagemUrlSalvarItem, stream);
+            // Cria Log de alteração da Imagem do Produto Pedido
+            //Apenas para controle
+            LogAlteracaoDAO.Instance.Insert(session, new LogAlteracao
             {
-                var ImagemUrlSalvarItem = ObterUrlImagemSalvar(idProdPedFilho);
-                ManipulacaoImagem.SalvarImagem(ImagemUrlSalvarItem, stream);
-                // Cria Log de alteração da Imagem do Produto Pedido
-                //Apenas para controle
-                LogAlteracaoDAO.Instance.Insert(new LogAlteracao
-                {
-                    Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                    IdRegistroAlt = (int)idProdPedFilho,
-                    Campo = "Imagem Produto Pedido",
-                    ValorAtual = "Imagem da matéria prima",
-                    DataAlt = DateTime.Now,
-                    IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                    Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
-                    NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
-                });
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
+                IdRegistroAlt = (int)idProdPedFilho,
+                Campo = "Imagem Produto Pedido",
+                ValorAtual = "Imagem da matéria prima",
+                DataAlt = DateTime.Now,
+                IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
+                NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
+            });
         }
     }
 }

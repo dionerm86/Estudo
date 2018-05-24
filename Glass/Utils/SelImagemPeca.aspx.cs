@@ -149,7 +149,6 @@ namespace Glass.UI.Web.Utils
                 {
                     var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(h.Value.StrParaUint());
                     if (File.Exists(urlImagem))
-                        if (File.Exists(urlImagem))
                         File.Delete(urlImagem);
 
                     Response.Redirect(Request.Url.ToString());
