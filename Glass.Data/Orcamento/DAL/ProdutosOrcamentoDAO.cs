@@ -1007,7 +1007,7 @@ namespace Glass.Data.DAL
 
         private bool ValidaDesconto(GDASession session, uint idOrcamento, int tipoDesconto, decimal desconto, decimal totalBruto)
         {
-            if (desconto > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento < 100)
+            if (desconto > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento <= 100)
             {
                 // Calcula o desconto máximo permitido verificando se foi lançado algum desconto pelo administrador
                 uint idFunc = UserInfo.GetUserInfo.CodUser;
