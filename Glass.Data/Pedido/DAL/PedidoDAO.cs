@@ -16961,25 +16961,7 @@ namespace Glass.Data.DAL
                                                 var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
 
                                                 if (possuiImagem)
-                                                {
-                                                    //atribui a imagem da matéria prima na peça filha
-                                                    var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(transaction, idProdPedFilho);
-                                                    ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
-
-                                                    // Cria Log de alteração da Imagem do Produto Pedido
-                                                    //Apenas para controle
-                                                    LogAlteracaoDAO.Instance.Insert(new LogAlteracao
-                                                    {
-                                                        Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                                                        IdRegistroAlt = (int)pp.IdProdPed,
-                                                        Campo = "Imagem Produto Pedido",
-                                                        ValorAtual = "Imagem da matéria prima",
-                                                        DataAlt = DateTime.Now,
-                                                        IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                                                        Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
-                                                        NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
-                                                    });
-                                                }
+                                                    ProdutosPedidoDAO.Instance.SalvarImagemProdutoPedido(transaction, idProdPedFilho, stream);
                                             }
                                         }
 
