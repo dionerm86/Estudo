@@ -9,11 +9,19 @@ namespace Glass.Data.Helper.Calculos
     {
         private ValorTotal() { }
 
+        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
+          ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
+          bool usarChapaVidro = true, bool valorBruto = false)
+        {
+            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, numeroBeneficiamentos,
+            usarChapaVidro, valorBruto);
+        }
+
         /// <summary>
         /// Método utilizado para calcular o valor total e o total de m² de um produto.
         /// </summary>
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
             bool usarChapaVidro = true, bool valorBruto = false)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
@@ -25,8 +33,7 @@ namespace Glass.Data.Helper.Calculos
             var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
 
             var compra = produto is ProdutosCompra;
-            var nf = produto is ProdutosNf;
-
+            
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
             estrategia.Calcular(
