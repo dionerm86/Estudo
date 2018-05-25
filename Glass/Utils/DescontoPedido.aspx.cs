@@ -277,6 +277,23 @@ namespace Glass.UI.Web.Utils
         }
 
         [Ajax.AjaxMethod]
+        public string VerificarDescontoPermitido(string idPedido, string tipoVenda, string tipoEntrega, string idParcela)
+        {
+            var isAdministrador = UserInfo.GetUserInfo.IsAdministrador;
+            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido.StrParaUint()).GetValueOrDefault() : 0;
+
+            var pedido = new Glass.Data.Model.Pedido();
+            pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido.StrParaUint());
+            pedido.TipoVenda = tipoVenda.StrParaInt();
+            pedido.TipoEntrega = idPedido.StrParaInt();
+            pedido.IdParcela = idPedido.StrParaUint();
+
+            return isAdministrador && !PedidoDAO.Instance.DescontoPermitido(null, pedido) ?
+                $"1|O funcionário {FuncionarioDAO.Instance.GetNome(idFuncDesc)} aplicou um desconto maior do que o desconto máximo configurado para esta alteração." +
+                " Tem certeza que deseja alterar o pedido?" : "0|Deseja atualizar os dados do pedido?";
+        }
+
+        [Ajax.AjaxMethod]
         public string PercDesconto(string idPedidoStr, string idFuncAtualStr, string alterouDesconto, string idParcela)
         {
             var idPedido = idPedidoStr.StrParaUint();

@@ -8796,7 +8796,7 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        private bool DescontoPermitido(GDASession sessao, Pedido pedido)
+        public bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
                 "") + ") from produtos_pedido where idPedido=p.idPedido)";
@@ -13735,6 +13735,12 @@ namespace Glass.Data.DAL
                     (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo))
                 {
                     throw new Exception("Não é possível atualizar os dados do pedido, pois a forma de pagamento não foi selecionada.");
+                }
+
+                if (ped.IdFuncDesc != objUpdate.IdFuncDesc)
+                {
+                    objPersistence.ExecuteCommand(session, "UPDATE pedido SET IdFuncDesc=?idFuncDesc WHERE IdPedido=?idPedido", new GDAParameter("?idFuncDesc", objUpdate.IdFuncDesc),
+                        new GDAParameter("?idPedido", objUpdate.IdPedido));
                 }
 
                 // Verifica se o desconto que já exista no pedido pode ser mantido pelo usuário que está atualizando o pedido, 
