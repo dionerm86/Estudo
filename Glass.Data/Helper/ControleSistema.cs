@@ -44,6 +44,7 @@ namespace Glass.Data.Helper
             AlumiTemper,
             AmazonBoxManaus,
             AmazonCuiaba,
+            AmazonExpress,
             AmazonJuazeiro,
             AmazonLojaCE,
             AmazonMossoro,
