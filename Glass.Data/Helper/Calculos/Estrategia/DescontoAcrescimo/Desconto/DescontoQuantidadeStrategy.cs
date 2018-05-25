@@ -1,5 +1,6 @@
 ﻿using System;
 using Glass.Data.Model;
+using GDA;
 
 namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
 {
@@ -43,6 +44,11 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Desconto
         {
             produto.Total += produto.ValorDescontoQtde;
             produto.ValorDescontoQtde = 0;
+        }
+
+        protected override void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
+        {
+            // Method intentionally left empty.
         }
     }
 }

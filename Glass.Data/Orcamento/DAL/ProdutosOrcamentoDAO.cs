@@ -1133,8 +1133,6 @@ namespace Glass.Data.DAL
                             }
                     }
 
-                    CalculaDescontoEValorBrutoProduto(sessao, objInsert, orcamento);
-
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
 
                     if (idCliente > 0 && objInsert.IdProduto.Value > 0)
@@ -1147,6 +1145,8 @@ namespace Glass.Data.DAL
                             true,
                             objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
                     }
+
+                    CalculaDescontoEValorBrutoProduto(sessao, objInsert, orcamento);
                 }
 
                 returnValue = base.Insert(sessao, objInsert);
