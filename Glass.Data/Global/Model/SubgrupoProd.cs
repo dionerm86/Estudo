@@ -69,11 +69,6 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(GrupoProd), "IdGrupoProd")]
         public int IdGrupoProd { get; set; }
 
-        [Log("Loja", "NomeFantasia", typeof(LojaDAO))]
-        [PersistenceProperty("IDLOJA")]
-        [PersistenceForeignKey(typeof(Loja), "IdLoja")]
-        public uint? IdLoja { get; set; }
-
         [Log("Descrição")]
         [PersistenceProperty("DESCRICAO")]
         [Colosoft.Data.Schema.CacheIndexed]

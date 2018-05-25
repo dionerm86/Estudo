@@ -95,23 +95,6 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
-        /// Identificador da loja.
-        /// </summary>
-        public uint? IdLoja
-        {
-            get { return DataModel.IdLoja; }
-            set
-            {
-                if (DataModel.IdLoja != value &&
-                    RaisePropertyChanging("IdLoja", value))
-                {
-                    DataModel.IdLoja = value;
-                    RaisePropertyChanged("IdLoja");
-                }
-            }
-        }
-
-        /// <summary>
         /// Descrição.
         /// </summary>
         public string Descricao
