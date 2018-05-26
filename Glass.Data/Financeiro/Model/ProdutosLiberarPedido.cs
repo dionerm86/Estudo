@@ -349,11 +349,14 @@ namespace Glass.Data.Model
             {
                 if (_valorUnit == null)
                 {
+                    var totM = ProdutosPedidoDAO.Instance.ObtemTotM(null, IdProdPed);
+                    var totM2 = TotM2 > totM ? TotM2 : totM;
+
                     // Recupera o valor unitário do beneficiamento e soma ao valor unitário final, o motivo disso é evitar que o cálculo do
                     // valor unitário fique incorreto caso esteja usando área mínima, situação na qual o beneficiamento calculado por m²
                     // considera a área real e o cálculo do vidro considera a área mínima
                     var valorUnitBenef = Beneficiamentos.Sum(b => {
-                        var divisor = TotM2 > 0 ? (decimal)TotM2 : 1;
+                        var divisor = totM2 > 0 ? (decimal)totM2 : 1;
                         return b.Valor / divisor;
                     });
                     
