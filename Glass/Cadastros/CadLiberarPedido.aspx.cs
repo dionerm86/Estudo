@@ -994,11 +994,7 @@ namespace Glass.UI.Web.Cadastros
             var parc = (Glass.UI.Web.Controls.ctrlParcelasSelecionar)sender;
             parc.ControleParcelas = ctrlParcelas1;
             parc.CampoClienteID = hdfIdCliente;
-
-            var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, hdfIdsPedido.Value != null ? hdfIdsPedido.Value.Split(',').Select(f => f.StrParaInt()) : null);
-
-            if (Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido || possuiParcelaAVista)
-                parc.CampoPedidosIDs = hdfIdsPedido;
+            parc.CampoPedidosIDs = hdfIdsPedido;
         }
     
         protected List<int?> GetTipoVendaPedidos()
