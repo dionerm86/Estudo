@@ -189,10 +189,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         private void RemoverBeneficiamentos(IProdutoCalculo produto)
         {
-            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.Empty))
+            var beneficiamentos = produto.Beneficiamentos ?? GenericBenefCollection.Empty;
+
+            foreach (var beneficiamento in beneficiamentos)
             {
                 RemoverValorBeneficiamento(beneficiamento);
             }
+
+            produto.Beneficiamentos = beneficiamentos;
         }
 
         private void RemoverProduto(IProdutoCalculo produto)
