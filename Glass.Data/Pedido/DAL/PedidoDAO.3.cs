@@ -1304,17 +1304,6 @@ namespace Glass.Data.DAL
             if (!forcarAtualizacao && _atualizando[UserInfo.GetUserInfo.CodUser])
                 return;
 
-            if (forcarAtualizacao)
-            {
-                var atual = GetElementByPrimaryKey(sessao, pedido.IdPedido);
-                var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, pedido.IdPedido, false, true);
-
-                AtualizarPercentualComissao(sessao, pedido, produtos);
-
-                RemoveComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
-                AplicaComissaoDescontoAcrescimo(sessao, atual, pedido, produtos);
-            }
-
             try
             {
                 // Define que o usuário está atualizando o total
