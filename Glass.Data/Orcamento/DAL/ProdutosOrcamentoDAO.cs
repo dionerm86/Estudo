@@ -736,6 +736,16 @@ namespace Glass.Data.DAL
                 prodOrca.Total = ItemProjetoDAO.Instance.GetTotalItemProjetoAluminio(sessao, prodOrca.IdItemProjeto.Value);
                 if (prodOrca.Total != null)
                 {
+                    if (!PedidoConfig.RatearDescontoProdutos)
+                    {
+                        var valorDesconto = prodOrca.Desconto;
+                        if (prodOrca.TipoDesconto == 1)
+                        {
+                            valorDesconto = Math.Round(prodOrca.Total.GetValueOrDefault() * (valorDesconto / 100), 2);
+                        }
+                        prodOrca.Total -= valorDesconto;
+                    }
+
                     prodOrca.ValorUnitarioBruto = prodOrca.Total.Value / (prodOrca.Qtde > 0 ? (decimal)prodOrca.Qtde.Value : 1);
                     
                     objPersistence.ExecuteCommand(sessao, @"Update produtos_orcamento Set totalBruto=?total, total=?total, valorUnitBruto=?valorUnit
@@ -1292,7 +1302,7 @@ namespace Glass.Data.DAL
                 if (
                     !ValidaDesconto(session, objUpdate.IdOrcamento, objUpdate.TipoDesconto,
                         objUpdate.Desconto,
-                        prodOrca.TotalBruto))
+                        prodOrca.IdProdParent == null ? prodOrca.Total.GetValueOrDefault() : prodOrca.TotalBruto))
                     throw new Exception("Desconto acima do permitido.");
 
                 // Atualiza o acréscimo e o desconto
