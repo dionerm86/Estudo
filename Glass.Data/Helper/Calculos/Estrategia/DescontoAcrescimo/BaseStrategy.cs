@@ -178,7 +178,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return Math.Round(valorAplicado, 2);
         }
 
-        private void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
+        protected virtual void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
         {
             if (produto != null && valorResidual != 0)
             {
