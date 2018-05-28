@@ -11562,25 +11562,25 @@ namespace Glass.Data.DAL
 
             if (tipoArquivo == (int)TipoArquivoMesaCorte.SAG)
             {
-                if (variaveisCalcEngine.ContainsKey("RX1"))
-                    variaveisCalcEngine["RX1"] = descontoLap;
+                if (variaveisCalcEngine.ContainsKey("SAG_RX1"))
+                    variaveisCalcEngine["SAG_RX1"] = descontoLap;
                 else
-                    variaveisCalcEngine.Add("RX1", descontoLap);
+                    variaveisCalcEngine.Add("SAG_RX1", descontoLap);
 
-                if (variaveisCalcEngine.ContainsKey("RX2"))
-                    variaveisCalcEngine["RX2"] = descontoLap;
+                if (variaveisCalcEngine.ContainsKey("SAG_RX2"))
+                    variaveisCalcEngine["SAG_RX2"] = descontoLap;
                 else
-                    variaveisCalcEngine.Add("RX2", descontoLap);
+                    variaveisCalcEngine.Add("SAG_RX2", descontoLap);
 
-                if (variaveisCalcEngine.ContainsKey("RY1"))
-                    variaveisCalcEngine["RY1"] = descontoLap;
+                if (variaveisCalcEngine.ContainsKey("SAG_RY1"))
+                    variaveisCalcEngine["SAG_RY1"] = descontoLap;
                 else
-                    variaveisCalcEngine.Add("RY1", descontoLap);
+                    variaveisCalcEngine.Add("SAG_RY1", descontoLap);
 
-                if (variaveisCalcEngine.ContainsKey("RY2"))
-                    variaveisCalcEngine["RY2"] = descontoLap;
+                if (variaveisCalcEngine.ContainsKey("SAG_RY2"))
+                    variaveisCalcEngine["SAG_RY2"] = descontoLap;
                 else
-                    variaveisCalcEngine.Add("RY2", descontoLap);
+                    variaveisCalcEngine.Add("SAG_RY2", descontoLap);
             }
         }
 
@@ -11932,11 +11932,8 @@ namespace Glass.Data.DAL
                     break;
 
                 case (int)TipoArquivoMesaCorte.SAG:
-                    var projetoSag = CalcEngine.Optima.Sag.Import(projeto);
-                    projetoSag.RX1 = descontoLap;
-                    projetoSag.RX2 = descontoLap;
-                    projetoSag.RY1 = descontoLap;
-                    projetoSag.RY2 = descontoLap;
+                    var projetoSag = CalcEngine.Optima.Sag.Import(projeto, 
+                        new CalcEngine.Optima.SagParameters(descontoLap, descontoLap, descontoLap, descontoLap, 0, 0));
                     projetoSag.Save(arquivo);
                     break;
 
