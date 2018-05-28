@@ -413,7 +413,6 @@ namespace Glass.Data.DAL
 
             switch (System.Configuration.ConfigurationManager.AppSettings["sistema"].ToLower())
             {                    
-                case "dekor":
                 case "vidrorapido":
                     {
                         bool lapidado = descrBenef.ToLower().Contains("lap");
@@ -462,26 +461,6 @@ namespace Glass.Data.DAL
                     aresta = 4;
                     break;
 
-                // Chamado 14114.
-                case "termari":
-                    {
-                        var box = ProdutoDAO.Instance.ObtemDescricao(idProd).ToLower().Contains("box");
-                        var comum = ProdutoDAO.Instance.ObtemDescricao(idProd).ToLower().Contains("comum");
-                        var cortado = ProdutoDAO.Instance.ObtemDescricao(idProd).ToLower().Contains("cortado");
-                        var laminado = ProdutoDAO.Instance.ObtemDescricao(idProd).ToLower().Contains("laminado");
-                        var temperado = ProdutoDAO.Instance.ObtemDescricao(idProd).ToLower().Contains("temperado");
-                        var subgrupoLaminadoTemperado = idSubgrupoProd == 81;
-
-                        aresta =
-                            cortado || box ? 0 :
-                            subgrupoLaminadoTemperado ? 2 :
-                            laminado ? 4 :
-                            (comum || temperado) && espessura >= 4 && espessura <= 8 ? 2 :
-                            (comum || temperado) && espessura == 10 || espessura == 12 ? 3 :
-                            (comum || temperado) && espessura == 15 ? 5 :
-                            (comum || temperado) && espessura == 19 ? 6 : 0;
-                        break;
-                    }
                 case "noroestevidros":
                     {
                         var lapidacao = descrBenef.ToLower().Contains("lap");
@@ -489,12 +468,6 @@ namespace Glass.Data.DAL
                         aresta = idSubgrupoProd == 2 || idSubgrupoProd == 5 || idSubgrupoProd == 9 || idSubgrupoProd == 10 || lapidacao ? 2 : 0;
                         break;
                     }
-
-                case "colpany":
-                    aresta =
-                        idSubgrupoProd == 2 || idSubgrupoProd == 59 ?
-                            4 : 2;
-                    break;
                     
                 case "amazonrecife":
                     aresta = 3;
@@ -502,20 +475,6 @@ namespace Glass.Data.DAL
 
                 case "divine":
                     aresta = 2;
-                    break;
-
-                case "modelovidros":
-                    aresta =
-                        codInternoProd == "18486/350" || codInternoProd == "13680/296" ? 0 :
-
-                        // Se o subgrupo for "laminado" então a aresta é 2
-                        idSubgrupoProd == 69 ? 2 :
-
-                        // Se o subgrupo for o "SO CORTADO" ou "Dal Mobile" então a aresta é "0".
-                        idSubgrupoProd == 218 || idSubgrupoProd == 247 ? 0 :
-
-                        // Se o beneficiamento for "LAPIDAÇÃO - LIXADO" ou "LAPIDAÇÃO - CORT" ou "SO CORTADO" a aresta deve ser "0".
-                        idsBenefConfig.Where(f => f == 359 || f == 487 || f == 486).Count() > 0 ? 0 : espessura <= 10 ? 3 : espessura == 12 || espessura == 15 ? 5 : 8;
                     break;
 
                 case "invitra":
@@ -544,14 +503,6 @@ namespace Glass.Data.DAL
                     {
                         var bisote = descrBenef.ToLower().Contains("bis") || descrBenef.ToLower().Contains("biz");
                         aresta = idSubgrupoProd == 6 && espessura <= 6 && bisote ? 2 : 4;
-                        break;
-                    }
-                case "lisboavidro":
-                    {
-                        if (idProcesso == 9 || idSubgrupoProd == 9 || idSubgrupoProd == 10)
-                            aresta = 0;
-                        else
-                            aresta = espessura <= 8 ? 3 : 4;
                         break;
                     }
             }
