@@ -25,7 +25,7 @@ namespace Glass.Data.Helper.Calculos
         public static void InicializarParaCalculo(this IProdutoCalculo produtoCalculo, GDASession sessao,
             IContainerCalculo container)
         {
-            produtoCalculo.Container = container;
+            produtoCalculo.Container = container ?? new ContainerCalculoDTO();
             produtoCalculo.DadosProduto = new DadosProdutoDTO(sessao, produtoCalculo);
 
             ObterAmbientes(container, produtoCalculo);
