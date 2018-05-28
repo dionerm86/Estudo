@@ -85,7 +85,7 @@ namespace Glass.Api.Host.Areas.App.Controllers
                 IdGrupoProd = subgrupo.IdGrupoProd,
                 Descricao = subgrupo.Descricao,
                 TipoCalculo = subgrupo.TipoCalculo,
-                IdLoja = subgrupo.IdLoja,
+                IdLoja = (int?)null,
                 TipoSubgrupo = subgrupo.TipoSubgrupo,
                 IsVidroTemperado = subgrupo.IsVidroTemperado
             };
