@@ -798,6 +798,11 @@
     <Compile Include="Financeiro\DAL\ProdutoFornecedorCotacaoCompraDAO.cs" />
     <Compile Include="Global\DAL\ProdutoFornecedorDAO.cs" />
     <Compile Include="Estoque\DAL\ProdutoInventarioEstoqueDAO.cs" />
+    <Compile Include="Pedido\DAL\PedidoDAO.1.cs" />
+    <Compile Include="Pedido\DAL\PedidoDAO.2.cs" />
+    <Compile Include="Pedido\DAL\PedidoDAO.3.cs" />
+    <Compile Include="Pedido\DAL\PedidoDAO.4.cs" />
+    <Compile Include="Pedido\DAL\PedidoDAO.5.cs" />
     <Compile Include="Pedido\DAL\PedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\ProdutoMoldeDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfAdicaoDAO.cs" />

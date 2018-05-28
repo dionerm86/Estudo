@@ -234,6 +234,14 @@ namespace Glass.Data.Model
             get { return DescrGrupo + " - " + Descricao; }
         }
 
+        public int[] IdsLoja
+        {
+            get
+            {
+                return SubgrupoProdDAO.Instance.ObterIdsLoja(null, IdSubgrupoProd).ToArray();
+            }
+        }
+
         #endregion
 	}
 }

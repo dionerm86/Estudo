@@ -337,9 +337,9 @@ namespace Glass.Data.DAL
             return ObterIdsLoja(sessao, idSubgrupoProd.Value);
         }
 
-        public List<int> ObterIdsLoja(GDASession sessao, int idSubrupoProd)
+        public List<int> ObterIdsLoja(GDASession sessao, int idSubgrupoProd)
         {
-            return ExecuteMultipleScalar<int>(sessao, "SELECT IdLoja FROM subgrupoprod_loja sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
+            return ExecuteMultipleScalar<int>(sessao, "SELECT IdLoja FROM subgrupoprod_loja sgp WHERE IdSubgrupoProd=" + idSubgrupoProd);
         }
 
         public bool ObterBloquearEcommerce(GDASession sessao, int idSubrupoProd)
