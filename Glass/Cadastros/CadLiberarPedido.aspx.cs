@@ -333,9 +333,11 @@ namespace Glass.UI.Web.Cadastros
             {
                 chkReceberEntrada.Visible = true;
                 bool isAPrazo = valorPagar > 0;
-    
+
+                var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, hdfIdsPedido.Value != null ? hdfIdsPedido.Value.Split(',').Select(f => f.StrParaInt()) : null);
+
                 if (isAPrazo && (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido || PedidoConfig.Desconto.DescontoPedidoApenasAVista ||
-                    Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido))
+                    Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido || possuiParcelaAVista))
                 {
                     List<int?> tipoVenda = GetTipoVendaPedidos();
     
@@ -554,8 +556,10 @@ namespace Glass.UI.Web.Cadastros
                         return;
                     }
                 }
-    
-                if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido)
+
+                var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, hdfBuscarIdsPedidos.Value != null ? hdfBuscarIdsPedidos.Value.Split(',').Select(f => f.StrParaInt()) : null);
+
+                if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido || possuiParcelaAVista)
                     hdfBloqueioTipoVenda.Value = ((HiddenField)grdPedido.Rows[0].FindControl("hdfTipoVenda")).Value;
 
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
@@ -861,7 +865,8 @@ namespace Glass.UI.Web.Cadastros
             // Verifica se é pedido de funcionário
             bool isPedidoFuncionario = !String.IsNullOrEmpty(idsPedido) && PedidoDAO.Instance.IsPedidoFuncionario(idsPedido);
             hdfIsPedidoFuncionario.Value = isPedidoFuncionario.ToString().ToLower();
-    
+
+            var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, idsPedido != null ? idsPedido.Split(',').Select(f => f.StrParaInt()) : null);
             bool exibirMensagemErro = false;
             if (!isGarantiaReposicao && (String.IsNullOrEmpty(idsPedido) ||
                 (Liberacao.DadosLiberacao.LiberarPedidoProdutos && String.IsNullOrEmpty(idsProdutosPedido))))
@@ -869,7 +874,7 @@ namespace Glass.UI.Web.Cadastros
                 lblMensagem.Text = "Nenhum pedido selecionado.";
                 exibirMensagemErro = true;
             }
-            else if (!isGarantiaReposicao && Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido && tipoVendaPedidos.Count > 1)
+            else if (!isGarantiaReposicao && (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido || possuiParcelaAVista) && tipoVendaPedidos.Count > 1)
             {
                 lblMensagem.Text = "Para liberar esses pedidos eles devem ser do mesmo tipo de venda.";
                 exibirMensagemErro = true;
@@ -886,7 +891,7 @@ namespace Glass.UI.Web.Cadastros
                 chkTaxaPrazo.Visible = false;
                 return;
             }
-            else if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido)
+            else if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido || possuiParcelaAVista)
                 drpTipoPagto_Load(null, EventArgs.Empty);
     
             #endregion
@@ -989,8 +994,10 @@ namespace Glass.UI.Web.Cadastros
             var parc = (Glass.UI.Web.Controls.ctrlParcelasSelecionar)sender;
             parc.ControleParcelas = ctrlParcelas1;
             parc.CampoClienteID = hdfIdCliente;
-    
-            if (Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido)
+
+            var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, hdfIdsPedido.Value != null ? hdfIdsPedido.Value.Split(',').Select(f => f.StrParaInt()) : null);
+
+            if (Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido || possuiParcelaAVista)
                 parc.CampoPedidosIDs = hdfIdsPedido;
         }
     
