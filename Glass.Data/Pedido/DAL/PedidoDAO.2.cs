@@ -2347,7 +2347,7 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        private bool DescontoPermitido(GDASession sessao, Pedido pedido)
+        public bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
                 "") + ") from produtos_pedido where idPedido=p.idPedido)";
