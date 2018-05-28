@@ -195,7 +195,7 @@ namespace Glass.Pedido.Negocios.Componentes
                 ProvedorIndicadoresFinanceiro, criarRegistro, produtoPedido, registros, ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
-                PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef, // Na atualiza configuração do sistema o total do produto não possui o valor do IPI
+                PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
                 PrecoCusto = custoProd,
                 PrazoMedio = prazoMedio,
                 PercentualICMSVenda = (decimal)produtoPedido.AliqIcms / 100m,
@@ -388,7 +388,7 @@ namespace Glass.Pedido.Negocios.Componentes
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Ambiente {ambiente.Ambiente}",
-                PrecoVendaSemIPI = total, // Na atualiza configuração do sistema o total do ambiente não possui o valor do IPI
+                PrecoVendaSemIPI = total, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
                 PrazoMedio = prazoMedio,
                 FatorICMSSubstituicao = 0,
                 PercentualComissao = percentualComissao,
