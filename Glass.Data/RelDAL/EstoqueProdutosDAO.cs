@@ -174,7 +174,7 @@ namespace Glass.Data.RelDAL
 
                 entradaEstoque,
                 PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                string.Format("({0},{1})", (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente),
+                string.Format("{0},{1}", (int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente),
                 (int)Pedido.SituacaoProducaoEnum.Entregue,
                 (int)Pedido.TipoPedidoEnum.Producao,
                 sqlProd,
