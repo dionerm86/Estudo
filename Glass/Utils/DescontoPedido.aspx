@@ -421,10 +421,10 @@
 
         var mensagem = retorno.value.split("|");
 
-        if (mensagem[0] == "1" && confirm(mensagem[1]) == true && descontoAntigo == descontoAtual && descontoAtual > 0) {
+        if (mensagem[0] == "1" && descontoAntigo == descontoAtual && descontoAtual > 0 && confirm(mensagem[1])) {
             FindControl("hdfIdFuncDesc", "input").value = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
             return true;
-        } else if (confirm(mensagem[1]) == true) {
+        } else if (confirm(mensagem[1])) {
             return true;
         } else {
             return false;
