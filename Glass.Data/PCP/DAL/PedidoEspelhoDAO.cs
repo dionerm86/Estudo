@@ -1941,12 +1941,6 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void UpdateTotalPedido(GDASession sessao, PedidoEspelho pedidoEspelho, bool forcarAtualizacao)
         {
-            if (forcarAtualizacao)
-            {
-                PedidoEspelho atual = GetElementByPrimaryKey(sessao, pedidoEspelho.IdPedido);
-                RemoveComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
-                AplicaComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
-            }
 
             // Atualiza valor do pedido
             string sql = "update pedido_espelho p set Total=Round((Select Sum(Total + coalesce(valorBenef, 0)) From produtos_pedido_espelho " +
