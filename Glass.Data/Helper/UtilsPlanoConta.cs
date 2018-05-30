@@ -1151,6 +1151,7 @@ namespace Glass.Data.Helper
                 case (uint)Pagto.FormaPagto.CartaoNaoIdentificado:
                     return GetPlanoConta(PlanoContas.VistaCartao);
                 case (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito:
+                case (uint)Glass.Data.Model.Pagto.FormaPagto.DepositoNaoIdentificado:
                     return GetPlanoConta(PlanoContas.VistaDeposito);
                 case (uint)Glass.Data.Model.Pagto.FormaPagto.Permuta:
                     return GetPlanoConta(PlanoContas.VistaPermuta);
