@@ -246,6 +246,11 @@ namespace Glass.Data.DAL
             return BuscaNaturezaOperacao(null, idNf, idLoja, idCliente, idProd);
         }
 
+        public uint? BuscaNaturezaOperacao(GDA.GDASession session, uint? idLoja, uint? idCliente, int? idProd)
+        {
+            return BuscaNaturezaOperacao(session, null, null, idLoja, idCliente, idProd, true);
+        }
+
         public uint? BuscaNaturezaOperacao(GDA.GDASession session, uint idNf, uint? idLoja, uint? idCliente, int? idProd)
         {
             return BuscaNaturezaOperacao(session, idNf, null, idLoja, idCliente, idProd, false);
