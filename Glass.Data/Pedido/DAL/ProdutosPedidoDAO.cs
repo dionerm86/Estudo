@@ -4215,7 +4215,7 @@ namespace Glass.Data.DAL
             var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
             var lojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
 
-            if (!insersaoComposicao && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
+            if (!insersaoComposicao && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
                 throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
             /* Chamados 52702 e 52911.
@@ -4231,6 +4231,8 @@ namespace Glass.Data.DAL
                         "Portanto, não é possível inserir o produto {0}, pois, ele possui mais de 2 produtos em sua hierarquia de composição.",
                         ProdutoDAO.Instance.GetCodInterno(session, (int)objInsert.IdProd)));
             }
+
+            CarregarNaturezaOperacao(session, objInsert);
 
             DescontoFormaPagamentoDadosProduto descontoFormPagtoProdNovo = null;
             //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
@@ -4770,6 +4772,8 @@ namespace Glass.Data.DAL
                 if (!PedidoReferenciadoPermiteInsercao(sessao, objUpdate))
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
+                CarregarNaturezaOperacao(sessao, objUpdate);
+
                 // 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
                 //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
@@ -5233,6 +5237,33 @@ namespace Glass.Data.DAL
                 new GDA.GDAParameter("?percentual", percentualRentabilidade),
                 new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
                 new GDA.GDAParameter("?id", idProdPed));
+        }
+
+        #endregion
+
+        #region Natureza Operação
+
+        /// <summary>
+        /// Realiza a atualização da natureza de operação no produto do pedido.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoPedido"></param>
+        private void CarregarNaturezaOperacao(GDASession sessao, ProdutosPedido produtoPedido)
+        {
+            // Recupera os dados do pedido
+            var pedido = objPersistence.LoadResult(sessao,
+                "SELECT IdLoja, IdCli FROM pedido WHERE IdPedido=?id",
+                new GDAParameter("?id", produtoPedido.IdPedido))
+                .Select(f => new
+                {
+                    IdLoja = f.GetUInt32("IdLoja"),
+                    IdCli = f.GetUInt32("IdCli")
+                }).FirstOrDefault();
+
+            var idNaturezaOperacao = RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(
+                sessao, pedido.IdLoja, pedido.IdCli, (int)produtoPedido.IdProd);
+
+            produtoPedido.IdNaturezaOperacao = idNaturezaOperacao;
         }
 
         #endregion
