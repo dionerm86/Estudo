@@ -224,7 +224,6 @@ namespace Glass.Global.Negocios.Componentes
                 .From<Data.Model.SubgrupoProd>("s")
                 .InnerJoin<Data.Model.GrupoProd>("s.IdGrupoProd = g.IdGrupoProd", "g")
                 .LeftJoin<Data.Model.Cliente>("s.IdCli = c.IdCli", "c")
-                .LeftJoin<Data.Model.Loja>("s.IdLoja = l.IdLoja", "l")
                 .OrderBy("Descricao")
                 .Select(@"s.IdSubgrupoProd, s.IdGrupoProd, s.Descricao, s.TipoCalculo,
                           s.TipoCalculoNf, s.BloquearEstoque, s.NaoAlterarEstoque,
@@ -233,7 +232,7 @@ namespace Glass.Global.Negocios.Componentes
                           s.NumeroDiasMinimoEntrega, s.DiaSemanaEntrega,
                           s.GeraVolume, s.TipoSubgrupo, s.IdCli,
                           g.TipoCalculo AS TipoCalculoGrupo, g.TipoCalculoNf AS TipoCalculoNfGrupo, c.Nome as NomeCliente,
-                          s.LiberarPendenteProducao, s.IdLoja, s.PermitirItemRevendaNaVenda, l.NomeFantasia as Loja, s.BloquearEcommerce");
+                          s.LiberarPendenteProducao, s.PermitirItemRevendaNaVenda, s.BloquearEcommerce");
 
             if (idGrupoProd.HasValue && idGrupoProd.Value > 0)
                 consulta.WhereClause.And("IdGrupoProd=?idGrupoProd").Add("?idGrupoProd", idGrupoProd.Value);
