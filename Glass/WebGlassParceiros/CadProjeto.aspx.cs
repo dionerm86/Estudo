@@ -492,7 +492,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                     
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                    if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                    if (idLojaProjeto > 0 && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
                         return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                     /* Chamado 48322. */
                     else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())
@@ -561,7 +561,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                if (idLojaProjeto > 0 && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
                     return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                 /* Chamado 48322. */
                 else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())

@@ -3678,7 +3678,7 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
-                if (!idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
+                if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
                     throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;

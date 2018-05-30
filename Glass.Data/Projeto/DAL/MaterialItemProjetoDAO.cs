@@ -673,7 +673,7 @@ namespace Glass.Data.DAL
 
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(sessao, prod.IdSubgrupoProd.Value);
 
-                    if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                    if (idLojaProjeto > 0 && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
                         throw new Exception(string.Format("O produto {0} não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes das lojas do projeto.", prod.Descricao));
                     /* Chamado 48322. */
                     else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())
