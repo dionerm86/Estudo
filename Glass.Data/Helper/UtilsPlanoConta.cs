@@ -1295,6 +1295,7 @@ namespace Glass.Data.Helper
                 case (uint)Pagto.FormaPagto.Permuta:
                     return GetPlanoConta(PlanoContas.RecPrazoPermuta);
                 case (uint)Pagto.FormaPagto.Deposito:
+                case (uint)Pagto.FormaPagto.DepositoNaoIdentificado:
                     return GetPlanoConta(PlanoContas.RecPrazoDeposito);
                 case (uint)Pagto.FormaPagto.Prazo:
                     return GetPlanoConta(PlanoContas.Prazo);
