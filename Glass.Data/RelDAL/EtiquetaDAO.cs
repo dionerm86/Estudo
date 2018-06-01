@@ -1251,6 +1251,19 @@ namespace Glass.Data.RelDAL
 
                 if (prodImp.IdProdPed > 0)
                 {
+                    var idMaterItemProj = Instance.ObtemValorCampo<uint>(session, "idMaterItemProj", "idProdPed=" + prodImp.IdProdPed);
+                    var pecaProjMod = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj);
+
+                    if (pecaProjMod == null)
+                    {
+                        var idProduto = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, prodImp.IdProdPed.Value);
+                        etiqueta.Flags = string.Join(",", FlagArqMesaDAO.Instance.ObtemPorProduto(session, (int)idProduto, false)?.Select(f => f.Descricao));
+                    }
+                    else
+                    {
+                        etiqueta.Flags = string.Join(",", FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true)?.Select(f => f.Descricao));
+                    }
+
                     if (PCPConfig.EmpresaGeraArquivoFml)
                     {
                         etiqueta.PossuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(session, prodImp.IdProdPed.Value, etiqueta.NumEtiqueta, true);

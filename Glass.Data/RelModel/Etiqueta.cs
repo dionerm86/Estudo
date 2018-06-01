@@ -99,6 +99,8 @@ namespace Glass.Data.RelModel
 
         public string ImpressoPor { get; set; }
 
+        public string Flags { get; set; }
+
         /// <summary>
         /// Dados do Cód. de Barras
         /// </summary>
