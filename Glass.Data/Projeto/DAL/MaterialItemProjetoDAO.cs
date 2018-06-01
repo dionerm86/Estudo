@@ -1758,6 +1758,8 @@ namespace Glass.Data.DAL
                 }
 
                 CalcTotais(session, ref objUpdate, false);
+                base.Update(session, objUpdate);
+
                 AtualizaBenef(session, objUpdate.IdMaterItemProj, objUpdate.Beneficiamentos, container);
             }
             catch (Exception ex)
