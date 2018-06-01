@@ -639,7 +639,7 @@ namespace Glass.Data.DAL
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
 
-                    if (DateTime.Now > objUpdate.DataEntrega)
+                    if (DateTime.Now.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
                         throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
@@ -930,6 +930,12 @@ namespace Glass.Data.DAL
 
                 #endregion
 
+                #region Atualização do total do pedido
+
+                UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
+
+                #endregion
+
                 #region Atualização dos totais do pedido espelho
 
                 // Atualiza os dados do pedido espelho.
@@ -1014,12 +1020,6 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
-
-                #endregion
-
-                #region Atualização do total do pedido
-
-                UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
 
                 #endregion
 
