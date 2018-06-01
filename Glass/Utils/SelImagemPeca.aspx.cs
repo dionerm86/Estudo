@@ -79,20 +79,22 @@ namespace Glass.UI.Web.Utils
 
                         if (Request["tipo"] == "pedido" && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) && (ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido) || Request["pecaAvulsa"] == "True"))
                         {
-                            var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(h.Value.StrParaUint());
-                            ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, f.FileBytes);
+                            //var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(h.Value.StrParaUint());
+                            var idProdPed = h.Value.StrParaUint();
+                            var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(idProdPed);
+                            ManipulacaoImagem.SalvarImagem(urlImagem, f.FileBytes);
 
                             // Cria Log de alteração da Imagem do Produto Pedido
                             LogAlteracaoDAO.Instance.Insert(new LogAlteracao
                             {
                                 Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                                IdRegistroAlt = (int)pp.IdProdPed,
+                                IdRegistroAlt = (int)idProdPed,
                                 Campo = "Imagem Produto Pedido",
                                 ValorAtual = f.FileName,
                                 DataAlt = DateTime.Now,
                                 IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                                Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
-                                NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
+                                Referencia = "Imagem do Produto Pedido " + idProdPed,
+                                NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPed)
                             });
 
                             Glass.MensagemAlerta.ShowMsg("Imagens alteradas.", Page);
@@ -145,10 +147,9 @@ namespace Glass.UI.Web.Utils
 
                 if (Request["tipo"] == "pedido" && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) && ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido))
                 {
-                    var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(h.Value.StrParaUint());
-
-                    if (File.Exists(pp.ImagemUrlSalvarItem))
-                        File.Delete(pp.ImagemUrlSalvarItem);
+                    var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(h.Value.StrParaUint());
+                    if (File.Exists(urlImagem))
+                        File.Delete(urlImagem);
 
                     Response.Redirect(Request.Url.ToString());
                 }
@@ -190,8 +191,8 @@ namespace Glass.UI.Web.Utils
 
                 if (Request["tipo"] == "pedido" && !PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) && ProdutosPedidoDAO.Instance.TemProdutoLamComposicao(idPedido))
                 {
-                    var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(h.Value.StrParaUint());
-                    ((ImageButton)sender).Visible = File.Exists(pp.ImagemUrlSalvarItem);
+                    var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(h.Value.StrParaUint());
+                    ((ImageButton)sender).Visible = File.Exists(urlImagem);
                     return;
                 }
 

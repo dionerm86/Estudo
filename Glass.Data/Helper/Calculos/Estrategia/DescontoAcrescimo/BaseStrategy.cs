@@ -102,8 +102,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         private decimal AplicarBeneficiamentos(decimal percentual, IProdutoCalculo produto)
         {
             decimal valorAplicado = 0;
+            var beneficiamentos = produto.Beneficiamentos ?? GenericBenefCollection.Empty;
 
-            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.Empty))
+            foreach (var beneficiamento in beneficiamentos)
             {
                 decimal valorCalculado = Math.Round(percentual / 100 * beneficiamento.TotalBruto, 2);
                 valorAplicado += valorCalculado;
@@ -111,6 +112,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
                 AplicarValorBeneficiamento(beneficiamento, valorCalculado);
             }
 
+            produto.Beneficiamentos = beneficiamentos;
             return valorAplicado;
         }
 
@@ -176,7 +178,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
             return Math.Round(valorAplicado, 2);
         }
 
-        private void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
+        protected virtual void AplicarValorResidual(GDASession sessao, IProdutoCalculo produto, decimal valorResidual)
         {
             if (produto != null && valorResidual != 0)
             {
@@ -187,10 +189,14 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
 
         private void RemoverBeneficiamentos(IProdutoCalculo produto)
         {
-            foreach (var beneficiamento in (produto.Beneficiamentos ?? GenericBenefCollection.Empty))
+            var beneficiamentos = produto.Beneficiamentos ?? GenericBenefCollection.Empty;
+
+            foreach (var beneficiamento in beneficiamentos)
             {
                 RemoverValorBeneficiamento(beneficiamento);
             }
+
+            produto.Beneficiamentos = beneficiamentos;
         }
 
         private void RemoverProduto(IProdutoCalculo produto)

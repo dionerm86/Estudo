@@ -3106,6 +3106,7 @@ namespace Glass.Data.DAL
                 Tipo = tipo,
                 TipoVenda = tipoVenda,
                 IdParcela = (uint)idParcela,
+                TipoEntrega = tipoEntrega.GetValueOrDefault(),
                 Cliente = new ClienteDTO(() => idCliente ?? 0)
             };
 
@@ -5022,15 +5023,31 @@ namespace Glass.Data.DAL
                 Cliente = new ClienteDTO(() => idCliente)
             };
 
-            ValorTotal.Instance.Calcular(
-                sessao,
-                container,
-                produto,
-                (ArredondarAluminio)arredondarAluminio,
-                calcMult5,
-                numeroBenef,
-                usarChapaVidro
-            );
+            if (nf)
+            {
+                ValorTotal.Instance.Calcular(
+                    sessao,
+                    container,
+                    produto,
+                    (ArredondarAluminio)arredondarAluminio,
+                    calcMult5,
+                    nf,
+                    numeroBenef,
+                    usarChapaVidro
+               );
+            }
+            else
+            {
+                ValorTotal.Instance.Calcular(
+                    sessao,
+                    container,
+                    produto,
+                    (ArredondarAluminio)arredondarAluminio,
+                    calcMult5,
+                    numeroBenef,
+                    usarChapaVidro
+                );
+            }
 
             custoProd = produto.CustoProd;
             altura = produto.Altura;

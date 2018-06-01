@@ -58,6 +58,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDPROCESSO")]
         public uint? IdProcesso { get; set; }
 
+        [PersistenceProperty("IdNaturezaOperacao")]
+        public uint? IdNaturezaOperacao { get; set; }
+
         [PersistenceProperty("QTDE")]
         public float Qtde { get; set; }
 
@@ -1122,12 +1125,6 @@ namespace Glass.Data.Model
 
                 return null;
             }
-        }
-
-        [XmlIgnore]
-        public string ImagemUrlSalvarItem
-        {
-            get { return Utils.GetPecaComercialPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg"; }
         }
 
         [XmlIgnore]

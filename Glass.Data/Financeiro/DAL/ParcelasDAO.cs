@@ -177,6 +177,21 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<bool>(sessao, "ParcelaAVista", string.Format("IdParcela={0}", idParcela));
         }
 
+        /// <summary>
+        /// Verifica se algum dos pedidos passados possui uma parcela à vista.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idsPedidos"></param>
+        /// <returns></returns>
+        public bool VerificarPossuiParcelaAVista(GDASession sessao, IEnumerable<int> idsPedidos)
+        {
+            var sql = $@"SELECT * FROM parcelas P
+                        INNER JOIN PEDIDO PED ON (P.IDPARCELA = PED.IDPARCELA)
+                        WHERE PED.IDPEDIDO IN ({((idsPedidos != null && idsPedidos.Count() > 0) ? string.Join(",", idsPedidos) : "0")}) AND P.PARCELAAVISTA=1";
+
+            return objPersistence.ExecuteSqlQueryCount(sql) > 0;
+        }
+
         public GenericModel[] GetNumeroParcelas()
         {
             string sql = "select concat('0,', cast(group_concat(distinct numParcelas) as char)) from parcelas where numParcelas>0 order by numParcelas";
@@ -289,7 +304,9 @@ namespace Glass.Data.DAL
                 retorno = GetByClienteFornecedor(idCliente, idFornecedor, true, tipo);
             }
 
-            if (!String.IsNullOrEmpty(idsPedidos) && Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido)
+            var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, idsPedidos != null ? idsPedidos.Split(',').Select(f => f.StrParaInt()) : null);
+
+            if (!String.IsNullOrEmpty(idsPedidos) && (Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido || possuiParcelaAVista))
             {
                 uint? idMenorPrazo = GetMenorPrazo(idsPedidos);
                 if (idMenorPrazo > 0)

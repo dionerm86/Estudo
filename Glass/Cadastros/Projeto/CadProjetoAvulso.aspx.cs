@@ -613,7 +613,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     {
                         var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                        if (!idsLojaSubgrupoProd.Any(f => f == idLoja))
+                        if (idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLoja))
                             return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                     }
                 }
@@ -691,7 +691,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 {
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(null, prod.IdSubgrupoProd.Value);
 
-                    if (!idsLojaSubgrupoProd.Any(f => f == idLoja))
+                    if (idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLoja))
                         return "Erro;Esse produto não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes da loja do pedido/projeto.";
                 }
             }

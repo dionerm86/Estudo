@@ -397,6 +397,22 @@
                                 </asp:DropDownList>
                             </InsertItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Transportador">
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                    DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                    SelectedValue='<%# Bind("IdTransportador") %>'>
+                                    <asp:ListItem></asp:ListItem>
+                                </asp:DropDownList>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:DropDownList ID="drpTransportador" runat="server" AppendDataBoundItems="True"
+                                    DataSourceID="odsTransportador" DataTextField="Name" DataValueField="Id"
+                                    SelectedValue='<%# Bind("IdTransportador") %>'>
+                                    <asp:ListItem></asp:ListItem>
+                                </asp:DropDownList>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">
                             <EditItemTemplate>
                                 <asp:Button ID="btnUpdate" runat="server" CommandName="Update" Text="Atualizar" />
@@ -433,6 +449,9 @@
                     <SelectParameters>
                         <asp:QueryStringParameter Name="placa" QueryStringField="placa" Type="String" />
                     </SelectParameters>
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
+                    SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

@@ -6,6 +6,7 @@ using Glass.Data.Helper;
 using Glass.Configuracoes;
 using System.Linq;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -490,7 +491,11 @@ namespace Glass.Data.DAL
             var cobrarTranspasse = ProjetoConfig.CobrarTranspasse || isBoxPadrao;
 
             var materiaisItemProjeto = new List<IMaterialItemProjeto>();
-            var container = ObtemContainer(sessao, itemProjeto);
+            var container = ObtemContainer(sessao, itemProjeto) ?? new ContainerCalculoDTO()
+            {
+                TipoEntrega = tipoEntrega,
+                Cliente = new ClienteDTO(() => idCliente.GetValueOrDefault())
+            };
 
             // Insere as peças de vidro, tirando a diferença de projeto das peças
             for (var i = 0; i < pecasProjetoModelo.Count; i++)
@@ -584,7 +589,7 @@ namespace Glass.Data.DAL
 
                 ValorBruto.Instance.Calcular(sessao, container, material);
 
-                CalcTotais(sessao, ref material, false);
+                CalcTotais(sessao, ref material, false, idCliente);
 
                 materiaisItemProjeto.Add(material);
             }
@@ -668,7 +673,7 @@ namespace Glass.Data.DAL
 
                     var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLoja(sessao, prod.IdSubgrupoProd.Value);
 
-                    if (idLojaProjeto > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
+                    if (idLojaProjeto > 0 && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == idLojaProjeto))
                         throw new Exception(string.Format("O produto {0} não pode ser utilizado, pois, as lojas do seu subgrupo são diferentes das lojas do projeto.", prod.Descricao));
                     /* Chamado 48322. */
                     else if (idLojaProjeto == 0 && idsLojaSubgrupoProd.Any())

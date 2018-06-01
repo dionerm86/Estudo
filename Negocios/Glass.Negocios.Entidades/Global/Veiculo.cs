@@ -379,6 +379,24 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// situação.
+        /// </summary>
+        public int? IdTransportador
+        {
+            get { return DataModel.IdTransportador; }
+            set
+            {
+                if (DataModel.IdTransportador != value &&
+                    RaisePropertyChanging("IdTransportador", value))
+                {
+                    DataModel.IdTransportador = value;
+                    RaisePropertyChanged("IdTransportador");
+                }
+            }
+        }
+
+
         #endregion
 
         #region Construtores

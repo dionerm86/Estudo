@@ -54,52 +54,59 @@ namespace Glass.Api.Host.Areas.App.Controllers
         [Colosoft.Web.Http.MultiPostParameters]
         public Glass.Api.Projeto.ItemProjeto CalcularMedidas(int idTipoEntrega, Glass.Api.Projeto.ItemProjeto itemProjeto)
         {
-            var pecasProjMod = PecaProjetoModeloDAO.Instance.GetByModelo((uint)itemProjeto.IdProjetoModelo);
-            var pecasMateriaisProjeto = ItemProjetoDAO.Instance.CriarPecasMateriaisProjeto(itemProjeto, pecasProjMod, itemProjeto.Pecas, itemProjeto.Medidas, idTipoEntrega, UserInfo.GetUserInfo.IdCliente.GetValueOrDefault());
-            var medidasProjetoModelo = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(null, (uint)itemProjeto.IdProjetoModelo, true);
-
-            // Carrega a relação dos identificador único da peça associado a peça do modelo
-            var pecasUids = itemProjeto.Pecas.Select(f => new
+            try
             {
-                Uid = f.IdPecaItemProj,
-                IdPecaProjMod = f.IdPecaProjMod
-            }).ToList();
+                var pecasProjMod = PecaProjetoModeloDAO.Instance.GetByModelo((uint)itemProjeto.IdProjetoModelo);
+                var pecasMateriaisProjeto = ItemProjetoDAO.Instance.CriarPecasMateriaisProjeto(itemProjeto, pecasProjMod, itemProjeto.Pecas, itemProjeto.Medidas, idTipoEntrega, UserInfo.GetUserInfo.IdCliente.GetValueOrDefault());
+                var medidasProjetoModelo = MedidaProjetoModeloDAO.Instance.GetByProjetoModelo(null, (uint)itemProjeto.IdProjetoModelo, true);
 
-            itemProjeto.Pecas.Clear();
-            itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto
-                .Select(f => new Glass.Api.Projeto.PecaItemProjeto(
-                    f,
-                    // Recupera o identificador único da peça 
-                    pecasUids.FirstOrDefault(pecaUid => pecaUid.IdPecaProjMod == f.IdPecaProjMod)?.Uid ?? Guid.NewGuid())));
-
-            if (itemProjeto.Pecas.All(f => !f.IdProd.HasValue || f.IdProd.Value == 0))
-                throw new Exception("Não foram encontrados vidros compatíveis com a espessura e cor informados.");
-
-            itemProjeto.Materiais.Clear();
-            itemProjeto.Materiais.AddRange(pecasMateriaisProjeto.MateriaisItemProjeto.Select(f => new Glass.Api.Projeto.MaterialItemProjeto(f)));
-
-            itemProjeto.PosicoesPeca.Clear();
-            foreach (var p in PosicaoPecaModeloDAO.Instance.GetPosicoes((uint)itemProjeto.IdProjetoModelo))
-            {
-                p.IdItemProjeto = itemProjeto.IdItemProjeto;
-                p.Valor = UtilsProjeto.CalcExpressao(null, p.Calc, itemProjeto, itemProjeto.Pecas, medidasProjetoModelo, itemProjeto.Medidas, null);
-
-                itemProjeto.PosicoesPeca.Add(new Projeto.PosicaoPeca(p));
-            }
-
-            foreach (var peca in itemProjeto.Pecas)
-            {
-                foreach (var p in PosicaoPecaIndividualDAO.Instance.GetPosicoes(peca.IdPecaProjMod, peca.Item.StrParaInt()))
+                // Carrega a relação dos identificador único da peça associado a peça do modelo
+                var pecasUids = itemProjeto.Pecas.Select(f => new
                 {
-                    p.IdPecaItemProj = peca.IdPecaItemProj;
+                    Uid = f.IdPecaItemProj,
+                    IdPecaProjMod = f.IdPecaProjMod
+                }).ToList();
+
+                itemProjeto.Pecas.Clear();
+                itemProjeto.Pecas.AddRange(pecasMateriaisProjeto.PecasItemProjeto
+                    .Select(f => new Glass.Api.Projeto.PecaItemProjeto(
+                        f,
+                        // Recupera o identificador único da peça 
+                        pecasUids.FirstOrDefault(pecaUid => pecaUid.IdPecaProjMod == f.IdPecaProjMod)?.Uid ?? Guid.NewGuid())));
+
+                if (itemProjeto.Pecas.All(f => !f.IdProd.HasValue || f.IdProd.Value == 0))
+                    throw new Exception("Não foram encontrados vidros compatíveis com a espessura e cor informados.");
+
+                itemProjeto.Materiais.Clear();
+                itemProjeto.Materiais.AddRange(pecasMateriaisProjeto.MateriaisItemProjeto.Select(f => new Glass.Api.Projeto.MaterialItemProjeto(f)));
+
+                itemProjeto.PosicoesPeca.Clear();
+                foreach (var p in PosicaoPecaModeloDAO.Instance.GetPosicoes((uint)itemProjeto.IdProjetoModelo))
+                {
+                    p.IdItemProjeto = itemProjeto.IdItemProjeto;
                     p.Valor = UtilsProjeto.CalcExpressao(null, p.Calc, itemProjeto, itemProjeto.Pecas, medidasProjetoModelo, itemProjeto.Medidas, null);
 
-                    peca.PosicoesPeca.Add(new Projeto.PosicaoPecaIndividual(p));
+                    itemProjeto.PosicoesPeca.Add(new Projeto.PosicaoPeca(p));
                 }
+
+                foreach (var peca in itemProjeto.Pecas)
+                {
+                    foreach (var p in PosicaoPecaIndividualDAO.Instance.GetPosicoes(peca.IdPecaProjMod, peca.Item.StrParaInt()))
+                    {
+                        p.IdPecaItemProj = peca.IdPecaItemProj;
+                        p.Valor = UtilsProjeto.CalcExpressao(null, p.Calc, itemProjeto, itemProjeto.Pecas, medidasProjetoModelo, itemProjeto.Medidas, null);
+
+                        peca.PosicoesPeca.Add(new Projeto.PosicaoPecaIndividual(p));
+                    }
+                }
+
+
+                return itemProjeto;
             }
-
-
-            return itemProjeto;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 

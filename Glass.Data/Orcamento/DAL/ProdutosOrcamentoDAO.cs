@@ -719,7 +719,14 @@ namespace Glass.Data.DAL
                 decimal total = decimal.Parse(objPersistence.ExecuteScalar(sessao, sql).ToString());
 
                 if (!PedidoConfig.RatearDescontoProdutos)
-                    total -= prodOrca.ValorDescontoProd;
+                {
+                    var valorDesconto = prodOrca.Desconto;
+                    if (prodOrca.TipoDesconto == 1)
+                    {
+                        valorDesconto = Math.Round(total * (valorDesconto / 100), 2);
+                    }
+                    total -= valorDesconto;
+                }
 
                 sql = "update produtos_orcamento set custo=?custo, valorProd=?total / Coalesce(qtde, 1), total=?total where idProd=" + prodOrca.IdProd;
                 objPersistence.ExecuteCommand(sessao, sql,  new GDAParameter("?custo", custo), new GDAParameter("?total", total));
@@ -729,6 +736,16 @@ namespace Glass.Data.DAL
                 prodOrca.Total = ItemProjetoDAO.Instance.GetTotalItemProjetoAluminio(sessao, prodOrca.IdItemProjeto.Value);
                 if (prodOrca.Total != null)
                 {
+                    if (!PedidoConfig.RatearDescontoProdutos)
+                    {
+                        var valorDesconto = prodOrca.Desconto;
+                        if (prodOrca.TipoDesconto == 1)
+                        {
+                            valorDesconto = Math.Round(prodOrca.Total.GetValueOrDefault() * (valorDesconto / 100), 2);
+                        }
+                        prodOrca.Total -= valorDesconto;
+                    }
+
                     prodOrca.ValorUnitarioBruto = prodOrca.Total.Value / (prodOrca.Qtde > 0 ? (decimal)prodOrca.Qtde.Value : 1);
                     
                     objPersistence.ExecuteCommand(sessao, @"Update produtos_orcamento Set totalBruto=?total, total=?total, valorUnitBruto=?valorUnit
@@ -1000,7 +1017,7 @@ namespace Glass.Data.DAL
 
         private bool ValidaDesconto(GDASession session, uint idOrcamento, int tipoDesconto, decimal desconto, decimal totalBruto)
         {
-            if (desconto > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento < 100)
+            if (desconto > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento > 0 && OrcamentoConfig.Desconto.DescontoMaximoOrcamento <= 100)
             {
                 // Calcula o desconto máximo permitido verificando se foi lançado algum desconto pelo administrador
                 uint idFunc = UserInfo.GetUserInfo.CodUser;
@@ -1126,8 +1143,6 @@ namespace Glass.Data.DAL
                             }
                     }
 
-                    CalculaDescontoEValorBrutoProduto(sessao, objInsert, orcamento);
-
                     uint? idCliente = OrcamentoDAO.Instance.ObtemIdCliente(sessao, objInsert.IdOrcamento);
 
                     if (idCliente > 0 && objInsert.IdProduto.Value > 0)
@@ -1140,6 +1155,8 @@ namespace Glass.Data.DAL
                             true,
                             objInsert.Beneficiamentos.CountAreaMinimaSession(sessao));
                     }
+
+                    CalculaDescontoEValorBrutoProduto(sessao, objInsert, orcamento);
                 }
 
                 returnValue = base.Insert(sessao, objInsert);
@@ -1285,7 +1302,7 @@ namespace Glass.Data.DAL
                 if (
                     !ValidaDesconto(session, objUpdate.IdOrcamento, objUpdate.TipoDesconto,
                         objUpdate.Desconto,
-                        prodOrca.TotalBruto))
+                        prodOrca.IdProdParent == null ? prodOrca.Total.GetValueOrDefault() : prodOrca.TotalBruto))
                     throw new Exception("Desconto acima do permitido.");
 
                 // Atualiza o acréscimo e o desconto

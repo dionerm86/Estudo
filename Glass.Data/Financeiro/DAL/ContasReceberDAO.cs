@@ -217,7 +217,7 @@ namespace Glass.Data.DAL
             if (selecionar && Glass.Configuracoes.PedidoConfig.LiberarPedido)
             {
                 var codCliente = FinanceiroConfig.RelatorioContasReceber.ExibirPedCli ? 
-                    "concat(cast(ped.idPedido as char), ' (',ped.codCliente, ')')" : "ped.idPedido";
+                    "COALESCE(concat(cast(ped.idPedido as char), ' (',ped.codCliente, ')'),ped.idPedido)" : "ped.idPedido";
 
                 campos += @", lp.dataLiberacao, (
                     select Cast(group_concat(distinct "+ codCliente + @" separator ', ') as char)    
@@ -6745,8 +6745,8 @@ namespace Glass.Data.DAL
                     sql = "select count(*) from (" + sql + ") as temp";
             }
 
-            if (!agrupar)
-                sql = sql + "Group By c.IdContaR";
+            if (!agrupar && selecionar)
+                sql = sql + " Group By c.IdContaR";
 
             return sql.Replace("$$$", criterio);
         }

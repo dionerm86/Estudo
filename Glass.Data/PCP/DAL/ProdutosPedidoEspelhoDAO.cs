@@ -3429,6 +3429,34 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Natureza Operação
+
+        /// <summary>
+        /// Realiza a atualização da natureza de operação no produto do pedido.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="pedidoEspelho"></param>
+        /// <param name="produtoPedidoEspelho"></param>
+        private void CarregarNaturezaOperacao(GDASession sessao, ProdutosPedidoEspelho produtoPedidoEspelho)
+        {
+            // Recupera os dados do pedido
+            var pedido = objPersistence.LoadResult(sessao,
+                "SELECT IdLoja, IdCli FROM pedido WHERE IdPedido=?id",
+                new GDAParameter("?id", produtoPedidoEspelho.IdPedido))
+                .Select(f => new
+                {
+                    IdLoja = f.GetUInt32("IdLoja"),
+                    IdCli = f.GetUInt32("IdCli")
+                }).FirstOrDefault();
+
+            var idNaturezaOperacao = RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(
+                sessao, pedido.IdLoja, pedido.IdCli, (int)produtoPedidoEspelho.IdProd);
+
+            produtoPedidoEspelho.IdNaturezaOperacao = idNaturezaOperacao;
+        }
+
+        #endregion
+
         #region Métodos sobrescritos
 
         #region Clone
@@ -3526,6 +3554,7 @@ namespace Glass.Data.DAL
             clone.IdAplicacao = prodPedEsp.IdAplicacao;
             clone.IdItemProjeto = prodPedEsp.IdItemProjeto;
             clone.IdProcesso = prodPedEsp.IdProcesso;
+            clone.IdNaturezaOperacao = prodPedEsp.IdNaturezaOperacao;
             clone.IdProd = prodPedEsp.IdProd;
             clone.Largura = prodPedEsp.Largura;
             clone.Qtde = prodPedEsp.Qtde;
@@ -3596,6 +3625,8 @@ namespace Glass.Data.DAL
             {
                 objInsert.Espessura = ProdutoDAO.Instance.ObtemEspessura(session, (int)objInsert.IdProd);
             }
+
+            CarregarNaturezaOperacao(session, objInsert);
 
             // Cria uma cópia do produto na tabela ProdutosPedido, com referência ao produto que está sendo inserido e invisível ao pedido.
             objInsert.IdProdPed = base.Insert(session, objInsert);
@@ -3678,7 +3709,7 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
-                if (!idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
+                if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
                     throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
@@ -3737,7 +3768,7 @@ namespace Glass.Data.DAL
                     !isPedidoProducaoCorte,
                     objInsert.Beneficiamentos.CountAreaMinimaSession(session)
                 );
-                
+
                 returnValue = InsertBase(session, objInsert, pedidoEspelho);
 
                 try
@@ -3872,6 +3903,8 @@ namespace Glass.Data.DAL
         internal int UpdateBase(GDASession sessao, ProdutosPedidoEspelho objUpdate, IContainerCalculo container)
         {
             CalculaDescontoEValorBrutoProduto(sessao, objUpdate, container);
+            CarregarNaturezaOperacao(sessao, objUpdate);
+
             return base.Update(sessao, objUpdate);
         }
 
@@ -3956,6 +3989,9 @@ namespace Glass.Data.DAL
 
                 /* Chamado 54462. */
                 objUpdate.ValorDescontoQtde = 0;
+
+                var pedidoEspelho = container as PedidoEspelho ?? PedidoEspelhoDAO.Instance.GetElement(sessao, objUpdate.IdPedido);
+
                 UpdateBase(sessao, objUpdate, container);
 
                 try

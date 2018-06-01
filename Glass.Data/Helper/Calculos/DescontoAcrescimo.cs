@@ -104,7 +104,7 @@ namespace Glass.Data.Helper.Calculos
         public bool AplicarDesconto(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
-            bool aplicado = AplicarDesconto(sessao, container, tipoDesconto, desconto, produtos, true);
+            var aplicado = AplicarDesconto(sessao, container, tipoDesconto, desconto, produtos, true);
             RemoverDescontosConfiguracao(sessao, container, produtos);
 
             return aplicado;
@@ -132,7 +132,7 @@ namespace Glass.Data.Helper.Calculos
         public bool AplicarDescontoAmbiente(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
-            bool aplicado = AplicarDescontoAmbiente(sessao, container, tipoDesconto, desconto, produtos, true);
+            var aplicado = AplicarDescontoAmbiente(sessao, container, tipoDesconto, desconto, produtos, true);
             RemoverDescontosConfiguracao(sessao, container, produtos);
 
             return aplicado;
@@ -329,6 +329,8 @@ namespace Glass.Data.Helper.Calculos
                 reaplicado = ReaplicarComissao(sessao, container, produtos, true)
                     || reaplicado;
 
+                RemoverDescontosConfiguracao(sessao, container, produtos);
+
                 return reaplicado;
             }
 
@@ -369,7 +371,10 @@ namespace Glass.Data.Helper.Calculos
         {
             if (reaplicar && container.PercComissao > 0)
             {
-                return AplicarComissao(sessao, container, container.PercComissao, produtos);
+                bool aplicado = AplicarComissao(sessao, container, container.PercComissao, produtos);
+                RemoverDescontosConfiguracao(sessao, container, produtos);
+
+                return aplicado;
             }
 
             return false;

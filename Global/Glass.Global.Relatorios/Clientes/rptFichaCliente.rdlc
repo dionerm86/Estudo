@@ -196,7 +196,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Iif(CInt(Fields!TipoPessoa.Value.ToString()) = Asc("J"), "Nome fantasia:", "Apelido:")</Value>
+                                                <Value>Apelido/Nome Fantasia:</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                   <FontWeight>Bold</FontWeight>
@@ -238,7 +238,7 @@
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!NomeExibir.Value</Value>
+                                                <Value>=Fields!NomeFantasia.Value</Value>
                                                 <Style>
                                                   <FontSize>8pt</FontSize>
                                                 </Style>
@@ -1288,7 +1288,7 @@
                               </TablixMember>
                             </TablixMembers>
                           </TablixRowHierarchy>
-                          <DataSetName>Cliente</DataSetName>
+                          <DataSetName>FichaCliente</DataSetName>
                           <Top>0.85cm</Top>
                           <Height>4.17976cm</Height>
                           <Width>18.74999cm</Width>

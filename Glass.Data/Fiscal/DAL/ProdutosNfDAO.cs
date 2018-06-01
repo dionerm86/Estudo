@@ -1664,7 +1664,10 @@ namespace Glass.Data.DAL
                 objUpdate.InfAdic = prodNfOld.InfAdic;
 
                 objUpdate.CstCofins = objUpdate.CstPis;
-                objUpdate.BcCofins = objUpdate.BcPis;               
+                objUpdate.BcCofins = objUpdate.BcPis;
+                objUpdate.VAFRMM = prodNfOld.VAFRMM;
+                objUpdate.TpViaTransp = prodNfOld.TpViaTransp;
+                objUpdate.TpIntermedio = prodNfOld.TpIntermedio;
 
                 // Verifica se a nota não está finalizada (não é correção manual da nota) ou se não é de importação
                 if (!NotaFiscalDAO.Instance.IsFinalizada(session, objUpdate.IdNf) && !NotaFiscalDAO.Instance.IsNotaFiscalImportacao(session, objUpdate.IdNf))

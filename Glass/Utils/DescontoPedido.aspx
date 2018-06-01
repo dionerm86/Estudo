@@ -398,7 +398,40 @@
             }
         }
     }
-    
+
+    function verificarDescontoPermitido() {
+
+        // Verifica se o desconto que já exista no pedido pode ser mantido pelo usuário que está atualizando o pedido,
+        // tendo em vista que o mesmo possa ter sido lançado por um administrador
+
+        var tipoVenda = FindControl("drpTipoVenda", "select").value;
+        var formaPagto = FindControl("drpFormaPagto", "select").value;
+        var tipoEntrega = FindControl("drpTipoEntrega", "select").value;
+        var idParcela = FindControl("drpParcelas", "select").value;
+
+        var descontoAntigo = FindControl("hdfDesconto", "input").value;
+        var descontoAtual = FindControl("txtDesconto", "input").value;
+
+        var retorno = DescontoPedido.VerificarDescontoPermitido(idPedido, tipoVenda, tipoEntrega, idParcela);
+
+        if (retorno.error != null) {
+                alert(retorno.error.description);
+                return false;
+        }
+
+        var mensagem = retorno.value.split("|");
+
+        if (mensagem[0] == "1" && descontoAntigo == descontoAtual && descontoAtual > 0 && confirm(mensagem[1])) {
+            FindControl("hdfIdFuncDesc", "input").value = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
+            return true;
+        } else if (confirm(mensagem[1])) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
     function setObra(idCliente, idObra, descrObra, saldo)
     {
         FindControl("hdfIdObra", "input").value = idObra;
@@ -808,6 +841,7 @@
                                 <asp:HiddenField ID="hdfExibirParcela" runat="server" />
                                 <asp:HiddenField ID="hdfCalcularParcela" runat="server" />
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCli") %>' />
+                                <asp:HiddenField ID="hdfIdFuncDesc" runat="server" Value='<%# Eval("IdFuncDesc") %>' />
                                 <asp:HiddenField ID="hdfFastDelivery" runat="server" Value='<%# Eval("FastDelivery") %>' />
 
                                 <script type="text/javascript">
@@ -823,7 +857,7 @@
                         <asp:TemplateField ShowHeader="False">
                             <EditItemTemplate>
                                 <br />
-                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="return confirm(&quot;Deseja atualizar os dados do pedido?&quot;)"
+                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="verificarDescontoPermitido();"
                                     Text="Atualizar" ValidationGroup="pedido" />
                             </EditItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -932,6 +966,7 @@
                                             <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
                                             <asp:HiddenField ID="hdfFastDelivery" runat="server" Value='<%# Eval("FastDelivery") %>' />
                                             <asp:HiddenField ID="hdfIdFunc" runat="server" Value='<%# Bind("IdFunc") %>' />
+                                            <asp:HiddenField ID="hdfIdFuncDesc" runat="server" Value='<%# Eval("IdFuncDesc") %>' />
                                             <asp:HiddenField ID="hdfValorEntrada" runat="server" Value='<%# Bind("ValorEntrada") %>' />
                                         </td>
                                     </tr>
@@ -977,7 +1012,7 @@
                         <asp:TemplateField ShowHeader="False">
                             <EditItemTemplate>
                                 <br />
-                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="return confirm(&quot;Deseja atualizar os dados do pedido?&quot;)"
+                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="verificarDescontoPermitido();"
                                     Text="Atualizar" ValidationGroup="pedido" />
                             </EditItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -1087,6 +1122,7 @@
                                             <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
                                             <asp:HiddenField ID="hdfFastDelivery" runat="server" Value='<%# Eval("FastDelivery") %>' />
                                             <asp:HiddenField ID="hdfIdFunc" runat="server" Value='<%# Bind("IdFunc") %>' />
+                                            <asp:HiddenField ID="hdfIdFuncDesc" runat="server" Value='<%# Bind("IdFuncDesc") %>' />
                                             <asp:HiddenField ID="hdfValorEntrada" runat="server" Value='<%# Bind("ValorEntrada") %>' />
                                         </td>
                                     </tr>
@@ -1123,7 +1159,7 @@
                         <asp:TemplateField ShowHeader="False">
                             <EditItemTemplate>
                                 <br />
-                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="return confirm(&quot;Deseja atualizar os dados do pedido?&quot;)"
+                                <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" OnClientClick="verificarDescontoPermitido();"
                                     Text="Atualizar" ValidationGroup="pedido" />
                             </EditItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />

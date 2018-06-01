@@ -332,14 +332,14 @@ namespace Glass.Data.DAL
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, idProd);
 
             if (idSubgrupoProd.GetValueOrDefault() == 0)
-                return null;
+                return new List<int>();
 
             return ObterIdsLoja(sessao, idSubgrupoProd.Value);
         }
 
-        public List<int> ObterIdsLoja(GDASession sessao, int idSubrupoProd)
+        public List<int> ObterIdsLoja(GDASession sessao, int idSubgrupoProd)
         {
-            return ExecuteMultipleScalar<int>(sessao, "SELECT IdLoja FROM subgrupoprod_loja sgp WHERE IdSubgrupoProd=" + idSubrupoProd);
+            return ExecuteMultipleScalar<int>(sessao, "SELECT IdLoja FROM subgrupoprod_loja sgp WHERE IdSubgrupoProd=" + idSubgrupoProd);
         }
 
         public bool ObterBloquearEcommerce(GDASession sessao, int idSubrupoProd)

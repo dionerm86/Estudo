@@ -3716,10 +3716,11 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<int> ObterIdsLojaSubgrupoProdPeloPedido(GDASession session, int idPedido)
         {
-            var sql = string.Format(@"SELECT DISTINCT sp.IdLoja FROM produtos_pedido pp
+            var sql = string.Format(@"SELECT DISTINCT spl.IdLoja FROM produtos_pedido pp
                     INNER JOIN produto p ON (pp.IdProd=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
-                WHERE pp.IdPedido={0} AND pp.IdProdPedParent IS NULL AND sp.IdLoja > 0", idPedido);
+                    INNER JOIN subgrupoprod_loja spl ON (sp.IDSUBGRUPOPROD=spl.IDSUBGRUPOPROD)
+                WHERE pp.IdPedido={0} AND pp.IdProdPedParent IS NULL", idPedido);
 
             var retorno = ExecuteMultipleScalar<int>(session, sql);
 
@@ -4231,6 +4232,8 @@ namespace Glass.Data.DAL
                         ProdutoDAO.Instance.GetCodInterno(session, (int)objInsert.IdProd)));
             }
 
+            CarregarNaturezaOperacao(session, objInsert);
+
             DescontoFormaPagamentoDadosProduto descontoFormPagtoProdNovo = null;
             //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
             if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
@@ -4356,34 +4359,15 @@ namespace Glass.Data.DAL
                         Beneficiamentos = p.Beneficiamentos
                     }, true, false);
 
-                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                            .Current.GetInstance <Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+                    var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoBaixaEstoqueRepositorioImagens>();
 
                     var stream = new System.IO.MemoryStream();
-
+                    
                     //Verifica se a matéria prima possui imagem
                     var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
 
                     if (possuiImagem)
-                    {
-                        //atribui a imagem da matéria prima na peça filha
-                        var pp = ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(session, idProdPed);
-                        ManipulacaoImagem.SalvarImagem(pp.ImagemUrlSalvarItem, stream);
-
-                        // Cria Log de alteração da Imagem do Produto Pedido
-                        //Apenas para controle
-                        LogAlteracaoDAO.Instance.Insert(new LogAlteracao
-                        {
-                            Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
-                            IdRegistroAlt = (int)pp.IdProdPed,
-                            Campo = "Imagem Produto Pedido",
-                            ValorAtual = "Imagem da matéria prima",
-                            DataAlt = DateTime.Now,
-                            IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                            Referencia = "Imagem do Produto Pedido " + pp.IdProdPed,
-                            NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)pp.IdProdPed)
-                        });
-                    }
+                        SalvarImagemProdutoPedido(session, idProdPed, stream);
                 }
             }
 
@@ -4787,6 +4771,8 @@ namespace Glass.Data.DAL
 
                 if (!PedidoReferenciadoPermiteInsercao(sessao, objUpdate))
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
+
+                CarregarNaturezaOperacao(sessao, objUpdate);
 
                 // 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
@@ -5255,6 +5241,33 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Natureza Operação
+
+        /// <summary>
+        /// Realiza a atualização da natureza de operação no produto do pedido.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoPedido"></param>
+        private void CarregarNaturezaOperacao(GDASession sessao, ProdutosPedido produtoPedido)
+        {
+            // Recupera os dados do pedido
+            var pedido = objPersistence.LoadResult(sessao,
+                "SELECT IdLoja, IdCli FROM pedido WHERE IdPedido=?id",
+                new GDAParameter("?id", produtoPedido.IdPedido))
+                .Select(f => new
+                {
+                    IdLoja = f.GetUInt32("IdLoja"),
+                    IdCli = f.GetUInt32("IdCli")
+                }).FirstOrDefault();
+
+            var idNaturezaOperacao = RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(
+                sessao, pedido.IdLoja, pedido.IdCli, (int)produtoPedido.IdProd);
+
+            produtoPedido.IdNaturezaOperacao = idNaturezaOperacao;
+        }
+
+        #endregion
+
         public List<ProdutosPedido> ObterProdutosNaoExportados(uint idPedido)
         {
             List<ProdutosPedido> lista = new List<ProdutosPedido>();
@@ -5380,6 +5393,30 @@ namespace Glass.Data.DAL
             var retorno = objPersistence.LoadData(session, sql, parameter);
 
             return retorno;
+        }
+
+        public string ObterUrlImagemSalvar(uint idProdPed)
+        {
+            return Utils.GetPecaComercialPath + idProdPed.ToString().PadLeft(10, '0') + "_0.jpg";
+        }
+        public void SalvarImagemProdutoPedido(GDASession session, uint idProdPedFilho, MemoryStream stream)
+        {
+
+            var imagemUrlSalvarItem = ObterUrlImagemSalvar(idProdPedFilho);
+            ManipulacaoImagem.SalvarImagem(imagemUrlSalvarItem, stream);
+            // Cria Log de alteração da Imagem do Produto Pedido
+            //Apenas para controle
+            LogAlteracaoDAO.Instance.Insert(session, new LogAlteracao
+            {
+                Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPed,
+                IdRegistroAlt = (int)idProdPedFilho,
+                Campo = "Imagem Produto Pedido",
+                ValorAtual = "Imagem da matéria prima",
+                DataAlt = DateTime.Now,
+                IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
+                NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
+            });
         }
     }
 }

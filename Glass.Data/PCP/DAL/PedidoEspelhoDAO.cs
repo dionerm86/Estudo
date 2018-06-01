@@ -1178,6 +1178,7 @@ namespace Glass.Data.DAL
                     pe.IdProd = p.IdProd;
                     pe.IdAplicacao = p.IdAplicacao;
                     pe.IdProcesso = p.IdProcesso;
+                    pe.IdNaturezaOperacao = p.IdNaturezaOperacao;
                     pe.IdItemProjeto = p.IdItemProjeto != null && itensProjeto.ContainsKey(p.IdItemProjeto.Value) ? itensProjeto[p.IdItemProjeto.Value] : p.IdItemProjeto;
                     pe.Qtde = p.Qtde;
                     pe.ValorVendido = p.ValorVendido;
@@ -1256,10 +1257,11 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, "update produtos_pedido set idProdPedEsp=" + idProdPedEsp + " where idProdPed=" + p.IdProdPed);
 
                     //Copia as imagens de vidros duplos ou laminados
-                    if (File.Exists(p.ImagemUrlSalvarItem))
+                    var urlImagem = ProdutosPedidoDAO.Instance.ObterUrlImagemSalvar(p.IdProdPed);
+                    if (File.Exists(urlImagem))
                     {
                         var caminhoImagemPCP = Utils.GetPecaProducaoPath + idProdPedEsp.ToString().PadLeft(10, '0') + "_0.jpg";
-                        File.Copy(p.ImagemUrlSalvarItem, caminhoImagemPCP, true);
+                        File.Copy(urlImagem, caminhoImagemPCP, true);
                     }
 
                     if (pe.IdProdPedParent.GetValueOrDefault(0) > 0 && string.IsNullOrEmpty(pe.ImagemUrl))
@@ -1940,12 +1942,6 @@ namespace Glass.Data.DAL
         /// </summary>
         internal void UpdateTotalPedido(GDASession sessao, PedidoEspelho pedidoEspelho, bool forcarAtualizacao)
         {
-            if (forcarAtualizacao)
-            {
-                PedidoEspelho atual = GetElementByPrimaryKey(sessao, pedidoEspelho.IdPedido);
-                RemoveComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
-                AplicaComissaoDescontoAcrescimo(sessao, atual, pedidoEspelho);
-            }
 
             // Atualiza valor do pedido
             string sql = "update pedido_espelho p set Total=Round((Select Sum(Total + coalesce(valorBenef, 0)) From produtos_pedido_espelho " +

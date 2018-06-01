@@ -67,7 +67,7 @@ namespace Glass.UI.Web.Cadastros
                 subGrupo.GeraVolume = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkGeraVolume")).Checked;
                 subGrupo.LiberarPendenteProducao = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkLibPendenteProducao")).Checked;
                 subGrupo.PermitirItemRevendaNaVenda = ((CheckBox)grdSubgrupoProd.FooterRow.FindControl("chkPermitirItemRevendaNaVenda")).Checked;
-                subGrupo.IdsLojaAssociacao = string.Join(",",((CheckBoxListDropDown)grdSubgrupoProd.FooterRow.FindControl("cblLoja")).SelectedValues);
+                subGrupo.IdsLojaAssociacao = ((CheckBoxListDropDown)grdSubgrupoProd.FooterRow.FindControl("cblLoja")).SelectedValues;
 
                 subGrupo.TipoSubgrupo = (Data.Model.TipoSubgrupoProd)Enum.Parse(typeof(Data.Model.TipoSubgrupoProd), 
                     ((DropDownList)grdSubgrupoProd.FooterRow.FindControl("drpTipoSubgrupo")).SelectedValue);

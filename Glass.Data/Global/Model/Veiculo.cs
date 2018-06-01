@@ -79,6 +79,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }
 
+        [PersistenceProperty("IDTRANSPORTADOR")]
+        public int? IdTransportador { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte

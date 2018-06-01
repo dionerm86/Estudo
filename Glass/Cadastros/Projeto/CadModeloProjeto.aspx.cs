@@ -5,6 +5,7 @@ using Glass.Data.Model;
 using System.IO;
 using Sync.Controls;
 using Glass.UI.Web.Controls;
+using System.Linq;
 
 namespace Glass.UI.Web.Cadastros.Projeto
 {
@@ -463,11 +464,13 @@ namespace Glass.UI.Web.Cadastros.Projeto
         {
             MaterialProjetoModelo material = new MaterialProjetoModelo();
 
+            var espessuras = ((CheckBoxListDropDown)grdMaterialProjetoModelo.FooterRow.FindControl("drpEspessuras")).SelectedValues;
+
             material.IdProjetoModelo = Glass.Conversoes.StrParaUint(hdfIdProjetoModelo.Value);
             material.IdProdProj = Glass.Conversoes.StrParaUint(((HiddenField)grdMaterialProjetoModelo.FooterRow.FindControl("hdfIdProdProj")).Value);
             material.CalculoQtde = ((TextBox)grdMaterialProjetoModelo.FooterRow.FindControl("txtCalcQtd")).Text;
             material.CalculoAltura = ((TextBox)grdMaterialProjetoModelo.FooterRow.FindControl("txtCalcMaterAlt")).Text;
-            material.Espessuras = string.Join(",", ((CheckBoxListDropDown)grdMaterialProjetoModelo.FooterRow.FindControl("drpEspessuras")).SelectedValues);
+            material.Espessuras = espessuras.Any(f => f > 0) ? string.Join(",", espessuras) : null;
 
             /* Chamado 53687. */
             var grauCorte = new GrauCorteEnum();

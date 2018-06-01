@@ -6,39 +6,39 @@ namespace Glass.Api.Host
 {
     public static class ImagesConfig
     {
-        private static string _checksum;
+        private static string _diretorioModelosProjeto = System.Configuration.ConfigurationManager.AppSettings["diretorioModelosProjeto"];
+        private static string _arquivoModelosProjetoPath = Path.Combine(_diretorioModelosProjeto, "ModeloProjetos.zip");
+        private static string _checksumPath = Path.Combine(_diretorioModelosProjeto, "checksum.txt");
 
-        public static void Configure(string checksum = null)
+        public static void Configure()
         {
-            try
+            if (!Directory.Exists(_diretorioModelosProjeto))
+                return;
+
+            if (!File.Exists(_checksumPath))
             {
-                var diretorioModelosProjeto = System.Configuration.ConfigurationManager.AppSettings["diretorioModelosProjeto"];
-                if (!Directory.Exists(diretorioModelosProjeto))
-                    return;
-
-                var arquivoModelosProjeto = Path.Combine(diretorioModelosProjeto, "ModeloProjetos.zip");
-
-                if (!string.IsNullOrWhiteSpace(checksum))
-                    _checksum = checksum;
-                else
-                    _checksum = CreateMd5ForFolder(diretorioModelosProjeto);
-
-                CriarArquivoZip(diretorioModelosProjeto, arquivoModelosProjeto);
-                
+                CriarArquivoZip();
+                return;
             }
-            catch
-            {
-            }
+
+            var checksum = File.ReadAllText(_checksumPath);
+            var checksumAtual = CreateMd5();
+
+            if (checksum != checksumAtual || !File.Exists(_arquivoModelosProjetoPath))
+                CriarArquivoZip();
         }
 
-        public static string CreateMd5ForFolder(string path)
+        private static string CreateMd5()
         {
-            var files = Directory.GetFiles(path);
+            var files = Directory.GetFiles(_diretorioModelosProjeto);
             var md5 = MD5.Create();
 
             for (int i = 0; i < files.Length; i++)
             {
                 var file = files[i];
+
+                if (file.Equals(_checksumPath) || file.Equals(_arquivoModelosProjetoPath))
+                    continue;
 
                 // hash contents
                 byte[] contentBytes = File.ReadAllBytes(file);
@@ -54,34 +54,33 @@ namespace Glass.Api.Host
 
         public static MemoryStream ObterImagensProjeto()
         {
-            var diretorioModelosProjeto = System.Configuration.ConfigurationManager.AppSettings["diretorioModelosProjeto"];
-
-            if (!Directory.Exists(diretorioModelosProjeto))
+            if (!Directory.Exists(_diretorioModelosProjeto))
                 return null;
 
-            var arquivoModelosProjeto = Path.Combine(diretorioModelosProjeto, "ModeloProjetos.zip");
+            Configure();
 
-            var checksumAtual = CreateMd5ForFolder(diretorioModelosProjeto);
-
-            if (checksumAtual != _checksum)
-                Configure(checksumAtual);
-
-            var bytes = File.ReadAllBytes(arquivoModelosProjeto);
+            var bytes = File.ReadAllBytes(_arquivoModelosProjetoPath);
             var ms = new MemoryStream(bytes);
 
             return ms;
         }
 
-        private static void CriarArquivoZip(string diretorioPath, string filePath)
+        private static void CriarArquivoZip()
         {
-            if (File.Exists(filePath))
-                File.Delete(filePath);
+            if (File.Exists(_arquivoModelosProjetoPath))
+                File.Delete(_arquivoModelosProjetoPath);
+
+            if (File.Exists(_checksumPath))
+                File.Delete(_checksumPath);
 
             using (var zipFile = new Ionic.Zip.ZipFile(System.Text.Encoding.UTF8))
             {
-                zipFile.AddDirectory(diretorioPath);
-                zipFile.Save(filePath);
+                zipFile.AddDirectory(_diretorioModelosProjeto);
+                zipFile.Save(_arquivoModelosProjetoPath);
             }
+
+            var checksum = CreateMd5();
+            File.WriteAllText(_checksumPath, checksum);
         }
     }
 }

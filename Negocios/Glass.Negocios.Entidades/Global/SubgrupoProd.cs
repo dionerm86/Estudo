@@ -56,9 +56,6 @@ namespace Glass.Global.Negocios.Entidades
         {
             get
             {
-                if(_subgruposLoja != null && _subgruposLoja.Any())
-                    _idsLojaAssociacao = string.Join(",", _subgruposLoja.Select(f => f.IdLoja));
-
                 return _subgruposLoja;
             }
         }
@@ -93,23 +90,6 @@ namespace Glass.Global.Negocios.Entidades
                 {
                     DataModel.IdGrupoProd = value;
                     RaisePropertyChanged("IdGrupoProd");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Identificador da loja.
-        /// </summary>
-        public uint? IdLoja
-        {
-            get { return DataModel.IdLoja; }
-            set
-            {
-                if (DataModel.IdLoja != value &&
-                    RaisePropertyChanging("IdLoja", value))
-                {
-                    DataModel.IdLoja = value;
-                    RaisePropertyChanged("IdLoja");
                 }
             }
         }
@@ -433,20 +413,19 @@ namespace Glass.Global.Negocios.Entidades
             get { return IdSubgrupoProd > 0 && IdSubgrupoProd <= 8; }
         }
 
-        
-
-        private string _idsLojaAssociacao;
-        public string IdsLojaAssociacao
+        public int[] IdsLojaAssociacao
         {
             get
             {
-                return _idsLojaAssociacao;
+#pragma warning disable S2365 // Properties should not make collection or array copies
+                return SubgruposProdLoja.Select(f => f.IdLoja).ToArray();
+#pragma warning restore S2365 // Properties should not make collection or array copies
             }
             set
             {
                 SubgruposProdLoja.Clear();
 
-                foreach (var loja in value.Split(',').Select(f => f.StrParaInt()))
+                foreach (var loja in value)
                 {
                     var novo = new SubgrupoProdLoja();
                     novo.IdSubgrupoProd = IdSubgrupoProd;
@@ -454,8 +433,6 @@ namespace Glass.Global.Negocios.Entidades
 
                     SubgruposProdLoja.Add(novo);
                 }
-
-                _idsLojaAssociacao = value;
             }
         }
 
