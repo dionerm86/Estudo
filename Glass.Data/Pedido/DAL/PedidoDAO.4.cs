@@ -2341,6 +2341,27 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Impostos
+
+        /// <summary>
+        /// Atualiza os valores de impostos associados com a instancia informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoPedido"></param>
+        public void AtualizarImpostos(GDASession sessao, Pedido pedido)
+        {
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
+            {
+                nameof(ProdutosPedido.ValorIpi),
+                nameof(ProdutosPedido.ValorIcms)
+            };
+
+            objPersistence.Update(sessao, pedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
+        }
+
+        #endregion
+
         #region Métodos sobrescritos
 
         public override uint Insert(Pedido objInsert)

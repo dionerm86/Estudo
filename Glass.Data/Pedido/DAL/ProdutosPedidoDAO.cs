@@ -4232,8 +4232,6 @@ namespace Glass.Data.DAL
                         ProdutoDAO.Instance.GetCodInterno(session, (int)objInsert.IdProd)));
             }
 
-            CarregarNaturezaOperacao(session, objInsert);
-
             DescontoFormaPagamentoDadosProduto descontoFormPagtoProdNovo = null;
             //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
             if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
@@ -4772,8 +4770,6 @@ namespace Glass.Data.DAL
                 if (!PedidoReferenciadoPermiteInsercao(sessao, objUpdate))
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
-                CarregarNaturezaOperacao(sessao, objUpdate);
-
                 // 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
                 //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
@@ -5241,29 +5237,42 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Natureza Operação
+        #region Calculo Impostos
 
         /// <summary>
-        /// Realiza a atualização da natureza de operação no produto do pedido.
+        /// Atualiza os valores de impostos associados com a instancia informada.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="produtoPedido"></param>
-        private void CarregarNaturezaOperacao(GDASession sessao, ProdutosPedido produtoPedido)
+        public void AtualizarImpostos(GDASession sessao, ProdutosPedido produtoPedido)
         {
-            // Recupera os dados do pedido
-            var pedido = objPersistence.LoadResult(sessao,
-                "SELECT IdLoja, IdCli FROM pedido WHERE IdPedido=?id",
-                new GDAParameter("?id", produtoPedido.IdPedido))
-                .Select(f => new
-                {
-                    IdLoja = f.GetUInt32("IdLoja"),
-                    IdCli = f.GetUInt32("IdCli")
-                }).FirstOrDefault();
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
+            {
+                nameof(ProdutosPedido.IdNaturezaOperacao),
+                nameof(ProdutosPedido.AliqIpi),
+                nameof(ProdutosPedido.ValorIpi),
+                nameof(ProdutosPedido.AliqIcms),
+                nameof(ProdutosPedido.BcIcms),
+                nameof(ProdutosPedido.ValorIcms),
+                nameof(ProdutosPedido.AliqFcp),
+                nameof(ProdutosPedido.BcFcp),
+                nameof(ProdutosPedido.ValorFcp),
+                nameof(ProdutosPedido.AliqIcmsSt),
+                nameof(ProdutosPedido.BcIcmsSt),
+                nameof(ProdutosPedido.ValorIcmsSt),
+                nameof(ProdutosPedido.AliqFcpSt),
+                nameof(ProdutosPedido.BcFcpSt),
+                nameof(ProdutosPedido.ValorFcpSt),
+                nameof(ProdutosPedido.AliqPis),
+                nameof(ProdutosPedido.BcPis),
+                nameof(ProdutosPedido.ValorPis),
+                nameof(ProdutosPedido.AliqCofins),
+                nameof(ProdutosPedido.BcCofins),
+                nameof(ProdutosPedido.ValorCofins),
+            };
 
-            var idNaturezaOperacao = RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(
-                sessao, pedido.IdLoja, pedido.IdCli, (int)produtoPedido.IdProd);
-
-            produtoPedido.IdNaturezaOperacao = idNaturezaOperacao;
+            objPersistence.Update(sessao, produtoPedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
         }
 
         #endregion

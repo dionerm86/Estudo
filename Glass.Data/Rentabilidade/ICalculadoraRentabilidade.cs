@@ -8,9 +8,9 @@ namespace Glass.Data
     /// <summary>
     /// Assinatura da classe responsável pelo calculo da rentabilidade.
     /// </summary>
-    public interface ICalculadoraRentabilidade<T>
+    public interface ICalculadoraRentabilidade<in T>
     {
-        #region Methods
+        #region Métodos
 
         /// <summary>
         /// Executa o calculo da rentabilidade para o tipo principal da calculadora..
@@ -32,7 +32,7 @@ namespace Glass.Data
     /// </summary>
     static class RentabilidadeHelper
     {
-        #region Properties
+        #region Propriedades
 
         /// <summary>
         /// Instancia da calculadora de rentabilidade.

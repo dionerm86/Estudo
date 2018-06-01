@@ -260,13 +260,17 @@
     <Compile Include="Financeiro\PlanoContasFluxo.cs" />
     <Compile Include="Financeiro\ProsoftFluxo.cs" />
     <Compile Include="Financeiro\QuitacaoParcelaCartaoFluxo.cs" />
+    <Compile Include="Fiscal\CalculadoraImposto.cs" />
     <Compile Include="Fiscal\CentroCustoFluxo.cs" />
     <Compile Include="Fiscal\CestFluxo.cs" />
     <Compile Include="Fiscal\CfopFluxo.cs" />
     <Compile Include="Fiscal\CTeFluxo.cs" />
     <Compile Include="Fiscal\DetalhamentoDebitosPisCofinsFluxo.cs" />
     <Compile Include="Fiscal\IestUfLojaFluxo.cs" />
+    <Compile Include="Fiscal\ItemImpostoResultado.cs" />
+    <Compile Include="Fiscal\LocalizadorNaturezaOperacao.cs" />
     <Compile Include="Fiscal\NotaFiscalFluxo.cs" />
+    <Compile Include="Fiscal\ProvedorIcmsProdutoUf.cs" />
     <Compile Include="Global\BeneficiamentoFluxo.cs" />
     <Compile Include="Global\ComissionadoFluxo.cs" />
     <Compile Include="Global\Configuracao\FuncaoFluxo.cs" />
@@ -309,6 +313,9 @@
     <Compile Include="PCP\OtimizacaoFluxo.cs" />
     <Compile Include="PCP\PerdaFluxo.cs" />
     <Compile Include="PCP\SetorFluxo.cs" />
+    <Compile Include="Pedido\CalculadoraImpostoPedido.cs" />
+    <Compile Include="Pedido\PedidoImpostoContainer.cs" />
+    <Compile Include="Pedido\ProdutosPedidoItemImposto.cs" />
     <Compile Include="Projeto\FerragemCache.cs" />
     <Compile Include="Projeto\ExportacaoImportacaoFerragem.cs" />
     <Compile Include="Projeto\FerragemFluxo.cs" />

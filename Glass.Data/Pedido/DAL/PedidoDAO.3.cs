@@ -1463,6 +1463,13 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(sessao, sql);
                 }
 
+                // Calcula os impostos dos produtos do pedido
+                var impostos = CalculadoraImpostoHelper.ObterCalculadora<Model.Pedido>()
+                    .Calcular(sessao, pedido);
+
+                // Salva os dados dos impostos calculados
+                impostos.Salvar(sessao);
+
                 // Atualiza o campo ValorComissao
                 sql = @"update pedido set valorComissao=total*coalesce(percComissao,0)/100 where idPedido=" + pedido.IdPedido;
                 objPersistence.ExecuteCommand(sessao, sql);

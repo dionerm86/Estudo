@@ -470,6 +470,8 @@
     <Compile Include="Fiscal\DAL\MargemLucroCnaeMTDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalCteDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalNfDAO.cs" />
+    <Compile Include="Fiscal\ICalculadoraImposto.cs" />
+    <Compile Include="Fiscal\ICalculoImpostoResultado.cs" />
     <Compile Include="Fiscal\Model\CargaTributariaMediaMT.cs" />
     <Compile Include="Fiscal\Model\Cest.cs" />
     <Compile Include="Fiscal\Model\CTe\ChaveAcessoCte.cs" />

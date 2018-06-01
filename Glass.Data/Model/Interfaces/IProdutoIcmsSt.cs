@@ -1,6 +1,6 @@
 ﻿namespace Glass.Data.Model
 {
-    interface IProdutoIcmsSt
+    public interface IProdutoIcmsSt
     {
         int IdProd { get; }
 

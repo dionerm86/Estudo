@@ -3,7 +3,7 @@ using Glass.Data.DAL;
 
 namespace Glass.Data.Helper
 {
-    interface ICalculoIcmsSt
+    public interface ICalculoIcmsSt
     {
         float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool saida);
 
@@ -20,7 +20,7 @@ namespace Glass.Data.Helper
         string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery);
     }
 
-    static class CalculoIcmsStFactory
+    public static class CalculoIcmsStFactory
     {
         public static ICalculoIcmsSt ObtemInstancia(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, int? idCfop, string produtoNfCst, int? idNf)
         {

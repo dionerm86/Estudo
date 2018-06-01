@@ -2088,6 +2088,14 @@ function exibirProdsComposicao(botao, idProdPed) {
     FindControl("hdfProdPedComposicaoSelecionado", "input").value = exibir ? idProdPed : 0;
 }
 
+function exibirInfoAdicProd(num, botao) {
+    for (iTip = 0; iTip < 2; iTip++) {
+        TagToTip('tbInfoAdicProd_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Informações Adicionais', CLOSEBTN, true,
+            CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, false,
+            FIX, [botao, 9 - getTableWidth('tbInfoAdicProd_' + num), 7]);
+    }
+}
+
 function exibirObs(num, botao) {
     for (iTip = 0; iTip < 2; iTip++) {
         TagToTip('tbObsCalc_' + num, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação', CLOSEBTN, true,

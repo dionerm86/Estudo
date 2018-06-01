@@ -500,6 +500,7 @@
     <Content Include="Images\page_attach.gif" />
     <Content Include="Images\page_save.gif" />
     <Content Include="Images\table_gear.gif" />
+    <Content Include="Images\tax.png" />
     <Content Include="Images\user_headset.gif" />
     <Content Include="Images\validacao.gif" />
     <Content Include="Listas\ListaTotalMarcacao.aspx" />
