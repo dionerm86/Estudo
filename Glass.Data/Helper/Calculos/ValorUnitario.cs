@@ -21,11 +21,11 @@ namespace Glass.Data.Helper.Calculos
         }
 
         public decimal? RecalcularValor(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            bool valorBruto = false)
+            bool valorBruto = false, bool forcarRecalculo = false)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 
-            if (!DeveExecutar(produto))
+            if (!DeveExecutar(produto) && !forcarRecalculo)
                 return null;
 
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
