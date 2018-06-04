@@ -377,19 +377,19 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
-        /// Define a hora inicial que se pode fazer login no sistema
+        /// Define o horário inicial que se pode fazer login no sistema.
         /// </summary>
-        public static int HoraInicioLogin
+        public static string HorarioInicioLogin
         {
-            get { return Config.GetConfigItem<int>(Config.ConfigEnum.HoraInicioLogin); }
+            get { return Config.GetConfigItem<string>(Config.ConfigEnum.HorarioInicioLogin); }
         }
 
         /// <summary>
-        /// Define a hora final que se pode fazer login no sistema 
+        /// Define o horário final que se pode fazer login no sistema.
         /// </summary>
-        public static int HoraFimLogin
+        public static string HorarioFimLogin
         {
-            get { return Config.GetConfigItem<int>(Config.ConfigEnum.HoraFimLogin); }
+            get { return Config.GetConfigItem<string>(Config.ConfigEnum.HorarioFimLogin); }
         }
 
         /// <summary>
