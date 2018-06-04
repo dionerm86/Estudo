@@ -4758,6 +4758,9 @@ namespace Glass.Data.DAL
                 if (atualizarAmbienteBeneficiamento && objUpdate.IdAmbientePedido > 0)
                 {
                     var produtosPedido = GetByAmbiente(sessao, objUpdate.IdAmbientePedido.Value);
+                    var remover = produtosPedido.FirstOrDefault(p => p.IdProdPed == objUpdate.IdProdPed);
+                    produtosPedido.Remove(remover);
+                    produtosPedido.Add(objUpdate);
 
                     bool acrescimoRemovido = AmbientePedidoDAO.Instance.RemoverAcrescimo(
                         sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
