@@ -2733,7 +2733,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    if (novaDataEntrega.Date.Date < DateTime.Now.Date)
+                    if (novaDataEntrega.Date < DateTime.Now.Date)
                         throw new Exception(string.Format("A data selecionada não pode ser inferior a {0}.", DateTime.Now.ToShortDateString()));
 
                     var ped = objPersistence.LoadData(transaction, "select * from pedido where idPedido in (" + idsPedidos + ")").ToArray();
