@@ -660,7 +660,7 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                erro = new Exception("Falha ao gerar o pedido.", ex);
+                erro = new Exception($"Falha ao gerar o pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                 return 0;
             }
 
@@ -695,7 +695,7 @@ namespace Glass.Data.DAL
                 }
                 catch (Exception ex)
                 {
-                    erro = new Exception("Falha ao confirmar o pedido.", ex);
+                    erro = new Exception($"Falha ao confirmar o pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                     ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
                     return idPedido;
                 }
@@ -709,7 +709,7 @@ namespace Glass.Data.DAL
                     }
                     catch (Exception ex)
                     {
-                        erro = new Exception("Falha ao gerar a conferência do pedido.", ex);
+                        erro = new Exception($"Falha ao gerar a conferência do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                         ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
                         return idPedido;
                     }
@@ -721,7 +721,7 @@ namespace Glass.Data.DAL
                     }
                     catch (Exception ex)
                     {
-                        erro = new Exception("Falha ao finalizar a conferência do pedido.", ex);
+                        erro = new Exception($"Falha ao finalizar a conferência do pedido. Erro: { ex?.Message ?? ex?.InnerException?.Message }.", ex);
                         ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
                         return idPedido;
                     }
