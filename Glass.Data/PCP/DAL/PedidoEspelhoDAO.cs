@@ -2628,7 +2628,7 @@ namespace Glass.Data.DAL
                                 sessao,
                                 orcamento,
                                 prodOrca,
-                                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                                 true,
                                 prodOrca.Beneficiamentos.CountAreaMinima
                             );
