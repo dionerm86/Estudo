@@ -6740,13 +6740,13 @@ namespace Glass.Data.DAL
                     " FROM (" + sql + @") as c 
                         LEFT JOIN loja l on (c.idLoja = l.idLoja) " +
                     "GROUP BY " + (PedidoConfig.LiberarPedido ? "" : "c.idLoja,") + "date(c.dataVec), c.IdConta";
-
-                if (!selecionar)
-                    sql = "select count(*) from (" + sql + ") as temp";
             }
 
-            if (!agrupar && selecionar)
+            if (!agrupar)
                 sql = sql + " Group By c.IdContaR";
+
+            if (!selecionar)
+                sql = "select count(*) from (" + sql + ") as temp";
 
             return sql.Replace("$$$", criterio);
         }
