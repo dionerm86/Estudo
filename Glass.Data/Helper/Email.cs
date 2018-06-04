@@ -32,6 +32,12 @@ namespace Glass.Data.Helper
         public static void EnviaEmailCarregamentoFinalizado(GDASession sessao, uint idCarregamento)
         {
             var ocs = OrdemCargaDAO.Instance.GetOCsForCarregamento(sessao, idCarregamento);
+            var idLoja = (UserInfo.GetUserInfo?.IdLoja).GetValueOrDefault();
+
+            if (idLoja == 0)
+            {
+                throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
+            }
 
             foreach (var idCli in ocs.Select(f => f.IdCliente).Distinct())
             {
@@ -74,7 +80,7 @@ namespace Glass.Data.Helper
                 foreach (var oc in ocsCli)
                     anexos.Add(new AnexoEmail("IdOC=" + oc.IdOrdemCarga, "OC_" + oc.IdOrdemCarga + ".pdf"));
 
-                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Pedido em processo de entrega", texto, EmailEnvio.Comercial, false, anexos.ToArray());
+                EnviaEmailAsync(sessao, idLoja, email, "Pedido em processo de entrega", texto, EmailEnvio.Comercial, false, anexos.ToArray());
             }
         }
 
@@ -112,6 +118,12 @@ namespace Glass.Data.Helper
 
                 string codCliente = PedidoDAO.Instance.ObtemValorCampo<string>(session, "codCliente", "idPedido=" + idPedido);
                 uint idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
+                }
+
                 var nomeLoja = LojaDAO.Instance.GetNome(session, idLoja);
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(session, idPedido);
 
@@ -161,6 +173,12 @@ namespace Glass.Data.Helper
 
                 var codCliente = PedidoDAO.Instance.ObtemValorCampo<string>(sessao, "codCliente", "idPedido=" + idPedido);
                 var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
+                }
+
                 var nomeLoja = LojaDAO.Instance.GetNome(sessao, idLoja);
                 var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(sessao, idPedido).GetValueOrDefault();
                 
@@ -191,7 +209,12 @@ namespace Glass.Data.Helper
 
                 var idCliente = PedidoDAO.Instance.ObtemValorCampo<uint>(sessao, "idcli", "idPedido=" + idPedido);
                 var nomeCliente = ClienteDAO.Instance.GetNome(sessao, idCliente);
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);                
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
+                }
 
                 string texto = nomeVendedor + " ,\n\nSegue em anexo o pedido "+ idPedido + " do seu cliente " + 
                     idCliente.ToString() +" - " +  nomeCliente;
@@ -201,8 +224,7 @@ namespace Glass.Data.Helper
                     new AnexoEmail("~/Relatorios/RelPedido.aspx?tipo=2&semThread=true&idPedido=" + idPedido,
                         "Pedido " + idPedido + ".pdf")
                 };
-
-
+                
                 EnviaEmailAsync(sessao, idLoja, emailVendedor, "Pedido confirmado", texto, Email.EmailEnvio.Comercial, false, anexos.ToArray());
             }
             catch (Exception ex)
@@ -227,6 +249,13 @@ namespace Glass.Data.Helper
 
             try
             {
+                var idLoja = (UserInfo.GetUserInfo?.IdLoja).GetValueOrDefault();
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
+                }
+
                 string nomeAdmin = FuncionarioDAO.Instance.GetNome(sessao, idAdminEmail.Value);
                 string nomeFuncDesconto = FuncionarioDAO.Instance.GetNome(sessao, idFuncDesconto);
 
@@ -243,7 +272,7 @@ namespace Glass.Data.Helper
                     percentualConfigurado.ToString("0.###") + "%).\nEsse desconto foi concedido pelo funcionário " + nomeFuncDesconto + 
                     " no dia " + DateTime.Now.ToString("dd/MM/yyyy") + " às " + DateTime.Now.ToString("HH:mm:ss") + ".";
 
-                EnviaEmailAsync(sessao, UserInfo.GetUserInfo.IdLoja, email, "Desconto maior que o configurado", texto, Email.EmailEnvio.Comercial, false);
+                EnviaEmailAsync(sessao, idLoja, email, "Desconto maior que o configurado", texto, Email.EmailEnvio.Comercial, false);
             }
             catch (Exception ex)
             {
@@ -280,7 +309,12 @@ namespace Glass.Data.Helper
 
                 uint idFunc = LiberarPedidoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFunc", "idLiberarPedido=" + idLiberarPedido);
                 uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
-                
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do funcionário ao salvar o e-mail a ser enviado.");
+                }
+
                 string texto = "Prezado(a) cliente,\n\nInformamos que sua liberação de pedido " +
                     idLiberarPedido + " foi realizada.\nSegue anexo para conferência.";
 
@@ -314,6 +348,11 @@ namespace Glass.Data.Helper
 
                 uint idFunc = OrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "idFunc", "idOrcamento=" + idOrcamento);
                 uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do funcionário ao salvar o e-mail a ser enviado.");
+                }
 
                 string texto = "Prezado(a) cliente, segue em anexo o seu orçamento para conferência.";
 
@@ -384,7 +423,6 @@ namespace Glass.Data.Helper
                 throw new Exception("Email do destinatário inválido.");
 
             var emailsDestinatario = emailDestinatario.Trim().Split(';').Where(f => !string.IsNullOrEmpty(f)).Select(f => f.Trim());
-            var sqlInserirFilaEmail = new List<string>();
 
             uint idEmail = 0;
             foreach (var e in emailsDestinatario)
@@ -726,8 +764,13 @@ namespace Glass.Data.Helper
                         foreach (Funcionario f in func)
                         {
                             // Se não tiver email cadastrado para este administrador, apenas não envia
-                            if (String.IsNullOrEmpty(f.Email))
+                            if (string.IsNullOrEmpty(f.Email))
                                 continue;
+
+                            if (f.IdLoja == 0)
+                            {
+                                throw new Exception("Não foi possível recuperar a loja do funcionário ao salvar o e-mail a ser enviado.");
+                            }
 
                             EnviaEmailAsync(trans, (uint)f.IdLoja, f.Email, "Resumo diário WebGlass", mensagem, EmailEnvio.Comercial, true, null);
                         }
@@ -745,7 +788,7 @@ namespace Glass.Data.Helper
                     }
                     catch { }
 
-                    ErroDAO.Instance.InserirFromException("EnvioEmail", ex);
+                    ErroDAO.Instance.InserirFromException("EnvioEmailAdministradores", ex);
                 }
                 finally
                 {
@@ -767,6 +810,11 @@ namespace Glass.Data.Helper
                     return;
 
                 var idLoja = FuncionarioDAO.Instance.ObtemIdLoja(sessao, (uint)idAdminEnvio);
+
+                if (idLoja == 0)
+                {
+                    throw new Exception("Não foi possível recuperar a loja do funcionário ao salvar o e-mail a ser enviado.");
+                }
 
                 if (prodOld.Custofabbase == prodNew.Custofabbase && prodOld.CustoCompra == prodNew.CustoCompra && prodOld.ValorAtacado == prodNew.ValorAtacado &&
                     prodOld.ValorBalcao == prodNew.ValorBalcao && prodOld.ValorObra == prodNew.ValorObra)

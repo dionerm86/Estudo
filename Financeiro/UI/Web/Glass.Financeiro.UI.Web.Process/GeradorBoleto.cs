@@ -4,6 +4,7 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace Glass.Financeiro.UI.Web.Process
 {
@@ -82,6 +83,12 @@ namespace Glass.Financeiro.UI.Web.Process
                     !Impresso.Instance.BoletoFoiImpresso((int)idsContasR.FirstOrDefault()) && codigoNotaFiscal > 0)
                 {
                     var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja((uint)codigoNotaFiscal);
+
+                    if (idLoja == 0)
+                    {
+                        throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
+                    }
+
                     var idCliente = NotaFiscalDAO.Instance.ObtemIdCliente((uint)codigoNotaFiscal);
 
                     var email = ClienteDAO.Instance.GetEmail(null, idCliente.GetValueOrDefault(0));
