@@ -4215,7 +4215,7 @@ namespace Glass.Data.DAL
             var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
             var lojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
 
-            if (!insersaoComposicao && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
+            if (!insersaoComposicao && idsLojaSubgrupoProd.Count() > 0 && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
                 throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
             /* Chamados 52702 e 52911.
