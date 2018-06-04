@@ -9600,6 +9600,11 @@ namespace Glass.Data.DAL
                     {
                         var loja = LojaDAO.Instance.GetElementByPrimaryKey(session, nf.IdLoja.Value);
 
+                        if ((loja?.IdLoja).GetValueOrDefault() == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
+                        }
+
                         if (!cancelamento)
                         {
                             Email.EnviaEmailAsync((uint)loja.IdLoja, cliente.EmailFiscal, "Emissão de NF-e", "Prezados(as),\n\nSegue em anexo XML de " +

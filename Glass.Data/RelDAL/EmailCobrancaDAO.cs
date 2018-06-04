@@ -130,6 +130,11 @@ namespace Glass.Data.RelDAL
                         if (idLoja == 0 && idLojaAtiva > 0)
                             idLoja = idLojaAtiva;
 
+                        if (idLoja == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar a loja do funcionário ao salvar o e-mail a ser enviado.");
+                        }
+
                         var mensagem = CorpoEmail(trans, email.IdCliente, email.NomeCliente, email.NumContasVec, email.NumContasVecHoje, email.NumContasAVec,
                             email.ValorContasVec, email.ValorContasVecHoje, email.ValorContasAVec, idLoja);
 
