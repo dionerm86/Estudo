@@ -55,7 +55,7 @@ namespace Glass.Data.Helper.Calculos
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
         {
-            if (valor.HasValue && produto.AlturaBenef > 0 && produto.LarguraBenef > 0)
+            if (valor.HasValue && (produto.AlturaBenef > 0 || produto.LarguraBenef > 0))
             {
                 return valor.Value;
             }
