@@ -25,7 +25,7 @@ namespace Glass.Data.Helper.Calculos
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
 
-            if (!DeveExecutar(produto) && !forcarRecalculo)
+            if (!forcarRecalculo && !DeveExecutar(produto))
                 return null;
 
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
