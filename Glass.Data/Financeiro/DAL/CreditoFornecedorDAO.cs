@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -383,10 +384,46 @@ namespace Glass.Data.DAL
 
                         // Verifica se o fornecedor possui crédito suficiente para que este seja cancelado
                         if (FornecedorDAO.Instance.GetCredito(transaction, cred.IdFornecedor) < valor)
-                            throw new Exception("O crédito gerado já foi utilizado, não é possível cancelá-lo."); 
+                            throw new Exception("O crédito gerado já foi utilizado, não é possível cancelá-lo.");
 
-                        if (ExecuteScalar<bool>(transaction, "Select Count(*)>0 From cheques c Where c.IdCreditoFornecedor=" + idCreditoFornecedor + " And Situacao > 1"))
-                            throw new Exception(@"Um ou mais cheques que compõe esse procedimento já foram utilizados em outras transações, cancele ou retifique as transações dos cheques antes de cancelar este crédito.");
+                        var cheques = ChequesDAO.Instance.GetByCreditoFornecedor(transaction, cred.IdCreditoFornecedor);
+
+                        // Ao efetuar um pagamento com cheque próprio Compensado o campo ValorReceb fica zerado, é preenchido na quitação do cheque próprio que foi cadastrado em aberto no pagamento.
+                        if (cheques.Count(f => f.Tipo == 1 && (f.ValorReceb > 0 || f.IdDeposito > 0)) > 0)
+                        {
+                            var idsAcertoCheques = new List<int>();
+
+                            if (cheques.Count(f => f.Tipo == 1 && f.ValorReceb > 0) > 0)
+                            {
+                                foreach (var cheque in cheques.Where(f => f.Tipo == 1 && f.ValorReceb > 0).ToList())
+                                {
+                                    var idsAcertoCheque = ItemAcertoChequeDAO.Instance.GetIdsAcertoByCheque(transaction, cheque.IdCheque, true);
+
+                                    if (!string.IsNullOrEmpty(idsAcertoCheque))
+                                    {
+                                        idsAcertoCheques.AddRange(idsAcertoCheque.Split(',').Select(f => f.StrParaInt()).ToList());
+                                    }
+                                }
+                            }
+
+                            if (cheques.Count(f => f.Tipo == 1 && f.IdDeposito > 0) > 0 || idsAcertoCheques.Count > 0)
+                            {
+                                throw new Exception(string.Format(@"Não é possível cancelar este pagamento, o(s) cheque(s) próprio de número {0} foi(ram) quitado(s):\n\n{1}{2}\n\n
+                                    Cancele a quitação dos cheques e tente cancelar o pagamento novamente.",
+                                        string.Join(", ", cheques.Where(f => f.Tipo == 1 && (f.ValorReceb > 0 || f.IdDeposito > 0)).Select(f => f.Num).ToList()),
+                                        idsAcertoCheques.Count > 0 ? string.Format("Acerto(s) de cheque próprio {0}", string.Join(", ", idsAcertoCheques)) : string.Empty,
+                                        cheques.Count(f => f.Tipo == 1 && f.IdDeposito > 0) > 0 ?
+                                            string.Format("{0}Depósito(s) {1}", idsAcertoCheques.Count > 0 ? "\n" : string.Empty,
+                                                string.Join(", ", cheques.Where(f => f.Tipo == 1 && f.IdDeposito > 0).Select(f => f.IdDeposito).ToList())) : string.Empty));
+                            }
+                        }
+
+                        if (cheques.Any(f => f.Situacao == (int)Cheques.SituacaoCheque.Devolvido))
+                        {
+                            throw new Exception(string.Format(@"Não é possível cancelar este pagamento, o(s) cheque(s) de número {0} foi(ram) devolvido(s).
+                                Cancele a devolução deles para, depois, cancelar o pagamento.",
+                                string.Join(", ", cheques.Where(f => f.Situacao == (int)Cheques.SituacaoCheque.Devolvido).Select(f => f.Num).ToList())));
+                        }
 
                         objPersistence.ExecuteCommand(transaction, "update credito_fornecedor set situacao=?s where idCreditoFornecedor=" +
                         idCreditoFornecedor, new GDAParameter("?s", (int)CreditoFornecedor.SituacaoCredito.Cancelado));
@@ -408,7 +445,6 @@ namespace Glass.Data.DAL
                             // que estão sendo pagas, debita valor da conta que foi escolhida em cada cheque
                             else if ((p.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio || p.IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro))
                             {
-                                var cheques = ChequesDAO.Instance.GetByCreditoFornecedor(transaction, idCreditoFornecedor);
                                 var contadorDataUnica = 0;
                                 foreach (Cheques c in cheques)
                                 {
