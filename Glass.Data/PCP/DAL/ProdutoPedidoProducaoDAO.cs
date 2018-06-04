@@ -5095,16 +5095,25 @@ namespace Glass.Data.DAL
                     // Exclui leituras feitas nesta peça
                     objPersistence.ExecuteCommand(transaction, "Delete From leitura_producao Where idProdPedProducao=" + idProdPedProducao);
 
-                    #region Remove a associação da peça ou da chapa, somente vidro laminado
+                    #region Remove a associação da peça ou da chapa
 
-                    /* Chamado 57188. */
-                    if (prodPedEsp.IsProdutoLaminadoComposicao)
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(transaction, dados.IdProdImpressao, idProdPedProducao);
+                    var quantidadeLeiturasChapa = ChapaCortePecaDAO.Instance.QtdeLeiturasChapa(transaction, dados.IdProdImpressao);
 
-                    //Chamado 53349
-                    //Exclui o uso da chapa
+                    // O ideal é agregar à esta condição o mesmo código do método RetiraPecaSituacao, para que a reposição fique correta.
+                    // Além disso, temos que salvar os dados da chapa nos dados da reposição, pois se o usuário voltar a situação da peça, tudo deve ser revertido.
+                    if (quantidadeLeiturasChapa == 1)
+                    {
+                        throw new Exception("Para efetuar a reposição esta peça, será preciso removê-la do setor marcado como Corte, para que o estoque das peças fique correto.");
+                    }
+
                     if (prodPedEsp.IsProdFilhoLamComposicao)
+                    {
                         ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, dados.IdProdImpressao);
+                    }
+                    else
+                    {
+                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(transaction, dados.IdProdImpressao, idProdPedProducao);
+                    }
 
                     #endregion
 
