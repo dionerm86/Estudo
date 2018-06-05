@@ -338,7 +338,7 @@
                 return false;
             }
                   
-            if(idLojaSubgrupo.value != "0" && idLojaSubgrupo.value != idLoja){
+            if(idLojaSubgrupo.value != "" && !idLojaSubgrupo.value.includes(idLoja)){
                 
                 if (FindControl("txtCodProd", "input") != null)
                     FindControl("txtCodProd", "input").value = "";
