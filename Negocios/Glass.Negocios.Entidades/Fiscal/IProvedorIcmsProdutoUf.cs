@@ -22,6 +22,18 @@ namespace Glass.Fiscal.Negocios.Entidades
         float ObterIcmsPorProduto(Produto produto, Loja loja, Fornecedor fornecedor, Cliente cliente);
 
         /// <summary>
+        /// Obtém a alíquota de ICMS ST que será utilizada.
+        /// Será o valor configurado no produto, se for maior que zero;
+        /// caso contrário, será a alíquota de ICMS intraestadual.
+        /// </summary>
+        /// <param name="produto"></param>
+        /// <param name="loja"></param>
+        /// <param name="fornecedor"></param>
+        /// <param name="cliente"></param>
+        /// <returns></returns>
+        float ObterAliquotaIcmsSt(Produto produto, Loja loja, Fornecedor fornecedor, Cliente cliente);
+
+        /// <summary>
         /// Busca o valor do FCP por produto e UF.
         /// </summary>
         /// <param name="produto"></param>
@@ -30,5 +42,15 @@ namespace Glass.Fiscal.Negocios.Entidades
         /// <param name="cliente"></param>
         /// <returns></returns>
         float ObterFCPPorProduto(Produto produto, Loja loja, Fornecedor fornecedor, Cliente cliente);
+
+        /// <summary>
+        /// Busca o valor da Aliquota FCP por produto e UF.
+        /// </summary>
+        /// <param name="produto"></param>
+        /// <param name="loja"></param>
+        /// <param name="fornecedor"></param>
+        /// <param name="cliente"></param>
+        /// <returns></returns>
+        float ObterAliquotaFCPSTPorProduto(Produto produto, Loja loja, Fornecedor fornecedor, Cliente cliente);
     }
 }

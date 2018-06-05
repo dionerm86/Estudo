@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fiscal\IProvedorIcmsProdutoUf.cs" />
+    <Compile Include="Fiscal\IProvedorMvaProdutoUf.cs" />
     <Compile Include="Otimizacao\EstoqueChapaEntrada.cs" />
     <Compile Include="Estoque\ProdutoBaixaEstoquePesquisa.cs" />
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificado.cs" />

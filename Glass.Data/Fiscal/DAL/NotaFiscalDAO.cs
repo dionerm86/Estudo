@@ -25,6 +25,11 @@ namespace Glass.Data.DAL
             bool simplesNacional = new List<int> { (int)CrtLoja.SimplesNacional, (int)CrtLoja.SimplesNacionalExcSub }.
                 Contains(LojaDAO.Instance.BuscaCrtLoja(sessao, idLoja));
 
+            return ObtemCodValorFiscal(tipoDocumento, cst, simplesNacional);
+        }
+
+        public uint? ObtemCodValorFiscal(int tipoDocumento, string cst, bool simplesNacional)
+        {
             if (!simplesNacional)
             {
                 switch (cst)

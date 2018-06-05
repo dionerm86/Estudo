@@ -305,7 +305,7 @@ namespace Glass.Pedido.Negocios.Componentes
                     return true;
 
                 var produtoPedido = (item as IItemRentabilidade<Data.Model.ProdutosPedido>)?.Proprietario;
-                return produtoPedido != null && !produtoPedido.InvisivelPedido && !produtoPedido.IdAmbientePedido.HasValue;
+                return produtoPedido != null && !produtoPedido.InvisivelPedido && !produtoPedido.InvisivelFluxo && !produtoPedido.IdAmbientePedido.HasValue;
             });
 
             return new ItemRentabilidadeContainer<Data.Model.Pedido, Data.Model.PedidoRentabilidade>(

@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Glass.Pedido.Negocios.Componentes
+namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
 {
     /// <summary>
-    /// Implementação do container de itens de imposto para o pedido.
+    /// Implementação do container de itens de impostos para o pedido.
     /// </summary>
-    class PedidoImpostoContainer : Fiscal.Negocios.IItemImpostoContainer
+    class PedidoEspelhoImpostoContainer : IItemImpostoContainer
     {
         #region Propriedades
 
         /// <summary>
         /// Pedido.
         /// </summary>
-        public Data.Model.Pedido Pedido { get; }
+        public Data.Model.PedidoEspelho PedidoEspelho { get; }
 
         /// <summary>
         /// Identificador da nota fiscal.
@@ -50,7 +50,7 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Valor do frete
         /// </summary>
-        public decimal ValorFrete => Pedido.ValorEntrega;
+        public decimal ValorFrete => PedidoEspelho.ValorEntrega;
 
         /// <summary>
         /// Modalidade do frete
@@ -85,7 +85,7 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Itens filhos.
         /// </summary>
-        public IEnumerable<Fiscal.Negocios.IItemImposto> Itens { get; }
+        public IEnumerable<IItemImposto> Itens { get; }
 
         #endregion
 
@@ -94,17 +94,17 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Construtor padrão.
         /// </summary>
-        /// <param name="pedido"></param>
+        /// <param name="pedidoEspelho"></param>
         /// <param name="cliente"></param>
         /// <param name="loja"></param>
         /// <param name="itens"></param>
-        public PedidoImpostoContainer(
-            Data.Model.Pedido pedido, 
+        public PedidoEspelhoImpostoContainer(
+            Data.Model.PedidoEspelho pedidoEspelho,
             Global.Negocios.Entidades.Cliente cliente,
             Global.Negocios.Entidades.Loja loja,
-            IEnumerable<Fiscal.Negocios.IItemImposto> itens)
+            IEnumerable<IItemImposto> itens)
         {
-            Pedido = pedido;
+            PedidoEspelho = pedidoEspelho;
             Cliente = cliente;
             Loja = loja;
             Itens = itens;

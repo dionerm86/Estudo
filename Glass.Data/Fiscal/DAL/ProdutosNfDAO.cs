@@ -407,6 +407,15 @@ namespace Glass.Data.DAL
             // Busca a Nota Fiscal
             NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(sessao, lstProdNf[0].IdNf);
 
+            // Calcula os impostos dos produtos do pedido
+            var impostos = (Data.ICalculoImpostoResultado<Data.Model.ProdutosNf>) 
+                CalculadoraImpostoHelper.ObterCalculadora<Model.NotaFiscal, Model.ProdutosNf>()
+                    .Calcular(sessao, nf, lstProdNf);
+
+            if (atualizarSeNecessario && !forcarCalculoIcmsSt)
+                // Salva os dados dos impostos calculados
+                impostos.Salvar(sessao);
+
             if (nf.IdNaturezaOperacao == 0)
                 return;
 
@@ -740,6 +749,48 @@ namespace Glass.Data.DAL
                     }
                 }
             }
+        }
+
+        #endregion
+
+        #region Calculo Impostos
+
+        /// <summary>
+        /// Atualiza os valores de impostos associados com a instancia informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoNf"></param>
+        public void AtualizarImpostos(GDASession sessao, ProdutosNf produtoNf)
+        {
+            if (produtoNf.IdProdNf <= 0) return;
+
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
+            {
+                //nameof(ProdutosNf.IdNaturezaOperacao),
+                nameof(ProdutosNf.AliqIpi),
+                nameof(ProdutosNf.ValorIpi),
+                nameof(ProdutosNf.AliqIcms),
+                nameof(ProdutosNf.BcIcms),
+                nameof(ProdutosNf.ValorIcms),
+                nameof(ProdutosNf.AliqFcp),
+                nameof(ProdutosNf.BcFcp),
+                nameof(ProdutosNf.ValorFcp),
+                nameof(ProdutosNf.AliqIcmsSt),
+                nameof(ProdutosNf.BcIcmsSt),
+                nameof(ProdutosNf.ValorIcmsSt),
+                nameof(ProdutosNf.AliqFcpSt),
+                nameof(ProdutosNf.BcFcpSt),
+                nameof(ProdutosNf.ValorFcpSt),
+                nameof(ProdutosNf.AliqPis),
+                nameof(ProdutosNf.BcPis),
+                nameof(ProdutosNf.ValorPis),
+                nameof(ProdutosNf.AliqCofins),
+                nameof(ProdutosNf.BcCofins),
+                nameof(ProdutosNf.ValorCofins),
+            };
+
+            objPersistence.Update(sessao, produtoNf, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
         }
 
         #endregion

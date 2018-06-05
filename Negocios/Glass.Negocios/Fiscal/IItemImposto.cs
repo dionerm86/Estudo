@@ -45,7 +45,7 @@ namespace Glass.Fiscal.Negocios
         /// <summary>
         /// Margem de valor agregado
         /// </summary>
-        decimal Mva { get; }
+        float Mva { get; }
 
         /// <summary>
         /// Código de situação tributária do IPI
@@ -105,7 +105,7 @@ namespace Glass.Fiscal.Negocios
         /// <summary>
         /// Percentual de diferimento do ICMS
         /// </summary>
-        decimal PercDiferimento { get; }
+        float PercDiferimento { get; }
 
         /// <summary>
         /// Código de situação tributária do ICMS
@@ -122,21 +122,6 @@ namespace Glass.Fiscal.Negocios
         /// </summary>
         /// <returns></returns>
         bool CalcularImpostos { get; }
-
-        /// <summary>
-        /// Indica se possui pedidos
-        /// </summary>
-        bool PossuiPedidos { get; }
-
-        /// <summary>
-        /// Indica se possui compras
-        /// </summary>
-        bool PossuiCompras { get; }
-
-        /// <summary>
-        /// Indica se a nota fiscal está sendo importada pelo sistema.
-        /// </summary>
-        bool NotaFiscalImportadaSistema { get; }
 
         #endregion
     }

@@ -127,6 +127,7 @@
     <Compile Include="Fiscal\IItemImpostoContainer.cs" />
     <Compile Include="Fiscal\ILocalizadorNaturezaOperacao.cs" />
     <Compile Include="Fiscal\INotaFiscalFluxo.cs" />
+    <Compile Include="Fiscal\IProvedorCodValorFiscal.cs" />
     <Compile Include="Global\Configuracao\IMenuFluxo.cs" />
     <Compile Include="Global\Configuracao\IFuncaoFluxo.cs" />
     <Compile Include="Global\IBeneficiamentoFluxo.cs" />

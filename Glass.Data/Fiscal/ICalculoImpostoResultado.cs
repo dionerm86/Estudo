@@ -20,4 +20,22 @@ namespace Glass.Data
 
         #endregion
     }
+
+    /// <summary>
+    /// Assinatura complementar do resultado do calculo de imposto
+    /// para aplicar os valores sobre itens de um determinado tipo.
+    /// </summary>
+    /// <typeparam name="T">Tipo do item que será tratado pelo resultado.</typeparam>
+    public interface ICalculoImpostoResultado<in T> : ICalculoImpostoResultado
+    {
+        #region Métodos
+
+        /// <summary>
+        /// Aplica os impostos calculados para os itens informados.
+        /// </summary>
+        /// <param name="itens"></param>
+        void AplicarImpostos(IEnumerable<T> itens);
+
+        #endregion
+    }
 }

@@ -101,7 +101,11 @@ namespace Glass.Data.Helper.Calculos.Cache
         {
             try
             {
-                return new Tuple<Type, object>(propriedade.PropertyType, propriedade.GetValue(objeto, null));
+                // Ignora propriedades indexadas
+                if (!propriedade.GetIndexParameters().Any())
+                    return new Tuple<Type, object>(propriedade.PropertyType, propriedade.GetValue(objeto, null));
+                else
+                    return null;
             }
             catch
             {

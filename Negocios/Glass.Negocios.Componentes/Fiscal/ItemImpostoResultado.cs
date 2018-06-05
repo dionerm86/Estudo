@@ -72,7 +72,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <summary>
         /// Percentual de diferimento do ICMS
         /// </summary>
-        public decimal PercDiferimento => Referencia.PercDiferimento;
+        public float PercDiferimento => Referencia.PercDiferimento;
 
         /// <summary>
         /// Valor do IOF.

@@ -59,6 +59,7 @@ namespace Glass.Data.DAL
             string campos = selecionar ? @"pp.*, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, g.descricao as descrGrupoProd, 
                 mip.idMaterProjMod, mip.IdPecaItemProj, p.idSubgrupoProd, if(p.AtivarAreaMinima=1,
                 Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, 
+                Coalesce(no.CodInterno, cfop.CodInterno) as CodNaturezaOperacao,
                 Round(0, 2) as AliqICMSProd, p.Cst, ap.Ambiente, ap.Descricao as DescrAmbiente, 
                 " + sqlProdutoTabela + @" as ValorProdutoTabela, p.custoCompra as custoCompraProduto,
                 (Select Sum(Coalesce(pi.qtdeInstalada, 0)) From produtos_instalacao pi Where pi.idProdPed=pp.idProdPed) as qtdeInstalada" + (usarTabelasAdicionais ?
@@ -74,7 +75,9 @@ namespace Glass.Data.DAL
                 Left Join ambiente_pedido ap On (pp.idAmbientePedido=ap.idAmbientePedido)
                 Left Join material_item_projeto mip On (pp.idMaterItemProj=mip.idMaterItemProj)
                 Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
-                Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) " +
+                Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
+                Left Join natureza_operacao no On (pp.IdNaturezaOperacao=no.IdNaturezaOperacao) 
+                Left Join cfop cfop On (no.IdCfop=cfop.IdCfop) " +
                 (usarTabelasAdicionais ?
                     @"Left Join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
                     Left Join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
@@ -5217,7 +5220,10 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<ProdutosPedido> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
         {
-            return objPersistence.LoadData(sessao, "SELECT * FROM produtos_pedido WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+            return objPersistence.LoadData(sessao, 
+                "SELECT * FROM produtos_pedido WHERE IdPedido=?id AND InvisivelPedido=0 AND InvisivelFluxo=0 AND IdProdPedParent IS NULL", 
+                new GDAParameter("?id", idPedido))
+                .ToList();
         }
         
         /// <summary>
@@ -5250,8 +5256,14 @@ namespace Glass.Data.DAL
             var propriedades = new[]
             {
                 nameof(ProdutosPedido.IdNaturezaOperacao),
+                nameof(ProdutosPedido.Mva),
+                nameof(ProdutosPedido.CodValorFiscal),
+                nameof(ProdutosPedido.Csosn),
+                nameof(ProdutosPedido.Cst),
+                nameof(ProdutosPedido.PercRedBcIcms),
                 nameof(ProdutosPedido.AliqIpi),
                 nameof(ProdutosPedido.ValorIpi),
+                nameof(ProdutosPedido.CstIpi),
                 nameof(ProdutosPedido.AliqIcms),
                 nameof(ProdutosPedido.BcIcms),
                 nameof(ProdutosPedido.ValorIcms),
@@ -5267,9 +5279,11 @@ namespace Glass.Data.DAL
                 nameof(ProdutosPedido.AliqPis),
                 nameof(ProdutosPedido.BcPis),
                 nameof(ProdutosPedido.ValorPis),
+                nameof(ProdutosPedido.CstPis),
                 nameof(ProdutosPedido.AliqCofins),
                 nameof(ProdutosPedido.BcCofins),
                 nameof(ProdutosPedido.ValorCofins),
+                nameof(ProdutosPedido.CstCofins)
             };
 
             objPersistence.Update(sessao, produtoPedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);

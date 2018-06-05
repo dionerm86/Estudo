@@ -261,6 +261,9 @@
     <Compile Include="Financeiro\ProsoftFluxo.cs" />
     <Compile Include="Financeiro\QuitacaoParcelaCartaoFluxo.cs" />
     <Compile Include="Fiscal\CalculadoraImposto.cs" />
+    <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoNotaFiscal.cs" />
+    <Compile Include="Fiscal\Calculadoras\NotaFiscalImpostoContainer.cs" />
+    <Compile Include="Fiscal\Calculadoras\ProdutoNfItemImposto.cs" />
     <Compile Include="Fiscal\CentroCustoFluxo.cs" />
     <Compile Include="Fiscal\CestFluxo.cs" />
     <Compile Include="Fiscal\CfopFluxo.cs" />
@@ -270,7 +273,9 @@
     <Compile Include="Fiscal\ItemImpostoResultado.cs" />
     <Compile Include="Fiscal\LocalizadorNaturezaOperacao.cs" />
     <Compile Include="Fiscal\NotaFiscalFluxo.cs" />
+    <Compile Include="Fiscal\ProvedorCodValorFiscal.cs" />
     <Compile Include="Fiscal\ProvedorIcmsProdutoUf.cs" />
+    <Compile Include="Fiscal\ProvedorMvaProdutoUf.cs" />
     <Compile Include="Global\BeneficiamentoFluxo.cs" />
     <Compile Include="Global\ComissionadoFluxo.cs" />
     <Compile Include="Global\Configuracao\FuncaoFluxo.cs" />
@@ -303,6 +308,7 @@
     <Compile Include="Otimizacao\Material.cs" />
     <Compile Include="Otimizacao\OtimizacaoFluxo.cs" />
     <Compile Include="Otimizacao\SessaoOtimizacao.cs" />
+    <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoPedidoEspelho.cs" />
     <Compile Include="PCP\CalculadoraRentabilidadePedidoEspelho.cs" />
     <Compile Include="PCP\CapacidadeProducaoDiariaClassificacaoFluxo.cs" />
     <Compile Include="PCP\CavaleteFluxo.cs" />
@@ -311,11 +317,13 @@
     <Compile Include="PCP\ExpedicaoFluxo.cs" />
     <Compile Include="PCP\MesaCorteFluxo.cs" />
     <Compile Include="PCP\OtimizacaoFluxo.cs" />
+    <Compile Include="Fiscal\Calculadoras\PedidoEspelhoImpostoContainer.cs" />
     <Compile Include="PCP\PerdaFluxo.cs" />
+    <Compile Include="Fiscal\Calculadoras\ProdutoPedidoEspelhoItemImposto.cs" />
     <Compile Include="PCP\SetorFluxo.cs" />
-    <Compile Include="Pedido\CalculadoraImpostoPedido.cs" />
-    <Compile Include="Pedido\PedidoImpostoContainer.cs" />
-    <Compile Include="Pedido\ProdutosPedidoItemImposto.cs" />
+    <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoPedido.cs" />
+    <Compile Include="Fiscal\Calculadoras\PedidoImpostoContainer.cs" />
+    <Compile Include="Fiscal\Calculadoras\ProdutoPedidoItemImposto.cs" />
     <Compile Include="Projeto\FerragemCache.cs" />
     <Compile Include="Projeto\ExportacaoImportacaoFerragem.cs" />
     <Compile Include="Projeto\FerragemFluxo.cs" />

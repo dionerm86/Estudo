@@ -311,7 +311,7 @@ namespace Glass.Data.Model
         /// MVA
         /// </summary>
         [PersistenceProperty("Mva")]
-        public int Mva { get; set; }
+        public float Mva { get; set; }
 
         /// <summary>
         /// Código do valor fiscal de ICMS do produto do pedido
@@ -625,6 +625,10 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("IDORDEMCARGA", DirectionParameter.InputOptional)]
         public int IdOrdemCarga { get; set; }
+
+        [XmlIgnore]
+        [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
+        public string CodNaturezaOperacao { get; set; }
 
         #endregion
 

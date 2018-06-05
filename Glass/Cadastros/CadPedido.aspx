@@ -2023,7 +2023,7 @@
                                                         <td align="left" style="font-weight: bold">Natureza de Operação
                                                         </td>
                                                         <td align="left" style="padding-left: 2px">
-                                                            <asp:label ID="lblNatOp" runat="server" Text='<%# Eval("IdNaturezaOperacao")  %>'></asp:label>
+                                                            <asp:label ID="lblNatOp" runat="server" Text='<%# Eval("CodNaturezaOperacao")  %>'></asp:label>
                                                         </td>
                                                     </tr>
                                                     <tr>

@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Glass.Fiscal.Negocios;
 
-namespace Glass.Pedido.Negocios.Componentes
+namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
 {
     /// <summary>
-    /// Implementação que encapsula o produtos do pedido para um item de imposto.
+    /// Implementação que encapsula o produto da nota fiscal para um item de imposto.
     /// </summary>
-    class ProdutosPedidoItemImposto : Fiscal.Negocios.IItemImposto
+    class ProdutoNfItemImposto : IItemImposto
     {
         #region Propriedades
 
         /// <summary>
         /// Produto do pedido.
         /// </summary>
-        public Data.Model.ProdutosPedido ProdutoPedido { get; }
+        public Data.Model.ProdutosNf ProdutoNf { get; }
 
         /// <summary>
         /// Natureza de operação vinculada ao item.
@@ -31,7 +30,7 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Valor total.
         /// </summary>
-        public decimal Total => ProdutoPedido.Total;
+        public decimal Total => ProdutoNf.Total;
 
         /// <summary>
         /// Finalidade de emissão
@@ -51,103 +50,110 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Código do valor fiscal
         /// </summary>
-        public int? CodValorFiscal => ProdutoPedido.CodValorFiscal;
+        public int? CodValorFiscal => (int?)ProdutoNf.CodValorFiscal;
 
         /// <summary>
         /// Margem de valor agregado
         /// </summary>
-        public decimal Mva => ProdutoPedido.Mva;
+        public float Mva => ProdutoNf.Mva;
 
         /// <summary>
         /// Código de situação tributária do IPI
         /// </summary>
-        public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi => ProdutoPedido.CstIpi;
+        public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi => (Sync.Fiscal.Enumeracao.Cst.CstIpi?)ProdutoNf.CstIpi;
 
         /// <summary>
         /// Aliquota do IPI
         /// </summary>
-        public float AliqIpi => ProdutoPedido.AliqIpi;
+        public float AliqIpi => ProdutoNf.AliqIpi;
 
         /// <summary>
         /// Código de situação tributária do COFINS
         /// </summary>
-        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstCofins => ProdutoPedido.CstCofins;
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstCofins => 
+            (Sync.Fiscal.Enumeracao.Cst.CstPisCofins ? )ProdutoNf.CstCofins;
 
         /// <summary>
         /// Aliquota do COFINS
         /// </summary>
-        public float AliqCofins => ProdutoPedido.AliqCofins;
+        public float AliqCofins => ProdutoNf.AliqCofins;
 
         /// <summary>
         /// Código de situação tributária do PIS
         /// </summary>
-        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstPis => ProdutoPedido.CstPis;
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstPis => 
+            (Sync.Fiscal.Enumeracao.Cst.CstPisCofins ? )ProdutoNf.CstPis;
 
         /// <summary>
         /// Aliquota do PIS
         /// </summary>
-        public float AliqPis => ProdutoPedido.AliqPis;
+        public float AliqPis => ProdutoNf.AliqPis;
 
         /// <summary>
         /// Aliquota do ICMS ST
         /// </summary>
-        public float AliqIcmsSt => ProdutoPedido.AliqIcmsSt;
+        public float AliqIcmsSt => ProdutoNf.AliqIcmsSt;
 
         /// <summary>
         /// Aliquota do ICMS
         /// </summary>
-        public float AliqIcms => ProdutoPedido.AliqIcms;
+        public float AliqIcms => ProdutoNf.AliqIcms;
 
         /// <summary>
         /// Aliquota do FCP
         /// </summary>
-        public float AliqFcp => ProdutoPedido.AliqFcp;
+        public float AliqFcp => ProdutoNf.AliqFcp;
 
         /// <summary>
         /// Aliquota do FCP ST
         /// </summary>
-        public float AliqFcpSt => ProdutoPedido.AliqFcpSt;
+        public float AliqFcpSt => ProdutoNf.AliqFcpSt;
 
         /// <summary>
         /// Percentual de redução da base de calc. do ICMS
         /// </summary>
-        public float PercRedBcIcms => ProdutoPedido.PercRedBcIcms;
+        public float PercRedBcIcms => ProdutoNf.PercRedBcIcms;
 
         /// <summary>
         /// Percentual de diferimento do ICMS
         /// </summary>
-        public decimal PercDiferimento => 0;
+        public float PercDiferimento => ProdutoNf.PercDiferimento;
 
         /// <summary>
         /// Código de situação tributária do ICMS
         /// </summary>
-        public Sync.Fiscal.Enumeracao.Cst.CstIcms? Cst => (Sync.Fiscal.Enumeracao.Cst.CstIcms)ProdutoPedido.Cst;
+        public Sync.Fiscal.Enumeracao.Cst.CstIcms? Cst
+        {
+            get
+            {
+                var cst = 0;
+                if (int.TryParse(ProdutoNf.Cst, out cst))
+                    return (Sync.Fiscal.Enumeracao.Cst.CstIcms)cst;
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// Código de situação tributária do ICMS SN
         /// </summary>
-        public Sync.Fiscal.Enumeracao.Cst.CsosnIcms? Csosn => (Sync.Fiscal.Enumeracao.Cst.CsosnIcms)ProdutoPedido.Csosn;
+        public Sync.Fiscal.Enumeracao.Cst.CsosnIcms? Csosn
+        {
+            get
+            {
+                var csosn = 0;
+                if (int.TryParse(ProdutoNf.Csosn, out csosn))
+                    return (Sync.Fiscal.Enumeracao.Cst.CsosnIcms)csosn;
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// Verifica se os impostos devem ser calculados
         /// </summary>
         /// <returns></returns>
         public bool CalcularImpostos => true;
-
-        /// <summary>
-        /// Indica se possui pedidos
-        /// </summary>
-        public bool PossuiPedidos => true;
-
-        /// <summary>
-        /// Indica se possui compras
-        /// </summary>
-        public bool PossuiCompras => false;
-
-        /// <summary>
-        /// Indica se a nota fiscal está sendo importada pelo sistema.
-        /// </summary>
-        public bool NotaFiscalImportadaSistema => false;
 
         #endregion
 
@@ -156,15 +162,15 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <summary>
         /// Construtor padrão.
         /// </summary>
-        /// <param name="produtoPedido"></param>
+        /// <param name="produtoNf"></param>
         /// <param name="naturezaOperacao"></param>
         /// <param name="produto"></param>
-        public ProdutosPedidoItemImposto(
-            Data.Model.ProdutosPedido produtoPedido, 
+        public ProdutoNfItemImposto(
+            Data.Model.ProdutosNf produtoNf,
             Fiscal.Negocios.Entidades.NaturezaOperacao naturezaOperacao,
             Global.Negocios.Entidades.Produto produto)
         {
-            ProdutoPedido = produtoPedido;
+            ProdutoNf = produtoNf;
             NaturezaOperacao = naturezaOperacao;
             Produto = produto;
         }

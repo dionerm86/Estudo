@@ -52,12 +52,75 @@ namespace Glass.Fiscal.Negocios.Componentes
         #region Métodos Privados
 
         /// <summary>
+        /// Carrega a aliquota o ICMS.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaIcms(ItemImpostoResultado item)
+        {
+            item.AliqIcms = ProvedorIcmsProdutoUf
+                .ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+        }
+
+        /// <summary>
+        /// Carrega a Aliquota do ICMS ST interna.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaIcmsStInterna(ItemImpostoResultado item)
+        {
+            if (Container.Loja != null)
+                item.AliqIcmsSt = ProvedorIcmsProdutoUf
+                    .ObterAliquotaIcmsSt(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+        }
+
+        /// <summary>
+        /// Carrega a aliquota do FCP.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaFcp(ItemImpostoResultado item)
+        {
+            item.AliqFcp = ProvedorIcmsProdutoUf
+                .ObterFCPPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+        }
+
+        /// <summary>
+        /// Carrega a aliquota do FCP ST.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaFcpSt(ItemImpostoResultado item)
+        {
+            item.AliqFcpSt = ProvedorIcmsProdutoUf
+                .ObterAliquotaFCPSTPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+        }
+
+        /// <summary>
+        /// Carrega a aliquota do PIS.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaPis(ItemImpostoResultado item)
+        {
+            item.AliqPis = Data.NFeUtils.ConfigNFe.AliqPis((uint)Container.Loja.IdLoja);
+            item.BcPis = item.Total;
+            item.ValorPis = item.BcPis * (decimal)item.AliqPis / 100m;
+        }
+
+        /// <summary>
+        /// Carrega a aliquota do COFINS.
+        /// </summary>
+        /// <param name="item"></param>
+        private void CarregarAliquotaCofins(ItemImpostoResultado item)
+        {
+            item.AliqCofins = Data.NFeUtils.ConfigNFe.AliqCofins((uint)Container.Loja.IdLoja);
+            item.BcCofins = item.Total;
+            item.ValorCofins = item.BcCofins * (decimal)item.AliqCofins / 100m;
+        }
+
+        /// <summary>
         /// Calcula o valor do IPI.
         /// </summary>
         /// <param name="item"></param>
         private void CalcularIpi(ItemImpostoResultado item)
         {
-            if (item.NaturezaOperacao?.CalcIpi ?? false && item.AliqIpi > 0)
+            if ((item.NaturezaOperacao?.CalcIpi ?? false) && item.AliqIpi > 0)
             {
                 var bcIpi = item.Total;
 
@@ -346,6 +409,13 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="percentualDesconto"></param>
         private void Calcular(ItemImpostoResultado item, decimal percentualDesconto)
         {
+            CarregarAliquotaIcms(item);
+            CarregarAliquotaIcmsStInterna(item);
+            CarregarAliquotaFcp(item);
+            CarregarAliquotaFcpSt(item);
+            CarregarAliquotaPis(item);
+            CarregarAliquotaCofins(item);
+
             // IPI integra BC do Pis se o CST for diferente de 0 e nota de entrada (segundo Julielberty), porém segundo o Higor,
             // deve integrar somente se o ipi não gerar crédito e a empresa destinatária ser do lucro presumido e gerar crédito PIS/COFINS,
             // portanto, a opção foi alterada para ficar assim somente para a Vipal
