@@ -37,7 +37,7 @@
 
             var jaInstalado = CadGerarInstalacao.VerificarPedidoJaInstalado(idPedido).value;
             if (jaInstalado == "true") {
-                alert("Todos os produtos do pedido " + idPedido + " já foram instalados, verifique as instalações desse padido!");
+                alert("Todos os produtos do pedido " + idPedido + " já foram instalados, verifique as instalações desse pedido!");
                 return false;
             }
 

@@ -3576,7 +3576,7 @@ namespace Glass.Data.DAL
                 Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
 
                 //Caso algum dos dados abaixo tenham sido alterados valida se o cheque já existe
-                if (c1.Banco != c.Banco || c1.Num != c.Num || c1.DigitoNum != c.DigitoNum)
+                if (c1.Banco != c.Banco || c1.Num != c.Num || (c1.DigitoNum?.ToString() ?? string.Empty) != (c.DigitoNum?.ToString() ?? string.Empty))
                     if ((c.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && c.IdCliente > 0 &&
                         ExisteChequeDigito(c.IdCliente.Value, c.IdCheque, c.Num, c.DigitoNum))))
                         return "Este cheque já foi cadastrado no sistema.";

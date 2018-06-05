@@ -3022,7 +3022,7 @@ namespace Glass.Data.DAL
 
                 ValorBruto.Instance.Calcular(session, pedidoEspelho, prodPed);
                 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedidoEspelho, prodPed, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedidoEspelho, prodPed, !somarAcrescimoDesconto, true);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max((prodPed as IProdutoCalculo).DadosProduto.ValorTabela(), prodPed.ValorVendido);
 
                 ValorTotal.Instance.Calcular(
@@ -3817,7 +3817,7 @@ namespace Glass.Data.DAL
                     session,
                     pedidoEspelho,
                     objInsert,
-                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                     !isPedidoProducaoCorte,
                     objInsert.Beneficiamentos.CountAreaMinimaSession(session)
                 );
@@ -4025,7 +4025,7 @@ namespace Glass.Data.DAL
                     sessao,
                     container,
                     objUpdate,
-                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                     !isPedidoProducaoCorte,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );

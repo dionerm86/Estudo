@@ -23,9 +23,8 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public LoginUsuario Autenticacao(string login, string senha)
         {
-            int horaInicioLogin = Geral.HoraInicioLogin;
-            int horaFimLogin = Geral.HoraFimLogin;
-            int minFimLogin = 30;
+            var horarioInicioLogin = DateTime.Parse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioInicioLogin)));
+            var horarioFimLogin = DateTime.Parse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioFimLogin)));
 
             string sql = "Select IDFUNC From funcionario Where Login=?login And Senha=?senha And situacao=" + (int)Situacao.Ativo;
 
@@ -63,21 +62,20 @@ namespace Glass.Data.DAL
                     return GetLogin(Glass.Conversoes.StrParaInt(idFunc.ToString()));
 
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday) // Domingo
+                {
                     throw new Exception("Não é permitido logar no sistema aos domingos.");
-                else if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday) // Sábado
-                {
-                    if (DateTime.Now.Hour < 6 || DateTime.Now.Hour >= 14)
-                        throw new Exception("Não é permitido logar no sistema neste horário no sábado.");
                 }
-                else // Dia de semana Seg-Sex
+                else if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && (DateTime.Now.Hour < 6 || DateTime.Now.Hour >= 14)) // Sábado
                 {
-                    // Se for antes de 6:00 ou mais de 19:30
-                    if (DateTime.Now.Hour < horaInicioLogin || DateTime.Now.Hour > horaFimLogin || (DateTime.Now.Hour == horaFimLogin && DateTime.Now.Minute > minFimLogin))
-                        throw new Exception("Não é permitido logar no sistema neste horário.");
+                    throw new Exception("Não é permitido logar no sistema neste horário no sábado.");
+                }
+                else if (DateTime.Now < horarioInicioLogin || DateTime.Now > horarioFimLogin) // Configuração.
+                {
+                    throw new Exception("Não é permitido logar no sistema neste horário.");
                 }
             }
-            
-            return GetLogin(Glass.Conversoes.StrParaInt(idFunc.ToString()));
+                        
+            return GetLogin(idFunc.ToString().StrParaInt());
         }
 
         #endregion

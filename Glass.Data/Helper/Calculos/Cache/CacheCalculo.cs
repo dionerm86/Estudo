@@ -22,7 +22,7 @@ namespace Glass.Data.Helper.Calculos.Cache
         private readonly CacheMemoria<int?, ID> cacheHashCode;
         private readonly Func<T, ID> idItem;
         
-        public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 3)
+        public CacheCalculo(string nome, Func<T, ID> idItem, int tempoExpiracaoSegundos = 0)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 throw new ArgumentException("Nome do cache não pode ser nulo ou vazio.", "nome");

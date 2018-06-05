@@ -2894,6 +2894,9 @@ namespace Glass.Data.DAL
                 ProdutosOrcamentoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(session, orcamento, p, produtos, true);
             }
 
+            //Necessário buscar os produtos atualizados; após o método FinalizarAplicacaoAcrescimoDesconto os produtos em memória não estão atualizados
+            produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, orcamento.IdOrcamento, true);
+
             foreach (var p in produtosOrcamento.Where(p => p.IdProdParent.HasValue))
             {
                 if (p.IdProduto > 0)

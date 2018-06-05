@@ -3975,7 +3975,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if(pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
+            if(pagamentosNfe != null && pagamentosNfe.Any() && pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
                 ManipulacaoXml.SetNode(doc, pag, "vTroco", Formatacoes.TrataValorDecimal(pagamentosNfe.Sum(f => f.Valor) - nf.TotalNota, 2));
 
             #endregion
@@ -9604,6 +9604,11 @@ namespace Glass.Data.DAL
                     if (cliente != null && !cliente.NaoReceberEmailFiscal)
                     {
                         var loja = LojaDAO.Instance.GetElementByPrimaryKey(session, nf.IdLoja.Value);
+
+                        if ((loja?.IdLoja).GetValueOrDefault() == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
+                        }
 
                         if (!cancelamento)
                         {

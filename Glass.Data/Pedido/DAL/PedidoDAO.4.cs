@@ -639,7 +639,7 @@ namespace Glass.Data.DAL
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
 
-                    if (DateTime.Now > objUpdate.DataEntrega)
+                    if (DateTime.Now.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
                         throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
@@ -729,7 +729,7 @@ namespace Glass.Data.DAL
                         AplicarAcrescimo(session, objUpdate, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido);
                     }
 
-                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda, (int)objUpdate.IdParcela) != 100)
+                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda, (int?)objUpdate.IdParcela) != 100)
                     {
                         objUpdate.IdFuncDesc = null;
                         objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET idFuncDesc=NULL WHERE IdPedido={0}", objUpdate.IdPedido));
@@ -930,6 +930,12 @@ namespace Glass.Data.DAL
 
                 #endregion
 
+                #region Atualização do total do pedido
+
+                UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
+
+                #endregion
+
                 #region Atualização dos totais do pedido espelho
 
                 // Atualiza os dados do pedido espelho.
@@ -1014,12 +1020,6 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
-
-                #endregion
-
-                #region Atualização do total do pedido
-
-                UpdateTotalPedido(session, objUpdate, false, false, aplicarDesconto, true);
 
                 #endregion
 

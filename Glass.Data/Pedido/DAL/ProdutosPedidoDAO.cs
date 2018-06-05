@@ -3846,7 +3846,7 @@ namespace Glass.Data.DAL
                 prodPed.InicializarParaCalculo(session, pedido);
                 prodPed.ValorTabelaPedido = (prodPed as IProdutoCalculo).DadosProduto.ValorTabela();
 
-                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
+                var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto, true);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
                 ValorTotal.Instance.Calcular(
@@ -4218,7 +4218,7 @@ namespace Glass.Data.DAL
             var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
             var lojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
 
-            if (!insersaoComposicao && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
+            if (!insersaoComposicao && idsLojaSubgrupoProd.Count() > 0 && !idsLojaSubgrupoProd.Any(f => f == lojaPedido))
                 throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
 
             /* Chamados 52702 e 52911.
@@ -4319,7 +4319,7 @@ namespace Glass.Data.DAL
                 session,
                 pedido,
                 objInsert,
-                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                 objInsert.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                 objInsert.Beneficiamentos.CountAreaMinimaSession(session)
             );
@@ -4759,6 +4759,9 @@ namespace Glass.Data.DAL
                 if (atualizarAmbienteBeneficiamento && objUpdate.IdAmbientePedido > 0)
                 {
                     var produtosPedido = GetByAmbiente(sessao, objUpdate.IdAmbientePedido.Value);
+                    var remover = produtosPedido.FirstOrDefault(p => p.IdProdPed == objUpdate.IdProdPed);
+                    produtosPedido.Remove(remover);
+                    produtosPedido.Add(objUpdate);
 
                     bool acrescimoRemovido = AmbientePedidoDAO.Instance.RemoverAcrescimo(
                         sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
@@ -4831,7 +4834,7 @@ namespace Glass.Data.DAL
                     sessao,
                     pedido,
                     objUpdate,
-                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                    Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                     !isPedidoProducaoCorte,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );

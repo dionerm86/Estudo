@@ -733,27 +733,25 @@ namespace Glass.Data.DAL
 
             try
             {
-                var atualizarAcrescimo = objUpdate.TipoAcrescimo != tipoAcrescimo || objUpdate.Acrescimo != acrescimo;
-                var atualizarDesconto = objUpdate.TipoDesconto != tipoDesconto || objUpdate.Desconto != desconto;
+                var produtosPedido = ProdutosPedidoDAO.Instance.GetByAmbiente(sessao, objUpdate.IdAmbientePedido);
 
-                if (atualizarAcrescimo || atualizarDesconto)
+                foreach (ProdutosPedido pp in produtosPedido)
                 {
-                    var produtosPedido = ProdutosPedidoDAO.Instance.GetByAmbiente(sessao, objUpdate.IdAmbientePedido);
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, pedido, pp, forcarRecalculo: true);
+                    pp.ValorVendido = valorUnitario ?? pp.ValorVendido;
 
-                    if (atualizarAcrescimo)
-                    {
-                        RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
-                        AplicarAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido);
-                    }
-
-                    if (atualizarDesconto)
-                    {
-                        RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
-                        AplicarDesconto(sessao, pedido, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedido);
-                    }
-
-                    FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido, true);
+                    ValorTotal.Instance.Calcular(
+                        sessao,
+                        pedido,
+                        pp,
+                        Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                        !(pedido as IContainerCalculo).IsPedidoProducaoCorte,
+                        pp.Beneficiamentos.CountAreaMinimaSession(sessao)
+                    );
                 }
+
+                RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
+                RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido, produtosPedido);
 
                 if (pedido.MaoDeObra)
                 {
@@ -768,9 +766,19 @@ namespace Glass.Data.DAL
 
                     // Atualiza todos os produtos deste ambiente, caso a quantidade/m² do ambiente tenha sido alterada é necessário recalcular
                     // os valores dos produtos associados ao mesmo
-                    foreach (ProdutosPedido pp in ProdutosPedidoDAO.Instance.GetByAmbiente(sessao, objUpdate.IdAmbientePedido))
+                    foreach (ProdutosPedido pp in produtosPedido)
                         ProdutosPedidoDAO.Instance.Update(sessao, pp, pedido);
                 }
+
+                bool aplicado = false;
+
+                if (AplicarAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido))
+                    aplicado = true;
+
+                if (AplicarDesconto(sessao, pedido, objUpdate.IdAmbientePedido, objUpdate.TipoDesconto, objUpdate.Desconto, produtosPedido))
+                    aplicado = true;
+
+                FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido, aplicado);
 
                 PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
             }
