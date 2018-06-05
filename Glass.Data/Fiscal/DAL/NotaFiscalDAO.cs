@@ -3970,7 +3970,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if(pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
+            if(pagamentosNfe != null && pagamentosNfe.Any() && pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
                 ManipulacaoXml.SetNode(doc, pag, "vTroco", Formatacoes.TrataValorDecimal(pagamentosNfe.Sum(f => f.Valor) - nf.TotalNota, 2));
 
             #endregion
