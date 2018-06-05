@@ -1038,6 +1038,7 @@ namespace Glass.Data.DAL
                 PedidoEspelho pedEsp = new PedidoEspelho
                 {
                     IdPedido = idPedido,
+                    IdCli = ped.IdCli,
                     Situacao = (int)PedidoEspelho.SituacaoPedido.Aberto,
                     DataEspelho = DateTime.Now,
                     IdFuncConf = UserInfo.GetUserInfo.CodUser,
@@ -2628,7 +2629,7 @@ namespace Glass.Data.DAL
                                 sessao,
                                 orcamento,
                                 prodOrca,
-                                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
+                                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                                 true,
                                 prodOrca.Beneficiamentos.CountAreaMinima
                             );

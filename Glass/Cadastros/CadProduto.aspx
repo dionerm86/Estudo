@@ -932,10 +932,10 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Cod. Otimização" SortExpression="CodOtimizacao">
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtCodOtimizacao" runat="server" Text='<%# Bind("CodOtimizacao") %>' Width="70px"></asp:TextBox>
+                                <asp:TextBox ID="txtCodOtimizacao" runat="server" Text='<%# Bind("CodOtimizacao") %>' MaxLength="13"  Width="70px"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtCodOtimizacao" runat="server" Text='<%# Bind("CodOtimizacao") %>' Width="70px"></asp:TextBox>
+                                <asp:TextBox ID="txtCodOtimizacao" runat="server" Text='<%# Bind("CodOtimizacao") %>' MaxLength="13" Width="70px"></asp:TextBox>
                             </InsertItemTemplate>
                             <ItemTemplate>
                                 <asp:Label ID="Label17" runat="server" Text='<%# Bind("CodOtimizacao") %>'></asp:Label>

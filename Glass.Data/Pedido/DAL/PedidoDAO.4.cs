@@ -729,7 +729,7 @@ namespace Glass.Data.DAL
                         AplicarAcrescimo(session, objUpdate, objUpdate.TipoAcrescimo, objUpdate.Acrescimo, produtosPedido);
                     }
 
-                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda, (int)objUpdate.IdParcela) != 100)
+                    if (objUpdate.Desconto != ped.Desconto && PedidoConfig.Desconto.GetDescontoMaximoPedido(session, UserInfo.GetUserInfo.CodUser, (int)objUpdate.TipoVenda, (int?)objUpdate.IdParcela) != 100)
                     {
                         objUpdate.IdFuncDesc = null;
                         objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET idFuncDesc=NULL WHERE IdPedido={0}", objUpdate.IdPedido));
