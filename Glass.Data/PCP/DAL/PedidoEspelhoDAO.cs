@@ -1038,6 +1038,7 @@ namespace Glass.Data.DAL
                 PedidoEspelho pedEsp = new PedidoEspelho
                 {
                     IdPedido = idPedido,
+                    IdCli = ped.IdCli,
                     Situacao = (int)PedidoEspelho.SituacaoPedido.Aberto,
                     DataEspelho = DateTime.Now,
                     IdFuncConf = UserInfo.GetUserInfo.CodUser,
