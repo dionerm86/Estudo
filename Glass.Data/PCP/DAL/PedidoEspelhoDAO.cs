@@ -1265,15 +1265,6 @@ namespace Glass.Data.DAL
                         File.Copy(urlImagem, caminhoImagemPCP, true);
                     }
 
-                    if (pe.IdProdPedParent.GetValueOrDefault(0) > 0 && string.IsNullOrEmpty(pe.ImagemUrl))
-                    {
-                        var caminhoPai = Utils.GetPecaComercialPath + p.IdProdPedParent.GetValueOrDefault(0).ToString().PadLeft(10, '0') + "_0.jpg";
-                        if (File.Exists(caminhoPai))
-                        {
-                            var caminhoImagemPCP = Utils.GetPecaProducaoPath + idProdPedEsp.ToString().PadLeft(10, '0') + "_0.jpg";
-                            File.Copy(caminhoPai, caminhoImagemPCP);
-                        }
-                    }
                 }
 
                 #region Valida quantidade item/material projeto
