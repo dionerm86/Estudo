@@ -46,15 +46,12 @@ namespace Glass.Data.RelDAL
                     (p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @") as Producao,
                     " + m2QtdeTurno + @"t.descricao as Turno, t.numSeq as numSeqTurno, '$$$' as Criterio {0}
                 from (
-                    select * from (
                         select idProdPedProducao, dataLeitura, " + campoTurno + @" as turno
                         from leitura_producao
                         where dataLeitura>=?dtIni
                             and dataLeitura<=?dtFim
                             " + (setor > 0 ? "and idSetor=" + setor : "") + @"
-                        order by dataLeitura asc
-                    ) as temp
-                    group by idProdPedProducao
+                        order by dataLeitura asc            
                 ) lp
                     inner join produto_pedido_producao ppp on (lp.idProdPedProducao=ppp.idProdPedProducao)
                     inner join produtos_pedido_espelho pp on (ppp.idProdPed=pp.idProdPed)
