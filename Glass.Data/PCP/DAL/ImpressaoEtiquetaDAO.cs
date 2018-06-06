@@ -1304,7 +1304,6 @@ namespace Glass.Data.DAL
                         {
                             ArquivoMesaCorteDAO.Instance.GetArquivoMesaCorte(session, etiq.IdPedido.StrParaUint(), etiq.IdProdPedEsp,
                                 idSetor, ref idArquivoMesaCorte, arquivoOtimizacao, ms, ref tipoArquivo, forSGlass, forIntermac);
-                            lstErrosArq.Add(new KeyValuePair<string, Exception>(null, null));
                         }
                         catch (Exception ex)
                         {
