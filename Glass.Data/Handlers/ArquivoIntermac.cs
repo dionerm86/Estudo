@@ -41,17 +41,10 @@ namespace Glass.Data.Handlers
 
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, true, true);
 
-                foreach (var erro in lstErrosArq)
+                if (lstErrosArq.Any())
                 {
-                    if (erro.Value == null || string.IsNullOrEmpty(erro.Value.Message))
-                    {
-                        lstErrosArq.Remove(erro);
-                    }
-                }
-
-                if (lstErrosArq != null && lstErrosArq.Count > 0)
-                {
-                    var erros = string.Join("</br>", lstErrosArq.Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, MensagemAlerta.FormatErrorMsg(null, f.Value))));
+                    var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))
+                        .Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, MensagemAlerta.FormatErrorMsg(null, f.Value))));
 
                     context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
                     context.Response.Flush();
