@@ -27,10 +27,7 @@
         var apenasVidros = FindControl(ctrlSourceId + "_chkApenasVidro", "input").checked;
 
         if (espessuraVidro != undefined && espessuraVidro != null && espessuraVidro.style.display != "none") {
-            if (!apenasVidros) {
-                espessuraVidro.value = "";
-            }
-            else if (espessuraVidro.value == "") {
+            if (espessuraVidro.value == "") {
                 alert("Informe a espessura do vidro.");
                 click = false;
                 return false;

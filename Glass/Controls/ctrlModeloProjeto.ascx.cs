@@ -42,30 +42,16 @@ namespace Glass.UI.Web.Controls
             if (ProjetoConfig.ControleModeloProjeto.ApenasVidrosPadrao)
             {
                 chkApenasVidro.Checked = true;
-                drpEspessuraVidro.Attributes.Add("style", "display: block;");
-
-                if (!ProjetoConfig.SelecionarEspessuraAoCalcularProjeto)
-                {
-                    drpEspessuraVidro.Visible = false;
-                    lblEspessura.Visible = false;
-                }
-                else
-                    lblEspessura.Attributes.Add("style", "display: block;");
-
                 spnMedidaExata.Attributes.Add("style", "display: inline");
                 
                 if (ProjetoConfig.ControleModeloProjeto.MedidaExataPadrao)
                     chkMedidaExata.Checked = true;
             }
-            else if (!ProjetoConfig.SelecionarEspessuraAoCalcularProjeto)
+
+            if (!ProjetoConfig.SelecionarEspessuraAoCalcularProjeto)
             {
                 drpEspessuraVidro.Visible = false;
                 lblEspessura.Visible = false;
-            }
-            else
-            {
-                drpEspessuraVidro.Attributes.Add("style", "display: none;");
-                lblEspessura.Attributes.Add("style", "display: none;");
             }
             
             if (Modelo != null && Modelo.IdGrupoModelo > 0)
