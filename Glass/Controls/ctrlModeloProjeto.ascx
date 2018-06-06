@@ -3,22 +3,7 @@
 
 <script type="text/javascript">
 
-    function exibeEspessura(controle)
-    {
-        var prefixo = controle.children[0].id.substring(0, controle.children[0].id.indexOf("chkApenasVidro"));
-        controle = FindControl(controle.children[0].id, "input");
-
-        if (FindControl(prefixo + "drpEspessuraVidro", "select") != undefined &&
-            FindControl(prefixo + "drpEspessuraVidro", "select") != null)
-        if (!controle.checked) {
-            FindControl(prefixo + "drpEspessuraVidro", "select").style.display = "none";
-            FindControl(prefixo + "lblEspessura", "span").style.display = "none";
-        }
-        else {
-            FindControl(prefixo + "drpEspessuraVidro", "select").style.display = "block";
-            FindControl(prefixo + "lblEspessura", "span").style.display = "block";
-        }
-    }
+   
 
 </script>
 
@@ -88,7 +73,7 @@
                                 </td>
                             </tr>
                         </table>
-                            <asp:CheckBox ID="chkApenasVidro" runat="server" Text="Apenas Vidros" onchange="exibeEspessura(this); return false;"/>
+                            <asp:CheckBox ID="chkApenasVidro" runat="server" Text="Apenas Vidros" />
                             <span id="spnMedidaExata" runat="server" style="display: none" >
                             <asp:CheckBox ID="chkMedidaExata" runat="server" Text="Medidas Exatas" />
                         </span>
