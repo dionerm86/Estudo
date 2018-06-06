@@ -5,6 +5,7 @@ using Ionic.Utils.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 
 namespace Glass.Data.Handlers
@@ -45,6 +46,23 @@ namespace Glass.Data.Handlers
                     throw new Exception("Nenhum pedido filtrado possui arquivo SGLASS para ser gerado.");
 
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, true, false, false);
+
+                foreach (var erro in lstErrosArq)
+                {
+                    if (erro.Value == null || string.IsNullOrEmpty(erro.Value.Message))
+                    {
+                        lstErrosArq.Remove(erro);
+                    }
+                }
+
+                if (lstErrosArq != null && lstErrosArq.Count > 0)
+                {
+                    var erros = string.Join("</br>", lstErrosArq.Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, MensagemAlerta.FormatErrorMsg(null, f.Value))));
+
+                    context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
+                    context.Response.Flush();
+                    return;
+                }
 
                 if (lstArqMesa.Count == 0)
                     throw new Exception("Nenhum pedido filtrado possui arquivo SGLASS para ser gerado.");
