@@ -29,10 +29,7 @@
             var parceiro = "<%= Request["Parceiro"] %>" == "true" ? true : false;
 
             if (espessuraVidro != undefined && espessuraVidro != null && espessuraVidro.style.display != "none") {
-                if (!apenasVidros) {
-                    espessuraVidro.value = "";
-                }
-                else if (espessuraVidro.value == "") {
+                if (espessuraVidro.value == "") {
                     alert("Informe a espessura do vidro.");
                     click = false;
                     return false;
