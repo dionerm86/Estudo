@@ -683,7 +683,7 @@ function loadProduto(codInterno, idProdPed, manterProcessoAplicacao) {
             if (retorno.length >= 22)
                 FindControl("lblDescrProd", "span").innerHTML += " (Valor m²: " + retorno[21] + ")";
 
-            if (FindControl("txtComissaoProd", "input") != null)
+            if (FindControl("txtComissaoProd", "input") != null && FindControl("txtComissaoProd", "input").valse == 0)
                 FindControl("txtComissaoProd", "input").value = retorno[22] != undefined ? retorno[22] : retorno[21];
         }
         else {
