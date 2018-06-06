@@ -41,11 +41,22 @@ namespace Glass.Data.Handlers
 
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, false, false);
 
-                // Verifica se existe algum erro tratado no momento da geração do arquivo.
-                if (lstErrosArq != null && lstErrosArq.Any(f => f.Value != null))
-                    // Monta um texto com todos os problemas ocorridos ao gerar o arquivo de mesa, ao final do método, o texto é salvo em um arquivo separado e é zipado junto com o ASC.
-                    errosGeracaoMarcacao = string.Format("Situações com arquivos de mesa: </br></br>{0}",
-                        string.Join("</br>", lstErrosArq.Where(f => f.Value != null).Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value)))));
+                foreach (var erro in lstErrosArq)
+                {
+                    if (erro.Value == null || string.IsNullOrEmpty(erro.Value.Message))
+                    {
+                        lstErrosArq.Remove(erro);
+                    }
+                }
+
+                if (lstErrosArq != null && lstErrosArq.Count > 0)
+                {
+                    var erros = string.Join("</br>", lstErrosArq.Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, MensagemAlerta.FormatErrorMsg(null, f.Value))));
+
+                    context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
+                    context.Response.Flush();
+                    return;
+                }
 
                 // Adiciona o arquivo de otimização ao zip            
                 context.Response.ContentType = "application/zip";
