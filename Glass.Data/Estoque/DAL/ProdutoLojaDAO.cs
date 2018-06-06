@@ -581,61 +581,58 @@ namespace Glass.Data.DAL
                     .ToList();
 
                 if (idsProd.Count == 0)
+                {
                     return;
-                
+                }
+
+                var invisivelFluxoPedido = PCPConfig.UsarConferenciaFluxo ? "InvisivelFluxo" : "InvisivelPedido";
+
                 // Atualiza a reserva e liberação de cada produto
                 foreach (var idProd in idsProd)
                 {
                     // Cria um registro na tabela produto_loja caso não exista.
                     NewProd(sessao, idProd, idLoja);
 
+                    var reserva = objPersistence.ExecuteScalar(sessao,
+                        $@"SELECT COALESCE(SUM(Qtde-Qtdsaida), 0)
+	                    FROM produtos_pedido pp 
+		                    LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
+	                    WHERE pp.Qtde<>pp.QtdSaida
+                            AND (pp.{ invisivelFluxoPedido } IS NULL OR pp.{ invisivelFluxoPedido }=0)
+                            AND p.Situacao={ (PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado) }
+                            AND p.TipoPedido<>{ (int)Pedido.TipoPedidoEnum.Producao }
+		                    AND pp.IdProd={ idProd }
+                            { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) };");
+
                     // Atualiza a coluna RESERVA
-                    objPersistence.ExecuteCommand(sessao, string.Format(@"
-                        UPDATE produto_loja SET 
-                            Reserva=(
-                                SELECT COALESCE(SUM(qtde-qtdsaida),0)
-	                            FROM produtos_pedido pp 
-		                            LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
-	                            WHERE pp.Qtde<>pp.QtdSaida 
-                                    AND pp.Invisivel{0}=0
-		                            AND p.Situacao={1}
-                                    AND p.TipoPedido<>{2}
-		                            AND pp.IdProd={3}
-                                    {4}
-                            )
-                        WHERE IdProd={3} {4}",
-                        PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                        PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado,
-                        (int)Pedido.TipoPedidoEnum.Producao,
-                        idProd,
-                        idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty)
-                    );
+                    objPersistence.ExecuteCommand(sessao, string.Format(
+                        $@"UPDATE produto_loja SET 
+                            Reserva=?reserva
+                        WHERE IdProd={ idProd }
+                            { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) };"),
+                        new GDAParameter("?reserva", reserva));
 
                     // Atualiza a coluna LIBERACAO
                     if (PedidoConfig.LiberarPedido && atualizarLiberacao)
                     {
-                        objPersistence.ExecuteCommand(sessao, string.Format(@"
-                        UPDATE produto_loja SET 
-                            Liberacao=(
-                                SELECT COALESCE(SUM(qtde-qtdsaida),0)
-	                            FROM produtos_pedido pp 
-		                            LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
-	                            WHERE pp.Qtde<>pp.QtdSaida 
-                                    AND pp.Invisivel{0}=0
-		                            AND p.Situacao IN({1})
-                                    AND p.SituacaoProducao<>{2}
-                                    AND p.TipoPedido<>{3}
-		                            AND pp.IdProd={4}
-                                    {5}
-                            )
-                        WHERE IdProd={4} {5}",
-                            PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                            string.Format("{0},{1}",(int)Pedido.SituacaoPedido.Confirmado, (int)Pedido.SituacaoPedido.LiberadoParcialmente),
-                            (int)Pedido.SituacaoProducaoEnum.Entregue,
-                            (int)Pedido.TipoPedidoEnum.Producao,
-                            idProd,
-                            idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty)
-                        );
+                        var liberacao = objPersistence.ExecuteScalar(sessao,
+                            $@"SELECT COALESCE(SUM(Qtde-Qtdsaida), 0)
+	                        FROM produtos_pedido pp 
+		                        LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
+	                        WHERE pp.Qtde<>pp.QtdSaida 
+                                AND (pp.{ invisivelFluxoPedido } IS NULL OR pp.{ invisivelFluxoPedido }=0)
+		                        AND p.Situacao IN ({ (int)Pedido.SituacaoPedido.Confirmado }, { (int)Pedido.SituacaoPedido.LiberadoParcialmente })
+                                AND p.SituacaoProducao<>{ (int)Pedido.SituacaoProducaoEnum.Entregue }
+                                AND p.TipoPedido<>{ (int)Pedido.TipoPedidoEnum.Producao }
+		                        AND pp.IdProd={ idProd }
+                                { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) };");
+
+                        objPersistence.ExecuteCommand(sessao,
+                            $@"UPDATE produto_loja SET
+                                Liberacao=?liberacao
+                            WHERE IdProd={ idProd }
+                                { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) }",
+                            new GDAParameter("?liberacao", liberacao));
                     }
                 }
             }

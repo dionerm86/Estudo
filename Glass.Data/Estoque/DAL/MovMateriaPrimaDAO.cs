@@ -26,10 +26,7 @@ namespace Glass.Data.DAL
         private void MovimentaMateriaPrima(GDASession sessao, int idCorVidro, decimal espessura, MovEstoque.TipoMovEnum tipoMov, decimal qntd,
             int? idProdNf, int? idPerdaChapaVidro, int? idProdImpressao, int? idProdPed, int? idProdPedEsp)
         {
-            // Pega o saldo atual
-            var idMovMateriaPrima = ObtemUltimoIdMovMateriaPrima(sessao, idCorVidro, espessura);
-
-            decimal saldoAtual = idMovMateriaPrima == null ? 0 : ObtemValorCampo<decimal>(sessao, "saldo", "idMovMateriaPrima=" + idMovMateriaPrima);
+            var saldoAtual = ObterSaldo(sessao, idCorVidro, espessura);
 
             MovMateriaPrima mov = new MovMateriaPrima();
 
@@ -79,7 +76,7 @@ namespace Glass.Data.DAL
         {
             var id = ObtemUltimoIdMovMateriaPrima(sessao, idCorVidro, espessura);
 
-            if (id.GetValueOrDefault(0) == 0)
+            if (id.GetValueOrDefault() == 0)
                 return 0;
 
             return ObtemValorCampo<decimal>(sessao, "Saldo", "IdMovMateriaPrima=" + id);

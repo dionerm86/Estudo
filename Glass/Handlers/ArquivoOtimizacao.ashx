@@ -61,8 +61,19 @@ public class ArquivoOtimizacao : IHttpHandler
         // Recupera as etiquetas e os arquivos de mesa
         else if (Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
                  Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
-            arquivo = ImpressaoEtiquetaDAO.Instance.ArquivoOtimizacaoOptyWay(UserInfo.GetUserInfo.CodUser, idImpressao, context.Request["etiquetas"],
-                ref lstEtiqueta, ref lstArqMesa, ref lstCodArq, ref lstErrosArq, ignorarExportadas, ignorarSag);
+        {
+            try
+            {
+                arquivo = ImpressaoEtiquetaDAO.Instance.ArquivoOtimizacaoOptyWay(UserInfo.GetUserInfo.CodUser, idImpressao, context.Request["etiquetas"],
+                    ref lstEtiqueta, ref lstArqMesa, ref lstCodArq, ref lstErrosArq, ignorarExportadas, ignorarSag);
+            }
+            catch (Exception x)
+            {
+                context.Response.Write(string.Format("<script>alert(\"{0}\"); window.history.back(); </script>", x.Message));
+                context.Response.Flush();
+                return;
+            }
+        }
         else
             arquivo = ImpressaoEtiquetaDAO.Instance.ArquivoOtimizacaoCorteCerto(UserInfo.GetUserInfo.CodUser, idImpressao, context.Request["etiquetas"], ignorarExportadas, ref lstEtiqueta);
 
