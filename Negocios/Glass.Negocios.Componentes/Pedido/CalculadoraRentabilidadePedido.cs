@@ -202,8 +202,7 @@ namespace Glass.Pedido.Negocios.Componentes
                 FatorICMSSubstituicao = 0,
                 PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
                 PercentualIPIVenda = (decimal)produtoPedido.AliqIpi / 100m,
-                // TODO: Adiciona a comissão por produto
-                PercentualComissao = 0m,
+                PercentualComissao = produtoPedido.PercComissao / 100m,
                 CustosExtras = 0M,
                 PercentualRentabilidade = produtoPedido.PercentualRentabilidade / 100m,
                 RentabilidadeFinanceira = produtoPedido.RentabilidadeFinanceira
@@ -302,21 +301,39 @@ namespace Glass.Pedido.Negocios.Componentes
             var filtroItensParaCalculo = new Func<IItemRentabilidade, bool>((item) =>
             {
                 if (item is IItemRentabilidade<Data.Model.AmbientePedido>)
-                    return true;
+                    // Calcula a rentabilidade somente de ambientes com produtos
+                    return ((IItemRentabilidadeContainer)item).Itens.Any();
 
                 var produtoPedido = (item as IItemRentabilidade<Data.Model.ProdutosPedido>)?.Proprietario;
-                return produtoPedido != null && !produtoPedido.InvisivelPedido && !produtoPedido.InvisivelFluxo && !produtoPedido.IdAmbientePedido.HasValue;
+                return produtoPedido != null && 
+                       !produtoPedido.InvisivelPedido && !produtoPedido.InvisivelFluxo && !produtoPedido.IdAmbientePedido.HasValue;
             });
+
+            decimal percentualComissao = 0;
+
+            if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
+            {
+                decimal percComissao = 0;
+                var total = pedido.Total;
+
+                if (total > 0)
+                    foreach (var item in itens.Where(filtroItensParaCalculo))
+                        percComissao += ((item.PrecoVendaSemIPI * 100) / total) * (item.PercentualComissao);
+
+                percentualComissao = percComissao / 100m;
+            }
+            else
+                percentualComissao = (decimal)pedido.PercentualComissao / 100m;
 
             return new ItemRentabilidadeContainer<Data.Model.Pedido, Data.Model.PedidoRentabilidade>(
                 ProvedorIndicadoresFinanceiro, criarRegistro, pedido, itens, filtroItensParaCalculo, registros, 
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Pedido {pedido.IdPedido}",
-                PrecoVendaSemIPI = itens.Sum(f => f.PrecoVendaSemIPI),
+                PrecoVendaSemIPI = itens.Where(filtroItensParaCalculo).Sum(f => f.PrecoVendaSemIPI),
                 PrazoMedio = prazoMedio,
                 FatorICMSSubstituicao = 0,
-                PercentualComissao = (decimal)pedido.PercentualComissao / 100m,
+                PercentualComissao = percentualComissao,
                 PercentualRentabilidade = pedido.PercentualRentabilidade / 100m,
                 RentabilidadeFinanceira = pedido.RentabilidadeFinanceira
             };

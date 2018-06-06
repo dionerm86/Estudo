@@ -860,9 +860,10 @@ namespace Glass.Data.DAL
                 }
 
                 var idPedido = ObtemValorCampo<uint>(session, "idPedido", "idAmbientePedido=" + Key);
-                PedidoDAO.Instance.UpdateTotalPedido(session, idPedido);
 
                 var retorno = base.DeleteByPrimaryKey(session, Key);
+
+                PedidoDAO.Instance.UpdateTotalPedido(session, idPedido);
 
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;

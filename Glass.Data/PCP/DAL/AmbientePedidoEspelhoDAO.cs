@@ -860,7 +860,18 @@ namespace Glass.Data.DAL
             foreach (ProdutosPedidoEspelho p in ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(session, 0, key))
                 ProdutosPedidoEspelhoDAO.Instance.Delete(session, p);
 
-            return base.DeleteByPrimaryKey(session, key);
+            // Recupera o identificador do pedido associado
+            var idPedido = objPersistence.LoadResult(session,
+                "SELECT IdPedido FROM ambiente_pedido_espelho WHERE IdAmbientePedido=?id",
+                new GDAParameter("?id", key))
+                .Select(f => f.GetUInt32(0))
+                .First();
+
+            var retorno = base.DeleteByPrimaryKey(session, key);
+
+            PedidoEspelhoDAO.Instance.UpdateTotalPedido(session, idPedido);
+
+            return retorno;
         }
 
         #endregion
