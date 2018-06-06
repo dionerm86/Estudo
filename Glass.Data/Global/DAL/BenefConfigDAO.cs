@@ -437,7 +437,7 @@ namespace Glass.Data.DAL
                 return false;
             }
 
-            var sql = string.Format("SELECT COUNT(*) FROM benef_config WHERE (LOWER(Descricao)='redondo' OR LOWER(Nome)='redondo') AND IdBenefConfig IN ({0})", idsBenefConfig);
+            var sql = string.Format("SELECT COUNT(*) FROM benef_config WHERE (LOWER(Descricao)='redondo' OR LOWER(Nome)='redondo') AND IdBenefConfig IN ({0})", string.Join(",", idsBenefConfig));
 
             return objPersistence.ExecuteSqlQueryCount(sql) > 0;
         }
