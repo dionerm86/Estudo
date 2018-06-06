@@ -3412,8 +3412,12 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<ProdutosPedidoEspelho> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
         {
-            return objPersistence.LoadData(sessao, 
-                "SELECT * FROM produtos_pedido_espelho WHERE IdPedido=?id AND InvisivelFluxo=0 AND IdProdPedParent IS NULL", 
+            return objPersistence.LoadData(sessao,
+                @"SELECT 
+                    ppe.*, pp.PercComissao
+                  FROM produtos_pedido_espelho ppe
+                  INNER JOIN produtos_pedido pp ON (ppe.IdProdPed=pp.IdProdPedEsp)
+                  WHERE ppe.IdPedido=?id AND ppe.InvisivelFluxo=0 AND ppe.IdProdPedParent IS NULL", 
                 new GDAParameter("?id", idPedido))
                 .ToList();
         }

@@ -313,7 +313,7 @@ namespace Glass.Pedido.Negocios.Componentes
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Pedido {pedido.IdPedido}",
-                PrecoVendaSemIPI = pedido.Total - pedido.ValorIpi,
+                PrecoVendaSemIPI = itens.Sum(f => f.PrecoVendaSemIPI),
                 PrazoMedio = prazoMedio,
                 FatorICMSSubstituicao = 0,
                 PercentualComissao = (decimal)pedido.PercentualComissao / 100m,
@@ -369,19 +369,16 @@ namespace Glass.Pedido.Negocios.Componentes
 
             var percentualComissao = 0m;
 
-            // TODO: Implementar quando foi colocada a comissão por produto
-#pragma warning disable S125 // Sections of code should not be "commented out"
-            //if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
-            //{
-            //    decimal percComissao = 0;
+            if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
+            {
+                decimal percComissao = 0;
 
-            //    if (total > 0)
-            //        foreach (var prod in produtosAmbiente)
-            //            percComissao += ((prod.Total * 100) / total) * (prod.PercComissao / 100);
+                if (total > 0)
+                    foreach (var prod in produtosAmbiente)
+                        percComissao += ((prod.Total * 100) / total) * (prod.PercComissao / 100);
 
-            //    percentualComissao = percComissao / 100m;
-            //}
-#pragma warning restore S125 // Sections of code should not be "commented out"
+                percentualComissao = percComissao / 100m;
+            }
 
             return new ItemRentabilidadeContainer<Data.Model.AmbientePedido, Data.Model.AmbientePedidoRentabilidade>(
                 ProvedorIndicadoresFinanceiro, criarRegistro, ambiente, produtos, f => true, registros, 

@@ -537,6 +537,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
         public string CodNaturezaOperacao { get; set; }
 
+        [PersistenceProperty("PERCCOMISSAO", DirectionParameter.InputOptional)]
+        public decimal PercComissao { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
