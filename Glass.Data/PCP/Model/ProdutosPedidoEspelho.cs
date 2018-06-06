@@ -242,12 +242,6 @@ namespace Glass.Data.Model
         public decimal PercRedBcIcmsSt { get; set; }
 
         /// <summary>
-        /// Base de calculo IPI
-        /// </summary>
-        [PersistenceProperty("BcIpi")]
-        public decimal BcIpi { get; set; }
-
-        /// <summary>
         /// Base de calculo PIS
         /// </summary>
         [PersistenceProperty("BcPis")]
