@@ -2016,6 +2016,97 @@
                                                         </td>
                                                     </tr>
                                                 </table>
+                                                <a href="#" id="lnkInfoAdicProd" onclick="exibirInfoAdicProd(<%# Eval("IdProdPed") %>, this); return false;">
+                                                    <img border="0" src="../Images/tax.png" title="Informações Adicionais" width="16px" /></a>
+                                                <table id='tbInfoAdicProd_<%# Eval("IdProdPed") %>' cellspacing="5" style="display: none;">
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Natureza de Operação
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label ID="lblNatOp" runat="server" Text='<%# Eval("CodNaturezaOperacao")  %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Aliq. IPI
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label ID="Label20" runat="server" Text='<%# Eval("AliqIpi") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Valor IPI
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label ID="Label21" runat="server" Text='<%# Eval("ValorIpi") %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Aliq. ICMS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("AliqIcms") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Bc. ICMS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("BcIcms") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Valor ICMS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("ValorIcms") %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Aliq. ICMS ST
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("AliqIcmsSt") %>'></asp:label>
+                                                        </td>
+                                                         <td align="left" style="font-weight: bold">Bc. ICMS ST
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("BcIcmsSt") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Valor ICMS ST
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("ValorIcmsSt") %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Aliq. COFINS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("AliqCofins") %>'></asp:label>
+                                                        </td>
+                                                         <td align="left" style="font-weight: bold">Bc. COFINS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("BcCofins") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Valor COFINS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("ValorCofins") %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td align="left" style="font-weight: bold">Aliq. PIS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("AliqPis") %>'></asp:label>
+                                                        </td>
+                                                         <td align="left" style="font-weight: bold">Bc. PIS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("BcPis") %>'></asp:label>
+                                                        </td>
+                                                        <td align="left" style="font-weight: bold">Valor PIS
+                                                        </td>
+                                                        <td align="left" style="padding-left: 2px">
+                                                            <asp:label runat="server" Text='<%# Eval("ValorPis") %>'></asp:label>
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </ItemTemplate>
                                             <EditItemTemplate></EditItemTemplate>
                                             <FooterTemplate></FooterTemplate>
@@ -2147,7 +2238,7 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
         SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
     </colo:VirtualObjectDataSource>
-    <script type="text/javascript" src="CadPedido.js"></script>
+    <script type="text/javascript" src="CadPedido.js?v=<%= Glass.Configuracoes.Geral.ObtemVersao(true) %>"></script>
     <script type="text/javascript">        
         inicializarControles();
     </script>

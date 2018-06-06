@@ -1265,15 +1265,6 @@ namespace Glass.Data.DAL
                         File.Copy(urlImagem, caminhoImagemPCP, true);
                     }
 
-                    if (pe.IdProdPedParent.GetValueOrDefault(0) > 0 && string.IsNullOrEmpty(pe.ImagemUrl))
-                    {
-                        var caminhoPai = Utils.GetPecaComercialPath + p.IdProdPedParent.GetValueOrDefault(0).ToString().PadLeft(10, '0') + "_0.jpg";
-                        if (File.Exists(caminhoPai))
-                        {
-                            var caminhoImagemPCP = Utils.GetPecaProducaoPath + idProdPedEsp.ToString().PadLeft(10, '0') + "_0.jpg";
-                            File.Copy(caminhoPai, caminhoImagemPCP);
-                        }
-                    }
                 }
 
                 #region Valida quantidade item/material projeto
@@ -2112,6 +2103,13 @@ namespace Glass.Data.DAL
                 sql = "update pedido_espelho set AliquotaIpi=0, ValorIpi=0 where idPedido=" + pedidoEspelho.IdPedido;
                 objPersistence.ExecuteCommand(sessao, sql);
             }
+
+            // Calcula os impostos dos produtos do pedido
+            var impostos = CalculadoraImpostoHelper.ObterCalculadora<Model.PedidoEspelho>()
+                .Calcular(sessao, pedidoEspelho);
+
+            // Salva os dados dos impostos calculados
+            impostos.Salvar(sessao);
 
             // Atualiza o campo ValorComissao
             sql = @"update pedido_espelho set valorComissao=total*coalesce(percComissao,0)/100 where idPedido=" + pedidoEspelho.IdPedido;
@@ -4661,6 +4659,27 @@ namespace Glass.Data.DAL
                 new GDA.GDAParameter("?percentual", percentualRentabilidade),
                 new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
                 new GDA.GDAParameter("?idPedido", idPedido));
+        }
+
+        #endregion
+
+        #region Impostos
+
+        /// <summary>
+        /// Atualiza os valores de impostos associados com a instancia informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoPedido"></param>
+        public void AtualizarImpostos(GDASession sessao, PedidoEspelho pedido)
+        {
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
+            {
+                nameof(ProdutosPedidoEspelho.ValorIpi),
+                nameof(ProdutosPedidoEspelho.ValorIcms)
+            };
+
+            objPersistence.Update(sessao, pedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
         }
 
         #endregion

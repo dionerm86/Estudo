@@ -131,7 +131,7 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// </summary>
         /// <param name="provedorIndicadoresFinanceiro">Provedor dos indicadores financeiros.</param>
         /// <param name="criarRegistroRentabilidade">Referencia do método para criar o registor de rentabilidade.</param>
-        public ItemRentabilidade(
+        protected ItemRentabilidade(
             IProvedorIndicadorFinanceiro provedorIndicadoresFinanceiro, 
             CriadorRegistroRentabilidade criarRegistroRentabilidade)
         {

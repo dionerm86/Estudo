@@ -405,341 +405,58 @@ namespace Glass.Data.DAL
                 return;
 
             // Busca a Nota Fiscal
-            NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(sessao, lstProdNf[0].IdNf);
+            var nf = NotaFiscalDAO.Instance.GetElement(sessao, lstProdNf[0].IdNf);
 
-            if (nf.IdNaturezaOperacao == 0)
-                return;
+            // Calcula os impostos dos produtos do pedido
+            var impostos = (Data.ICalculoImpostoResultado<Data.Model.ProdutosNf>) 
+                CalculadoraImpostoHelper.ObterCalculadora<Model.NotaFiscal, Model.ProdutosNf>()
+                    .Calcular(sessao, nf, lstProdNf);
 
-            // Busca o CFOP para saber quais impostos calcular
-            uint idNaturezaOperacao, idNaturezaOperacaoNf = NotaFiscalDAO.Instance.ObtemIdNaturezaOperacao(sessao, nf.IdNf);
-            
-            // Regime do emitente
-            int crtEmit = LojaDAO.Instance.BuscaCrtLoja(sessao, nf.IdLoja.GetValueOrDefault());
+            if (atualizarSeNecessario && !forcarCalculoIcmsSt)
+                // Salva os dados dos impostos calculados
+                impostos.Salvar(sessao);
+        }
 
-            // Calcula o percentual de desconto, considerando todas as casas decimais (TotalProd na nota fiscal salva arredondado)
-            // O totalProd foi alterado para recuperar da lista de produtos para ao inserir um produto ele ser considerado.
-            var totalProd = lstProdNf.Sum(p => p.Total);
-            decimal percDesconto = (nf.Desconto / (totalProd > 0 ? totalProd : 1));
+        #endregion
 
-            decimal totalDescontoAplicado = 0;
+        #region Calculo Impostos
 
-            var i = 0;
+        /// <summary>
+        /// Atualiza os valores de impostos associados com a instancia informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoNf"></param>
+        public void AtualizarImpostos(GDASession sessao, ProdutosNf produtoNf)
+        {
+            if (produtoNf.IdProdNf <= 0) return;
 
-            // Chamado 58610: Necessário garantir que os valores serão calculados nesta ordem, para que a aplicação do desconto fique correta
-            foreach (ProdutosNf prodNf in lstProdNf.OrderBy(f => f.IdProdNf))
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
             {
-                // Utilizado para verificar qual o último elemento da iteração
-                i++;
+                //nameof(ProdutosNf.IdNaturezaOperacao),
+                nameof(ProdutosNf.AliqIpi),
+                nameof(ProdutosNf.ValorIpi),
+                nameof(ProdutosNf.AliqIcms),
+                nameof(ProdutosNf.BcIcms),
+                nameof(ProdutosNf.ValorIcms),
+                nameof(ProdutosNf.AliqFcp),
+                nameof(ProdutosNf.BcFcp),
+                nameof(ProdutosNf.ValorFcp),
+                nameof(ProdutosNf.AliqIcmsSt),
+                nameof(ProdutosNf.BcIcmsSt),
+                nameof(ProdutosNf.ValorIcmsSt),
+                nameof(ProdutosNf.AliqFcpSt),
+                nameof(ProdutosNf.BcFcpSt),
+                nameof(ProdutosNf.ValorFcpSt),
+                nameof(ProdutosNf.AliqPis),
+                nameof(ProdutosNf.BcPis),
+                nameof(ProdutosNf.ValorPis),
+                nameof(ProdutosNf.AliqCofins),
+                nameof(ProdutosNf.BcCofins),
+                nameof(ProdutosNf.ValorCofins),
+            };
 
-                // IPI integra BC do Pis se o CST for diferente de 0 e nota de entrada (segundo Julielberty), porém segundo o Higor,
-                // deve integrar somente se o ipi não gerar crédito e a empresa destinatária ser do lucro presumido e gerar crédito PIS/COFINS,
-                // portanto, a opção foi alterada para ficar assim somente para a Vipal
-                var ipiIntegraBcPISCOFINS = FiscalConfig.NotaFiscalConfig.IpiIntegraBcPISCOFINS && nf.TipoDocumento != (int)NotaFiscal.TipoDoc.Saída && prodNf.CstIpi != 0;
-
-                var vFreteRateado = nf.ValorFrete / lstProdNf.Count;
-                var vSeguroRateado = nf.ValorSeguro / lstProdNf.Count;
-                var vOutrDespRateado = nf.OutrasDespesas / lstProdNf.Count;
-
-                // Se o cfop do produto tiver sido selecionado busca o mesmo, caso contrário utiliza o da nota
-                idNaturezaOperacao = prodNf.IdNaturezaOperacao > 0 ? prodNf.IdNaturezaOperacao.Value : idNaturezaOperacaoNf;
-
-                var calcularIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(sessao, idNaturezaOperacao);
-                var calcularIcms = NaturezaOperacaoDAO.Instance.CalculaIcms(sessao, idNaturezaOperacao);
-                bool calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(sessao, idNaturezaOperacao) && prodNf.AliqIpi > 0;
-                bool ipiIntegraBcIcms = calcIpi && NaturezaOperacaoDAO.Instance.IpiIntegraBcIcms(sessao, idNaturezaOperacao);
-                bool freteIntegraBcIpi = calcIpi && NaturezaOperacaoDAO.Instance.FreteIntegraBcIpi(sessao, idNaturezaOperacao);
-                var calcEnergiaEletrica = NaturezaOperacaoDAO.Instance.CalculaEnergiaEletrica(sessao, idNaturezaOperacao);
-
-                if (nf.IdCliente > 0 && ipiIntegraBcIcms)
-                {
-                    int? tipoFiscal = ClienteDAO.Instance.ObtemTipoFiscal(sessao, nf.IdCliente.Value);
-                    ipiIntegraBcIcms = ipiIntegraBcIcms && (tipoFiscal == (int)TipoFiscalCliente.ConsumidorFinal || tipoFiscal == null);
-                }
-
-                prodNf.ValorFrete = vFreteRateado;
-                prodNf.ValorSeguro = vSeguroRateado;
-                prodNf.ValorOutrasDespesas = vOutrDespRateado;
-
-                // Criado para resolver os chamados 12720, 14223, 14370 e 14646, soma o desconto distribuído entre os produtos, caso sobre um valor de desconto,
-                // ajusta no último produto
-                //prodNf.ValorDesconto = Math.Round(percDesconto * Math.Round(prodNf.Total, 2), 2);
-                /* Chamado 36827.
-                 * O valor de desconto rateado pelos produtos estava sendo arredondado com duas casas decimais
-                 * causando diferença entre a base de cálculo do ICMS da nota com a soma da base de cálculo do ICMS dos produtos.
-                 * Alterei o arredondamento para 6 casas decimais e o valor da base de cálculo ficou correto. */
-                //prodNf.ValorDesconto = Math.Round(percDesconto * Math.Round(prodNf.Total, 6), 6);
-                /* Chamado 47780. */
-                prodNf.ValorDesconto = Math.Round(percDesconto * prodNf.Total, 2, MidpointRounding.AwayFromZero);
-                totalDescontoAplicado += prodNf.ValorDesconto;
-                if (i == lstProdNf.Count() && Math.Abs(nf.Desconto - totalDescontoAplicado) <= (decimal)0.3)
-                    prodNf.ValorDesconto += (nf.Desconto - totalDescontoAplicado);
-
-                // Realiza o calculo dos impostos se a Nota NÃO for de Importação, ou, se for Nota de Ajuste com mais de um produto.
-                if (!NotaFiscalDAO.Instance.IsNotaFiscalImportacao(sessao, prodNf.IdNf) ||
-                    (nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste &&
-                    ExecuteScalar<bool>(sessao, string.Format("SELECT COUNT(*)>1 FROM produtos_nf WHERE IdNf={0}", prodNf.IdNf))))
-                {
-                    #region Calcula IPI
-
-                    if (calcIpi)
-                    {
-                        var bcIpi = prodNf.Total;
-
-                        if (freteIntegraBcIpi)
-                            bcIpi += vFreteRateado;
-
-                        // É necessário colocar arredondamento pois na nota será arredondado em duas casas decimais,
-                        // para que o somatório de ipi dos itens fique igual ao total de ipi da nota é necessário 
-                        // fazer esse arredondamento.
-                        prodNf.ValorIpi = Math.Round(bcIpi * (decimal)(prodNf.AliqIpi / 100), 2, MidpointRounding.AwayFromZero);
-                    }
-                    else
-                    {
-                        prodNf.ValorIpi = 0;
-                        prodNf.AliqIpi = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula ICMS
-
-                    // Se o CFOP selecionado estiver marcado para calcular ICMS
-                    if (calcularIcms || calcularIcmsSt)
-                    {
-                        /* Chamado 50313. */
-                        if (!calcularIcms && calcularIcmsSt)
-                            prodNf.AliqIcms = IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(sessao, prodNf.IdProd, nf.IdLoja.GetValueOrDefault(), nf.IdFornec, nf.IdCliente);
-
-                        //Se for NF de entrada e a natureza estiver marcada para calcular o icms de energia elétrica.
-                        if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada && calcEnergiaEletrica)
-                        {
-                            prodNf.BcIcms = prodNf.Total / (decimal)(1 - prodNf.AliqIcms / 100);
-                            prodNf.ValorIcms = prodNf.BcIcms * (decimal)prodNf.AliqIcms / 100;
-                        }
-                        else if (crtEmit == (int)CrtLoja.LucroReal || crtEmit == (int)CrtLoja.LucroPresumido || nf.TipoDocumento == (int)NotaFiscal.TipoDoc.EntradaTerceiros) // Se o emitente for Regime Normal
-                        {
-                            if (prodNf.AliqIcms > 0)
-                            {
-                                prodNf.BcIcms = prodNf.Total +
-                                    (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
-                                    + prodNf.ValorIof + prodNf.DespAduaneira - prodNf.ValorDesconto;
-
-                                if (NotaFiscalDAO.Instance.IsNotaFiscalImportacao(sessao, prodNf.IdNf))
-                                    prodNf.BcIcms = prodNf.BcIcms / (decimal)(1 - (prodNf.AliqIcms / 100));
-
-                                // Soma o IPI à base de cálculo, se CFOP estiver marcado para calcular desta forma
-                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
-
-                                // Se for CST 20: Com redução na BC ICMS
-                                // Se for CST 70: Com redução na BC ICMS, considerando o código do valor fiscal = 1
-                                if ((prodNf.Cst == "20" && prodNf.PercRedBcIcms > 0) || (prodNf.Cst == "70" && prodNf.PercRedBcIcms > 0 && prodNf.CodValorFiscal == 1))
-                                    prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));
-
-                                // Criado para resolver os chamados 12720, 14223, 14370 e 14646, junto com outra alteração feita logo acima
-                                prodNf.BcIcms = Math.Round(prodNf.BcIcms, 2, MidpointRounding.AwayFromZero);
-
-                                // É necessário colocar arredondamento pois na nota será arredondado em duas casas decimais,
-                                // para que o somatório de icms dos itens fique igual ao total de icms da nota é necessário 
-                                // fazer esse arredondamento.
-                                prodNf.ValorIcms = Math.Round(prodNf.BcIcms * (decimal)(prodNf.AliqIcms / 100), 2, MidpointRounding.AwayFromZero);
-
-                                // Se for CST 51: ICMS com diferimento
-                                if (prodNf.Cst == "51")
-                                    prodNf.ValorIcms = Math.Round(prodNf.ValorIcms - (prodNf.ValorIcms * ((decimal)prodNf.PercDiferimento / 100)), 2, MidpointRounding.AwayFromZero);
-                            }
-                            else
-                            {
-                                prodNf.BcIcms = 0;
-                                prodNf.ValorIcms = 0;
-                            }
-                        }
-                        else // Se o emitente for Simples Nacional
-                        {
-                            if (prodNf.AliqIcms > 0)
-                            {
-                                // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
-                                var naoIncluirOutrasDespBCIcms = nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
-
-                                prodNf.BcIcms = (prodNf.Total +
-                                    (nf.ModalidadeFrete == ModalidadeFrete.ContaDoRemetente ? vFreteRateado : 0)
-                                    + (naoIncluirOutrasDespBCIcms ? 0 : prodNf.ValorOutrasDespesas) + prodNf.ValorIof + prodNf.DespAduaneira - (percDesconto * prodNf.Total));
-                                if (ipiIntegraBcIcms) prodNf.BcIcms += prodNf.ValorIpi;
-                                // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
-                                // Se CST igual a 20 ou 70, calcula redução da BC ICMS.
-                                //if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
-                                //    prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));
-
-                                // É necessário colocar arredondamento pois na nota será arredondado em duas casas decimais,
-                                // para que o somatório de icms dos itens fique igual ao total de icms da nota é necessário 
-                                // fazer esse arredondamento.
-                                prodNf.ValorIcms = Math.Round(prodNf.BcIcms * (decimal)(prodNf.AliqIcms / 100), 2, MidpointRounding.AwayFromZero);
-                            }
-                            else
-                            {
-                                prodNf.BcIcms = 0;
-                                prodNf.ValorIcms = 0;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        prodNf.BcIcms = 0;
-                        prodNf.ValorIcms = 0;
-                        prodNf.AliqIcms = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula FCP
-
-                    // Se o CFOP selecionado estiver marcado para calcular ICMS
-                    if (calcularIcms || calcularIcmsSt)
-                    {
-                        if (!calcularIcms && calcularIcmsSt)
-                            prodNf.AliqFcp = IcmsProdutoUfDAO.Instance.ObterFCPPorProduto(sessao, prodNf.IdProd, nf.IdLoja.GetValueOrDefault(), nf.IdFornec, nf.IdCliente);
-
-                        if (prodNf.AliqFcp > 0)
-                        {
-                            prodNf.BcFcp = prodNf.BcIcms;
-                            prodNf.ValorFcp = Math.Round(prodNf.BcFcp * (decimal)(prodNf.AliqFcp / 100), 2, MidpointRounding.AwayFromZero);
-                        }
-                        else
-                        {
-                            prodNf.BcFcp = 0;
-                            prodNf.ValorFcp = 0;
-                        }
-                    }
-                    else
-                    {
-                        prodNf.BcFcp = 0;
-                        prodNf.ValorFcp = 0;
-                        prodNf.AliqFcp = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula ICMSST
-
-                    if (calcularIcmsSt)
-                    {
-                        // Só calcula o ST se a alíquota de icms st tiver sido informada
-                        if (((nf.TipoDocumento == 3 || nf.TipoDocumento == 4) && prodNf.AliqIcmsSt > 0) || (nf.TipoDocumento != 3 && nf.TipoDocumento != 4))
-                        {
-                            var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(sessao, prodNf.IdNaturezaOperacao.Value);
-
-                            // Cria uma instancia do calculo de ICMS ST.
-                            var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int?)nf.IdLoja ?? 0, (int?)nf.IdCliente,
-                                (int?)nf.IdFornec, (int?)idCfop, prodNf.Cst, (int)nf.IdNf);
-                            // Verifica se a Nota é de saída.
-                            bool saida = nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída ||
-                                /* Chamado 32984 e 39660. */
-                                (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada &&
-                                CfopDAO.Instance.IsCfopDevolucao(sessao, idCfop));
-
-                            // Chamado 15452: Coloquei o round para resolver um problema ao autorizar a nota
-                            prodNf.BcIcmsSt = Math.Round(calcIcmsSt.ObtemBaseCalculoIcmsSt(prodNf, saida), 2, MidpointRounding.AwayFromZero);
-                            prodNf.AliqIcmsSt = calcIcmsSt.ObtemAliquotaIcmsSt(prodNf, saida);
-                            prodNf.ValorIcmsSt = Math.Round(calcIcmsSt.ObtemValorIcmsSt(prodNf, saida), 2, MidpointRounding.AwayFromZero);
-                        }
-
-                        /* Chamado 50313. */
-                        if (!calcularIcms)
-                        {
-                            prodNf.BcIcms = 0;
-                            prodNf.ValorIcms = 0;
-                            prodNf.AliqIcms = 0;
-                        }
-                    }
-                    else
-                    {
-                        prodNf.BcIcmsSt = 0;
-                        prodNf.AliqIcmsSt = 0;
-                        prodNf.ValorIcmsSt = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula FCP ST
-
-                    // Se o CFOP selecionado estiver marcado para calcular ICMS ST
-                    if (calcularIcmsSt)
-                    {
-                        if (prodNf.AliqFcpSt > 0)
-                        {
-                            prodNf.BcFcpSt = prodNf.BcIcmsSt;
-                            prodNf.ValorFcpSt = Math.Round((prodNf.BcFcpSt * (decimal)(prodNf.AliqFcpSt / 100)), 2, MidpointRounding.AwayFromZero) - prodNf.ValorFcp;
-                        }
-                        else
-                        {
-                            prodNf.BcFcpSt = 0;
-                            prodNf.ValorFcpSt = 0;
-                        }
-
-                        if (!calcularIcms)
-                        {
-                            prodNf.BcFcp = 0;
-                            prodNf.ValorFcp = 0;
-                            prodNf.AliqFcp = 0;
-                        }
-                    }
-                    else
-                    {
-                        prodNf.BcFcpSt = 0;
-                        prodNf.ValorFcpSt = 0;
-                        prodNf.AliqFcpSt = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula PIS
-
-                    if (NaturezaOperacaoDAO.Instance.CalculaPis(sessao, idNaturezaOperacao))
-                    {
-                        if (nf.FinalidadeEmissao != (int)NotaFiscal.FinalidadeEmissaoEnum.Complementar && (prodNf.CstPis < 3 || prodNf.CstPis > 9))
-                        {
-                            prodNf.BcPis = Math.Round(prodNf.Total + (ipiIntegraBcPISCOFINS ? prodNf.ValorIpi : 0) - prodNf.ValorDesconto, 2, MidpointRounding.AwayFromZero);
-                            prodNf.AliqPis = prodNf.AliqPis > 0 ? prodNf.AliqPis : Glass.Data.NFeUtils.ConfigNFe.AliqPis(nf.IdLoja.Value);
-                            prodNf.ValorPis = Math.Round(prodNf.BcPis * ((decimal)prodNf.AliqPis / 100), 2, MidpointRounding.AwayFromZero);
-                        }
-                    }
-                    else
-                    {
-                        prodNf.AliqPis = 0;
-                        prodNf.BcPis = 0;
-                        prodNf.ValorPis = 0;
-                    }
-
-                    #endregion
-
-                    #region Calcula COFINS
-
-                    if (NaturezaOperacaoDAO.Instance.CalculaCofins(sessao, idNaturezaOperacao))
-                    {
-                        if (nf.FinalidadeEmissao != (int)NotaFiscal.FinalidadeEmissaoEnum.Complementar && (prodNf.CstCofins < 3 || prodNf.CstCofins > 9))
-                        {
-                            prodNf.BcCofins = Math.Round(prodNf.Total + (ipiIntegraBcPISCOFINS ? prodNf.ValorIpi : 0) - prodNf.ValorDesconto, 2, MidpointRounding.AwayFromZero);
-                            prodNf.AliqCofins = prodNf.AliqCofins > 0 ? prodNf.AliqCofins : Glass.Data.NFeUtils.ConfigNFe.AliqCofins(nf.IdLoja.Value);
-                            prodNf.ValorCofins = Math.Round(prodNf.BcCofins * ((decimal)prodNf.AliqCofins / 100), 2, MidpointRounding.AwayFromZero);
-                        }
-                    }
-                    else
-                    {
-                        prodNf.AliqCofins = 0;
-                        prodNf.BcCofins = 0;
-                        prodNf.ValorCofins = 0;
-                    }
-
-                    #endregion
-
-                    // Atualiza o produto
-                    if (atualizarSeNecessario && !forcarCalculoIcmsSt && prodNf.IdProdNf > 0)
-                    {
-                        // Comentado para resolver chamado 13910
-                        //LogAlteracaoDAO.Instance.LogProdutoNotaFiscal(prodNf, LogAlteracaoDAO.SequenciaObjeto.Novo);
-                        base.Update(sessao, prodNf);
-                    }
-                }
-            }
+            objPersistence.Update(sessao, produtoNf, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
         }
 
         #endregion

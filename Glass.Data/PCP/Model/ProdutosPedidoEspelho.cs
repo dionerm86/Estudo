@@ -182,6 +182,168 @@ namespace Glass.Data.Model
         public int? IdProdBaixaEst { get; set; }
 
         /// <summary>
+        /// Base de calculo COFINS
+        /// </summary>
+        [PersistenceProperty("BcCofins")]
+        public decimal BcCofins { get; set; }
+
+        /// <summary>
+        /// Alíquota CONFINS
+        /// </summary>
+        [PersistenceProperty("AliqCofins")]
+        public float AliqCofins { get; set; }
+
+        /// <summary>
+        /// Valor COFINS
+        /// </summary>
+        [PersistenceProperty("ValorCofins")]
+        public decimal ValorCofins { get; set; }
+
+        /// <summary>
+        /// Base de calculo ICMS
+        /// </summary>
+        [PersistenceProperty("BcIcms")]
+        public decimal BcIcms { get; set; }
+
+        /// <summary>
+        /// Valor do ICMS desonerado
+        /// </summary>
+        [PersistenceProperty("ValorIcmsDesonerado")]
+        public decimal ValorIcmsDesonerado { get; set; }
+
+        /// <summary>
+        /// Percentual de crédito base calculo ICMS
+        /// </summary>
+        [PersistenceProperty("PercRedBcIcms")]
+        public float PercRedBcIcms { get; set; }
+
+        /// <summary>
+        /// Base de calculo ICMSST
+        /// </summary>
+        [PersistenceProperty("BcIcmsSt")]
+        public decimal BcIcmsSt { get; set; }
+
+        /// <summary>
+        /// Alíquota ICMSST
+        /// </summary>
+        [PersistenceProperty("AliqIcmsSt")]
+        public float AliqIcmsSt { get; set; }
+
+        /// <summary>
+        /// Valor do ICMSST
+        /// </summary>
+        [PersistenceProperty("ValorIcmsSt")]
+        public decimal ValorIcmsSt { get; set; }
+
+        /// <summary>
+        /// Percentual de crédito base calculo ICMSST
+        /// </summary>
+        [PersistenceProperty("PercRedBcIcmsSt")]
+        public decimal PercRedBcIcmsSt { get; set; }
+
+        /// <summary>
+        /// Base de calculo IPI
+        /// </summary>
+        [PersistenceProperty("BcIpi")]
+        public decimal BcIpi { get; set; }
+
+        /// <summary>
+        /// Base de calculo PIS
+        /// </summary>
+        [PersistenceProperty("BcPis")]
+        public decimal BcPis { get; set; }
+
+        /// <summary>
+        /// Aliquota PIS
+        /// </summary>
+        [PersistenceProperty("AliqPis")]
+        public float AliqPis { get; set; }
+
+        /// <summary>
+        /// Valor PIS
+        /// </summary>
+        [PersistenceProperty("ValorPis")]
+        public decimal ValorPis { get; set; }
+
+        /// <summary>
+        /// CST
+        /// </summary>
+        [PersistenceProperty("Cst")]
+        public int Cst { get; set; }
+
+        /// <summary>
+        /// CSOSN
+        /// </summary>
+        [PersistenceProperty("Csosn")]
+        public int Csosn { get; set; }
+
+        /// <summary>
+        /// CST COFINS
+        /// </summary>
+        [PersistenceProperty("CstCofins")]
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstCofins { get; set; }
+
+        /// <summary>
+        /// CST PIS
+        /// </summary>
+        [PersistenceProperty("CstPis")]
+        public Sync.Fiscal.Enumeracao.Cst.CstPisCofins? CstPis { get; set; }
+
+        /// <summary>
+        /// MVA
+        /// </summary>
+        [PersistenceProperty("Mva")]
+        public float Mva { get; set; }
+
+        /// <summary>
+        /// Base de calc. do FCP ST
+        /// </summary>
+        [PersistenceProperty("BcFcpSt")]
+        public decimal BcFcpSt { get; set; }
+
+        /// <summary>
+        /// Aliquota do FCP ST
+        /// </summary>
+        [PersistenceProperty("AliqFcpSt")]
+        public float AliqFcpSt { get; set; }
+
+        /// <summary>
+        /// Valor do FCP ST
+        /// </summary>
+        [PersistenceProperty("ValorFcpSt")]
+        public decimal ValorFcpSt { get; set; }
+
+        /// <summary>
+        /// Base de calc. do FCP
+        /// </summary>
+        [PersistenceProperty("BcFcp")]
+        public decimal BcFcp { get; set; }
+
+        /// <summary>
+        /// Aliquota do FCP
+        /// </summary>
+        [PersistenceProperty("AliqFcp")]
+        public float AliqFcp { get; set; }
+
+        /// <summary>
+        /// Valor do FCP
+        /// </summary>
+        [PersistenceProperty("ValorFcp")]
+        public decimal ValorFcp { get; set; }
+
+        /// <summary>
+        /// Cód de subistituição tributaria do IPI
+        /// </summary>
+        [PersistenceProperty("CSTIPI")]
+        public Sync.Fiscal.Enumeracao.Cst.CstIpi? CstIpi { get; set; }
+
+        /// <summary>
+        /// Código do valor fiscal de ICMS do produto do pedido
+        /// </summary>
+        [PersistenceProperty("CODVALORFISCAL")]
+        public int? CodValorFiscal { get; set; }
+
+        /// <summary>
         /// Percentual da rentabilidade.
         /// </summary>
         [PersistenceProperty("PERCENTUALRENTABILIDADE", Direction = DirectionParameter.OutputOnlyInsert)]
@@ -370,6 +532,13 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("CompraGerada", DirectionParameter.InputOptional)]
         public string CompraGerada { get; set; }
+
+        [System.Xml.Serialization.XmlIgnore]
+        [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
+        public string CodNaturezaOperacao { get; set; }
+
+        [PersistenceProperty("PERCCOMISSAO", DirectionParameter.InputOptional)]
+        public decimal PercComissao { get; set; }
 
         #endregion
 

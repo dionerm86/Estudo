@@ -45,7 +45,8 @@ namespace Glass.Data.DAL
             string campos = selecionar ? @"
                 pp.*, ped.idCli as idCliente, p.Descricao as DescrProduto, p.CodInterno, p.IdGrupoProd, p.codOtimizacao, p.idSubgrupoProd, 
                 if(p.AtivarAreaMinima=1, Cast(p.AreaMinima as char), '0') as AreaMinima, apl.CodInterno as CodAplicacao, p.custoCompra as custoCompraProduto,
-                prc.CodInterno as CodProcesso, ap.ambiente as ambientePedido, ap.descricao as descrAmbientePedido, (" + (verificarProdutoComprado ? sqlComprado : "0") + @")>0 as comprado,
+                prc.CodInterno as CodProcesso, Coalesce(no.CodInterno, cfop.CodInterno) as CodNaturezaOperacao,
+                ap.ambiente as ambientePedido, ap.descricao as descrAmbientePedido, (" + (verificarProdutoComprado ? sqlComprado : "0") + @")>0 as comprado,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as pedidoMaoObra " : "Count(*)";
 
             string sql = "Select " + campos + @" From produtos_pedido_espelho pp 
@@ -53,7 +54,9 @@ namespace Glass.Data.DAL
                 Left Join pedido ped On (pp.idPedido=ped.idPedido)
                 Left Join produto p On (pp.idProd=p.idProd) 
                 Left Join etiqueta_aplicacao apl On (COALESCE(pp.idAplicacao, ap.idAplicacao)=apl.idAplicacao)
-                Left Join etiqueta_processo prc On (COALESCE(pp.idProcesso, ap.idProcesso)=prc.idProcesso) Where 1 " + FILTRO_ADICIONAL;
+                Left Join etiqueta_processo prc On (COALESCE(pp.idProcesso, ap.idProcesso)=prc.idProcesso)
+                Left Join natureza_operacao no On (pp.IdNaturezaOperacao=no.IdNaturezaOperacao) 
+                Left Join cfop cfop On (no.IdCfop=cfop.IdCfop) Where 1 " + FILTRO_ADICIONAL;
 
             temFiltro = true;
             StringBuilder fa = new StringBuilder();
@@ -3409,7 +3412,14 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<ProdutosPedidoEspelho> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
         {
-            return objPersistence.LoadData(sessao, "SELECT * FROM produtos_pedido_espelho WHERE IdPedido=?id", new GDAParameter("?id", idPedido)).ToList();
+            return objPersistence.LoadData(sessao,
+                @"SELECT 
+                    ppe.*, pp.PercComissao
+                  FROM produtos_pedido_espelho ppe
+                  INNER JOIN produtos_pedido pp ON (ppe.IdProdPed=pp.IdProdPedEsp)
+                  WHERE ppe.IdPedido=?id AND ppe.InvisivelFluxo=0 AND ppe.IdProdPedParent IS NULL", 
+                new GDAParameter("?id", idPedido))
+                .ToList();
         }
 
         /// <summary>
@@ -3429,30 +3439,50 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Natureza Operação
+        #region Calculo Impostos
 
         /// <summary>
-        /// Realiza a atualização da natureza de operação no produto do pedido.
+        /// Atualiza os valores de impostos associados com a instancia informada.
         /// </summary>
         /// <param name="sessao"></param>
-        /// <param name="pedidoEspelho"></param>
-        /// <param name="produtoPedidoEspelho"></param>
-        private void CarregarNaturezaOperacao(GDASession sessao, ProdutosPedidoEspelho produtoPedidoEspelho)
+        /// <param name="produtoPedido"></param>
+        public void AtualizarImpostos(GDASession sessao, ProdutosPedidoEspelho produtoPedido)
         {
-            // Recupera os dados do pedido
-            var pedido = objPersistence.LoadResult(sessao,
-                "SELECT IdLoja, IdCli FROM pedido WHERE IdPedido=?id",
-                new GDAParameter("?id", produtoPedidoEspelho.IdPedido))
-                .Select(f => new
-                {
-                    IdLoja = f.GetUInt32("IdLoja"),
-                    IdCli = f.GetUInt32("IdCli")
-                }).FirstOrDefault();
+            // Relação das propriedades que devem ser atualizadas
+            var propriedades = new[]
+            {
+                nameof(ProdutosPedidoEspelho.IdNaturezaOperacao),
+                nameof(ProdutosPedidoEspelho.Mva),
+                nameof(ProdutosPedidoEspelho.CodValorFiscal),
+                nameof(ProdutosPedidoEspelho.Csosn),
+                nameof(ProdutosPedidoEspelho.Cst),
+                nameof(ProdutosPedidoEspelho.PercRedBcIcms),
+                nameof(ProdutosPedidoEspelho.AliqIpi),
+                nameof(ProdutosPedidoEspelho.ValorIpi),
+                nameof(ProdutosPedidoEspelho.CstIpi),
+                nameof(ProdutosPedidoEspelho.AliqIcms),
+                nameof(ProdutosPedidoEspelho.BcIcms),
+                nameof(ProdutosPedidoEspelho.ValorIcms),
+                nameof(ProdutosPedidoEspelho.AliqFcp),
+                nameof(ProdutosPedidoEspelho.BcFcp),
+                nameof(ProdutosPedidoEspelho.ValorFcp),
+                nameof(ProdutosPedidoEspelho.AliqIcmsSt),
+                nameof(ProdutosPedidoEspelho.BcIcmsSt),
+                nameof(ProdutosPedidoEspelho.ValorIcmsSt),
+                nameof(ProdutosPedidoEspelho.AliqFcpSt),
+                nameof(ProdutosPedidoEspelho.BcFcpSt),
+                nameof(ProdutosPedidoEspelho.ValorFcpSt),
+                nameof(ProdutosPedidoEspelho.AliqPis),
+                nameof(ProdutosPedidoEspelho.BcPis),
+                nameof(ProdutosPedidoEspelho.ValorPis),
+                nameof(ProdutosPedidoEspelho.CstPis),
+                nameof(ProdutosPedidoEspelho.AliqCofins),
+                nameof(ProdutosPedidoEspelho.BcCofins),
+                nameof(ProdutosPedidoEspelho.ValorCofins),
+                nameof(ProdutosPedidoEspelho.CstCofins)
+            };
 
-            var idNaturezaOperacao = RegraNaturezaOperacaoDAO.Instance.BuscaNaturezaOperacao(
-                sessao, pedido.IdLoja, pedido.IdCli, (int)produtoPedidoEspelho.IdProd);
-
-            produtoPedidoEspelho.IdNaturezaOperacao = idNaturezaOperacao;
+            objPersistence.Update(sessao, produtoPedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
         }
 
         #endregion
@@ -3582,6 +3612,35 @@ namespace Glass.Data.DAL
             clone.ValorDescontoQtde = prodPedEsp.ValorDescontoQtde;
             clone.IdProdPedParent = prodPedEsp.IdProdPedParentOrig;
 
+            clone.BcCofins = prodPedEsp.BcCofins;
+            clone.AliqCofins = prodPedEsp.AliqCofins;
+            clone.ValorCofins = prodPedEsp.ValorCofins;
+            clone.BcIcms = prodPedEsp.BcIcms;
+            clone.ValorIcmsDesonerado = prodPedEsp.ValorIcmsDesonerado;
+            clone.PercRedBcIcms = prodPedEsp.PercRedBcIcms;
+            clone.BcIcmsSt = prodPedEsp.BcIcmsSt;
+            clone.AliqIcmsSt = prodPedEsp.AliqIcmsSt;
+            clone.ValorIcmsSt = prodPedEsp.ValorIcmsSt;
+            clone.PercRedBcIcmsSt = prodPedEsp.PercRedBcIcmsSt;
+            clone.BcPis = prodPedEsp.BcPis;
+            clone.AliqPis = prodPedEsp.AliqPis;
+            clone.ValorPis = prodPedEsp.ValorPis;
+            clone.Cst = prodPedEsp.Cst;
+            clone.Csosn = prodPedEsp.Csosn;
+            clone.CstCofins = prodPedEsp.CstCofins;
+            clone.CstPis = prodPedEsp.CstPis;
+            clone.Mva = prodPedEsp.Mva;
+            clone.CodValorFiscal = prodPedEsp.CodValorFiscal;
+            clone.CstIpi = prodPedEsp.CstIpi;
+            clone.BcFcpSt = prodPedEsp.BcFcpSt;
+            clone.AliqFcpSt = prodPedEsp.AliqFcpSt;
+            clone.ValorFcpSt = prodPedEsp.ValorFcpSt;
+            clone.BcFcp = prodPedEsp.BcFcp;
+            clone.AliqFcp = prodPedEsp.AliqFcp;
+            clone.ValorFcp = prodPedEsp.ValorFcp;
+            clone.PercentualRentabilidade = prodPedEsp.PercentualRentabilidade;
+            clone.RentabilidadeFinanceira = prodPedEsp.RentabilidadeFinanceira;
+
             // Calcula o custo do produto
             var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPedEsp.IdProd);
             clone.CustoProd = CalculosFluxo.CalcTotaisItemProdFast(sessao, tipoCalculo, clone.Altura, clone.Largura, clone.Qtde,
@@ -3625,8 +3684,6 @@ namespace Glass.Data.DAL
             {
                 objInsert.Espessura = ProdutoDAO.Instance.ObtemEspessura(session, (int)objInsert.IdProd);
             }
-
-            CarregarNaturezaOperacao(session, objInsert);
 
             // Cria uma cópia do produto na tabela ProdutosPedido, com referência ao produto que está sendo inserido e invisível ao pedido.
             objInsert.IdProdPed = base.Insert(session, objInsert);
@@ -3903,8 +3960,6 @@ namespace Glass.Data.DAL
         internal int UpdateBase(GDASession sessao, ProdutosPedidoEspelho objUpdate, IContainerCalculo container)
         {
             CalculaDescontoEValorBrutoProduto(sessao, objUpdate, container);
-            CarregarNaturezaOperacao(sessao, objUpdate);
-
             return base.Update(sessao, objUpdate);
         }
 
