@@ -1706,6 +1706,10 @@ function getCli(idCliente) {
         }
     }
 
+    if (FindControl("drpTransportador", "select") != null) {
+        FindControl("drpTransportador", "select").value = retorno[14];
+    }
+
     // É muito importante que o método atualizaTipoVendaCli seja chamado antes do método atualizaFormasPagtoCli, pois as formas de pagamento são recuperadas com base no tipo de venda do pedido.
     // OBS.: o método atualizaTipoVendaCli está sendo chamado dentro do método atualizaTipoVendaCli.
     atualizaTipoVendaCli();

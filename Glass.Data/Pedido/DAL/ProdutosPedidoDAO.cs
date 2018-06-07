@@ -2410,28 +2410,12 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Insere/Atualiza Produto de Projeto
-
+        
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        public uint InsereAtualizaProdProj(uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas)
-        {
-            return InsereAtualizaProdProj(null, idPedido, idAmbientePedido, itemProj, medidasAlteradas);
-        }
-
-        /// <summary>
-        /// Insere/Atualiza Produto de Projeto
-        /// </summary>
-        internal uint InsereAtualizaProdProj(GDASession sessao, uint idPedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas)
-        {
-            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido);
-            return InsereAtualizaProdProj(sessao, pedido, idAmbientePedido, itemProj, medidasAlteradas, true, false);
-        }
-
-        /// <summary>
-        /// Insere/Atualiza Produto de Projeto
-        /// </summary>
-        internal uint InsereAtualizaProdProj(GDASession sessao, Pedido pedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas, bool atualizarTotalPedido, bool atualizaDataEntrega)
+        public uint InsereAtualizaProdProj(GDASession sessao, Pedido pedido, uint? idAmbientePedido, ItemProjeto itemProj, bool medidasAlteradas, bool atualizarTotalPedido = true,
+            bool atualizaDataEntrega = false, bool forcarAtualizacaoImagemMarcacaoPeca = false)
         {
             try
             {
@@ -2565,7 +2549,9 @@ namespace Glass.Data.DAL
 
                     // Altera as imagens que possam ter sido inseridas anteriormente para ficarem associadas às novas peças inseridas
                     if (prodPed.IdMaterItemProj > 0 && dicProdPedMater.ContainsKey(prodPed.IdMaterItemProj.Value))
-                        AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas);
+                    {
+                        AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas, forcarAtualizacaoImagemMarcacaoPeca);
+                    }
                 }
 
                 if (PedidoEspelhoDAO.Instance.ExisteEspelho(sessao, pedido.IdPedido))
@@ -2649,233 +2635,52 @@ namespace Glass.Data.DAL
 
             foreach (var idProdPed in idsProdPed)
                 if (idProdPed > 0)
-                    AtualizarEdicaoImagemPecaArquivoMarcacao(idProdPed.Value, null, true);
+                    AtualizarEdicaoImagemPecaArquivoMarcacao(idProdPed.Value, null, true, false);
         }
 
         /// <summary>
         /// Remove ou mantém a edição das imagens e de arquivos de marcação, de acordo com a configuração ManterImagensEditadasAoConfirmarProjeto e o parâmetro medidasAlteradas.
         /// </summary>
-        public void AtualizarEdicaoImagemPecaArquivoMarcacao(int idProdPedAtual, int? idProdPedNovo, bool medidasAlteradas)
+        public void AtualizarEdicaoImagemPecaArquivoMarcacao(int idProdPedAtual, int? idProdPedNovo, bool medidasAlteradas, bool forcarAtualizacaoImagemMarcacaoPeca)
         {
-            var arquivosImagem = Directory.GetFiles(Utils.GetPecaComercialPath, string.Format("{0}_*", idProdPedAtual.ToString().PadLeft(10, '0')));
+            var atualizarImagemMarcacao = idProdPedNovo > 0 && (forcarAtualizacaoImagemMarcacaoPeca || (!medidasAlteradas && ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto));
+            var arquivosImagem = Directory.GetFiles(Utils.GetPecaComercialPath, $"{ idProdPedAtual.ToString().PadLeft(10, '0') }_*");
+            var caminhoDxf = $"{ PCPConfig.CaminhoSalvarCadProject(false) }{ idProdPedAtual }.dxf";
+            var caminhoSvg = $"{ PCPConfig.CaminhoSalvarCadProject(false) }{ idProdPedAtual }.svg";
 
             foreach (var arquivoImagem in arquivosImagem)
             {
-                if (idProdPedNovo > 0 && (!medidasAlteradas || ProjetoConfig.GerarPecasComMedidasIncoerentesDaImagemEditada) && ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
+                if (idProdPedNovo > 0 && (forcarAtualizacaoImagemMarcacaoPeca ||
+                    (ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto && (!medidasAlteradas || ProjetoConfig.GerarPecasComMedidasIncoerentesDaImagemEditada))))
+                {
                     File.Copy(arquivoImagem, arquivoImagem.Replace(idProdPedAtual.ToString().PadLeft(10, '0'), idProdPedNovo.ToString().PadLeft(10, '0')));
+                }
 
                 File.Delete(arquivoImagem);
             }
-
-            /* Chamado 49119.
-             * Caso as medidas tenham sido alteradas o arquivo deve ser excluído.
-             * Caso as medidas NÃO tenham sido alteradas o arquivo deve ser renomeado com o novo IDPRODPED inserido. */
-            var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(false), idProdPedAtual);
+            
             if (File.Exists(caminhoDxf))
             {
-                if (idProdPedNovo.GetValueOrDefault() == 0 || medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                    File.Delete(caminhoDxf);
-                else
+                if (atualizarImagemMarcacao)
+                {
                     File.Move(caminhoDxf, string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(false), idProdPedNovo));
+                }
+                else
+                {
+                    File.Delete(caminhoDxf);
+                }
             }
 
-            var caminhoSvg = string.Format("{0}{1}.svg", PCPConfig.CaminhoSalvarCadProject(false), idProdPedAtual);
             if (File.Exists(caminhoSvg))
             {
-                if (idProdPedNovo.GetValueOrDefault() == 0 || medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                    File.Delete(caminhoSvg);
-                else
+                if (atualizarImagemMarcacao)
+                {
                     File.Move(caminhoSvg, string.Format("{0}{1}.svg", PCPConfig.CaminhoSalvarCadProject(false), idProdPedNovo));
-            }
-        }
-
-        #endregion
-
-        #region Insere/Atualiza Produto de Projeto sem atualizar total do pedido
-
-        /// <summary>
-        /// Insere/Atualiza Produto de Projeto
-        /// </summary>
-        public uint InsereAtualizaProdProjSemAtualizarTotalPedido(GDASession sessao, uint idPedido, uint? idAmbientePedido,
-            ItemProjeto itemProj, bool medidasAlteradas)
-        {
-            try
-            {
-                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido);
-
-                // Remove acréscimo, desconto e comissão
-                objPersistence.ExecuteCommand(sessao, "update pedido set idComissionado=null where idPedido=" + idPedido);
-                PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(sessao, pedido);
-
-                AmbientePedido ambiente = new AmbientePedido();
-                ambiente.IdPedido = idPedido;
-                ambiente.IdItemProjeto = itemProj.IdItemProjeto;
-                ambiente.Ambiente = !String.IsNullOrEmpty(itemProj.Ambiente) ? itemProj.Ambiente : "Cálculo Projeto";
-
-                string descricao = UtilsProjeto.FormataTextoOrcamento(sessao, itemProj);
-                if (!String.IsNullOrEmpty(descricao)) ambiente.Descricao = descricao;
-
-                ambiente.Qtde = itemProj.Qtde > 0 ? itemProj.Qtde : 1; // Colocado para centerbox e megatemper ficar com valor correto de fechamentos na impressão
-
-                // Se o ambiente não tiver sido informado, insere ambiente pedido, senão apenas atualiza texto
-                if (idAmbientePedido == 0 || idAmbientePedido == null)
-                    idAmbientePedido = AmbientePedidoDAO.Instance.Insert(sessao, ambiente);
+                }
                 else
                 {
-                    AmbientePedido amb = AmbientePedidoDAO.Instance.GetElementByPrimaryKey(sessao, idAmbientePedido.Value);
-
-                    ambiente.TipoAcrescimo = amb.TipoAcrescimo;
-                    ambiente.TipoDesconto = amb.TipoDesconto;
-                    ambiente.Desconto = amb.Desconto;
-                    ambiente.Acrescimo = amb.Acrescimo;
-                    ambiente.IdAmbientePedido = idAmbientePedido.Value;
-
-                    if (String.IsNullOrEmpty(ambiente.Descricao))
-                        ambiente.Descricao = amb.Descricao;
-
-                    AmbientePedidoDAO.Instance.Update(sessao, ambiente);
+                    File.Delete(caminhoSvg);
                 }
-
-                // Dicionário criado para renomear imagens associadas às peças que estão sendo apagadas para que as mesmas sejam associadas às novas peças
-                var dicProdPedMater = new Dictionary<uint, uint>();
-
-                // Salva os materiais de projeto associados ao ambiente, para verificar, mais abaixo, a qual produto a imagem individual deve ser associada.
-                foreach (ProdutosPedido pp in objPersistence.LoadData(sessao, "Select * From produtos_pedido Where idAmbientePedido=" + idAmbientePedido))
-                    if (pp.IdMaterItemProj != null && !dicProdPedMater.ContainsKey(pp.IdMaterItemProj.Value))
-                        dicProdPedMater.Add(pp.IdMaterItemProj.Value, pp.IdProdPed);
-
-                // Recupera os ids dos produtos de pedido que deverão ser exclusos do sistema. 
-                var idsProdPed = String.Join(",",
-                ExecuteMultipleScalar<string>(sessao, "SELECT pp.IdProdPed FROM produtos_pedido pp WHERE pp.IdAmbientePedido=" + idAmbientePedido).ToArray());
-                // Caso nenhum id de produto de pedido seja retornado então seta o valor "0" na variável para evitar erro de execução do sql.
-                if (String.IsNullOrEmpty(idsProdPed))
-                    idsProdPed = "0";
-
-                /* Chamado 15363.
-                    * O projeto foi confirmado mais de uma vez e os produtos do pedido ficaram duplicados porque o comando abaixo foi
-                    * apagado do código. Analisei o log de alterações e recoloquei o comando abaixo para que os produtos não sejam duplicados. */
-                // Exclui produto do pedido, caso já tenha sido inserido.
-                objPersistence.ExecuteCommand(sessao, @"
-                    DELETE FROM produto_pedido_benef WHERE IdProdPed IN  (" + idsProdPed + @");
-                    DELETE FROM produtos_pedido WHERE IdProdPed IN (" + idsProdPed + ");");
-
-                // Insere materiais do item projeto no ambiente
-                foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(sessao, itemProj.IdItemProjeto))
-                {
-                    ProdutosPedido prodPed = new ProdutosPedido();
-                    prodPed.IdPedido = idPedido;
-                    prodPed.IdAmbientePedido = idAmbientePedido;
-                    prodPed.IdItemProjeto = itemProj.IdItemProjeto;
-                    prodPed.IdMaterItemProj = mip.IdMaterItemProj;
-                    prodPed.IdProd = mip.IdProd;
-                    prodPed.IdProcesso = mip.IdProcesso;
-                    prodPed.IdAplicacao = mip.IdAplicacao;
-                    prodPed.Redondo = mip.Redondo;
-                    prodPed.Qtde = mip.Qtde;
-                    prodPed.AlturaReal = mip.AlturaCalc;
-                    prodPed.Altura = mip.Altura;
-                    prodPed.Largura = mip.Largura;
-                    prodPed.TotM = mip.TotM;
-                    prodPed.TotM2Calc = mip.TotM2Calc;
-                    prodPed.ValorVendido = mip.Valor;
-                    prodPed.Total = mip.Total;
-                    prodPed.CustoProd = mip.Custo;
-                    prodPed.Espessura = mip.Espessura;
-                    prodPed.AliqIcms = mip.AliqIcms;
-                    prodPed.ValorIcms = mip.ValorIcms;
-                    prodPed.AliqIpi = mip.AliquotaIpi;
-                    prodPed.ValorIpi = mip.ValorIpi;
-                    prodPed.ValorAcrescimo = mip.ValorAcrescimo;
-                    prodPed.ValorDesconto = mip.ValorDesconto;
-                    prodPed.PedCli = mip.PedCli;
-                    prodPed.Beneficiamentos = mip.Beneficiamentos;
-
-                    ValorBruto.Instance.Calcular(sessao, pedido, prodPed);
-                    ValorUnitario.Instance.Calcular(sessao, pedido, prodPed);
-
-                    prodPed.IdProdPed = InsertFromProjeto(sessao, prodPed);
-
-                    // Altera as imagens que possam ter sido inseridas anteriormente para ficarem associadas às novas peças inseridas
-                    if (prodPed.IdMaterItemProj > 0 && dicProdPedMater.ContainsKey(prodPed.IdMaterItemProj.Value))
-                    {
-                        var idProdPedAntigo = dicProdPedMater[prodPed.IdMaterItemProj.Value];
-                        var nomeAnterior = idProdPedAntigo.ToString().PadLeft(10, '0');
-                        var nomesArq = Directory.GetFiles(Utils.GetPecaComercialPath, nomeAnterior + "_*");
-
-                        foreach (string arq in nomesArq)
-                        {
-                            if (!medidasAlteradas && ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                                File.Copy(arq, arq.Replace(nomeAnterior, prodPed.IdProdPed.ToString().PadLeft(10, '0')));
-
-                            File.Delete(arq);
-                        }
-
-                        /* Chamado 49119.
-                         * Caso as medidas tenham sido alteradas o arquivo deve ser excluído.
-                         * Caso as medidas NÃO tenham sido alteradas o arquivo deve ser renomeado com o novo IDPRODPED inserido. */
-                        var caminhoDxf = PCPConfig.CaminhoSalvarCadProject(true) + idProdPedAntigo + ".dxf";
-                        if (File.Exists(caminhoDxf))
-                        {
-                            if (medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                                File.Delete(caminhoDxf);
-                            else
-                                File.Move(caminhoDxf, PCPConfig.CaminhoSalvarCadProject(true) + prodPed.IdProdPed + ".dxf");
-                        }
-
-                        var caminhoSvg = PCPConfig.CaminhoSalvarCadProject(true) + idProdPedAntigo + ".svg";
-                        if (File.Exists(caminhoSvg))
-                        {
-                            if (medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                                File.Delete(caminhoSvg);
-                            else
-                                File.Move(caminhoSvg, PCPConfig.CaminhoSalvarCadProject(true) + prodPed.IdProdPed + ".svg");
-                        }
-                    }
-                }
-
-                // Aplica acréscimo e desconto no ambiente
-                if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento
-                    && (ambiente.Acrescimo > 0 || ambiente.Desconto > 0))
-                {
-                    var produtosPedido = GetByAmbiente(sessao, ambiente.IdAmbientePedido);
-
-                    if (ambiente.Acrescimo > 0)
-                    {
-                        AmbientePedidoDAO.Instance.AplicarAcrescimo(
-                            sessao,
-                            pedido,
-                            ambiente.IdAmbientePedido,
-                            ambiente.TipoAcrescimo,
-                            ambiente.Acrescimo,
-                            produtosPedido
-                        );
-                    }
-
-                    if (ambiente.Desconto > 0)
-                    {
-                        AmbientePedidoDAO.Instance.AplicarDesconto(
-                            sessao,
-                            pedido,
-                            ambiente.IdAmbientePedido,
-                            ambiente.TipoDesconto,
-                            ambiente.Desconto,
-                            produtosPedido
-                        );
-                    }
-
-                    AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido, true);
-                    PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
-                }
-
-                // Verifica se o itemProjeto possui referência do idPedido (Ocorreu de não estar associado)
-                if (itemProj.IdPedido == null)
-                    objPersistence.ExecuteCommand(sessao, "Update item_projeto Set idPedido=" + idPedido + " Where idItemProjeto=" + itemProj.IdItemProjeto);
-
-                return idAmbientePedido.GetValueOrDefault();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
             }
         }
 

@@ -1143,7 +1143,10 @@ namespace Glass.Data.DAL
 
                 // Insere/Atualiza produto no pedido, caso esteja sendo inserido projeto no pedido
                 if (idPedido > 0)
-                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, idPedido.Value, idAmbientePedido, itemProj, false);
+                {
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(session, (int)idPedido);
+                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, pedido, idAmbientePedido, itemProj, false, false);
+                }
 
                 // Insere/Atualiza produto no pedido, caso esteja sendo inserido projeto no pedido
                 if (idPedidoEsp > 0)
