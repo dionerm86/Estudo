@@ -4590,7 +4590,7 @@ namespace Glass.Data.DAL
                 var idAmbientePedidoEspelho = AmbientePedidoEspelhoDAO.Instance.GetIdByItemProjeto(session, itemProjeto.IdItemProjeto);
                 var itemProjetoConferido = itemProjeto.Conferido;
 
-                ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(session, pedidoEspelho, idAmbientePedidoEspelho, itemProjeto, false);
+                ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(session, pedidoEspelho, idAmbientePedidoEspelho, itemProjeto, false, true);
 
                 // Este método é chamado através da atualização do pedido pela notinha verde. Dentro do método InsereAtualizaProdProj, o item de projeto é marcado como não conferido,
                 // porém ele deve-se manter como conferido, pois não foi feita alteração no projeto, diretamente.

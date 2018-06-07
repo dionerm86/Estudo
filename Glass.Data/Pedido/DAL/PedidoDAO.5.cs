@@ -583,8 +583,7 @@ namespace Glass.Data.DAL
                                     if (ambiente.IdItemProjeto > 0)
                                     {
                                         var itemProjeto = ItemProjetoDAO.Instance.GetElement(transaction, ambiente.IdItemProjeto.Value);
-
-                                        ProdutosPedidoDAO.Instance.InsereAtualizaProdProjSemAtualizarTotalPedido(transaction, idPedido, idAmbiente, itemProjeto, true);
+                                        ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(transaction, pedido, idAmbiente, itemProjeto, true, false);
                                     }
 
                                     // Atualiza os dados de desconto/acréscimo do ambiente.
@@ -603,8 +602,6 @@ namespace Glass.Data.DAL
                                     {
                                         // O custo do produto de orçamento é atualizado somente se o cliente estiver inserido no orçamento, 
                                         // para certificar que o custo inserido no pedido será o valor correto é necessário atualizar novamente
-                                        decimal custoProdTemp = 0, totalTemp = 0;
-                                        float alturaTemp = 0, totM2Temp = 0;
                                         decimal valorProd = poChild.ValorProd != null ? po.ValorProd.Value : 0;
 
                                         var prodPed = new ProdutosPedido
@@ -1511,7 +1508,7 @@ namespace Glass.Data.DAL
                 var idAmbientePedido = AmbientePedidoDAO.Instance.GetIdByItemProjeto(session, itemProjeto.IdItemProjeto);
                 var itemProjetoConferido = itemProjeto.Conferido;
 
-                ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, novo, idAmbientePedido, itemProjeto, false, false, false);
+                ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(session, novo, idAmbientePedido, itemProjeto, false, false, false, true);
 
                 // Este método é chamado através da atualização do pedido pela notinha verde. Dentro do método InsereAtualizaProdProj, o item de projeto é marcado como não conferido,
                 // porém ele deve-se manter como conferido, pois não foi feita alteração no projeto, diretamente.
