@@ -1251,7 +1251,7 @@ namespace Glass.Data.RelDAL
 
                 if (prodImp.IdProdPed > 0)
                 {
-                    var idMaterItemProj = Instance.ObtemValorCampo<uint>(session, "idMaterItemProj", "idProdPed=" + prodImp.IdProdPed);
+                    var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint>(session, "idMaterItemProj", "idProdPed=" + prodImp.IdProdPed);
                     var pecaProjMod = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj);
 
                     if (pecaProjMod == null)
