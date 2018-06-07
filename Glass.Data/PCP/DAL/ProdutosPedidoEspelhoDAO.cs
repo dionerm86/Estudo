@@ -2455,16 +2455,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        public uint InsereAtualizaProdProj(uint idPedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj, bool medidasAlteradas)
-        {
-            return InsereAtualizaProdProj(null, idPedidoEspelho, idAmbientePedidoEsp, itemProj, medidasAlteradas);
-        }
-
-        /// <summary>
-        /// Insere/Atualiza Produto de Projeto
-        /// </summary>
-        internal uint InsereAtualizaProdProj(GDASession sessao, uint idPedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj,
-            bool medidasAlteradas)
+        public uint InsereAtualizaProdProj(GDASession sessao, uint idPedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj, bool medidasAlteradas)
         {
             var pedidoEspelho = PedidoEspelhoDAO.Instance.GetElement(sessao, idPedidoEspelho);
             return InsereAtualizaProdProj(sessao, pedidoEspelho, idAmbientePedidoEsp, itemProj, medidasAlteradas);
@@ -2473,40 +2464,41 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        internal uint InsereAtualizaProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj,
-            bool medidasAlteradas)
+        public uint InsereAtualizaProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj, bool medidasAlteradas,
+            bool forcarAtualizacaoImagemMarcacaoPeca = false)
         {
-            string where = "idAmbientePedido=" + idAmbientePedidoEsp.GetValueOrDefault();
-
-            string sqlAcrescimo = "sum(valorAcrescimo)+sum(valorAcrescimoProd)";
-            string sqlDesconto = "sum(valorDesconto)+sum(valorDescontoProd)";
+            var where = $"IdAmbientePedido={ idAmbientePedidoEsp.GetValueOrDefault() }";
+            var sqlAcrescimo = "SUM(ValorAcrescimo) + SUM(ValorAcrescimoProd)";
+            var sqlDesconto = "SUM(ValorDesconto) + SUM(ValorDescontoProd)";
 
             if (OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento && idAmbientePedidoEsp > 0)
             {
-                var ambiente = AmbientePedidoEspelhoDAO.Instance.GetElementByPrimaryKey(idAmbientePedidoEsp.Value);
+                var ambiente = AmbientePedidoEspelhoDAO.Instance.GetElementByPrimaryKey(sessao, idAmbientePedidoEsp.Value);
 
                 if (ambiente.Acrescimo > 0)
-                    sqlAcrescimo = "sum(valorAcrescimo)";
+                {
+                    sqlAcrescimo = "SUM(ValorAcrescimo)";
+                }
 
                 if (ambiente.Desconto > 0)
-                    sqlDesconto = "sum(valorDesconto)";
+                {
+                    sqlDesconto = "SUM(ValorDesconto)";
+                }
             }
 
             // Soma o valorAcrescimoProd e valorDescontoProd, pois caso não sejam somados, caso tenha dado acréscimo/desconto no ambiente
             // ao confirmar o projeto no PCP os mesmos estavam sendo perdidos (Chamado 6807)
-            decimal valorAcrescimoAplicado = ObtemValorCampo<decimal>(sessao, sqlAcrescimo, where);
-            decimal valorDescontoAplicado = ObtemValorCampo<decimal>(sessao, sqlDesconto, where);
+            var valorAcrescimoAplicado = ObtemValorCampo<decimal>(sessao, sqlAcrescimo, where);
+            var valorDescontoAplicado = ObtemValorCampo<decimal>(sessao, sqlDesconto, where);
 
-            return InsereAtualizaProdProj(sessao, pedidoEspelho, idAmbientePedidoEsp, itemProj, valorAcrescimoAplicado,
-                valorDescontoAplicado, pedidoEspelho.PercComissao, true, medidasAlteradas, null);
+            return InsereAtualizaProdProj(sessao, pedidoEspelho, idAmbientePedidoEsp, itemProj, valorAcrescimoAplicado, valorDescontoAplicado, pedidoEspelho.PercComissao, true, medidasAlteradas, null);
         }
 
         /// <summary>
         /// Insere/Atualiza Produto de Projeto
         /// </summary>
-        internal uint InsereAtualizaProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj,
-            decimal valorAcrescimoAplicado, decimal valorDescontoAplicado, float percComissao, bool atualizaReserva, bool medidasAlteradas,
-            Dictionary<int, int> associacaoProdutosPedidoProdutosPedidoEspelho)
+        public uint InsereAtualizaProdProj(GDASession sessao, PedidoEspelho pedidoEspelho, uint? idAmbientePedidoEsp, ItemProjeto itemProj, decimal valorAcrescimoAplicado, decimal valorDescontoAplicado,
+            float percComissao, bool atualizaReserva, bool medidasAlteradas, Dictionary<int, int> associacaoProdutosPedidoProdutosPedidoEspelho, bool forcarAtualizacaoImagemMarcacaoPeca = false)
         {
             try
             {
@@ -2652,7 +2644,9 @@ namespace Glass.Data.DAL
                     // Altera as imagens que possam ter sido inseridas anteriormente para ficarem associadas às novas peças inseridas
                     // Apaga possiveis arquivos DXF editados anteriormente.
                     if (prodPed.IdMaterItemProj > 0 && dicProdPedMater.ContainsKey(prodPed.IdMaterItemProj.Value))
-                        AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas);
+                    {
+                        AtualizarEdicaoImagemPecaArquivoMarcacao((int)dicProdPedMater[prodPed.IdMaterItemProj.Value], (int)prodPed.IdProdPed, medidasAlteradas, forcarAtualizacaoImagemMarcacaoPeca);
+                    }
                 }
 
                 #region Mantém acréscimo/desconto/comissão originais
@@ -2724,43 +2718,52 @@ namespace Glass.Data.DAL
 
             foreach (var idProdPed in idsProdPed)
                 if (idProdPed > 0)
-                    AtualizarEdicaoImagemPecaArquivoMarcacao(idProdPed.Value, null, true);
+                    AtualizarEdicaoImagemPecaArquivoMarcacao(idProdPed.Value, null, true, false);
         }
 
         /// <summary>
         /// Remove ou mantém a edição das imagens e de arquivos de marcação, de acordo com a configuração ManterImagensEditadasAoConfirmarProjeto e o parâmetro medidasAlteradas.
         /// </summary>
-        public void AtualizarEdicaoImagemPecaArquivoMarcacao(int idProdPedAtual, int? idProdPedNovo, bool medidasAlteradas)
+        public void AtualizarEdicaoImagemPecaArquivoMarcacao(int idProdPedAtual, int? idProdPedNovo, bool medidasAlteradas, bool forcarAtualizacaoImagemMarcacaoPeca)
         {
-            var arquivosImagem = Directory.GetFiles(Utils.GetPecaProducaoPath, string.Format("{0}_*", idProdPedAtual.ToString().PadLeft(10, '0')));
+            var atualizarImagemMarcacao = idProdPedNovo > 0 && (forcarAtualizacaoImagemMarcacaoPeca || (!medidasAlteradas && ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto));
+            var arquivosImagem = Directory.GetFiles(Utils.GetPecaProducaoPath, $"{ idProdPedAtual.ToString().PadLeft(10, '0') }_*");
+            var caminhoDxf = $"{ PCPConfig.CaminhoSalvarCadProject(true) }{ idProdPedAtual }.dxf";
+            var caminhoSvg = $"{ PCPConfig.CaminhoSalvarCadProject(true) }{ idProdPedAtual }.svg";
 
             foreach (var arquivoImagem in arquivosImagem)
             {
-                if (idProdPedNovo > 0 && (!medidasAlteradas || ProjetoConfig.GerarPecasComMedidasIncoerentesDaImagemEditada) && ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
+                if (idProdPedNovo > 0 && (forcarAtualizacaoImagemMarcacaoPeca ||
+                    (ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto && (!medidasAlteradas || ProjetoConfig.GerarPecasComMedidasIncoerentesDaImagemEditada))))
+                {
                     File.Copy(arquivoImagem, arquivoImagem.Replace(idProdPedAtual.ToString().PadLeft(10, '0'), idProdPedNovo.ToString().PadLeft(10, '0')));
+                }
 
                 File.Delete(arquivoImagem);
             }
-
-            /* Chamado 49119.
-             * Caso as medidas tenham sido alteradas o arquivo deve ser excluído.
-             * Caso as medidas NÃO tenham sido alteradas o arquivo deve ser renomeado com o novo IDPRODPED inserido. */
-            var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPedAtual);
+            
             if (File.Exists(caminhoDxf))
             {
-                if (idProdPedNovo.GetValueOrDefault() == 0 || medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                    File.Delete(caminhoDxf);
+                if (atualizarImagemMarcacao)
+                {
+                    File.Move(caminhoDxf, $"{ PCPConfig.CaminhoSalvarCadProject(true) }{ idProdPedNovo }.dxf");
+                }
                 else
-                    File.Move(caminhoDxf, string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPedNovo));
+                {
+                    File.Delete(caminhoDxf);
+                }
             }
 
-            var caminhoSvg = string.Format("{0}{1}.svg", PCPConfig.CaminhoSalvarCadProject(true), idProdPedAtual);
             if (File.Exists(caminhoSvg))
             {
-                if (idProdPedNovo.GetValueOrDefault() == 0 || medidasAlteradas || !ProjetoConfig.ManterImagensEditadasAoConfirmarProjeto)
-                    File.Delete(caminhoSvg);
+                if (atualizarImagemMarcacao)
+                {
+                    File.Move(caminhoSvg, $"{ PCPConfig.CaminhoSalvarCadProject(true) }{ idProdPedNovo }.svg");
+                }
                 else
-                    File.Move(caminhoSvg, string.Format("{0}{1}.svg", PCPConfig.CaminhoSalvarCadProject(true), idProdPedNovo));
+                {
+                    File.Delete(caminhoSvg);
+                }
             }
         }
 

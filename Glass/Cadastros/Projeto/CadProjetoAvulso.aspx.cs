@@ -1382,12 +1382,17 @@ namespace Glass.UI.Web.Cadastros.Projeto
     
                 if (idOrcamento > 0)
                     ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, idAmbienteOrca, itemProjeto);
-    
+
                 if (idPedido > 0)
-                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(idPedido.Value, idAmbientePedido, itemProjeto, true);
-    
+                {
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido.Value);
+                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(null, pedido, idAmbientePedido, itemProjeto, true);
+                }
+
                 if (idPedidoEsp > 0)
-                    ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(idPedidoEsp.Value, idAmbientePedidoEsp, itemProjeto, true);
+                {
+                    ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(null, idPedidoEsp.Value, idAmbientePedidoEsp, itemProjeto, true);
+                }
     
                 // Marca que cálculo de projeto foi conferido
                 if (idPedido > 0 || idPedidoEsp > 0)

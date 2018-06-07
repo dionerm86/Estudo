@@ -204,12 +204,14 @@ namespace Glass.UI.Web.Controls
             }
             else if (idPedido != null)
             {
+                var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido.Value);
+
                 foreach (uint id in idsItensProjetos)
                 {
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(id);
                     uint? idAmbientePedido = AmbientePedidoDAO.Instance.GetIdByItemProjeto(id);
-                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(idPedido.Value, idAmbientePedido, itemProj, false);
+                    ProdutosPedidoDAO.Instance.InsereAtualizaProdProj(null, pedido, idAmbientePedido, itemProj, false);
                 }
             }
             else if (idPedidoEspelho != null)
@@ -219,7 +221,7 @@ namespace Glass.UI.Web.Controls
                     // Deve ser getelement para buscar o texto do orçamento e não apagar o texto no produto/ambiente
                     var itemProj = ItemProjetoDAO.Instance.GetElement(id);
                     uint? idAmbientePedidoEspelho = AmbientePedidoEspelhoDAO.Instance.GetIdByItemProjeto(id);
-                    ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(idPedidoEspelho.Value, idAmbientePedidoEspelho, itemProj, false);
+                    ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(null, idPedidoEspelho.Value, idAmbientePedidoEspelho, itemProj, false);
                 }
             }
         }
