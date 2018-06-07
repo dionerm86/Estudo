@@ -437,6 +437,27 @@ namespace Glass.Data.Model
         [PersistenceProperty("MotivoDesoneracao")]
         public int MotivoDesoneracao { get; set; }
 
+        [PersistenceProperty("PERCCOMISSAO")]
+        public decimal PercComissao { get; set; }
+
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE", Direction = DirectionParameter.Input)]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.Input)]
+        public decimal RentabilidadeFinanceira { get; set; }
+
+        [PersistenceProperty("ALTURABENEF")]
+        public int? AlturaBenef { get; set; }
+
+        [PersistenceProperty("LARGURABENEF")]
+        public int? LarguraBenef { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

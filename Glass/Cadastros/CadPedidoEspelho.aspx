@@ -1524,6 +1524,7 @@
                                 <asp:HiddenField ID="hdfValorDesconto" runat="server" Value='<%# Bind("ValorDesconto") %>' />
                                 <asp:HiddenField ID="hdfValorAcrescimoProd" runat="server" Value='<%# Bind("ValorAcrescimoProd") %>' />
                                 <asp:HiddenField ID="hdfValorDescontoProd" runat="server" Value='<%# Bind("ValorDescontoProd") %>' />
+                                <asp:HiddenField ID="hdfPercComissao" runat="server" Value='<%# Bind("PercComissao") %>' />
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>

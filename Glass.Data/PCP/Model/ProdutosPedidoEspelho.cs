@@ -337,6 +337,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("CODVALORFISCAL")]
         public int? CodValorFiscal { get; set; }
 
+        [PersistenceProperty("PERCCOMISSAO")]
+        public decimal PercComissao { get; set; }
+
         /// <summary>
         /// Percentual da rentabilidade.
         /// </summary>
@@ -530,9 +533,6 @@ namespace Glass.Data.Model
         [System.Xml.Serialization.XmlIgnore]
         [PersistenceProperty("CODNATUREZAOPERACAO", DirectionParameter.InputOptional)]
         public string CodNaturezaOperacao { get; set; }
-
-        [PersistenceProperty("PERCCOMISSAO", DirectionParameter.InputOptional)]
-        public decimal PercComissao { get; set; }
 
         #endregion
 

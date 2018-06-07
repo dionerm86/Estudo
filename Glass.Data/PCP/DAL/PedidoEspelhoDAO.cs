@@ -1183,6 +1183,7 @@ namespace Glass.Data.DAL
                     pe.IdItemProjeto = p.IdItemProjeto != null && itensProjeto.ContainsKey(p.IdItemProjeto.Value) ? itensProjeto[p.IdItemProjeto.Value] : p.IdItemProjeto;
                     pe.Qtde = p.Qtde;
                     pe.ValorVendido = p.ValorVendido;
+                    pe.PercComissao = p.PercComissao;
                     pe.PercentualRentabilidade = p.PercentualRentabilidade;
                     pe.RentabilidadeFinanceira = p.RentabilidadeFinanceira;
 

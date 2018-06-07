@@ -754,6 +754,10 @@ namespace Glass.Data.DAL
                                             prod.Largura.Value :
                                             0;
 
+                            prodNf.PercComissao = pp.PercComissao;
+                            prodNf.AlturaBenef = pp.AlturaBenef;
+                            prodNf.LarguraBenef = pp.LarguraBenef;
+
                             prodNf.TotM = FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? pp.TotM2Calc : pp.TotM;
                             prodNf.NumControleFciStr = pp.NumControleFci;
                             prodNf.CstIpi = (int?)prod.CstIpi;
@@ -7871,6 +7875,10 @@ namespace Glass.Data.DAL
             sql += where;
 
             objPersistence.ExecuteCommand(sessao, sql);
+
+            var rentabilidade = RentabilidadeHelper.ObterCalculadora<NotaFiscal>().Calcular(sessao, idNf);
+            if (rentabilidade.Executado)
+                rentabilidade.Salvar(sessao);
         }
 
         #endregion
@@ -9927,6 +9935,53 @@ namespace Glass.Data.DAL
                         WHERE ln.IdNf={0} AND
                         ln.Codigo=102 AND
                         ln.DataHora>=DATE_ADD(NOW(), INTERVAL - 2 MINUTE)", idNf)) == 0;
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Atualiza a rentabilidade da nota fiscal.
+        /// </summary>
+        /// <param name="idNf"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idNf, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE nota_fiscal SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdNf=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idNf));
+        }
+
+        /// <summary>
+        /// Calcula o prazo médio das parcelas da nota.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idNf"></param>
+        /// <returns></returns>
+        public int CalcularPrazoMedio(GDASession sessao, uint idNf)
+        {
+            var dataEmissao = objPersistence.LoadResult(sessao,
+                "SELECT DataEmissao FROM nota_fiscal WHERE IdNf=?id",
+                new GDAParameter("?id", idNf))
+                .Select(f => f.GetDateTime(0))
+                .First();
+
+            // Recupera os dias das parcelas com base na data de emissão da nota
+            var numeroDias = objPersistence.LoadResult(sessao,
+                "SELECT Data FROM parcela_nf WHERE IdNf=?id ORDER BY Data",
+                new GDAParameter("?id", idNf))
+                .Select(f => f.GetDateTime(0))
+                .Select(f => (int)(f.Date - dataEmissao.Date).TotalDays)
+                .ToArray();
+
+            if (numeroDias.Length == 0)
+                return 0;
+
+            return numeroDias.Sum() / numeroDias.Length;
         }
 
         #endregion

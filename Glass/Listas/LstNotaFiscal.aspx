@@ -720,6 +720,12 @@
                                     CommandArgument='<%# Eval("IdNf") %>' Visible='<%# (bool)Eval("ReenviarEmailXmlVisible") || (bool)Eval("ReenviarEmailXmlCancelamentoVisible") %>'
                                     OnClientClick="if (!confirm('Deseja reenviar o e-mail do XML / DANFE?')) return false"/>                                
                                 <asp:HiddenField ID="hdfCorLinha" runat="server" Value='<%# Eval("CorLinhaGrid") %>' />
+
+                                <asp:PlaceHolder ID="pchRentabillidade" runat="server" Visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                    <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=notafiscal&id=<%# Eval("IdNf") %>"); return false;'>
+                                        <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
+                                </asp:PlaceHolder>
+
                             </ItemTemplate>
                             <HeaderStyle Wrap="False" />
                             <ItemStyle Wrap="False" />
