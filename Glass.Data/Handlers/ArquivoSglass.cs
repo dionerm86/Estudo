@@ -50,7 +50,7 @@ namespace Glass.Data.Handlers
                 if (lstErrosArq.Any())
                 {
                     var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))
-                        .Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, MensagemAlerta.FormatErrorMsg(null, f.Value))));
+                        .Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value))));
 
                     context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
                     context.Response.Flush();
