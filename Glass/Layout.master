@@ -219,6 +219,7 @@
                             <asp:Label ID="lblPedidosAguardandoFinanceiro" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
                             <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>     
                             <br /> 
+                            <div style="margin-bottom:5px;"></div>
                             <asp:LinkButton ID="lnkMensagens" runat="server" OnClick="lnkMensagens_Click" ToolTip="Mensagens Recebidas"> <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
                             <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" OnClick="lnkMensagens_Click"
                                 ToolTip="Mensagens Recebidas" Visible="false"> <img src='<%= ResolveUrl("~/Images/mail_received.png") %>' border="0" /></asp:LinkButton>
