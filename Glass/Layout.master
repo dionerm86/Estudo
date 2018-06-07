@@ -167,10 +167,6 @@
                                                 <td>
                                                     <asp:Image ID="imgLogoWebGlass" runat="server" ImageUrl="~/Images/webglass.png" />
                                                 </td>
-                                                <td valign="bottom" style="padding-left: 4px; padding-bottom: 4px">
-                                                    <asp:LinkButton ID="lnkVersao" runat="server" ForeColor="Gray" Font-Size="XX-Small"
-                                                        Font-Overline="false" OnClientClick="openWindow(590, 760, '../Utils/VersaoDLLs.aspx'); return false;"></asp:LinkButton>
-                                                </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -198,6 +194,12 @@
                                                 <td class="textoLogo">
                                                     Email: <a id="emailSuporte" runat="server" href="mailto:suporte@syncsoftwares.com.br">
                                                         suporte@syncsoftwares.com.br</a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="textoLogo">
+                                                    Versão: <asp:LinkButton ID="lnkVersao" runat="server" ForeColor="Gray" Font-Size="XX-Small"
+                                                        Font-Overline="false" OnClientClick="openWindow(590, 760, '../Utils/VersaoDLLs.aspx'); return false;"></asp:LinkButton>
                                                 </td>
                                             </tr>
                                         </table>
