@@ -106,17 +106,26 @@
                 tabela.rows[29].style.display = "";
             }
 
-            // Esconde campos referentes ao controle de beneficiamento: "Beneficiamento".
-            for (i = 33; i < 34; i++)
-                tabela.rows[i].style.display = exibirBeneficiamento ? "" : "none";
+            var indexBenef = 0;
 
-            if (!exibirBeneficiamento) {
-                for (i = 33; i < 34; i++)
-                    for (j = 0; j < tabela.rows[i].cells.length; j++) {
-                        var inputs = tabela.rows[i].cells[j].getElementsByTagName("input");
+            // Esconde campos referentes ao controle de beneficiamento: "Beneficiamento".
+            for (i = 0; i < tabela.rows.length; i++) {
+                if (tabela.rows[i].cells[0].innerText == "Beneficiamentos") {
+                    indexBenef = i;
+                    break;
+                }
+            }
+
+            if (indexBenef > 0) {
+                tabela.rows[indexBenef].style.display = exibirBeneficiamento ? "" : "none";
+
+                if (!exibirBeneficiamento) {
+                    for (j = 0; j < tabela.rows[indexBenef].cells.length; j++) {
+                        var inputs = tabela.rows[indexBenef].cells[j].getElementsByTagName("input");
                         for (k = 0; k < inputs.length; k++)
                             inputs[k].value = "";
                     }
+                }
             }
 
             FindControl("hdfIdSubgrupo", "input").value = idSubgrupo;
