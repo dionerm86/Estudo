@@ -503,6 +503,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     if (idOC == 0)
                         throw new Exception("Nenhuma ordem de carga informada.");
 
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, true);
+
                     if (OrdemCargaDAO.Instance.PossuiPecaCarregada(trans, idOC))
                         throw new Exception("Não é possível remover essa OC do Carregamento, pois a mesma possui itens que já foram carregados.");
 
@@ -552,6 +554,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     //Registra o log de remoção
                     LogCancelamentoDAO.Instance.LogOrdemCarga(trans, oc, string.Format("Remoção da OC: {0}", idOC), true);
+
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, false);
 
                     trans.Commit();
                     trans.Close();
