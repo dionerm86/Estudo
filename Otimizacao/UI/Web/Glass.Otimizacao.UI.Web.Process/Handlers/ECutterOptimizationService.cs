@@ -91,18 +91,18 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 var importacao = OtimizacaoFluxo.Importar(arquivos);
 
                 var url = context.Request.Url.AbsoluteUri;
-                url = url.Substring(0, url.LastIndexOf("handlers/")) + "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
+                url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase)) + "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
 
                 return new eCutter.ResultadoSalvarTransacao(true, new Uri(url), new[]
                 {
-                    new eCutter.MensagemTransacao("Succeos", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao)
+                    new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao)
                 });
             }
             catch (Exception ex)
             {
                 return new eCutter.ResultadoSalvarTransacao(false, null, new[]
                 {
-                    new eCutter.MensagemTransacao("Falha", $"Ocorreu uma falha na importação. {ex.Message}", eCutter.TipoMensagemTransacao.Erro)
+                    new eCutter.MensagemTransacao("Falha", $"Ocorreu uma falha na importação do resultado da otimização pelo WebGlass. {ex.Message}", eCutter.TipoMensagemTransacao.Erro)
                 });
             }
         }
