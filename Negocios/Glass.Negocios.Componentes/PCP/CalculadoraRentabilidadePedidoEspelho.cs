@@ -10,7 +10,7 @@ using Glass.Rentabilidade.Negocios.Componentes;
 namespace Glass.PCP.Negocios.Componentes
 {
     /// <summary>
-    /// Implementação da calculadora de rentabilidade das models do sistema.
+    /// Implementação da calculadora de rentabilidade do pedido espelho.
     /// </summary>
     public sealed class CalculadoraRentabilidadePedidoEspelho :
         Rentabilidade.Negocios.Componentes.CalculadoraRentabilidade,
@@ -39,7 +39,7 @@ namespace Glass.PCP.Negocios.Componentes
 
         #endregion
 
-        #region Métodos Privados
+        #region Métodos Protegidos
 
         /// <summary>
         /// Cria o resultado do calculo da rentabilidade para o item informado.
@@ -119,6 +119,10 @@ namespace Glass.PCP.Negocios.Componentes
 
             return resultado;
         }
+
+        #endregion
+
+        #region Métodos Privados
 
         /// <summary>
         /// Calcula o prazo médio do pedido.
@@ -323,7 +327,7 @@ namespace Glass.PCP.Negocios.Componentes
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Pedido {pedido.IdPedido}",
-                PrecoVendaSemIPI = itens.Where(filtroItensParaCalculo).Sum(f => f.PrecoVendaSemIPI),
+                PrecoVendaSemIPI = pedido.Total,
                 PrazoMedio = prazoMedio,
                 FatorICMSSubstituicao = 0,
                 PercentualComissao = percentualComissao,

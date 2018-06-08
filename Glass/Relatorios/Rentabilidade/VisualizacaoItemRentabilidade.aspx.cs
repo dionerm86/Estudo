@@ -59,6 +59,11 @@ namespace Glass.UI.Web.Relatorios.Rentabilidade
                     return serviceLocator
                         .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.PedidoEspelho>>()
                         .ObterItem(IdItem);
+
+                case "notafiscal":
+                    return serviceLocator
+                       .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.NotaFiscal>>()
+                       .ObterItem(IdItem);
             }
 
             return null;

@@ -88,6 +88,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("SITUACAO")]
         public SituacaoOCEnum Situacao { get; set; }
 
+        [PersistenceProperty("TRANSACAO")]
+        public bool Transacao { get; set; }
+
         #endregion
 
         #region Propiedades estendidas

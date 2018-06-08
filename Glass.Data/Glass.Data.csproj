@@ -465,11 +465,13 @@
     <Compile Include="Fiscal\DAL\MDFe\RodoviarioMDFeDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\UFPercursoMDFeDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\VeiculoRodoviarioMDFeDAO.cs" />
+    <Compile Include="Fiscal\DAL\NotaFiscalRentabilidadeDAO.cs" />
     <Compile Include="Fiscal\DAL\PagtoNotaFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\ImpostoNcmUFDAO.cs" />
     <Compile Include="Fiscal\DAL\MargemLucroCnaeMTDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalCteDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalNfDAO.cs" />
+    <Compile Include="Fiscal\DAL\ProdutoNfRentabilidadeDAO.cs" />
     <Compile Include="Fiscal\ICalculadoraImposto.cs" />
     <Compile Include="Fiscal\ICalculoImpostoResultado.cs" />
     <Compile Include="Fiscal\Model\CargaTributariaMediaMT.cs" />
@@ -496,8 +498,10 @@
     <Compile Include="Fiscal\Model\MDFe\RodoviarioMDFe.cs" />
     <Compile Include="Fiscal\Model\MDFe\UFPercursoMDFe.cs" />
     <Compile Include="Fiscal\Model\MDFe\VeiculoRodoviarioMDFe.cs" />
+    <Compile Include="Fiscal\Model\NotaFiscalRentabilidade.cs" />
     <Compile Include="Fiscal\Model\ObsLancFiscalCte.cs" />
     <Compile Include="Fiscal\Model\PagtoNotaFiscal.cs" />
+    <Compile Include="Fiscal\Model\ProdutoNfRentabilidade.cs" />
     <Compile Include="Fiscal\Model\TabelaCodigoReceita.cs" />
     <Compile Include="Fiscal\Model\TabelaSped.cs" />
     <Compile Include="Global\CalculosFluxo.cs" />

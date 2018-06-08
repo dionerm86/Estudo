@@ -3445,6 +3445,31 @@
                                         </tr>
                                     </table>
                                 </div>
+
+                                <div align="center" class="dtvTitle" style="padding: 3px"
+                                     runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                    Rentabilidade
+                                </div>
+                                <table class="pos espaco"
+                                       runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                    <tr > 
+                                        <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                            <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label> 
+                                        </td>
+                                        <td align="left" nowrap="nowrap" style="font-weight: bold">
+                                            <asp:Label runat="server" Text="Rent. Financeira"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label> 
+                                            <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=notafiscal&id=<%# Eval("IdNf") %>"); return false;'>
+                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a> 
+                                        </td>
+                                        <td align="left" nowrap="nowrap" colspan="4"></td>
+                                    </tr>
+                                </table>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField ShowHeader="False">
@@ -3547,6 +3572,9 @@
                                     <asp:HiddenField ID="hdfM2Minimo" runat="server" Value='<%# Eval("M2Minimo") %>' />
                                     <asp:HiddenField ID="hdfDescrItemGenerico" runat="server" 
                                         Value='<%# Bind("DescricaoItemGenerico") %>' />
+                                    <asp:HiddenField ID="hdfPercComissao" runat="server" Value='<%# Bind("PercComissao") %>' />
+                                    <asp:HiddenField ID="hdfAlturaBenef" runat="server" Value='<%# Bind("AlturaBenef") %>' />
+                                    <asp:HiddenField ID="hdfLarguraBenef" runat="server" Value='<%# Bind("LarguraBenef") %>' />
                                 </EditItemTemplate>
                                 <FooterTemplate>
                                     <uc8:ctrlSelProduto ID="ctrlSelProd" runat="server" OnLoad="ctrlSelProd_Load"

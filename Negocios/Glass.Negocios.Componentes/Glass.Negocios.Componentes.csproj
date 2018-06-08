@@ -261,6 +261,7 @@
     <Compile Include="Financeiro\ProsoftFluxo.cs" />
     <Compile Include="Financeiro\QuitacaoParcelaCartaoFluxo.cs" />
     <Compile Include="Fiscal\CalculadoraImposto.cs" />
+    <Compile Include="Fiscal\CalculadoraRentabilidadeNotaFiscal.cs" />
     <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoNotaFiscal.cs" />
     <Compile Include="Fiscal\Calculadoras\NotaFiscalImpostoContainer.cs" />
     <Compile Include="Fiscal\Calculadoras\ProdutoNfItemImposto.cs" />

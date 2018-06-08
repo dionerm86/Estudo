@@ -590,6 +590,18 @@ namespace Glass.Data.Model
         [PersistenceProperty("LocalDespacho")]
         public string LocalDespacho { get; set; }
 
+        /// <summary>
+        /// Percentual da rentabilidade.
+        /// </summary>
+        [PersistenceProperty("PERCENTUALRENTABILIDADE", Direction = DirectionParameter.Input)]
+        public decimal PercentualRentabilidade { get; set; }
+
+        /// <summary>
+        /// Valor da rentabilidade financeira.
+        /// </summary>
+        [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.Input)]
+        public decimal RentabilidadeFinanceira { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

@@ -1988,5 +1988,38 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        #region Rentabilidade
+
+        /// <summary>
+        /// Recupera os produtos da nota para o calculo da rentabilidade.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idNf"></param>
+        /// <returns></returns>
+        public IList<ProdutosNf> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idNf)
+        {
+            return objPersistence.LoadData(sessao,
+                "SELECT * FROM produtos_nf WHERE IdNf=?id",
+                new GDAParameter("?id", idNf))
+                .ToList();
+        }
+
+        /// <summary>
+        /// Atualiza a rentabilidade do produto da nota fiscal.
+        /// </summary>
+        /// <param name="idProdNf"></param>
+        /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
+        /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
+        public void AtualizarRentabilidade(GDA.GDASession sessao,
+            uint idProdNf, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        {
+            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_nf SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdNf=?id",
+                new GDA.GDAParameter("?percentual", percentualRentabilidade),
+                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDA.GDAParameter("?id", idProdNf));
+        }
+
+        #endregion
     }
 }

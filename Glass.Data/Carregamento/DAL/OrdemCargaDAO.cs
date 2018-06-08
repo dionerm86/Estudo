@@ -593,6 +593,23 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Força que a transação ocorra fazendo um update no campo transação, dessa forma o roll-back terá o que reverter.
+        /// </summary>
+        /// <param name="idOC"></param>
+        /// <param name="inicio"></param>
+        public void ForcarTransacaoOC(GDASession sessao, uint idOc, bool inicio)
+        {
+            string sql = @"
+                UPDATE ordem_carga
+                SET TRANSACAO = {0}
+                WHERE idOrdemCarga = {1}";
+
+            sql = string.Format(sql, inicio, idOc);
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
+
+        /// <summary>
         /// Desvincula as OC's a um carregamento
         /// </summary>
         /// <param name="idCarregamento"></param>
