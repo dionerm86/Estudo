@@ -10,7 +10,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Comissao
     {
         protected override bool PermiteAplicar()
         {
-            return PedidoConfig.Comissao.ComissaoPedido;
+            return PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor;
         }
 
         protected override decimal BaseCalculoTotalProduto(IProdutoCalculo produto)

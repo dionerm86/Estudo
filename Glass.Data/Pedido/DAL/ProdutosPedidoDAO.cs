@@ -4217,6 +4217,8 @@ namespace Glass.Data.DAL
                 PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, objInsert.IdPedido, null, out enviarMensagem);
             }
 
+            AplicarComissaoDescontoAcrescimo(session, PedidoDAO.Instance.GetElement(session, objInsert.IdPedido));
+
             return returnValue;
         }
 
@@ -4339,6 +4341,8 @@ namespace Glass.Data.DAL
                     PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, prodPed.IdPedido, null, out enviarMensagem);
                 }
 
+                AplicarComissaoDescontoAcrescimo(transaction, PedidoDAO.Instance.GetElement(transaction, prodPed.IdPedido));
+
                 if (transaction != null && fazerCommit)
                 {
                     transaction.Commit();
@@ -4420,6 +4424,8 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Update(transaction, objUpdate);
+
+                    AplicarComissaoDescontoAcrescimo(transaction, PedidoDAO.Instance.GetElement(transaction, objUpdate.IdPedido));
 
                     transaction.Commit();
                     transaction.Close();
