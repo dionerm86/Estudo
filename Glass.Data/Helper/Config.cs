@@ -852,7 +852,8 @@ namespace Glass.Data.Helper
         [ModuloAttr(Modulo.Orcamento)]
         public enum FuncaoMenuOrcamento
         {
-            EmitirOrcamento = 1
+            EmitirOrcamento = 1,
+            ExibirRentabilidade
         }
 
         [ModuloAttr(Modulo.Conferencia)]
@@ -889,7 +890,8 @@ namespace Glass.Data.Helper
             ExportarImportarPedido,
             ConfirmarPedidoLiberacao,
             GerarReposicao,                                 
-            ReposicaoDePeca
+            ReposicaoDePeca,
+            ExibirRentabilidade
         }
 
         [ModuloAttr(Modulo.PCP)]
@@ -906,7 +908,8 @@ namespace Glass.Data.Helper
             GerarConferenciaPedido,
             ReimprimirEtiquetaBox,                  // 10
             VoltarSetorPecaProducao,
-            PararRetornarPecaProducao
+            PararRetornarPecaProducao,
+            ExibirRentabilidade
         }
 
         [ModuloAttr(Modulo.Estoque)]
@@ -966,7 +969,8 @@ namespace Glass.Data.Helper
             AlteracaoManualNFe = 1,
             AtivarContingenciaNFe,
             SepararValoresFiscaisReais,
-            InserirNotaFiscalParaQualquerLoja
+            InserirNotaFiscalParaQualquerLoja,
+            ExibirRentabilidade
         }
 
 

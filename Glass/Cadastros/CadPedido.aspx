@@ -1175,7 +1175,7 @@
                                                         <asp:Label ID="lblObsCliente" runat="server" OnLoad="lblObsCliente_Load" Text='<%# Eval("ObsCliente") %>'></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'> 
+                                                <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedido %>'> 
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
                                                     </td>
