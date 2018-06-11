@@ -3417,7 +3417,7 @@ namespace Glass.Data.DAL
         {
             return objPersistence.LoadData(sessao,
                 @"SELECT *FROM produtos_pedido_espelho ppe
-                  WHERE ppe.IdPedido=?id AND ppe.InvisivelFluxo=0 AND ppe.IdProdPedParent IS NULL", 
+                  WHERE ppe.IdPedido=?id AND ppe.InvisivelFluxo=0", 
                 new GDAParameter("?id", idPedido))
                 .ToList();
         }

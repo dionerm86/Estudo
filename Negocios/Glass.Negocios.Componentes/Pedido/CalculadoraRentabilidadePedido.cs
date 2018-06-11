@@ -156,10 +156,12 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <param name="produtoPedido"></param>
         /// <param name="prazoMedio"></param>
         /// <param name="produtos"></param>
+        /// <param name="produtosPedidoFilhos">Relação dos produtos do pedidos filhos do produto informado.</param>
         /// <returns></returns>
-        private ItemRentabilidade<Data.Model.ProdutosPedido, Data.Model.ProdutoPedidoRentabilidade> ObterItemProdutoPedido(
+        private IItemRentabilidade<Data.Model.ProdutosPedido> ObterItemProdutoPedido(
             GDA.GDASession sessao, Data.Model.ProdutosPedido produtoPedido,
-            int prazoMedio, IEnumerable<Data.Model.Produto> produtos)
+            int prazoMedio, IEnumerable<Data.Model.Produto> produtos,
+            IEnumerable<Data.Model.ProdutosPedido> produtosPedidoFilhos)
         {
             var registros = new Lazy<IList<Data.Model.ProdutoPedidoRentabilidade>>(
                 () => Data.DAL.ProdutoPedidoRentabilidadeDAO.Instance.ObterPorProdutoPedido(sessao, produtoPedido.IdProdPed));
@@ -195,22 +197,43 @@ namespace Glass.Pedido.Negocios.Componentes
                 produtoPedido.TotM, produto.CustoCompra, produtoPedido.AlturaBenef.GetValueOrDefault(2),
                 produtoPedido.LarguraBenef.GetValueOrDefault(2));
 
-            return new ItemRentabilidade<Data.Model.ProdutosPedido, Data.Model.ProdutoPedidoRentabilidade>(
-                ProvedorIndicadoresFinanceiro, criarRegistro, produtoPedido, registros, ConverterParaRegistroRentabilidade)
+            if (produtosPedidoFilhos.Any())
             {
-                Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
-                PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
-                PrecoCusto = custoProd,
-                PrazoMedio = prazoMedio,
-                PercentualICMSVenda = (decimal)produtoPedido.AliqIcms / 100m,
-                FatorICMSSubstituicao = 0,
-                PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
-                PercentualIPIVenda = (decimal)produtoPedido.AliqIpi / 100m,
-                PercentualComissao = produtoPedido.PercComissao / 100m,
-                CustosExtras = 0M,
-                PercentualRentabilidade = produtoPedido.PercentualRentabilidade / 100m,
-                RentabilidadeFinanceira = produtoPedido.RentabilidadeFinanceira
-            };
+                // Recupera os itens dos produtos filhos
+                var itens = produtosPedidoFilhos.Select(produtoPedido1 =>
+                    ObterItemProdutoPedido(sessao, produtoPedido1, prazoMedio, produtos, new Data.Model.ProdutosPedido[0]))
+                    .ToList();
+
+                return new ItemRentabilidadeContainer<Data.Model.ProdutosPedido, Data.Model.ProdutoPedidoRentabilidade>(
+                    ProvedorIndicadoresFinanceiro, criarRegistro, produtoPedido, itens, f => true, registros,
+                    ConverterParaRegistroRentabilidade)
+                {
+                    Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
+                    PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef,
+                    PrazoMedio = prazoMedio,
+                    FatorICMSSubstituicao = 0,
+                    PercentualComissao = produtoPedido.PercComissao / 100m,
+                    PercentualRentabilidade = produtoPedido.PercentualRentabilidade / 100m,
+                    RentabilidadeFinanceira = produtoPedido.RentabilidadeFinanceira
+                };
+            }
+            else
+                return new ItemRentabilidade<Data.Model.ProdutosPedido, Data.Model.ProdutoPedidoRentabilidade>(
+                    ProvedorIndicadoresFinanceiro, criarRegistro, produtoPedido, registros, ConverterParaRegistroRentabilidade)
+                {
+                    Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
+                    PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
+                    PrecoCusto = custoProd,
+                    PrazoMedio = prazoMedio,
+                    PercentualICMSVenda = (decimal)produtoPedido.AliqIcms / 100m,
+                    FatorICMSSubstituicao = 0,
+                    PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
+                    PercentualIPIVenda = (decimal)produtoPedido.AliqIpi / 100m,
+                    PercentualComissao = produtoPedido.PercComissao / 100m,
+                    CustosExtras = 0M,
+                    PercentualRentabilidade = produtoPedido.PercentualRentabilidade / 100m,
+                    RentabilidadeFinanceira = produtoPedido.RentabilidadeFinanceira
+                };
         }
 
         /// <summary>
@@ -220,14 +243,17 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <param name="pedido">Pedido.</param>
         /// <param name="prazoMedio">Prazo médio de faturamenteo do pedido.</param>
         /// <returns></returns>
-        private IEnumerable<ItemRentabilidade<Data.Model.ProdutosPedido, Data.Model.ProdutoPedidoRentabilidade>> 
+        private IEnumerable<IItemRentabilidade<Data.Model.ProdutosPedido>> 
             ObterItensProdutosPedido(GDA.GDASession sessao, Data.Model.Pedido pedido, int prazoMedio)
         {
             var produtosPedido = Data.DAL.ProdutosPedidoDAO.Instance.ObterProdutosParaRentabilidade(sessao, pedido.IdPedido);
             var produtos = Data.DAL.ProdutoDAO.Instance.ObterProdutos(sessao, produtosPedido.Select(f => f.IdProd).Distinct()).ToList();
 
-            foreach(var i in produtosPedido)
-                yield return ObterItemProdutoPedido(sessao, i, prazoMedio, produtos);
+            // Ignora produtos do pedido com pai
+            foreach (var i in produtosPedido.Where(f => !f.IdProdPedParent.HasValue))
+                yield return ObterItemProdutoPedido(
+                    sessao, i, prazoMedio, produtos,
+                    produtosPedido.Where(f => f.IdProdPedParent == i.IdProdPed));
         }
 
         /// <summary>
@@ -424,9 +450,12 @@ namespace Glass.Pedido.Negocios.Componentes
         private IItemRentabilidade ObterItemProdutoPedido(GDA.GDASession sessao, Data.Model.ProdutosPedido produtoPedido)
         {
             var prazoMedio = CalcularPrazoMedioPedido(sessao, produtoPedido.IdPedido);
-            var produto = Data.DAL.ProdutoDAO.Instance.GetElementByPrimaryKey(produtoPedido.IdProd);
+            var filhos = Data.DAL.ProdutosPedidoDAO.Instance.ObterFilhosComposicao(sessao, (int)produtoPedido.IdProdPed);
 
-            return ObterItemProdutoPedido(sessao, produtoPedido, prazoMedio, new[] { produto });
+            var produtos = Data.DAL.ProdutoDAO.Instance.ObterProdutos(sessao,
+                filhos.Select(f => f.IdProd).Concat(new uint[] { produtoPedido.IdProd }).Distinct());
+           
+            return ObterItemProdutoPedido(sessao, produtoPedido, prazoMedio, produtos, filhos);
         }
 
         /// <summary>
@@ -441,9 +470,22 @@ namespace Glass.Pedido.Negocios.Componentes
 
             var produtosAmbiente = Data.DAL.ProdutosPedidoDAO.Instance.GetByAmbiente(sessao, ambiente.IdAmbientePedido);
             var produtos = Data.DAL.ProdutoDAO.Instance.ObterProdutos(sessao, produtosAmbiente.Select(f => f.IdProd).Distinct()).ToList();
-
+            
             // Recupera os itens de rentabilidade dos produtos do pedido
-            var itens = new LazyItemRentabilidadeEnumerable(produtosAmbiente.Select(f => ObterItemProdutoPedido(sessao, f, prazoMedio, produtos)));
+            var itens = new LazyItemRentabilidadeEnumerable(produtosAmbiente.Select(produtoPedido =>
+            {
+                // Carrega os produtos filhos
+                var filhosComposicao = Data.DAL.ProdutosPedidoDAO.Instance.ObterFilhosComposicao(sessao, (int)produtoPedido.IdProdPed);
+
+                if (!produtos.Any(f => f.IdProd == produtoPedido.IdProd))
+                {
+                    var produto = Data.DAL.ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, produtoPedido.IdProd);
+                    if (produto != null)
+                        produtos.Add(produto);
+                }
+
+                return ObterItemProdutoPedido(sessao, produtoPedido, prazoMedio, produtos, filhosComposicao);
+            }));
 
             return ObterItemAmbientePedido(sessao, ambiente, prazoMedio, itens.OfType<IItemRentabilidade<Data.Model.ProdutosPedido>>());
         }

@@ -156,7 +156,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
             {
                 int value = 0;
 
-                if (int.TryParse(NaturezaOperacao.CstIcms ?? Produto.Cst, out value))
+                if (int.TryParse(NaturezaOperacao?.CstIcms ?? Produto.Cst, out value))
                     return (Sync.Fiscal.Enumeracao.Cst.CstIcms)value;
 
                 return null;
@@ -172,7 +172,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
             {
                 int value = 0;
 
-                if (int.TryParse(NaturezaOperacao.Csosn ?? Produto.Csosn, out value))
+                if (int.TryParse(NaturezaOperacao?.Csosn ?? Produto.Csosn, out value))
                     return (Sync.Fiscal.Enumeracao.Cst.CsosnIcms)value;
 
                 return null;
