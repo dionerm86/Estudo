@@ -559,7 +559,7 @@ namespace Glass.Data.NFeUtils
             var codStatus = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
 
             // Executa ações de acordo com o retorno dado
-            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno);
+            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno);
 
             if (codStatus == "100" || codStatus == "150") // NFe Autorizada
                 return "NFe está autorizada para uso.";
