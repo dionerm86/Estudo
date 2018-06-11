@@ -2314,6 +2314,9 @@ namespace Glass.Data.DAL
 
                 base.Update(session, objUpdate);
 
+                if (PossuiPedidoGerado(objUpdate.IdOrcamento) && orcaAntigo.Situacao == (int)Orcamento.SituacaoOrcamento.Negociado)
+                    throw new Exception("Nenhuma alteração pode ser efetuada caso o orçamento possua um pedido gerado.");
+
                 UpdateTotaisOrcamento(session, objUpdate, true, orcaAntigo.Desconto != objUpdate.Desconto || orcaAntigo.TipoDesconto != objUpdate.TipoDesconto);
 
                 #endregion
