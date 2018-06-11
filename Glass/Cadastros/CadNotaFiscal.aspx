@@ -3447,11 +3447,11 @@
                                 </div>
 
                                 <div align="center" class="dtvTitle" style="padding: 3px"
-                                     runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                     runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadeNotaFiscal %>'>
                                     Rentabilidade
                                 </div>
                                 <table class="pos espaco"
-                                       runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'>
+                                       runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadeNotaFiscal %>'>
                                     <tr > 
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rentabilidade"></asp:Label>

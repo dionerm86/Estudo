@@ -1126,7 +1126,7 @@
                                             <asp:Label ID="lblValorIpi" runat="server" Text='<%# Eval("ValorIpi", "{0:C}") %>'></asp:Label>
                                         </td>
                                     </tr>
-                                    <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.CalcularRentabilidade %>'> 
+                                    <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedidoEspelho %>'> 
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
                                         </td>
