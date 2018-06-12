@@ -33,7 +33,7 @@ namespace Glass.Data.wsPMGCTeRecepcaoEvento
         /// <remarks/>
         public RecepcaoEvento() {
             this.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPMGRecepcaoEvento_RecepcaoEvento;
+            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPMGRecepcao1_CteRecepcao;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

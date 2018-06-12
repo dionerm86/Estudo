@@ -1620,6 +1620,71 @@
     <Compile Include="SIntegra\Registro75.cs" />
     <Compile Include="SIntegra\Registro90.cs" />
     <Compile Include="SIntegra\SIntegra.cs" />
+    <Compile Include="Web References\wsHConsultaCadastro\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeConsultaProtocolo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeInutilizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeRecepcaoEvento\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeRetAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFCeStatusServico\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeConsultaProtocolo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeInutilizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeRecepcaoEvento\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeRetAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsHNFeStatusServico\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\wsHSVRSMDFeConsultaNaoEncerrado\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1650,7 +1715,67 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPSVRSNFeInutilizacao\Reference1.cs">
+    <Compile Include="Web References\wsPConsultaCadastro\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeConsultaProtocolo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeInutilizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeRecepcaoEvento\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeRetAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFCeStatusServico\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeConsultaProtocolo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeInutilizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeRecepcaoEvento\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeRetAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeStatusServico\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -1686,46 +1811,6 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\WebGlass.WebService.MargemLucro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCInitilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCRecepcao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCRetRecepcao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHAMNFCStatus\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -1835,16 +1920,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsHRSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHRSNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsHRSCTeCancelamento\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1871,16 +1946,6 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\wsHRSCteStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHRSNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHRSNFeRetornoAutorizacao\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -1915,237 +1980,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsHSVRSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsHSVRSCTeCancelamento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSVRSNFCStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFCAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFCConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFCInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFCRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFCRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPAMNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHRSNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsHSPNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPBANFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCEAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCEConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCEConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCEInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCERecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCERetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPCEStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPGONFeStatusServico\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGNFeConsultaProtocolo\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2175,42 +2010,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPMGNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsPMGCTeRecepcao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMGNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeConsultaProtocolo\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2250,41 +2050,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPMSNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMSNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsPMTCTeRecepcaoEvento\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2311,76 +2076,6 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\wsPMTCTeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPMTNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPENFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeConsulta\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2415,41 +2110,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPPRNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPPRNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsPRSCTeConsulta\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2471,31 +2131,6 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\wsPRSCTeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPRSNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeAutorizacao\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2530,117 +2165,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPSPNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCANNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCANNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCANNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCANNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCRSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCRSNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCRSNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVCRSNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\wsPSVRSMDFeRetornoRecepcao\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\wsPSVRSMDFeStatusServico\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFCAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFCConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFCInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFCRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFCRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeConsultaCadastro\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2675,83 +2205,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsPSVRSNFeRecepcaoEvento\Reference1.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeRetornoAutorizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeConsultaCadastro\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeConsultaProtocolo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSPNFeStatusServico\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVANNFeStatus\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsPSVRSNFeStatusServico\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsSCANConsulta\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsSCANInutilizacao\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsSCANRecepcaoEvento\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
-    <Compile Include="Web References\wsSVCANRecepcao\Reference.cs" />
-    <Compile Include="Web References\wsSVCANRetRecepcao\Reference.cs" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
@@ -2770,26 +2223,71 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\FML_Basico.calcpackage" />
-    <None Include="Web References\wsHAMNFCAutorizacao\NfeAutorizacao4.wsdl" />
-    <None Include="Web References\wsHAMNFCConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsHAMNFCInitilizacao\NfeInutilizacao4.wsdl" />
-    <None Include="Web References\wsHAMNFCRecepcaoEvento\RecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsHAMNFCRetornoAutorizacao\NfeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsHAMNFCStatus\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsHRSNFeInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsHRSNFeConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsHRSNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsHRSNFeRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsHRSNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsHSPNFeRecepcaoEvento\nferecepcaoevento4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsHSVRSNFCStatus\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsHSVRSNFeConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsHSVRSNFeAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsHConsultaCadastro\cadconsultacadastro4.wsdl" />
+    <None Include="Web References\wsHConsultaCadastro\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsHNFCeAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeConsultaProtocolo\NfeConsulta4.wsdl" />
+    <None Include="Web References\wsHNFCeConsultaProtocolo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeInutilizacao\nfeinutilizacao4.wsdl" />
+    <None Include="Web References\wsHNFCeInutilizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeRecepcaoEvento\recepcaoevento4.wsdl" />
+    <None Include="Web References\wsHNFCeRecepcaoEvento\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeRetAutorizacao\NFeRetAutorizacao4.wsdl" />
+    <None Include="Web References\wsHNFCeRetAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFCeStatusServico\NfeStatusServico4.wsdl" />
+    <None Include="Web References\wsHNFCeStatusServico\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsHNFeAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeConsultaProtocolo\NfeConsulta4.wsdl" />
+    <None Include="Web References\wsHNFeConsultaProtocolo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeInutilizacao\nfeinutilizacao4.wsdl" />
+    <None Include="Web References\wsHNFeInutilizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeRecepcaoEvento\recepcaoevento4.wsdl" />
+    <None Include="Web References\wsHNFeRecepcaoEvento\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeRetAutorizacao\NFeRetAutorizacao4.wsdl" />
+    <None Include="Web References\wsHNFeRetAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsHNFeStatusServico\NfeStatusServico4.wsdl" />
+    <None Include="Web References\wsHNFeStatusServico\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
     <None Include="Web References\wsHSVRSMDFeConsultaNaoEncerrado\MDFeConsNaoEnc.wsdl" />
     <None Include="Web References\wsHSVRSMDFeConsultaNaoEncerrado\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -2820,146 +2318,71 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPAMNFCAutorizacao\NfeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFCConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPAMNFCInutilizacao\NfeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFCRecepcaoEvento\RecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPAMNFCRetornoAutorizacao\NfeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFeAutorizacao\NfeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFeConsulta\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPAMNFeInutilizacao\NfeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFeRecepcaoEvento\RecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPAMNFeRetornoAutorizacao\NfeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPAMNFeStatus\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsPBANFeAutorizacao\NfeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPBANFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPBANFeConsulta\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPBANFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPBANFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPBANFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPBANFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPGONFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPGONFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPGONFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPGONFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPGONFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPGONFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPGONFeStatusServico\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPMGNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMGNFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPMGNFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPMGNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMGNFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPMGRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPMSNFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPMSNFeInutilizacao\NFeInutilizacao4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPConsultaCadastro\cadconsultacadastro4.wsdl" />
+    <None Include="Web References\wsPConsultaCadastro\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPMSNFeConsultaProtocolo\NFeConsultaProtocolo4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPNFCeAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsPNFCeAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPMSNFeConsultaCadastro\CadConsultaCadastro4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPNFCeConsultaProtocolo\NfeConsulta4.wsdl" />
+    <None Include="Web References\wsPNFCeConsultaProtocolo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMSNFeAutorizacao\NFeAutorizacao4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPNFCeInutilizacao\nfeinutilizacao4.wsdl" />
+    <None Include="Web References\wsPNFCeInutilizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeAutorizacao\nfeResultMsg11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFCeRecepcaoEvento\recepcaoevento4.wsdl" />
+    <None Include="Web References\wsPNFCeRecepcaoEvento\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeConsultaCadastro\consultaCadastroResult11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFCeRetAutorizacao\NFeRetAutorizacao4.wsdl" />
+    <None Include="Web References\wsPNFCeRetAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeConsultaProtocolo\nfeResultMsg11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFCeStatusServico\NfeStatusServico4.wsdl" />
+    <None Include="Web References\wsPNFCeStatusServico\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeInutilizacao\nfeResultMsg11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFeAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsPNFeAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPMSNFeRecepcaoEvento\NFeRecepcaoEvento4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPNFeConsultaProtocolo\NfeConsulta4.wsdl" />
+    <None Include="Web References\wsPNFeConsultaProtocolo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeRecepcaoEvento\nfeRecepcaoEventoResult11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFeInutilizacao\nfeinutilizacao4.wsdl" />
+    <None Include="Web References\wsPNFeInutilizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeRetornoAutorizacao\nfeResultMsg1.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFeRecepcaoEvento\recepcaoevento4.wsdl" />
+    <None Include="Web References\wsPNFeRecepcaoEvento\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMSNFeRetornoAutorizacao\NFeRetAutorizacao4.xsd">
-      <SubType>Designer</SubType>
+    <None Include="Web References\wsPNFeRetAutorizacao\NFeRetAutorizacao4.wsdl" />
+    <None Include="Web References\wsPNFeRetAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeStatus\nfeResultMsg11.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
+    <None Include="Web References\wsPNFeStatusServico\NfeStatusServico4.wsdl" />
+    <None Include="Web References\wsPNFeStatusServico\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPMSNFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPMSNFeStatus\NFeStatusServico4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\wsPMSNFeStatus\NFeStatusServico40.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\wsPMTNFeAutorizacao\NfeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMTNFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPMTNFeConsultaProtocolo\NfeConsulta2.wsdl" />
-    <None Include="Web References\wsPMTNFeInutilizacao\NfeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPMTNFeRecepcaoEvento\RecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPMTNFeRetornoAutorizacao\NfeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPMTNFeStatus\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsPPENFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPPENFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPPENFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPPENFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPPENFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPPENFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPPRNFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPPRNFeConsultaCadastro\CadConsultaCadastro4.wsdl" />
-    <None Include="Web References\wsPPRNFeConsulta\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPPRNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPPRNFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPPRNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPPRNFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPRSNFeInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsPRSNFeConsultaCadastro\cadconsultacadastro4.wsdl" />
-    <None Include="Web References\wsPRSNFeConsulta\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPRSNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPRSNFeRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsPRSNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPRSNFeStatus\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsPSPNFeInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsPSPNFeConsultaProtocolo\nfeconsultaprotocolo4.wsdl" />
-    <None Include="Web References\wsPSPNFeConsultaCadastro\cadconsultacadastro4.wsdl" />
-    <None Include="Web References\wsPSPNFeAutorizacao\nfeautorizacao4.wsdl" />
-    <None Include="Web References\wsPSPNFeRecepcaoEvento\nferecepcaoevento4.wsdl" />
-    <None Include="Web References\wsPSPNFeRetornoAutorizacao\nferetautorizacao4.wsdl" />
-    <None Include="Web References\wsPSPNFeStatusServico\nfestatusservico4.wsdl" />
-    <None Include="Web References\wsPSVANNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVANNFeInutilizacao\NFeInutilizacao4.wsdl" />
-    <None Include="Web References\wsPSVANNFeConsulta\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPSVANNFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPSVANNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVANNFeStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsPSVCANNFeConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
-    <None Include="Web References\wsPSVCANNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVCANNFeRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
-    <None Include="Web References\wsPSVCANNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVCRSNFeConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPSVCRSNFeAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVCRSNFeRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsPSVCRSNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFCAutorizacao\NFeAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFCConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPSVRSNFCInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFCRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsPSVRSNFCRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeInutilizacao\nfeinutilizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeConsultaProtocolo\NfeConsulta4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeConsultaCadastro\cadconsultacadastro4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeAutorizacao\NFeAutorizacao4.wsdl" />
     <None Include="Web References\wsPSVRSMDFeConsultaNaoEncerrado\MDFeConsNaoEnc.wsdl" />
     <None Include="Web References\wsPSVRSMDFeConsultaNaoEncerrado\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -3002,276 +2425,16 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsHAMNFCAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCInitilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCRecepcao\NfeRecepcao2.wsdl" />
-    <None Include="Web References\wsHAMNFCRecepcao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCRetRecepcao\NfeRetRecepcao2.wsdl" />
-    <None Include="Web References\wsHAMNFCRetRecepcao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHAMNFCStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHRSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHRSNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHRSNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHRSNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsHSVRSCTeCancelamento\cterecepcaoevento.wsdl" />
     <None Include="Web References\wsHSVRSCTeCancelamento\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsHSVRSNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsHSVRSNFCStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFCAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFCConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFCInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFCRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFCRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPBANFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPBANFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPBANFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCEAutorizacao\NfeAutorizacao.wsdl" />
-    <None Include="Web References\wsPCEAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCERetornoAutorizacao\NfeRetAutorizacao.wsdl" />
-    <None Include="Web References\wsPCERetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMGNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMGNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPMGCTeRecepcaoEvento\RecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPMGNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMGNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMGNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPMSCTeRecepcaoEvento\CteRecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPMSNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPMTCTeRecepcaoEvento\CteRecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPMTNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPPRCTeRecepcaoEvento\CteRecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPPRNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPRSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPRSNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPRSNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPRSNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSPNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPSPCTeRecepcaoEvento\cteRecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPSPNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVANNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVANNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCANNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCANNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCRSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCRSNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCRSNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCRSNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPSVRSCTeConsulta\CteConsulta.wsdl" />
     <None Include="Web References\wsPSVRSCTeConsulta\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -3324,194 +2487,8 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPSVRSNFCAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFCConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFCInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFCRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFCRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeRecepcaoEvento\recepcaoevento4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference1.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference1.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeRetornoAutorizacao\NFeRetAutorizacao4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeRetornoAutorizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVRSNFeStatusServico\NfeStatusServico4.wsdl" />
-    <None Include="Web References\wsPSVRSNFeStatusServico\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsSVCANRecepcao\NfeRecepcao2.wsdl" />
-    <None Include="Web References\wsSVCANRecepcao\Reference.map" />
-    <None Include="Web References\wsSVCANRetRecepcao\NfeRetRecepcao2.wsdl" />
-    <None Include="Web References\wsSVCANRetRecepcao\Reference.map" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCAutorizacao\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCInitilizacao\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCInitilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRecepcao2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCRecepcao\</RelPath>
-      <UpdateFromURL>http://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRecepcao2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCRecepcao_NfeRecepcao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetRecepcao2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCRetRecepcao\</RelPath>
-      <UpdateFromURL>http://homnfce.sefaz.am.gov.br/nfce-services/services/NfeRetRecepcao2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCRetRecepcao_NfeRetRecepcao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCStatus\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homnfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHAMNFCRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://homnfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHAMNFCRecpcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFCAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMNFCAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFCConsultaProtocolo\</RelPath>
-      <UpdateFromURL>http://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMNFCConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFCInutilizacao\</RelPath>
-      <UpdateFromURL>http://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMNFCInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFCRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>http://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMNFCRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFCRecepcaoEvento\</RelPath>
-      <UpdateFromURL>http://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMNFCRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="http://webservices.webglass.com.br/CargaTributariaMedia.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\WebGlass.WebService.CargaTributariaMedia\</RelPath>
@@ -3544,6 +2521,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_WebGlass_WebService_ImpostoTotal_ImpostoTotal</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPConsultaCadastro\</RelPath>
+      <UpdateFromURL>https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPConsultaCadastro_CadConsultaCadastro4</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://cte-homologacao.svrs.rs.gov.br/ws/cterecepcaoevento/cterecepcaoevento.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
@@ -4172,16 +3160,16 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsHSPCTeStatus_CteStatusServico</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx">
+    <WebReferenceUrl Include="https://homologacao.nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSPNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://homologacao.nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx</UpdateFromURL>
+      <RelPath>Web References\wsHConsultaCadastro\</RelPath>
+      <UpdateFromURL>https://homologacao.nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSPRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHConsultaCadastro_CadConsultaCadastro4</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://mdfe-homologacao.svrs.rs.gov.br/ws/MDFeConsNaoEnc/MDFeConsNaoEnc.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
@@ -4315,204 +3303,6 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPSVRSMDFeStatusServico_MDFeStatusServico</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCStatus\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFCRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSNFCRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFCAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSNFCAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFCConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSNFCConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFCInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSNFCInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFCRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSNFCRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFCRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSNFCRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHRSNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHRSAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHRSNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHRSConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHRSNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHRSInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHRSNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHRSRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHRSNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHRSRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="https://cte.svrs.rs.gov.br/ws/cteconsulta/CteConsulta.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\wsPSVRSCTeConsulta\</RelPath>
@@ -4579,192 +3369,203 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPSVRSCTeStatusServico_CteStatusServico</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeAutorizacao_NFeAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeConsultaProtocolo_NFeConsultaProtocolo4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeInutilizacao\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeInutilizacao_NFeInutilizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeRetAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeRetAutorizacao_NFeRetAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeStatusServico\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeStatusServico_NFeStatusServico4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsHNFCeRecepcaoEvento\</RelPath>
+      <UpdateFromURL>https://nfce-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsHNFCeRecepcaoEvento_NFeRecepcaoEvento4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeAutorizacao_NFeAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeConsultaProtocolo_NFeConsultaProtocolo4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeInutilizacao\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeInutilizacao_NFeInutilizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeRetAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeRetAutorizacao_NFeRetAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeStatusServico\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeStatusServico_NFeStatusServico4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFCeRecepcaoEvento\</RelPath>
+      <UpdateFromURL>https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFCeRecepcaoEvento_NFeRecepcaoEvento4</CachedSettingsPropName>
+    </WebReferenceUrl>
     <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsHSVRSNFeAutorizacao\</RelPath>
+      <RelPath>Web References\wsHNFeAutorizacao\</RelPath>
       <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsHSVRSAutorizacao_NfeAutorizacao</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeAutorizacao_NFeAutorizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/cadconsultacadastro2%3fwsdl">
+    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/cadconsultacadastro2%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsHNFeConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeConsultaProtocolo_NFeConsultaProtocolo4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeAutorizacao4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeAutorizacao4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsHNFeInutilizacao\</RelPath>
+      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGAutorizacao_NfeAutorizacao</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeInutilizacao_NFeInutilizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsultaProtocolo4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsHNFeRetAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGConsulta_NfeConsulta2</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeRetAutorizacao_NFeRetAutorizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeInutilizacao4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeInutilizacao4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsHNFeStatusServico\</RelPath>
+      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeStatusServico_NFeStatusServico4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRetAutorizacao4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRetAutorizacao4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsHNFeRecepcaoEvento\</RelPath>
+      <UpdateFromURL>https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMGRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.mg.gov.br/nfe2/services/NFeRecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMGRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/CadConsultaCadastro4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/CadConsultaCadastro4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeConsultaProtocolo4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.ms.gov.br/ws/NFeRecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMSNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.ms.gov.br/ws/NFeRecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMSRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRAutorizacao_NfeAutorizacao3</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRRetornoAutorizacao_NfeRetAutorizacao3</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsHNFeRecepcaoEvento_NFeRecepcaoEvento4</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/cteweb/services/cteRecepcaoEvento.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
@@ -4832,775 +3633,71 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPSPCTeStatus_CteStatusServico</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nfeconsultaprotocolo4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nfeconsultaprotocolo4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSPNFeStatusServico\</RelPath>
-      <UpdateFromURL>https://nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSPStatusServico_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/CadConsultaCadastro2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/CadConsultaCadastro2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/NfeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/NfeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/NfeConsulta4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/NfeConsulta4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsAMPConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/NfeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsAMPInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/NfeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/NfeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPAMRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/NfeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/NfeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsAMPStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.am.gov.br/services2/services/RecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPAMNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.am.gov.br/services2/services/RecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsAMPRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NfeAutorizacao4/NfeAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NfeAutorizacao4/NfeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBAAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NFeInutilizacao4/NFeInutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NFeInutilizacao4/NFeInutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBAInutilizacao_NfeInutilizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBAConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBAConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBARetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NFeStatusServico4/NFeStatusServico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NFeStatusServico4/NFeStatusServico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBAStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ba.gov.br/webservices/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPBANFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ba.gov.br/webservices/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPBARecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/CadConsultaCadastro2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCEConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/CadConsultaCadastro2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCEConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/NfeAutorizacao%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCEAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/NfeAutorizacao%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCEAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/NfeConsulta2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCEConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/NfeConsulta2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCEConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/NfeInutilizacao2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCEInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/NfeInutilizacao2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCEInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/NfeRetAutorizacao%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCERetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/NfeRetAutorizacao%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCERetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/NfeStatusServico2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCEStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/NfeStatusServico2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCEStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.ce.gov.br/nfe2/services/RecepcaoEvento%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPCERecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.ce.gov.br/nfe2/services/RecepcaoEvento%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPCERecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/CadConsultaCadastro4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/CadConsultaCadastro4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGOConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGOAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeConsultaProtocolo4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGOConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGOInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeRecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeRecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGORecepcaoEvento_NfeRecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGORetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.go.gov.br/nfe/services/NFeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPGONFeStatusServico\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.go.gov.br/nfe/services/NFeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPGOStatusServico_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeConsulta2%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeConsulta2%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/NfeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.mt.gov.br/nfews/v2/services/RecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPMTNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.mt.gov.br/nfews/v2/services/RecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPMTRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPEConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPEAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeConsultaProtocolo4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPEConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPEInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeRetAutorizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeRetAutorizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPERetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/NFeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPEStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/RecepcaoEvento4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPENFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/RecepcaoEvento4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPERecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx">
-      <UrlBehavior>Static</UrlBehavior>
-      <RelPath>Web References\wsPSVCRSNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCRSAutorizacao1_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCRSNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCRSConsultaProtocolo1_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCRSNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCRSRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCRSNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCRSRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeAutorizacao\</RelPath>
+      <RelPath>Web References\wsPNFeAutorizacao\</RelPath>
       <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSAutorizacao_NfeAutorizacao</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeAutorizacao_NFeAutorizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx">
+    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx</UpdateFromURL>
+      <RelPath>Web References\wsPNFeConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeConsultaProtocolo_NFeConsultaProtocolo4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx">
+    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx</UpdateFromURL>
+      <RelPath>Web References\wsPNFeInutilizacao\</RelPath>
+      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeInutilizacao_NFeInutilizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx">
+    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx</UpdateFromURL>
+      <RelPath>Web References\wsPNFeRetAutorizacao\</RelPath>
+      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeRetAutorizacao_NFeRetAutorizacao4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeRecepcaoEvento4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeRecepcaoEvento4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsPNFeStatusServico\</RelPath>
+      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeStatusServico_NFeStatusServico4</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/CadConsultaCadastro4%3fwsdl">
+    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/CadConsultaCadastro4%3fwsdl</UpdateFromURL>
+      <RelPath>Web References\wsPNFeRecepcaoEvento\</RelPath>
+      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeConsultaProtocolo4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeConsulta\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeConsultaProtocolo4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeInutilizacao4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeInutilizacao4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.sefa.pr.gov.br/nfe/NFeStatusServico4%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPPRNFeStatus\</RelPath>
-      <UpdateFromURL>https://nfe.sefa.pr.gov.br/nfe/NFeStatusServico4%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPPRStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeStatusServico\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSStatusServico_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVRSNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVRSRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeRecepcaoEvento_NFeRecepcaoEvento4</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://producao.cte.ms.gov.br/cteWEB/CadConsultaCadastro.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
@@ -5679,17 +3776,6 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPMSCTeStatus_CteStatusServico</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPRSNFeConsultaCadastro\</RelPath>
-      <UpdateFromURL>https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPRSConsultaCadastro_CadConsultaCadastro2</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="https://webservice.comunika.com.br/WSComunika/WSManager%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\SMSManager\</RelPath>
@@ -5712,234 +3798,9 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_SMSSend_WSSend</CachedSettingsPropName>
     </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.scan.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsSCANConsulta\</RelPath>
-      <UpdateFromURL>https://www.scan.fazenda.gov.br/NfeConsulta2/NfeConsulta2.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsSCANConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.scan.fazenda.gov.br/NfeInutilizacao2/NfeInutilizacao2.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsSCANInutilizacao\</RelPath>
-      <UpdateFromURL>https://www.scan.fazenda.gov.br/NfeInutilizacao2/NfeInutilizacao2.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsSCANInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.scan.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsSCANRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://www.scan.fazenda.gov.br/RecepcaoEvento/RecepcaoEvento.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsSCANRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANAutorizacao_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeConsulta\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANConsulta_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeInutilizacao\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANInutilizacao_NfeInutilizacao2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeStatus\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANStatus_NfeStatusServico2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVANNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVANRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.svc.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCANNFeAutorizacao\</RelPath>
-      <UpdateFromURL>https://www.svc.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCANAutorizacao1_NfeAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.svc.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCANNFeConsultaProtocolo\</RelPath>
-      <UpdateFromURL>https://www.svc.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVNANConsultaProtocolo_NfeConsulta2</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.svc.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCANNFeRetornoAutorizacao\</RelPath>
-      <UpdateFromURL>https://www.svc.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVCANRetornoAutorizacao_NfeRetAutorizacao</CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="https://www.svc.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx%3fwsdl">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsPSVCANNFeRecepcaoEvento\</RelPath>
-      <UpdateFromURL>https://www.svc.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx%3fwsdl</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsPSVNANRecepcaoEvento_RecepcaoEvento</CachedSettingsPropName>
-    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsSCANInutilizacao\NfeInutilizacao2.wsdl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsSCANInutilizacao\NfeInutilizacao2.disco" />
-    <None Include="Web References\wsSCANInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsSCANConsulta\NfeConsulta2.disco" />
-    <None Include="Web References\wsSCANConsulta\NfeConsulta2.wsdl" />
-    <None Include="Web References\wsSCANConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPBANFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPBANFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPGONFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPGONFeStatusServico\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSPNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSPNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSPNFeStatusServico\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSPNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSPNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\SMSManager\Reference.map">
@@ -5975,220 +3836,8 @@
     </None>
     <None Include="Web References\SMSSend\WSSend.wsdl" />
     <None Include="Web References\SMSSend\WSSend.xsd" />
-    <None Include="Web References\wsPMGRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\wsHSPNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsHRSNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPBANFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSVANNFeConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSVANNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSVANNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPSVANNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPRSNFeConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPRSNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPRSNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPAMNFeConsultaCadastro\CadConsultaCadastro2.wsdl" />
-    <None Include="Web References\wsPAMNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPAMNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCEConsultaCadastro\CadConsultaCadastro2.wsdl" />
-    <None Include="Web References\wsPCEConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCEConsulta\NfeConsulta2.wsdl" />
-    <None Include="Web References\wsPCEConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCEInutilizacao\NfeInutilizacao2.wsdl" />
-    <None Include="Web References\wsPCEInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCERecepcaoEvento\RecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPCERecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPCEStatus\NfeStatusServico2.wsdl" />
-    <None Include="Web References\wsPCEStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMTNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPRNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsSCANRecepcaoEvento\RecepcaoEvento.wsdl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPMGConsultaCadastro\CadConsultaCadastro2.wsdl" />
-    <None Include="Web References\wsPMGConsultaCadastro\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPMSNFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeInutilizacao\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeRecepcaoEvento\RecepcaoEvento.wsdl" />
-    <None Include="Web References\wsPPENFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPPENFeStatus\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsSCANRecepcaoEvento\RecepcaoEvento.disco" />
-    <None Include="Web References\wsSCANRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Web References\wsPBANFeConsulta\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\wsPMGCTeRecepcaoEvento\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
@@ -6610,14 +4259,6 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsPSVCANNFeConsultaProtocolo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\wsPSVCANNFeRecepcaoEvento\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Sync.Utils\Sync.Utils\Sync.Utils.csproj">
@@ -6660,67 +4301,12 @@
     <None Include="Web References\wsHSVRSCTeCancelamento\cterecepcaoevento.disco" />
     <None Include="Web References\wsPSPCTeRecepcaoEvento\cteRecepcaoEvento.disco" />
     <None Include="Web References\wsPMSCTeRecepcaoEvento\CteRecepcaoEvento.disco" />
-    <None Include="Web References\wsHRSNFeConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsHRSNFeInutilizacao\nfeinutilizacao4.disco" />
-    <None Include="Web References\wsHRSNFeRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsHRSNFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsHSPNFeRecepcaoEvento\nferecepcaoevento4.disco" />
-    <None Include="Web References\wsHSVRSNFeConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsHSVRSNFCAutorizacao\NFeAutorizacao4.disco" />
-    <None Include="Web References\wsHSVRSNFCConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsHSVRSNFCInutilizacao\nfeinutilizacao4.disco" />
-    <None Include="Web References\wsHSVRSNFCRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsHSVRSNFCRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsHSVRSNFCStatus\NfeStatusServico4.disco" />
-    <None Include="Web References\wsPBANFeAutorizacao\NfeAutorizacao4.disco" />
-    <None Include="Web References\wsPBANFeConsulta\NFeConsultaProtocolo4.disco" />
-    <None Include="Web References\wsPBANFeConsultaCadastro\CadConsultaCadastro4.disco" />
-    <None Include="Web References\wsPBANFeInutilizacao\NFeInutilizacao4.disco" />
-    <None Include="Web References\wsPBANFeRecepcaoEvento\NFeRecepcaoEvento4.disco" />
-    <None Include="Web References\wsPBANFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsPBANFeStatus\NFeStatusServico4.disco" />
-    <None Include="Web References\wsPRSNFeAutorizacao\NFeAutorizacao4.disco" />
-    <None Include="Web References\wsPRSNFeConsulta\NfeConsulta4.disco" />
-    <None Include="Web References\wsPRSNFeConsultaCadastro\cadconsultacadastro4.disco" />
-    <None Include="Web References\wsPRSNFeRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsPRSNFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsPRSNFeStatus\NfeStatusServico4.disco" />
-    <None Include="Web References\wsPSPNFeAutorizacao\nfeautorizacao4.disco" />
-    <None Include="Web References\wsPSPNFeConsultaCadastro\cadconsultacadastro4.disco" />
-    <None Include="Web References\wsPSPNFeConsultaProtocolo\nfeconsultaprotocolo4.disco" />
-    <None Include="Web References\wsPSPNFeInutilizacao\nfeinutilizacao4.disco" />
-    <None Include="Web References\wsPSPNFeRecepcaoEvento\nferecepcaoevento4.disco" />
-    <None Include="Web References\wsPSPNFeRetornoAutorizacao\nferetautorizacao4.disco" />
-    <None Include="Web References\wsPSPNFeStatusServico\nfestatusservico4.disco" />
-    <None Include="Web References\wsPSVANNFeConsulta\NFeConsultaProtocolo4.disco" />
-    <None Include="Web References\wsPSVANNFeInutilizacao\NFeInutilizacao4.disco" />
-    <None Include="Web References\wsPSVANNFeRecepcaoEvento\NFeRecepcaoEvento4.disco" />
-    <None Include="Web References\wsPSVANNFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsPSVANNFeStatus\NFeStatusServico4.disco" />
-    <None Include="Web References\wsPSVCRSNFeAutorizacao\NFeAutorizacao4.disco" />
-    <None Include="Web References\wsPSVCRSNFeConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsPSVCRSNFeRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsPSVCRSNFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsPSVRSNFeConsultaCadastro\cadconsultacadastro4.disco" />
-    <None Include="Web References\wsPSVRSNFeConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsPSVANNFeAutorizacao\NFeAutorizacao4.disco" />
     <Content Include="Web References\wsPSVRSCTeConsulta\CteConsulta.disco" />
     <Content Include="Web References\wsPSVRSCTeInutilizacao\cteinutilizacao.disco" />
     <Content Include="Web References\wsPSVRSCTeRecepcaoEvento\cterecepcaoevento.disco" />
     <Content Include="Web References\wsPSVRSCTeRecepcao\CteRecepcao.disco" />
     <Content Include="Web References\wsPSVRSCTeRetRecepcao\cteRetRecepcao.disco" />
     <Content Include="Web References\wsPSVRSCTeStatusServico\CteStatusServico.disco" />
-    <None Include="Web References\wsPSVRSNFeInutilizacao\nfeinutilizacao4.disco" />
-    <None Include="Web References\wsPSVRSNFeRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsPSVRSNFeRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <None Include="Web References\wsPSVRSNFeStatusServico\NfeStatusServico4.disco" />
-    <None Include="Web References\wsPSVRSNFCAutorizacao\NFeAutorizacao4.disco" />
-    <None Include="Web References\wsPSVRSNFCConsultaProtocolo\NfeConsulta4.disco" />
-    <None Include="Web References\wsPSVRSNFCInutilizacao\nfeinutilizacao4.disco" />
-    <None Include="Web References\wsPSVRSNFCRecepcaoEvento\recepcaoevento4.disco" />
-    <None Include="Web References\wsPSVRSNFCRetornoAutorizacao\NFeRetAutorizacao4.disco" />
-    <Content Include="Web References\wsSVCANRecepcao\NfeRecepcao2.disco" />
-    <Content Include="Web References\wsSVCANRetRecepcao\NfeRetRecepcao2.disco" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuracoes\RelatorioConfig\" />

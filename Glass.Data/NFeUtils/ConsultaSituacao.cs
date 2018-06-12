@@ -12,13 +12,14 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Consulta lote, função acionada pelo usuário
         /// </summary>
-        /// <param name="idNf"></param>
         public static string ConsultaLote(uint idNf)
         {
             NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(idNf);
 
             if (nf.Consumidor)
+            {
                 return ConsultaLoteNFCe(nf);
+            }
 
             return ConsultaLoteNFe(nf);
         }
@@ -27,10 +28,12 @@ namespace Glass.Data.NFeUtils
         {
             #region Monta XML de requisição de situação do lote
 
-            if (String.IsNullOrEmpty(nf.NumRecibo))
+            if (string.IsNullOrEmpty(nf.NumRecibo))
+            {
                 throw new Exception("A NFe não foi emitida. Não há número de recibo.");
+            }
 
-            string strXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            var strXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<consReciNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" " +
                 "versao=\"" + ConfigNFe.VersaoRetAutorizacao + "\">" +
                 "<tpAmb>" + (int)ConfigNFe.TipoAmbiente + "</tpAmb>" +
@@ -50,9 +53,8 @@ namespace Glass.Data.NFeUtils
 
             #endregion
 
+            var status = string.Empty;
             XmlNode xmlRetorno = null;
-
-            // Salva o callback padrão do WebService
             System.Net.Security.RemoteCertificateValidationCallback callback = System.Net.ServicePointManager.ServerCertificateValidationCallback;
 
             try
@@ -69,101 +71,12 @@ namespace Glass.Data.NFeUtils
                     return isDateValid;
                 };
 
-                #region Envia o arquivo e recebe o retorno
-
-                string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
-                if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS && nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                {
-                    if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                    {
-                        switch (uf)
-                        {
-                            case "AM":
-                                xmlRetorno = GetWebService.PAMRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "CE":
-                                xmlRetorno = GetWebService.PCERetornoAutorizao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "MG":
-                                {
-                                    var dadosMsg = new wsPMGNFeConsultaProtocolo.nfeResultMsg();
-
-                                    dadosMsg.Any = new XmlNode[] { xmlRetRecep };
-                                    dadosMsg.Any[0] = xmlRetRecep.DocumentElement;
-                                    var xmlDocument = new XmlDocument();
-                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
-
-                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsultaNF(dadosMsg);
-
-                                    // Verificar se retorno.Any está funcionando corretamente
-                                    foreach (var node in retorno.Any as XmlNode[])
-                                        xmlNode.InnerXml += node.OuterXml;
-
-                                    xmlRetorno = xmlNode;
-                                    break;
-                                }
-                            case "MT":
-                                xmlRetorno = GetWebService.PMTRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "MS":
-                                {
-                                    var dadosMsg = new wsPMSNFeConsultaProtocolo.nfeResultMsg();
-
-                                    dadosMsg.Any = new XmlNode[] { xmlRetRecep };
-                                    dadosMsg.Any[0] = xmlRetRecep.DocumentElement;
-                                    var xmlDocument = new XmlDocument();
-                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
-
-                                    var retorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(dadosMsg);
-
-                                    // Verificar se retorno.Any está funcionando corretamente
-                                    foreach (var node in retorno.Any as XmlNode[])
-                                        xmlNode.InnerXml += node.OuterXml;
-
-                                    xmlRetorno = xmlNode;
-                                    break;
-                                }
-                                //xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(xmlRetRecep); break;
-                            case "PE":
-                                xmlRetorno = GetWebService.PPERetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "BA":
-                                xmlRetorno = GetWebService.PBARetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "GO":
-                                xmlRetorno = GetWebService.PGORetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "PR":
-                                xmlRetorno = GetWebService.PPRRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "RS":
-                                xmlRetorno = GetWebService.PRSRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "SP":
-                                xmlRetorno = GetWebService.PSPRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "MA":
-                            case "PA":
-                                xmlRetorno = GetWebService.PSVANRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                            case "AC":
-                            case "AL":
-                            case "AP":
-                            case "DF":
-                            case "PB":
-                            case "PI":
-                            case "RJ":
-                            case "RN":
-                            case "RO":
-                            case "RR":
-                            case "SC":
-                            case "SE":
-                            case "TO":
-                            case "ES":
-                                xmlRetorno = GetWebService.PSVRSRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        }
-                    }
-                }
-                else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                    xmlRetorno = GetWebService.SVCRSRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep);
-                else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                    xmlRetorno = GetWebService.SVCANRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep);
-
-                #endregion
+                // Envia o arquivo e recebe o retorno
+                xmlRetorno = EnviaXML.ObterXmlRetornoAutorizacaoNFe(nf, xmlRetRecep);
             }
             catch (Exception ex)
             {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
                 throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex));
             }
             finally
@@ -172,12 +85,12 @@ namespace Glass.Data.NFeUtils
                 System.Net.ServicePointManager.ServerCertificateValidationCallback = callback;
             }
 
-            if (xmlRetorno == null)
-                throw new Exception("Falha ao comunicar com webservice da SEFAZ. Favor consultar a disponibilidade da receita");
+            // Se o lote já tiver sido processado, sai do loop
+            if (xmlRetorno != null) // Lote processado
+            {
+                status = xmlRetorno?["cStat"]?.InnerXml;
+            }
 
-            var status = xmlRetorno?["cStat"]?.InnerXml ?? "0";
-
-            // Verifica o status do lote
             if (status == "104") // Lote processado
             {
                 XmlNodeList protNFeList = ((XmlElement)xmlRetorno).GetElementsByTagName("protNFe");
@@ -185,14 +98,18 @@ namespace Glass.Data.NFeUtils
                 // Para cada protocolo de autorização de uso (inicialmente será só um, pois cada nota está sendo enviada em um lote distinto)
                 foreach (XmlNode protNFeNode in protNFeList)
                 {
-                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(protNFeNode["infProt"]["chNFe"].InnerXml, protNFeNode);
+                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(protNFeNode?["infProt"]?["chNFe"]?.InnerXml, protNFeNode);
 
-                    string statusNFe = protNFeNode["infProt"]["cStat"].InnerXml;
+                    var statusNFe = protNFeNode?["infProt"]?["cStat"]?.InnerXml;
 
                     if (statusNFe == "100" || statusNFe == "150") // Autorizada para uso
+                    {
                         return "NFe está autorizada para uso.";
+                    }
                     else
-                        return "NFe rejeitada. Motivo: " + protNFeNode["infProt"]["xMotivo"].InnerXml;
+                    {
+                        return $"NFe rejeitada. Motivo: { protNFeNode?["infProt"]?["xMotivo"]?.InnerXml }";
+                    }
                 }
 
                 return "Lote processado";
@@ -215,16 +132,20 @@ namespace Glass.Data.NFeUtils
             {
                 NotaFiscalDAO.Instance.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", status.StrParaInt(), xmlRetorno["xMotivo"].InnerXml);
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", (xmlRetorno?["cStat"]?.InnerXml?.StrParaInt()).GetValueOrDefault(), xmlRetorno?["xMotivo"]?.InnerXml);
 
-                string msgErro = "Falha na consulta. ";
+                var msgErro = "Falha na consulta. ";
 
                 if (status == "215" || status == "516" || status == "517" || status == "545")
+                {
                     msgErro += "Mensagem de consulta inválida. ";
+                }
                 else if (status == "225" || status == "565" || status == "567" || status == "568")
+                {
                     msgErro += "Lote da NFe é inválido. ";
+                }
 
-                return string.Format("{0}{1} - ", msgErro, status, CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml));
+                return $"{ msgErro }{ xmlRetorno?["cStat"]?.InnerXml } - { CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml) }";
             }
         }
 
@@ -277,48 +198,12 @@ namespace Glass.Data.NFeUtils
                     return isDateValid;
                 };
 
-                #region Envia o arquivo e recebe o retorno
-
-                string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
-                if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                {
-                    switch (uf)
-                    {
-                        case "AM":
-                            xmlRetorno = GetWebService.PAMNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        case "MT":
-                            xmlRetorno = GetWebService.PMTNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        case "RS":
-                            xmlRetorno = GetWebService.PRSNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        case "AC":
-                        case "BA":
-                        case "DF":
-                        case "RJ":
-                        case "RN":
-                        case "RO":
-                        case "PA":
-                        case "PB":
-                            xmlRetorno = GetWebService.PSVRSNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                    }
-                }
-                else
-                {
-                    switch (uf)
-                    {
-                        case "AM":
-                            xmlRetorno = GetWebService.HAMNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        case "MT":
-                            xmlRetorno = GetWebService.HMTNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                        case "RS":
-                            xmlRetorno = GetWebService.HRSNFCeRetornoAutorizacao(nf, null).nfeRetAutorizacaoLote(xmlRetRecep); break;
-                    }
-                }
- 
-                #endregion
+                // Envia o arquivo e recebe o retorno.
+                xmlRetorno = EnviaXML.ObterXmlRetornoAutorizacaoNFCe(nf, xmlRetRecep);
             }
             catch (Exception ex)
             {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
                 throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex));
             }
             finally
@@ -327,9 +212,10 @@ namespace Glass.Data.NFeUtils
                 System.Net.ServicePointManager.ServerCertificateValidationCallback = callback;
             }
 
-            // Se o lote já tiver sido processado, sai do loop
             if (xmlRetorno != null) // Lote processado
-                status = xmlRetorno["cStat"].InnerXml;
+            {
+                status = xmlRetorno?["cStat"]?.InnerXml;
+            }
 
             // Verifica o status do lote
             if (status == "104") // Lote processado
@@ -339,14 +225,18 @@ namespace Glass.Data.NFeUtils
                 // Para cada protocolo de autorização de uso (inicialmente será só um, pois cada nota está sendo enviada em um lote distinto)
                 foreach (XmlNode protNFeNode in protNFeList)
                 {
-                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(protNFeNode["infProt"]["chNFe"].InnerXml, protNFeNode);
+                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(protNFeNode?["infProt"]?["chNFe"]?.InnerXml, protNFeNode);
 
-                    string statusNFe = protNFeNode["infProt"]["cStat"].InnerXml;
+                    var statusNFe = protNFeNode?["infProt"]?["cStat"]?.InnerXml;
 
                     if (statusNFe == "100" || statusNFe == "150") // Autorizada para uso
+                    {
                         return "NFe está autorizada para uso.";
+                    }
                     else
-                        return "NFe rejeitada. Motivo: " + protNFeNode["infProt"]["xMotivo"].InnerXml;
+                    {
+                        return $"NFe rejeitada. Motivo: { protNFeNode?["infProt"]?["xMotivo"]?.InnerXml }";
+                    }
                 }
 
                 return "Lote processado";
@@ -360,7 +250,6 @@ namespace Glass.Data.NFeUtils
             else if (status == "106") // Lote não encontrado
             {
                 NotaFiscalDAO.Instance.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
-
                 LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", 106, "Falha na emissão da NFe. Não foi encontrado o lote de envio.");
 
                 return "Falha na consulta. Não foi encontrado o lote de envio.";
@@ -368,17 +257,20 @@ namespace Glass.Data.NFeUtils
             else // Lote rejeitado
             {
                 NotaFiscalDAO.Instance.AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", (xmlRetorno?["cStat"]?.InnerXml?.StrParaInt()).GetValueOrDefault(), xmlRetorno?["xMotivo"]?.InnerXml);
 
-                LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", Glass.Conversoes.StrParaInt(xmlRetorno["cStat"].InnerXml), xmlRetorno["xMotivo"].InnerXml);
-
-                string msgErro = "Falha na consulta. ";
+                var msgErro = "Falha na consulta. ";
 
                 if (status == "215" || status == "516" || status == "517" || status == "545")
+                {
                     msgErro += "Mensagem de consulta inválida. ";
+                }
                 else if (status == "225" || status == "565" || status == "567" || status == "568")
+                {
                     msgErro += "Lote da NFe é inválido. ";
+                }
 
-                return msgErro + xmlRetorno["cStat"].InnerXml + " - " + CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml);
+                return $"{ msgErro }{ xmlRetorno?["cStat"]?.InnerXml } - { CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml) }";
             }
         }
 
@@ -386,10 +278,6 @@ namespace Glass.Data.NFeUtils
 
         #region Consulta situação da NFe
 
-        /// <summary>
-        /// Consulta situação da NFe
-        /// </summary>
-        /// <param name="idNf"></param>
         public static string ConsultaSitNFe(uint idNf)
         {
             NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(idNf);
@@ -424,8 +312,6 @@ namespace Glass.Data.NFeUtils
 
             XmlNode xmlRetorno = null;
 
-            string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
             try
             {
                 // Altera o callback de validação do WebService
@@ -440,112 +326,12 @@ namespace Glass.Data.NFeUtils
                     return isDateValid;
                 };
 
-                #region Envia o arquivo e recebe o retorno
-
-                if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS && nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                {
-                    if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                    {
-                        switch (uf)
-                        {
-                            case "AM":
-                                xmlRetorno = GetWebService.PAMConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "CE":
-                                xmlRetorno = GetWebService.PCEConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
-                            case "MG":
-                                {
-                                    var dadosMsg = new wsPMGNFeConsultaProtocolo.nfeResultMsg();
-
-                                    dadosMsg.Any = new XmlNode[] { xmlConsSitNFe };
-                                    dadosMsg.Any[0] = xmlConsSitNFe.DocumentElement;
-                                    var xmlDocument = new XmlDocument();
-                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
-
-                                    var retorno = GetWebService.PMGConsulta(nf, null).nfeConsultaNF(dadosMsg);
-
-                                    foreach (var node in retorno.Any as XmlNode[])
-                                        xmlNode.InnerXml += node.OuterXml;
-
-                                    xmlRetorno = xmlNode;
-                                    break;
-                                }
-                            case "MT":
-                                xmlRetorno = GetWebService.PMTConsulta(nf, null).nfeConsultaNF2(xmlConsSitNFe); break;
-                            case "MS":
-                                {
-                                    var dadosMsg = new wsPMSNFeConsultaProtocolo.nfeResultMsg();
-
-                                    dadosMsg.Any = new XmlNode[] { xmlConsSitNFe };
-                                    dadosMsg.Any[0] = xmlConsSitNFe.DocumentElement;
-                                    var xmlDocument = new XmlDocument();
-                                    var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
-
-                                    var retorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(dadosMsg);
-
-                                    // Verificar se retorno.Any está funcionando corretamente
-                                    foreach (var node in retorno.Any as XmlNode[])
-                                        xmlNode.InnerXml += node.OuterXml;
-
-                                    xmlRetorno = xmlNode;
-                                    break;
-                                }
-                                //xmlRetorno = GetWebService.PMSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "PE":
-                                xmlRetorno = GetWebService.PPEConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "BA":
-                                xmlRetorno = GetWebService.PBAConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "GO":
-                                xmlRetorno = GetWebService.PGOConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "PR":
-                                xmlRetorno = GetWebService.PPRConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "RS":
-                                xmlRetorno = GetWebService.PRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "SP":
-                                xmlRetorno = GetWebService.PSPConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "MA":
-                            case "PA":
-                                xmlRetorno = GetWebService.PSVANConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                            case "AC":
-                            case "AL":
-                            case "AP":
-                            case "DF":
-                            case "PB":
-                            case "PI":
-                            case "RJ":
-                            case "RN":
-                            case "RO":
-                            case "RR":
-                            case "SC":
-                            case "SE":
-                            case "TO":
-                            case "ES":
-                                xmlRetorno = GetWebService.PSVRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        }
-                    }
-                    else
-                    {
-                        switch (uf)
-                        {
-                            case "RS":
-                                xmlRetorno = GetWebService.HRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        }
-                    }
-                }
-                else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                {
-                    if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                        xmlRetorno = GetWebService.PSVCRSConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe);
-                    else
-                    { }
-                }
-                else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                    xmlRetorno = GetWebService.PSVCANConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe);
-
-                #endregion
+                xmlRetorno = EnviaXML.ObterXmlConsultaProtocoloNFe(nf, xmlConsSitNFe);
             }
             catch (Exception ex)
             {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService. Favor consultar a disponibilidade da receita", ex));
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
+                throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex));
             }
             finally
             {
@@ -554,37 +340,29 @@ namespace Glass.Data.NFeUtils
             }
 
             if (xmlRetorno == null)
-                throw new Exception("Falha ao comunicar com webservice da SEFAZ. Favor consultar a disponibilidade da receita");
-
-            var codStatus = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
-
-            XmlNode xmlRetConsSit;
-
-            switch (uf)
             {
-                case "MG":
-                case "MS":
-                    xmlRetConsSit = xmlRetorno?.ChildNodes?[0];
-                    break;
-
-                default:
-                    xmlRetConsSit = xmlRetorno;
-                    break;
+                throw new Exception("Falha ao comunicar com webservice da SEFAZ.");
             }
 
+            var codStatus = xmlRetorno?["cStat"]?.InnerXml?.StrParaInt() ?? 0;
+
             // Executa ações de acordo com o retorno dado
-            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetConsSit);
+            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno);
 
-            if (codStatus == "100" || codStatus == "150") // NFe Autorizada
-                return "NFe está autorizada para uso.";
-            else // NFe rejeitada
+            if (codStatus == 100 || codStatus == 150)
             {
-                string msgErro = "Falha na consulta. ";
+                return "NFe está autorizada para uso.";
+            }
+            else
+            {
+                var msgErro = "Falha na consulta. ";
 
-                if (codStatus == "215" || codStatus == "516" || codStatus == "517" || codStatus == "545")
+                if (codStatus == 215 || codStatus == 516 || codStatus == 517 || codStatus == 545)
+                {
                     msgErro += "Mensagem de consulta inválida. ";
+                }
 
-                return string.Format("{0}{1} - {2}", msgErro, codStatus, CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml));
+                return $"msgErro { xmlRetorno?["cStat"]?.InnerXml } - { CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml) }";
             }
         }
 
@@ -626,49 +404,12 @@ namespace Glass.Data.NFeUtils
                     return isDateValid;
                 };
 
-                #region Envia o arquivo e recebe o retorno
-
-                string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
-
-                if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                {
-                    switch (uf)
-                    {
-                        case "AM":
-                            xmlRetorno = GetWebService.PAMNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        case "MT":
-                            xmlRetorno = GetWebService.PMTNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        case "RS":
-                            xmlRetorno = GetWebService.PRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        case "AC":
-                        case "BA":
-                        case "DF":
-                        case "RJ":
-                        case "RN":
-                        case "RO":
-                        case "PA":
-                        case "PB":
-                            xmlRetorno = GetWebService.PSVRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                    }
-                }
-                else
-                {
-                    switch (uf)
-                    {
-                        case "AM":
-                            xmlRetorno = GetWebService.HAMNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        case "MT":
-                            xmlRetorno = GetWebService.HMTNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                        case "RS":
-                            xmlRetorno = GetWebService.HRSNFCeConsulta(nf, null).nfeConsultaNF(xmlConsSitNFe); break;
-                    }
-                }
-
-                #endregion
+                // Envia o arquivo e recebe o retorno.
+                xmlRetorno = EnviaXML.ObterXmlConsultaProtocoloNFCe(nf, xmlConsSitNFe);
             }
             catch (Exception ex)
             {
+                LogNfDAO.Instance.NewLog(nf.IdNf, "Instaciar Webservice", 3, MensagemAlerta.FormatErrorMsg("Falha ao instanciar webservice.", ex));
                 throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex));
             }
             finally
@@ -680,21 +421,25 @@ namespace Glass.Data.NFeUtils
             if (xmlRetorno == null)
                 throw new Exception("Falha ao comunicar com webservice da SEFAZ.");
 
-            string codStatus = xmlRetorno["cStat"].InnerXml;
+            var codStatus = xmlRetorno?["cStat"]?.InnerXml;
 
             // Executa ações de acordo com o retorno dado
             NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno);
 
             if (codStatus == "100" || codStatus == "150") // NFe Autorizada
+            {
                 return "NFe está autorizada para uso.";
+            }
             else // NFe rejeitada
             {
-                string msgErro = "Falha na consulta. ";
+                var msgErro = "Falha na consulta. ";
 
                 if (codStatus == "215" || codStatus == "516" || codStatus == "517" || codStatus == "545")
+                {
                     msgErro += "Mensagem de consulta inválida. ";
+                }
 
-                return msgErro + xmlRetorno["cStat"].InnerXml + " - " + CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno["xMotivo"].InnerXml);
+                return $"{ msgErro }{ xmlRetorno?["cStat"]?.InnerXml } - { CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["xMotivo"]?.InnerXml) }";
             }
         }
 
@@ -705,12 +450,12 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Consulta o cadastro de contribuintes do ICMS da unidade federada.
         /// </summary>
-        /// <param name="idCli"></param>
-        /// <returns></returns>
-        public static string ConsultaSitCadastroContribuinte(string UF, string CpfCnpj)
+        public static string ConsultaSitCadastroContribuinte(string uf, string cpfCnpj)
         {
-            if (string.IsNullOrEmpty(UF) || string.IsNullOrEmpty(CpfCnpj))
+            if (string.IsNullOrEmpty(uf) || string.IsNullOrEmpty(cpfCnpj))
+            {
                 return "Contribuinte não encontrado.";
+            }
 
             #region Monta XML
 
@@ -723,19 +468,23 @@ namespace Glass.Data.NFeUtils
             consCad.SetAttribute("versao", ConfigNFe.VersaoConsCad);
             consCad.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
             xmlConsCad.AppendChild(consCad);
-    
+
             XmlElement infCons = xmlConsCad.CreateElement("infCons");
             consCad.AppendChild(infCons);
 
             ManipulacaoXml.SetNode(xmlConsCad, infCons, "xServ", "CONS-CAD");
-            ManipulacaoXml.SetNode(xmlConsCad, infCons, "UF", UF);
+            ManipulacaoXml.SetNode(xmlConsCad, infCons, "UF", uf);
 
-            CpfCnpj = Formatacoes.LimpaCpfCnpj(CpfCnpj);
+            cpfCnpj = Formatacoes.LimpaCpfCnpj(cpfCnpj);
 
-            if (CpfCnpj.Length == 11)
-                ManipulacaoXml.SetNode(xmlConsCad, infCons, "CPF", CpfCnpj);
+            if (cpfCnpj.Length == 11)
+            {
+                ManipulacaoXml.SetNode(xmlConsCad, infCons, "CPF", cpfCnpj);
+            }
             else
-                ManipulacaoXml.SetNode(xmlConsCad, infCons, "CNPJ", CpfCnpj);
+            {
+                ManipulacaoXml.SetNode(xmlConsCad, infCons, "CNPJ", cpfCnpj);
+            }
 
             #endregion
 
@@ -747,7 +496,7 @@ namespace Glass.Data.NFeUtils
             try
             {
                 // Altera o callback de validação do WebService
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
                 {
                     // Verifica se a data do certificado é válida
                     DateTime beginDate = DateTime.Parse(cert.GetEffectiveDateString());
@@ -758,52 +507,8 @@ namespace Glass.Data.NFeUtils
                     return isDateValid;
                 };
 
-                #region Envia o arquivo e recebe o retorno
-
-                switch (UF)
-                {
-                    case "AM":
-                        xmlRetorno = GetWebService.PAMConsultaCadastro().consultaCadastro2(xmlConsCad); break;
-                    case "CE":
-                        xmlRetorno = GetWebService.PCEConsultaCadastro().consultaCadastro2(xmlConsCad); break;
-                    case "MT":
-                        xmlRetorno = GetWebService.PMTConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "BA":
-                        xmlRetorno = GetWebService.PBAConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "GO":
-                        xmlRetorno = GetWebService.PGOConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "PR":
-                        xmlRetorno = GetWebService.PPRConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "RS":
-                        xmlRetorno = GetWebService.PRSConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "SP":
-                        xmlRetorno = GetWebService.PSPConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "MS":
-                        {
-                            var dadosMsg = new wsPMSNFeConsultaCadastro.consultaCadastroResult();
-
-                            dadosMsg.Any = new XmlNode[] { xmlConsCad };
-                            dadosMsg.Any[0] = xmlConsCad.DocumentElement;
-                            var xmlDocument = new XmlDocument();
-                            var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsCad", "");
-
-                            var retornoCad = GetWebService.PMSConsultaCadastro().consultaCadastro(dadosMsg);
-
-                            // Verificar se retorno.Any está funcionando corretamente
-                            foreach (var node in retornoCad.Any as XmlNode[])
-                                xmlNode.InnerXml += node.OuterXml;
-
-                            xmlRetorno = xmlNode;
-                            break;
-                        }
-                        //xmlRetorno = GetWebService.PMSConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "PE":
-                        xmlRetorno = GetWebService.PPEConsultaCadastro().consultaCadastro(xmlConsCad); break;
-                    case "MG":
-                        xmlRetorno = GetWebService.PMGConsultaCadastro().consultaCadastro2(xmlConsCad); break;
-                    }
-
-                #endregion
+                // Envia o arquivo e recebe o retorno.
+                xmlRetorno = EnviaXML.ObterXmlConsultaCadastroContribuinte(uf, xmlConsCad);
             }
             catch (Exception ex)
             {
@@ -816,7 +521,9 @@ namespace Glass.Data.NFeUtils
             }
 
             if (xmlRetorno == null)
+            {
                 return "Falha ao comunicar com webservice da SEFAZ.";
+            }
 
             XmlDocument xmlDocRetorno = new XmlDocument();
             xmlDocRetorno.ImportNode(xmlRetorno, true);
@@ -824,27 +531,32 @@ namespace Glass.Data.NFeUtils
             XmlNamespaceManager nMgr = new XmlNamespaceManager(xmlDocRetorno.NameTable);
             nMgr.AddNamespace("nfe", "http://www.portalfiscal.inf.br/nfe");
 
-            XmlNode infoCons = xmlRetorno.SelectSingleNode("//nfe:infCons",nMgr);
-            string codStatus = infoCons["cStat"].InnerText;
+            XmlNode infoCons = xmlRetorno.SelectSingleNode("//nfe:infCons", nMgr);
+            var codStatus = infoCons?["cStat"]?.InnerText;
 
-            string retorno = "";
+            var retorno = string.Empty;
             if (codStatus == "111" || codStatus == "112")
             {
                 retorno += "Consulta Situação do Contribuinte no Sintegra\n\n";
-                retorno+="Situação: ";
+                retorno += "Situação: ";
+
                 if (infoCons["infCad"]["cSit"].InnerText == "1")
+                {
                     retorno += "Habilitado.";
+                }
                 else
+                {
                     retorno += "Não Habilitado.";
+                }
             }
             else
             {
                 retorno += "Falha na Consulta Situação do Contribuinte no Sintegra\n\n";
-                retorno += "Código: " + codStatus+"\n";
-                retorno += infoCons["xMotivo"].InnerText;
+                retorno += "Código: " + codStatus + "\n";
+                retorno += infoCons?["xMotivo"]?.InnerText;
             }
 
-            ClienteDAO.Instance.AtualizaUltimaConsultaSintegra(CpfCnpj);
+            ClienteDAO.Instance.AtualizaUltimaConsultaSintegra(cpfCnpj);
 
             return retorno;
         }
@@ -853,29 +565,22 @@ namespace Glass.Data.NFeUtils
         /// Verifica se a consulta de cadastro esta disponivel
         /// para o cliente em questão
         /// </summary>
-        /// <param name="idCli"></param>
-        /// <returns></returns>
-        public static bool HabilitadoConsultaCadastro(string UF)
+        public static bool HabilitadoConsultaCadastro(string uf)
         {
-            if (string.IsNullOrEmpty(UF))
-                return false;
-
-            switch (UF)
+            if (string.IsNullOrEmpty(uf))
             {
-                case "AM":
-                case "CE":
-                case "MT":
+                return false;
+            }
+
+            switch (uf)
+            {
                 case "BA":
                 case "GO":
-                case "PR":
-                case "RS":
-                case "SP":
                 case "MS":
-                case "PE":
-                case "MG":
-                    return true;
-                default:
-                    return false;
+                case "MT":
+                case "PR":
+                case "SP": return true;
+                default: return false;
             }
         }
 
@@ -896,25 +601,33 @@ namespace Glass.Data.NFeUtils
         /// </summary>
         public static string CustomizaMensagemRejeicao(GDA.GDASession session, uint idNf, string motivoRejeicao)
         {
-            bool isSimplesNacional = LojaDAO.Instance.ObtemValorCampo<int?>(session, "crt", "idLoja=" + NotaFiscalDAO.Instance.ObtemIdLoja(session, idNf)) < 3;
+            var lojaSimplesNacional = LojaDAO.Instance.ObtemValorCampo<int?>(session, "Crt", $"IdLoja={ NotaFiscalDAO.Instance.ObtemIdLoja(session, idNf) }") < 3;
 
             if (motivoRejeicao.Contains("Total da BC ICMS difere do somatório dos itens"))
             {
-                if (isSimplesNacional)
+                if (lojaSimplesNacional)
+                {
                     motivoRejeicao += " (Empresas optantes pelo simples nacional devem destacar ICMS apenas nas informações complementares)";
+                }
                 else
+                {
                     motivoRejeicao += " (Um ou mais produtos desta nota fiscal possuem CST que não calcula ICMS, CST 60 por exemplo, apesar de estar sendo calculado ICMS na mesma)";
+                }
             }
             else if (motivoRejeicao.Contains("Total da BC ICMS-ST difere do somatório dos itens"))
             {
-                if (isSimplesNacional)
+                if (lojaSimplesNacional)
+                {
                     motivoRejeicao += " (Um ou mais produtos desta nota fiscal possuem CSOSN que não devem calcular ICMS ST, apesar de estar sendo calculado na mesma)";
+                }
                 else
+                {
                     motivoRejeicao += " (Um ou mais produtos desta nota fiscal possuem CST que não devem calcular ICMS ST, CST 00 por exemplo, apesar de estar sendo calculado na mesma)";
+                }
             }
             else if (motivoRejeicao.Contains("Falha na solicitação com status HTTP 403: Forbidden."))
             {
-                motivoRejeicao += " (Provavelmente não foi exportada a chave privado do certificado digital ou as cadeias do certificado digital não foram instaladas corretamente.)";
+                motivoRejeicao += " (Provavelmente não foi exportada a chave privada do certificado digital ou as cadeias do certificado digital não foram instaladas corretamente.)";
             }
 
             return motivoRejeicao;

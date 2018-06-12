@@ -7,6 +7,7 @@ using Glass.Configuracoes;
 using System.IO;
 using GDA;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Glass.Data.NFeUtils
 {
@@ -17,8 +18,6 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Monta e retorna um Xml do lote para envio com a NF-e a ser enviada
         /// </summary>
-        /// <param name="xmlNFe"></param>
-        /// <returns></returns>
         private static XmlDocument CriaLote(XmlDocument xmlNFe, uint idNf)
         {
             XmlDocument xmlLote = new XmlDocument();
@@ -34,7 +33,7 @@ namespace Glass.Data.NFeUtils
             //Servidores da Bahia não aceitam emissão síncrona.
             var indsinc = ufLoja.ToUpper() == "BA" || ufLoja.ToUpper() == "SP" ? "0" : "1";
 
-            string enviNFeString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
+            string enviNFeString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + ConfigNFe.VersaoLoteNFe + "\">" +
                 "<idLote>" + NotaFiscalDAO.Instance.GetNewNumLote(idNf).ToString("000000000000000") + "</idLote>" +
                 "<indSinc>" + indsinc + "</indSinc>";
@@ -74,9 +73,6 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Monta e retorna um Xml do lote para envio de carta de correção
         /// </summary>
-        /// <param name="xmlCce">Carta de correção</param>
-        /// <param name="idNf">Identificador da nota fiscal</param>
-        /// <returns></returns>
         public static XmlDocument CriaLoteCce(XmlDocument xmlCce)
         {
             XmlDocument xmlLote = new XmlDocument();
@@ -85,7 +81,7 @@ namespace Glass.Data.NFeUtils
 
             string envEventoString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<envEvento xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"1.00\">" +
-                "<idLote>" + ContadorRecepcaoEventoDAO.Instance.GetNext() +"</idLote>";
+                "<idLote>" + ContadorRecepcaoEventoDAO.Instance.GetNext() + "</idLote>";
 
             // Insere o XML da CCe no lote
             int nPosI = xmlCce.InnerXml.IndexOf("<evento");
@@ -114,8 +110,6 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Monta e retorna um Xml do lote para envio de cancelamento da NF-e
         /// </summary>
-        /// <param name="xmlCancelamento"></param>
-        /// <returns></returns>
         public static XmlDocument CriaLoteCancelamento(XmlDocument xmlCancelamento)
         {
             XmlDocument xmlLote = new XmlDocument();
@@ -157,8 +151,6 @@ namespace Glass.Data.NFeUtils
         /// <summary>
         /// Envia a NFe para a SEFAZ via Webservice
         /// </summary>
-        /// <param name="xmlNFe"></param>
-        /// <param name="idNf"></param>
         public static string EnviaNFe(XmlDocument xmlNFe, uint idNf)
         {
             var numeroNfe = NotaFiscalDAO.Instance.ObtemNumeroNf(null, idNf);
@@ -189,7 +181,7 @@ namespace Glass.Data.NFeUtils
                     try
                     {
                         // Altera o callback de validação do WebService
-                        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
+                        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
                         {
                             // Verifica se a data do certificado é válida
                             DateTime beginDate = DateTime.Parse(cert.GetEffectiveDateString());
@@ -200,200 +192,15 @@ namespace Glass.Data.NFeUtils
                             return isDateValid;
                         };
 
-                        #region Envia o arquivo e recebe o retorno
-
-                        string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
-                        #region NFC-e
-
+                        // Envia o arquivo e recebe o retorno.
                         if (nf.Consumidor)
                         {
-                            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                            {
-                                switch (uf)
-                                {
-                                    case "AM":
-                                        xmlRetorno = GetWebService.PAMNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "MT":
-                                        xmlRetorno = GetWebService.PMTNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "RS":
-                                        xmlRetorno = GetWebService.PRSNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "AC":
-                                    case "BA":
-                                    case "DF":
-                                    case "MA":
-                                    case "PA":
-                                    case "PB":
-                                    case "RJ":
-                                    case "RN":
-                                    case "RO":
-                                        xmlRetorno = GetWebService.PSVRSNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                }
-                            }
-                            else
-                            {
-                                switch (uf)
-                                {
-                                    case "AM":
-                                        xmlRetorno = GetWebService.HAMNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "MT":
-                                        xmlRetorno = GetWebService.HMTNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "RS":
-                                        xmlRetorno = GetWebService.HRSNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    case "AC":
-                                    case "BA":
-                                    case "DF":
-                                    case "MA":
-                                    case "PA":
-                                    case "PB":
-                                    case "RJ":
-                                    case "RN":
-                                    case "RO":
-                                        xmlRetorno = GetWebService.HSVRSNFCeAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                }
-                            }
+                            xmlRetorno = ObterXmlAutorizacaoNFCe(nf, xmlLote);
                         }
-
-                        #endregion
-
-                        #region NF-e
-
                         else
                         {
-                            if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS && nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                            {
-                                if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                                {
-                                    switch (uf)
-                                    {
-                                        case "AM":
-                                            xmlRetorno = GetWebService.PAMAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "CE":
-                                            xmlRetorno = GetWebService.PCEAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "MG":
-                                            {
-                                                var dadosMsg = new wsPMGNFeAutorizacao.nfeResultMsg();
-
-                                                dadosMsg.Any = new XmlNode[] { xmlLote };
-                                                dadosMsg.Any[0] = xmlLote.DocumentElement;
-                                                var xmlDocument = new XmlDocument();
-                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
-                                                var retorno = GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(dadosMsg).Any;
-
-                                                foreach (var node in retorno)
-                                                    xmlNode.InnerXml += node.OuterXml;
-
-                                                xmlRetorno = xmlNode;
-                                                break;
-                                            }
-                                        case "MS":
-                                            {
-                                                var dadosMsg = new wsPMSNFeAutorizacao.nfeResultMsg();
-
-                                                dadosMsg.Any = new XmlNode[] { xmlLote };
-                                                dadosMsg.Any[0] = xmlLote.DocumentElement;
-                                                var xmlDocument = new XmlDocument();
-                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", "");
-                                                var retorno = GetWebService.PMSAutorizacao(nf, null).nfeAutorizacaoLote(dadosMsg).Any;
-
-                                                foreach (var node in retorno)
-                                                    xmlNode.InnerXml += node.OuterXml;
-
-                                                xmlRetorno = xmlNode;
-                                                break;
-                                            }
-                                        case "MT":
-                                            xmlRetorno = GetWebService.PMTAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "PE":
-                                            xmlRetorno = GetWebService.PPEAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "BA":
-                                            xmlRetorno = GetWebService.PBAAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "GO":
-                                            xmlRetorno = GetWebService.PGOAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "PR":
-                                            xmlRetorno = GetWebService.PPRAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "RS":
-                                            xmlRetorno = GetWebService.PRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "AC":
-                                        case "AL":
-                                        case "AP":
-                                        case "DF":
-                                        case "PB":
-                                        case "PI":
-                                        case "RJ":
-                                        case "RN":
-                                        case "RO":
-                                        case "RR":
-                                        case "SC":
-                                        case "SE":
-                                        case "TO":
-                                        case "ES":
-                                            xmlRetorno = GetWebService.PSVRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "MA":
-                                        case "PA":
-                                            xmlRetorno = GetWebService.PSVANAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "SP":
-                                            {
-                                                uint idCidade = LojaDAO.Instance.ObtemValorCampo<uint>("idCidade", "idLoja=" + nf.IdLoja.Value);
-
-                                                try
-                                                {
-                                                    if (nf.IdLoja > 0)
-                                                        LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
-
-                                                    GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(null);
-                                                }
-                                                catch
-                                                {
-                                                    try
-                                                    {
-                                                        if (nf.IdLoja > 0)
-                                                            LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=538 Where idLoja=" + nf.IdLoja);
-
-                                                        GetWebService.PBAAutorizacao(nf, null).nfeAutorizacaoLote(null);
-                                                    }
-                                                    catch { }
-                                                }
-
-                                                if (nf.IdLoja > 0)
-                                                    LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=" + idCidade + " Where idLoja=" + nf.IdLoja);
-
-                                                xmlRetorno = GetWebService.PSPAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                            }
-                                    }
-                                }
-                                else
-                                {
-                                    switch (uf)
-                                    {
-                                        case "RS":
-                                            xmlRetorno = GetWebService.HRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                        case "AC":
-                                        case "AL":
-                                        case "AP":
-                                        case "DF":
-                                        case "PB":
-                                        case "RJ":
-                                        case "RN":
-                                        case "RO":
-                                        case "RR":
-                                        case "SC":
-                                        case "SE":
-                                        case "TO":
-                                        case "ES":
-                                            xmlRetorno = GetWebService.HSVRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote); break;
-                                    }
-                                }
-                            }
-                            else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                                xmlRetorno = GetWebService.SVCRSAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote);
-                            else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                                xmlRetorno = GetWebService.SVCANAutorizacao(nf, null).nfeAutorizacaoLote(xmlLote);
+                            xmlRetorno = ObterXmlAutorizacaoNFe(nf, xmlLote);
                         }
-
-                        #endregion
-
-                        #endregion
 
                         break;
                     }
@@ -421,81 +228,85 @@ namespace Glass.Data.NFeUtils
                 if (xmlRetorno == null)
                 {
                     LogNfDAO.Instance.NewLog(idNf, "Emissão", 2, "Falha ao enviar lote. Retorno de envio do lote inválido.");
-
                     NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
                     return "Falha ao enviar lote. Retorno de envio do lote inválido.";
                 }
 
                 // Lê Xml de retorno do envio do lote
-                var status = xmlRetorno?["cStat"]?.InnerXml?.StrParaInt() ?? 0;
-                var statusNoduloFilho = xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml?.StrParaInt() ?? 0;
+                var status = xmlRetorno?["cStat"]?.InnerXml ?? "0";
 
-                if (status == 103) // Lote recebido com sucesso
+                if (status == "103") // Lote recebido com sucesso
                 {
-                    var numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
+                    var numReciboLote = xmlRetorno?["infRec"]?["nRec"]?.InnerXml;
 
-                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 103, "Lote enviado com sucesso.");
+                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 103, "Lote enviado com sucesso. ");
                     NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
 
                     return "Lote enviado com sucesso.";
                 }
-                else if (statusNoduloFilho == 104 || statusNoduloFilho == 100)
+                else if (status == "104")
                 {
-                    LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote Processado");
-                    NotaFiscalDAO.Instance.RetornoEmissaoNFe(nf.ChaveAcesso, xmlRetorno?.ChildNodes?[0]?["protNFe"]);
-
-                    return xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml;
-                }
-                else if (status == 104)
-                {
-                    if (xmlRetorno["protNFe"] == null)
+                    if (xmlRetorno?["protNFe"] == null)
                     {
-                        var numReciboLote = xmlRetorno["infRec"]["nRec"].InnerXml;
+                        if (xmlRetorno?["cStat"]?.InnerXml == "104")
+                        {
+                            var mensagem = "Lote processado.";
+                            var numReciboLote = xmlRetorno?["infRec"]?["nRec"]?.InnerXml;
 
-                        LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote processado.");
-                        // Salva na nota fiscal o número do recibo do lote
-                        NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
+                            LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, mensagem);
+                            NotaFiscalDAO.Instance.RetornoEnvioLote(idNf, numReciboLote);
 
-                        return "Lote processado.";
+                            return mensagem;
+                        }
+                        else
+                        {
+                            var motivo = xmlRetorno?["xMotivo"]?.InnerXml;
+
+                            LogNfDAO.Instance.NewLog(idNf, "Emissão", (xmlRetorno?["cStat"]?.InnerXml.StrParaInt()).GetValueOrDefault(), motivo);
+                            NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+
+                            return motivo;
+                        }
                     }
-                    else if (xmlRetorno["protNFe"]["infProt"]["cStat"].InnerXml == "100")
+                    else if (xmlRetorno?["protNFe"]?["infProt"]?["cStat"]?.InnerXml == "100")
                     {
                         LogNfDAO.Instance.NewLog(idNf, "Emissão", 104, "Lote Processado");
+                        NotaFiscalDAO.Instance.RetornoEmissaoNFe(nf.ChaveAcesso, xmlRetorno?["protNFe"]);
 
-                        NotaFiscalDAO.Instance.RetornoEmissaoNFe(nf.ChaveAcesso, xmlRetorno["protNFe"]);
-
-                        return xmlRetorno["protNFe"]["infProt"]["xMotivo"].InnerXml;
+                        return xmlRetorno?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml;
                     }
                     else
                     {
-                        var codigo = xmlRetorno["protNFe"]["infProt"]["cStat"].InnerXml.StrParaInt();
-                        var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno["protNFe"]["infProt"]["xMotivo"].InnerXml);
+                        var codigo = (xmlRetorno?["protNFe"]?["infProt"]?["cStat"]?.InnerXml?.StrParaInt()).GetValueOrDefault();
+                        var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? string.Empty);
 
                         LogNfDAO.Instance.NewLog(idNf, "Emissão", codigo, motivo);
-
                         NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
                         return motivo;
                     }
                 }
-                else if (status > 200 || statusNoduloFilho > 200) // Lote foi rejeitado pela SEFAZ
+                else if (Convert.ToInt32(status) > 200) // Lote foi rejeitado pela SEFAZ
                 {
-                    var codigo = status > 200 ? status : statusNoduloFilho > 200 ? statusNoduloFilho : 0;
-                    var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? "Não foi possível recuperar o motivo.");
+                    var codigo = status.StrParaInt();
+                    var motivo = TrataMotivoRejeicaoNFe(codigo, xmlRetorno?["xMotivo"]?.InnerXml ?? string.Empty);
 
-                    /* Chamado 36067. */
+                    if (string.IsNullOrWhiteSpace(motivo))
+                    {
+                        motivo = $"Falha ao emitir NFe. Código de Rejeição: { codigo }.";
+                    }
+
                     try
                     {
-                        var uf = xmlRetorno?["cUF"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["cUF"]?.InnerXml ?? string.Empty;
-
-                        // Salva na tabela de erro os dados do XML de retorno da NF-e.
-                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe, xmlRetorno?.InnerXml ?? "xmlRetorno nulo"), new Exception());
+                        var uf = xmlRetorno?["cUF"]?.InnerXml ?? string.Empty;
 
                         if (!string.IsNullOrEmpty(uf))
                         {
                             motivo = string.Format("{0} UF: {1}", motivo, CidadeDAO.Instance.GetNomeUf(null, uf.StrParaUintNullable()));
                         }
+
+                        ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe, xmlRetorno?.InnerXml ?? "xmlRetorno nulo"), new Exception());
                     }
                     catch (Exception ex)
                     {
@@ -503,19 +314,16 @@ namespace Glass.Data.NFeUtils
                     }
 
                     LogNfDAO.Instance.NewLog(idNf, "Emissão", codigo, motivo);
-
                     NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
                     return motivo;
                 }
                 else
                 {
-                    LogNfDAO.Instance.NewLog(idNf, "Emissão", status, xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? string.Empty);
+                    LogNfDAO.Instance.NewLog(idNf, "Emissão", status.StrParaInt(), xmlRetorno?["xMotivo"]?.InnerXml ?? string.Empty);
 
-                    /* Chamado 36067. */
                     try
                     {
-                        // Salva na tabela de erro os dados do XML de retorno da NF-e.
                         ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0} - {1}", numeroNfe, xmlRetorno?.InnerXml ?? "xmlRetorno nulo"), new Exception());
                     }
                     catch (Exception ex)
@@ -523,7 +331,7 @@ namespace Glass.Data.NFeUtils
                         ErroDAO.Instance.InserirFromException(string.Format("RetornoEnvioNFe {0}", numeroNfe), ex);
                     }
 
-                    return xmlRetorno?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? "Não foi possível recuperar o motivo.";
+                    return xmlRetorno?["xMotivo"]?.InnerXml;
                 }
 
                 #endregion
@@ -533,7 +341,6 @@ namespace Glass.Data.NFeUtils
                 ErroDAO.Instance.InserirFromException(string.Format("Falha no método RetornoEnvioNFe {0}", numeroNfe), ex);
 
                 LogNfDAO.Instance.NewLog(idNf, "Emissão", 1, Glass.MensagemAlerta.FormatErrorMsg("Falha ao enviar lote.", ex));
-
                 NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
 
                 return Glass.MensagemAlerta.FormatErrorMsg("Falha ao enviar lote.", ex);
@@ -546,11 +353,17 @@ namespace Glass.Data.NFeUtils
         private static string TrataMotivoRejeicaoNFe(int codigo, string motivo)
         {
             if (codigo == 531)
+            {
                 motivo += ". Possivelmente o CST ou CSOSN utilizado nos produtos da nota não permite o destaque do ICMS ou ICMS ST.";
+            }
             else if (codigo == 533)
+            {
                 motivo += ". Possivelmente o CST ou CSOSN utilizado nos produtos da nota não permite o destaque do ICMS ST.";
+            }
             else if (codigo == 321)
+            {
                 motivo += ". Possivelmente a nota fiscal referenciada não possui chave de acesso ou o CFOP utilizado na nota fiscal não é do tipo Devolução.";
+            }
 
             return motivo;
         }
@@ -561,7 +374,7 @@ namespace Glass.Data.NFeUtils
 
         public static string EnviaCCe(XmlDocument xmlCce, uint idCarta)
         {
-            string retorno = "";
+            var retorno = string.Empty;
 
             CartaCorrecao carta = CartaCorrecaoDAO.Instance.GetElement(idCarta);
             NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(carta.IdNf);
@@ -585,7 +398,7 @@ namespace Glass.Data.NFeUtils
                     try
                     {
                         // Altera o callback de validação do WebService
-                        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate(object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
+                        System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate cert, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors error)
                         {
                             // Verifica se a data do certificado é válida
                             DateTime beginDate = DateTime.Parse(cert.GetEffectiveDateString());
@@ -596,105 +409,13 @@ namespace Glass.Data.NFeUtils
                             return isDateValid;
                         };
 
-                        #region Envia o arquivo e recebe o retorno
-
-                        string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
                         if (ConfigNFe.TipoAmbiente != ConfigNFe.TipoAmbienteNfe.Producao)
-                            throw new Exception("A carta de correção está implementada somente para o ambiente de produção.");
-
-                        if (FiscalConfig.NotaFiscalConfig.ContingenciaNFe == DataSources.TipoContingenciaNFe.NaoUtilizar)
                         {
-                            switch (uf)
-                            {
-                                case "AM":
-                                    xmlRetorno = GetWebService.PAMRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "CE":
-                                    xmlRetorno = GetWebService.PCERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "MG":
-                                    {
-                                        var dadosMsg = new wsPMGRecepcaoEvento.nfeResultMsg();
-
-                                        dadosMsg.Any = new XmlNode[] { xmlLote };
-                                        dadosMsg.Any[0] = xmlLote.DocumentElement;
-                                        var xmlDocument = new XmlDocument();
-                                        var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
-                                        var recepcaoEvento = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(dadosMsg).Any;
-
-                                        foreach (var node in recepcaoEvento)
-                                            xmlNode.InnerXml += node.OuterXml;
-
-                                        xmlRetorno = xmlNode;
-                                        break;
-                                    }
-                                case "MT":
-                                    xmlRetorno = GetWebService.PMTRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                //case "MS":
-                                //    xmlRetorno = GetWebService.PMSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "PE":
-                                    xmlRetorno = GetWebService.PPERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "GO":
-                                    xmlRetorno = GetWebService.PGORecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "PR":
-                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
-                                case "RS":
-                                    xmlRetorno = GetWebService.PRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "BA":
-                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
-                                case "MA":
-                                case "PA":
-                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote); break;
-                                case "AC":
-                                case "AL":
-                                case "AP":
-                                case "DF":
-                                case "PB":
-                                case "PI":
-                                case "RJ":
-                                case "RN":
-                                case "RO":
-                                case "RR":
-                                case "SC":
-                                case "SE":
-                                case "TO":
-                                case "ES":
-                                    xmlRetorno = GetWebService.PSVRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                case "SP":
-                                    {
-                                        uint idCidade = LojaDAO.Instance.ObtemValorCampo<uint>("idCidade", "idLoja=" + nf.IdLoja.Value);
-
-                                        try
-                                        {
-                                            if (nf.IdLoja > 0)
-                                                LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=1630 Where idLoja=" + nf.IdLoja);
-
-                                            GetWebService.PMGAutorizacao(nf, null).nfeAutorizacaoLote(null);
-                                        }
-                                        catch
-                                        {
-                                            try
-                                            {
-                                                if (nf.IdLoja > 0)
-                                                    LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=538 Where idLoja=" + nf.IdLoja);
-
-                                                GetWebService.PBAAutorizacao(nf, null).nfeAutorizacaoLote(null);
-                                            }
-                                            catch { }
-                                        }
-
-                                        if (nf.IdLoja > 0)
-                                            LojaDAO.Instance.ExecuteScalar<int>("Update loja set idCidade=" + idCidade + " Where idLoja=" + nf.IdLoja);
-
-                                        xmlRetorno = GetWebService.PSPRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                    }
-                            }
+                            throw new Exception("A carta de correção está implementada somente para o ambiente de produção.");
                         }
-                        else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                            xmlRetorno = GetWebService.PSVRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                        else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                            xmlRetorno = GetWebService.PSVCANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
 
-                        #endregion
+                        // Envia o arquivo e recebe o retorno.
+                        xmlRetorno = ObterXmlRecepcaoEventoNFe(nf, xmlLote);
 
                         break;
                     }
@@ -728,22 +449,22 @@ namespace Glass.Data.NFeUtils
                     }
 
                     // Lê Xml de retorno do envio do lote
-                    var status = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
-                    var resposta = xmlRetorno?["xMotivo"]?.InnerText ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["xMotivo"]?.InnerXml ?? string.Empty;
-                    var statusProcessamento = xmlRetorno?["retEvento"]?["infEvento"]?["cStat"]?.InnerText?.StrParaInt() ?? status.StrParaInt();
+                    var status = xmlRetorno?["cStat"]?.InnerText;
+                    var resposta = xmlRetorno?["xMotivo"]?.InnerText;
+                    var statusProcessamento = (xmlRetorno?["retEvento"]?["infEvento"]?["cStat"]?.InnerText?.StrParaInt() ?? status?.StrParaInt()).GetValueOrDefault();
                     var respostaProcessamento = xmlRetorno?["retEvento"]?["infEvento"]?["xMotivo"]?.InnerText ?? resposta;
 
                     // Salva o retorno apenas se tiver sido aceito
                     if (statusProcessamento == 135 || statusProcessamento == 136)
                     {
-                        var doc = new XmlDocument();
+                        XmlDocument doc = new XmlDocument();
                         doc.LoadXml(xmlRetorno.OuterXml);
 
-                        var fileName = string.Format("{0}{1}-cce.xml", Utils.GetCartaCorrecaoXmlPath, idCarta.ToString().PadLeft(9, '0'));
+                        var fileName = $"{ Utils.GetCartaCorrecaoXmlPath }{ idCarta.ToString().PadLeft(9, '0') }-cce.xml";
 
-                        if (File.Exists(fileName))
+                        if (System.IO.File.Exists(fileName))
                         {
-                            File.Delete(fileName);
+                            System.IO.File.Delete(fileName);
                         }
 
                         doc.Save(fileName);
@@ -756,7 +477,7 @@ namespace Glass.Data.NFeUtils
                             {
                                 LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
                                 // Salva o protocolo
-                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
+                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
                                 CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
                                 break;
                             }
@@ -764,7 +485,7 @@ namespace Glass.Data.NFeUtils
                             {
                                 LogNfDAO.Instance.NewLog(carta.IdNf, "Recepção Evento", statusProcessamento, respostaProcessamento);
                                 // Salva o protocolo
-                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
+                                CartaCorrecaoDAO.Instance.SalvaProtocolo(carta.IdCarta, xmlRetorno?["retEvento"]?["infEvento"]?["nProt"]?.InnerXml);
                                 CartaCorrecaoDAO.Instance.AtualizaSituacao(carta.IdCarta, (uint)CartaCorrecao.SituacaoEnum.Registrada);
                                 break;
                             }
@@ -797,7 +518,7 @@ namespace Glass.Data.NFeUtils
             }
             catch (Exception ex)
             {
-                LogNfDAO.Instance.NewLog(carta.IdNf, "Emissão", 1, "Falha ao enviar lote. " + ex.Message);
+                LogNfDAO.Instance.NewLog(carta.IdNf, "Emissão", 1, $"Falha ao enviar lote. { ex.Message }");
 
                 return Glass.MensagemAlerta.FormatErrorMsg("Falha ao enviar lote.", ex);
             }
@@ -833,7 +554,6 @@ namespace Glass.Data.NFeUtils
 
                         if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
                         {
-                            /* Chamado 43036. */
                             try
                             {
                                 // Verifica se o cancelamento de valores pode ser feito.
@@ -881,168 +601,15 @@ namespace Glass.Data.NFeUtils
                                     return isDateValid;
                                 };
 
-                                #region Envia o arquivo e recebe o retorno
-
-                                string uf = LojaDAO.Instance.GetElement(transaction, nf.IdLoja.Value).Uf.ToUpper();
-
-                                #region NFC-e
-
+                                // Envia o arquivo e recebe o retorno
                                 if (nf.Consumidor)
                                 {
-
-                                    if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                                    {
-                                        switch (uf)
-                                        {
-                                            case "AM":
-                                                xmlRetorno = GetWebService.PAMNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "MT":
-                                                xmlRetorno = GetWebService.PMTNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "RS":
-                                                xmlRetorno = GetWebService.PRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "AC":
-                                            case "BA":
-                                            case "DF":
-                                            case "MA":
-                                            case "PA":
-                                            case "PB":
-                                            case "RJ":
-                                            case "RN":
-                                            case "RO":
-                                                xmlRetorno = GetWebService.PSVRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        switch (uf)
-                                        {
-                                            case "AM":
-                                                xmlRetorno = GetWebService.HAMNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "MT":
-                                                xmlRetorno = GetWebService.HMTNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "RS":
-                                                xmlRetorno = GetWebService.HRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                            case "AC":
-                                            case "BA":
-                                            case "DF":
-                                            case "MA":
-                                            case "PA":
-                                            case "PB":
-                                            case "RJ":
-                                            case "RN":
-                                            case "RO":
-                                                xmlRetorno = GetWebService.HSVRSNFCRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                break;
-                                        }
-                                    }
+                                    xmlRetorno = ObterXmlRecepcaoEventoNFCe(nf, xmlLote);
                                 }
-
-                                #endregion
-
-                                #region NF-e
-
-                                //else da verificação se a nota é de consumidor (NFC-e)
                                 else
                                 {
-                                    if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS && nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                                    {
-                                        if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                                        {
-                                            switch (uf)
-                                            {
-                                                case "AM":
-                                                    xmlRetorno = GetWebService.PAMRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "CE":
-                                                    xmlRetorno = GetWebService.PCERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "MG":
-                                                    {
-                                                        var dadosMsg = new wsPMGRecepcaoEvento.nfeResultMsg();
-
-                                                        dadosMsg.Any = new XmlNode[] { xmlLote };
-                                                        dadosMsg.Any[0] = xmlLote.DocumentElement;
-                                                        var xmlDocument = new XmlDocument();
-                                                        var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retEnviNFe", string.Empty);
-                                                        var recepcaoEvento = GetWebService.PMGRecepcaoEvento(nf, null).nfeRecepcaoEvento(dadosMsg).Any;
-
-                                                        foreach (var node in recepcaoEvento)
-                                                            xmlNode.InnerXml += node.OuterXml;
-
-                                                        xmlRetorno = xmlNode;
-                                                        break;
-                                                    }
-                                                case "MT":
-                                                    xmlRetorno = GetWebService.PMTRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                //case "MS":
-                                                //    xmlRetorno = GetWebService.PMSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote); break;
-                                                case "PE":
-                                                    xmlRetorno = GetWebService.PPERecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "BA":
-                                                    xmlRetorno = GetWebService.PBARecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
-                                                    break;
-                                                case "GO":
-                                                    xmlRetorno = GetWebService.PGORecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "PR":
-                                                    xmlRetorno = GetWebService.PPRRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
-                                                    break;
-                                                case "RS":
-                                                    xmlRetorno = GetWebService.PRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "SP":
-                                                    xmlRetorno = GetWebService.PSPRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                                case "MA":
-                                                case "PA":
-                                                    xmlRetorno = GetWebService.PSVANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
-                                                    break;
-                                                case "AC":
-                                                case "AL":
-                                                case "AP":
-                                                case "DF":
-                                                case "PB":
-                                                case "PI":
-                                                case "RJ":
-                                                case "RN":
-                                                case "RO":
-                                                case "RR":
-                                                case "SC":
-                                                case "SE":
-                                                case "TO":
-                                                case "ES":
-                                                    xmlRetorno = GetWebService.PSVRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            switch (uf)
-                                            {
-                                                case "RS":
-                                                    xmlRetorno = GetWebService.HRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                    else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS)
-                                        xmlRetorno = GetWebService.PSVCRSRecepcaoEvento(nf, null).nfeRecepcaoEvento(xmlLote);
-                                    else if (nf.FormaEmissao == (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
-                                        xmlRetorno = GetWebService.PSVCANRecepcaoEvento(nf, null).nfeRecepcaoEventoNF(xmlLote);
+                                    xmlRetorno = ObterXmlRecepcaoEventoNFe(nf, xmlLote);
                                 }
-
-                                #endregion
-
-                                #endregion
 
                                 break;
                             }
@@ -1067,7 +634,7 @@ namespace Glass.Data.NFeUtils
                         #endregion
 
                         // Realiza procedimentos de cancelamento de NFe
-                        retorno = NotaFiscalDAO.Instance.RetornoEvtCancelamentoNFe(transaction, nf.IdNf, justificativa, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno, cancelarSeparacaoValores);
+                        retorno = NotaFiscalDAO.Instance.RetornoEvtCancelamentoNFe(transaction, nf.IdNf, justificativa, xmlRetorno, cancelarSeparacaoValores);
 
                         #region Salva XML de cancelamento com retorno
 
@@ -1075,7 +642,7 @@ namespace Glass.Data.NFeUtils
                         {
                             if (NotaFiscalDAO.Instance.ObtemSituacao(transaction, nf.IdNf) == (int)NotaFiscal.SituacaoEnum.Cancelada)
                             {
-                                string fileName = string.Format("{0}110111{1}-can.xml", Utils.GetNfeXmlPath, nf.ChaveAcesso);
+                                var fileName = $"{ Utils.GetNfeXmlPath }110111{ nf.ChaveAcesso }-can.xml";
 
                                 XmlDocument xmlDoc = new XmlDocument();
                                 XmlNode declarationNode = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
@@ -1088,14 +655,10 @@ namespace Glass.Data.NFeUtils
                                 xmlDoc.AppendChild(procEventoNFe);
 
                                 // Insere o xml de cancelamento no documento xml
-                                procEventoNFe.AppendChild(
-                                    procEventoNFe.OwnerDocument.ImportNode(
-                                        xmlCanc.DocumentElement, true));
+                                procEventoNFe.AppendChild(procEventoNFe.OwnerDocument.ImportNode(xmlCanc.DocumentElement, true));
 
                                 // Insere o resultado do cancelamento no documento xml
-                                procEventoNFe.AppendChild(
-                                    procEventoNFe.OwnerDocument.ImportNode(
-                                    xmlRetorno?["retEvento"] ?? xmlRetorno?.ChildNodes?[0]?["retEvento"] ?? xmlRetorno, true));
+                                procEventoNFe.AppendChild(procEventoNFe.OwnerDocument.ImportNode(xmlRetorno?["retEvento"] ?? xmlRetorno, true));
 
                                 if (File.Exists(fileName))
                                 {
@@ -1115,10 +678,7 @@ namespace Glass.Data.NFeUtils
                         situacaoNota = (NotaFiscal.SituacaoEnum)NotaFiscalDAO.Instance.ObtemSituacao(transaction, nf.IdNf);
 
                         if (situacaoNota != NotaFiscal.SituacaoEnum.Cancelada && situacaoNota != NotaFiscal.SituacaoEnum.ProcessoCancelamento)
-                        {
                             transaction.Rollback();
-                            transaction.Close();
-                        }
                         else
                         {
                             LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, string.Format("Funcionário cancelamento: {0}", UserInfo.GetUserInfo.Nome));
@@ -1131,8 +691,7 @@ namespace Glass.Data.NFeUtils
                         transaction.Rollback();
                         transaction.Close();
 
-                        LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, "Falha ao cancelar NFe. " + ex.Message + " " +
-                            (ex.InnerException != null ? ex.InnerException.Message : ""));
+                        LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, $"Falha ao cancelar NFe. { ex.Message } { ex?.InnerException?.Message ?? string.Empty }");
 
                         exception = ex;
                     }
@@ -1144,13 +703,16 @@ namespace Glass.Data.NFeUtils
                     throw exception;
                 }
 
-                if (situacaoNota != null &&
-                    situacaoNota != NotaFiscal.SituacaoEnum.Cancelada && situacaoNota != NotaFiscal.SituacaoEnum.ProcessoCancelamento)
+                if (situacaoNota != null && situacaoNota != NotaFiscal.SituacaoEnum.Cancelada && situacaoNota != NotaFiscal.SituacaoEnum.ProcessoCancelamento)
+                {
                     NotaFiscalDAO.Instance.AlteraSituacao(idNf, situacaoNota.Value);
+                }
 
                 var idsPedidoNf = NotaFiscalDAO.Instance.GetIdsPedidoNotaFiscal(null, idNf);
                 if (idsPedidoNf.Any())
+                {
                     CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(null, idsPedidoNf);
+                }
 
                 return retorno;
             }
@@ -1207,153 +769,15 @@ namespace Glass.Data.NFeUtils
                             return isDateValid;
                         };
 
-                        #region Envia o arquivo e recebe o retorno
-
-                        string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
-
-                        #region NFC-e
-
+                        // Envia o arquivo e recebe o retorno.
                         if (nf.Consumidor)
                         {
-
-                            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                            {
-                                switch (uf)
-                                {
-                                    case "AM":
-                                        xmlRetorno = GetWebService.PAMNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    case "MT":
-                                        xmlRetorno = GetWebService.PMTNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    case "RS":
-                                        xmlRetorno = GetWebService.PRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    case "AC":
-                                    case "BA":
-                                    case "DF":
-                                    case "MA":
-                                    case "PA":
-                                    case "PB":
-                                    case "RJ":
-                                    case "RN":
-                                    case "RO":
-                                        xmlRetorno = GetWebService.PSVRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                }
-                            }
-                            else
-                            {
-                                switch (uf)
-                                {
-                                    case "AM":
-                                        xmlRetorno = GetWebService.HAMNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    case "MT":
-                                        xmlRetorno = GetWebService.HMTNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    case "RS":
-                                        xmlRetorno = GetWebService.HRSNFCInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                }
-                            }
+                            xmlRetorno = ObterXmlInutilizacaoNFCe(nf, xmlInut);
                         }
-
-                        #endregion
-
-                        #region NF-e
-
                         else
                         {
-                            if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaComSCAN)
-                            {
-                                if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-                                {
-                                    switch (uf)
-                                    {
-                                        case "AM":
-                                            xmlRetorno = GetWebService.PAMInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "CE":
-                                            xmlRetorno = GetWebService.PCEInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut); break;
-                                        case "MG":
-                                            {
-                                                var dadosMsg = new wsPMGNFeInutilizacao.nfeDadosMsg();
-
-                                                dadosMsg.Any = new XmlNode[] { xmlInut };
-                                                dadosMsg.Any[0] = xmlInut.DocumentElement;
-                                                var xmlDocument = new XmlDocument();
-                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retConsSitNFe", "");
-
-                                                var retorno = GetWebService.PMGInutilizacao(nf, null).nfeInutilizacao4(dadosMsg);
-
-                                                foreach (var node in retorno[0] as XmlNode[])
-                                                    xmlNode.InnerXml += node.OuterXml;
-
-                                                xmlRetorno = xmlNode;
-                                                break;
-                                            }
-                                        case "MT":
-                                            xmlRetorno = GetWebService.PMTInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "MS":
-                                            {
-                                                var dadosMsg = new wsPMSNFeInutilizacao.nfeResultMsg();
-
-                                                dadosMsg.Any = new XmlNode[] { xmlInut };
-                                                dadosMsg.Any[0] = xmlInut.DocumentElement;
-                                                var xmlDocument = new XmlDocument();
-                                                var xmlNode = xmlDocument.CreateNode(XmlNodeType.Element, "retInutNFe", "");
-
-                                                var retorno = GetWebService.PMSInutilizacao(nf, null).nfeInutilizacaoNF(dadosMsg);
-
-                                                // Verificar se retorno.Any está funcionando corretamente
-                                                foreach (var node in retorno.Any as XmlNode[])
-                                                    xmlNode.InnerXml += node.OuterXml;
-
-                                                xmlRetorno = xmlNode;
-                                                break;
-                                            }
-                                            //xmlRetorno = GetWebService.PMSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "PE":
-                                            xmlRetorno = GetWebService.PPEInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "BA":
-                                            xmlRetorno = GetWebService.PBAInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "GO":
-                                            xmlRetorno = GetWebService.PGOInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "PR":
-                                            xmlRetorno = GetWebService.PPRInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "RS":
-                                            xmlRetorno = GetWebService.PRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "SP":
-                                            xmlRetorno = GetWebService.PSPInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "MA":
-                                        case "PA":
-                                            xmlRetorno = GetWebService.PSVANInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                        case "AC":
-                                        case "AL":
-                                        case "AP":
-                                        case "DF":
-                                        case "PB":
-                                        case "PI":
-                                        case "RJ":
-                                        case "RN":
-                                        case "RO":
-                                        case "RR":
-                                        case "SC":
-                                        case "SE":
-                                        case "TO":
-                                        case "ES":
-                                            xmlRetorno = GetWebService.PSVRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (uf)
-                                    {
-                                        case "RS":
-                                            xmlRetorno = GetWebService.HRSInutilizacao(nf, null).nfeInutilizacaoNF(xmlInut); break;
-                                    }
-                                }
-                            }
-                            else
-                                xmlRetorno = GetWebService.SCANInutilizacao(nf, null).nfeInutilizacaoNF2(xmlInut);
+                            xmlRetorno = ObterXmlInutilizacaoNFe(nf, xmlInut);
                         }
-
-                        #endregion
-
-                        #endregion
 
                         break;
                     }
@@ -1380,9 +804,9 @@ namespace Glass.Data.NFeUtils
                 #region Lê Xml de retorno do envio da inutilização)
 
                 // Realiza procedimentos de inutilização da NFe
-                NotaFiscalDAO.Instance.RetornoInutilizacaoNFe(nf.IdNf, justificativa, xmlRetorno?.ChildNodes?[0] ?? xmlRetorno);
+                NotaFiscalDAO.Instance.RetornoInutilizacaoNFe(nf.IdNf, justificativa, xmlRetorno);
 
-                string codStatus = xmlRetorno?["infInut"]?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["infInut"]?["cStat"]?.InnerXml;
+                var codStatus = xmlRetorno?["infInut"]?["cStat"]?.InnerXml;
 
                 if (codStatus == "102")
                 {
@@ -1390,18 +814,19 @@ namespace Glass.Data.NFeUtils
                 }
                 else
                 {
-                    return "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["infInut"]?["xMotivo"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["infInut"]?["xMotivo"]?.InnerXml);
+                    return "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlRetorno?["infInut"]?["xMotivo"]?.InnerXml);
                 }
 
                 #endregion
             }
             catch (Exception ex)
             {
-                LogNfDAO.Instance.NewLog(idNf, "Inutilização", 1, "Falha ao inutilizar numeração da NFe. " + ConsultaSituacao.CustomizaMensagemRejeicao(idNf, ex.Message));
+                LogNfDAO.Instance.NewLog(idNf, "Inutilização", 1, $"Falha ao inutilizar numeração da NFe. { ConsultaSituacao.CustomizaMensagemRejeicao(idNf, ex.Message) }");
 
-                /* Chamado 48738. */
                 if (ex.Message != "A numeração desta nota já foi inutilizada.")
+                {
                     NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaInutilizar);
+                }
 
                 throw ex;
             }
@@ -1409,6 +834,200 @@ namespace Glass.Data.NFeUtils
             {
                 FilaOperacoes.NotaFiscalInutilizar.ProximoFila();
             }
+        }
+
+        #endregion
+
+        #region Obtém XML de resultado dos eventos da NFe e NFCe
+
+        public static XmlNode ObterXmlConsultaCadastroContribuinte(string uf, XmlDocument xmlConsultaCadastro)
+        {
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                GetWebService.ConsultaCadastroProducao(uf).consultaCadastro(xmlConsultaCadastro);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                GetWebService.ConsultaCadastroHomologacao(uf).consultaCadastro(xmlConsultaCadastro);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlAutorizacaoNFe(NotaFiscal notaFiscal, XmlDocument xmlAutorizacaoNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeAutorizacaoProducao(notaFiscal, null, uf).nfeAutorizacaoLote(xmlAutorizacaoNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeAutorizacaoHomologacao(notaFiscal, null, uf).nfeAutorizacaoLote(xmlAutorizacaoNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlConsultaProtocoloNFe(NotaFiscal notaFiscal, XmlDocument xmlConsultaProtocoloNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeConsultaProtocoloProducao(notaFiscal, null, uf).nfeConsultaNF(xmlConsultaProtocoloNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeConsultaProtocoloHomologacao(notaFiscal, null, uf).nfeConsultaNF(xmlConsultaProtocoloNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlInutilizacaoNFe(NotaFiscal notaFiscal, XmlDocument xmlInutilizacaoNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeInutilizacaoProducao(notaFiscal, null, uf).nfeInutilizacaoNF(xmlInutilizacaoNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeInutilizacaoHomologacao(notaFiscal, null, uf).nfeInutilizacaoNF(xmlInutilizacaoNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlRecepcaoEventoNFe(NotaFiscal notaFiscal, XmlDocument xmlRecepcaoEventoNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeRecepcaoEventoProducao(notaFiscal, null, uf).nfeRecepcaoEvento(xmlRecepcaoEventoNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeRecepcaoEventoHomologacao(notaFiscal, null, uf).nfeRecepcaoEvento(xmlRecepcaoEventoNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlRetornoAutorizacaoNFe(NotaFiscal notaFiscal, XmlDocument xmlRetornoAutorizacaoNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeRetornoAutorizacaoProducao(notaFiscal, null, uf).nfeRetAutorizacaoLote(xmlRetornoAutorizacaoNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeRetornoAutorizacaoHomologacao(notaFiscal, null, uf).nfeRetAutorizacaoLote(xmlRetornoAutorizacaoNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlStatusServicoNFe(NotaFiscal notaFiscal, XmlDocument xmlStatusServicoNFe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFeStatusServicoProducao(notaFiscal, null, uf).nfeStatusServicoNF(xmlStatusServicoNFe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFeStatusServicoHomologacao(notaFiscal, null, uf).nfeStatusServicoNF(xmlStatusServicoNFe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlAutorizacaoNFCe(NotaFiscal notaFiscal, XmlDocument xmlAutorizacaoNFCe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFCeAutorizacaoProducao(notaFiscal, null, uf).nfeAutorizacaoLote(xmlAutorizacaoNFCe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFCeAutorizacaoHomologacao(notaFiscal, null, uf).nfeAutorizacaoLote(xmlAutorizacaoNFCe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlConsultaProtocoloNFCe(NotaFiscal notaFiscal, XmlDocument xmlConsultaProtocoloNFCe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFCeConsultaProtocoloProducao(notaFiscal, null, uf).nfeConsultaNF(xmlConsultaProtocoloNFCe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFCeConsultaProtocoloHomologacao(notaFiscal, null, uf).nfeConsultaNF(xmlConsultaProtocoloNFCe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlInutilizacaoNFCe(NotaFiscal notaFiscal, XmlDocument xmlInutilizacaoNFCe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFCeInutilizacaoProducao(notaFiscal, null, uf).nfeInutilizacaoNF(xmlInutilizacaoNFCe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFCeInutilizacaoHomologacao(notaFiscal, null, uf).nfeInutilizacaoNF(xmlInutilizacaoNFCe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlRecepcaoEventoNFCe(NotaFiscal notaFiscal, XmlDocument xmlRecepcaoEventoNFCe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFCeRecepcaoEventoProducao(notaFiscal, null, uf).nfeRecepcaoEvento(xmlRecepcaoEventoNFCe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFCeRecepcaoEventoHomologacao(notaFiscal, null, uf).nfeRecepcaoEvento(xmlRecepcaoEventoNFCe);
+            }
+
+            return null;
+        }
+
+        public static XmlNode ObterXmlRetornoAutorizacaoNFCe(NotaFiscal notaFiscal, XmlDocument xmlRetornoAutorizacaoNFCe)
+        {
+            var uf = LojaDAO.Instance.GetUf(notaFiscal.IdLoja.Value)?.ToUpper() ?? string.Empty;
+
+            if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
+            {
+                return GetWebService.NFCeRetornoAutorizacaoProducao(notaFiscal, null, uf).nfeRetAutorizacaoLote(xmlRetornoAutorizacaoNFCe);
+            }
+            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
+            {
+                return GetWebService.NFCeRetornoAutorizacaoHomologacao(notaFiscal, null, uf).nfeRetAutorizacaoLote(xmlRetornoAutorizacaoNFCe);
+            }
+
+            return null;
         }
 
         #endregion
