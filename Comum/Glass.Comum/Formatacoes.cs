@@ -482,8 +482,8 @@ namespace Glass
         /// <param name="str"></param>
         public static string TrataStringDocFiscal(string str, bool telefone)
         {
-            if (str == null || str.Trim() == String.Empty)
-                return String.Empty;
+            if (str == null || str.Trim() == string.Empty)
+                return string.Empty;
 
             int cont = 0;
 
@@ -508,7 +508,7 @@ namespace Glass
             str = str.Replace("%", "").Replace("´", "").Replace("`", "").Replace("~", "").Replace("^", "").Replace("&", "&amp;");
             str = str.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&#39;");
             str = str.Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace("¹", "1").Replace("²", "2").Replace("³", "3");
-            str = str.Replace("\\", "").Replace("º", "o").Replace("°", "o").Replace("ª", "a");
+            str = str.Replace("\\", "").Replace("º", "o").Replace("°", "o").Replace("ª", "a").Replace("–", "");
 
             return str.Trim();
         }
@@ -520,8 +520,8 @@ namespace Glass
         /// <returns></returns>
         public static string TrataTextoDocFiscal(string str)
         {
-            if (str == null || str.Trim() == String.Empty)
-                return String.Empty;
+            if (str == null || str.Trim() == string.Empty)
+                return string.Empty;
 
             // Remove espaços duplos da string
             while (str.IndexOf("  ") > 0)
@@ -537,7 +537,7 @@ namespace Glass
             str = str.Replace("´", "").Replace("`", "").Replace("~", "").Replace("^", "").Replace("&", "&amp;");
             str = str.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&#39;");
             str = str.Replace("\t", "").Replace("\r", "").Replace("\n", "").Replace("¹", "1").Replace("²", "2").Replace("³", "3");
-            str = str.Replace("º", "o").Replace("ª", "a");
+            str = str.Replace("º", "o").Replace("ª", "a").Replace("-", "").Replace("–", "");
 
             return str.Trim();
         }

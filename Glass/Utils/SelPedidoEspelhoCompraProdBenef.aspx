@@ -100,7 +100,7 @@
             
             if (retorno.split(';')[0] == null || retorno.split(';')[0] == "") {
                 alert("Falha ao gerar compra." +
-                    "\nPedidos que não geraram compra: " + retorno.split(';')[2]);
+                    "\nJá foram geradas compras anteriormente para os seguintes pedidos: " + retorno.split(';')[2]);
                     
                 pedidos = "";
                 fornecedor = "";

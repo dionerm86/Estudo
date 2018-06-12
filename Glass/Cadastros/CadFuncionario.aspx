@@ -596,8 +596,8 @@
                                             <asp:Label ID="Label3" runat="server" Text="Loja"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name" AppendDataBoundItems="true"
-                                                DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>'>
+                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name" AppendDataBoundItems="true" 
+                                                OnLoad="drpLojaEdit_Load" DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
                                         </td>

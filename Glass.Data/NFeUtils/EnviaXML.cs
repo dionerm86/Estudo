@@ -208,9 +208,15 @@ namespace Glass.Data.NFeUtils
                     {
                         if (i == 2)
                         {
-                            LogNfDAO.Instance.NewLog(idNf, "Emissão", 1, "Falha ao enviar lote. " + ex.Message);
+                            var mensagemErro = ex.Message;
+
+                            if(mensagemErro.Contains("The remote name could not be resolved"))
+                                mensagemErro = @"Serviço da receita federal indisponível para emissão de NFe.
+                                    (é possível acompanhar a disponibilidade dos serviços  pelo site: www.nfe.fazenda.gov.br, clicando na opção “Consultar Disponibilidade“";
+
+                            LogNfDAO.Instance.NewLog(idNf, "Emissão", 1, "Falha ao enviar lote."  + mensagemErro);
                             NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
-                            return "Falha ao enviar lote. " + ex.Message;
+                            return "Falha ao enviar lote. " + mensagemErro;
                         }
                     }
                     finally
