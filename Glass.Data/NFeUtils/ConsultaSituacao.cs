@@ -424,6 +424,8 @@ namespace Glass.Data.NFeUtils
 
             XmlNode xmlRetorno = null;
 
+            string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
+
             try
             {
                 // Altera o callback de validação do WebService
@@ -439,8 +441,6 @@ namespace Glass.Data.NFeUtils
                 };
 
                 #region Envia o arquivo e recebe o retorno
-
-                string uf = LojaDAO.Instance.GetElement(nf.IdLoja.Value).Uf.ToUpper();
 
                 if (nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCRS && nf.FormaEmissao != (int)NotaFiscal.TipoEmissao.ContingenciaSVCAN)
                 {
@@ -558,8 +558,22 @@ namespace Glass.Data.NFeUtils
 
             var codStatus = xmlRetorno?["cStat"]?.InnerXml ?? xmlRetorno?.ChildNodes?[0]?["protNFe"]?["infProt"]?["cStat"]?.InnerXml ?? "0";
 
+            XmlNode xmlRetConsSit;
+
+            switch (uf)
+            {
+                case "MG":
+                case "MS":
+                    xmlRetConsSit = xmlRetorno?.ChildNodes?[0];
+                    break;
+
+                default:
+                    xmlRetConsSit = xmlRetorno;
+                    break;
+            }
+
             // Executa ações de acordo com o retorno dado
-            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetorno);
+            NotaFiscalDAO.Instance.RetornoConsSitNFe(nf.IdNf, xmlRetConsSit);
 
             if (codStatus == "100" || codStatus == "150") // NFe Autorizada
                 return "NFe está autorizada para uso.";
