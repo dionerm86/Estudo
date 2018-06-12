@@ -258,5 +258,14 @@ namespace Glass.UI.Web.Cadastros
                 }
             }
         }
+
+        protected void drpLojaEdit_Load(object sender, EventArgs e)
+        {
+            var idLoja = FuncionarioDAO.Instance.ObtemIdLoja(Request["idFunc"].StrParaUint());
+            var loja = LojaDAO.Instance.GetElementByPrimaryKey(idLoja);
+
+            if (loja.Situacao == Situacao.Inativo)
+                ((DropDownList)sender).Items.Add(new ListItem(loja.NomeFantasia, loja.IdLoja.ToString()));
+        }
     }
 }

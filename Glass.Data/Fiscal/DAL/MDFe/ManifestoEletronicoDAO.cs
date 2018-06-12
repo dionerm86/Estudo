@@ -1177,6 +1177,20 @@ namespace Glass.Data.DAL
                         else if (contratante.IdFornecedor > 0)
                         {
                             var fornec = FornecedorDAO.Instance.GetElement((uint)contratante.IdFornecedor.GetValueOrDefault());
+
+                            if (fornec.TipoPessoa.ToUpper() == "J")
+                            {
+                                // Verifica se o CNPJ é válido
+                                if (!Glass.Validacoes.ValidaCnpj(fornec.CpfCnpj))
+                                    throw new Exception("O CNPJ do Fornecedor é inválido. Altere no cadastro de fornecedores.");
+                            }
+                            else
+                            {
+                                // Verifica se o CPF é válido
+                                if (!Glass.Validacoes.ValidaCpf(fornec.CpfCnpj))
+                                    throw new Exception("O CPF do Fornecedor é inválido. Altere no cadastro de fornecedores.");
+                            }
+                            
                             if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 11)
                                 ManipulacaoXml.SetNode(doc, infResp, "CPF", Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).PadLeft(11, '0'));
                             else if (Formatacoes.TrataStringDocFiscal(fornec.CpfCnpj).Length == 14)
@@ -1185,6 +1199,20 @@ namespace Glass.Data.DAL
                         else if (contratante.IdCliente > 0)
                         {
                             var cliente = ClienteDAO.Instance.GetElement((uint)contratante.IdCliente.GetValueOrDefault());
+
+                            if (cliente.TipoPessoa.ToUpper() == "J")
+                            {
+                                // Verifica se o CNPJ é válido
+                                if (!Glass.Validacoes.ValidaCnpj(cliente.CpfCnpj))
+                                    throw new Exception("O CNPJ do Cliente é inválido. Altere no cadastro de clientes.");
+                            }
+                            else
+                            {
+                                // Verifica se o CPF é válido
+                                if (!Glass.Validacoes.ValidaCpf(cliente.CpfCnpj))
+                                    throw new Exception("O CPF do Cliente é inválido. Altere no cadastro de clientes.");
+                            }
+
                             if (Formatacoes.TrataStringDocFiscal(cliente.CpfCnpj).Length == 11)
                                 ManipulacaoXml.SetNode(doc, infResp, "CPF", Formatacoes.TrataStringDocFiscal(cliente.CpfCnpj).PadLeft(11, '0'));
                             else if (Formatacoes.TrataStringDocFiscal(cliente.CpfCnpj).Length == 14)

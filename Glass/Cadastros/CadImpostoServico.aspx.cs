@@ -3,6 +3,7 @@ using System.Web.UI.WebControls;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -128,6 +129,14 @@ namespace Glass.UI.Web.Cadastros
                 idFornec = ImpostoServDAO.Instance.ObtemIdFornec(Glass.Conversoes.StrParaUint(Request["idImpostoServ"]));
     
             return idFornec;
+        }
+
+        protected void ddlPlanoContaEdit_Load(object sender, EventArgs e)
+        {
+            var idConta = ImpostoServDAO.Instance.ObtemIdConta(null, Request["idImpostoServ"].StrParaInt());
+            var planoConta = PlanoContasDAO.Instance.GetElementByPrimaryKey(idConta);
+            if (planoConta.Situacao == Situacao.Inativo)
+                ((DropDownList)sender).Items.Add(new ListItem(planoConta.Descricao, planoConta.IdConta.ToString()));
         }
     }
 }
