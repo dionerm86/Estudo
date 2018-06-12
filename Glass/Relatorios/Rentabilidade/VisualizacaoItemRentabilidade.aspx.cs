@@ -46,24 +46,40 @@ namespace Glass.UI.Web.Relatorios.Rentabilidade
             switch ((Tipo ?? "").ToLower())
             {
                 case "pedido": 
-                    return serviceLocator
-                        .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.Pedido>>()
-                        .ObterItem(IdItem);
+
+                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedido)
+                        return serviceLocator
+                            .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.Pedido>>()
+                            .ObterItem(IdItem);
+
+                    return null;
 
                 case "orcamento":
-                    return serviceLocator
-                        .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.Orcamento>>()
-                        .ObterItem(IdItem);
+
+                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadeOrcamento)
+                        return serviceLocator
+                            .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.Orcamento>>()
+                            .ObterItem(IdItem);
+
+                    return null;
 
                 case "pedidoespelho":
-                    return serviceLocator
-                        .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.PedidoEspelho>>()
-                        .ObterItem(IdItem);
+
+                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedidoEspelho)
+                        return serviceLocator
+                            .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.PedidoEspelho>>()
+                            .ObterItem(IdItem);
+
+                    return null;
 
                 case "notafiscal":
-                    return serviceLocator
-                       .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.NotaFiscal>>()
-                       .ObterItem(IdItem);
+
+                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadeNotaFiscal)
+                        return serviceLocator
+                           .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.NotaFiscal>>()
+                           .ObterItem(IdItem);
+
+                    return null;
             }
 
             return null;

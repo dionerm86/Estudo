@@ -7,12 +7,20 @@
         for (var i = 0; i < trs.length; i++) {
             var tr = trs[i];
 
-            if (tr.getAttribute("pai") == idPai) {
+            var paiAttr = tr.getAttribute("pai");
+            
+            if (paiAttr != undefined && paiAttr.startsWith(idPai)) {
                 var item = $(tr);
 
                 if (item.is(':visible')) {
+
+                    var img = item.find("img");
+                    if (img != null) {
+                        img.attr("src", "../../images/mais.gif")
+                    }
+
                     item.hide();
-                } else {
+                } else if (paiAttr == idPai) {
                     $(tr).show();
                 }
             }
@@ -94,7 +102,7 @@ var ItemRentabilidadeDataSourceView = function (nome, itemRentabilidadeDataSourc
 
                     var linhas2 = this.criarLinhas(id, item.Itens, nivel + 1);
 
-                    if (nivel == 1) {
+                    if (nivel >= 1) {
                         var opcoes = tr.find("td").first();
                         opcoes.append($("<a href=\"#\" onclick=\"ItemRentabilidadeDataSourceViewHelper.exibirSubItens(this, '" + id + "')\"><img src=\"../../images/mais.gif\" /></a>"));
                     }
@@ -103,7 +111,10 @@ var ItemRentabilidadeDataSourceView = function (nome, itemRentabilidadeDataSourc
                         var linha = linhas2[j];
 
                         linha.attr("class", linha.attr("class") + " sub-item" + nivel);
-                        linha.attr("pai", id);
+                        if (linha.attr("pai") == undefined) {
+                            linha.attr("pai", id);
+                        }
+
                         linhas.push(linha);
                     }
                 }

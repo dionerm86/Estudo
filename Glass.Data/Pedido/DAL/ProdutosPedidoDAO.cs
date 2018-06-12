@@ -5041,7 +5041,7 @@ namespace Glass.Data.DAL
         public IList<ProdutosPedido> ObterProdutosParaRentabilidade(GDA.GDASession sessao, uint idPedido)
         {
             return objPersistence.LoadData(sessao, 
-                "SELECT * FROM produtos_pedido WHERE IdPedido=?id AND InvisivelPedido=0 AND IdProdPedParent IS NULL", 
+                "SELECT * FROM produtos_pedido WHERE IdPedido=?id AND InvisivelPedido=0", 
                 new GDAParameter("?id", idPedido))
                 .ToList();
         }
