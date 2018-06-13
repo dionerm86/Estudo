@@ -9196,6 +9196,9 @@ namespace Glass.Data.DAL
 
             LimparEmitenteDestinatario(session, objUpdate);
 
+            if (old.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
+                throw new Exception("Está nota já está autorizada");
+
             // Não permite inserir nota fiscal se a loja informada não existir
             if (objUpdate.IdLoja.GetValueOrDefault() == 0 || (objUpdate.IdLoja > 0 && !LojaDAO.Instance.Exists(session, objUpdate.IdLoja)))
                 throw new Exception("A loja informada não existe.");

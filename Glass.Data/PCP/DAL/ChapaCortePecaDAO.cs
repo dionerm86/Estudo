@@ -286,7 +286,7 @@ namespace Glass.Data.DAL
             var idProdImpressaoChapa = ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
             var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, (uint)idProdImpressaoChapa);
             // Obtém a movimentação de estoque associada ao produto de produção.
-            var idsMovEstoque = MovEstoqueDAO.Instance.ObtemMovEstoqueChapaCortePeca(sessao, idProdPedProducao, numEtiquetaChapa);
+            var idsMovEstoque = MovEstoqueDAO.Instance.ObtemMovEstoqueChapaCortePeca(sessao, idProdPedProducao, numEtiquetaChapa ?? "");
 
             #region Associa a movimentação de estoque da chapa à outro produto de produção
 
