@@ -2945,7 +2945,7 @@ namespace Glass.Data.DAL
             if (File.Exists(System.Web.HttpContext.Current.Server.MapPath(ppe.ImagemUrlSalvar)))
                 return true;
 
-            for (int i = 1; i <= 10; i++)
+            for (int i = 0; i <= 10; i++)
             {
                 ppe.Item = i;
                 if (File.Exists(System.Web.HttpContext.Current.Server.MapPath(ppe.ImagemUrlSalvarItem)))
