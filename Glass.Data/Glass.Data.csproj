@@ -471,6 +471,8 @@
     <Compile Include="Fiscal\DAL\MargemLucroCnaeMTDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalCteDAO.cs" />
     <Compile Include="Fiscal\DAL\ObsLancFiscalNfDAO.cs" />
+    <Compile Include="Fiscal\DAL\ProdutoNfCustoDAO.cs" />
+    <Compile Include="Fiscal\DAL\ProdutoNfCustoRentabilidadeDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfRentabilidadeDAO.cs" />
     <Compile Include="Fiscal\ICalculadoraImposto.cs" />
     <Compile Include="Fiscal\ICalculoImpostoResultado.cs" />
@@ -501,6 +503,8 @@
     <Compile Include="Fiscal\Model\NotaFiscalRentabilidade.cs" />
     <Compile Include="Fiscal\Model\ObsLancFiscalCte.cs" />
     <Compile Include="Fiscal\Model\PagtoNotaFiscal.cs" />
+    <Compile Include="Fiscal\Model\ProdutoNfCusto.cs" />
+    <Compile Include="Fiscal\Model\ProdutoNfCustoRentabilidade.cs" />
     <Compile Include="Fiscal\Model\ProdutoNfRentabilidade.cs" />
     <Compile Include="Fiscal\Model\TabelaCodigoReceita.cs" />
     <Compile Include="Fiscal\Model\TabelaSped.cs" />
@@ -754,6 +758,7 @@
     <Compile Include="PCP\Model\ClassificacaoRoteiroProducao.cs" />
     <Compile Include="PCP\Model\ClassificacaoSubgrupo.cs" />
     <Compile Include="PCP\Model\ContadorPlanoCorte.cs" />
+    <Compile Include="PCP\Model\CustoRealProdutoPedidoEspelho.cs" />
     <Compile Include="PCP\Model\ExpedicaoChapa.cs" />
     <Compile Include="PCP\Model\Fornada.cs" />
     <Compile Include="PCP\Model\LayoutPecaOtimizada.cs" />
