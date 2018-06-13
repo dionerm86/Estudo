@@ -230,8 +230,7 @@ namespace Glass.Global
             var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, idProd);
             decimal custoCompraProd = ProdutoDAO.Instance.ObtemCustoCompra(sessao, idProd);
 
-            Single decimosAltura = altura - (int)altura;
-            Single alturaCalc = altura;
+            var alturaCalc = altura;
 
             if (!Glass.Data.DAL.GrupoProdDAO.Instance.IsAluminio(idGrupoProd))
                 arredondarAluminio = 0;
@@ -370,6 +369,56 @@ namespace Glass.Global
 
                 default:
                     retorno = valorUnit * (decimal)qtde;
+                    break;
+            }
+
+            return Math.Round(retorno, 2);
+        }
+
+        /// <summary>
+        /// Realiza o calculo do valor de custo.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="tipoCalc">Tipo de cálculo que será usado.</param>
+        /// <param name="altura">Altura.</param>
+        /// <param name="largura">Largura.</param>
+        /// <param name="qtde">Quantidade.</param>
+        /// <param name="totM2">Área total em m².</param>
+        /// <param name="valorUnit">Valor unitário.</param>
+        /// <param name="alturaBenef">Altura do beneficiamento.</param>
+        /// <param name="larguraBenef">Largura do beneficiamento.</param>
+        /// <returns></returns>
+        public static decimal CalcularValorCusto(
+            GDASession sessao, int tipoCalc, float altura, int largura, float qtde, 
+            float totM2, decimal valorUnit, int alturaBenef, int larguraBenef)
+        {
+            decimal retorno = 0;
+            switch ((TipoCalculoGrupoProd)tipoCalc)
+            {
+                case TipoCalculoGrupoProd.M2:
+                case TipoCalculoGrupoProd.M2Direto:
+                    retorno = valorUnit / (decimal)totM2;
+                    break;
+
+                case TipoCalculoGrupoProd.ML:
+                    retorno = valorUnit / (decimal)(altura * qtde);
+                    break;
+
+                case Glass.Data.Model.TipoCalculoGrupoProd.MLAL0:
+                case Glass.Data.Model.TipoCalculoGrupoProd.MLAL05:
+                case Glass.Data.Model.TipoCalculoGrupoProd.MLAL1:
+                case Glass.Data.Model.TipoCalculoGrupoProd.MLAL6:
+                    decimal total = 0, custo = 0;
+                    CalcTamanhoAluminio(sessao, 0, ref altura, tipoCalc, 0, valorUnit, qtde, ref total, ref custo);
+                    retorno = custo;
+                    break;
+
+                case Glass.Data.Model.TipoCalculoGrupoProd.Perimetro:
+                    retorno = (valorUnit / (decimal)((altura * alturaBenef / 1000) + (largura * larguraBenef / 1000))) * (decimal)qtde;
+                    break;
+
+                default:
+                    retorno = valorUnit / (decimal)qtde;
                     break;
             }
 

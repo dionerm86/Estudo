@@ -35,7 +35,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdNf"></param>
-        public void ApagarPorProdutoPedido(GDA.GDASession sessao, uint idProdNf)
+        public void ApagarPorProdutoNf(GDA.GDASession sessao, uint idProdNf)
         {
             objPersistence.ExecuteCommand(sessao, "DELETE FROM produto_nf_rentabilidade WHERE IdProdNf=?id", new GDA.GDAParameter("?id", idProdNf));
         }

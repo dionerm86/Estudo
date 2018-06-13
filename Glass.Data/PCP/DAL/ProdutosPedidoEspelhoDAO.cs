@@ -3436,6 +3436,123 @@ namespace Glass.Data.DAL
                 new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
                 new GDA.GDAParameter("?id", idProdPed));
         }
+        
+        /// <summary>
+        /// Recupera os custos reais dos produtos dos pedidos associados
+        /// com os identificadores informados.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idsPedido"></param>
+        /// <returns></returns>
+        public IEnumerable<CustoRealProdutoPedidoEspelho> CalcularCustoRealPorPedido(GDASession sessao, IEnumerable<int> idsPedido)
+        {
+            var ids = string.Join(",", idsPedido.Distinct());
+
+            if (string.IsNullOrEmpty(ids)) yield break;
+
+            // Recupera a relação dos produtos do pedido associado a chapa de corte
+            var produtosPedidoChapaCorte = objPersistence.LoadResult(sessao,
+                $@"SELECT 
+	                piPeca.IdPedido,
+	                piPeca.IdProdPed AS IdProdPedEsp,
+	                MAX(pp.IdProdPed) AS IdProdPed, 
+                    piChapa.IdProdNf, 
+                    MAX(pnf.IdProd) AS IdProd, 
+                    MAX(p.IdGrupoProd) AS IdGrupoProd,
+                    MAX(p.IdSubgrupoProd) AS IdSubGrupoProd,
+                    MAX(pnf.Altura) AS Altura,
+                    MAX(pnf.Largura) AS Largura,
+                    MAX(pnf.TotM) / MAX(pnf.Qtde) AS TotM,
+                    MAX(pnf.ValorUnitario) AS ValorUnitario, COUNT(*) Qtde
+                FROM chapa_corte_peca ccp
+                INNER JOIN produto_impressao piPeca ON (ccp.IdProdImpressaoPeca=piPeca.IdProdImpressao)
+                INNER JOIN produto_impressao piChapa ON (ccp.IdProdImpressaoChapa=piChapa.IdProdImpressao)
+                INNER JOIN produtos_nf pnf ON (piChapa.IdProdNf=pnf.IdProdNf)
+                INNER JOIN produtos_pedido pp ON (piPeca.IdProdPed=pp.IdProdPedEsp)
+                INNER JOIN produto p ON (pnf.IdProd=p.IdProd)
+                WHERE piPeca.IdPedido={ids} AND piPeca.Cancelado=0
+                GROUP BY IdPedido, IdProdPedEsp, IdProdNf")
+                .Select(f => new
+                {
+                    IdPedido = f.GetInt32("IdPedido"),
+                    IdProdPedEsp = f.GetInt32("IdProdPedEsp"),
+                    IdProdPed = f.GetInt32("IdProdPed"),
+                    IdProdNf = f.GetInt32("IdProdNf"),
+                    IdProd = f.GetInt32("IdProd"),
+                    IdGrupoProd = f.GetInt32("IdGrupoProd"),
+                    IdSubgrupoProd = (int?)f["IdSubgrupoProd"],
+                    Altura = f.GetFloat("Altura"),
+                    Largura = f.GetInt32("Largura"),
+                    TotM = f.GetFloat("TotM"),
+                    ValorUnitario = f.GetDecimal("ValorUnitario"),
+                    Qtde = f.GetInt32("Qtde")
+                }).ToList();
+
+            var produtosPedido1 = objPersistence.LoadResult(sessao,
+                $@"SELECT 
+                        ppe.IdPedido,
+                        ppe.IdProdPed AS IdProdPedEsp,
+                        pp.IdProdPed,
+                        ppe.Qtde,
+                        p.CustoCompra,
+                        p.IdGrupoProd,
+                        p.IdSubgrupoProd
+                   FROM produtos_pedido_espelho ppe
+                   INNER JOIN produtos_pedido pp ON (ppe.IdProdPed=pp.IdProdPedEsp)
+                   INNER JOIN produto p ON (ppe.IdProd=p.IdProd)
+                   WHERE ppe.IdPedido IN ({ids})")
+                   .Select(f => new
+                   {
+                       IdPedido = f.GetInt32("IdPedido"),
+                       IdProdPedEsp = f.GetInt32("IdProdPedEsp"),
+                       IdProdPed = f.GetInt32("IdProdPed"),
+                       Qtde = f.GetInt32("Qtde"),
+                       IdGrupoProd = f.GetInt32("IdGrupoProd"),
+                       IdSubgrupoProd = (int?)f["IdSubgrupoProd"],
+                       CustoCompra = f.GetDecimal("CustoCompra")
+                   }).ToList();
+
+            foreach(var produtosPedido in produtosPedido1.GroupBy(f => f.IdPedido))
+            {
+                foreach (var produtoPedido in produtosPedido)
+                {
+                    var produtosChapaCorte = produtosPedidoChapaCorte.Where(f => f.IdProdPedEsp == produtoPedido.IdProdPedEsp);
+
+                    if (produtosChapaCorte.Any())
+                    {
+                        foreach(var produtoChapaCorte in produtosChapaCorte)
+                        {
+                            // Recupera o tipo de calculo do produto do pedido
+                            var tipoCalculo = DAL.GrupoProdDAO.Instance.TipoCalculo(produtoPedido.IdGrupoProd, produtoPedido.IdSubgrupoProd);
+
+                            var valorCusto = CalculosFluxo.CalcularValorCusto(sessao, 
+                                tipoCalculo,
+                                produtoChapaCorte.Altura, produtoChapaCorte.Largura, 1,
+                                produtoChapaCorte.TotM, produtoChapaCorte.ValorUnitario, 2, 2);
+
+                            yield return new CustoRealProdutoPedidoEspelho
+                            {
+                                IdPedido = produtosPedido.Key,
+                                IdProdPedEsp = produtoChapaCorte.IdProdPedEsp,
+                                IdProdPed = produtoChapaCorte.IdProdPed,
+                                IdProdNf = produtoChapaCorte.IdProdNf,
+                                Custo = valorCusto,
+                                Qtde = produtoChapaCorte.Qtde
+                            };
+                        }
+                    }
+                    else
+                        yield return new CustoRealProdutoPedidoEspelho
+                        {
+                            IdPedido = produtosPedido.Key,
+                            IdProdPedEsp = produtoPedido.IdProdPedEsp,
+                            IdProdPed = produtoPedido.IdProdPed,
+                            Custo = produtoPedido.CustoCompra,
+                            Qtde = produtoPedido.Qtde
+                        };
+                }
+            }
+        }
 
         #endregion
 

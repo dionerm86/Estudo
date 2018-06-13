@@ -53,6 +53,7 @@ namespace Glass.Fiscal.Negocios.Componentes
 
             var itemNotaFiscal = item as IItemRentabilidade<Data.Model.NotaFiscal>;
             var itemProdutoNf = item as IItemRentabilidade<Data.Model.ProdutosNf>;
+            var itemProdutoNfCusto = item as IItemRentabilidade<Data.Model.ProdutoNfCusto>;
 
             if (itemNotaFiscal != null)
             {
@@ -78,14 +79,31 @@ namespace Glass.Fiscal.Negocios.Componentes
                     (x, y) => (int)x.Tipo == y.Tipo && x.IdRegistro == y.IdRegistro,
                     (x, y) => y.Valor = x.Valor);
 
-                var produtoPedido = itemProdutoNf.Proprietario;
+                var produtoNf = itemProdutoNf.Proprietario;
 
                 // Registra o evento para salvar o dados do produto da nota fiscal quando o resultado for salvo
                 resultado.Salvando += (sender, e) =>
                 {
-                    var rentabilidade = produtoPedido.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
-                    var percentual = produtoPedido.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.ProdutosNfDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoPedido.IdProdNf, percentual, rentabilidade);
+                    var rentabilidade = produtoNf.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
+                    var percentual = produtoNf.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
+                    Data.DAL.ProdutosNfDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoNf.IdProdNf, percentual, rentabilidade);
+                };
+            }
+            else if (itemProdutoNfCusto != null)
+            {
+                resultado = MontarResultado
+                    ((IItemRentabilidadeComReferencias<Data.Model.ProdutoNfCustoRentabilidade>)item,
+                    (x, y) => (int)x.Tipo == y.Tipo && x.IdRegistro == y.IdRegistro,
+                    (x, y) => y.Valor = x.Valor);
+
+                var produtoNfCusto = itemProdutoNfCusto.Proprietario;
+
+                // Registra o evento para salvar o dados do custo do produto da nota fiscal quando o resultado for salvo
+                resultado.Salvando += (sender, e) =>
+                {
+                    var rentabilidade = produtoNfCusto.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
+                    var percentual = produtoNfCusto.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
+                    Data.DAL.ProdutoNfCustoDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoNfCusto.IdProdNfCusto, percentual, rentabilidade);
                 };
             }
             else
@@ -115,57 +133,58 @@ namespace Glass.Fiscal.Negocios.Componentes
         }
 
         /// <summary>
-        /// Recupera um item de rentabilidade para o produto pedido informado.
+        /// Recupera o item da rentabilidade para o custo do produto da nota fiscal.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="produtoNf"></param>
+        /// <param name="produtoNfCusto"></param>
         /// <param name="prazoMedio"></param>
-        /// <param name="produtos"></param>
+        /// <param name="produto"></param>
         /// <returns></returns>
-        private ItemRentabilidade<Data.Model.ProdutosNf, Data.Model.ProdutoNfRentabilidade> ObterItemProdutoNf(
+        private IItemRentabilidade<Data.Model.ProdutoNfCusto> ObterItemProdutoNfCusto(
             GDA.GDASession sessao, Data.Model.ProdutosNf produtoNf,
-            int prazoMedio, IEnumerable<Data.Model.Produto> produtos)
+            Data.Model.ProdutoNfCusto produtoNfCusto, int prazoMedio, Data.Model.Produto produto)
         {
-            var registros = new Lazy<IList<Data.Model.ProdutoNfRentabilidade>>(
-                () => Data.DAL.ProdutoNfRentabilidadeDAO.Instance.ObterPorProdutoNf(sessao, produtoNf.IdProdNf));
+            var registros = new Lazy<IList<Data.Model.ProdutoNfCustoRentabilidade>>(
+                    () => Data.DAL.ProdutoNfCustoRentabilidadeDAO.Instance.ObterPorProdutoNf(sessao, produtoNfCusto.IdProdNfCusto));
 
-            var criarRegistro = new CriadorRegistroRentabilidade((tipo, nome, valor) =>
-            {
-                var idRegistro = ProvedorDescritoresRegistro.ObterRegistro(tipo, nome);
-                var registro = registros.Value.FirstOrDefault(f => f.Tipo == (int)tipo && f.IdRegistro == idRegistro);
-
-                if (registro == null)
+            var criarRegistro = new CriadorRegistroRentabilidade(
+                (tipo, nome, valor) =>
                 {
-                    registro = new Data.Model.ProdutoNfRentabilidade
+                    var idRegistro = ProvedorDescritoresRegistro.ObterRegistro(tipo, nome);
+                    var registro = registros.Value.FirstOrDefault(f => f.Tipo == (int)tipo && f.IdRegistro == idRegistro);
+
+                    if (registro == null)
                     {
-                        IdProdNf = (int)produtoNf.IdProdNf,
-                        IdRegistro = idRegistro,
-                        Tipo = (int)tipo,
-                        Valor = valor
-                    };
-                    registros.Value.Add(registro);
-                }
-                else
-                    registro.Valor = valor;
+                        registro = new Data.Model.ProdutoNfCustoRentabilidade
+                        {
+                            IdProdNfCusto = produtoNfCusto.IdProdNfCusto,
+                            IdRegistro = idRegistro,
+                            Tipo = (int)tipo,
+                            Valor = valor
+                        };
+                        registros.Value.Add(registro);
+                    }
+                    else
+                        registro.Valor = valor;
 
-                return ConverterParaRegistroRentabilidade(registro);
-            });
-
-            // Carrega o produto associado
-            var produto = produtos.FirstOrDefault(f => f.IdProd == produtoNf.IdProd);
+                    return ConverterParaRegistroRentabilidade(registro);
+                });
 
             // Calcula o custo do produto
             var custoProd = Glass.Global.CalculosFluxo.CalcTotaisItemProdFast(sessao, produto.TipoCalculo,
                 produtoNf.Altura, produtoNf.Largura, produtoNf.Qtde,
-                produtoNf.TotM, produto.CustoCompra, 
+                produtoNf.TotM, produtoNfCusto.CustoCompra,
                 produtoNf.AlturaBenef.GetValueOrDefault(2),
                 produtoNf.LarguraBenef.GetValueOrDefault(2));
 
-            return new ItemRentabilidade<Data.Model.ProdutosNf, Data.Model.ProdutoNfRentabilidade>(
-                ProvedorIndicadoresFinanceiro, criarRegistro, produtoNf, registros, ConverterParaRegistroRentabilidade)
+            var preceoVendaSemIPIUnitario = (produtoNf.Total + produtoNf.ValorIcmsSt) / (decimal)produtoNf.Qtde;
+
+            return new ItemRentabilidade<Data.Model.ProdutoNfCusto, Data.Model.ProdutoNfCustoRentabilidade>(
+                    ProvedorIndicadoresFinanceiro, criarRegistro, produtoNfCusto, registros, ConverterParaRegistroRentabilidade)
             {
-                Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
-                PrecoVendaSemIPI = produtoNf.Total, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
+                Descricao = $"Produto [{produtoNfCusto.Qtde}] ({produto?.CodInterno}) {produto?.Descricao}",
+                PrecoVendaSemIPI = preceoVendaSemIPIUnitario * produtoNfCusto.Qtde,
                 PrecoCusto = custoProd,
                 PrazoMedio = prazoMedio,
                 PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
@@ -174,9 +193,114 @@ namespace Glass.Fiscal.Negocios.Componentes
                 PercentualIPIVenda = (decimal)produtoNf.AliqIpi / 100m,
                 PercentualComissao = produtoNf.PercComissao / 100m,
                 CustosExtras = 0m,
-                PercentualRentabilidade = produtoNf.PercentualRentabilidade / 100m,
-                RentabilidadeFinanceira = produtoNf.RentabilidadeFinanceira
+                PercentualRentabilidade = produtoNfCusto.PercentualRentabilidade / 100m,
+                RentabilidadeFinanceira = produtoNfCusto.RentabilidadeFinanceira
             };
+        }
+
+        /// <summary>
+        /// Recupera um item de rentabilidade para o produto pedido informado.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="produtoNf"></param>
+        /// <param name="produtoNfCustos">Custos associados.</param>
+        /// <param name="prazoMedio"></param>
+        /// <param name="produtos"></param>
+        /// <returns></returns>
+        private IItemRentabilidade<Data.Model.ProdutosNf> ObterItemProdutoNf(
+            GDA.GDASession sessao, Data.Model.ProdutosNf produtoNf, IEnumerable<Data.Model.ProdutoNfCusto> produtoNfCustos,
+            int prazoMedio, IEnumerable<Data.Model.Produto> produtos)
+        {
+            var registros = new Lazy<IList<Data.Model.ProdutoNfRentabilidade>>(
+                    () => Data.DAL.ProdutoNfRentabilidadeDAO.Instance.ObterPorProdutoNf(sessao, produtoNf.IdProdNf));
+
+            var criarRegistro = new CriadorRegistroRentabilidade(
+                (tipo, nome, valor) =>
+                {
+                    var idRegistro = ProvedorDescritoresRegistro.ObterRegistro(tipo, nome);
+                    var registro = registros.Value.FirstOrDefault(f => f.Tipo == (int)tipo && f.IdRegistro == idRegistro);
+
+                    if (registro == null)
+                    {
+                        registro = new Data.Model.ProdutoNfRentabilidade
+                        {
+                            IdProdNf = (int)produtoNf.IdProdNf,
+                            IdRegistro = idRegistro,
+                            Tipo = (int)tipo,
+                            Valor = valor
+                        };
+                        registros.Value.Add(registro);
+                    }
+                    else
+                        registro.Valor = valor;
+
+                    return ConverterParaRegistroRentabilidade(registro);
+                });
+
+            // Carrega o produto associado
+            var produto = produtos.FirstOrDefault(f => f.IdProd == produtoNf.IdProd);
+
+            if (!produtoNfCustos.Any())
+                produtoNfCustos = new[]
+                {
+                    new Data.Model.ProdutoNfCusto
+                    {
+                       IdProdNf = produtoNf.IdProdNf,
+                       IdProdNfEntrada = 0,
+                       Qtde = (int)produtoNf.Qtde,
+                       CustoCompra = produto.CustoCompra
+                    }
+                };
+
+            var qtdeProdutoNfCustos = produtoNfCustos.Count();
+
+            if (qtdeProdutoNfCustos > 1)
+            {
+                var itens = produtoNfCustos.Select(produtoNfCusto => ObterItemProdutoNfCusto(sessao, produtoNf, produtoNfCusto, prazoMedio, produto));
+
+                return new ItemRentabilidadeContainer<Data.Model.ProdutosNf, Data.Model.ProdutoNfRentabilidade>(
+                        ProvedorIndicadoresFinanceiro, criarRegistro,
+                        produtoNf, itens, f => true, registros,
+                        ConverterParaRegistroRentabilidade)
+                {
+                    Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
+                    PrecoVendaSemIPI = produtoNf.Total + produtoNf.ValorIcmsSt,
+                    PrazoMedio = prazoMedio,
+                    FatorICMSSubstituicao = 0,
+                    PercentualComissao = produtoNf.PercComissao / 100m,
+                    PercentualRentabilidade = produtoNf.PercentualRentabilidade / 100m,
+                    RentabilidadeFinanceira = produtoNf.RentabilidadeFinanceira
+                };
+            }
+            else
+            {
+                var custoCompra = qtdeProdutoNfCustos == 1 ? produtoNfCustos.First().CustoCompra : produto.CustoCompra;
+
+                // Calcula o custo do produto
+                var custoProd = Glass.Global.CalculosFluxo.CalcTotaisItemProdFast(sessao, produto.TipoCalculo,
+                    produtoNf.Altura, produtoNf.Largura, produtoNf.Qtde,
+                    produtoNf.TotM, custoCompra,
+                    produtoNf.AlturaBenef.GetValueOrDefault(2),
+                    produtoNf.LarguraBenef.GetValueOrDefault(2));
+
+                return new ItemRentabilidade<Data.Model.ProdutosNf, Data.Model.ProdutoNfRentabilidade>(
+                    ProvedorIndicadoresFinanceiro, criarRegistro, produtoNf, registros, ConverterParaRegistroRentabilidade)
+                {
+                    Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
+                    PrecoVendaSemIPI = produtoNf.Total + produtoNf.ValorIcmsSt, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
+                    PrecoCusto = custoProd,
+                    PrazoMedio = prazoMedio,
+                    PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
+                    FatorICMSSubstituicao = 0,
+                    PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
+                    PercentualIPIVenda = (decimal)produtoNf.AliqIpi / 100m,
+                    PercentualComissao = produtoNf.PercComissao / 100m,
+                    CustosExtras = 0m,
+                    PercentualRentabilidade = produtoNf.PercentualRentabilidade / 100m,
+                    RentabilidadeFinanceira = produtoNf.RentabilidadeFinanceira
+                };
+            }
+            
         }
 
         /// <summary>
@@ -186,14 +310,15 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="notaFiscal">Pedido.</param>
         /// <param name="prazoMedio">Prazo médio de faturamenteo do pedido.</param>
         /// <returns></returns>
-        private IEnumerable<ItemRentabilidade<Data.Model.ProdutosNf, Data.Model.ProdutoNfRentabilidade>>
+        private IEnumerable<IItemRentabilidade<Data.Model.ProdutosNf>>
             ObterItensProdutosNf(GDA.GDASession sessao, Data.Model.NotaFiscal notaFiscal, int prazoMedio)
         {
             var produtosNf = Data.DAL.ProdutosNfDAO.Instance.ObterProdutosParaRentabilidade(sessao, notaFiscal.IdNf);
+            var produtosNfCusto = Data.DAL.ProdutoNfCustoDAO.Instance.ObterCustosPorNotaFiscal(sessao, notaFiscal.IdNf);
             var produtos = Data.DAL.ProdutoDAO.Instance.ObterProdutos(sessao, produtosNf.Select(f => f.IdProd).Distinct()).ToList();
 
             foreach (var i in produtosNf)
-                yield return ObterItemProdutoNf(sessao, i, prazoMedio, produtos);
+                yield return ObterItemProdutoNf(sessao, i, produtosNfCusto.Where(f => f.IdProdNf == i.IdProdNf), prazoMedio, produtos);
         }
 
         /// <summary>
@@ -229,7 +354,7 @@ namespace Glass.Fiscal.Negocios.Componentes
 
                 return ConverterParaRegistroRentabilidade(registro);
             });
-            
+
             var prazoMedio = CalcularPrazoMedioNotaFiscal(sessao, notaFiscal.IdNf);
 
             // Recupera os itens associados com todos os produtos da nota
@@ -274,8 +399,9 @@ namespace Glass.Fiscal.Negocios.Componentes
         {
             var prazoMedio = CalcularPrazoMedioNotaFiscal(sessao, produtoNf.IdNf);
             var produto = Data.DAL.ProdutoDAO.Instance.GetElementByPrimaryKey(produtoNf.IdProd);
+            var custos = Data.DAL.ProdutoNfCustoDAO.Instance.ObterCustosPorProdutoNotaFiscal(sessao, produtoNf.IdProdNf);
 
-            return ObterItemProdutoNf(sessao, produtoNf, prazoMedio, new[] { produto });
+            return ObterItemProdutoNf(sessao, produtoNf, custos, prazoMedio, new[] { produto });
         }
 
         /// <summary>
@@ -304,6 +430,20 @@ namespace Glass.Fiscal.Negocios.Componentes
 
             return new RegistroRentabilidade(produtoNfRentabilidade.IdRegistro,
                 ProvedorDescritoresRegistro.ObterDescritor(tipo, produtoNfRentabilidade.IdRegistro), tipo, produtoNfRentabilidade.Valor);
+        }
+
+        /// <summary>
+        /// Realiza a conversão dos dados de rentabilidade do custo do produto da nota 
+        /// para um registro da rentabilidade.
+        /// </summary>
+        /// <param name="produtoNfCustoRentabilidade"></param>
+        /// <returns></returns>
+        private IRegistroRentabilidade ConverterParaRegistroRentabilidade(Data.Model.ProdutoNfCustoRentabilidade produtoNfCustoRentabilidade)
+        {
+            var tipo = (TipoRegistroRentabilidade)produtoNfCustoRentabilidade.Tipo;
+
+            return new RegistroRentabilidade(produtoNfCustoRentabilidade.IdRegistro,
+                ProvedorDescritoresRegistro.ObterDescritor(tipo, produtoNfCustoRentabilidade.IdRegistro), tipo, produtoNfCustoRentabilidade.Valor);
         }
 
         #endregion
