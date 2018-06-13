@@ -273,7 +273,7 @@ function getFornec(idFornec)
                                                         Plano de Conta
                                                     </td>
                                                     <td align="left" nowrap="nowrap" valign="middle">
-                                                        <asp:DropDownList ID="ddlPlanoConta" runat="server" DataSourceID="odsPlanoConta"
+                                                        <asp:DropDownList ID="ddlPlanoConta" runat="server" DataSourceID="odsPlanoConta" OnLoad="ddlPlanoContaEdit_Load"
                                                             DataTextField="DescrPlanoGrupo" DataValueField="IdConta" SelectedValue='<%# Bind("IdConta") %>'
                                                             AppendDataBoundItems="True">
                                                             <asp:ListItem Value="0" Text=""></asp:ListItem>

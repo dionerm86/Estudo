@@ -4882,46 +4882,56 @@ namespace Glass.Data.DAL
 
                     // Se a Nota Fiscal já tiver sido autorizada, não faz nada
                     if (nf.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
+                    {
                         return;
+                    }
 
-                    if (xmlProt == null || xmlProt["infProt"] == null)
+                    if (xmlProt?["infProt"] == null)
+                    {
                         throw new Exception("Não foi possível recuperar os dados do retorno da emissão da nota fiscal.");
+                    }
 
-                    if (xmlProt["infProt"]["cStat"] == null)
+                    if (xmlProt?["infProt"]?["cStat"] == null)
+                    {
                         throw new Exception("Não foi possível recuperar a situação da nota fiscal.");
+                    }
 
-                    string cStat = xmlProt["infProt"]["cStat"].InnerXml;
+                    var cStat = xmlProt?["infProt"]?["cStat"]?.InnerXml;
 
-                    if (xmlProt["infProt"]["xMotivo"] == null)
+                    if (xmlProt?["infProt"]?["xMotivo"] == null)
+                    {
                         throw new Exception("Não foi possível recuperar o motivo da rejeição da nota fiscal.");
+                    }
 
                     // Gera log do ocorrido
-                    LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", Glass.Conversoes.StrParaInt(cStat),
-                        ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlProt["infProt"]["xMotivo"].InnerXml));
+                    LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", cStat.StrParaInt(), ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlProt?["infProt"]?["xMotivo"]?.InnerXml));
 
                     // Atualiza número do protocolo de uso da NFe
                     if (cStat == "100" || cStat == "150")
                     {
-                        // Anexa protocolo de autorização
-                        string path = nfePath + nf.ChaveAcesso + "-nfe.xml";
-                        IncluiProtocoloXML(path, xmlProt);
+                        var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
 
+                        IncluiProtocoloXML(path, xmlProt);
                         AutorizaNotaFiscal(nf, xmlProt);
                     }
                     // NFe denegada
                     else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
                     {
                         // Salva protocolo de denegação de uso
-                        if (xmlProt["infProt"]["nProt"] != null)
-                            objPersistence.ExecuteCommand("Update nota_fiscal set numProtocolo=?numProt Where idNf=" + nf.IdNf,
-                                new GDAParameter[] { new GDAParameter("?numProt", xmlProt["infProt"]["nProt"].InnerXml) });
-                        
+                        if (xmlProt?["infProt"]?["nProt"] != null)
+                        {
+                            objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET NumProtocolo=?numProt WHERE IdNf={ nf.IdNf }",
+                                new GDAParameter[] { new GDAParameter("?numProt", xmlProt?["infProt"]?["nProt"]?.InnerXml) });
+                        }
+
                         // Altera situação da NFe para denegada
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Denegada);
                     }
                     // Se o código de retorno da emissão for > 105, algum erro ocorreu, altera situação da NF para Falha ao Emitir
-                    else if (Convert.ToInt32(cStat) > 105)
+                    else if (cStat.StrParaInt() > 105)
+                    {
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+                    }
 
                     BaixaCreditaEstoqueFiscalReal(cStat, nf);
                 }
@@ -4941,26 +4951,31 @@ namespace Glass.Data.DAL
             var numProtocolo = string.Empty;
 
             // Tenta recuperar o protocolo de autorização
-            if (xmlProt != null && xmlProt["infProt"] != null && xmlProt["infProt"]["nProt"] != null)
-                numProtocolo = xmlProt["infProt"]["nProt"].InnerXml;
+            if (xmlProt?["infProt"]?["nProt"] != null)
+            {
+                numProtocolo = xmlProt?["infProt"]?["nProt"]?.InnerXml;
+            }
 
             // Tenta recuperar o protocolo de autorização se o de cima não der certo
-            if (string.IsNullOrWhiteSpace(numProtocolo) && xmlProt != null && xmlProt["protNFe"] != null && xmlProt["protNFe"]["infProt"] != null && xmlProt["protNFe"]["infProt"]["nProt"] != null)
-                numProtocolo = xmlProt["protNFe"]["infProt"]["nProt"].InnerXml;
+            if (string.IsNullOrWhiteSpace(numProtocolo) && xmlProt?["protNFe"]?["infProt"]?["nProt"] != null)
+            {
+                numProtocolo = xmlProt?["protNFe"]?["infProt"]?["nProt"]?.InnerXml;
+            }
 
             // Salva protocolo de autorização
-            if (!string.IsNullOrWhiteSpace(numProtocolo))
-                objPersistence.ExecuteCommand("Update nota_fiscal set numProtocolo=?numProt Where idNf=" + nf.IdNf,
-                    new GDAParameter[] { new GDAParameter("?numProt", numProtocolo) });
+            if (!string.IsNullOrEmpty(numProtocolo))
+            {
+                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET NumProtocolo=?numProt WHERE IdNf={ nf.IdNf }", new GDAParameter[] { new GDAParameter("?numProt", numProtocolo) });
+            }
+
+            // Separa os valores
+            SeparaValoresAReceber(nf);
 
             //Referencia a NF-e nas contas recebidas de pedidos que foram pagos antecipadamente ou que receberam sinal
             ReferenciaPedidosAntecipados(null, nf);
 
             // Altera situação da NFe para autorizada
             AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
-                                    
-            // Separa os valores
-            SeparaValoresAReceber(nf);
 
             // Envia email para o cliente com o XML
             EnviarEmailXml(nf);
@@ -4976,42 +4991,52 @@ namespace Glass.Data.DAL
 
             // Se a Nota Fiscal já tiver sido autorizada, não faz nada
             if (nf.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
+            {
                 return;
+            }
 
-            string cStat = xmlRetConsSit?["cStat"]?.InnerXml ?? xmlRetConsSit?["protNFe"]?["infProt"]?["cStat"]?.InnerXml; ;
+            var cStat = xmlRetConsSit?["cStat"]?.InnerXml;
 
             // Gera log do ocorrido
-            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["protNFe"]?["infProt"]?["xMotivo"].InnerXml);
+            LogNfDAO.Instance.NewLog(nf.IdNf, "Consulta", cStat.StrParaInt(), xmlRetConsSit?["xMotivo"]?.InnerXml);
 
             // Atualiza número do protocolo de uso da NFe
             if (cStat == "100" || cStat == "150")
             {
-                // Anexa protocolo de autorizaçã
-                string path = Utils.GetNfeXmlPath + nf.ChaveAcesso + "-nfe.xml";
-                IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
+                var path = $"{ Utils.GetNfeXmlPath }{ nf.ChaveAcesso }-nfe.xml";
 
+                IncluiProtocoloXML(path, xmlRetConsSit?["protNFe"]);
                 AutorizaNotaFiscal(nf, xmlRetConsSit);
             }
             else if (cStat == "206" || cStat == "256") // NF-e já está inutilizada
-                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Inutilizada);
-            else if (cStat == "218" || cStat == "420" || cStat == "101" || cStat == "151") // NF-e já está cancelada
-                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Cancelada);
-            else if (cStat == "220") // NF-e já está autorizada há mais de 7 dias
-                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
-            // NFe denegada
-            else if (cStat == "301" || cStat == "302" || cStat == "110" || cStat == "205")
             {
-                // Salva protocolo de denegação de uso
-                if (xmlRetConsSit["protNFe"] != null)
-                    objPersistence.ExecuteCommand("Update nota_fiscal set numProtocolo=?numProt Where idNf=" + nf.IdNf,
-                        new GDAParameter[] { new GDAParameter("?numProt", xmlRetConsSit["protNFe"]["infProt"]["nProt"].InnerXml) });
+                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Inutilizada);
+            }
+            else if (cStat == "218" || cStat == "420" || cStat == "101" || cStat == "151") // NF-e já está cancelada
+            {
+                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Cancelada);
+            }
+            else if (cStat == "220") // NF-e já está autorizada há mais de 7 dias
+            {
+                AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Autorizada);
+            }
+            // NFe denegada
+            else if (cStat == "301" || cStat == "302" || cStat == "303" || cStat == "110" || cStat == "205")
+            {
+                if (xmlRetConsSit?["protNFe"] != null)
+                {
+                    objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET NumProtocolo=?numProt WHERE IdNf={ nf.IdNf }",
+                        new GDAParameter[] { new GDAParameter("?numProt", xmlRetConsSit?["protNFe"]?["infProt"]?["nProt"]?.InnerXml) });
+                }
 
                 // Altera situação da NFe para denegada
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Denegada);
             }
             // Se o código de retorno da emissão for > 105, algum erro ocorreu, altera situação da NF para Falha ao Emitir
             else if (Convert.ToInt32(cStat) > 105)
+            {
                 AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.FalhaEmitir);
+            }
 
             BaixaCreditaEstoqueFiscalReal(cStat, nf);
         }
@@ -5019,30 +5044,27 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Retorno de cancelamento da NF-e
-
+        
         /// <summary>
         /// Retorno do cancelamento da NF-e, grava log e altera situação da NF-e
         /// </summary>
-        public string RetornoEvtCancelamentoNFe(GDASession session, uint idNf, string justificativa, XmlNode xmlRetCanc,
-            bool cancelarSeparacaoValores)
+        public string RetornoEvtCancelamentoNFe(GDASession session, uint idNf, string justificativa, XmlNode xmlRetCanc, bool cancelarSeparacaoValores)
         {
             // Se o xml de retorno for nulo, ocorreu alguma falha no processo
             if (xmlRetCanc == null)
             {
-                LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, "Falha ao cancelar NFe. Sem retorno. ");
-
-                NotaFiscalDAO.Instance.AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.FalhaCancelar);
+                LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, "Falha ao cancelar NFe. ");
+                AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.FalhaCancelar);
 
                 throw new Exception("Servidor da SEFAZ não respondeu em tempo hábil, tente novamente.");
             }
 
             try
             {
-                // Lê Xml de retorno do envio do lote
-                string status = xmlRetCanc["cStat"].InnerText;
-                string resposta = xmlRetCanc["xMotivo"].InnerText;
-                int statusProcessamento = Glass.Conversoes.StrParaInt(xmlRetCanc["retEvento"]["infEvento"]["cStat"].InnerText);
-                string respostaProcessamento = xmlRetCanc["retEvento"]["infEvento"]["xMotivo"].InnerText;
+                var status = xmlRetCanc?["cStat"]?.InnerText;
+                var resposta = xmlRetCanc?["xMotivo"]?.InnerText;
+                var statusProcessamento = (xmlRetCanc?["retEvento"]?["infEvento"]?["cStat"]?.InnerText?.StrParaInt()).GetValueOrDefault();
+                var respostaProcessamento = xmlRetCanc?["retEvento"]?["infEvento"]?["xMotivo"]?.InnerText;
 
                 // Insere o log de cancelamento desta NF
                 LogNfDAO.Instance.NewLog(idNf, "Cancelamento", statusProcessamento, respostaProcessamento);
@@ -5054,8 +5076,8 @@ namespace Glass.Data.DAL
                     BaixaCreditaEstoqueFiscalReal(session, statusProcessamento.ToString(), GetElement(idNf));
 
                     // Insere protocolo de cancelamento na NFe
-                    objPersistence.ExecuteCommand(session, "Update nota_fiscal set numProtocoloCanc=?numProt Where idNf=" + idNf,
-                        new GDAParameter[] { new GDAParameter("?numProt", xmlRetCanc["retEvento"]["infEvento"]["nProt"].InnerText) });
+                    objPersistence.ExecuteCommand(session, $"UPDATE nota_fiscal SET NumProtocoloCanc=?numProt WHERE IdNf={ idNf }",
+                        new GDAParameter[] { new GDAParameter("?numProt", xmlRetCanc?["retEvento"]?["infEvento"]?["nProt"]?.InnerText) });
 
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Cancelada);
 
@@ -5067,32 +5089,43 @@ namespace Glass.Data.DAL
                     DesvinculaReferenciaPedidosAntecipados(session, (int)idNf);
                 }
                 else if (statusProcessamento == 206 || statusProcessamento == 256) // NF-e já está inutilizada
+                {
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Inutilizada);
+                }
                 else if (statusProcessamento == 218 || statusProcessamento == 420) // NF-e já está cancelada
+                {
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Cancelada);
+                }
                 else if (statusProcessamento == 220) // NF-e já está autorizada há mais de 7 dias
+                {
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Autorizada);
+                }
                 else if (statusProcessamento == 110 || statusProcessamento == 301 || statusProcessamento == 302 || statusProcessamento == 205)
+                {
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.Denegada);
+                }
                 // Altera situação da NF para Falha ao Cancelar
                 else
+                {
                     AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.FalhaCancelar);
-
-                LogMovimentacaoNotaFiscalDAO.Instance.DeleteFromNf(session, idNf);
+                }
 
                 if (statusProcessamento == 135 || statusProcessamento == 136)
+                {
                     return "Cancelamento efetuado.";
+                }
                 else
-                    return "Falha ao cancelar NFe. " + respostaProcessamento;
+                {
+                    return $"Falha ao cancelar NFe. { respostaProcessamento } ";
+                }
 
             }
             catch (Exception ex)
             {
-                LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, "Falha ao cancelar NFe. Falha ao processar retorno. ");
+                LogNfDAO.Instance.NewLog(idNf, "Cancelamento", 1, "Falha ao cancelar NFe. ");
+                AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.FalhaCancelar);
+
                 ErroDAO.Instance.InserirFromException("Falha ao processar retorno do cancelamento - IdNF " + idNf, ex);
-
-                NotaFiscalDAO.Instance.AlteraSituacao(session, idNf, NotaFiscal.SituacaoEnum.FalhaCancelar);
-
                 throw new Exception("Falha ao processar retorno, tente novamente.");
             }
         }
@@ -5416,46 +5449,52 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorno de inutilização de numeração da NF-e, grava log e altera situação da NF-e
         /// </summary>
-        /// <param name="idNf"></param>
-        /// <param name="justificativa"></param>
-        /// <param name="xmlRetInut"></param>
         public void RetornoInutilizacaoNFe(uint idNf, string justificativa, XmlNode xmlRetInut)
         {
             // Se o xml de retorno for nulo, ocorreu alguma falha no processo
             if (xmlRetInut == null)
             {
                 LogNfDAO.Instance.NewLog(idNf, "Inutilização", 1, "Falha ao inutilizar NFe. ");
-
-                NotaFiscalDAO.Instance.AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaInutilizar);
+                AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaInutilizar);
 
                 throw new Exception("Servidor da SEFAZ não respondeu em tempo hábil, tente novamente.");
             }
 
-            int cod = Glass.Conversoes.StrParaInt(xmlRetInut["infInut"]["cStat"].InnerXml);
+            var cod = (xmlRetInut?["infInut"]?["cStat"]?.InnerXml?.StrParaInt()).GetValueOrDefault();
 
             // Insere o log de cancelamento desta NF
-            LogNfDAO.Instance.NewLog(idNf, "Inutilização", cod, xmlRetInut["infInut"]["xMotivo"].InnerXml);
+            LogNfDAO.Instance.NewLog(idNf, "Inutilização", cod, xmlRetInut?["infInut"]?["xMotivo"]?.InnerXml);
 
             // Se o código de retorno for 102-Inutilização de número homologado, altera situação para inutilizada
             if (cod == 102)
             {
                 // Insere protocolo de cancelamento na NFe
-                objPersistence.ExecuteCommand("Update nota_fiscal set numProtocolo=?numProt Where idNf=" + idNf,
-                    new GDAParameter[] { new GDAParameter("?numProt", xmlRetInut["infInut"]["nProt"].InnerXml) });
+                objPersistence.ExecuteCommand($"UPDATE nota_fiscal SET NumProtocolo=?numProt WHERE IdNf={ idNf }",
+                    new GDAParameter[] { new GDAParameter("?numProt", xmlRetInut?["infInut"]?["nProt"]?.InnerXml) });
 
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.Inutilizada);
             }
             else if (cod == 206 || cod == 256) // NF-e já está inutilizada
+            {
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.Inutilizada);
+            }
             else if (cod == 218 || cod == 420) // NF-e já está cancelada
+            {
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.Cancelada);
+            }
             else if (cod == 220) // NF-e já está autorizada há mais de 7 dias
+            {
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.Autorizada);
-            else if (cod == 110 || cod == 301 || cod == 302 || cod == 205)
+            }
+            else if (cod == 110 || cod == 301 || cod == 302 || cod == 303 || cod == 205)
+            {
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.Denegada);
+            }
             // Se o código de retorno for > 105, algum erro ocorreu, altera situação da NF para Falha ao Inutilizar
             else if (cod > 105)
+            {
                 AlteraSituacao(idNf, NotaFiscal.SituacaoEnum.FalhaInutilizar);
+            }
         }
 
         #endregion

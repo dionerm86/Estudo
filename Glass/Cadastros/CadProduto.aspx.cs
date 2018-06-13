@@ -87,7 +87,7 @@ namespace Glass.UI.Web.Cadastros
 
 
                 var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator
-                    .Current.GetInstance<Glass.Global.Negocios.Entidades.IProdutoRepositorioImagens>();
+                    .Current.GetInstance<Glass.IProdutoRepositorioImagens>();
 
                 // Salva a imagem do produto
                 repositorio.SalvarImagem(!string.IsNullOrEmpty(Request["idProd"]) ? Request["idProd"].StrParaInt() : _produto.IdProd, imagem.PostedFile.InputStream);

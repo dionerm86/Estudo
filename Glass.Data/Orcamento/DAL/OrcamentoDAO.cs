@@ -1512,13 +1512,19 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o orçamento possui pedido gerado
         /// </summary>
-        /// <param name="idOrcamento"></param>
-        /// <returns></returns>
         public bool PossuiPedidoGerado(uint idOrcamento)
         {
-            string sql = "Select Count(*) From pedido Where idOrcamento=" + idOrcamento;
+            return PossuiPedidoGerado(null, idOrcamento);
+        }
 
-            return objPersistence.ExecuteSqlQueryCount(sql) > 0;
+        /// <summary>
+        /// Verifica se o orçamento possui pedido gerado
+        /// </summary>
+        public bool PossuiPedidoGerado(GDASession session, uint idOrcamento)
+        {
+            var sql = $"SELECT COUNT(*) FROM pedido WHERE IdOrcamento={ idOrcamento }";
+
+            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
         }
 
         #endregion
@@ -2314,7 +2320,7 @@ namespace Glass.Data.DAL
 
                 base.Update(session, objUpdate);
 
-                if (PossuiPedidoGerado(objUpdate.IdOrcamento) && orcaAntigo.Situacao == (int)Orcamento.SituacaoOrcamento.Negociado)
+                if (PossuiPedidoGerado(session, objUpdate.IdOrcamento) && orcaAntigo.Situacao == (int)Orcamento.SituacaoOrcamento.Negociado)
                     throw new Exception("Nenhuma alteração pode ser efetuada caso o orçamento possua um pedido gerado.");
 
                 UpdateTotaisOrcamento(session, objUpdate, true, orcaAntigo.Desconto != objUpdate.Desconto || orcaAntigo.TipoDesconto != objUpdate.TipoDesconto);
