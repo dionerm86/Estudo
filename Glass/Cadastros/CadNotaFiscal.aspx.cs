@@ -524,6 +524,9 @@ namespace Glass.UI.Web.Cadastros
             {
                 var notaFiscal = NotaFiscalDAO.Instance.GetElement(Request["idNf"].StrParaUint());
 
+                if (notaFiscal.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
+                    throw new Exception("A nota já se encontra autorizada");
+
                 //Chamado 66308
                 var usuarioFinalização = UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.CodUser > 0 ? UserInfo.GetUserInfo.Nome : " ";
                 LogNfDAO.Instance.NewLog(notaFiscal.IdNf, "Emissão ", 0, string.Format("Tentativa Emissão : {0}", usuarioFinalização));
