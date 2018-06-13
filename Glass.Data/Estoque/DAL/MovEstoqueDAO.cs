@@ -316,6 +316,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<int> ObtemMovEstoqueChapaCortePeca(GDASession session, uint idProdPedProducao, string numEtiqueta)
         {
+             if(string.IsNullOrWhiteSpace(numEtiqueta))
+                return new List<int>();
+
             ProdutoImpressao produtoimpressao = null;
             var idProd = 0;
 
