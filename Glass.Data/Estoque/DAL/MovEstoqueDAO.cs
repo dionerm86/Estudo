@@ -314,24 +314,33 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o mov estoque associado a chapa, especificamente para um ProdutoPedidoProducao
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idProdPedProducao"></param>
-        /// <param name="numEtiqueta"></param>
-        /// <returns></returns>
         public List<int> ObtemMovEstoqueChapaCortePeca(GDASession session, uint idProdPedProducao, string numEtiqueta)
         {
-            var prodNf = ProdutosNfDAO.Instance.GetProdNfByEtiqueta(numEtiqueta);
-            var prodImpressao = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+            ProdutoImpressao produtoimpressao = null;
+            var idProd = 0;
+
+            if (numEtiqueta.Contains("N"))
+            {
+                produtoimpressao = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+                idProd = ProdutosNfDAO.Instance.ObtemValorCampo<int>("IdProd", $"IdProdNf={ produtoimpressao.IdProdNf }");
+            }
+            else if (numEtiqueta.Contains("R"))
+            {
+                produtoimpressao = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
+                idProd = ((int?)RetalhoProducaoDAO.Instance.ObtemIdProd(session, produtoimpressao.IdRetalhoProducao.GetValueOrDefault())).GetValueOrDefault();
+            }
+
+            if (idProd == 0)
+            {
+                return new List<int>();
+            }
 
             return ExecuteMultipleScalar<int>(session,
                 string.Format(@"SELECT me.idMovEstoque FROM mov_estoque me
-                                INNER JOIN produto_pedido_producao ppp ON (ppp.IdProdPedProducao = me.IdProdPedProducao)
-                                INNER JOIN produto_impressao pi ON (pi.NumEtiqueta = ppp.NumEtiqueta)
-                                INNER JOIN chapa_corte_peca ccp ON (ccp.IdProdImpressaoPeca = pi.IdProdImpressao)
-                                INNER JOIN produto_impressao piChapa ON (piChapa.IdProdImpressao = {0} And piChapa.IdProdImpressao = ccp.IdProdImpressaoChapa)
-                                WHERE ppp.IdProdPedProducao = {1} 
-                                      And me.IdProd = {2} group by me.IdMovEstoque", prodImpressao.IdProdImpressao, idProdPedProducao, prodNf.IdProd));
-
+                    INNER JOIN produto_impressao pi ON (pi.NumEtiqueta = ppp.NumEtiqueta)
+                    INNER JOIN chapa_corte_peca ccp ON (ccp.IdProdImpressaoPeca = pi.IdProdImpressao)
+                    INNER JOIN produto_impressao piChapa ON (piChapa.IdProdImpressao = {0} And piChapa.IdProdImpressao = ccp.IdProdImpressaoChapa)
+                    WHERE ppp.IdProdPedProducao = {1} And me.IdProd = {2} group by me.IdMovEstoque", produtoimpressao.IdProdImpressao, idProdPedProducao, idProd));
         }
 
         #endregion
