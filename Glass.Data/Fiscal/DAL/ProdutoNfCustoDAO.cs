@@ -44,12 +44,27 @@ namespace Glass.Data.DAL
         /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
         /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
         public void AtualizarRentabilidade(GDA.GDASession sessao,
-            uint idProdNfCusto, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+            int idProdNfCusto, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
         {
-            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_nf_custo SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdNfCusto=?id",
+            objPersistence.ExecuteCommand(sessao, "UPDATE produto_nf_custo SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdNfCusto=?id",
                 new GDA.GDAParameter("?percentual", percentualRentabilidade),
                 new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
                 new GDA.GDAParameter("?id", idProdNfCusto));
+        }
+
+        /// <summary>
+        /// Apaga os registros associados com o produto da nota fiscal.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idProdNf"></param>
+        public void ApagarPorProdutoNf(GDA.GDASession sessao, uint idProdNf)
+        {
+            // Apaga os registro de rentabilidade
+            objPersistence.ExecuteCommand(sessao, 
+                "DELETE FROM produto_nf_custo_rentabilidade WHERE IdProdNfCusto IN (SELECT IdProdNfCust FROM produto_nf_custo pnc WHERE pnc.IdProdNf=?id", 
+                new GDA.GDAParameter("?id", idProdNf));
+
+            objPersistence.ExecuteCommand(sessao, "DELETE FROM produto_nf_custo WHERE IdProdNf=?id", new GDA.GDAParameter("?id", idProdNf));
         }
 
         public override int Delete(GDASession session, ProdutoNfCusto objDelete)

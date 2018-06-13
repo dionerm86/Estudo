@@ -3462,7 +3462,7 @@ namespace Glass.Data.DAL
                     MAX(p.IdSubgrupoProd) AS IdSubGrupoProd,
                     MAX(pnf.Altura) AS Altura,
                     MAX(pnf.Largura) AS Largura,
-                    MAX(pnf.TotM) AS TotM,
+                    MAX(pnf.TotM) / MAX(pnf.Qtde) AS TotM,
                     MAX(pnf.ValorUnitario) AS ValorUnitario, COUNT(*) Qtde
                 FROM chapa_corte_peca ccp
                 INNER JOIN produto_impressao piPeca ON (ccp.IdProdImpressaoPeca=piPeca.IdProdImpressao)

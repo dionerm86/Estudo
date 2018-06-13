@@ -1518,8 +1518,11 @@ namespace Glass.Data.DAL
             try
             {
                 LogAlteracaoDAO.Instance.ApagaLogProdutoNotaFiscal(idProdNf);
-                returnValue = GDAOperations.Delete(sessao, prod);
+                ProdutoNfCustoDAO.Instance.ApagarPorProdutoNf(sessao, idProdNf);
                 ProdutoNfBenefDAO.Instance.DeleteByProdNf(sessao, idProdNf);
+                ProdutoNfRentabilidadeDAO.Instance.ApagarPorProdutoNf(sessao, idProdNf);
+                returnValue = GDAOperations.Delete(sessao, prod);
+                
             }
             catch (Exception ex)
             {

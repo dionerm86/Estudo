@@ -103,7 +103,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                 {
                     var rentabilidade = produtoNfCusto.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
                     var percentual = produtoNfCusto.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.ProdutoNfCustoDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoNfCusto.IdProdNf, percentual, rentabilidade);
+                    Data.DAL.ProdutoNfCustoDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoNfCusto.IdProdNfCusto, percentual, rentabilidade);
                 };
             }
             else
@@ -178,11 +178,13 @@ namespace Glass.Fiscal.Negocios.Componentes
                 produtoNf.AlturaBenef.GetValueOrDefault(2),
                 produtoNf.LarguraBenef.GetValueOrDefault(2));
 
+            var preceoVendaSemIPIUnitario = (produtoNf.Total + produtoNf.ValorIcmsSt) / (decimal)produtoNf.Qtde;
+
             return new ItemRentabilidade<Data.Model.ProdutoNfCusto, Data.Model.ProdutoNfCustoRentabilidade>(
                     ProvedorIndicadoresFinanceiro, criarRegistro, produtoNfCusto, registros, ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Produto [{produtoNfCusto.Qtde}] ({produto?.CodInterno}) {produto?.Descricao}",
-                PrecoVendaSemIPI = produtoNf.Total,
+                PrecoVendaSemIPI = preceoVendaSemIPIUnitario * produtoNfCusto.Qtde,
                 PrecoCusto = custoProd,
                 PrazoMedio = prazoMedio,
                 PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
@@ -191,8 +193,8 @@ namespace Glass.Fiscal.Negocios.Componentes
                 PercentualIPIVenda = (decimal)produtoNf.AliqIpi / 100m,
                 PercentualComissao = produtoNf.PercComissao / 100m,
                 CustosExtras = 0m,
-                PercentualRentabilidade = produtoNf.PercentualRentabilidade / 100m,
-                RentabilidadeFinanceira = produtoNf.RentabilidadeFinanceira
+                PercentualRentabilidade = produtoNfCusto.PercentualRentabilidade / 100m,
+                RentabilidadeFinanceira = produtoNfCusto.RentabilidadeFinanceira
             };
         }
 
@@ -250,7 +252,9 @@ namespace Glass.Fiscal.Negocios.Componentes
                     }
                 };
 
-            if (produtoNfCustos.Any())
+            var qtdeProdutoNfCustos = produtoNfCustos.Count();
+
+            if (qtdeProdutoNfCustos > 1)
             {
                 var itens = produtoNfCustos.Select(produtoNfCusto => ObterItemProdutoNfCusto(sessao, produtoNf, produtoNfCusto, prazoMedio, produto));
 
@@ -260,7 +264,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                         ConverterParaRegistroRentabilidade)
                 {
                     Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
-                    PrecoVendaSemIPI = produtoNf.Total,
+                    PrecoVendaSemIPI = produtoNf.Total + produtoNf.ValorIcmsSt,
                     PrazoMedio = prazoMedio,
                     FatorICMSSubstituicao = 0,
                     PercentualComissao = produtoNf.PercComissao / 100m,
@@ -270,10 +274,12 @@ namespace Glass.Fiscal.Negocios.Componentes
             }
             else
             {
+                var custoCompra = qtdeProdutoNfCustos == 1 ? produtoNfCustos.First().CustoCompra : produto.CustoCompra;
+
                 // Calcula o custo do produto
                 var custoProd = Glass.Global.CalculosFluxo.CalcTotaisItemProdFast(sessao, produto.TipoCalculo,
                     produtoNf.Altura, produtoNf.Largura, produtoNf.Qtde,
-                    produtoNf.TotM, produto.CustoCompra,
+                    produtoNf.TotM, custoCompra,
                     produtoNf.AlturaBenef.GetValueOrDefault(2),
                     produtoNf.LarguraBenef.GetValueOrDefault(2));
 
@@ -281,7 +287,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                     ProvedorIndicadoresFinanceiro, criarRegistro, produtoNf, registros, ConverterParaRegistroRentabilidade)
                 {
                     Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
-                    PrecoVendaSemIPI = produtoNf.Total, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
+                    PrecoVendaSemIPI = produtoNf.Total + produtoNf.ValorIcmsSt, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
                     PrecoCusto = custoProd,
                     PrazoMedio = prazoMedio,
                     PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
@@ -312,7 +318,7 @@ namespace Glass.Fiscal.Negocios.Componentes
             var produtos = Data.DAL.ProdutoDAO.Instance.ObterProdutos(sessao, produtosNf.Select(f => f.IdProd).Distinct()).ToList();
 
             foreach (var i in produtosNf)
-                yield return ObterItemProdutoNf(sessao, i, produtosNfCusto, prazoMedio, produtos);
+                yield return ObterItemProdutoNf(sessao, i, produtosNfCusto.Where(f => f.IdProdNf == i.IdProdNf), prazoMedio, produtos);
         }
 
         /// <summary>
