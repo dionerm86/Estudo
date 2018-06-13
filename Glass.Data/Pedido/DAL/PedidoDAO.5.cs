@@ -670,6 +670,14 @@ namespace Glass.Data.DAL
                                         if (idProdPed == 0)
                                             throw new Exception("Inserção do produto do pedido retornou 0.");
 
+                                        var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoRepositorioImagens>();
+                                        var stream = new System.IO.MemoryStream();
+                                        var possuiImagem = repositorio.ObtemImagem((int)prodPed.IdProd, stream);
+
+                                        //Salva imagem no produto pedido
+                                        if (possuiImagem)
+                                            ProdutosPedidoDAO.Instance.SalvarImagemProdutoPedido(transaction, prodPed.IdProdPed, stream);
+
                                         //Caso o produto seja do subgrupo de tipo laminado, insere os filhos
                                         var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(transaction, (int)prodPed.IdProd);
 
@@ -694,15 +702,15 @@ namespace Glass.Data.DAL
                                                     ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, p.IdProdBaixa, tipoEntrega, prodPed.IdCliente, false, false, 0, (int)prodPed.IdPedido, null, null),
                                                 }, false, true);
 
-                                                var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();
+                                                var repositorioFilho = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();
 
-                                                var stream = new System.IO.MemoryStream();
+                                                var streamFilho = new System.IO.MemoryStream();
 
                                                 //Verifica se a matéria prima possui imagem
-                                                var possuiImagem = repositorio.ObtemImagem(p.IdProdBaixaEst, stream);
+                                                var possuiImagemFilho = repositorioFilho.ObtemImagem(p.IdProdBaixaEst, streamFilho);
 
-                                                if (possuiImagem)
-                                                    ProdutosPedidoDAO.Instance.SalvarImagemProdutoPedido(transaction, idProdPedFilho, stream);
+                                                if (possuiImagemFilho)
+                                                    ProdutosPedidoDAO.Instance.SalvarImagemProdutoPedido(transaction, idProdPedFilho, streamFilho);
                                             }
                                         }
 

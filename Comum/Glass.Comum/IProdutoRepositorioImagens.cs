@@ -1,4 +1,4 @@
-﻿namespace Glass.Global.Negocios.Entidades
+﻿namespace Glass
 {
     /// <summary>
     /// Assinatura do repositório de imagens dos produtos.
