@@ -306,7 +306,22 @@
                 });
             }
         });
+
     </script>
+        
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117324359-4"></script>
+        <script>
+            var codigoAcompanhamentoAnalytics = "<%= System.Configuration.ConfigurationManager.AppSettings["CodigoAcompanhamentoAnalytics"] %>";
+            
+            if (codigoAcompanhamentoAnalytics != undefined && codigoAcompanhamentoAnalytics != null && codigoAcompanhamentoAnalytics != ""){
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', codigoAcompanhamentoAnalytics);
+            }
+        </script>
+
     </form>
     <form id="formPost" name="formPost" method="post" style="display: none"></form>
 </body>
