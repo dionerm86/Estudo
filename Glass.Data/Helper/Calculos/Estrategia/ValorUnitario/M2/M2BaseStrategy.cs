@@ -67,7 +67,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario.M2
 
         private int LarguraProduto(IProdutoCalculo produto)
         {
-            if (produto.Container.MaoDeObra && produto.Redondo && produto.Largura == 0)
+            if ((produto?.Container?.MaoDeObra).GetValueOrDefault() && (produto?.Redondo).GetValueOrDefault() && produto?.Largura == 0)
             {
                 return (int)produto.Altura;
             }
