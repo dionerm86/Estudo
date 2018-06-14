@@ -41,6 +41,14 @@ namespace Glass.Data.Handlers
 
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(null, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, (int)TipoArquivoMesaCorte.DXF, false, true, true);
 
+                if (!lstArqMesa.Any() && !lstErrosArq.Any())
+                {
+                    var mensagem = "O pedido não possui projetos com arquivos para execução na máquina.";
+                    context.Response.Write(string.Format("<script>alert(\"{0}\"); window.close();</script>", mensagem));
+                    context.Response.Flush();
+                    return;
+                }
+
                 if (lstErrosArq.Any())
                 {
                     var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))
@@ -69,6 +77,7 @@ namespace Glass.Data.Handlers
                 // Devolve o erro
                 context.Response.ContentType = "text/html";
                 context.Response.Write(GetErrorResponse(ex));
+                context.Response.Write("<script>window.close();</script>");
             }
         }
 
