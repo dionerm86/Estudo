@@ -232,7 +232,6 @@
     <Compile Include="Global\IClienteRepositorioImagens.cs" />
     <Compile Include="Global\IFuncionarioRepositorioImagens.cs" />
     <Compile Include="Global\ILojaRepositorioImagens.cs" />
-    <Compile Include="Global\IProdutoRepositorioImagens.cs" />
     <Compile Include="Global\IProvedorFormaPagtoCliente.cs" />
     <Compile Include="Global\IProvedorProdutos.cs" />
     <Compile Include="Global\IProvedorRota.cs" />

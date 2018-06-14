@@ -778,6 +778,8 @@ namespace Glass.UI.Web.Relatorios
                         if (report.ReportPath == Glass.Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaPedidos{0}.rdlc"))
                             lstParam.Add(new ReportParameter("ExibirTotaisVendedorCliente", "false"));
 
+                        lstParam.Add(new ReportParameter("MostrarDescontoTotal", (Request["mostrarDescontoTotal"] == "true").ToString()));
+
                         report.DataSources.Add(new ReportDataSource("PedidoRpt",
                             PedidoRptDAL.Instance.CopiaLista(pedidos, PedidoRpt.TipoConstrutor.ListaPedidos, Request["mostrarDescontoTotal"] == "true", login)));
 

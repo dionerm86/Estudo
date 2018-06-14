@@ -271,6 +271,12 @@ namespace Glass.Data.DAL
                                         if (pagtoCheque.IdCheque == 0)
                                             throw new Exception("Não foi possível recuperar um dos cheques utilizados no pagamento.");
 
+                                        if (ChequesDAO.Instance.ObterSituacao(sessao, (int)pagtoCheque.IdCheque) != (int)Cheques.SituacaoCheque.EmAberto)
+                                        {
+                                            var numCheque = ChequesDAO.Instance.ObtemNumCheque(sessao, pagtoCheque.IdCheque);
+                                            throw new Exception($"O cheque {numCheque} não pode ser utilizado neste pagamento, verifique a situação deste cheque");
+                                        }
+
                                         PagtoChequeDAO.Instance.Insert(sessao, pagtoCheque);
                                         idsChequeTerc += string.Format("{0},", dadosCheque[18]);
 

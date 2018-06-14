@@ -3474,7 +3474,7 @@ namespace Glass.Data.DAL
         {
             string sql = "Select coalesce(qtde,0) From produtos_pedido Where idProdPed=" + idProdPed;
 
-            return float.Parse(objPersistence.ExecuteScalar(sessao, sql).ToString());
+            return objPersistence.LoadResult(sessao, sql).Select(f => f.GetFloat(0)).FirstOrDefault();
         }
 
         public float? ObtemQtde(uint idPedido, uint idProd)

@@ -3063,6 +3063,16 @@ namespace Glass.Data.DAL
                             "Cancelamento" + descr + " - " + motivo, true);
                     }
                 }
+
+                if (idImpressao > 0)
+                {
+                    bool pecasCanceladas = ExecuteScalar<bool>(sessao, "Select IF(count(*) = Sum(cancelado),TRUE,FALSE) from produto_impressao where idImpressao = " + idImpressao);
+                    if (pecasCanceladas)
+                    {
+                        objPersistence.ExecuteCommand(sessao, "Update impressao_etiqueta Set situacao=" +
+                        (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada + " Where idImpressao=" + idImpressao);
+                    }
+                }
             }
             catch (Exception ex)
             {

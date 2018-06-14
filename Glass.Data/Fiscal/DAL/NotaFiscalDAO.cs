@@ -674,6 +674,9 @@ namespace Glass.Data.DAL
 
                         #region Cria o produto da nota
 
+                        // Calcula o custo real dos produtos dos pedidos
+                        var custoRealProdutosPedido = ProdutosPedidoEspelhoDAO.Instance.CalcularCustoRealPorPedido(transaction, lstProd.Select(f => (int)f.IdPedido).Distinct()).ToList();
+
                         foreach (ProdutosPedido pp in lstProd)
                         {
                             uint? idProjetoModelo = !liberacaoParcial && FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe && pp.IdItemProjeto != null ? (uint?)ItemProjetoDAO.Instance.ObtemIdProjetoModelo(transaction, pp.IdItemProjeto.Value) : null;
@@ -1061,6 +1064,20 @@ namespace Glass.Data.DAL
                             prodNf.CodValorFiscal = ObtemCodValorFiscal(transaction, nf.TipoDocumento, nf.IdLoja.GetValueOrDefault(), prodNf.Cst);
 
                             uint idProdNf = ProdutosNfDAO.Instance.Insert(transaction, prodNf);
+
+                            // Processa os custos reais do produto do pedido
+                            foreach (var custoReal in custoRealProdutosPedido.Where(f => f.IdProdPed == pp.IdProdPed))
+                            {
+                                var prodNfCusto = new ProdutoNfCusto
+                                {
+                                    IdProdNf = idProdNf,
+                                    IdProdNfEntrada = (uint?)custoReal.IdProdNf,
+                                    Qtde = custoReal.Qtde,
+                                    CustoCompra = custoReal.Custo
+                                };
+
+                                ProdutoNfCustoDAO.Instance.Insert(transaction, prodNfCusto);
+                            }
 
                             //Se for transferir a nf de loja salva a natureza da operação da loja destino
                             dicNaturezaOperacaoProdDestino.Add(prodNf.IdProdNf, idNaturezaOperacaoDestinoProd);
@@ -9178,6 +9195,9 @@ namespace Glass.Data.DAL
             objUpdate.TipoDocumento = old.TipoDocumento;
 
             LimparEmitenteDestinatario(session, objUpdate);
+
+            if (old.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada)
+                throw new Exception("Está nota já está autorizada");
 
             // Não permite inserir nota fiscal se a loja informada não existir
             if (objUpdate.IdLoja.GetValueOrDefault() == 0 || (objUpdate.IdLoja > 0 && !LojaDAO.Instance.Exists(session, objUpdate.IdLoja)))
