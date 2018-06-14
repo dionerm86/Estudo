@@ -81,11 +81,11 @@ namespace Glass.Data.RelDAL
 
             var campoValorCxDiario =
                 string.Format("{0}{1}",
-                    !detalhado ? "ABS(SUM(c.Valor * IF(c.TipoMov = 1, 1, -1)))" : "c.Valor", subtrairJuros ? "-c.Juros" : string.Empty);
+                    !detalhado ? "SUM(c.Valor * IF(c.TipoMov = 1, 1, -1))" : "IF(c.TipoMov = 1,1,-1) * c.Valor", subtrairJuros ? "-c.Juros" : string.Empty);
             var campoValorCxGeral =
                 string.Format("{0}{1}",
-                    !detalhado ? "ABS(SUM(c.ValorMov * IF(c.TipoMov = 1, 1, -1)))" : "c.ValorMov", subtrairJuros ? "-c.Juros" : string.Empty);
-            
+                    !detalhado ? "SUM(c.ValorMov * IF(c.TipoMov = 1, 1, -1))" : "IF(c.TipoMov = 1,1,-1) * c.ValorMov", subtrairJuros ? "-c.Juros" : string.Empty);
+
             // O plano de contas "Cheque Devolvido" está associado ao grupo de ID 5, porém o mesmo deve ser mostrado caso a variável "exibirChequeDevolvido" seja verdadeira,
             // por isso recupero as movimentações que não estão incluídas no grupo de ID 5 ou as que possuem referência do plano de conta "Cheque Devolvido".
             string filtroGrupos = " AND (p.ExibirDre" +
@@ -104,26 +104,26 @@ namespace Glass.Data.RelDAL
                 (select descricao from categoria_conta where numSeq > plano_contas.numSeqCateg and tipo=" +
                 (int)Glass.Data.Model.TipoCategoriaConta.SubtotalAgregado + " order by numSeq limit 1) as grupoSubtotalAgregado";
 
-            string campoGeralSintetico = selecionar ? "IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, cast(if(Sum(Valor*if(tipoMov=1,1,-1))<0, 2, 1) as signed) as tipoMov, " +
-                "cast(abs(Sum(Valor*if(tipoMov=1,1,-1))) as decimal(12,2)) as Valor, IdsPagto" + camposVenc + grupoSubtotal + (agruparMes ? ", Mes, Ano" : "") :
-                "idConta, cast(abs(Sum(Valor)) as decimal(12,2)) as Valor" + camposVenc;
+            string campoGeralSintetico = selecionar ? "IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, " +
+                "ABS(CAST(SUM(Valor) as DECIMAL(12,2))) as Valor, IdsPagto" + camposVenc + grupoSubtotal + (agruparMes ? ", Mes, Ano" : "") :
+                "idConta, ABS(CAST(SUM(Valor) as DECIMAL(12,2))) as Valor" + camposVenc;
 
-            string campoGeralAnalitico = selecionar ? @"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornec, TipoMov, 
-                cast(Valor as decimal(12,2)) as Valor, Data, IdCompra, " + campoIdPagto + ", IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs" + camposVenc + grupoSubtotal : "Sum(cont)";
+            string campoGeralAnalitico = selecionar ? @"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornec, 
+                CAST(Valor as DECIMAL(12,2)) as Valor, Data, IdCompra, " + campoIdPagto + ", IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs" + camposVenc + grupoSubtotal : "Sum(cont)";
 
             string camposCxDiario = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
-                cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, null as NomeFornec, c.TipoMov, 
+                cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, null as NomeFornec, 
                 " + campoValorCxDiario + @" as Valor, c.DataCad as Data, null as idCompra, null as idPagto, NULL AS IdsPagto, null as IdDeposito, c.idPedido, c.idAcerto,
                 c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" + (agruparMes ? ", month(c.dataCad) as Mes, year(c.dataCad) as Ano" : "") :
-                (sintetico ? "c.IdConta, abs(sum(c.Valor*if(c.tipoMov=1,1,-1))) as Valor" : "Count(*) as cont");
+                (sintetico ? "c.IdConta, SUM(c.Valor*if(c.TipoMov=1,1,-1)) as Valor" : "Count(*) as cont");
 
             var camposContasPagas =
                 string.Format("{0}",
                     selecionar ?
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
-                            null as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, null as TipoMov,
-                            {0} as Valor, if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto) as Data, cp.IdCompra, {2},
+                            null as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 
+                            {0} * -1 as Valor, if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto) as Data, cp.IdCompra, {2},
                             null as IdDeposito, null as IdPedido, null as IdAcerto, null as IdLiberarPedido, cp.DataVenc,
                             Convert(Concat('[', Coalesce(cp.Obs, ''), '];[', Coalesce(pag.obs, ''), '];[', Coalesce(imps.Obs, ''),']') Using utf8) As Obs {1}",
                     !detalhado ? "SUM(cp.ValorPago)" : "cp.ValorPago",
@@ -135,24 +135,24 @@ namespace Glass.Data.RelDAL
             // pois o valor da movimentação já é o valor recebido em determinada forma de pagamento.
             var camposCxGeral = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 
-                c.TipoMov, " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, " +
+                 " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, " +
                 (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(c.IdPagto)) AS IdsPagto" : "c.IdPagto, CAST(c.IdPagto AS CHAR) AS IdsPagto") +
                 @", null as idDeposito, c.idPedido, c.idAcerto, c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" +
                 (agruparMes ? ", month(Coalesce(c.dataMovBanco, c.dataMov)) as Mes, year(Coalesce(c.dataMovBanco, c.dataMov)) as Ano" : "") :
-                (sintetico ? "c.IdConta, c.ValorMov*if(c.tipoMov=1,1,-1) as Valor" : "Count(*) as cont");
+                (sintetico ? "c.IdConta, c.ValorMov * IF(c.TipoMov=1,1,-1) as Valor" : "Count(*) as cont");
 
             var camposContaBanco =
                 string.Format("{0}",
                     selecionar ?
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
-                            cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, m.TipoMov,
+                            cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor,
                             {0} as Valor, Cast(Date_Format(m.DataMov, '%Y/%m/%d') as Date) as Data, null as idCompra, " +
                             (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(m.IdPagto)) AS IdsPagto" : "m.IdPagto, CAST(m.IdPagto AS CHAR) AS IdsPagto") +
                             @", m.idDeposito, m.idPedido, m.idAcerto, m.idLiberarPedido, null as DataVenc, Convert(m.Obs Using utf8) As Obs {1}",
-                            !detalhado ? "ABS(SUM(m.ValorMov * IF(m.TipoMov = 1, 1, -1)))" : "m.ValorMov",
+                            !detalhado ? "SUM(m.ValorMov * IF(m.TipoMov = 1, 1, -1))" : "IF(m.TipoMov = 1,1,-1) * m.ValorMov",
                             (agruparMes ? ", month(m.dataMov) as Mes, year(m.dataMov) as Ano" : "")) :
-                        (sintetico ? "m.IdConta, m.ValorMov*if(m.tipoMov=1,1,-1) as Valor" : "Count(*) as cont"));
+                        (sintetico ? "m.IdConta, m.ValorMov*if(m.TipoMov = 1, 1, -1) as Valor" : "Count(*) as cont"));
 
             var camposPlanoConta = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta,
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, null as NomeCliente, null as NomeFornecedor, 1 as TipoMov, 
