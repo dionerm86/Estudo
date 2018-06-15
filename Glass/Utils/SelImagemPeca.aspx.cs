@@ -103,8 +103,18 @@ namespace Glass.UI.Web.Utils
 
                         ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(h.Value));
 
-                        ppe.Item = item;
-                        ManipulacaoImagem.SalvarImagem(Server.MapPath(ppe.ImagemUrlSalvarItem), f.FileBytes);
+
+                        var nomeImagem = string.Empty;
+
+                        if (item > 0)
+                        {
+                            ppe.Item = item;
+                            nomeImagem = ppe.ImagemUrlSalvarItem;
+                        }
+                        else
+                            nomeImagem = ppe.ImagemUrlSalvar;
+
+                        ManipulacaoImagem.SalvarImagem(Server.MapPath(nomeImagem), f.FileBytes);
 
                         // Cria Log de alteração da Imagem do Produto Pedido Espelho
                         LogAlteracaoDAO.Instance.Insert(new LogAlteracao
