@@ -209,13 +209,25 @@ namespace Glass.Data.DAL
                 if (idPedido > 0)
                 {
                     var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido.Value);
-
-                    // Etiqueta Processo
+                    var diasDataEntregaAplicacao = 0;
                     var diasDataEntregaProcesso = 0;
-                    foreach (var pp in produtosPedido.Where(f => f.IdProcesso > 0).ToList())
-                        diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, pp.IdProcesso.Value));
-                    // Considera a data maior entre a data das configurações e da data do processo.
+
+                    foreach (var pp in produtosPedido.Where(f => f.IdProcesso > 0 || f.IdAplicacao > 0).ToList())
+                    {
+                        if (pp.IdAplicacao > 0)
+                        {
+                            diasDataEntregaAplicacao = Math.Max(diasDataEntregaAplicacao, EtiquetaAplicacaoDAO.Instance.ObterDiasMinimosDataEntrega(session, (int)pp.IdAplicacao.Value));
+                        }
+
+                        if (pp.IdProcesso > 0)
+                        {
+                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, pp.IdProcesso.Value));
+                        }
+                    }
+
+                    numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaAplicacao);
                     numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
+
 
                     // Subgrupo produto.
                     Dictionary<uint, KeyValuePair<int?, int?>> subgrupos = new Dictionary<uint, KeyValuePair<int?, int?>>();
@@ -2348,16 +2360,24 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="produtoPedido"></param>
-        public void AtualizarImpostos(GDASession sessao, Pedido pedido)
+        /// <param name="atualizarTotal">Identifica se é para atualizar o total do pedido.</param>
+        public void AtualizarImpostos(GDASession sessao, Pedido pedido, bool atualizarTotal)
         {
             // Relação das propriedades que devem ser atualizadas
-            var propriedades = new[]
+            var propriedades = new List<string>
             {
-                nameof(ProdutosPedido.ValorIpi),
-                nameof(ProdutosPedido.ValorIcms)
+                nameof(Pedido.ValorIpi),
+                nameof(Pedido.ValorIcms),
+                nameof(Pedido.AliquotaIpi),
+                nameof(Pedido.AliquotaIcms)
             };
 
             objPersistence.Update(sessao, pedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
+
+            if (atualizarTotal)
+                objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET Total=?total WHERE IdPedido=?id",
+                    new GDAParameter("?total", pedido.Total),
+                    new GDAParameter("?id", pedido.IdPedido));
         }
 
         #endregion

@@ -23,6 +23,11 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         public Data.Model.ProdutosPedidoEspelho ProdutoPedido { get; }
 
         /// <summary>
+        /// Valor do desconto rateado dos impostos.
+        /// </summary>
+        public decimal DescontoRateadoImpostos { get; }
+
+        /// <summary>
         /// Loja associada.
         /// </summary>
         public Global.Negocios.Entidades.Loja Loja { get; }
@@ -40,7 +45,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Valor total.
         /// </summary>
-        public decimal Total => ProdutoPedido.Total;
+        public decimal Total => ProdutoPedido.Total + ProdutoPedido.ValorBenef - DescontoRateadoImpostos;
 
         /// <summary>
         /// Finalidade de emissão
@@ -197,18 +202,22 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <param name="naturezaOperacao"></param>
         /// <param name="produto"></param>
         /// <param name="mva"></param>
+        /// <param name="descontoRateadoImpostos"></param>
+        /// <param name="provedorCodValorFiscal"></param>
         public ProdutoPedidoEspelhoItemImposto(
             Data.Model.ProdutosPedidoEspelho produtoPedido,
             Global.Negocios.Entidades.Loja loja,
             Entidades.NaturezaOperacao naturezaOperacao,
             Global.Negocios.Entidades.Produto produto,
-            float mva, IProvedorCodValorFiscal provedorCodValorFiscal)
+            float mva, decimal descontoRateadoImpostos,
+            IProvedorCodValorFiscal provedorCodValorFiscal)
         {
             ProdutoPedido = produtoPedido;
             Loja = loja;
             NaturezaOperacao = naturezaOperacao;
             Produto = produto;
             Mva = mva;
+            DescontoRateadoImpostos = descontoRateadoImpostos;
             ProvedorCodValorFiscal = provedorCodValorFiscal;
         }
 

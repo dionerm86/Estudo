@@ -227,7 +227,7 @@ namespace Glass.Pedido.Negocios.Componentes
                     PrazoMedio = prazoMedio,
                     PercentualICMSVenda = (decimal)produtoPedido.AliqIcms / 100m,
                     FatorICMSSubstituicao = 0,
-                    PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
+                    PercentualIPICompra = 0m, //(decimal)(produto?.AliqIPI ?? 0) / 100m,
                     PercentualIPIVenda = (decimal)produtoPedido.AliqIpi / 100m,
                     PercentualComissao = produtoPedido.PercComissao / 100m,
                     CustosExtras = 0M,
@@ -360,10 +360,11 @@ namespace Glass.Pedido.Negocios.Componentes
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Pedido {pedido.IdPedido}",
-                PrecoVendaSemIPI = pedido.Total,
+                PrecoVendaSemIPI = (pedido.Total - pedido.ValorIpi) - pedido.ValorEntrega,
                 PrazoMedio = prazoMedio,
                 FatorICMSSubstituicao = 0,
                 PercentualComissao = percentualComissao,
+                CustosExtras = pedido.ValorEntrega,
                 PercentualRentabilidade = pedido.PercentualRentabilidade / 100m,
                 RentabilidadeFinanceira = pedido.RentabilidadeFinanceira
             };

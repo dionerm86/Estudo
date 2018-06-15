@@ -58,5 +58,21 @@ namespace Glass.Data.Model
         public decimal RentabilidadeFinanceira { get; set; }
 
         #endregion
+
+        #region Propriedades Extendidas
+
+        /// <summary>
+        /// Aliquota do IPI do produto na nota fiscal de entrada.
+        /// </summary>
+        [PersistenceProperty("ALIQIPICOMPRA", DirectionParameter.InputOptional)]
+        public float? AliqIpiCompra { get; set; }
+
+        /// <summary>
+        /// Aliquota do ICMS do produto na nota fiscal de entrada.
+        /// </summary>
+        [PersistenceProperty("ALIQICMSCOMPRA", DirectionParameter.InputOptional)]
+        public float? AliqIcmsCompra { get; set; }
+
+        #endregion
     }
 }
