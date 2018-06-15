@@ -14,9 +14,9 @@ namespace Glass.Data.DAL
 
         private int GetNumSeq(GDASession sessao, uint idProdImpressaoChapa, uint idProdImpressaoPeca)
         {
-            string sql = @"select coalesce(max(numSeq),0)+1 from chapa_corte_peca
-                where idProdImpressaoChapa=" + idProdImpressaoChapa + 
-                " and idProdImpressaoPeca=" + idProdImpressaoPeca;
+            string sql = $@"select coalesce(max(numSeq),0)+1 from chapa_corte_peca
+                where idProdImpressaoChapa= { idProdImpressaoChapa } 
+                 AND idProdImpressaoPeca= { idProdImpressaoPeca }";
 
             return ExecuteScalar<int>(sessao, sql);
         }
@@ -85,8 +85,7 @@ namespace Glass.Data.DAL
                 uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
 
                 uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
-                    string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
-                                        idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
+                    $"SELECT idLoja FROM mov_estoque WHERE idNf={ idNf.GetValueOrDefault(0) } AND idProd={ idProd.GetValueOrDefault() } AND tipoMov={ (int)MovEstoque.TipoMovEnum.Entrada } order by idmovestoque desc limit 1");
 
                 var idLojaFuncionario = UserInfo.GetUserInfo.IdLoja;
                 var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
@@ -127,8 +126,8 @@ namespace Glass.Data.DAL
         {
             uint idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, codChapa, ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa));
 
-            string sql = @"SELECT COUNT(*) FROM chapa_corte_peca WHERE IdProdImpressaoChapa=" + idProdImpressaoChapa+
-                " AND planocorte IS NOT NULL";
+            string sql = $@"SELECT COUNT(*) FROM chapa_corte_peca WHERE IdProdImpressaoChapa={ idProdImpressaoChapa }
+                AND planocorte IS NOT NULL AND COALESCE(PecaReposta,FALSE) = FALSE";
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
         }
@@ -157,8 +156,8 @@ namespace Glass.Data.DAL
             uint idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(codChapa,
                 ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa));
 
-            string sql = @"SELECT COUNT(*) FROM chapa_corte_peca WHERE IdProdImpressaoChapa=" + idProdImpressaoChapa +
-               " AND COALESCE(SaidaRevenda, 0) = 1";
+            string sql = $@"SELECT COUNT(*) FROM chapa_corte_peca WHERE IdProdImpressaoChapa={ idProdImpressaoChapa }
+                AND COALESCE(SaidaRevenda, 0) = 1 AND COALESCE(PecaReposta,FALSE) = FALSE";
 
             return objPersistence.ExecuteSqlQueryCount(sql) > 0 && !ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(null, codChapa);
         }
@@ -173,7 +172,8 @@ namespace Glass.Data.DAL
             uint idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(codChapa,
                 ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa));
 
-            return ObtemValorCampo<string>("planocorte", "IdProdImpressaoChapa=" + idProdImpressaoChapa + " AND planocorte IS NOT NULL");
+            return ObtemValorCampo<string>("PlanoCorte", $"IdProdImpressaoChapa={ idProdImpressaoChapa } AND PlanoCorte IS NOT NULL AND COALESCE(PecaReposta,FALSE) = FALSE");
+
         }
 
         public bool ValidarChapa(GDASession sessao, Produto produto)
@@ -211,15 +211,14 @@ namespace Glass.Data.DAL
 
             var chapasTrocadasDisponiveis = ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(sessao, idsProdImpressaoChapa);
 
-            return ExecuteScalar<bool>(sessao, string.Format(@"SELECT COUNT(*)>0 FROM chapa_corte_peca ccp
+            return ExecuteScalar<bool>(sessao, $@"SELECT COUNT(*)>0 FROM chapa_corte_peca ccp
                     INNER JOIN produto_impressao pi ON (ccp.IdProdImpressaoChapa=pi.IdProdImpressao)
                     LEFT JOIN produtos_nf pnf ON (pi.IdProdNf=pnf.IdProdNf)
                     LEFT JOIN produtos_pedido_espelho ppe on (ppe.IdProdPed = pi.IdProdPed)
-                    LEFT JOIN pedido ped on (ped.IdPedido = ppe.IdPedido) And (ped.TipoPedido = {0})
+                    LEFT JOIN pedido ped on (ped.IdPedido = ppe.IdPedido) And (ped.TipoPedido = {(int)Pedido.TipoPedidoEnum.Producao})
                     INNER JOIN produto p ON (coalesce(pnf.IdProd,ppe.IdProd)=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
-                WHERE ccp.IdProdImpressaoChapa IN ({1}) AND sp.TipoSubgrupo IN {2}", (int)Pedido.TipoPedidoEnum.Producao,
-                            string.Join(",", idsProdImpressaoChapa.Where(f => f > 0)), string.Format("({0}, {1})", (int)TipoSubgrupoProd.ChapasVidro, (int)TipoSubgrupoProd.ChapasVidroLaminado))) && !chapasTrocadasDisponiveis;
+                WHERE ccp.IdProdImpressaoChapa IN ({string.Join(",", idsProdImpressaoChapa.Where(f => f > 0))}) AND sp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.ChapasVidro}, {(int)TipoSubgrupoProd.ChapasVidroLaminado})") && !chapasTrocadasDisponiveis;
         }
 
         /// <summary>
@@ -230,8 +229,8 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public int QtdeLeituraChapaPedidoRevenda(GDASession sessao, uint idProdImpressaoChapa, uint idPedidoRevenda)
         {
-            string sql = string.Format(@"SELECT COUNT(*) FROM chapa_corte_peca WHERE idProdIMpressaoChapa = {0} AND idProdImpressaoPeca IN(SELECT idprodimpressao
-                FROM produto_impressao WHERE idpedido IN(SELECT idpedido FROM pedido WHERE idpedidorevenda = {1}))", idProdImpressaoChapa, idPedidoRevenda);
+            string sql = $@"SELECT COUNT(*) FROM chapa_corte_peca WHERE idProdIMpressaoChapa = {idProdImpressaoChapa} AND idProdImpressaoPeca IN(SELECT idprodimpressao
+                FROM produto_impressao WHERE idpedido IN(SELECT idpedido FROM pedido WHERE idpedidorevenda = {idPedidoRevenda}))";
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) ;
         }
@@ -299,7 +298,7 @@ namespace Glass.Data.DAL
                 {
                     // Produto de impressão do pedido associado ao produto de impressão da nota fiscal.
                     var idProdImpressaoPecaAssociarMovEstoque = ObtemValorCampo<uint?>(sessao, "IdProdImpressaoPeca",
-                        string.Format("IdProdImpressaoChapa={0} AND IdProdImpressaoPeca<>{1}", idProdImpressaoChapa, idProdImpressaoPeca));
+                        $"IdProdImpressaoChapa={ idProdImpressaoChapa } AND COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca<>{ idProdImpressaoPeca }");
 
                     if (idProdImpressaoPecaAssociarMovEstoque > 0)
                     {
@@ -314,16 +313,15 @@ namespace Glass.Data.DAL
 
                             if (idProdPedProducaoAssiciarMovEstoque > 0)
                                 // Associa a movimentação de estoque ao novo produto de produção.
-                                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao={0} WHERE IdMovEstoque in ({1})", idProdPedProducaoAssiciarMovEstoque.Value,
-                                    string.Join(",", idsMovEstoque)));
+                                objPersistence.ExecuteCommand(sessao, $"UPDATE mov_estoque SET IdProdPedProducao={ idProdPedProducaoAssiciarMovEstoque.Value } WHERE IdMovEstoque in ({string.Join(",", idsMovEstoque) })");
                         }
                     }
                 }
                 // Na movimentação de estoque, salva no campo OBS o número da etiqueta da chapa. Pois, a referência da chapa é recuperada através do produto de produção,
                 // caso ele seja apagado ou seja associado à outra chapa, esta movimentação ficará com a referência incorreta.
                 else
-                    objPersistence.ExecuteCommand(sessao, string.Format("UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque in ({0})", string.Join(",", idsMovEstoque)),
-                        new GDAParameter("?obs", string.Format("Etiqueta: {0}|{1}.", numEtiquetaChapa, ObtemPlanoCorteVinculado(numEtiquetaChapa) ?? ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdPedProducao) ?? "").Replace("|.", ".")));
+                    objPersistence.ExecuteCommand(sessao, string.Format($"UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque in ({ string.Join(", ", idsMovEstoque) })"),
+                        new GDAParameter("?obs", ($"Etiqueta: { numEtiquetaChapa }|{ ObtemPlanoCorteVinculado(numEtiquetaChapa) ?? ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdPedProducao) ?? "" }.").Replace("|.", ".")));
             }
 
             #endregion
@@ -340,7 +338,7 @@ namespace Glass.Data.DAL
 
                 var idsProdImpressaoChapa = ObtemIdProdImpressaoChapa(session, ids);
 
-                objPersistence.ExecuteCommand(session, string.Format("DELETE FROM chapa_corte_peca WHERE IdProdImpressaoPeca IN ({0})", ids));
+                objPersistence.ExecuteCommand(session, $"DELETE FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca IN ({ids})");
 
                 foreach (var id in idsProdImpressaoChapa)
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(session, id, MovEstoque.TipoMovEnum.Entrada);
@@ -355,7 +353,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public void DeleteByIdProdImpressaoChapa(GDASession sessao, uint idProdImpressaoChapa)
         {
-            objPersistence.ExecuteCommand(sessao, "DELETE FROM chapa_corte_peca WHERE SaidaRevenda = 1 AND idProdImpressaoChapa=" + idProdImpressaoChapa);
+            objPersistence.ExecuteCommand(sessao, $"DELETE FROM chapa_corte_peca WHERE SaidaRevenda = 1 AND COALESCE(PecaReposta,FALSE) = FALSE AND idProdImpressaoChapa={ idProdImpressaoChapa }");
 
             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaChapaCortePeca(sessao, (int)idProdImpressaoChapa, MovEstoque.TipoMovEnum.Entrada);
         }
@@ -369,7 +367,7 @@ namespace Glass.Data.DAL
         {
             uint idProdImpressaoChapa = ObtemValorCampo<uint>(sessao, "idProdImpressaoChapa", "idProdImpressaoPeca=" + idProdImpressaoPeca);
 
-            return objPersistence.ExecuteSqlQueryCount(sessao, "SELECT COUNT(*) FROM chapa_corte_peca WHERE idProdImpressaoChapa=" + idProdImpressaoChapa);
+            return objPersistence.ExecuteSqlQueryCount(sessao, $"SELECT COUNT(*) FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = FALSE AND idProdImpressaoChapa={ idProdImpressaoChapa }");
         }
 
         /// <summary>
@@ -380,10 +378,11 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<DateTime> ObtemDiasLeitura(GDASession sessao, uint idProdImpressaoChapa)
         {
-            string sql = @"
+            string sql = $@"
                 SELECT date(dataCad)
                 FROM chapa_corte_peca
-                WHERE idProdImpressaoChapa = " + idProdImpressaoChapa + @"
+                WHERE idProdImpressaoChapa = { idProdImpressaoChapa }
+                AND COALESCE(PecaReposta,FALSE) = FALSE
                 GROUP BY date(dataCad)";
 
             return ExecuteMultipleScalar<DateTime>(sql);
@@ -419,7 +418,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public int ObtemIdProdImpressaoChapa(GDASession sessao, int idProdImpressaoPeca)
         {
-            return ObtemValorCampo<int>(sessao, "IdProdImpressaoChapa", "IdProdImpressaoPeca = " + idProdImpressaoPeca);
+            return ObtemValorCampo<int>(sessao, "IdProdImpressaoChapa", $"COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca = { idProdImpressaoPeca }");
         }
 
         /// <summary>
@@ -430,7 +429,32 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public List<int> ObtemIdProdImpressaoChapa(GDASession sessao, string idsProdImpressaoPeca)
         {
-            return ExecuteMultipleScalar<int>(sessao, "SELECT DISTINCT IdProdImpressaoChapa FROM chapa_corte_peca WHERE IdProdImpressaoPeca IN(" + idsProdImpressaoPeca + ")");
+            return ExecuteMultipleScalar<int>(sessao, $"SELECT DISTINCT IdProdImpressaoChapa FROM chapa_corte_peca WHERE IdProdImpressaoPeca IN({ idsProdImpressaoPeca }) AND COALESCE(PecaReposta,FALSE) = FALSE");
+        }
+
+        public void MarcarPecaRepostaChapaCortePeca(GDATransaction sessao, uint idProdPedProducao)
+        {
+            var numEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "NumEtiqueta", $"IdProdPedProducao = { idProdPedProducao }");
+            var idProdImpressaoPeca = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "IdProdImpressao", $"NumEtiqueta = '{numEtiqueta}'");
+            var possuiLeituraChapa = ExecuteScalar<bool>(sessao, $"SELECT count(*) FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca = { idProdImpressaoPeca }");
+
+            if (!possuiLeituraChapa)
+                return;
+
+            objPersistence.ExecuteCommand(sessao, $"UPDATE chapa_corte_peca SET PecaReposta = TRUE WHERE COALESCE(PecaReposta,FALSE) = FALSE AND IdProdImpressaoPeca = { idProdImpressaoPeca }");
+        }
+
+        public void VoltarPecaRepostaChapaCortePeca(GDASession sessao, uint idProdPedProducao)
+        {
+            var numEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "NumEtiqueta", $"IdProdPedProducao = { idProdPedProducao }");
+            var idProdImpressaoPeca = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "IdProdImpressao", $"NumEtiqueta = '{ numEtiqueta }'");
+            var possuiLeituraChapaReposta = ExecuteScalar<bool>(sessao, $"SELECT count(*) FROM chapa_corte_peca WHERE COALESCE(PecaReposta,TRUE) = TRUE AND IdProdImpressaoPeca = { idProdImpressaoPeca }");
+
+            if (!possuiLeituraChapaReposta)
+                return;
+
+            var idChapaCortePeca = ExecuteScalar<uint>(sessao, $"SELECT MAX(IdChapaCortePeca) FROM chapa_corte_peca WHERE COALESCE(PecaReposta,FALSE) = TRUE AND IdProdImpressaoPeca = { idProdImpressaoPeca }");
+            objPersistence.ExecuteCommand(sessao, $"UPDATE chapa_corte_peca SET PecaReposta = FALSE WHERE COALESCE(PecaReposta,FALSE) = TRUE AND IdChapaCortePeca = { idChapaCortePeca }");
         }
     }
 }
