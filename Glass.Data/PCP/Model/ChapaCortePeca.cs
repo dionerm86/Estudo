@@ -31,6 +31,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("SaidaRevenda")]
         public bool SaidaRevenda { get; set; }
 
+        [PersistenceProperty("PECAREPOSTA")]
+        public bool PecaReposta { get; set; }
+
         #endregion
     }
 }

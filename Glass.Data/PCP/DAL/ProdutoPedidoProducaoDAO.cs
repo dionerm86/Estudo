@@ -5105,9 +5105,9 @@ namespace Glass.Data.DAL
 
                     // O ideal é agregar à esta condição o mesmo código do método RetiraPecaSituacao, para que a reposição fique correta.
                     // Além disso, temos que salvar os dados da chapa nos dados da reposição, pois se o usuário voltar a situação da peça, tudo deve ser revertido.
-                    if (quantidadeLeiturasChapa == 1)
+                    if (quantidadeLeiturasChapa > 0)
                     {
-                        throw new Exception("Para efetuar a reposição esta peça, será preciso removê-la do setor marcado como Corte, para que o estoque das peças fique correto.");
+                        ChapaCortePecaDAO.Instance.MarcarPecaRepostaChapaCortePeca(transaction, idProdPedProducao);
                     }
 
                     if (prodPedEsp.IsProdFilhoLamComposicao)
@@ -6586,6 +6586,8 @@ namespace Glass.Data.DAL
 
             if (!IsPecaReposta(sessao, idProdPedProducao, false) || String.IsNullOrEmpty(dadosReposicaoPeca))
                 return;
+
+            ChapaCortePecaDAO.Instance.VoltarPecaRepostaChapaCortePeca(sessao, idProdPedProducao);
 
             var etiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
             var item = GetElementByPrimaryKey(sessao, idProdPedProducao);
