@@ -306,20 +306,26 @@ namespace Glass.Projeto.Negocios.Componentes
             {
                 // Caso alguma ferragem tenha sido importadas, informa o nome delas na mensagem de erro, junto com o nome das ferragens que não foram importadas.
                 if (resultadoImportacao.FerragensImportadas.Count > 0)
-                    retornoImportacao = string.Format("Algumas ferragens não foram importadas. Verifique se elas já existem.\nFerragens importadas: {0}\nFerragens não importadas: {1}\n{2}",
-                        string.Join(", ", resultadoImportacao.FerragensNaoImportadas), string.Join(", ", resultadoImportacao.FerragensImportadas), string.Join(", ", resultadoImportacao.MensagensErro));
+                {
+                    retornoImportacao = $@"Algumas ferragens não foram importadas. Verifique se elas já existem.
+                        \nFerragens importadas: { string.Join(", ", resultadoImportacao.FerragensImportadas) }
+                        \nFerragens não importadas: { string.Join(", ", resultadoImportacao.FerragensNaoImportadas) }
+                        \n{ string.Join(", ", resultadoImportacao.MensagensErro) }";
+                }
                 // Monta uma mensagem de erro informando quais ferragens não foram importadas.
                 else
-                    retornoImportacao = string.Format("Não foi possível importar as ferragens.\nFerragens não importadas: {0}\n{1}",
-                        string.Join(", ", resultadoImportacao.FerragensNaoImportadas), string.Join(", ", resultadoImportacao.MensagensErro));
+                {
+                    retornoImportacao = $@"Não foi possível importar as ferragens.
+                        \nFerragens não importadas: { string.Join(", ", resultadoImportacao.FerragensNaoImportadas) }
+                        \n{ string.Join(", ", resultadoImportacao.MensagensErro) }";
+                }
 
                 return new SaveResult(false, retornoImportacao.GetFormatter());
             }
             // Salva uma mensagem de sucesso, informando o nome das ferragens importadas.
             else
             {
-                retornoImportacao = string.Format("Importação realizada com sucesso! Ferragens importadas: {0}.", string.Join(", ", resultadoImportacao.FerragensImportadas));
-
+                retornoImportacao = $"Importação realizada com sucesso! Ferragens importadas: { string.Join(", ", resultadoImportacao.FerragensImportadas) }.";
                 return new SaveResult(true, retornoImportacao.GetFormatter());
             }
 
