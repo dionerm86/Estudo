@@ -138,6 +138,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<bool>(session, "NaoPermitirFastDelivery", string.Format("IdAplicacao={0}", idAplicacao));
         }
 
+        /// <summary>
+        /// Retorna o número mínimo de dias úteis para a data de entrega.
+        /// </summary>
+        public int ObterDiasMinimosDataEntrega(GDASession sessao, int idAplicacao)
+        {
+            return ObtemValorCampo<int>(sessao, "DiasMinimos", $"IdAplicacao={ idAplicacao }");
+        }
+
         #endregion
 
         #region Busca aplicação pelo seu código interno

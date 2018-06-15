@@ -209,13 +209,25 @@ namespace Glass.Data.DAL
                 if (idPedido > 0)
                 {
                     var produtosPedido = ProdutosPedidoDAO.Instance.GetByPedido(session, idPedido.Value);
-
-                    // Etiqueta Processo
+                    var diasDataEntregaAplicacao = 0;
                     var diasDataEntregaProcesso = 0;
-                    foreach (var pp in produtosPedido.Where(f => f.IdProcesso > 0).ToList())
-                        diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, pp.IdProcesso.Value));
-                    // Considera a data maior entre a data das configurações e da data do processo.
+
+                    foreach (var pp in produtosPedido.Where(f => f.IdProcesso > 0 || f.IdAplicacao > 0).ToList())
+                    {
+                        if (pp.IdAplicacao > 0)
+                        {
+                            diasDataEntregaAplicacao = Math.Max(diasDataEntregaAplicacao, EtiquetaAplicacaoDAO.Instance.ObterDiasMinimosDataEntrega(session, (int)pp.IdAplicacao.Value));
+                        }
+
+                        if (pp.IdProcesso > 0)
+                        {
+                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, pp.IdProcesso.Value));
+                        }
+                    }
+
+                    numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaAplicacao);
                     numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
+
 
                     // Subgrupo produto.
                     Dictionary<uint, KeyValuePair<int?, int?>> subgrupos = new Dictionary<uint, KeyValuePair<int?, int?>>();
