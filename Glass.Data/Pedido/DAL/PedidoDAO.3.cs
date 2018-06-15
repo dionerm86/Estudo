@@ -1371,97 +1371,7 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?taxa", PedidoConfig.Pedido_FastDelivery.TaxaFastDelivery));
                 }
 
-                string descontoRateadoImpostos = "0";
                 pedido.Total = GetTotal(sessao, pedido.IdPedido);
-
-                if (!PedidoConfig.RatearDescontoProdutos)
-                {
-                    var dadosAmbientes = (pedido as IContainerCalculo).Ambientes.Obter(true)
-                        .Cast<AmbientePedido>()
-                        .Select(x => new { x.IdAmbientePedido, TotalProdutos = x.TotalProdutos + x.ValorDescontoAtual });
-
-                    var formata = new Func<decimal, string>(x => x.ToString().Replace(".", "").Replace(",", "."));
-
-                    decimal totalSemDesconto = GetTotalSemDesconto(sessao, pedido.IdPedido, (pedido.Total / (decimal)percFastDelivery));
-                    string selectAmbientes = dadosAmbientes.Count() == 0 ? "select null as idAmbientePedido, 1 as total" :
-                        String.Join(" union all ", dadosAmbientes.Select(x =>
-                            String.Format("select {0} as idAmbientePedido, {1} as total",
-                            x.IdAmbientePedido, formata(x.TotalProdutos))).ToArray());
-
-                    descontoRateadoImpostos = @"(
-                        if(coalesce(ped.desconto, 0)=0, 0, if(ped.tipoDesconto=1, ped.desconto / 100, ped.desconto / Greatest(" + formata(totalSemDesconto) + @", 1)) * (pp.total + coalesce(pp.valorBenef, 0)))) - (
-                        if(coalesce(ap.desconto, 0)=0, 0, if(ap.tipoDesconto=1, ap.desconto / 100, ap.desconto / (select Greatest(total, 1) from (" + selectAmbientes + @") as amb 
-                        where idAmbientePedido=ap.idAmbientePedido)) * (pp.total + coalesce(pp.valorBenef, 0))))";
-                }
-
-                // Calcula o valor do ICMS do pedido, utiliza o percentual do fast delivery no cálcul o para que quando for gerar a NF, calcule corretamente
-                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, pedido.IdLoja) && ClienteDAO.Instance.IsCobrarIcmsSt(sessao, pedido.IdCli))
-                {
-                    var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int)pedido.IdLoja, (int)pedido.IdCli, null, null, null, null);
-
-                    string idProd = "pp.idProd";
-                    string total = "pp.Total + Coalesce(pp.ValorBenef, 0)";
-                    string aliquotaIcmsSt = "pp.AliqIcms";
-
-                    sql = @"
-                        Update produtos_pedido pp
-                            inner join pedido ped on (pp.idPedido=ped.idPedido)
-                            left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
-                        {0}
-                        Where pp.idPedido=" + pedido.IdPedido + " and (pp.InvisivelPedido = false or pp.InvisivelPedido is null) AND pp.IdProdPedParent IS NULL";
-
-                    // Atualiza a Alíquota ICMSST somada ao FCPST com o ajuste do MVA e do IPI. Necessário porque na tela é recuperado e salvo o valor sem FCPST.
-                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
-                        "set pp.AliqIcms=(" + calcIcmsSt.ObtemSqlAliquotaInternaIcmsSt(sessao, idProd, total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
-                    // Atualiza o valor do ICMSST calculado com a Alíquota recuperada anteriormente.
-                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
-                        "set pp.ValorIcms=(" + calcIcmsSt.ObtemSqlValorIcmsSt(total, descontoRateadoImpostos, aliquotaIcmsSt, percFastDelivery.ToString().Replace(',', '.')) + @")"));
-
-                    sql = "update pedido set AliquotaIcms=(select sum(coalesce(AliqIcms, 0)) from produtos_pedido where idPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) / (select Greatest(count(*), 1) from produtos_pedido where idPedido=" + pedido.IdPedido + " and AliqIcms>0 and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-
-                    sql = "update pedido set ValorIcms=(select sum(coalesce(ValorIcms, 0)) from produtos_pedido where IdPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL), Total=(Total + ValorIcms) where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-                }
-                else
-                {
-                    sql = "update produtos_pedido pp set AliqIcms=0, ValorIcms=0 where idPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL";
-                    objPersistence.ExecuteCommand(sessao, sql);
-
-                    sql = "update pedido set AliquotaIcms=0, ValorIcms=0 where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-                }
-
-                // Calcula o valor do IPI do pedido
-                if (LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, pedido.IdLoja) && ClienteDAO.Instance.IsCobrarIpi(sessao, pedido.IdCli))
-                {
-                    sql = @"
-                        Update produtos_pedido pp
-                            inner join pedido ped on (pp.idPedido=ped.idPedido)
-                            left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido) 
-                        {0}
-                        Where pp.idPedido=" + pedido.IdPedido + " and (pp.InvisivelPedido = false or pp.InvisivelPedido is null) AND pp.IdProdPedParent IS NULL";
-
-                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
-                        "SET pp.AliquotaIpi=Round((select aliqIpi from produto where idProd=pp.idProd), 2)"));
-
-                    objPersistence.ExecuteCommand(sessao, string.Format(sql,
-                        "SET pp.ValorIpi=(((pp.Total + Coalesce(pp.ValorBenef, 0) - " + descontoRateadoImpostos + @") * " + percFastDelivery.ToString().Replace(',', '.') + @")  * (Coalesce(pp.AliquotaIpi, 0) / 100))"));
-
-                    sql = "update pedido set AliquotaIpi=Round((select sum(coalesce(AliquotaIpi, 0)) from produtos_pedido where idPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL) / (select Greatest(count(*), 1) from produtos_pedido where idPedido=" + pedido.IdPedido + " and AliquotaIpi>0 and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL), 2) where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-
-                    sql = "update pedido set ValorIpi=Round((select sum(coalesce(ValorIpi, 0)) from produtos_pedido where IdPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL), 2), Total=(Total + ValorIpi) where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-                }
-                else
-                {
-                    sql = "update produtos_pedido pp set AliquotaIpi=0, ValorIpi=0 where idPedido=" + pedido.IdPedido + " and (InvisivelPedido = false or InvisivelPedido is null) AND IdProdPedParent IS NULL";
-                    objPersistence.ExecuteCommand(sessao, sql);
-
-                    sql = "update pedido set AliquotaIpi=0, ValorIpi=0 where idPedido=" + pedido.IdPedido;
-                    objPersistence.ExecuteCommand(sessao, sql);
-                }
 
                 // Calcula os impostos dos produtos do pedido
                 var impostos = CalculadoraImpostoHelper.ObterCalculadora<Model.Pedido>()
@@ -1501,6 +1411,8 @@ namespace Glass.Data.DAL
                     }
                     GeraParcelaParceiro(sessao, ref ped);
                 }
+
+                pedido.Total = GetTotal(sessao, pedido.IdPedido);
 
                 var rentabilidade = RentabilidadeHelper.ObterCalculadora<Pedido>().Calcular(sessao, pedido);
                 if (rentabilidade.Executado)
@@ -3497,7 +3409,7 @@ namespace Glass.Data.DAL
                 (int)Pedido.SituacaoPedido.Cancelado);
         }
 
-        internal decimal GetTotalSemDesconto(uint idPedido, decimal total)
+        public decimal GetTotalSemDesconto(uint idPedido, decimal total)
         {
             return GetTotalSemDesconto(null, idPedido, total);
         }

@@ -23,9 +23,19 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         public Data.Model.ProdutosPedido ProdutoPedido { get; }
 
         /// <summary>
+        /// Valor do desconto rateado dos impostos.
+        /// </summary>
+        public decimal DescontoRateadoImpostos { get; }
+
+        /// <summary>
         /// Loja associada.
         /// </summary>
         public Global.Negocios.Entidades.Loja  Loja { get; }
+
+        /// <summary>
+        /// Cliente associado.
+        /// </summary>
+        public Global.Negocios.Entidades.Cliente Cliente { get; }
 
         /// <summary>
         /// Natureza de operação vinculada ao item.
@@ -40,7 +50,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Valor total.
         /// </summary>
-        public decimal Total => ProdutoPedido.Total;
+        public decimal Total => ProdutoPedido.Total + ProdutoPedido.ValorBenef - DescontoRateadoImpostos;
 
         /// <summary>
         /// Finalidade de emissão
@@ -77,7 +87,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Aliquota do IPI
         /// </summary>
-        public float AliqIpi => ProdutoPedido.AliqIpi;
+        public float AliqIpi => Loja.CalcularIpiPedido && Cliente.CobrarIpi ? Produto.AliqIPI : 0f;
 
         /// <summary>
         /// Código de situação tributária do COFINS
@@ -193,22 +203,28 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// </summary>
         /// <param name="produtoPedido"></param>
         /// <param name="loja"></param>
+        /// <param name="cliente"></param>
         /// <param name="naturezaOperacao"></param>
         /// <param name="produto"></param>
         /// <param name="mva"></param>
+        /// <param name="descontoRateadoImpostos"></param>
         /// <param name="codValorFiscal"></param>
         public ProdutoPedidoItemImposto(
             Data.Model.ProdutosPedido produtoPedido, 
             Global.Negocios.Entidades.Loja loja,
+            Global.Negocios.Entidades.Cliente cliente,
             Entidades.NaturezaOperacao naturezaOperacao,
             Global.Negocios.Entidades.Produto produto,
-            float mva, IProvedorCodValorFiscal provedorCodValorFiscal)
+            float mva, decimal descontoRateadoImpostos,
+            IProvedorCodValorFiscal provedorCodValorFiscal)
         {
             ProdutoPedido = produtoPedido;
             Loja = loja;
+            Cliente = cliente;
             NaturezaOperacao = naturezaOperacao;
             Produto = produto;
             Mva = mva;
+            DescontoRateadoImpostos = descontoRateadoImpostos;
             ProvedorCodValorFiscal = provedorCodValorFiscal;
         }
 

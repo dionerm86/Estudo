@@ -187,9 +187,10 @@ namespace Glass.Fiscal.Negocios.Componentes
                 PrecoVendaSemIPI = preceoVendaSemIPIUnitario * produtoNfCusto.Qtde,
                 PrecoCusto = custoProd,
                 PrazoMedio = prazoMedio,
+                PercentualICMSCompra = (decimal)(produtoNfCusto.AliqIcmsCompra ?? 0) / 100m,
                 PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
                 FatorICMSSubstituicao = 0,
-                PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
+                PercentualIPICompra = (decimal)(produtoNfCusto.AliqIpiCompra ?? 0) / 100m,
                 PercentualIPIVenda = (decimal)produtoNf.AliqIpi / 100m,
                 PercentualComissao = produtoNf.PercComissao / 100m,
                 CustosExtras = 0m,
@@ -208,7 +209,8 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="produtos"></param>
         /// <returns></returns>
         private IItemRentabilidade<Data.Model.ProdutosNf> ObterItemProdutoNf(
-            GDA.GDASession sessao, Data.Model.ProdutosNf produtoNf, IEnumerable<Data.Model.ProdutoNfCusto> produtoNfCustos,
+            GDA.GDASession sessao, Data.Model.ProdutosNf produtoNf, 
+            IEnumerable<Data.Model.ProdutoNfCusto> produtoNfCustos,
             int prazoMedio, IEnumerable<Data.Model.Produto> produtos)
         {
             var registros = new Lazy<IList<Data.Model.ProdutoNfRentabilidade>>(
@@ -290,9 +292,10 @@ namespace Glass.Fiscal.Negocios.Componentes
                     PrecoVendaSemIPI = produtoNf.Total + produtoNf.ValorIcmsSt, // Não atualizar a configuração do sistema o total do produto não possui o valor do IPI
                     PrecoCusto = custoProd,
                     PrazoMedio = prazoMedio,
+                    PercentualICMSCompra = (decimal)(produtoNfCustos.FirstOrDefault()?.AliqIcmsCompra ?? 0f) / 100m,
                     PercentualICMSVenda = (decimal)produtoNf.AliqIcms / 100m,
                     FatorICMSSubstituicao = 0,
-                    PercentualIPICompra = (decimal)(produto?.AliqIPI ?? 0) / 100m,
+                    PercentualIPICompra = (decimal)(produtoNfCustos.FirstOrDefault()?.AliqIpiCompra ?? 0f) / 100m,
                     PercentualIPIVenda = (decimal)produtoNf.AliqIpi / 100m,
                     PercentualComissao = produtoNf.PercComissao / 100m,
                     CustosExtras = 0m,

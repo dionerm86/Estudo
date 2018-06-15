@@ -40,6 +40,7 @@ namespace Glass.Rentabilidade.Negocios.Componentes
 
         private readonly List<Rentabilidade.IRegistroRentabilidade> _registrosRentabilidade = new List<IRegistroRentabilidade>();
         private readonly CriadorRegistroRentabilidade _criarRegistroRentabilidade;
+        private decimal? _percentualICMSCompra;
 
         #endregion
 
@@ -73,9 +74,19 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Percentual do ICMS de compra.
         /// </summary>
-        public decimal PercentualICMSCompra =>
-            IndicadoresFinanceiros.Contains("AliqICMSCompra") ? 
-                IndicadoresFinanceiros["AliqICMSCompra"] : 0m;
+        public virtual decimal PercentualICMSCompra
+        { 
+            get
+            {
+                return _percentualICMSCompra ??
+                    (IndicadoresFinanceiros.Contains("AliqICMSCompra") ?
+                        IndicadoresFinanceiros["AliqICMSCompra"] : 0m);
+            }
+            set
+            {
+                _percentualICMSCompra = value;
+            }
+        }
 
         /// <summary>
         /// Percentual do ICMS de venda.
