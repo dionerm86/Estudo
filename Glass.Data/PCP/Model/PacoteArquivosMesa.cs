@@ -37,6 +37,17 @@ namespace Glass.Data.Model
         #region Métodos Públicos
 
         /// <summary>
+        /// Verifica se o pacote está válido para geração
+        /// </summary>
+        public bool PacotePreparadoGerarArquivos
+        {
+            get
+            {
+                return _arquivos.Any() || _erros.Any();
+            }
+        }
+
+        /// <summary>
         /// Compacta os arquivos gerados.
         /// </summary>
         /// <param name="outputStream"></param>
