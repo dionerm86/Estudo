@@ -97,30 +97,42 @@ namespace Glass.UI.Web.Utils
                                 NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPed)
                             });
 
-                            Glass.MensagemAlerta.ShowMsg("Imagens alteradas.", Page);
-                            Response.Redirect(Request.Url.ToString());
+                            //Glass.MensagemAlerta.ShowMsg("Imagens alteradas.", Page);
+                            //Response.Redirect(Request.Url.ToString());
                         }
 
                         ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(h.Value));
 
-                        ppe.Item = item;
-                        ManipulacaoImagem.SalvarImagem(Server.MapPath(ppe.ImagemUrlSalvarItem), f.FileBytes);
-
-                        // Cria Log de alteração da Imagem do Produto Pedido Espelho
-                        LogAlteracaoDAO.Instance.Insert(new LogAlteracao
+                        if (ppe != null)
                         {
-                            Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPedEsp,
-                            IdRegistroAlt = (int)ppe.IdProdPed,
-                            Campo = "Imagem Produto Pedido Espelho",
-                            ValorAtual = f.FileName,
-                            DataAlt = DateTime.Now,
-                            IdFuncAlt = UserInfo.GetUserInfo.CodUser,
-                            Referencia = "Imagem do Produto Pedido Espelho " + ppe.IdProdPed,
-                            NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPedEsp, (int)ppe.IdProdPed)
-                        });
+                            var nomeImagem = string.Empty;
 
-                        if (idPecaItemProj > 0)
-                            LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, item.ToString(), "Nova imagem atribuída à peça");
+                            if (item > 0)
+                            {
+                                ppe.Item = item;
+                                nomeImagem = ppe.ImagemUrlSalvarItem;
+                            }
+                            else
+                                nomeImagem = ppe.ImagemUrlSalvar;
+
+                            ManipulacaoImagem.SalvarImagem(Server.MapPath(nomeImagem), f.FileBytes);
+
+                            // Cria Log de alteração da Imagem do Produto Pedido Espelho
+                            LogAlteracaoDAO.Instance.Insert(new LogAlteracao
+                            {
+                                Tabela = (int)LogAlteracao.TabelaAlteracao.ImagemProdPedEsp,
+                                IdRegistroAlt = (int)ppe.IdProdPed,
+                                Campo = "Imagem Produto Pedido Espelho",
+                                ValorAtual = f.FileName,
+                                DataAlt = DateTime.Now,
+                                IdFuncAlt = UserInfo.GetUserInfo.CodUser,
+                                Referencia = "Imagem do Produto Pedido Espelho " + ppe.IdProdPed,
+                                NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(null, LogAlteracao.TabelaAlteracao.ImagemProdPedEsp, (int)ppe.IdProdPed)
+                            });
+
+                            if (idPecaItemProj > 0)
+                                LogAlteracaoDAO.Instance.LogImagemProducao(idPecaItemProj, item.ToString(), "Nova imagem atribuída à peça");
+                        }
                     }
                 }
 

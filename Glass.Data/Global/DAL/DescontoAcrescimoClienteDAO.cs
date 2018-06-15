@@ -195,9 +195,7 @@ namespace Glass.Data.DAL
 
         internal DescontoAcrescimoCliente GetDescontoAcrescimo(GDASession sessao, IContainerCalculo container, Produto produto)
         {
-            var idCliente = container.Cliente != null
-                ? container.Cliente.Id
-                : default(uint);
+            var idCliente = container?.Cliente?.Id ?? default(uint);
 
             return GetDescontoAcrescimo(
                 sessao,

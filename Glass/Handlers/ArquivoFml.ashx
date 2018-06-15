@@ -10,7 +10,7 @@ using Glass.Data.DAL;
 using Glass.Data.Model;
 using System.Collections.Generic;
 
-public class ArquivoFml : IHttpHandler 
+public class ArquivoFml : IHttpHandler
 {
     public void ProcessRequest(HttpContext context)
     {
@@ -28,6 +28,14 @@ public class ArquivoFml : IHttpHandler
             null, null, null, context.Request["tipoPedido"], context.Request["idsRotas"], Glass.Conversoes.StrParaInt(context.Request["origemPedido"]), Glass.Conversoes.StrParaInt(context.Request["pedidosConferidos"]));
 
         var resultado = PedidoEspelhoDAO.Instance.GerarArquivoFmlPeloPedido(lstProdPedEsp, false);
+
+        if(!resultado.PacotePreparadoGerarArquivos)
+        {
+            var mensagem = "O pedido não possui projetos com arquivos para execução na máquina.";
+            context.Response.Write(string.Format("<script>alert(\"{0}\"); window.close();</script>", mensagem));
+            context.Response.Flush();
+            return;
+        }
 
         // Adiciona o arquivo de otimização ao zip
         context.Response.ContentType = "application/zip";
