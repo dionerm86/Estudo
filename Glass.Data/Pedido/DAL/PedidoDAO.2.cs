@@ -1891,6 +1891,8 @@ namespace Glass.Data.DAL
                         var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
                             (int)p.IdProd);
 
+                        var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
+
                         var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                   tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
 
@@ -1923,7 +1925,7 @@ namespace Glass.Data.DAL
                         if (p.QtdSaida > 0)
                             MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido,
                                 p.IdProdPed,
-                                (decimal)(m2 ? m2Saida : qtdCreditoEstoque), true);
+                                (decimal)(m2 ? m2Saida : qtdCreditoEstoque), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
 
                         if (situacaoAtual == Pedido.SituacaoPedido.Confirmado && ProdutoDAO.Instance.IsVidro(session, (int)p.IdProd))
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(null, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
@@ -2061,6 +2063,9 @@ namespace Glass.Data.DAL
                                     p.Beneficiamentos.CountAreaMinimaSession(session), areaMinimaProd, false,
                                     p.Espessura, true);
 
+                                var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
+                                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
+
                                 MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja,
                                     idPedido, p.IdProdPed,
                                     (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0),
@@ -2068,7 +2073,7 @@ namespace Glass.Data.DAL
 
                                 MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja,
                                     idPedido, p.IdProdPed,
-                                    (decimal)(m2 ? m2Saida : qtdBaixa), true);
+                                    (decimal)(m2 ? m2Saida : qtdBaixa), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
                             }
                         }
                         else
@@ -2080,6 +2085,8 @@ namespace Glass.Data.DAL
                             {
                                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session,
                                     (int)p.IdProd);
+
+                                var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
                                 var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 ||
                                           tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -2110,7 +2117,7 @@ namespace Glass.Data.DAL
                                 if (p.QtdSaida > 0)
                                     MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja,
                                         idPedido, p.IdProdPed,
-                                        (decimal)(m2 ? m2Saida : qtdCreditoEstoque), true);
+                                        (decimal)(m2 ? m2Saida : qtdCreditoEstoque), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
                             }
 
                             if (situacaoAtual == Pedido.SituacaoPedido.Confirmado)

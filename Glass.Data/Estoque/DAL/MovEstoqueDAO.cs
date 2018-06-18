@@ -512,15 +512,6 @@ namespace Glass.Data.DAL
 
         #region Baixa Estoque
 
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// </summary>
-        public void BaixaEstoquePedido(uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeBaixa,
-            decimal qtdeBaixaAreaMinima, bool alterarMateriaPrima, string observacao)
-        {
-            BaixaEstoquePedido(null, idProd, idLoja, idPedido, idProdPed, qtdeBaixa, qtdeBaixaAreaMinima, alterarMateriaPrima, observacao);
-        }
-
         public void BaixaEstoquePedido(GDASession sessao, uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeBaixa,
             decimal qtdeBaixaAreaMinima, bool alterarMateriaPrima, string observacao)
         {
@@ -672,11 +663,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Credita Estoque
-
-        public void CreditaEstoquePedido(uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeEntrada, bool alterarMateriaPrima)
-        {
-            CreditaEstoquePedido(null, idProd, idLoja, idPedido, idProdPed, qtdeEntrada, alterarMateriaPrima);
-        }
 
         public void CreditaEstoquePedido(GDASession session, uint idProd, uint idLoja, uint idPedido, uint idProdPed, decimal qtdeEntrada, bool alterarMateriaPrima)
         {
