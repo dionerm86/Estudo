@@ -45,6 +45,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("ABA")]
         public string Aba { get; set; }
 
+        [PersistenceProperty("PERMITIRNEGATIVO")]
+        public bool PermitirNegativo { get; set; }
+
         #endregion
     }
 }
