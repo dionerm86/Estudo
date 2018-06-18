@@ -558,21 +558,16 @@ namespace Glass.Data.DAL
             bool agruparProdutos, bool agruparSomentePorProduto, bool agruparProjetosAoAgruparProdutos)
         {
             var liberacaoParcial = PedidoConfig.LiberarPedido && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
-            var sqlLiberacaoParcial = string.Format(@"
-                IF(ped.Situacao={0} OR {1}, (
+            var sqlLiberacaoParcial = $@"
+                IF(ped.Situacao={(int)Pedido.SituacaoPedido.LiberadoParcialmente} OR {(idsLiberarPedido.Length > 0).ToString()}, (
                     SELECT SUM(COALESCE(QtdeCalc, 0))
                     FROM produtos_liberar_pedido plp1
                         LEFT JOIN liberarpedido lp1 ON (plp1.IdLiberarPedido=lp1.IdLiberarPedido)
                     WHERE plp1.IdProdPed=pp.IdProdPed
-                        {2}
-                        AND lp1.Situacao={3}
-                )-{4}, {5})",
-                (int)Pedido.SituacaoPedido.LiberadoParcialmente,
-                (idsLiberarPedido.Length > 0).ToString(),
-                idsLiberarPedido.Length > 0 ? "AND plp1.IdLiberarPedido=plp.IdLiberarPedido" : string.Empty,
-                (int)LiberarPedido.SituacaoLiberarPedido.Liberado,
-                FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ? "COALESCE(pt.QtdeTrocaDevolucao, 0)" : "0",
-                "{0}");
+                        {(idsLiberarPedido.Length > 0 ? "AND plp1.IdLiberarPedido=plp.IdLiberarPedido" : string.Empty)}
+                        AND lp1.Situacao={(int)LiberarPedido.SituacaoLiberarPedido.Liberado}
+                )-{(FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ? "COALESCE(pt.QtdeTrocaDevolucao, 0)" : "0")}, {"{0}"})";
+
             // Não é necessário multiplicar os cálculos pela qtd dos ambientes, isso porque o total dos produtos_pedido já é o total final
             // este cálculo foi comentado para resolver o chamado 7710
             var ambiente = "1"; //"if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ap.qtde, 1)";            
