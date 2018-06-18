@@ -53,12 +53,12 @@ namespace Glass.Data.DAL
             string filtroTabela = idDesconto == 0 && idTabelaDesconto > 0 ? " and {0}.idTabelaDesconto=" + idTabelaDesconto : "";
 
             string tabelaDesconto = @"(
-                select idDesconto, idCliente, idTabelaDesconto, idGrupoProd, idSubgrupoProd, idProd, desconto, acrescimo, aplicarBeneficiamentos
+                select idDesconto, idCliente, idTabelaDesconto, idGrupoProd, idSubgrupoProd, idProd, desconto, DescontoAVista, acrescimo, aplicarBeneficiamentos
                 from desconto_acrescimo_cliente dc
                 where 1" + filtroCliente + String.Format(filtroTabela, "dc") +
                     GetWhere(idDesconto, idGrupo, idSubgrupo, produto, situacao, usarTabelaProduto, "dc", "dc", null, "dc") + @"
                 
-                union all select null, c.id_Cli, null, p.idGrupoProd, p.idSubgrupoProd, p.idProd, null, null, false
+                union all select null, c.id_Cli, null, p.idGrupoProd, p.idSubgrupoProd, p.idProd, null, null, null, false
                 from produto p, cliente c
                 where c.id_Cli=" + idCliente + @"
                     and not exists (
@@ -68,7 +68,7 @@ namespace Glass.Data.DAL
                     )
                     " + GetWhere(0, idGrupo, idSubgrupo, produto, situacao, usarTabelaProduto, "p", "p", "p", "p") + @"
                 
-                union all select null, c.id_Cli, null, g.idGrupoProd, s.idSubgrupoProd, null, null, null, false
+                union all select null, c.id_Cli, null, g.idGrupoProd, s.idSubgrupoProd, null, null, null, null, false
                 from grupo_prod g, subgrupo_prod s, cliente c
                 where c.id_Cli=" + idCliente + @"
         	        and g.idGrupoProd=s.idGrupoProd
@@ -84,7 +84,7 @@ namespace Glass.Data.DAL
             string camposProduto = usarTabelaProduto ? ", p.Descricao as DescrProduto" : "";
 
             string sql = @"
-                Select dc.IdDesconto, dc.idCliente, dc.idTabelaDesconto, dc.desconto, dc.acrescimo, g.idGrupoProd, g.Descricao as DescrGrupo, 
+                Select dc.IdDesconto, dc.idCliente, dc.idTabelaDesconto, dc.desconto, dc.DescontoAVista, dc.acrescimo, g.idGrupoProd, g.Descricao as DescrGrupo, 
                     s.idSubgrupoProd, s.Descricao as DescrSubgrupo, " + (usarTabelaProduto ? "p.idProd" : "dc.idProd") + ", c.nome as nomeCliente, dc.AplicarBeneficiamentos" + camposProduto + @"
                 From " + tabela + @"
                     Left Join " + tabelaDesconto + " dc On (dc.idGrupoProd=g.idGrupoProd and (dc.idSubgrupoProd=s.idSubgrupoProd Or " +
