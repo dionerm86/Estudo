@@ -2360,16 +2360,24 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="produtoPedido"></param>
-        public void AtualizarImpostos(GDASession sessao, Pedido pedido)
+        /// <param name="atualizarTotal">Identifica se é para atualizar o total do pedido.</param>
+        public void AtualizarImpostos(GDASession sessao, Pedido pedido, bool atualizarTotal)
         {
             // Relação das propriedades que devem ser atualizadas
-            var propriedades = new[]
+            var propriedades = new List<string>
             {
-                nameof(ProdutosPedido.ValorIpi),
-                nameof(ProdutosPedido.ValorIcms)
+                nameof(Pedido.ValorIpi),
+                nameof(Pedido.ValorIcms),
+                nameof(Pedido.AliquotaIpi),
+                nameof(Pedido.AliquotaIcms)
             };
 
             objPersistence.Update(sessao, pedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
+
+            if (atualizarTotal)
+                objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET Total=?total WHERE IdPedido=?id",
+                    new GDAParameter("?total", pedido.Total),
+                    new GDAParameter("?id", pedido.IdPedido));
         }
 
         #endregion

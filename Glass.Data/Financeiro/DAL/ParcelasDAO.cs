@@ -306,7 +306,12 @@ namespace Glass.Data.DAL
 
             var possuiParcelaAVista = ParcelasDAO.Instance.VerificarPossuiParcelaAVista(null, idsPedidos != null ? idsPedidos.Split(',').Select(f => f.StrParaInt()) : null);
 
-            if (!String.IsNullOrEmpty(idsPedidos) && (Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido || possuiParcelaAVista))
+            if (possuiParcelaAVista)
+            {
+                retorno = retorno.Select(f => f).Where(f => f.ParcelaAVista ==  true).ToArray();
+            }
+
+            else if (!String.IsNullOrEmpty(idsPedidos) && Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido)
             {
                 uint? idMenorPrazo = GetMenorPrazo(idsPedidos);
                 if (idMenorPrazo > 0)

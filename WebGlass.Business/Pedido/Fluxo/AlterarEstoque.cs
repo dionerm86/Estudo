@@ -106,7 +106,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     // Dá baixa no estoque da loja
                     MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, p.IdProd, idLoja, p.IdPedido, p.IdProdPed,
                         (decimal)(m2 ? (p.TotM / p.Qtde) * qtdSaida : qtdSaida), (decimal)(m2 ? (p.TotM2Calc / p.Qtde) * qtdSaida : 0),
-                         tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, observacao, idVolume, idProdImpressaoChapa);
+                         (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, observacao, idVolume, idProdImpressaoChapa);
 
                     // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
                     if (!PedidoDAO.Instance.IsProducao(sessao, p.IdPedido))

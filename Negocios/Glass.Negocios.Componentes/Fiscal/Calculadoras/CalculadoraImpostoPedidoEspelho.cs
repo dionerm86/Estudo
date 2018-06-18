@@ -62,15 +62,19 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Recupera os itens de impostos com base nos produtos do pedido.
         /// </summary>
+        /// <param name="pedido">Pedido pai.</param>
         /// <param name="produtosPedido"></param>
         /// <param name="cliente"></param>
         /// <param name="loja"></param>
         /// <param name="produtos"></param>
+        /// <param name="ambientes">Ambientes do pedido.</param>
         /// <returns></returns>
         private IEnumerable<IItemImposto> ObterItensImposto(
+            Data.Model.PedidoEspelho pedido,
             IEnumerable<Data.Model.ProdutosPedidoEspelho> produtosPedido,
             Global.Negocios.Entidades.Cliente cliente, Global.Negocios.Entidades.Loja loja,
-            IEnumerable<Global.Negocios.Entidades.Produto> produtos)
+            IEnumerable<Global.Negocios.Entidades.Produto> produtos,
+            IEnumerable<Data.Model.AmbientePedidoEspelho> ambientes)
         {
             var naturezasOperacao = LocalizadorNaturezaOperacao.Buscar(cliente, loja, produtos);
             var mvas = ProvedorMvaProdutoUf.ObterMvaPorProdutos(produtos, loja, null, cliente, true);
@@ -93,8 +97,42 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                         produtosMva.Add(produtoEnumerator.Current.IdProd, mvaEnumerator.Current);
                 }
 
+            var totalPedidoSemDesconto = new Lazy<decimal>(() =>
+            {
+                var percFastDelivery = 1f;
+
+                if (Configuracoes.PedidoConfig.Pedido_FastDelivery.FastDelivery && pedido.FastDelivery)
+                    percFastDelivery = 1 + (Configuracoes.PedidoConfig.Pedido_FastDelivery.TaxaFastDelivery / 100f);
+
+                return Data.DAL.PedidoEspelhoDAO.Instance.GetTotalSemDesconto(pedido.IdPedido, (pedido.Total / (decimal)percFastDelivery));
+            });
+
             foreach (var produtoPedido in produtosPedido)
             {
+                var descontoRateadoImpostos = 0m;
+
+                if (!Configuracoes.PedidoConfig.RatearDescontoProdutos)
+                {
+                    if (pedido.Desconto != 0m)
+                    {
+                        descontoRateadoImpostos =
+                            (pedido.TipoDesconto == 1 ?
+                                pedido.Desconto / 100m :
+                                pedido.Desconto / Math.Max(totalPedidoSemDesconto.Value, 1)) *
+                            (produtoPedido.Total + produtoPedido.ValorBenef);
+                    }
+
+                    var ambiente = produtoPedido.IdAmbientePedido.HasValue ?
+                        ambientes.FirstOrDefault(f => f.IdAmbientePedido == produtoPedido.IdAmbientePedido.Value) : null;
+
+                    if (ambiente != null && ambiente.Desconto > 0)
+                        descontoRateadoImpostos -=
+                            (ambiente.TipoDesconto == 1 ?
+                                ambiente.Desconto / 100m :
+                                ambiente.Desconto / (ambiente.TotalProdutos + ambiente.ValorDescontoAtual)) *
+                            (produtoPedido.Total * produtoPedido.ValorBenef);
+                }
+
                 var produtoNateruzaOperacao = produtosNaturezaOperacao[(int)produtoPedido.IdProd];
 
                 yield return new ProdutoPedidoEspelhoItemImposto(
@@ -103,6 +141,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                     produtoNateruzaOperacao.Item2,
                     produtoNateruzaOperacao.Item1,
                     produtosMva[(int)produtoPedido.IdProd],
+                    descontoRateadoImpostos,
                     ProvedorCodValorFiscal);
             }
         }
@@ -111,12 +150,16 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// Recupera o container dos itens de impostos do pedido.
         /// </summary>
         /// <param name="pedidoEspelho"></param>
+        /// <param name="loja">Instancia da loja associada com o pedido.</param>
+        /// <param name="cliente">Instancia do cliente associado com o pedido.</param>
         /// <returns></returns>
-        private IItemImpostoContainer ObterContainer(Data.Model.PedidoEspelho pedidoEspelho)
+        private IItemImpostoContainer ObterContainer(Data.Model.PedidoEspelho pedidoEspelho,
+            out Global.Negocios.Entidades.Loja loja, out Global.Negocios.Entidades.Cliente cliente)
         {
-            Global.Negocios.Entidades.Cliente cliente = null;
-            Global.Negocios.Entidades.Loja loja = null;
+            Global.Negocios.Entidades.Cliente cliente1 = null;
+            Global.Negocios.Entidades.Loja loja1 = null;
             IEnumerable<Global.Negocios.Entidades.Produto> produtos = null;
+            IEnumerable<Data.Model.AmbientePedidoEspelho> ambientes = null;
             IEnumerable<IItemImposto> itens = null;
 
             SourceContext.Instance.CreateMultiQuery()
@@ -126,7 +169,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                     .Where("p.IdPedido=?id")
                     .Add("?id", pedidoEspelho.IdPedido),
                     (sender, query, result) =>
-                        cliente = EntityManager.Instance
+                        cliente1 = EntityManager.Instance
                             .ProcessLazyResult<Global.Negocios.Entidades.Cliente>(result, SourceContext.Instance)
                             .FirstOrDefault())
 
@@ -136,7 +179,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                     .Where("p.IdPedido=?id")
                     .Add("?id", pedidoEspelho.IdPedido),
                     (sender, query, result) =>
-                        loja = EntityManager.Instance
+                        loja1 = EntityManager.Instance
                             .ProcessLazyResult<Global.Negocios.Entidades.Loja>(result, SourceContext.Instance)
                             .FirstOrDefault())
 
@@ -154,18 +197,27 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                             .ProcessLazyResult<Global.Negocios.Entidades.Produto>(result, SourceContext.Instance)
                             .ToList())
 
+                .Add<Data.Model.AmbientePedidoEspelho>(SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.AmbientePedido>()
+                    .Where("IdPedido=?id")
+                    .Add("?id", pedidoEspelho.IdPedido),
+                    (sender, query, result) =>
+                        ambientes = result.ToList())
+
                 // Consulta os produtos do pedido que serão usados para o cálculo
                 .Add<Data.Model.ProdutosPedidoEspelho>(SourceContext.Instance.CreateQuery()
                     .From<Data.Model.ProdutosPedidoEspelho>()
                     .Where("IdPedido=?id AND InvisivelFluxo=0 AND IdProdPedParent IS NULL")
                     .Add("?id", pedidoEspelho.IdPedido),
                     (sender, query, result) =>
-                        itens = ObterItensImposto(result, cliente, loja, produtos).ToList())
+                        itens = ObterItensImposto(pedidoEspelho, result, cliente1, loja1, produtos, ambientes).ToList())
 
                 .Execute();
 
-            var pedidoImposto = new PedidoEspelhoImpostoContainer(pedidoEspelho, cliente, loja, itens);
+            var pedidoImposto = new PedidoEspelhoImpostoContainer(pedidoEspelho, cliente1, loja1, itens);
 
+            loja = loja1;
+            cliente = cliente1;
             return pedidoImposto;
         }
 
@@ -182,10 +234,12 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         Data.ICalculoImpostoResultado Data.ICalculadoraImposto<Data.Model.PedidoEspelho>
             .Calcular(GDA.GDASession sessao, Data.Model.PedidoEspelho instancia)
         {
-            var pedidoContainer = ObterContainer(instancia);
+            Global.Negocios.Entidades.Loja loja;
+            Global.Negocios.Entidades.Cliente cliente;
+            var pedidoContainer = ObterContainer(instancia, out loja, out cliente);
 
             var resultado = Calculadora.Calcular(pedidoContainer);
-            return new Resultado(pedidoContainer, resultado);
+            return new Resultado(pedidoContainer, resultado, loja, cliente);
         }
 
         #endregion
@@ -198,6 +252,16 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         class Resultado : Data.ICalculoImpostoResultado
         {
             #region Propriedades
+
+            /// <summary>
+            /// Loja associada com o pedido.
+            /// </summary>
+            private Global.Negocios.Entidades.Loja Loja { get; }
+
+            /// <summary>
+            /// Cliente associado com o pedido.
+            /// </summary>
+            private Global.Negocios.Entidades.Cliente Cliente { get; }
 
             private IItemImpostoContainer Container { get; }
 
@@ -215,10 +279,16 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
             /// </summary>
             /// <param name="container"></param>
             /// <param name="resultadoInterno"></param>
-            public Resultado(IItemImpostoContainer container, ICalculoImpostoResultado resultadoInterno)
+            /// <param name="loja"></param>
+            /// <param name="cliente"></param>
+            public Resultado(
+                IItemImpostoContainer container, ICalculoImpostoResultado resultadoInterno,
+                Global.Negocios.Entidades.Loja loja, Global.Negocios.Entidades.Cliente cliente)
             {
                 Container = container;
                 ResultadoInterno = resultadoInterno;
+                Loja = loja;
+                Cliente = cliente;
             }
 
             #endregion
@@ -293,10 +363,39 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                 foreach (var item in resultado.Itens)
                     AplicarImpostos(sessao, item);
 
-                pedido.ValorIpi = resultado.Itens.Sum(f => f.ValorIpi);
-                pedido.ValorIcms = resultado.Itens.Sum(f => f.ValorIcms);
+                var atualizarTotalPedido = false;
 
-                Data.DAL.PedidoEspelhoDAO.Instance.AtualizarImpostos(sessao, pedido);
+                if (Loja.CalcularIpiPedido && Cliente.CobrarIpi)
+                {
+                    pedido.ValorIpi = resultado.Itens.Sum(f => f.ValorIpi);
+                    pedido.AliquotaIpi = resultado.Itens.Any(f => f.AliqIpi > 0) ?
+                        resultado.Itens.Sum(f => f.AliqIpi) / resultado.Itens.Count(f => f.AliqIpi > 0f) : 0f;
+
+                    pedido.Total += pedido.ValorIpi;
+                    atualizarTotalPedido = true;
+                }
+                else
+                {
+                    pedido.ValorIpi = 0;
+                    pedido.AliquotaIpi = 0;
+                }
+
+                if (Loja.CalcularIcmsPedido && Cliente.CobrarIcmsSt)
+                {
+                    pedido.ValorIcms = resultado.Itens.Sum(f => f.ValorIcms);
+                    pedido.AliquotaIcms = resultado.Itens.Any(f => f.AliqIcms > 0) ?
+                        resultado.Itens.Sum(f => f.AliqIcms) / resultado.Itens.Count(f => f.AliqIcms > 0f) : 0f;
+
+                    pedido.Total += pedido.ValorIcms;
+                    atualizarTotalPedido = true;
+                }
+                else
+                {
+                    pedido.ValorIcms = 0;
+                    pedido.AliquotaIcms = 0;
+                }
+
+                Data.DAL.PedidoEspelhoDAO.Instance.AtualizarImpostos(sessao, pedido, atualizarTotalPedido);
             }
 
             #endregion

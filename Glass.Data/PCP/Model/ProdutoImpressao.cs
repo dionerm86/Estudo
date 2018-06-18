@@ -194,9 +194,10 @@ namespace Glass.Data.Model
             {
                 var idFuncImpressao = ImpressaoEtiquetaDAO.Instance.ObterIdFunc(null, (int)IdImpressao);
                 var chapaPossuiLeitura = ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(IdProdImpressao);
+                var possuiPerda = PerdaChapaVidroDAO.Instance.IsPerda(NumEtiqueta);
 
-                return !Cancelado && !chapaPossuiLeitura && (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) &&
-                    idFuncImpressao == UserInfo.GetUserInfo.CodUser) || Config.PossuiPermissao(Config.FuncaoMenuPCP.CancelarImpressaoEtiqueta);
+                return !Cancelado && !chapaPossuiLeitura && !possuiPerda && (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) ||
+                    idFuncImpressao == UserInfo.GetUserInfo.CodUser || Config.PossuiPermissao(Config.FuncaoMenuPCP.CancelarImpressaoEtiqueta));
             }
         }
 

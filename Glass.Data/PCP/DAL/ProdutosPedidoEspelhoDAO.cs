@@ -3562,8 +3562,8 @@ namespace Glass.Data.DAL
         /// Atualiza os valores de impostos associados com a instancia informada.
         /// </summary>
         /// <param name="sessao"></param>
-        /// <param name="produtoPedido"></param>
-        public void AtualizarImpostos(GDASession sessao, ProdutosPedidoEspelho produtoPedido)
+        /// <param name="produtoPedidoEspelho"></param>
+        public void AtualizarImpostos(GDASession sessao, ProdutosPedidoEspelho produtoPedidoEspelho)
         {
             // Relação das propriedades que devem ser atualizadas
             var propriedades = new[]
@@ -3599,7 +3599,56 @@ namespace Glass.Data.DAL
                 nameof(ProdutosPedidoEspelho.CstCofins)
             };
 
-            objPersistence.Update(sessao, produtoPedido, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
+            objPersistence.Update(sessao, produtoPedidoEspelho, string.Join(",", propriedades), DirectionPropertiesName.Inclusion);
+
+            // Recupera o identifidor do produtodo pedido clone
+            var idProdPed = objPersistence.LoadResult(sessao,
+                "SELECT IdProdPed FROM produtos_pedido WHERE IdPedido=?idPedido AND InvisivelPedido=1 AND IdProdPedParent IS NULL AND IdProdPedEsp=?id",
+                new GDAParameter("?idPedido", produtoPedidoEspelho.IdPedido),
+                new GDAParameter("?id", produtoPedidoEspelho.IdProdPed))
+                .Select(f => (int?)f[0])
+                .FirstOrDefault();
+
+            if (idProdPed.HasValue)
+            {
+                // Preenche os dados do produto do pedido para atualizar os impostos
+                var produtoPedido = new Data.Model.ProdutosPedido()
+                {
+                    IdProdPed = (uint)idProdPed.Value,
+                    IdPedido = produtoPedidoEspelho.IdPedido,
+                    IdNaturezaOperacao = produtoPedidoEspelho.IdNaturezaOperacao,
+                    Mva = produtoPedidoEspelho.Mva,
+                    CodValorFiscal = produtoPedidoEspelho.CodValorFiscal,
+                    Csosn = produtoPedidoEspelho.Csosn,
+                    Cst = produtoPedidoEspelho.Cst,
+                    PercRedBcIcms = produtoPedidoEspelho.PercRedBcIcms,
+                    AliqIpi = produtoPedidoEspelho.AliqIpi,
+                    ValorIpi = produtoPedidoEspelho.ValorIpi,
+                    CstIpi = produtoPedidoEspelho.CstIpi,
+                    AliqIcms = produtoPedidoEspelho.AliqIcms,
+                    BcIcms = produtoPedidoEspelho.BcIcms,
+                    ValorIcms = produtoPedidoEspelho.ValorIcms,
+                    AliqFcp = produtoPedidoEspelho.AliqFcp,
+                    BcFcp = produtoPedidoEspelho.BcFcp,
+                    ValorFcp = produtoPedidoEspelho.ValorFcp,
+                    AliqIcmsSt = produtoPedidoEspelho.AliqIcmsSt,
+                    BcIcmsSt = produtoPedidoEspelho.BcIcmsSt,
+                    ValorIcmsSt = produtoPedidoEspelho.ValorIcmsSt,
+                    AliqFcpSt = produtoPedidoEspelho.AliqFcpSt,
+                    BcFcpSt = produtoPedidoEspelho.BcFcpSt,
+                    ValorFcpSt = produtoPedidoEspelho.ValorFcpSt,
+                    AliqPis = produtoPedidoEspelho.AliqPis,
+                    BcPis = produtoPedidoEspelho.BcPis,
+                    ValorPis = produtoPedidoEspelho.ValorPis,
+                    CstPis = produtoPedidoEspelho.CstPis,
+                    AliqCofins = produtoPedidoEspelho.AliqCofins,
+                    BcCofins = produtoPedidoEspelho.BcCofins,
+                    ValorCofins = produtoPedidoEspelho.ValorCofins,
+                    CstCofins = produtoPedidoEspelho.CstCofins
+                };
+
+                ProdutosPedidoDAO.Instance.AtualizarImpostos(sessao, produtoPedido);
+            }
         }
 
         #endregion

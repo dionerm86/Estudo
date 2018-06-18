@@ -18,9 +18,10 @@ namespace Glass.Data.DAL
         public IEnumerable<ProdutoNfCusto> ObterCustosPorNotaFiscal(GDA.GDASession sessao, uint idNf)
         {
             return objPersistence.LoadData(sessao,
-                @"SELECT * 
+                @"SELECT pnc.*, pnEntrada.AliqIpi AS AliqIpiCompra, pnEntrada.AliqIcms AS AliqIcmsCompra 
                   FROM produto_nf_custo pnc 
                   INNER JOIN produtos_nf pn ON (pnc.IdProdNf=pn.IdProdNf) 
+                  LEFT JOIN produtos_nf pnEntrada ON (pnc.IdProdNfEntrada=pnEntrada.IdProdNf)
                   WHERE pn.IdNf=?id", new GDA.GDAParameter("?id", idNf)).ToList();
         }
 
@@ -33,7 +34,10 @@ namespace Glass.Data.DAL
         public IEnumerable<ProdutoNfCusto> ObterCustosPorProdutoNotaFiscal(GDA.GDASession sessao, uint idProdNf)
         {
             return objPersistence.LoadData(sessao,
-                "SELECT * FROM produto_nf_custo WHERE IdProdNf=?id",
+                @"SELECT pnc.*, pnEntrada.AliqIpi AS AliqIpiCompra, pnEntrada.AliqIcms AS AliqIcmsCompra  
+                FROM produto_nf_custo pnc
+                LEFT JOIN produtos_nf pnEntrada ON (pnc.IdProdNfEntrada=pnEntrada.IdProdNf)
+                WHERE IdProdNf=?id",
                 new GDA.GDAParameter("?id", idProdNf)).ToList();
         }
 
