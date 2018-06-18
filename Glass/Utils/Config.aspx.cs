@@ -373,7 +373,7 @@ namespace Glass.UI.Web.Utils
                     case Glass.Data.Helper.Config.TipoConfigEnum.Decimal:
                         TextBox txtDecimal = new TextBox();
                         txtDecimal.ID = "txtDecimal_" + item.IdConfig;
-                        txtDecimal.Attributes.Add("onkeypress", "return soNumeros(event, false, true)");
+                        txtDecimal.Attributes.Add("onkeypress", string.Format("return soNumeros(event, false, {0})", item.PermitirNegativo ? "false" : "true"));
                         txtDecimal.Text = configLoja != null ? configLoja.ValorDecimal.GetValueOrDefault().ToString().Replace(".", ",") : null;
                         txtDecimal.EnableViewState = false;
                         controle = txtDecimal;
@@ -382,7 +382,7 @@ namespace Glass.UI.Web.Utils
                     case Glass.Data.Helper.Config.TipoConfigEnum.Inteiro:
                         TextBox txtInteiro = new TextBox();
                         txtInteiro.ID = "txtInteiro_" + item.IdConfig;
-                        txtInteiro.Attributes.Add("onkeypress", "return soNumeros(event, true, true)");
+                        txtInteiro.Attributes.Add("onkeypress", string.Format("return soNumeros(event, true, {0})", item.PermitirNegativo ? "false" : "true"));
                         txtInteiro.Text = configLoja != null ? configLoja.ValorInteiro.GetValueOrDefault().ToString() : null;
                         txtInteiro.EnableViewState = false;
                         controle = txtInteiro;
@@ -541,8 +541,8 @@ namespace Glass.UI.Web.Utils
             }
     
             return retorno.ToArray();
-        }
-    
+        }  
+        
         private void Config_EndLoad(Table tabela, TableRow[] linhas, string nomeAba)
         {
             if (linhas.Length == 0)
@@ -601,8 +601,8 @@ namespace Glass.UI.Web.Utils
                         case Glass.Data.Helper.Config.TipoConfigEnum.Inteiro:
                         case Glass.Data.Helper.Config.TipoConfigEnum.Enum:
                         case Glass.Data.Helper.Config.TipoConfigEnum.ListaMetodo:
-                            valor = valor != null && valor.ToString() != "" ? Glass.Conversoes.StrParaUintNullable(valor.ToString()) : null;
-                            valorAlterado = configLoja.ValorInteiro != (uint?)valor;
+                            valor = valor != null && valor.ToString() != "" ? Glass.Conversoes.StrParaIntNullable(valor.ToString()) : null;
+                            valorAlterado = configLoja.ValorInteiro != (int?)valor;
                             break;
     
                         case Glass.Data.Helper.Config.TipoConfigEnum.Logico:
