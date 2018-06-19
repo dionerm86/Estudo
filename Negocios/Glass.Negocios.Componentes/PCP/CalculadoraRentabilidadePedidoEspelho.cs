@@ -72,7 +72,8 @@ namespace Glass.PCP.Negocios.Componentes
                 {
                     var rentabilidade = pedido.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
                     var percentual = pedido.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.PedidoEspelhoDAO.Instance.AtualizarRentabilidade(e.Sessao, pedido.IdPedido, percentual, rentabilidade);
+                    Data.DAL.PedidoEspelhoDAO.Instance.AtualizarRentabilidade(e.Sessao, 
+                        pedido.IdPedido, percentual, rentabilidade);
                 };
             }
             else if (itemProdutoPedido != null)
@@ -89,7 +90,11 @@ namespace Glass.PCP.Negocios.Componentes
                 {
                     var rentabilidade = produtoPedido.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
                     var percentual = produtoPedido.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.ProdutosPedidoEspelhoDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoPedido.IdProdPed, percentual, rentabilidade);
+
+                    produtoPedido.PercComissao = item.PercentualComissao * 100m;
+
+                    Data.DAL.ProdutosPedidoEspelhoDAO.Instance.AtualizarRentabilidade(e.Sessao, 
+                        produtoPedido.IdProdPed, percentual, rentabilidade, produtoPedido.PercComissao);
                 };
             }
             else if (itemAmbientePedido != null)
@@ -337,7 +342,7 @@ namespace Glass.PCP.Negocios.Componentes
             if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
             {
                 decimal percComissao = 0;
-                var total = pedido.Total;
+                var total = (pedido.Total - pedido.ValorIpi) - pedido.ValorEntrega;
 
                 if (total > 0)
                     foreach (var item in itens.Where(filtroItensParaCalculo))

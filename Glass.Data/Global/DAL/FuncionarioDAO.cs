@@ -22,10 +22,7 @@ namespace Glass.Data.DAL
         /// <param name="senha"></param>
         /// <returns></returns>
         public LoginUsuario Autenticacao(string login, string senha)
-        {
-            var horarioInicioLogin = DateTime.Parse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioInicioLogin)));
-            var horarioFimLogin = DateTime.Parse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioFimLogin)));
-
+        {               
             string sql = "Select IDFUNC From funcionario Where Login=?login And Senha=?senha And situacao=" + (int)Situacao.Ativo;
 
             object idFunc;
@@ -60,6 +57,13 @@ namespace Glass.Data.DAL
                 // Usuários da produção podem logar no sistema a qualquer hora
                 if (tipoFunc == (uint)Utils.TipoFuncionario.MarcadorProducao)
                     return GetLogin(Glass.Conversoes.StrParaInt(idFunc.ToString()));
+
+                DateTime horarioInicioLogin;
+                DateTime horarioFimLogin;
+
+                if (!DateTime.TryParse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioInicioLogin)), out horarioInicioLogin) ||
+                    !DateTime.TryParse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioFimLogin)), out horarioFimLogin))
+                    throw new InvalidOperationException("Não foi possível recuperar a configuração do horário de inicio e fim de login.");
 
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday) // Domingo
                 {

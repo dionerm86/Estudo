@@ -184,6 +184,8 @@ namespace Glass.Rentabilidade
 
             public decimal PercentualComissao => 0;
 
+            public decimal ValorComissao => 0;
+
             public decimal PercentualICMSCompra => 0;
 
             public decimal PercentualICMSVenda => 0;

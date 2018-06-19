@@ -472,6 +472,7 @@
     <Content Include="Cadastros\Projeto\LstFabricanteFerragem.aspx" />
     <Content Include="Cadastros\Projeto\SelFerragemExportar.aspx" />
     <Content Include="Controls\ctrlConfigAresta.ascx" />
+    <Content Include="Controls\ctrlConfigFaixasRentabilidadeComissao.ascx" />
     <Content Include="Controls\ctrlDadosCnab.ascx" />
     <Content Include="Controls\ctrlFilhoFerragem.ascx" />
     <Content Include="Controls\ctrlFormaPagtoNotaFiscal.ascx" />
@@ -3446,6 +3447,13 @@
     </Compile>
     <Compile Include="Controls\ctrlConfigAresta.ascx.designer.cs">
       <DependentUpon>ctrlConfigAresta.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ctrlConfigFaixasRentabilidadeComissao.ascx.cs">
+      <DependentUpon>ctrlConfigFaixasRentabilidadeComissao.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ctrlConfigFaixasRentabilidadeComissao.ascx.designer.cs">
+      <DependentUpon>ctrlConfigFaixasRentabilidadeComissao.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\ctrlFilhoFerragem.ascx.cs">
       <DependentUpon>ctrlFilhoFerragem.ascx</DependentUpon>

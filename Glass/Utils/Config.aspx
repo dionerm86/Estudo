@@ -5,11 +5,12 @@
 <%@ Reference Control="~/Controls/ctrlSelPopup.ascx" %>
 <%@ Reference Control="~/Controls/ctrlData.ascx" %>
 <%@ Register Src="../Controls/ctrlConfigAresta.ascx" TagName="ctrlConfigAresta" TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlConfigFaixasRentabilidadeComissao.ascx" TagName="ctrlConfigFaixasRentabilidadeComissao" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style title="text/css">
         .aba, .painel {
-            width: 800px;
+            width: 880px;
         }
 
         .aba {
@@ -52,7 +53,7 @@
                 return;
 
             // variável que contém os identificadores das abas
-            var abas = new Array("geral", "comissao", "precoProduto", "financeiro", "planoconta", "orcamento", "pedido", "projeto", "nfe", "pcp", "liberarPedido", "internas");
+            var abas = new Array("geral", "comissao", "precoProduto", "financeiro", "planoconta", "orcamento", "pedido", "projeto", "nfe", "pcp", "liberarPedido", "rentabilidade", "internas");
 
             // percorre todas as abas
             for (i = 0; i < abas.length; i++) {
@@ -307,6 +308,9 @@
                 case "liberarPedido":
                     tabela = document.getElementById("<%= tblLiberarPedido.ClientID %>");
                     break;
+                case "rentabilidade":
+                    tabela = document.getElementById("<%= tblRentabilidade.ClientID %>");
+                    break;
                 case "internas":
                     tabela = document.getElementById("<%= tblInternas.ClientID %>");
                     break;
@@ -401,6 +405,7 @@
                     </span>
                     <span id="aba_nfe" onclick="mudaAba('nfe')">Fiscal
                     </span>
+                    <span id="aba_rentabilidade" onclick="mudaAba('rentabilidade')">Rentab.</span>
                     <span id="aba_internas" onclick="mudaAba('internas')" runat="server" clientidmode="Static">INTERNAS
                     </span>
                 </div>
@@ -1639,6 +1644,36 @@
                         </asp:Table>
                         <asp:Button ID="btnSalvarNFe" runat="server" Text="Salvar"
                             OnClientClick="salvarConfig(this, 'nfe'); return false" ValidationGroup="nfe" />
+                    </div>
+
+                    <div id="rentabilidade">
+                        <asp:Table ID="tblRentabilidade" runat="server" OnLoad="tblRentabilidade_Load">
+                        </asp:Table>
+                        <asp:Button ID="Button1" runat="server" Text="Salvar"
+                            OnClientClick="salvarConfig(this, 'rentabilidade'); return false"
+                            ValidationGroup="rentabilidade" />
+                         <br />  <br /> 
+
+                        <table>
+                            <tr>
+                                <td nowrap="nowrap">Selecione o funcionário:
+                                </td>
+                                <td>
+                                    <asp:DropDownList ID="drpFuncFaixaRentabilidadeComissao" 
+                                        runat="server" AutoPostBack="True" DataSourceID="odsFunc"
+                                        DataTextField="Nome" DataValueField="IdFunc"
+                                        OnSelectedIndexChanged="drpFuncFaixaRentabilidadeComissao_SelectedIndexChanged">
+                                    </asp:DropDownList>
+                                </td>
+                            </tr>
+                        </table>
+                       
+                        <fieldset>
+                            <legend>Faixas de Rentabilidade para comissão
+                            </legend>
+                            <uc1:ctrlConfigFaixasRentabilidadeComissao ID="ctrlFaixasRentabilidadeComissao" runat="server" EnableViewState="false" />
+                        </fieldset>
+                          
                     </div>
                     <div id="internas">
                         <asp:Table ID="tblInternas" runat="server" OnLoad="tblInternas_Load">

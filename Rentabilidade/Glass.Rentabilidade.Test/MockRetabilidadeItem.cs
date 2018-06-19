@@ -13,6 +13,8 @@ namespace Glass.Rentabilidade.Test
 
         public decimal PercentualComissao { get; set; }
 
+        public decimal ValorComissao => PrecoVendaSemIPI * PercentualComissao;
+
         public decimal PercentualICMSCompra { get; set; }
 
         public decimal PercentualICMSVenda { get; set; }

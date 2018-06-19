@@ -314,6 +314,7 @@
     <Compile Include="Rentabilidade\ConfigRegistroRentabilidade.cs" />
     <Compile Include="Rentabilidade\ConfigRegistroRentabilidadePesquisa.cs" />
     <Compile Include="Rentabilidade\ExpressaoRentabilidade.cs" />
+    <Compile Include="Rentabilidade\FaixaRentabilidadeComissao.cs" />
     <Compile Include="Rentabilidade\IndicadorFinanceiro.cs" />
     <Compile Include="Seguranca\AdaptadorUsuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -63,6 +63,11 @@ namespace Glass.Rentabilidade
         decimal PercentualComissao { get; }
 
         /// <summary>
+        /// Valor da comissão.
+        /// </summary>
+        decimal ValorComissao { get; }
+
+        /// <summary>
         /// Custos extras.
         /// </summary>
         decimal CustosExtras { get; }

@@ -333,6 +333,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rentabilidade\CalculadoraRentabilidade.cs" />
     <Compile Include="Pedido\CalculadoraRentabilidadePedido.cs" />
+    <Compile Include="Rentabilidade\CalculadoraComissaoRentabilidade.cs" />
     <Compile Include="Rentabilidade\CalculoRentabilidadeResultado.cs" />
     <Compile Include="Rentabilidade\IItemRentabilidadeComReferencias.cs" />
     <Compile Include="Rentabilidade\ItemRentabilidade.cs" />

@@ -1609,6 +1609,7 @@
     <Compile Include="Rentabilidade\ICalculadoraRentabilidade.cs" />
     <Compile Include="Rentabilidade\Model\ConfigRegistroRentabilidade.cs" />
     <Compile Include="Rentabilidade\Model\ExpressaoRentabilidade.cs" />
+    <Compile Include="Rentabilidade\Model\FaixaRentabilidadeComissao.cs" />
     <Compile Include="Rentabilidade\Model\IndicadorFinanceiro.cs" />
     <Compile Include="Seguranca\Model\Token.cs" />
     <Compile Include="SIntegra\Registro61R.cs" />

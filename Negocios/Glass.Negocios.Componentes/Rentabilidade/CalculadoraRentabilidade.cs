@@ -113,7 +113,7 @@ namespace Glass.Rentabilidade.Negocios.Componentes
             // Recupera os registros apagados.
             var apagados = item.Referencias.Except(novos.Concat(atualizados));
 
-            return new CalculoRentabilidadeResultado<T>(
+            return new CalculoRentabilidadeResultado<T>(item,
                 true, item.PercentualRentabilidade, item.RentabilidadeFinanceira,
                 novos.Select(f =>
                     new CalculoRentabilidadeResultado<T>
@@ -141,8 +141,8 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Executa o cálculo para o item informado.
         /// </summary>
-        /// <param name="item"></param>
-        protected Data.ICalculoRentabilidadeResultado Calcular(IItemRentabilidade item)
+        /// <param name="item">Item sobre o qual será calculada a rentabilidade.</param>
+        protected virtual Data.ICalculoRentabilidadeResultado Calcular(IItemRentabilidade item)
         {
             var calculadora = ProvedorCalculadoraRentabilidade.Calculadora;
 
