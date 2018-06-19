@@ -552,7 +552,15 @@ namespace Glass.Data.Model
 
         public decimal DescontoTotal
         {
-            get { return PedidoEspelhoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoEspelhoDAO.Instance.GetDescontoProdutos(IdPedido); }
+            get
+            {
+                decimal descontoProdutos, descontoPedido;
+
+                descontoProdutos = PedidoEspelhoDAO.Instance.GetDescontoProdutos(null, IdPedido);
+                descontoPedido = PedidoEspelhoDAO.Instance.GetDescontoPedido(null, IdPedido, descontoProdutos);
+
+                return descontoProdutos + descontoPedido;
+            }
         }
 
         public decimal AcrescimoTotal

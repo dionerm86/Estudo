@@ -522,11 +522,22 @@ namespace Glass.Data.DAL
                 foreach (var idPedido in idsPedidos.Split(',').Select(f => f.StrParaUint()))
                 {
                     var usarEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(session, idPedido);
-                    var descontoPedido = usarEspelho ? PedidoEspelhoDAO.Instance.GetDescontoPedido(session, idPedido) : GetDescontoPedido(session, idPedido);
+                    decimal descontoProdutos, descontoPedido;
                     var fastDelivery = (decimal)ObtemTaxaFastDelivery(session, idPedido);
                     fastDelivery = fastDelivery > 0 ? fastDelivery : 1;
                     var totalSemDesconto = usarEspelho ? PedidoEspelhoDAO.Instance.GetTotalSemDesconto(session, idPedido, PedidoEspelhoDAO.Instance.GetTotal(session, idPedido) / fastDelivery) :
                         GetTotalSemDesconto(session, idPedido, GetTotal(session, idPedido) / fastDelivery);
+
+                    if (usarEspelho)
+                    {
+                        descontoProdutos = PedidoEspelhoDAO.Instance.GetDescontoProdutos(session, idPedido);
+                        descontoPedido = PedidoEspelhoDAO.Instance.GetDescontoPedido(session, idPedido, descontoProdutos);
+                    }
+                    else
+                    {
+                        descontoProdutos = GetDescontoProdutos(session, idPedido);
+                        descontoPedido = GetDescontoPedido(session, idPedido, descontoProdutos);
+                    }
 
                     sqls.Add(string.Format(sql, idPedido, (descontoPedido / totalSemDesconto).ToString().Replace(",", ".")));
                 }
@@ -1894,13 +1905,8 @@ namespace Glass.Data.DAL
 
             return ExecuteScalar<decimal>(sessao, String.Format(sql, idPedido, PedidoConfig.ConsiderarDescontoClienteDescontoTotalPedido ? "+coalesce(valorDescontoCliente,0)" : ""));
         }
-
-        public decimal GetDescontoPedido(uint idPedido)
-        {
-            return GetDescontoPedido(null, idPedido);
-        }
-
-        public decimal GetDescontoPedido(GDASession sessao, uint idPedido)
+        
+        public decimal GetDescontoPedido(GDASession sessao, uint idPedido, decimal totalDescontoProdutos)
         {
             string sql;
 
@@ -1921,7 +1927,7 @@ namespace Glass.Data.DAL
                 decimal desconto = 0;
                 var descontoPedido = ObterDesconto(sessao, (int)idPedido);
                 var tipoDescontoPedido = ObterTipoDesconto(sessao, (int)idPedido);
-                var totalPedido = GetTotal(sessao, idPedido);
+                var totalPedido = GetTotal(sessao, idPedido) + totalDescontoProdutos;
                 var valorIcmsPedido = ObtemValorIcms(sessao, idPedido);
                 var valorIpiPedido = ObtemValorIpi(sessao, idPedido);
                 var valorEntrega = ObtemValorCampo<decimal>("ValorEntrega", "IdPedido=" + idPedido);
@@ -3419,7 +3425,12 @@ namespace Glass.Data.DAL
 
         internal decimal GetTotalSemDesconto(GDASession sessao, uint idPedido, decimal total)
         {
-            return total + GetDescontoPedido(sessao, idPedido) + GetDescontoProdutos(sessao, idPedido);
+            decimal descontoProdutos, descontoPedido;
+
+            descontoProdutos = GetDescontoProdutos(sessao, idPedido);
+            descontoPedido = GetDescontoPedido(sessao, idPedido, descontoProdutos);
+
+            return total + descontoPedido + descontoProdutos;
         }
 
         internal decimal GetTotalSemAcrescimo(uint idPedido, decimal total)
