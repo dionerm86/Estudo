@@ -1159,10 +1159,20 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             try
             {
-                if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                if (!string.IsNullOrWhiteSpace(Request["idPedido"]))
+                {
+                    decimal descontoProdutos, descontoPedido;
+                    var idPedido = Request["idPedido"].StrParaUint();
+
+                    descontoProdutos = PedidoDAO.Instance.GetDescontoProdutos(null, idPedido);
+                    descontoPedido = PedidoDAO.Instance.GetDescontoPedido(null, idPedido, descontoProdutos);
+
+                    return (descontoProdutos + descontoPedido).ToString().Replace(",", ".");
+                }
                 else
+                {
                     return "0";
+                }
             }
             catch
             {
