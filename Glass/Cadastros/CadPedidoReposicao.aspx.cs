@@ -311,10 +311,20 @@ namespace Glass.UI.Web.Cadastros
 
         protected void odsPedidoRepos_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
-            var pedido = ((PedidoReposicao)e.InputParameters[0]);
-            var idLoja = Conversoes.StrParaUint(((DropDownList)dtvPedidoRepos.FindControl("drpLoja")).SelectedValue);
+            try
+            {
+                var pedido = ((PedidoReposicao)e.InputParameters[0]);
+                var idLoja = Conversoes.StrParaUint(((DropDownList)dtvPedidoRepos.FindControl("drpLoja")).SelectedValue);
 
-            PedidoDAO.Instance.AtualizaLoja(pedido.IdPedido, idLoja);
+                if (idLoja == 0)
+                    throw new Exception("Selecione uma loja para vincular o pedido");
+
+                PedidoDAO.Instance.AtualizaLoja(pedido.IdPedido, idLoja);
+            }
+            catch (Exception ex)
+            {
+                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar os dados da reposição.", ex, Page);
+            }
         }
     }
 }

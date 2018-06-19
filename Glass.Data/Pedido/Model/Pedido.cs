@@ -1337,11 +1337,25 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal DescontoTotal
         {
-            get 
-            { 
+            get
+            {
                 if (_descontoTotal == null)
-                    _descontoTotal = !_descontoTotalPcp && !BuscarDescontoFluxoParaLiberacao ? PedidoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoDAO.Instance.GetDescontoProdutos(IdPedido) :
-                        PedidoEspelhoDAO.Instance.GetDescontoPedido(IdPedido) + PedidoEspelhoDAO.Instance.GetDescontoProdutos(IdPedido);
+                {
+                    decimal descontoProdutos, descontoPedido;
+
+                    if (_descontoTotalPcp)
+                    {
+                        descontoProdutos = PedidoEspelhoDAO.Instance.GetDescontoProdutos(null, IdPedido);
+                        descontoPedido = PedidoEspelhoDAO.Instance.GetDescontoPedido(null, IdPedido, descontoProdutos);
+                    }
+                    else
+                    {
+                        descontoProdutos = PedidoDAO.Instance.GetDescontoProdutos(null, IdPedido);
+                        descontoPedido = PedidoDAO.Instance.GetDescontoPedido(null, IdPedido, descontoProdutos);
+                    }
+
+                    _descontoTotal = descontoPedido + descontoProdutos;
+                }
 
                 return _descontoTotal.Value;
             }
@@ -1355,8 +1369,20 @@ namespace Glass.Data.Model
             get
             {
                 if (_descontoExibirLib == null)
-                    _descontoExibirLib = !_descontoTotalPcp && !BuscarDescontoFluxoParaLiberacao ? PedidoDAO.Instance.GetDescontoPedido(IdPedido) :
-                        PedidoEspelhoDAO.Instance.GetDescontoPedido(IdPedido);
+                {
+                    decimal descontoProdutos;
+
+                    if (_descontoTotalPcp)
+                    {
+                        descontoProdutos = PedidoEspelhoDAO.Instance.GetDescontoProdutos(null, IdPedido);
+                        _descontoExibirLib = PedidoEspelhoDAO.Instance.GetDescontoPedido(null, IdPedido, descontoProdutos);
+                    }
+                    else
+                    {
+                        descontoProdutos = PedidoDAO.Instance.GetDescontoProdutos(null, IdPedido);
+                        _descontoExibirLib = PedidoDAO.Instance.GetDescontoPedido(null, IdPedido, descontoProdutos);
+                    }
+                }
 
                 return _descontoExibirLib.Value;
             }

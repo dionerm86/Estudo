@@ -199,6 +199,7 @@ namespace Glass.Data.Helper
             #endregion
 
             #region "N"
+            NfDr,
             NoroesteVidros,
             NVidros,
             NRC,

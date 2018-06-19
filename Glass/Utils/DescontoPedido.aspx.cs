@@ -415,7 +415,7 @@ namespace Glass.UI.Web.Utils
             try
             {
                 if (!string.IsNullOrEmpty(Request["idPedido"]))
-                    return PedidoDAO.Instance.GetDescontoProdutos(Request["idPedido"].StrParaUint()).ToString(CultureInfo.InvariantCulture).Replace(",", ".");
+                    return PedidoDAO.Instance.GetDescontoProdutos(Request["idPedido"].StrParaUint()).ToString().Replace(",", ".");
                 
                 return "0";
             }
@@ -429,8 +429,16 @@ namespace Glass.UI.Web.Utils
         {
             try
             {
-                if (!string.IsNullOrEmpty(Request["idPedido"]))
-                    return PedidoDAO.Instance.GetDescontoPedido(Request["idPedido"].StrParaUint()).ToString(CultureInfo.InvariantCulture).Replace(",", ".");
+                if (!string.IsNullOrWhiteSpace(Request["idPedido"]))
+                {
+                    decimal descontoProdutos, descontoPedido;
+                    var idPedido = Request["idPedido"].StrParaUint();
+
+                    descontoProdutos = PedidoDAO.Instance.GetDescontoProdutos(null, idPedido);
+                    descontoPedido = PedidoDAO.Instance.GetDescontoPedido(null, idPedido, descontoProdutos);
+
+                    return (descontoProdutos + descontoPedido).ToString().Replace(",", ".");
+                }
                 
                 return "0";
             }

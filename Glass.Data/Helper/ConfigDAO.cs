@@ -110,16 +110,20 @@ namespace Glass.Data.Helper
             switch ((Config.TipoConfigEnum)config.Tipo)
             {
                 case Config.TipoConfigEnum.Decimal:
+                    var valorDecimal = Glass.Conversoes.StrParaDecimal(value != null ? value.ToString() : "0");
+                    valorDecimal = config.PermitirNegativo ? valorDecimal : Math.Abs(valorDecimal);
                     // Antes estava apenas fazendo um cast para "decimal?" não pode ser desta forma porque dá erro
-                    valorAlterado = (configLoja.ValorDecimal == null ? 0 : configLoja.ValorDecimal.Value) != Glass.Conversoes.StrParaDecimal(value != null ? value.ToString() : "0");
-                    configLoja.ValorDecimal = value != null ? (decimal?)Glass.Conversoes.StrParaDecimal(value.ToString()) : null;
+                    valorAlterado = (configLoja.ValorDecimal == null ? 0 : configLoja.ValorDecimal.Value) != valorDecimal;
+                    configLoja.ValorDecimal = value != null ? (decimal?)valorDecimal : null;
                     break;
 
                 case Config.TipoConfigEnum.Inteiro:
                 case Config.TipoConfigEnum.Enum:
                 case Config.TipoConfigEnum.ListaMetodo:
-                    valorAlterado = configLoja.ValorInteiro != (uint?)value;
-                    configLoja.ValorInteiro = value != null ? value.ToString().StrParaIntNullable() : null;
+                    var valorInteiro = (int?)value;
+                    valorInteiro =  config.PermitirNegativo || valorInteiro == null ? valorInteiro : Math.Abs(valorInteiro.Value);
+                    valorAlterado = configLoja.ValorInteiro != (int?)value;
+                    configLoja.ValorInteiro = value != null ? valorInteiro : null;
                     break;
 
                 case Config.TipoConfigEnum.Logico:

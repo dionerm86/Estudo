@@ -61,7 +61,7 @@ namespace Glass.UI.Web.Listas
             lblInfoInscEst.Text = cli.RgEscinst;
             lblInfoCrt.Text = cli.DescrCrt;
             lblInfoCnae.Text = cli.Cnae;
-            
+            lblEmail.Text = cli.Email;
 
             lblObs.Text = cli.Obs;
             lblObsLib.Text = cli.ObsLiberacao;

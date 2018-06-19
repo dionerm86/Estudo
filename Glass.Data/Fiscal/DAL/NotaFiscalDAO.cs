@@ -4822,6 +4822,10 @@ namespace Glass.Data.DAL
                 return;
 
             var pedidosNf = PedidosNotaFiscalDAO.Instance.GetByNf(session, (uint)nf);
+
+            if (!pedidosNf.Any())
+                return;
+
             var idsPedido = pedidosNf.Where(f => f.IdPedido.GetValueOrDefault(0) > 0).Select(f => f.IdPedido.Value).ToArray();
 
             var sql = string.Format(@"

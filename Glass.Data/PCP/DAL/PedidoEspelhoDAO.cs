@@ -1763,12 +1763,7 @@ namespace Glass.Data.DAL
                 "+coalesce(valorDescontoCliente,0)" : ""));
         }
 
-        public decimal GetDescontoPedido(uint idPedido)
-        {
-            return GetDescontoPedido(null, idPedido);
-        }
-
-        public decimal GetDescontoPedido(GDASession sessao, uint idPedido)
+        public decimal GetDescontoPedido(GDASession sessao, uint idPedido, decimal totalDescontoProdutos)
         {
             string sql;
 
@@ -1789,7 +1784,7 @@ namespace Glass.Data.DAL
                 decimal desconto;
                 var descontoPedido = ObterDesconto(null, (int)idPedido);
                 var tipoDescontoPedido = ObterTipoDesconto(null, (int)idPedido);
-                var totalPedido = GetTotal(null, idPedido);
+                var totalPedido = GetTotal(null, idPedido) + totalDescontoProdutos;
                 var valorIcmsPedido = ObterValorIcms(null, (int)idPedido);
                 var valorIpiPedido = ObterValorIpi(null, (int)idPedido);
                 var valorEntrega = ObtemValorCampo<decimal>("ValorEntrega", "IdPedido=" + idPedido);
@@ -3522,7 +3517,12 @@ namespace Glass.Data.DAL
 
         internal decimal GetTotalSemDesconto(GDASession sessao, uint idPedido, decimal total)
         {
-            return total + GetDescontoPedido(sessao, idPedido) + GetDescontoProdutos(sessao, idPedido);
+            decimal descontoProdutos, descontoPedido;
+
+            descontoProdutos = GetDescontoProdutos(sessao, idPedido);
+            descontoPedido = GetDescontoPedido(sessao, idPedido, descontoProdutos);
+
+            return total + descontoPedido + descontoProdutos;
         }
 
         internal decimal GetTotalSemAcrescimo(uint idPedido, decimal total)

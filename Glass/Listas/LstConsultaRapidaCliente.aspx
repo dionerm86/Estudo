@@ -182,7 +182,6 @@
                         <td align="left">
                             <asp:Label ID="lblInfoCPF" runat="server" Text=""></asp:Label>
                         </td>
-
                     </tr>
                     <tr>
                         <td align="right">
@@ -202,6 +201,12 @@
                         </td>
                         <td align="left">
                             <asp:Label ID="lblInfoCnae" runat="server" Text=""></asp:Label>
+                        </td>
+                        <td align="right">
+                            <asp:Label ID="Label27" runat="server" Text="E-mail: " Font-Bold="True"></asp:Label>
+                        </td>
+                        <td align="left">
+                            <asp:Label ID="lblEmail" runat="server" Text=""></asp:Label>
                         </td>
                     </tr>
                     <tr>
