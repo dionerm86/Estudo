@@ -39,6 +39,7 @@
     var config_NumeroDiasPedidoProntoAtrasado = <%= Glass.Configuracoes.PedidoConfig.NumeroDiasPedidoProntoAtrasado %>;
     var config_UsarControleObraComProduto = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.UsarControleNovoObra.ToString().ToLower() %>;
     var config_UsarComissaoPorPedido = <%= Glass.Configuracoes.PedidoConfig.Comissao.PerComissaoPedido.ToString().ToLower() %>;
+    var config_UsarComissaoPorProduto = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto.ToString().ToLower() %>;
     var config_UsarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
     var config_PermitirDescontoAVistaComUmaParcela = <%= (Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoUmaParcela && Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista).ToString().ToLower() %>;
     var config_BloqEmisPedidoPorPosicaoMateriaPrima = <%= (Glass.Configuracoes.PedidoConfig.BloqEmisPedidoPorPosicaoMateriaPrima != Glass.Data.Helper.DataSources.BloqEmisPedidoPorPosicaoMateriaPrima.Bloquear).ToString().ToLower() %>
@@ -1874,10 +1875,10 @@
                                                 <asp:Label ID="lblPercComissao" runat="server" Text='<%# Eval("PercComissao") %>'></asp:Label>
                                             </ItemTemplate>
                                             <EditItemTemplate>
-                                                <asp:TextBox ID="txtComissaoProd" runat="server" MaxLength="50" onkeypress="return soNumeros(event, true, true)" Text='<%# Bind("PercComissao") %>' Width="50px"></asp:TextBox>
+                                                <asp:TextBox ID="txtComissaoProd" runat="server" MaxLength="50" onkeypress="return soNumeros(event, false, true)" Text='<%# Bind("PercComissao") %>' Width="50px"></asp:TextBox>
                                             </EditItemTemplate>
                                             <FooterTemplate>
-                                                <asp:TextBox ID="txtComissaoProd" runat="server" onkeypress="return soNumeros(event, true, true)" MaxLength="50" Width="50px"></asp:TextBox>
+                                                <asp:TextBox ID="txtComissaoProd" runat="server" onkeypress="return soNumeros(event, false, true)" MaxLength="50" Width="50px"></asp:TextBox>
                                             </FooterTemplate>
                                         </asp:TemplateField>
                                         <asp:TemplateField>
@@ -2238,7 +2239,7 @@
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
         SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
     </colo:VirtualObjectDataSource>
-    <script type="text/javascript" src="CadPedido.js?v=<%= Glass.Configuracoes.Geral.ObtemVersao(true) %>"></script>
+    <script type="text/javascript" src="CadPedido.js?v=<%= Glass.Configuracoes.Geral.ObtemVersao(true) %>1"></script>
     <script type="text/javascript">        
         inicializarControles();
     </script>

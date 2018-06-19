@@ -1237,6 +1237,42 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.Button btnSalvarNFe;
         
         /// <summary>
+        /// tblRentabilidade control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Table tblRentabilidade;
+        
+        /// <summary>
+        /// Button1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
+        
+        /// <summary>
+        /// drpFuncFaixaRentabilidadeComissao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpFuncFaixaRentabilidadeComissao;
+        
+        /// <summary>
+        /// ctrlFaixasRentabilidadeComissao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlConfigFaixasRentabilidadeComissao ctrlFaixasRentabilidadeComissao;
+        
+        /// <summary>
         /// tblInternas control.
         /// </summary>
         /// <remarks>

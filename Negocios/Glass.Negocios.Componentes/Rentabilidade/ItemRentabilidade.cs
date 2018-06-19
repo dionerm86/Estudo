@@ -114,6 +114,11 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         public decimal PercentualComissao { get; set; }
 
         /// <summary>
+        /// Valor da comissão.
+        /// </summary>
+        public virtual decimal ValorComissao => PrecoVendaSemIPI * PercentualComissao;
+
+        /// <summary>
         /// Custos extras.
         /// </summary>
         public decimal CustosExtras { get; set; }

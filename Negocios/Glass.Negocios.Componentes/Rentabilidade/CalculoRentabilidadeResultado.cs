@@ -75,6 +75,11 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         #region Properties
 
         /// <summary>
+        /// Item da rentabilidade.
+        /// </summary>
+        public IItemRentabilidade ItemRentabilidade { get; }
+
+        /// <summary>
         /// Identifica se o cálculo foi executado.
         /// </summary>
         public bool Executado { get; }
@@ -101,15 +106,18 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Construtor padrão.
         /// </summary>
+        /// <param name="itemRentabilidade"></param>
         /// <param name="executado">Identifica se o cálculo foi executado.</param>
         /// <param name="percentualRentabilidade"></param>
         /// <param name="rentabilidadeFinanceira"></param>
         /// <param name="itens">Itens associados.</param>
         public CalculoRentabilidadeResultado(
+            IItemRentabilidade itemRentabilidade,
             bool executado,
             decimal percentualRentabilidade, decimal rentabilidadeFinanceira,
             IEnumerable<Item> itens)
         {
+            ItemRentabilidade = itemRentabilidade;
             Executado = executado;
             PercentualRentabilidade = percentualRentabilidade;
             RentabilidadeFinanceira = rentabilidadeFinanceira;

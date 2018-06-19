@@ -5044,16 +5044,26 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a rentabilidade do produto do pedido..
         /// </summary>
+        /// <param name="sessao"></param>
         /// <param name="idProdPed"></param>
         /// <param name="percentualRentabilidade">Percentual da rentabilidade.</param>
         /// <param name="rentabilidadeFinanceira">Rentabilidade financeira.</param>
-        public void AtualizarRentabilidade(GDA.GDASession sessao,
-            uint idProdPed, decimal percentualRentabilidade, decimal rentabilidadeFinanceira)
+        /// <param name="percComissao">Percentual de comissão do produto.</param>
+        public void AtualizarRentabilidade(
+            GDA.GDASession sessao, uint idProdPed, 
+            decimal percentualRentabilidade, decimal rentabilidadeFinanceira,
+            decimal percComissao)
         {
-            objPersistence.ExecuteCommand(sessao, "UPDATE produtos_pedido SET PercentualRentabilidade=?percentual, RentabilidadeFinanceira=?rentabilidade WHERE IdProdPed=?id",
-                new GDA.GDAParameter("?percentual", percentualRentabilidade),
-                new GDA.GDAParameter("?rentabilidade", rentabilidadeFinanceira),
-                new GDA.GDAParameter("?id", idProdPed));
+            objPersistence.ExecuteCommand(sessao,
+                @"UPDATE produtos_pedido SET 
+                    PercentualRentabilidade=?percentual, 
+                    RentabilidadeFinanceira=?rentabilidade, 
+                    PercComissao=?percComissao
+                WHERE IdProdPed=?id",
+                new GDAParameter("?percentual", percentualRentabilidade),
+                new GDAParameter("?rentabilidade", rentabilidadeFinanceira),
+                new GDAParameter("?percComissao", percComissao),
+                new GDAParameter("?id", idProdPed));
         }
 
         #endregion
