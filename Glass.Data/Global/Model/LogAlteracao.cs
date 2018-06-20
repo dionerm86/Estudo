@@ -113,9 +113,10 @@ namespace Glass.Data.Model
             ImagemProdPedEsp = 102,
             Compra = 103,
             ImpostoServico = 104,
-            IndicadorFinanceiro,
-            ExpressaoRentabilidade,
-            ConfigRegistroRentabilidade
+            IndicadorFinanceiro = 105,
+            ExpressaoRentabilidade = 106,
+            ConfigRegistroRentabilidade = 107,
+            FaixaRentabilidadeComissao = 108
         }
 
         public static string GetDescrTabela(int tabela)
@@ -208,6 +209,10 @@ namespace Glass.Data.Model
                 case TabelaAlteracao.Medicao: return "Medição";
                 case TabelaAlteracao.Compra: return "Compra";
                 case TabelaAlteracao.ImpostoServico: return "Imposto/Serviço";
+                case TabelaAlteracao.ExpressaoRentabilidade: return "Expressão de Rentabilidade";
+                case TabelaAlteracao.IndicadorFinanceiro: return "Indicador Financeiro";
+                case TabelaAlteracao.ConfigRegistroRentabilidade: return "Configuração do Registro de Rentabilidade";
+                case TabelaAlteracao.FaixaRentabilidadeComissao: return "Faixa Rentabilidade Comissão";
                 default: return string.Empty;
             }
         }

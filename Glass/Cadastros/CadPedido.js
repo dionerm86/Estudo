@@ -1675,10 +1675,12 @@ function getCli(idCliente) {
     if (config_UsarComissionado && retorno[9] != "")
         setComissionado(retorno[9], retorno[10], retorno[11]);
 
-    if (config_UsarComissaoPorPedido && retorno[12] != "")
-        FindControl("hdfPercentualComissao", "input").value = retorno[12];
-    else
-        FindControl("hdfPercentualComissao", "input").value = "0";
+    if (!config_UsarComissaoPorProduto) {
+        if (config_UsarComissaoPorPedido && retorno[12] != "")
+            FindControl("hdfPercentualComissao", "input").value = retorno[12];
+        else
+            FindControl("hdfPercentualComissao", "input").value = "0";
+    }
 
     if (FindControl("hdfClienteAtual", "input") != null) {
         var clienteAtual = parseInt(FindControl("hdfClienteAtual", "input").value, 10);

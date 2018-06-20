@@ -14,7 +14,7 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         IRentabilidadeFluxo, 
         IProvedorCalculadoraRentabilidade, 
         IProvedorIndicadorFinanceiro, 
-        IProvedorDescritorRegistroRentabilidade, 
+        IProvedorDescritorRegistroRentabilidade,
         Entidades.IProvedorExpressaoRentabilidade,
         Entidades.IProvedorConfigRegistroRentabilidade
     {
@@ -76,6 +76,24 @@ namespace Glass.Rentabilidade.Negocios.Componentes
                 AsseguraCargaVariaveisItens();
                 return _descritoresVariavelItem;
             }
+        }
+
+        /// <summary>
+        /// Calculadora de comissão.
+        /// </summary>
+        private ICalculadoraComissaoRentabilidade CalculadoraComissao { get; }
+
+        #endregion
+
+        #region Construtores
+
+        /// <summary>
+        /// Inicializa uma nova instância da classe <c>RentabilidadeFluxo</c>.
+        /// </summary>
+        /// <param name="calculadoraComissao"></param>
+        public RentabilidadeFluxo(ICalculadoraComissaoRentabilidade calculadoraComissao)
+        {
+            CalculadoraComissao = calculadoraComissao;
         }
 
         #endregion
@@ -591,6 +609,82 @@ namespace Glass.Rentabilidade.Negocios.Componentes
 
                 return resultado;
             }
+        }
+
+        #endregion
+
+        #region FaixaRentabilidadeComissao
+
+        /// <summary>
+        /// Cria uma instancia para a faixa.
+        /// </summary>
+        /// <returns></returns>
+        public Entidades.FaixaRentabilidadeComissao CriarFaixaRentabilidadeComissao()
+        {
+            return SourceContext.Instance.Create<Entidades.FaixaRentabilidadeComissao>();
+        }
+
+        /// <summary>
+        /// Obtém a faixa da rentabiliade em relação a comissão.
+        /// </summary>
+        /// <param name="idFaixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        public Entidades.FaixaRentabilidadeComissao ObterFaixaRentabilidadeComissao(int idFaixaRentabilidadeComissao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.FaixaRentabilidadeComissao>()
+                .Where("IdFaixaRentabilidadeComissao=?id")
+                .Add("?id", idFaixaRentabilidadeComissao)
+                .ProcessResult<Entidades.FaixaRentabilidadeComissao>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Obtém as faixas da rentabilidade em relação a comissão com base no funcionário informado.
+        /// </summary>
+        /// <param name="idLoja">Identificador da loja pai das faixas.</param>
+        /// <param name="idFunc">Identificador do funcionário pai da faixas, ou nulo para a configuração geral.</param>
+        /// <returns></returns>
+        public IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int idLoja, int? idFunc)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.FaixaRentabilidadeComissao>()
+                .Where("IdLoja=?idLoja AND IdFunc=?idFunc")
+                .Add("?idLoja", idLoja)
+                .Add("?idFunc", idFunc)
+                .OrderBy("PercentualRentabilidade")
+                .ProcessResult<Entidades.FaixaRentabilidadeComissao>()
+                .ToList();
+        }
+
+        /// <summary>
+        /// Salva os dados da faixa da rentabilidade em relação a comissão.
+        /// </summary>
+        /// <param name="faixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        public Colosoft.Business.SaveResult SalvarFaixaRentabilidadeComissao(Entidades.FaixaRentabilidadeComissao faixaRentabilidadeComissao)
+        {
+            var resultado = SourceContext.Instance.ExecuteSave(faixaRentabilidadeComissao);
+
+            if (resultado)
+                CalculadoraComissao.AtualizarDados();
+
+            return resultado;
+        }
+
+        /// <summary>
+        /// Apaga os dados da faixa da rentabilidade em relação a comissão.
+        /// </summary>
+        /// <param name="faixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        public Colosoft.Business.DeleteResult ApagarFaixaRentabilidadeComissao(Entidades.FaixaRentabilidadeComissao faixaRentabilidadeComissao)
+        {
+            var resultado = SourceContext.Instance.ExecuteDelete(faixaRentabilidadeComissao);
+
+            if (resultado)
+                CalculadoraComissao.AtualizarDados();
+
+            return resultado;
         }
 
         #endregion

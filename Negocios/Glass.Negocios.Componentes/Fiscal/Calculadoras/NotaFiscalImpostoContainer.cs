@@ -80,6 +80,11 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         public decimal ValorIpiDevolvido => NotaFiscal.ValorIpiDevolvido;
 
         /// <summary>
+        /// Identifica se deve calcular a aliquota do ICMS.
+        /// </summary>
+        public bool CalcularAliquotaIcms => true;
+
+        /// <summary>
         /// Indica se a nota fiscal está sendo importada pelo sistema.
         /// </summary>
         public bool NotaFiscalImportadaSistema =>

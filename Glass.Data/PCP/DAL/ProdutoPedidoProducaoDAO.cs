@@ -5013,8 +5013,14 @@ namespace Glass.Data.DAL
                     if (idProdPedProducao == 0)
                         throw new Exception(string.Format("Não foi possível recuperar o produto de produção da etiqueta {0}.", numEtiqueta));
 
-                    if (idProdPedProducaoParent > 0 && (int)ObtemIdSetor(transaction, idProdPedProducaoParent) > 0)
-                        throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso.");
+                    if (ExecuteScalar<int>(transaction, $"SELECT count(*) FROM produto_pedido_producao WHERE IdProdPedProducaoParent={idProdPedProducao}") > 0)
+                        throw new Exception($"Não é possível marcar reposição em produtos pais de composição. Cancele a impressão da etiqueta e faça a reposição das peças filhas.");
+
+                    var numEtiquetaParent = ObtemValorCampo<string>(transaction, "NumEtiqueta", "idProdPedProducao=" + idProdPedProducaoParent);
+
+                    if (idProdPedProducaoParent > 0 &&
+                        ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiquetaParent, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                        throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso. Cancele a impressão da etiqueta pai: {numEtiquetaParent}");
 
                     /* Chamado 51854. */
                     if (SetorDAO.Instance.ObterSituacao(transaction, (int)ObtemIdSetor(transaction, idProdPedProducao)) == Situacao.Inativo)

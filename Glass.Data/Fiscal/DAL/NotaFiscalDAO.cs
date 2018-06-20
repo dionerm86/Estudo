@@ -1131,12 +1131,6 @@ namespace Glass.Data.DAL
 
                         #endregion
 
-                        #region Informações de Pagamento
-
-                        CriarPagtoNotaFiscalConsumidor(transaction, idNf, idsLiberarPedidos, nfce, totalNotaAjuste);
-
-                        #endregion
-
                         #region Gera parcelas da nota
 
                         nf = GetElement(transaction, idNf);
@@ -1221,6 +1215,12 @@ namespace Glass.Data.DAL
 
                         #endregion
 
+                        #region Informações de Pagamento da nota
+
+                        CriarPagtoNotaFiscalConsumidor(transaction, idNf, nf, idsLiberarPedidos, nfce, totalNotaAjuste);
+
+                        #endregion
+
                         #region Transferência NF-e
 
                         // Chamado 12747. Caso ocorra algum problema na geração da nota fiscal a mesma não deve ser transferida, por isso,
@@ -1272,7 +1272,7 @@ namespace Glass.Data.DAL
         /// <param name="idsLiberarPedidos"></param>
         /// <param name="nfce"></param>
         /// <param name="totalNotaAjuste"></param>
-        private static void CriarPagtoNotaFiscalConsumidor(GDATransaction sessao, uint idNf, string idsLiberarPedidos, bool nfce, decimal totalNotaAjuste)
+        private static void CriarPagtoNotaFiscalConsumidor(GDATransaction sessao, uint idNf, NotaFiscal nf, string idsLiberarPedidos, bool nfce, decimal totalNotaAjuste)
         {
             if (nfce && FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe.HasValue)
             {
@@ -1286,62 +1286,96 @@ namespace Glass.Data.DAL
             // Define o valor recebido e a forma de pagamento da NFe ou NFCe de acordo com a forma de pagamento da liberação
             else if (!string.IsNullOrEmpty(idsLiberarPedidos))
             {
-                decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0;
-                // Busca as formas de pagamento de todas as liberações
-                foreach (string id in idsLiberarPedidos.Split(','))
+                decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0, valorRecebRelativo = 0,
+                   totalCartaoDebito = 0, totalCartaoCredito = 0, totalFormaPagtoLiberacao = 0;
+
+                var liberacoes = idsLiberarPedidos.Split(',');
+                var valorParcelasNf = nf.ValoresParcelas.Sum(n => n);
+
+                foreach (var liberacao in liberacoes)
                 {
-                    if (string.IsNullOrEmpty(id))
+                    var formaPgtoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, Glass.Conversoes.StrParaUint(liberacao));
+                    totalFormaPagtoLiberacao += formaPgtoLiberacao.Sum(fpl => fpl.ValorPagto);
+                }
+
+                valorRecebRelativo = totalFormaPagtoLiberacao > 0 ? (valorParcelasNf / totalFormaPagtoLiberacao) : 1;
+
+                // Busca as formas de pagamento de todas as liberações
+                foreach (var liberacao in liberacoes)
+                {
+                    if (string.IsNullOrEmpty(liberacao))
                         continue;
 
                     // Busca as formas de pagamento pelo id da liberação
-                    var formaPgtoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, Glass.Conversoes.StrParaUint(id));
+                    var formaPgtoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, Glass.Conversoes.StrParaUint(liberacao));
+
                     foreach (var formaPgto in formaPgtoLiberacao)
                     {
                         switch (formaPgto.IdFormaPagto)
                         {
                             case (uint)Pagto.FormaPagto.Dinheiro:
-                                totalDinheiro += formaPgto.ValorPagto;
+                                totalDinheiro += formaPgto.ValorPagto * valorRecebRelativo;
                                 break;
                             case (uint)Pagto.FormaPagto.ChequeProprio:
                             case (uint)Pagto.FormaPagto.ChequeTerceiro:
-                                totalCheque += formaPgto.ValorPagto;
+                                totalCheque += formaPgto.ValorPagto * valorRecebRelativo;
                                 break;
                             case (uint)Pagto.FormaPagto.Credito:
-                                totalCreditoLoja += formaPgto.ValorPagto;
+                                totalCreditoLoja += formaPgto.ValorPagto * valorRecebRelativo;
                                 break;
                             case (uint)Pagto.FormaPagto.Boleto:
-                                totalBoleto += formaPgto.ValorPagto;
+                                totalBoleto += formaPgto.ValorPagto * valorRecebRelativo;
                                 break;
                             // Se a liberação tiver sido paga com cartão
                             case (uint)Pagto.FormaPagto.Cartao:
                             case (uint)Pagto.FormaPagto.CartaoNaoIdentificado:
                                 // Verifica se foi cartão de Debito e insere esse tipo na forma de pagamento
                                 if (formaPgto.IdTipoCartao != null && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(sessao, (int)formaPgto.IdTipoCartao) == TipoCartaoEnum.Debito)
+                                {
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
                                         IdNf = (int)idNf,
                                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoDebito,
-                                        Valor = formaPgto.ValorPagto,
+                                        Valor = formaPgto.ValorPagto * valorRecebRelativo,
                                         NumAut = formaPgto.NumAutCartao
                                     });
+
+                                    totalCartaoDebito += formaPgto.ValorPagto * valorRecebRelativo;
+                                }
                                 // Verifica se foi cartão de Crédito e insere esse tipo na forma de pagamento
                                 else if (formaPgto.IdTipoCartao != null && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(sessao, (int)formaPgto.IdTipoCartao) == TipoCartaoEnum.Credito)
+                                {
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
                                         IdNf = (int)idNf,
                                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoCredito,
-                                        Valor = formaPgto.ValorPagto,
+                                        Valor = formaPgto.ValorPagto * valorRecebRelativo,
                                         NumAut = formaPgto.NumAutCartao
                                     });
+
+                                    totalCartaoCredito += formaPgto.ValorPagto * valorRecebRelativo;
+                                }
                                 break;
                             // Se a forma de pagamento da liberação não estiver definida acima
                             // Insere como outros por padrão
                             default:
-                                totalOutros += formaPgto.ValorPagto;
+                                totalOutros += formaPgto.ValorPagto * valorRecebRelativo;
                                 break;
                         }
                     }
                 }
+
+                decimal totais = totalDinheiro + totalCheque + totalCreditoLoja + totalBoleto + totalOutros + totalCartaoCredito + totalCartaoDebito;
+
+                // Ajusta com uma tolerância de 5 centavos o valor receb. nos casos onde o valor ficar menor
+                if (Math.Abs(totais - valorParcelasNf) <= (decimal)0.05)
+                {
+                    if (valorParcelasNf > totais)
+                    {
+                        totalOutros += Math.Abs(totais - valorParcelasNf);
+                    }
+                }
+
                 // Insere o valor total somado por nota.
                 if (totalDinheiro > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal

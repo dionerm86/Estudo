@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Glass.Data;
 using Glass.Rentabilidade;
 using Glass.Rentabilidade.Negocios;
 using Glass.Rentabilidade.Negocios.Componentes;
@@ -21,6 +22,27 @@ namespace Glass.Pedido.Negocios.Componentes
         IProvedorItemRentabilidade<Data.Model.ProdutosPedido>,
         IProvedorItemRentabilidade<Data.Model.AmbientePedido>
     {
+        #region Propriedades
+
+        /// <summary>
+        /// Calculadora da comissão para a rentabilidade.
+        /// </summary>
+        private ICalculadoraComissaoRentabilidade CalculadoraComissaoRentabilidade { get; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do funcionário que está
+        /// vinculado com o cálculo.
+        /// </summary>
+        private int IdFunc { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador da loja que está
+        /// vinculada com o cálculo.
+        /// </summary>
+        private int IdLoja { get; set; }
+
+        #endregion
+
         #region Construtores
 
         /// <summary>
@@ -29,12 +51,15 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <param name="provedorDescritoresRegistro"></param>
         /// <param name="provedorIndicadoresFinanceiro"></param>
         /// <param name="provedorCalculadoraRentabilidade"></param>
+        /// <param name="calculadoraComissaoRentabilidade"></param>
         public CalculadoraRentabilidadePedido(
             IProvedorDescritorRegistroRentabilidade provedorDescritoresRegistro,
             IProvedorIndicadorFinanceiro provedorIndicadoresFinanceiro,
-            IProvedorCalculadoraRentabilidade provedorCalculadoraRentabilidade)
+            IProvedorCalculadoraRentabilidade provedorCalculadoraRentabilidade,
+            ICalculadoraComissaoRentabilidade calculadoraComissaoRentabilidade)
             : base(provedorDescritoresRegistro, provedorIndicadoresFinanceiro, provedorCalculadoraRentabilidade)
         {
+            CalculadoraComissaoRentabilidade = calculadoraComissaoRentabilidade;
         }
 
         #endregion
@@ -72,7 +97,12 @@ namespace Glass.Pedido.Negocios.Componentes
                 {
                     var rentabilidade = pedido.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
                     var percentual = pedido.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.PedidoDAO.Instance.AtualizarRentabilidade(e.Sessao, pedido.IdPedido, percentual, rentabilidade);
+
+                    var percentualComissao = item.PercentualComissao * 100m;
+                    pedido.PercentualComissao = (float)percentualComissao;
+
+                    Data.DAL.PedidoDAO.Instance.AtualizarRentabilidade(e.Sessao, 
+                        pedido.IdPedido, percentual, rentabilidade, percentualComissao);
                 };
             }
             else if (itemProdutoPedido != null)
@@ -89,7 +119,12 @@ namespace Glass.Pedido.Negocios.Componentes
                 {
                     var rentabilidade = produtoPedido.RentabilidadeFinanceira = e.RentabilidadeFinanceira;
                     var percentual = produtoPedido.PercentualRentabilidade = e.PercentualRentabilidade * 100m;
-                    Data.DAL.ProdutosPedidoDAO.Instance.AtualizarRentabilidade(e.Sessao, produtoPedido.IdProdPed, percentual, rentabilidade);
+
+                    var percentualComissao = item.PercentualComissao * 100m;
+                    produtoPedido.PercComissao = percentualComissao;
+
+                    Data.DAL.ProdutosPedidoDAO.Instance.AtualizarRentabilidade(e.Sessao, 
+                        produtoPedido.IdProdPed, percentual, rentabilidade, percentualComissao);
                 };
             }
             else if (itemAmbientePedido != null)
@@ -116,6 +151,49 @@ namespace Glass.Pedido.Negocios.Componentes
             if (resultadosContainer != null)
                 foreach (var i in subResultados)
                     resultadosContainer.Adicionar(i);
+
+            return resultado;
+        }
+
+        /// <summary>
+        /// Executa o cálculo para o item informado.
+        /// </summary>
+        /// <param name="item">Item sobre o qual será calculada a rentabilidade.</param>
+        protected override ICalculoRentabilidadeResultado Calcular(IItemRentabilidade item)
+        {
+            var possuiaRegistroRentabilidade = item.RegistrosRentabilidade.Any();
+
+            var resultado = base.Calcular(item);
+            var itemProdutoPedido = item as IItemRentabilidade<Data.Model.ProdutosPedido>;
+
+            if (itemProdutoPedido != null && resultado.Executado)
+            {
+                var tentativas = 20;
+
+                var calcularComissaoBase = !possuiaRegistroRentabilidade;
+
+                while (tentativas > 0)
+                {
+                    var resultadoComissao = CalculadoraComissaoRentabilidade.Calcular(item, IdLoja, IdFunc, calcularComissaoBase);
+
+                    if (!resultadoComissao.Valido || calcularComissaoBase) 
+                    {
+                        ((ItemRentabilidade)item).PercentualComissao = resultadoComissao.PercentualComissao;
+                        itemProdutoPedido.Proprietario.PercComissao = resultadoComissao.PercentualComissao * 100m;
+                    }
+
+                    if (resultadoComissao.Valido)
+                        break;
+
+                    // Recalcula a rentabilidade
+                    resultado = base.Calcular(item);
+
+                    if (!resultado.Executado)
+                        break;
+
+                    tentativas--;
+                }
+            }
 
             return resultado;
         }
@@ -344,7 +422,7 @@ namespace Glass.Pedido.Negocios.Componentes
             if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
             {
                 decimal percComissao = 0;
-                var total = pedido.Total;
+                var total = (pedido.Total - pedido.ValorIpi) - pedido.ValorEntrega;
 
                 if (total > 0)
                     foreach (var item in itens.Where(filtroItensParaCalculo))
@@ -638,6 +716,8 @@ namespace Glass.Pedido.Negocios.Componentes
             if (!CalculoHabilitado)
                 return CriarResultadoNaoExecutado();
 
+            IdFunc = (int)instancia.IdFunc;
+            IdLoja = (int)instancia.IdLoja;
             var item = ObterItemPedido(sessao, instancia);
             return Calcular(item);
         }
@@ -653,7 +733,7 @@ namespace Glass.Pedido.Negocios.Componentes
             if (!CalculoHabilitado)
                 return CriarResultadoNaoExecutado();
 
-            var produtoPedido = Data.DAL.ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(id);
+            var produtoPedido = Data.DAL.ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
             return (this as Data.ICalculadoraRentabilidade<Data.Model.ProdutosPedido>).Calcular(sessao, produtoPedido);
         }
 
@@ -667,6 +747,10 @@ namespace Glass.Pedido.Negocios.Componentes
         {
             if (!CalculoHabilitado)
                 return CriarResultadoNaoExecutado();
+
+            var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, instancia.IdPedido);
+            IdFunc = (int)pedido.IdFunc;
+            IdLoja = (int)pedido.IdLoja;
 
             var item = ObterItemProdutoPedido(sessao, instancia);
             return Calcular(item);
@@ -697,6 +781,10 @@ namespace Glass.Pedido.Negocios.Componentes
         {
             if (!CalculoHabilitado)
                 return CriarResultadoNaoExecutado();
+
+            var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, instancia.IdPedido);
+            IdFunc = (int)pedido.IdFunc;
+            IdLoja = (int)pedido.IdLoja;
 
             var item = ObterItemAmbientePedido(sessao, instancia);
             return Calcular(item);

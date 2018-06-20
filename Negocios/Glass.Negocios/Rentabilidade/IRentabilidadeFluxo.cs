@@ -119,5 +119,43 @@ namespace Glass.Rentabilidade.Negocios
 
         #endregion
 
+        #region FaixaRentabilidadeComissao
+
+        /// <summary>
+        /// Cria uma instancia para a faixa.
+        /// </summary>
+        /// <returns></returns>
+        Entidades.FaixaRentabilidadeComissao CriarFaixaRentabilidadeComissao();
+
+        /// <summary>
+        /// Obtém a faixa da rentabiliade em relação a comissão.
+        /// </summary>
+        /// <param name="idFaixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        Entidades.FaixaRentabilidadeComissao ObterFaixaRentabilidadeComissao(int idFaixaRentabilidadeComissao);
+
+        /// <summary>
+        /// Obtém as faixas da rentabilidade em relação a comissão com base no funcionário informado.
+        /// </summary>
+        /// <param name="idLoja">Identificador da loja pai das faixas.</param>
+        /// <param name="idFunc">Identificador do funcionário pai da faixas, ou nulo para a configuração geral.</param>
+        /// <returns></returns>
+        IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int idLoja, int? idFunc);
+
+        /// <summary>
+        /// Salva os dados da faixa da rentabilidade em relação a comissão.
+        /// </summary>
+        /// <param name="faixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        Colosoft.Business.SaveResult SalvarFaixaRentabilidadeComissao(Entidades.FaixaRentabilidadeComissao faixaRentabilidadeComissao);
+
+        /// <summary>
+        /// Apaga os dados da faixa da rentabilidade em relação a comissão.
+        /// </summary>
+        /// <param name="faixaRentabilidadeComissao"></param>
+        /// <returns></returns>
+        Colosoft.Business.DeleteResult ApagarFaixaRentabilidadeComissao(Entidades.FaixaRentabilidadeComissao faixaRentabilidadeComissao);
+
+        #endregion
     }
 }

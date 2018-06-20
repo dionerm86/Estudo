@@ -48,7 +48,11 @@ namespace Glass.UI.Web.Utils
 
                 if (!UserInfo.GetUserInfo.IsAdminSync)
                     aba_internas.Style.Add("Display", "none");
-            }            
+            }
+
+            int idLoja;
+            if (int.TryParse(drpLoja.SelectedValue, out idLoja))
+                ctrlFaixasRentabilidadeComissao.IdLoja = idLoja;
 
             // A opção de gerar backup deve ficar visível apenas para admin sync
             lnkRelatorioDinamico.Visible = UserInfo.GetUserInfo.IsAdminSync;            
@@ -779,6 +783,25 @@ namespace Glass.UI.Web.Utils
         {
             TableRow[] linhas = LinhasItens(ConfigDAO.Instance.GetItensComissao(), "aba_comissao", null);
             Config_EndLoad(tblComissao, linhas, "aba_comissao");
+        }
+
+        #endregion
+
+        #region Rentabilidade
+
+        protected void tblRentabilidade_Load(object sender, EventArgs e)
+        {
+            TableRow[] linhas = LinhasItens(ConfigDAO.Instance.GetItensRentabilidade(), "aba_rentabilidade", null);
+            Config_EndLoad(tblRentabilidade, linhas, "aba_rentabilidade");
+        }
+
+        protected void drpFuncFaixaRentabilidadeComissao_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int idFunc;
+            if (int.TryParse(drpFunc.SelectedValue == "0" ? string.Empty : drpFunc.SelectedValue, out idFunc))
+                ctrlFaixasRentabilidadeComissao.IdFunc = idFunc;
+            else
+                ctrlFaixasRentabilidadeComissao.IdFunc = null;
         }
 
         #endregion

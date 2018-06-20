@@ -304,6 +304,20 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
+        /// Retorna a lista de itens usados na Rentabilidade.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Configuracao> GetItensRentabilidade()
+        {
+            var itens = new List<Config.ConfigEnum>()
+            {
+                Config.ConfigEnum.CalcularRentabilidade
+            };
+
+            return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
+        }
+
+        /// <summary>
         /// Retorna a lista de itens usados no financeiro
         /// </summary>
         /// <returns></returns>

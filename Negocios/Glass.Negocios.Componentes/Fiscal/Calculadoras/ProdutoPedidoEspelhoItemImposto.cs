@@ -33,6 +33,11 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         public Global.Negocios.Entidades.Loja Loja { get; }
 
         /// <summary>
+        /// Cliente associado.
+        /// </summary>
+        public Global.Negocios.Entidades.Cliente Cliente { get; }
+
+        /// <summary>
         /// Natureza de operação vinculada ao item.
         /// </summary>
         public Entidades.NaturezaOperacao NaturezaOperacao { get; }
@@ -83,7 +88,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Aliquota do IPI
         /// </summary>
-        public float AliqIpi => ProdutoPedido.AliqIpi;
+        public float AliqIpi => Loja.CalcularIpiPedido && Cliente.CobrarIpi ? Produto.AliqIPI : 0f;
 
         /// <summary>
         /// Código de situação tributária do COFINS
@@ -199,6 +204,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// </summary>
         /// <param name="produtoPedido"></param>
         /// <param name="loja"></param>
+        /// <param name="cliente"></param>
         /// <param name="naturezaOperacao"></param>
         /// <param name="produto"></param>
         /// <param name="mva"></param>
@@ -207,6 +213,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         public ProdutoPedidoEspelhoItemImposto(
             Data.Model.ProdutosPedidoEspelho produtoPedido,
             Global.Negocios.Entidades.Loja loja,
+            Global.Negocios.Entidades.Cliente cliente,
             Entidades.NaturezaOperacao naturezaOperacao,
             Global.Negocios.Entidades.Produto produto,
             float mva, decimal descontoRateadoImpostos,
@@ -214,6 +221,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         {
             ProdutoPedido = produtoPedido;
             Loja = loja;
+            Cliente = cliente;
             NaturezaOperacao = naturezaOperacao;
             Produto = produto;
             Mva = mva;
