@@ -48,7 +48,11 @@ namespace Glass.UI.Web.Utils
 
                 if (!UserInfo.GetUserInfo.IsAdminSync)
                     aba_internas.Style.Add("Display", "none");
-            }            
+            }
+
+            int idLoja;
+            if (int.TryParse(drpLoja.SelectedValue, out idLoja))
+                ctrlFaixasRentabilidadeComissao.IdLoja = idLoja;
 
             // A opção de gerar backup deve ficar visível apenas para admin sync
             lnkRelatorioDinamico.Visible = UserInfo.GetUserInfo.IsAdminSync;            

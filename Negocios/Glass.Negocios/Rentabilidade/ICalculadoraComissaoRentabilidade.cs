@@ -50,10 +50,11 @@ namespace Glass.Rentabilidade.Negocios
         /// Realiza o cálculo dos valores da rentabilidade sobre a comissão.
         /// </summary>
         /// <param name="itemRentabilidade">Item onde será aplicado o cálculo.</param>
+        /// <param name="idLoja">Identificador da loja.</param>
         /// <param name="idFunc">Identificador do funcionário que criou o item.</param>
         /// <param name="forcaPercentualComissao">Identifica se é para forçar a atualização do percentual de comissão.</param>
         /// <returns></returns>
-        ResultadoComissaoRentabilidade Calcular(IItemRentabilidade itemRentabilidade, int? idFunc, bool forcaPercentualComissao);
+        ResultadoComissaoRentabilidade Calcular(IItemRentabilidade itemRentabilidade, int idLoja, int? idFunc, bool forcaPercentualComissao);
 
         /// <summary>
         /// Força a atualização dos dados da calculadora.

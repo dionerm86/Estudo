@@ -45,6 +45,24 @@ namespace Glass.Rentabilidade.Negocios.Entidades
             }
         }
 
+
+        /// <summary>
+        /// Identificador da loja associada.
+        /// </summary>
+        public int IdLoja
+        {
+            get { return DataModel.IdLoja; }
+            set
+            {
+                if (DataModel.IdLoja != value &&
+                    RaisePropertyChanging(nameof(IdLoja), value))
+                {
+                    DataModel.IdLoja = value;
+                    RaisePropertyChanged(nameof(IdLoja));
+                }
+            }
+        }
+
         /// <summary>
         /// Identificador do funcionário associado.
         /// </summary>

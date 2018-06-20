@@ -137,9 +137,10 @@ namespace Glass.Rentabilidade.Negocios
         /// <summary>
         /// Obtém as faixas da rentabilidade em relação a comissão com base no funcionário informado.
         /// </summary>
+        /// <param name="idLoja">Identificador da loja pai das faixas.</param>
         /// <param name="idFunc">Identificador do funcionário pai da faixas, ou nulo para a configuração geral.</param>
         /// <returns></returns>
-        IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int? idFunc);
+        IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int idLoja, int? idFunc);
 
         /// <summary>
         /// Salva os dados da faixa da rentabilidade em relação a comissão.

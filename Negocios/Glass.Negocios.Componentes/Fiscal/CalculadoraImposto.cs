@@ -57,8 +57,11 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="item"></param>
         private void CarregarAliquotaIcms(ItemImpostoResultado item)
         {
-            item.AliqIcms = ProvedorIcmsProdutoUf
-                .ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+            if (item.CalcularAliquotaIcms)
+                item.AliqIcms = ProvedorIcmsProdutoUf
+                    .ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
+            else
+                item.AliqIcms = 0f;
         }
 
         /// <summary>
@@ -145,6 +148,13 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="item"></param>
         private void CalcularIcms(ItemImpostoResultado item, decimal percentualDesconto)
         {
+            if (!item.CalcularAliquotaIcms)
+            {
+                item.ValorIcms = 0m;
+                item.BcIcms = 0m;
+                return;
+            }
+
             // Se o CFOP selecionado estiver marcado para calcular ICMS
             if (item.NaturezaOperacao != null &&
                 (item.NaturezaOperacao.CalcIcms || 
@@ -475,7 +485,7 @@ namespace Glass.Fiscal.Negocios.Componentes
             var totalProd = container.Itens.Sum(f => f.Total);
             decimal percDesconto = (container.ValorDesconto / (totalProd > 0 ? totalProd : 1));
 
-            var itens = container.Itens.Select(f => new ItemImpostoResultado(f)).ToList();
+            var itens = container.Itens.Select(f => new ItemImpostoResultado(f, container.CalcularAliquotaIcms)).ToList();
 
             _totalDescontoAplicado = 0m;
 

@@ -194,6 +194,11 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// </summary>
         public decimal ValorCofins { get; set; }
 
+        /// <summary>
+        /// Identifica se deve calcular a aliquota do ICMS.
+        /// </summary>
+        public bool CalcularAliquotaIcms { get; }
+
         #endregion
 
         #region Construtores
@@ -202,7 +207,8 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// Construtor padrão.
         /// </summary>
         /// <param name="item"></param>
-        public ItemImpostoResultado(IItemImposto item)
+        /// <param name="calcularAliquotaIcms">Identifica se deve calcular a aliquota do ICMS.</param>
+        public ItemImpostoResultado(IItemImposto item, bool calcularAliquotaIcms)
         {
             Referencia = item;
             AliqIpi = item.AliqIpi;
@@ -212,6 +218,7 @@ namespace Glass.Fiscal.Negocios.Componentes
             AliqFcpSt = item.AliqFcpSt;
             AliqPis = item.AliqPis;
             AliqCofins = item.AliqCofins;
+            CalcularAliquotaIcms = calcularAliquotaIcms;
         }
 
         #endregion

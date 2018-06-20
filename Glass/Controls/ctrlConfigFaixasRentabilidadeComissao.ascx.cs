@@ -28,7 +28,27 @@ namespace Glass.UI.Web.Controls
             }
             set
             {
-                hdfIdFuncFaixaRentabilidadeComissao.Value = value.ToString();
+                hdfIdFuncFaixaRentabilidadeComissao.Value = value?.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define o identificador da loja
+        /// para o qual serão filtradas as faixas.
+        /// </summary>
+        public int IdLoja
+        {
+            get
+            {
+                int value;
+                if (int.TryParse(hdfIdLojaFaixaRentabilidadeComissao.Value, out value))
+                    return value;
+
+                return 0;
+            }
+            set
+            {
+                hdfIdLojaFaixaRentabilidadeComissao.Value = value.ToString();
             }
         }
 
@@ -72,6 +92,8 @@ namespace Glass.UI.Web.Controls
                     return;
                 }
 
+                faixaRentabilidadeComissao.IdLoja = IdLoja;
+                faixaRentabilidadeComissao.IdFunc = IdFunc;
                 faixaRentabilidadeComissao.PercentualRentabilidade = percentualRentabilidade;
                 faixaRentabilidadeComissao.PercentualComissao = percentualComissao;
 
