@@ -44,7 +44,7 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor0.Value + IIf(Len(Fields!NomeFunc0.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc0.Value + IIf(Len(Fields!Setor0.Value) &gt; 0 And Fields!SetorCorte0.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc0.Value + IIf(Len(Fields!Setor0.Value) &gt; 0 And Fields!SetorCorte0.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -81,7 +81,7 @@ Fields!NomeFunc0.Value + IIf(Len(Fields!Setor0.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor1.Value + IIf(Len(Fields!NomeFunc1.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc1.Value + IIf(Len(Fields!Setor1.Value) &gt; 0 And Fields!SetorCorte1.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc1.Value + IIf(Len(Fields!Setor1.Value) &gt; 0 And Fields!SetorCorte1.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -118,7 +118,7 @@ Fields!NomeFunc1.Value + IIf(Len(Fields!Setor1.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor2.Value + IIf(Len(Fields!NomeFunc2.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc2.Value + IIf(Len(Fields!Setor2.Value) &gt; 0 And Fields!SetorCorte2.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc2.Value + IIf(Len(Fields!Setor2.Value) &gt; 0 And Fields!SetorCorte2.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -154,7 +154,7 @@ Fields!NomeFunc2.Value + IIf(Len(Fields!Setor2.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor3.Value + IIf(Len(Fields!NomeFunc3.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc3.Value + IIf(Len(Fields!Setor3.Value) &gt; 0 And Fields!SetorCorte3.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc3.Value + IIf(Len(Fields!Setor3.Value) &gt; 0 And Fields!SetorCorte3.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -190,7 +190,7 @@ Fields!NomeFunc3.Value + IIf(Len(Fields!Setor3.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor4.Value + IIf(Len(Fields!NomeFunc4.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc4.Value + IIf(Len(Fields!Setor4.Value) &gt; 0 And Fields!SetorCorte4.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc4.Value + IIf(Len(Fields!Setor4.Value) &gt; 0 And Fields!SetorCorte4.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -226,7 +226,7 @@ Fields!NomeFunc4.Value + IIf(Len(Fields!Setor4.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor5.Value + IIf(Len(Fields!NomeFunc5.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc5.Value + IIf(Len(Fields!Setor5.Value) &gt; 0 And Fields!SetorCorte5.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc5.Value + IIf(Len(Fields!Setor5.Value) &gt; 0 And Fields!SetorCorte5.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -262,7 +262,7 @@ Fields!NomeFunc5.Value + IIf(Len(Fields!Setor5.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor6.Value + IIf(Len(Fields!NomeFunc6.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc6.Value + IIf(Len(Fields!Setor6.Value) &gt; 0 And Fields!SetorCorte6.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc6.Value + IIf(Len(Fields!Setor6.Value) &gt; 0 And Fields!SetorCorte6.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -298,7 +298,7 @@ Fields!NomeFunc6.Value + IIf(Len(Fields!Setor6.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor7.Value + IIf(Len(Fields!NomeFunc7.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc7.Value + IIf(Len(Fields!Setor7.Value) &gt; 0 And Fields!SetorCorte7.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc7.Value + IIf(Len(Fields!Setor7.Value) &gt; 0 And Fields!SetorCorte7.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -339,7 +339,7 @@ Fields!NomeFunc7.Value + IIf(Len(Fields!Setor7.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor8.Value + IIf(Len(Fields!NomeFunc8.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc8.Value + IIf(Len(Fields!Setor8.Value) &gt; 0 And Fields!SetorCorte8.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc8.Value + IIf(Len(Fields!Setor8.Value) &gt; 0 And Fields!SetorCorte8.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -376,7 +376,7 @@ Fields!NomeFunc8.Value + IIf(Len(Fields!Setor8.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor9.Value + IIf(Len(Fields!NomeFunc9.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc9.Value + IIf(Len(Fields!Setor9.Value) &gt; 0 And Fields!SetorCorte9.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc9.Value + IIf(Len(Fields!Setor9.Value) &gt; 0 And Fields!SetorCorte9.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -413,7 +413,7 @@ Fields!NomeFunc9.Value + IIf(Len(Fields!Setor9.Value) &gt; 0 And Fields!SetorCor
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor10.Value + IIf(Len(Fields!NomeFunc10.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc10.Value + IIf(Len(Fields!Setor10.Value) &gt; 0 And Fields!SetorCorte10.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc10.Value + IIf(Len(Fields!Setor10.Value) &gt; 0 And Fields!SetorCorte10.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -450,7 +450,7 @@ Fields!NomeFunc10.Value + IIf(Len(Fields!Setor10.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor11.Value + IIf(Len(Fields!NomeFunc11.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc11.Value + IIf(Len(Fields!Setor11.Value) &gt; 0 And Fields!SetorCorte11.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc11.Value + IIf(Len(Fields!Setor11.Value) &gt; 0 And Fields!SetorCorte11.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -487,7 +487,7 @@ Fields!NomeFunc11.Value + IIf(Len(Fields!Setor11.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor12.Value + IIf(Len(Fields!NomeFunc12.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc12.Value + IIf(Len(Fields!Setor12.Value) &gt; 0 And Fields!SetorCorte12.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc12.Value + IIf(Len(Fields!Setor12.Value) &gt; 0 And Fields!SetorCorte12.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -524,7 +524,7 @@ Fields!NomeFunc12.Value + IIf(Len(Fields!Setor12.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor13.Value + IIf(Len(Fields!NomeFunc13.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc13.Value + IIf(Len(Fields!Setor13.Value) &gt; 0 And Fields!SetorCorte13.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc13.Value + IIf(Len(Fields!Setor13.Value) &gt; 0 And Fields!SetorCorte13.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -561,7 +561,7 @@ Fields!NomeFunc13.Value + IIf(Len(Fields!Setor13.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor14.Value + IIf(Len(Fields!NomeFunc14.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc14.Value + IIf(Len(Fields!Setor14.Value) &gt; 0 And Fields!SetorCorte14.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc14.Value + IIf(Len(Fields!Setor14.Value) &gt; 0 And Fields!SetorCorte14.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -598,7 +598,7 @@ Fields!NomeFunc14.Value + IIf(Len(Fields!Setor14.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor15.Value + IIf(Len(Fields!NomeFunc15.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc15.Value + IIf(Len(Fields!Setor15.Value) &gt; 0 And Fields!SetorCorte15.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc15.Value + IIf(Len(Fields!Setor15.Value) &gt; 0 And Fields!SetorCorte15.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -640,7 +640,7 @@ Fields!NomeFunc15.Value + IIf(Len(Fields!Setor15.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor16.Value + IIf(Len(Fields!NomeFunc16.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc16.Value + IIf(Len(Fields!Setor16.Value) &gt; 0 And Fields!SetorCorte16.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc16.Value + IIf(Len(Fields!Setor16.Value) &gt; 0 And Fields!SetorCorte16.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -677,7 +677,7 @@ Fields!NomeFunc16.Value + IIf(Len(Fields!Setor16.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor17.Value + IIf(Len(Fields!NomeFunc17.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc17.Value + IIf(Len(Fields!Setor17.Value) &gt; 0 And Fields!SetorCorte17.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc17.Value + IIf(Len(Fields!Setor17.Value) &gt; 0 And Fields!SetorCorte17.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -714,7 +714,7 @@ Fields!NomeFunc17.Value + IIf(Len(Fields!Setor17.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor18.Value + IIf(Len(Fields!NomeFunc18.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc18.Value + IIf(Len(Fields!Setor18.Value) &gt; 0 And Fields!SetorCorte18.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc18.Value + IIf(Len(Fields!Setor18.Value) &gt; 0 And Fields!SetorCorte18.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -751,7 +751,7 @@ Fields!NomeFunc18.Value + IIf(Len(Fields!Setor18.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor19.Value + IIf(Len(Fields!NomeFunc19.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc19.Value + IIf(Len(Fields!Setor19.Value) &gt; 0 And Fields!SetorCorte19.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc19.Value + IIf(Len(Fields!Setor19.Value) &gt; 0 And Fields!SetorCorte19.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -788,7 +788,7 @@ Fields!NomeFunc19.Value + IIf(Len(Fields!Setor19.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor20.Value + IIf(Len(Fields!NomeFunc20.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc20.Value + IIf(Len(Fields!Setor20.Value) &gt; 0 And Fields!SetorCorte20.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc20.Value + IIf(Len(Fields!Setor20.Value) &gt; 0 And Fields!SetorCorte20.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -825,7 +825,7 @@ Fields!NomeFunc20.Value + IIf(Len(Fields!Setor20.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor21.Value + IIf(Len(Fields!NomeFunc21.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc21.Value + IIf(Len(Fields!Setor21.Value) &gt; 0 And Fields!SetorCorte21.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc21.Value + IIf(Len(Fields!Setor21.Value) &gt; 0 And Fields!SetorCorte21.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -862,7 +862,7 @@ Fields!NomeFunc21.Value + IIf(Len(Fields!Setor21.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor22.Value + IIf(Len(Fields!NomeFunc22.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc22.Value + IIf(Len(Fields!Setor22.Value) &gt; 0 And Fields!SetorCorte22.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc22.Value + IIf(Len(Fields!Setor22.Value) &gt; 0 And Fields!SetorCorte22.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -899,7 +899,7 @@ Fields!NomeFunc22.Value + IIf(Len(Fields!Setor22.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor23.Value + IIf(Len(Fields!NomeFunc23.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc23.Value + IIf(Len(Fields!Setor23.Value) &gt; 0 And Fields!SetorCorte23.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc23.Value + IIf(Len(Fields!Setor23.Value) &gt; 0 And Fields!SetorCorte23.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -941,7 +941,7 @@ Fields!NomeFunc23.Value + IIf(Len(Fields!Setor23.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor24.Value + IIf(Len(Fields!NomeFunc24.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc24.Value + IIf(Len(Fields!Setor24.Value) &gt; 0 And Fields!SetorCorte24.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc24.Value + IIf(Len(Fields!Setor24.Value) &gt; 0 And Fields!SetorCorte24.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -978,7 +978,7 @@ Fields!NomeFunc24.Value + IIf(Len(Fields!Setor24.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor25.Value + IIf(Len(Fields!NomeFunc25.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc25.Value + IIf(Len(Fields!Setor25.Value) &gt; 0 And Fields!SetorCorte25.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc25.Value + IIf(Len(Fields!Setor25.Value) &gt; 0 And Fields!SetorCorte25.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -1015,7 +1015,7 @@ Fields!NomeFunc25.Value + IIf(Len(Fields!Setor25.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor26.Value + IIf(Len(Fields!NomeFunc26.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc26.Value + IIf(Len(Fields!Setor26.Value) &gt; 0 And Fields!SetorCorte26.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc26.Value + IIf(Len(Fields!Setor26.Value) &gt; 0 And Fields!SetorCorte26.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -1052,7 +1052,7 @@ Fields!NomeFunc26.Value + IIf(Len(Fields!Setor26.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor27.Value + IIf(Len(Fields!NomeFunc27.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc27.Value + IIf(Len(Fields!Setor27.Value) &gt; 0 And Fields!SetorCorte27.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc27.Value + IIf(Len(Fields!Setor27.Value) &gt; 0 And Fields!SetorCorte27.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -1089,7 +1089,7 @@ Fields!NomeFunc27.Value + IIf(Len(Fields!Setor27.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor28.Value + IIf(Len(Fields!NomeFunc28.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc28.Value + IIf(Len(Fields!Setor28.Value) &gt; 0 And Fields!SetorCorte28.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc28.Value + IIf(Len(Fields!Setor28.Value) &gt; 0 And Fields!SetorCorte28.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -1126,7 +1126,7 @@ Fields!NomeFunc28.Value + IIf(Len(Fields!Setor28.Value) &gt; 0 And Fields!SetorC
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!Setor29.Value + IIf(Len(Fields!NomeFunc29.Value)&gt;0, vbCrLf + "Func.: ", "") +
-Fields!NomeFunc29.Value + IIf(Len(Fields!Setor29.Value) &gt; 0 And Fields!SetorCorte29.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")", "")</Value>
+Fields!NomeFunc29.Value + IIf(Len(Fields!Setor29.Value) &gt; 0 And Fields!SetorCorte29.Value And Parameters!NumEtiquetaChapa.Value &lt;&gt; "", vbCrLf + "(Chapa: " + Parameters!NumEtiquetaChapa.Value + ")" + IIf(Not IsNothing(Parameters!NumeroNFeChapa.Value), " NFe: " + Parameters!NumeroNFeChapa.Value, ""), "")</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                                 <Color>=Parameters!CorLinha.Value</Color>
@@ -1736,6 +1736,11 @@ Fields!NomeFunc29.Value + IIf(Len(Fields!Setor29.Value) &gt; 0 And Fields!SetorC
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Report_Parameter_4</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="NumeroNFeChapa">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Report_Parameter_5</Prompt>
     </ReportParameter>
   </ReportParameters>
   <Language>pt-BR</Language>

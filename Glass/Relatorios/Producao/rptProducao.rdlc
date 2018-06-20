@@ -991,6 +991,9 @@ Parameters!Agrupar.Value=4, "Prev. entrega: " + Fields!DataEntregaExibicao.Value
                                                       <Parameter Name="NumEtiquetaChapa">
                                                         <Value>=IIf(Not IsNothing(Fields!NumEtiquetaChapa.Value), Fields!NumEtiquetaChapa.Value, "")</Value>
                                                       </Parameter>
+                                                      <Parameter Name="NumeroNFeChapa">
+                                                        <Value>=IIf(Not IsNothing(Fields!NumeroNFeChapa.Value), Fields!NumeroNFeChapa.Value, "")</Value>
+                                                      </Parameter>
                                                     </Parameters>
                                                     <KeepTogether>true</KeepTogether>
                                                     <Left>9.3cm</Left>
@@ -998,7 +1001,11 @@ Parameters!Agrupar.Value=4, "Prev. entrega: " + Fields!DataEntregaExibicao.Value
                                                     <Width>12.89577cm</Width>
                                                     <ZIndex>9</ZIndex>
                                                     <DataElementOutput>NoOutput</DataElementOutput>
-                                                    <Style />
+                                                    <Style>
+                                                      <Border>
+                                                        <Style>None</Style>
+                                                      </Border>
+                                                    </Style>
                                                   </Subreport>
                                                   <Textbox Name="textbox23">
                                                     <CanGrow>true</CanGrow>
@@ -1776,6 +1783,10 @@ True, Fields!IdProdPedProducao.Value)</GroupExpression>
         <Field Name="TotM">
           <DataField>TotM</DataField>
           <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="NumeroNFeChapa">
+          <DataField>NumeroNFeChapa</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

@@ -43,6 +43,7 @@ namespace Glass.Data.RelModel
             TotM2 = prodPedProducao.TotM2;
             LoteChapa = prodPedProducao.LoteChapa;
             TotM = prodPedProducao.TotM;
+            NumeroNFeChapa = prodPedProducao.NumeroNFeChapa;
         }
 
         #endregion
@@ -102,6 +103,8 @@ namespace Glass.Data.RelModel
         public string LoteChapa { get; set; }
 
         public double TotM { get; set; }
+
+        public string NumeroNFeChapa { get; set; }
 
         #endregion
     }
