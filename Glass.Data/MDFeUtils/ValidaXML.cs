@@ -89,10 +89,9 @@ namespace Glass.Data.MDFeUtils
             }
 
             xmlMDFe.PreserveWhitespace = true;
-            var caminhoDoSchema = Helper.Utils.GetMDFeSchemasPath + nomeSchema;
-            bool lArqXSD = File.Exists(caminhoDoSchema);
+            var caminhoDoSchema = $"{ Helper.Utils.ObterCaminhoEsquemaMDFe }{ nomeSchema }";
 
-            if (lArqXSD)
+            if (File.Exists(caminhoDoSchema))
             {
                 MemoryStream stream = new MemoryStream();
                 xmlMDFe.Save(stream);

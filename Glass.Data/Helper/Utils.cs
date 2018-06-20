@@ -574,32 +574,63 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação da NFe
+        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação da NFe.
         /// </summary>
-        public static string GetSchemasPath
+        public static string ObterCaminhoEsquemaNFe
         {
             get
             {
-                var caminho = HttpContext.Current.Server.MapPath("~/Schemas/");
+                var caminho = string.Empty;
+
+                if (DateTime.Now < DateTime.Parse("2018-07-09"))
+                {
+                    caminho = HttpContext.Current.Server.MapPath("~/Schemas/NFe_v1.50/");
+                }
+                else
+                {
+                    caminho = HttpContext.Current.Server.MapPath("~/Schemas/NFe_v1.60/");
+                }
 
                 if (!Directory.Exists(caminho))
+                {
                     Directory.CreateDirectory(caminho);
+                }
 
                 return caminho;
             }
         }
 
         /// <summary>
-        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação do MDFe
+        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação do CTe.
         /// </summary>
-        public static string GetMDFeSchemasPath
+        public static string ObterCaminhoEsquemaCTe
+        {
+            get
+            {
+                var caminho = HttpContext.Current.Server.MapPath("~/Schemas/CTe/");
+
+                if (!Directory.Exists(caminho))
+                {
+                    Directory.CreateDirectory(caminho);
+                }
+
+                return caminho;
+            }
+        }
+
+        /// <summary>
+        /// Retorna o endereço físico do servidor onde está salvo os schemas de validação do MDFe.
+        /// </summary>
+        public static string ObterCaminhoEsquemaMDFe
         {
             get
             {
                 var caminho = HttpContext.Current.Server.MapPath("~/Schemas/MDFe/");
 
                 if (!Directory.Exists(caminho))
+                {
                     Directory.CreateDirectory(caminho);
+                }
 
                 return caminho;
             }

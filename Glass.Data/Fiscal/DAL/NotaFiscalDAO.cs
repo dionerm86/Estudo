@@ -3953,7 +3953,7 @@ namespace Glass.Data.DAL
                         for (int i = 0; i < lstParcNf.Length; i++)
                         {
                             XmlElement dup = doc.CreateElement("dup");
-                            ManipulacaoXml.SetNode(doc, dup, "nDup", nf.NumeroNFe.ToString() + "-" + (i + 1));
+                            ManipulacaoXml.SetNode(doc, dup, "nDup", i.ToString().PadLeft(3, '0'));
                             ManipulacaoXml.SetNode(doc, dup, "dVenc", lstParcNf[i].Data.Value.ToString("yyyy-MM-dd"));
                             ManipulacaoXml.SetNode(doc, dup, "vDup", Formatacoes.TrataValorDecimal(lstParcNf[i].Valor, 2));
                             cobr.AppendChild(dup);
