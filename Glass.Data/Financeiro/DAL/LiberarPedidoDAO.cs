@@ -3124,6 +3124,16 @@ namespace Glass.Data.DAL
 
             lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);
 
+            // Verifica se os pedidos estão entregues
+            if (ProducaoConfig.ExpedirSomentePedidosLiberados)
+            {
+                var pedidosEntregues = lstPedidos.Where(P => P.SituacaoProducao == (int)Pedido.SituacaoProducaoEnum.Entregue).Select(P => P.IdPedido);
+                if (pedidosEntregues.Count() > 0)
+                {
+                    throw new Exception("O(s) pedido(s) " + string.Join(",", pedidosEntregues) + " esta(ão) entregue(s).");
+                }
+            }
+
             #region Remove os produtos da liberação
 
             /* Chamado 39231. */
