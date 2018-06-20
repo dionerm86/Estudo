@@ -78,6 +78,11 @@ namespace Glass.Fiscal.Negocios
         bool NotaFiscalImportadaSistema { get; }
 
         /// <summary>
+        /// Identifica se deve calcular a aliquota do ICMS.
+        /// </summary>
+        bool CalcularAliquotaIcms { get; }
+
+        /// <summary>
         /// Itens filhos.
         /// </summary>
         IEnumerable<IItemImposto> Itens { get; }

@@ -12,24 +12,26 @@ namespace Glass.Rentabilidade.Negocios.Componentes
     {
         #region Local Variables
 
-        private readonly IDictionary<int, IEnumerable<Faixa>> _faixasFuncionario = new Dictionary<int, IEnumerable<Faixa>>();
+        private readonly IDictionary<int, IDictionary<int, IEnumerable<Faixa>>> _faixasLoja = new Dictionary<int, IDictionary<int, IEnumerable<Faixa>>>();
 
         #endregion
 
         #region Métodos Privados
 
         /// <summary>
-        /// Recuperea as faixas com base no identificador do funcionário, de
+        /// Recuperea as faixas com base na loja e no funcionário, de
         /// forma direta no banco de dados.
         /// </summary>
-        /// <param name="idFunc"></param>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <param name="idFunc">Identificador do funcionário.</param>
         /// <returns></returns>
-        private IEnumerable<Faixa> ObterFaixasDireto(int? idFunc)
+        private IEnumerable<Faixa> ObterFaixasDireto(int idLoja, int? idFunc)
         {
             var registros = SourceContext.Instance.CreateQuery()
                     .From<Data.Model.FaixaRentabilidadeComissao>()
-                    .Where("IdFunc=?id")
-                    .Add("?id", idFunc)
+                    .Where("IdLoja=?idLoja AND IdFunc=?idFunc")
+                    .Add("?idLoja", idLoja)
+                    .Add("?idFunc", idFunc)
                     .Execute()
                     .Select(f => new
                     {
@@ -81,22 +83,32 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Recupera as faixas com base no identificador do funcionário.
         /// </summary>
-        /// <param name="idFunc"></param>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <param name="idFunc">Identificador do funcionário.</param>
         /// <returns></returns>
-        private IEnumerable<Faixa> ObterFaixas(int? idFunc)
+        private IEnumerable<Faixa> ObterFaixas(int idLoja, int? idFunc)
         {
-            lock (_faixasFuncionario)
+            IDictionary<int, IEnumerable<Faixa>> faixasFuncionario;
+
+            lock(_faixasLoja)
+                if (!_faixasLoja.TryGetValue(idLoja, out faixasFuncionario))
+                {
+                    faixasFuncionario = new Dictionary<int, IEnumerable<Faixa>>();
+                    _faixasLoja.Add(idLoja, faixasFuncionario);
+                }
+
+            lock (faixasFuncionario)
             {
                 IEnumerable<Faixa> faixas;
-                if (!_faixasFuncionario.TryGetValue(idFunc.GetValueOrDefault(), out faixas))
+                if (!faixasFuncionario.TryGetValue(idFunc.GetValueOrDefault(), out faixas))
                 {
-                    faixas = ObterFaixasDireto(idFunc).ToArray();
+                    faixas = ObterFaixasDireto(idLoja, idFunc).ToArray();
 
                     if (idFunc.HasValue && idFunc.Value != 0 && !faixas.Any())
                         // Carrega as faixas gerais
-                        faixas = ObterFaixas(null);
-                    
-                    _faixasFuncionario.Add(idFunc.GetValueOrDefault(), faixas);
+                        faixas = ObterFaixas(idLoja, null);
+
+                    faixasFuncionario.Add(idFunc.GetValueOrDefault(), faixas);
                 }
 
                 return faixas;
@@ -111,12 +123,13 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// Realiza o cálculo dos valores da rentabilidade sobre a comissão.
         /// </summary>
         /// <param name="itemRentabilidade">Item onde será aplicado o cálculo.</param>
-        /// <param name="idFunc">Identificador do funcionário que criou o item.</param>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <param name="idFunc">Identificador do funcionário.</param>
         /// <param name="forcaPercentualComissao">Identifica se é para forçar a atualização do percentual de comissão.</param>
         /// <returns></returns>
-        public ResultadoComissaoRentabilidade Calcular(IItemRentabilidade itemRentabilidade, int? idFunc, bool forcaPercentualComissao)
+        public ResultadoComissaoRentabilidade Calcular(IItemRentabilidade itemRentabilidade, int idLoja, int? idFunc, bool forcaPercentualComissao)
         {
-            var faixas = ObterFaixas(idFunc);
+            var faixas = ObterFaixas(idLoja, idFunc);
 
             var faixa = faixas.FirstOrDefault(f => 
                 itemRentabilidade.PercentualRentabilidade > f.Inicio && 
@@ -133,8 +146,13 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// </summary>
         public void AtualizarDados()
         {
-            lock (_faixasFuncionario)
-                _faixasFuncionario.Clear();
+            lock (_faixasLoja)
+            {
+                foreach (var i in _faixasLoja.Values)
+                    i.Clear();
+
+                _faixasLoja.Clear();
+            }
         }
 
         #endregion

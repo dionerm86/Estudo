@@ -138,6 +138,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                 yield return new ProdutoPedidoEspelhoItemImposto(
                     produtoPedido,
                     loja,
+                    cliente,
                     produtoNateruzaOperacao.Item2,
                     produtoNateruzaOperacao.Item1,
                     produtosMva[(int)produtoPedido.IdProd],

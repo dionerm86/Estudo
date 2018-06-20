@@ -642,13 +642,15 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Obtém as faixas da rentabilidade em relação a comissão com base no funcionário informado.
         /// </summary>
+        /// <param name="idLoja">Identificador da loja pai das faixas.</param>
         /// <param name="idFunc">Identificador do funcionário pai da faixas, ou nulo para a configuração geral.</param>
         /// <returns></returns>
-        public IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int? idFunc)
+        public IList<Entidades.FaixaRentabilidadeComissao> ObterFaixasRentabilidadeComissao(int idLoja, int? idFunc)
         {
             return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.FaixaRentabilidadeComissao>()
-                .Where("IdFunc=?idFunc")
+                .Where("IdLoja=?idLoja AND IdFunc=?idFunc")
+                .Add("?idLoja", idLoja)
                 .Add("?idFunc", idFunc)
                 .OrderBy("PercentualRentabilidade")
                 .ProcessResult<Entidades.FaixaRentabilidadeComissao>()

@@ -61,6 +61,7 @@
     </Columns>
 </asp:GridView>
 <asp:HiddenField runat="server" ID="hdfIdFuncFaixaRentabilidadeComissao" EnableViewState="false" />
+<asp:HiddenField runat="server" ID="hdfIdLojaFaixaRentabilidadeComissao" EnableViewState="false" />
 
  <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFaixaRentabilidadeComissao" runat="server"
     DataObjectTypeName="Glass.Rentabilidade.Negocios.Entidades.FaixaRentabilidadeComissao"
@@ -72,6 +73,7 @@
     UpdateMethod="SalvarFaixaRentabilidadeComissao"
     UpdateStrategy="GetAndUpdate">
     <SelectParameters>
+        <asp:ControlParameter ControlID="hdfIdLojaFaixaRentabilidadeComissao" Name="idLoja" />
         <asp:ControlParameter ControlID="hdfIdFuncFaixaRentabilidadeComissao" Name="idFunc" DefaultValue="" />
     </SelectParameters>
 </colo:VirtualObjectDataSource>

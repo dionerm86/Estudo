@@ -44,15 +44,14 @@ namespace Glass.Data.CTeUtils
                     nomeSchema = "inutCte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.CancCTe:
-                    nomeSchema = "eventoCTe_v3.00.xsd";
+                    nomeSchema = "evCancCTe_v3.00.xsd";
                     break;
             }
 
             xmlCTe.PreserveWhitespace = true;
-            var caminhoDoSchema = Utils.GetSchemasPath + nomeSchema;
-            bool lArqXSD = File.Exists(caminhoDoSchema);
+            var caminhoDoSchema = $"{ Utils.ObterCaminhoEsquemaCTe }{ nomeSchema }";
 
-            if (lArqXSD)
+            if (File.Exists(caminhoDoSchema))
             {
                 MemoryStream stream = new MemoryStream();
                 xmlCTe.Save(stream);

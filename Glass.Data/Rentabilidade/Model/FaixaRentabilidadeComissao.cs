@@ -22,9 +22,17 @@ namespace Glass.Data.Model
         public int IdFaixaRentabilidadeComissao { get; set; }
 
         /// <summary>
+        /// Identificador da loja no qual a faixa se aplica.
+        /// </summary>
+        [PersistenceProperty("IDLOJA")]
+        [PersistenceForeignKey(typeof(Loja), "IdLoja")]
+        public int IdLoja { get; set; }
+
+        /// <summary>
         /// Identificador do funcionário ao qual se aplica a faixa.
         /// </summary>
         [PersistenceProperty("IdFunc")]
+        [PersistenceForeignKey(typeof(Funcionario), "IdFunc")]
         public int? IdFunc { get; set; }
 
         /// <summary>

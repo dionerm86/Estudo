@@ -218,7 +218,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN pedido ped on (ped.IdPedido = ppe.IdPedido) And (ped.TipoPedido = {(int)Pedido.TipoPedidoEnum.Producao})
                     INNER JOIN produto p ON (coalesce(pnf.IdProd,ppe.IdProd)=p.IdProd)
                     INNER JOIN subgrupo_prod sp ON (p.IdSubgrupoProd=sp.IdSubgrupoProd)
-                WHERE ccp.IdProdImpressaoChapa IN ({string.Join(",", idsProdImpressaoChapa.Where(f => f > 0))}) AND sp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.ChapasVidro}, {(int)TipoSubgrupoProd.ChapasVidroLaminado})") && !chapasTrocadasDisponiveis;
+                WHERE ccp.IdProdImpressaoChapa IN ({string.Join(",", idsProdImpressaoChapa.Where(f => f > 0))}) AND sp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.ChapasVidro}, {(int)TipoSubgrupoProd.ChapasVidroLaminado})") || !chapasTrocadasDisponiveis;
         }
 
         /// <summary>

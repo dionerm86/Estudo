@@ -33,7 +33,13 @@ namespace Glass.Pedido.Negocios.Componentes
         /// Obtém ou define o identificador do funcionário que está
         /// vinculado com o cálculo.
         /// </summary>
-        private int? IdFunc { get; set; }
+        private int IdFunc { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador da loja que está
+        /// vinculada com o cálculo.
+        /// </summary>
+        private int IdLoja { get; set; }
 
         #endregion
 
@@ -168,7 +174,7 @@ namespace Glass.Pedido.Negocios.Componentes
 
                 while (tentativas > 0)
                 {
-                    var resultadoComissao = CalculadoraComissaoRentabilidade.Calcular(item, IdFunc, calcularComissaoBase);
+                    var resultadoComissao = CalculadoraComissaoRentabilidade.Calcular(item, IdLoja, IdFunc, calcularComissaoBase);
 
                     if (!resultadoComissao.Valido || calcularComissaoBase) 
                     {
@@ -710,7 +716,8 @@ namespace Glass.Pedido.Negocios.Componentes
             if (!CalculoHabilitado)
                 return CriarResultadoNaoExecutado();
 
-            IdFunc = (int?)instancia.IdFunc;
+            IdFunc = (int)instancia.IdFunc;
+            IdLoja = (int)instancia.IdLoja;
             var item = ObterItemPedido(sessao, instancia);
             return Calcular(item);
         }
@@ -742,7 +749,8 @@ namespace Glass.Pedido.Negocios.Componentes
                 return CriarResultadoNaoExecutado();
 
             var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, instancia.IdPedido);
-            IdFunc = (int?)pedido.IdFunc;
+            IdFunc = (int)pedido.IdFunc;
+            IdLoja = (int)pedido.IdLoja;
 
             var item = ObterItemProdutoPedido(sessao, instancia);
             return Calcular(item);
@@ -775,7 +783,8 @@ namespace Glass.Pedido.Negocios.Componentes
                 return CriarResultadoNaoExecutado();
 
             var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, instancia.IdPedido);
-            IdFunc = (int?)pedido.IdFunc;
+            IdFunc = (int)pedido.IdFunc;
+            IdLoja = (int)pedido.IdLoja;
 
             var item = ObterItemAmbientePedido(sessao, instancia);
             return Calcular(item);
