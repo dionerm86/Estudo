@@ -130,7 +130,7 @@
 
             FindControl("hdfIdSubgrupo", "input").value = idSubgrupo;
 
-            ctrlProdutoBaixaEst.AtualizaVisibilidadeProcApl(idSubgrupo);
+            //ctrlProdutoBaixaEst.AtualizaVisibilidadeProcApl(idSubgrupo);
 
             // Exibe e esconde os campos de produto base e materia prima
             var tipoSubgrupo = CadProduto.ObterTipoSubgrupoPeloSubgrupo(idSubgrupo).value.split(';');
@@ -145,8 +145,8 @@
                     tabela.rows[25].style.display = "";
                     // Materia Prima
                     tabela.rows[27].style.display = "none";
-                    FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").value = "";
-                    FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").onblur();
+                    //FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").value = "";
+                    //FindControl("ctrlProdutoBaixaEstoque1_ctrlSelProduto_ctrlSelProdBuscar_txtDescr", "input").onblur();
                     // Tipo Mercadoria
                     //MateriaPrima
                     FindControl("drpTipoMercadoria", "select").selectedIndex = 2

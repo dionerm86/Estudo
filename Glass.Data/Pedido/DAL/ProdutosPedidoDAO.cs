@@ -4503,7 +4503,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
-                    var retorno = Update(transaction, objUpdate, pedido);
+                    var retorno = Update(transaction, objUpdate, pedido, true, true, true);
 
                     transaction.Commit();
                     transaction.Close();
