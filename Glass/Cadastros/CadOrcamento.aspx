@@ -549,7 +549,7 @@
         
             openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd + 
                 "&TipoEntrega=" + tipoEntrega + ambiente + (editar ? "&editar=true" : "") +
-                "&idCliente=" + idCliente);
+                "&idCliente=" + idCliente + "&orcamentoRapido=false");
             
             return false;
         }

@@ -14,7 +14,7 @@ function setProduto(codInterno) {
     try {
         limpaCampos();
         FindControl("txtCodProd", "input").value = codInterno;
-        loadProduto();
+        loadProduto(orcamentoRapido);
     }
     catch (err) {
 
@@ -39,7 +39,7 @@ function atualizaValMin()
 }
 
 // Carrega dados do produto com base no código do produto passado
-function loadProduto() {
+function loadProduto(orcamentoRapido) {
     if (FindControl('txtCodProd', 'input').value == "")
         return false;
 
@@ -63,7 +63,7 @@ function loadProduto() {
         var retorno = LstOrcamentoRapido.GetProduto(FindControl('txtCodProd', 'input').value,
             FindControl("hdfIdCliente", "input").value, FindControl("hdfIdOrca", "input").value,
             FindControl("drpTipoEntrega", "select").value, FindControl("chkRevenda", "input").checked ? "true" : "false", 
-            percDescontoQtde).value.split(';');
+            percDescontoQtde, orcamentoRapido).value.split(';');
 
         if (retorno[0] == "Erro") {
             alert(retorno[1]);
