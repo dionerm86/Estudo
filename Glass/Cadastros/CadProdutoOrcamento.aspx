@@ -29,7 +29,7 @@
             return '../Listas/LstOrcamentoRapido.aspx?popup=true&IdOrca=<%= Request["IdOrca"] %>&PercComissao=<%= GetPercComissao() %>' +
                 '&IdProdOrca=<%= !String.IsNullOrEmpty(Request["editar"]) ? Request["IdProd"] : "" %>&tipoEntrega=<%= Request["tipoEntrega"] %>&revenda=<%= GetRevenda() %>' +
                 '&callbackIncluir=incluir&callbackExcluir=excluir' +
-                '&idCliente=<%= Request["idCliente"] %>';
+                '&idCliente=<%= Request["idCliente"] %>&orcamentoRapido=false';
         }
     
         function inserirProdutos(link)
