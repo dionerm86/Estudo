@@ -11,6 +11,13 @@ namespace Glass.UI.Web.Utils
 {
     public partial class SelProdMateriaPrima : System.Web.UI.Page
     {
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            grdProdMateriaPrima.Register(true, true);
+            odsProdMateriaPrima.Register();
+        }
+
         /// <summary>
         /// Instancia do produto que está sendo salvo.
         /// </summary>
