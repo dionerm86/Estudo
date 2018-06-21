@@ -40,7 +40,7 @@ namespace Glass.Data.NFeUtils
                     nomeSchema = "enviNFe_v4.00.xsd";
                     break;
                 case TipoArquivoXml.CancNfe:
-                    nomeSchema = "cancNFe_v3.10.xsd";
+                    nomeSchema = "cancNFe_v2.00.xsd";
                     break;
                 case TipoArquivoXml.InutNFe:
                     nomeSchema = "inutNFe_v4.00.xsd";
@@ -65,10 +65,9 @@ namespace Glass.Data.NFeUtils
             }
 
             xmlNFe.PreserveWhitespace = true;
-            var caminhoDoSchema = Utils.GetSchemasPath + nomeSchema;
-            bool lArqXSD = File.Exists(caminhoDoSchema);
+            var caminhoDoSchema = $"{ Utils.ObterCaminhoEsquemaNFe }{ nomeSchema }";
 
-            if (lArqXSD)
+            if (File.Exists(caminhoDoSchema))
             {
                 MemoryStream stream = new MemoryStream();
                 xmlNFe.Save(stream);

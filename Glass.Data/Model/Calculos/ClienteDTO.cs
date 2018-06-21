@@ -32,6 +32,13 @@ namespace Glass.Data.Model.Calculos
             idContainer = id;
         }
 
+        internal ClienteDTO(uint id, bool revenda)
+        {
+            idContainer = () => id;
+            VerificaAtualizacaoIdCliente();
+            Revenda = revenda;
+        }
+
         public uint Id
         {
             get

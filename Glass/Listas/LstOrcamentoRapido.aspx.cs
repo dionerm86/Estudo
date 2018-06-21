@@ -171,7 +171,7 @@ namespace Glass.UI.Web.Listas
         /// Retorna o Código/Descrição/Valor aplicável do produto
         /// </summary>
         [Ajax.AjaxMethod()]
-        public string GetProduto(string codInterno, string idCli, string idOrca, string tipoEntrega, string revenda, string percDescontoQtdeStr)
+        public string GetProduto(string codInterno, string idCli, string idOrca, string tipoEntrega, string revenda, string percDescontoQtdeStr, string orcamentoRapido)
         {
             try
             {
@@ -187,6 +187,10 @@ namespace Glass.UI.Web.Listas
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
                 else if (prod.Compra)
                     return "Erro;Produto apenas para compra.";
+                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Venda && (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || (prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))) && prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra))
+                    return "Erro;Produtos de revenda não podem ser incluídos em um orçamento de venda.";
+                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Revenda && ((prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && !SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd)) || prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)))
+                    return "Erro;Produtos de venda não podem ser incluídos em um orçamento de revenda.";
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
 

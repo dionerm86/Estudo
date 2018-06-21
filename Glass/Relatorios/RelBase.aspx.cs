@@ -3252,7 +3252,7 @@ namespace Glass.UI.Web.Relatorios
                 case "CotacaoCompraFornecedor":
                     {
                         report.ReportPath = "Relatorios/rptCotacaoCompraCalculada.rdlc";
-
+                        lstParam.Add(new ReportParameter("TipoCalculo",""));
                         report.DataSources.Add(new ReportDataSource("CotacaoCompraCalculada", WebGlass.Business.CotacaoCompra.Fluxo.CotacaoPorFornecedor.Instance.ObtemDados(
                             Glass.Conversoes.StrParaUint(Request["id"]), true)));
 

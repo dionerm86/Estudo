@@ -1673,286 +1673,127 @@
     <Content Include="Mef.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Schemas\cancCteTiposBasico_v1.04.xsd">
+    <None Include="Schemas\CTe\cancCTeTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cancCTeTiposBasico_v2.00.xsd">
+    <None Include="Schemas\CTe\consReciCTeTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cancCTeTiposBasico_v3.00.xsd">
+    <None Include="Schemas\CTe\consReciCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cancCte_v1.04.xsd">
+    <None Include="Schemas\CTe\consSitCTeTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cancNFe_v2.00.xsd">
+    <None Include="Schemas\CTe\consSitCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\CCe_v1.00.xsd">
+    <None Include="Schemas\CTe\consStatServCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consCad_v2.00.xsd">
+    <None Include="Schemas\CTe\consStatServTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciCTeTiposBasico_v2.00.xsd">
+    <None Include="Schemas\CTe\cteModalAereo_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciCTeTiposBasico_v3.00.xsd">
+    <None Include="Schemas\CTe\cteModalAquaviario_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciCTe_v2.00.xsd">
+    <None Include="Schemas\CTe\cteModalDutoviario_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciCTe_v3.00.xsd">
+    <None Include="Schemas\CTe\cteModalFerroviario_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciNFe_v3.10.xsd">
+    <None Include="Schemas\CTe\cteModalRodoviarioOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consReciNFe_v4.00.xsd">
+    <None Include="Schemas\CTe\cteModalRodoviario_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitCTeTiposBasico_v2.00.xsd">
+    <None Include="Schemas\CTe\cteMultiModal_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitCTeTiposBasico_v3.00.xsd">
+    <None Include="Schemas\CTe\cteOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitCTe_v2.00.xsd">
+    <None Include="Schemas\CTe\cteTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitCTe_v3.00.xsd">
+    <None Include="Schemas\CTe\cte_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitNFe_v2.00.xsd">
+    <None Include="Schemas\CTe\enviCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitNFe_v2.01.xsd">
+    <None Include="Schemas\CTe\evCancCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitNFe_v3.10.xsd">
+    <None Include="Schemas\CTe\evCCeCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consSitNFe_v4.00.xsd">
+    <None Include="Schemas\CTe\eventoCTeTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServCTe_v2.00.xsd">
+    <None Include="Schemas\CTe\eventoCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServCTe_v3.00.xsd">
+    <None Include="Schemas\CTe\evEPECCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServTiposBasico_v2.00.xsd">
+    <None Include="Schemas\CTe\evGTV_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServTiposBasico_v3.00.xsd">
+    <None Include="Schemas\CTe\evPrestDesacordo_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServ_v2.00.xsd">
+    <None Include="Schemas\CTe\evRegMultimodal_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServ_v3.10.xsd">
+    <None Include="Schemas\CTe\inutCTeTiposBasico_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\consStatServ_v4.00.xsd">
+    <None Include="Schemas\CTe\inutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalAereo_v2.00.xsd">
+    <None Include="Schemas\CTe\procCTeOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalAereo_v3.00.xsd">
+    <None Include="Schemas\CTe\procCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalAquaviario_v2.00.xsd">
+    <None Include="Schemas\CTe\procEventoCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalAquaviario_v3.00.xsd">
+    <None Include="Schemas\CTe\procInutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalDutoviario_v2.00.xsd">
+    <None Include="Schemas\CTe\retConsReciCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalDutoviario_v3.00.xsd">
+    <None Include="Schemas\CTe\retConsSitCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalFerroviario_v2.00.xsd">
+    <None Include="Schemas\CTe\retConsStatServCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalFerroviario_v3.00.xsd">
+    <None Include="Schemas\CTe\retCTeOS_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalRodoviarioOS_v3.00.xsd">
+    <None Include="Schemas\CTe\retEnviCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalRodoviario_v2.00.xsd">
+    <None Include="Schemas\CTe\retEventoCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteModalRodoviario_v3.00.xsd">
+    <None Include="Schemas\CTe\retInutCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteMultiModal_v2.00.xsd">
+    <None Include="Schemas\CTe\tiposGeralCTe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\cteMultiModal_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cteOS_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cteTiposBasico_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cteTiposBasico_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cteTiposBasico_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cte_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cte_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\cte_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\e110111_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\envCCe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\envEventoCancNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\enviCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\enviCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\enviNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\enviNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evCancCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evCancCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evCCeCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evCCeCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCancNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTeTiposBasico_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTeTiposBasico_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTeTiposBasico_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTe_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\eventoCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evEPECCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evEPECCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evGTV_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evPrestDesacordo_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evRegMultimodal_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\evRegMultimodal_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutCTeTiposBasico_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutCTeTiposBasico_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutCte_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\inutNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteCancNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteCCe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsSitNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsSitNFe_v2.01.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsSitNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsSitNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsStatServ_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsStatServ_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsStatServ_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteConsultaCadastro_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteEventoCancNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteInutNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteInutNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\leiauteNFe_v4.00.xsd">
+    <None Include="Schemas\CTe\xmldsig-core-schema_v1.01.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\MDFe\consMDFeNaoEncTiposBasico_v3.00.xsd">
@@ -2027,225 +1868,6 @@
     <None Include="Schemas\MDFe\mdfe_v3.00.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Schemas\MDFe\procEventoMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\procMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retConsReciMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retConsSitMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retConsStatServMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retDistMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retEnviMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retEventoMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\retMDFeConsultaDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\tiposGeralMDFe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\MDFe\xmldsig-core-schema_v1.01.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\nfe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\nfe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\nfe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procCancNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procCCeNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procCTeOS_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procEventoCancNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procEventoCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procEventoCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procInutCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procInutCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procInutNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procInutNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procInutNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\procNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retCancNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsCad_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsReciCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsReciCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsReciNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsReciNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsReciNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitNFe_v2.01.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsSitNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsStatServCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsStatServCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsStatServ_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsStatServ_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retConsStatServ_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retCTeOS_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnvCCe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnvEventoCancNFe_v1.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnviCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnviCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnviNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnviNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEnviNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEventoCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retEventoCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retInutCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retInutCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retInutNFe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retInutNFe_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\retInutNFe_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposBasico_v1.03.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposBasico_v3.10.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposBasico_v4.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposGeralCTe_v1.04.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposGeralCTe_v2.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tiposGeralCTe_v3.00.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\tmp0000.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Schemas\xmldsig-core-schema_v1.01.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -2287,6 +1909,189 @@
     <Content Include="Scripts\EdicaoImagemProjeto\wPaint.js" />
     <Content Include="Scripts\FusionCharts.js" />
     <Content Include="Scripts\Grid.js" />
+    <None Include="Schemas\MDFe\procEventoMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\procMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsMDFeNaoEnc_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsReciMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsSitMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retConsStatServMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retDistMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retEnviMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retEventoMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\retMDFeConsultaDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\tiposGeralMDFe_v3.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\MDFe\xmldsig-core-schema_v1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\cancNFe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\CCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\consReciNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\consSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\consStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\envCCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\envEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\enviNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\eventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\inutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteConsSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\nfe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\procInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\procNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\retConsReciNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\retConsSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\retConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\retEnviNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\retInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\tiposBasico_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\xmldsig-core-schema_v1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\cancNFe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\CCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\consReciNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\consSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\consStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\envCCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\envEventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\enviNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\eventoCancNFe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\inutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteConsSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\nfe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\procInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\procNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\retConsReciNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\retConsSitNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\retConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\retEnviNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\retInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\tiposBasico_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\xmldsig-core-schema_v1.01.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Scripts\jquery-1.4.4-vsdoc.js" />
     <Content Include="Scripts\jquery-1.4.4.js" />
     <Content Include="Scripts\jquery-ui.js" />

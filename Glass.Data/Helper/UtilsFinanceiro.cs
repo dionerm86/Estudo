@@ -912,7 +912,9 @@ namespace Glass.Data.Helper
 
                             var dataConsiderar = dataRecebido.StrParaDate().Value;
 
-                            for (int j = 0; j < numParcCartoes[i]; j++)
+                            var numParcCartaoAtual = IsFormaPagtoCartaoDebito(formasPagto[i], tiposCartao[i]) ? 1 : numParcCartoes[i];
+
+                            for (int j = 0; j < numParcCartaoAtual; j++)
                             {
                                 novaConta.DataVec =
                                     IsFormaPagtoCartaoCredito(formasPagto[i], tiposCartao[i]) ?
@@ -924,8 +926,8 @@ namespace Glass.Data.Helper
 
                                 /* Chamado 49396 */
                                 /* Chamado 63211. */
-                                novaConta.ValorVec = Math.Round(GetValorParcela(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i]), 2);
-                                novaConta.ValorJurosCartao = GetValorJurosParc(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartoes[i], j);
+                                novaConta.ValorVec = Math.Round(GetValorParcela(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartaoAtual), 2);
+                                novaConta.ValorJurosCartao = GetValorJurosParc(sessao, novaConta.IdLoja, valorMovReal, formasPagto[i], tiposCartao[i], numParcCartaoAtual, j);
 
                                 /* Chamado 53946.
                                  * Soma o valor de juros somente se ele for cobrado do cliente, caso contrário, ele não influencia no valor da conta. */

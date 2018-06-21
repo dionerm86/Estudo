@@ -444,9 +444,7 @@ namespace Glass.Data.DAL
                             string textoPedidos = !FiscalConfig.NotaFiscalConfig.ExibirDescricaoPedidoInfCompl ? String.Empty : "Pedido(s): ";
                             nf.InfCompl = textoPedidos + idsPedidos + ". " + (nf.InfCompl != null ? nf.InfCompl : String.Empty);
                         }
-
-                        bool gerarParcelas = false;
-
+                        
                         #region Informações de transporte
 
                         var tiposEntrega = idsPedidos.Split(',').Select(f => new
@@ -1146,30 +1144,36 @@ namespace Glass.Data.DAL
 
                             if (nf.FormaPagto != (int)NotaFiscal.FormaPagtoEnum.AVista && plp.Length > 0)
                             {
-                                if (LiberarPedidoDAO.Instance.ObtemValorCampo<int>(transaction, "tipoPagto", "idLiberarPedido=" + idLiberacao) == (int)LiberarPedido.TipoPagtoEnum.APrazo)
+                                if (tipoPagtoLiberacao == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                                 {
-                                    nf.FormaPagto = 2;
-                                    var cr = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, idLiberacao.Value, true).ToArray();
-                                    gerarParcelas = cr.Length > 0;
+                                    var contasReceberLiberacao = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, idLiberacao.Value, true)?.ToArray();
 
-                                    nf.NumParc = cr.Length;
+                                    nf.FormaPagto = 2;
+                                    nf.NumParc = contasReceberLiberacao?.Length > 0 ? contasReceberLiberacao.Length : 1;
                                     nf.DatasParcelas = new DateTime[nf.NumParc.Value];
                                     nf.ValoresParcelas = new decimal[nf.NumParc.Value];
 
                                     if (nf.NumParc > 0)
                                     {
-                                        decimal valorParc = nf.TotalNota / nf.NumParc.Value;
+                                        var valorParc = nf.TotalNota / nf.NumParc.Value;
 
-                                        for (int i = 0; i < nf.NumParc; i++)
+                                        for (var i = 0; i < nf.NumParc; i++)
                                         {
-                                            nf.DatasParcelas[i] = cr[i].DataVec;
-                                            nf.ValoresParcelas[i] = Decimal.Round(valorParc, 2);
+                                            var dataVencimento = contasReceberLiberacao?.Length > i ? contasReceberLiberacao[i]?.DataVec ?? DateTime.Now : DateTime.Now;
+
+                                            nf.DatasParcelas[i] = dataVencimento;
+                                            nf.ValoresParcelas[i] = Math.Round(valorParc, 2);
                                         }
 
                                         if (nf.ValoresParcelas.Sum(f => f) > nf.TotalNota)
+                                        {
                                             nf.ValoresParcelas[0] = nf.ValoresParcelas[0] - (nf.ValoresParcelas.Sum(f => f) - nf.TotalNota);
+                                        }
+
                                         if (nf.ValoresParcelas.Sum(f => f) < nf.TotalNota)
+                                        {
                                             nf.ValoresParcelas[0] = nf.ValoresParcelas[0] + (nf.TotalNota - nf.ValoresParcelas.Sum(f => f));
+                                        }
                                     }
                                 }
                             }
@@ -1178,29 +1182,31 @@ namespace Glass.Data.DAL
                         {
                             if (peds[0].TipoVenda == (int)Pedido.TipoVendaPedido.APrazo)
                             {
-                                nf.FormaPagto = 2;
-                                var cr = ContasReceberDAO.Instance.GetByPedido(transaction, Glass.Conversoes.StrParaUint(idsPedidos), false, true).ToArray();
-                                gerarParcelas = cr.Length > 0;
+                                var contasReceberPedido = ContasReceberDAO.Instance.GetByPedido(transaction, idsPedidos.StrParaUint(), false, true)?.ToArray();
 
-                                // Não gerar parcelas na NF se o pedido for de data antiga
-                                if (gerarParcelas)
+                                nf.FormaPagto = 2;                                
+                                nf.NumParc = contasReceberPedido?.Length > 0 ? contasReceberPedido.Length : 1;
+                                nf.DatasParcelas = new DateTime[nf.NumParc.Value];
+                                nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+
+                                var valorParc = nf.TotalNota / (nf.NumParc > 0 ? nf.NumParc.Value : 1);
+
+                                for (var i = 0; i < nf.NumParc; i++)
                                 {
-                                    nf.NumParc = cr.Length;
-                                    nf.DatasParcelas = new DateTime[nf.NumParc.Value];
-                                    nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+                                    var dataVencimento = contasReceberPedido?.Length > i ? contasReceberPedido[i]?.DataVec ?? DateTime.Now : DateTime.Now;
 
-                                    decimal valorParc = nf.TotalNota / (nf.NumParc > 0 ? nf.NumParc.Value : 1);
+                                    nf.DatasParcelas[i] = dataVencimento;
+                                    nf.ValoresParcelas[i] = Math.Round(valorParc, 2);
+                                }
 
-                                    for (int i = 0; i < nf.NumParc; i++)
-                                    {
-                                        nf.DatasParcelas[i] = cr[i].DataVec;
-                                        nf.ValoresParcelas[i] = Decimal.Round(valorParc, 2);
-                                    }
+                                if (nf.ValoresParcelas.Sum(f => f) > nf.TotalNota)
+                                {
+                                    nf.ValoresParcelas[0] = nf.ValoresParcelas[0] - (nf.ValoresParcelas.Sum(f => f) - nf.TotalNota);
+                                }
 
-                                    if (nf.ValoresParcelas.Sum(f => f) > nf.TotalNota)
-                                        nf.ValoresParcelas[0] = nf.ValoresParcelas[0] - (nf.ValoresParcelas.Sum(f => f) - nf.TotalNota);
-                                    if (nf.ValoresParcelas.Sum(f => f) < nf.TotalNota)
-                                        nf.ValoresParcelas[0] = nf.ValoresParcelas[0] + (nf.TotalNota - nf.ValoresParcelas.Sum(f => f));
+                                if (nf.ValoresParcelas.Sum(f => f) < nf.TotalNota)
+                                {
+                                    nf.ValoresParcelas[0] = nf.ValoresParcelas[0] + (nf.TotalNota - nf.ValoresParcelas.Sum(f => f));
                                 }
                             }
                         }
@@ -1210,14 +1216,11 @@ namespace Glass.Data.DAL
 
                         Update(transaction, nf);
 
-                        if (!gerarParcelas)
-                            ParcelaNfDAO.Instance.DeleteFromNf(transaction, idNf);
-
                         #endregion
 
                         #region Informações de Pagamento da nota
 
-                        CriarPagtoNotaFiscalConsumidor(transaction, idNf, nf, idsLiberarPedidos, nfce, totalNotaAjuste);
+                        CriarPagtoNotaFiscal(transaction, nf, idsLiberarPedidos, totalNotaAjuste);
 
                         #endregion
 
@@ -1267,17 +1270,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idNf"></param>
-        /// <param name="idsLiberarPedidos"></param>
-        /// <param name="nfce"></param>
-        /// <param name="totalNotaAjuste"></param>
-        private static void CriarPagtoNotaFiscalConsumidor(GDATransaction sessao, uint idNf, NotaFiscal nf, string idsLiberarPedidos, bool nfce, decimal totalNotaAjuste)
+        private static void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal nf, string idsLiberarPedidos, decimal totalNotaAjuste)
         {
-            if (nfce && FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe.HasValue)
+            if (nf.Consumidor && FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe.HasValue)
             {
                 var pagamentoNotaFiscal = new PagtoNotaFiscal();
-                pagamentoNotaFiscal.IdNf = (int)idNf;
+                pagamentoNotaFiscal.IdNf = (int)nf.IdNf;
                 pagamentoNotaFiscal.FormaPagto = (int)FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe;
                 pagamentoNotaFiscal.Valor = totalNotaAjuste;
 
@@ -1334,7 +1332,7 @@ namespace Glass.Data.DAL
                                 {
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
-                                        IdNf = (int)idNf,
+                                        IdNf = (int)nf.IdNf,
                                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoDebito,
                                         Valor = formaPgto.ValorPagto * valorRecebRelativo,
                                         NumAut = formaPgto.NumAutCartao
@@ -1347,7 +1345,7 @@ namespace Glass.Data.DAL
                                 {
                                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                                     {
-                                        IdNf = (int)idNf,
+                                        IdNf = (int)nf.IdNf,
                                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoCredito,
                                         Valor = formaPgto.ValorPagto * valorRecebRelativo,
                                         NumAut = formaPgto.NumAutCartao
@@ -1380,35 +1378,35 @@ namespace Glass.Data.DAL
                 if (totalDinheiro > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
-                        IdNf = (int)idNf,
+                        IdNf = (int)nf.IdNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.Dinheiro,
                         Valor = totalDinheiro
                     });
                 if (totalCheque > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
-                        IdNf = (int)idNf,
+                        IdNf = (int)nf.IdNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.Cheque,
                         Valor = totalCheque
                     });
                 if (totalCreditoLoja > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
-                        IdNf = (int)idNf,
+                        IdNf = (int)nf.IdNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.CreditoLoja,
                         Valor = totalCreditoLoja
                     });
                 if (totalBoleto > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
-                        IdNf = (int)idNf,
+                        IdNf = (int)nf.IdNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.BoletoBancario,
                         Valor = totalBoleto
                     });
                 if (totalOutros > 0)
                     PagtoNotaFiscalDAO.Instance.Insert(sessao, new PagtoNotaFiscal
                     {
-                        IdNf = (int)idNf,
+                        IdNf = (int)nf.IdNf,
                         FormaPagto = (int)FormaPagtoNotaFiscalEnum.Outros,
                         Valor = totalOutros
                     });
@@ -3987,7 +3985,7 @@ namespace Glass.Data.DAL
                         for (int i = 0; i < lstParcNf.Length; i++)
                         {
                             XmlElement dup = doc.CreateElement("dup");
-                            ManipulacaoXml.SetNode(doc, dup, "nDup", nf.NumeroNFe.ToString() + "-" + (i + 1));
+                            ManipulacaoXml.SetNode(doc, dup, "nDup", i.ToString().PadLeft(3, '0'));
                             ManipulacaoXml.SetNode(doc, dup, "dVenc", lstParcNf[i].Data.Value.ToString("yyyy-MM-dd"));
                             ManipulacaoXml.SetNode(doc, dup, "vDup", Formatacoes.TrataValorDecimal(lstParcNf[i].Valor, 2));
                             cobr.AppendChild(dup);
@@ -8628,7 +8626,8 @@ namespace Glass.Data.DAL
                                 LogCancelamentoDAO.Instance.LogMovEstoque(transaction, m, "Reabertura de NF-e", false);
                             }
 
-                            MovEstoqueDAO.Instance.DeleteByNf(transaction, idNf);
+                            if (movsEstoque.Any())
+                                MovEstoqueDAO.Instance.DeleteByNf(transaction, idNf);
                         }
 
                         foreach (var p in ProdutosNfDAO.Instance.GetByNf(idNf))
