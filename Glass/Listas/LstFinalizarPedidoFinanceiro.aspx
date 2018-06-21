@@ -256,6 +256,10 @@
                                         <img border="0" src="../Images/clipboard.gif" title="Projeto" /></a> </asp:PlaceHolder>
                                 <asp:PlaceHolder ID="pchAnexos" runat="server"><a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=<%# Eval("Codigo") %>&amp;tipo=pedido&#039;); return false;'>
                                     <img border="0px" src="../Images/Clipe.gif"></img></a></asp:PlaceHolder>
+                                <asp:PlaceHolder ID="pchRentabillidade" runat="server" Visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadeFinalizarConfirmarPedidoPeloFinanceiro %>'>
+                                    <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=pedido&id=<%# Eval("Codigo") %>"); return false;'>
+                                        <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
+                                </asp:PlaceHolder>
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>

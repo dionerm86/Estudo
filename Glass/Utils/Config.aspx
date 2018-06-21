@@ -6,6 +6,7 @@
 <%@ Reference Control="~/Controls/ctrlData.ascx" %>
 <%@ Register Src="../Controls/ctrlConfigAresta.ascx" TagName="ctrlConfigAresta" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlConfigFaixasRentabilidadeComissao.ascx" TagName="ctrlConfigFaixasRentabilidadeComissao" TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlConfigFaixasRentabilidadeLiberacao.ascx" TagName="ctrlConfigFaixasRentabilidadeLiberacao" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <style title="text/css">
@@ -74,6 +75,10 @@
 
             // altera o hiddenfield que guarda a aba atual
             document.getElementById("<%= hdfAba.ClientID %>").value = nomeAba;
+
+            if (nomeAba == 'rentabilidade') {
+
+            }
         }
 
         // ---------------------------------------------------------------------------------
@@ -1669,11 +1674,17 @@
                         </table>
                        
                         <fieldset>
-                            <legend>Faixas de Rentabilidade para comissão
+                            <legend>Faixas de Rentabilidade para Comissão
                             </legend>
-                            <uc1:ctrlConfigFaixasRentabilidadeComissao ID="ctrlFaixasRentabilidadeComissao" runat="server" EnableViewState="false" />
+                            <uc1:ctrlConfigFaixasRentabilidadeComissao ID="ctrlFaixasRentabilidadeComissao" runat="server" />
                         </fieldset>
-                          
+
+                        <fieldset>
+                            <legend>Faixas de Rentabilidade para Liberção
+                            </legend>
+                            <uc1:ctrlConfigFaixasRentabilidadeLiberacao ID="ctrlFaixasRentabilidadeLiberacao" runat="server" />
+                        </fieldset>
+
                     </div>
                     <div id="internas">
                         <asp:Table ID="tblInternas" runat="server" OnLoad="tblInternas_Load">

@@ -329,6 +329,7 @@ namespace Glass.Data.Helper
             PermitirEmitirNotaParaClienteBloqueadoOuInativo = 367,
             CalcularRentabilidade = 368,
             UsarComissaoPorProduto = 369,
+            ControlarFaixaRentabilidadeLiberacao = 370,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -950,7 +951,8 @@ namespace Glass.Data.Helper
             GerarCreditoAvulsoCliente,
             FinalizarConfirmarPedidoPeloFinanceiro = 4,
             MarcarContaJuridicoCartorio,
-            CancelarRecebimentos
+            CancelarRecebimentos,
+            ExibirRentabilidadeFinalizarConfirmarPedidoPeloFinanceiro
         }
 
         [ModuloAttr(Modulo.FinanceiroPagto)]

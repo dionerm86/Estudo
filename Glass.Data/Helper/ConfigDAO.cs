@@ -311,7 +311,8 @@ namespace Glass.Data.Helper
         {
             var itens = new List<Config.ConfigEnum>()
             {
-                Config.ConfigEnum.CalcularRentabilidade
+                Config.ConfigEnum.CalcularRentabilidade,
+                Config.ConfigEnum.ControlarFaixaRentabilidadeLiberacao
             };
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());

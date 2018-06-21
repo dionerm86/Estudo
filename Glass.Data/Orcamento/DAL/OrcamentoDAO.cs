@@ -1522,7 +1522,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool PossuiPedidoGerado(GDASession session, uint idOrcamento)
         {
-            var sql = $"SELECT COUNT(*) FROM pedido WHERE IdOrcamento={ idOrcamento }";
+            var sql = $"SELECT COUNT(*) FROM pedido WHERE IdOrcamento={ idOrcamento } AND Situacao <> 6";
 
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
         }

@@ -1607,10 +1607,15 @@
     <Compile Include="RelModel\VendasMeses.cs" />
     <Compile Include="Rentabilidade\ICalculoRentabilidadeResultado.cs" />
     <Compile Include="Rentabilidade\ICalculadoraRentabilidade.cs" />
+    <Compile Include="Rentabilidade\IVerificadorRentabilidadeLiberacao.cs" />
     <Compile Include="Rentabilidade\Model\ConfigRegistroRentabilidade.cs" />
     <Compile Include="Rentabilidade\Model\ExpressaoRentabilidade.cs" />
     <Compile Include="Rentabilidade\Model\FaixaRentabilidadeComissao.cs" />
+    <Compile Include="Rentabilidade\Model\FaixaRentabilidadeLiberacao.cs" />
+    <Compile Include="Rentabilidade\Model\FuncionarioFaixaRentabilidadeLiberacao.cs" />
     <Compile Include="Rentabilidade\Model\IndicadorFinanceiro.cs" />
+    <Compile Include="Rentabilidade\Model\TipoFuncionarioFaixaRentabilidadeLiberacao.cs" />
+    <Compile Include="Rentabilidade\RentabilidadeHelper.cs" />
     <Compile Include="Seguranca\Model\Token.cs" />
     <Compile Include="SIntegra\Registro61R.cs" />
     <Compile Include="SIntegra\Registro.cs" />

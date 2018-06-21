@@ -19,10 +19,26 @@ namespace Glass.Rentabilidade.Negocios
         IItemRentabilidade ObterItem(T referencia);
 
         /// <summary>
+        /// Recupera o item da rentabilidade com base na referencia informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade ObterItem(GDA.GDASession sessao, T referencia);
+
+        /// <summary>
         /// Recupera o item da rentabilidade com base no identificador associado com o tipo do provedor.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         IItemRentabilidade ObterItem(int id);
+
+        /// <summary>
+        /// Recupera o item da rentabilidade com base no identificador associado com o tipo do provedor.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade ObterItem(GDA.GDASession sessao, int id);
     }
 }

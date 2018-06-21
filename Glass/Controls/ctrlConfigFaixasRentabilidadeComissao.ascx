@@ -1,24 +1,27 @@
 ﻿<%@ Control Language="C#" AutoEventWireup="true" 
-    CodeBehind="ctrlConfigFaixasRentabilidadeComissao.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlConfigFaixasRentabilidadeComissao"
-    EnableViewState="false" %>
+    CodeBehind="ctrlConfigFaixasRentabilidadeComissao.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlConfigFaixasRentabilidadeComissao"%>
 <%@ Register Src="~/Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 
 <asp:GridView ID="grdFaixasRentabilidadeComissao" runat="server" SkinID="gridViewEditable"
     DataSourceID="odsFaixaRentabilidadeComissao" DataKeyNames="IdFaixaRentabilidadeComissao"
-    AllowPaging="false" AllowSorting="false" EnableViewState="false"> 
+    AllowPaging="false" AllowSorting="false"> 
     <Columns>
         <asp:TemplateField>
             <ItemTemplate>
                 <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
                 <img border="0" src="../Images/Edit.gif" alt="Editar" /></asp:LinkButton>
-                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                    ToolTip="Excluir" OnClientClick="return confirm(&quot;Tem certeza que deseja excluir esta faixa?&quot;);" />
+                <asp:LinkButton ID="lnkExcluir" runat="server" CommandName="Delete"
+                    OnClientClick="return confirm(&quot;Tem certeza que deseja excluir esta faixa?&quot;);"
+                    ToolTip="Excluir">
+                <img border="0" src="../Images/ExcluirGrid.gif" alt="Excluir" /></asp:LinkButton>
             </ItemTemplate>
             <EditItemTemplate>
-                <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" Height="16px"
-                    ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" />
-                <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
-                    ToolTip="Cancelar" />
+                <asp:LinkButton ID="lnkAtualizar" runat="server" CommandName="Update" ToolTip="Atualizar">
+                    <img border="0" src="../Images/ok.gif" alt="Atualizar" />
+                </asp:LinkButton>
+                <asp:LinkButton ID="lnkCancelar" runat="server" CommandName="Cancel" ToolTip="Cancelar">
+                    <img border="0" src="../Images/ExcluirGrid.gif" alt="Cancelar" />
+                </asp:LinkButton>
             </EditItemTemplate>
             <ItemStyle Wrap="False" />
         </asp:TemplateField>
@@ -60,12 +63,12 @@
         </asp:TemplateField>
     </Columns>
 </asp:GridView>
-<asp:HiddenField runat="server" ID="hdfIdFuncFaixaRentabilidadeComissao" EnableViewState="false" />
-<asp:HiddenField runat="server" ID="hdfIdLojaFaixaRentabilidadeComissao" EnableViewState="false" />
+<asp:HiddenField runat="server" ID="hdfIdFuncFaixaRentabilidadeComissao" />
+<asp:HiddenField runat="server" ID="hdfIdLojaFaixaRentabilidadeComissao" />
 
  <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFaixaRentabilidadeComissao" runat="server"
     DataObjectTypeName="Glass.Rentabilidade.Negocios.Entidades.FaixaRentabilidadeComissao"
-    DeleteMethod="ApagarFaixaRentabilidade" EnablePaging="True"
+    DeleteMethod="ApagarFaixaRentabilidadeComissao" EnablePaging="True"
     DeleteStrategy="GetAndDelete"
     SelectMethod="ObterFaixasRentabilidadeComissao"
     SelectByKeysMethod="ObterFaixaRentabilidadeComissao"

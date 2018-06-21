@@ -325,6 +325,7 @@
     <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoPedido.cs" />
     <Compile Include="Fiscal\Calculadoras\PedidoImpostoContainer.cs" />
     <Compile Include="Fiscal\Calculadoras\ProdutoPedidoItemImposto.cs" />
+    <Compile Include="Pedido\VerificadorRentabilidadeLiberacaoPedido.cs" />
     <Compile Include="Projeto\FerragemCache.cs" />
     <Compile Include="Projeto\ExportacaoImportacaoFerragem.cs" />
     <Compile Include="Projeto\FerragemFluxo.cs" />
@@ -341,6 +342,7 @@
     <Compile Include="Rentabilidade\LazyItemRentabilidadeEnumerable.cs" />
     <Compile Include="Rentabilidade\RegistroRentabilidade.cs" />
     <Compile Include="Rentabilidade\RentabilidadeFluxo.cs" />
+    <Compile Include="Rentabilidade\VerificadorRentabilidadeLiberacao.cs" />
     <Compile Include="Seguranca\AutenticacaoUsuario.cs" />
     <Compile Include="Seguranca\GerenciadorProvedorIdentidade.cs" />
     <Compile Include="Seguranca\ProvedorToken.cs" />

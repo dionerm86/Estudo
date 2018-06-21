@@ -71,6 +71,11 @@ namespace WebGlass.Business.Pedido.Entidade
             get { return _pedido.Total; }
         }
 
+        public decimal PercentualRentabilidade
+        {
+            get { return _pedido.PercentualRentabilidade; }
+        }
+
         public string TipoVenda
         {
             get { return _pedido.DescrTipoVenda; }

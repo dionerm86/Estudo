@@ -78,7 +78,10 @@ namespace Glass.UI.Web.Controls
         {
             try
             {
-                var faixaRentabilidadeComissao = new Glass.Rentabilidade.Negocios.Entidades.FaixaRentabilidadeComissao();
+                var rentabilidadeFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                    .GetInstance<Glass.Rentabilidade.Negocios.IRentabilidadeFluxo>();
+
+                var faixaRentabilidadeComissao = rentabilidadeFluxo.CriarFaixaRentabilidadeComissao();
 
                 decimal percentualRentabilidade;
                 decimal percentualComissao;
@@ -97,10 +100,7 @@ namespace Glass.UI.Web.Controls
                 faixaRentabilidadeComissao.PercentualRentabilidade = percentualRentabilidade;
                 faixaRentabilidadeComissao.PercentualComissao = percentualComissao;
 
-                var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                    .GetInstance<Glass.Rentabilidade.Negocios.IRentabilidadeFluxo>();
-
-                var resultado = fluxo.SalvarFaixaRentabilidadeComissao(faixaRentabilidadeComissao);
+                var resultado = rentabilidadeFluxo.SalvarFaixaRentabilidadeComissao(faixaRentabilidadeComissao);
 
                 if (!resultado)
                     Glass.MensagemAlerta.ErrorMsg("Falha ao inserir a faixa de rentabilidade em relação ao comissão.", resultado);
@@ -115,7 +115,7 @@ namespace Glass.UI.Web.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            
         }
 
         #endregion

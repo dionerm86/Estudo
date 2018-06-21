@@ -455,7 +455,12 @@
         }
 
         function openProdMateriaPrima() {
-            openWindow(600, 1000, "../Utils/SelProdMateriaPrima.aspx?idprod=" + GetQueryString("idProd"));
+            var idProd = GetQueryString("idProd");
+            if (!idProd) {
+                alert('É necessario salvar o produto antes de cadastrar uma matéria-prima');
+                return false;
+            }
+            openWindow(600, 1000, "../Utils/SelProdMateriaPrima.aspx?idprod=" + idProd);
         }
 
     </script>
@@ -1031,15 +1036,20 @@
                                     BaixasEstoqueFiscal='<%# Bind("BaixasEstoqueFiscal") %>' />
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Matéria Prima">
-                            <EditItemTemplate>                                
-                                <asp:ImageButton ID="imbOpenProdMateriaPrima" Style="float: left" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                                    OnClientClick="openProdMateriaPrima(); return false;" />
-                                <asp:Label Text="Adicionar Matéria Prima" runat="server" />
-<%--                            <div runat="server" id="divProdBaixaEstoque" clientidmode="Static">
-                                <uc6:ctrlProdutoBaixaEstoque ID="ctrlProdutoBaixaEstoque1" runat="server"
-                                    BaixasEstoque='<%# Bind("BaixasEstoque") %>' />
-                            </div>--%>
+                        <asp:TemplateField HeaderText="Matéria-Prima">
+                            <EditItemTemplate>
+                                <asp:LinkButton ID="lnkMateriaPrima" runat="server" OnClientClick="openProdMateriaPrima(); return false;">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                Adicionar Matéria-Prima
+                                            </td>
+                                            <td>
+                                                <img border="0" src="../Images/Pesquisar.gif" alt="Adicionar Matéria-Prima" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </asp:LinkButton>
                             </EditItemTemplate>
                          </asp:TemplateField>
                         <asp:TemplateField HeaderText="Altura" SortExpression="Altura">

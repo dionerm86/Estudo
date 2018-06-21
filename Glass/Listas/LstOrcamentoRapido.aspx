@@ -267,12 +267,12 @@
                             <asp:Label ID="Label1" runat="server" Text="Tipo Entrega"></asp:Label>
                         </td>
                         <td align="left">
-                            <asp:DropDownList ID="drpTipoEntrega" runat="server" onchange="loadProduto();calcTotal();"
+                            <asp:DropDownList ID="drpTipoEntrega" runat="server" onchange="loadProduto(GetQueryString('orcamentoRapido'));calcTotal();"
                                 DataSourceID="odsTipoEntrega" DataTextField="Descr" DataValueField="Id">
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkRevenda" Text="Revenda" runat="server" onclick="revendaClick(this);loadProduto();calcTotal();" />
+                            <asp:CheckBox ID="chkRevenda" Text="Revenda" runat="server" onclick="revendaClick(this);loadProduto(GetQueryString('orcamentoRapido'));calcTotal();" />
                             &nbsp;
                         </td>
                         <td style="font-weight: bold;">
@@ -308,7 +308,7 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td>
-                                        <asp:TextBox ID="txtCodProd" runat="server" Width="50px" onblur="limpaCampos();loadProduto();"
+                                        <asp:TextBox ID="txtCodProd" runat="server" Width="50px" onblur="limpaCampos();loadProduto(GetQueryString('orcamentoRapido'));"
                                             onkeydown="if (isEnter(event)) FindControl('txtQtde', 'input').select();" />
                                     </td>
                                     <td>

@@ -18,6 +18,14 @@ namespace Glass.Configuracoes
         }
 
         /// <summary>
+        /// Obtém se é para controlar a faixa de rentabilidade para liberação.
+        /// </summary>
+        public static bool ControlarFaixaRentabilidadeLiberacao
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ControlarFaixaRentabilidadeLiberacao); }
+        }
+
+        /// <summary>
         /// Identifica se é para exibir a rentabilidade no orçamento.
         /// </summary>
         public static bool ExibirRentabilidadeOrcamento
@@ -70,6 +78,20 @@ namespace Glass.Configuracoes
                     Config.PossuiPermissao(
                         (int)(UserInfo.GetUserInfo?.CodUser ?? 0),
                         Config.FuncaoMenuFiscal.ExibirRentabilidade);
+            }
+        }
+
+        /// <summary>
+        /// Identifica se é para exibir a rentabilidade na parte de confirmação do financeiro.
+        /// </summary>
+        public static bool ExibirRentabilidadeFinalizarConfirmarPedidoPeloFinanceiro
+        {
+            get
+            {
+                return CalcularRentabilidade &&
+                    Config.PossuiPermissao(
+                        (int)(UserInfo.GetUserInfo?.CodUser ?? 0),
+                        Config.FuncaoMenuFinanceiro.ExibirRentabilidadeFinalizarConfirmarPedidoPeloFinanceiro);
             }
         }
     }

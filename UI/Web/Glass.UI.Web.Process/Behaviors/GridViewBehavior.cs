@@ -64,6 +64,7 @@ namespace Glass.UI.Web.Process.Behaviors
             gridView.DataBound += DataBound;
             gridView.Sorted += Sorted;
             gridView.PreRender += PreRender;
+            gridView.RowUpdating += RowUpdating;
         }
 
         #endregion
@@ -225,6 +226,16 @@ namespace Glass.UI.Web.Process.Behaviors
         }
 
         /// <summary>
+        /// Método acionado quando a linha estiver sendo atualizada.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RowUpdating(object sender, System.Web.UI.WebControls.GridViewUpdateEventArgs e)
+        {
+            // Não faz nada
+        }
+
+        /// <summary>
         /// Método acionado quando a linha da grid for atualizada.
         /// </summary>
         /// <param name="sender"></param>
@@ -241,7 +252,7 @@ namespace Glass.UI.Web.Process.Behaviors
                 if (exception is System.Reflection.TargetInvocationException)
                     exception = exception.InnerException;
 
-                validator.ErrorMessage = e.Exception.Message;
+                validator.ErrorMessage = exception.Message;
                 _gridView.Page.Validators.Add(validator);
 
                 e.KeepInEditMode = true;
@@ -266,10 +277,8 @@ namespace Glass.UI.Web.Process.Behaviors
                 if (exception is System.Reflection.TargetInvocationException)
                     exception = exception.InnerException;
 
-                validator.ErrorMessage = e.Exception.Message;
+                validator.ErrorMessage = exception.Message;
                 _gridView.Page.Validators.Add(validator);
-
-                //Glass.MensagemAlerta.ErrorMsg(null, exception, _gridView.Page);
 
                 e.ExceptionHandled = true;
             }
