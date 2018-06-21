@@ -3107,7 +3107,7 @@ namespace Glass.Data.DAL
                 TipoVenda = tipoVenda,
                 IdParcela = (uint)idParcela,
                 TipoEntrega = tipoEntrega.GetValueOrDefault(),
-                Cliente = new ClienteDTO(() => idCliente ?? 0, revenda)
+                Cliente = new ClienteDTO(idCliente ?? 0, revenda)
             };
 
             var produtoCalculo = new ProdutoCalculoDTO()
