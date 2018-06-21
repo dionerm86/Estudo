@@ -3122,17 +3122,7 @@ namespace Glass.Data.DAL
             //if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
             //    throw new Exception("A liberação possui contas a receber/recebidas associadas à ela. Cancele os recebimentos antes de efetuar o cancelamento da liberação.");
 
-            lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);
-
-            // Verifica se os pedidos estão entregues
-            if (ProducaoConfig.ExpedirSomentePedidosLiberados)
-            {
-                var pedidosEntregues = lstPedidos.Where(P => P.SituacaoProducao == (int)Pedido.SituacaoProducaoEnum.Entregue).Select(P => P.IdPedido);
-                if (pedidosEntregues.Count() > 0)
-                {
-                    throw new Exception("O(s) pedido(s) " + string.Join(",", pedidosEntregues) + " esta(ão) entregue(s).");
-                }
-            }
+            lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);            
 
             #region Remove os produtos da liberação
 
@@ -3371,6 +3361,16 @@ namespace Glass.Data.DAL
                     );
 
             #endregion
+
+            // Verifica se os pedidos estão entregues
+            if (ProducaoConfig.ExpedirSomentePedidosLiberados)
+            {
+                var pedidosEntregues = ExecuteMultipleScalar<string>(session, @"Select idPedido From pedido Where situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Entregue + @"
+                                        And idPedido In (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")");
+
+                if (pedidosEntregues.Count() > 0)
+                    throw new Exception("O(s) pedido(s) " + string.Join(",", pedidosEntregues) + " esta(ão) entregue(s).");
+            }
 
             // Estorna movimentações do funcionário
             foreach (var ped in lstPedidos)
