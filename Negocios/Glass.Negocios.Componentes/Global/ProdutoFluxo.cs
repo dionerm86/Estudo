@@ -855,7 +855,7 @@ namespace Glass.Global.Negocios.Componentes
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
             if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro && produto.TipoMercadoria == Data.Model.TipoMercadoria.ProdutoAcabado)
             {
-                if (!produto.BaixasEstoque.Any())
+                if (!produto.BaixasEstoque.Any() && produto.ExistsInStorage)
                     return new Colosoft.Business.SaveResult(false,
                         "Produtos do tipo de mercadoria Produto Acabado devem informar a matéria prima.".GetFormatter());
 
