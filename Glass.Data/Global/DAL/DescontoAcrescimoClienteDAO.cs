@@ -85,7 +85,7 @@ namespace Glass.Data.DAL
 
             string sql = @"
                 Select dc.IdDesconto, dc.idCliente, dc.idTabelaDesconto, dc.desconto, dc.DescontoAVista, dc.acrescimo, g.idGrupoProd, g.Descricao as DescrGrupo, 
-                    s.idSubgrupoProd, s.Descricao as DescrSubgrupo, " + (usarTabelaProduto ? "p.idProd" : "dc.idProd") + ", c.nome as nomeCliente, dc.AplicarBeneficiamentos, dc.descontoavista AS DescontoAvista" + camposProduto + @"
+                    s.idSubgrupoProd, s.Descricao as DescrSubgrupo, " + (usarTabelaProduto ? "p.idProd" : "dc.idProd") + ", c.nome as nomeCliente, dc.AplicarBeneficiamentos" + camposProduto + @"
                 From " + tabela + @"
                     Left Join " + tabelaDesconto + " dc On (dc.idGrupoProd=g.idGrupoProd and (dc.idSubgrupoProd=s.idSubgrupoProd Or " +
                         "dc.idSubgrupoProd is null)" + (usarTabelaProduto ? " and (dc.idProd=p.idProd" + (idDesconto > 0 ? " or dc.idProd is null)" : ")") : "") + @")
