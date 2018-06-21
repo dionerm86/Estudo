@@ -8628,7 +8628,8 @@ namespace Glass.Data.DAL
                                 LogCancelamentoDAO.Instance.LogMovEstoque(transaction, m, "Reabertura de NF-e", false);
                             }
 
-                            MovEstoqueDAO.Instance.DeleteByNf(transaction, idNf);
+                            if (movsEstoque.Any())
+                                MovEstoqueDAO.Instance.DeleteByNf(transaction, idNf);
                         }
 
                         foreach (var p in ProdutosNfDAO.Instance.GetByNf(idNf))
