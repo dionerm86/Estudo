@@ -47,7 +47,8 @@ namespace Glass.UI.Web.Relatorios.Rentabilidade
             {
                 case "pedido": 
 
-                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedido)
+                    if (Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedido ||
+                        Configuracoes.RentabilidadeConfig.ExibirRentabilidadeFinalizarConfirmarPedidoPeloFinanceiro)
                         return serviceLocator
                             .GetInstance<Glass.Rentabilidade.Negocios.IProvedorItemRentabilidade<Data.Model.Pedido>>()
                             .ObterItem(IdItem);

@@ -116,7 +116,8 @@ namespace Glass.Data.Model
             IndicadorFinanceiro = 105,
             ExpressaoRentabilidade = 106,
             ConfigRegistroRentabilidade = 107,
-            FaixaRentabilidadeComissao = 108
+            FaixaRentabilidadeComissao = 108,
+            FaixaRentabilidadeLiberacao = 109
         }
 
         public static string GetDescrTabela(int tabela)
@@ -213,6 +214,7 @@ namespace Glass.Data.Model
                 case TabelaAlteracao.IndicadorFinanceiro: return "Indicador Financeiro";
                 case TabelaAlteracao.ConfigRegistroRentabilidade: return "Configuração do Registro de Rentabilidade";
                 case TabelaAlteracao.FaixaRentabilidadeComissao: return "Faixa Rentabilidade Comissão";
+                case TabelaAlteracao.FaixaRentabilidadeLiberacao: return "Faixa Rentabilidade Liberação";
                 default: return string.Empty;
             }
         }

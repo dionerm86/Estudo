@@ -178,6 +178,7 @@
     <Compile Include="Rentabilidade\ICalculadoraComissaoRentabilidade.cs" />
     <Compile Include="Rentabilidade\IProvedorItemRentabilidade.cs" />
     <Compile Include="Rentabilidade\IRentabilidadeFluxo.cs" />
+    <Compile Include="Rentabilidade\IVerificadorRentabilidadeLiberacao.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">

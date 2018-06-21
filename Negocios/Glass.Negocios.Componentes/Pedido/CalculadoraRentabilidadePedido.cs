@@ -627,6 +627,16 @@ namespace Glass.Pedido.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera o item com base no pedido informado.
+        /// </summary>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.Pedido>.ObterItem(GDA.GDASession sessao, Data.Model.Pedido referencia)
+        {
+            return ObterItemPedido(sessao, referencia);
+        }
+
+        /// <summary>
         /// Recupera o item com base no identificador do pedido informado.
         /// </summary>
         /// <param name="id"></param>
@@ -634,10 +644,19 @@ namespace Glass.Pedido.Negocios.Componentes
         IItemRentabilidade IProvedorItemRentabilidade<Data.Model.Pedido>.ObterItem(int id)
         {
             using (var sessao = new GDA.GDASession())
-            {
-                var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
-                return ObterItemPedido(sessao, pedido);
-            }
+                return ((IProvedorItemRentabilidade<Data.Model.Pedido>)this).ObterItem(sessao, id);
+        }
+
+        /// <summary>
+        /// Recupera o item com base no identificador do pedido informado.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.Pedido>.ObterItem(GDA.GDASession sessao, int id)
+        {
+            var pedido = Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
+            return ObterItemPedido(sessao, pedido);
         }
 
         /// <summary>
@@ -652,6 +671,16 @@ namespace Glass.Pedido.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera o item com base no produto do pedido.
+        /// </summary>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosPedido>.ObterItem(GDA.GDASession sessao, Data.Model.ProdutosPedido referencia)
+        {
+            return ObterItemProdutoPedido(sessao, referencia);
+        }
+
+        /// <summary>
         /// Recupera o item com base no identificador do produto do pedido.
         /// </summary>
         /// <param name="id"></param>
@@ -659,10 +688,18 @@ namespace Glass.Pedido.Negocios.Componentes
         IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosPedido>.ObterItem(int id)
         {
             using (var sessao = new GDA.GDASession())
-            {
-                var produtoPedido = Data.DAL.ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
-                return ObterItemProdutoPedido(sessao, produtoPedido);
-            }
+                return ((IProvedorItemRentabilidade<Data.Model.ProdutosPedido>)this).ObterItem(sessao, id);
+        }
+
+        /// <summary>
+        /// Recupera o item com base no identificador do produto do pedido.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosPedido>.ObterItem(GDA.GDASession sessao, int id)
+        {
+            var produtoPedido = Data.DAL.ProdutosPedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
+            return ObterItemProdutoPedido(sessao, produtoPedido);
         }
 
         /// <summary>
@@ -677,6 +714,16 @@ namespace Glass.Pedido.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera o item com base no ambiente do pedido.
+        /// </summary>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.AmbientePedido>.ObterItem(GDA.GDASession sessao, Data.Model.AmbientePedido referencia)
+        {
+            return ObterItemAmbientePedido(sessao, referencia);
+        }
+
+        /// <summary>
         /// Recupera o item com base no identificador do ambiente do pedido.
         /// </summary>
         /// <param name="id"></param>
@@ -684,10 +731,19 @@ namespace Glass.Pedido.Negocios.Componentes
         IItemRentabilidade IProvedorItemRentabilidade<Data.Model.AmbientePedido>.ObterItem(int id)
         {
             using (var sessao = new GDA.GDASession())
-            {
-                var ambiente = Data.DAL.AmbientePedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
-                return ObterItemAmbientePedido(sessao, ambiente);
-            }
+                return ((IProvedorItemRentabilidade<Data.Model.AmbientePedido>)this).ObterItem(sessao, id);
+        }
+
+        /// <summary>
+        /// Recupera o item com base no identificador do ambiente do pedido.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.AmbientePedido>.ObterItem(GDA.GDASession sessao, int id)
+        {
+            var ambiente = Data.DAL.AmbientePedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
+            return ObterItemAmbientePedido(sessao, ambiente);
         }
 
         #endregion

@@ -26,20 +26,4 @@ namespace Glass.Data
 
         #endregion
     }
-
-    /// <summary>
-    /// Classe com métodos para auxiliar nos calculos da rentabilidade.
-    /// </summary>
-    static class RentabilidadeHelper
-    {
-        #region Propriedades
-
-        /// <summary>
-        /// Instancia da calculadora de rentabilidade.
-        /// </summary>
-        public static ICalculadoraRentabilidade<T> ObterCalculadora<T>() => Microsoft.Practices.ServiceLocation
-            .ServiceLocator.Current.GetInstance<ICalculadoraRentabilidade<T>>();
-
-        #endregion
-    }
 }

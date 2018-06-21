@@ -157,5 +157,43 @@ namespace Glass.Rentabilidade.Negocios
         Colosoft.Business.DeleteResult ApagarFaixaRentabilidadeComissao(Entidades.FaixaRentabilidadeComissao faixaRentabilidadeComissao);
 
         #endregion
+
+        #region FaixaRentabilidadeLiberacao
+
+        /// <summary>
+        /// Cria uma nova instância da faixa de rentabilidade para liberação.
+        /// </summary>
+        /// <returns></returns>
+        Entidades.FaixaRentabilidadeLiberacao CriarFaixaRentabilidadeLiberacao();
+
+        /// <summary>
+        /// Obtém 
+        /// </summary>
+        /// <param name="idFaixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        Entidades.FaixaRentabilidadeLiberacao ObterFaixaRentabilidadeLiberacao(int idFaixaRentabilidadeLiberacao);
+
+        /// <summary>
+        /// Obtém as faixas de rentabilidade para liberação.
+        /// </summary>
+        /// <param name="idLoja">Identificador da loja.</param>
+        /// <returns></returns>
+        IList<Entidades.FaixaRentabilidadeLiberacao> ObterFaixasRentabilidadeLiberacao(int idLoja);
+
+        /// <summary>
+        /// Salva os dados da faixa de rentabilidade para liberação.
+        /// </summary>
+        /// <param name="faixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        Colosoft.Business.SaveResult SalvarFaixaRentabilidadeLiberacao(Entidades.FaixaRentabilidadeLiberacao faixaRentabilidadeLiberacao);
+
+        /// <summary>
+        /// Apaga os dados da faixa de rentabiliade para liberação.
+        /// </summary>
+        /// <param name="faixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        Colosoft.Business.DeleteResult ApagarFaixaRentabilidadeLiberacao(Entidades.FaixaRentabilidadeLiberacao faixaRentabilidadeLiberacao);
+
+        #endregion
     }
 }

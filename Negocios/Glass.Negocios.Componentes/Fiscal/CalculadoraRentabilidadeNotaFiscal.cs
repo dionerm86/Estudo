@@ -465,6 +465,17 @@ namespace Glass.Fiscal.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera o item com base na nota fiscal informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.NotaFiscal>.ObterItem(GDA.GDASession sessao, Data.Model.NotaFiscal referencia)
+        {
+            return ObterItemNotaFiscal(sessao, referencia);
+        }
+
+        /// <summary>
         /// Recupera o item com base no identificador da nota fiscal informada.
         /// </summary>
         /// <param name="id"></param>
@@ -472,10 +483,19 @@ namespace Glass.Fiscal.Negocios.Componentes
         IItemRentabilidade IProvedorItemRentabilidade<Data.Model.NotaFiscal>.ObterItem(int id)
         {
             using (var sessao = new GDA.GDASession())
-            {
-                var pedido = Data.DAL.NotaFiscalDAO.Instance.GetElementByPrimaryKey(sessao, id);
-                return ObterItemNotaFiscal(sessao, pedido);
-            }
+                return ((IProvedorItemRentabilidade<Data.Model.NotaFiscal>)this).ObterItem(sessao, id);
+        }
+
+        /// <summary>
+        /// Recupera o item com base no identificador da nota fiscal informada.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.NotaFiscal>.ObterItem(GDA.GDASession sessao, int id)
+        {
+            var pedido = Data.DAL.NotaFiscalDAO.Instance.GetElementByPrimaryKey(sessao, id);
+            return ObterItemNotaFiscal(sessao, pedido);
         }
 
         /// <summary>
@@ -490,6 +510,16 @@ namespace Glass.Fiscal.Negocios.Componentes
         }
 
         /// <summary>
+        /// Recupera o item com base no produto do pedido.
+        /// </summary>
+        /// <param name="referencia"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosNf>.ObterItem(GDA.GDASession sessao, Data.Model.ProdutosNf referencia)
+        {
+            return ObterItemProdutoNf(sessao, referencia);
+        }
+
+        /// <summary>
         /// Recupera o item com base no identificador do produto do pedido.
         /// </summary>
         /// <param name="id"></param>
@@ -497,10 +527,19 @@ namespace Glass.Fiscal.Negocios.Componentes
         IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosNf>.ObterItem(int id)
         {
             using (var sessao = new GDA.GDASession())
-            {
-                var produtoPedido = Data.DAL.ProdutosNfDAO.Instance.GetElementByPrimaryKey(sessao, id);
-                return ObterItemProdutoNf(sessao, produtoPedido);
-            }
+                return ((IProvedorItemRentabilidade<Data.Model.ProdutosNf>)this).ObterItem(sessao, id);
+        }
+
+        /// <summary>
+        /// Recupera o item com base no identificador do produto do pedido.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        IItemRentabilidade IProvedorItemRentabilidade<Data.Model.ProdutosNf>.ObterItem(GDA.GDASession sessao, int id)
+        {
+            var produtoPedido = Data.DAL.ProdutosNfDAO.Instance.GetElementByPrimaryKey(sessao, id);
+            return ObterItemProdutoNf(sessao, produtoPedido);
         }
 
         #endregion

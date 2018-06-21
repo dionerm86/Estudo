@@ -3093,6 +3093,17 @@ namespace Glass.Data.DAL
                     null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
             }
 
+            // Verifica se pode liberar o epdido com base na rentailidade do mesmo
+            if (Configuracoes.RentabilidadeConfig.ControlarFaixaRentabilidadeLiberacao &&
+                RentabilidadeHelper.ObterVerificadorLiberacao<Pedido>().VerificarRequerLiberacao(session, pedido))
+            {
+                if (pedido.Situacao == Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro)
+                    throw new Exception("Você não possui permissão para liberar o pedido com base no percentual de rentabilidade.");
+
+                LancarExceptionValidacaoPedidoFinanceiro("O percentual de rentabilidade do pedido deve ser verificado.", idPedido, true,
+                    null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
             // Garante que o pedido possa ser finalizado
             var situacao = ObtemSituacao(session, idPedido);
 

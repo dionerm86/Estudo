@@ -83,6 +83,11 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// </summary>
         private ICalculadoraComissaoRentabilidade CalculadoraComissao { get; }
 
+        /// <summary>
+        /// Obtém o verificador de rentabilidade para liberação.
+        /// </summary>
+        private IVerificadorRentabilidadeLiberacao VerificadorRentabilidadeLiberacao { get; }
+
         #endregion
 
         #region Construtores
@@ -91,9 +96,13 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// Inicializa uma nova instância da classe <c>RentabilidadeFluxo</c>.
         /// </summary>
         /// <param name="calculadoraComissao"></param>
-        public RentabilidadeFluxo(ICalculadoraComissaoRentabilidade calculadoraComissao)
+        /// <param name="verificadorRentabilidadeLiberacao"></param>
+        public RentabilidadeFluxo(
+            ICalculadoraComissaoRentabilidade calculadoraComissao,
+            IVerificadorRentabilidadeLiberacao verificadorRentabilidadeLiberacao)
         {
             CalculadoraComissao = calculadoraComissao;
+            VerificadorRentabilidadeLiberacao = verificadorRentabilidadeLiberacao;
         }
 
         #endregion
@@ -683,6 +692,79 @@ namespace Glass.Rentabilidade.Negocios.Componentes
 
             if (resultado)
                 CalculadoraComissao.AtualizarDados();
+
+            return resultado;
+        }
+
+        #endregion
+
+        #region FaixaRentabilidadeLiberacao
+
+        /// <summary>
+        /// Cria uma nova instância da faixa de rentabilidade para liberação.
+        /// </summary>
+        /// <returns></returns>
+        public Entidades.FaixaRentabilidadeLiberacao CriarFaixaRentabilidadeLiberacao()
+        {
+            return SourceContext.Instance.Create<Entidades.FaixaRentabilidadeLiberacao>();
+        }
+
+        /// <summary>
+        /// Obtém 
+        /// </summary>
+        /// <param name="idFaixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        public Entidades.FaixaRentabilidadeLiberacao ObterFaixaRentabilidadeLiberacao(int idFaixaRentabilidadeLiberacao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.FaixaRentabilidadeLiberacao>()
+                .Where("IdFaixaRentabilidadeLiberacao=?id")
+                .Add("?id", idFaixaRentabilidadeLiberacao)
+                .ProcessResult<Entidades.FaixaRentabilidadeLiberacao>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Obtém as faixas de rentabilidade para liberação com base na loja informada.
+        /// </summary>
+        /// <param name="idLoja">Identificador da loja que será usada no filtro.</param>
+        /// <returns></returns>
+        public IList<Entidades.FaixaRentabilidadeLiberacao> ObterFaixasRentabilidadeLiberacao(int idLoja)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.FaixaRentabilidadeLiberacao>()
+                .Where("IdLoja=?idLoja")
+                .Add("?idLoja", idLoja)
+                .OrderBy("PercentualRentabilidade")
+                .ToVirtualResult<Entidades.FaixaRentabilidadeLiberacao>();
+        }
+
+        /// <summary>
+        /// Salva os dados da faixa de rentabilidade para liberação.
+        /// </summary>
+        /// <param name="faixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        public Colosoft.Business.SaveResult SalvarFaixaRentabilidadeLiberacao(Entidades.FaixaRentabilidadeLiberacao faixaRentabilidadeLiberacao)
+        {
+            var resultado = SourceContext.Instance.ExecuteSave(faixaRentabilidadeLiberacao);
+
+            if (resultado)
+                VerificadorRentabilidadeLiberacao.AtualizarDados();
+
+            return resultado;
+        }
+
+        /// <summary>
+        /// Apaga os dados da faixa de rentabiliade para liberação.
+        /// </summary>
+        /// <param name="faixaRentabilidadeLiberacao"></param>
+        /// <returns></returns>
+        public Colosoft.Business.DeleteResult ApagarFaixaRentabilidadeLiberacao(Entidades.FaixaRentabilidadeLiberacao faixaRentabilidadeLiberacao)
+        {
+            var resultado = SourceContext.Instance.ExecuteDelete(faixaRentabilidadeLiberacao);
+
+            if (resultado)
+                VerificadorRentabilidadeLiberacao.AtualizarDados();
 
             return resultado;
         }

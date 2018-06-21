@@ -1273,6 +1273,15 @@ namespace Glass.UI.Web.Utils {
         protected global::Glass.UI.Web.Controls.ctrlConfigFaixasRentabilidadeComissao ctrlFaixasRentabilidadeComissao;
         
         /// <summary>
+        /// ctrlFaixasRentabilidadeLiberacao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlConfigFaixasRentabilidadeLiberacao ctrlFaixasRentabilidadeLiberacao;
+        
+        /// <summary>
         /// tblInternas control.
         /// </summary>
         /// <remarks>
