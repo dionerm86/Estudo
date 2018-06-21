@@ -3088,7 +3088,7 @@ namespace Glass.Data.DAL
                 tipo = ContainerCalculoDTO.TipoContainer.Projeto;
                 var idClienteProjeto = ProjetoDAO.Instance.ObtemIdCliente(sessao, (uint)idProjeto.Value);
                 tipoVenda = (int)ProjetoDAO.Instance.GetTipoVenda(sessao, (uint)idProjeto.Value);
-                idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value) : 0;
+                idParcela = idClienteProjeto > 0 ? (int)ClienteDAO.Instance.ObtemTipoPagto(sessao, idClienteProjeto.Value).GetValueOrDefault() : 0;
             }
             else if (idOrcamento > 0)
             {
