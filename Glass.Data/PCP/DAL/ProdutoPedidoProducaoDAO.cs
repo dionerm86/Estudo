@@ -5018,7 +5018,7 @@ namespace Glass.Data.DAL
 
                     var numEtiquetaParent = ObtemValorCampo<string>(transaction, "NumEtiqueta", "idProdPedProducao=" + idProdPedProducaoParent);
 
-                    if (idProdPedProducaoParent > 0 &&
+                    if (idProdPedProducaoParent > 0 && !string.IsNullOrWhiteSpace(numEtiquetaParent) &&
                         ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiquetaParent, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
                         throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso. Cancele a impressão da etiqueta pai: {numEtiquetaParent}");
 

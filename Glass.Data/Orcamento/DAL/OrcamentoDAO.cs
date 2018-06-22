@@ -1582,7 +1582,7 @@ namespace Glass.Data.DAL
                     orca.DataAlt = null;
                     orca.IdFuncionario = UserInfo.GetUserInfo.CodUser;
                     orca.IdOrcamentoOriginal = idOrcamento;
-                    idOrcamentoNovo = Instance.Insert(transaction, orca);
+                    idOrcamentoNovo = Insert(transaction, orca);
                     orca.IdOrcamento = idOrcamentoNovo;
 
                     #endregion
@@ -1624,25 +1624,19 @@ namespace Glass.Data.DAL
 
                         p.IdProd = 0;
                         p.IdOrcamento = idOrcamentoNovo;
-                        p.IdAmbienteOrca = p.IdAmbienteOrca > 0 && ambientes.ContainsKey(p.IdAmbienteOrca.Value)
-                            ? (uint?) ambientes[p.IdAmbienteOrca.Value]
-                            : null;
-                        p.IdItemProjeto = p.IdItemProjeto > 0 && itensProjeto.ContainsKey(p.IdItemProjeto.Value)
-                            ? (uint?) itensProjeto[p.IdItemProjeto.Value]
-                            : null;
+                        p.IdAmbienteOrca = p.IdAmbienteOrca > 0 && ambientes.ContainsKey(p.IdAmbienteOrca.Value) ? (uint?) ambientes[p.IdAmbienteOrca.Value] : null;
+                        p.IdItemProjeto = p.IdItemProjeto > 0 && itensProjeto.ContainsKey(p.IdItemProjeto.Value) ? (uint?) itensProjeto[p.IdItemProjeto.Value] : null;
                         var idProdutoNovo = ProdutosOrcamentoDAO.Instance.Insert(transaction, p);
 
                         produtos.Add(idProduto, idProdutoNovo);
 
-                        foreach (var po in produtosOrcamento.Where(produto => produto.IdProdParent == p.IdProd))
+                        foreach (var po in produtosOrcamento.Where(produto => produto.IdProdParent == idProduto))
                         {
                             var idProdutoChild = po.IdProd;
 
                             po.IdProd = 0;
                             po.IdOrcamento = idOrcamentoNovo;
-                            po.IdAmbienteOrca = po.IdAmbienteOrca > 0 && ambientes.ContainsKey(po.IdAmbienteOrca.Value)
-                                ? (uint?) ambientes[po.IdAmbienteOrca.Value]
-                                : null;
+                            po.IdAmbienteOrca = po.IdAmbienteOrca > 0 && ambientes.ContainsKey(po.IdAmbienteOrca.Value) ? (uint?) ambientes[po.IdAmbienteOrca.Value] : null;
                             po.IdProdParent = idProdutoNovo;
                             var idProdutoChildNovo = ProdutosOrcamentoDAO.Instance.Insert(transaction, po);
 
@@ -1653,7 +1647,7 @@ namespace Glass.Data.DAL
                     #endregion
 
                     // Salva o orçamento novamente para manter os dados sobre desconto, acréscimo e comissão
-                    Instance.Update(transaction, orca);
+                    Update(transaction, orca);
 
                     transaction.Commit();
                     transaction.Close();
