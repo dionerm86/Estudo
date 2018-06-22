@@ -49,24 +49,24 @@ namespace Glass.Pedido.Negocios.Componentes
         /// <param name="sessao"></param>
         /// <param name="id"></param>
         /// <returns></returns>
-        public bool VerificarRequerLiberacao(GDA.GDASession sessao, int id)
-        {
-            if (!Configuracoes.RentabilidadeConfig.CalcularRentabilidade) return true;
-            var item = ProvedorItemRentabilidade.ObterItem(sessao, id);
-            return Verificador.VerificarRequerLiberacao(item);
-        }
-
-        /// <summary>
-        /// Executa a verificação da rentabilidade para a liberação.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public bool VerificarRequerLiberacao(GDA.GDASession sessao, Data.Model.Pedido instancia)
         {
             if (!Configuracoes.RentabilidadeConfig.CalcularRentabilidade) return true;
             var item = ProvedorItemRentabilidade.ObterItem(sessao, instancia);
             return Verificador.VerificarRequerLiberacao(item);
+        }
+
+        /// <summary>
+        /// Verifica se pode liberar.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="instancia"></param>
+        /// <returns></returns>
+        public bool PodeLiberar(GDA.GDASession sessao, Data.Model.Pedido instancia)
+        {
+            if (!Configuracoes.RentabilidadeConfig.CalcularRentabilidade) return true;
+            var item = ProvedorItemRentabilidade.ObterItem(sessao, instancia);
+            return Verificador.PodeLiberar(item);
         }
 
         #endregion

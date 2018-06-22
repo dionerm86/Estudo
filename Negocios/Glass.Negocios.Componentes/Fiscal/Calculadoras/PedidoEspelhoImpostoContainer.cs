@@ -85,7 +85,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Identifica se deve calcular a aliquota do ICMS.
         /// </summary>
-        public bool CalcularAliquotaIcms => (Loja?.CalcularIcmsPedido ?? false) && (Cliente?.CobrarIcmsSt ?? false);
+        public bool CalcularAliquotaIcmsSt => (Loja?.CalcularIcmsPedido ?? false) && (Cliente?.CobrarIcmsSt ?? false);
 
         /// <summary>
         /// Itens filhos.

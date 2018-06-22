@@ -200,13 +200,24 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         {
             var faixa = ObterFaixa(item);
 
+            return faixa?.RequerLiberacao ?? false;
+        }
+
+        /// <summary>
+        /// Verifica se pode liberar o item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool PodeLiberar(IItemRentabilidade item)
+        {
+            var faixa = ObterFaixa(item);
+
             if (faixa?.RequerLiberacao ?? false)
             {
-                if (!faixa.IdsFuncionario.Any() && 
+                if (!faixa.IdsFuncionario.Any() &&
                     !faixa.IdsTipoFuncionario.Any())
-                {
-                    return !Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
-                }
+                    return Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
+                
 
                 if (Data.Helper.UserInfo.GetUserInfo != null)
                 {
@@ -214,14 +225,12 @@ namespace Glass.Rentabilidade.Negocios.Componentes
 
                     // Verifica se o funcionário logado ou o tipo de funcionário 
                     // tem permissão para a liberação
-                    return !faixa.IdsFuncionario.Contains((int)usuario.CodUser) &&
-                           !faixa.IdsTipoFuncionario.Contains((int)usuario.TipoUsuario);
+                    return faixa.IdsFuncionario.Contains((int)usuario.CodUser) ||
+                           faixa.IdsTipoFuncionario.Contains((int)usuario.TipoUsuario);
                 }
-
-                return true;
             }
 
-            return false;
+            return true;
         }
 
         /// <summary>
