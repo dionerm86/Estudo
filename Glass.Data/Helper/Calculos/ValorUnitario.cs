@@ -31,9 +31,6 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
-
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
@@ -48,8 +45,8 @@ namespace Glass.Data.Helper.Calculos
                 total,
                 compra,
                 nf,
-                alturaBenef,
-                larguraBenef
+                produto.AlturaBenef.GetValueOrDefault(),
+                produto.LarguraBenef.GetValueOrDefault()
             );
         }
 
@@ -64,17 +61,14 @@ namespace Glass.Data.Helper.Calculos
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
-            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
-
             return CalcularValor(
                 sessao,
                 produto,
                 baseCalculo,
                 compra,
                 nf,
-                alturaBeneficiamento,
-                larguraBeneficiamento
+                produto.AlturaBenef.GetValueOrDefault(),
+                produto.LarguraBenef.GetValueOrDefault()
             );
         }
 
@@ -178,15 +172,15 @@ namespace Glass.Data.Helper.Calculos
                 - desconto;
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
-        {
-            if (valor.HasValue && produto.AlturaBenef > 0 && produto.LarguraBenef > 0)
-            {
-                return valor.Value;
-            }
+        //private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
+        //{
+        //    if (valor.HasValue && produto.AlturaBenef > 0 && produto.LarguraBenef > 0)
+        //    {
+        //        return valor.Value;
+        //    }
 
-            return 2;
-        }
+        //    return 2;
+        //}
 
         private decimal? CalcularValor(GDASession sessao, IProdutoCalculo produto, decimal baseCalculo,
             bool compra, bool nf, int alturaBeneficiamento, int larguraBeneficiamento)
