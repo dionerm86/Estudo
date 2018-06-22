@@ -4624,26 +4624,26 @@ namespace Glass.Data.DAL
             }
         }
 
-        public string MarcaExpedicaoChapaRetalhoRevenda(GDASession session, string codEtiquetaChapa, uint idPedidoExpedicao, uint idSetor)
+        public string MarcaExpedicaoChapaRetalhoRevenda(GDASession sessao, string codEtiquetaChapa, uint idPedidoExpedicao, uint idSetor)
         {
             var tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codEtiquetaChapa);
 
             var idRetalho = tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ?
                codEtiquetaChapa.Substring(1, codEtiquetaChapa.IndexOf('-') - 1).StrParaUint() : 0;
 
-            var prodImpressao = ProdutoImpressaoDAO.Instance.ObtemProdImpressaoParaExpedicao(session, codEtiquetaChapa);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(session, idPedidoExpedicao);
+            var prodImpressao = ProdutoImpressaoDAO.Instance.ObtemProdImpressaoParaExpedicao(sessao, codEtiquetaChapa);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedidoExpedicao);
 
             //Verifica se o retalho informado pode ser expedido
             if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho &&
-                RetalhoProducaoDAO.Instance.ObtemSituacao(session, idRetalho) != SituacaoRetalhoProducao.Disponivel)
+                RetalhoProducaoDAO.Instance.ObtemSituacao(sessao, idRetalho) != SituacaoRetalhoProducao.Disponivel)
                 throw new Exception("O retalho informado não esta disponivel para uso.");
 
             //Verifica se o pedido de expedição foi informado
             if (idPedidoExpedicao == 0)
                 throw new Exception("Indique o pedido de revenda que contém esse produto.");
 
-            if (PedidoDAO.Instance.ObtemTipoEntrega(session, idPedidoExpedicao) != (int)Pedido.TipoEntregaPedido.Balcao)
+            if (PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedidoExpedicao) != (int)Pedido.TipoEntregaPedido.Balcao)
                 throw new Exception("O pedido informado não é do tipo entrega balcão.");
 
             // Muda todos os caracteres para maiúsculo, em alguns leitores o N ou o C são lidos em letra minúscula
@@ -4654,14 +4654,14 @@ namespace Glass.Data.DAL
                 throw new Exception("Etiqueta não existe ou ainda não foi impressa no sistema.");
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, prodImpressao.IdProdImpressao))
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, prodImpressao.IdProdImpressao))
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
-            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, prodImpressao.IdProdImpressao))
+            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, prodImpressao.IdProdImpressao))
                 throw new Exception("Esta etiqueta já foi utilizada no setor de corte.");
 
             // Se a empresa obriga o financeiro a liberar pedido para entrega, verifica se o mesmo está liberado,
-            if (FinanceiroConfig.UsarControleLiberarFinanc && !PedidoDAO.Instance.IsLiberadoEntregaFinanc(session, idPedidoExpedicao))
+            if (FinanceiroConfig.UsarControleLiberarFinanc && !PedidoDAO.Instance.IsLiberadoEntregaFinanc(sessao, idPedidoExpedicao))
                 throw new Exception("O financeiro não liberou este pedido para entrega.");
 
             // Busca o produto ao qual se refere a etiqueta 
@@ -4673,13 +4673,13 @@ namespace Glass.Data.DAL
 
             var encontrado = false;
 
-            var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(session, idPedidoExpedicao);
+            var prodPed = ProdutosPedidoDAO.Instance.GetByPedido(sessao, idPedidoExpedicao);
             prodPed = MetodosExtensao.ToArray(Glass.MetodosExtensao.Agrupar(prodPed, new[] { "IdProd" }, new[] { "Qtde" }));
 
             foreach (var p in prodPed)
             {
                 if (p.IdProd == prodImpressao.IdProd && p.Altura == prodImpressao.Altura && p.Largura == prodImpressao.Largura)
-                    if ((p.Qtde - GetQtdeLiberadaByPedProd(session, p.IdPedido, idProdutoNovo, p.IdProd)) >= 1)
+                    if ((p.Qtde - GetQtdeLiberadaByPedProd(sessao, p.IdPedido, idProdutoNovo, p.IdProd)) >= 1)
                     {
                         encontrado = true;
                         idProdutoNovo = p.IdProdPed;
@@ -4693,15 +4693,15 @@ namespace Glass.Data.DAL
             // Verifica se a peça já foi liberada, caso esteja tentando marcar como entregue
             if (PedidoConfig.LiberarPedido)
             {
-                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(session, idPedidoExpedicao);
+                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(sessao, idPedidoExpedicao);
 
                 var liberado = !Liberacao.DadosLiberacao.LiberarPedidoProdutos ? situacaoPedido == Pedido.SituacaoPedido.Confirmado :
                      situacaoPedido == Pedido.SituacaoPedido.Confirmado ||
-                     (LiberarPedidoDAO.Instance.IsProdutoPedidoLiberado(session, idProdutoNovo, null, 0));
+                     (LiberarPedidoDAO.Instance.IsProdutoPedidoLiberado(sessao, idProdutoNovo, null, 0));
 
                 if (liberado)
                 {
-                    var situacao = PedidoDAO.Instance.ObtemSituacao(session, idPedidoExpedicao);
+                    var situacao = PedidoDAO.Instance.ObtemSituacao(sessao, idPedidoExpedicao);
                     if (situacao != Pedido.SituacaoPedido.Confirmado && situacao != Pedido.SituacaoPedido.LiberadoParcialmente)
                         liberado = false;
                 }
@@ -4714,36 +4714,36 @@ namespace Glass.Data.DAL
             }
 
             //Marca no produto_impressão o id do pedido de expedição
-            ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(session, idPedidoExpedicao, prodImpressao.IdProdImpressao);
+            ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(sessao, idPedidoExpedicao, prodImpressao.IdProdImpressao);
 
             //Faz o vinculo da chapa no corte para que a mesma não possa ser usada novamente
-            ChapaCortePecaDAO.Instance.Inserir(session, codEtiquetaChapa, null, false, true);
+            ChapaCortePecaDAO.Instance.Inserir(sessao, codEtiquetaChapa, null, false, true);
 
             /* Chamado 52270. */
             // Marca quantos produtos do pedido saíram do estoque.
-            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(session, PedidoDAO.Instance.ObtemIdLoja(session, idPedidoExpedicao), idPedidoExpedicao, null, null, false);
-            ProdutosPedidoDAO.Instance.MarcarSaida(session, (uint)idProdutoNovo, 1, idSaidaEstoque);
+            var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, PedidoDAO.Instance.ObtemIdLoja(sessao, idPedidoExpedicao), idPedidoExpedicao, null, null, false);
+            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, (uint)idProdutoNovo, 1, idSaidaEstoque);
 
             //Baixa o estoque da peça
-            MovEstoqueDAO.Instance.BaixaEstoquePedido(session, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null);
+            MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null);
 
             //Atualiza a situação do pedido
-            PedidoDAO.Instance.AtualizaSituacaoProducao(session, idPedidoExpedicao, null, DateTime.Now);
+            PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, idPedidoExpedicao, null, DateTime.Now);
 
             //Marca o retalho como vendido
             if (tipoEtiqueta == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
-                RetalhoProducaoDAO.Instance.AlteraSituacao(session, idRetalho, SituacaoRetalhoProducao.Vendido);
+                RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, idRetalho, SituacaoRetalhoProducao.Vendido);
 
             // Executa o sql para retirar da liberação/reserva depois que marcar saída nos produtos, para que atualize corretamente a coluna
             // reserva/liberação
-            if (!PedidoDAO.Instance.IsProducao(session, idPedidoExpedicao))
+            if (!PedidoDAO.Instance.IsProducao(sessao, idPedidoExpedicao))
             {
                 if (PedidoConfig.LiberarPedido)
-                    ProdutoLojaDAO.Instance.TirarLiberacao(session, (int)PedidoDAO.Instance.ObtemIdLoja(session, idPedidoExpedicao),
+                    ProdutoLojaDAO.Instance.TirarLiberacao(sessao, (int)PedidoDAO.Instance.ObtemIdLoja(sessao, idPedidoExpedicao),
                         new Dictionary<int, float> { { (int)prodImpressao.IdProd, 1 } }, null, null, null, null, (int)idPedidoExpedicao,
                         null, null, "ProdutoPedidoProducaoDAO - MarcaExpedicaoChapaRetalhoRevenda");
                 else
-                    ProdutoLojaDAO.Instance.TirarReserva(session, (int)PedidoDAO.Instance.ObtemIdLoja(session, idPedidoExpedicao),
+                    ProdutoLojaDAO.Instance.TirarReserva(sessao, (int)PedidoDAO.Instance.ObtemIdLoja(sessao, idPedidoExpedicao),
                         new Dictionary<int, float> { { (int)prodImpressao.IdProd, 1 } }, null, null, null, null, (int)idPedidoExpedicao,
                         null, null, "ProdutoPedidoProducaoDAO - MarcaExpedicaoChapaRetalhoRevenda");
             }
@@ -4814,12 +4814,14 @@ namespace Glass.Data.DAL
                         (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0),
                         !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd), true, true);
 
+                    var numEtiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
+
                     // Marca saída desta peça no ProdutosPedido do pedido de PRODUÇÃO
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de REVENDA desde que o pedido produção não seja para corte.
                     if (idProdPedRevenda > 0 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0);
+                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, numEtiqueta);
 
                     if (idPedidoNovo != null)
                     {
@@ -6441,7 +6443,7 @@ namespace Glass.Data.DAL
 
                     ProdutosPedidoDAO.Instance.EstonoSaida(sessao, (uint)idProdPed, 1);
 
-                    EstornarSaidaRevenda(sessao, idPedidoExpedicao, prodPedEsp);
+                    EstornarSaidaRevenda(sessao, idPedidoExpedicao, prodPedEsp, ObtemEtiqueta(idProdPedProducao));
 
                     //Se for tranferencia, credita o estoque da loja que esta recebendo a transferencia
                     var idPedTransferencia = idPedidoExpedicao > 0 ? idPedidoExpedicao : idPedido;
@@ -6559,7 +6561,7 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idPedidoNovo"></param>
         /// <param name="prodPedEtiqueta"></param>
-        private void EstornarSaidaRevenda(GDASession sessao, uint idPedidoNovo, ProdutosPedidoEspelho prodPedEtiqueta)
+        private void EstornarSaidaRevenda(GDASession sessao, uint idPedidoNovo, ProdutosPedidoEspelho prodPedEtiqueta, string numEtiqueta)
         {
             if (idPedidoNovo == 0)
                 return;
@@ -6580,7 +6582,7 @@ namespace Glass.Data.DAL
                 f.QtdSaida > 0);
 
             if (produtoRevenda.Count() > 0)
-                ProdutosPedidoDAO.Instance.EstonoSaida(sessao, produtoRevenda.FirstOrDefault().IdProdPed, 1);
+                ProdutosPedidoDAO.Instance.EstonoSaida(sessao, produtoRevenda.FirstOrDefault().IdProdPed, 1, numEtiqueta);
         }
 
         /// <summary>
