@@ -216,7 +216,6 @@ namespace Glass.PCP.Negocios.Componentes
                     Descricao = $"Produto ({produto?.CodInterno}) {produto?.Descricao}",
                     PrecoVendaSemIPI = produtoPedido.Total + produtoPedido.ValorBenef,
                     PrazoMedio = prazoMedio,
-                    FatorICMSSubstituicao = 0,
                     PercentualComissao = produtoPedido.PercComissao / 100m,
                     PercentualRentabilidade = produtoPedido.PercentualRentabilidade / 100m,
                     RentabilidadeFinanceira = produtoPedido.RentabilidadeFinanceira
@@ -231,7 +230,7 @@ namespace Glass.PCP.Negocios.Componentes
                     PrecoCusto = custoProd,
                     PrazoMedio = prazoMedio,
                     PercentualICMSVenda = (decimal)produtoPedido.AliqIcms / 100m,
-                    FatorICMSSubstituicao = 0,
+                    FatorICMSSubstituicao = 0m,
                     PercentualIPICompra = 0m, //(decimal)(produto?.AliqIPI ?? 0) / 100m,
                     PercentualIPIVenda = (decimal)produtoPedido.AliqIpi / 100m,
                     PercentualComissao = produtoPedido.PercComissao / 100m,
@@ -342,7 +341,7 @@ namespace Glass.PCP.Negocios.Componentes
             if (Glass.Configuracoes.PedidoConfig.Comissao.UsarComissaoPorProduto)
             {
                 decimal percComissao = 0;
-                var total = (pedido.Total - pedido.ValorIpi) - pedido.ValorEntrega;
+                var total = (pedido.Total - pedido.ValorIpi - pedido.ValorIcms) - pedido.ValorEntrega;
 
                 if (total > 0)
                     foreach (var item in itens.Where(filtroItensParaCalculo))
@@ -358,9 +357,8 @@ namespace Glass.PCP.Negocios.Componentes
                 ConverterParaRegistroRentabilidade)
             {
                 Descricao = $"Pedido {pedido.IdPedido}",
-                PrecoVendaSemIPI = (pedido.Total - pedido.ValorIpi) - pedido.ValorEntrega,
+                PrecoVendaSemIPI = (pedido.Total - pedido.ValorIpi - pedido.ValorIcms) - pedido.ValorEntrega,
                 PrazoMedio = prazoMedio,
-                FatorICMSSubstituicao = 0,
                 PercentualComissao = percentualComissao,
                 CustosExtras = pedido.ValorEntrega,
                 PercentualRentabilidade = pedido.PercentualRentabilidade / 100m,
@@ -433,7 +431,6 @@ namespace Glass.PCP.Negocios.Componentes
                 Descricao = $"Ambiente {ambiente.Ambiente}",
                 PrecoVendaSemIPI = total, // Na atualiza configuração do sistema o total do ambiente não possui o valor do IPI
                 PrazoMedio = prazoMedio,
-                FatorICMSSubstituicao = 0,
                 PercentualComissao = percentualComissao,
                 PercentualRentabilidade = ambiente.PercentualRentabilidade / 100m,
                 RentabilidadeFinanceira = ambiente.RentabilidadeFinanceira

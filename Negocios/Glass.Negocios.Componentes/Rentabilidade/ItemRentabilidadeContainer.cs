@@ -47,6 +47,15 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         public IEnumerable<IItemRentabilidade> Itens => TodosItens.Where(_filtroItensParaCalculo);
 
         /// <summary>
+        /// Fator do ICMS de substituição.
+        /// </summary>
+        public override decimal FatorICMSSubstituicao
+        {
+            get { return Itens.Any() ? Itens.Average(f => f.FatorICMSSubstituicao) : 0m; }
+            set { throw new NotSupportedException(); }
+        }
+
+        /// <summary>
         /// Percentual do ICMS de compra.
         /// </summary>
         public override decimal PercentualICMSCompra

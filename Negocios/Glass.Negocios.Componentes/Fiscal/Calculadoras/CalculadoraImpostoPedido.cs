@@ -379,9 +379,9 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
 
                 if (Loja.CalcularIcmsPedido && Cliente.CobrarIcmsSt)
                 {
-                    pedido.ValorIcms = resultado.Itens.Sum(f => f.ValorIcms);
-                    pedido.AliquotaIcms = resultado.Itens.Any(f => f.AliqIcms > 0) ?
-                        resultado.Itens.Sum(f => f.AliqIcms) / resultado.Itens.Count(f => f.AliqIcms > 0f) : 0f;
+                    pedido.ValorIcms = resultado.Itens.Sum(f => f.ValorIcmsSt);
+                    pedido.AliquotaIcms = resultado.Itens.Any(f => f.AliqIcmsSt > 0) ?
+                        resultado.Itens.Sum(f => f.AliqIcmsSt) / resultado.Itens.Count(f => f.AliqIcmsSt > 0f) : 0f;
 
                     pedido.Total += pedido.ValorIcms;
                     atualizarTotalPedido = true;

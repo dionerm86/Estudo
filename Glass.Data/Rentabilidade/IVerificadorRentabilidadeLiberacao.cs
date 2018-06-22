@@ -14,15 +14,16 @@ namespace Glass.Data
         /// <summary>
         /// Executa a verificação da rentabilidade para a liberação.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        bool VerificarRequerLiberacao(GDA.GDASession sessao, int id);
-
-        /// <summary>
-        /// Executa a verificação da rentabilidade para a liberação.
-        /// </summary>
         /// <param name="instancia">Instância que será usada na verificação.</param>
         /// <returns></returns>
         bool VerificarRequerLiberacao(GDA.GDASession sessao, T instancia);
+
+        /// <summary>
+        /// Verifica se pode liberar.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="instancia"></param>
+        /// <returns></returns>
+        bool PodeLiberar(GDA.GDASession sessao, T instancia);
     }
 }

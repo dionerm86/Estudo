@@ -96,7 +96,7 @@ namespace Glass.Rentabilidade.Negocios.Componentes
         /// <summary>
         /// Fator do ICMS de substituição.
         /// </summary>
-        public decimal FatorICMSSubstituicao { get; set; }
+        public virtual decimal FatorICMSSubstituicao { get; set; }
 
         /// <summary>
         /// Percentual do IPI de compra.

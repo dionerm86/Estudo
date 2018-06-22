@@ -82,7 +82,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
         /// <summary>
         /// Identifica se deve calcular a aliquota do ICMS.
         /// </summary>
-        public bool CalcularAliquotaIcms => true;
+        public bool CalcularAliquotaIcmsSt => true;
 
         /// <summary>
         /// Indica se a nota fiscal está sendo importada pelo sistema.
