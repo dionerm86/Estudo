@@ -21,6 +21,13 @@ namespace Glass.Rentabilidade.Negocios
         bool VerificarRequerLiberacao(IItemRentabilidade item);
 
         /// <summary>
+        /// Verifica se pode liberar o item.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        bool PodeLiberar(IItemRentabilidade item);
+
+        /// <summary>
         /// Atualiza os dados do verificador.
         /// </summary>
         void AtualizarDados();

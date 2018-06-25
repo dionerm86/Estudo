@@ -1885,13 +1885,11 @@
                                             <EditItemTemplate>
                                                 <div id="benefMaoObra" style='<%# !IsPedidoMaoDeObra() ? "display: none;": "" %> white-space: nowrap'>                                                    
                                                     <asp:DropDownList ID="drpLargBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("LarguraBenef") %>'>
-                                                        <asp:ListItem></asp:ListItem>
                                                         <asp:ListItem>0</asp:ListItem>
                                                         <asp:ListItem>1</asp:ListItem>
                                                         <asp:ListItem>2</asp:ListItem>
                                                     </asp:DropDownList>
                                                     <asp:DropDownList ID="drpAltBenef" runat="server" onchange="calcTotalProd()" SelectedValue='<%# Bind("AlturaBenef") %>'>
-                                                        <asp:ListItem></asp:ListItem>
                                                         <asp:ListItem>0</asp:ListItem>
                                                         <asp:ListItem>1</asp:ListItem>
                                                         <asp:ListItem>2</asp:ListItem>

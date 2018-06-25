@@ -155,7 +155,7 @@ namespace Glass.UI.Web.Cadastros
             ((DropDownList)sender).Enabled = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente);
     
             if ((Glass.Configuracoes.ClienteConfig.CadastrarClienteInativo && dtvCliente.CurrentMode == DetailsViewMode.Insert) &&
-                Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+                !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
             {
                 ((DropDownList)sender).SelectedValue = SituacaoCliente.Inativo.ToString();
                 ((DropDownList)sender).Enabled = false;

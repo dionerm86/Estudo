@@ -1396,6 +1396,11 @@ function validarProduto() {
         return false;
     }
 
+    if (FindControl("hdfPedidoMaoDeObra", "input").value == "true" && FindControl("drpLargBenef", "select").value == "0" && FindControl("drpLargBenef", "select").value == "0") {
+        alert("Defina altura ou largura do beneficiamento para continuar.");
+        return false;
+    }
+
     // Calcula o ICMS do produto
     var aliquota = FindControl("hdfAliquotaIcmsProd", "input");
     var icms = FindControl("hdfValorIcmsProd", "input");
@@ -1434,8 +1439,10 @@ function onInsertProd() {
         return false;
     }
 
-    if (!validarProduto())
+    if (!validarProduto()) {
+        var_SaveProdClicked = false;
         return false;
+    }
 
     return true;
 }

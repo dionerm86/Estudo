@@ -57,11 +57,8 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="item"></param>
         private void CarregarAliquotaIcms(ItemImpostoResultado item)
         {
-            if (item.CalcularAliquotaIcms)
-                item.AliqIcms = ProvedorIcmsProdutoUf
-                    .ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
-            else
-                item.AliqIcms = 0f;
+            item.AliqIcms = ProvedorIcmsProdutoUf
+                .ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
         }
 
         /// <summary>
@@ -70,7 +67,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="item"></param>
         private void CarregarAliquotaIcmsStInterna(ItemImpostoResultado item)
         {
-            if (Container.Loja != null)
+            if (item.CalcularAliquotaIcmsSt && Container.Loja != null)
                 item.AliqIcmsSt = ProvedorIcmsProdutoUf
                     .ObterAliquotaIcmsSt(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
         }
@@ -148,7 +145,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <param name="item"></param>
         private void CalcularIcms(ItemImpostoResultado item, decimal percentualDesconto)
         {
-            if (!item.CalcularAliquotaIcms)
+            if (!item.CalcularAliquotaIcmsSt)
             {
                 item.ValorIcms = 0m;
                 item.BcIcms = 0m;
@@ -485,7 +482,7 @@ namespace Glass.Fiscal.Negocios.Componentes
             var totalProd = container.Itens.Sum(f => f.Total);
             decimal percDesconto = (container.ValorDesconto / (totalProd > 0 ? totalProd : 1));
 
-            var itens = container.Itens.Select(f => new ItemImpostoResultado(f, container.CalcularAliquotaIcms)).ToList();
+            var itens = container.Itens.Select(f => new ItemImpostoResultado(f, container.CalcularAliquotaIcmsSt)).ToList();
 
             _totalDescontoAplicado = 0m;
 

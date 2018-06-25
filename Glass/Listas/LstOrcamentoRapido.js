@@ -63,7 +63,7 @@ function loadProduto(orcamentoRapido) {
         var retorno = LstOrcamentoRapido.GetProduto(FindControl('txtCodProd', 'input').value,
             FindControl("hdfIdCliente", "input").value, FindControl("hdfIdOrca", "input").value,
             FindControl("drpTipoEntrega", "select").value, FindControl("chkRevenda", "input").checked ? "true" : "false", 
-            percDescontoQtde, orcamentoRapido).value.split(';');
+            percDescontoQtde, orcamentoRapido == undefined ? true : orcamentoRapido).value.split(';');
 
         if (retorno[0] == "Erro") {
             alert(retorno[1]);
