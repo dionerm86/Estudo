@@ -16,75 +16,83 @@ namespace Glass.Data.RelDAL
         {
             // ATENÇÃO: Ao alterar este sql, alterar também o sql do método SqlPerdaSetores(), pois devem buscar dados idênticos, por menor que seja a alteração,
             // modificar os dois sqls.
+            var criterio = $"Setor: { SetorDAO.Instance.GetNomeSetores(idsSetor) }. Mês Referência: { mes.PadLeft(2, '0') }/{ ano }";
 
-            string sql;
-            var criterio = string.Format("Setor: {0}. Mês Referência: {1}/{2}", SetorDAO.Instance.GetNomeSetores(idsSetor), mes.StrParaInt() < 10 ? string.Format("0{0}", mes) : mes, ano);
+            var idsProdPed = ExecuteMultipleScalar<int>($@"SELECT DISTINCT(ppp.IdProdPed)
+		        FROM produto_pedido_producao ppp
+			        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
+                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
+		        WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }, { (int)ProdutoPedidoProducao.SituacaoEnum.Perda })
+			        AND lp.IdSetor IN ({ idsSetor })
+			        AND MONTH(lp.DataLeitura)={ mes }
+                    AND YEAR(lp.DataLeitura)={ ano }");
 
-            sql = string.Format(@"
-                SELECT Dia, IdSetor, Descricao, CAST(SUM(TotProdM2) AS DECIMAL(12, 2)) AS TotProdM2, SUM(TotPerdaM2) AS TotPerdaM2,
-                    '$$$' AS Criterio, 0 AS DesafioPerda, 0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
-                FROM (
-                    SELECT * FROM
+            var sql = $@"SELECT Dia, IdSetor, Descricao, CAST(SUM(TotProdM2) AS DECIMAL(12, 2)) AS TotProdM2, SUM(TotPerdaM2) AS TotPerdaM2,
+                '$$$' AS Criterio, 0 AS DesafioPerda, 0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
+                FROM
+                    (SELECT * FROM
                         (SELECT Dia, IdSetor, Descricao, ROUND(SUM(TotProdM2), 4) AS TotProdM2, 0 AS TotPerdaM2
                         FROM
                             (SELECT DAY(ppp.DataLeitura) AS Dia, ppp.IdSetor, ppp.Descricao,
-                                IF(TipoPedido = {5}, ((((50 - IF(MOD(Altura, 50) > 0, MOD(Altura, 50), 50)) + Altura) * ((50 - IF(MOD(Largura, 50) > 0,
-                                    MOD(Largura, 50), 50)) + Largura)) / 1000000) * a.Qtde, TotM2Calc) / (pp.Qtde * IF(TipoPedido = {5}, a.Qtde, 1)) AS TotProdM2
+                                IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, ((((50 - IF(MOD(Altura, 50) > 0, MOD(Altura, 50), 50)) + Altura) * ((50 - IF(MOD(Largura, 50) > 0,
+                                MOD(Largura, 50), 50)) + Largura)) / 1000000) * a.Qtde, TotM2Calc) / (pp.Qtde * IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)) AS TotProdM2
                             FROM pedido ped
                                 INNER JOIN
-                                    (SELECT IdProdPed, IdPedido, IdAmbientePedido, TotM2Calc, Qtde
-                                    FROM produtos_pedido_espelho) pp ON (ped.IdPedido = pp.IdPedido)
-	                            INNER JOIN
-		                            (SELECT ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, lp.IdSetor, s.Descricao, lp.Dataleitura
-		                            FROM produto_pedido_producao ppp	
-			                            INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
+                                    (SELECT ppe.IdProdPed, ppe.IdPedido, ppe.IdAmbientePedido, ppe.TotM2Calc, ppe.Qtde
+                                    FROM produtos_pedido_espelho ppe
+                                    WHERE ppe.IdProdPed IN ({ string.Join(",", idsProdPed) })) pp ON (ped.IdPedido = pp.IdPedido)
+                                INNER JOIN
+                                    (SELECT ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, lp.IdSetor, s.Descricao, lp.Dataleitura
+                                    FROM produto_pedido_producao ppp
+                                        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
                                         INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
-		                            WHERE ppp.Situacao IN ({0}, {1})
-			                            AND lp.IdSetor IN ({2})
-			                            AND MONTH(lp.DataLeitura)={3}
-                                        AND YEAR(lp.DataLeitura)={4}) ppp ON (pp.IdProdPed = ppp.IdProdPed)
+                                    WHERE ppp.IdProdPed IN ({ string.Join(",", idsProdPed) })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
                                 LEFT JOIN
                                     (SELECT ape.IdAmbientePedido, ape.Altura, ape.Largura, ape.Qtde
-                                    FROM ambiente_pedido_espelho ape) a ON (pp.IdAmbientePedido = a.IdAmbientePedido)) AS temp
+                                    FROM ambiente_pedido_espelho ape) a ON (pp.IdAmbientePedido = a.IdAmbientePedido))
+                        AS temp
                         GROUP BY 1
-                        ORDER BY 1) AS tbResultProd
+                        ORDER BY 1)
+                    AS tbResultProd
 
-                        UNION /*All - Retiramos o All para resolver o chamado 20531, no qual estava buscando um das perdas do dia 13/08/15 duplicada */
+                UNION /*All - Retiramos o All para resolver o chamado 20531, no qual estava buscando um das perdas do dia 13/08/15 duplicada */
 
-                        SELECT * FROM
-                            (SELECT Dia, IdSetor, Descricao, 0 AS TotProdM2, ROUND(SUM(TotM2), 2) AS TotPerdaM2
-                            FROM
-                                (SELECT DAY(ppp.DataRepos) AS Dia, ppp.IdSetorRepos AS IdSetor, sr.Descricao,
-                                    ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido={5}, a.Qtde, 1)), 4) AS TotM2
-                                FROM produto_pedido_producao ppp
-                                    LEFT JOIN setor sr ON (ppp.IdSetorRepos=sr.IdSetor)
-                                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
-                                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
-                                    LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
-                                WHERE ppp.PecaReposta=1
-                                    AND MONTH(ppp.DataRepos)={3}
-                                    AND YEAR(ppp.DataRepos)={4}
-                                    AND sr.IdSetor In ({2})
-
-                                UNION ALL
-
-                                SELECT DAY(ppp.DataRepos) AS Dia, dr.IdSetorRepos AS IdSetor, sr.Descricao,
-                                    ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={5}, a.Qtde, 1)), 4) AS TotM2
-                                FROM produto_pedido_producao ppp
-                                    LEFT JOIN dados_reposicao dr ON (ppp.IdProdPedProducao=dr.IdProdPedProducao)
-                                    LEFT JOIN setor sr ON (dr.IdSetorRepos=sr.IdSetor)
-                                    LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed) 
-                                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido) 
-                                    LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido) 
-                                WHERE ppp.PecaReposta=1 AND MONTH(ppp.DataRepos)={3} AND YEAR(ppp.DataRepos)={4}
-                                    AND sr.IdSetor IN ({2})) AS tb_result
-                                    GROUP BY 1
-                                    ORDER BY 1) AS tbResultPerda) AS tbResultFinal
-                GROUP BY 1
-                ORDER BY 1;", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda, idsSetor, mes, ano, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                SELECT * FROM
+                    (SELECT Dia, IdSetor, Descricao, 0 AS TotProdM2, ROUND(SUM(TotM2), 2) AS TotPerdaM2
+                        FROM
+                        (SELECT DAY(ppp.DataRepos) AS Dia, ppp.IdSetorRepos AS IdSetor, sr.Descricao,
+                            ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido={ (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
+                        FROM produto_pedido_producao ppp
+                            LEFT JOIN setor sr ON (ppp.IdSetorRepos=sr.IdSetor)
+                            LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
+                            LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
+                            LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
+                        WHERE ppp.PecaReposta=1
+                            AND MONTH(ppp.DataRepos)={ mes }
+                            AND YEAR(ppp.DataRepos)={ ano }
+                            AND sr.IdSetor In ({ idsSetor })
+                        UNION ALL
+                        SELECT DAY(ppp.DataRepos) AS Dia, dr.IdSetorRepos AS IdSetor, sr.Descricao,
+                            ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={ (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
+                        FROM produto_pedido_producao ppp
+                            LEFT JOIN dados_reposicao dr ON (ppp.IdProdPedProducao=dr.IdProdPedProducao)
+                            LEFT JOIN setor sr ON (dr.IdSetorRepos=sr.IdSetor)
+                            LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed) 
+                            LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido) 
+                            LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido) 
+                        WHERE ppp.PecaReposta=1 AND MONTH(ppp.DataRepos)={ mes } AND YEAR(ppp.DataRepos)={ ano }
+                            AND sr.IdSetor IN ({ idsSetor })) AS tb_result
+                    GROUP BY 1
+                    ORDER BY 1)
+                AS tbResultPerda)
+            AS tbResultFinal
+            GROUP BY 1
+            ORDER BY 1;";
 
             if (!selecionar)
-                return string.Format("SELECT COUNT(*) FROM ({0}) AS tbResultCount", sql);
+            {
+                return $"SELECT COUNT(*) FROM ({ sql }) AS tbResultCount";
+            }
 
             return sql.Replace("$$$", criterio);
         }
