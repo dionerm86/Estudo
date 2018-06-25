@@ -240,6 +240,7 @@ namespace Glass.Data.Helper
             ScComercio,
             SiaGlass,
             Simonica,
+            SmartGlass,
             SulGlass,
             SyncLite,
             SyncProjEsp,
