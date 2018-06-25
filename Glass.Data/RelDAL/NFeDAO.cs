@@ -158,7 +158,7 @@ namespace Glass.Data.RelDAL
             string modFrete = GetNodeValue(xmlInfNFe, "transp", "modFrete");
             nfe.RazaoSocialTransp = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfNFe, "transp/transporta", "xNome"));
             nfe.CpfCnpjTransp = Formatacoes.MascaraCpfCnpj(GetNodeValue(xmlInfNFe, "transp/transporta", "CNPJ") + GetNodeValue(xmlInfNFe, "transp/transporta", "CPF"));
-            nfe.FretePorConta = modFrete == "0" ? "0 - Emitente" : modFrete == "1" ? "1 - Dest/Rem" : modFrete == "2" ? "2 - Terceiros" : "9 - Sem Frete";
+            nfe.FretePorConta = modFrete == "0" ? "0 - Emitente" : modFrete == "1" ? "1 - Dest/Rem" : modFrete == "2" ? "2 - Terceiros" : modFrete == "3" ? "3 - Proprio/Rem" : "9 - Sem Frete";
             nfe.CodAntt = GetNodeValue(xmlInfNFe, "transp/veicTransp", "RNTC");
             nfe.PlacaVeiculo = GetNodeValue(xmlInfNFe, "transp/veicTransp", "placa");
             nfe.UfVeiculo = GetNodeValue(xmlInfNFe, "transp/veicTransp", "UF");
