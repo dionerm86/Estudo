@@ -372,7 +372,7 @@ namespace Glass.Data.Model
                         break;
 
                     case TabelaAlteracao.Setor:
-                        referencia = Utils.ObtemSetor(idRegistroAlt).Descricao;
+                        referencia = Utils.ObtemSetor(idRegistroAlt)?.Descricao ?? string.Empty;
                         break;
 
                     case TabelaAlteracao.TipoPerda:

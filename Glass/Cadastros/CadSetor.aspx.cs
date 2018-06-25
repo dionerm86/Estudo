@@ -61,14 +61,20 @@ namespace Glass.UI.Web.Cadastros
             {
                 try
                 {
-                    var fluxo = ServiceLocator.Current.GetInstance<PCP.Negocios.ISetorFluxo>();
-
-                    fluxo.AlterarPosicao(e.CommandArgument.ToString().StrParaInt(), e.CommandName == "Up");
+                    var resultado = ServiceLocator.Current.GetInstance<PCP.Negocios.ISetorFluxo>().AlterarPosicao(e.CommandArgument.ToString().StrParaInt(), e.CommandName == "Up");
+                    if (!resultado)
+                    {
+                        MensagemAlerta.ShowMsg($"Falha ao alterar a posição do setor. { resultado.Message }", this);
+                    }
+                    else
+                    {
+                        MensagemAlerta.ShowMsg("Posição do setor alterada com sucesso!", this);
+                    }
                     grdSetor.DataBind();
                 }
                 catch (Exception ex)
                 {
-                    Glass.MensagemAlerta.ErrorMsg("Falha ao mudar posição do setor.", ex, Page);
+                    MensagemAlerta.ErrorMsg("Falha ao mudar posição do setor.", ex, Page);
                 }
             }
         }
