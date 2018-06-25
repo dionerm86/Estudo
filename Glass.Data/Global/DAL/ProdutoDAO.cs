@@ -3107,6 +3107,7 @@ namespace Glass.Data.DAL
                 TipoVenda = tipoVenda,
                 IdParcela = (uint)idParcela,
                 TipoEntrega = tipoEntrega.GetValueOrDefault(),
+                Reposicao = reposicao,
                 Cliente = new ClienteDTO(idCliente ?? 0, revenda)
             };
 

@@ -247,7 +247,8 @@ namespace Glass.PCP.Negocios.Componentes
                 }
                 else if (setor.Situacao == Situacao.Ativo)
                 {
-                    if (setor.Tipo == Glass.Data.Model.TipoSetor.Entregue && SourceContext.Instance.CreateQuery()
+                    if (setor.ChangedProperties.Contains("Situacao") && 
+                        setor.Tipo == Glass.Data.Model.TipoSetor.Entregue && SourceContext.Instance.CreateQuery()
                         .From<Glass.Data.Model.Setor>("s")
                         .Where("Situacao=?ativo AND Tipo=?entregue")
                         .Add("?ativo", Situacao.Ativo)
@@ -259,7 +260,8 @@ namespace Glass.PCP.Negocios.Componentes
                         };
                     }
 
-                    if (setor.Tipo == Glass.Data.Model.TipoSetor.ExpCarregamento && SourceContext.Instance.CreateQuery()
+                    if (setor.ChangedProperties.Contains("Situacao") && 
+                        setor.Tipo == Glass.Data.Model.TipoSetor.ExpCarregamento && SourceContext.Instance.CreateQuery()
                         .From<Glass.Data.Model.Setor>("s")
                         .Where("Situacao=?ativo AND Tipo=?expCarregamento")
                         .Add("?ativo", Situacao.Ativo)
