@@ -1978,10 +1978,19 @@
     <None Include="Schemas\NFe_v1.50\inutNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\NFe_v1.50\leiauteCancNFe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteCCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\NFe_v1.50\leiauteConsSitNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.50\leiauteConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.50\leiauteEventoCancNFe_v1.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.50\leiauteInutNFe_v4.00.xsd">
@@ -2050,10 +2059,19 @@
     <None Include="Schemas\NFe_v1.60\inutNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\NFe_v1.60\leiauteCancNFe_v2.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteCCe_v1.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\NFe_v1.60\leiauteConsSitNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.60\leiauteConsStatServ_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\leiauteEventoCancNFe_v1.00.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.60\leiauteInutNFe_v4.00.xsd">
