@@ -3256,7 +3256,15 @@ namespace Glass.Data.Helper
 
             // Em projetos de medida exata, a área do vão será a soma das medidas das peças, utilizando arredondamento com múltimos de 50.
             if (medidaExata)
-                totM2 = pecasItemProjeto.Sum(f => ((((50 - (f.Altura % 50 > 0 ? f.Altura % 50 : 50)) + f.Altura) * ((50 - (f.Largura % 50 > 0 ? f.Largura % 50 : 50)) + f.Largura)) / 1000000) * f.Qtde);
+            {
+                var medidasUsar = pecasItemProjeto.Select(f =>
+                new {
+                    Altura = ((50 - (f.Altura % 50 > 0 ? f.Altura % 50 : 50)) + f.Altura),
+                    Largura = ((50 - (f.Largura % 50 > 0 ? f.Largura % 50 : 50)) + f.Largura),
+                    f.Qtde
+                }).ToList();
+                totM2 = medidasUsar.Sum(f => ((f.Altura * f.Largura) / 1000000F) * f.Qtde);
+            }
             else
             {
                 // Recupera o valor da medida "largura do vão".
