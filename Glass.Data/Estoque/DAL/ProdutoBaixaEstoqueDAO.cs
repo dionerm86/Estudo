@@ -159,19 +159,30 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public ProdutoBaixaEstoque[] GetByProd(GDASession sessao, uint idProd, bool baixarProdutoSeNaoHouverProdBaixa, TipoBuscaProduto tipoBuscaProduto)
         {
-            string sql = @"
-                SELECT pbe.*, p.CodInterno AS CodInternoProduto, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao
-                FROM produto_baixa_estoque pbe
-                    " + (tipoBuscaProduto == TipoBuscaProduto.ApenasProducao ? @"INNER JOIN produto p ON (pbe.idProdBaixa = p.idProd)
-                        LEFT JOIN subgrupo_prod s ON (p.idSubgrupoProd=s.idSubgrupoProd)" :
-                      @"Left Join produto p ON (pbe.idProdBaixa = p.idProd)
-                        LEFT JOIN Etiqueta_Processo ep ON (pbe.idProcesso=ep.idProcesso)
-                        LEFT JOIN etiqueta_Aplicacao ea ON (pbe.idAplicacao=ea.idAplicacao)") + @"
-                WHERE pbe.idProd=" + idProd;
+            var apenasProducao = tipoBuscaProduto == TipoBuscaProduto.ApenasProducao;
 
-            if (tipoBuscaProduto == TipoBuscaProduto.ApenasProducao)
+            string sql = @" SELECT pbe.*, p.CodInterno AS CodInternoProduto {0}
+                FROM produto_baixa_estoque pbe ";
+
+            if (apenasProducao)
+            {
+                sql += @"INNER JOIN produto p ON (pbe.idProdBaixa = p.idProd)
+                        LEFT JOIN subgrupo_prod s ON (p.idSubgrupoProd=s.idSubgrupoProd)";
+            }
+            else
+            {
+                sql += @"Left Join produto p ON (pbe.idProdBaixa = p.idProd)
+                        LEFT JOIN Etiqueta_Processo ep ON (pbe.idProcesso=ep.idProcesso)
+                        LEFT JOIN etiqueta_Aplicacao ea ON (pbe.idAplicacao=ea.idAplicacao)";
+            }
+
+            sql += " WHERE pbe.idProd = " + idProd;
+
+            if (apenasProducao)
                 sql += " AND ((p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + " AND p.tipoMercadoria=" +
                     (int)TipoMercadoria.MateriaPrima + ") OR s.tipoSubgrupo=" + (int)TipoSubgrupoProd.PVB + ")";
+
+            sql = string.Format(sql, apenasProducao ? "" : ", ep.CodInterno AS CodInterno , ea.CodInterno AS CodAplicacao ");
 
             List<ProdutoBaixaEstoque> retorno = objPersistence.LoadData(sessao, sql);
 
