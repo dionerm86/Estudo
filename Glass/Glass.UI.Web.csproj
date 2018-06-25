@@ -2023,6 +2023,9 @@
     <None Include="Schemas\NFe_v1.50\retInutNFe_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Schemas\NFe_v1.50\tiposBasico_v1.03.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Schemas\NFe_v1.50\tiposBasico_v4.00.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -2102,6 +2105,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.60\retInutNFe_v4.00.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Schemas\NFe_v1.60\tiposBasico_v1.03.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Schemas\NFe_v1.60\tiposBasico_v4.00.xsd">
