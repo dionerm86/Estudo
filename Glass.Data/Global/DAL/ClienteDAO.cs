@@ -282,9 +282,10 @@ namespace Glass.Data.DAL
             out List<GDAParameter> param, bool selecionar, out string filtroAdicional)
         {
             filtroAdicional = "";
-            string custoPedido = "(Select Round(Sum(p.custoPedido), 2) From pedido p Where p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado +
-                " And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Garantia + " And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Reposição +
-                " And p.IdCli=c.Id_Cli)";
+
+            string custoPedido = $@"(Select Round(Sum(p.custoPedido), 2) From pedido p Where p.situacao={ (int)Pedido.SituacaoPedido.Confirmado }
+                 And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.Garantia } And p.tipovenda<>{ (int)Pedido.TipoVendaPedido.Reposição }
+                 And p.IdCli=c.Id_Cli)";
 
             string campos = selecionar ? "c.*, if(c.idCidade is null, c.cidade, cid.NomeCidade) as nomeCidade, cid.NomeUf as uf, cast(" +
                 custoPedido + " as decimal(12,2)) as TotalCusto, '^^^' as Criterio, f.nome as nomeFunc, r.Descricao As Rota, " +
@@ -297,62 +298,65 @@ namespace Glass.Data.DAL
                 "Left Join (" + LogAlteracaoDAO.Instance.SqlDataAlt((int)LogAlteracao.TabelaAlteracao.Cliente, null, "Situação", "",
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
-            string sql = @"
-                Select " + campos + @" From cliente c 
+            string sql = $@"
+                Select { campos } From cliente c 
                     Left Join funcionario f On (c.idFunc=f.idFunc)
                     Left Join cidade cid On (cid.idCidade=c.idCidade)
                     Left Join rota_cliente rc On(c.Id_Cli=rc.IdCliente)
                     Left Join rota r On(rc.IdRota=r.IdRota)
                     Left Join loja lj On(c.Id_Loja=lj.IdLoja)
-                    " + sqlDataInativado + @"
+                    { sqlDataInativado }
                 Where 1 ?filtroAdicional?";
 
             if (!String.IsNullOrEmpty(dataNiverIni))
             {
-                filtroAdicional += " And c.Data_Nasc >=?dataNiverIni";
-                criterio = "Data Aniversário Início: " + dataNiverIni + "    ";
+                filtroAdicional += @" And MONTH(Data_nasc) * 100 + DAY(Data_Nasc) >= MONTH(?dataNiverIni) * 100 + DAY(?dataNiverIni)";
+                criterio = $"Data Aniversário Início: { dataNiverIni }    ";
             }
+
 
             if (!String.IsNullOrEmpty(dataNiverFim))
             {
-                filtroAdicional += " And c.Data_Nasc <=?dataNiverFim";
-                criterio = "Data Aniversário Fim: " + dataNiverFim + "    ";
+                filtroAdicional += @" And IF(MONTH(?dataNiverIni) <= MONTH(?dataNiverFim),
+                MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim),
+                (MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
+                criterio = $"Data Aniversário Fim: { dataNiverFim }    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
             {
                 filtroAdicional += " And c.dataCad >= ?dataCadIni";
-                criterio += "Data início cad.: " + dataCadIni + "    ";
+                criterio += $"Data início cad.: { dataCadIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadFim))
             {
                 filtroAdicional += " And c.dataCad <= ?dataCadFim";
-                criterio += "Data fim cad.: " + dataCadFim + "    ";
+                criterio += $"Data fim cad.: { dataCadFim }    ";
             }
 
             if (!String.IsNullOrEmpty(dataSemCompraIni))
             {
                 filtroAdicional += " and id_Cli not in (select idCli from pedido where dataCad>=?dataSemCompraIni)";
-                criterio += "Data início sem compra: " + dataSemCompraIni + "    ";
+                criterio += $"Data início sem compra: { dataSemCompraIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataSemCompraFim))
             {
                 filtroAdicional += " and id_Cli not in (select idCli from pedido where dataCad<=?dataSemCompraFim)";
-                criterio += "Data fim sem compra: " + dataSemCompraFim + "    ";
+                criterio += $"Data fim sem compra: { dataSemCompraFim }    ";
             }
 
             if (!String.IsNullOrEmpty(dataInativadoIni))
             {
                 sql += " and l.dataAlt>=?dataInativadoIni";
-                criterio += "Data início inativado: " + dataInativadoIni + "    ";
+                criterio += $"Data início inativado: { dataInativadoIni }    ";
             }
 
             if (!String.IsNullOrEmpty(dataInativadoFim))
             {
                 sql += " and l.dataAlt<=?dataInativadoFim";
-                criterio += "Data fim inativado: " + dataInativadoFim + "    ";
+                criterio += $"Data fim inativado: { dataInativadoFim }    ";
             }
 
             if (!String.IsNullOrEmpty(sqlDataInativado) && selecionar)
@@ -367,7 +371,7 @@ namespace Glass.Data.DAL
             {
                 filtroAdicional += " And c.id_Cli In (Select idCliente From rota_cliente Where idRota In " +
                     "(Select idRota From rota where codInterno like ?codRota))";
-                criterio += "Rota: " + codRota + "    ";
+                criterio += $"Rota: { codRota }    ";
             }
 
             if (ApenasSemPrecoTabela)
@@ -378,31 +382,31 @@ namespace Glass.Data.DAL
 
             if (idLoja > 0)
             {
-                filtroAdicional += " And c.id_loja=" + idLoja;
-                criterio += "Loja: " + LojaDAO.Instance.GetNome(idLoja) + "    ";
+                filtroAdicional += $" And c.id_loja={ idLoja }";
+                criterio += $"Loja: { LojaDAO.Instance.GetNome(idLoja) }    ";
             }
 
             if (idFunc > 0)
             {
-                filtroAdicional += " And c.idFunc=" + idFunc;
-                criterio += "Vendedor: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
+                filtroAdicional += $" And c.idFunc={ idFunc }";
+                criterio += $"Vendedor: { FuncionarioDAO.Instance.GetNome(idFunc) }    ";
             }
 
             if (idCidade > 0)
             {
-                filtroAdicional += " And c.idCidade=" + idCidade;
-                criterio += "Cidade: " + CidadeDAO.Instance.GetNome(idCidade) + "    ";
+                filtroAdicional += $" And c.idCidade={ idCidade }";
+                criterio += $"Cidade: { CidadeDAO.Instance.GetNome(idCidade) }    ";
             }
 
             if (idTipoCliente > 0)
             {
-                filtroAdicional += " And c.idTipoCliente=" + idTipoCliente;
-                criterio += "Tipo: " + TipoClienteDAO.Instance.GetNome(idTipoCliente) + "    ";
+                filtroAdicional += $" And c.idTipoCliente={ idTipoCliente }";
+                criterio += $"Tipo: { TipoClienteDAO.Instance.GetNome(idTipoCliente) }    ";
             }
 
             if (!String.IsNullOrEmpty(tipoFiscal))
             {
-                filtroAdicional += " And c.tipoFiscal In (" + tipoFiscal + ")";
+                filtroAdicional += $" And c.tipoFiscal In ({ tipoFiscal })";
 
                 if (tipoFiscal.Contains(((int)TipoFiscalCliente.ConsumidorFinal).ToString()))
                     criterio += "Tipo fiscal: Consumidor final";
@@ -415,60 +419,60 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(endereco))
             {
                 filtroAdicional += " And c.Endereco Like ?endereco ";
-                criterio += "Endereço: " + endereco + "    ";
+                criterio += $"Endereço: { endereco }    ";
             }
 
             if (!String.IsNullOrEmpty(bairro))
             {
                 filtroAdicional += " And c.Bairro Like ?bairro ";
-                criterio += "Bairro: " + bairro + "    ";
+                criterio += $"Bairro: { bairro }    ";
             }
 
             if (!String.IsNullOrEmpty(telefone))
             {
                 filtroAdicional += " And (Tel_Res Like ?telRes Or Tel_Cont Like ?telCont Or Tel_Cel Like ?telCel) ";
-                criterio += "Telefone: " + telefone + "    ";
+                criterio += $"Telefone: { telefone }    ";
             }
 
             if (!String.IsNullOrEmpty(cpfCnpj))
             {
                 filtroAdicional += " And Replace(Replace(Replace(Cpf_Cnpj, '.', ''), '-', ''), '/', '') Like ?cpfCnpj ";
-                criterio += "CPF/CNPJ: " + cpfCnpj + "    ";
+                criterio += $"CPF/CNPJ: { cpfCnpj }    ";
             }
 
             if (idTabelaDesconto > 0)
             {
                 string descr = TabelaDescontoAcrescimoClienteDAO.Instance.GetDescricao(idTabelaDesconto);
                 sql += " and c.idtabeladesconto = ?idtabeladesconto";
-                criterio += "Tabela Desconto/Acréscimo Cliente: " + descr + "    ";
+                criterio += $"Tabela Desconto/Acréscimo Cliente: { descr }    ";
             }
 
             if (!string.IsNullOrEmpty(dataIni))
             {
                 filtroAdicional += " And c.Dt_Ult_Compra>=?dataIni";
-                criterio = string.Format("Data Início: {0}    ", dataIni);
+                criterio = $"Data Início: { dataIni }    ";
             }
 
             if (!string.IsNullOrEmpty(dataFim))
             {
                 filtroAdicional += " And c.Dt_Ult_Compra<=?dataFim";
-                criterio += string.Format("Data Fim: {0}    ", dataFim);
+                criterio += $"Data Fim: {dataFim}    ";
             }
 
             if (tipoPessoa > 0)
             {
-                filtroAdicional += " And c.Tipo_Pessoa='" + (tipoPessoa == 1 ? "F" : "J") + "'";
-                criterio += "Tipo Pessoa: " + (tipoPessoa == 1 ? "Física" : "Jurídica") + "    ";
+                filtroAdicional += $" And c.Tipo_Pessoa='{ (tipoPessoa == 1 ? "F" : "J") }'";
+                criterio += $"Tipo Pessoa: { (tipoPessoa == 1 ? "Física" : "Jurídica") }    ";
             }
 
             if (idCli > 0)
-                filtroAdicional += " And c.Id_Cli=" + idCli;
+                filtroAdicional += $" And c.Id_Cli={ idCli }";
             else
             {
                 if (!String.IsNullOrEmpty(nomeCli))
                 {
                     string ids = ClienteDAO.Instance.GetIds(null, nomeCli, null, 0, null, null, null, null, 0);
-                    filtroAdicional += " And c.id_Cli in (" + ids + ")";
+                    filtroAdicional += $" And c.id_Cli in ({ ids })";
                 }
 
                 if (compra == 1)
@@ -482,10 +486,10 @@ namespace Glass.Data.DAL
 
                 if (situacao > 0)
                 {
-                    filtroAdicional += " And c.situacao=" + situacao;
+                    filtroAdicional += $" And c.situacao={ situacao }";
                     Cliente temp = new Cliente();
                     temp.Situacao = situacao;
-                    criterio += "Situação: " + temp.DescrSituacao + "    ";
+                    criterio += $"Situação: { temp.DescrSituacao }    ";
                 }
             }
 
