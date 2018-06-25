@@ -346,6 +346,69 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.CheckBox chkCliVinculado;
         
         /// <summary>
+        /// Label31 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label31;
+        
+        /// <summary>
+        /// ctrlDataMedIni control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataMedIni;
+        
+        /// <summary>
+        /// ctrlDataMedFim control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataMedFim;
+        
+        /// <summary>
+        /// ImageButton21 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton21;
+        
+        /// <summary>
+        /// Label27 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label27;
+        
+        /// <summary>
+        /// txtBairro control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtBairro;
+        
+        /// <summary>
+        /// ImageButton20 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton20;
+        
+        /// <summary>
         /// Label6 control.
         /// </summary>
         /// <remarks>

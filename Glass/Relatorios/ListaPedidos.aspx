@@ -59,6 +59,9 @@
             var dataIniPronto = "", dataFimPronto = "", diasDifProntoLib = "";
             var obs = FindControl("txtObs", "input").value;
             var idCarregamento = FindControl("txtCarregamento", "input").value;
+            var bairro = FindControl("txtBairro", "input").value;
+            var dtIniMed = FindControl("ctrlDataMedIni_txtData", "input").value;
+            var dtFimMed = FindControl("ctrlDataMedFim_txtData", "input").value;
 
             if (exibirPronto && FindControl("ctrlDataProntoIni_txtData", "input") != null) {
                 dataIniPronto = FindControl("ctrlDataProntoIni_txtData", "input").value;
@@ -96,7 +99,8 @@
                 "&tipoCliente=" + tipoCliente + "&trazerPedCliVinculado=" + trazerPedCliVinculado + "&esconderTotal=" + esconderTotal +
                 "&mostrarDescontoTotal=" + mostrarDescontoTotal + "&desconto=" + desconto + "&agrupar=" + agrupar +
                 "&cidade=" + cidade + "&comSemNf=" + comSemNf + "&idMedidor=" + idMedidor +
-                "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento;
+                "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento + 
+                "&bairro=" + bairro + "&dataInicioMedicao" + dtIniMed + "&dataFimMedicao" + dtFimMed;;
 
             openWindow(600, 800, 'RelBase.aspx?rel=' + nomeRel + queryString);
             return false;
@@ -322,6 +326,28 @@
                 </table>
                 <table>
                     <tr>
+                        <td>
+                            <asp:Label ID="Label31" runat="server" Text="Período (Medição)" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <uc2:ctrlData ID="ctrlDataMedIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
+                        </td>
+                        <td>
+                            <uc2:ctrlData ID="ctrlDataMedFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
+                        </td>
+                        <td>
+                            <asp:ImageButton ID="ImageButton21" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
+                        </td>                        
+                        <td>
+                            <asp:Label ID="Label27" runat="server" Text="Bairro" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtBairro" runat="server" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
+                                MaxLength="50"></asp:TextBox>
+                            <asp:ImageButton ID="ImageButton20" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
                         <td>
                             <asp:Label ID="Label6" runat="server" ForeColor="#0066FF" Text="Vendedor (Assoc. Pedido)"></asp:Label>
                         </td>
@@ -848,6 +874,9 @@
                         <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="txtObs" Name="observacao" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCarregamento" Name="idCarregamento" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
@@ -932,6 +961,9 @@
                         <asp:ControlParameter ControlID="drpOrigemPedido" Name="origemPedido" PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="txtObs" Name="observacao" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCarregamento" Name="idCarregamento" PropertyName="Text" Type="Int32" />
+                        <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"
