@@ -328,6 +328,26 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "semLucr":
+                    {
+                        report.ReportPath = "Relatorios/rptVendasSemLucr.rdlc";
+                        var situacaoSemLucr = !String.IsNullOrEmpty(Request["situacao"]) ? Glass.Conversoes.StrParaInt(Request["situacao"]) : (int)Glass.Data.Model.Pedido.SituacaoPedido.Confirmado;
+                        var lstSemLucr = PedidoDAO.Instance.GetForRptLucr(Request["idLoja"], Request["idVend"], Request["idPedido"].StrParaInt(), Request["idCliente"].StrParaInt(),
+                            Request["nomeCliente"], situacaoSemLucr, Request["DtIni"], Request["DtFim"], Glass.Conversoes.StrParaInt(Request["TipoVenda"]),
+                            Glass.Conversoes.StrParaInt(Request["agruparFunc"]), Request["orderBy"]);
+                        if (Request["idVend"] != null)
+                        {
+                            var idPedido = new List<uint>();
+                            foreach (var p in lstSemLucr)
+                                idPedido.Add(p.IdPedido);
+                            lstParam.Add(new ReportParameter("ValorComissao", ComissaoConfigDAO.Instance.GetComissaoValor(0, Glass.Conversoes.StrParaUint(Request["idVend"]), null, null, idPedido.ToArray()).ToString()));
+                        }
+                        else
+                            lstParam.Add(new ReportParameter("ValorComissao", "0"));
+                        lstParam.Add(new ReportParameter("Agrupar", (Request["agrupar"] == "1").ToString()));
+                        report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(lstSemLucr, PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
+                        break;
+                    }
                 case "SemImposto":
                     {
                         report.ReportPath = "Relatorios/rptVendasSemImposto.rdlc";
