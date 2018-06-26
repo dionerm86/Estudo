@@ -3981,7 +3981,7 @@ namespace Glass.Data.DAL
 
         public List<int> ObterTiposPagto(GDASession session, string idsLiberarPedido)
         {
-            return ExecuteMultipleScalar<int>(session, $"SELECT TipoPagto FROM liberarpedido WHERE IdLiberarPedido IN ({ idsLiberarPedido });");
+            return ExecuteMultipleScalar<int>(session, $"SELECT DISTINCT(TipoPagto) FROM liberarpedido WHERE IdLiberarPedido IN ({ idsLiberarPedido });");
         }
 
         public uint ObtemIdLoja(uint idLiberarPedido)

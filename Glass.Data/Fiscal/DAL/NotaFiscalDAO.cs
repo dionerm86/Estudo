@@ -129,7 +129,6 @@ namespace Glass.Data.DAL
                 decimal totalIpiPedido = 0;
                 decimal totalIcmsPedido = 0;
                 decimal totalFrete = 0;
-
                 var nfDeLiberacao = false;
 
                 if (!String.IsNullOrEmpty(idsLiberarPedidos))
@@ -406,7 +405,7 @@ namespace Glass.Data.DAL
                         nf.IdCliente = idCli > 0 ? idCli : idCliente;
                         nf.IdLoja = idLoja;
                         nf.IdCidade = cidadeLoja.Value;
-                        nf.IdTransportador = peds[0].IdTransportador > 0 ? (uint?)peds[0].IdTransportador : ClienteDAO.Instance.ObtemIdTransportador(transaction, nf.IdCliente.Value);
+                        nf.IdTransportador = (uint?)peds?.Where(f => f.IdTransportador > 0)?.Select(f => f.IdTransportador)?.FirstOrDefault() ?? ClienteDAO.Instance.ObtemIdTransportador(transaction, nf.IdCliente.Value);
                         nf.Situacao = (int)NotaFiscal.SituacaoEnum.Aberta;
                         nf.TipoDocumento = (int)NotaFiscal.TipoDoc.Saída;
                         nf.DataSaidaEnt = nfce ? null : (DateTime?)DateTime.Now.AddMinutes(1);
@@ -1284,8 +1283,10 @@ namespace Glass.Data.DAL
 
                     if (idsPedidoLiberacao.Any(f => f > 0))
                     {
-                        var valoresPagtoAntecipado = ExecuteScalar<decimal>(sessao, $"SELECT SUM(ValorPagamentoAntecipado) FROM pedido WHERE IdPedido IN ({ string.Join(",", idsPedidoLiberacao) }) AND IdPagamentoAntecipado > 0;");
-                        var valoresSinal = ExecuteScalar<decimal>(sessao, $"SELECT SUM(ValorEntrada) FROM pedido WHERE IdPedido IN ({ string.Join(",", idsPedidoLiberacao) }) AND IdSinal > 0;");
+                        var valoresPagtoAntecipado = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorPagamentoAntecipado) FROM pedido
+                            WHERE IdPedido IN ({ string.Join(",", idsPedidoLiberacao) }) AND (IdPagamentoAntecipado > 0 OR IdObra > 0);");
+                        var valoresSinal = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorEntrada) FROM pedido
+                            WHERE IdPedido IN ({ string.Join(",", idsPedidoLiberacao) }) AND IdSinal > 0;");
 
                         totalOutros += valoresPagtoAntecipado + valoresSinal;
                     }
