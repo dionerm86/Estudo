@@ -67,7 +67,7 @@ namespace Glass.Data.Handlers
                 using (ZipFile zip = new ZipFile(context.Response.OutputStream))
                 {
                     for (var i = 0; i < lstArqMesa.Count; i++)
-                        zip.AddFileStream(lstCodArq[i].Replace("  ", string.Empty).Replace(" ", string.Empty), string.Empty, new System.IO.MemoryStream(lstArqMesa[i]));
+                        zip.AddFileStream(lstCodArq[i].Replace("  ", string.Empty).Replace(" ", string.Empty).Replace('ç', Convert.ToChar(135)), string.Empty, new System.IO.MemoryStream(lstArqMesa[i]));
 
                     zip.AddStringAsFile(errosGeracaoMarcacao, "Situações com arquivos de mesa.error", string.Empty);
 
