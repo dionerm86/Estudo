@@ -440,19 +440,6 @@ namespace Glass.Global.Negocios.Componentes
                         "Todos os produtos associados ao subgrupo do tipo Modulado devem ter matéria-prima associada.").GetFormatter()
                     };
 
-            /* Chamado 35445. */
-            if (!subgrupoProd.ProdutosEstoque && Data.DAL.GrupoProdDAO.Instance.IsVidro(subgrupoProd.IdGrupoProd) &&
-                subgrupoProd.TipoCalculo == Data.Model.TipoCalculoGrupoProd.Qtd)
-            {
-                if (subgrupoProd.ExistsInStorage)
-                    return new[]
-                    {
-                        "Não é possível configurar um subgrupo do grupo Vidro com o tipo de cálculo por quantidade sendo que não é um subgrupo de produtos para estoque.".GetFormatter()
-                    };
-                else
-                    subgrupoProd.ProdutosEstoque = true;
-
-            }
             /* Chamado 39865. */
             else if (subgrupoProd.ProdutosEstoque && Data.DAL.GrupoProdDAO.Instance.IsVidro(subgrupoProd.IdGrupoProd) &&
                 subgrupoProd.TipoCalculo != Data.Model.TipoCalculoGrupoProd.Qtd &&
