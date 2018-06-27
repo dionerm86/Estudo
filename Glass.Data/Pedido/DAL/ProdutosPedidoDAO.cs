@@ -1701,7 +1701,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Marca saída de produto na tabela produtos_pedido
         /// </summary>
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string numEtiqueta)
+        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque, string metodo, string numEtiqueta)
         {
 
             if (idProdPed == 0)
@@ -1709,28 +1709,28 @@ namespace Glass.Data.DAL
 
             var idPedido = (int)ObtemIdPedido(idProdPed);
 
-            if (!string.IsNullOrWhiteSpace(numEtiqueta)
-                && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Revenda && idSaidaEstoque == 0)
+            if (!string.IsNullOrWhiteSpace(metodo)
+                && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
-                var idProd = ObtemValorCampo<uint>(sessao, "idProd", "idProdPed = " + idProdPed);
-                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", "idProd = " + idProd);
+                var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
+                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
                 var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
 
                 var logData = new LogAlteracao();
                 logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                 logData.IdRegistroAlt = idPedido;
                 logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-                logData.Campo = "Saída Expedição";
+                logData.Campo = $"MarcarSaida - { metodo }";
                 logData.DataAlt = DateTime.Now;
-                logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                logData.ValorAnterior = $"{codInterno} - {descricaoProd} ({ObtemValorCampo<string>("Qtde", "IdProdPed = " + idProdPed)}/{ObtemValorCampo<string>("QtdSaida", "IdProdPed = " + idProdPed)})";
-                logData.ValorAtual = $"{ numEtiqueta } - Qtd. Saída ({qtdSaida.ToString() })";
+                logData.IdFuncAlt = (uint)FuncionarioDAO.Instance.GetAdministradores(true).Where(f => f.AdminSync == true).Select(f => f.IdFunc).FirstOrDefault();
+                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>("Qtde", $"IdProdPed = { idProdPed }") }/{ ObtemValorCampo<string>("QtdSaida", $"IdProdPed = { idProdPed }") })";
+                logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdSaida.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
                 logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
 
                 LogAlteracaoDAO.Instance.Insert(sessao, logData);
             }
 
-            string sql = "Update produtos_pedido set qtdSaida=greatest(Coalesce(qtdSaida, 0)+?qtdSaida, 0) Where idProdPed=" + idProdPed;
+            string sql = $"Update produtos_pedido set qtdSaida=greatest(Coalesce(qtdSaida, 0)+?qtdSaida, 0) Where idProdPed={ idProdPed }";
             objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?qtdSaida", qtdSaida));
 
             // Insere um registro na tabela indicando que o produto foi baixado
@@ -1745,16 +1745,11 @@ namespace Glass.Data.DAL
             }
         }
 
-        public void MarcarSaida(GDASession sessao, uint idProdPed, float qtdSaida, uint idSaidaEstoque)
-        {
-            MarcarSaida(sessao, idProdPed, qtdSaida, idSaidaEstoque, string.Empty);
-        }
-
         #endregion
 
         #region Estorno saída de produtos
 
-        public void EstonoSaida(GDASession sessao, uint idProdPed, float qtdEstorno, string numEtiqueta)
+        public void EstornoSaida(GDASession sessao, uint idProdPed, float qtdEstorno, string metodo, string numEtiqueta)
         {
 
             if (idProdPed == 0)
@@ -1762,34 +1757,29 @@ namespace Glass.Data.DAL
 
             var idPedido = (int)ObtemIdPedido(idProdPed);
 
-            if (!string.IsNullOrWhiteSpace(numEtiqueta)
+            if (!string.IsNullOrWhiteSpace(metodo)
                 && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
-                var idProd = ObtemValorCampo<uint>(sessao, "idProd", "idProdPed = " + idProdPed);
-                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", "idProd = " + idProd);
+                var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
+                var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
                 var descricaoProd = ProdutoDAO.Instance.GetDescrProduto(sessao, codInterno);
 
                 var logData = new LogAlteracao();
                 logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                 logData.IdRegistroAlt = idPedido;
                 logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-                logData.Campo = "Estorno Expedição Balcão";
+                logData.Campo = $"EstornoSaida - { metodo }";
                 logData.DataAlt = DateTime.Now;
                 logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                logData.ValorAnterior = $"{codInterno} - {descricaoProd} ({ObtemValorCampo<string>("Qtde", "IdProdPed = " + idProdPed)}/{ObtemValorCampo<string>("QtdSaida", "IdProdPed = " + idProdPed)})";
-                logData.ValorAtual = $"{ numEtiqueta } - Qtd. Estorno ({qtdEstorno.ToString() })";
+                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ObtemValorCampo<string>("Qtde", $"IdProdPed = { idProdPed }")}/{ ObtemValorCampo<string>("QtdSaida", $"IdProdPed = { idProdPed }") })";
+                logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdEstorno.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
                 logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
 
                 LogAlteracaoDAO.Instance.Insert(sessao, logData);
             }
 
-            string sql = "Update produtos_pedido set qtdSaida=(Coalesce(qtdSaida, 0)-" + qtdEstorno + ") Where idProdPed=" + idProdPed;
+            string sql = $"Update produtos_pedido set qtdSaida=(Coalesce(qtdSaida, 0)-{ qtdEstorno }) Where idProdPed={ idProdPed }";
             objPersistence.ExecuteCommand(sessao, sql);
-        }
-
-        public void EstonoSaida(GDASession sessao, uint idProdPed, float qtdEstorno)
-        {
-            EstonoSaida(sessao, idProdPed, qtdEstorno, string.Empty);
         }
 
         #endregion

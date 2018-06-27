@@ -235,7 +235,7 @@ namespace Glass.Data.DAL
                                 qtdSaidaEstoque *= prodPed.Altura;
 
                             // Marca a entrada dos produtos no pedido
-                            ProdutosPedidoDAO.Instance.MarcarSaida(transaction, prod.IdProdPed, -prod.QtdeSaida, idSaidaEstoque);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(transaction, prod.IdProdPed, -prod.QtdeSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                             // Faz a movimentação de estorno no estoque
                             if (saida.IdPedido > 0)

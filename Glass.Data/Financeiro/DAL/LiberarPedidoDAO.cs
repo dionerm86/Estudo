@@ -1546,7 +1546,7 @@ namespace Glass.Data.DAL
                         // Estorna a saída dada neste produto, se o pedido não tiver que transferir
                         if (!transferencia)
                         {
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
                         }
 
                         // Credita o estoque
@@ -2926,7 +2926,7 @@ namespace Glass.Data.DAL
                         {
                             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
 
-                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
                         }
 
                         MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
@@ -3281,7 +3281,7 @@ namespace Glass.Data.DAL
                     {
                         // Estorna a saída dada neste produto, se o pedido não tiver que transferir
                         if (!transferencia)
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                         // Credita o estoque
                         MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, prod.IdProd, (uint)idLoja, idLiberarPedido, prod.IdPedido,
