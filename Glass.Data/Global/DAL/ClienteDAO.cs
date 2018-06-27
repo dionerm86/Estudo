@@ -314,13 +314,12 @@ namespace Glass.Data.DAL
                 criterio = $"Data Aniversário Início: { dataNiverIni }    ";
             }
 
-
             if (!String.IsNullOrEmpty(dataNiverFim))
             {
-                filtroAdicional += @" And IF(MONTH(?dataNiverIni) <= MONTH(?dataNiverFim),
-                MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim),
-                (MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
-                criterio = $"Data Aniversário Fim: { dataNiverFim }    ";
+                filtroAdicional += !String.IsNullOrEmpty(dataNiverIni) && DateTime.Parse(dataCadIni + " 00:00") <= DateTime.Parse(dataNiverFim + " 00:00") ?
+                "MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim)" :
+                "(MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
+                criterio = "Data Aniversário Fim: " + dataNiverFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
