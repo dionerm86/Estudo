@@ -3049,11 +3049,17 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o cliente do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public string ObtemPedCli(uint idPedido)
         {
-            return ObtemValorCampo<string>("codCliente", "idPedido=" + idPedido);
+            return ObtemPedCli(null, idPedido);
+        }
+
+        /// <summary>
+        /// Obtém o cliente do pedido
+        /// </summary>
+        public string ObtemPedCli(GDASession session, uint idPedido)
+        {
+            return ObtemValorCampo<string>(session, "CodCliente", $"IdPedido={ idPedido }");
         }
 
         /// <summary>
@@ -3637,11 +3643,11 @@ namespace Glass.Data.DAL
                         AND pp.IdPedido = {0};", idPedido)) > 0;
         }
 
-        public bool VerificarPedidoPossuiIcmsEDesconto(string idsPedidos)
+        public bool VerificarPedidoPossuiIcmsEDesconto(GDASession session, string idsPedidos)
         {
             var sql = string.Format("select COUNT(*) from pedido where ValorIcms>0 AND Desconto>0 AND IdPedido IN({0})", idsPedidos);
 
-            return ExecuteScalar<bool>(sql);
+            return ExecuteScalar<bool>(session, sql);
         }
 
         /// <summary>

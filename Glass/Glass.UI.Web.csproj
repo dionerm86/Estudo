@@ -9041,6 +9041,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptPosicaoMateriaPrimaProdutos.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptVendasSemLucr.rdlc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Relatorios\CFe\" />

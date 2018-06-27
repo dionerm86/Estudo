@@ -1824,7 +1824,12 @@ namespace Glass.Data.DAL
 
         public uint? ObtemIdTransportador(uint idCliente)
         {
-            return ObtemValorCampo<uint?>("idTransportador", "id_Cli=" + idCliente);
+            return ObtemIdTransportador(null, idCliente);
+        }
+
+        public uint? ObtemIdTransportador(GDASession session, uint idCliente)
+        {
+            return ObtemValorCampo<uint?>(session, "IdTransportador", $"Id_Cli={ idCliente }");
         }
 
         public bool ObtemHabilitarEditorCad(uint idCliente)
@@ -2211,9 +2216,9 @@ namespace Glass.Data.DAL
             return cidade + "/" + uf;
         }
 
-        public string ObtemObsNfe(uint idCliente)
+        public string ObtemObsNfe(GDASession session, uint idCliente)
         {
-            return ObtemValorCampo<string>("obsNfe", "id_Cli=" + idCliente);
+            return ObtemValorCampo<string>("ObsNfe", $"Id_Cli={ idCliente }");
         }
 
         /// <summary>

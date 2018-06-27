@@ -3979,6 +3979,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>(session, "tipoPagto", "IdLiberarPedido=" + idLiberarPedido);
         }
 
+        public List<int> ObterTiposPagto(GDASession session, string idsLiberarPedido)
+        {
+            return ExecuteMultipleScalar<int>(session, $"SELECT DISTINCT(TipoPagto) FROM liberarpedido WHERE IdLiberarPedido IN ({ idsLiberarPedido });");
+        }
+
         public uint ObtemIdLoja(uint idLiberarPedido)
         {
             return ExecuteScalar<uint>(@"select f.idLoja from liberarpedido lp 
@@ -4097,15 +4102,17 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteScalar(sql, new GDAParameter("?dataIni", DateTime.Parse(dtIni + " 00:00:00")), new GDAParameter("?dataFim", DateTime.Parse(dtFim + " 23:59:59"))).ToString();
         }
 
-        public float GetTotalLiberado(string idsLiberacoes)
+        public float GetTotalLiberado(GDASession session, string idsLiberacoes)
         {
-            if (string.IsNullOrEmpty(idsLiberacoes))
+            if (string.IsNullOrWhiteSpace(idsLiberacoes))
+            {
                 return 0;
+            }
 
-            string sql = @"select sum(lp.total) from liberarpedido lp
-                            where lp.idliberarpedido in (" + idsLiberacoes + ") and lp.situacao=1;";
+            var sql = $@"SELECT SUM(lp.Total) FROM liberarpedido lp
+                WHERE lp.IdLiberarPedido IN ({ idsLiberacoes }) AND lp.Situacao={ (int)LiberarPedido.SituacaoLiberarPedido.Liberado };";
 
-            return Convert.ToSingle(objPersistence.ExecuteScalar(sql));
+            return objPersistence.ExecuteScalar(session, sql)?.ToString()?.StrParaFloat() ?? 0F;
         }
 
         #endregion
