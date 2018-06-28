@@ -325,9 +325,12 @@ namespace Glass.UI.Web.Cadastros
             // Se houver separação entre valores fiscais e reais só permite liberação à prazo
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
-                drpTipoPagto.Items[0].Enabled = false;
-                drpTipoPagto.Items[1].Enabled = true;
+                drpTipoPagto.Items[0].Enabled = valorPagar <= 0;
+                drpTipoPagto.Items[1].Enabled = valorPagar > 0;
                 chkReceberEntrada.Visible = false;
+
+                ctrlFormaPagto1.ExibirGerarCredito = valorPagar < 0;
+                ctrlFormaPagto2.ExibirGerarCredito = valorPagar < 0;
             }
             else if (idCliente > 0)
             {
