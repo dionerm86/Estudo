@@ -132,10 +132,15 @@ namespace Glass.Data.DAL
             }
 
             tipoArquivo = tipoArquivo == 0 && idArquivoMesaCorte.GetValueOrDefault() > 0 ? ObtemTipoArquivo(session, idArquivoMesaCorte.Value) : tipoArquivo;
-            
+            var produtoPossuiImagemEditada = ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(session, idProdPedEsp);
+            var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaItemProjeto.IdPecaItemProj);
+            // Chamado 74968.
+            // A propriedade ImagemEditada é marcada como true somente ao salvar a edição do projeto, ou seja, caso o usuário somente abra a tela o sistema não deve considerar que a peça foi editada.
+            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp) && pecaItemProjeto.ImagemEditada;
+
             // Se possuir imagem associada, não deve gerar arquivo de mesa, a menos que seja .fml básico ou tenha sido editado no CadProject
-            if ((ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(session, idProdPedEsp) || pecaItemProjeto.ImagemEditada || PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaItemProjeto.IdPecaItemProj)) &&
-                (idArquivoMesaCorte == null || tipoArquivo != (int)TipoArquivoMesaCorte.FMLBasico) && !ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp))
+            if ((produtoPossuiImagemEditada || pecaItemProjeto.ImagemEditada || pecaPossuiFiguraAssociada) &&
+                (idArquivoMesaCorte == null || tipoArquivo != (int)TipoArquivoMesaCorte.FMLBasico) && !pecaPossuiEdicaoCadProject)
             {
                 if (idArquivoMesaCorte.GetValueOrDefault() > 0 && (tipoArquivo == (int)TipoArquivoMesaCorte.FML ||
                     tipoArquivo == (int)TipoArquivoMesaCorte.FMLBasico))
