@@ -1546,7 +1546,7 @@ namespace Glass.Data.DAL
                         // Estorna a saída dada neste produto, se o pedido não tiver que transferir
                         if (!transferencia)
                         {
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
                         }
 
                         // Credita o estoque
@@ -2926,7 +2926,7 @@ namespace Glass.Data.DAL
                         {
                             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
 
-                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, qtdeLiberar[i], idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
                         }
 
                         MovEstoqueDAO.Instance.BaixaEstoqueLiberacao(sessao, prodPed.IdProd, idLoja, idLiberarPedido,
@@ -3281,7 +3281,7 @@ namespace Glass.Data.DAL
                     {
                         // Estorna a saída dada neste produto, se o pedido não tiver que transferir
                         if (!transferencia)
-                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0);
+                            ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                         // Credita o estoque
                         MovEstoqueDAO.Instance.CreditaEstoqueLiberacao(session, prod.IdProd, (uint)idLoja, idLiberarPedido, prod.IdPedido,
@@ -3979,6 +3979,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>(session, "tipoPagto", "IdLiberarPedido=" + idLiberarPedido);
         }
 
+        public List<int> ObterTiposPagto(GDASession session, string idsLiberarPedido)
+        {
+            return ExecuteMultipleScalar<int>(session, $"SELECT DISTINCT(TipoPagto) FROM liberarpedido WHERE IdLiberarPedido IN ({ idsLiberarPedido });");
+        }
+
         public uint ObtemIdLoja(uint idLiberarPedido)
         {
             return ExecuteScalar<uint>(@"select f.idLoja from liberarpedido lp 
@@ -4097,15 +4102,17 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteScalar(sql, new GDAParameter("?dataIni", DateTime.Parse(dtIni + " 00:00:00")), new GDAParameter("?dataFim", DateTime.Parse(dtFim + " 23:59:59"))).ToString();
         }
 
-        public float GetTotalLiberado(string idsLiberacoes)
+        public float GetTotalLiberado(GDASession session, string idsLiberacoes)
         {
-            if (string.IsNullOrEmpty(idsLiberacoes))
+            if (string.IsNullOrWhiteSpace(idsLiberacoes))
+            {
                 return 0;
+            }
 
-            string sql = @"select sum(lp.total) from liberarpedido lp
-                            where lp.idliberarpedido in (" + idsLiberacoes + ") and lp.situacao=1;";
+            var sql = $@"SELECT SUM(lp.Total) FROM liberarpedido lp
+                WHERE lp.IdLiberarPedido IN ({ idsLiberacoes }) AND lp.Situacao={ (int)LiberarPedido.SituacaoLiberarPedido.Liberado };";
 
-            return Convert.ToSingle(objPersistence.ExecuteScalar(sql));
+            return objPersistence.ExecuteScalar(session, sql)?.ToString()?.StrParaFloat() ?? 0F;
         }
 
         #endregion

@@ -14,87 +14,115 @@ namespace Glass.Data.RelDAL
     {
         private string Sql(string idsSetor, string mes, string ano, bool selecionar)
         {
-            // ATENÇÃO: Ao alterar este sql, alterar também o sql do método SqlPerdaSetores(), pois devem buscar dados idênticos, por menor que seja a alteração,
-            // modificar os dois sqls.
-            var criterio = $"Setor: { SetorDAO.Instance.GetNomeSetores(idsSetor) }. Mês Referência: { mes.PadLeft(2, '0') }/{ ano }";
+            var sqlTotalM2Producao = string.Empty;
+            var sqlTotalM2Reposicao = string.Empty;
+            var sqlTotalM2DadosReposicao = string.Empty;
 
+            return Sql(idsSetor, mes, ano, selecionar, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
+        }
+
+        private string Sql(string idsSetor, string mes, string ano, bool selecionar, out string sqlTotalM2Producao, out string sqlTotalM2Reposicao,
+            out string sqlTotalM2DadosReposicao)
+        {
             var idsProdPed = ExecuteMultipleScalar<int>($@"SELECT DISTINCT(ppp.IdProdPed)
 		        FROM produto_pedido_producao ppp
 			        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
-		        WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }, { (int)ProdutoPedidoProducao.SituacaoEnum.Perda })
-			        AND lp.IdSetor IN ({ idsSetor })
 			        AND MONTH(lp.DataLeitura)={ mes }
                     AND YEAR(lp.DataLeitura)={ ano }");
 
-            var sql = $@"SELECT Dia, IdSetor, Descricao, CAST(SUM(TotProdM2) AS DECIMAL(12, 2)) AS TotProdM2, SUM(TotPerdaM2) AS TotPerdaM2,
-                '$$$' AS Criterio, 0 AS DesafioPerda, 0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
-                FROM
-                    (SELECT * FROM
-                        (SELECT Dia, IdSetor, Descricao, ROUND(SUM(TotProdM2), 4) AS TotProdM2, 0 AS TotPerdaM2
-                        FROM
-                            (SELECT DAY(ppp.DataLeitura) AS Dia, ppp.IdSetor, ppp.Descricao,
-                                IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, ((((50 - IF(MOD(Altura, 50) > 0, MOD(Altura, 50), 50)) + Altura) * ((50 - IF(MOD(Largura, 50) > 0,
-                                MOD(Largura, 50), 50)) + Largura)) / 1000000) * a.Qtde, TotM2Calc) / (pp.Qtde * IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)) AS TotProdM2
-                            FROM pedido ped
-                                INNER JOIN
-                                    (SELECT ppe.IdProdPed, ppe.IdPedido, ppe.IdAmbientePedido, ppe.TotM2Calc, ppe.Qtde
-                                    FROM produtos_pedido_espelho ppe
-                                    WHERE ppe.IdProdPed IN ({ string.Join(",", idsProdPed) })) pp ON (ped.IdPedido = pp.IdPedido)
-                                INNER JOIN
-                                    (SELECT ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, lp.IdSetor, s.Descricao, lp.Dataleitura
-                                    FROM produto_pedido_producao ppp
-                                        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-                                        INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
-                                    WHERE ppp.IdProdPed IN ({ string.Join(",", idsProdPed) })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
-                                LEFT JOIN
-                                    (SELECT ape.IdAmbientePedido, ape.Altura, ape.Largura, ape.Qtde
-                                    FROM ambiente_pedido_espelho ape) a ON (pp.IdAmbientePedido = a.IdAmbientePedido))
-                        AS temp
-                        GROUP BY 1
-                        ORDER BY 1)
-                    AS tbResultProd
+            sqlTotalM2Producao = $@"SELECT DAY(ppp.DataLeitura) AS Dia,
+                    ppp.IdSetor,
+                    ppp.Descricao,
+                    ROUND(SUM(ROUND(IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra },
+                        ((((50 - IF(MOD(Altura, 50) > 0,
+                            MOD(Altura, 50),
+                            50)) + Altura) * ((50 - IF(MOD(Largura, 50) > 0,
+                            MOD(Largura, 50),
+                            50)) + Largura)) / 1000000) * a.Qtde,
+                        TotM2Calc) / (pp.Qtde * IF(TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 2)), 4) AS TotProdM2,
+                    0 AS TotPerdaM2
+                FROM pedido ped
+	                INNER JOIN
+		                (SELECT ppe.IdProdPed,
+                            ppe.IdPedido,
+                            ppe.IdAmbientePedido,
+                            ppe.TotM2Calc,
+                            ppe.Qtde
+		                FROM produtos_pedido_espelho ppe
+                        WHERE ppe.IdProdPed IN ({ string.Join(",", idsProdPed) })) pp ON (ped.IdPedido = pp.IdPedido)
+	                INNER JOIN
+		                (SELECT ppp.IdProdPedProducao,
+                            ppp.IdProdPed,
+                            ppp.Situacao,
+                            lp.IdSetor,
+                            s.Descricao,
+                            lp.Dataleitura
+		                FROM produto_pedido_producao ppp
+			                INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
+			                INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
+                        WHERE ppp.IdProdPed IN ({ string.Join(",", idsProdPed) })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
+                        LEFT JOIN
+			                (SELECT ape.IdAmbientePedido,
+				                ape.Altura,
+				                ape.Largura,
+				                ape.Qtde
+			                FROM ambiente_pedido_espelho ape) a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                GROUP BY Dia
+                ORDER BY DIA;";
 
-                UNION /*All - Retiramos o All para resolver o chamado 20531, no qual estava buscando um das perdas do dia 13/08/15 duplicada */
+            sqlTotalM2Reposicao = $@"SELECT DAY(ppp.DataRepos) AS Dia,
+	                ppp.IdSetorRepos AS IdSetor,
+	                sr.Descricao,
+	                0 AS TotProdM2,
+	                ROUND(SUM(ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4)), 2) AS TotPerdaM2
+                FROM produto_pedido_producao ppp
+	                LEFT JOIN setor sr ON (ppp.IdSetorRepos = sr.IdSetor)
+	                LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+	                LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+	                LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                WHERE ppp.PecaReposta = 1
+                    AND MONTH(ppp.DataRepos)={ mes }
+                    AND YEAR(ppp.DataRepos)={ ano }
+                    AND sr.IdSetor In ({ idsSetor })
+                GROUP BY Dia
+                ORDER BY Dia;";
 
-                SELECT * FROM
-                    (SELECT Dia, IdSetor, Descricao, 0 AS TotProdM2, ROUND(SUM(TotM2), 2) AS TotPerdaM2
-                        FROM
-                        (SELECT DAY(ppp.DataRepos) AS Dia, ppp.IdSetorRepos AS IdSetor, sr.Descricao,
-                            ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido={ (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
-                        FROM produto_pedido_producao ppp
-                            LEFT JOIN setor sr ON (ppp.IdSetorRepos=sr.IdSetor)
-                            LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
-                            LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
-                            LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
-                        WHERE ppp.PecaReposta=1
-                            AND MONTH(ppp.DataRepos)={ mes }
-                            AND YEAR(ppp.DataRepos)={ ano }
-                            AND sr.IdSetor In ({ idsSetor })
-                        UNION ALL
-                        SELECT DAY(ppp.DataRepos) AS Dia, dr.IdSetorRepos AS IdSetor, sr.Descricao,
-                            ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={ (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
-                        FROM produto_pedido_producao ppp
-                            LEFT JOIN dados_reposicao dr ON (ppp.IdProdPedProducao=dr.IdProdPedProducao)
-                            LEFT JOIN setor sr ON (dr.IdSetorRepos=sr.IdSetor)
-                            LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed) 
-                            LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido) 
-                            LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido) 
-                        WHERE ppp.PecaReposta=1 AND MONTH(ppp.DataRepos)={ mes } AND YEAR(ppp.DataRepos)={ ano }
-                            AND sr.IdSetor IN ({ idsSetor })) AS tb_result
-                    GROUP BY 1
-                    ORDER BY 1)
-                AS tbResultPerda)
-            AS tbResultFinal
-            GROUP BY 1
-            ORDER BY 1;";
+            sqlTotalM2DadosReposicao = $@"SELECT DAY(ppp.DataRepos) AS Dia,
+	                dr.IdSetorRepos AS IdSetor,
+	                sr.Descricao,
+	                0 AS TotProdM2,
+	                ROUND(SUM(ROUND(pp.TotM / (pp.Qtde * IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4)), 2) AS TotPerdaM2
+                FROM produto_pedido_producao ppp
+	                LEFT JOIN dados_reposicao dr ON (ppp.IdProdPedProducao = dr.IdProdPedProducao)
+	                LEFT JOIN setor sr ON (dr.IdSetorRepos = sr.IdSetor)
+	                LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
+	                LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+	                LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
+                WHERE ppp.PecaReposta = 1
+                    AND MONTH(ppp.DataRepos)={ mes }
+                    AND YEAR(ppp.DataRepos)={ ano }
+                    AND sr.IdSetor IN ({ idsSetor })
+                GROUP BY Dia
+                ORDER BY Dia;";
+
+            var criterio = ObterCriterioProducaoPerdaDiaria(idsSetor, mes, ano);
+
+            var retorno = $@"SELECT Dia, IdSetor, Descricao, SUM(TotProdM2), SUM(TotPerdaM2), { criterio } AS Criterio
+                FROM ({ sqlTotalM2Producao } UNION { sqlTotalM2Reposicao } UNION { sqlTotalM2DadosReposicao }) AS temp
+                GROUP BY Dia
+                ORDER BY Dia;";
 
             if (!selecionar)
             {
-                return $"SELECT COUNT(*) FROM ({ sql }) AS tbResultCount";
+                retorno = $"SELECT COUNT(*) FROM ({ retorno }) AS count";
             }
 
-            return sql.Replace("$$$", criterio);
+            return retorno;
+        }
+
+        private string ObterCriterioProducaoPerdaDiaria(string idsSetor, string mes, string ano)
+        {
+            return $"Setor: { SetorDAO.Instance.GetNomeSetores(idsSetor) }. Mês Referência: { mes.PadLeft(2, '0') }/{ ano }";
         }
 
         private string SqlProducao(DateTime? dataIni, DateTime? dataFim)
@@ -520,14 +548,69 @@ namespace Glass.Data.RelDAL
 
         public GraficoProdPerdaDiaria[] GetForRpt(string idsSetor, string mes, string ano)
         {
-            var retorno = new List<GraficoProdPerdaDiaria>(objPersistence.LoadData(Sql(idsSetor, mes, ano, true)).ToList());
+            var sqlTotalM2Producao = string.Empty;
+            var sqlTotalM2Reposicao = string.Empty;
+            var sqlTotalM2DadosReposicao = string.Empty;
+
+            Sql(idsSetor, mes, ano, true, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
+
+            var totalM2Producao = objPersistence.LoadData(sqlTotalM2Producao)?.ToList() ?? new List<GraficoProdPerdaDiaria>();
+            var totalM2Reposicao = objPersistence.LoadData(sqlTotalM2Reposicao)?.ToList() ?? new List<GraficoProdPerdaDiaria>();
+            var totalM2DadosReposicao = objPersistence.LoadData(sqlTotalM2DadosReposicao)?.ToList() ?? new List<GraficoProdPerdaDiaria>();
+            var diasBuscados = new List<int>();
+            var retorno = new List<GraficoProdPerdaDiaria>();
+
+            if (totalM2Producao.Any(f => f.Dia > 0))
+            {
+                diasBuscados.AddRange(totalM2Producao.Where(f => f.Dia > 0).Select(f => (int)f.Dia).Distinct().ToList());
+            }
+
+            if (totalM2Reposicao.Any(f => f.Dia > 0))
+            {
+                diasBuscados.AddRange(totalM2Reposicao.Where(f => f.Dia > 0).Select(f => (int)f.Dia).Distinct().ToList());
+            }
+
+            if (totalM2DadosReposicao.Any(f => f.Dia > 0))
+            {
+                diasBuscados.AddRange(totalM2DadosReposicao.Where(f => f.Dia > 0).Select(f => (int)f.Dia).Distinct().ToList());
+            }
+
+            foreach (var dia in diasBuscados.Distinct())
+            {
+                var dadosDia = new GraficoProdPerdaDiaria();
+                dadosDia.Dia = dia;
+
+                if (totalM2Producao.Any(f => f.Dia == dia))
+                {
+                    dadosDia.TotProdM2 = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.DescricaoSetor = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
+                }
+
+                if (totalM2Reposicao.Any(f => f.Dia == dia))
+                {
+                    dadosDia.TotProdM2 = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.DescricaoSetor = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
+                }
+
+                if (totalM2DadosReposicao.Any(f => f.Dia == dia))
+                {
+                    dadosDia.TotProdM2 = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.DescricaoSetor = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
+                }
+
+                retorno.Add(dadosDia);
+            }
+
             int diasDecorridos = 0;
             double prodAcumulada = 0;
             double perdaAcumulada = 0;
 
-            if (retorno.Count > 0)
+            if (diasBuscados.Count > 0)
             {
-                for (int i = 0; i < retorno.Count; i++)
+                for (var i = 0; i < diasBuscados.Count; i++)
                 {
                     diasDecorridos++;
                     prodAcumulada += retorno[i].TotProdM2;

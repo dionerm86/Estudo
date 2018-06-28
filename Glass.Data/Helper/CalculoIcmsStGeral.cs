@@ -172,13 +172,13 @@ namespace Glass.Data.Helper
             string campo;
 
             string mva = dados.Simples ? "mvaSimples" : "mvaOriginal";
-            string aliqIcmsSt = "(i.aliquotaIntra + i.AliquotaFCPIntraestadual)";
-            string icms = "(i.aliquotaInter + i.AliquotaFCPInterestadual)";
+            string aliqIcmsSt = "(i.aliquotaIntra + COALESCE(i.AliquotaFCPIntraestadual, 0))";
+            string icms = "(i.aliquotaInter + COALESCE(i.AliquotaFCPInterestadual, 0))";
             var simplesLoja = _idLoja > 0 && LojaDAO.Instance.ObtemValorCampo<int>(sessao, "crt", "idLoja=" + _idLoja) <= 2; // 1 e 2 - simples
 
             if (_idCliente > 0 && CidadeDAO.Instance.GetNomeUf(sessao, LojaDAO.Instance.ObtemIdCidade((uint)_idLoja)) ==
                 CidadeDAO.Instance.GetNomeUf(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente)))
-                icms = "(i.aliquotaIntra + i.AliquotaFCPIntraestadual)";
+                icms = "(i.aliquotaIntra + COALESCE(i.AliquotaFCPIntraestadual, 0))";
 
             // Não calcula MVA ajustada se a loja for Simples
             if (!simplesLoja && !String.Equals(dados.UfOrigem, dados.UfDestino, StringComparison.CurrentCultureIgnoreCase))

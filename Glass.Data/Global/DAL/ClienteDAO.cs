@@ -314,13 +314,12 @@ namespace Glass.Data.DAL
                 criterio = $"Data Aniversário Início: { dataNiverIni }    ";
             }
 
-
             if (!String.IsNullOrEmpty(dataNiverFim))
             {
-                filtroAdicional += @" And IF(MONTH(?dataNiverIni) <= MONTH(?dataNiverFim),
-                MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim),
-                (MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
-                criterio = $"Data Aniversário Fim: { dataNiverFim }    ";
+                filtroAdicional += !String.IsNullOrEmpty(dataNiverIni) && DateTime.Parse(dataCadIni + " 00:00") <= DateTime.Parse(dataNiverFim + " 00:00") ?
+                "MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim)" :
+                "(MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
+                criterio = "Data Aniversário Fim: " + dataNiverFim + "    ";
             }
 
             if (!String.IsNullOrEmpty(dataCadIni))
@@ -1824,7 +1823,12 @@ namespace Glass.Data.DAL
 
         public uint? ObtemIdTransportador(uint idCliente)
         {
-            return ObtemValorCampo<uint?>("idTransportador", "id_Cli=" + idCliente);
+            return ObtemIdTransportador(null, idCliente);
+        }
+
+        public uint? ObtemIdTransportador(GDASession session, uint idCliente)
+        {
+            return ObtemValorCampo<uint?>(session, "IdTransportador", $"Id_Cli={ idCliente }");
         }
 
         public bool ObtemHabilitarEditorCad(uint idCliente)
@@ -2211,9 +2215,9 @@ namespace Glass.Data.DAL
             return cidade + "/" + uf;
         }
 
-        public string ObtemObsNfe(uint idCliente)
+        public string ObtemObsNfe(GDASession session, uint idCliente)
         {
-            return ObtemValorCampo<string>("obsNfe", "id_Cli=" + idCliente);
+            return ObtemValorCampo<string>("ObsNfe", $"Id_Cli={ idCliente }");
         }
 
         /// <summary>

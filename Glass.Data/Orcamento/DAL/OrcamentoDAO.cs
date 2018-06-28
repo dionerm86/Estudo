@@ -1760,12 +1760,11 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém os orçamentos que os pedidos passados possa ter sido gerados
         /// </summary>
-        /// <param name="idsPedidos"></param>
-        public string ObtemIdsOrcamento(string idsPedidos)
+        public string ObtemIdsOrcamento(GDASession session, string idsPedidos)
         {
             string sql = "Select cast(group_concat(Coalesce(idOrcamento, '')) as char) From pedido Where idPedido In (" + idsPedidos + ")";
 
-            object obj = objPersistence.ExecuteScalar(sql);
+            object obj = objPersistence.ExecuteScalar(session, sql);
 
             return obj == null ? String.Empty : obj.ToString();
         }

@@ -403,7 +403,7 @@ namespace WebGlass.Business.Produto.Ajax
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, null, null, idOrcamento.StrParaIntNullable());
+                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", false, percDescontoQtde, null, null, idOrcamento.StrParaIntNullable());
 
                 if (PedidoConfig.Comissao.ComissaoPedido)
                     valorProduto = valorProduto / (decimal)((100 - float.Parse(percComissao)) / 100);
@@ -567,7 +567,7 @@ namespace WebGlass.Business.Produto.Ajax
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda == "true",
+                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true",
                     tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição, percDescontoQtde, (int?)idPedido, null, null);
 
                 if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)

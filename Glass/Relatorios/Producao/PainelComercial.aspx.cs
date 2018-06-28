@@ -35,11 +35,13 @@ namespace Glass.UI.Web.Relatorios.Producao
                 // Series do Gráfico.
                 var serieDados = new Series("Total m²");
                 var serieMeta = new Series("Limite m²");
-    
+
+                serieMeta.IsVisibleInLegend = false;
+
                 #endregion
-    
+
                 #region Áreas e Eixos
-    
+
                 // Configurações do ChartArea.
                 this.chtDataEntrega.ChartAreas.Add("Area");
     

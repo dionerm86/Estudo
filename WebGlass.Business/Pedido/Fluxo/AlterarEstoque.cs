@@ -89,7 +89,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                         continue;
 
                     // Marca quantos produtos do pedido foi marcado como saída
-                    ProdutosPedidoDAO.Instance.MarcarSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, idSaidaEstoque);
+                    ProdutosPedidoDAO.Instance.MarcarSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                     var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
                     var qtdSaida = p.QtdMarcadaSaida;
@@ -195,7 +195,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                         continue;
 
                     // Marca quantos produtos do pedido foram estornados
-                    ProdutosPedidoDAO.Instance.EstonoSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida);
+                    ProdutosPedidoDAO.Instance.EstornoSaida(sessao, p.IdProdPed, p.QtdMarcadaSaida, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
                     var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)p.IdProd);
                     var qtdMov = p.QtdMarcadaSaida;
