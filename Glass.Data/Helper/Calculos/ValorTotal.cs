@@ -29,8 +29,8 @@ namespace Glass.Data.Helper.Calculos
             if (!DeveExecutar(produto))
                 return;
 
-            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, produto);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, produto);
+            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
+            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
 
             var compra = produto is ProdutosCompra;
             
@@ -53,12 +53,10 @@ namespace Glass.Data.Helper.Calculos
             AtualizarDadosCache(produto);
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
         {
-            if (valor.HasValue && (produto.AlturaBenef > 0 || produto.LarguraBenef > 0))
-            {
+            if (container.MaoDeObra)
                 return valor.Value;
-            }
 
             return 2;
         }

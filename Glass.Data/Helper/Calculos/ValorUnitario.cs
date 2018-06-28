@@ -31,6 +31,9 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.Largura, container);
+
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
@@ -45,8 +48,8 @@ namespace Glass.Data.Helper.Calculos
                 total,
                 compra,
                 nf,
-                produto.AlturaBenef.GetValueOrDefault(),
-                produto.LarguraBenef.GetValueOrDefault()
+                alturaBenef,
+                larguraBenef
             );
         }
 
@@ -58,6 +61,9 @@ namespace Glass.Data.Helper.Calculos
             if (!DeveExecutar(produto))
                 return null;
 
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.Largura, container);
+
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
 
@@ -67,8 +73,8 @@ namespace Glass.Data.Helper.Calculos
                 baseCalculo,
                 compra,
                 nf,
-                produto.AlturaBenef.GetValueOrDefault(),
-                produto.LarguraBenef.GetValueOrDefault()
+                alturaBenef,
+                larguraBenef
             );
         }
 
@@ -172,15 +178,13 @@ namespace Glass.Data.Helper.Calculos
                 - desconto;
         }
 
-        //private int NormalizarAlturaLarguraBeneficiamento(int? valor, IProdutoCalculo produto)
-        //{
-        //    if (valor.HasValue && produto.AlturaBenef > 0 && produto.LarguraBenef > 0)
-        //    {
-        //        return valor.Value;
-        //    }
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
+        {
+            if (container.MaoDeObra)
+                return valor.GetValueOrDefault();
 
-        //    return 2;
-        //}
+            return 2;
+        }
 
         private decimal? CalcularValor(GDASession sessao, IProdutoCalculo produto, decimal baseCalculo,
             bool compra, bool nf, int alturaBeneficiamento, int larguraBeneficiamento)
