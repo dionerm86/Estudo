@@ -459,7 +459,8 @@ namespace Glass.UI.Web.Listas
                     // [0]Id do produto [1]Valor produto (sem benef.) [2]Valor total [3]Qtd [4]Altura [5]AlturaCalc [6]Largura [7]Redondo [8]Area total
                     // [9]Descrição [10]Custo, [11]Valor tabela [12]Espessura [13]Perc. Desc. Qtde [14]ServicoInfo [15]Perc. Comissão [16]IdProcesso [17]IdAplicacao
                     string[] dadosProd = prod.Split('\t');
-    
+                    var revenda = ClienteDAO.Instance.IsRevenda(orca.IdCliente);
+
                     prodOrca = new ProdutosOrcamento();
                     prodOrca.IdOrcamento = idOrca;
                     prodOrca.IdAmbienteOrca = idAmbienteOrca;
@@ -469,7 +470,7 @@ namespace Glass.UI.Web.Listas
                     prodOrca.Qtde = float.Parse(dadosProd[3].Replace('.', ','));
 
                     prodOrca.PercDescontoQtde = !String.IsNullOrEmpty(dadosProd[13]) ? float.Parse(dadosProd[13].Replace('.', ',')) : 0;
-                    prodOrca.ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)prodOrca.IdProduto.Value, orca.TipoEntrega, orca.IdCliente, false, false, prodOrca.PercDescontoQtde, null, null, (int?)idOrca);
+                    prodOrca.ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)prodOrca.IdProduto.Value, orca.TipoEntrega, orca.IdCliente, revenda, false, prodOrca.PercDescontoQtde, null, null, (int?)prodOrca.IdOrcamento);
                     prodOrca.ValorProd = decimal.Parse(dadosProd[1].Replace('.', ','));
 
                     if (ProdutoDAO.Instance.IsPrecoTabela(prodOrca.IdProduto.Value, prodOrca.ValorProd.Value))
