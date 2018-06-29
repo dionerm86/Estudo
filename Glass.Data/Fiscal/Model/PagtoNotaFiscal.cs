@@ -152,6 +152,8 @@ namespace Glass.Data.Model
                         return Pagto.FormaPagto.Prazo;
                     case (int)FormaPagtoNotaFiscalEnum.BoletoBancario:
                         return Pagto.FormaPagto.Boleto;
+                    case (int)FormaPagtoNotaFiscalEnum.SemPagamento:
+                        return Pagto.FormaPagto.Permuta;
                     default:
                         return Pagto.FormaPagto.Prazo;
                 }
