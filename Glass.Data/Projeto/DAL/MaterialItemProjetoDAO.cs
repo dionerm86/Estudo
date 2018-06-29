@@ -856,7 +856,7 @@ namespace Glass.Data.DAL
                 // precisou ser mudado porque ao alterar a peça de vidro em "Medidas das Peças", o valor não era alterado
                 ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, prod.CodInterno) : null;
                 var valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, false, itemProjeto.Reposicao, 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
+                    ProdutoDAO.Instance.GetValorTabela(sessao, prod.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(sessao ,idCliente), itemProjeto.Reposicao, 0, idPedido, (int?)itemProjeto.IdProjeto, (int?)itemProjeto.IdOrcamento);
 
                 /* Chamado 53156. */
                 /* Chamado 55446. */
