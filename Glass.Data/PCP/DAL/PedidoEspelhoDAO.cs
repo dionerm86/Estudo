@@ -1263,6 +1263,11 @@ namespace Glass.Data.DAL
                     if (File.Exists(urlImagem))
                     {
                         var caminhoImagemPCP = Utils.GetPecaProducaoPath + idProdPedEsp.ToString().PadLeft(10, '0') + "_0.jpg";
+
+                        //Chamado 75704
+                        if (File.Exists(caminhoImagemPCP))
+                            File.Delete(caminhoImagemPCP);
+
                         File.Copy(urlImagem, caminhoImagemPCP, true);
                     }
 
