@@ -717,5 +717,19 @@ namespace Glass.UI.Web.Utils
                     ((DropDownList)sender).Items.Add(new ListItem(formaPagto.Descricao, formaPagto.IdFormaPagto.ToString()));
             }            
         }
+
+        protected void drpFormaPagto_Load(object sender, EventArgs e)
+        {
+            if (!PedidoConfig.LiberarPedido)
+            {
+                var idFormaPagto = PedidoDAO.Instance.GetFormaPagto(null, Request["idPedido"].StrParaUint());
+                var formaPagto = FormaPagtoDAO.Instance.GetElement(idFormaPagto.GetValueOrDefault());
+
+                var item = new ListItem(formaPagto?.Descricao, idFormaPagto.ToString());
+
+                if (!((DropDownList)sender).Items.Contains(item))
+                    ((DropDownList)sender).Items.Add(item);
+            }
+        }
     }
 }
