@@ -81,6 +81,15 @@ namespace Glass.Data.DAL
             objInsert.DataCad = DateTime.Now;
             objInsert.UsuCad = UserInfo.GetUserInfo.CodUser;
 
+            var idProdPedProducao = ItemCarregamentoDAO.Instance.ObtemValorCampo<uint>("IdProdPedProducao", $"IdItemCarregamento={objInsert.IdItemCarregamento}");
+
+            if (idProdPedProducao > 0)
+            {
+                var prodPedProducao = ProdutoPedidoProducaoDAO.Instance.GetElementByPrimaryKey(idProdPedProducao);
+
+                LogAlteracaoDAO.Instance.LogProdPedProducao(session, prodPedProducao, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            }
+
             return base.Insert(session, objInsert);
         }
 
