@@ -215,11 +215,19 @@ namespace Glass.Data.DAL
             {
                 string[] dadosEtiqueta = numEtiqueta.Split('-', '.', '/');
 
+                if (!char.IsNumber(dadosEtiqueta[0][0]))
+                {
+                    if (dadosEtiqueta[0].Length <= 1)
+                        throw new Exception($"Etiqueta {numEtiqueta} fora de padrão");
+
+                    dadosEtiqueta[0] = dadosEtiqueta[0].Substring(1);
+                }
+
                 string sql = @"
                                 SELECT COUNT(*) 
                                 FROM perda_chapa_vidro pcv
                                 INNER JOIN produto_impressao pi on (pcv.IDPRODIMPRESSAO = pi.IDPRODIMPRESSAO)
-                                WHERE pi.IDNF = " + dadosEtiqueta[0].Substring(1) + @"
+                                WHERE pi.IDNF = " + dadosEtiqueta[0] + @"
                                       AND pi.POSICAOPROD = " + dadosEtiqueta[1] + @"
                                       AND pi.ITEMETIQUETA = " + dadosEtiqueta[2] + @"
                                       AND pi.QTDEPROD= " + dadosEtiqueta[3] + @"
