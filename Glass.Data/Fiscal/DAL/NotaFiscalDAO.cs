@@ -2844,6 +2844,7 @@ namespace Glass.Data.DAL
             decimal totalFreteAplicado = 0;
             var contadorPnf = 0;
             var totalIcmsFCP = 0m;
+            decimal valorOutrasDespesasAplicado = 0;
 
             try
             {
@@ -2996,16 +2997,21 @@ namespace Glass.Data.DAL
                     if (nf.ValorSeguro > 0) ManipulacaoXml.SetNode(doc, prod, "vSeg", Formatacoes.TrataValorDecimal(pnf.ValorSeguro, 2));
                     if (Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2) != "0.00") ManipulacaoXml.SetNode(doc, prod, "vDesc", Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2));
 
-                    // Trata o valor de outras despesas do produto, no XML, para que não ocorra diferença entre o somatório de outras despesas dos produtos com o total de outras despesas da nota.
-                    if (nf.OutrasDespesas > 0 && Formatacoes.TrataValorDecimal(pnf.ValorOutrasDespesas, 2) != "0.00")
+                    if (nf.OutrasDespesas > 0)
                     {
-                        /* Chamado 49684. */
-                        var valorOutrasDespesas = Math.Round(pnf.ValorOutrasDespesas, 2);
-                        totalOutrasDespesasAplicado += valorOutrasDespesas;
-                        if (contadorPnf == lstProdNf.Count() && Math.Abs(nf.OutrasDespesas - totalOutrasDespesasAplicado) <= (decimal)0.3)
-                            valorOutrasDespesas += (nf.OutrasDespesas - totalOutrasDespesasAplicado);
+                        decimal valorOutraDespesasProduto = 0;
 
-                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutrasDespesas, 2));
+                        if (contadorPnf < lstProdNf.Count())
+                        {
+                            valorOutraDespesasProduto = Math.Round(nf.OutrasDespesas / lstProdNf.Count(), 2);
+                        }
+                        else
+                        {
+                            valorOutraDespesasProduto = nf.OutrasDespesas - valorOutrasDespesasAplicado;
+                        }
+
+                        valorOutrasDespesasAplicado += valorOutraDespesasProduto;
+                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutraDespesasProduto, 2));
                     }
 
                     ManipulacaoXml.SetNode(doc, prod, "indTot", nf.TotalProd == 0 && nfeComplAjuste ? "0" : "1"); // Indica se o valor do item compões a NF, 0-Não Compõe, 1-Compõe

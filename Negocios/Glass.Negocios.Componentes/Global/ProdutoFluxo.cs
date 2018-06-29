@@ -842,7 +842,7 @@ namespace Glass.Global.Negocios.Componentes
                     })
                     .ToList();
 
-                if(produtosLoja == null || produtosLoja.Count() <= 0)
+                if(produtosLoja?.Count() <= 0)
                     return new Colosoft.Business.SaveResult(false, "Falha ao incluir produto loja.".GetFormatter());
             }
             else
@@ -855,13 +855,12 @@ namespace Glass.Global.Negocios.Componentes
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
             if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro && produto.TipoMercadoria == Data.Model.TipoMercadoria.ProdutoAcabado)
             {
-                if (!produto.BaixasEstoque.Any() && produto.ExistsInStorage)
-                    return new Colosoft.Business.SaveResult(false,
-                        "Produtos do tipo de mercadoria Produto Acabado devem informar a matéria prima.".GetFormatter());
-
                 if (!produto.BaixasEstoqueFiscal.Any())
                     return new Colosoft.Business.SaveResult(false,
                         "Produtos do tipo de mercadoria Produto Acabado devem informar os produtos para baixa fiscal.".GetFormatter());
+
+                if (produto.ExistsInStorage && !produto.BaixasEstoque.Any())
+                    return new Colosoft.Business.SaveResult(false, "Produtos do tipo de mercadoria Produto Acabado devem informar a matéria prima.".GetFormatter());
             }
 
             // Valida os campos de máteria prima, produto base e tipo mercadoria
@@ -869,7 +868,7 @@ namespace Glass.Global.Negocios.Componentes
             {
                 case Data.Model.TipoSubgrupoProd.ChapasVidro:
                     // Matéria Prima
-                    if (produto.BaixasEstoque.Count() > 0)
+                    if (produto.BaixasEstoque.Count > 0)
                         return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Chapa de Vidro não deve ser informado Matéria Prima.".GetFormatter());
                     // Tipo Mercadoria
                     if (produto.TipoMercadoria != Data.Model.TipoMercadoria.MateriaPrima)
@@ -885,7 +884,7 @@ namespace Glass.Global.Negocios.Componentes
                     if (produto.IdProdBase.GetValueOrDefault() > 0)
                         return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Vidro Laminado não deve ser informado Produto Base.".GetFormatter());
                     // Matéria Prima
-                    if (produto.BaixasEstoque.Count() <= 0)
+                    if (produto.ExistsInStorage && produto.BaixasEstoque.Count <= 0)
                         return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Vidro Laminado deve ser informado Matéria Prima.".GetFormatter());
                     break;
                 default:
@@ -912,81 +911,76 @@ namespace Glass.Global.Negocios.Componentes
             }
 
             // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
-            if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.ChapasVidro)
-                if (produto.IdProdBase.GetValueOrDefault() == 0)
-                    return new Colosoft.Business.SaveResult(false,
-                        "Produtos do subgrupo chapa de vidro deve informar o produto base.".GetFormatter());
+            if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.ChapasVidro && produto.IdProdBase.GetValueOrDefault() == 0)
+                return new Colosoft.Business.SaveResult(false, "Produtos do subgrupo chapa de vidro deve informar o produto base.".GetFormatter());
 
             /* Chamado 50689. */
             if (produto.IdGrupoProd != produto.Subgrupo.IdGrupoProd)
                 return new Colosoft.Business.SaveResult(false, "O subgrupo informado não pertence ao grupo informado. Informe um subgrupo que esteja associado ao grupo selecionado.".GetFormatter());
 
             /* Chamado 37411. */
-            if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.Modulado)
-                if (produto.BaixasEstoque == null || produto.BaixasEstoque.Count != 1 || produto.BaixasEstoque.FirstOrDefault().IdProdBaixa <= 0)
-                    return new Colosoft.Business.SaveResult(false, ("Informe a matéria prima do produto, somente uma matéria prima pode ser informada. " +
-                        "A matéria prima é obrigatória para produtos do subgrupo Modulado.").GetFormatter());
+            if (produto.ExistsInStorage && produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.Modulado && (produto.BaixasEstoque?.Count != 1 || produto.BaixasEstoque.FirstOrDefault().IdProdBaixa <= 0))
+                return new Colosoft.Business.SaveResult(false, ("Informe a matéria prima do produto, somente uma matéria prima pode ser informada. " +
+                    "A matéria prima é obrigatória para produtos do subgrupo Modulado.").GetFormatter());
 
             /* Chamado 52702. */
             // Verifica se o subgrupo do produto que está sendo salvo é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque real ou fiscal.
-            if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo)
+            if ((produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) && produto.BaixasEstoque?.Count > 0)
             {
-                #region Baixa estoque
-                
-                if (produto.BaixasEstoque != null && produto.BaixasEstoque.Count() > 0)
+                // Não permite que o próprio produto duplo ou laminado seja referenciado como baixa de estoque.
+                if (produto.BaixasEstoque.Any(f => f.IdProdBaixa == produto.IdProd))
+                    return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado não pode ser configurado com ele próprio na baixa de etoque.".GetFormatter());
+
+                // Percorre as baixas de estoque do produto que está sendo salvo.
+                foreach (var baixaEstoque in produto.BaixasEstoque)
                 {
-                    // Não permite que o próprio produto duplo ou laminado seja referenciado como baixa de estoque.
-                    if (produto.BaixasEstoque.Count(f => f.IdProdBaixa == produto.IdProd) > 0)
-                        return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado não pode ser configurado com ele próprio na baixa de etoque.".GetFormatter());
+                    // Recupera a baixa de estoque do produto que está sendo salvo.
+                    var produtoBaixaEstoque = ObtemProduto(baixaEstoque.IdProdBaixa);
 
-                    // Percorre as baixas de estoque do produto que está sendo salvo.
-                    foreach (var baixaEstoque in produto.BaixasEstoque)
+                    // Verifica se o subgrupo do produto configurado como baixa, do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
+                    if ((produtoBaixaEstoque.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixaEstoque.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
+                        produtoBaixaEstoque.BaixasEstoque?.Count > 0)
                     {
-                        // Recupera a baixa de estoque do produto que está sendo salvo.
-                        var produtoBaixaEstoque = ObtemProduto(baixaEstoque.IdProdBaixa);
-
-                        // Verifica se o subgrupo do produto configurado como baixa, do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
-                        if ((produtoBaixaEstoque.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixaEstoque.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
-                            produtoBaixaEstoque.BaixasEstoque != null && produtoBaixaEstoque.BaixasEstoque.Count() > 0)
+                        // Percorre as baixas de estoque da baixa de estoque do produto que está sendo salvo.
+                        foreach (var baixaEstoqueBaixa in produtoBaixaEstoque.BaixasEstoque)
                         {
-                            // Percorre as baixas de estoque da baixa de estoque do produto que está sendo salvo.
-                            foreach (var baixaEstoqueBaixa in produtoBaixaEstoque.BaixasEstoque)
-                            {
-                                // Recupera o produto da baixa de estoque da baixa de estoque do produto que está sendo salvo.
-                                var produtoBaixaEstoqueBaixa = ObtemProduto(baixaEstoqueBaixa.IdProdBaixa);
+                            // Recupera o produto da baixa de estoque da baixa de estoque do produto que está sendo salvo.
+                            var produtoBaixaEstoqueBaixa = ObtemProduto(baixaEstoqueBaixa.IdProdBaixa);
 
-                                // Verifica se o subgrupo do produto configurado como baixa, da baixa de estoque do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
-                                // Caso esta baixa esteja configurada com um produto laminado ou duplo, o bloqueio deve ocorrer, pois, será criada uma ligação de bisavô entre os produtos e a ligação máxima é de avô.
-                                if ((produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
-                                    produtoBaixaEstoqueBaixa.BaixasEstoque != null && produtoBaixaEstoqueBaixa.BaixasEstoque.Count() > 0)
-                                    return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado pode possuir no máximo 2 produtos em sua hierarquia de composição de baixa de estoque.".GetFormatter());
-                            }
+                            // Verifica se o subgrupo do produto configurado como baixa, da baixa de estoque do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
+                            // Caso esta baixa esteja configurada com um produto laminado ou duplo, o bloqueio deve ocorrer, pois, será criada uma ligação de bisavô entre os produtos e a ligação máxima é de avô.
+                            if ((produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
+                                produtoBaixaEstoqueBaixa.BaixasEstoque?.Count > 0)
+                                return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado pode possuir no máximo 2 produtos em sua hierarquia de composição de baixa de estoque.".GetFormatter());
                         }
                     }
                 }
-
-                #endregion
             }
 
             /* Chamado 55685. */
             // Verifica se o produto possui matéria-prima cadastrada.
-            if (produto.BaixasEstoque != null && produto.BaixasEstoque.Count > 0)
+            if (produto.BaixasEstoque?.Count > 0)
             {
                 // Verifica se existem classificações de subgrupo, para definir se a validação da associação de roteiro (IdProcesso) com subgrupo será feita ou não.
-                if (SourceContext.Instance.CreateQuery()
+                var possuiClassificacao = SourceContext.Instance.CreateQuery()
                     .From<Data.Model.ClassificacaoSubgrupo>()
                     .Select("IdClassificacaoRoteiroProducao")
-                    .Execute().ToList().Count > 0)
-                    foreach (var baixaEstoque in produto.BaixasEstoque.Where(f => f.IdProcesso > 0).ToList())
+                    .Execute()
+                    .Any();
+
+                if (possuiClassificacao)
+                {
+                    foreach (var baixaEstoque in produto.BaixasEstoque.Where(f => f.IdProcesso > 0))
                     {
                         // Recupera o produto da baixa de estoque.
                         var produtoBaixaEstoque = ObtemProduto(baixaEstoque.IdProdBaixa);
 
                         // Verifica se o produto da baixa de estoque possui subgrupo.
                         if (produtoBaixaEstoque.IdSubgrupoProd > 0 && produtoBaixaEstoque.Subgrupo != null)
+                        {
                             // SQL copiado do método ClassificacaoSubgrupoDAO.VerificarAssociacaoExistente.
                             // Verifica se o roteiro (IdProcesso) está associado ao subgrupo da baixa de estoque, caso não esteja, impede a inserção/atualização do produto.
-                            if (SourceContext.Instance.CreateQuery()
+                            var possuiAssociacao = SourceContext.Instance.CreateQuery()
                                 .From<Data.Model.ClassificacaoSubgrupo>()
                                 .Where(string.Format("IdSubgrupoProd={0} AND IdClassificacaoRoteiroProducao in (?roteiroProducao)", produtoBaixaEstoque.IdSubgrupoProd))
                                 .Add("?roteiroProducao", SourceContext.Instance.CreateQuery()
@@ -994,10 +988,14 @@ namespace Glass.Global.Negocios.Componentes
                                     .Where(string.Format("IdProcesso={0}", baixaEstoque.IdProcesso))
                                     .Select("IdClassificacaoRoteiroProducao"))
                                 .Select("IdClassificacaoRoteiroProducao")
-                                .Execute().ToList().Count == 0)
+                                .Execute().Any();
+
+                            if (!possuiAssociacao)
                                 return new Colosoft.Business.SaveResult(false, (string.Format("O processo associado à matéria-prima {0} - {1} não é válido de acordo com a classificação de subgrupo.",
                                     produtoBaixaEstoque.CodInterno, produtoBaixaEstoque.Descricao)).GetFormatter());
+                        }
                     }
+                }
             }
 
             /* Chamado 22919. */
@@ -1158,6 +1156,9 @@ namespace Glass.Global.Negocios.Componentes
 
             var produto = ObtemProduto(produtoBaixaEstoque.IdProd);
 
+            if(produto == null)
+                return new Colosoft.Business.SaveResult(false, "Produto não encontrado.".GetFormatter());
+
             if (!produtoBaixaEstoque.ExistsInStorage && !produto.BaixasEstoque.Contains(produtoBaixaEstoque))
                 produto.BaixasEstoque.Add(produtoBaixaEstoque);
 
@@ -1167,9 +1168,125 @@ namespace Glass.Global.Negocios.Componentes
                 produto.BaixasEstoque.Add(produtoBaixaEstoque);
             }
 
-            var retorno = SalvarProduto(produto);
+            #region Validações
 
-            return retorno;
+            // Se produto for do tipo mercadoria produto para acabado, obriga a informar os campos matéria prima e produto para baixa
+            if (produto.IdGrupoProd == (int)Data.Model.NomeGrupoProd.Vidro && produto.TipoMercadoria == Data.Model.TipoMercadoria.ProdutoAcabado && !produto.BaixasEstoque.Any())
+                return new Colosoft.Business.SaveResult(false, "Produtos do tipo de mercadoria Produto Acabado devem informar a matéria prima.".GetFormatter());
+
+
+            // Valida os campos de máteria prima, produto base e tipo mercadoria
+            switch (produto.Subgrupo.TipoSubgrupo)
+            {
+                case Data.Model.TipoSubgrupoProd.ChapasVidro:
+                    // Matéria Prima
+                    if (produto.BaixasEstoque.Any())
+                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Chapa de Vidro não deve ser informado Matéria Prima.".GetFormatter());
+                    break;
+                case Data.Model.TipoSubgrupoProd.VidroLaminado:
+                    // Matéria Prima
+                    if (!produto.BaixasEstoque.Any())
+                        return new Colosoft.Business.SaveResult(false, "Para produtos de subgrupo do tipo Vidro Laminado deve ser informado Matéria Prima.".GetFormatter());
+                    break;
+            }
+
+            /* Chamado 37411. */
+            if (produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.Modulado && (produto.BaixasEstoque?.Count != 1 || produto.BaixasEstoque.FirstOrDefault().IdProdBaixa <= 0))
+                return new Colosoft.Business.SaveResult(false, ("Informe a matéria prima do produto, somente uma matéria prima pode ser informada. " +
+                    "A matéria prima é obrigatória para produtos do subgrupo Modulado.").GetFormatter());
+
+            /* Chamado 52702. */
+            // Verifica se o subgrupo do produto que está sendo salvo é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque real ou fiscal.
+            if ((produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produto.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) && produto.BaixasEstoque?.Count > 0)
+            {
+                // Não permite que o próprio produto duplo ou laminado seja referenciado como baixa de estoque.
+                if (produto.BaixasEstoque.Any(f => f.IdProdBaixa == produto.IdProd))
+                    return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado não pode ser configurado com ele próprio na baixa de etoque.".GetFormatter());
+
+                // Percorre as baixas de estoque do produto que está sendo salvo.
+                foreach (var baixaEstoque in produto.BaixasEstoque)
+                {
+                    // Recupera a baixa de estoque do produto que está sendo salvo.
+                    var produtoBaixa = ObtemProduto(baixaEstoque.IdProdBaixa);
+
+                    // Verifica se o subgrupo do produto configurado como baixa, do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
+                    if ((produtoBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
+                        produtoBaixa.BaixasEstoque?.Count > 0)
+                    {
+                        // Percorre as baixas de estoque da baixa de estoque do produto que está sendo salvo.
+                        foreach (var baixaEstoqueBaixa in produtoBaixa.BaixasEstoque)
+                        {
+                            // Recupera o produto da baixa de estoque da baixa de estoque do produto que está sendo salvo.
+                            var produtoBaixaEstoqueBaixa = ObtemProduto(baixaEstoqueBaixa.IdProdBaixa);
+
+                            // Verifica se o subgrupo do produto configurado como baixa, da baixa de estoque do produto que está sendo salvo, é do tipo Vidro Laminado ou Vidro Duplo e se possui baixa de estoque.
+                            // Caso esta baixa esteja configurada com um produto laminado ou duplo, o bloqueio deve ocorrer, pois, será criada uma ligação de bisavô entre os produtos e a ligação máxima é de avô.
+                            if ((produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroLaminado || produtoBaixaEstoqueBaixa.Subgrupo.TipoSubgrupo == Data.Model.TipoSubgrupoProd.VidroDuplo) &&
+                                produtoBaixaEstoqueBaixa.BaixasEstoque?.Count > 0)
+                                return new Colosoft.Business.SaveResult(false, "O produto duplo/laminado pode possuir no máximo 2 produtos em sua hierarquia de composição de baixa de estoque.".GetFormatter());
+                        }
+                    }
+                }
+            }
+
+            /* Chamado 55685. */
+            // Verifica se o produto possui matéria-prima cadastrada.
+            if (produto.BaixasEstoque?.Count > 0)
+            {
+                // Verifica se existem classificações de subgrupo, para definir se a validação da associação de roteiro (IdProcesso) com subgrupo será feita ou não.
+                var possuiClassificacao = SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.ClassificacaoSubgrupo>()
+                    .Select("IdClassificacaoRoteiroProducao")
+                    .Execute()
+                    .Any();
+
+                if (possuiClassificacao)
+                {
+                    foreach (var baixaEstoque in produto.BaixasEstoque.Where(f => f.IdProcesso > 0))
+                    {
+                        // Recupera o produto da baixa de estoque.
+                        var produtoBaixa = ObtemProduto(baixaEstoque.IdProdBaixa);
+
+                        // Verifica se o produto da baixa de estoque possui subgrupo.
+                        if (produtoBaixa.IdSubgrupoProd > 0 && produtoBaixa.Subgrupo != null)
+                        {
+                            // SQL copiado do método ClassificacaoSubgrupoDAO.VerificarAssociacaoExistente.
+                            // Verifica se o roteiro (IdProcesso) está associado ao subgrupo da baixa de estoque, caso não esteja, impede a inserção/atualização do produto.
+                            var possuiAssociacao = SourceContext.Instance.CreateQuery()
+                                .From<Data.Model.ClassificacaoSubgrupo>()
+                                .Where(string.Format("IdSubgrupoProd={0} AND IdClassificacaoRoteiroProducao in (?roteiroProducao)", produtoBaixa.IdSubgrupoProd))
+                                .Add("?roteiroProducao", SourceContext.Instance.CreateQuery()
+                                    .From<Data.Model.RoteiroProducao>()
+                                    .Where(string.Format("IdProcesso={0}", baixaEstoque.IdProcesso))
+                                    .Select("IdClassificacaoRoteiroProducao"))
+                                .Select("IdClassificacaoRoteiroProducao")
+                                .Execute().Any();
+
+                            if (!possuiAssociacao)
+                                return new Colosoft.Business.SaveResult(false, (string.Format("O processo associado à matéria-prima {0} - {1} não é válido de acordo com a classificação de subgrupo.",
+                                    produtoBaixa.CodInterno, produtoBaixa.Descricao)).GetFormatter());
+                        }
+                    }
+                }
+            }
+
+
+            #endregion
+
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                var resultado = produto.Save(session);
+
+                if (!resultado)
+                    return resultado;
+
+                var retorno = session.Execute(false).ToSaveResult();
+
+                if (retorno)
+                    LogAlteracaoDAO.Instance.LogProduto(produto.DataModel, LogAlteracaoDAO.SequenciaObjeto.Novo);
+
+                return retorno;
+            }
         }
 
         /// <summary>

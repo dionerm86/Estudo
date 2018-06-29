@@ -1177,7 +1177,7 @@ function validarPedido(controle) {
         controle.disabled = false;
         return false;
     }
-    else if (tipoEntrega != 1) {
+    else if (tipoEntrega == 4) {
         if (FindControl("txtEnderecoObra", "input").value == "") {
             alert("Informe o endereço " + (tipoEntrega == 4 ? "da entrega" : "do local da obra."));
             controle.disabled = false;
