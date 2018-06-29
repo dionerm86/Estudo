@@ -2236,7 +2236,7 @@ function inicializarControles() {
 
     controlarVisibilidadeProducaoCorte();
     tipoVendaChange(FindControl("drpTipoVenda", "select"), false);
-    exibirEsconderAmbiente(false);
+    exibirEsconderAmbiente(!var_PedidoMaoDeObra);
     modificarLayoutGridProdutos();
     calculaTamanhoMaximo();
     carregarDadosFinanceirosCliente();
