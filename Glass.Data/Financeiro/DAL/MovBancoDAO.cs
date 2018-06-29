@@ -49,7 +49,7 @@ namespace Glass.Data.DAL
                     Left Join grupo_conta g On (pl.IdGrupo=g.IdGrupo) 
                     Left Join cliente cli on (m.IdCliente=cli.Id_Cli) 
                     Left Join fornecedor forn on (m.idFornec=forn.idFornec)
-                    LEFT JOIN pagto_pagto pp ON (m.IdPagto=pp.IdPagto)
+                    LEFT JOIN pagto_pagto pp ON (m.IdPagto=pp.IdPagto) And (pp.IdContaBanco = m.IdContaBanco)
                 Where 1 ";
 
             if (idContaBanco > 0)
