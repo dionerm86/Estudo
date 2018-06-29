@@ -1172,7 +1172,7 @@ namespace Glass.Data.DAL
             List<CaixaDiario> lst = objPersistence.LoadData(session, sql, param);
 
             if (lst.Count == 0)
-                lst.Add(new CaixaDiario());
+                lst.Add(new CaixaDiario() { DataCad = data });
 
             decimal creditoGerado = ExecuteScalar<decimal>(session, "Select Sum(c.valor) From caixa_diario c " +
                 "Where DAYOFMONTH(c.DataCad)=DAYOFMONTH(?data) And MONTH(c.DataCad)=MONTH(?data) And YEAR(c.DataCad)=YEAR(?data) " +
@@ -1832,19 +1832,6 @@ namespace Glass.Data.DAL
 
                         if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
                             throw new Exception("Erro\tApenas funcionário Caixa Diário pode efetuar transferência para o Caixa Geral.");
-
-                        /* Chamado 66573. */
-                        if (!CaixaFechadoDiaAnterior(transaction, idLoja))
-                            throw new Exception("O caixa não foi fechado no último dia de trabalho.");
-
-                        // Verifica se há saldo para realizar a transferência desejada
-                        if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Dinheiro && saldoCaixaDiarioDinheiro < valor)
-                            throw new Exception(string.Format("Não há saldo suficiente para efetuar essa saída. Saldo em dinheiro: {0}.", saldoCaixaDiarioDinheiro.ToString("C")));
-                        else if (formaSaida == (int)CaixaDiario.FormaSaidaEnum.Cheque && saldoCaixaDiarioCheque < valor)
-                            throw new Exception(string.Format("Não há saldo suficiente para efetuar essa saí­da. Saldo em cheque: {0}.", saldoCaixaDiarioCheque.ToString("C")));
-
-                        if (valor > saldo)
-                            throw new Exception("Valor a ser transferido é maior que o saldo disponível no caixa.");
 
                         // Movimenta caixa geral
                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null,
