@@ -80,7 +80,7 @@ namespace Glass.Data.Helper.Calculos
 
         private void AtualizaValorUnitario(IProdutoCalculo produto, bool valorBruto)
         {
-            decimal valorUnitario = produto.DadosProduto.ValorTabela();
+            decimal valorUnitario = Math.Max(produto.DadosProduto.ValorTabela(), PedidoConfig.DadosPedido.AlterarValorUnitarioProduto ? produto.ValorUnit:0);
 
             if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
                 valorUnitario = produto.ValorTabelaPedido;
