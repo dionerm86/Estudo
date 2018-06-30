@@ -2825,15 +2825,6 @@ namespace Glass.Data.DAL
 
         #region Parâmetros
 
-        private GDAParameter[] ObterParametrosFiltrosVendasPedidos(string codCliente, string codigoProduto, string dataFimEntrega, string dataFimPedido, string dataFimInstalacao,
-            string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto, string dataInicioSituacao,
-            string descricaoProduto, string nomeCliente, string observacao)
-        {
-            return ObterParametrosFiltrosVendasPedidos(codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao,
-             dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao,
-             descricaoProduto, nomeCliente, observacao, null, null, null);
-        }
-
         /// <summary>
         /// Retorna os parâmetros que devem ser substituídos no SQL, com base nos filtros informados.
         /// </summary>
