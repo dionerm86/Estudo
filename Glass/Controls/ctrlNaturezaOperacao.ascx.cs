@@ -10,7 +10,7 @@ namespace Glass.UI.Web.Controls
         #region Propriedades
 
         /// <summary>
-        /// TODO: Método usado para auxiliar a migração.
+        /// TODO: MÃ©todo usado para auxiliar a migraÃ§Ã£o.
         /// </summary>
         public int? IdNaturezaOperacao
         {
@@ -31,8 +31,7 @@ namespace Glass.UI.Web.Controls
                         selNaturezaOperacao.Descricao = inst.ObtemCodigoCompleto(value.Value);
 
                         Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_valor",
-                            "document.getElementById('" + selNaturezaOperacao.FindControl("txtDescr").
-                            ClientID + "').onblur();\n", true);
+                            "FindControl('" + selNaturezaOperacao.FindControl("txtDescr").ClientID + "', 'input').onblur();\n", true);
                     }
                     else
                     {
@@ -94,7 +93,7 @@ namespace Glass.UI.Web.Controls
 
         #endregion
 
-        #region Métodos Ajax
+        #region MÃ©todos Ajax
 
         [Ajax.AjaxMethod]
         public string ObtemDadosComplementares(string codigoNaturezaOperacao)
@@ -114,7 +113,7 @@ namespace Glass.UI.Web.Controls
 
             selNaturezaOperacao.CallbackSelecao = this.ClientID + ".Callback";
 
-            // Este atributo deve ser repassado até chegar no campo txtDescr do controle SelPopup que é referenciado neste controle.
+            // Este atributo deve ser repassado atÃ© chegar no campo txtDescr do controle SelPopup que Ã© referenciado neste controle.
             if (this.Attributes["onchange"] != null)
                 selNaturezaOperacao.Attributes.Add("onchange", this.Attributes["onchange"]);
         }
