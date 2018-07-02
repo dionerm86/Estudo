@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPNFeRecepcaoEvento {
+namespace Glass.Data.wsNFeSVANRecepcaoEvento {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -36,7 +36,7 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
         
         /// <remarks/>
         public NFeRecepcaoEvento4() {
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPNFeRecepcaoEvento_NFeRecepcaoEvento4;
+            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -75,7 +75,7 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4/nfeRecepcaoEvento", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4", IsNullable=true)]
+        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")]
         public System.Xml.XmlNode nfeRecepcaoEvento([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")] System.Xml.XmlNode nfeDadosMsg) {
             object[] results = this.Invoke("nfeRecepcaoEvento", new object[] {
                         nfeDadosMsg});
