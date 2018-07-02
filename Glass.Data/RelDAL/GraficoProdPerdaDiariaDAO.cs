@@ -24,11 +24,19 @@ namespace Glass.Data.RelDAL
         private string Sql(string idsSetor, string mes, string ano, bool selecionar, out string sqlTotalM2Producao, out string sqlTotalM2Reposicao,
             out string sqlTotalM2DadosReposicao)
         {
+            var dataIni = new DateTime(ano.StrParaInt(), mes.StrParaInt(), 1);
+            var dataFim = new DateTime(ano.StrParaInt(), mes.StrParaInt(), DateTime.DaysInMonth(ano.StrParaInt(), mes.StrParaInt()));
+
+            var selectLeituraProducao = $@"SELECT IDPRODPEDPRODUCAO, IDSETOR 
+                FROM leitura_producao 
+                WHERE IdSetor IN ({ idsSetor }) AND DATALEITURA BETWEEN ?dataIni AND ?dataFim";
+
             var idsProdPed = ExecuteMultipleScalar<int>($@"SELECT DISTINCT(ppp.IdProdPed)
 		        FROM produto_pedido_producao ppp
-			        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-			        AND MONTH(lp.DataLeitura)={ mes }
-                    AND YEAR(lp.DataLeitura)={ ano }");
+			        INNER JOIN ({selectLeituraProducao}) lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
+                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
+		        WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }, { (int)ProdutoPedidoProducao.SituacaoEnum.Perda })",
+                new GDAParameter("?dataIni", dataIni), new GDAParameter("?dataFim", dataFim));
 
             sqlTotalM2Producao = $@"SELECT DAY(ppp.DataLeitura) AS Dia,
                     ppp.IdSetor,
@@ -612,6 +620,9 @@ namespace Glass.Data.RelDAL
             {
                 for (var i = 0; i < diasBuscados.Count; i++)
                 {
+                    if (i >= retorno.Count)
+                        break;
+
                     diasDecorridos++;
                     prodAcumulada += retorno[i].TotProdM2;
                     perdaAcumulada += retorno[i].TotPerdaM2;
