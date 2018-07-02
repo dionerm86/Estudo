@@ -13,7 +13,14 @@ namespace Glass.Data.Helper.Calculos
           ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
           bool usarChapaVidro = true, bool valorBruto = false)
         {
-            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, numeroBeneficiamentos,
+            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, false, numeroBeneficiamentos,
+             usarChapaVidro, valorBruto);
+        }
+        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
+         ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool compra, int numeroBeneficiamentos,
+         bool usarChapaVidro = true, bool valorBruto = false)
+        {
+            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, compra, numeroBeneficiamentos,
             usarChapaVidro, valorBruto);
         }
 
@@ -21,7 +28,7 @@ namespace Glass.Data.Helper.Calculos
         /// Método utilizado para calcular o valor total e o total de m² de um produto.
         /// </summary>
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, bool compra, int numeroBeneficiamentos,
             bool usarChapaVidro = true, bool valorBruto = false)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
@@ -30,9 +37,7 @@ namespace Glass.Data.Helper.Calculos
                 return;
 
             var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
-
-            var compra = produto is ProdutosCompra;
+            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);            
             
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
