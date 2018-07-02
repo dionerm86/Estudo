@@ -62,7 +62,7 @@ namespace Glass.Data.Model.Calculos
         public bool CalcularAreaMinima(int numeroBeneficiamentos)
         {
             bool ativarAreaMinima = produto.Value.AtivarAreaMinima &&
-                (produtoCalculo.Container?.Cliente?.CobrarAreaMinima ?? false);
+                (produtoCalculo.Container?.Cliente?.CobrarAreaMinima ?? true);
 
             if (PedidoConfig.DadosPedido.CalcularAreaMinimaApenasVidroBeneficiado)
             {
