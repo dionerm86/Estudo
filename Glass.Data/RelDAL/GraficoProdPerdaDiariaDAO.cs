@@ -26,6 +26,7 @@ namespace Glass.Data.RelDAL
         {
             var dataIni = new DateTime(ano.StrParaInt(), mes.StrParaInt(), 1);
             var dataFim = new DateTime(ano.StrParaInt(), mes.StrParaInt(), DateTime.DaysInMonth(ano.StrParaInt(), mes.StrParaInt()));
+            dataFim = dataFim.AddDays(1).AddSeconds(-1);
 
             var selectLeituraProducao = $@"SELECT IDPRODPEDPRODUCAO, IDSETOR 
                 FROM leitura_producao 
