@@ -20,6 +20,7 @@ namespace Glass.Data.wsHNFeRetAutorizacao {
     using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
+    using NFeUtils;
     
     
     /// <remarks/>
@@ -27,7 +28,7 @@ namespace Glass.Data.wsHNFeRetAutorizacao {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="NFeRetAutorizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRetAutorizacao4")]
-    public partial class NFeRetAutorizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class NFeRetAutorizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IRetornoAutorizacao {
         
         private System.Threading.SendOrPostCallback nfeRetAutorizacaoLoteOperationCompleted;
         

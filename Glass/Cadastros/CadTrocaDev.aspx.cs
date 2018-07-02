@@ -275,57 +275,65 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string GetProduto(string codInterno, string tipoEntrega, string revenda, string idCliente, string percDescontoQtdeStr, string idLoja, string idPedido)
         {
-            Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
-
-            if (prod == null)
-                return "Erro;Não existe produto com o código informado.";
-            else if (prod.Situacao == Glass.Situacao.Inativo)
-                return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
-            else if (prod.Compra)
-                return "Erro;Produto utilizado apenas na compra.";
-
-            if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
-                return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
-
-            string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
-            decimal valorProduto = 0;
-
-            // Recupera o valor de tabela do produto
-            int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
-            uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-            float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-            valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, bool.Parse(revenda), false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null);
-
-            if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+            try
             {
-                var percentualComissao = PedidoDAO.Instance.ObterPercentualComissao(null, idPedido.StrParaInt());
-                
-                valorProduto = percentualComissao > 0 ? valorProduto / (decimal)((100 - percentualComissao) / 100) : valorProduto;
+                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+
+                if (prod == null)
+                    return "Erro;Não existe produto com o código informado.";
+                else if (prod.Situacao == Glass.Situacao.Inativo)
+                    return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
+                else if (prod.Compra)
+                    return "Erro;Produto utilizado apenas na compra.";
+
+                if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
+                    return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
+
+                string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
+                decimal valorProduto = 0;
+
+                // Recupera o valor de tabela do produto
+                int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
+                uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
+                float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+                valorProduto = ProdutoDAO.Instance.GetValorTabela(prod.IdProd, tipoEntr, idCli, bool.Parse(revenda), false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null);
+
+                if (PedidoConfig.Comissao.ComissaoPedido && PedidoConfig.Comissao.ComissaoAlteraValor)
+                {
+                    var percentualComissao = PedidoDAO.Instance.ObterPercentualComissao(null, idPedido.StrParaInt());
+
+                    valorProduto = percentualComissao > 0 ? valorProduto / (decimal)((100 - percentualComissao) / 100) : valorProduto;
+                }
+
+                retorno += ";" + valorProduto.ToString("F2");
+
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +
+                    (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
+
+                bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
+                retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja, (uint)prod.IdProd).ToString() : "100000");
+
+                // Verifica como deve ser feito o cálculo do produto
+                retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
+
+                // Retorna a espessura do produto
+                retorno += ";" + prod.Espessura;
+
+                // Retorna a alíquota ICMS do produto
+                retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
+
+                //if (isPedidoProducao)
+                retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? prod.Largura.Value.ToString() : "");
+
+                retorno += ";" + prod.IdCorVidro + ";" + prod.CustoCompra;
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao inserir produto para troca.", ex);
             }
 
-            retorno += ";" + valorProduto.ToString("F2");
-
-            retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +
-                (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
-
-            bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
-            retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja, (uint)prod.IdProd).ToString() : "100000");
-
-            // Verifica como deve ser feito o cálculo do produto
-            retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
-
-            // Retorna a espessura do produto
-            retorno += ";" + prod.Espessura;
-
-            // Retorna a alíquota ICMS do produto
-            retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
-
-            //if (isPedidoProducao)
-            retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? prod.Largura.Value.ToString() : "");
-
-            retorno += ";" + prod.IdCorVidro + ";" + prod.CustoCompra;
-
-            return retorno;
         }
 
         [Ajax.AjaxMethod]

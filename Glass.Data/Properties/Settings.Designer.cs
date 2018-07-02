@@ -1629,5 +1629,80 @@ namespace Glass.Data.Properties {
                 return ((string)(this["Glass_Data_wsPNFeStatusServico_NFeStatusServico4"]));
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx")]
+        public string Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4"]));
+            }
+        }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocol" +
+            "o4.asmx")]
+        public string Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4"]));
+            }
+        }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx")]
+        public string Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4"]));
+            }
+        }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asm" +
+            "x")]
+        public string Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4"]));
+            }
+        }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asm" +
+            "x")]
+        public string Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4"]));
+            }
+        }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx")]
+        public string Glass_Data_wsNFeSVANStatus_NFeStatusServico4
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsNFeSVANStatus_NFeStatusServico4"]));
+            }
+        }
     }
 }

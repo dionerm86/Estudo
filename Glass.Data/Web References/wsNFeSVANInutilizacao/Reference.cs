@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPNFeRecepcaoEvento {
+namespace Glass.Data.wsNFeSVANInutilizacao {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -27,16 +27,16 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Web.Services.WebServiceBindingAttribute(Name="NFeRecepcaoEvento4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")]
-    public partial class NFeRecepcaoEvento4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IRecepcaoEvento {
+    [System.Web.Services.WebServiceBindingAttribute(Name="NFeInutilizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")]
+    public partial class NFeInutilizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IInutilizacao {
         
-        private System.Threading.SendOrPostCallback nfeRecepcaoEventoOperationCompleted;
+        private System.Threading.SendOrPostCallback nfeInutilizacaoNFOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
-        public NFeRecepcaoEvento4() {
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPNFeRecepcaoEvento_NFeRecepcaoEvento4;
+        public NFeInutilizacao4() {
+            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -71,35 +71,35 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
         }
         
         /// <remarks/>
-        public event nfeRecepcaoEventoCompletedEventHandler nfeRecepcaoEventoCompleted;
+        public event nfeInutilizacaoNFCompletedEventHandler nfeInutilizacaoNFCompleted;
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4/nfeRecepcaoEvento", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4", IsNullable=true)]
-        public System.Xml.XmlNode nfeRecepcaoEvento([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")] System.Xml.XmlNode nfeDadosMsg) {
-            object[] results = this.Invoke("nfeRecepcaoEvento", new object[] {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4/nfeInutilizacaoNF", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
+        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")]
+        public System.Xml.XmlNode nfeInutilizacaoNF([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")] System.Xml.XmlNode nfeDadosMsg) {
+            object[] results = this.Invoke("nfeInutilizacaoNF", new object[] {
                         nfeDadosMsg});
             return ((System.Xml.XmlNode)(results[0]));
         }
         
         /// <remarks/>
-        public void nfeRecepcaoEventoAsync(System.Xml.XmlNode nfeDadosMsg) {
-            this.nfeRecepcaoEventoAsync(nfeDadosMsg, null);
+        public void nfeInutilizacaoNFAsync(System.Xml.XmlNode nfeDadosMsg) {
+            this.nfeInutilizacaoNFAsync(nfeDadosMsg, null);
         }
         
         /// <remarks/>
-        public void nfeRecepcaoEventoAsync(System.Xml.XmlNode nfeDadosMsg, object userState) {
-            if ((this.nfeRecepcaoEventoOperationCompleted == null)) {
-                this.nfeRecepcaoEventoOperationCompleted = new System.Threading.SendOrPostCallback(this.OnnfeRecepcaoEventoOperationCompleted);
+        public void nfeInutilizacaoNFAsync(System.Xml.XmlNode nfeDadosMsg, object userState) {
+            if ((this.nfeInutilizacaoNFOperationCompleted == null)) {
+                this.nfeInutilizacaoNFOperationCompleted = new System.Threading.SendOrPostCallback(this.OnnfeInutilizacaoNFOperationCompleted);
             }
-            this.InvokeAsync("nfeRecepcaoEvento", new object[] {
-                        nfeDadosMsg}, this.nfeRecepcaoEventoOperationCompleted, userState);
+            this.InvokeAsync("nfeInutilizacaoNF", new object[] {
+                        nfeDadosMsg}, this.nfeInutilizacaoNFOperationCompleted, userState);
         }
         
-        private void OnnfeRecepcaoEventoOperationCompleted(object arg) {
-            if ((this.nfeRecepcaoEventoCompleted != null)) {
+        private void OnnfeInutilizacaoNFOperationCompleted(object arg) {
+            if ((this.nfeInutilizacaoNFCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.nfeRecepcaoEventoCompleted(this, new nfeRecepcaoEventoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.nfeInutilizacaoNFCompleted(this, new nfeInutilizacaoNFCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -124,17 +124,17 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
-    public delegate void nfeRecepcaoEventoCompletedEventHandler(object sender, nfeRecepcaoEventoCompletedEventArgs e);
+    public delegate void nfeInutilizacaoNFCompletedEventHandler(object sender, nfeInutilizacaoNFCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class nfeRecepcaoEventoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+    public partial class nfeInutilizacaoNFCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
         
-        internal nfeRecepcaoEventoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+        internal nfeInutilizacaoNFCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

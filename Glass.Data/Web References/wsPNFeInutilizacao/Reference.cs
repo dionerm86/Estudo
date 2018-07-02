@@ -20,6 +20,7 @@ namespace Glass.Data.wsPNFeInutilizacao {
     using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
+    using NFeUtils;
     
     
     /// <remarks/>
@@ -27,7 +28,7 @@ namespace Glass.Data.wsPNFeInutilizacao {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="NFeInutilizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeInutilizacao4")]
-    public partial class NFeInutilizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class NFeInutilizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IInutilizacao {
         
         private System.Threading.SendOrPostCallback nfeInutilizacaoNFOperationCompleted;
         
