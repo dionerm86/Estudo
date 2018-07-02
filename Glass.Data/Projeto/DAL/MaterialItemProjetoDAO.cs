@@ -981,7 +981,7 @@ namespace Glass.Data.DAL
                 // Verifica qual preço deverá ser utilizado
                 ProdutoObraDAO.DadosProdutoObra dadosObra = idObra > 0 ? ProdutoObraDAO.Instance.IsProdutoObra(sessao, idObra.Value, m.IdProd) : null;
                 decimal valorTabela = dadosObra != null && dadosObra.ProdutoValido ? dadosObra.ValorUnitProduto :
-                    ProdutoDAO.Instance.GetValorTabela(sessao, (int)m.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, (int?)itemProj.IdPedido, (int?)itemProj.IdProjeto, (int?)itemProj.IdOrcamento);
+                    ProdutoDAO.Instance.GetValorTabela(sessao, (int)m.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)itemProj.IdPedido, (int?)itemProj.IdProjeto, (int?)itemProj.IdOrcamento);
 
                 material.Valor = material.Valor > valorTabela ? material.Valor : valorTabela;
 
