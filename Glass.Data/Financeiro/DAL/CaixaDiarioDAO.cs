@@ -1833,6 +1833,10 @@ namespace Glass.Data.DAL
                         if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario))
                             throw new Exception("Erro\tApenas funcionário Caixa Diário pode efetuar transferência para o Caixa Geral.");
 
+                        /* Chamado 66573. */
+                        if (!CaixaFechadoDiaAnterior(transaction, idLoja))
+                            throw new Exception("O caixa não foi fechado no último dia de trabalho.");
+
                         // Movimenta caixa geral
                         var idCaixaGeral = CaixaGeralDAO.Instance.MovCxGeral(transaction, null, null, null,
                             UtilsPlanoConta.GetPlanoConta(formaSaida == 1 ? UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro : UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, formaSaida,
