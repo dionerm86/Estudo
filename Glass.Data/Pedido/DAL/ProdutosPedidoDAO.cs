@@ -2588,7 +2588,7 @@ namespace Glass.Data.DAL
                             : null;
                         material.Valor = dadosObra != null && dadosObra.ProdutoValido
                             ? dadosObra.ValorUnitProduto
-                            : ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null);
+                            : ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null);
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);

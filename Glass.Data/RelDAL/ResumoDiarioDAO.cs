@@ -63,7 +63,7 @@ namespace Glass.Data.RelDAL
         internal string Sql(string data, uint idLoja)
         {
             var sqlChequesAVista = 
-                "Select Sum(valor) From cheques Where date(dataVenc)<=date(dataCad) and dataCad>=?dataIni and dataCad<=?dataFim and situacao<>" + 
+                "Select Sum(valor) From cheques Where date(IFNULL(dataVenc,dataCad))<=date(dataCad) and dataCad>=?dataIni and dataCad<=?dataFim and situacao<>" + 
                     (int)Cheques.SituacaoCheque.Cancelado + " And tipo=2";
             
             var sqlChequesAPrazo = 

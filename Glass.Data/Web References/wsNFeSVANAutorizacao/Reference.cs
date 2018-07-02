@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsPNFeAutorizacao {
+namespace Glass.Data.wsNFeSVANAutorizacao {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -21,8 +21,8 @@ namespace Glass.Data.wsPNFeAutorizacao {
     using System.Xml.Serialization;
     using System.ComponentModel;
     using NFeUtils;
-
-
+    
+    
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -38,7 +38,7 @@ namespace Glass.Data.wsPNFeAutorizacao {
         
         /// <remarks/>
         public NFeAutorizacao4() {
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsPNFeAutorizacao_NFeAutorizacao4;
+            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -80,7 +80,7 @@ namespace Glass.Data.wsPNFeAutorizacao {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4/nfeAutorizacaoLote", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4", IsNullable=true)]
+        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")]
         public System.Xml.XmlNode nfeAutorizacaoLote([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")] System.Xml.XmlNode nfeDadosMsg) {
             object[] results = this.Invoke("nfeAutorizacaoLote", new object[] {
                         nfeDadosMsg});
@@ -110,7 +110,7 @@ namespace Glass.Data.wsPNFeAutorizacao {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4/nfeAutorizacaoLoteZip", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4", IsNullable=true)]
+        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")]
         public System.Xml.XmlNode nfeAutorizacaoLoteZip([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")] string nfeDadosMsgZip) {
             object[] results = this.Invoke("nfeAutorizacaoLoteZip", new object[] {
                         nfeDadosMsgZip});

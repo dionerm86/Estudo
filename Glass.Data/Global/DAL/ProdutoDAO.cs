@@ -5037,6 +5037,19 @@ namespace Glass.Data.DAL
                     usarChapaVidro
                );
             }
+            else if (compra)
+            {
+                ValorTotal.Instance.Calcular(
+                  sessao,
+                  container,
+                  produto,
+                  (ArredondarAluminio)arredondarAluminio,
+                  calcMult5,
+                  compra,
+                  numeroBenef,
+                  usarChapaVidro
+              );
+            }
             else
             {
                 ValorTotal.Instance.Calcular(
