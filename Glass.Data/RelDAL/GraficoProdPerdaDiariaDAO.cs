@@ -616,13 +616,10 @@ namespace Glass.Data.RelDAL
             double prodAcumulada = 0;
             double perdaAcumulada = 0;
 
-            if (diasBuscados.Count > 0)
+            if (retorno.Count > 0)
             {
-                for (var i = 0; i < diasBuscados.Count; i++)
+                for (var i = 0; i < retorno.Count; i++)
                 {
-                    if (i >= retorno.Count)
-                        break;
-
                     diasDecorridos++;
                     prodAcumulada += retorno[i].TotProdM2;
                     perdaAcumulada += retorno[i].TotPerdaM2;
