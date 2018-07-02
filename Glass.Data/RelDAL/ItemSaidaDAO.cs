@@ -97,7 +97,8 @@ namespace Glass.Data.RelDAL
                                         pnf.IDPRODNF
                                     FROM nota_fiscal n
                                         LEFT JOIN cliente cli ON(cli.Id_Cli = n.IdCliente)
-                                        LEFT JOIN cidade c ON(cli.IdCidade=c.IdCidade)
+                                        LEFT JOIN fornecedor f ON(f.IdFornec = n.IdFornec)
+                                        LEFT JOIN cidade c ON(IFNULL(cli.IdCidade,f.IdCidade)=c.IdCidade)
                                         LEFT JOIN produtos_nf pnf ON(n.IdNF = pnf.IdNf)
                                         LEFT JOIN produto p ON(pnf.IdProd=p.IdProd)
                                         LEFT JOIN natureza_operacao no ON (coalesce(pnf.idNaturezaOperacao, n.idNaturezaOperacao)=no.idNaturezaOperacao)
@@ -151,7 +152,8 @@ namespace Glass.Data.RelDAL
                                         pnf.IDPRODNF
                                     FROM nota_fiscal n
                                         LEFT JOIN cliente cli ON(cli.Id_Cli = n.IdCliente)
-                                        LEFT JOIN cidade c ON(cli.IdCidade=c.IdCidade)
+                                        LEFT JOIN fornecedor f ON(f.IdFornec = n.IdFornec)
+                                        LEFT JOIN cidade c ON(IFNULL(cli.IdCidade,f.IdCidade)=c.IdCidade)
                                         INNER JOIN produtos_nf pnf ON(n.IdNF = pnf.IdNf)
                                         INNER JOIN produto p ON(pnf.IdProd=p.IdProd)
                                         INNER JOIN natureza_operacao no ON(coalesce(pnf.idNaturezaOperacao, n.idNaturezaOperacao)=no.idNaturezaOperacao)
@@ -186,7 +188,8 @@ namespace Glass.Data.RelDAL
                                         pnf.IDPRODNF
                                     FROM nota_fiscal n
                                         LEFT JOIN cliente cli ON(cli.Id_Cli = n.IdCliente)
-                                        LEFT JOIN cidade c ON(cli.IdCidade=c.IdCidade)
+                                        LEFT JOIN fornecedor f ON(f.IdFornec = n.IdFornec)
+                                        LEFT JOIN cidade c ON(IFNULL(cli.IdCidade,f.IdCidade)=c.IdCidade)
                                         INNER JOIN produtos_nf pnf ON(n.IdNF = pnf.IdNf)
                                         INNER JOIN produto p ON(pnf.IdProd=p.IdProd)
                                         INNER JOIN natureza_operacao no ON(coalesce(pnf.idNaturezaOperacao, n.idNaturezaOperacao)=no.idNaturezaOperacao)
