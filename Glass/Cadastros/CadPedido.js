@@ -1396,7 +1396,7 @@ function validarProduto() {
         return false;
     }
 
-    if (FindControl("hdfPedidoMaoDeObra", "input").value == "true" && FindControl("drpLargBenef", "select").value == "0" && FindControl("drpLargBenef", "select").value == "0") {
+    if (FindControl("hdfPedidoMaoDeObra", "input").value == "true" && FindControl("drpAltBenef", "select").value == "0" && FindControl("drpLargBenef", "select").value == "0") {
         alert("Defina altura ou largura do beneficiamento para continuar.");
         return false;
     }
