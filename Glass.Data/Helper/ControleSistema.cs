@@ -307,6 +307,7 @@ namespace Glass.Data.Helper
             Vintage,
             Vipal,
             VisaoVidros,
+            VitoriaVidros,
             VitralManaus,
             VitralVarejo,
             Vitrol,
