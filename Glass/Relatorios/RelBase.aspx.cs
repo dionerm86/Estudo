@@ -710,7 +710,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstImpostoServ = ImpostoServDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idImpostoServ"]), Request["dataIni"],
                             Request["dataFim"], Glass.Conversoes.StrParaFloat(Request["valorIni"]), Glass.Conversoes.StrParaFloat(Request["valorFim"]),
                             Glass.Conversoes.StrParaUint(Request["idFornec"]), Request["nomeFornec"], ImpostoServ_Contabil, Glass.Conversoes.StrParaInt(Request["tipoPagto"]),
-                            bool.Parse(Request["centroCustoDivergente"]));
+                            bool.Parse(Request["centroCustoDivergente"]), Glass.Conversoes.StrParaInt(Request["situacao"]));
 
                         report.DataSources.Add(new ReportDataSource("ImpostoServ", lstImpostoServ.ToArray()));
 
