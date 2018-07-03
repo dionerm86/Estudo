@@ -1573,6 +1573,9 @@ namespace Glass.Data.DAL
                         ClienteDAO.Instance.GetNome(transaction, objInsert.IdCliente).ToLower().Contains("consumidor"))
                         throw new Exception("Não é possível gerar crédito para consumidor final.");
 
+                    if (objInsert.IdLoja == 0)
+                        objInsert.IdLoja = Geral.ConsiderarLojaClientePedidoFluxoSistema ? ClienteDAO.Instance.ObtemIdLoja(transaction, objInsert.IdCliente) : UserInfo.GetUserInfo.IdLoja;
+
                     if (ClienteDAO.Instance.GetSituacao(transaction, objInsert.IdCliente) != (int)SituacaoCliente.Ativo)
                         throw new Exception("O cliente precisa estar ativo para efetuar este procedimento.");
 
