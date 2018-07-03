@@ -1842,7 +1842,7 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 1000px">
-                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
+                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar() ? "": "display: none") %>'>
                                                 <tr>
                                                     <td align="center" bgcolor="#D2D2D2" colspan="4">
                                                         <asp:Label ID="Label9" runat="server" Font-Bold="True" Text="Dados Financeiros"></asp:Label>
