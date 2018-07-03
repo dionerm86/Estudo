@@ -636,6 +636,7 @@ namespace Glass.Data.DAL
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+                                novoProduto.DadosBaixaEstoque.Clear();
 
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
@@ -651,6 +652,7 @@ namespace Glass.Data.DAL
                             else
                             {
                                 novoProduto.Descricao = produto.Descricao;
+                                novoProduto.DadosBaixaEstoque.Clear();
 
                                 // Chamado 65546
                                 var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
