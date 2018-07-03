@@ -16,13 +16,6 @@ namespace Glass.Data.Helper.Calculos
             Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, false, numeroBeneficiamentos,
              usarChapaVidro, valorBruto);
         }
-        public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-         ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool compra, int numeroBeneficiamentos,
-         bool usarChapaVidro = true, bool valorBruto = false)
-        {
-            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, compra, numeroBeneficiamentos,
-            usarChapaVidro, valorBruto);
-        }
 
         /// <summary>
         /// Método utilizado para calcular o valor total e o total de m² de um produto.
