@@ -3975,7 +3975,13 @@ namespace Glass.Data.DAL
 
                         /* Chamado 63113.
                          * Busca o pedido de revenda associado ao pedido de produção, para que a reserva do pedido seja considerada no momento de verificar se o produto possui estoque ou não. */
-                        if (ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaMovEstoqueChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false) <= 0)
+
+                        var qtdEstoque = ProdutoLojaDAO.Instance.GetEstoque(sessao, idLojaMovEstoqueChapa, idProdBaixa, (uint?)idPedidoRevenda, false, false, false);
+                        var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)idProdBaixa);
+                        var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)idProdBaixa);
+                        var bloqueiaEstoque = GrupoProdDAO.Instance.BloquearEstoque(sessao, idGrupoProd, idSubgrupoProd);
+
+                        if (qtdEstoque <= 0 && bloqueiaEstoque)
                             throw new Exception(string.Format("Não há estoque da matéria-prima ({0}) da peça ({1}).", ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProdBaixa),
                                 ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd)));
                     }
