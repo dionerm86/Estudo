@@ -6,6 +6,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
+using System.Text;
 
 namespace Glass.Data.DAL
 {
@@ -3472,6 +3473,9 @@ namespace Glass.Data.DAL
                     dicProduto[idProd] += qtdALiberar;
             }
 
+            //armazena os produtos que não tem estoque disponível
+            var produtosSemEstoque = new StringBuilder();
+
             // Verifica se há estoque disponível para os produtos sendo liberados
             foreach (KeyValuePair<uint, float> item in dicProduto)
             {
@@ -3500,13 +3504,19 @@ namespace Glass.Data.DAL
                     // esta situação ocorre somente quando o controle de estoque não está bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
-                        mensagem = "A liberação não pode ser realizada pois o produto " +
+                        produtosSemEstoque.Append(
                             ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key) + " - " +
-                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + " não possui estoque disponível.";
-
-                        return false;
+                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + ",     ");
                     }
                 }
+            }
+
+            //verifica se algum produto não tem estoque e caso não adiciona na mensagem
+            if (!string.IsNullOrWhiteSpace(produtosSemEstoque.ToString()))
+            {
+                mensagem = string.Format("A liberação não pode ser realizada pois o(s) produto(s) {0} não possui(em) estoque disponível.", produtosSemEstoque);
+
+                return false;
             }
 
             return true;

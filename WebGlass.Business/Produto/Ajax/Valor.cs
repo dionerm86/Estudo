@@ -34,7 +34,7 @@ namespace WebGlass.Business.Produto.Ajax
                 // Recupera o valor mínimo do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
-                return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, null, null, idOrcamento.StrParaIntNullable()).ToString();
+                return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true", false, percDescontoQtde, null, null, idOrcamento.StrParaIntNullable()).ToString();
             }
         }
 
