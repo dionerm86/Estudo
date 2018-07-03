@@ -1196,15 +1196,27 @@ namespace Glass.Data.DAL
                                 if (cr != null)
                                 {
                                     nf.NumParc = cr?.Length ?? 1;
-                                    nf.DatasParcelas = new DateTime[cr.Length];
-                                    nf.ValoresParcelas = new decimal[cr.Length];
-                                    for (int i = 0; i < cr.Length; i++)
+                                    if (nf.NumParc > 1)
                                     {
-                                        nf.DatasParcelas[i] = cr[i].DataVec;
-                                        nf.ValoresParcelas[i] = cr[i].ValorVec;
+                                        nf.DatasParcelas = new DateTime[cr.Length];
+                                        nf.ValoresParcelas = new decimal[cr.Length];
+
+                                        decimal valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+
+                                        for (int i = 0; i < cr.Length; i++)
+                                        {
+                                            nf.DatasParcelas[i] = cr[i].DataVec;
+                                            nf.ValoresParcelas[i] = valorParcelas;
+                                        }
+                                        var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
+                                        if (difParcelaNota != 0)
+                                        {
+                                            nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                        }
                                     }
                                 }
                             }
+
                             if (nf.DatasParcelas?.Count() == 0)
                             {
                                 nf.NumParc = 1;
