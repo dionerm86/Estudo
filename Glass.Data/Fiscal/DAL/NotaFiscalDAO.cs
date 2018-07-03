@@ -1188,12 +1188,32 @@ namespace Glass.Data.DAL
 
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
+                            var liberacao = idsLiberarPedidos?.Split(',');
+                            if (liberacao.Count() == 1)
+                            {
+                                var cr = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, Glass.Conversoes.StrParaUint(liberacao.FirstOrDefault()), true)?.ToArray();
+
+                                if (cr != null)
+                                {
+                                    nf.NumParc = cr?.Length ?? 1;
+                                    nf.DatasParcelas = new DateTime[cr.Length];
+                                    nf.ValoresParcelas = new decimal[cr.Length];
+                                    for (int i = 0; i < cr.Length; i++)
+                                    {
+                                        nf.DatasParcelas[i] = cr[i].DataVec;
+                                        nf.ValoresParcelas[i] = cr[i].ValorVec;
+                                    }
+                                }
+                            }
+                            if (nf.DatasParcelas?.Count() == 0)
+                            {
+                                nf.NumParc = 1;
+                                nf.DatasParcelas = new DateTime[1];
+                                nf.ValoresParcelas = new decimal[1];
+                                nf.DatasParcelas[0] = DateTime.Now;
+                                nf.ValoresParcelas[0] = nf.TotalNota;
+                            }
                             nf.FormaPagto = (int)LiberarPedido.TipoPagtoEnum.APrazo;
-                            nf.NumParc = 1;
-                            nf.DatasParcelas = new DateTime[1];
-                            nf.ValoresParcelas = new decimal[1];
-                            nf.DatasParcelas[0] = DateTime.Now;
-                            nf.ValoresParcelas[0] = nf.TotalNota;
 
                             Update(transaction, nf);
                         }
