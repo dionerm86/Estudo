@@ -506,6 +506,11 @@ namespace Glass.Data.Model
                 if (PCPConfig.UsarControleGerenciamentoProjCnc && SituacaoCnc == (int)SituacaoCncEnum.Projetado)
                     return false;
 
+                var possuiExportacao = PedidoExportacaoDAO.Instance.VerificarPossuiExportacao((int)IdPedido);
+
+                if (possuiExportacao)
+                    return false;
+
                 // A opção de reabrir pedido impresso não pode existir, pois caso o pedido tenha algum projeto,
                 // ao recalcular ou confirmar o projeto, os produtos do pedido irão trocar de posição, alterando os números das etiquetas.
                 return Situacao == (int)SituacaoPedido.Finalizado
