@@ -47,6 +47,7 @@
             var nomeFornec = FindControl("txtNome", "input").value;
             var contabil = FindControl("drpContabil", "select").value;
             var tipoPagto = FindControl("drpTipoPagto", "select").value;
+            var situacao = FindControl("drpSituacao", "select").value;
             var centroCustoDivergente = FindControl("chkCentroCustoDivergente", "input").checked;
 
             var queryString =
@@ -60,6 +61,7 @@
                 "&contabil=" + contabil +
                 "&tipoPagto=" + tipoPagto +
                 "&centroCustoDivergente=" + centroCustoDivergente +
+                "&situacao=" + situacao +
                 "&exportarexcel=" + exportarExcel;
 
             openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=ListaImpostoServ' + queryString);
@@ -149,6 +151,17 @@
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="2">À prazo</asp:ListItem>
                                 <asp:ListItem Value="1">À vista</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:Label ID="Label7" runat="server" Text="Situação." ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpSituacao" runat="server" AutoPostBack="True">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
+                                <asp:ListItem Value="1">Aberto</asp:ListItem>                                
+                                <asp:ListItem Value="2">Cancelado</asp:ListItem>
+                                <asp:ListItem Value="3">Finalizado</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                     </tr>
@@ -276,6 +289,8 @@
                             PropertyName="SelectedValue" Type="Int32" />
                         <asp:ControlParameter ControlID="chkCentroCustoDivergente" Name="centroCustoDivergente" PropertyName="Checked"
                             Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpSituacao" Name="situacao"
+                            PropertyName="SelectedValue" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>

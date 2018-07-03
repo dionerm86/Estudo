@@ -15,7 +15,7 @@ namespace Glass.Data.DAL
         #region Busca padrão
 
         private string Sql(uint idImpostoServ, string dataIni, string dataFim, float valorIni, float valorFim,
-            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, bool selecionar)
+            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, int situacao, bool selecionar)
         {
             string criterio = String.Empty;
             string campos = selecionar ? @"i.*, f.nomeFantasia as nomeFornec, l.nomeFantasia as nomeLoja,
@@ -87,6 +87,12 @@ namespace Glass.Data.DAL
                 criterio += "Tipo pagto.: " + (tipoPagto == (int)ImpostoServ.TipoPagtoEnum.AVista ? "À Vista" : "À Prazo") + "    ";
             }
 
+            if (situacao > 0)
+            {
+                sql += " and i.Situacao=" + situacao;
+                criterio += "Situação.: " + (situacao == (int)ImpostoServ.SituacaoEnum.Aberto ? "Aberto" : situacao == (int)ImpostoServ.SituacaoEnum.Finalizado ? "Finalizado" :  "Cancelado") + "    ";
+            }
+
             if (centroCustoDivergente)
             {
                 sql += " AND i.total <> (SELECT COALESCE(sum(valor), 0) FROM centro_custo_associado WHERE IdImpostoServ = i.IdImpostoServ)";
@@ -113,24 +119,24 @@ namespace Glass.Data.DAL
         }
 
         public IList<ImpostoServ> GetForRpt(uint idImpostoServ, string dataIni, string dataFim, float valorIni, float valorFim,
-            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente)
+            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, int situacao)
         {
             return objPersistence.LoadData(Sql(idImpostoServ, dataIni, dataFim, valorIni, valorFim, idFornec, nomeFornec,
-                contabil, tipoPagto, centroCustoDivergente, true), GetParams(dataIni, dataFim, nomeFornec)).ToList();
+                contabil, tipoPagto, centroCustoDivergente, situacao, true), GetParams(dataIni, dataFim, nomeFornec)).ToList();
         }
 
         public IList<ImpostoServ> GetList(uint idImpostoServ, string dataIni, string dataFim, float valorIni, float valorFim,
-            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, string sortExpression, int startRow, int pageSize)
+            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, int situacao, string sortExpression, int startRow, int pageSize)
         {
             return LoadDataWithSortExpression(Sql(idImpostoServ, dataIni, dataFim, valorIni, valorFim, idFornec, nomeFornec, 
-                contabil, tipoPagto, centroCustoDivergente, true), sortExpression, startRow, pageSize, GetParams(dataIni, dataFim, nomeFornec));
+                contabil, tipoPagto, centroCustoDivergente, situacao, true), sortExpression, startRow, pageSize, GetParams(dataIni, dataFim, nomeFornec));
         }
 
         public int GetCount(uint idImpostoServ, string dataIni, string dataFim, float valorIni, float valorFim,
-            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente)
+            uint idFornec, string nomeFornec, bool? contabil, int tipoPagto, bool centroCustoDivergente, int situacao)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(idImpostoServ, dataIni, dataFim, valorIni, valorFim, idFornec, nomeFornec,
-                contabil, tipoPagto, centroCustoDivergente, false), GetParams(dataIni, dataFim, nomeFornec));
+                contabil, tipoPagto, centroCustoDivergente, situacao, false), GetParams(dataIni, dataFim, nomeFornec));
         }
 
         private string GetDescrPagto(GDASession session, ImpostoServ impostoServ)
@@ -174,7 +180,7 @@ namespace Glass.Data.DAL
 
         public ImpostoServ GetElement(GDASession session, uint idImpostoServ)
         {
-            List<ImpostoServ> item = objPersistence.LoadData(session, Sql(idImpostoServ, null, null, 0, 0, 0, null, null, 0, false, true)).ToList();
+            List<ImpostoServ> item = objPersistence.LoadData(session, Sql(idImpostoServ, null, null, 0, 0, 0, null, null, 0, false, 0, true)).ToList();
             if (item.Count == 0)
                 return null;
 
