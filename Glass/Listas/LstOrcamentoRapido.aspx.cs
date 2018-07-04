@@ -177,6 +177,8 @@ namespace Glass.UI.Web.Listas
             {
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
 
+                var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
+
                 int? tipoOrcamento = String.IsNullOrEmpty(idOrca) ? null : OrcamentoDAO.Instance.ObtemTipoOrcamento(Glass.Conversoes.StrParaUint(idOrca));
 
                 var idLoja = OrcamentoDAO.Instance.GetIdLoja(null, idOrca.StrParaUint());
@@ -187,7 +189,7 @@ namespace Glass.UI.Web.Listas
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
                 else if (prod.Compra)
                     return "Erro;Produto apenas para compra.";
-                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Venda && (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || (prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))) && prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra))
+                else if (!subGrupo.PermitirItemRevendaNaVenda && PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Venda && (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || (prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))) && prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra))
                     return "Erro;Produtos de revenda não podem ser incluídos em um orçamento de venda.";
                 else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Revenda && ((prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && !SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd)) || prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)))
                     return "Erro;Produtos de venda não podem ser incluídos em um orçamento de revenda.";
