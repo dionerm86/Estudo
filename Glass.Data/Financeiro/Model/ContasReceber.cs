@@ -706,7 +706,7 @@ namespace Glass.Data.Model
                 if (!Glass.Configuracoes.FinanceiroConfig.FinanceiroRec.ExibirCnab)
                     return false;
 
-                if (FinanceiroConfig.EmitirBoletoSemNota)
+                if (FinanceiroConfig.EmitirBoletoSemNota && !FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto)
                     return true;
 
                 if (FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto && IdConta.GetValueOrDefault(0) > 0)

@@ -4,6 +4,7 @@ using Glass.Data.Helper;
 using Glass.Data.DAL;
 using System.Collections.Generic;
 using System.Linq;
+using Glass.Data.Model;
 using System;
 
 namespace Glass.Financeiro.UI.Web.Process
@@ -38,7 +39,30 @@ namespace Glass.Financeiro.UI.Web.Process
                 var contasReceberLiberacao = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null);
 
                 if (contasReceberLiberacao != null && contasReceberLiberacao.Count > 0)
-                    idsContasR = contasReceberLiberacao.Select(f => f.IdContaR).ToList();
+                {
+                    if (!Glass.Configuracoes.FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto)
+                    {
+                        idsContasR = contasReceberLiberacao.Select(f => f.IdContaR).ToList();
+                    }
+                    else
+                    {
+                        var idsContaRBoleto = new List<ContasReceber>();
+                        foreach (var item in contasReceberLiberacao)
+                        {
+                            if (UtilsPlanoConta.ContasRecebimentoBoleto().Contains("," + item.IdConta + ","))
+                                idsContaRBoleto.Add(item);
+                        }
+
+                        if (idsContaRBoleto.Count > 0)
+                        {
+                            idsContasR = idsContaRBoleto.Select(f => f.IdContaR).ToList();
+                        }
+                        else
+                        {
+                            throw new Exception("Nenhuma conta encontrada para gerar o boleto");
+                        }
+                    }
+                }
             }
 
             using (var outPdf = new PdfSharp.Pdf.PdfDocument())
