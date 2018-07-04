@@ -372,7 +372,7 @@ namespace Glass.Data.DAL
             else
                 formasPagto += "," + (uint)Pagto.FormaPagto.Permuta;
 
-            string sql = "Select *, true as utilizarPagamento From formapagto where !apenasSistema and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
+            string sql = $"Select *, true as utilizarPagamento From formapagto where (!apenasSistema OR IdFormaPagto={ (uint)Pagto.FormaPagto.Credito }) and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
 
             List<FormaPagto> lst = objPersistence.LoadData(sql).ToList();
             lst.Insert(0, new FormaPagto());
