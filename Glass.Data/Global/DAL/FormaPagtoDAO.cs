@@ -362,7 +362,7 @@ namespace Glass.Data.DAL
         {
             string formasPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + "," +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro + "," +
-                (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito;
+                (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito + "," + (uint)Pagto.FormaPagto.Credito;
 
             if (FinanceiroConfig.FormaPagamento.PermitirFormaPagtoPermutaApenasAdministrador)
             {
