@@ -53,7 +53,7 @@ namespace Glass.Data.Helper.Calculos
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
         {
-            if (container.MaoDeObra)
+            if (container?.MaoDeObra ?? false)
                 return valor.Value;
 
             return 2;
