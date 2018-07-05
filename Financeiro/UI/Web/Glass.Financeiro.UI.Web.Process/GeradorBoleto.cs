@@ -47,10 +47,14 @@ namespace Glass.Financeiro.UI.Web.Process
                     else
                     {
                         var idsContaRBoleto = new List<ContasReceber>();
+                        var contasRecebimentoBoleto = UtilsPlanoConta.ContasRecebimentoBoleto().Split(',');
+
                         foreach (var item in contasReceberLiberacao)
                         {
-                            if (UtilsPlanoConta.ContasRecebimentoBoleto().Contains("," + item.IdConta + ","))
+                            if (contasRecebimentoBoleto.Contains(Conversoes.UintParaStr(item.IdConta)))
+                            {
                                 idsContaRBoleto.Add(item);
+                            }
                         }
 
                         if (idsContaRBoleto.Count > 0)
