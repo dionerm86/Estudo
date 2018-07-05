@@ -5045,8 +5045,12 @@ namespace Glass.Data.DAL
                         throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
                             ". Efetue o estorno antes.");
 
-                    if (PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.Confirmado && PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra)
+                    if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
+                        (PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.Confirmado ||
+                        PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.LiberadoParcialmente))
+                    {
                         throw new Exception("Não é possível marcar perda em peças de pedido mão de obra liberados.");
+                    }
 
                     // Valida a etiqueta
                     ValidaEtiquetaProducao(transaction, ref numEtiqueta);
