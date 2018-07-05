@@ -801,14 +801,14 @@ namespace Glass.UI.Web.Cadastros
                 // Recupera a variável que será usada para cálculo do percentual calculado para o pedido
                 // Usado para liberação parcial - aplica o desconto e subtrai parte do valor 
                 // da entrada relativo ao percentual do pedido que está sendo liberado
-                var dividir = !existeEspelho || pedido.DescontoTotal == 0 ? 0 : pedidoEspelho.TotalSemDesconto;
+                var dividir = (!existeEspelho || pedido.DescontoTotal == 0 || PedidoConfig.RatearDescontoProdutos) ? 0 : pedidoEspelho.TotalSemDesconto;
 
                 // Define o tipo de desconto: se o valor calculado for do pedido espelho, usa o desconto do pedido espelho também
                 pedido.DescontoTotalPcp = PCPConfig.UsarConferenciaFluxo && dividir > 0;
 
                 // Caso não deva ser utilizado o total do pedido PCP e não exista conferência para este pedido, utilizad o total sem desconto
                 // do pedido original
-                dividir = pedido.DescontoTotalPcp ? dividir : !existeEspelho ? pedido.TotalSemDesconto : pedidoEspelho.TotalSemDesconto;
+                dividir = (pedido.DescontoTotalPcp || PedidoConfig.RatearDescontoProdutos) ? dividir : !existeEspelho ? pedido.TotalSemDesconto : pedidoEspelho.TotalSemDesconto;
 
                 // Remove o fast delivery do total calculado do pedido, aplica o desconto logo abaixo e depois aplica o fast delivery novamente
                 // Faz o mesmo com o dividir
