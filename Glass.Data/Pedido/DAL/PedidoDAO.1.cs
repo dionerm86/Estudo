@@ -2497,15 +2497,26 @@ namespace Glass.Data.DAL
         /// </summary>
         public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, string idsPedidos, string mensagem)
         {
+            var pedidos = idsPedidos.Split(',');
+            var idsPedidosErro = new List<uint>();
+            foreach (var idPedido in pedidos)
+            {
+                string erro = "";
+                if (!VerificaSinalPagamentoReceber(sessao, idPedido, out erro))
+                {
+                    idsPedidosErro.Add(Conversoes.StrParaUint(idPedido));
+                }
+            }
+
             var sql = @"
                 UPDATE pedido SET
                     situacao=" + (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro + @",
                     idFuncConfirmarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
-                WHERE idPedido IN(" + idsPedidos + ")";
+                WHERE idPedido IN(" + string.Join(",", idsPedidosErro) + ")";
 
             objPersistence.ExecuteCommand(sessao, sql);
 
-            foreach (var idPedido in idsPedidos.Split(',').Select(f => f.StrParaUint()).ToList())
+            foreach (var idPedido in idsPedidosErro)
             {
                 ObservacaoFinalizacaoFinanceiroDAO.Instance
                     .InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
