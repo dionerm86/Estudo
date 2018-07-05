@@ -48,10 +48,10 @@ namespace Glass.UI.Web.Cadastros
 
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
-                grdConta.Columns[11].Visible = false;
+                grdConta.Columns[12].Visible = false;
             }
             
-            grdConta.Columns[12].Visible = drpArquivoRemessa.SelectedValue != "1" &&
+            grdConta.Columns[13].Visible = drpArquivoRemessa.SelectedValue != "1" &&
                                            FinanceiroConfig.FinanceiroRec.ExibirCnab;
 
             hdfCxDiario.Value = Request["cxDiario"];
