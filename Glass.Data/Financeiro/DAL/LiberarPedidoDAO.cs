@@ -342,6 +342,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     // Cria a liberação de pedidos à vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
@@ -353,6 +355,8 @@ namespace Glass.Data.DAL
                         IdReferencia = idLiberarPedido,
                         TipoRecebimento = UtilsFinanceiro.TipoReceb.LiberacaoAVista
                     });
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
