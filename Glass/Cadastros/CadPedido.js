@@ -112,11 +112,13 @@ function atualizaTipoVendaCli() {
         return true;
     }
 
-    var drpTipoVenda = FindControl("drpTipoVenda", "select");
-    // Salva o valor selecionado antes de preencher novamente a drop por ajax
-    var tipoVenda = drpTipoVenda.value;
+    var drpTipoVenda = FindControl("drpTipoVenda", "select");    
     // Carrega os valores possíveis para o tipo venda
     drpTipoVenda.innerHTML = ajax;
+
+    // Salva o valor selecionado antes de preencher novamente a drop por ajax
+    var tipoVenda = drpTipoVenda.value;
+
     // Volta o tipo de venda que estava selecionado
     drpTipoVenda.value = tipoVenda;
     drpTipoVenda.onchange();
@@ -135,8 +137,6 @@ function atualizaFormasPagtoCli() {
         return true;
     }
 
-    // Salva em uma variável a forma de pagamento selecionada, antes do recarregamento das opções da Drop Down List.
-    var idFormaPagtoAtual = drpFormaPagto.value;
     // Recupera as opções de forma de pagamento disponíveis.
     var ajax = loadAjax("formaPagto");
 
@@ -151,6 +151,9 @@ function atualizaFormasPagtoCli() {
 
     // Atualiza a Drop Down List com as formas de pagamento disponíveis.
     drpFormaPagto.innerHTML = ajax;
+
+    // Salva em uma variável a forma de pagamento selecionada, antes do recarregamento das opções da Drop Down List.
+    var idFormaPagtoAtual = drpFormaPagto.value;
 
     // Variável criada para informar se a forma de pagamento pré-selecionada existe nas opções atuais da Drop Down List de forma de pagamento.
     var formaPagtoEncontrada = false;
