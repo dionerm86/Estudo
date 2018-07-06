@@ -509,6 +509,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("RENTABILIDADEFINANCEIRA", Direction = DirectionParameter.Input)]
         public decimal RentabilidadeFinanceira { get; set; }
 
+        [PersistenceProperty("TRANSACAO")]
+        public bool Transacao { get; set; }
+
         #region Dados para exportação
 
         [PersistenceProperty("IdPedidoExterno")]
@@ -546,6 +549,8 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("IDPEDIDOREVENDA")]
         public int? IdPedidoRevenda { get; set; }
+
+
 
         #endregion
 
