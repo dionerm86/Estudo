@@ -537,7 +537,7 @@ namespace Glass.Data.DAL
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    arquivo.GerarArquivoRemessa(cedente.Convenio.ToString(), banco, cedente, boletos, ms, boletos.NumRemessa);
+                    arquivo.GerarArquivoRemessa(cedente.Convenio.ToString(), banco, boletos, ms, boletos.NumRemessa);
 
                     Glass.Data.Model.ArquivoRemessa ar = new Glass.Data.Model.ArquivoRemessa();
                     ar.IdContaBanco = boletos.IdContaBanco;
