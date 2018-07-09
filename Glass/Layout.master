@@ -5,34 +5,114 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>WebGlass</title>
-    
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Geral.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/GridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-    <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/dhtmlgoodies_calendar.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
-
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery-2.0.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type='text/javascript' src='<%= ResolveUrl("~/Scripts/jquery/jquery.utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/dhtmlgoodies_calendar.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
-
     <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
-
+    <script type="text/javascript" src="<%= ConfigurationManager.AppSettings["VueJsPath"] %>"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue-text-mask@6.1.1/dist/vueTextMask.min.js"></script>
+    <asp:PlaceHolder runat="server">
+        <%
+            foreach (var estilo in Glass.UI.Web.BundleConfig.Estilos())
+            {
+                Response.Write(System.Web.Optimization.Styles.Render(estilo));
+            }
+        %>
+        <%
+            foreach (var script in Glass.UI.Web.BundleConfig.Scripts())
+            {
+                Response.Write(script.ToString());
+            }
+        %>
+    </asp:PlaceHolder>
     <meta name="robots" content="noindex"/>
     <meta name="googlebot" content="noindex"/>
-
     <noscript>
-        <meta http-equiv="Refresh" content="1; url=http://www.enable-javascript.com/pt/"/>
+        <meta http-equiv="Refresh" content="1; url=http://www.enable-javascript.com/pt/" />
     </noscript>
-
     <asp:ContentPlaceHolder ID="Header" runat="server">
     </asp:ContentPlaceHolder>
-
     <asp:ContentPlaceHolder ID="javaScript" runat="server">
     </asp:ContentPlaceHolder>
-
 </head>
 <body>
+    <script type="text/javascript">
+
+        Vue.prototype.$http = axios.create({
+            baseURL: '<%= ConfigurationManager.AppSettings["backendUrl"] %>',
+            headers: {
+                'Authorization': 'Bearer <%= ObterCookieAuth() %>'
+            }
+        });
+
+        Vue.prototype.$http.interceptors.response.use(
+            function (resposta) {
+                const converteData = function(data) {
+                    const regex = new RegExp(/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)*Z*([+-]\d{2}:\d{2})*)*$/);
+
+                    if (typeof data === 'object') {
+                        for (var campo in data) {
+                            var convertido = converteData(data[campo]);
+                            if (convertido) {
+                                data[campo] = convertido;
+                            }
+                        }
+
+                        return data;
+                    }
+                    else if (typeof data === 'string' && regex.test(data)) {
+                        return new Date(data);
+                    }
+
+                    return null;
+                }
+
+                resposta.data = converteData(resposta.data);
+                return resposta;
+            },
+            function (erro) {
+                var codigo = 500;
+                var mensagem = erro.message;
+
+                if (erro.response) {
+                    if (erro.response.status === 401) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    codigo = erro.response.status;
+
+                    if (erro.response.data) {
+                        mensagem = erro.response.data.mensagem || mensagem;
+                    }
+
+                    var exibirDetalhesErro = <%= (Glass.Data.Helper.ControleSistema.AmbienteTeste
+                        || Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync).ToString().ToLower() %>;
+
+                    if (exibirDetalhesErro && erro.response.data) {
+                        if (erro.response.data.Message) {
+                            mensagem = erro.response.data.Message
+                                + (erro.response.data.MessageDetail ? '\nDetalhes: ' + erro.response.data.MessageDetail : '');
+                        }
+
+                        if (erro.response.data.ExceptionMessage) {
+                            mensagem = erro.response.data.ExceptionMessage
+                                + (erro.response.data.StackTrace ? '\n\n' + erro.response.data.StackTrace : '');
+                        }
+                    }
+                }
+
+                return Promise.reject({ codigo, mensagem })
+            });
+
+        Servicos.Publicos.disponibilidade(30000)
+            .catch(function (erro) {
+                window.location.reload();
+                return;
+            });
+
+        const usuarioLogado = {
+            id: <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>
+        };
+    </script>
     <div runat="server" id="divChat" onload="divChat_Load">
         <!--Start of Tawk.to Script-->
         <script type="text/javascript">

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using Colosoft;
 using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.Web;
-using Glass.Data.Exceptions;
-using System.Linq;
-using Glass.Data.RelDAL;
 using Glass.Configuracoes;
-using Glass.Global;
-using Colosoft;
-using Glass.Data.Helper.Calculos;
+using Glass.Data.Exceptions;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using Glass.Data.RelDAL;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -60,10 +55,10 @@ namespace Glass.Data.DAL
 
             var dadosVendidos = usarDadosVendidos ?
                 string.Format(@"LEFT JOIN (
-                    SELECT IdCli, IdPedido, CONCAT(CAST(GROUP_CONCAT(CONCAT('\n* ', CodInterno, ' - ', Descricao, ': Qtde ', Qtde, '  Tot. m² ', 
+                    SELECT IdCli, IdPedido, CONCAT(CAST(GROUP_CONCAT(CONCAT('\n* ', CodInterno, ' - ', Descricao, ': Qtde ', Qtde, '  Tot. m² ',
                         TotM2)) AS CHAR), RPAD('', 100, ' ')) AS DadosVidrosVendidos
                     FROM (
-                        SELECT ped.IdCli, ped.IdPedido, pp.IdProd, p.CodInterno, p.Descricao, 
+                        SELECT ped.IdCli, ped.IdPedido, pp.IdProd, p.CodInterno, p.Descricao,
                             REPLACE(CAST(SUM(pp.TotM) AS CHAR), '.', ',') AS TotM2, CAST(SUM(pp.Qtde) AS SIGNED) AS Qtde
                         FROM produtos_pedido pp
                             INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -82,7 +77,7 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM pedido p
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN rota_cliente rc ON (c.Id_Cli=rc.IdCliente)
                     LEFT JOIN rota r ON (rc.IdRota=r.IdRota)
@@ -92,8 +87,8 @@ namespace Glass.Data.DAL
                     LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido AND lp.Situacao IS NOT NULL AND lp.Situacao=1)
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
                     LEFT JOIN funcionario fc ON (c.IdFunc=fc.IdFunc)
-                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
-                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja) 
+                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
+                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN comissionado com ON (p.IdComissionado=com.IdComissionado)
                     {1}
                 WHERE p.Situacao IN ({2}) AND p.TipoVenda IN ({3},{4},{5}) ?filtroAdicional?",
@@ -638,7 +633,7 @@ namespace Glass.Data.DAL
             var criterio = string.Empty;
 
             var sql = "Select " + campos + @"
-                From pedido p 
+                From pedido p
                     Inner Join cliente c On (p.idCli=c.id_Cli)
                     Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
                     Left Join sinal s On (" + (pagtoAntecipado ? "p.idPagamentoAntecipado" : "p.idSinal") + @"=s.idSinal)
@@ -883,14 +878,14 @@ namespace Glass.Data.DAL
         public Pedido[] GetForRptObra(uint idObra)
         {
             var sql = @"
-                Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, 
-                    c.Tel_Cont as rptTelCont, c.Tel_Res as rptTelRes, c.Tel_Cel as rptTelCel, 
+                Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc,
+                    c.Tel_Cont as rptTelCont, c.Tel_Res as rptTelRes, c.Tel_Cel as rptTelCel,
                     l.NomeFantasia as nomeLoja, fp.Descricao as FormaPagto
-                From pedido p 
-                    Inner Join cliente c On (p.idCli=c.id_Cli) 
-                    Inner Join funcionario f On (p.IdFunc=f.IdFunc) 
-                    Inner Join loja l On (p.IdLoja = l.IdLoja) 
-                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) 
+                From pedido p
+                    Inner Join cliente c On (p.idCli=c.id_Cli)
+                    Inner Join funcionario f On (p.IdFunc=f.IdFunc)
+                    Inner Join loja l On (p.IdLoja = l.IdLoja)
+                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto)
                 Where p.idObra=" + idObra + " and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado;
 
             return objPersistence.LoadData(sql).ToArray();
@@ -908,8 +903,8 @@ namespace Glass.Data.DAL
 
             var campos = selecionar ? "p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as nomeFunc" : "Count(*)";
 
-            var sql = "Select " + campos + @" From pedido p 
-                Inner Join funcionario f On (p.IdFunc=f.IdFunc) 
+            var sql = "Select " + campos + @" From pedido p
+                Inner Join funcionario f On (p.IdFunc=f.IdFunc)
                 Inner Join cliente c On (p.idCli=c.id_Cli) Where 1 ?filtroAdicional?";
 
             if (idCliente > 0)
@@ -1105,29 +1100,29 @@ namespace Glass.Data.DAL
         private string SqlLiberacao(uint idCliente, string nomeCliente, string idsPedidos, string dataIniEntrega, string dataFimEntrega,
             int situacaoProd, string tiposPedidos, int? idLoja, bool buscarDescontoFluxoParaLiberacao)
         {
-            // O Left Join com funcionário deve ser left porque aconteceu de um pedido ter sido tirado pela web e 
+            // O Left Join com funcionário deve ser left porque aconteceu de um pedido ter sido tirado pela web e
             // ter ficado com idFunc=0
 
             var buscarOcs = OrdemCargaConfig.UsarControleOrdemCarga ? ", CAST((SELECT GROUP_CONCAT(idOrdemCarga) FROM pedido_ordem_carga WHERE idPedido = p.idPedido) as CHAR) as IdsOCs " : " ";
 
             var sql = $@"
-                Select p.*, { ClienteDAO.Instance.GetNomeCliente("c") } as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, o.saldo as saldoObra, 
-                    ({ ObraDAO.Instance.SqlPedidosAbertos("p.idObra", "p.idPedido", ObraDAO.TipoRetorno.TotalPedido) }) as totalPedidosAbertosObra, l.NomeFantasia as nomeLoja, 
+                Select p.*, { ClienteDAO.Instance.GetNomeCliente("c") } as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, o.saldo as saldoObra,
+                    ({ ObraDAO.Instance.SqlPedidosAbertos("p.idObra", "p.idPedido", ObraDAO.TipoRetorno.TotalPedido) }) as totalPedidosAbertosObra, l.NomeFantasia as nomeLoja,
                     fp.Descricao as FormaPagto, pe.Total as TotalEspelho, s.dataCad as dataEntrada,
-                    s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, 
+                    s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal,
                     cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal, s.isPagtoAntecipado as pagamentoAntecipado,
                     { PCPConfig.UsarConferenciaFluxo && buscarDescontoFluxoParaLiberacao} as BuscarDescontoFluxoParaLiberacao,
                     c.ObsLiberacao as ObsLiberacaoCliente{ buscarOcs }
-                From pedido p 
-                    Left Join pedido_espelho pe On (p.idPedido=pe.idPedido) 
-                    Inner Join cliente c On (p.idCli=c.id_Cli) 
-                    Left Join funcionario f On (p.IdFunc=f.IdFunc) 
-                    Inner Join loja l On (p.IdLoja = l.IdLoja) 
+                From pedido p
+                    Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
+                    Inner Join cliente c On (p.idCli=c.id_Cli)
+                    Left Join funcionario f On (p.IdFunc=f.IdFunc)
+                    Inner Join loja l On (p.IdLoja = l.IdLoja)
                     Left Join obra o On (p.idObra=o.idObra)
-                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) 
+                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto)
                     Left Join sinal s On (p.idSinal=s.idSinal)
-                Where p.situacao in ({ (int)Pedido.SituacaoPedido.ConfirmadoLiberacao }, { (int)Pedido.SituacaoPedido.LiberadoParcialmente }) 
+                Where p.situacao in ({ (int)Pedido.SituacaoPedido.ConfirmadoLiberacao }, { (int)Pedido.SituacaoPedido.LiberadoParcialmente })
                 and p.tipoPedido<>{(int)Pedido.TipoPedidoEnum.Producao}";
 
             if (idCliente > 0)
@@ -1229,7 +1224,7 @@ namespace Glass.Data.DAL
 
             var sql = @"
                 Select " + SqlCampoTotalLiberacao(true, "valor", "p", "pe", "ap", "plp") + @"
-                From pedido p 
+                From pedido p
                     Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
                     Inner Join produtos_pedido pp On (pp.idPedido=p.idPedido)
                     Left Join ambiente_pedido ap On (pp.idAmbientePedido=ap.idAmbientePedido)
@@ -1252,21 +1247,21 @@ namespace Glass.Data.DAL
 
         private string SqlByLiberacao(uint idPedido, string idsLiberarPedidos)
         {
-            // O Left Join com funcionário deve ser left porque aconteceu de um pedido ter sido tirado pela web e 
+            // O Left Join com funcionário deve ser left porque aconteceu de um pedido ter sido tirado pela web e
             // ter ficado com idFunc=0
             var sql = @"
-                Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, 
+                Select p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
                     fp.Descricao as FormaPagto, pe.total as totalEspelho, o.saldo as saldoObra, (" +
                     ObraDAO.Instance.SqlPedidosAbertos("p.idObra", "p.idPedido", ObraDAO.TipoRetorno.TotalPedido) + @") as totalPedidosAbertosObra, s.dataCad as dataEntrada,
                     s.usuCad as usuEntrada, cast(s.valorCreditoAoCriar as decimal(12,2)) as valorCreditoAoReceberSinal, cast(s.creditoGeradoCriar as decimal(12,2)) as creditoGeradoReceberSinal,
                     cast(s.creditoUtilizadoCriar as decimal(12,2)) as creditoUtilizadoReceberSinal,  (p.idPagamentoAntecipado > 0) as pagamentoAntecipado,
                     (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota
-                From pedido p 
-                    Inner Join cliente c On (p.idCli=c.id_Cli) 
-                    Left Join funcionario f On (p.IdFunc=f.IdFunc) 
-                    Inner Join loja l On (p.IdLoja = l.IdLoja) 
+                From pedido p
+                    Inner Join cliente c On (p.idCli=c.id_Cli)
+                    Left Join funcionario f On (p.IdFunc=f.IdFunc)
+                    Inner Join loja l On (p.IdLoja = l.IdLoja)
                     Left Join obra o On (p.idObra=o.idObra)
-                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) 
+                    Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto)
                     Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
                     Left Join sinal s On (p.idSinal=s.idSinal)";
 
@@ -1482,7 +1477,7 @@ namespace Glass.Data.DAL
             string nomeCliExterno, string codRotaExterna, bool selecionar)
         {
             var campos = @"p.*, c.nomeFantasia as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja,
-                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota, 
+                (SELECT r.codInterno FROM rota r WHERE r.idRota IN (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota,
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
@@ -1502,7 +1497,7 @@ namespace Glass.Data.DAL
 	                                    INNER JOIN volume_produtos_pedido vpp1 ON (vpp1.idVolume = v1.idVolume)
                                     GROUP BY v1.idPedido
                              ) vpp ON (p.idPedido = vpp.idPedido)
-                WHERE p.situacao IN(" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + @" {0}) 
+                WHERE p.situacao IN(" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + @" {0})
                     AND COALESCE(sgp.GeraVolume, gp.GeraVolume, false) = true
                     AND COALESCE(sgp.TipoSubgrupo, 0) <> " + (int)TipoSubgrupoProd.ChapasVidro;
 
@@ -1765,7 +1760,7 @@ namespace Glass.Data.DAL
                     INNER JOIN produto prod ON (pp.idprod = prod.idprod)
                     LEFT JOIN pedido_espelho pe ON (p.idPedido=pe.idPedido)
                     LEFT JOIN (" + SubgrupoProdDAO.Instance.SqlSubgrupoRevenda() + @"
-                    ) as prodRevenda ON (prod.idGrupoProd = prodRevenda.idGrupoProd 
+                    ) as prodRevenda ON (prod.idGrupoProd = prodRevenda.idGrupoProd
                         /* Chamado 16149.
                          * Não pode ser feito coalesce com prodRevenda.idSubgrupoProd, porque quando o produto não tem subgrupo
                          * associado, é buscado um subgrupo qualquer que atenda às condições informadas.
@@ -1793,7 +1788,7 @@ namespace Glass.Data.DAL
             filtro += " AND p.tipoEntrega <> " + (int)Pedido.TipoEntregaPedido.Balcao;
             filtro += string.Format(" AND IF(p.TipoPedido = {0}, coalesce(p.IdPedidoRevenda, 0) > 0, true)", (int)Pedido.TipoPedidoEnum.Producao);
             filtro += string.Format(" AND IF(p.TipoPedido = {0}, p.GerarPedidoProducaoCorte=false, true)", (int)Pedido.TipoPedidoEnum.Revenda);
-            //49453 
+            //49453
             filtro += string.Format(" AND IF(p.TipoPedido = {0}, p.Situacao IN ({1}), p.situacao IN(" + situacoesPedido + "))", (int)Pedido.TipoPedidoEnum.Producao, situacoesPedidoRevenda);
 
             if (idRota > 0)
@@ -1842,19 +1837,19 @@ namespace Glass.Data.DAL
             {
                 filtro += " AND p.idCli NOT IN (SELECT id_Cli FROM cliente WHERE SomenteOcTransferencia = 1)";
                 filtro += " AND p.idLoja=" + idLoja;
-                filtro += @" AND IF(p.deveTransferir, COALESCE((SELECT COUNT(*) 
-                                                             FROM ordem_carga oc 
+                filtro += @" AND IF(p.deveTransferir, COALESCE((SELECT COUNT(*)
+                                                             FROM ordem_carga oc
                                                                 LEFT JOIN pedido_ordem_carga poc ON (oc.idOrdemCarga = poc.idOrdemCarga)
                                                              WHERE oc.tipoOrdemCarga=" + (int)OrdemCarga.TipoOCEnum.Transferencia + @"
-                                                                AND poc.idPedido = p.idPedido), 0) > 0 
+                                                                AND poc.idPedido = p.idPedido), 0) > 0
                                                     AND COALESCE((SELECT COUNT(*)
                                                                     FROM nota_fiscal nf
                                                                         INNER JOIN pedidos_nota_fiscal pnf ON (nf.idNf = pnf.idNf)
-                                                                    WHERE nf.situacao = 2 
+                                                                    WHERE nf.situacao = 2
 	                                                                AND nf.tipoDocumento = 2
 	                                                                AND pnf.idPedido = p.idPedido), 0) > 0, p.situacaoProducao <> " + (int)Pedido.SituacaoProducaoEnum.Entregue + ")";
 
-                filtro += @" AND COALESCE((SELECT COUNT(*) 
+                filtro += @" AND COALESCE((SELECT COUNT(*)
                                         FROM ordem_carga oc
                                             LEFT JOIN pedido_ordem_carga poc ON (oc.IdOrdemCarga = poc.idOrdemCarga)
                                         WHERE IF(p.OrdemCargaParcial, (oc.Situacao <> " + (int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente + "), 1) AND oc.tipoOrdemCarga=" + (int)OrdemCarga.TipoOCEnum.Venda +
@@ -1868,7 +1863,7 @@ namespace Glass.Data.DAL
                 filtro += " AND p.situacaoProducao <> " + (int)Pedido.SituacaoProducaoEnum.Entregue;
                 filtro += " AND p.idLoja <>" + idLoja;
                 filtro += " AND p.deveTransferir = TRUE";
-                filtro += @" AND COALESCE((SELECT COUNT(*) 
+                filtro += @" AND COALESCE((SELECT COUNT(*)
                                         FROM ordem_carga oc
                                             LEFT JOIN pedido_ordem_carga poc ON (oc.IdOrdemCarga = poc.idOrdemCarga)
                                         WHERE oc.tipoOrdemCarga=" + (int)OrdemCarga.TipoOCEnum.Transferencia +
@@ -1913,7 +1908,7 @@ namespace Glass.Data.DAL
             var nomeCliente = ClienteDAO.Instance.GetNomeCliente("c");
 
             var sqlQtdeVolume = @"
-                SELECT count(*) 
+                SELECT count(*)
                 FROM volume v
                     LEFT JOIN ordem_carga oc ON (v.IdOrdemCarga = oc.IdOrdemCarga)
                 WHERE v.idPedido = p.idPedido";
@@ -1936,9 +1931,9 @@ namespace Glass.Data.DAL
                 FROM pedido p
                     LEFT JOIN cliente c ON (p.idCli = c.id_cli)
                     LEFT JOIN loja l ON (p.idLoja = l.idLoja)
-                    LEFT JOIN ( 
+                    LEFT JOIN (
                         select idPedido, sum(qtdePecasVidro) as qtdePecasVidro, sum(qtdePendente) as qtdePendente,
-                            SUM(peso / qtdePecasVidro * qtdePendente) as pesoPendente, 
+                            SUM(peso / qtdePecasVidro * qtdePendente) as pesoPendente,
                             sum(totM / qtdePecasVidro * qtdePendente) as totMPendente,
                             sum(peso) as peso, sum(totM) as totM, Sum(ValorTotal) as ValorTotal
                         from (
@@ -1951,21 +1946,21 @@ namespace Glass.Data.DAL
                                 INNER JOIN produto prod ON (pp.idProd = prod.idProd)
                                 LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
                                 LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                                LEFT JOIN 
+                                LEFT JOIN
                                     (
 			                                SELECT IdProdPed, count(*) as QtdePronto
 			                                FROM produto_pedido_producao
 			                                WHERE SituacaoProducao IN (" + (int)SituacaoProdutoProducao.Pronto + "," + (int)SituacaoProdutoProducao.Entregue + @")
 			                                GROUP BY IdProdPed
                                     ) as ppp ON (pp.IdProdPedEsp = ppp.idProdPed)
-	                                LEFT JOIN 
+	                                LEFT JOIN
                                     (
 		                                SELECT IdProdPed, count(*) as Qtde
 		                                FROM item_carregamento
 		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
 		                                GROUP BY IdProdPed
                                     ) as ic ON (ic.IdProdPed = pp.IdProdPed)
-                                    LEFT JOIN 
+                                    LEFT JOIN
                                     (
 		                                SELECT IdProdPed, count(*) as Qtde
 		                                FROM item_carregamento
@@ -1983,7 +1978,7 @@ namespace Glass.Data.DAL
                                 HAVING Qtde > 0
                             ) as tmp1
 
-                            UNION ALL SELECT pp.idProdPed, pp.idPedido, ({0}) as qtdePecasVidro, 0 as qtdePendente, ((pp.TotM / pp.qtde) * ({0})) as TotM, 
+                            UNION ALL SELECT pp.idProdPed, pp.idPedido, ({0}) as qtdePecasVidro, 0 as qtdePendente, ((pp.TotM / pp.qtde) * ({0})) as TotM,
                                  ((pp.peso / pp.Qtde) * ({0})) as peso,
                                  (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.qtde) * {0}) as ValorTotal
                             FROM produtos_pedido pp
@@ -1992,14 +1987,14 @@ namespace Glass.Data.DAL
                                 LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
                                 LEFT JOIN produto_pedido_producao ppp ON (pp.IDPRODPEDESP = ppp.idProdPed)
                                 LEFT JOIN setor s ON (ppp.idSetor = s.idSetor)
-                                LEFT JOIN 
+                                LEFT JOIN
                                     (
 		                                SELECT IdProdPed, count(*) as Qtde
 		                                FROM item_carregamento
 		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
 		                                GROUP BY IdProdPed
                                     ) as ic ON (ic.IdProdPed = pp.IdProdPed)
-                                    LEFT JOIN 
+                                    LEFT JOIN
                                     (
 		                                SELECT IdProdPed, count(*) as Qtde
 		                                FROM item_carregamento
@@ -2021,7 +2016,7 @@ namespace Glass.Data.DAL
                                 INNER JOIN produto prod ON (pp.idProd = prod.idProd)
                                 LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
                                 LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                                LEFT JOIN 
+                                LEFT JOIN
                                 (
 		                            SELECT vpp.IdProdPed, SUM(vpp.Qtde) as Qtde
 		                            FROM volume_produtos_pedido vpp
@@ -2029,7 +2024,7 @@ namespace Glass.Data.DAL
 		                            WHERE ic.idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
 		                            GROUP BY vpp.IdProdPed
                                 ) as ic ON (ic.IdProdPed = pp.IdProdPed)
-                                LEFT JOIN 
+                                LEFT JOIN
                                 (
 		                            SELECT vpp.IdProdPed, SUM(vpp.Qtde) as Qtde
 		                            FROM volume_produtos_pedido vpp
@@ -2198,7 +2193,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public IEnumerable<PedidoTotaisOrdemCarga> ObterPedidosTotaisOrdensCarga(GDASession session, IEnumerable<int> idsOrdemCarga)
         {
-            // Recupera os produtos de pedido da ordem de carga informada. 
+            // Recupera os produtos de pedido da ordem de carga informada.
             var produtosPedido = ProdutosPedidoDAO.Instance.ObterProdutosPedidoPelasOrdensDeCarga(session, idsOrdemCarga);
             produtosPedido = produtosPedido != null ? produtosPedido.ToList() : null;
 
@@ -2362,9 +2357,9 @@ namespace Glass.Data.DAL
                 WHERE p.SituacaoProducao = " + (int)Pedido.SituacaoProducaoEnum.Pronto + @"
 	                AND p.TipoEntrega = " + DataSources.Instance.GetTipoEntregaEntrega().GetValueOrDefault(0) + @"
                     AND coalesce(oc.IdCarregamento, 0) = 0
-                    AND p.IdCli IN 
+                    AND p.IdCli IN
                     (
-		                SELECT oc.IdCliente 
+		                SELECT oc.IdCliente
                         FROM ordem_carga oc
 		                WHERE oc.IdCarregamento = ?idCarregamento
 	                )
@@ -2530,24 +2525,20 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Criar pedido de produção com base no pedido de revenda
         /// </summary>
+        /// <param name="pedido"></param>
+        /// <returns></returns>
         public uint CriarPedidoProducaoPedidoRevenda(Pedido pedido)
         {
-            var pedidoNovo = (Pedido)pedido.Clone();
-            pedidoNovo.IdPedido = 0;
-            pedidoNovo.TipoPedido = (int)Pedido.TipoPedidoEnum.Producao;
-            pedidoNovo.Situacao = Pedido.SituacaoPedido.Ativo;
-            pedidoNovo.IdPedidoRevenda = (int)pedido.IdPedido;
-            pedidoNovo.GerarPedidoProducaoCorte = false;
-            pedidoNovo.CodCliente = string.Format("({1}) Rev.{0}", pedido.IdPedido, pedidoNovo.CodCliente);
-
             using (var transaction = new GDATransaction())
             {
                 try
                 {
                     transaction.BeginTransaction();
-                    Insert(transaction, pedidoNovo);
+                    var id = CriarPedidoProducaoPedidoRevenda(transaction, pedido);
                     transaction.Commit();
                     transaction.Close();
+
+                    return id;
                 }
                 catch
                 {
@@ -2557,7 +2548,22 @@ namespace Glass.Data.DAL
                 }
             }
 
-            return pedidoNovo.IdPedido;
+        }
+
+        /// <summary>
+        /// Criar pedido de produção com base no pedido de revenda.
+        /// </summary>
+        public uint CriarPedidoProducaoPedidoRevenda(GDASession sessao, Pedido pedido)
+        {
+            var pedidoNovo = (Pedido)pedido.Clone();
+            pedidoNovo.IdPedido = 0;
+            pedidoNovo.TipoPedido = (int)Pedido.TipoPedidoEnum.Producao;
+            pedidoNovo.Situacao = Pedido.SituacaoPedido.Ativo;
+            pedidoNovo.IdPedidoRevenda = (int)pedido.IdPedido;
+            pedidoNovo.GerarPedidoProducaoCorte = false;
+            pedidoNovo.CodCliente = string.Format("({1}) Rev.{0}", pedido.IdPedido, pedidoNovo.CodCliente);
+
+            return Insert(sessao, pedidoNovo);
         }
 
         public void VerificaCapacidadeProducaoSetor(uint idPedido, DateTime dataEntrega, float totM2Adicionar, uint idProcessoAdicionar)
@@ -2614,7 +2620,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera a situação do pedido para Conferido
         /// </summary>
-        public void FinalizarPedidoComTransacao(uint idPedido, ref bool emConferencia, bool financeiro)
+        public void FinalizarPedidoComTransacao(uint idPedido, bool financeiro)
         {
             lock (_finalizarPedidoLock)
             {
@@ -2624,7 +2630,7 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
-                        FinalizarPedido(transaction, idPedido, ref emConferencia, financeiro);
+                        FinalizarPedido(transaction, idPedido, financeiro);
 
                         transaction.Commit();
                         transaction.Close();
@@ -2648,7 +2654,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera a situação do pedido para Conferido
         /// </summary>
-        public void FinalizarPedido(GDASession session, uint idPedido, ref bool emConferencia, bool financeiro)
+        public void FinalizarPedido(GDASession session, uint idPedido, bool financeiro)
         {
             // Atualiza o total do pedido para ter certeza que o valor está correto, evitando que ocorra novamente o problema no chamado 3202
             UpdateTotalPedido(session, idPedido);
@@ -2770,8 +2776,8 @@ namespace Glass.Data.DAL
                 From ambiente_pedido ap
                     Inner Join item_projeto ip On (ap.IdItemProjeto=ip.IdItemProjeto)
                 Where ap.idPedido={0}
-                    And ap.idItemProjeto is not null 
-                Group By ap.idItemProjeto 
+                    And ap.idItemProjeto is not null
+                Group By ap.idItemProjeto
                 Having Count(*) > 1", idPedido)).ToArray());
 
             if (!string.IsNullOrEmpty(itemProjDupl))
@@ -2850,7 +2856,7 @@ namespace Glass.Data.DAL
                             throw new Exception("O produto " + prod.DescrProduto + " possui apenas " + estoque + " em estoque.");
                     }
 
-                    // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados em 
+                    // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados em
                     // um pedido reposição/garantia e depois alterar o pedido para à vista/à prazo
                     if (!pedidoReposicaoGarantia && prod.ValorVendido == 0)
                         throw new Exception("O produto " + prod.DescrProduto + " não pode ter valor zerado.");
@@ -2912,13 +2918,7 @@ namespace Glass.Data.DAL
             // Verifica se o Pedido possui produtos
             if (countProdPed == 0)
                 throw new Exception("Inclua pelo menos um produto no pedido para finalizá-lo.");
-            // Se houver apenas um produto associado ao pedido e este contiver a palavra conferencia,
-            // ao invés de finalizar o pedido, altera sua situação para em conferencia
-            if (countProdPed == 1 && lstProd[0].DescrProduto.ToLower().Contains("conferencia"))
-            {
-                emConferencia = true;
-                return;
-            }
+
             // Verifica se o pedido contém produtos TOTAL ou PEDIDO EM CONFERÊNCIA
             if (lstProd.Length <= 2)
             {
@@ -3104,20 +3104,6 @@ namespace Glass.Data.DAL
                     null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
             }
 
-            // Verifica se pode liberar o epdido com base na rentailidade do mesmo
-            if (Configuracoes.RentabilidadeConfig.ControlarFaixaRentabilidadeLiberacao &&
-                RentabilidadeHelper.ObterVerificadorLiberacao<Pedido>().VerificarRequerLiberacao(session, pedido))
-            {
-                var podeLiberar = RentabilidadeHelper.ObterVerificadorLiberacao<Pedido>().PodeLiberar(session, pedido);
-
-                if (!podeLiberar && pedido.Situacao == Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro)
-                    throw new Exception("Você não possui permissão para liberar o pedido com base no percentual de rentabilidade.");
-
-                if (!podeLiberar)
-                    LancarExceptionValidacaoPedidoFinanceiro("O percentual de rentabilidade do pedido deve ser verificado.", idPedido, true,
-                        null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
             // Garante que o pedido possa ser finalizado
             var situacao = ObtemSituacao(session, idPedido);
 
@@ -3256,7 +3242,7 @@ namespace Glass.Data.DAL
                     }
                 }
             }
-            // Se for venda à prazo            
+            // Se for venda à prazo
             else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo)
             {
                 var valorPagamentoAntecipado = ObtemValorCampo<decimal>(session, "ValorPagamentoAntecipado", string.Format("IdPedido={0}", idPedido));

@@ -1,0 +1,21 @@
+﻿<span style='display: inline-block; width: 150px' v-on:focus='buscando = true'>
+    <input type='search' v-model='nomeAtual' v-on:focus='buscando = true' v-on:blur='buscando = false' style="width: 100%" v-bind="$attrs">
+    <div v-if='buscando && itensFiltrados.length !== 1' style='position: absolute; -appearance: searchfield; padding: 1px; margin-top: -2px; background-color: white; z-index: 1'>
+        <div v-for='item in itensFiltrados' style='text-align: left'>
+            <a tabindex="-1" href='#' v-on:mousedown.prevent='selecionar(item)' v-on:click.prevent='' style='display: block; padding: 2px'>
+                {{ item[campoNome] }}
+            </a>
+        </div>
+        <div v-if='itensFiltrados.length === 0' style='padding: 2px'>
+            <span v-if='pesquisando || executandoBuscaTimeout'>
+                Buscando...
+            </span>
+            <span v-else-if='nomeAtual'>
+                Não foram encontrados itens para a busca.
+            </span>
+            <span v-else>
+                Para realizar a busca, digite no campo acima e os resultados serão exibidos aqui para seleção.
+            </span>
+        </div>
+    </div>
+</span>

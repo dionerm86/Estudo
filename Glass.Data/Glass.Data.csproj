@@ -12,7 +12,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.Data</RootNamespace>
     <AssemblyName>Glass.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -29,6 +29,7 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +38,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility">
@@ -175,8 +177,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NReco.PdfGenerator, Version=1.1.12.0, Culture=neutral, PublicKeyToken=231663d50a41b451, processorArchitecture=MSIL">
@@ -241,6 +243,7 @@
       <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security">
       <Private>True</Private>
     </Reference>
@@ -262,6 +265,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Beneficiamentos\Total\Dto\BeneficiamentoDto.cs" />
+    <Compile Include="Beneficiamentos\Total\Dto\DadosCalculoDto.cs" />
+    <Compile Include="Beneficiamentos\Total\Dto\DadosProdutoDto.cs" />
+    <Compile Include="Beneficiamentos\Total\Dto\ItemBeneficiamentoDto.cs" />
+    <Compile Include="Beneficiamentos\Total\Dto\TotalDto.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\ICalculoValorTotalStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\MetroLinearStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\MetroQuadradoStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\PorcentagemStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\QuantidadeStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\SemAlteracaoStrategy.cs" />
+    <Compile Include="Beneficiamentos\Total\Estrategia\ValorTotalStrategyFactory.cs" />
+    <Compile Include="Beneficiamentos\ValorTotal.cs" />
     <Compile Include="Carregamento\DAL\ItemCarregamentoDAO.cs" />
     <Compile Include="Carregamento\DAL\OrdemCargaDAO.cs" />
     <Compile Include="Carregamento\DAL\PedidoOrdemCargaDAO.cs" />
@@ -616,6 +632,7 @@
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />
+    <Compile Include="Helper\LoginUsuarioExpiracao.cs" />
     <Compile Include="Instalacao\DAL\FixacaoVidroDAO.cs" />
     <Compile Include="Global\DAL\FormaPagtoDAO.cs" />
     <Compile Include="Global\DAL\FornecedorDAO.cs" />
@@ -1106,6 +1123,7 @@
     <Compile Include="Projeto\Model\ValidacaoPecaModelo.cs" />
     <Compile Include="Projeto\Model\FlagArqMesaPecaProjMod.cs" />
     <Compile Include="Projeto\Model\FlagArqMesa.cs" />
+    <Compile Include="Properties\Settings.Designer.cs" />
     <Compile Include="RelDAL\CapacidadeProducaoDAO.cs" />
     <Compile Include="RelDAL\CapacidadeProducaoPedidoDAO.cs" />
     <Compile Include="RelDAL\ChapasDisponiveisDAO.cs" />
@@ -1557,11 +1575,6 @@
     <Compile Include="NFeUtils\ValidaXML.cs" />
     <Compile Include="NFeUtils\ConfigNFe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="RelDAL\CaixaDiarioDAO.cs" />
     <Compile Include="RelDAL\EtiquetaDAO.cs" />
     <Compile Include="RelDAL\GraficoVendasDAO.cs" />
@@ -2255,6 +2268,12 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
+    <AdditionalFiles Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
@@ -2263,11 +2282,8 @@
     <None Include="Properties\DataSources\Glass.Data.Model.AcertoCheque.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.Cheques.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
-    </None>
     <EmbeddedResource Include="Resources\FML_Basico.calcpackage" />
+    <None Include="Properties\Settings.settings" />
     <None Include="Web References\wsHConsultaCadastro\cadconsultacadastro4.wsdl" />
     <None Include="Web References\wsHConsultaCadastro\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -4453,12 +4469,25 @@
     <Folder Include="Configuracoes\RelatorioConfig\" />
     <Folder Include="Rentabilidade\DAL\" />
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingInsideVisualStudio)' == 'True' And '$(BuildingProject)' == 'True'">
+    <!--
+      Disable analyzers when building a project inside Visual Studio. Note that analyzer behavior for IntelliSense
+      purposes is not altered by this.
+    -->
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
 </Project>

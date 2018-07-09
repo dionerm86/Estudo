@@ -1,18 +1,18 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Exceptions;
+using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using Glass.Configuracoes;
-using System.Linq;
 using System.IO;
-using Glass.Data.Exceptions;
+using System.Linq;
+using System.Text;
 
 namespace Glass.Data.DAL
 {
     public sealed class ProjetoDAO : BaseDAO<Projeto, ProjetoDAO>
-	{
+    {
         //private ProjetoDAO() { }
 
         #region Listagem Padrão
@@ -185,7 +185,7 @@ namespace Glass.Data.DAL
                      * O tipo de venda deve ser validado somente para o parceiro, pois, no webglass, a inserção de projetos não disponibiliza a seleção de tipo de venda. */
                     if (parceiro && projeto.TipoVenda == 0)
                         throw new Exception("Selecione um tipo venda para o projeto antes de gerar o pedido.");
- 
+
                     /* Chamado 63864. */
                     // Verifica se existe algum projeto não conferido, e se o tipo venda for diferente de REVENDA.
                     if (ItemProjetoDAO.Instance.VerificarProjetoPossuiItensNaoConferidos(transaction, (int)idProjeto) && projeto.TipoVenda != 2)
@@ -229,7 +229,7 @@ namespace Glass.Data.DAL
                         pedido.TipoDesconto = 1;
                         pedido.Desconto = descontoEcommerce.Value;
                     }
-                    
+
                     #region Define as informações de pagamento do pedido
 
                     // Recupera a parcela padrão do cliente.
@@ -461,14 +461,14 @@ namespace Glass.Data.DAL
                     var lstImagensPcp = new List<string>();
 
                     if (!revendaParceiro)
-                    { 
+                    {
                         // Copia as imagens de projeto que podem ter sido criadas no comercial, alterando o idProdPed do produtos_pedido para o
                         // idProdPed de produtos_pedido_espelho, recém criado
                         foreach (ItemProjeto ip in ItemProjetoDAO.Instance.GetByPedido(transaction, idPedido))
                         {
                             foreach (MaterialItemProjeto mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(transaction, ip.IdItemProjeto, false))
                             {
-                                // Com base no campo IdMaterItemProjOrig, recupera o produtos_pedido associado ao mesmo, para verificar se 
+                                // Com base no campo IdMaterItemProjOrig, recupera o produtos_pedido associado ao mesmo, para verificar se
                                 // existe ou não alguma figura editada neste produto
                                 var idProdPed = ProdutosPedidoDAO.Instance.GetIdProdPedByMaterItemProj(transaction, idPedido, mip.IdMaterItemProjOrig.Value);
 
@@ -537,7 +537,7 @@ namespace Glass.Data.DAL
                                 pedido.IdLoja = (uint)LojaDAO.Instance.GetAll()[0].IdLoja;
                             }
                         }
-                        
+
                         /* Chamado 48322. */
                         if (projeto.IdLoja == 0 && pedido.IdLoja > 0)
                             AtualizarIdLojaProjeto(transaction, (int)idProjeto, (int)pedido.IdLoja);
@@ -565,8 +565,7 @@ namespace Glass.Data.DAL
                         if (!PedidoConfig.PodeEditarPedidoGeradoParceiro)
                         {
                             // Deixa o pedido conferido.
-                            bool temp = false;
-                            PedidoDAO.Instance.FinalizarPedido(transaction, idPedido, ref temp, false);
+                            PedidoDAO.Instance.FinalizarPedido(transaction, idPedido, false);
                         }
 
                         /* Chamado 49811. */
@@ -605,7 +604,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Gerar Pedido Parceiro
-        
+
         /// <summary>
         /// Gera um pedido de um parceiro.
         /// </summary>
@@ -633,7 +632,7 @@ namespace Glass.Data.DAL
             foreach (ItemProjeto item in itemProjeto)
             {
                 //Verifica se foi informado o ambiente no item
-                if(proj.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda && string.IsNullOrWhiteSpace(item.Ambiente))
+                if (proj.TipoVenda == (int)Pedido.TipoPedidoEnum.Venda && string.IsNullOrWhiteSpace(item.Ambiente))
                 {
                     erro = new Exception("Existe pelo menos um projeto sem ambiente, edite e informe o ambiente antes de gerar o pedido.");
                     return 0;
@@ -732,11 +731,11 @@ namespace Glass.Data.DAL
 
             if (erro != null)
                 ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
-            
+
             return idPedido;
         }
 
-        #endregion        
+        #endregion
 
         #region Verifica se projeto pode ser editado
 
@@ -748,7 +747,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool CanBeEdited(uint idProjeto)
         {
-            string sql = "Select Count(*) From projeto Where situacao=" + (int)Projeto.SituacaoProjeto.Aberto + 
+            string sql = "Select Count(*) From projeto Where situacao=" + (int)Projeto.SituacaoProjeto.Aberto +
                 " And idProjeto=" + idProjeto;
 
             if (UserInfo.GetUserInfo.IdCliente > 0)
@@ -758,7 +757,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Busca o pedido relacionado ao projeto
 
         /// <summary>
@@ -1063,7 +1062,7 @@ namespace Glass.Data.DAL
 
                     int retorno = base.Update(transaction, objUpdate);
 
-                    // Atualiza total do projeto tendo em vista que um cliente possa ter sido selecionado e 
+                    // Atualiza total do projeto tendo em vista que um cliente possa ter sido selecionado e
                     // talvez seja necessário calcular a taxa à prazo do mesmo
                     UpdateTotalProjeto(transaction, objUpdate.IdProjeto);
 

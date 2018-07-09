@@ -1,0 +1,6 @@
+<span v-on:focus.prevent="exibirDescontoPorQuantidade_ = true" v-on:blur.prevent="exibirDescontoPorQuantidade_ = false">
+    <input type="number" v-bind:step="incremento" v-bind:min="incremento" v-model.number="quantidadeAtual" style="width: 50px" required>
+    <campo-desconto-quantidade v-bind:percentual.sync="percentualDescontoPorQuantidadeAtual" v-bind:valor.sync="valorDescontoPorQuantidadeAtual"
+        v-bind:id-produto="idProduto" v-bind:id-cliente="idCliente" v-bind:exibir="exibirDescontoPorQuantidade && exibirDescontoPorQuantidade_"
+        v-if="idProduto"></campo-desconto-quantidade>
+</span>

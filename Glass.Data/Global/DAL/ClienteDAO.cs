@@ -1,11 +1,11 @@
+using Colosoft;
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
 using System.Linq;
-using Glass.Configuracoes;
-using Colosoft;
 
 namespace Glass.Data.DAL
 {
@@ -37,7 +37,7 @@ namespace Glass.Data.DAL
             // Campos que serão retornados pelo sql, se usuário tiver permissão, busca total comprado de cada cliente
             string campos = selecionar ? @"c.*, fg.descricao As FormaPagamento, tc.descricao As TipoCliente, lj.nomeFantasia As Loja,
                 r.descricao As Rota, r.codInterno as CodigoRota, p.descricao As Parcela, da.descricao As DescontoAcrescimo,
-                If(c.idCidade Is Null, c.cidade, cid.nomeCidade) As NomeCidade, da.Descricao AS TabelaDescontoAcrescimo, 
+                If(c.idCidade Is Null, c.cidade, cid.nomeCidade) As NomeCidade, da.Descricao AS TabelaDescontoAcrescimo,
                 If(c.idCidadeCobranca Is Null, c.cidadeCobranca, cobrcid.nomeCidade) As NomeCidadeCobranca,
                 cidEntrega.nomeCidade As NomeCidadeEntrega, cid.nomeUf As Uf, cobrcid.nomeUf As UfCobranca,
                 cidEntrega.nomeUf As UfEntrega, cid.codIbgeUf as CodIbgeUf, f.nome As DescrUsuCad,
@@ -49,14 +49,14 @@ namespace Glass.Data.DAL
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = @"
-                Select " + campos + @" From cliente c 
+                Select " + campos + @" From cliente c
                     Left Join cidade cid On (cid.idCidade=c.idCidade)
                     Left Join cidade cidEntrega On (cidEntrega.idCidade=c.idCidadeEntrega)
-                    Left Join funcionario f On (c.UsuCad=f.idFunc) 
-                    Left Join funcionario ff On (c.UsuAlt=ff.idFunc) 
+                    Left Join funcionario f On (c.UsuCad=f.idFunc)
+                    Left Join funcionario ff On (c.UsuAlt=ff.idFunc)
                     Left Join funcionario fVend On (c.idFunc=fVend.idFunc)
                     Left Join comissionado com On (c.idComissionado=com.idComissionado)
-                    Left Join cidade cobrcid On (cobrcid.idCidade=c.idCidadeCobranca) 
+                    Left Join cidade cobrcid On (cobrcid.idCidade=c.idCidadeCobranca)
                     Left Join formapagto fg On (c.IdFormaPagto=fg.IdFormaPagto)
                     Left Join tipo_cliente tc On(c.IdTipoCliente=tc.IdTipoCliente)
                     Left Join loja lj On(c.Id_Loja=lj.IdLoja)
@@ -258,6 +258,38 @@ namespace Glass.Data.DAL
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional);
         }
 
+        public IEnumerable<Cliente> ObterClientesPorIdENome(GDASession sessao, int idCliente, string nomeCliente, int startRow, int pageSize)
+        {
+            if (idCliente == 0 && string.IsNullOrWhiteSpace(nomeCliente))
+            {
+                return new Cliente[0];
+            }
+
+            const string sql = "select cl.*, ci.nomeCidade as nomeCidadeEntrega from cliente cl "
+                + "left join cidade ci on (cl.idCidadeEntrega = ci.idCidade) "
+                + "where ";
+
+            string where;
+            var parametros = new List<GDAParameter>();
+
+            if (idCliente > 0)
+            {
+                where = "id_cli = " + idCliente;
+            }
+            else
+            {
+                where = "nome like ?nome";
+                parametros.Add(new GDAParameter("?nome", $"%{nomeCliente}%"));
+            }
+
+            return this.objPersistence.LoadDataAndPaging(
+                sessao,
+                sql + where,
+                startRow,
+                pageSize,
+                parametros.ToArray());
+        }
+
         #endregion
 
         #region Busca os clientes em ordem alfabética
@@ -299,7 +331,7 @@ namespace Glass.Data.DAL
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = $@"
-                Select { campos } From cliente c 
+                Select { campos } From cliente c
                     Left Join funcionario f On (c.idFunc=f.idFunc)
                     Left Join cidade cid On (cid.idCidade=c.idCidade)
                     Left Join rota_cliente rc On(c.Id_Cli=rc.IdCliente)
@@ -650,8 +682,8 @@ namespace Glass.Data.DAL
                 "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From cliente c 
-                    Left Join cidade cid On (cid.idCidade=c.idCidade) 
+                Select " + campos + @" From cliente c
+                    Left Join cidade cid On (cid.idCidade=c.idCidade)
                     Left Join rota_cliente rc On (c.id_Cli=rc.idCliente)
                 Where 1 ?filtroAdicional?";
 
@@ -903,10 +935,10 @@ namespace Glass.Data.DAL
                 new object[] { "Inativo", "Cancelado", "Bloqueado" }, out param, false) + ") l On (l.idRegistroAlt=c.id_Cli)";
 
             string sql = @"
-                Select " + campos + @" From cliente c 
+                Select " + campos + @" From cliente c
                     Left Join cidade cid On (cid.idCidade=c.idCidade)
-                    Left Join funcionario f On (c.UsuCad=f.idFunc) 
-                    Left Join funcionario ff On (c.UsuAlt=ff.idFunc) 
+                    Left Join funcionario f On (c.UsuCad=f.idFunc)
+                    Left Join funcionario ff On (c.UsuAlt=ff.idFunc)
                     Left Join funcionario fVend On (c.idFunc=fVend.idFunc)
                     Left Join comissionado com On (c.idComissionado=com.idComissionado)
                     Left Join tipo_cliente tc On(c.IdTipoCliente=tc.IdTipoCliente)
@@ -1112,13 +1144,13 @@ namespace Glass.Data.DAL
 
             var ids = objPersistence.LoadResult(sessao, sql,
                 GetParamFilter(codCliente, nome, codRota, endereco, bairro, telefone, cpfCnpj, null, null, null, null, null, null, 0)).Select(f => f.GetUInt32(0))
-                       .ToList();;
+                       .ToList(); ;
 
             if (ids.Count == 0)
                 return "0";
 
             return String.Join(",", Array.ConvertAll<uint, string>(ids.ToArray(), new Converter<uint, string>(
-                delegate(uint x)
+                delegate (uint x)
                 {
                     return x.ToString();
                 }
@@ -1309,14 +1341,14 @@ namespace Glass.Data.DAL
             bool selecionar, out string filtroAdicional)
         {
             filtroAdicional = " and credito>0";
-            string campos = selecionar ? @"c.*, if(c.idCidade is null, c.cidade, cid.NomeCidade) as nomeCidade, cid.NomeUf as uf, 
+            string campos = selecionar ? @"c.*, if(c.idCidade is null, c.cidade, cid.NomeCidade) as nomeCidade, cid.NomeUf as uf,
                 '$$$' as criterio" : "Count(*)";
 
             string criterio = String.Empty;
 
             string sql = @"
-                Select " + campos + @" From cliente c 
-                    Left Join cidade cid On (cid.idCidade=c.idCidade) 
+                Select " + campos + @" From cliente c
+                    Left Join cidade cid On (cid.idCidade=c.idCidade)
                 Where 1 ?filtroAdicional?";
 
             if (!String.IsNullOrEmpty(codCliente) && codCliente != "0")
@@ -1788,7 +1820,7 @@ namespace Glass.Data.DAL
 
             return obj == null || obj.ToString().Trim() == String.Empty ? 0 : Glass.Conversoes.StrParaUint(obj.ToString());
         }
- 
+
         /// <summary>
         /// Obtém o id da conta bancária do cliente.
         /// </summary>
@@ -2093,15 +2125,20 @@ namespace Glass.Data.DAL
 
         public string ObterObsPedido(uint idCliente)
         {
+            return ObterObsPedido(null, idCliente);
+        }
+
+        public string ObterObsPedido(GDASession sessao, uint idCliente)
+        {
             try
             {
                 string obs = string.Empty;
 
-                var percSinalMinimo = GetPercMinSinalPedido(idCliente);
-                var limite = ObtemValorCampo<decimal>("limite", "id_Cli=" + idCliente);
-                var obsCli = ObtemValorCampo<string>("obs", "id_Cli=" + idCliente);
-                var codRota = RotaDAO.Instance.ObtemCodRota(idCliente);
-                var isPagamentoAntesProducao = IsPagamentoAntesProducao(idCliente);
+                var percSinalMinimo = GetPercMinSinalPedido(sessao, idCliente);
+                var limite = ObtemValorCampo<decimal>(sessao, "limite", "id_Cli=" + idCliente);
+                var obsCli = ObtemValorCampo<string>(sessao, "obs", "id_Cli=" + idCliente);
+                var codRota = RotaDAO.Instance.ObtemCodRota(sessao, idCliente);
+                var isPagamentoAntesProducao = IsPagamentoAntesProducao(sessao, idCliente);
 
                 if (isPagamentoAntesProducao && PedidoConfig.LiberarPedido)
                     obs += " <br />ESTE PEDIDO DEVE SER PAGO ANTES DA PRODUÇÃO.";
@@ -2111,7 +2148,7 @@ namespace Glass.Data.DAL
 
                 if (limite > 0)
                 {
-                    var limiteDisp = limite - ContasReceberDAO.Instance.GetDebitos(idCliente, null);
+                    var limiteDisp = limite - ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
                     obs += " <br />LIMITE DISPONÍVEL PARA COMPRA: " + (limiteDisp > 0 ? limiteDisp : 0).ToString("C");
                 }
 
@@ -2281,7 +2318,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<bool>("Importacao", "Id_Cli = " + idCliente);
         }
- 
+
         /// <summary>
         /// Obtém o CRT do cliente.
         /// </summary>
@@ -2344,7 +2381,7 @@ namespace Glass.Data.DAL
             AtualizaUltimaCompra(null, idCliente);
         }
 
-        /// <summary>        
+        /// <summary>
         /// Atualiza data da última compra
         /// </summary>
         /// <param name="idCliente"></param>
@@ -2367,19 +2404,19 @@ namespace Glass.Data.DAL
             AtualizaTotalComprado(null, idCliente);
         }
 
-        /// <summary>        
+        /// <summary>
         /// Atualiza o total comprado pelo cliente.
         /// </summary>
         /// <param name="idCliente"></param>
         public void AtualizaTotalComprado(GDASession sessao, uint idCliente)
         {
-            string totalComprado = @" 
+            string totalComprado = @"
                 Update cliente set totalComprado=(
                     Select Round(Sum(p.total), 2) From pedido p Where p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado + @"
-                    And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Garantia + @" 
+                    And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Garantia + @"
                     And p.tipovenda<>" + (int)Pedido.TipoVendaPedido.Reposição + @"
                     And p.IdCli=" + idCliente + @"
-                ) 
+                )
                 Where id_cli=" + idCliente;
 
             objPersistence.ExecuteCommand(sessao, totalComprado);
@@ -2483,7 +2520,7 @@ namespace Glass.Data.DAL
                 return retorno.Value;
 
             // Tenta buscar um cliente com o mesmo nome
-            sql = @"select id_Cli from cliente c where exists (select * from loja l where l.nomeFantasia like 
+            sql = @"select id_Cli from cliente c where exists (select * from loja l where l.nomeFantasia like
                 concat('%', c.nome, '%') or l.razaoSocial like concat('%', c.nome, '%')) limit 1";
 
             retorno = ExecuteScalar<uint?>(sql);
@@ -2542,7 +2579,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idCliente"></param>
         /// <param name="cheques"></param>
-        public void ValidaInserirCheque(GDASession sessao, uint idCliente, IEnumerable<Cheques> cheques, 
+        public void ValidaInserirCheque(GDASession sessao, uint idCliente, IEnumerable<Cheques> cheques,
             string idsPedidos, string idsContasR, string idsChequesR, bool validarLimite)
         {
             if (idCliente == 0 || objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from cliente where id_Cli=" + idCliente) == 0)
@@ -2647,7 +2684,7 @@ namespace Glass.Data.DAL
         #region Busca um cliente por CPF/CNPJ
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cpfCnpj"></param>
         /// <returns></returns>
@@ -2791,7 +2828,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public Cliente[] GetListForRptTabelaDesconto()
         {
-            string sql = @"Select c.*, da.descricao as DescontoAcrescimo From cliente c 
+            string sql = @"Select c.*, da.descricao as DescontoAcrescimo From cliente c
                 Inner Join tabela_desconto_acrescimo_cliente da On (c.IdTabelaDesconto=da.IdTabelaDesconto)";
             return objPersistence.LoadData(sql).ToArray(); ;
         }
@@ -2807,7 +2844,7 @@ namespace Glass.Data.DAL
         /// <param name="senha"></param>
         public void AlteraSenha(uint idCliente, string senha)
         {
-            objPersistence.ExecuteCommand("Update cliente Set senha=?senha Where id_cli=" + idCliente, 
+            objPersistence.ExecuteCommand("Update cliente Set senha=?senha Where id_cli=" + idCliente,
                 new GDAParameter("?senha", senha));
         }
 
@@ -2989,7 +3026,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Há notas fiscais associadas ao mesmo.");
 
             LogAlteracaoDAO.Instance.ApagaLogCliente((uint)objDelete.IdCli);
-            
+
             sql = "delete from parcelas_nao_usar where idcliente=" + objDelete.IdCli;
             objPersistence.ExecuteCommand(sql);
 
@@ -3138,10 +3175,10 @@ namespace Glass.Data.DAL
 
             // Para verificar se o cliente não compra há mais de x dias, além de fazer esta verificação, considera também
             // os clientes que nunca fizeram compras e que foram cadastrados há mais de x dias
-            string sql = @"select c.id_Cli from cliente c 
+            string sql = @"select c.id_Cli from cliente c
                     {0}
                 where lower(c.nome)<>'consumidor final' and c.situacao=" + (int)SituacaoCliente.Ativo + @"
-                    and ((c.dt_Ult_Compra is null and c.dataCad<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + @" day)) 
+                    and ((c.dt_Ult_Compra is null and c.dataCad<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + @" day))
                     or c.dt_Ult_Compra<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + " day))";
 
             string join = String.Empty;
@@ -3181,10 +3218,10 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra < 1)
                 return;
 
-            var sql = @"SELECT ID_CLI 
-                        FROM cliente 
-                        WHERE LOWER(NOME) <> 'consumidor final' 
-                            AND LOWER(TIPO_PESSOA) = 'j' 
+            var sql = @"SELECT ID_CLI
+                        FROM cliente
+                        WHERE LOWER(NOME) <> 'consumidor final'
+                            AND LOWER(TIPO_PESSOA) = 'j'
                             AND DTULTCONSINTEGRA <= date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra + " day)";
 
             var ids = ExecuteMultipleScalar<int>(sql);
@@ -3204,7 +3241,7 @@ namespace Glass.Data.DAL
         public void InativaPelaDataLimiteCad()
         {
             var sql = @"
-                SELECT Id_cli 
+                SELECT Id_cli
                 FROM cliente
                 WHERE LOWER(nome) <> 'consumidor final'
                     AND dataLimiteCad IS NOT NULL

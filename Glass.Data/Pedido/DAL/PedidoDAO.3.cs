@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using Colosoft;
 using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.Web;
-using Glass.Data.Exceptions;
-using System.Linq;
-using Glass.Data.RelDAL;
 using Glass.Configuracoes;
-using Glass.Global;
-using Colosoft;
+using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
 namespace Glass.Data.DAL
 {
@@ -77,7 +72,7 @@ namespace Glass.Data.DAL
 
         #region Listagem de Comissão
 
-        #region SQLs para cálculo da comissão do pedido        
+        #region SQLs para cálculo da comissão do pedido
 
         /// <summary>
         /// Retorna o SQL usado para retornar o valor da comissão pago a um funcionário/comissionado.
@@ -111,7 +106,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="tipoFunc"></param>
@@ -155,15 +150,15 @@ namespace Glass.Data.DAL
 
             string total = SqlCampoTotalLiberacao(!selecaoIds && PedidoConfig.LiberarPedido, "total", "p", "pe", "ap", "plp");
 
-            string campos = !selecaoIds ? "p.idPedido, p.idLoja, p.idFunc, p.idCli, p.idFormaPagto, p.idOrcamento, " + total + @", p.prazoEntrega, 
+            string campos = !selecaoIds ? "p.idPedido, p.idLoja, p.idFunc, p.idCli, p.idFormaPagto, p.idOrcamento, " + total + @", p.prazoEntrega,
                 p.tipoEntrega, p.tipoVenda, p.dataEntrega, p.valorEntrega, p.situacao, p.valorEntrada, p.dataCad, p.usuCad, p.numParc, p.total as totalReal,
-                p.desconto, p.obs, p.custoPedido, p.dataConf, p.usuConf, p.dataCanc, p.usuCanc, p.enderecoObra, p.bairroObra, p.cidadeObra, 
-                p.localObra, p.idFormaPagto2, p.idTipoCartao, p.idTipoCartao2, p.codCliente, p.numAutConstrucard, p.idComissionado, p.percComissao, 
-                p.valorComissao, p.idPedidoAnterior, p.fastDelivery, p.dataPedido, p.valorIcms, p.aliquotaIcms, p.idObra, p.idMedidor, p.taxaPrazo, 
+                p.desconto, p.obs, p.custoPedido, p.dataConf, p.usuConf, p.dataCanc, p.usuCanc, p.enderecoObra, p.bairroObra, p.cidadeObra,
+                p.localObra, p.idFormaPagto2, p.idTipoCartao, p.idTipoCartao2, p.codCliente, p.numAutConstrucard, p.idComissionado, p.percComissao,
+                p.valorComissao, p.idPedidoAnterior, p.fastDelivery, p.dataPedido, p.valorIcms, p.aliquotaIcms, p.idObra, p.idMedidor, p.taxaPrazo,
                 p.tipoPedido, p.tipoDesconto, p.acrescimo, p.tipoAcrescimo, p.taxaFastDelivery, p.temperaFora, p.rotaExterna, p.clienteExterno,
                 p.situacaoProducao, p.idFuncVenda, p.dataEntregaOriginal, p.peso, p.totM, p.geradoParceiro, p.aliquotaIpi, p.valorIpi, p.idParcela, p.pedCliExterno,
                 p.celCliExterno, p.cepObra, p.idSinal, p.idPagamentoAntecipado, p.valorPagamentoAntecipado, p.dataPronto, p.obsLiberacao, p.idProjeto, p.idLiberarPedido,
-                p.PercentualComissao, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, '$$$' as Criterio, l.NomeFantasia as nomeLoja, 
+                p.PercentualComissao, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, '$$$' as Criterio, l.NomeFantasia as nomeLoja,
                 cast(" + (int)tipoFunc + @" as signed) as ComissaoFuncionario, p.valorCreditoAoConfirmar, p.creditoGeradoConfirmar, p.idFuncDesc,
                 p.dataDesc, p.importado, p.creditoUtilizadoConfirmar, p.deveTransferir, p.dataFin, p.usuFin" + (PedidoConfig.LiberarPedido ? ", lp.dataLiberacao" : "") :
                 "distinct " + campoIds + " as id";
@@ -244,7 +239,7 @@ namespace Glass.Data.DAL
                 if (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado)
                     sitInstalacao += ", " + (int)Instalacao.SituacaoInst.Continuada;*/
 
-                filtro += " and i.situacao IN (" + sitInstalacao + @") 
+                filtro += " and i.situacao IN (" + sitInstalacao + @")
                     and i.tipoInstalacao <> " + (int)Instalacao.TipoInst.Entrega;
             }
 
@@ -263,7 +258,7 @@ namespace Glass.Data.DAL
                     break;
                 case Pedido.TipoComissao.Instalador:
                     filtroFunc = idFunc > 0 || idPedido > 0 ? " and fe.idFunc=" + idFunc :
-                        " and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni 
+                        " and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni
                             and " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @"<=?dataFim)";
                     break;
             }
@@ -317,7 +312,7 @@ namespace Glass.Data.DAL
                                 break;
                             case Pedido.TipoComissao.Instalador:
                                 filtroFuncPed = idFunc > 0 || idPedido > 0 ? " and fe.idFunc=" + idFunc :
-                                    " and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni 
+                                    " and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni
                                             and " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + "<=?dataFim)";
                                 break;
                         }
@@ -329,14 +324,14 @@ namespace Glass.Data.DAL
                                 " And pc.idComissionado" + (idFunc > 0 ? "=" + idFunc : " is not null") :
                             tipoFunc == Pedido.TipoComissao.Instalador ?
                                 idFunc > 0 || idPedido > 0 ? " and fe.idFunc=" + idFunc :
-                                   @" and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni 
+                                   @" and p.idPedido in (select idPedido from instalacao where " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + @">=?dataIni
                                     and " + (Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado ? "DataInstalacao" : "dataFinal") + "<=?dataFim)" : "";
 
                         if (string.IsNullOrEmpty(idsPedidos))
                         {
                             var sqlIdsPedidos = @"
                                 select distinct pc.idPedido
-                                from pedido_comissao pc 
+                                from pedido_comissao pc
                                     inner join pedido p On (p.idPedido=pc.idPedido)" +
                                     (tipoFunc ==
                                     Pedido.TipoComissao.Instalador
@@ -346,7 +341,7 @@ namespace Glass.Data.DAL
                                     Left Join func_equipe fe on (ei.idEquipe=fe.idEquipe)"
                                     : "") + @"
 
-                                WHERE ((pc.ValorPagar=pc.ValorPago) OR (pc.ValorPagar-" + TOLERANCIA_VALORES_PAGAR_PAGO + @">pc.ValorPago) 
+                                WHERE ((pc.ValorPagar=pc.ValorPago) OR (pc.ValorPagar-" + TOLERANCIA_VALORES_PAGAR_PAGO + @">pc.ValorPago)
                                     OR (pc.ValorPagar+" + TOLERANCIA_VALORES_PAGAR_PAGO + @"<pc.ValorPago)) AND pc.ValorPagar > 0" +
                                     (tipoFunc !=
                                     Pedido.TipoComissao.Todos
@@ -365,9 +360,9 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                string filtroComissaoPaga = @" 
-                    select distinct p.idPedido 
-                    from pedido p 
+                string filtroComissaoPaga = @"
+                    select distinct p.idPedido
+                    from pedido p
                         inner join pedido_comissao pc On (p.idPedido=pc.idPedido)
                         left join produtos_liberar_pedido plp on (p.idPedido=plp.idPedido)
                         left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)";
@@ -409,7 +404,7 @@ namespace Glass.Data.DAL
                 else if (idPedido > 0)
                     filtroComissaoPaga += " and p.idPedido=" + idPedido;
 
-                // Inclui os filtros passados por parâmetro neste sub-sql, exceto os referentes à liberação, os quais serão 
+                // Inclui os filtros passados por parâmetro neste sub-sql, exceto os referentes à liberação, os quais serão
                 // tratado logo abaixo
                 filtroComissaoPaga += filtroFunc + " " + filtro.ToLower();
 
@@ -423,7 +418,7 @@ namespace Glass.Data.DAL
             }
             else
             {
-                string whereComissaoConfig = @"faixaUm < p.total or faixaDois < p.total 
+                string whereComissaoConfig = @"faixaUm < p.total or faixaDois < p.total
                     or faixaTres < p.total or faixaQuatro < p.total or faixaCinco < p.total";
 
                 switch (tipoFunc)
@@ -446,7 +441,7 @@ namespace Glass.Data.DAL
 
                     case Pedido.TipoComissao.Instalador:
                         {
-                            filtro += string.Format(@" AND (fe.idFunc IN (select idFunc from comissao_config where {0}) 
+                            filtro += string.Format(@" AND (fe.idFunc IN (select idFunc from comissao_config where {0})
                                     OR (select count(*) from comissao_config where idFunc is null and({0})) > 0)", whereComissaoConfig);
 
                             if (!Configuracoes.ComissaoConfig.UsarComissaoPorProdutoInstalado)
@@ -1183,13 +1178,13 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 UPDATE produtos_pedido pp
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
                         " + Utils.SqlCalcPeso(Utils.TipoCalcPeso.ProdutoPedido, idPedido, false, false, false) + @"
                     ) as peso on (pp.idProdPed=peso.id)
                     INNER JOIN produto prod ON (pp.idProd = prod.idProd)
                     LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                    LEFT JOIN 
+                    LEFT JOIN
                     (
                         SELECT pp1.IdProdPedParent, sum(pp1.peso) as peso
                         FROM produtos_pedido pp1
@@ -1198,8 +1193,8 @@ namespace Glass.Data.DAL
                 SET pp.peso = coalesce(IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), pesoFilhos.peso * pp.Qtde, peso.peso), 0)
                 WHERE pp.idPedido={0};
 
-                UPDATE pedido 
-                SET peso = coalesce((SELECT sum(peso) FROM produtos_pedido WHERE coalesce(IdProdPedParent, 0) = 0 AND idPedido={0} and !coalesce(invisivelPedido, false)), 0) 
+                UPDATE pedido
+                SET peso = coalesce((SELECT sum(peso) FROM produtos_pedido WHERE coalesce(IdProdPedParent, 0) = 0 AND idPedido={0} and !coalesce(invisivelPedido, false)), 0)
                 WHERE idPedido = {0}";
 
             objPersistence.ExecuteCommand(sessao, String.Format(sql, idPedido));
@@ -1337,12 +1332,12 @@ namespace Glass.Data.DAL
                             Total-if(p.TipoDesconto=1, (p.Total * (p.Desconto / 100)), p.Desconto)-
                             coalesce((
                                 Select sum(if(tipoDesconto=1, ((
-                                    Select sum(total + coalesce(valorBenef,0)) 
-                                    From produtos_pedido 
-                                    Where (invisivelPedido=false or invisivelPedido is null) 
+                                    Select sum(total + coalesce(valorBenef,0))
+                                    From produtos_pedido
+                                    Where (invisivelPedido=false or invisivelPedido is null)
                                         And idAmbientePedido=a.idAmbientePedido
-                                        AND IdProdPedParent IS NULL) * (desconto / 100)), desconto)) 
-                                From ambiente_pedido a 
+                                        AND IdProdPedParent IS NULL) * (desconto / 100)), desconto))
+                                From ambiente_pedido a
                                 Where idPedido=p.idPedido),0), 2) " +
                         "Where IdPedido=" + pedido.IdPedido;
 
@@ -1510,7 +1505,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN rota_cliente rc ON (c.Id_Cli=rc.IdCliente)
                     LEFT JOIN rota r ON (rc.IdRota=r.IdRota)
                     LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
-                    LEFT JOIN funcionario med On (p.IdMedidor=med.IdFunc)                  
+                    LEFT JOIN funcionario med On (p.IdMedidor=med.IdFunc)
                     LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade)
                 WHERE p.IdPedido IN ({2})", ClienteDAO.Instance.GetNomeCliente("c"), (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro || FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro),
                 idsPedido);
@@ -1645,7 +1640,7 @@ namespace Glass.Data.DAL
             var campos = selecionar ? "p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + " as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja" : "COUNT(*)";
 
             var sql = string.Format(@"
-                SELECT {0} 
+                SELECT {0}
                 FROM pedido p
                     INNER JOIN cliente c ON (p.IdCli = c.Id_Cli)
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
@@ -1879,7 +1874,7 @@ namespace Glass.Data.DAL
                         select coalesce(sum(coalesce(pp.total/a.totalProd*a.desconto,0)+coalesce(pp.valorDescontoQtde,0){1}),0)
                         from produtos_pedido pp
                             left join (
-                                select a.idAmbientePedido, sum(pp.total+coalesce(pp.valorBenef,0)) as totalProd, 
+                                select a.idAmbientePedido, sum(pp.total+coalesce(pp.valorBenef,0)) as totalProd,
                                     a.desconto*if(a.tipoDesconto=1, sum(pp.total+coalesce(pp.valorBenef,0))/100, 1) as desconto
                                 from produtos_pedido pp
                                     inner join ambiente_pedido a on (pp.idAmbientePedido=a.idAmbientePedido)
@@ -1892,7 +1887,7 @@ namespace Glass.Data.DAL
                         from produto_pedido_benef ppb
                             inner join produtos_pedido pp on (ppb.idProdPed=pp.idProdPed)
                             left join (
-                                select a.idAmbientePedido, sum(pp.total+coalesce(pp.valorBenef,0)) as totalProd, 
+                                select a.idAmbientePedido, sum(pp.total+coalesce(pp.valorBenef,0)) as totalProd,
                                     a.desconto*if(a.tipoDesconto=1, sum(pp.total+coalesce(pp.valorBenef,0))/100, 1) as desconto
                                 from produtos_pedido pp
                                     inner join ambiente_pedido a on (pp.idAmbientePedido=a.idAmbientePedido)
@@ -1905,7 +1900,12 @@ namespace Glass.Data.DAL
 
             return ExecuteScalar<decimal>(sessao, String.Format(sql, idPedido, PedidoConfig.ConsiderarDescontoClienteDescontoTotalPedido ? "+coalesce(valorDescontoCliente,0)" : ""));
         }
-        
+
+        public decimal GetDescontoPedido(uint idPedido)
+        {
+            return GetDescontoPedido(null, idPedido, 0);
+        }
+
         public decimal GetDescontoPedido(GDASession sessao, uint idPedido, decimal totalDescontoProdutos)
         {
             string sql;
@@ -2081,7 +2081,7 @@ namespace Glass.Data.DAL
                 select coalesce(count(ppp.idProdPedProducao){1},0)
                 from pedido ped
                     Inner Join produtos_pedido_espelho pp On (ped.idPedido=pp.idPedido)
-                    Left Join produto_pedido_producao ppp On (pp.idProdPed=ppp.idProdPed) 
+                    Left Join produto_pedido_producao ppp On (pp.idProdPed=ppp.idProdPed)
                 Where {0}=" + idPedido + @"
                     And ped.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
                     And ppp.Situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao;
@@ -2464,7 +2464,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool TemSinalReceber(GDASession sessao, uint idPedido)
         {
-            var sql = @"Select Count(*) From pedido p Where p.valorEntrada > 0 And p.idSinal Is Null And p.idPagamentoAntecipado is null And Coalesce(p.valorPagamentoAntecipado, 0) < p.total And 
+            var sql = @"Select Count(*) From pedido p Where p.valorEntrada > 0 And p.idSinal Is Null And p.idPagamentoAntecipado is null And Coalesce(p.valorPagamentoAntecipado, 0) < p.total And
                 p.idPedido=" + idPedido + " And p.tipoVenda In (" + (int)Pedido.TipoVendaPedido.APrazo + "," + (int)Pedido.TipoVendaPedido.AVista + ")";
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
@@ -2481,7 +2481,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool TemPagamentoAntecipadoReceber(GDASession sessao, uint idPedido)
         {
-            string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where 
+            string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where
                 pagamentoAntesProducao=true) and tipoVenda in (" + (int)Pedido.TipoVendaPedido.APrazo + "," +
                 (int)Pedido.TipoVendaPedido.AVista + ") and idPagamentoAntecipado is null and TipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao + " and idPedido=" + idPedido;
 
@@ -2495,7 +2495,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool TemPagamentoAntecipadoRecebido(GDASession sessao, uint idPedido)
         {
-            string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where 
+            string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where
                 pagamentoAntesProducao=true) and tipoVenda in (" + (int)Pedido.TipoVendaPedido.APrazo + "," +
                 (int)Pedido.TipoVendaPedido.AVista + ") and idPagamentoAntecipado is not null and idPedido=" + idPedido;
 
@@ -2810,7 +2810,7 @@ namespace Glass.Data.DAL
         public string ObtemIdsPeloSinal(uint idSinal)
         {
             // Foi retirada a opção idAcertoParcial para otimizar o comando
-            string ids = ExecuteScalar<string>(@"select cast(group_concat(distinct idPedido separator ',') as char) 
+            string ids = ExecuteScalar<string>(@"select cast(group_concat(distinct idPedido separator ',') as char)
                 from pedido where idSinal=" + idSinal);
 
             if (ids == null)
@@ -3203,9 +3203,9 @@ namespace Glass.Data.DAL
         public string ObtemNomeFuncResp(GDASession session, uint idPedido)
         {
             return ExecuteScalar<string>(session, @"
-                Select f.nome 
-                From pedido p 
-                    Inner Join funcionario f On (p.idFunc=f.idFunc) 
+                Select f.nome
+                From pedido p
+                    Inner Join funcionario f On (p.idFunc=f.idFunc)
                 Where idpedido=" + idPedido);
         }
 
@@ -3429,7 +3429,7 @@ namespace Glass.Data.DAL
             return GetTotalSemDesconto(null, idPedido, total);
         }
 
-        internal decimal GetTotalSemDesconto(GDASession sessao, uint idPedido, decimal total)
+        public decimal GetTotalSemDesconto(GDASession sessao, uint idPedido, decimal total)
         {
             decimal descontoProdutos, descontoPedido;
 
@@ -3529,7 +3529,7 @@ namespace Glass.Data.DAL
 
             var invisivel = PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido";
 
-            var sql = $@"SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER) FROM produtos_pedido pp 
+            var sql = $@"SELECT CAST(SUM(COALESCE(Qtde, 0)) AS SIGNED INTEGER) FROM produtos_pedido pp
                     LEFT JOIN produto p ON (pp.IdProd=p.IdProd)
                 WHERE IdPedido=?id AND (Invisivel{invisivel} IS NULL OR Invisivel{invisivel}=0) AND p.IdGrupoProd={(int)NomeGrupoProd.Vidro}";
 
@@ -3656,7 +3656,7 @@ namespace Glass.Data.DAL
         public string ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(GDASession session, string idsPedido)
         {
             var sql = @"SELECT group_concat(IdPedido SEPARATOR ', ')
-                        FROM 
+                        FROM
                         (
 	                        SELECT p.IdPedido, SUM(IF(pProd.Situacao IN (" + (int)Pedido.SituacaoPedido.Confirmado +
                             ", " + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + @"), 1, 0)) as qtdePedProducao

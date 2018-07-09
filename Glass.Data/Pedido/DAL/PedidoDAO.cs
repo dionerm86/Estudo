@@ -1,18 +1,12 @@
+using Colosoft;
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.Web;
-using Glass.Data.Exceptions;
 using System.Linq;
-using Glass.Data.RelDAL;
-using Glass.Configuracoes;
-using Glass.Global;
-using Colosoft;
-using Glass.Data.Helper.Calculos;
+using System.Text;
 
 namespace Glass.Data.DAL
 {
@@ -38,7 +32,7 @@ namespace Glass.Data.DAL
             TotM2Pendente = 0;
             Peso = 0;
             PesoPendente = 0;
-            ValorTotal = 0;           
+            ValorTotal = 0;
         }
 
         /// <summary>
@@ -54,7 +48,7 @@ namespace Glass.Data.DAL
             TotM2Pendente = 0;
             Peso = 0;
             PesoPendente = 0;
-            ValorTotal = 0;            
+            ValorTotal = 0;
         }
 
         /// <summary>
@@ -70,7 +64,7 @@ namespace Glass.Data.DAL
             TotM = Math.Round(totM, 2, MidpointRounding.AwayFromZero);
             TotM2Pendente = Math.Round(totM2Pendente, 2, MidpointRounding.AwayFromZero);
             Peso = peso;
-            PesoPendente = Math.Round(pesoPendente, 2, MidpointRounding.AwayFromZero);           
+            PesoPendente = Math.Round(pesoPendente, 2, MidpointRounding.AwayFromZero);
             ValorTotal = Math.Round(valorTotal, 2, MidpointRounding.AwayFromZero);
         }
 
@@ -121,7 +115,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valor total das peças da OC.
         /// </summary>
-        public decimal ValorTotal { get; set; }        
+        public decimal ValorTotal { get; set; }
 
         #endregion
     }
@@ -291,7 +285,7 @@ namespace Glass.Data.DAL
                 Left Join funcionario med On (p.IdMedidor=med.IdFunc)
                 Left Join liberarpedido lp on (p.idLiberarPedido=lp.idLiberarPedido)
                 Left Join sinal s on (p.idSinal=s.idSinal)
-                Left Join funcionario ent On (s.UsuCad=ent.idFunc) 
+                Left Join funcionario ent On (s.UsuCad=ent.idFunc)
                 LEFT JOIN rota_cliente rc ON (c.id_cli = rc.idCliente)
                 LEFT JOIN rota r ON (rc.idRota = r.idRota)
                 Left Join funcionario ff On (p.usuFin=ff.idFunc)
@@ -309,7 +303,7 @@ namespace Glass.Data.DAL
                     Left Join subgrupo_prod s1 on (prod.idSubgrupoProd=s1.idSubgrupoProd) ");
 
             sql.AppendFormat(@"Left Join obra o On (p.IdObra=o.IdObra)
-                Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) 
+                Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto)
                 Where 1 {0}", FILTRO_ADICIONAL);
 
             var fa = new StringBuilder();
@@ -325,7 +319,7 @@ namespace Glass.Data.DAL
                 if (buscarPedidoProducao)
                 {
                     // Otimização necessária para deixar o sistema mais rápido, select in no SQL é extremamente pesado e deve ser evitado ao máximo
-                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format(@"SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0 
+                    var ids = string.Join(",", ExecuteMultipleScalar<string>(string.Format(@"SELECT IdPedidoRevenda FROM Pedido WHERE IdPedido={0} AND IdPedidoRevenda>0
                                            UNION ALL SELECT IdPedido FROM Pedido WHERE IdPedidoRevenda={0}", idPedido)));
                     if (!string.IsNullOrEmpty(ids))
                         idsPedidoFiltro += "," + ids;
@@ -898,6 +892,19 @@ namespace Glass.Data.DAL
             float valorDe, float valorAte, string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim,
             string funcFinalizacao, string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, string obsLiberacao = "")
         {
+            return GetCount(idPedido, idLoja, idCli, nomeCli, codCliente, idCidade, endereco, bairro, complemento, situacao,
+                situacaoProd, byVend, maoObra, maoObraEspecial, producao, idOrcamento, altura, largura, numeroDiasDiferencaProntoLib,
+                valorDe, valorAte, dataCadIni, dataCadFim, dataFinIni, dataFinFim, funcFinalizacao, tipo, fastDelivery, tipoVenda,
+                origemPedido, obs, obsLiberacao, true);
+        }
+
+        public int GetCount(uint idPedido, uint idLoja, uint idCli, string nomeCli, string codCliente, uint idCidade, string endereco,
+            string bairro, string complemento, string situacao, string situacaoProd, string byVend, string maoObra,
+            string maoObraEspecial, string producao, uint idOrcamento, float altura, int largura, int numeroDiasDiferencaProntoLib,
+            float valorDe, float valorAte, string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim,
+            string funcFinalizacao, string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, string obsLiberacao,
+            bool usarOtimizacaoCount)
+        {
             bool temFiltro;
             string filtroAdicional;
 
@@ -906,6 +913,13 @@ namespace Glass.Data.DAL
                 funcFinalizacao, idOrcamento, false, false, altura, largura, numeroDiasDiferencaProntoLib, valorDe, valorAte, tipo,
                 fastDelivery, tipoVenda, origemPedido, obs, true, true, out filtroAdicional, out temFiltro, obsLiberacao)
                 .Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+
+            if (!usarOtimizacaoCount)
+            {
+                _sortExpression = null;
+                _startRow = 0;
+                _pageSize = 0;
+            }
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParam(nomeCli, codCliente, endereco, bairro, complemento,
                 situacao, situacaoProd, dataCadIni, dataCadFim, dataFinIni, dataFinFim, obs));
@@ -1051,8 +1065,8 @@ namespace Glass.Data.DAL
 
         public Pedido[] GetForRpt(string idsPedidos, bool forPcp, LoginUsuario login)
         {
-            var qtdPecas = PedidoConfig.LiberarPedido ? @"Select Cast(Sum(Coalesce(qtde, 0)) As Signed Integer) From produtos_pedido pp 
-                Left Join produto p On (pp.idProd=p.idProd) Where idPedido=p.idPedido And Coalesce(invisivelPedido, False)=False 
+            var qtdPecas = PedidoConfig.LiberarPedido ? @"Select Cast(Sum(Coalesce(qtde, 0)) As Signed Integer) From produtos_pedido pp
+                Left Join produto p On (pp.idProd=p.idProd) Where idPedido=p.idPedido And Coalesce(invisivelPedido, False)=False
                 And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro : "0";
 
             var sql = @"
@@ -1557,25 +1571,25 @@ namespace Glass.Data.DAL
 
                 @"p.idPedido, p.idLoja, p.idFunc, p.idCli, p.idFormaPagto, p.idOrcamento, " + total + ", " +
                 itensProjeto + @"p.prazoEntrega, p.tipoEntrega, p.tipoVenda, p.dataEntrega, p.valorEntrega, p.situacao, p.valorEntrada,
-                p.dataCad, p.usuCad, p.numParc, p.obs, " + custo + @", p.dataConf, p.usuConf, p.dataCanc, p.usuCanc, p.enderecoObra, 
-                p.bairroObra, p.cidadeObra, p.localObra, p.idFormaPagto2, p.idTipoCartao, p.idTipoCartao2, p.codCliente, p.numAutConstrucard, 
+                p.dataCad, p.usuCad, p.numParc, p.obs, " + custo + @", p.dataConf, p.usuConf, p.dataCanc, p.usuCanc, p.enderecoObra,
+                p.bairroObra, p.cidadeObra, p.localObra, p.idFormaPagto2, p.idTipoCartao, p.idTipoCartao2, p.codCliente, p.numAutConstrucard,
                 p.idComissionado, p.percComissao, p.valorComissao, p.idPedidoAnterior, p.fastDelivery, p.dataPedido,
-                p.idObra, p.idMedidor, p.taxaPrazo, p.tipoPedido, p.taxaFastDelivery, 
-                p.temperaFora, p.situacaoProducao, p.idFuncVenda, p.dataEntregaOriginal, p.geradoParceiro, 
-                " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, l.telefone as TelefoneLoja, fp.Descricao as FormaPagto, 
-                cid.nomeCidade as cidade, p.valorCreditoAoConfirmar, p.creditoGeradoConfirmar, p.creditoUtilizadoConfirmar, '$$$' as Criterio, 
+                p.idObra, p.idMedidor, p.taxaPrazo, p.tipoPedido, p.taxaFastDelivery,
+                p.temperaFora, p.situacaoProducao, p.idFuncVenda, p.dataEntregaOriginal, p.geradoParceiro,
+                " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja, l.telefone as TelefoneLoja, fp.Descricao as FormaPagto,
+                cid.nomeCidade as cidade, p.valorCreditoAoConfirmar, p.creditoGeradoConfirmar, p.creditoUtilizadoConfirmar, '$$$' as Criterio,
                 c.idFunc as idFuncCliente, fc.nome as nomeFuncCliente, p.idParcela, p.cepObra, p.idSinal, p.idPagamentoAntecipado,
                 p.valorPagamentoAntecipado, p.dataPronto, p.obsLiberacao, p.idProjeto, p.idLiberarPedido, p.idFuncDesc, p.dataDesc,
                 p.importado, c.email, p.percentualComissao,
                 p.rotaExterna, p.clienteExterno, p.pedCliExterno, p.celCliExterno, p.totalPedidoExterno, p.deveTransferir, p.dataFin, p.usuFin" +
 
-                (exibirRota ? @", (Select r.codInterno From rota r Where r.idRota In 
+                (exibirRota ? @", (Select r.codInterno From rota r Where r.idRota In
                     (Select rc.idRota From rota_cliente rc Where rc.idCliente=p.idCli)) As codRota" : "") :
 
                 camposFluxo +
-                "p.idLoja, p.idFunc, p.idCli, " + total + @", f.nome as nomeFunc, c.idFunc as idFuncCliente, fc.nome as nomeFuncCliente, 
-                l.nomeFantasia as nomeLoja, p.tipoPedido, p.situacao, p.dataConf, com.idComissionado, com.nome as nomeComissionado, lp.dataLiberacao, 
-                " + ClienteDAO.Instance.GetNomeCliente("c") + @" as nomeCliente, p.importado, 
+                "p.idLoja, p.idFunc, p.idCli, " + total + @", f.nome as nomeFunc, c.idFunc as idFuncCliente, fc.nome as nomeFuncCliente,
+                l.nomeFantasia as nomeLoja, p.tipoPedido, p.situacao, p.dataConf, com.idComissionado, com.nome as nomeComissionado, lp.dataLiberacao,
+                " + ClienteDAO.Instance.GetNomeCliente("c") + @" as nomeCliente, p.importado,
                 '$$$' as Criterio") : "Count(*)";
 
             var usarDadosVendidos = !loginCliente && selecionar && exibirProdutos && !countLimit;
@@ -1586,10 +1600,10 @@ namespace Glass.Data.DAL
 
             var dadosVendidos = !usarDadosVendidos ? "" :
                 @"Left Join (
-                    select idCli, idPedido, concat(cast(group_concat(concat('\n* ', codInterno, ' - ', descricao, ': Qtde ', qtde, '  Tot. m² ', 
+                    select idCli, idPedido, concat(cast(group_concat(concat('\n* ', codInterno, ' - ', descricao, ': Qtde ', qtde, '  Tot. m² ',
                         totM2)) as char), rpad('', 100, ' ')) as dadosVidrosVendidos
                     from (
-                        select ped.idCli, ped.idPedido, pp.idProd, p.codInterno, p.descricao, 
+                        select ped.idCli, ped.idPedido, pp.idProd, p.codInterno, p.descricao,
                             replace(cast(sum(pp.totM) as char), '.', ',') as totM2, cast(sum(pp.qtde) as signed) as qtde
                         from produtos_pedido pp
                             inner join pedido ped on (pp.idPedido=ped.idPedido)
@@ -1597,7 +1611,7 @@ namespace Glass.Data.DAL
                             inner join produto p on (pp.idProd=p.idProd)
                             left join produtos_liberar_pedido plp1 on (pp.idProdPed=plp1.idProdPed)
                             left join liberarpedido lp1 on (plp1.idLiberarPedido=lp1.idLiberarPedido)
-                        where p.idGrupoProd=1 
+                        where p.idGrupoProd=1
                             and (invisivelFluxo IS NULL or invisivelFluxo=FALSE)
                             {0}
                         group by ped.idCli, pp.idProd
@@ -1607,7 +1621,7 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM pedido p
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_pedido pp ON (p.IdPedido=pp.IdPedido)
@@ -1615,9 +1629,9 @@ namespace Glass.Data.DAL
                     LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido AND COALESCE(lp.Situacao, 1)=1)
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
                     LEFT JOIN funcionario fc ON (c.IdFunc=fc.IdFunc)
-                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade) 
-                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
-                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja) 
+                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade)
+                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
+                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
                     LEFT JOIN comissionado com ON (p.IdComissionado=com.IdComissionado)
                     {1}
@@ -1889,7 +1903,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(idsSubgrupoProd) && idsSubgrupoProd != "0")
             {
-                filtroAdicional += @" 
+                filtroAdicional += @"
                     AND p.IdPedido IN
                         (SELECT pp1.IdPedido FROM produtos_pedido pp1
                             INNER JOIN produto prod ON (pp1.IdProd=prod.IdProd)
@@ -1985,7 +1999,7 @@ namespace Glass.Data.DAL
                 var idProd = ProdutoDAO.Instance.ObtemIdProd(codProd);
 
                 filtroAdicional += string.Format(
-                    @" AND p.IdPedido IN 
+                    @" AND p.IdPedido IN
                         (SELECT IdPedido FROM produtos_pedido pp1
                         WHERE pp1.idProd={0} AND (pp1.InvisivelFluxo IS NULL OR pp1.InvisivelFluxo=FALSE))",
                     idProd);
@@ -1995,9 +2009,9 @@ namespace Glass.Data.DAL
             else if (!string.IsNullOrEmpty(descrProd))
             {
                 filtroAdicional +=
-                    @" AND p.IdPedido IN 
+                    @" AND p.IdPedido IN
                         (SELECT pp1.IdPedido FROM produtos_pedido pp1
-                            INNER JOIN produto p ON (pp1.IdProd=p.IdProd) 
+                            INNER JOIN produto p ON (pp1.IdProd=p.IdProd)
                         WHERE p.Descricao LIKE ?descrProd AND (pp1.InvisivelFluxo IS NULL OR pp1.InvisivelFluxo=FALSE))";
 
                 criterio += "Produto: " + descrProd;
@@ -2146,10 +2160,10 @@ namespace Glass.Data.DAL
 
             var dadosVendidos = usarDadosVendidos ?
                 string.Format(@"LEFT JOIN (
-                    SELECT IdCli, IdPedido, CONCAT(CAST(GROUP_CONCAT(CONCAT('\n* ', CodInterno, ' - ', Descricao, ': Qtde ', Qtde, '  Tot. m² ', 
+                    SELECT IdCli, IdPedido, CONCAT(CAST(GROUP_CONCAT(CONCAT('\n* ', CodInterno, ' - ', Descricao, ': Qtde ', Qtde, '  Tot. m² ',
                         TotM2)) AS CHAR), RPAD('', 100, ' ')) AS DadosVidrosVendidos
                     FROM (
-                        SELECT ped.IdCli, ped.IdPedido, pp.IdProd, p.CodInterno, p.Descricao, 
+                        SELECT ped.IdCli, ped.IdPedido, pp.IdProd, p.CodInterno, p.Descricao,
                             REPLACE(CAST(SUM(pp.TotM) AS CHAR), '.', ',') AS TotM2, CAST(SUM(pp.Qtde) AS SIGNED) AS Qtde
                         FROM produtos_pedido pp
                             INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -2166,14 +2180,14 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM pedido p
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN produtos_liberar_pedido plp ON (p.IdPedido=plp.IdPedido)
                     LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido AND lp.Situacao IS NOT NULL AND lp.Situacao=1)
                     LEFT JOIN funcionario fc ON (c.IdFunc=fc.IdFunc)
-                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade) 
-                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
+                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade)
+                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
                     {1}
@@ -2590,16 +2604,16 @@ namespace Glass.Data.DAL
             {
                 var idProd = ProdutoDAO.Instance.ObtemIdProd(codigoProduto);
 
-                filtroAdicional += string.Format(@" AND p.IdPedido IN 
+                filtroAdicional += string.Format(@" AND p.IdPedido IN
                     (SELECT DISTINCT IdPedido FROM produtos_pedido pp1 WHERE pp1.IdProd={0} AND {1})", idProd, filtroFluxoProdutoPedido);
 
                 criterio += string.Format(formatoCriterio, "Produto:", string.Format("{0} - {1}", codigoProduto, ProdutoDAO.Instance.GetDescrProduto(codigoProduto)));
             }
             else if (!string.IsNullOrWhiteSpace(descricaoProduto))
             {
-                filtroAdicional += string.Format(@" AND p.IdPedido IN 
+                filtroAdicional += string.Format(@" AND p.IdPedido IN
                     (SELECT DISTINCT pp1.IdPedido FROM produtos_pedido pp1
-                        INNER JOIN produto p ON (pp1.IdProd=p.IdProd) 
+                        INNER JOIN produto p ON (pp1.IdProd=p.IdProd)
                     WHERE p.Descricao LIKE ?descrProd AND {0})", filtroFluxoProdutoPedido);
 
                 criterio += string.Format(formatoCriterio, "Produto:", descricaoProduto);
@@ -2679,7 +2693,7 @@ namespace Glass.Data.DAL
 
             if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao && FiltrosVazios(altura, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao,
                  dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto,
-                 dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento,idCliente, idFunc, idMedidor, idOrcamento, idOC,
+                 dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento, idCliente, idFunc, idMedidor, idOrcamento, idOC,
                  idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente,
                  numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao, tipoCliente,
                  tipoEntrega, tipoFiscal, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao))
@@ -2735,7 +2749,7 @@ namespace Glass.Data.DAL
                  idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente,
                  numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao, tipoCliente,
                  tipoEntrega, tipoFiscal, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao))
-            return 0;
+                return 0;
 
             var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, true, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega,
             dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery, out filtroAdicional, idCarregamento, idCliente,
@@ -2932,12 +2946,12 @@ namespace Glass.Data.DAL
 
             var sql = string.Format(@"
                 SELECT {0}
-                FROM pedido p 
+                FROM pedido p
                     INNER JOIN cliente c ON (p.IdCli=c.Id_Cli)
                     LEFT JOIN pedido_espelho pe ON (p.IdPedido=pe.IdPedido)
                     LEFT JOIN funcionario fc ON (c.IdFunc=fc.IdFunc)
-                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade) 
-                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc) 
+                    LEFT JOIN cidade cid ON (c.IdCidade=cid.IdCidade)
+                    LEFT JOIN funcionario f ON (p.IdFunc=f.IdFunc)
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN formapagto fp ON (fp.IdFormaPagto=p.IdFormaPagto)
                 WHERE p.TipoPedido IN (1,2,3) AND p.TipoVenda IN (1,2,5) ?filtroAdicional?", campos);

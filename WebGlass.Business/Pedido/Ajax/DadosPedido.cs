@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Glass;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
-using Glass;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace WebGlass.Business.Pedido.Ajax
 {
@@ -16,6 +19,8 @@ namespace WebGlass.Business.Pedido.Ajax
         string CheckFastDelivery(string idPedido, string dataEntrega, string diferencaM2);
 
         string AtualizarFastDelivery(string idPedido, string dataEntrega);
+
+        List<GenericModel> ObterTiposVendaCliente(uint? idCliente, bool incluirVazio);
     }
 
     internal class DadosPedido : IDadosPedido
@@ -163,6 +168,30 @@ namespace WebGlass.Business.Pedido.Ajax
             {
                 return "Erro|" + ex.Message;
             }
+        }
+
+        public List<GenericModel> ObterTiposVendaCliente(uint? idCliente, bool incluirVazio)
+        {
+            if (idCliente.GetValueOrDefault() == 0 || !PedidoConfig.DadosPedido.BloquearDadosClientePedido)
+            {
+                return DataSources.Instance.GetTipoVenda(incluirVazio).ToList();
+            }
+
+            var tiposVenda = new List<GenericModel>();
+
+            foreach (var g in DataSources.Instance.GetTipoVenda(incluirVazio))
+            {
+                bool adicionar = g.Id != (uint)Glass.Data.Model.Pedido.TipoVendaPedido.APrazo && g.Id != (uint)Glass.Data.Model.Pedido.TipoVendaPedido.AVista;
+                adicionar = adicionar || g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.APrazo && ParcelasDAO.Instance.GetCountByCliente(idCliente.GetValueOrDefault(), ParcelasDAO.TipoConsulta.Prazo) > 0;
+                adicionar = adicionar || g.Id == (uint)Glass.Data.Model.Pedido.TipoVendaPedido.AVista && ParcelasDAO.Instance.GetCountByCliente(idCliente.GetValueOrDefault(), ParcelasDAO.TipoConsulta.Vista) > 0;
+
+                if (adicionar)
+                {
+                    tiposVenda.Add(g);
+                }
+            }
+
+            return tiposVenda;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.DAL
@@ -18,7 +18,7 @@ namespace Glass.Data.DAL
             Prazo
         }
 
-        private string Sql(uint idParcela, uint idCliente, uint idFornecedor, bool apenasUsar, TipoConsulta tipo, 
+        private string Sql(uint idParcela, uint idCliente, uint idFornecedor, bool apenasUsar, TipoConsulta tipo,
             int numeroParcelas, bool selecionar)
         {
             string campos = selecionar ? "*" : "count(*)";
@@ -248,7 +248,7 @@ namespace Glass.Data.DAL
 
             int numeroParcelas = int.MaxValue;
             int numeroDias = int.MaxValue;
-            
+
             uint? retorno = null;
             foreach (Parcelas p in objPersistence.LoadData(sql))
             {
@@ -308,7 +308,7 @@ namespace Glass.Data.DAL
 
             if (possuiParcelaAVista)
             {
-                retorno = retorno.Select(f => f).Where(f => f.ParcelaAVista ==  true).ToArray();
+                retorno = retorno.Select(f => f).Where(f => f.ParcelaAVista == true).ToArray();
             }
 
             else if (!String.IsNullOrEmpty(idsPedidos) && Liberacao.DadosLiberacao.UsarMenorPrazoLiberarPedido)
@@ -317,7 +317,7 @@ namespace Glass.Data.DAL
                 if (idMenorPrazo > 0)
                 {
                     var menorParcela = Array.FindAll<Parcelas>(retorno, new Predicate<Parcelas>(
-                        delegate(Parcelas p)
+                        delegate (Parcelas p)
                         {
                             return p.IdParcela == idMenorPrazo;
                         }
@@ -332,9 +332,9 @@ namespace Glass.Data.DAL
 
                         return retorno;
                     }
-                    
+
                     retorno = Array.FindAll<Parcelas>(retorno, new Predicate<Parcelas>(
-                        delegate(Parcelas p)
+                        delegate (Parcelas p)
                         {
                             return p.IdParcela == idMenorPrazo || p.NumParcelas <= menorParcela[0].NumParcelas;
                         }
@@ -342,15 +342,35 @@ namespace Glass.Data.DAL
                 }
             }
 
-            return retorno.Where(f=>f.Situacao == Situacao.Ativo).ToList();
+            return retorno.Where(f => f.Situacao == Situacao.Ativo).ToList();
         }
 
-        public List<Parcelas>ObterParcelasAtivas()
+        public List<Parcelas> ObterParcelasAtivas()
         {
             var sql = @"SELECT * FROM PARCELAS
                         WHERE SITUACAO=" + (int)Situacao.Ativo;
 
             return objPersistence.LoadData(sql);
+        }
+
+        /// <summary>
+        /// Retorna a quantidade de parcelas que a parcela passada possui.
+        /// </summary>
+        /// <param name="idParcela">Identificador da parcela</param>
+        /// <returns>Quantidade de parcelas</returns>
+        public int ObterNumParcelas(int idParcela)
+        {
+            return this.ExecuteScalar<int>($"SELECT NumParcelas FROM parcelas WHERE IdParcela={idParcela}");
+        }
+
+        /// <summary>
+        /// Retorna como calcular as datas das parcelas.
+        /// </summary>
+        /// <param name="idParcela">Identificador da parcela</param>
+        /// <returns>Dias das parcelas.</returns>
+        public string ObterDiasParcelas(int idParcela)
+        {
+            return this.ExecuteScalar<string>($"SELECT Dias FROM parcelas WHERE IdParcela={idParcela}");
         }
 
         #endregion
@@ -362,7 +382,7 @@ namespace Glass.Data.DAL
             /*uint idParcela = base.Insert(objInsert);
 
             // Marca que todos os clientes não poderão usar esta parcela cadastrada
-            objPersistence.ExecuteCommand("Insert Into parcelas_nao_usar (IdParcela, IdCliente) (Select " + idParcela + 
+            objPersistence.ExecuteCommand("Insert Into parcelas_nao_usar (IdParcela, IdCliente) (Select " + idParcela +
                 ", id_Cli From cliente)");
 
             // Marca que todos os fornecedores não poderão usar esta parcela cadastrada

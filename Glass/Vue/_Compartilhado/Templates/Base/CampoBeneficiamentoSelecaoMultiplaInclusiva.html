@@ -1,0 +1,8 @@
+<span style="display: inline-grid; grid-template-columns: repeat(2, max-content); grid-gap: 4px 8px">
+    <span style="white-space: nowrap" v-for="(item, index) in beneficiamento.filhos" v-bind:key="index">
+        <input v-bind:id="idUnico(item)" type="checkbox" v-bind:value="item.id" v-model="selecionados" v-bind="$attrs">
+        <label v-bind:for="idUnico(item)" v-bind="$attrs">
+            {{ item.nome }}
+        </label>
+    </span>
+</span>

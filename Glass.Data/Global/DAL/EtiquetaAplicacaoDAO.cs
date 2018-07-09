@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
     public sealed class EtiquetaAplicacaoDAO : BaseDAO<EtiquetaAplicacao, EtiquetaAplicacaoDAO>
-	{
+    {
         //private EtiquetaAplicacaoDAO() { }
 
         private string SqlList(int situacao, bool selecionar)
@@ -139,6 +139,22 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Verifica se algum produto do pedido passado não permite usar fast delivery.
+        /// </summary>
+        /// <param name="session">Sessão da transação do banco de dados</param>
+        /// <param name="idPedido">Identificação do pedido que será analisado</param>
+        /// <returns>Código de aplicações usadas que não podem ser usadas como fast delivery</returns>
+        public IEnumerable<string> ObterSemPermissaoFastDelivery(GDASession session, int idPedido)
+        {
+            return this.ExecuteMultipleScalar<string>($@"
+                SELECT a.CodInterno FROM produtos_pedido pp
+                    INNER JOIN etiqueta_aplicacao a ON (pp.IdAplicacao=a.IdAplicacao)
+                WHERE pp.IdPedido={idPedido}
+                    AND a.NaoPermitirFastDelivery
+            ");
+        }
+
+        /// <summary>
         /// Retorna o número mínimo de dias úteis para a data de entrega.
         /// </summary>
         public int ObterDiasMinimosDataEntrega(GDASession sessao, int idAplicacao)
@@ -175,7 +191,7 @@ namespace Glass.Data.DAL
             // Atualiza a configuração para ficar igual à esta alteração
             if (objUpdate.CodInterno != codInterno)
             {
-                objPersistence.ExecuteCommand("Update config_loja set valorTexto=?codAplNovo Where idConfig In (20,22) And valorTexto=?codAplAntigo", 
+                objPersistence.ExecuteCommand("Update config_loja set valorTexto=?codAplNovo Where idConfig In (20,22) And valorTexto=?codAplAntigo",
                     new GDAParameter("?codAplNovo", objUpdate.CodInterno), new GDAParameter("?codAplAntigo", codInterno));
             }
 

@@ -13,7 +13,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.UI.Web</RootNamespace>
     <AssemblyName>Glass.UI.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,10 +41,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ajax">
       <HintPath>..\Dlls\Ajax.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Boleto.Net">
       <HintPath>..\Dlls\Boleto.Net.dll</HintPath>
@@ -271,8 +277,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dlls\netDxf.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NPOI, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
@@ -330,9 +336,7 @@
     <Reference Include="System.ComponentModel.Composition">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Biesse.1.8.49\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -372,7 +376,9 @@
     <Reference Include="System.Web">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Extensions">
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml">
@@ -387,9 +393,7 @@
     <Reference Include="System.EnterpriseServices">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Cadastros\CadAdminCartao.aspx" />
@@ -1597,6 +1601,127 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\Orcamentos\Componentes\LstOrcamentos.Filtro.js" />
+    <Content Include="Vue\Orcamentos\Componentes\LstOrcamentos.js" />
+    <Content Include="Vue\Orcamentos\Templates\LstOrcamentos.Filtro.html" />
+    <Content Include="Vue\Pedidos\Componentes\CadPedido.Ambientes.js" />
+    <Content Include="Vue\Pedidos\Componentes\CadPedido.js" />
+    <Content Include="Vue\Pedidos\Componentes\CadPedido.Produtos.js" />
+    <Content Include="Vue\Pedidos\Componentes\LstPedidos.Filtro.js" />
+    <Content Include="Vue\Pedidos\Componentes\LstPedidos.js" />
+    <Content Include="Vue\Pedidos\Templates\CadPedido.Ambientes.html" />
+    <Content Include="Vue\Pedidos\Templates\CadPedido.Produtos.html" />
+    <Content Include="Vue\Pedidos\Templates\LstPedidos.Filtro.html" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoBisote.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoLapidacao.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoListaSelecao.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoListaSelecaoQuantidade.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoQuantidade.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoSelecaoMultiplaExclusiva.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoSelecaoMultiplaInclusiva.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoSelecaoSimples.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBusca.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBuscaComPopup.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoComMascara.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHora.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHoraPeriodo.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecao.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecaoIdValor.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecaoMultipla.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoAcrescimoDesconto.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoAltura.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoAreaM2.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCidade.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaCliente.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaAplicacao.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\Data.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\DataHora.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\Decimal.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\Moeda.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Clonar.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Comparar.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Data.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\ExecutarTimeout.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Html.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\JsonQuerystring.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Mensagens.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Merge.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Aplicacoes.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Beneficiamentos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Cep.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Cidades.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Clientes.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Datas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Funcionarios.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Log.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Lojas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Obras.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Orcamentos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Parcelas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Pedidos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Processos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Producao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoLapidacao.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoListaSelecao.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoListaSelecaoQuantidade.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoQuantidade.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoSelecaoMultiplaExclusiva.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoSelecaoMultiplaInclusiva.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoSelecaoSimples.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBusca.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoBuscaComPopup.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoComMascara.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHora.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHoraPeriodo.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\ListaPaginada.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecao.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecaoIdValor.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecaoMultipla.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoAcrescimoDesconto.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoAltura.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoAreaM2.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCidade.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaCliente.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaAplicacao.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />
     <Content Include="WebGlassParceiros\AlterarObsLiberacaoPedido.aspx" />
     <Content Include="WebGlassParceiros\CadMensagemParceiro.aspx" />
     <Content Include="WebGlassParceiros\CadPecaModelo.aspx" />
@@ -1661,6 +1786,12 @@
     <Content Include="Handlers\ExportarFerragem.ashx" />
     <Content Include="Handlers\RetornoRecebimentoCappta.ashx" />
     <Content Include="Handlers\eCutterOptimizationService.ashx" />
+    <AdditionalFiles Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -1872,6 +2003,12 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="WebGlassParceiros\PainelParceiros.master" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\CalcAluminio.js" />
@@ -3269,6 +3406,12 @@
     <Compile Include="Cadastros\Projeto\SelFerragemExportar.aspx.designer.cs">
       <DependentUpon>SelFerragemExportar.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Code\BundleConfig.cs" />
+    <Compile Include="Code\Bundles\IncluirTemplateTela.cs" />
+    <Compile Include="Code\Bundles\ScriptItem.cs" />
+    <Compile Include="Code\Bundles\TemplateBundle.cs" />
+    <Compile Include="Code\Bundles\TemplateItem.cs" />
+    <Compile Include="Code\Bundles\TemplateMinify.cs" />
     <Compile Include="Code\Tarefas\Agendador.cs" />
     <Compile Include="Code\Tarefas\ContasReceberPagarBase.cs" />
     <Compile Include="Controls\ctrlConfigAresta.ascx.cs">
@@ -9047,6 +9190,11 @@
     <Folder Include="Relatorios\CFe\" />
     <Folder Include="Relatorios\Clientes\" />
     <Folder Include="Relatorios\Fornecedores\" />
+    <Folder Include="Vue\_Compartilhado\Diretivas\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -9073,11 +9221,20 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingInsideVisualStudio)' == 'True' And '$(BuildingProject)' == 'True'">
+    <!--
+      Disable analyzers when building a project inside Visual Studio. Note that analyzer behavior for IntelliSense
+      purposes is not altered by this.
+    -->
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
 </Project>

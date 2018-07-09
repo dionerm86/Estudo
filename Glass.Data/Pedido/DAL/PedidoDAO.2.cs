@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.Web;
-using Glass.Data.Exceptions;
-using System.Linq;
-using Glass.Data.RelDAL;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.Exceptions;
+using Glass.Data.Helper;
+using Glass.Data.Model;
 using Glass.Global;
-using Colosoft;
-using Glass.Data.Helper.Calculos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -23,7 +17,7 @@ namespace Glass.Data.DAL
         private static readonly object _confirmarPedidoLock = new object();
 
         /// <summary>
-        /// Confirma o pedido, gera contas a receber, dá baixa no estoque, 
+        /// Confirma o pedido, gera contas a receber, dá baixa no estoque,
         /// </summary>
         public string ConfirmarPedido(uint idPedido, uint[] formasPagto, uint[] tiposCartao, decimal[] valores, uint[] contasBanco, uint[] depositoNaoIdentificado,
             bool gerarCredito, decimal creditoUtilizado, string numAutConstrucard, uint[] numParcCartoes, string chequesPagto,
@@ -147,7 +141,7 @@ namespace Glass.Data.DAL
                                         throw new Exception("O produto " + prod.DescrProduto + " possui apenas " + estoque + " em estoque.");
                                 }
 
-                                // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados em 
+                                // Verifica se o valor unitário do produto foi informado, pois pode acontecer do usuário inserir produtos zerados em
                                 // um pedido reposição/garantia e depois alterar o pedido para à vista/à prazo
                                 if (!pedidoReposicaoGarantia && prod.ValorVendido == 0)
                                     throw new Exception("O produto " + prod.DescrProduto + " não pode ter valor zerado.");
@@ -600,7 +594,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Marca o pedido como entregue após baixar o estoque do mesmo, se todos os produtos tiverem dado baixa e 
+        /// Marca o pedido como entregue após baixar o estoque do mesmo, se todos os produtos tiverem dado baixa e
         /// se a empresa não trabalhar com produção de vidro ou não possuir vidros de produção no pedido
         /// </summary>
         /// <param name="sessao"></param>
@@ -961,7 +955,7 @@ namespace Glass.Data.DAL
                             throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == 0 ? "Grupo" : "Subgrupo"));
                         }
 
-                        //Verifica se o produto possui estoque para inserir na reserva 
+                        //Verifica se o produto possui estoque para inserir na reserva
                         if (GrupoProdDAO.Instance.BloquearEstoque(sessao, (int)idGrupo, (int)idSubGrupo))
                         {
                             var estoque = ProdutoLojaDAO.Instance.GetEstoque(sessao, idLoja, idProd, null, false, false, true);
@@ -999,7 +993,7 @@ namespace Glass.Data.DAL
                         // Recupera o pedido
                         var ped = pedidos.Where(f => f.IdPedido == id.StrParaUint()).FirstOrDefault();
 
-                        // Atualiza para confirmado PCP 
+                        // Atualiza para confirmado PCP
                         AlteraSituacao(sessao, id.StrParaUint(), Pedido.SituacaoPedido.ConfirmadoLiberacao);
 
                         // Chamado 59179: Atualiza o saldo da obra (Deve ser feito neste momento)
@@ -1131,134 +1125,138 @@ namespace Glass.Data.DAL
         /// </summary>
         public void Reabrir(uint idPedido)
         {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    this.Reabrir(transaction, idPedido);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reabre um pedido.
+        /// </summary>
+        public void Reabrir(GDASession sessao, uint idPedido)
+        {
             lock (_reabrirPedido)
             {
-                using (var transaction = new GDATransaction())
+                // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
+                var obsPedido = ObtemObs(sessao, idPedido);
+                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE pedido SET obs='Reabrindo pedido' WHERE IdPedido={0}", idPedido));
+
+                if (!PodeReabrir(sessao, idPedido))
+                    throw new Exception("Não é possível reabrir esse pedido.");
+
+                /* Chamado 33940. */
+                if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    string.Format("SELECT COUNT(*) FROM produto_pedido_producao WHERE IdPedidoExpedicao={0}", idPedido)) > 0)
+                    throw new Exception("Este pedido não pode ser reaberto porque uma ou mais peças foram entregues, volte a situação delas na produção e tente novamente.");
+
+                if (TemVolume(sessao, idPedido))
+                    throw new Exception("Não é possível reabrir esse pedido, pois o mesmo possui volumes gerados.");
+
+                var nova = Pedido.SituacaoPedido.Ativo;
+                if (PedidoConferenciaDAO.Instance.IsInConferencia(sessao, idPedido) || Instance.ObtemIdSinal(sessao, idPedido) > 0)
+                    nova = Pedido.SituacaoPedido.AtivoConferencia;
+
+                var pedido = GetElementByPrimaryKey(sessao, idPedido);
+
+                if (pedido.GerarPedidoProducaoCorte && Instance.PedidoProducaoCorteAtivo(sessao, idPedido))
+                    throw new Exception("Não é possível reabrir esse pedido, pois o mesmo possui pedidos de produção em andamento. Cancele-os para reabrir este pedido.");
+
+                var situacao = ObtemSituacao(sessao, idPedido);
+                Instance.AlteraSituacao(sessao, idPedido, nova);
+
+                objPersistence.ExecuteCommand(sessao, "update pedido set dataFin=null, usuFin=null where idPedido=" + idPedido);
+
+                //Verifica se o  ValorPagamentoAntecipado é proveniente de uma Obra, então zera.
+                if (pedido.IdObra.GetValueOrDefault() > 0 && pedido.IdPagamentoAntecipado.GetValueOrDefault() == 0)
+                    objPersistence.ExecuteCommand(sessao, "UPDATE pedido SET ValorPagamentoAntecipado=null WHERE IdPedido=" + idPedido);
+
+                var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido);
+
+                //Movimenta o estoque da materia-prima
+                foreach (var p in produtos)
+                {
+                    if (ProdutoDAO.Instance.IsVidro(sessao, (int)p.IdProd))
+                        MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(sessao, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
+                }
+
+                // Tira os produtos da reserva, se o pedido estivesse confirmado
+                if (situacao == Pedido.SituacaoPedido.ConfirmadoLiberacao)
                 {
                     try
                     {
-                        transaction.BeginTransaction();
+                        var login = UserInfo.GetUserInfo;
 
-                        ForcarTransacaoPedido(transaction, idPedido, true);
+                        var idsProdQtde = new Dictionary<int, float>();
 
-                        // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
-                        var obsPedido = ObtemObs(transaction, idPedido);
-                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs='Reabrindo pedido' WHERE IdPedido={0}", idPedido));
-
-                        if (!PodeReabrir(transaction, idPedido))
-                            throw new Exception("Não é possível reabrir esse pedido.");
-
-                        /* Chamado 33940. */
-                        if (objPersistence.ExecuteSqlQueryCount(transaction,
-                            string.Format("SELECT COUNT(*) FROM produto_pedido_producao WHERE IdPedidoExpedicao={0}", idPedido)) > 0)
-                            throw new Exception("Este pedido não pode ser reaberto porque uma ou mais peças foram entregues, volte a situação delas na produção e tente novamente.");
-
-                        if (TemVolume(transaction, idPedido))
-                            throw new Exception("Não é possível reabrir esse pedido, pois o mesmo possui volumes gerados.");
-
-                        var nova = Pedido.SituacaoPedido.Ativo;
-                        if (PedidoConferenciaDAO.Instance.IsInConferencia(transaction, idPedido) || Instance.ObtemIdSinal(transaction, idPedido) > 0)
-                            nova = Pedido.SituacaoPedido.AtivoConferencia;
-
-                        var pedido = GetElementByPrimaryKey(transaction, idPedido);
-
-                        if (pedido.GerarPedidoProducaoCorte && Instance.PedidoProducaoCorteAtivo(transaction, idPedido))
-                            throw new Exception("Não é possível reabrir esse pedido, pois o mesmo possui pedidos de produção em andamento. Cancele-os para reabrir este pedido.");
-
-                        var situacao = ObtemSituacao(transaction, idPedido);
-                        Instance.AlteraSituacao(transaction, idPedido, nova);
-
-                        objPersistence.ExecuteCommand(transaction, "update pedido set dataFin=null, usuFin=null where idPedido=" + idPedido);
-
-                        //Verifica se o  ValorPagamentoAntecipado é proveniente de uma Obra, então zera.
-                        if (pedido.IdObra.GetValueOrDefault() > 0 && pedido.IdPagamentoAntecipado.GetValueOrDefault() == 0)
-                            objPersistence.ExecuteCommand(transaction, "UPDATE pedido SET ValorPagamentoAntecipado=null WHERE IdPedido=" + idPedido);
-
-                        var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, idPedido);
-
-                        //Movimenta o estoque da materia-prima
-                        foreach (var p in produtos)
+                        // Pedido de produção não deve tirar nem colocar na reserva
+                        if (pedido.TipoPedido != (int)Pedido.TipoPedidoEnum.Producao)
                         {
-                            if (ProdutoDAO.Instance.IsVidro(transaction, (int)p.IdProd))
-                                MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(transaction, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
-                        }
-
-                        // Tira os produtos da reserva, se o pedido estivesse confirmado
-                        if (situacao == Pedido.SituacaoPedido.ConfirmadoLiberacao)
-                        {
-                            try
+                            foreach (var pp in ProdutosPedidoDAO.Instance.GetByPedidoLite(sessao, idPedido))
                             {
-                                var login = UserInfo.GetUserInfo;
+                                var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)pp.IdGrupoProd,
+                                    (int)pp.IdSubgrupoProd);
+                                var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
+                                    tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
 
-                                var idsProdQtde = new Dictionary<int, float>();
+                                var qtdEstornoEstoque = pp.Qtde;
 
-                                // Pedido de produção não deve tirar nem colocar na reserva
-                                if (pedido.TipoPedido != (int)Pedido.TipoPedidoEnum.Producao)
+                                if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 ||
+                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
+                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 ||
+                                    tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
                                 {
-                                    foreach (var pp in ProdutosPedidoDAO.Instance.GetByPedidoLite(transaction, idPedido))
-                                    {
-                                        var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(transaction, (int)pp.IdGrupoProd,
-                                            (int)pp.IdSubgrupoProd);
-                                        var m2 = tipoCalc == (int)TipoCalculoGrupoProd.M2 ||
-                                            tipoCalc == (int)TipoCalculoGrupoProd.M2Direto;
-
-                                        var qtdEstornoEstoque = pp.Qtde;
-
-                                        if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 ||
-                                            tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
-                                            tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 ||
-                                            tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
-                                        {
-                                            var altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(transaction, "altura",
-                                                "idProdPed=" + pp.IdProdPed);
-                                            qtdEstornoEstoque = pp.Qtde * altura;
-                                        }
-
-                                        // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
-                                        if (!idsProdQtde.ContainsKey((int)pp.IdProd))
-                                            idsProdQtde.Add((int)pp.IdProd, m2 ? pp.TotM : qtdEstornoEstoque);
-                                        else
-                                            idsProdQtde[(int)pp.IdProd] += m2 ? pp.TotM : qtdEstornoEstoque;
-                                    }
+                                    var altura = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(sessao, "altura",
+                                        "idProdPed=" + pp.IdProdPed);
+                                    qtdEstornoEstoque = pp.Qtde * altura;
                                 }
 
-                                /* Chamado 17824. */
-                                // Zera o campo pagamento antecipado
-                                //objPersistence.ExecuteCommand("update pedido set valorPagamentoAntecipado=0, dataConf=null, usuConf=null where idPedido=" + idPedido);
-                                objPersistence.ExecuteCommand(transaction,
-                                    "update pedido set dataConf=null, usuConf=null where idPedido=" + idPedido);
-
-                                var idObra = ObtemValorCampo<uint>(transaction, "idObra", "idPedido=" + idPedido);
-                                if (idObra > 0)
-                                    ObraDAO.Instance.AtualizaSaldo(transaction, idObra, false);
-
-                                ProdutoLojaDAO.Instance.TirarReserva(transaction, (int)ObtemIdLoja(transaction, idPedido), idsProdQtde,
-                                    null, null, null, null, (int)idPedido, null, null, "PedidoDAO - Reabrir");
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Falha ao tirar produtos na reserva.", ex);
+                                // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
+                                if (!idsProdQtde.ContainsKey((int)pp.IdProd))
+                                    idsProdQtde.Add((int)pp.IdProd, m2 ? pp.TotM : qtdEstornoEstoque);
+                                else
+                                    idsProdQtde[(int)pp.IdProd] += m2 ? pp.TotM : qtdEstornoEstoque;
                             }
                         }
 
-                        LogAlteracaoDAO.Instance.LogPedido(transaction, pedido, GetElementByPrimaryKey(transaction, pedido.IdPedido),
-                            LogAlteracaoDAO.SequenciaObjeto.Atual);
+                        /* Chamado 17824. */
+                        // Zera o campo pagamento antecipado
+                        //objPersistence.ExecuteCommand("update pedido set valorPagamentoAntecipado=0, dataConf=null, usuConf=null where idPedido=" + idPedido);
+                        objPersistence.ExecuteCommand(sessao,
+                            "update pedido set dataConf=null, usuConf=null where idPedido=" + idPedido);
 
-                        // #69907 - Ao final da transação volta a situação original do pedido
-                        objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedido), new GDAParameter("?obs", obsPedido));
+                        var idObra = ObtemValorCampo<uint>(sessao, "idObra", "idPedido=" + idPedido);
+                        if (idObra > 0)
+                            ObraDAO.Instance.AtualizaSaldo(sessao, idObra, false);
 
-                        ForcarTransacaoPedido(transaction, idPedido, false);
-
-                        transaction.Commit();
-                        transaction.Close();
+                        ProdutoLojaDAO.Instance.TirarReserva(sessao, (int)ObtemIdLoja(sessao, idPedido), idsProdQtde,
+                            null, null, null, null, (int)idPedido, null, null, "PedidoDAO - Reabrir");
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        transaction.Rollback();
-                        transaction.Close();
-                        throw;
+                        throw new Exception("Falha ao tirar produtos na reserva.", ex);
                     }
                 }
+
+                LogAlteracaoDAO.Instance.LogPedido(sessao, pedido, GetElementByPrimaryKey(sessao, pedido.IdPedido),
+                    LogAlteracaoDAO.SequenciaObjeto.Atual);
+
+                // #69907 - Ao final da transação volta a situação original do pedido
+                objPersistence.ExecuteCommand(sessao, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedido), new GDAParameter("?obs", obsPedido));
             }
         }
 
@@ -1425,8 +1423,8 @@ namespace Glass.Data.DAL
         /// <param name="tipo">1-Comum, 2-Temperado</param>
         private bool ContemTipo(GDASession sessao, uint idPedido, int tipo)
         {
-            var sql = @"Select Count(*) From produtos_pedido pp 
-                Left Join produto p On (pp.IdProd=p.IdProd) 
+            var sql = @"Select Count(*) From produtos_pedido pp
+                Left Join produto p On (pp.IdProd=p.IdProd)
                 Where idPedido=" + idPedido;
 
             var subgruposMarcadosFiltro = Glass.Data.DAL.GrupoProdDAO.Instance.ObtemSubgruposMarcadosFiltro(sessao, 0);
@@ -2036,9 +2034,9 @@ namespace Glass.Data.DAL
                             {
                                 // Busca a quantidade que foi dado baixa deste produto no estoque
                                 int qtdBaixa = objPersistence.ExecuteSqlQueryCount(session,
-                                    @"Select Count(*) From produto_pedido_producao 
+                                    @"Select Count(*) From produto_pedido_producao
                                         Where idProdPed In (Select idProdPed from produtos_pedido_espelho Where idPedido=" +
-                                    idPedido + @" 
+                                    idPedido + @"
                                         And idProd=" + p.IdProd +
                                     ") And idSetor in (select idSetor from setor where forno)");
 
@@ -2442,13 +2440,13 @@ namespace Glass.Data.DAL
             FinalizarAplicacaoComissaoAcrescimoDesconto(sessao, pedido, produtosAtualizar, true);
 
             objPersistence.ExecuteCommand(sessao, @"
-                Update pedido set desconto=0 
+                Update pedido set desconto=0
                 Where idPedido=" + pedido.IdPedido + @";
-                Update pedido p set Total=Round((   
-                    Select Sum(Total + coalesce(valorBenef, 0)) 
-                    From produtos_pedido 
-                    Where IdPedido=p.IdPedido 
-                        And (InvisivelPedido = false or InvisivelPedido is null)), 2) 
+                Update pedido p set Total=Round((
+                    Select Sum(Total + coalesce(valorBenef, 0))
+                    From produtos_pedido
+                    Where IdPedido=p.IdPedido
+                        And (InvisivelPedido = false or InvisivelPedido is null)), 2)
                 Where p.IdPedido=" + pedido.IdPedido);
 
             // Chamado 21923: Não deve salvar log se pedido já estiver liberado, pois a alteração de desconto não será salva.
@@ -2666,24 +2664,24 @@ namespace Glass.Data.DAL
                 return true;
 
             var sql = @"
-                SELECT COUNT(*) FROM produtos_pedido pp 
+                SELECT COUNT(*) FROM produtos_pedido pp
                     INNER JOIN produto p On (pp.IdProd=p.IdProd)
                 WHERE pp.IdPedido=" + idPedido + @"
-                    AND p.IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"  
+                    AND p.IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
                     AND (p.IdSubgrupoProd IN (
-                        SELECT sgp.IdSubgrupoProd From subgrupo_prod sgp Where sgp.IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" 
+                        SELECT sgp.IdSubgrupoProd From subgrupo_prod sgp Where sgp.IdGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
                             AND (sgp.ProdutosEstoque=FALSE OR sgp.ProdutosEstoque IS NULL))" +
                 /* Chamado 16470.
                  * Produtos sem associação de subgrupo não estavam sendo considerados como vidros de produção,
                  * por isso, colocamos uma condição que irá verificar se o produto não tem subgrupo. */
                 " OR COALESCE(p.IdSubgrupoProd, 0)=0)";
             /*string sql = @"
-                Select Count(*) From produtos_pedido pp 
+                Select Count(*) From produtos_pedido pp
                     Inner Join produto p On (pp.idProd=p.idProd)
                 Where pp.idPedido=" + idPedido + @"
-                    And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"  
+                    And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
                     And p.idSubgrupoProd In (
-                        Select idSubgrupoProd From subgrupo_prod Where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" 
+                        Select idSubgrupoProd From subgrupo_prod Where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
                             And (produtosEstoque=false or produtosEstoque is null)
                     )";*/
 
@@ -2696,8 +2694,8 @@ namespace Glass.Data.DAL
         public bool PossuiVolume(GDASession session, uint idPedido)
         {
             string sql = @"
-                SELECT COUNT(*) 
-                FROM produtos_pedido pp 
+                SELECT COUNT(*)
+                FROM produtos_pedido pp
                     INNER JOIN produto p On (pp.idProd=p.idProd)
                     LEFT JOIN grupo_prod gp ON (p.idGrupoProd = gp.idGrupoProd)
                     LEFT JOIN subgrupo_prod sgp ON (p.idSubgrupoProd = sgp.idSubgrupoProd)
@@ -2717,12 +2715,12 @@ namespace Glass.Data.DAL
         public int ObtemQtdVidrosProducao(GDASession session, uint idPedido)
         {
             string sql = @"
-                Select Sum(Qtde) From produtos_pedido pp 
+                Select Sum(Qtde) From produtos_pedido pp
                     Inner Join produto p On (pp.idProd=p.idProd)
                 Where pp.idPedido=" + idPedido + @" and Coalesce(invisivelFluxo,false)=false
-                    And p.idGrupoProd=1 
+                    And p.idGrupoProd=1
                     And p.idSubgrupoProd In (
-                        Select idSubgrupoProd From subgrupo_prod Where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" 
+                        Select idSubgrupoProd From subgrupo_prod Where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"
                             And produtosEstoque=true
                     )";
 
@@ -2772,7 +2770,7 @@ namespace Glass.Data.DAL
         public bool PossuiProdutosPendentesSaida(GDASession sessao, uint idPedido)
         {
             string sql = @"
-                Select Count(*) From produtos_pedido pp 
+                Select Count(*) From produtos_pedido pp
                 Where pp.idPedido=" + idPedido + @"
                     And pp.qtde<>Coalesce(pp.qtdSaida, 0)";
 
@@ -2906,9 +2904,9 @@ namespace Glass.Data.DAL
 
             string criterio = String.Empty;
 
-            string sql = "Select " + campos + @" From pedido p 
-                Left Join cliente c On (p.IdCli=c.Id_Cli) 
-                Inner Join pedido_corte pc On (p.IdPedido=pc.IdPedido) 
+            string sql = "Select " + campos + @" From pedido p
+                Left Join cliente c On (p.IdCli=c.Id_Cli)
+                Inner Join pedido_corte pc On (p.IdPedido=pc.IdPedido)
                 Where 1 ";
 
             // Se nenhuma situação tiver sido especificada, não retorna nada
@@ -3027,18 +3025,18 @@ namespace Glass.Data.DAL
         private string SqlListCorte(uint idPedido, uint idCli, string nomeCli, bool selecionar, out bool temFiltro)
         {
             temFiltro = false;
-            string campos = selecionar ? "p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc, 
-                pc.DataProducao, pc.DataEntregue, pc.DataPronto as DataProntoCorte, fprod.Nome as FuncProd, fe.Nome as FuncEntregue,  
+            string campos = selecionar ? "p.*, " + ClienteDAO.Instance.GetNomeCliente("c") + @" as NomeCliente, c.Revenda as CliRevenda, f.Nome as NomeFunc,
+                pc.DataProducao, pc.DataEntregue, pc.DataPronto as DataProntoCorte, fprod.Nome as FuncProd, fe.Nome as FuncEntregue,
                 pc.Situacao as SitProducao, l.NomeFantasia as nomeLoja, fp.Descricao as FormaPagto" : "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From pedido p 
-                Inner Join cliente c On (p.idCli=c.id_Cli) 
-                Inner Join funcionario f On (p.IdFunc=f.IdFunc) 
-                Inner Join loja l On (p.IdLoja = l.IdLoja) 
-                Inner Join pedido_corte pc On (p.idPedido=pc.idPedido) 
-                Left Join funcionario fprod On (pc.idFuncProducao=fprod.idFunc) 
-                Left Join funcionario fe On (pc.idFuncEntregue=fe.idFunc) 
+                Select " + campos + @" From pedido p
+                Inner Join cliente c On (p.idCli=c.id_Cli)
+                Inner Join funcionario f On (p.IdFunc=f.IdFunc)
+                Inner Join loja l On (p.IdLoja = l.IdLoja)
+                Inner Join pedido_corte pc On (p.idPedido=pc.idPedido)
+                Left Join funcionario fprod On (pc.idFuncProducao=fprod.idFunc)
+                Left Join funcionario fe On (pc.idFuncEntregue=fe.idFunc)
                 Left Join formapagto fp On (fp.IdFormaPagto=p.IdFormaPagto) Where 1 ";
 
             if (idPedido > 0)

@@ -1,0 +1,8 @@
+﻿<select v-model="idAtual" v-on:change.prevent="alterarSelecao">
+    <option value="">
+        {{ this.textoSelecionar }}
+    </option>
+    <slot v-for="item in itens" v-bind:item="item">
+        <option>{{ item }}</option>
+    </slot>
+</select>

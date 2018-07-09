@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Glass.Data.DAL;
+using System;
 using System.Collections.Generic;
 using System.Web;
-using Glass.Data.DAL;
 using System.Web.Security;
 
 namespace Glass.Data.Helper
@@ -13,12 +13,25 @@ namespace Glass.Data.Helper
     {
         #region Variáveis Locais
 
+        [ThreadStatic]
+        private static Func<LoginUsuario> _loginUsuarioGetterThread;
+
         private static Func<LoginUsuario> _loginUsuarioGetter;
         internal static volatile List<LoginUsuario> _usuario = new List<LoginUsuario>();
 
         #endregion
 
         #region Métodos Públicos
+
+        /// <summary>
+        /// Configura o método que será usado para recuperar as informações do
+        /// usuário logado no sistema.
+        /// </summary>
+        /// <param name="getter"></param>
+        public static void ConfigurarLoginUsuarioGetterThread(Func<LoginUsuario> getter)
+        {
+            _loginUsuarioGetterThread = getter;
+        }
 
         /// <summary>
         /// Configura o método que será usado para recuperar as informações do
@@ -49,7 +62,7 @@ namespace Glass.Data.Helper
         internal static LoginUsuario GetByIdFunc(uint idFunc)
         {
             return _usuario.Find(new Predicate<LoginUsuario>(
-                delegate(LoginUsuario x)
+                delegate (LoginUsuario x)
                 {
                     return x.CodUser == idFunc;
                 }
@@ -64,7 +77,7 @@ namespace Glass.Data.Helper
         internal static LoginUsuario GetByIdCliente(uint idCliente)
         {
             return _usuario.Find(new Predicate<LoginUsuario>(
-                delegate(LoginUsuario x)
+                delegate (LoginUsuario x)
                 {
                     return x.IdCliente == idCliente;
                 }
@@ -135,7 +148,7 @@ namespace Glass.Data.Helper
             }
             catch (Exception ex)
             {
-                // Chamado 12793. Inserimos este log caso ocorra erro ao recuperar o login do usuário, para tentar resolver o 
+                // Chamado 12793. Inserimos este log caso ocorra erro ao recuperar o login do usuário, para tentar resolver o
                 // problema de usuário trocado na produção, ao voltar o setor da peça, ao marcar a peça em um novo setor etc.
                 ErroDAO.Instance.InserirFromException("Falha ao recuperar login (FindUserInfo).", ex, codUser);
                 return null;
@@ -153,6 +166,10 @@ namespace Glass.Data.Helper
                 if (_loginUsuarioGetter != null)
                 {
                     loginUsuario = _loginUsuarioGetter();
+                }
+                else if (_loginUsuarioGetterThread != null)
+                {
+                    loginUsuario = _loginUsuarioGetterThread();
                 }
                 else
                 {
@@ -184,7 +201,7 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Inclui o usuário logado na lista de usuários logados ou caso o mesmo já esteja logado, 
+        /// Inclui o usuário logado na lista de usuários logados ou caso o mesmo já esteja logado,
         /// atualiza a data de última atividade
         /// </summary>
         public static void SetActivity()

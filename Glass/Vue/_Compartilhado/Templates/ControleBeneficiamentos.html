@@ -1,0 +1,53 @@
+<span v-bind:style="estiloContainerBeneficiamentos" v-if="pronto">
+    <img src="/Images/gear_add.gif" title="Beneficiamentos" style="cursor: pointer"
+        v-on:click="exibirBeneficiamentos = !exibirBeneficiamentos" />
+    <span v-if="exibirBeneficiamentos">
+        <div v-bind:style="estiloBeneficiamentos">
+            <template v-for="(item, index) in beneficiamentosAgrupados">
+                <span style="white-space: nowrap; padding-left: initial; align-self: center">
+                    <label style="font-weight: bold; position: initial">
+                        {{ item.beneficiamento.nome }}
+                    </label>
+                    <span v-if="item.beneficiamento.permitirCobrancaOpcional" style="padding-left: 3px; font-size: 85%">
+                        <input v-bind:id="idUnico(item.beneficiamento, 'cobrar')" type="checkbox" v-model="item.cobrar" />
+                        <label v-bind:for="idUnico(item.beneficiamento, 'cobrar')" style="left: initial">
+                            Cobrar?
+                        </label>
+                    </span>
+                </span>
+                <span v-bind:style="estiloControles">
+                    <campo-beneficiamento-bisote v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-if="bisote(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-bisote>
+                    <campo-beneficiamento-lapidacao v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="lapidacao(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-lapidacao>
+                    <campo-beneficiamento-lista-selecao v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="listaSelecao(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-lista-selecao>
+                    <campo-beneficiamento-lista-selecao-quantidade v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="listaSelecaoQuantidade(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-lista-selecao-quantidade>
+                    <campo-beneficiamento-quantidade v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="quantidade(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-quantidade>
+                    <campo-beneficiamento-selecao-multipla-inclusiva v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="selecaoMultiplaInclusiva(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-selecao-multipla-inclusiva>
+                    <campo-beneficiamento-selecao-multipla-exclusiva v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else-if="selecaoMultiplaExclusiva(item.beneficiamento)" v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-selecao-multipla-exclusiva>
+                    <campo-beneficiamento-selecao-simples v-bind:beneficiamento="item.beneficiamento" v-bind:itens-selecionados.sync="item.itensSelecionados"
+                        v-else v-bind:disabled="item.padrao" v-bind="$attrs"></campo-beneficiamento-selecao-simples>
+                </span>
+                <span v-if="exibirValorBeneficiamento" style="margin-left: 6px">
+                    <label style="position: initial">
+                        Valor
+                        <span v-if="tipoCobrancaValor(item.beneficiamento)">
+                            {{ unidadeMonetaria }}
+                        </span>
+                    </label>
+                    <input type="number" v-model.number="item.itensSelecionados[0].custo" min="0" step="0.01"
+                           v-bind:style="estiloValor" v-if="item.itensSelecionados && item.itensSelecionados.length">
+                    <input type="number" value="0" disabled v-bind:style="estiloValor" v-else>
+                    <span v-if="!tipoCobrancaValor(item.beneficiamento)">
+                        %
+                    </span>
+                </span>
+            </template>
+        </div>
+    </span>
+</span>
