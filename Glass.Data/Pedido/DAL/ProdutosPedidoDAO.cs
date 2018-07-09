@@ -2107,13 +2107,13 @@ namespace Glass.Data.DAL
         /// </summary>
         public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos)
         {
-            return GetForLiberacao(session, idsPedidos, true);
+            return GetForLiberacao(session, idsPedidos, true, false);
         }
 
         /// <summary>
         /// Retorna os produtos para liberação de vários pedidos.
         /// </summary>
-        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial)
+        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial, bool isRelatorioPedidoParcial)
         {
             if (string.IsNullOrEmpty(idsPedidos))
                 return new ProdutosPedido[0];
@@ -2139,11 +2139,14 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed) == 0)
+                    if (!isRelatorioPedidoParcial)
                     {
-                        retorno.RemoveAt(i);
-                        continue;
-                    }
+                        if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed) == 0)
+                        {
+                            retorno.RemoveAt(i);
+                            continue;
+                        }
+                    }                    
                 }
 
                 if (retorno[i].QtdeDisponivelLiberacao <= 0)

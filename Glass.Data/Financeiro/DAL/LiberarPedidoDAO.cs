@@ -3659,7 +3659,7 @@ namespace Glass.Data.DAL
                 return true;
 
             /* Chamado 46495. */
-            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false);
+            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false, false);
 
             return produtosNaoLiberados == null || produtosNaoLiberados.Count() == 0;
         }

@@ -2881,7 +2881,7 @@ namespace Glass.UI.Web.Relatorios
                 case "ProdutosLiberar":
                     {
                         report.ReportPath = "Relatorios/rptProdutosLiberar.rdlc";
-                        var ProdutosLiberar_prodPed = ProdutosPedidoDAO.Instance.GetForLiberacao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                        var ProdutosLiberar_prodPed = ProdutosPedidoDAO.Instance.GetForLiberacao(null, Request["idPedido"], true, true);
 
                         report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", Glass.Data.RelDAL.ProdutosPedidoRptDAL.Instance.CopiaLista(ProdutosLiberar_prodPed)));
 
