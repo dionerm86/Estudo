@@ -418,24 +418,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.Label Label21;
         
         /// <summary>
-        /// ctrlDataCadIni control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataCadIni;
-        
-        /// <summary>
-        /// ctrlDataCadFim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataCadFim;
-        
-        /// <summary>
         /// ImageButton6 control.
         /// </summary>
         /// <remarks>
@@ -454,24 +436,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.Label Label15;
         
         /// <summary>
-        /// ctrlDataSemCompraIni control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataSemCompraIni;
-        
-        /// <summary>
-        /// ctrlDataSemCompraFim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataSemCompraFim;
-        
-        /// <summary>
         /// ImageButton1 control.
         /// </summary>
         /// <remarks>
@@ -488,24 +452,6 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label16;
-        
-        /// <summary>
-        /// ctrlDataInIni control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataInIni;
-        
-        /// <summary>
-        /// ctrlDataInFim control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataInFim;
         
         /// <summary>
         /// ImageButton2 control.

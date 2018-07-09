@@ -1,13 +1,24 @@
 <%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstCliente.aspx.cs"
-    Inherits="Glass.UI.Web.Listas.LstCliente" Title="Clientes" %>
-
-<%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
-<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra" TagPrefix="uc3" %>
+    Inherits="Glass.UI.Web.Listas.LstCliente" Title="Clientes" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <%=
+        Glass.UI.Web.IncluirTemplateTela.Script(
+            "~/Vue/Clientes/Templates/LstClientes.Filtro.html")
+    %>
+    <div id="app">
+        <cliente-filtros :filtro.sync="filtro"></cliente-filtros>
+        <section v-if="configuracoes.cadastrarOrcamento">
+            <a :href="obterLinkInserirCliente()">
+                Inserir Cliente
+            </a>
+        </section>
+        <section>
+        </section>
+    </div>
+
+
 
     <script type="text/javascript">
         function openAlterarVendedor() {
