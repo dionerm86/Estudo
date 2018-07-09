@@ -383,12 +383,10 @@
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
     <Compile Include="Estoque\DAL\MovMateriaPrimaDAO.cs" />
-    <Compile Include="Estoque\DAL\MovReservaLiberacaoDAO.cs" />
     <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />
     <Compile Include="Estoque\Model\MovEstoqueCentroCusto.cs" />
     <Compile Include="Estoque\Model\MovInternaEstoqueFiscal.cs" />
     <Compile Include="Estoque\Model\MovMateriaPrima.cs" />
-    <Compile Include="Estoque\Model\MovReservaLiberacao.cs" />
     <Compile Include="Exceptions\LogoutException.cs" />
     <Compile Include="Financeiro\DAL\BandeiraCartaoDAO.cs" />
     <Compile Include="Financeiro\DAL\ChequesAcertoChequeDAO.cs" />
