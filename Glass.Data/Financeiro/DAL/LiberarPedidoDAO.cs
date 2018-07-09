@@ -298,6 +298,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     // Cria a liberação de pedidos à vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
@@ -306,6 +308,8 @@ namespace Glass.Data.DAL
 
                     // Finaliza a liberação criada acima, gerando movimentação no caixa, conta bancária, estoque etc.
                     FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -338,6 +342,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     // Cria a liberação de pedidos à vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
@@ -349,6 +355,8 @@ namespace Glass.Data.DAL
                         IdReferencia = idLiberarPedido,
                         TipoRecebimento = UtilsFinanceiro.TipoReceb.LiberacaoAVista
                     });
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -1682,12 +1690,16 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
+
                     var idLiberarPedido = CriarLiberacaoAPrazo(transaction, idCliente, idsPedido, idsProdutosPedido,
                         idsProdutoPedidoProducao, qtdeLiberar, totalASerPago, numParcelas, diasParcelas, valoresParcelas, idParcela,
                         receberEntrada, formasPagto, tiposCartao, valoresPagos, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
                         utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, descontarComissao, parcelasCartao,
                         tipoDesconto, desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto,
                         numAutCartao);
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -2424,6 +2436,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
+
                     uint idLiberarPedido;
 
                     LoginUsuario login = UserInfo.GetUserInfo;
@@ -2620,6 +2634,8 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                         new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
+
                     transaction.Commit();
                     transaction.Close();
 
@@ -2658,6 +2674,8 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
 
                     uint idLiberarPedido;
 
@@ -2840,6 +2858,8 @@ namespace Glass.Data.DAL
                     WHERE IdLiberarPedido = {1}";
                     objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                         new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
 
                     transaction.Commit();
                     transaction.Close();

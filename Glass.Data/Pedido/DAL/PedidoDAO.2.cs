@@ -1139,6 +1139,8 @@ namespace Glass.Data.DAL
                     {
                         transaction.BeginTransaction();
 
+                        ForcarTransacaoPedido(transaction, idPedido, true);
+
                         // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteração na tabela fora dessa transação
                         var obsPedido = ObtemObs(transaction, idPedido);
                         objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs='Reabrindo pedido' WHERE IdPedido={0}", idPedido));
@@ -1244,6 +1246,8 @@ namespace Glass.Data.DAL
 
                         // #69907 - Ao final da transação volta a situação original do pedido
                         objPersistence.ExecuteCommand(transaction, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedido), new GDAParameter("?obs", obsPedido));
+
+                        ForcarTransacaoPedido(transaction, idPedido, false);
 
                         transaction.Commit();
                         transaction.Close();
@@ -3104,6 +3108,16 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
+        {
+            string sql = $@"
+                UPDATE pedido
+                SET TRANSACAO = {inicio}
+                WHERE idPedido = {idPedido}";
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
 
         #endregion
     }
