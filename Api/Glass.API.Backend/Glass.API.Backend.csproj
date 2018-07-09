@@ -289,6 +289,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
@@ -325,6 +326,9 @@
     <Compile Include="Models\Clientes\Filtro\ClienteDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ComissionadoDto.cs" />
     <Compile Include="Models\Clientes\Filtro\RotaDto.cs" />
+    <Compile Include="Models\Clientes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Datas\Validacao\DadosEntradaDto.cs" />
     <Compile Include="Models\Genericas\CidadeDto.cs" />
     <Compile Include="Models\Genericas\EnderecoDto.cs" />
