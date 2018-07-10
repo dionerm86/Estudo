@@ -9,29 +9,136 @@
     %>
     <div id="app">
         <cliente-filtros :filtro.sync="filtro"></cliente-filtros>
-        <section v-if="configuracoes.cadastrarOrcamento">
+        <section v-if="configuracoes.cadastrarCliente">
             <a :href="obterLinkInserirCliente()">
                 Inserir Cliente
             </a>
         </section>
         <section>
+            <lista-paginada :funcao-recuperar-itens="atualizarClientes" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum cliente encontrado">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('id')">Nome</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('cpfCnpj')">CPF/CNPJ</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('endereco')">Endereço</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('telCont')">Tel. cont.</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('telCel')">Celular</a>
+                    </th>
+                    <th v-if="configuracoes.cadastrarCliente">
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('email')">Email</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('ultCompra')">Ult. compra</a>
+                    </th>
+                    <th v-if="configuracoes.exibirTotalComprado">
+                        <a href="#" @click.prevent="ordenar('totalComprado')">Total comprado</a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item }">
+                    <td style="white-space: nowrap">
+                        <a :href="obterLinkEditarCliente(item)" title="Editar" v-if="configuracoes.cadastrarCliente">
+                            <img border="0" src="../Images/EditarGrid.gif">
+                        </a>
+                        <a href="#" @click.prevent="excluir(item)" title="Cancelar" v-if="configuracoes.cadastrarCliente">
+                            <img border="0" src="../Images/ExcluirGrid.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirTabelaDescontoAcrescimo(item)" title="Descontos/Acréscimos" v-if="item.permissoes.cadastrarDescontoTabela">
+                            <img border="0" src="../Images/money_delete.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos" v-if="configuracoes.anexarImagens">
+                            <img border="0" src="../Images/Clipe.gif">
+                        </a>
+                        <a :href="obterLinkSugestoes(item)" title="Sugestões" v-if="configuracoes.cadastrarSugestoes">
+                            <img border="0" src="../Images/Nota.gif">
+                        </a>
+                        <a href="#" @click.prevent="alterarSituacao(item)" title="Ativa/Inativar" v-if="item.permissoes.alterarSituacao">
+                            <img border="0" src="../Images/Inativar.gif">
+                        </a>
+                    </td>
+                    <td>{{ item.id }} - {{ item.nome }}</td>
+                    <td>{{ item.enderecoCompleto }}</td>
+                    <td>{{ item.telefoneContato }}</td>
+                    <td>{{ item.celular }}</td>
+                    <td v-if="configuracoes.cadastrarCliente">{{ item.situacao }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.dataUltimaCompra | data }}</td>
+                    <td v-if="configuracoes.exibirTotalComprado">{{ item.totalComprado | moeda }}</td>
+                    <td style="white-space: nowrap">
+                        <log-alteracao tabela="Cliente" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                        <a href="#" @click.prevent="abrirFichaCliente(item)" title="Ficha cliente" v-if="configuracoes.imprimir">
+                            <img border="0" src="../Images/printer.png">
+                        </a>
+                        <a :href="obterLinkPrecosTabela(item)" title="Preços de tabela" v-if="configuracoes.consultarPrecoTabela">
+                            <img border="0" src="../Images/cifrao.png">
+                        </a>
+                        <img border="0" src="../Images/user_headset.gif" v-if="item.atendente && item.atendente.id > 0" :title="'Atendente: ' + item.atendente.nome" />
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
+        <section>
+            <div>
+                <span v-if="configuracoes.imprimir">
+                    <a href="#" @click.prevent="abrirListaClientes(false, false)" title="Imprimir">
+                        <img alt="" border="0" src="../Images/printer.png" /> Imprimir
+                    </a>
+                </span>
+                <span v-if="configuracoes.imprimir">
+                    <a href="#" @click.prevent="abrirListaClientes(false, true)" title="Exportar para o Excel">
+                        <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
+                    </a>
+                </span>
+                <span v-if="configuracoes.alterarVendedor">
+                    <a href="#" @click.prevent="abrirAlteracaoVendedor(true)">
+                        Alterar vendedor
+                    </a>
+                </span>
+                <span v-if="configuracoes.alterarRota">
+                    <a href="#" @click.prevent="abrirAlteracaoRota(true)">
+                        Alterar rota
+                    </a>
+                </span>
+            </div>
+            <div>
+                <span v-if="configuracoes.imprimir">
+                    <a href="#" @click.prevent="abrirListaClientes(true, false)" title="Imprimir">
+                        <img alt="" border="0" src="../Images/printer.png" /> Imprimir ficha
+                    </a>
+                </span>
+                <span v-if="configuracoes.imprimir">
+                    <a href="#" @click.prevent="abrirListaClientes(true, true)" title="Exportar para o Excel">
+                        <img border="0" src="../Images/Excel.gif" /> Exportar ficha para o Excel
+                    </a>
+                </span>
+            </div>
         </section>
     </div>
-
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstClientes.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstClientes.js" />
+        </Scripts>
+    </asp:ScriptManager>
 
 
     <script type="text/javascript">
-        function openAlterarVendedor() {
-            openWindow(200, 400, "../Utils/AlterarVendedorCli.aspx");
-        }
 
         function alteraVendedor(idVendedorNovo) {
             FindControl("hdfIdVendedorNovo", "input").value = idVendedorNovo;
             FindControl("btnAlterarVendedorCliente", "input").click();
-        }
-
-        function openAlterarRota() {
-            openWindow(200, 400, "../Utils/AlterarRotaClientes.aspx");
         }
 
         function alterarRota(idRotaNova) {
@@ -39,23 +146,7 @@
             FindControl("btnAlterarRotaCliente", "input").click();
         }
 
-        function getCli(idCli) {
-            if (idCli.value == "")
-                return;
-
-            var retorno = LstCliente.GetCli(idCli.value).value.split(';');
-
-            if (retorno[0] == "Erro") {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNome", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNome", "input").value = retorno[1];
-        }
-
-        function openRpt(exportarExcel, ficha, id) {
+        function openRpt(exportarExcel, ficha) {
             var idCli = FindControl("txtNumCli", "input").value;
             var nomeCli = FindControl("txtNome", "input").value;
             var cpfCnpj = FindControl("txtCnpj", "input").value;
@@ -88,29 +179,25 @@
                 return false;
             }
 
-            if (id === 0)
-                if (idCli == "" && nomeCli == "" && cpfCnpj == "" && telefone == "" && endereco == "" && bairro == "" &&
-                    situacao == "" && codRota == "" && idLoja == "" && idFunc == "" && dataCadIni == "" &&
-                    dataCadFim == "" && dataSemCompraIni == "" && dataSemCompraFim == "" && dataInativadoIni == "" && dataInativadoFim == "" &&
-                    idCidade == "" && idTipoCliente == "" && tipoFiscal == "" && formasPagto === "" && idTabelaDesconto == "" && uf == "" && !apenasSemRota) {
-                    if (!confirm("É recomendável aplicar um filtro. Deseja realmente prosseguir?"))
-                        return false;
-                }
+            
+            if (idCli == "" && nomeCli == "" && cpfCnpj == "" && telefone == "" && endereco == "" && bairro == "" &&
+                situacao == "" && codRota == "" && idLoja == "" && idFunc == "" && dataCadIni == "" &&
+                dataCadFim == "" && dataSemCompraIni == "" && dataSemCompraFim == "" && dataInativadoIni == "" && dataInativadoFim == "" &&
+                idCidade == "" && idTipoCliente == "" && tipoFiscal == "" && formasPagto === "" && idTabelaDesconto == "" && uf == "" && !apenasSemRota) {
+                if (!confirm("É recomendável aplicar um filtro. Deseja realmente prosseguir?"))
+                    return false;
+            }
 
             if (idCli == "")
                 idCli = 0;
 
-            if (id == 0) {
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=" + (ficha == true ? "Ficha" : "Lista") + "Clientes&dataIni=&dataFim=&Revenda=0&tipoPessoa=0&Compra=0" +
-                    "&idCli=" + idCli + "&nome=" + nomeCli + "&cpfCnpj=" + cpfCnpj + "&telefone=" + telefone + "&endereco=" + endereco + "&idCidade=" + idCidade +
-                    "&bairro=" + bairro + "&situacao=" + situacao + "&codRota=" + codRota + "&idFunc=" + idFunc + "&idLoja=" + idLoja + "&idTipoCliente=" + idTipoCliente +
-                    "&tipoFiscal=" + tipoFiscal + "&formasPagto=" + formasPagto + "&exportarExcel=" + exportarExcel + "&agruparVend=" + agruparVend + "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim +
-                    "&dataSemCompraIni=" + dataSemCompraIni + "&dataSemCompraFim=" + dataSemCompraFim + "&dataInativadoIni=" + dataInativadoIni + "&dataInativadoFim=" + dataInativadoFim +
-                    "&idTabelaDesconto=" + idTabelaDesconto + "&apenasSemRota=" + apenasSemRota + "&exibirHistorico=" + exibirHistorico + "&uf=" + uf);
-            }
-            else {
-                openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=FichaClientes&idCli=" + id);
-            }
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=" + (ficha == true ? "Ficha" : "Lista") + "Clientes&dataIni=&dataFim=&Revenda=0&tipoPessoa=0&Compra=0" +
+                "&idCli=" + idCli + "&nome=" + nomeCli + "&cpfCnpj=" + cpfCnpj + "&telefone=" + telefone + "&endereco=" + endereco + "&idCidade=" + idCidade +
+                "&bairro=" + bairro + "&situacao=" + situacao + "&codRota=" + codRota + "&idFunc=" + idFunc + "&idLoja=" + idLoja + "&idTipoCliente=" + idTipoCliente +
+                "&tipoFiscal=" + tipoFiscal + "&formasPagto=" + formasPagto + "&exportarExcel=" + exportarExcel + "&agruparVend=" + agruparVend + "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim +
+                "&dataSemCompraIni=" + dataSemCompraIni + "&dataSemCompraFim=" + dataSemCompraFim + "&dataInativadoIni=" + dataInativadoIni + "&dataInativadoFim=" + dataInativadoFim +
+                "&idTabelaDesconto=" + idTabelaDesconto + "&apenasSemRota=" + apenasSemRota + "&exibirHistorico=" + exibirHistorico + "&uf=" + uf);
+
             return false;
         }
 
@@ -133,10 +220,6 @@
 
         function ativarTodos() {
             return confirm("ATENÇÃO: Essa opção ativará TODOS os clientes inativos que se encaixam nos filtros especificados.\nDeseja continuar?");
-        }
-
-        function openPrecoTabelaCliente(idCli) {
-            window.location.href = "../Relatorios/ListaPrecoTabCliente.aspx?idCli=" + idCli;
         }
         
     </script>
@@ -298,89 +381,11 @@
             </span>
         </div>
     </div>
-    <div class="inserir">
-        <asp:LinkButton ID="lnkInserir" runat="server" OnClick="lnkInserir_Click">Inserir 
-            Cliente</asp:LinkButton>
-    </div>
     <asp:GridView ID="grdCli" runat="server" SkinID="defaultGridView"
         DataSourceID="odsCliente" DataKeyNames="IdCli" EmptyDataText="Nenhum cliente cadastrado"
         OnPageIndexChanged="grdCli_PageIndexChanged" OnRowCommand="grdCli_RowCommand"
         OnDataBound="grdCli_DataBound">
         <Columns>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# "../Cadastros/CadCliente.aspx?idCli=" + Eval("IdCli") %>'>
-                        <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
-                    <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                        ToolTip="Excluir" Visible='<%# ExcluirVisible() %>' OnClientClick="return confirm(&quot;Tem certeza que deseja excluir este Cliente?&quot;);" />
-                </ItemTemplate>
-                <ItemStyle Wrap="False" />
-            </asp:TemplateField>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:PlaceHolder ID="pchDesconto" runat="server" Visible='<%# DescontoVisible(Container.DataItem) %>'>
-                        <a href="#" onclick='openWindow(500, 650, &#039;../Cadastros/CadDescontoAcrescimoCliente.aspx?IdCliente=<%# Eval("IdCli") %>&#039;); return false;'>
-                            <img src="../Images/money_delete.gif" border="0" title="Descontos/Acréscimos" /></a>
-                    </asp:PlaceHolder>
-                    <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# FotosVisible() %>'>
-                        <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=<%# Eval("IdCli") %>&amp;tipo=cliente&#039;); return false;'>
-                            <img border="0px" src="../Images/Clipe.gif"></img></a></asp:PlaceHolder>
-                    <asp:HyperLink ID="lnkSugestao" runat="server" NavigateUrl='<%# "../Listas/LstSugestaoCliente.aspx?idCliente=" + Eval("IdCli") %>'
-                        ToolTip="Sugestões" Visible='<%# SugestoesVisible() %>'>
-                        <img border="0" src="../Images/Nota.gif" /></asp:HyperLink>
-                    <asp:ImageButton ID="imbInativar" runat="server" CommandArgument='<%# Eval("IdCli") %>'
-                        CommandName="Inativar" ImageUrl="~/Images/Inativar.gif" OnClientClick="if (!confirm(&quot;Deseja alterar a situação desse cliente?&quot;)) return false"
-                        ToolTip="Alterar situação" Visible='<%# InativarVisible(Container.DataItem) %>' />
-                </ItemTemplate>
-                <ItemStyle Wrap="False" />
-            </asp:TemplateField>
-            <asp:TemplateField HeaderText="Nome" SortExpression="Nome">
-                <ItemTemplate>
-                    <asp:Label ID="Label3" runat="server" Text='<%# Nome(Container.DataItem) %>'></asp:Label>
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:BoundField DataField="CpfCnpj" HeaderText="CPF/CNPJ" SortExpression="CpfCnpj" />
-            <asp:BoundField DataField="EnderecoCompleto" HeaderText="Endereço" SortExpression="Endereco, Numero" />
-            <asp:BoundField DataField="Telefone" HeaderText="Tel. Cont." SortExpression="TelCont, TelRes, TelCel" />
-            <asp:BoundField DataField="TelCel" HeaderText="Celular" SortExpression="TelCel" />
-            <asp:BoundField DataField="Situacao" HeaderText="Situação" SortExpression="Situacao" />
-            <asp:BoundField DataField="Email" HeaderText="Email" SortExpression="Email" />
-            <asp:BoundField DataField="DtUltCompra" DataFormatString="{0:d}" HeaderText="Ult. Compra" SortExpression="DtUltCompra" />
-            <asp:BoundField DataField="TotalComprado" DataFormatString="{0:C}" HeaderText="Total Comprado" SortExpression="TotalComprado" />
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <a href="#" onclick='TagToTip("cliente_<%# Eval("IdCli") %>", FADEIN, 300, COPYCONTENT, false, TITLE, "Detalhes", CLOSEBTN, true, CLOSEBTNTEXT, "Fechar", CLOSEBTNCOLORS, ["#cc0000", "#ffffff", "#D3E3F6", "#0000cc"], STICKY, true, FIX, [this, 10, 0]); return false;'>
-                        <img src="../Images/user_comment.gif" border="0" /></a>
-                    <div id="cliente_<%# Eval("IdCli") %>" style="display: none">
-                        <asp:Label ID="Label1" runat="server" Text='<%# DataCadastro(Container.DataItem) %>'></asp:Label><br />
-                        <asp:Label ID="Label2" runat="server" Text='<%# NomeUsuarioCadastro(Container.DataItem) %>'></asp:Label><br />
-                        <asp:Label ID="Label6" runat="server" Text='<%# DataAlteracao(Container.DataItem) %>'></asp:Label><br />
-                        <asp:Label ID="Label7" runat="server" Text='<%# NomeUsuarioAlteracao(Container.DataItem) %>'></asp:Label><br />
-                        <asp:Label ID="Label11" runat="server" Style="font-weight: bold" Text='<%# ERevenda(Container.DataItem) %>'></asp:Label><br />
-                    </div>
-                    <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="Cliente" IdRegistro='<%# (uint)(int)Eval("IdCli") %>' />
-                </ItemTemplate>
-                <ItemStyle Wrap="False" />
-            </asp:TemplateField>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <uc3:ctrlConsultaCadCliSintegra runat="server" ID="ctrlConsultaCadCliSintegra1" IdCliente='<%# (uint)(int)Eval("IdCli") %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:ImageButton ID="imbFichaCliente" runat="server" ImageUrl="~/Images/printer.png" ToolTip="Ficha Cliente"
-                        OnClientClick='<%# "openRpt(false, true, " + Eval("IdCli") + "); return false;" %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
-            <asp:TemplateField>
-                <ItemTemplate>
-                    <asp:ImageButton ID="imbPecoTabelaCliente" runat="server" ImageUrl="~/Images/cifrao.png" Visible='<%# ExibirPrecoTabelaCliente() %>'
-                        ToolTip="Preços de Tabela por Cliente" OnClientClick='<%# "openPrecoTabelaCliente(" + Eval("IdCli") + "); return false;" %>' />
-                    <asp:ImageButton ID="imbNomeAtendente" runat="server" ImageUrl="~/Images/user_headset.gif" Visible='<%# (int)Eval("IdFuncAtendente") > 0 ? true : false %>'
-                        ToolTip='<%# "Atendente: " + Eval("NomeAtendente") %>' />
-                </ItemTemplate>
-            </asp:TemplateField>
         </Columns>
         <PagerStyle />
         <EditRowStyle />
@@ -390,14 +395,11 @@
         <asp:LinkButton ID="lnkAtivarTodos" runat="server" OnClick="lnkAtivarTodos_Click"
             OnClientClick="return ativarTodos();" Visible="False">Ativar Clientes Inativos</asp:LinkButton>
     </div>
-    <div style="text-align: center">
-        <asp:Label ID="lblStatus" runat="server"></asp:Label>
-    </div>
     <div class="imprimir">
         <div>
-            <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false, false, 0);"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
+            <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt(false, false);"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
             &nbsp;&nbsp;&nbsp;
-            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false, 0); return false;">
+            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false); return false;">
                 <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             &nbsp;&nbsp;&nbsp;
             <asp:LinkButton ID="lnkAlterarVendedor" runat="server" OnClientClick="openAlterarVendedor(); return false;">Alterar Vendedor</asp:LinkButton>
@@ -405,11 +407,11 @@
             <asp:LinkButton ID="lnkAlterarRota" runat="server" OnClientClick="openAlterarRota(); return false;">Alterar Rota</asp:LinkButton>
         </div>
         <div style="margin-top: 10px">
-            <asp:LinkButton ID="lnkImprimirFicha" runat="server" OnClientClick="return openRpt(false, true, 0);">
+            <asp:LinkButton ID="lnkImprimirFicha" runat="server" OnClientClick="return openRpt(false, true);">
                 <img alt="" border="0" src="../Images/printer.png" /> Imprimir ficha</asp:LinkButton>
             &nbsp;&nbsp;&nbsp;
-            <asp:LinkButton ID="lnkExportarFicha" runat="server" OnClientClick="openRpt(true, true, 0); return false;"><img border="0" 
-                src="../Images/Excel.gif" /> Exportar ficha para o Excel</asp:LinkButton>
+            <asp:LinkButton ID="lnkExportarFicha" runat="server" OnClientClick="openRpt(true, true); return false;">
+                <img border="0" src="../Images/Excel.gif" /> Exportar ficha para o Excel</asp:LinkButton>
         </div>
     </div>
     <asp:HiddenField ID="hdfCidade" runat="server" Value='' />

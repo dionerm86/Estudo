@@ -13,20 +13,20 @@ const app = new Vue({
 
   methods: {
     /**
-     * Busca os orçamentos para exibição na lista.
-     * @param {!Object} filtro O filtro utilizado para a busca de orçamentos.
+     * Busca os clientes para exibição na lista.
+     * @param {!Object} filtro O filtro utilizado para a busca de clientes.
      * @param {!number} pagina O número da página que será exibida na lista.
      * @param {!number} numeroRegistros O número de registros que serão exibidos na lista.
      * @param {string} ordenacao A ordenação que será usada para a recuperação dos itens.
-     * @returns {Promise} Uma promise com o resultado da busca de orçamentos.
+     * @returns {Promise} Uma promise com o resultado da busca de clientes.
      */
-    atualizarOrcamentos: function(filtro, pagina, numeroRegistros, ordenacao) {
+    atualizarClientes: function (filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
-      return Servicos.Orcamentos.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+      return Servicos.Clientes.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**
-     * Realiza a ordenação da lista de orçamentos.
+     * Realiza a ordenação da lista de clientes.
      * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
      */
     ordenar: function(campo) {
@@ -39,112 +39,126 @@ const app = new Vue({
     },
 
     /**
-     * Retorna o link para a tela de edição de orçamentos.
-     * @param {Object} item O orçamento que será usado para construção do link.
-     * @returns {string} O link que redireciona para a edição de orçamentos.
+     * Retorna o link para a tela de edição de clientes.
+     * @param {Object} item O cliente que será usado para construção do link.
+     * @returns {string} O link que redireciona para a edição de clientes.
      */
-    obterLinkEditarOrcamento: function(item) {
-      return '../Cadastros/CadOrcamento.aspx?idorca=' + item.id;
-    },
-
-    /**
-     * Exibe um relatório de orçamento, de acordo com o tipo desejado.
-     * @param {Object} item O orçamento que será exibido.
-     */
-    abrirRelatorio: function(item) {
-      this.abrirJanela(600, 800, '../Relatorios/RelOrcamento.aspx?idOrca=' + item.id);
-    },
-
-    /**
-     * Exibe o relatório de projetos de um orçamento.
-     * @param {Object} item O orçamento que será exibido.
-     */
-    abrirRelatorioProjeto: function(item) {
-      this.abrirJanela(600, 800, '../Cadastros/Projeto/ImprimirProjeto.aspx?idOrcamento=' + item.id);
-    },
-
-    /**
-     * Exibe o relatório de memória de cálculo de um orçamento.
-     * @param {Object} item O pedido que será exibido.
-     */
-    abrirRelatorioMemoriaCalculo: function (item) {
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=MemoriaCalculoOrcamento&idOrca=' + item.id);
-    },
-
-    /**
-     * Exibe a tela para anexos das medições associadas ao orçamento.
-     * @param {Object} item O orçamento que terá medições com itens anexados.
-     */
-    abrirAnexosMedicao: function(item) {
-      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.idsMedicao + '&tipo=medicao');
-    },
-
-    /**
-     * Exibe a tela para anexos do orçamento.
-     * @param {Object} item O orçamento que com itens anexados.
-     */
-    abrirAnexos: function (item) {
-      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=orcamento');
+    obterLinkEditarCliente: function(item) {
+      return '../Cadastros/CadCliente.aspx?idCli=' + item.id;
     },
 
     /**
      * Retorna o link para a tela de sugestões de clientes.
-     * @param {Object} item O orçamento que terá sugestões feitas.
+     * @param {Object} item O cliente que terá sugestões feitas.
      * @returns {string} O link que redireciona para a sugestão de clientes.
      */
     obterLinkSugestoes: function(item) {
-      return '../Listas/LstSugestaoCliente.aspx?idOrcamento=' + item.id;
+      return '../Listas/LstSugestaoCliente.aspx?idCliente=' + item.id;
     },
 
     /**
-     * Retorna o link para a tela de cadastro de orçamento, de acordo com a listagem sendo exibida.
-     * @returns {string} O link para a tela de cadastro de orçamento.
+     * Retorna o link para a tela de cadastro de cliente, de acordo com a listagem sendo exibida.
+     * @returns {string} O link para a tela de cadastro de cliente.
      */
-    obterLinkInserirOrcamento: function() {
-      return '../Cadastros/CadOrcamento.aspx';
+    obterLinkInserirCliente: function() {
+      return '../Cadastros/CadCliente.aspx';
     },
 
     /**
-     * Gera um novo pedido a partir do orçamento.
-     * @param {Object} item O orçamento a ser utilizado para geração do pedido.
+     * Retorna o link para exibir os preços de tabela do cliente.
+     * @param {Object} item O cliente que será usado para consultar os preços de tabela.
      */
-    gerarPedido: function (item) {
-      if (!this.perguntar('Gerar pedido', 'Tem certeza que deseja gerar um pedido para este orçamento?')) {
-        return;
-      }
+    obterLinkPrecosTabela: function (item) {
+      return '../Relatorios/ListaPrecoTabCliente.aspx?idCli=' + item.id;
+    },
 
-      if (!item.cliente.id || item.cliente.id === 0) {
-        this.exibirMensagem('Erro', 'Para gerar pedido é preciso que o orçamento tenha um cliente associado. Edite o orçamento e informe um cliente cadastrado.');
+    /**
+     * Abre um popup para editar a tabela de desconto/acréscimo do cliente.
+     * @param {Object} item O cliente que será usado para alterar a tabela de desconto/acréscimo.
+     */
+    abrirTabelaDescontoAcrescimo: function (item) {
+      this.abrirJanela(500, 650, '../Cadastros/CadDescontoAcrescimoCliente.aspx?IdCliente=' + item.id);
+    },
+
+    /**
+     * Abre um popup para exibir/editar os anexos do cliente.
+     * @param {Object} item O cliente que será usado para exibir/alterar os anexos.
+     */
+    abrirAnexos: function (item) {
+      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=cliente');
+    },
+
+    /**
+     * Exibe um relatório com os dados do cliente.
+     * @param {Object} item O cliente que será exibido.
+     */
+    abrirFichaCliente: function (item) {
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?Rel=FichaClientes&idCli=' + item.id);
+    },
+
+    /**
+     * Exibe um relatório com a listagem de clientes aplicando os filtros da tela.
+     * @param {Boolean} ficha Define se os clientes serão impressos no formato de ficha e não de listagem.
+     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
+     */
+    abrirListaClientes: function (ficha, exportarExcel) {
+
+
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?Rel=ListaClientes');
+    },
+
+    /**
+     * Abre uma tela para alterar os vendedores dos clientes, com base nos filtros da tela.
+     */
+    abrirAlteracaoVendedor: function () {
+      this.abrirJanela(200, 400, '../Utils/AlterarVendedorCli.aspx');
+    },
+
+    /**
+     * Abre uma tela para alterar as rotas dos clientes, com base nos filtros da tela.
+     */
+    abrirAlteracaoRota: function () {
+      this.abrirJanela(200, 400, '../Utils/AlterarRotaClientes.aspx');
+    },
+
+    /**
+     * Exclui o cliente.
+     * @param {Object} item O cliente que será excluído.
+     */
+    excluir: function (item) {
+      if (!this.perguntar("Tem certeza que deseja excluir este cliente?")) {
         return;
       }
 
       var vm = this;
 
-      Servicos.Orcamentos.gerarPedido(item.id)
+      Servicos.Clientes.excluir(item.id)
         .then(function (resposta) {
-          window.location.assign('../Cadastros/CadPedido.aspx?idPedido=' + resposta.data.id);
+          vm.filtro.refresh_++;
+          vm.filtrar();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
-            vm.exibirMensagem(erro.mensagem);
+            vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
     },
 
     /**
-     * Envia email para o cliente com o orçamento.
-     * @param {Object} item O orçamento que será enviado por email.
+     * Ativa/inativa o cliente.
+     * @param {Object} item O cliente que será ativado/inativado.
      */
-    enviarEmail: function (item) {
-      if (!this.perguntar('Enviar e-mail', 'Deseja realmente enviar o e-mail do orçamento?')) {
+    alterarSituacao: function (item) {
+      if (!this.perguntar("Tem certeza que deseja alterar a situação deste cliente?")) {
         return;
       }
 
       var vm = this;
 
-      Servicos.Orcamentos.enviarEmail(item.id)
+      Servicos.Clientes.alterarSituacao(item.id)
         .then(function (resposta) {
-          vm.exibirMensagem('Enviar e-mail', 'O e-mail foi adicionado na fila para ser enviado.');
+          vm.filtro.refresh_++;
+          vm.filtrar();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -168,7 +182,7 @@ const app = new Vue({
   mounted: function() {
     var vm = this;
 
-    Servicos.Orcamentos.obterConfiguracoesLista()
+    Servicos.Clientes.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });

@@ -25,6 +25,14 @@ Servicos.Clientes = (function(http) {
     },
 
     /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de clientes.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesLista: function () {
+      return http().get(API + 'configuracoes/lista');
+    },
+
+    /**
      * Retorna os itens para o controle de situações de cliente.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
@@ -46,6 +54,32 @@ Servicos.Clientes = (function(http) {
      */
     obterTiposFiscal: function () {
       return http().get(API + 'tiposFiscal');
+    },
+
+    /**
+     * Remove um cliente.
+     * @param {!number} idCliente O identificador do cliente que será excluído.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (idCliente) {
+      if (!idCliente) {
+        throw new Error('Cliente é obrigatório.');
+      }
+
+      return http().delete(API + idCliente);
+    },
+
+    /**
+     * Altera a situação do cliente.
+     * @param {!number} idCliente O identificador do cliente que será alterada a situação.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarSituacao: function (idCliente) {
+      if (!idCliente) {
+        throw new Error('Cliente é obrigatório.');
+      }
+
+      return http().post(API + idCliente + '/alterarSituacao');
     }
   };
 })(function() {

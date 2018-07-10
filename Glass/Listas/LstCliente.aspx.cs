@@ -1,11 +1,9 @@
 using System;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
-using System.Linq;
 
 namespace Glass.UI.Web.Listas
 {
@@ -20,63 +18,31 @@ namespace Glass.UI.Web.Listas
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            Ajax.Utility.RegisterTypeForAjax(typeof(Glass.UI.Web.Listas.LstCliente));
+            Ajax.Utility.RegisterTypeForAjax(typeof(LstCliente));
 
             if (!IsPostBack)
             {
-                bool permissaoCadCliente = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente);
-                bool exibirTotalComprado = Config.PossuiPermissao(Config.FuncaoMenuCadastro.ExibirTotalCompradoCliente);
-    
-                if (!permissaoCadCliente || !exibirTotalComprado)
-                {
-                    // Caso o funcionário não tenha permissão de cadastro de cliente ele não pode imprimir a listagem de clientes e também não consegue visualizar a situação atual do cliente.
-                    if (!permissaoCadCliente)
-                        grdCli.Columns[7].Visible = false;
-
-                    // Caso o funcionário não possa visualizar o total comprado do cliente a coluna na listagem de registros é escondida.
-                    if (!exibirTotalComprado)
-                        grdCli.Columns[10].Visible = false;
-                }
-
-                grdCli.Columns[0].Visible = permissaoCadCliente;
-                lnkInserir.Visible = permissaoCadCliente;
-                
-                // Esconde a impressão da ficha do cliente.
-                bool imprimir = Config.PossuiPermissao(Config.FuncaoMenuCadastro.ExportarImprimirDadosClientes);
-                grdCli.Columns[13].Visible = imprimir;
-                lnkImprimirFicha.Visible = imprimir;
-                lnkExportarFicha.Visible = imprimir;
-                lnkImprimir.Visible = imprimir;
-                lnkExportarExcel.Visible = imprimir;
-
                 if (!string.IsNullOrEmpty(hdfCidade.Value) && Glass.Conversoes.StrParaUint(hdfCidade.Value) > 0)
                     txtCidade.Text = CidadeDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(hdfCidade.Value)).ToUpper();
             }
-            
-            if (Session["pgIndCliente"] != null)
-                grdCli.PageIndex = Glass.Conversoes.StrParaInt(Session["pgIndCliente"].ToString());
+
+            //lnkAtivarTodos.Visible = ctrlDataInIni.DataNullable.HasValue ||
+            //    ctrlDataInFim.DataNullable.HasValue;
         }
-    
-        protected void lnkInserir_Click(object sender, EventArgs e)
-        {
-            Response.Redirect("../Cadastros/CadCliente.aspx");
-        }
-    
-        #region Métodos AJAX
-    
+
         /// <summary>
-        /// Busca o cliente em tempo real
+        /// Busca o cliente em tempo real.
         /// </summary>
         /// <param name="idCli"></param>
         /// <returns></returns>
-        [Ajax.AjaxMethod()]
+        [Ajax.AjaxMethod]
         public string GetCli(string idCli)
         {
-            if (!ClienteDAO.Instance.Exists(Glass.Conversoes.StrParaUint(idCli)))
+            if (!ClienteDAO.Instance.Exists(Conversoes.StrParaUint(idCli)))
                 return "Erro;Cliente não encontrado.";
             else
             {
-                var nomeUtilizar = string.Empty; 
+                var nomeUtilizar = string.Empty;
 
                 var nomeFantasia = ClienteDAO.Instance.GetNomeFantasia(null, Glass.Conversoes.StrParaUint(idCli));
                 var nome = ClienteDAO.Instance.GetNome(Glass.Conversoes.StrParaUint(idCli));
@@ -90,51 +56,6 @@ namespace Glass.UI.Web.Listas
             }
         }
     
-        #endregion
-    
-        protected void imgPesq_Click(object sender, ImageClickEventArgs e)
-        {
-            lblStatus.Text = "";
-            grdCli.PageIndex = 0;
-        }
-    
-        protected void grdCli_PageIndexChanged(object sender, EventArgs e)
-        {
-            if (grdCli.PageIndex >= 0)
-            {
-                if (Session["pgIndCliente"] == null)
-                    Session.Add("pgIndCliente", grdCli.PageIndex.ToString());
-                else
-                    Session["pgIndCliente"] = grdCli.PageIndex.ToString();
-            }
-        }
-    
-        protected void grdCli_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            try
-            {
-                if (e.CommandName == "Inativar")
-                {
-                    uint idCli = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                    ClienteDAO.Instance.AlteraSituacao(idCli);
-                    grdCli.DataBind();
-                }
-            }
-            catch (Exception ex)
-            {
-                Glass.MensagemAlerta.ErrorMsg("", ex, Page);
-            }
-        }
-    
-        protected void grdCli_DataBound(object sender, EventArgs e)
-        {
-            lnkAlterarVendedor.Visible = UserInfo.GetUserInfo.TipoUsuario == (uint)Data.Helper.Utils.TipoFuncionario.Administrador && 
-                grdCli.Rows.Count > 0;
-
-            lnkAtivarTodos.Visible = ctrlDataInIni.DataNullable.HasValue ||
-                ctrlDataInFim.DataNullable.HasValue;
-        }
-    
         protected void lnkAtivarTodos_Click(object sender, EventArgs e)
         {
             odsAtivarClientesInativos.Update();
@@ -145,104 +66,6 @@ namespace Glass.UI.Web.Listas
             if (!IsPostBack && ClienteConfig.ListarAtivosPadrao)
                 drpSituacao.SelectedValue = ((int)SituacaoCliente.Ativo).ToString();
         }
-
-        #region Métodos de visibilidade de itens
-
-        protected bool ExcluirVisible()
-        {
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente);
-        }
-
-        protected bool DescontoVisible(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && cliente.IdTabelaDesconto.GetValueOrDefault() == 0;
-        }
-
-        protected bool FotosVisible()
-        {
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.AnexarArquivosCliente);
-        }
-
-        protected bool SugestoesVisible()
-        {
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes);
-        }
-
-        protected bool InativarVisible(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente) && cliente.Situacao != SituacaoCliente.Cancelado; 
-        }
-
-        protected bool ExibirPrecoTabelaCliente()
-        {
-            // Recupera o funcionário
-            var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
-                .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)UserInfo.GetUserInfo.CodUser);
-
-            // Verificar se ele possui acesso ao menu de preço de tabela
-            var menusFunc = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                .GetInstance<Glass.Global.Negocios.IMenuFluxo>()
-                .ObterMenusPorFuncionario(funcionario);
-
-            if (menusFunc != null && menusFunc.Any(f => !string.IsNullOrEmpty(f.Url) && f.Url.ToLower().Contains("listaprecotabcliente")))
-                return true;
-
-            return false;
-        }
-
-        #endregion
-
-        #region Métodos de formatação de dados
-
-        protected string Nome(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return cliente.IdNome;
-        }
-
-        protected string DataCadastro(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return "Data de cadastro: " + cliente.DataCad.ToShortDateString();
-        }
-
-        protected string NomeUsuarioCadastro(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return "Usuário que cadastrou: " + cliente.DescrUsuCad;
-        }
-
-        protected string DataAlteracao(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return "Data de alteração: " + (cliente.DataAlt.HasValue ? 
-                                            cliente.DataAlt.Value.ToShortDateString() : 
-                                            String.Empty);
-        }
-
-        protected string NomeUsuarioAlteracao(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return "Usuário que alterou: " + cliente.DescrUsuAlt;
-        }
-
-        protected string ERevenda(object dataItem)
-        {
-            var cliente = (Glass.Global.Negocios.Entidades.ClientePesquisa)dataItem;
-
-            return cliente.Revenda ? "Cliente é revenda" : "Cliente não é revenda";
-        }
-
-        #endregion
 
         protected void btnAlterarVendedorCliente_Click(object sender, EventArgs e)
         {

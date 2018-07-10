@@ -235,6 +235,8 @@
     <Compile Include="Controllers\Beneficiamentos\V1\GetBeneficiamentosController.cs" />
     <Compile Include="Controllers\Cep\V1\GetCepController.cs" />
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
+    <Compile Include="Controllers\Clientes\V1\DeleteClientesController.cs" />
+    <Compile Include="Controllers\Clientes\V1\PostClientesController.cs" />
     <Compile Include="Controllers\Comissionados\V1\ComissionadosController.cs" />
     <Compile Include="Controllers\Comissionados\V1\GetComissionadosController.cs" />
     <Compile Include="Controllers\Datas\V1\PostDatasController.cs" />
@@ -328,6 +330,7 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Clientes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ClienteBaseDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ClienteDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ComissionadoDto.cs" />

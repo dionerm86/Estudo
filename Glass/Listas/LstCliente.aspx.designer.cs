@@ -481,15 +481,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.CheckBox chkExibirHistorico;
         
         /// <summary>
-        /// lnkInserir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkInserir;
-        
-        /// <summary>
         /// grdCli control.
         /// </summary>
         /// <remarks>
@@ -506,15 +497,6 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkAtivarTodos;
-        
-        /// <summary>
-        /// lblStatus control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblStatus;
         
         /// <summary>
         /// lnkImprimir control.

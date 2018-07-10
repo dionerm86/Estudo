@@ -43,14 +43,8 @@ namespace Glass.API.Backend.Models.Clientes.Lista
             this.Situacao = cliente.Situacao.ToString();
             this.Permissoes = new PermissoesDto
             {
-                Excluir = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente),
-                Inativar = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente) && cliente.Situacao != Data.Model.SituacaoCliente.Cancelado,
-                Imprimir = Config.PossuiPermissao(Config.FuncaoMenuCadastro.ExportarImprimirDadosClientes),
+                AlterarSituacao = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente) && cliente.Situacao != Data.Model.SituacaoCliente.Cancelado,
                 CadastrarDescontoTabela = Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && cliente.IdTabelaDesconto.GetValueOrDefault() == 0,
-                AnexarImagens = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AnexarArquivosCliente),
-                CadastrarSugestoes = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes),
-                ConsultarPrecoTabela = this.ExibirPrecoTabela(),
-                ExibirTotalComprado = Config.PossuiPermissao(Config.FuncaoMenuCadastro.ExibirTotalCompradoCliente),
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(Data.Model.LogAlteracao.TabelaAlteracao.Cliente, (uint)cliente.IdCli, null),
             };
         }
@@ -138,19 +132,5 @@ namespace Glass.API.Backend.Models.Clientes.Lista
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
-
-        private bool ExibirPrecoTabela()
-        {
-            // Recupera o funcionário
-            var funcionario = Microsoft.Practices.ServiceLocation.ServiceLocator
-                .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>().ObtemFuncionario((int)UserInfo.GetUserInfo.CodUser);
-
-            // Verificar se ele possui acesso ao menu de preço de tabela
-            var menusFunc = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                .GetInstance<Glass.Global.Negocios.IMenuFluxo>()
-                .ObterMenusPorFuncionario(funcionario);
-
-            return menusFunc != null && menusFunc.Any(f => !string.IsNullOrEmpty(f.Url) && f.Url.ToLower().Contains("listaprecotabcliente"));
-        }
     }
 }

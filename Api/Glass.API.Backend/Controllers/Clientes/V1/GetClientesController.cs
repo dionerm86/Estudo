@@ -22,6 +22,22 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
     public partial class ClientesController : BaseController
     {
         /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de clientes.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes/lista")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Clientes.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaClientes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Clientes.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de clientes.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos clientes.</param>

@@ -6,6 +6,7 @@ using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GDA;
 
 namespace Glass.Data.DAL
 {
@@ -2485,14 +2486,23 @@ namespace Glass.Data.DAL
         /// <param name="idCliente"></param>
         public void AlteraSituacao(uint idCliente)
         {
-            if (GetNome(idCliente).ToLower() == "consumidor final" && GetSituacao(idCliente) == (int)SituacaoCliente.Ativo)
+            AlteraSituacao(null, idCliente);
+        }
+
+        /// <summary>
+        /// Altera a situação de um cliente, ativando ou inativando o cliente.
+        /// </summary>
+        /// <param name="idCliente"></param>
+        public void AlteraSituacao(GDASession sessao, uint idCliente)
+        {
+            if (GetNome(sessao, idCliente).ToLower() == "consumidor final" && GetSituacao(sessao, idCliente) == (int)SituacaoCliente.Ativo)
                 throw new Exception("Consumidor Final não pode ser inativado/cancelado.");
 
-            Cliente cli = GetElementByPrimaryKey(idCliente);
+            Cliente cli = GetElementByPrimaryKey(sessao, idCliente);
             cli.Situacao = cli.Situacao == 1 ? 2 : 1;
             cli.IdRota = (int)ClienteDAO.Instance.ObtemIdRota(idCliente);
             cli.IdRota = cli.IdRota > 0 ? cli.IdRota : cli.IdRota = null;
-            Update(cli);
+            Update(sessao, cli);
         }
 
         #endregion
@@ -3005,36 +3015,18 @@ namespace Glass.Data.DAL
         {
             return Update(null, objUpdate);
         }
-
-        [Obsolete("Migrado para a entidade")]
+        
         public override int Delete(Cliente objDelete)
         {
-            string sql = "select count(*) from pedido where idCli=" + objDelete.IdCli;
-            if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("Há pedidos associados ao mesmo.");
-
-            sql = "select count(*) from orcamento where idCliente=" + objDelete.IdCli;
-            if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("Há orçamentos associados ao mesmo.");
-
-            sql = "select count(*) from projeto where idCliente=" + objDelete.IdCli;
-            if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("Há projetos associados ao mesmo.");
-
-            sql = "select count(*) from nota_fiscal where idCliente=" + objDelete.IdCli;
-            if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("Há notas fiscais associadas ao mesmo.");
-
-            LogAlteracaoDAO.Instance.ApagaLogCliente((uint)objDelete.IdCli);
-
-            sql = "delete from parcelas_nao_usar where idcliente=" + objDelete.IdCli;
-            objPersistence.ExecuteCommand(sql);
-
-            return base.Delete(objDelete);
+            return DeleteByPrimaryKey(null, objDelete.IdCli);
         }
 
-        [Obsolete("Migrado para a entidade")]
         public override int DeleteByPrimaryKey(uint key)
+        {
+            return DeleteByPrimaryKey(null, key);
+        }
+
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
         {
             string sql = "select count(*) from pedido where idCli=" + key;
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
@@ -3052,8 +3044,9 @@ namespace Glass.Data.DAL
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
                 throw new Exception("Há notas fiscais associadas ao mesmo.");
 
-            LogAlteracaoDAO.Instance.ApagaLogCliente(key);
-            return base.DeleteByPrimaryKey(key);
+            LogAlteracaoDAO.Instance.ApagaLogCliente((uint)key);
+
+            return base.DeleteByPrimaryKey(sessao, key);
         }
 
         #endregion
