@@ -235,16 +235,6 @@
                     OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
             </span>
             <span>
-                <asp:Label ID="Label23" runat="server" Text="Forma Pagto." AssociatedControlID="cblFormasPagto"></asp:Label>
-                <sync:checkboxlistdropdown ID="cblFormasPagto" runat="server" Title="Selecione a forma pagto." DataSourceID="odsFormasPagto"
-                    DataTextField="Descricao" DataValueField="IdFormaPagto" AppendDataBoundItems="True">
-                    <asp:ListItem Value="0">Todas</asp:ListItem>
-                </sync:checkboxlistdropdown>
-                <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/Pesquisar.gif"
-                    ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
-                    OnClick="imgPesq_Click" CssClass="botaoPesquisar" />
-            </span>
-            <span>
                 <asp:Label ID="Label13" runat="server" Text="Rota" AssociatedControlID="txtRota"></asp:Label>
                 <asp:TextBox ID="txtRota" runat="server" MaxLength="20" Width="80px"></asp:TextBox>
                 <asp:ImageButton ID="imgPesq7" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
@@ -557,28 +547,10 @@
             <asp:ControlParameter ControlID="drpUf" Name="uf" PropertyName="SelectedValue" Type="String" />
         </UpdateParameters>
     </colo:virtualobjectdatasource>
-    <colo:virtualobjectdatasource Culture="pt-BR" ID="odsFuncionario" runat="server"
-        SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
-    </colo:virtualobjectdatasource>
-    <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacaoCliente" runat="server"
-        SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
-        <SelectParameters>
-            <asp:Parameter Name="typeName" DefaultValue="Glass.Data.Model.SituacaoCliente, Glass.Data" />
-        </SelectParameters>
-    </colo:virtualobjectdatasource>
-    <colo:virtualobjectdatasource Culture="pt-BR" ID="odsTipoCliente" runat="server"
-        SelectMethod="ObtemDescritoresTipoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo">
-    </colo:virtualobjectdatasource>
     <colo:virtualobjectdatasource Culture="pt-BR" ID="odsTabelaDescontoAcrescimo" runat="server"
         SelectMethod="ObtemDescritoresTabelaDescontoAcrescimo" TypeName="Glass.Global.Negocios.IClienteFluxo">
     </colo:virtualobjectdatasource>
-    <colo:virtualobjectdatasource Culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="ObtemLojas"
-        TypeName="Glass.Global.Negocios.ILojaFluxo">
-    </colo:virtualobjectdatasource>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetForControle"
-        TypeName="Glass.Data.DAL.FormaPagtoDAO">
-    </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource ID="odsUf" runat="server" SelectMethod="GetUf" 
-                    TypeName="Glass.Data.DAL.CidadeDAO">
-                </colo:VirtualObjectDataSource>
+        TypeName="Glass.Data.DAL.CidadeDAO">
+    </colo:VirtualObjectDataSource>
 </asp:Content>

@@ -70,7 +70,8 @@
         </span>
         <span class="form-group">
             <label for="rota">Rota</label>
-
+            <campo-busca-com-popup id.sync="filtroAtual.codigoRota" nome.sync="filtroAtual.codigoRota" item-selecionado.sync="rotaAtual" funcao-buscar-itens="obterRotas" 
+                url-popup="../Utils/SelRota.aspx" largura-popup="700" altura-popup="500" style="width: 80px" required></campo-busca-com-popup>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

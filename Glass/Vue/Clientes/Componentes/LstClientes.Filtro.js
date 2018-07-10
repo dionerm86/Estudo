@@ -45,6 +45,7 @@ Vue.component('cliente-filtros', {
       situacaoAtual: null,
       lojaAtual: null,
       cidadeAtual: null,
+      rotaAtual: null,
       tabelaDescontoAcrescimoAtual: null
     };
   },
@@ -97,7 +98,7 @@ Vue.component('cliente-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroVendedores: function () {
-      return Servicos.Funcionarios.obterVendedores();
+      return Servicos.Funcionarios.obterAtivosAssociadosAClientes();
     },
 
     /**
@@ -105,7 +106,15 @@ Vue.component('cliente-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroTabelaDescontoAcrescimo: function () {
-      return Servicos.Clientes.obterTabelasDescontoAcrescimo();
+      return Servicos.TabelasDescontoAcrescimoCliente.obterFiltro();
+    },
+
+    /**
+     * Retorna os itens para o controle de rotas.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroRotas: function () {
+      return Servicos.Rotas.obterFiltro();
     }
   },
 
@@ -139,6 +148,17 @@ Vue.component('cliente-filtros', {
     cidadeAtual: {
       handler: function(atual) {
         this.filtroAtual.idCidade = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'rotaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    rotaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.codigoRota = atual ? atual.id : null;
       },
       deep: true
     },

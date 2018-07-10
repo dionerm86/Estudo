@@ -239,11 +239,17 @@
     <Compile Include="Controllers\Comissionados\V1\GetComissionadosController.cs" />
     <Compile Include="Controllers\Datas\V1\PostDatasController.cs" />
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
+    <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
+    <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\GetTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
     <Compile Include="Controllers\Obras\V1\GetObrasController.cs" />
     <Compile Include="Controllers\Clientes\V1\GetClientesController.cs" />
     <Compile Include="Controllers\Clientes\V1\ClientesController.cs" />
     <Compile Include="Controllers\Orcamentos\V1\PostOrcamentosController.cs" />
+    <Compile Include="Controllers\FormasPagamento\V1\GetFormasPagamentoController.cs" />
+    <Compile Include="Controllers\FormasPagamento\V1\FormasPagamentoController.cs" />
     <Compile Include="Controllers\Parcelas\V1\GetParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\ParcelasController.cs" />
     <Compile Include="Controllers\Pedidos\V1\AmbientesPedido\DeleteAmbientesPedidoController.cs" />

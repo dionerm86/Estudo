@@ -22,6 +22,30 @@ Servicos.Clientes = (function(http) {
           tipoValidacao
         }
       });
+    },
+
+    /**
+     * Retorna os itens para o controle de situações de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTipos: function () {
+      return http().get(API + 'tipos');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos fiscal de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposFiscal: function () {
+      return http().get(API + 'tiposFiscal');
     }
   };
 })(function() {

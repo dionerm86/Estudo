@@ -319,33 +319,6 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton5;
         
         /// <summary>
-        /// Label23 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label23;
-        
-        /// <summary>
-        /// cblFormasPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Sync.Controls.CheckBoxListDropDown cblFormasPagto;
-        
-        /// <summary>
-        /// ImageButton7 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton ImageButton7;
-        
-        /// <summary>
         /// Label13 control.
         /// </summary>
         /// <remarks>
@@ -679,33 +652,6 @@ namespace Glass.UI.Web.Listas {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsAtivarClientesInativos;
         
         /// <summary>
-        /// odsFuncionario control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFuncionario;
-        
-        /// <summary>
-        /// odsSituacaoCliente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsSituacaoCliente;
-        
-        /// <summary>
-        /// odsTipoCliente control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoCliente;
-        
-        /// <summary>
         /// odsTabelaDescontoAcrescimo control.
         /// </summary>
         /// <remarks>
@@ -713,24 +659,6 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTabelaDescontoAcrescimo;
-        
-        /// <summary>
-        /// odsLoja control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsLoja;
-        
-        /// <summary>
-        /// odsFormasPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormasPagto;
         
         /// <summary>
         /// odsUf control.
