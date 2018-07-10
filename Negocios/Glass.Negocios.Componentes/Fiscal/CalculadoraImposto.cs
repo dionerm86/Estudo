@@ -292,9 +292,8 @@ namespace Glass.Fiscal.Negocios.Componentes
                     using (var sessao = new GDA.GDASession())
                     {
                         // Cria uma instancia do calculo de ICMS ST.
-                        var calcIcmsSt = Data.Helper.CalculoIcmsStFactory.ObtemInstancia(sessao, 
-                            Container.Loja?.IdLoja ?? 0, Container.Cliente?.IdCli,
-                            Container.Fornecedor?.IdFornec, item.NaturezaOperacao.IdCfop, ((int?)item.Cst)?.ToString("00"), Container.IdNf);
+                        var calcIcmsSt = Data.Helper.CalculoIcmsStFactory.ObtemInstancia(sessao, Container.Loja?.IdLoja ?? 0, Container.Cliente?.IdCli,
+                            Container.Fornecedor?.IdFornec, item.NaturezaOperacao.IdCfop, ((int?)item.Cst)?.ToString("00"), Container.IdNf, (item.NaturezaOperacao?.CalcIpi ?? false) && item.AliqIpi > 0);
                         // Verifica se a Nota é de saída.
                         bool saida = Container.TipoDocumento == Sync.Fiscal.Enumeracao.NFe.TipoDocumento.Saida ||
                             /* Chamado 32984 e 39660. */

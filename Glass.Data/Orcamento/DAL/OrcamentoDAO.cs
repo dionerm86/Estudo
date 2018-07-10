@@ -836,17 +836,36 @@ namespace Glass.Data.DAL
                         where idProd=ppo.idProd)) * ({0}.total + coalesce({0}.valorBenef, 0))))";
                 }
 
-                // Calcula o valor do ICMS do orçamento
-                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, orca.IdLoja ?? 0) && orca.IdCliente != null && ClienteDAO.Instance.IsCobrarIcmsSt(sessao, orca.IdCliente.Value))
+                var lojaCalculaIpiPedido = false;
+                var clienteCalculaIpi = false;
+                var lojaCalculaIcmsStPedido = false;
+                var clienteCalculaIcmsSt = false;
+
+                if (orca.IdLoja > 0)
                 {
-                    string descontoRateadoMaterial = String.Format(descontoRateadoImpostos, "mip");
-                    string descontoRateadoProduto = String.Format(descontoRateadoImpostos, "po");
+                    lojaCalculaIpiPedido = LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, orca.IdLoja.Value);
+                    lojaCalculaIcmsStPedido = LojaDAO.Instance.ObtemCalculaIcmsStPedido(sessao, orca.IdLoja.Value);
+                }
 
-                    var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int?)orca.IdLoja ?? 0, (int?)orca.IdCliente, null, null, null, null);
+                if (orca.IdCliente > 0)
+                {
+                    clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(sessao, orca.IdCliente.Value);
+                    clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(sessao, orca.IdCliente.Value);
+                }
 
-                    string idProd = "mip.idProd";
-                    string totalProd = "mip.Total + coalesce(mip.ValorBenef, 0)";
-                    string aliquotaIcmsSt = "mip.AliqIcms";
+                var calcularIpi = lojaCalculaIpiPedido && clienteCalculaIpi;
+                var calcularIcmsSt = lojaCalculaIcmsStPedido && clienteCalculaIcmsSt;
+
+                // Calcula o valor do ICMS do orçamento
+                if (calcularIcmsSt)
+                {
+                    var descontoRateadoMaterial = string.Format(descontoRateadoImpostos, "mip");
+                    var descontoRateadoProduto = string.Format(descontoRateadoImpostos, "po");
+                    var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int?)orca.IdLoja ?? 0, (int?)orca.IdCliente, null, null, null, null, calcularIpi);
+
+                    var idProd = "mip.idProd";
+                    var totalProd = "mip.Total + coalesce(mip.ValorBenef, 0)";
+                    var aliquotaIcmsSt = "mip.AliqIcms";
 
                     sql = @"
                         update material_item_projeto mip 
@@ -906,7 +925,7 @@ namespace Glass.Data.DAL
                 }
 
                 // Calcula o valor do IPI do orçamento
-                if (LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, orca.IdLoja ?? 0) && orca.IdCliente != null && ClienteDAO.Instance.IsCobrarIpi(sessao, orca.IdCliente.Value))
+                if (calcularIpi)
                 {
                     string descontoRateadoMaterial = String.Format(descontoRateadoImpostos, "mip");
                     string descontoRateadoProduto = String.Format(descontoRateadoImpostos, "po");

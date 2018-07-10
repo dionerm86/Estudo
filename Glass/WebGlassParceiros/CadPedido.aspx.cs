@@ -974,7 +974,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             var idPedido = Request["idPedido"];
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
     
         #endregion   

@@ -178,8 +178,8 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", ProdutosPedidoRptDAL.Instance.CopiaLista(prodPedido.ToArray())));
             }
 
-            lstParam.Add(new ReportParameter("LojaCalculaICMSPedido", LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja).ToString()));
-            lstParam.Add(new ReportParameter("LojaCalculaIPIPedido", LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja).ToString()));
+            lstParam.Add(new ReportParameter("LojaCalculaICMSPedido", LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja).ToString()));
+            lstParam.Add(new ReportParameter("LojaCalculaIPIPedido", LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja).ToString()));
             lstParam.Add(new ReportParameter("TemProdutoLamComposicao", pedido[0].TemProdutoLamComposicao.ToString()));
 
             report.DataSources.Add(new ReportDataSource("ParcelasPedido", parcPedido));

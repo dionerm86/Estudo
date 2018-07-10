@@ -591,7 +591,7 @@ namespace WebGlass.Business.Produto.Ajax
 
                 var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(idPedido);
                 // Retorna a alíquota ICMS do produto
-                retorno += ";" + (LojaDAO.Instance.ObtemCalculaIcmsPedido(idLojaPedido) ? prod.AliqICMSInterna.ToString().Replace(',', '.') : "0");
+                retorno += ";" + (LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLojaPedido) ? prod.AliqICMSInterna.ToString().Replace(',', '.') : "0");
 
                 //if (isPedidoProducao)
                 retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? prod.Largura.Value.ToString() : "");

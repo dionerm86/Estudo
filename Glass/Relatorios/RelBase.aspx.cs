@@ -2043,8 +2043,8 @@ namespace Glass.UI.Web.Relatorios
                         if (idLiberarPedido > 0)
                             idLoja = (int)LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido);
 
-                        var calcularIcmsPedido = idLoja > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido((uint)idLoja) :
-                            (Glass.Conversoes.StrParaUint(Request["idLoja"]) > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido(Glass.Conversoes.StrParaUint(Request["idLoja"])) :
+                        var calcularIcmsPedido = idLoja > 0 ? LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, (uint)idLoja) :
+                            (Glass.Conversoes.StrParaUint(Request["idLoja"]) > 0 ? LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, Glass.Conversoes.StrParaUint(Request["idLoja"])) :
                             PedidoConfig.Impostos.CalcularIcmsPedido);
 
                         report.ReportPath = "Relatorios/rptListaLiberacao" + (calcularIcmsPedido ? "Icms" : "") + ".rdlc";

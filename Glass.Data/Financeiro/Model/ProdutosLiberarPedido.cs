@@ -252,12 +252,23 @@ namespace Glass.Data.Model
         {
             get
             {
-                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
-
                 // Soma o desconto por quantidade pois na impressão da liberação o desconto será deduzido do total do pedido,
                 // se não somar o desconto por qtd, ficará como se o relatório estivesse aplicando o desconto 2 vezes
-                return TotalProd + ValorBenefProd + ValorDescontoQtde + (LojaDAO.Instance.ObtemCalculaIcmsPedido(idLojaPedido) ? ValorIcmsProd : 0) +
-                    (LojaDAO.Instance.ObtemCalculaIpiPedido(idLojaPedido) ? ValorIpiProd : 0);
+                var valorProd = TotalProd + ValorBenefProd + ValorDescontoQtde;
+                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(IdPedido);
+                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(IdPedido);
+
+                if (pedidoCalculouIcmsSt)
+                {
+                    valorProd += ValorIcmsProd;
+                }
+
+                if (pedidoCalculouIpi)
+                {
+                    valorProd += ValorIpiProd;
+                }
+
+                return valorProd;
             }
         }
 

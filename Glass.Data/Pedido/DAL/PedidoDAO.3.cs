@@ -2516,7 +2516,7 @@ namespace Glass.Data.DAL
             foreach (var idPedido in idsPedido.TrimEnd(',').Split(','))
             {
                 var idLojaPedido = ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-                if (!LojaDAO.Instance.ObtemCalculaIcmsPedido(idLojaPedido))
+                if (!LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLojaPedido))
                     return false;
             }
 

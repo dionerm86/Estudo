@@ -1052,7 +1052,7 @@ namespace Glass.UI.Web.Cadastros
             prodPed.ValorIcms = valorIcms;
 
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
-            if (LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja) && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
+            if (LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja) && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
                 prodPed.AliqIpi = ProdutoDAO.Instance.ObtemAliqIpi(prodPed.IdProd);
 
             prodPed.AlturaBenef = alturaBenef;
@@ -1237,14 +1237,14 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = Request["idPedido"];
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));            
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
 
         protected void Ipi_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja), null);
         }
 
         #endregion

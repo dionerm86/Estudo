@@ -509,7 +509,7 @@ namespace Glass.Data.DAL
                             if (estorno || usarValorProdNf)
                             {
                                 /* Chamado 38441. */
-                                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, idLoja) && idProdNf > 0)
+                                if (LojaDAO.Instance.ObtemCalculaIcmsStPedido(sessao, idLoja) && idProdNf > 0)
                                 {
                                     var valorIcms = ProdutosNfDAO.Instance.ObterValorIcms(sessao, (int)idProdNf.GetValueOrDefault());
                                     totalMov -= valorIcms;

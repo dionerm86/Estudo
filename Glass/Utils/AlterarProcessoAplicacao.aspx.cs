@@ -328,14 +328,14 @@ namespace Glass.UI.Web.Utils
         {
             var idPedido = Request["idPedido"];
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
 
         protected void Ipi_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja), null);
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja), null);
         }
 
         #endregion

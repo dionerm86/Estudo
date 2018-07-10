@@ -730,11 +730,22 @@ namespace Glass.Data.Model
 
         public decimal AliqICMSInterna
         {
-            get 
+            get
             {
-                if (_aliqIcmsInterna == null && IdLojaIcms > 0)
-                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms,
-                        (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                if (_aliqIcmsInterna == null)
+                {
+                    if (IdLojaIcms == 0)
+                    {
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+                    }
+
+                    var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
+                    var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
+                    var calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+
+                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                        .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                }
 
                 return _aliqIcmsInterna.GetValueOrDefault();
             }
@@ -746,9 +757,20 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (_aliqIcmsInternaComIpiNoCalculo == null && IdLojaIcms > 0)
-                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms,
-                        (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, true, SaidaIcms);
+                if (_aliqIcmsInternaComIpiNoCalculo == null)
+                {
+                    if (IdLojaIcms == 0)
+                    {
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+                    }
+
+                    var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
+                    var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
+                    var calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+
+                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                        .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                }
 
                 return _aliqIcmsInternaComIpiNoCalculo.GetValueOrDefault();
             }

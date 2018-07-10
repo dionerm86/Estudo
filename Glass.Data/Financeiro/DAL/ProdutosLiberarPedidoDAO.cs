@@ -235,42 +235,42 @@ namespace Glass.Data.DAL
                 }
             ));
         }
-
-        public decimal GetValorIcmsForLiberacao(uint idCliente, uint idProdutoPedido, float qntdeLiberada)
-        {
-            return GetValorIcmsForLiberacao(null, idCliente, idProdutoPedido, qntdeLiberada);
-        }
-
+        
         public decimal GetValorIcmsForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
-            ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
             var idLoja = PedidoDAO.Instance.ObtemIdLoja((uint)pp.IdLoja);
+            var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(session, idLoja);
+            var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente);
+            var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido);
 
-            if (LojaDAO.Instance.ObtemCalculaIcmsLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente) || PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido)))
+            if (lojaCalculaIcmsStLiberacao && clienteCalculaIcmsSt && pedidoCalculouIcmsSt)
             {
                 if (pp.ValorIcms == 00 || pp.Qtde == 0)
+                {
                     return 0;
+                }
 
                 return (pp.ValorIcms / Convert.ToDecimal(pp.Qtde)) * Convert.ToDecimal(qntdeLiberada);
             }
 
             return 0;
         }
-
-        public decimal GetValorIpiForLiberacao(uint idCliente, uint idProdutoPedido, float qntdeLiberada)
-        {
-            return GetValorIpiForLiberacao(null, idCliente, idProdutoPedido, qntdeLiberada);
-        }
-
+        
         public decimal GetValorIpiForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
-            ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
+            var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja);
+            var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(session, idCliente);
+            var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido);
 
-            if (LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIpi(session, idCliente) || PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido)))
+            if (lojaCalculaIpiLiberacao && clienteCalculaIpi && pedidoCalculouIpi)
             {
                 if (pp.ValorIpi == 00 || pp.Qtde == 0)
+                {
                     return 0;
+                }
 
                 return (pp.ValorIpi / Convert.ToDecimal(pp.Qtde)) * Convert.ToDecimal(qntdeLiberada);
             }

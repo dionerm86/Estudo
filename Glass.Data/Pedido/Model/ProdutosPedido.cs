@@ -1020,8 +1020,15 @@ namespace Glass.Data.Model
 
                 var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
 
-                total += (LojaDAO.Instance.ObtemCalculaIcmsLiberacao(idLoja) && (ClienteDAO.Instance.IsCobrarIcmsSt(idCliente) || PedidoDAO.Instance.CobrouICMSST(IdPedido)) ? ValorIcms : 0) +
-                    (LojaDAO.Instance.ObtemCalculaIpiLiberacao(idLoja) && (ClienteDAO.Instance.IsCobrarIpi(null, idCliente) || PedidoDAO.Instance.CobrouIPI(IdPedido)) ? ValorIpi : 0);
+                var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(null, idLoja);
+                var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(idCliente);
+                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(IdPedido);
+                var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(null, idLoja);
+                var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(null, idCliente);
+                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(IdPedido);
+
+                total += lojaCalculaIcmsStLiberacao && clienteCalculaIcmsSt && pedidoCalculouIcmsSt ? ValorIcms : 0;
+                total += lojaCalculaIpiLiberacao && clienteCalculaIpi && pedidoCalculouIpi ? ValorIpi : 0;
 
                 decimal retorno = total;
 
