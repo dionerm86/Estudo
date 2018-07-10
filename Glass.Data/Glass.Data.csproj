@@ -616,6 +616,7 @@
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />
+    <Compile Include="Helper\ZenviaSMS.cs" />
     <Compile Include="Instalacao\DAL\FixacaoVidroDAO.cs" />
     <Compile Include="Global\DAL\FormaPagtoDAO.cs" />
     <Compile Include="Global\DAL\FornecedorDAO.cs" />
