@@ -3068,7 +3068,7 @@ namespace Glass.Data.DAL
                     : 0;
             }
 
-            revenda = idCliente  > 0 ? ClienteDAO.Instance.IsRevenda(sessao ,idCliente) : revenda;
+            revenda = idCliente > 0 ? ClienteDAO.Instance.IsRevenda(sessao ,idCliente) : revenda;
 
             int id = 0;
             ContainerCalculoDTO.TipoContainer? tipo = null;

@@ -441,7 +441,7 @@ namespace Glass.Global.Negocios.Componentes
                     };
 
             /* Chamado 39865. */
-            else if (subgrupoProd.ProdutosEstoque && Data.DAL.GrupoProdDAO.Instance.IsVidro(subgrupoProd.IdGrupoProd) &&
+            if (subgrupoProd.ProdutosEstoque && Data.DAL.GrupoProdDAO.Instance.IsVidro(subgrupoProd.IdGrupoProd) &&
                 subgrupoProd.TipoCalculo != Data.Model.TipoCalculoGrupoProd.Qtd &&
                 subgrupoProd.TipoCalculo != Data.Model.TipoCalculoGrupoProd.M2Direto)
                 return new[]
