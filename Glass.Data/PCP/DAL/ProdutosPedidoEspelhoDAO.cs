@@ -1049,7 +1049,7 @@ namespace Glass.Data.DAL
             if (posicao > 0)
                 sql += " Having linha=" + posicao;
 
-            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
             return String.Format(sql, isMaoDeObra ? "idAmbientePedido" : "idProdPed",
                 isMaoDeObra ? "ambiente_pedido_espelho" : "produtos_pedido_espelho",
 
@@ -1373,7 +1373,7 @@ namespace Glass.Data.DAL
             // Adiciona os beneficiamentos feitos nos produtos como itens do pedido
             foreach (ProdutosPedidoEspelho ppe in lstProdPedEsp)
             {
-                if (PedidoDAO.Instance.IsMaoDeObra(ppe.IdPedido) && ppe.IdAmbientePedido != null)
+                if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido) && ppe.IdAmbientePedido != null)
                 {
                     int? qtdAmb = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<int?>("Qtde", "idAmbientePedido=" + ppe.IdAmbientePedido.Value);
                     if (qtdAmb > 1)
@@ -3134,7 +3134,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoFml)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3195,7 +3195,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoDxf)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {

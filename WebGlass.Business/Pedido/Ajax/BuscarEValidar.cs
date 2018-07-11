@@ -140,7 +140,7 @@ namespace WebGlass.Business.Pedido.Ajax
             try
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
-                uint idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                uint idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
 
                 string enderecoObra = PedidoDAO.Instance.ObtemEnderecoObra(idPedido);
                 string bairroObra = PedidoDAO.Instance.ObtemBairroObra(idPedido);

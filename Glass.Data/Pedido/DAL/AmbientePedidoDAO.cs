@@ -344,10 +344,10 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool ValidaDesconto(GDASession sessao, AmbientePedido ambientePedido, out string msg)
         {
-            var tipoVenda = PedidoDAO.Instance.GetTipoVenda(sessao, ambientePedido.IdPedido);
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, ambientePedido.IdPedido);
 
             //Verificar se o pedido possui o tipo Venda antes de validar o desconto
-            if (tipoVenda == null && ambientePedido.Desconto > 0)
+            if (tipoVenda == 0 && ambientePedido.Desconto > 0)
             {
                 msg = "Informe o tipo venda do pedido antes de aplicar desconto";
                 return false;
@@ -377,7 +377,7 @@ namespace Glass.Data.DAL
                 percDescAmbiente = (ambientePedido.Desconto / totalBrutoAmbiente) * 100;
 
             var descontoMaximoPedido = Conversoes.StrParaDecimal(PedidoConfig.Desconto.GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser,
-                tipoVenda.Value, (int?)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)).ToString());
+                tipoVenda, (int?)PedidoDAO.Instance.ObtemIdParcela(null, ambientePedido.IdPedido)).ToString());
 
             // Verifica se o desconto lançado é maior que o máximo configurado no pedido
             if (percDescAmbiente > descontoMaximoPedido)

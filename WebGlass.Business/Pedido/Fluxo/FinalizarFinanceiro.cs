@@ -31,7 +31,7 @@ namespace WebGlass.Business.Pedido.Fluxo
 
         public bool PodeExecutarAcao(uint idPedido, string tipo)
         {
-            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(idPedido);
+            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
 
             switch (tipo.ToLower())
             {
@@ -99,7 +99,7 @@ namespace WebGlass.Business.Pedido.Fluxo
 
                         var idRemetente = UserInfo.GetUserInfo.CodUser;
                         var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
-                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido);
+                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
 
                         if (enviarMensagem)
                         {

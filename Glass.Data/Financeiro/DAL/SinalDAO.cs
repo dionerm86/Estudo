@@ -1531,7 +1531,7 @@ namespace Glass.Data.DAL
                             if (isSinal && PedidoDAO.Instance.ObtemIdPagamentoAntecipado(transaction, idPedidoRemover) > 0)
                                 throw new Exception("Cancele o pagamento antecipado do pedido " + id + " antes de cancelar o sinal do mesmo.");
 
-                            if (PedidoDAO.Instance.ObtemSituacao(idPedidoRemover) == Pedido.SituacaoPedido.Cancelado)
+                            if (PedidoDAO.Instance.ObtemSituacao(null, idPedidoRemover) == Pedido.SituacaoPedido.Cancelado)
                                 throw new Exception(string.Format("Não é permitido remover pedidos cancelados do sinal. Pedido {0}", idPedidoRemover));
 
                             // Se a empresa libera os pedidos: não cancela o sinal se há uma conferência no PCP

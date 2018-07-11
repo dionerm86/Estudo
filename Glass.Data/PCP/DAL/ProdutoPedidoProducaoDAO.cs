@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(idLiberarPedido) && idLiberarPedido != "0")
             {
                 string idsPedidoStr = String.Empty;
-                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido.StrParaUint());
+                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido.StrParaUint());
                 foreach (uint id in idsPedido)
                     idsPedidoStr += id + ",";
 
@@ -1764,7 +1764,7 @@ namespace Glass.Data.DAL
 
             if (idLiberarPedido > 0)
             {
-                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao((uint)idLiberarPedido);
+                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao(null, (uint)idLiberarPedido);
 
                 if (idsPedidoPelaLiberacao?.Count() > 0)
                 {
@@ -3968,9 +3968,7 @@ namespace Glass.Data.DAL
                         var idLojaFuncionario = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
 
                         //Verifica se a chapa teve entrada e recupera a loja que foi feito a movimentação pois a loja que deu entrada manual pode não ser é a mesma da nota fiscal
-                        var idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao, string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2}",
-                            idNf.GetValueOrDefault(0), idProdBaixa, (int)MovEstoque.TipoMovEnum.Entrada));
-
+                        var idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.GetValueOrDefault(), (int)idProdBaixa, MovEstoque.TipoMovEnum.Entrada);
                         var idLojaMovEstoqueChapa = idLojaMovEstoque ?? (idLojaNotaFiscal == 0 ? idLojaFuncionario : idLojaNotaFiscal);
 
                         /* Chamado 63113.
@@ -4731,7 +4729,7 @@ namespace Glass.Data.DAL
             ProdutosPedidoDAO.Instance.MarcarSaida(sessao, (uint)idProdutoNovo, 1, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
             //Baixa o estoque da peça
-            MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null);
+            MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null, null, null);
 
             //Atualiza a situação do pedido
             PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, idPedidoExpedicao, null, DateTime.Now);
@@ -4956,10 +4954,9 @@ namespace Glass.Data.DAL
                 float m2CalcAreaMinima = CalculoM2.Instance.CalcularM2Calculo(null, pedido, pp,
                     false, true, pp.Beneficiamentos.CountAreaMinima);
 
-                MovEstoqueDAO.Instance.CreditaEstoqueProducao(pp.IdProd, login.IdLoja, idProdPedProducao, 1, false, true);
+                MovEstoqueDAO.Instance.CreditaEstoqueProducao(null, pp.IdProd, login.IdLoja, idProdPedProducao, 1, false, true);
 
-                MovEstoqueDAO.Instance.BaixaEstoqueProducao(pp.IdProd, login.IdLoja, idProdPedProducao,
-                    (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0), true, true, true);
+                MovEstoqueDAO.Instance.BaixaEstoqueProducao(null, pp.IdProd, login.IdLoja, idProdPedProducao, (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0), true, true, true);
 
                 // Marca que este produto entrou em estoque
                 objPersistence.ExecuteCommand("Update produto_pedido_producao Set entrouEstoque=true Where idProdPedProducao=" + idProdPedProducao);
@@ -6495,12 +6492,8 @@ namespace Glass.Data.DAL
                     if (quantidadeLeiturasChapa == 1)
                     {
                         uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                        uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
-                            string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
-                                                idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
-
+                        uint? idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.GetValueOrDefault(), (int)idProd.GetValueOrDefault(), MovEstoque.TipoMovEnum.Entrada);
                         var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
-
                         var idLojaMovChapa = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaConsiderar : idLojaNf);
 
                         if (idProd > 0)

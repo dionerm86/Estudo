@@ -81,6 +81,11 @@ namespace Glass.Data.DAL
             return descrBenef;
         }
 
+        public decimal ObterValorTotalPeloIdProdCompra(GDASession session, int idProdCompra)
+        {
+            return ObtemValorCampo<decimal>(session, "SUM(Valor)", $"IdProdCompra={ idProdCompra }");
+        }
+
         #region Retorna os beneficiamentos para um produto de um pedido
 
         internal string SqlProdPedBenef(uint idPedido, uint idProdPed, uint idMaterItemProj, uint idBenefConfig, bool selecionar)

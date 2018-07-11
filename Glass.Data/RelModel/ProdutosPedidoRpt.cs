@@ -39,7 +39,7 @@ namespace Glass.Data.RelModel
             ValorVendido = prodPed.ValorVendido;
             Total = prodPed.Total;
             ValorBenef = prodPed.ValorBenef;
-            PedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(IdPedido);
+            PedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, IdPedido);
             DescrBeneficiamentos = prodPed.DescrBeneficiamentos;
             IdProdPedProducaoConsulta = prodPed.IdProdPedProducaoConsulta;
             TipoDescontoAmbiente = prodPed.TipoDescontoAmbiente;

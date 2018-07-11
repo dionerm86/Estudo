@@ -637,7 +637,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         public bool IsEtiquetaRevenda(string etiqueta)
         {
             uint idPedido = Glass.Conversoes.StrParaUint(etiqueta.Split('-')[0]);
-            return PedidoDAO.Instance.IsProducao(idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R");
+            return PedidoDAO.Instance.IsProducao(null, idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R");
         }
 
         /// <summary>

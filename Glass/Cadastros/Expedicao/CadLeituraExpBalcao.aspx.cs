@@ -240,7 +240,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         public string IsEtiquetaRevenda(string etiqueta)
         {
             uint idPedido = Glass.Conversoes.StrParaUint(etiqueta.Split('-')[0]);
-            return (PedidoDAO.Instance.IsProducao(idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R")).ToString();
+            return (PedidoDAO.Instance.IsProducao(null, idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R")).ToString();
         }
 
         [Ajax.AjaxMethod()]

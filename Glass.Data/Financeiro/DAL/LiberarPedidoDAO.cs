@@ -1902,10 +1902,10 @@ namespace Glass.Data.DAL
             foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
             {
                 //Verifica se o pedido está para receber sinal e não recebeu
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(id.StrParaUint());
-                var entrada = PedidoDAO.Instance.ObtemValorEntrada(id.StrParaUint());
-                var idSinal = PedidoDAO.Instance.ObtemIdSinal(id.StrParaUint());
-                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(id.StrParaUint());
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, id.StrParaUint());
+                var entrada = PedidoDAO.Instance.ObtemValorEntrada(null, id.StrParaUint());
+                var idSinal = PedidoDAO.Instance.ObtemIdSinal(null, id.StrParaUint());
+                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, id.StrParaUint());
                 var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
 
                 if (entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0)
@@ -2391,7 +2391,7 @@ namespace Glass.Data.DAL
             // Atualiza o total comprado pelo cliente
             ClienteDAO.Instance.AtualizaTotalComprado(session, idCliente);
 
-            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
+            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido);
             if (idsPedidoLiberado.Any())
                 CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
 
@@ -4049,6 +4049,20 @@ namespace Glass.Data.DAL
         public int ObterIdNf(GDASession sessao, int idLiberarPedido)
         {
             return ExecuteScalar<int>(sessao, "SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdLiberarPedido = " + idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Retorna todos os ids das liberações de pedido do acerto.
+        /// </summary>
+        public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
+        {
+            var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
+                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                FROM liberarpedido
+                WHERE IdLiberarPedido IN
+                    (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");
+
+            return string.Join(",", idsLiberarPedido?.Where(f => f > 0)?.ToList() ?? new List<int>());
         }
 
         #endregion

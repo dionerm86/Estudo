@@ -242,11 +242,11 @@ namespace Glass.Data.Model
                     refer += string.Format("Pedido(s): {0} ", SinalDAO.Instance.ObtemIdsPedidos(IdSinal.Value));
                 else if (IdAcerto > 0 && Configuracoes.FinanceiroConfig.CaixaDiario.ExibirPedidosDoAcerto)
                 {
-                    var idsPedido = AcertoDAO.Instance.ObterIdsPedido(null, (int)IdAcerto.Value);
+                    var idsPedido = PedidoDAO.Instance.ObterIdsPedidoPeloAcerto(null, (int)IdAcerto.Value);
 
                     if (string.IsNullOrEmpty(idsPedido))
                     {
-                        var idsLiberarPedido = AcertoDAO.Instance.ObterIdsLiberarPedido(null, (int)IdAcerto.Value);
+                        var idsLiberarPedido = LiberarPedidoDAO.Instance.ObterIdsLiberarPedidoPeloAcerto(null, (int)IdAcerto.Value);
 
                         if (!string.IsNullOrEmpty(idsLiberarPedido))
                             idsPedido += LiberarPedidoDAO.Instance.IdsPedidos(null, idsLiberarPedido);

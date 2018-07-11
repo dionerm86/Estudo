@@ -15,7 +15,7 @@ namespace Glass.UI.Web.Utils
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
     
             uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
     
             hdfTipoEntrega.Value = PedidoDAO.Instance.ObtemTipoEntrega(idPedido).ToString();
             hdfIdCliente.Value = idCliente.ToString();

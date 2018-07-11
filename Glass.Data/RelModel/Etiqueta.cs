@@ -301,7 +301,7 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                if (!PedidoDAO.Instance.IsPedidoImportado(IdPedido.StrParaUint()))
+                if (!PedidoDAO.Instance.IsPedidoImportado(null, IdPedido.StrParaUint()))
                     return "";
 
                 var produtoPedidoProducao = ProdutoPedidoProducaoDAO.Instance.GetByEtiqueta(NumEtiqueta);

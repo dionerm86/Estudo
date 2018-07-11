@@ -813,7 +813,7 @@ namespace Glass.Data.Model
             {
                 // Se o produto for composição e tipo subgrupo Vidro Laminado ou a forma de pagamento for Obra.
                 if ((IdProdPedParent.GetValueOrDefault(0) > 0 && ProdutosPedidoDAO.Instance.IsProdLaminado(IdProdPedParent.Value)) ||
-                        PedidoDAO.Instance.GetIdObra(IdPedido) > 0)
+                        PedidoDAO.Instance.GetIdObra(null, IdPedido) > 0)
                     return false;
                 
                 return true;
@@ -828,7 +828,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_maoDeObra == null)
-                    _maoDeObra = PedidoDAO.Instance.IsMaoDeObra(IdPedido);
+                    _maoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, IdPedido);
 
                 return _maoDeObra.GetValueOrDefault();
             }
@@ -847,7 +847,7 @@ namespace Glass.Data.Model
 
                 #endregion
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
                 bool usarQtdeEtiquetas = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) &&
                     (TemLiberacaoEtiqueta || !String.IsNullOrEmpty(NumEtiquetaConsulta)) && QtdeEtiquetas > 0;
@@ -1008,24 +1008,24 @@ namespace Glass.Data.Model
                 if (/*!Liberacao.DadosLiberacao.LiberarProdutosProntos &&*/ _pedidoMaoDeObra && _qtdeAmbiente > 0 && Qtde > 1 && qtdeDisponivelLiberacao > 1)
                     qtdeDisponivelLiberacao = qtdeAmbiente - (_qtdeLiberados > 0 ? (int)_qtdeLiberados : 0);
 
-                uint idCliente = IdCliente > 0 ? IdCliente : PedidoDAO.Instance.ObtemIdCliente(IdPedido);
+                uint idCliente = IdCliente > 0 ? IdCliente : PedidoDAO.Instance.ObtemIdCliente(null, IdPedido);
 
                 // Calcula o total do produto, considerando beneficiamentos, ICMS e IPI. Soma também o desconto por quantidade, 
                 // para que ao aplicar o desconto do pedido na tela de liberação aplique somente uma vez o desconto
                 decimal total = Total + ValorBenef + (!PedidoConfig.RatearDescontoProdutos ? ValorDescontoQtde : 0);
 
                 // Calcula a taxa de fast delivery, caso exista
-                if (PedidoConfig.Pedido_FastDelivery.FastDelivery && PedidoDAO.Instance.IsFastDelivery(IdPedido))
+                if (PedidoConfig.Pedido_FastDelivery.FastDelivery && PedidoDAO.Instance.IsFastDelivery(null, IdPedido))
                     total = Math.Round(total * (decimal)(1 + (PedidoDAO.Instance.ObtemTaxaFastDelivery(null, IdPedido) / 100)), 4);
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
 
                 var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(null, idLoja);
                 var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(idCliente);
-                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(IdPedido);
+                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(null, IdPedido);
                 var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(null, idLoja);
                 var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(null, idCliente);
-                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(IdPedido);
+                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(null, IdPedido);
 
                 total += lojaCalculaIcmsStLiberacao && clienteCalculaIcmsSt && pedidoCalculouIcmsSt ? ValorIcms : 0;
                 total += lojaCalculaIpiLiberacao && clienteCalculaIpi && pedidoCalculouIpi ? ValorIpi : 0;
@@ -1136,7 +1136,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
                 var ignorar = LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
                 return PedidoMaoDeObra && (!Liberacao.DadosLiberacao.LiberarProdutosProntos || ignorar) ? " x " + QtdeAmbiente + " p.v." : String.Empty; }
         }
@@ -1231,7 +1231,7 @@ namespace Glass.Data.Model
             {
                 var subGrupos = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
 
-                return PedidoDAO.Instance.GetTipoPedido(IdPedido) == Pedido.TipoPedidoEnum.Venda &&
+                return PedidoDAO.Instance.GetTipoPedido(null, IdPedido) == Pedido.TipoPedidoEnum.Venda &&
                     subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)IdProd));
             }
         }
@@ -1243,7 +1243,7 @@ namespace Glass.Data.Model
             {
                 var subGrupos = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
 
-                return PedidoDAO.Instance.GetTipoPedido(IdPedido) == Pedido.TipoPedidoEnum.Venda &&
+                return PedidoDAO.Instance.GetTipoPedido(null, IdPedido) == Pedido.TipoPedidoEnum.Venda &&
                     subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)IdProd)) &&
                     ProdutosPedidoDAO.Instance.TemFilhoComposicao((int)IdProdPed) && IdProdPedParent.GetValueOrDefault(0) > 0;
             }
@@ -1256,7 +1256,7 @@ namespace Glass.Data.Model
             {
                 var subGrupos = new List<int>() { (int)TipoSubgrupoProd.VidroDuplo };
 
-                return PedidoDAO.Instance.GetTipoPedido(IdPedido) == Pedido.TipoPedidoEnum.Venda &&
+                return PedidoDAO.Instance.GetTipoPedido(null, IdPedido) == Pedido.TipoPedidoEnum.Venda &&
                     subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)IdProd)) &&
                     ProdutosPedidoDAO.Instance.TemFilhoComposicao((int)IdProdPed);
             }

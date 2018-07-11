@@ -276,7 +276,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     lnkAnexo.OnClientClick = "openWindow(600, 700, '../CadFotos.aspx?id=" + prodPed.IdPedido + "&tipo=pedido'); return false;";
                     lnkAnexo.Visible = true;
     
-                    if (((ProducaoConfig.TelaMarcacaoPeca.ExibirAnexosPedidosMaoDeObraAoConsultarPeca && PedidoDAO.Instance.IsMaoDeObra(prodPed.IdPedido)) ||
+                    if (((ProducaoConfig.TelaMarcacaoPeca.ExibirAnexosPedidosMaoDeObraAoConsultarPeca && PedidoDAO.Instance.IsMaoDeObra(null, prodPed.IdPedido)) ||
                         ProducaoConfig.TelaMarcacaoPeca.SempreExibirAnexosPedidosAoConsultarPeca) && FotosPedidoDAO.Instance.PossuiAnexo(prodPed.IdPedido))
                         ClientScript.RegisterStartupScript(typeof(string), "anexo", "document.getElementById(\"lnkAnexo\").onclick();", true);
     
@@ -527,7 +527,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             try
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(numEtiqueta.Split('-')[0]);
-                return PedidoDAO.Instance.IsProducao(idPedido).ToString().ToLower();
+                return PedidoDAO.Instance.IsProducao(null, idPedido).ToString().ToLower();
             }
             catch
             {
@@ -646,7 +646,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 if (!uint.TryParse(idPedido, out id))
                     throw new Exception("Número do pedido inválido.");
     
-                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && PedidoDAO.Instance.GetTipoPedido(id) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)
+                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && PedidoDAO.Instance.GetTipoPedido(null, id) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)
                     throw new Exception("Apenas pedidos de revenda podem ser utilizados nesta opção.");
     
                 var produtosTemp = id > 0 ? ProdutosPedidoDAO.Instance.GetByPedido(id, true) : new ProdutosPedido[0];

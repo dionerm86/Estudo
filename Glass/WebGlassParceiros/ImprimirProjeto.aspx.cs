@@ -9,7 +9,7 @@ namespace Glass.UI.Web.WebGlassParceiros
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente)
+            if (PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente)
                 Response.Redirect("LstPedidos.aspx");
     
             if (!IsPostBack)

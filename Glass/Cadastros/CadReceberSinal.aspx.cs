@@ -132,7 +132,7 @@ namespace Glass.UI.Web.Cadastros
                 if (!PedidoDAO.Instance.PedidoExists(idPedido))
                     return "false|Não existe pedido com esse número.";
     
-                if (!String.IsNullOrEmpty(idClienteStr) && Glass.Conversoes.StrParaUint(idClienteStr) != PedidoDAO.Instance.ObtemIdCliente(idPedido))
+                if (!String.IsNullOrEmpty(idClienteStr) && Glass.Conversoes.StrParaUint(idClienteStr) != PedidoDAO.Instance.ObtemIdCliente(null, idPedido))
                     return "false|O cliente desse pedido é diferente do cliente do(s) pedido(s) já selecionado(s).";
                 
                 SinalDAO.Instance.ValidaSinalPedidos(idPedidoStr, isSinalStr.ToLower() == "true");
@@ -152,7 +152,7 @@ namespace Glass.UI.Web.Cadastros
             decimal total = 0;
             foreach (string s in idsPedidos.Split(','))
                 if (uint.TryParse(s, out id))
-                    total += PedidoDAO.Instance.ObtemValorEntrada(id);
+                    total += PedidoDAO.Instance.ObtemValorEntrada(null, id);
     
             return total.ToString();
         }
@@ -301,9 +301,9 @@ namespace Glass.UI.Web.Cadastros
                     if (Request["antecipado"] == "1")
                     {
                         uint idPedido = Glass.Conversoes.StrParaUint(((HiddenField)grdPedido.Rows[i].FindControl("hdfIdPedido")).Value);
-                        var recebeuSinal = !PedidoDAO.Instance.TemSinalReceber(idPedido) && PedidoDAO.Instance.ObtemIdSinal(idPedido) > 0;
+                        var recebeuSinal = !PedidoDAO.Instance.TemSinalReceber(idPedido) && PedidoDAO.Instance.ObtemIdSinal(null, idPedido) > 0;
     
-                        totalPagar += totalPedidoPagar - (recebeuSinal ? PedidoDAO.Instance.ObtemValorEntrada(idPedido) : 0);
+                        totalPagar += totalPedidoPagar - (recebeuSinal ? PedidoDAO.Instance.ObtemValorEntrada(null, idPedido) : 0);
                     }
                     else
                         totalPagar += totalPedidoPagar;

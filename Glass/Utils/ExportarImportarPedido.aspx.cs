@@ -53,7 +53,7 @@ namespace Glass.UI.Web.Utils
     
                 uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
                 bool usarEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido);
-                bool isMaoObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+                bool isMaoObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
     
                 bool usarAmbientePedido = PedidoConfig.DadosPedido.AmbientePedido;
                 var produtos = ProdutosPedidoDAO.Instance.GetByPedidoLite(idPedido, usarEspelho);

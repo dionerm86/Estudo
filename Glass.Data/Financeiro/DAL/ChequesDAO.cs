@@ -3542,7 +3542,7 @@ namespace Glass.Data.DAL
                 else if (cheque.IdLiberarPedido != null && LiberarPedidoDAO.Instance.ObtemValorCampo<LiberarPedido.SituacaoLiberarPedido>("situacao",
                     "idLiberarPedido=" + cheque.IdLiberarPedido.Value) != LiberarPedido.SituacaoLiberarPedido.Cancelado)
                     throw new Exception("Cheque utilizado na liberação " + cheque.IdLiberarPedido.Value + ". Cancele a liberação para continuar.");
-                else if (cheque.IdPedido != null && PedidoDAO.Instance.ObtemSituacao(cheque.IdPedido.Value) != Pedido.SituacaoPedido.Cancelado)
+                else if (cheque.IdPedido != null && PedidoDAO.Instance.ObtemSituacao(null, cheque.IdPedido.Value) != Pedido.SituacaoPedido.Cancelado)
                     throw new Exception("Cheque utilizado no pedido " + cheque.IdPedido.Value + ". Cancele o pedido para continuar.");
                 else
                 {
