@@ -206,13 +206,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdPedInterno={0}", idProdPedInterno));
         }
 
+        public float ObterTotMQtde(GDASession session, int idProdPedInterno)
+        {
+            return ObtemValorCampo<float>(session, "COALESCE(TotM, Qtde, 0)", $"IdProdPedInterno={ idProdPedInterno }");
+        }
+
         /// <summary>
         /// Método para estornar os produtos ao estoque em caso de cancelamento de pedido confirmado
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <param name="idProduto"></param>
-        /// <param name="quantidade"></param>
-        /// <returns></returns>
         public int ExtornaProdutosPedidoInterno(uint idLoja, uint idProduto, float quantidade)
         {
             string sql = "UPDATE produto_loja SET QtdEstoque=?qt WHERE IdLoja=?l AND IdProd=?p";

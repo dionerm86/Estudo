@@ -345,6 +345,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdCompra={0}", idProdCompra));
         }
 
+        public decimal ObterTotal(GDASession session, int idProdCompra)
+        {
+            return ObtemValorCampo<decimal>(session, "Total", $"IdProdCompra={ idProdCompra }");
+        }
+
         #endregion
 
         #region Métodos sobrescritos

@@ -2277,7 +2277,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint GetIdProdPedByProdPedEsp(uint idProdPedEsp)
         {
-            object retorno = objPersistence.ExecuteScalar("select idProdPed from produtos_pedido where idProdPedEsp=" + idProdPedEsp);
+            return GetIdProdPedByProdPedEsp(null, idProdPedEsp);
+        }
+
+        /// <summary>
+        /// Retorna o ID do produto do pedido pelos dados do produto pedido espelho.
+        /// </summary>
+        public uint GetIdProdPedByProdPedEsp(GDASession session, uint idProdPedEsp)
+        {
+            object retorno = objPersistence.ExecuteScalar(session, "select idProdPed from produtos_pedido where idProdPedEsp=" + idProdPedEsp);
             return retorno != null && retorno.ToString() != "" ? Glass.Conversoes.StrParaUint(retorno.ToString()) : 0;
         }
 
@@ -3585,6 +3593,11 @@ namespace Glass.Data.DAL
             var retorno = ExecuteMultipleScalar<int>(session, sql);
 
             return retorno != null && retorno.Count > 0 ? retorno : new List<int>();
+        }
+
+        public decimal ObterCustoProd(GDASession session, int idProdPed)
+        {
+            return ObtemValorCampo<decimal>(session, "CustoProd", $"IdProdPed={ idProdPed }");
         }
 
         #endregion

@@ -1128,7 +1128,7 @@ namespace Glass.UI.Web.Utils
                 new GDAParameter("?p", idProd), new GDAParameter("?l", idLoja)).FirstOrDefault();
 
             if (id > 0)
-                MovEstoqueDAO.Instance.AtualizaSaldo(id);
+                MovEstoqueDAO.Instance.AtualizaSaldo(null, id);
         }
 
         public void GeraMovimentacoes(NotaFiscal nf)
@@ -5834,7 +5834,7 @@ namespace Glass.UI.Web.Utils
                     if (nf.EntrouEstoque == false)
                     {
                         foreach (ProdutosNf p in lstProd)
-                            MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(p.IdProd, nf.IdLoja.Value,
+                            MovEstoqueFiscalDAO.Instance.CreditaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
                                 p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
                                 (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p, true), false, false);
 
@@ -5848,7 +5848,7 @@ namespace Glass.UI.Web.Utils
                     {
                         foreach (ProdutosNf p in lstProd)
                         {
-                            MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(p.IdProd, nf.IdLoja.Value,
+                            MovEstoqueFiscalDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value,
                                 p.IdCfop > 0 ? p.IdCfop.Value : nf.IdCfop.Value, p.IdNf, p.IdProdNf,
                                 (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p, true), false);
 
@@ -5858,7 +5858,7 @@ namespace Glass.UI.Web.Utils
                                 bool m2 = GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)TipoCalculoGrupoProd.M2 ||
                                     GrupoProdDAO.Instance.TipoCalculo((int)p.IdGrupoProd, (int)p.IdSubgrupoProd) == (int)TipoCalculoGrupoProd.M2Direto;
 
-                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
+                                MovEstoqueDAO.Instance.BaixaEstoqueNotaFiscal(null, p.IdProd, nf.IdLoja.Value, nf.IdNf, p.IdProdNf,
                                     (decimal)ProdutosNfDAO.Instance.ObtemQtdDanfe(p));
 
                                 objPersistence.ExecuteCommand("Update produtos_nf Set qtdeSaida=" + ProdutosNfDAO.Instance.ObtemQtdDanfe(p).ToString().Replace(",", ".") +
@@ -6140,7 +6140,7 @@ namespace Glass.UI.Web.Utils
             {
                 try
                 {
-                    var saldo = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, (uint)prod.Key, 1, false);
+                    var saldo = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, null, (uint)prod.Key, 1, null, false);
                     var qtdeAlterar = saldo - prod.Value;
 
                     if (qtdeAlterar > 0)
@@ -6562,7 +6562,7 @@ namespace Glass.UI.Web.Utils
                         if (valor == 0)
                             throw new Exception("Não foi informado valor para o produto: " + codInterno);
 
-                        var saldoQtde = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, 0, (uint)idProd, (uint)idLoja, false);
+                        var saldoQtde = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, 0, (uint)idProd, (uint)idLoja, null, false);
 
                         saldoQtde = saldoQtde == 0 ? 1 : saldoQtde;
 

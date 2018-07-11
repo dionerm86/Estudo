@@ -45,8 +45,13 @@ namespace Glass.Data.DAL
 
         public string GetNome(uint idCorAluminio)
         {
+            return GetNome(null, idCorAluminio);
+        }
+
+        public string GetNome(GDASession session, uint idCorAluminio)
+        {
             string sql = "select descricao from cor_aluminio where idCorAluminio=" + idCorAluminio;
-            return objPersistence.ExecuteScalar(sql).ToString();
+            return objPersistence.ExecuteScalar(session, sql).ToString();
         }
 
         public string GetSigla(uint idCorAluminio)

@@ -110,6 +110,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdLiberarPedido={0}", idProdLiberarPedido));
         }
 
+        public int ObterIdProdPed(GDASession session, int idProdLiberarPedido)
+        {
+            return ObtemValorCampo<int>(session, "IdProdPed", $"IdProdLiberarPedido={ idProdLiberarPedido }");
+        }
+
         public uint ObtemIdProdLiberarPedido(uint idLiberarPedido, uint idProdPed)
         {
             return ObtemIdProdLiberarPedido(null, idLiberarPedido, idProdPed);
