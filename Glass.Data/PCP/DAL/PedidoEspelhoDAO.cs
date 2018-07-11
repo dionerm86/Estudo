@@ -1863,9 +1863,9 @@ namespace Glass.Data.DAL
                 idFunc = ObtemIdFuncDesc(idPedido).GetValueOrDefault(idFunc);
 
             string sql = "Select Count(*) from pedido_espelho p Where idPedido=" + idPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)).ToString().Replace(",", ".") + @") Or
+                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @") Or
                 (tipoDesconto=2 And round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2)<=(" +
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)).ToString().Replace(",", ".") + @"/100))
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @"/100))
             )";
 
             return ExecuteScalar<int>(sql) > 0;
@@ -2824,7 +2824,7 @@ namespace Glass.Data.DAL
                     ContasReceber conta = new ContasReceber
                     {
                         IdLoja = UserInfo.GetUserInfo.IdLoja,
-                        IdCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido),
+                        IdCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido),
                         IdPedido = idPedido,
                         IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorExcedente),
                         DataVec = DateTime.Now,

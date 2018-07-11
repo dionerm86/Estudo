@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(idLiberarPedido) && idLiberarPedido != "0")
             {
                 string idsPedidoStr = String.Empty;
-                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido.StrParaUint());
+                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido.StrParaUint());
                 foreach (uint id in idsPedido)
                     idsPedidoStr += id + ",";
 
@@ -1764,7 +1764,7 @@ namespace Glass.Data.DAL
 
             if (idLiberarPedido > 0)
             {
-                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao((uint)idLiberarPedido);
+                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao(null, (uint)idLiberarPedido);
 
                 if (idsPedidoPelaLiberacao?.Count() > 0)
                 {

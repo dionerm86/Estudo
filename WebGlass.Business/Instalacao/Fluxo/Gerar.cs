@@ -9,7 +9,7 @@ namespace WebGlass.Business.Instalacao.Fluxo
 
         public uint GerarInstalacao(uint idPedido, int tipoInstalacao)
         {
-            DateTime dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido).Value;
+            DateTime dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido).Value;
             return InstalacaoDAO.Instance.NovaInstalacao(idPedido, dataEntrega, tipoInstalacao, true);
         }
     }

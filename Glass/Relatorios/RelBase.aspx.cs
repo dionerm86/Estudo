@@ -1345,12 +1345,12 @@ namespace Glass.UI.Web.Relatorios
                             exibirComissao = true;
 
                         // Insere na variável idLojaLogotipo o id da loja do pedido da primeira comissão da lista, para fazer a comparação de lojas
-                        idLojaLogotipo = PedidoDAO.Instance.ObtemIdLoja(lstComissaoDetalhada[0].IdPedido);
+                        idLojaLogotipo = PedidoDAO.Instance.ObtemIdLoja(null, lstComissaoDetalhada[0].IdPedido);
 
                         // Verifica se a loja de todos os pedidos é a mesma, caso seja, então a logomarca a ser buscada será a logomarca desta loja
                         // caso contrário será buscada a logomarca da loja do funcionário que gerou a comissão.
                         foreach (var comissao in lstComissaoDetalhada)
-                            if (idLojaLogotipo != PedidoDAO.Instance.ObtemIdLoja(comissao.IdPedido))
+                            if (idLojaLogotipo != PedidoDAO.Instance.ObtemIdLoja(null, comissao.IdPedido))
                             {
                                 idLojaLogotipo = FuncionarioDAO.Instance.ObtemIdLoja(comissao.IdFunc);
                                 break;
@@ -2039,7 +2039,7 @@ namespace Glass.UI.Web.Relatorios
                         var idLoja = 0;
 
                         if (idPedido > 0)
-                            idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(idPedido);
+                            idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
                         if (idLiberarPedido > 0)
                             idLoja = (int)LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido);
 
@@ -3423,9 +3423,9 @@ namespace Glass.UI.Web.Relatorios
                                 continue;
 
                             var idPedido = Glass.Conversoes.StrParaUint(prodPed[prodPed.Count - 1].IdPedido.ToString());
-                            var codPedCli = PedidoDAO.Instance.ObtemPedCli(idPedido);
-                            var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido);
-                            var idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                            var codPedCli = PedidoDAO.Instance.ObtemPedCli(null, idPedido);
+                            var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
+                            var idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                             var nomeCliente = ClienteDAO.Instance.GetNome(idCliente);
                             var codRota = RotaDAO.Instance.ObtemCodRota(idCliente);
                             var descrRota = RotaDAO.Instance.ObtemDescrRota(idCliente);
@@ -3567,7 +3567,7 @@ namespace Glass.UI.Web.Relatorios
                                         coalesce(pc.produtoBenef, false) And pc.idPedido=" + prodCaixa.IdPedido, "idCompra", ",", null);
                                     prodPedCaixa.IdPedido = prodCaixa.IdPedido;
 
-                                    var idClienteCx = PedidoDAO.Instance.ObtemIdCliente(prodPedCaixa.IdPedido);
+                                    var idClienteCx = PedidoDAO.Instance.ObtemIdCliente(null, prodPedCaixa.IdPedido);
                                     var nomeClienteCx = ClienteDAO.Instance.GetNomeByPedido(prodPedCaixa.IdPedido);
 
                                     prodPedCaixa.IdCliente = idClienteCx;

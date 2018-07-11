@@ -84,12 +84,12 @@ namespace Glass.UI.Web.Utils
     
         protected string GetIdProdPed(object idPedido, object idProdPed)
         {
-            return !PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(idPedido.ToString())) ? idProdPed.ToString() : "";
+            return !PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(idPedido.ToString())) ? idProdPed.ToString() : "";
         }
 
         protected string GetIdAmbientePedido(object idPedido, object idAmbientePedido)
         {
-            return PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(idPedido.ToString())) ? idAmbientePedido.ToString() : "";
+            return PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(idPedido.ToString())) ? idAmbientePedido.ToString() : "";
         }
 
         protected string ObterQtde(object objIdProdPed, object objPecaReposta, object objQtde)

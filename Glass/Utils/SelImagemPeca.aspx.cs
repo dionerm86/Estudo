@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Utils
             {
                 var idPedido = Request["idPedido"].StrParaUint();
 
-                if (PedidoDAO.Instance.IsMaoDeObra(idPedido))
+                if (PedidoDAO.Instance.IsMaoDeObra(null, idPedido))
                 {
                     odsPecas.SelectMethod = "GetMaoDeObra";
                     odsPecas.SelectCountMethod = "GetCountMaoDeObra";
@@ -301,7 +301,7 @@ namespace Glass.UI.Web.Utils
                                 permitirAlterarImagem = permitirAlterarImagem && !EtiquetaArquivoOtimizacaoDAO.Instance.TemArquivoSAG(etiq) &&
                                     !LeituraProducaoDAO.Instance.PassouSetor(etiq, (uint)setor.IdSetor);
                     }
-                    else if (PedidoDAO.Instance.IsMaoDeObra(ppe.IdPedido))
+                    else if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido))
                         permitirAlterarImagem = true;
                     else
                         msgErro = String.IsNullOrEmpty(result) ? "Apenas vidros que serão produzidos<br/ >podem ter imagens anexadas." :

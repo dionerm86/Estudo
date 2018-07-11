@@ -48,7 +48,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var idsPedidos = hdfPedidosAbertos.Value.Split(',');
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(idsPedidos.First().StrParaUint());
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idsPedidos.First().StrParaUint());
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
                 legenda.Visible = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
 
@@ -414,7 +414,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var idsPedidos = hdfPedidosAbertos.Value.Split(',');
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(idsPedidos.First().StrParaUint());
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idsPedidos.First().StrParaUint());
                 ignorar = LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
             }
 
@@ -445,7 +445,7 @@ namespace Glass.UI.Web.Cadastros
             if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(idPedido, true)))
                 return;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
             var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
             if (PCPConfig.UsarConferenciaFluxo && (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && e.Row.FindControl("hdfCorLinha") != null)
@@ -475,7 +475,7 @@ namespace Glass.UI.Web.Cadastros
                 if (idPedido != _idPedido)
                 {
                     _idPedido = idPedido;
-                    _isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+                    _isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
                 }
 
                

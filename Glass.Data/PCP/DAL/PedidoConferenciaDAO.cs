@@ -259,7 +259,7 @@ namespace Glass.Data.DAL
             if (!Config.PossuiPermissao(Config.FuncaoMenuConferencia.ControleConferenciaMedicao))
                 throw new Exception("Apenas funcionário Supervisor Temperado pode finalizar conferências.");
 
-            Pedido.SituacaoPedido situacaoPedido = PedidoDAO.Instance.ObtemSituacao(idPedido);
+            Pedido.SituacaoPedido situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
             int situacaoConf = ObtemValorCampo<int>("situacao", "idPedido=" + idPedido);
 
             try
@@ -274,7 +274,7 @@ namespace Glass.Data.DAL
                     " Where idPedido=" + idPedido);
 
                 // Se a situação do pedido não tiver sido alterada, lança exceção
-                if (PedidoDAO.Instance.ObtemSituacao(idPedido) != Pedido.SituacaoPedido.Conferido)
+                if (PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.Conferido)
                     throw new Exception("Não foi possível atualizar a situação do pedido para conferido.");
             }
             catch (Exception ex)

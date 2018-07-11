@@ -1193,8 +1193,8 @@ namespace Glass.Data.DAL
 
             if (idPedido > 0)
             {
-                uint? idSinal = PedidoDAO.Instance.ObtemIdSinal(idPedido);
-                uint? idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(idPedido);
+                uint? idSinal = PedidoDAO.Instance.ObtemIdSinal(null, idPedido);
+                uint? idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, idPedido);
 
                 var filtro = "";
 

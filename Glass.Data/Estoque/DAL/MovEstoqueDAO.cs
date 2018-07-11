@@ -523,7 +523,7 @@ namespace Glass.Data.DAL
         {
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, idPedido, null, null, null, null, null, null, idProdPed, null, null, null,
                 null, null, null, null, null, null, idVolume, null, idProdImpressaoChapa, false, qtdeBaixa, GetTotalProdPed(idProdPed), alterarMateriaPrima,
-                !PedidoDAO.Instance.IsProducao(idPedido), true, DateTime.Now, true, observacao);
+                !PedidoDAO.Instance.IsProducao(null, idPedido), true, DateTime.Now, true, observacao);
 
             if (PedidoDAO.Instance.GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.BaixaEstoquePedido(sessao, PedidoDAO.Instance.GetIdCliente(sessao, idPedido), idProd, idLoja, idPedido, idProdPed, qtdeBaixa, qtdeBaixaAreaMinima);
@@ -547,8 +547,8 @@ namespace Glass.Data.DAL
                 idProdLiberarPedido, null, null, null, null, null, null, null, null, null, null, false, qtdeBaixa,
                 GetTotalProdLiberarPedido(sessao, idProdLiberarPedido), true, false, true, DateTime.Now, true, null);
 
-            if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
-                MovEstoqueClienteDAO.Instance.BaixaEstoqueLiberacao(sessao, PedidoDAO.Instance.GetIdCliente(idPedido), idProd, idLoja, 
+            if (PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+                MovEstoqueClienteDAO.Instance.BaixaEstoqueLiberacao(sessao, PedidoDAO.Instance.GetIdCliente(null, idPedido), idProd, idLoja, 
                     idLiberarPedido, idPedido, idProdLiberarPedido, qtdeBaixa, qtdeBaixaAreaMinima);
         }
 
@@ -692,7 +692,7 @@ namespace Glass.Data.DAL
                 idProdLiberarPedido, null, null, null, null, null, null, null, null, null, null, false, qtdeEntrada, GetTotalProdLiberarPedido(sessao, idProdLiberarPedido), 
                 true, false, true, DateTime.Now, true, null);
 
-            if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            if (PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 MovEstoqueClienteDAO.Instance.CreditaEstoqueLiberacao(sessao, PedidoDAO.Instance.GetIdCliente(sessao, idPedido), idProd, idLoja, idLiberarPedido, idPedido,
                     idProdLiberarPedido, qtdeEntrada);
         }
@@ -768,7 +768,7 @@ namespace Glass.Data.DAL
             {
                 uint idPedido = ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, idProdPedProducao);
 
-                if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+                if (PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
                 {
                     uint idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido);
                     MovEstoqueClienteDAO.Instance.CreditaEstoqueProducao(sessao, idCliente, idProd, idLoja, idProdPedProducao, qtdeEntrada);

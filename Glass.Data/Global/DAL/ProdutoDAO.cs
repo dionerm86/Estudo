@@ -1454,7 +1454,7 @@ namespace Glass.Data.DAL
             if (idPedido > 0)
             {
                 // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
-                sql = String.Format(sql, " And pl.idLoja=" + PedidoDAO.Instance.ObtemIdLoja((uint)idPedido));
+                sql = String.Format(sql, " And pl.idLoja=" + PedidoDAO.Instance.ObtemIdLoja(null, (uint)idPedido));
 
                 filtroAdicional += " And (p.compra is null or p.compra=0)";
             }
@@ -1481,7 +1481,7 @@ namespace Glass.Data.DAL
             if (sql.Contains("{0}"))
                 sql = string.Format(sql, string.Empty);
 
-            if (idPedido > 0 && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Producao)
+            if (idPedido > 0 && PedidoDAO.Instance.GetTipoPedido(null, (uint)idPedido) == Pedido.TipoPedidoEnum.Producao)
             {
                 var idPedidoRevenda = PedidoDAO.Instance.ObterIdPedidoRevenda(null, idPedido);
 
@@ -3173,7 +3173,7 @@ namespace Glass.Data.DAL
                     percDescontoQtdeAtual = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdPed=" + id);
                     idParent = ProdutosPedidoDAO.Instance.ObtemIdPedido(id);
                     tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idParent);
-                    idCliente = PedidoDAO.Instance.ObtemIdCliente(idParent);
+                    idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idParent);
                     reposicao = PedidoDAO.Instance.IsPedidoReposicao(null, idParent.ToString());
                     break;
 
@@ -3183,7 +3183,7 @@ namespace Glass.Data.DAL
                     percDescontoQtdeAtual = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdPed=" + id);
                     idParent = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(id);
                     tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idParent);
-                    idCliente = PedidoDAO.Instance.ObtemIdCliente(idParent);
+                    idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idParent);
                     reposicao = PedidoDAO.Instance.IsPedidoReposicao(null, idParent.ToString());
                     break;
 

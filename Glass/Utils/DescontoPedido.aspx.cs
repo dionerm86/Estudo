@@ -42,7 +42,7 @@ namespace Glass.UI.Web.Utils
             Page.ClientScript.RegisterOnSubmitStatement(GetType(), "bloquear", "bloquearPagina(); desbloquearPagina(false);");
     
             if (!IsPostBack)
-                divAmbiente.Visible = PedidoConfig.DadosPedido.AmbientePedido || PedidoDAO.Instance.IsMaoDeObra(Request["idPedido"].StrParaUint());
+                divAmbiente.Visible = PedidoConfig.DadosPedido.AmbientePedido || PedidoDAO.Instance.IsMaoDeObra(null, Request["idPedido"].StrParaUint());
     
             Page.PreRender += delegate
             {
@@ -56,7 +56,7 @@ namespace Glass.UI.Web.Utils
         {
             if (!IsPostBack)
             {
-                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(Request["idPedido"].StrParaUint());
+                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(null, Request["idPedido"].StrParaUint());
                 if (tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Obra)
                     ((DropDownList)dtvPedido.FindControl("drpTipoVenda")).Enabled = false;
                 else
@@ -99,17 +99,16 @@ namespace Glass.UI.Web.Utils
                 var idPedido = !string.IsNullOrEmpty(Request["idPedido"])
                     ? (uint?) Request["idPedido"].StrParaUint()
                     : null;
-                var idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(idPedido.Value) : 0;
+                var idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(null, idPedido.Value) : 0;
                 var dataBase = idPedido > 0
-                    ? PedidoDAO.Instance.ObtemDataPedido(idPedido.Value)
+                    ? PedidoDAO.Instance.ObtemDataPedido(null, idPedido.Value)
                     : FuncionarioDAO.Instance.ObtemDataAtraso(UserInfo.GetUserInfo.CodUser);
 
                 DateTime dataMinima, dataFastDelivery;
                 bool desabilitarCampo;
 
                 if (!IsPostBack &&
-                    PedidoDAO.Instance.GetDataEntregaMinima(idCli, idPedido, null, null, dataBase, out dataMinima,
-                        out dataFastDelivery, out desabilitarCampo))
+                    PedidoDAO.Instance.GetDataEntregaMinima(null, idCli, idPedido, null, null, dataBase, out dataMinima, out dataFastDelivery, out desabilitarCampo))
                 {
                     if (dataFastDelivery.Date <= DateTime.Now.Date)
                         dataFastDelivery = DateTime.Now;
@@ -126,7 +125,7 @@ namespace Glass.UI.Web.Utils
 
         protected bool GetBloquearDataEntrega()
         {
-            return PedidoDAO.Instance.BloquearDataEntregaMinima(Request["idPedido"].StrParaUintNullable());
+            return PedidoDAO.Instance.BloquearDataEntregaMinima(null, Request["idPedido"].StrParaUintNullable());
         }
 
         protected void FastDelivery_Load(object sender, EventArgs e)
@@ -280,7 +279,7 @@ namespace Glass.UI.Web.Utils
         public string VerificarDescontoPermitido(string idPedido, string tipoVenda, string tipoEntrega, string idParcela)
         {
             var isAdministrador = UserInfo.GetUserInfo.IsAdministrador;
-            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido.StrParaUint()).GetValueOrDefault() : 0;
+            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido.StrParaUint()).GetValueOrDefault() : 0;
 
             var pedido = new Glass.Data.Model.Pedido();
             pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido.StrParaUint());
@@ -298,11 +297,11 @@ namespace Glass.UI.Web.Utils
         {
             var idPedido = idPedidoStr.StrParaUint();
             var idFuncAtual = idFuncAtualStr.StrParaUint();
-            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
+            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt()) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), idParcela.StrParaInt())).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), idParcela.StrParaInt()) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), idParcela.StrParaInt())).ToString().Replace(",", ".");
         }
 
         [Ajax.AjaxMethod()]
@@ -611,7 +610,7 @@ namespace Glass.UI.Web.Utils
         protected void drpFunc_DataBinding(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"].StrParaUint();
-            var idFunc = PedidoDAO.Instance.ObtemIdFunc(idPedido);
+            var idFunc = PedidoDAO.Instance.ObtemIdFunc(null, idPedido);
     
             // Se o funcionário deste pedido estiver inativo, inclui o mesmo na listagem para não ocorrer erro
             if (FuncionarioDAO.Instance.GetVendedores().All(f => f.IdFunc != idFunc))
@@ -641,12 +640,12 @@ namespace Glass.UI.Web.Utils
             {
                 // Bloqueia o tipo de entrega se houver OC ou volume gerados para o pedido
                 if (((DropDownList)sender).SelectedValue == (DataSources.Instance.GetTipoEntregaEntrega()).ToString())
-                    ((WebControl)sender).Enabled = !PedidoDAO.Instance.TemVolume(idPedido) && !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, idPedido);
+                    ((WebControl)sender).Enabled = !PedidoDAO.Instance.TemVolume(null, idPedido) && !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, idPedido);
             }
 
-            var isPedidoProducao = PedidoDAO.Instance.IsProducao(idPedido);
+            var isPedidoProducao = PedidoDAO.Instance.IsProducao(null, idPedido);
 
-            var situacaoPedidoRevenda = PedidoDAO.Instance.ObtemSituacao((uint)(PedidoDAO.Instance.ObterIdPedidoRevenda(null, (int)idPedido)).Value);
+            var situacaoPedidoRevenda = PedidoDAO.Instance.ObtemSituacao(null, (uint)(PedidoDAO.Instance.ObterIdPedidoRevenda(null, (int)idPedido)).Value);
 
             //se o pedido for de produção e o pedido de revenda estiver liberado, bloqueia o drop de alterar tipo entrega
             if (isPedidoProducao && (situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.Confirmado || situacaoPedidoRevenda == Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente))
@@ -704,7 +703,7 @@ namespace Glass.UI.Web.Utils
         protected void drpFormaPagto_DataBinding(object sender, EventArgs e)
         {
             uint idPedido = Conversoes.StrParaUint(Request["idPedido"]);
-            var idCliente = PedidoDAO.Instance.GetIdCliente(idPedido);
+            var idCliente = PedidoDAO.Instance.GetIdCliente(null, idPedido);
             var idFormaPagto = PedidoDAO.Instance.GetFormaPagto(null, idPedido);
 
             if (idFormaPagto > 0)

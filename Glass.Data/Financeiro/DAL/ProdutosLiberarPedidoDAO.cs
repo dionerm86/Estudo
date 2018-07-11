@@ -136,7 +136,7 @@ namespace Glass.Data.DAL
                 // Alterações neste trecho devem ser feitas também em ProdutosPedidoDAO.GetForRpt(uint, bool, bool)
                 if (plp.Redondo)
                 {
-                    if (!PedidoDAO.Instance.IsMaoDeObra(plp.IdPedido) && !plp.DescrProduto.ToLower().Contains("redondo"))
+                    if (!PedidoDAO.Instance.IsMaoDeObra(null, plp.IdPedido) && !plp.DescrProduto.ToLower().Contains("redondo"))
                         plp.DescrProduto += " REDONDO";
 
                     plp.LarguraProd = 0;
@@ -239,7 +239,7 @@ namespace Glass.Data.DAL
         public decimal GetValorIcmsForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
             var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja((uint)pp.IdLoja);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, (uint)pp.IdLoja);
             var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(session, idLoja);
             var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente);
             var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido);
@@ -260,7 +260,7 @@ namespace Glass.Data.DAL
         public decimal GetValorIpiForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
             var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, pp.IdPedido);
             var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja);
             var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(session, idCliente);
             var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido);

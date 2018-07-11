@@ -71,7 +71,7 @@ namespace Glass.UI.Web.Cadastros
                         {
                             var idPedido = Conversoes.StrParaUint(s);
 
-                            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+                            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
                             if (!Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.GerarConferenciaPedido))
                             {
                                 if (Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) && !isMaoDeObra)

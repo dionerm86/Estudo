@@ -280,7 +280,7 @@ namespace Glass.Data.Model
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
                 // QtdeProd e o QtdeTotal já considerar QtdeAmbiente * QtdeProd, a menos que a liberação seja por produtos prontos,
                 // onde deverá utilizar somente QtdeAmbiente (Cálculo baseado na propriedade QtdeDisponivelLiberacao de ProdutosPedido)
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
                 var NaoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
                 decimal divisor = PedidoMaoDeObra && QtdeAmbiente > 0 ?
@@ -305,7 +305,7 @@ namespace Glass.Data.Model
                 // QtdeAmbiente * QtdeProd, devido ao fato do ValorProd ser calculado já considerando o valor unitário do produto * QtdeAmbiente e 
                 // QtdeProd e o QtdeTotal já considerar QtdeAmbiente * QtdeProd, a menos que a liberação seja por produtos prontos,
                 // onde deverá utilizar somente QtdeAmbiente (Cálculo baseado na propriedade QtdeDisponivelLiberacao de ProdutosPedido)
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(IdPedido);
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, IdPedido);
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
                 decimal divisor = PedidoMaoDeObra && QtdeAmbiente > 0 ?

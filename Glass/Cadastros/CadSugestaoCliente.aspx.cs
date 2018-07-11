@@ -30,7 +30,7 @@ namespace Glass.UI.Web.Cadastros
             }
             else if (!string.IsNullOrEmpty(Request["idPedido"]))
             {
-                var idCliente = Data.DAL.PedidoDAO.Instance.GetIdCliente(Request["idPedido"].StrParaUint());
+                var idCliente = Data.DAL.PedidoDAO.Instance.GetIdCliente(null, Request["idPedido"].StrParaUint());
                 lblCliente.Text = Data.DAL.ClienteDAO.Instance.GetNome(idCliente);
                 hdfCliente.Value = Request["idCliente"];
 
@@ -84,7 +84,7 @@ namespace Glass.UI.Web.Cadastros
             else if (!string.IsNullOrEmpty(Request["idPedido"]))
             {
                 idPedido = Request["idPedido"].StrParaInt();
-                idCli = (int)Data.DAL.PedidoDAO.Instance.GetIdCliente(Request["idPedido"].StrParaUint());
+                idCli = (int)Data.DAL.PedidoDAO.Instance.GetIdCliente(null, Request["idPedido"].StrParaUint());
             }
             else if (!string.IsNullOrEmpty(Request["idOrcamento"]))
             {

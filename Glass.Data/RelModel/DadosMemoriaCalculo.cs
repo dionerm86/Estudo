@@ -197,7 +197,7 @@ namespace Glass.Data.RelModel
             ProdutosPedido pai = ProdutosPedidoDAO.Instance.GetElement(ppb.IdProdPed);
             BenefConfigPreco bcp = BenefConfigPrecoDAO.Instance.GetByIdBenefConfig(null, ppb.IdBenefConfig, pai.IdProd);
             int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(pai.IdPedido);
-            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(pai.IdPedido);
+            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, pai.IdPedido);
 
             Codigo = pai.CodInterno;
             Ambiente = !maoDeObra ? pai.Ambiente : AmbientePedidoDAO.Instance.ObtemPecaVidroQtd(pai.IdAmbientePedido.Value);
@@ -205,7 +205,7 @@ namespace Glass.Data.RelModel
             _descricao = " " + bc.DescricaoCompleta.Trim();
             Redondo = false;
             Qtde = ppb.Qtd;
-            ValorTabela = BenefConfigDAO.Instance.GetValorTabela(bcp, (int?)tipoEntrega, PedidoDAO.Instance.ObtemIdCliente(pai.IdPedido));
+            ValorTabela = BenefConfigDAO.Instance.GetValorTabela(bcp, (int?)tipoEntrega, PedidoDAO.Instance.ObtemIdCliente(null, pai.IdPedido));
             Custo = bcp.Custo;
             CustoTotal = ppb.Custo;
             Valor = ppb.ValorUnit;
@@ -266,7 +266,7 @@ namespace Glass.Data.RelModel
             ProdutosPedidoEspelho pai = ProdutosPedidoEspelhoDAO.Instance.GetElement(ppeb.IdProdPed, false);
             BenefConfigPreco bcp = BenefConfigPrecoDAO.Instance.GetByIdBenefConfig(null, ppeb.IdBenefConfig, pai.IdProd);
             int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(pai.IdPedido);
-            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(pai.IdPedido);
+            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, pai.IdPedido);
 
             Codigo = pai.CodInterno;
             Ambiente = !maoDeObra ? pai.AmbientePedido : AmbientePedidoEspelhoDAO.Instance.ObtemPecaVidroQtd(pai.IdAmbientePedido.Value);
@@ -274,7 +274,7 @@ namespace Glass.Data.RelModel
             _descricao = " " + bc.DescricaoCompleta.Trim();
             Redondo = false;
             Qtde = ppeb.Qtd;
-            ValorTabela = BenefConfigDAO.Instance.GetValorTabela(bcp, (int?)tipoEntrega, PedidoDAO.Instance.ObtemIdCliente(pai.IdPedido));
+            ValorTabela = BenefConfigDAO.Instance.GetValorTabela(bcp, (int?)tipoEntrega, PedidoDAO.Instance.ObtemIdCliente(null, pai.IdPedido));
             Custo = bcp.Custo;
             CustoTotal = ppeb.Custo;
             Valor = ppeb.ValorUnit;

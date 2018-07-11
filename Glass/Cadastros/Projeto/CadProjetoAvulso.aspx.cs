@@ -47,8 +47,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (idPedido > 0)
                 {
-                    hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(idPedido)).ToString();
-                    hdfTipoVenda.Value = ((int)PedidoDAO.Instance.GetTipoVenda(idPedido)).ToString();
+                    hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(null, idPedido)).ToString();
+                    hdfTipoVenda.Value = ((int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido)).ToString();
                 }
 
                 if (String.IsNullOrEmpty(hdfIdAmbientePedido.Value))
@@ -329,7 +329,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             // Se o campo ambiente estiver vazio, busca o ped cli do pedido, se a empresa estiver configurada para isso
             if (txtAmbiente.Text == String.Empty && ProjetoConfig.BuscarPedCliAoInserirProjeto &&
                 (!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) || !String.IsNullOrEmpty(hdfIdPedidoEspelho.Value)))
-                txtAmbiente.Text = PedidoDAO.Instance.ObtemPedCli(Glass.Conversoes.StrParaUint(!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) ?
+                txtAmbiente.Text = PedidoDAO.Instance.ObtemPedCli(null, Glass.Conversoes.StrParaUint(!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) ?
                     hdfIdPedidoOriginal.Value : hdfIdPedidoEspelho.Value));
 
             // Define se o projeto está sendo visualizado após confirmado
@@ -423,7 +423,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         [Ajax.AjaxMethod]
         public string IsProdutoObra(string idPedido, string codInterno)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno);
@@ -439,7 +439,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         [Ajax.AjaxMethod]
         public string GetTamanhoMaximoProduto(string idPedido, string codInterno, string totM2Produto)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
@@ -516,7 +516,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (idPedido > 0)
                 {
-                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedido.Value);
+                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido.Value);
                     if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Ativo && situacao != Glass.Data.Model.Pedido.SituacaoPedido.AtivoConferencia &&
                         situacao != Glass.Data.Model.Pedido.SituacaoPedido.EmConferencia)
                         return "Erro;O pedido precisa estar aberto para incluir novos projetos no mesmo.";
@@ -623,8 +623,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (!String.IsNullOrEmpty(idPedido) && idPedido != "0")
                 {
-                    pedidoReposicao = PedidoDAO.Instance.GetTipoVenda(Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
-                    isPedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(Glass.Conversoes.StrParaUint(idPedido)) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+                    pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
+                    isPedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(null, Glass.Conversoes.StrParaUint(idPedido)) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
                 }
 
                 if (isPedidoMaoObraEspecial)
@@ -878,19 +878,19 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (!String.IsNullOrEmpty(Request["IdPedido"]))
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
 
-                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(idPedido) : null;
+                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(null, idPedido) : null;
             }
 
             if (!String.IsNullOrEmpty(Request["IdPedidoEspelho"]))
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedidoEspelho"]);
-                idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
 
-                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(idPedido) : null;
+                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(null, idPedido) : null;
             }
 
             // Busca o grupo deste modelo
@@ -1528,7 +1528,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
     
             if (idPedido > 0)
             {
-                benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
+                benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
                     TipoBenef.MaoDeObraEspecial : TipoBenef.Venda;
             }
         }

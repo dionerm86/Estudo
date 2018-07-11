@@ -684,7 +684,7 @@ namespace Glass.Data.DAL
 
                     /* Chamado 47326. */
                     if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda &&
-                        PedidoDAO.Instance.ObtemSituacao(idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                        PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
                         PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsPedidos, out idsPedidosErro, true, false);
                 }
                 catch (ValidacaoPedidoFinanceiroException f)
