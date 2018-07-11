@@ -2365,7 +2365,8 @@ namespace Glass.Data.DAL
                 // Se a empresa deve salvar o arquivo de marcação das peças então o método devido é chamado.
                 if (PCPConfig.EmpresaGeraArquivoFml)
                     GerarArquivoFmlPeloPedido(session, produtosPedidoEspelho.ToArray(), true);
-                else if (PCPConfig.EmpresaGeraArquivoDxf)
+
+                if (PCPConfig.EmpresaGeraArquivoDxf)
                     GerarArquivoDxfPeloPedido(session, produtosPedidoEspelho.ToArray());
 
                 if (PCPConfig.EmpresaGeraArquivoSGlass)

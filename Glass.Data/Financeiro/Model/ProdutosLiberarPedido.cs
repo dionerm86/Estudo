@@ -255,8 +255,8 @@ namespace Glass.Data.Model
                 // Soma o desconto por quantidade pois na impressão da liberação o desconto será deduzido do total do pedido,
                 // se não somar o desconto por qtd, ficará como se o relatório estivesse aplicando o desconto 2 vezes
                 var valorProd = TotalProd + ValorBenefProd + ValorDescontoQtde;
-                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(IdPedido);
-                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(IdPedido);
+                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(null, IdPedido);
+                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(null, IdPedido);
 
                 if (pedidoCalculouIcmsSt)
                 {
@@ -480,7 +480,7 @@ namespace Glass.Data.Model
             {   
                 // Subtrai o desconto do pedido no cálculo do total do produto, para que o resumo da liberação fique correto
                 decimal total = ((TotalProd + ValorBenefProd) / (decimal)(QtdeProd > 0 ? QtdeProd : 1)) * (decimal)QtdeTotal;
-                decimal percDescPed = (decimal)PedidoDAO.Instance.GetPercDesc(IdPedido);
+                decimal percDescPed = (decimal)PedidoDAO.Instance.GetPercDesc(null, IdPedido);
 
                 return total - (total * percDescPed);
             }

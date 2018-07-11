@@ -1710,7 +1710,7 @@ namespace Glass.Data.DAL
             var idPedido = (int)ObtemIdPedido(idProdPed);
 
             if (!string.IsNullOrWhiteSpace(metodo)
-                && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
+                && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
                 var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
                 var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
@@ -1723,7 +1723,7 @@ namespace Glass.Data.DAL
                 logData.Campo = $"MarcarSaida - { metodo }";
                 logData.DataAlt = DateTime.Now;
                 logData.IdFuncAlt = (uint)FuncionarioDAO.Instance.GetAdministradores(true).Where(f => f.AdminSync == true).Select(f => f.IdFunc).FirstOrDefault();
-                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>("Qtde", $"IdProdPed = { idProdPed }") }/{ ObtemValorCampo<string>("QtdSaida", $"IdProdPed = { idProdPed }") })";
+                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = { idProdPed }") }/{ ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = { idProdPed }") })";
                 logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdSaida.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
                 logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
 
@@ -1758,7 +1758,7 @@ namespace Glass.Data.DAL
             var idPedido = (int)ObtemIdPedido(idProdPed);
 
             if (!string.IsNullOrWhiteSpace(metodo)
-                && PedidoDAO.Instance.GetTipoPedido((uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
+                && PedidoDAO.Instance.GetTipoPedido(sessao, (uint)idPedido) == Pedido.TipoPedidoEnum.Revenda)
             {
                 var idProd = ObtemValorCampo<uint>(sessao, "idProd", $"idProdPed = { idProdPed }");
                 var codInterno = ProdutoDAO.Instance.ObtemValorCampo<string>(sessao, "CodInterno", $"idProd = { idProd }");
@@ -1771,7 +1771,7 @@ namespace Glass.Data.DAL
                 logData.Campo = $"EstornoSaida - { metodo }";
                 logData.DataAlt = DateTime.Now;
                 logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
-                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ObtemValorCampo<string>("Qtde", $"IdProdPed = { idProdPed }")}/{ ObtemValorCampo<string>("QtdSaida", $"IdProdPed = { idProdPed }") })";
+                logData.ValorAnterior = $"{ codInterno } - { descricaoProd } ({ ObtemValorCampo<string>(sessao, "Qtde", $"IdProdPed = { idProdPed }")}/{ ObtemValorCampo<string>(sessao, "QtdSaida", $"IdProdPed = { idProdPed }") })";
                 logData.ValorAtual = $"{ numEtiqueta ?? "Sem Etiqueta" } \nQtd. Estorno ({ qtdEstorno.ToString() }) \nFuncionário ({ (UserInfo.GetUserInfo != null ? $"{ UserInfo.GetUserInfo.CodUser } - { UserInfo.GetUserInfo.Nome })" : string.Empty)}";
                 logData.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idPedido);
 

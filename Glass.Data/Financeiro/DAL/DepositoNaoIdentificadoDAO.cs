@@ -298,10 +298,15 @@ namespace Glass.Data.DAL
         {
             return (DepositoNaoIdentificado.SituacaoEnum)ObtemValorCampo<int>(session, "situacao", "idDepositoNaoIdentificado=" + idDeposito);
         }
- 
+
         public int ObtemIdContaBanco(GDASession session, int idDeposito)
         {
             return ObtemValorCampo<int>(session, "IdContaBanco", "IdDepositoNaoIdentificado=" + idDeposito);
+        }
+
+        public int? ObterIdContaBancoPeloAcertoValor(GDASession session, int idAcerto, decimal valor)
+        {
+            return ExecuteScalar<int?>(session, $"SELECT IdContaBanco FROM deposito_nao_identificado WHERE IdAcerto={ idAcerto } AND ValorMov=?valor;", new GDAParameter("?valor", valor));
         }
 
         #endregion

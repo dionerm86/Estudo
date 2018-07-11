@@ -121,15 +121,17 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Indica que o SMS foi enviado.
         /// </summary>
-        public void IndicaEnvio(uint idSms, int result, string resultDescr)
+        public void IndicaEnvio(bool enviada, uint idSms, int result, string resultDescr)
         {
-            // Salva a data de envio
-            string sql = "update fila_sms set dataEnvio=now() where idSms=" + idSms;
-            objPersistence.ExecuteCommand(sql);
+            var sql = "update fila_sms set descricaoResultado=?descr, codResultado=" + result;
 
-            // Salva o retorno do método
-            sql = "update fila_sms set descricaoResultado=?descr, codResultado=" + result + " where idSms=" + idSms;
-            resultDescr = !String.IsNullOrEmpty(resultDescr) && resultDescr.Length > 100 ? resultDescr.Substring(0, 100) : resultDescr;
+            if (enviada)
+                sql += ", dataEnvio=now()";
+
+            sql += " where idSms=" + idSms;
+
+            resultDescr = resultDescr?.Length > 100 ? resultDescr.Substring(0, 100) : resultDescr;
+
             objPersistence.ExecuteCommand(sql, new GDAParameter("?descr", resultDescr));
         }
 

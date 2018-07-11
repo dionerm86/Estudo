@@ -53,7 +53,7 @@ namespace Glass.UI.Web.Cadastros
                 if (Cadastrar())
                     hdfTotal.Value = ChequesDAO.Instance.GetTotalInAcerto(Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString().Replace(",", ".");
     
-                hdfIdCliente.Value = AcertoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString();
+                hdfIdCliente.Value = AcertoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString();
     
                 if (!string.IsNullOrEmpty(Request["controlForma"]) && Request["controlForma"] != "9")
                     ((TextBox)dtvCheque.FindControl("txtTitular")).Text = ClienteDAO.Instance.GetNomeByAcerto(Glass.Conversoes.StrParaUint(Request["idAcerto"]));

@@ -1022,10 +1022,10 @@ namespace Glass.Data.Model
 
                 var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(null, idLoja);
                 var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(idCliente);
-                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(IdPedido);
+                var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(null, IdPedido);
                 var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(null, idLoja);
                 var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(null, idCliente);
-                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(IdPedido);
+                var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(null, IdPedido);
 
                 total += lojaCalculaIcmsStLiberacao && clienteCalculaIcmsSt && pedidoCalculouIcmsSt ? ValorIcms : 0;
                 total += lojaCalculaIpiLiberacao && clienteCalculaIpi && pedidoCalculouIpi ? ValorIpi : 0;

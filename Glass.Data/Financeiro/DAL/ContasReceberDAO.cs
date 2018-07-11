@@ -5337,11 +5337,11 @@ namespace Glass.Data.DAL
                 }
                 else if (contaReceber.IdAcerto > 0)
                 {
-                    var idsPedido = AcertoDAO.Instance.ObterIdsPedido(null, (int)contaReceber.IdAcerto.Value);
+                    var idsPedido = PedidoDAO.Instance.ObterIdsPedidoPeloAcerto(null, (int)contaReceber.IdAcerto.Value);
 
                     if (string.IsNullOrEmpty(idsPedido))
                     {
-                        var idsLiberarPedido = AcertoDAO.Instance.ObterIdsLiberarPedido(null, (int)contaReceber.IdAcerto.Value);
+                        var idsLiberarPedido = LiberarPedidoDAO.Instance.ObterIdsLiberarPedidoPeloAcerto(null, (int)contaReceber.IdAcerto.Value);
 
                         if (!string.IsNullOrEmpty(idsLiberarPedido))
                         {
@@ -5929,6 +5929,16 @@ namespace Glass.Data.DAL
         public uint ObtemIdLoja(GDASession session, uint idContaR)
         {
             return ObtemValorCampo<uint>(session, "idLoja", "idContaR=" + idContaR);
+        }
+
+        /// <summary>
+        /// Busca os IDs das contas recebidas no acerto.
+        /// </summary>
+        public string ObterIdsContasRPeloAcerto(GDASession sessao, int idAcerto)
+        {
+            var idsContaR = ExecuteMultipleScalar<int>(sessao, $"SELECT DISTINCT(IdContaR) FROM contas_receber WHERE IdAcerto={ idAcerto }");
+
+            return string.Join(",", idsContaR?.Where(f => f > 0)?.ToList() ?? new List<int>());
         }
 
         #endregion

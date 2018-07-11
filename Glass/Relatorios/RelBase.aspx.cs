@@ -978,7 +978,7 @@ namespace Glass.UI.Web.Relatorios
                 case "Acerto":
                     {
                         report.ReportPath = "Relatorios/rptAcerto.rdlc";
-                        var acerto = AcertoDAO.Instance.GetAcertoDetails(Glass.Conversoes.StrParaUint(Request["idAcerto"]));
+                        var acerto = AcertoDAO.Instance.GetAcertoDetails(null, Glass.Conversoes.StrParaUint(Request["idAcerto"]));
                         var lstContasReceber = ContasReceberDAO.Instance.GetByAcerto(null, acerto.IdAcerto, false);
                         var lstContasReceberReneg = ContasReceberDAO.Instance.GetRenegByAcerto(acerto.IdAcerto, false);
                         var lstCheque = ChequesDAO.Instance.GetByAcerto(acerto.IdAcerto);

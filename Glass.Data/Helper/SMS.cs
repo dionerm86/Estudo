@@ -66,9 +66,9 @@ namespace Glass.Data.Helper
                 nomeLoja = BibliotecaTexto.GetTwoFirstNames(ClienteDAO.Instance.GetNome(session, idCli));
                 totalPedido = PedidoDAO.Instance.ObtemValorCampo<decimal>(session, "TotalPedidoExterno", "idPedido=" + idPedido);
             }
-            
+
             var mensagem = TextoSMSPedidoPronto((int)idPedido, codCliente, ref nomeLoja, totalPedido, exibirM2, (decimal)totM, peso);
-            
+
             EnviaSMSAsync(session, idPedido.ToString() + idCli, nomeLoja, celCliente, mensagem, false);
         }
 
@@ -101,7 +101,7 @@ namespace Glass.Data.Helper
                     lstParam.ToArray());
 
             double totMPedidos = PedidoDAO.Instance.ExecuteScalar<double>(string.Format(sql, "totM", ""), lstParam.ToArray());
-            
+
             var idsSetorPronto = SetorDAO.Instance.GetValoresCampo("Select idSetor From setor Where tipo=" + (int)TipoSetor.Pronto, "idSetor");
 
             // Cálculo de peças prontas baseadas em roteiro
@@ -212,7 +212,7 @@ namespace Glass.Data.Helper
                                 celCliente = celCliente.Replace(" ", "");
 
                             celCliente = celCliente.Replace("(", "").Replace(")", "").Replace("-", "");
-                            
+
                             var id = DateTime.Now.ToString("ddMMyyhhmmss" + objCliente.IdCli);
 
                             EnviaSMSAsync(id, remetente, celCliente, mensagem, false);
@@ -254,32 +254,15 @@ namespace Glass.Data.Helper
 
         internal static SMSSend.responseSendMessage EnviaSMSOld(string codMensagem, string remetente, string destinatario, string mensagem)
         {
-            SMSManager.WSManager wsManager = new Glass.Data.SMSManager.WSManager();
-            SMSManager.wsToken wsToken = wsManager.getAuthentication(System.Configuration.ConfigurationManager.AppSettings["sistema"].ToLower(), "webglass20");
+            var login = System.Configuration.ConfigurationManager.AppSettings["sistema"].ToLower();
+            var pass = "webglass20";
 
-            SMSSend.WSSend wsSend = new Glass.Data.SMSSend.WSSend();
+            var wsManager = new SMSManager.WSManager();
+            var wsSend = new SMSSend.WSSend();
+
+            var wsToken = wsManager.getAuthentication(login, pass);
+
             return wsSend.sendMessage(wsToken.token, remetente, "55" + destinatario, codMensagem, null, 0, 23, null, mensagem);
-        }
-
-        public static string EnviaSMS(string codMensagem, string remetente, string destinatario, string mensagem)
-        {
-            var conta = System.Configuration.ConfigurationManager.AppSettings["ContaSMS"];
-            var senha = System.Configuration.ConfigurationManager.AppSettings["SenhaSMS"];
-
-            var sms = new SimpleSending(conta, senha);
-
-            SimpleMessage message = new SimpleMessage
-            {
-                From = remetente,
-                To = string.Format("55{0}", destinatario),
-                Message = mensagem,
-                Id = codMensagem,
-                Callback = HumanAPIClient.Enum.CallbackTypeEnum.FULL
-            };
-
-            var retorno = String.Join("\n", sms.send(message));
-
-            return retorno;
         }
 
         public static void EnviaSmsAdministradorPrecoProdutoAlterado(Produto prodOld, Produto prodNew)
@@ -346,7 +329,7 @@ namespace Glass.Data.Helper
                 nomeLoja = nomeLoja.Substring(0, 12);
 
             mensagem = string.Format(Geral.TextoSMSPedidoPronto, codCliente, idPedido, totalPedido.ToString("C"), (exibirM2 ? string.Format(", {0}m2", totalM2) : string.Empty), peso);
-            
+
             if (mensagem.Length > 137)
                 mensagem = mensagem.Substring(0, 137);
 

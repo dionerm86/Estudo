@@ -444,7 +444,7 @@ namespace Glass.UI.Web.Listas
         [Ajax.AjaxMethod()]
         public string PodeImprimirPedidoImportado(string idPedido)
         {
-            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(idPedido.StrParaUint()))
+            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(null, idPedido.StrParaUint()))
                 return PedidoEspelhoDAO.Instance.IsPedidoConferido(idPedido.StrParaUint()).ToString();
 
             return "true";

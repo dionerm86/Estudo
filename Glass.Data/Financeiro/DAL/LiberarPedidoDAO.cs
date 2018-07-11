@@ -4051,6 +4051,20 @@ namespace Glass.Data.DAL
             return ExecuteScalar<int>(sessao, "SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdLiberarPedido = " + idLiberarPedido);
         }
 
+        /// <summary>
+        /// Retorna todos os ids das liberações de pedido do acerto.
+        /// </summary>
+        public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
+        {
+            var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
+                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                FROM liberarpedido
+                WHERE IdLiberarPedido IN
+                    (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");
+
+            return string.Join(",", idsLiberarPedido?.Where(f => f > 0)?.ToList() ?? new List<int>());
+        }
+
         #endregion
 
         #region Recupera descontos de liberações
