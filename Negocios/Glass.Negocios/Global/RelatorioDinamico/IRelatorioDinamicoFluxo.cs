@@ -12,7 +12,7 @@ namespace Glass.Global.Negocios
         /// Cria uma nova instancia do relatório dinâmico.
         /// </summary>
         /// <returns></returns>
-        Entidades.RelatorioDinamico CriarRelatorioDinamico();
+        Entidades.RelatorioDinamico CriarRelatorioDinamico(); 
 
         /// <summary>
         /// Pesquisa os relatórios dinâmicos 
