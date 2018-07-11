@@ -4809,21 +4809,18 @@ namespace Glass.Data.DAL
             // Marca saída do estoque em caso de expedição
             if (setor.Tipo == TipoSetor.Entregue || setor.Tipo == TipoSetor.ExpCarregamento)
             {
-                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(sessao, prodPedEsp.IdProdPed, false);
-                var numEtiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
-
                 if ((idPedidoNovo > 0 && Liberacao.Estoque.SaidaEstoqueBoxLiberar) || cancTrocaDev)
-                {
-                    if (cancTrocaDev)
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
                     return;
-                }
+
+                var prodPed = ProdutosPedidoDAO.Instance.GetByProdPedEsp(sessao, prodPedEsp.IdProdPed, false);
 
                 if (prodPed != null)
                 {
                     MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, idLojaConsiderar, idProdPedProducao,
                         (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0),
                         !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int)prodPed.IdSubgrupoProd), true, true);
+
+                    var numEtiqueta = ObtemEtiqueta(sessao, idProdPedProducao);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de PRODUÇÃO
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
@@ -6434,15 +6431,10 @@ namespace Glass.Data.DAL
                 // Se estiver saindo do setor entregue, é necessário estornar o estoque do item.
                 if (setor.Tipo == TipoSetor.Entregue || setor.Tipo == TipoSetor.ExpCarregamento)
                 {
+                    if ((idPedidoExpedicao > 0 && Liberacao.Estoque.SaidaEstoqueBoxLiberar) || trocaDevolucao)
+                        return;
 
                     ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, ObtemIdProdPed(sessao, idProdPedProducao), true);
-
-                    if ((idPedidoExpedicao > 0 && Liberacao.Estoque.SaidaEstoqueBoxLiberar) || trocaDevolucao)
-                    {
-                        if (trocaDevolucao)
-                            EstornarSaidaRevenda(sessao, idPedidoExpedicao, prodPedEsp, ObtemEtiqueta(idProdPedProducao));
-                        return;
-                    }
 
                     // Se o produto der saída ao liberar/confirmar o pedido, não volta para o estoque.
                     //if (!ProdutoSaiuEstoque(idLiberacao.GetValueOrDefault(0), idPedido, prodPedEsp.IdProdPed))
