@@ -1099,13 +1099,14 @@ namespace Glass.Data.Helper
                                 #endregion
 
                                 foreach (var a in itens[i].ArquivoMesaCorte)
-                                    foreach (var arquivo in a.Arquivo)
-                                        foreach (var id in dados[i].produtosPedido[(uint)a.IdProdPed])
-                                        {
-                                            var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
-                                            if (idProdPedEsp > 0)
-                                                ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, a);
-                                        }
+                                {
+                                    foreach (var id in dados[i].produtosPedido[(uint)a.IdProdPed])
+                                    {
+                                        var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
+                                        if (idProdPedEsp > 0)
+                                            ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, a);
+                                    }
+                                }
 
                                 #endregion
 
