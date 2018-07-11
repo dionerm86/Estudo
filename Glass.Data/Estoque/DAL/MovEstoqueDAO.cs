@@ -536,7 +536,7 @@ namespace Glass.Data.DAL
             MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, idPedido, null, idLiberarPedido, null, null, null, null, null, null, idProdLiberarPedido, null, null, null, null,
                 null, null, null, null, null, null, false, qtdeEntrada, totalProdLiberarPedido, true, false, true, DateTime.Now, true, null, null);
 
-            if (PedidoDAO.Instance.GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
+            if (PedidoDAO.Instance.GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial)
             {
                 var idClientePedido = PedidoDAO.Instance.GetIdCliente(sessao, idPedido);
 

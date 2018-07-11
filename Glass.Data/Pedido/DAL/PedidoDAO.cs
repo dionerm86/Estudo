@@ -8419,15 +8419,11 @@ namespace Glass.Data.DAL
                                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
-                                MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja,
-                                    idPedido, p.IdProdPed,
-                                    (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0),
-                                    false, null);
+                                MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0), false, null, null, null);
 
-                                MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja,
-                                    idPedido, p.IdProdPed,
-                                    (decimal)(m2 ? m2Saida : qtdBaixa), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
-                                    tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
+                                MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa),
+                                    (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
+                                    tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null, null);
                             }
                         }
                         else
