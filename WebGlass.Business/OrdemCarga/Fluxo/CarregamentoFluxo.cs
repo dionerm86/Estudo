@@ -197,6 +197,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             // Verifica se a etiqueta é uma etiqueta de pedido
             if (etiqueta.ToUpper().Substring(0, 1).Equals("P"))
             {
+                if (ProducaoConfig.TelaMarcacaoPeca.ImpedirLeituraTodasPecasPedido)
+                    throw new Exception("Não é permitido marcar leitura em todas as peças do pedido de uma só vez.");
+
                 ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref etiqueta);
 
                 var etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByPedido(null, etiqueta.Substring(1).StrParaUint());
