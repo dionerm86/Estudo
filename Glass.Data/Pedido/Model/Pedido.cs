@@ -1153,7 +1153,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalSemDesconto
         {
-            get { return PedidoDAO.Instance.GetTotalSemDesconto(IdPedido, Total); }
+            get { return PedidoDAO.Instance.GetTotalSemDesconto(null, IdPedido, Total); }
         }
 
         [XmlIgnore]
@@ -1174,7 +1174,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalRealSemDesconto
         {
-            get { return PedidoDAO.Instance.GetTotalSemDesconto(IdPedido, TotalReal); }
+            get { return PedidoDAO.Instance.GetTotalSemDesconto(null, IdPedido, TotalReal); }
         }
 
         [XmlIgnore]
@@ -1209,7 +1209,7 @@ namespace Glass.Data.Model
                 if (_totalParaLiberacao > 0)
                     return _totalParaLiberacao;
 
-                _totalParaLiberacao = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                _totalParaLiberacao = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 return _totalParaLiberacao;
             }
@@ -1221,7 +1221,7 @@ namespace Glass.Data.Model
         {
             get 
             {
-                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 if (IdPagamentoAntecipado > 0)
                     total -= ValorPagamentoAntecipado;
@@ -1246,7 +1246,7 @@ namespace Glass.Data.Model
 
                 var valorNegativoLiberar = new System.Text.StringBuilder("Valor Negativo para liberar. ");
 
-                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 if (PCPConfig.UsarConferenciaFluxo)
                     valorNegativoLiberar.Append("Sistema está configurado para considerar o valor confirmado para liberação. ");

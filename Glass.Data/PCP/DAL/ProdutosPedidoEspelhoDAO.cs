@@ -3134,7 +3134,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoFml)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3195,7 +3195,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoDxf)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
