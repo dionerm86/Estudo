@@ -330,8 +330,12 @@ namespace Glass.UI.Web.Cadastros
                 switch (Request["tipo"])
                 {
                     case "pedido":
+
+                        if (PedidoEspelhoDAO.Instance.IsPedidoImpresso(null, foto.IdParent))
+                            return ("Não é possível inserir imagem em pedidos que já possuam etiqueta(s) impressa(s).");
+
                         // Se o tipo for pedido e o nome do arquivo não for o id de um pedido válido então o arquivo não é anexado.
-                        if (!PedidoDAO.Instance.Exists(idReferencia))
+                        else if (!PedidoDAO.Instance.Exists(idReferencia))
                         {
                             arquivosNaoAnexados += arquivo.FileName + ", ";
                             continue;
