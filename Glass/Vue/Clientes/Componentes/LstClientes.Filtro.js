@@ -38,7 +38,9 @@ Vue.component('cliente-filtros', {
           periodoInativadoInicio: null,
           periodoInativadoFim: null,
           idTabelaDescontoAcrescimo: null,
-          apenasSemRota: null
+          apenasSemRota: null,
+          agruparVendedor: null,
+          exibirHistorico: null
         },
         this.filtro
       ),

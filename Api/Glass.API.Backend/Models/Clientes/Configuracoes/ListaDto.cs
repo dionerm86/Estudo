@@ -27,6 +27,7 @@ namespace Glass.API.Backend.Models.Clientes.Configuracoes
             this.Imprimir = Config.PossuiPermissao(Config.FuncaoMenuCadastro.ExportarImprimirDadosClientes);
             this.AnexarImagens = Config.PossuiPermissao(Config.FuncaoMenuCadastro.AnexarArquivosCliente);
             this.CadastrarSugestoes = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes);
+            this.AtivarClientes = UserInfo.GetUserInfo.IsAdministrador;
             this.AlterarVendedor = UserInfo.GetUserInfo.IsAdministrador;
             this.AlterarRota = UserInfo.GetUserInfo.IsAdministrador;
             this.ConsultarPrecoTabela = this.ExibirPrecoTabela();
@@ -73,6 +74,13 @@ namespace Glass.API.Backend.Models.Clientes.Configuracoes
         [DataMember]
         [JsonProperty("consultarPrecoTabela")]
         public bool ConsultarPrecoTabela { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se será permitido ativar os clientes buscados com o filtro da tela.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("ativarClientes")]
+        public bool AtivarClientes { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se será permitido alterar o vendedor dos clientes buscados com o filtro da tela.

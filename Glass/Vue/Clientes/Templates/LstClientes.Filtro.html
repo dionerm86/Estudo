@@ -80,6 +80,10 @@
                 v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
+        <span class="form-group">
+            <input id="agruparVendedor" type="checkbox" v-model="filtroAtual.agruparVendedor" />
+            <label for="agruparVendedor">Agrupar por vendedor</label>
+        </span>
     </div>
     <div>
         <span class="form-group">
@@ -109,6 +113,10 @@
             <input id="apenasSemRota" type="checkbox" v-model="filtroAtual.apenasSemRota" />
             <label for="apenasSemRota">Apenas clientes sem rota vinculada</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="exibirHistorico" type="checkbox" v-model="filtroAtual.exibirHistorico" />
+            <label for="exibirHistorico">Exibir histórico</label>
         </span>
     </div>
 </section>

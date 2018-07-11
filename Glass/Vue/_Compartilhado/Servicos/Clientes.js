@@ -8,6 +8,25 @@ Servicos.Clientes = (function(http) {
 
   return {
     /**
+     * Recupera a lista de clientes.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de clientes.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      filtro = filtro || {};
+      filtro.pagina = pagina;
+      filtro.numeroRegistros = numeroRegistros;
+      filtro.ordenacao = ordenacao;
+
+      return http().get(API.substr(0, API.length - 1), {
+        params: filtro
+      });
+    },
+
+    /**
      * Recupera a lista de clientes para uso no controle de busca.
      * @param {?number} [idCliente=null] O identificador do cliente para filtro na busca.
      * @param {?string} [nomeCliente=null] O nome do cliente para filtro na busca.
@@ -80,6 +99,53 @@ Servicos.Clientes = (function(http) {
       }
 
       return http().post(API + idCliente + '/alterarSituacao');
+    },
+
+    /**
+     * Ativa os clientes com base nos filtros passados.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para definir os clientes que serão ativados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    ativar: function (filtro) {
+      filtro = filtro || {};
+
+      return http().post(API + 'ativar', {
+        params: filtro
+      });
+    },
+
+    /**
+     * Altera o vendedor dos clientes com base nos filtros passados.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para definir os clientes que serão alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarVendedor: function (filtro, idVendedorNovo) {
+      filtro = filtro || {};
+      filtro.idVendedorNovo = idVendedorNovo;
+
+      return http().post(API + 'alterarVendedor', {
+        params: {
+          filtro,
+          idVendedorNovo: idVendedorNovo
+        }
+      });
+    },
+
+    /**
+     * Altera a rota dos clientes com base nos filtros passados.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para definir os clientes que serão alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarRota: function (filtro, idRotaNova) {
+      filtro = filtro || {};
+      filtro.idRotaNova = idRotaNova;
+
+      return http().post(API + 'alterarRota', {
+        params: {
+          filtro,
+          idRotaNova: idRotaNova
+        }
+      });
     }
   };
 })(function() {

@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Utils
 {
@@ -18,15 +13,23 @@ namespace Glass.UI.Web.Utils
         {
             try
             {
-                var idRota = Glass.Conversoes.StrParaUintNullable(drpRota.SelectedValue);
+                var idRota = Conversoes.StrParaUintNullable(this.drpRota.SelectedValue);
+                var retorno = string.Empty;
 
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), "ok", String.Format(@"
-                    window.opener.alterarRota('{0}');
-                    closeWindow();", idRota), true);
+                if (this.Request["vue"] == "true")
+                {
+                    retorno = $"window.opener.app.alterarRota({idRota}); window.close();";
+                }
+                else
+                {
+                    retorno = $"window.opener.alterarRota('{idRota}'); closeWindow();";
+                }
+
+                this.Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", retorno, true);
             }
             catch (Exception ex)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao alterar rota.", ex, Page);
+                MensagemAlerta.ErrorMsg("Falha ao alterar rota.", ex, this.Page);
             }
         }
     }

@@ -1,5 +1,4 @@
 using System;
-using System.Web.UI;
 
 namespace Glass.UI.Web.Utils
 {
@@ -7,22 +6,30 @@ namespace Glass.UI.Web.Utils
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            
+
         }
-    
+
         protected void btnAlterarVendedor_Click(object sender, EventArgs e)
         {
             try
             {
-                var idVendedor = Glass.Conversoes.StrParaUintNullable(drpFuncionario.SelectedValue);
-                
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), "ok", String.Format(@"
-                    window.opener.alteraVendedor('{0}');
-                    closeWindow();", idVendedor), true);
+                var idVendedor = Conversoes.StrParaUintNullable(this.drpFuncionario.SelectedValue);
+                var retorno = string.Empty;
+
+                if (this.Request["vue"] == "true")
+                {
+                    retorno = $"window.opener.app.alterarVendedor({idVendedor}); window.close();";
+                }
+                else
+                {
+                    retorno = $"window.opener.alteraVendedor('{idVendedor}'); closeWindow();";
+                }
+
+                this.Page.ClientScript.RegisterClientScriptBlock(this.GetType(), "ok", retorno, true);
             }
             catch (Exception ex)
             {
-                Glass.MensagemAlerta.ErrorMsg("Falha ao alterar vendedor.", ex, Page);
+                MensagemAlerta.ErrorMsg("Falha ao alterar vendedor.", ex, this.Page);
             }
         }
     }

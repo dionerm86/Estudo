@@ -102,23 +102,101 @@ const app = new Vue({
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirListaClientes: function (ficha, exportarExcel) {
+      var filtroReal = formatarFiltros_();
 
+      if (filtro.nomeCliente && filtro.nomeCliente.indexOf('&') >= 0) {
+        this.exibirMensagem("O filtro Nome/Apelido do cliente não deve conter o caractere '&', pois ele é utilizado como chave para geração do relatório. Tente filtrar sem o nome do cliente ou apenas com a primeira parte do nome antes do '&'.");
+        return false;
+      }
 
-      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?Rel=ListaClientes');
+      if (filtroReal == '' && !this.perguntar("É recomendável aplicar um filtro. Deseja realmente prosseguir?")) {
+          return false;
+      }
+
+      var url = '../Relatorios/RelBase.aspx?Rel=' + (ficha ? "Ficha" : "Lista") + 'Clientes' + filtroReal + '&exportarExcel=' + exportarExcel;
+
+      this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Ativa os clientes, com base nos filtros da tela.
+     */
+    ativarClientes: function () {
+      if (!this.perguntar("ATENÇÃO: Essa opção ativará TODOS os clientes inativos que se encaixam nos filtros especificados.\nDeseja continuar?")) {
+        return;
+      }
+
+      var vm = this;
+
+      var filtroUsar = this.clonar(filtro || {});
+
+      Servicos.Clientes.ativar(filtroUsar)
+        .then(function (resposta) {
+          vm.exibirMensagem('Clientes ativados com sucesso!');
+          vm.filtro.refresh_++;
+          vm.filtrar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
      * Abre uma tela para alterar os vendedores dos clientes, com base nos filtros da tela.
      */
     abrirAlteracaoVendedor: function () {
-      this.abrirJanela(200, 400, '../Utils/AlterarVendedorCli.aspx');
+      this.abrirJanela(200, 400, '../Utils/AlterarVendedorCli.aspx?vue=true');
+    },
+
+    /**
+     * Altera o vendedor dos clientes definidos nos filtros.
+     */
+    alterarVendedor: function (idVendedorNovo) {
+      var vm = this;
+
+      var filtroUsar = this.clonar(filtro || {});
+
+      Servicos.Clientes.alterarVendedor(filtroUsar, idVendedorNovo)
+        .then(function (resposta) {
+          vm.exibirMensagem('Vendedor alterado com sucesso!');
+          vm.filtro.refresh_++;
+          vm.filtrar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
      * Abre uma tela para alterar as rotas dos clientes, com base nos filtros da tela.
      */
     abrirAlteracaoRota: function () {
-      this.abrirJanela(200, 400, '../Utils/AlterarRotaClientes.aspx');
+      this.abrirJanela(200, 400, '../Utils/AlterarRotaClientes.aspx?vue=true');
+    },
+
+    /**
+     * Altera a rota dos clientes definidos nos filtros.
+     */
+    alterarRota: function (idRotaNova) {
+      var vm = this;
+
+      var filtroUsar = this.clonar(filtro || {});
+
+      Servicos.Clientes.alterarRota(filtroUsar, idRotaNova)
+        .then(function (resposta) {
+          vm.exibirMensagem('Rota alterada com sucesso!');
+          vm.filtro.refresh_++;
+          vm.filtrar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -165,6 +243,48 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Retornar uma string com os filtros selecionados na tela
+     */
+    formatarFiltros_: function () {
+      var filtros = []
+      const incluirFiltro = function (campo, valor) {
+        if (valor) {
+          filtros.push(campo + '=' + valor);
+        }
+      }
+
+      incluirFiltro('idCli', filtro.id);
+      incluirFiltro('nome', filtro.nomeCliente);
+      incluirFiltro('cpfCnpj', filtro.cpfCnpj);
+      incluirFiltro('idLoja', filtro.idLoja);
+      incluirFiltro('telefone', filtro.telefone);
+      incluirFiltro('endereco', filtro.endereco);
+      incluirFiltro('bairro', filtro.bairro);
+      incluirFiltro('idCidade', filtro.idCidade);
+      incluirFiltro('idTipoCliente', filtro.tipo);
+      incluirFiltro('situacao', filtro.situacao);
+      incluirFiltro('codRota', filtro.codRota);
+      incluirFiltro('idFunc', filtro.idVendedor);
+      incluirFiltro('tipoFiscal', filtro.tipoFiscal);
+      incluirFiltro('formasPagto', filtro.formasPagamento);
+      incluirFiltro('dataCadIni', filtro.periodoCadastroInicio);
+      incluirFiltro('dataCadFim', filtro.periodoCadastroFim);
+      incluirFiltro('dataSemCompraIni', filtro.periodoSemCompraInicio);
+      incluirFiltro('dataSemCompraFim', filtro.periodoSemCompraFim);
+      incluirFiltro('dataInativadoIni', filtro.periodoInativadoInicio);
+      incluirFiltro('dataInativadoFim', filtro.periodoInativadoFim);
+      incluirFiltro('idTabelaDesconto', filtro.idTabelaDescontoAcrescimo);
+      incluirFiltro('apenasSemRota', filtro.apenasSemRota);
+      incluirFiltro('agruparVend', filtro.agruparVendedor);
+      incluirFiltro('exibirHistorico', filtro.exibirHistorico);
+      incluirFiltro('uf', filtro.uf);
+
+      return filtros.length > 0
+        ? '&' + filtros.join('&')
+        : '';
     }
   },
 

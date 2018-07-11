@@ -6,8 +6,10 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Microsoft.Practices.ServiceLocation;
 using Swashbuckle.Swagger.Annotations;
 using System;
+using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Clientes.V1
@@ -53,6 +55,165 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                     sessao.Rollback();
                     return this.ErroValidacao(ex.Message, ex);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Ativa os clientes com base no filtro passado.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos clientes.</param>
+        /// <returns>Um status HTTP indicando se os clientes foram ativados.</returns>
+        [HttpPost]
+        [Route("ativar")]
+        [SwaggerResponse(202, "Cliente ativados.", Type = typeof(MensagemDto))]
+        public IHttpActionResult Ativar([FromUri] Models.Clientes.Lista.FiltroDto filtro)
+        {
+            try
+            {
+                var resultado = ServiceLocator.Current
+                    .GetInstance<Global.Negocios.IClienteFluxo>()
+                    .AtivarClientesInativos(
+                        filtro.Id,
+                        filtro.NomeCliente,
+                        filtro.CpfCnpj,
+                        filtro.IdLoja,
+                        filtro.Telefone,
+                        filtro.Endereco,
+                        filtro.Bairro,
+                        filtro.IdCidade,
+                        filtro.Tipo,
+                        filtro.CodigoRota,
+                        filtro.IdVendedor,
+                        filtro.TipoFiscal.ToArray(),
+                        filtro.FormasPagamento,
+                        filtro.PeriodoCadastroInicio,
+                        filtro.PeriodoCadastroFim,
+                        filtro.PeriodoSemCompraInicio,
+                        filtro.PeriodoSemCompraFim,
+                        filtro.PeriodoInativadoInicio,
+                        filtro.PeriodoInativadoFim,
+                        filtro.IdTabelaDesconto,
+                        filtro.ApenasSemRota,
+                        filtro.Uf);
+
+                if (!resultado)
+                {
+                    return this.ErroValidacao(resultado.Message.ToString());
+                }
+
+                return this.Aceito("Situação do cliente alterada com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return this.ErroValidacao(ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Altera o vendedor dos clientes com base no filtro passado.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos clientes.</param>
+        /// <param name="idVendedorNovo">Vendedor que será alterado.</param>
+        /// <returns>Um status HTTP indicando se o vendedor os clientes foram alterados.</returns>
+        [HttpPost]
+        [Route("alterarVendedor")]
+        [SwaggerResponse(202, "Vendedor alterado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult AlterarVendedor([FromUri] Models.Clientes.Lista.FiltroDto filtro, int? idVendedorNovo)
+        {
+            try
+            {
+                var resultado = ServiceLocator.Current
+                    .GetInstance<Global.Negocios.IClienteFluxo>()
+                    .AlterarVendedorClientes(
+                        filtro.Id,
+                        filtro.NomeCliente,
+                        filtro.CpfCnpj,
+                        filtro.IdLoja,
+                        filtro.Telefone,
+                        filtro.Endereco,
+                        filtro.Bairro,
+                        filtro.IdCidade,
+                        filtro.Tipo,
+                        filtro.Situacao.Select(f => (int)f).ToArray(),
+                        filtro.CodigoRota,
+                        filtro.IdVendedor,
+                        filtro.TipoFiscal.ToArray(),
+                        filtro.FormasPagamento,
+                        filtro.PeriodoCadastroInicio,
+                        filtro.PeriodoCadastroFim,
+                        filtro.PeriodoSemCompraInicio,
+                        filtro.PeriodoSemCompraFim,
+                        filtro.PeriodoInativadoInicio,
+                        filtro.PeriodoInativadoFim,
+                        filtro.IdTabelaDesconto,
+                        filtro.ApenasSemRota,
+                        idVendedorNovo.GetValueOrDefault(),
+                        filtro.Uf);
+
+                if (!resultado)
+                {
+                    return this.ErroValidacao(resultado.Message.ToString());
+                }
+
+                return this.Aceito("Vendedor alterado com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return this.ErroValidacao(ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Altera a rota dos clientes com base no filtro passado.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos clientes.</param>
+        /// <param name="idRotaNova">Rota que será alterada.</param>
+        /// <returns>Um status HTTP indicando se a rota foi alterada nos clientes.</returns>
+        [HttpPost]
+        [Route("alterarRota")]
+        [SwaggerResponse(202, "Rota alterada.", Type = typeof(MensagemDto))]
+        public IHttpActionResult AlterarRota([FromUri] Models.Clientes.Lista.FiltroDto filtro, int? idRotaNova)
+        {
+            try
+            {
+                var resultado = ServiceLocator.Current
+                    .GetInstance<Global.Negocios.IClienteFluxo>()
+                    .AlterarRotaClientes(
+                        filtro.Id,
+                        filtro.NomeCliente,
+                        filtro.CpfCnpj,
+                        filtro.IdLoja,
+                        filtro.Telefone,
+                        filtro.Endereco,
+                        filtro.Bairro,
+                        filtro.IdCidade,
+                        filtro.Tipo,
+                        filtro.Situacao.Select(f => (int)f).ToArray(),
+                        filtro.CodigoRota,
+                        filtro.IdVendedor,
+                        filtro.TipoFiscal.ToArray(),
+                        filtro.FormasPagamento,
+                        filtro.PeriodoCadastroInicio,
+                        filtro.PeriodoCadastroFim,
+                        filtro.PeriodoSemCompraInicio,
+                        filtro.PeriodoSemCompraFim,
+                        filtro.PeriodoInativadoInicio,
+                        filtro.PeriodoInativadoFim,
+                        filtro.IdTabelaDesconto,
+                        filtro.ApenasSemRota,
+                        idRotaNova.GetValueOrDefault(),
+                        filtro.Uf);
+
+                if (!resultado)
+                {
+                    return this.ErroValidacao(resultado.Message.ToString());
+                }
+
+                return this.Aceito("Rota alterada com sucesso.");
+            }
+            catch (Exception ex)
+            {
+                return this.ErroValidacao(ex.Message, ex);
             }
         }
     }

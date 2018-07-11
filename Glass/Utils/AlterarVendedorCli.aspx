@@ -11,7 +11,7 @@
             var idsClienteAlt = FindControl("hdfIdsCliente", "input");
 
             // Pega os idsCliente da tela de clientes e carrega no hidden field desta tela
-            if (idsClienteAlt.value == "") {
+            if (idsClienteAlt.value == "" && window.opener.FindControl("hdfIdsCliente", "input")) {
                 idsClienteAlt.value = window.opener.FindControl("hdfIdsCliente", "input").value;
                 document.getElementById("form1").submit();
             }
