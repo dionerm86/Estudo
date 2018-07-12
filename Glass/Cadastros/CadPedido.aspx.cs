@@ -1504,7 +1504,7 @@ namespace Glass.UI.Web.Cadastros
             try
             {
                 if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(null, Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
                 else
                     return "0";
             }

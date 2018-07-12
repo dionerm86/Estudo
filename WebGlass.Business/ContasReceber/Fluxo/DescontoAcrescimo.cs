@@ -29,7 +29,7 @@ namespace WebGlass.Business.ContasReceber.Fluxo
         {
             if (!PedidoConfig.LiberarPedido)
             {
-                if (!PedidoDAO.Instance.PedidoExists(idPedidoOuLiberarPedido))
+                if (!PedidoDAO.Instance.PedidoExists(null, idPedidoOuLiberarPedido))
                     throw new Exception("Não existe nenhum pedido com o número passado.");
                 else
                 {

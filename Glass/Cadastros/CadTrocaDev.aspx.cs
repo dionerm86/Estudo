@@ -346,7 +346,7 @@ namespace Glass.UI.Web.Cadastros
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado && situacao != Glass.Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente)
                     return "Erro;A troca/devolução só pode ser feita se o pedido estiver " + (PedidoConfig.LiberarPedido ? "liberado" : "confirmado") + ".";
 
-                bool pedidosReposicao = PedidoDAO.Instance.IsPedidoReposto(Glass.Conversoes.StrParaUint(idPedido)) &&
+                bool pedidosReposicao = PedidoDAO.Instance.IsPedidoReposto(null, Glass.Conversoes.StrParaUint(idPedido)) &&
                     PedidoReposicaoDAO.Instance.PedidoParaTroca(PedidoDAO.Instance.IdReposicao(Glass.Conversoes.StrParaUint(idPedido)).GetValueOrDefault());
 
                 string trocasString = TrocaDevolucaoDAO.Instance.ObtemIdTrocaDevPorPedido(Glass.Conversoes.StrParaUint(idPedido));

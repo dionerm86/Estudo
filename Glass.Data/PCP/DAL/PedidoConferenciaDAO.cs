@@ -170,10 +170,10 @@ namespace Glass.Data.DAL
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 // Se a atualização da situação do pedido não tiver sido realizada, lança exceção
                 if (registrosAfetados <= 0)
@@ -190,10 +190,10 @@ namespace Glass.Data.DAL
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 throw new Exception("Este pedido já foi para a conferência.");
             }

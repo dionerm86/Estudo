@@ -22,7 +22,7 @@ namespace WebGlass.Business.Instalacao.Ajax
 
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
 
-            if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido))
+            if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido, false))
                 return "Erro;Pedido não está confirmado.";
 
             return "Ok;";

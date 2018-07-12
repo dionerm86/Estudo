@@ -22,7 +22,7 @@ namespace Glass.UI.Web.Utils
                 return;
             }
             
-            if ((PedidoDAO.Instance.IsPedidoReposicao(Request["idPedido"]) || PedidoDAO.Instance.IsPedidoGarantia(Request["idPedido"])) &&
+            if ((PedidoDAO.Instance.IsPedidoReposicao(null, Request["idPedido"]) || PedidoDAO.Instance.IsPedidoGarantia(null, Request["idPedido"])) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
             {
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Você não tem permissão para editar pedidos de Garantia ou Reposição');closeWindow();\n", true);
@@ -414,7 +414,7 @@ namespace Glass.UI.Web.Utils
             try
             {
                 if (!string.IsNullOrEmpty(Request["idPedido"]))
-                    return PedidoDAO.Instance.GetDescontoProdutos(Request["idPedido"].StrParaUint()).ToString().Replace(",", ".");
+                    return PedidoDAO.Instance.GetDescontoProdutos(null, Request["idPedido"].StrParaUint()).ToString().Replace(",", ".");
                 
                 return "0";
             }

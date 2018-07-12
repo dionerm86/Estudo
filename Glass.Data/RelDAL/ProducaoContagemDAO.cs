@@ -81,12 +81,12 @@ namespace Glass.Data.RelDAL
                 sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
-                if (Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }

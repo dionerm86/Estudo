@@ -1790,7 +1790,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirReabrir
         {
-            get { return PedidoDAO.Instance.PodeReabrir(IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
+            get { return PedidoDAO.Instance.PodeReabrir(null, IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
         }
 
         [XmlIgnore]

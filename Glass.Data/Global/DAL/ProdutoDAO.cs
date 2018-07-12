@@ -4185,7 +4185,7 @@ namespace Glass.Data.DAL
                 if (idPedido > 0)
                 {
                     // Ao invés de excluir o pedido, marca-o como cancelado
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.Cancelado);
+                    PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.Cancelado);
                     PedidoDAO.Instance.AtualizaObs(idPedido, Glass.MensagemAlerta.FormatErrorMsg("Pedido cancelado por falha ao gerar pedido sugerido.", ex));
                 }
 

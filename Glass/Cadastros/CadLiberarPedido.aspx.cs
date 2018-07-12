@@ -442,7 +442,7 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = e.Row.DataItem != null ? Glass.Conversoes.StrParaUint(DataBinder.Eval(e.Row.DataItem, "IdPedido").ToString()) : 0;
     
-            if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(idPedido, true)))
+            if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(null, idPedido, true)))
                 return;
 
             var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
@@ -860,8 +860,8 @@ namespace Glass.UI.Web.Cadastros
             qtdeProdutosLiberar = qtdeProdutosLiberar.TrimEnd(';');
     
             // Se for pedido de liberação ou de garantia, permite liberar
-            bool isGarantiaReposicao = !String.IsNullOrEmpty(idsPedido) && (PedidoDAO.Instance.IsPedidoGarantia(idsPedido) || 
-                PedidoDAO.Instance.IsPedidoReposicao(idsPedido)) && totalPedidos == 0;
+            bool isGarantiaReposicao = !String.IsNullOrEmpty(idsPedido) && (PedidoDAO.Instance.IsPedidoGarantia(null, idsPedido) || 
+                PedidoDAO.Instance.IsPedidoReposicao(null, idsPedido)) && totalPedidos == 0;
     
             hdfIsGarantiaReposicao.Value = isGarantiaReposicao.ToString().ToLower();
     
@@ -1010,7 +1010,7 @@ namespace Glass.UI.Web.Cadastros
                 var idPedidoStr = ((HiddenField)r.Cells[0].FindControl("hdfIdPedido")).Value;
                 int? tipoVenda = Glass.Conversoes.StrParaIntNullable(tipoVendaStr);
     
-                if (!retorno.Contains(tipoVenda) && !PedidoDAO.Instance.IsPedidoReposicao(idPedidoStr) && !PedidoDAO.Instance.IsPedidoGarantia(idPedidoStr))
+                if (!retorno.Contains(tipoVenda) && !PedidoDAO.Instance.IsPedidoReposicao(null, idPedidoStr) && !PedidoDAO.Instance.IsPedidoGarantia(null, idPedidoStr))
                     retorno.Add(tipoVenda);
             }
     

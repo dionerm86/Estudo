@@ -172,7 +172,7 @@ namespace WebGlass.Business.Pedido.Ajax
         {
             try
             {
-                return PedidoDAO.Instance.PedidoExists(Glass.Conversoes.StrParaUint(idPedido)).ToString().ToLower();
+                return PedidoDAO.Instance.PedidoExists(null, Glass.Conversoes.StrParaUint(idPedido)).ToString().ToLower();
             }
             catch
             {

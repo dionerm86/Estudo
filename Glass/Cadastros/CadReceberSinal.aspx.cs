@@ -301,7 +301,7 @@ namespace Glass.UI.Web.Cadastros
                     if (Request["antecipado"] == "1")
                     {
                         uint idPedido = Glass.Conversoes.StrParaUint(((HiddenField)grdPedido.Rows[i].FindControl("hdfIdPedido")).Value);
-                        var recebeuSinal = !PedidoDAO.Instance.TemSinalReceber(idPedido) && PedidoDAO.Instance.ObtemIdSinal(null, idPedido) > 0;
+                        var recebeuSinal = !PedidoDAO.Instance.TemSinalReceber(null, idPedido) && PedidoDAO.Instance.ObtemIdSinal(null, idPedido) > 0;
     
                         totalPagar += totalPedidoPagar - (recebeuSinal ? PedidoDAO.Instance.ObtemValorEntrada(null, idPedido) : 0);
                     }

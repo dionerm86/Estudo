@@ -1119,7 +1119,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         protected void btnConfCalc_Load(object sender, EventArgs e)
         {
-            if (Request["idPedido"] != null && PedidoDAO.Instance.IsGeradoParceiro(Glass.Conversoes.StrParaUint(Request["idPedido"])))
+            if (Request["idPedido"] != null && PedidoDAO.Instance.IsGeradoParceiro(null, Glass.Conversoes.StrParaUint(Request["idPedido"])))
                 btnConfCalc.OnClientClick = "if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO SÃO DE SUA RESPONSABILIDADE.\\nDESEJA CONFIRMAR AS MEDIDAS?')) return false";
         }
 

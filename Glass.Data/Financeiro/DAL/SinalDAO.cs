@@ -425,7 +425,7 @@ namespace Glass.Data.DAL
                 {
                     throw new Exception("Não é permitido receber sinal de pedidos de obra.");
                 }
-                else if (isSinal && !PedidoDAO.Instance.TemSinalReceber(pedido.IdPedido))
+                else if (isSinal && !PedidoDAO.Instance.TemSinalReceber(null, pedido.IdPedido))
                 {
                     throw new Exception("Esse pedido não tem sinal a receber.");
                 }

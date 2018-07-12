@@ -288,13 +288,13 @@ namespace Glass.Data.DAL
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
                 if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido &&
-                    PedidoDAO.Instance.IsPedidoReposto(idPedido.StrParaUint()))
+                    PedidoDAO.Instance.IsPedidoReposto(null, idPedido.StrParaUint()))
                     filtroPedido += " Or ped.IdPedidoAnterior=" + idPedido;
 
                 sql += filtroPedido;
                 filtroPedido += ")";
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(idPedido.StrParaUint()))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, idPedido.StrParaUint()))
                     sql += " Or ppp.idPedidoExpedicao=" + idPedido;
 
                 sql += ")";
@@ -1783,12 +1783,12 @@ namespace Glass.Data.DAL
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2488,12 +2488,12 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
                 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2702,12 +2702,12 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
                 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2984,12 +2984,12 @@ namespace Glass.Data.DAL
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -3225,10 +3225,10 @@ namespace Glass.Data.DAL
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
                 if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido &&
-                    PedidoDAO.Instance.IsPedidoReposto(idPedido))
+                    PedidoDAO.Instance.IsPedidoReposto(null, idPedido))
                     filtroPedido += " Or ped.IdPedidoAnterior=" + idPedido;
 
-                var isPedExped = PedidoDAO.Instance.IsPedidoExpedicaoBox(idPedido);
+                var isPedExped = PedidoDAO.Instance.IsPedidoExpedicaoBox(null, idPedido);
                 if (isPedExped)
                     filtroPedido += " Or ppp.idPedidoExpedicao=" + idPedido;
 

@@ -3263,7 +3263,7 @@ namespace Glass.Data.DAL
                 bool temPecaReposta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(session, "Count(*)",
                     "pecaReposta=true And idProdPed In (Select idProdPed From produtos_pedido Where idPedido=" + idPedido + ")") > 0;
 
-                if ((PedidoDAO.Instance.IsPedidoReposicao(a) || temPecaReposta) && !alterarReposicao)
+                if ((PedidoDAO.Instance.IsPedidoReposicao(null, a) || temPecaReposta) && !alterarReposicao)
                     continue;
 
                 var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(session, idPedido);

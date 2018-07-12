@@ -75,7 +75,7 @@ namespace WebGlass.Business.Pedido.Fluxo
             }
             else
             {
-                PedidoDAO.Instance.AlteraSituacao(idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Ativo);
+                PedidoDAO.Instance.AlteraSituacao(null, idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Ativo);
             }
 
             ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(null, idPedido, observacao, !negado ?

@@ -21,7 +21,7 @@ namespace Glass.UI.Web.Utils
             hdfIdCliente.Value = idCliente.ToString();
             hdfCliRevenda.Value = ClienteDAO.Instance.IsRevenda(idCliente).ToString();
             hdfPercComissao.Value = PedidoDAO.Instance.ObterPercentualComissao(null, (int)idPedido).ToString();
-            hdfIsReposicao.Value = PedidoDAO.Instance.IsPedidoReposicao(idPedido.ToString()).ToString();
+            hdfIsReposicao.Value = PedidoDAO.Instance.IsPedidoReposicao(null, idPedido.ToString()).ToString();
     
             if (!IsPostBack)
                 txtQtdeMaoObra.Text = "1";

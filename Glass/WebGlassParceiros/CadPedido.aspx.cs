@@ -1145,7 +1145,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             try
             {
                 if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(null, Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
                 else
                     return "0";
             }
@@ -1245,7 +1245,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 string obsLib = ((TextBox)dtvPedido.FindControl("txtObsLib")).Text;
                 var idTransportador = ((DropDownList)dtvPedido.FindControl("drpTransportador")).SelectedValue;
 
-                PedidoDAO.Instance.UpdateParceiro(idPedido, codPedCli, null, obs, obsLib, Glass.Conversoes.StrParaIntNullable(idTransportador));
+                PedidoDAO.Instance.UpdateParceiro(null, idPedido, codPedCli, null, obs, obsLib, Glass.Conversoes.StrParaIntNullable(idTransportador));
                 Glass.MensagemAlerta.ShowMsg("Pedido atualizado!", Page);
             }
             catch (Exception ex)
