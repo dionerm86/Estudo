@@ -293,7 +293,7 @@ const app = new Vue({
     /**
      * 
      */
-    abrirRelatoriosTotais = function (usarValoresQueryString, alturaJanela, larguraJanela, url, filtro) {
+    abrirRelatoriosTotais: function (usarValoresQueryString, alturaJanela, larguraJanela, url, filtro) {
       var byVend = usarValoresQueryString ? GetQueryString('byVend') : '';
       var maoObra = usarValoresQueryString ? GetQueryString('maoObra') : '';
       var maoObraEspecial = usarValoresQueryString ? GetQueryString('maoObraEspecial') : '';
