@@ -276,10 +276,12 @@ namespace Glass.Data.Helper
                     if (this[i].IdBenefConfig == 0 && !GerarServicosInfo)
                         continue;
 
+                    var idBenefConfig = GerarServicosInfo ? 0 : this[i].IdBenefConfig;
+
                     decimal percComissao = Math.Round(this[i].ValorComissao / (this[i].Valor > 0 ? this[i].Valor : 1), 2);
 
                     // [0]Id do beneficiamento [1]Qtd [2]Valor [3]Total [4]Custo [5]Perc. Comissão [6]Altura [7]Largura [8]Esp. Bisote
-                    string info = this[i].IdBenefConfig + ";" + this[i].Qtd + ";" + this[i].ValorUnit + ";" + this[i].Valor + ";" +
+                    string info = idBenefConfig + ";" + this[i].Qtd + ";" + this[i].ValorUnit + ";" + this[i].Valor + ";" +
                         this[i].Custo + ";" + percComissao + ";" + (this[i].BisAlt + this[i].LapAlt) + ";" + (this[i].BisLarg + this[i].LapLarg) + ";" + this[i].EspBisote;
 
                     // [9]Descrição [10]Descrição Parent

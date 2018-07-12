@@ -1375,14 +1375,9 @@ namespace Glass.Data.Model
         {
             get 
             {
-                GenericBenefCollection benef = Beneficiamentos.ToProdutosPedido(IdProdPed);
-                foreach (GenericBenef b in benef)
-                {
-                    string temp = b.Descricao;
-                    b.IdBenefConfig = 0;
-                }
-
+                GenericBenefCollection benef = Beneficiamentos.ToProdutosPedido(IdProdPed);                
                 benef.GerarServicosInfo = true;
+
                 return benef.ServicosInfo;
             }
             set
