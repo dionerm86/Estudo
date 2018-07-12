@@ -12445,23 +12445,23 @@ namespace Glass.Data.DAL
             if (dataBase != null && dataBase.Value.Date < DateTime.Now.Date)
                 dataBase = DateTime.Now;
 
-            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out temp, numeroDiasUteisMinimoNaoConfig);
+            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out temp, numeroDiasUteisMinimoNaoConfig, false);
         }
-        
+
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
         public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima,
             out DateTime dataFastDelivery, out bool desabilitarCampo)
         {
-            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out desabilitarCampo, 0);
+            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out desabilitarCampo, 0, false);
         }
-        
+
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
         public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima,
-            out DateTime dataFastDelivery, out bool desabilitarCampo, int numeroDiasUteisMinimoNaoConfig, bool fastDelivery = false)
+            out DateTime dataFastDelivery, out bool desabilitarCampo, int numeroDiasUteisMinimoNaoConfig, bool throwException, bool fastDelivery = false)
         {
             try
             {
@@ -12634,14 +12634,16 @@ namespace Glass.Data.DAL
                 desabilitarCampo = false;
                 dataEntregaMinima = dataBase ?? DateTime.Now;
                 dataFastDelivery = dataEntregaMinima;
-                return false;
+                if (!throwException)
+                    return false;
+                throw;
             }
         }
 
         /// <summary>
         /// Recalcula a data de entrega do pedido baseando-se na data passada e atualiza o pedido
         /// </summary>
-        public void RecalcularEAtualizarDataEntregaPedido(GDASession session, uint idPedido, DateTime? dataBase, out bool enviarMensagem)
+        public void RecalcularEAtualizarDataEntregaPedido(GDASession session, uint idPedido, DateTime? dataBase, out bool enviarMensagem, bool throwException)
         {
             uint idCliente = PedidoDAO.Instance.ObtemIdCliente(session, idPedido);
             int? tipoPedido = (int?)GetTipoPedido(session, idPedido);
@@ -12652,7 +12654,7 @@ namespace Glass.Data.DAL
             enviarMensagem = false;
 
             GetDataEntregaMinima(session, idCliente, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima,
-                out dataFastDelivery, out desabilitarCampo, 0, fastDelivey);
+                out dataFastDelivery, out desabilitarCampo, 0, throwException, fastDelivey);
 
             if (dataFastDelivery != DateTime.MinValue && dataEntregaMinima != DateTime.MinValue)
             {
@@ -14861,6 +14863,9 @@ namespace Glass.Data.DAL
             {
                 objUpdate.DataPedido = objUpdate.DataPedido.AddHours(ped.DataCad.Hour).AddMinutes(ped.DataCad.Minute).AddSeconds(ped.DataCad.Second);
             }
+
+            bool enviarMensagem = false;
+            RecalcularEAtualizarDataEntregaPedido(session, objUpdate.IdPedido, null, out enviarMensagem, objUpdate.FastDelivery);
 
             // Remove o idObra caso não seja mais obra o tipo de venda.
             if (objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)

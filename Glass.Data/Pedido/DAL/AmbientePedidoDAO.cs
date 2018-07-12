@@ -868,7 +868,7 @@ namespace Glass.Data.DAL
 
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;
-                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, idPedido, null, out enviarMensagem);
+                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, idPedido, null, out enviarMensagem, false);
 
                 return retorno;
             }

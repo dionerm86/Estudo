@@ -95,7 +95,7 @@ namespace WebGlass.Business.Pedido.Fluxo
                     {
                         bool enviarMensagem = false;
                         //Recalcula a data de entrega do pedido baseando-se na data de hoje e atualiza a data de entrega do pedido
-                        PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem);
+                        PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem, false);
 
                         var idRemetente = UserInfo.GetUserInfo.CodUser;
                         var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
