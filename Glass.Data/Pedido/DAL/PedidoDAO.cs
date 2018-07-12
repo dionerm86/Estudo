@@ -13403,6 +13403,7 @@ namespace Glass.Data.DAL
             pedidoNovo.IdComissionado = pedido.IdComissionado;
             pedidoNovo.PercComissao = pedido.PercComissao;
             pedidoNovo.DataEntrega = pedido.DataEntrega;
+            pedidoNovo.IdTransportador = pedido.IdTransportador;
 
             return pedidoNovo;
         }
