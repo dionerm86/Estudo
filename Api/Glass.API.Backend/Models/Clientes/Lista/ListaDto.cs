@@ -33,7 +33,7 @@ namespace Glass.API.Backend.Models.Clientes.Lista
             this.Celular = cliente.TelCel;
             this.Atendente = new IdNomeDto
             {
-                Id = (int)cliente.IdFunc,
+                Id = (int)cliente.IdFunc.GetValueOrDefault(),
                 Nome = cliente.NomeFunc,
             };
 

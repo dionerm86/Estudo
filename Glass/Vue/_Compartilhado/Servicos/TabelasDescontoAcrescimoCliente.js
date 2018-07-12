@@ -3,8 +3,8 @@ var Servicos = Servicos || {};
 /**
  * Objeto com os serviços para a API de tabelas de desconto/acréscimo.
  */
-Servicos.TabelasDescontoAcrescimo = (function (http) {
-  const API = '/api/v1/tabelasDescontoAcrescimo/';
+Servicos.TabelasDescontoAcrescimoCliente = (function (http) {
+  const API = '/api/v1/tabelasDescontoAcrescimoCliente/';
 
   return {
     /**

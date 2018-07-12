@@ -1672,7 +1672,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
-    <Content Include="Vue\_Compartilhado\Servicos\TabelaDescontoAcrescimoCliente.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
     <Content Include="Vue\_Compartilhado\Servicos\FormasPagamento.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Aplicacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Beneficiamentos.js" />

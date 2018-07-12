@@ -12,7 +12,7 @@
         </span>
         <span class="form-group">
             <label for="cpfCnpj">CPF/CNPJ</label>
-            <input id="cpfCnpj" type="text" v-model="filtroAtual.cpfCnpj" style="width: 200px" />
+            <input id="cpfCnpj" type="text" v-model="filtroAtual.cpfCnpj" style="width: 120px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -70,9 +70,8 @@
         </span>
         <span class="form-group">
             <label for="rota">Rota</label>
-            <campo-busca-com-popup id.sync="filtroAtual.codigoRota" nome.sync="filtroAtual.codigoRota" item-selecionado.sync="rotaAtual" funcao-buscar-itens="obterRotas" 
-                url-popup="../Utils/SelRota.aspx" largura-popup="700" altura-popup="500" style="width: 80px" required></campo-busca-com-popup>
-            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            <campo-busca-com-popup v-bind:id.sync="filtroAtual.codigoRota" v-bind:nome.sync="filtroAtual.codigoRota" v-bind:item-selecionado.sync="rotaAtual" v-bind:funcao-buscar-itens="obterItensFiltroRotas"
+                url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px" required></campo-busca-com-popup>
         </span>
         <span class="form-group">
             <label>Vendedor</label>

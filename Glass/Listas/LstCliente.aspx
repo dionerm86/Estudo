@@ -68,7 +68,8 @@
                             <img border="0" src="../Images/Inativar.gif">
                         </a>
                     </td>
-                    <td>{{ item.id }} - {{ item.nome }}</td>
+                    <td>{{ item.id }} - {{ item.nomeCliente }}</td>
+                    <td>{{ item.cpfCnpj }}</td>
                     <td>{{ item.enderecoCompleto }}</td>
                     <td>{{ item.telefoneContato }}</td>
                     <td>{{ item.celular }}</td>

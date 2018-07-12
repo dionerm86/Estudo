@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Helper.Clientes
             switch (campo.ToLowerInvariant())
             {
                 case "id":
-                    return "IdPedido";
+                    return "IdCli";
 
                 case "codigopedidocliente":
                     return "CodCliente";
