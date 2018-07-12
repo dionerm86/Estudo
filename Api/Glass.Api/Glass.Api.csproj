@@ -146,7 +146,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingInsideVisualStudio)' == 'True' And '$(BuildingProject)' == 'True'">
+  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingProject)' == 'True'">
     <!--
       Disable analyzers when building a project inside Visual Studio. Note that analyzer behavior for IntelliSense
       purposes is not altered by this.
