@@ -805,6 +805,36 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (grdMaterialProjeto.Columns[12].Visible)
                 materItem.Obs = ((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtObsIns")).Text;
 
+            var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+            var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+            var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+            var retorno = string.Empty;
+
+            if (materItem.Beneficiamentos != null)
+            {
+                foreach (var prodBenef in materItem.Beneficiamentos)
+                {
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                        materItem.Altura < tamanhoMinimoBisote && materItem.Largura < tamanhoMinimoBisote)
+                        retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
+
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                        materItem.Altura < tamanhoMinimoLapidacao && materItem.Largura < tamanhoMinimoLapidacao)
+                        retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
+                }
+            }
+
+            if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)materItem.IdProd)).IsVidroTemperado &&
+                    materItem.Altura < tamanhoMinimoTemperado && materItem.Largura < tamanhoMinimoTemperado)
+                retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm.";
+
+            if (!string.IsNullOrWhiteSpace(retorno))
+            {
+                MensagemAlerta.ShowMsg(retorno, Page);
+                return;
+            }
+
             try
             {
                 #region insere Material Item Projeto

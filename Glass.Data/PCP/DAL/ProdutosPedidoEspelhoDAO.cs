@@ -3987,6 +3987,33 @@ namespace Glass.Data.DAL
                             objInsert.Largura = prod.Largura.GetValueOrDefault();
                         }
                     }
+
+                    var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                    var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                    var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                    var retorno = string.Empty;
+
+                    if (objInsert.Beneficiamentos != null)
+                    {
+                        foreach (var prodBenef in objInsert.Beneficiamentos)
+                        {
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                                objInsert.Altura < tamanhoMinimoBisote && objInsert.Largura < tamanhoMinimoBisote)
+                                retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                                objInsert.Altura < tamanhoMinimoLapidacao && objInsert.Largura < tamanhoMinimoLapidacao)
+                                retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                        }
+                    }
+
+                    if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objInsert.IdProd)).IsVidroTemperado &&
+                            objInsert.Altura < tamanhoMinimoTemperado && objInsert.Largura < tamanhoMinimoTemperado)
+                        retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                    if (!string.IsNullOrWhiteSpace(retorno))
+                        throw new Exception(retorno);
                 }
 
                 var isPedidoProducaoCorte = (pedidoEspelho as IContainerCalculo).IsPedidoProducaoCorte;
@@ -4201,6 +4228,33 @@ namespace Glass.Data.DAL
                 
                 objUpdate.IdProdPedParentOrig = ProdutosPedidoDAO.Instance.ObterIdProdPedParentByEsp(sessao, objUpdate.IdProdPed);
                 var isPedidoProducaoCorte = container.IsPedidoProducaoCorte;
+
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (objUpdate.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objUpdate.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            objUpdate.Altura < tamanhoMinimoBisote && objUpdate.Largura < tamanhoMinimoBisote)
+                            retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            objUpdate.Altura < tamanhoMinimoLapidacao && objUpdate.Largura < tamanhoMinimoLapidacao)
+                            retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                    }
+                }
+
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd)).IsVidroTemperado &&
+                        objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
 
                 ValorTotal.Instance.Calcular(
                     sessao,
