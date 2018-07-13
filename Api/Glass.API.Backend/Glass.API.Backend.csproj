@@ -292,6 +292,7 @@
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
+    <Compile Include="Helper\NumberExtension.cs" />
     <Compile Include="Helper\Orcamentos\TraducaoOrdenacaoListaOrcamentos.cs" />
     <Compile Include="Helper\Produtos\Estrategias\CalculoTotal\IValidacaoCalculoTotal.cs" />
     <Compile Include="Helper\Produtos\Estrategias\CalculoTotal\ValidacaoCalculoTotalPedidoStrategy.cs" />
@@ -329,6 +330,8 @@
     <Compile Include="Models\Genericas\CidadeDto.cs" />
     <Compile Include="Models\Genericas\EnderecoDto.cs" />
     <Compile Include="Models\Genericas\IdDto.cs" />
+    <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
+    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\DadosEntradaDto.cs" />
     <Compile Include="Models\Obras\Filtro\ObraDto.cs" />
     <Compile Include="Models\Orcamentos\Configuracoes\ListaDto.cs" />
@@ -403,15 +406,14 @@
     <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\DadoRealECalculadoDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\ProdutoDto.cs" />
     <Compile Include="Models\Processos\Filtro\ProcessoDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\AlturaDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\AreaDto.cs" />
+    <Compile Include="Models\Genericas\Venda\AlturaDto.cs" />
+    <Compile Include="Models\Genericas\Venda\AreaDto.cs" />
     <Compile Include="Models\Genericas\BeneficiamentosDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\DescontoQuantidadeDto.cs" />
+    <Compile Include="Models\Genericas\Venda\DescontoQuantidadeDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\FiltroListaDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\ListaDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\ProdutoDto.cs" />
-    <Compile Include="Models\Pedidos\ProdutosPedido\Lista\TipoProdutoDto.cs" />
+    <Compile Include="Models\Genericas\Venda\ProdutoDto.cs" />
+    <Compile Include="Models\Genericas\Venda\TipoProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\AreaCalculadaDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />

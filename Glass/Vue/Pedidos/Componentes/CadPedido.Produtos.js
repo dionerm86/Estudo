@@ -59,21 +59,8 @@ Vue.component('pedido-produtos', {
 
   data: function() {
     return {
-      refresh_: 0,
-      inserindo: false,
-      produtoPedido: {},
-      produtoPedidoOriginal: {},
-      numeroLinhaEdicao: -1,
-      exibirDescontoQuantidade: false,
-      dadosOrdenacao_: {
-        campo: '',
-        direcao: ''
-      },
-      produtoAtual: null,
-      dadosValidacaoProduto: {},
-      numeroBeneficiamentosParaAreaMinima: 0,
-      processoAtual: null,
-      aplicacaoAtual: null
+      atualizar_: 0,
+      dadosValidacaoProduto: {}
     };
   },
 
@@ -101,36 +88,21 @@ Vue.component('pedido-produtos', {
     },
 
     /**
-     * Atualiza os dados para ordenação do resultado.
-     * @param {string} campo O campo pelo qual o resultado deve ser ordenado.
-     */
-    ordenar: function(campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
-    },
-
-    /**
      * Inicia a edição do produto, se possível.
      * @param {Object} item O produto que será editado.
-     * @param {number} linha O número da linha da tabela que entrará em modo de edição.
+     * @returns {boolean} Verdadeiro, se o produto puder ser editado.
      */
-    editar: function(item, linha) {
+    editar: function(item) {
       if (!item.permissoes.editar) {
         var mensagem = 'Não é possível editar esse produto porque o pedido possui desconto.\n'
           + 'Aplique o desconto apenas ao terminar o cadastro dos produtos.\n'
           + 'Para continuar, remova o desconto do pedido.';
 
         this.exibirMensagem('Editar produto', mensagem)
-        return;
+        return false;
       }
 
-      this.inserindo = false;
-      this.iniciarCadastroOuAtualizacao_(item);
-      this.numeroLinhaEdicao = linha;
+      return true;
     },
 
     /**
@@ -144,225 +116,51 @@ Vue.component('pedido-produtos', {
           + 'Para continuar, remova o desconto do pedido.';
 
         this.exibirMensagem('Remover produto', mensagem);
-        return;
+        return Promise.reject();
       }
 
       if (!this.perguntar('Remover produto', 'Deseja remover esse produto do pedido?')) {
-        return;
+        return Promise.reject();
       }
 
-      var vm = this;
-
-      Servicos.Pedidos.Produtos.excluir(this.pedido.id, item.id)
-        .then(function(resposta) {
-          vm.refresh_++;
-        })
-        .catch(function(erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
-    },
-
-    /**
-     * Inicia o cadastro de um produto.
-     */
-    iniciarCadastro: function() {
-      this.iniciarCadastroOuAtualizacao_();
-      this.inserindo = true;
+      return Servicos.Pedidos.Produtos.excluir(this.pedido.id, item.id);
     },
 
     /**
      * Insere um produto, se possível.
-     * @param {Object} event O objeto com o evento JavaScript.
+     * @param {Object} item O produto de pedido que será inserido.
      */
-    inserir: function(event) {
-      if (!event || !this.validarFormulario_(event.target)) {
-        return;
-      }
-
-      var vm = this;
-
-      Servicos.Pedidos.Produtos.inserir(this.pedido.id, this.produtoPedido)
-        .then(function (resposta) {
-          vm.refresh_++;
-          vm.cancelar();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+    inserir: function(item) {
+      return Servicos.Pedidos.Produtos.inserir(this.pedido.id, item);
     },
 
     /**
      * Atualiza um produto, se possível.
-     * @param {Object} event O objeto com o evento JavaScript.
+     * @param {Object} item O produto de pedido que será atualizado.
      */
-    atualizar: function(event) {
-      if (!event || !this.validarFormulario_(event.target)) {
-        return;
-      }
-
-      var idProdutoPedidoAtualizar = this.produtoPedido.id;
-      var produtoPedidoAtualizar = this.patch(this.produtoPedido, this.produtoPedidoOriginal);
-      produtoPedidoAtualizar.beneficiamentos = this.clonar(this.produtoPedido.beneficiamentos);
-
-      var vm = this;
-
-      Servicos.Pedidos.Produtos.atualizar(this.pedido.id, idProdutoPedidoAtualizar, produtoPedidoAtualizar)
-        .then(function(resposta) {
-          vm.refresh_++;
-          vm.cancelar();
-        })
+    atualizar: function(item) {
+      return Servicos.Pedidos.Produtos.atualizar(this.pedido.id, item.id, item)
         .catch(function(erro) {
           const mensagemAmbienteObrigatorio = 'O ambiente de pedido é obrigatório.';
-          if (erro && erro.mensagem && erro.mensagem !== mensagemAmbienteObrigatorio) {
-            vm.exibirMensagem('Erro', erro.mensagem);
+          if (erro && erro.mensagem && erro.mensagem === mensagemAmbienteObrigatorio) {
+            Promise.reject();
+          } else {
+            Promise.reject(erro);
           }
         });
     },
 
     /**
-     * Cancela a edição ou cadastro de produto.
+     * Atualiza o filtro de produtos, para recarregar a lista.
+     * Além disso, emite um evento para que o pedido também seja recarregado.
      */
-    cancelar: function() {
-      this.inserindo = false;
-      this.numeroLinhaEdicao = -1;
-    },
-
-    /**
-     * Inicia um cadastro ou edição de produto, criando o objeto para 'bind'.
-     * @param {Object} item O produto que será usado como base, no caso de edição.
-     */
-    iniciarCadastroOuAtualizacao_: function (item) {
-      this.produtoAtual = {
-        id: item && item.produto ? item.produto.id : null,
-        codigo: item && item.produto ? item.produto.codigo : null
-      };
-
-      this.processoAtual = {
-        id: item && item.processo ? item.processo.id : null,
-        codigo: item && item.processo ? item.processo.codigo : null
-      };
-
-      this.aplicacaoAtual = {
-        id: item && item.aplicacao ? item.aplicacao.id : null,
-        codigo: item && item.aplicacao ? item.aplicacao.codigo : null
-      };
-
-      this.produtoPedidoOriginal = {
-        id: item ? item.id : null,
-        produto: {
-          id: item && item.produto ? item.produto.id : null,
-          espessura: item && item.produto ? item.produto.espessura : null,
-          codigo: item && item.produto ? item.produto.codigo : null,
-          descricao: item && item.produto ? item.produto.descricao : null,
-        },
-        quantidade: item ? item.quantidade : null,
-        descontoPorQuantidade: {
-          percentual: item && item.descontoPorQuantidade ? item.descontoPorQuantidade.percentual : null,
-          valor: item && item.descontoPorQuantidade ? item.descontoPorQuantidade.valor : null
-        },
-        largura: item ? item.largura : null,
-        altura: {
-          paraCalculo: item && item.altura ? item.altura.paraCalculo : null,
-          real: item && item.altura ? item.altura.real : null
-        },
-        areaEmM2: {
-          paraCalculo: item && item.areaEmM2 ? item.areaEmM2.paraCalculo : null,
-          real: item && item.areaEmM2 ? item.areaEmM2.real : null
-        },
-        valorUnitario: item ? item.valorUnitario : null,
-        processo: {
-          id: item && item.processo ? item.processo.id : null,
-          codigo: item && item.processo ? item.processo.codigo : null
-        },
-        aplicacao: {
-          id: item && item.aplicacao ? item.aplicacao.id : null,
-          codigo: item && item.aplicacao ? item.aplicacao.codigo : null
-        },
-        codigoPedidoCliente: item ? item.codigoPedidoCliente : null,
-        total: item ? item.total : null,
-        beneficiamentos: {
-          valor: item && item.beneficiamentos ? item.beneficiamentos.valor : null,
-          altura: item && item.beneficiamentos ? item.beneficiamentos.altura : null,
-          largura: item && item.beneficiamentos ? item.beneficiamentos.largura : null,
-          redondo: item && item.beneficiamentos ? item.beneficiamentos.redondo : null,
-          itens: item && item.beneficiamentos && item.beneficiamentos.itens ? item.beneficiamentos.itens.slice() : []
-        }
-      };
-
-      this.dadosValidacaoProduto = {
-        idPedido: this.pedido.id,
-        idObra: this.pedido.obra ? this.pedido.obra.id : null,
-        idLoja: this.pedido.loja.id,
-        tipoPedido: this.pedido.tipo.id,
-        tipoVenda: this.pedido.tipoVenda.id,
-        ambiente: false,
-        tipoEntrega: this.pedido.entrega.tipo.id,
-        cliente: {
-          id: this.pedido.cliente.id,
-          revenda: this.pedido.cliente.revenda
-        },
-        areaM2DesconsiderarObra: this.produtoPedidoOriginal.areaEmM2.real
-      };
-
-      this.produtoPedido = this.clonar(this.produtoPedidoOriginal);
-      this.produtoPedido.produto.id = null;
-    },
-
-    /**
-     * Função que indica se o formulário de ambientes possui valores válidos de acordo com os controles.
-     * @param {Object} botao O botão que foi disparado no controle.
-     * @returns {boolean} Um valor que indica se o formulário está válido.
-     */
-    validarFormulario_: function(botao) {
-      var form = botao.form || botao;
-      while (form.tagName.toLowerCase() !== 'form') {
-        form = form.parentNode;
-      }
-
-      if (!form.checkValidity()) {
-        return false;
-      }
-
-      if (this.produtoAtual && this.produtoAtual.exigirProcessoEAplicacao) {
-        var mensagem;
-
-        if (!this.aplicacaoAtual) {
-          mensagem = this.configuracoes.obrigarProcessoEAplicacaoRoteiro
-            ? 'É obrigatório informar a aplicação caso algum setor seja to tipo "Por Roteiro" ou "Por Benef.".'
-            : 'Informe a aplicação.';
-
-          this.exibirMensagem('Aplicação não informada', mensagem);
-          return false;
-        }
-
-        if (!this.processoAtual) {
-          mensagem = this.configuracoes.obrigarProcessoEAplicacaoRoteiro
-            ? 'É obrigatório informar o processo caso algum setor seja to tipo "Por Roteiro" ou "Por Benef.".'
-            : 'Informe o processo.';
-
-          this.exibirMensagem('Processo não informado', mensagem);
-          return false;
-        }
-      }
-
-      return true;
+    listaAtualizada: function () {
+      this.atualizar_++;
+      this.$emit('lista-atualizada');
     }
   },
 
   computed: {
-    /**
-     * Propriedade computada que retorna o campo para realizar a ordenação do resultado.
-     * @type {string}
-     */
-    ordenacao: function() {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
-    },
-
     /**
      * Propriedade computada que retorna o filtro usado para a busca de produtos.
      * @type {filtro}
@@ -376,120 +174,73 @@ Vue.component('pedido-produtos', {
       return {
         idPedido: this.pedido.id,
         idAmbiente: this.ambiente ? this.ambiente.id : null,
-        refresh: this.refresh_
+        atualizar: this.atualizar_
       };
     },
 
     /**
-     * Propriedade computada que retorna o tipo para busca no controle de beneficiamentos.
-     * @type {string}
+     * Propriedade computada que retorna o ID do cliente do pedido.
+     * @type {number}
      */
-    tipoBeneficiamentos: function () {
-      return this.pedidoMaoDeObraEspecial ? 'MaoDeObraEspecial' : 'Venda';
+    idCliente: function () {
+      return this.pedido && this.pedido.cliente
+        ? this.pedido.cliente.id
+        : null;
     },
 
     /**
-     * Propriedade computada para exibição do controle de beneficiamentos.
-     * @type {boolean}
+     * Propriedade computada que retorna se o cliente do pedido é revenda.
+     * @type {number}
      */
-    vIfControleBeneficiamentos: function () {
-      return this.produtoPedido
-        && this.produtoPedido.beneficiamentos
-        && this.produtoPedido.altura
-        && this.produtoPedido.areaEmM2
-        && this.produtoAtual
-        && this.pedido
-        && this.pedido.cliente
-        && this.pedido.entrega
-        && this.produtoAtual.exibirBeneficiamentos;
+    clienteRevenda: function () {
+      return this.pedido && this.pedido.cliente
+        ? this.pedido.cliente.revenda
+        : null;
+    },
+
+    /**
+     * Propriedade computada que retorna o tipo de entrega do pedido.
+     * @type {number}
+     */
+    tipoEntrega: function () {
+      return this.pedido && this.pedido.entrega && this.pedido.entrega.tipo
+        ? this.pedido.entrega.tipo.id
+        : null;
+    },
+
+    /**
+     * Propriedade computada que retorna o percentual de comissão do pedido.
+     * @type {number}
+     */
+    percentualComissao: function () {
+      return this.pedido && this.pedido.comissionado && this.pedido.comissionado.comissao
+        ? this.pedido.comissionado.comissao.percentual
+        : null;
     }
   },
 
   watch: {
     /**
-     * Observador para a variável 'produtoAtual'.
-     * Atualiza os dados do produto pedido ao alterar o produto.
+     * Observador para a variável 'pedido'.
+     * Atualiza os dados de validação de produto.
      */
-    produtoAtual: {
+    pedido: {
       handler: function(atual) {
-        if (!this.produtoPedido || !this.produtoPedido.produto) {
-          return;
-        }
-
-        this.produtoPedido.produto.id = atual ? atual.id : null;
-        this.produtoPedido.produto.espessura = atual ? atual.espessura : null;
-
-        if (atual && atual.altura && atual.altura.valor) {
-          this.produtoPedido.altura.paraCalculo = atual.altura.valor;
-          this.produtoPedido.altura.real = atual.altura.valor;
-        }
-
-        if (atual && atual.largura && atual.largura.valor) {
-          this.produtoPedido.largura = atual.largura.valor;
-        }
-
-        this.produtoPedido.valorUnitario = atual ? atual.valorUnitario : null;
+        this.dadosValidacaoProduto = {
+          idPedido: atual ? atual.id : null,
+          idObra: atual && atual.obra ? atual.obra.id : null,
+          idLoja: atual && atual.loja ? atual.loja.id : null,
+          tipoPedido: atual && atual.tipo ? atual.tipo.id : null,
+          tipoVenda: atual && atual.tipoVenda ? atual.tipoVenda.id : null,
+          ambiente: false,
+          tipoEntrega: atual && atual.entrega && atual.entrega.tipo ? atual.entrega.tipo.id : null,
+          cliente: {
+            id: atual && atual.cliente ? atual.cliente.id : null,
+            revenda: atual && atual.cliente ? atual.cliente.revenda : null
+          }
+        };
       },
       deep: true
-    },
-
-    /**
-     * Observador para a variável 'processoAtual'.
-     * Atualiza os dados do produto pedido ao alterar o processo.
-     */
-    processoAtual: {
-      handler: function(atual) {
-        if (!this.produtoPedido || !this.produtoPedido.processo) {
-          return;
-        }
-
-        this.produtoPedido.processo.id = atual ? atual.id : null;
-        this.produtoPedido.processo.codigo = atual ? atual.codigo : null;
-
-        if (atual && atual.idAplicacao) {
-          this.aplicacaoAtual = {
-            id: atual.idAplicacao,
-            codigo: atual.codigoAplicacao
-          };
-        }
-      },
-      deep: true
-    },
-
-    /**
-     * Observador para a variável 'aplicacaoAtual'.
-     * Atualiza os dados do produto pedido ao alterar a aplicação.
-     */
-    aplicacaoAtual: {
-      handler: function(atual) {
-        if (!this.produtoPedido || !this.produtoPedido.aplicacao) {
-          return;
-        }
-
-        this.produtoPedido.aplicacao.id = atual ? atual.id : null;
-        this.produtoPedido.aplicacao.codigo = atual ? atual.codigo : null;
-      },
-      deep: true
-    },
-
-    /**
-     * Observador para a variável 'produtoPedido.descontoPorQuantidade'.
-     * Atualiza o percentual de desconto por quantidade no objeto de dados adicionais.
-     */
-    'produtoPedido.descontoPorQuantidade': function(atual) {
-      if (!this.dadosValidacaoProduto) {
-        return;
-      }
-
-      this.dadosValidacaoProduto.percentualDescontoQuantidade = atual ? atual.percentual : 0;
-    },
-
-    /**
-     * Observador para a variável 'refresh_'.
-     * Emite um evento informando que a lista de produtos foi alterada.
-     */
-    'refresh_': function () {
-      this.$emit('updated');
     }
   },
 

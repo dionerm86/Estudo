@@ -291,9 +291,13 @@ const app = new Vue({
     },
 
     /**
-     * 
+     * Abre os relatórios de totais dos pedidos filtrados.
+     * @param {boolean} usarValoresQueryString Considerar os valores informados na querystring para o método?
+     * @param {number} alturaJanela A altura da janela de popup.
+     * @param {number} larguraJanela A largura da janela de popup.
+     * @param {string} url A URL do popup que contém o relatório de totais.
      */
-    abrirRelatoriosTotais = function (usarValoresQueryString, alturaJanela, larguraJanela, url, filtro) {
+    abrirRelatoriosTotais: function (usarValoresQueryString, alturaJanela, larguraJanela, url) {
       var byVend = usarValoresQueryString ? GetQueryString('byVend') : '';
       var maoObra = usarValoresQueryString ? GetQueryString('maoObra') : '';
       var maoObraEspecial = usarValoresQueryString ? GetQueryString('maoObraEspecial') : '';
@@ -306,37 +310,37 @@ const app = new Vue({
         }
       }
 
-      incluirFiltro('idPedido', filtro.id);
-      incluirFiltro('idLoja', filtro.idLoja);
-      incluirFiltro('idCli', filtro.idCliente);
-      incluirFiltro('nomeCli', filtro.nomeCliente);
-      incluirFiltro('codCliente', filtro.codigoPedidoCliente);
-      incluirFiltro('idCidade', filtro.idCidade);
-      incluirFiltro('endereco', filtro.endereco);
-      incluirFiltro('bairro', filtro.bairro);
-      incluirFiltro('complemento', filtro.complemento);
+      incluirFiltro('idPedido', this.filtro.id);
+      incluirFiltro('idLoja', this.filtro.idLoja);
+      incluirFiltro('idCli', this.filtro.idCliente);
+      incluirFiltro('nomeCli', this.filtro.nomeCliente);
+      incluirFiltro('codCliente', this.filtro.codigoPedidoCliente);
+      incluirFiltro('idCidade', this.filtro.idCidade);
+      incluirFiltro('endereco', this.filtro.endereco);
+      incluirFiltro('bairro', this.filtro.bairro);
+      incluirFiltro('complemento', this.filtro.complemento);
       incluirFiltro('byVend', byVend);
-      incluirFiltro('altura', filtro.altura);
-      incluirFiltro('largura', filtro.largura);
-      incluirFiltro('situacao', filtro.situacao);
-      incluirFiltro('situacaoProd', filtro.situacaoProducao);
-      incluirFiltro('idOrcamento', filtro.idOrcamento);
+      incluirFiltro('altura', this.filtro.altura);
+      incluirFiltro('largura', this.filtro.largura);
+      incluirFiltro('situacao', this.filtro.situacao);
+      incluirFiltro('situacaoProd', this.filtro.situacaoProducao);
+      incluirFiltro('idOrcamento', this.filtro.idOrcamento);
       incluirFiltro('maoObra', maoObra);
       incluirFiltro('maoObraEspecial', maoObraEspecial);
       incluirFiltro('producao', producao);
-      incluirFiltro('diasProntoLib', filtro.diferencaDiasEntreProntoELiberado);
-      incluirFiltro('valorDe', filtro.valorPedidoMinimo);
-      incluirFiltro('valorAte', filtro.valorPedidoMaximo);
-      incluirFiltro('dataCadIni', filtro.periodoCadastroInicio);
-      incluirFiltro('dataCadFim', filtro.periodoCadastroFim);
-      incluirFiltro('dataFinIni', filtro.periodoFinalizacaoInicio);
-      incluirFiltro('dataFinFim', filtro.periodoFinalizacaoFim);
-      incluirFiltro('funcFinalizacao', filtro.codigoUsuarioFinalizacao);
-      incluirFiltro('tipo', filtro.tipo);
-      incluirFiltro('fastDelivery', filtro.fastDelivery);
-      incluirFiltro('tipoVenda', filtro.tipoVenda);
-      incluirFiltro('origemPedido', filtro.origem);
-      incluirFiltro('obs', filtro.observacao);
+      incluirFiltro('diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado);
+      incluirFiltro('valorDe', this.filtro.valorPedidoMinimo);
+      incluirFiltro('valorAte', this.filtro.valorPedidoMaximo);
+      incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio);
+      incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim);
+      incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio);
+      incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim);
+      incluirFiltro('funcFinalizacao', this.filtro.codigoUsuarioFinalizacao);
+      incluirFiltro('tipo', this.filtro.tipo);
+      incluirFiltro('fastDelivery', this.filtro.fastDelivery);
+      incluirFiltro('tipoVenda', this.filtro.tipoVenda);
+      incluirFiltro('origemPedido', this.filtro.origem);
+      incluirFiltro('obs', this.filtro.observacao);
 
       var filtroReal = filtros.length > 0
         ? '?' + filtros.join('&')
@@ -349,14 +353,14 @@ const app = new Vue({
      * Exibe a lista de totais dos pedidos na tela.
      */
     abrirListaTotais: function () {
-      this.abrirRelatoriosTotais(true, 140, 320, '../Utils/ListaTotalPedido.aspx', this.filtro);
+      this.abrirRelatoriosTotais(true, 140, 320, '../Utils/ListaTotalPedido.aspx');
     },
 
     /**
      * Exibe o gráfico de totais diários na tela.
      */
     abrirGraficoTotaisDiarios: function () {
-      this.abrirRelatoriosTotais(false, 600, 800, '../Relatorios/GraficoTotaisDiariosPedido.aspx', this.filtro)
+      this.abrirRelatoriosTotais(false, 600, 800, '../Relatorios/GraficoTotaisDiariosPedido.aspx')
     },
 
     /**

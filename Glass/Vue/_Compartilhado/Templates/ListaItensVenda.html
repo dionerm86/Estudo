@@ -1,0 +1,343 @@
+﻿<form>
+    <lista-paginada v-bind:exibir-inclusao="true" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
+        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
+        <template slot="cabecalho">
+            <th></th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('codigo')">
+                    Cód.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('produto')">
+                    Produto
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('quantidade')">
+                    Qtde.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('largura')">
+                    Largura
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('altura')">
+                    Altura
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('area')">
+                    Tot. m²
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('areaCalculo')">
+                    Tot. m² cálc.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('valorUnitario')">
+                    Valor vendido
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('processo')">
+                    Proc.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('aplicacao')">
+                    Apl.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('codigoPedidoCliente')">
+                    Ped. Cli.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('total')">
+                    Total
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('valorBeneficiamentos')">
+                    V. Benef.
+                </a>
+            </th>
+            <th>
+                <a href="#" v-on:click.prevent="ordenar('percentualComissaoProduto')">
+                    Perc. Comissão Prod.
+                </a>
+            </th>
+            <slot name="cabecalho"></slot>
+            <th></th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td style="white-space: nowrap">
+                <button v-on:click.prevent="editar_(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                    <img src="../Images/Edit.gif">
+                </button>
+                <button v-on:click.prevent="excluir_(item)" title="Excluir" v-if="item.permissoes.excluir && !inserindo && numeroLinhaEdicao === -1">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td>
+                {{ item.produto.codigo }}
+            </td>
+            <td>
+                {{ item.produto.descricaoComBeneficiamentos }}
+            </td>
+            <td>
+                {{ item.quantidade }}
+                <span v-if="maoDeObra && quantidadeAmbiente">
+                    x {{ quantidadeAmbiente }} peças de vidro
+                </span>
+            </td>
+            <td>
+                {{ item.largura }}
+            </td>
+            <td>
+                {{ item.altura.paraExibirNaLista }}
+            </td>
+            <td>
+                {{ item.areaEmM2.real | decimal }}
+            </td>
+            <td>
+                {{ item.areaEmM2.paraCalculo | decimal }}
+            </td>
+            <td>
+                {{ item.valorUnitario | moeda }}
+            </td>
+            <td>
+                <span v-if="item.processo">
+                    {{ item.processo.codigo }}
+                </span>
+            </td>
+            <td>
+                <span v-if="item.aplicacao">
+                    {{ item.aplicacao.codigo }}
+                </span>
+            </td>
+            <td>
+                {{ item.codigoPedidoCliente }}
+            </td>
+            <td>
+                {{ item.total | moeda }}
+                <span v-if="item.descontoPorQuantidade && item.descontoPorQuantidade.percentual > 0">
+                    (Desconto de {{ item.descontoPorQuantidade.percentual | percentual }})
+                </span>
+            </td>
+            <td>
+                <span v-if="item.beneficiamentos">
+                    {{ item.beneficiamentos.valor | moeda }}
+                </span>
+                <span v-else>
+                    {{ 0 | moeda }}
+                </span>
+            </td>
+            <td>
+                {{ item.percentualComissao | percentual }}
+            </td>
+            <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
+            <td></td>
+        </template>
+        <template slot="itemEditando">
+            <td style="white-space: nowrap">
+                <button v-on:click.prevent="atualizar_" title="Atualizar">
+                    <img src="../Images/ok.gif">
+                </button>
+                <button v-on:click.prevent="cancelar" title="Cancelar">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td>
+                <span v-if="itemVenda && itemVenda.produto">
+                    {{ itemVenda.produto.codigo }}
+                </span>
+                <div style="display: none">
+                    <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="itemVenda && itemVenda.produto"
+                        v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"></campo-busca-produto>
+                </div>
+            </td>
+            <td>
+                <span v-if="itemVenda && itemVenda.produto">
+                    {{ itemVenda.produto.descricao }}
+                </span>
+            </td>
+            <td>
+                <campo-quantidade v-bind:quantidade.sync="itemVenda.quantidade" v-bind:percentual-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.percentual"
+                    v-bind:valor-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.valor" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
+                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="idCliente" v-if="itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
+                <span v-if="maoDeObra && quantidadeAmbiente">
+                    x {{ quantidadeAmbiente }} peças de vidro
+                </span>
+            </td>
+            <td>
+                <campo-largura v-bind:largura.sync="itemVenda.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
+                    v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="itemVenda"></campo-largura>
+            </td>
+            <td>
+                <campo-altura v-bind:altura-para-exibir.sync="itemVenda.altura.paraCalculo" v-bind:altura-oculta.sync="itemVenda.altura.real"
+                    v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal" v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar"
+                    v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
+                    v-if="itemVenda && itemVenda.altura"></campo-altura>
+            </td>
+            <td>
+                <campo-area-m2 v-bind:area-m2.sync="itemVenda.areaEmM2.real" v-bind:area-calculada-m2.sync="itemVenda.areaEmM2.paraCalculo" v-bind:tamanho-maximo-produto="produtoAtual.tamanhoMaximoObra"
+                    v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
+                    v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-if="itemVenda && itemVenda.areaEmM2 && itemVenda.descontoPorQuantidade && produtoAtual"></campo-area-m2>
+            </td>
+            <td>
+                <span v-if="itemVenda && itemVenda.areaEmM2 && itemVenda.areaEmM2.paraCalculo > 0">
+                    {{ itemVenda.areaEmM2.paraCalculo | decimal }}
+                </span>
+            </td>
+            <td>
+                <input type="number" step="0.01" min="produtoAtual ? produtoAtual.valorMinimo : 0" v-model.number="itemVenda.valorUnitario"
+                    style="width: 50px" required>
+            </td>
+            <td>
+                <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="itemVenda"></campo-busca-etiqueta-processo>
+            </td>
+            <td>
+                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda"></campo-busca-etiqueta-aplicacao>
+            </td>
+            <td>
+                <input type="number" v-model.number="itemVenda.valorUnitario" style="width: 60px" step="0.01" required
+                    v-bind:min="produtoAtual.valorMinimo" v-if="itemVenda && produtoAtual && produtoAtual.podeEditarValorUnitario">
+                <span v-else-if="itemVenda">
+                    {{ itemVenda.valorUnitario | moeda }}
+                </span>
+            </td>
+            <td>
+                <campo-total v-bind:total.sync="itemVenda.total" v-bind:area-m2="itemVenda.areaEmM2.real" v-bind:area-calculada-m2="itemVenda.areaEmM2.paraCalculo"
+                    v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
+                    v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
+                    v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
+            </td>
+            <td>
+                <span v-if="itemVenda.beneficiamentos">
+                    {{ itemVenda.beneficiamentos.valor | moeda }}
+                </span>
+                <span v-else>
+                    {{ 0 | moeda }}
+                </span>
+            </td>
+            <td>
+                <input type="number" step="0.01" v-model.number="itemVenda.percentualComissao" min="0" style="width: 50px" />
+            </td>
+            <slot name="itemEditando" v-bind:item="itemVenda"></slot>
+            <td>
+                <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
+                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
+                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
+                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
+                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
+                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                    v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
+                    v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
+                    v-if="vIfControleBeneficiamentos"></controle-beneficiamentos>
+            </td>
+        </template>
+        <template slot="itemIncluir">
+            <td style="white-space: nowrap">
+                <button v-on:click.prevent="iniciarCadastro" title="Novo produto..." v-if="!inserindo">
+                    <img src="../Images/Insert.gif">
+                </button>
+                <button v-on:click.prevent="inserir_" title="Inserir" v-if="inserindo">
+                    <img src="../Images/Ok.gif">
+                </button>
+                <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                    <img src="../Images/ExcluirGrid.gif">
+                </button>
+            </td>
+            <td colspan="2">
+                <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="inserindo && itemVenda && itemVenda.produto"
+                    v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"></campo-busca-produto>
+            </td>
+            <td>
+                <campo-quantidade v-bind:quantidade.sync="itemVenda.quantidade" v-bind:percentual-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.percentual"
+                    v-bind:valor-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.valor" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
+                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="idCliente" v-if="inserindo && itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
+                <span v-if="inserindo && maoDeObra && quantidadeAmbiente">
+                    x {{ quantidadeAmbiente }} peças de vidro
+                </span>
+            </td>
+            <td>
+                <campo-largura v-bind:largura.sync="itemVenda.largura" v-bind:permite-decimal="produtoAtual && produtoAtual.largura && produtoAtual.largura.permiteDecimal"
+                    v-bind:permite-editar="produtoAtual && produtoAtual.largura && produtoAtual.largura.podeEditar" v-if="inserindo && itemVenda"></campo-largura>
+            </td>
+            <td>
+                <campo-altura v-bind:altura-para-exibir.sync="itemVenda.altura.paraCalculo" v-bind:altura-oculta.sync="itemVenda.altura.real"
+                    v-bind:permite-decimal="produtoAtual && produtoAtual.altura && produtoAtual.altura.permiteDecimal" v-bind:permite-editar="produtoAtual && produtoAtual.altura && produtoAtual.altura.podeEditar"
+                    v-bind:fator-arredondamento="produtoAtual && produtoAtual.altura ? produtoAtual.altura.fatorArredondamento : null"
+                    v-if="inserindo && itemVenda && itemVenda.altura"></campo-altura>
+            </td>
+            <td>
+                <campo-area-m2 v-bind:area-m2.sync="itemVenda.areaEmM2.real" v-bind:area-calculada-m2.sync="itemVenda.areaEmM2.paraCalculo" v-bind:tamanho-maximo-produto="produtoAtual.tamanhoMaximoObra"
+                    v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
+                    v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-if="inserindo && itemVenda && itemVenda.areaEmM2 && itemVenda.descontoPorQuantidade && produtoAtual"></campo-area-m2>
+            </td>
+            <td>
+                <span v-if="inserindo && itemVenda && itemVenda.areaEmM2 && itemVenda.areaEmM2.paraCalculo > 0">
+                    {{ itemVenda.areaEmM2.paraCalculo | decimal }}
+                </span>
+            </td>
+            <td>
+                <input type="number" v-model.number="itemVenda.valorUnitario" style="width: 60px" step="0.01" required
+                    v-bind:min="produtoAtual.valorMinimo" v-if="inserindo && itemVenda && produtoAtual && produtoAtual.podeEditarValorUnitario">
+                <span v-else-if="inserindo && itemVenda">
+                    {{ itemVenda.valorUnitario | moeda }}
+                </span>
+            </td>
+            <td>
+                <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
+            </td>
+            <td>
+                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
+            </td>
+            <td>
+                <input type="text" v-model="itemVenda.codigoPedidoCliente" maxlength="50" style="width: 50px" v-if="inserindo && itemVenda">
+            </td>
+            <td>
+                <campo-total v-bind:total.sync="itemVenda.total" v-bind:area-m2="itemVenda.areaEmM2.real" v-bind:area-calculada-m2="itemVenda.areaEmM2.paraCalculo"
+                    v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
+                    v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
+                    v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
+            </td>
+            <td>
+                <span v-if="inserindo && itemVenda.beneficiamentos">
+                    {{ itemVenda.beneficiamentos.valor | moeda }}
+                </span>
+                <span v-else-if="inserindo">
+                    {{ 0 | moeda }}
+                </span>
+            </td>
+            <td>
+                <input type="number" step="0.01" v-model.number="itemVenda.percentualComissao" min="0" style="width: 50px" v-if="inserindo && itemVenda" />
+            </td>
+            <slot name="itemIncluir" v-bind:item="itemVenda"></slot>
+            <td>
+                <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
+                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
+                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
+                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
+                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
+                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                    v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
+                    v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
+                    v-if="inserindo && vIfControleBeneficiamentos"></controle-beneficiamentos>
+            </td>
+        </template>
+    </lista-paginada>
+</form>

@@ -4,6 +4,7 @@
 
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.Venda;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -13,7 +14,7 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
     /// Classe que encapsula os dados de um produto de pedido.
     /// </summary>
     [DataContract(Name = "Produto")]
-    public class ListaDto
+    public class ListaDto : ItemDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -79,111 +80,6 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o identificador do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o identificador do material de projeto que gerou o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("idMaterialProjeto")]
-        public int? IdMaterialProjeto { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados de produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("produto")]
-        public ProdutoDto Produto { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a quantidade de produtos do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("quantidade")]
-        public double Quantidade { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a quantidade do ambiente para o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("quantidadeAmbiente")]
-        public int QuantidadeAmbiente { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados de desconto por quantidade do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("descontoPorQuantidade")]
-        public DescontoQuantidadeDto DescontoPorQuantidade { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a largura pra o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("largura")]
-        public int Largura { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados de altura para o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("altura")]
-        public AlturaDto Altura { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados de área para o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("areaEmM2")]
-        public AreaDto AreaEmM2 { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor unitário para o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorUnitario")]
-        public decimal ValorUnitario { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados básicos para o processo do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("processo")]
-        public IdCodigoDto Processo { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os dados básicos para a aplicação do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("aplicacao")]
-        public IdCodigoDto Aplicacao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o código do pedido do cliente para o produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("codigoPedidoCliente")]
-        public string CodigoPedidoCliente { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor total do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("total")]
-        public decimal Total { get; set; }
-
-        /// <summary>
-        /// Obtém ou define os beneficiamentos do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("beneficiamentos")]
-        public BeneficiamentosDto Beneficiamentos { get; set; }
-
-        /// <summary>
         /// Obtém ou define a observação do produto do pedido.
         /// </summary>
         [DataMember]
@@ -191,28 +87,10 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
         public string Observacao { get; set; }
 
         /// <summary>
-        /// Obtém ou define o percentual de comissão do produto do pedido.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("percentualComissao")]
-        public double PercentualComissao { get; set; }
-
-        /// <summary>
         /// Obtém ou define as permissões do produto do pedido.
         /// </summary>
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
-
-        private IdCodigoDto ObterIdCodigo(int? id, string codigo)
-        {
-            return !id.HasValue || string.IsNullOrWhiteSpace(codigo)
-                ? null
-                : new IdCodigoDto
-                {
-                    Id = id.Value,
-                    Codigo = codigo,
-                };
-        }
     }
 }

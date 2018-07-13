@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Beneficiamentos.Filtro;
 using Glass.API.Backend.Models.Beneficiamentos.Total;
@@ -52,9 +53,9 @@ namespace Glass.API.Backend.Controllers.Beneficiamentos.V1
                     return new TotalDto
                     {
                         IdItemSelecionado = itemSelecionado.Id,
-                        ValorUnitario = total.ValorUnitario,
-                        ValorTotal = total.ValorTotal,
-                        CustoTotal = total.CustoTotal,
+                        ValorUnitario = total.ValorUnitario.Arredondar(2),
+                        ValorTotal = total.ValorTotal.Arredondar(2),
+                        CustoTotal = total.CustoTotal.Arredondar(2),
                     };
                 }));
 

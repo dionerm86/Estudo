@@ -1,36 +1,37 @@
-﻿// <copyright file="AlturaDto.cs" company="Sync Softwares">
+﻿// <copyright file="AreaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
+namespace Glass.API.Backend.Models.Genericas.Venda
 {
     /// <summary>
-    /// Classe que encapsula os dados de altura do produto.
+    /// Classe que encapsula os dados da área de um produto.
     /// </summary>
-    public class AlturaDto
+    [DataContract(Name = "Area")]
+    public class AreaDto
     {
         /// <summary>
-        /// Obtém ou define a altura para cálculo do produto.
+        /// Obtém ou define a área para cálculo.
         /// </summary>
         [DataMember]
         [JsonProperty("paraCalculo")]
         public double ParaCalculo { get; set; }
 
         /// <summary>
-        /// Obtém ou define a altura real do produto.
+        /// Obtém ou define a área real.
         /// </summary>
         [DataMember]
         [JsonProperty("real")]
         public double Real { get; set; }
 
         /// <summary>
-        /// Obtém ou define a altura para exibição na lista do produto.
+        /// Obtém ou define a área para cálculo, sem chapa.
         /// </summary>
         [DataMember]
-        [JsonProperty("paraExibirNaLista")]
-        public string ParaExibirNaLista { get; set; }
+        [JsonProperty("paraCalculoSemChapa")]
+        public string ParaCalculoSemChapa { get; set; }
     }
 }

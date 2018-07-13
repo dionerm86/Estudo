@@ -602,7 +602,7 @@
             </section>
             <pedido-ambientes :pedido="pedido" :ambiente.sync="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"></pedido-ambientes>
             <pedido-produtos :pedido="pedido" :ambiente="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"
-                :pedido-producao-corte="pedidoProducaoCorte" :pedido-mao-de-obra-especial="pedidoMaoDeObraEspecial" @updated="buscarPedido"></pedido-produtos>
+                :pedido-producao-corte="pedidoProducaoCorte" :pedido-mao-de-obra-especial="pedidoMaoDeObraEspecial" @lista-atualizada="atualizarPedidoEAmbientes"></pedido-produtos>
         </div>
     </div>
     <br /><br /><br />

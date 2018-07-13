@@ -1645,6 +1645,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
@@ -1719,6 +1720,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />

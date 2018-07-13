@@ -5,7 +5,7 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
+namespace Glass.API.Backend.Models.Genericas.Venda
 {
     /// <summary>
     /// Classe que encapsula os dados de desconto por quantidade do produto do pedido.

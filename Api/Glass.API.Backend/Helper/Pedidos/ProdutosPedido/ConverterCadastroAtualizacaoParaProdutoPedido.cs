@@ -70,11 +70,14 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
 
         private void ConverterBeneficiamentos(Data.Model.ProdutosPedido destino)
         {
+            var itens = this.cadastro.Beneficiamentos?.Itens
+                ?? new Models.Genericas.ItemBeneficiamentoDto[0];
+
             destino.ValorBenef = this.cadastro.Beneficiamentos?.Valor ?? destino.ValorBenef;
             destino.AlturaBenef = this.cadastro.Beneficiamentos?.Altura ?? destino.AlturaBenef;
             destino.LarguraBenef = this.cadastro.Beneficiamentos?.Largura ?? destino.LarguraBenef;
             destino.Redondo = this.cadastro.Beneficiamentos?.Redondo ?? destino.Redondo;
-            destino.Beneficiamentos = this.cadastro.Beneficiamentos?.Itens?.ObterListaBeneficiamentos();
+            destino.Beneficiamentos = itens.ObterListaBeneficiamentos();
         }
     }
 }

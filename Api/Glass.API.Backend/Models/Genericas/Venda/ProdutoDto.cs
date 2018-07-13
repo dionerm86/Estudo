@@ -2,11 +2,10 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
+namespace Glass.API.Backend.Models.Genericas.Venda
 {
     /// <summary>
     /// Classe que encapsula os dados de produto de um produto de pedido.

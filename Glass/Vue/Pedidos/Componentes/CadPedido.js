@@ -33,18 +33,17 @@
 
   methods: {
     /**
+     * Atualiza os dados do pedido e dos ambientes, se houver.
+     */
+    atualizarPedidoEAmbientes: function() {
+      this.buscarPedido(this.pedido.id);
+    },
+
+    /**
      * Busca os dados de um pedido.
      * @param {?number} id O número do pedido.
      */
     buscarPedido: function (id) {
-      if (!id) {
-        if (this.pedido) {
-          id = this.pedido.id;
-        } else {
-          return;
-        }
-      }
-
       var vm = this;
 
       Servicos.Pedidos.obterDetalhe(id)
