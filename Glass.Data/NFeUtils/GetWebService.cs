@@ -631,7 +631,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeAutorizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeAutorizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeAutorizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeAutorizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeAutorizacao4.asmx?wsdl"; break;
@@ -683,7 +683,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeConsultaProtocolo4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeConsultaProtocolo4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeConsulta4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeConsulta4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeConsultaProtocolo4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeConsultaProtocolo4.asmx?wsdl"; break;
@@ -735,7 +735,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeInutilizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeInutilizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeInutilizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeInutilizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeInutilizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeInutilizacao4.asmx?wsdl"; break;
@@ -787,7 +787,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeRecepcaoEvento4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeRecepcaoEvento4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/RecepcaoEvento4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/RecepcaoEvento4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeRecepcaoEvento4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeRecepcaoEvento4.asmx?wsdl"; break;
@@ -839,7 +839,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeRetAutorizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeRetAutorizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeRetAutorizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeRetAutorizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeRetAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeRetAutorizacao4.asmx?wsdl"; break;
@@ -891,7 +891,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeStatusServico4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeStatusServico4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeStatusServico4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeStatusServico4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeStatusServico4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeStatusServico4.asmx?wsdl"; break;
