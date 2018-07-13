@@ -330,6 +330,9 @@ namespace Glass.Data.Helper
             CalcularRentabilidade = 368,
             UsarComissaoPorProduto = 369,
             ControlarFaixaRentabilidadeLiberacao = 370,
+            AlturaELarguraMinimasParaPecasTemperadas = 371,
+            AlturaELarguraMinimaParaPecasComBisote = 372,
+            AlturaELarguraMinimaParaPecasComLapidacao = 373,
 
             #region Configs Suporte (Antiga config interna)
 

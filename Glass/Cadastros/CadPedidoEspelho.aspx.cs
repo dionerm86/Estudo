@@ -478,7 +478,37 @@ namespace Glass.UI.Web.Cadastros
     
             if (prodPed.Largura == 0 && prodPed.LarguraReal > 0)
                 prodPed.Largura = prodPed.LarguraReal;
-    
+
+            var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+            var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+            var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+            var retorno = string.Empty;
+
+            if (prodPed.Beneficiamentos != null)
+            {
+                foreach (var prodBenef in prodPed.Beneficiamentos)
+                {
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                        prodPed.Altura < tamanhoMinimoBisote && prodPed.Largura < tamanhoMinimoBisote)
+                        retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                        prodPed.Altura < tamanhoMinimoLapidacao && prodPed.Largura < tamanhoMinimoLapidacao)
+                        retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                }
+            }
+
+            if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prodPed.IdSubgrupoProd).IsVidroTemperado &&
+                    prodPed.Altura < tamanhoMinimoTemperado && prodPed.Largura < tamanhoMinimoTemperado)
+                retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+            if (!string.IsNullOrWhiteSpace(retorno))
+            {
+                MensagemAlerta.ShowMsg(retorno, Page);
+                return;
+            }
+
             try
             {
                 ProdutosPedidoEspelhoDAO.Instance.InsertComTransacao(prodPed);

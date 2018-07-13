@@ -4184,6 +4184,33 @@ namespace Glass.Data.DAL
                             objInsert.Largura = prod.Largura.GetValueOrDefault();
                         }
                     }
+
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (objInsert.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objInsert.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            objInsert.Altura < tamanhoMinimoBisote && objInsert.Largura < tamanhoMinimoBisote)
+                            retorno += $"O altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            objInsert.Altura < tamanhoMinimoLapidacao && objInsert.Largura < tamanhoMinimoLapidacao)
+                            retorno += $"O altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                    }
+                }
+
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey(objInsert.IdSubgrupoProd).IsVidroTemperado &&
+                        objInsert.Altura < tamanhoMinimoTemperado && objInsert.Largura < tamanhoMinimoTemperado)
+                    retorno += $"O altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
             }
 
             if (!objInsert.Redondo && objInsert.IdAmbientePedido > 0 && AmbientePedidoDAO.Instance.IsRedondo(session, objInsert.IdAmbientePedido.Value))
@@ -4654,6 +4681,34 @@ namespace Glass.Data.DAL
                     AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido,
                         acrescimoRemovido || descontoRemovido);
                 }
+
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (objUpdate.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objUpdate.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            objUpdate.Altura < tamanhoMinimoBisote && objUpdate.Largura < tamanhoMinimoBisote)
+                            retorno += $"O altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            objUpdate.Altura < tamanhoMinimoLapidacao && objUpdate.Largura < tamanhoMinimoLapidacao)
+                            retorno += $"O altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                    }
+                }
+
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd)).IsVidroTemperado &&
+                        objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    retorno += $"O altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
 
                 if (!PedidoReferenciadoPermiteInsercao(sessao, objUpdate))
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");

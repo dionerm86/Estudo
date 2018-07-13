@@ -3937,7 +3937,8 @@ namespace Glass.UI.Web.Relatorios
             if (Request["EnvioEmail"] != null && Request["EnvioEmail"].ToLower() == "true")
                 textoRodape = String.Empty;
 
-            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(diretorioLogotipos, idLojaLogotipo)));
+            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest, idLojaLogotipo)));
+            //lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(diretorioLogotipos, idLojaLogotipo)));
             lstParam.Add(new ReportParameter("TextoRodape", textoRodape));
             lstParam.Add(new ReportParameter("CorRodape", "DimGray"));
 
