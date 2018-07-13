@@ -5782,6 +5782,12 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(session, "Update pedido Set dataEntrega=?dataEntrega Where idPedido=" + idPedido, new GDAParameter("?dataEntrega", dataMinima));
             }
 
+            if (pedido.FastDelivery)
+            {
+                var totalM2pedido = ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(session, pedido.IdPedido);
+                ProdutosPedidoDAO.Instance.IsFastDeliveryDay(session, pedido.DataEntrega ?? System.DateTime.Now, pedido.IdPedido, totalM2pedido);
+            }
+
             // A verificação de bloquear ou não data de entrega mínima foi removida
             if (BloquearDataEntregaMinima(session, idPedido) && GetDataEntregaMinima(session, pedido.IdCli, idPedido, out dataMinima, out dataFastDelivery) && pedido.DataEntrega < dataMinima.Date)
                 throw new Exception("A data de entrega não pode ser anterior a " + dataMinima.ToString("dd/MM/yyyy") + ".");
@@ -14864,8 +14870,11 @@ namespace Glass.Data.DAL
                 objUpdate.DataPedido = objUpdate.DataPedido.AddHours(ped.DataCad.Hour).AddMinutes(ped.DataCad.Minute).AddSeconds(ped.DataCad.Second);
             }
 
-            bool enviarMensagem = false;
-            RecalcularEAtualizarDataEntregaPedido(session, objUpdate.IdPedido, null, out enviarMensagem, objUpdate.FastDelivery);
+            if (objUpdate.FastDelivery)
+            {
+                var totalM2pedido = ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(session, objUpdate.IdPedido);
+                ProdutosPedidoDAO.Instance.IsFastDeliveryDay(session, objUpdate.DataEntrega ?? System.DateTime.Now, objUpdate.IdPedido, totalM2pedido);
+            }
 
             // Remove o idObra caso não seja mais obra o tipo de venda.
             if (objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)
