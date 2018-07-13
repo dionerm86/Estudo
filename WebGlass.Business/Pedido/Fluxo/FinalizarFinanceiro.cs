@@ -31,7 +31,7 @@ namespace WebGlass.Business.Pedido.Fluxo
 
         public bool PodeExecutarAcao(uint idPedido, string tipo)
         {
-            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(idPedido);
+            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
 
             switch (tipo.ToLower())
             {
@@ -75,7 +75,7 @@ namespace WebGlass.Business.Pedido.Fluxo
             }
             else
             {
-                PedidoDAO.Instance.AlteraSituacao(idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Ativo);
+                PedidoDAO.Instance.AlteraSituacao(null, idPedido, Glass.Data.Model.Pedido.SituacaoPedido.Ativo);
             }
 
             ObservacaoFinalizacaoFinanceiroDAO.Instance.AtualizaItem(null, idPedido, observacao, !negado ?
@@ -95,11 +95,11 @@ namespace WebGlass.Business.Pedido.Fluxo
                     {
                         bool enviarMensagem = false;
                         //Recalcula a data de entrega do pedido baseando-se na data de hoje e atualiza a data de entrega do pedido
-                        PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem);
+                        PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, idPedido, DateTime.Now, out enviarMensagem, false);
 
                         var idRemetente = UserInfo.GetUserInfo.CodUser;
                         var idVendedorCad = (int)PedidoDAO.Instance.ObtemIdFuncCad(transaction, idPedido);
-                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido);
+                        var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
 
                         if (enviarMensagem)
                         {

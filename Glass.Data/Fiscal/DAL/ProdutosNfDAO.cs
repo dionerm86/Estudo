@@ -339,6 +339,14 @@ namespace Glass.Data.DAL
             return ExecuteScalar<decimal>(session, sql);
         }
 
+        /// <summary>
+        /// Obtém o total do produto de nota fiscal informado.
+        /// </summary>
+        public decimal ObterTotal(GDASession session, int idProdNf)
+        {
+            return ObtemValorCampo<decimal>(session, "Total", $"IdProdNf={ idProdNf }");
+        }
+
         #endregion
 
         #region Retorna a última BCICMSST/ICMSST utilizada
@@ -1104,9 +1112,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna um produto nota fiscal a partir do número da etiqueta
         /// </summary>
-        /// <param name="codEtiqueta"></param>
-        /// <returns></returns>
-        public ProdutosNf GetProdNfByEtiqueta(string codEtiqueta)
+        public ProdutosNf GetProdNfByEtiqueta(GDASession session, string codEtiqueta)
         {
             string sql = @"
                 SELECT pnf.*, p.descricao as DescrProduto, p.codInterno
@@ -1123,7 +1129,7 @@ namespace Glass.Data.DAL
             var itemEtiqueta = codEtiqueta.Substring(codEtiqueta.IndexOf('.') + 1, codEtiqueta.IndexOf('/') - codEtiqueta.IndexOf('.') - 1);
             var qtdeProd = codEtiqueta.Substring(codEtiqueta.IndexOf('/') + 1);
 
-            return objPersistence.LoadOneData(sql, new GDAParameter("?idNf", idNf), new GDAParameter("?posicaoProd", posicaoProd),
+            return objPersistence.LoadOneData(session, sql, new GDAParameter("?idNf", idNf), new GDAParameter("?posicaoProd", posicaoProd),
                 new GDAParameter("?itemEtiqueta", itemEtiqueta), new GDAParameter("?qtdeProd", qtdeProd));
         }
 

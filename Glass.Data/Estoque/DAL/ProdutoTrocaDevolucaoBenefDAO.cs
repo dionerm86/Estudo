@@ -36,5 +36,10 @@ namespace Glass.Data.DAL
         {
             objPersistence.ExecuteCommand(session, "delete from produto_troca_dev_benef where idProdTrocaDev=" + idProdTrocaDev);
         }
+
+        public decimal ObterCustoTotalPeloIdProdTrocaDev(GDASession session, int idProdTrocaDev)
+        {
+            return ObtemValorCampo<decimal>(session, "SUM(Custo)", $"IdProdTrocaDev={ idProdTrocaDev }");
+        }
     }
 }

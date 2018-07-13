@@ -42,7 +42,7 @@ namespace Glass.Data.DAL
             var idPedidoVerificarLiberacaoPedidosProntos = idPedido > 0 ? idPedido : !String.IsNullOrEmpty(idsPedidos) ? idsPedidos.Split(',').FirstOrDefault().StrParaUint() : 0;
 
             bool isClienteRota = RotaClienteDAO.Instance.IsClienteAssociado(sessao, idCliente);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedidoVerificarLiberacaoPedidosProntos);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedidoVerificarLiberacaoPedidosProntos);
             var naoIgnorar = idLoja > 0 ? !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja) : true;
             bool liberarProdutosProntos = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && !(Liberacao.DadosLiberacao.LiberarClienteRota && isClienteRota);
 
@@ -1207,7 +1207,7 @@ namespace Glass.Data.DAL
             List<ProdutosPedido> lstProdPed = objPersistence.LoadData(sql + " Order By pp.idProdPed Asc");
             List<ProdutosPedido> lstProdPedRetorno = new List<ProdutosPedido>();
 
-            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+            bool maoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
 
             // Adiciona os beneficiamentos feitos nos produtos como itens do pedido
             foreach (ProdutosPedido pp in lstProdPed)
@@ -1428,7 +1428,7 @@ namespace Glass.Data.DAL
         public IList<ProdutosPedido> GetForConfirmation(uint idPedido, string sortExpression, int startRow, int pageSize)
         {
             if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
-                PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+                PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
             return LoadDataWithSortExpression(Sql(null, idPedido, 0, 0, 0, false, false, false, false, false, false, false, false, 0, true), sortExpression, startRow, pageSize, null);
@@ -1437,7 +1437,7 @@ namespace Glass.Data.DAL
         public int GetForConfirmationCount(uint idPedido)
         {
             if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
-                PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+                PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return 0;
 
             return objPersistence.ExecuteSqlQueryCount(Sql(null, idPedido, 0, 0, 0, false, false, false, false, false, false, false, false, 0, false), null);
@@ -1453,7 +1453,7 @@ namespace Glass.Data.DAL
         public IList<ProdutosPedido> GetForSaidaEstoque(uint idPedido)
         {
             if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
-                PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+                PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
             var sql = Sql((GDASession)null, null, idPedido, 0, 0, 0, false, true, false, false, false, false,
@@ -1486,7 +1486,7 @@ namespace Glass.Data.DAL
         public IList<ProdutosPedido> GetForSaidaEstoque(uint idPedido, string sortExpression, int startRow, int pageSize)
         {
             if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
-                PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+                PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
             string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, true) +
@@ -1498,7 +1498,7 @@ namespace Glass.Data.DAL
         public int GetForSaidaEstoqueCount(uint idPedido)
         {
             if (idPedido == 0 || !PedidoDAO.Instance.PedidoExists(idPedido) ||
-                PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+                PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return 0;
 
             string sql = Sql(null, idPedido, 0, 0, 0, false, true, false, false, false, false, false, false, 0, false) +
@@ -1599,7 +1599,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (PedidoDAO.Instance.ObtemSituacao(idPedido) == Pedido.SituacaoPedido.Cancelado)
+            if (PedidoDAO.Instance.ObtemSituacao(null, idPedido) == Pedido.SituacaoPedido.Cancelado)
                 return null;
 
             return "ok";
@@ -1977,12 +1977,12 @@ namespace Glass.Data.DAL
 
         private string SqlLiberacao(string idsPedidos, uint idPedido, uint idAmbientePedido, uint idProdPed, uint idProdPedEsp)
         {
-            uint idCliente = idPedido > 0 ? PedidoDAO.Instance.ObtemIdCliente(idPedido) :
-                !String.IsNullOrEmpty(idsPedidos) ? PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(idsPedidos.Split(',')[0])) : 0;
+            uint idCliente = idPedido > 0 ? PedidoDAO.Instance.ObtemIdCliente(null, idPedido) :
+                !String.IsNullOrEmpty(idsPedidos) ? PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(idsPedidos.Split(',')[0])) : 0;
 
             var idPedidoVerificarLiberacaoPedidosProntos = idPedido > 0 ? idPedido : !String.IsNullOrEmpty(idsPedidos) ? idsPedidos.Split(',').FirstOrDefault().StrParaUint() : 0;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedidoVerificarLiberacaoPedidosProntos);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedidoVerificarLiberacaoPedidosProntos);
             var naoIgnorar = idLoja > 0 ? !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja) : true;
             bool isClienteRota = RotaClienteDAO.Instance.IsClienteAssociado(idCliente);
             bool liberarProdutosProntos = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && !(Liberacao.DadosLiberacao.LiberarClienteRota && isClienteRota);
@@ -2277,7 +2277,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public uint GetIdProdPedByProdPedEsp(uint idProdPedEsp)
         {
-            object retorno = objPersistence.ExecuteScalar("select idProdPed from produtos_pedido where idProdPedEsp=" + idProdPedEsp);
+            return GetIdProdPedByProdPedEsp(null, idProdPedEsp);
+        }
+
+        /// <summary>
+        /// Retorna o ID do produto do pedido pelos dados do produto pedido espelho.
+        /// </summary>
+        public uint GetIdProdPedByProdPedEsp(GDASession session, uint idProdPedEsp)
+        {
+            object retorno = objPersistence.ExecuteScalar(session, "select idProdPed from produtos_pedido where idProdPedEsp=" + idProdPedEsp);
             return retorno != null && retorno.ToString() != "" ? Glass.Conversoes.StrParaUint(retorno.ToString()) : 0;
         }
 
@@ -2664,7 +2672,7 @@ namespace Glass.Data.DAL
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
-                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(sessao, pedido.IdPedido, null, out enviarMensagem);
+                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(sessao, pedido.IdPedido, null, out enviarMensagem, true);
                 }
 
                 return idAmbientePedido.GetValueOrDefault();
@@ -3587,6 +3595,11 @@ namespace Glass.Data.DAL
             return retorno != null && retorno.Count > 0 ? retorno : new List<int>();
         }
 
+        public decimal ObterCustoProd(GDASession session, int idProdPed)
+        {
+            return ObtemValorCampo<decimal>(session, "CustoProd", $"IdProdPed={ idProdPed }");
+        }
+
         #endregion
 
         #region Verifica se uma etiqueta foi reposta
@@ -3745,8 +3758,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool PodeAplicarDescontoVendedor(uint idPedido)
         {
-            uint idCli = PedidoDAO.Instance.ObtemIdCliente(idPedido);
-            uint idFunc = PedidoDAO.Instance.ObtemIdFunc(idPedido);
+            uint idCli = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
+            uint idFunc = PedidoDAO.Instance.ObtemIdFunc(null, idPedido);
             uint? idFuncCliente = ClienteDAO.Instance.ObtemIdFunc(idCli);
 
             if (!PedidoConfig.DescontoPedidoVendedorUmProduto ||
@@ -4293,7 +4306,7 @@ namespace Glass.Data.DAL
             {
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;
-                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, objInsert.IdPedido, null, out enviarMensagem);
+                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, objInsert.IdPedido, null, out enviarMensagem, true);
             }
 
             AplicarComissaoDescontoAcrescimo(session, PedidoDAO.Instance.GetElement(session, objInsert.IdPedido));
@@ -4417,7 +4430,7 @@ namespace Glass.Data.DAL
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
-                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, prodPed.IdPedido, null, out enviarMensagem);
+                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(transaction, prodPed.IdPedido, null, out enviarMensagem, false);
                 }
 
                 AplicarComissaoDescontoAcrescimo(transaction, PedidoDAO.Instance.GetElement(transaction, prodPed.IdPedido));
@@ -4820,7 +4833,7 @@ namespace Glass.Data.DAL
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
-                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(sessao, objUpdate.IdPedido, null, out enviarMensagem);
+                    PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(sessao, objUpdate.IdPedido, null, out enviarMensagem, true);
                 }
 
             }

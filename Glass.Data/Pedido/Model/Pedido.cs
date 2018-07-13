@@ -1790,7 +1790,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirReabrir
         {
-            get { return PedidoDAO.Instance.PodeReabrir(IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
+            get { return PedidoDAO.Instance.PodeReabrir(null, IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
         }
 
         [XmlIgnore]
@@ -2002,9 +2002,9 @@ namespace Glass.Data.Model
         {
             get
             {
-                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(IdPedido);
-                var situacaoProducao = PedidoDAO.Instance.ObtemSituacaoProducao(IdPedido);
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(IdPedido);
+                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, IdPedido);
+                var situacaoProducao = PedidoDAO.Instance.ObtemSituacaoProducao(null, IdPedido);
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, IdPedido);
                 var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(IdPedido);
 
                 return tipoPedido == Pedido.TipoPedidoEnum.Venda && (situacaoPedido == Pedido.SituacaoPedido.Conferido || situacaoPedido == Pedido.SituacaoPedido.ConfirmadoLiberacao) &&
@@ -2892,7 +2892,7 @@ namespace Glass.Data.Model
         {
             get 
             {
-                if (!PedidoDAO.Instance.TemVolume(IdPedido))
+                if (!PedidoDAO.Instance.TemVolume(null, IdPedido))
                     return SituacaoVolumeEnum.SemVolume;
                 else if (PedidoDAO.Instance.TemVolumeAberto(IdPedido) || QtdePecasPendenteVolume > 0)
                     return SituacaoVolumeEnum.Pendente;

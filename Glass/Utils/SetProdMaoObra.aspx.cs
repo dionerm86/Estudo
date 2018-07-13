@@ -15,13 +15,13 @@ namespace Glass.UI.Web.Utils
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
     
             uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
     
             hdfTipoEntrega.Value = PedidoDAO.Instance.ObtemTipoEntrega(idPedido).ToString();
             hdfIdCliente.Value = idCliente.ToString();
             hdfCliRevenda.Value = ClienteDAO.Instance.IsRevenda(idCliente).ToString();
             hdfPercComissao.Value = PedidoDAO.Instance.ObterPercentualComissao(null, (int)idPedido).ToString();
-            hdfIsReposicao.Value = PedidoDAO.Instance.IsPedidoReposicao(idPedido.ToString()).ToString();
+            hdfIsReposicao.Value = PedidoDAO.Instance.IsPedidoReposicao(null, idPedido.ToString()).ToString();
     
             if (!IsPostBack)
                 txtQtdeMaoObra.Text = "1";
@@ -164,7 +164,7 @@ namespace Glass.UI.Web.Utils
                     // Insere a mão de obra no ambiente
                     if (!pcp)
                     {
-                        var prod = new ProdutosPedido();
+                        ProdutosPedido prod = new ProdutosPedido();
                         prod.IdPedido = idPedido;
                         prod.IdAmbientePedido = idAmbiente;
                         prod.IdProd = idProdMaoObra;
@@ -182,11 +182,14 @@ namespace Glass.UI.Web.Utils
                         prod.AlturaBenef = alturaBenef;
                         prod.LarguraBenef = larguraBenef;
                         prod.EspessuraBenef = espBenef;
+                        prod.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)prod.IdProd);
+                        prod.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)prod.IdProd).GetValueOrDefault(0);
+
                         ProdutosPedidoDAO.Instance.Insert(prod);
                     }
                     else
                     {
-                        var prod = new ProdutosPedidoEspelho();
+                        ProdutosPedidoEspelho prod = new ProdutosPedidoEspelho();
                         prod.IdPedido = idPedido;
                         prod.IdAmbientePedido = idAmbiente;
                         prod.IdProd = idProdMaoObra;
@@ -204,6 +207,9 @@ namespace Glass.UI.Web.Utils
                         prod.AlturaBenef = alturaBenef;
                         prod.LarguraBenef = larguraBenef;
                         prod.EspessuraBenef = espBenef;
+                        prod.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)prod.IdProd);
+                        prod.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)prod.IdProd).GetValueOrDefault(0);
+
                         ProdutosPedidoEspelhoDAO.Instance.Insert(prod);
                     }
                 }

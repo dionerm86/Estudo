@@ -4332,30 +4332,15 @@ namespace Glass.Data.DAL
 
             return retorno;
         }
-
-        /// <summary>
-        /// Busca pedidos Liberados em uma determinada Liberação
-        /// </summary>
-        public Pedido[] GetByLiberacoes(string idsLiberarPedidos)
-        {
-            return objPersistence.LoadData(SqlByLiberacao(0, idsLiberarPedidos)).ToArray();
-        }
-
-        public IList<uint> GetIdsByLiberacao(uint idLiberarPedido)
-        {
-            return GetIdsByLiberacao(null, idLiberarPedido);
-        }
-
+        
         public IList<uint> GetIdsByLiberacao(GDASession session, uint idLiberarPedido)
         {
-            return objPersistence.LoadResult(session, SqlByLiberacao(0, idLiberarPedido.ToString()), null).Select(f => f.GetUInt32(0))
-                       .ToList();
+            return objPersistence.LoadResult(session, SqlByLiberacao(0, idLiberarPedido.ToString()), null).Select(f => f.GetUInt32(0)).ToList();
         }
 
         public IList<uint> GetIdsByLiberacoes(string idsLiberarPedidos)
         {
-            return objPersistence.LoadResult(SqlByLiberacao(0, idsLiberarPedidos), null).Select(f => f.GetUInt32(0))
-                       .ToList();
+            return objPersistence.LoadResult(SqlByLiberacao(0, idsLiberarPedidos), null).Select(f => f.GetUInt32(0)).ToList();
         }
 
         /// <summary>
@@ -4366,75 +4351,6 @@ namespace Glass.Data.DAL
             var pedido = objPersistence.LoadOneData(SqlByLiberacao(idPedido, null));
 
             return pedido;
-        }
-
-        #endregion
-
-        #region Busca pedidos de um cliente
-
-        /// <summary>
-        /// Retorna os IDs dos pedidos de um cliente.
-        /// </summary>
-        public string GetIdsByCliente(uint idCli, string nomeCliente)
-        {
-            bool temFiltro;
-            string filtroAdicional;
-
-            return GetValoresCampo(Sql(0, 0, null, null, 0, idCli, nomeCliente, 0, null, 0, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null, 0, 0, 0, "",
-                true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional), "idPedido");
-        }
-
-        /// <summary>
-        /// Retorna os IDs dos pedidos de uma impressão
-        /// </summary>
-        /// <returns></returns>
-        public string GetIdsByImpressao(uint idImpressao)
-        {
-            var sql =
-                @"SELECT DISTINCT pi.IdPedido
-                FROM produto_impressao pi
-                WHERE pi.idImpressao = ?idImpressao";
-
-            var idsString =
-                objPersistence.LoadResult(sql, new GDAParameter("?idImpressao", idImpressao))
-                    .Select(f => f.GetString(0))
-                    .ToList();
-
-            var idsInt = new List<int>();
-
-            if (!idsString.Any())
-                return string.Empty;
-
-            foreach (var id in idsString)
-                if (id.StrParaIntNullable().GetValueOrDefault() > 0)
-                    idsInt.Add(id.StrParaInt());
-
-            if (!idsInt.Any())
-                return string.Empty;
-
-            return string.Join(",", Array.ConvertAll(idsInt.ToArray(), (x => x.ToString())));
-
-        }
-
-        #endregion
-
-        #region Busca idPedido pelo orçamento
-
-        /// <summary>
-        /// Busca idPedido pelo orçamento
-        /// </summary>
-        /// <returns></returns>
-        public uint GetIdPedidoByOrcamento(uint idOrcamento)
-        {
-            var sql = "Select idPedido From pedido Where situacao<>" + (int)Pedido.SituacaoPedido.Cancelado +
-                " And idOrcamento=" + idOrcamento + " limit 1";
-
-            object obj = objPersistence.ExecuteScalar(sql);
-
-            var idPedido = obj != null && obj.ToString() != String.Empty ? Glass.Conversoes.StrParaUint(obj.ToString()) : 0;
-
-            return idPedido;
         }
 
         #endregion
@@ -4735,15 +4651,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sqlGerouTodosVolumes) > 0;
         }
-
-        /// <summary>
-        /// Verifica se o pedido possuiu algum volume
-        /// </summary>
-        public bool TemVolume(uint idPedido)
-        {
-            return TemVolume(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Verifica se o pedido possuiu algum volume
         /// </summary>
@@ -5138,8 +5046,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o numero de pedidos que não geraram OC
         /// </summary>
-        public int GetCountPedidosForOC(OrdemCarga.TipoOCEnum tipoOC, uint idCliente, uint idRota, uint idLoja,
-            string dtEntPedidoIni, string dtEntPedidoFin, bool buscarTodos, bool pedidosObs,
+        public int GetCountPedidosForOC(OrdemCarga.TipoOCEnum tipoOC, uint idCliente, uint idRota, uint idLoja, string dtEntPedidoIni, string dtEntPedidoFin, bool buscarTodos, bool pedidosObs,
             string codRotasExternas, uint idCliExterno, string nomeCliExterno, bool fastDelivery, string obsLiberacao)
         {
             var retorno = ExecuteMultipleScalar<string>(SqlIdsPedidosForOC(tipoOC, idCliente, null, idRota, null, idLoja,
@@ -5194,15 +5101,7 @@ namespace Glass.Data.DAL
 
             return ExecuteMultipleScalar<uint>(sessao, sql);
         }
-
-        /// <summary>
-        /// Recupera os ids dos pedidos das ocs informadas
-        /// </summary>
-        public List<uint> GetIdsPedidosByOCs(string idsOCs)
-        {
-            return GetIdsPedidosByOCs(null, idsOCs);
-        }
-
+        
         /// <summary>
         /// Obtem um lista de pedidos e o id do cliente importado
         /// </summary>
@@ -5294,11 +5193,6 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Carregamento
-
-        public uint? GetFormaPagto(GDASession sessao, uint idPedido)
-        {
-            return PedidoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idFormaPagto", "idPedido=" + idPedido);
-        }
         
         /// <summary>
         /// Recupera os ids dos pedidos de um carregamento
@@ -5344,15 +5238,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
         }
-
-        /// <summary>
-        /// Verifica se um pedido possiu alguma peça que foi carregada
-        /// </summary>
-        public bool PossuiPecaCarregada(uint idPedido, uint idCarregamento)
-        {
-            return PossuiPecaCarregada(null, idPedido, idCarregamento);
-        }
-
+        
         /// <summary>
         /// Busca a placa é uf do veiculo do pedido utilizado no carregamento
         /// </summary>
@@ -5377,9 +5263,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera os pedidos do cliente do carregamento informado que ainda não possuem carregamento.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idCarregamento"></param>
-        /// <returns></returns>
         public List<Pedido> ObterPedidosProntosSemCarregamento(GDASession sessao, uint idCarregamento)
         {
             var sql = @"
@@ -5425,9 +5308,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca os pedidos com peças disponiveis para leitura no setor informado no momento
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idSetor"></param>
-        /// <returns></returns>
         public List<Pedido> ObterPedidosPendentesLeitura(GDASession sessao, uint idSetor)
         {
             var sql = @"
@@ -5482,8 +5362,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Lança uma ValidacaoPedidoFinanceiroException, se o funcionário não for Financeiro.
         /// </summary>
-        private void LancarExceptionValidacaoPedidoFinanceiro(string mensagem, uint idPedido, bool finalizarPedido,
-            string idsPedidos, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
+        private void LancarExceptionValidacaoPedidoFinanceiro(string mensagem, uint idPedido, bool finalizarPedido, string idsPedidos, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
         {
             if (FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && finalizarPedido)
             {
@@ -5574,7 +5453,9 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
                     Insert(transaction, pedidoNovo);
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -5589,11 +5470,6 @@ namespace Glass.Data.DAL
             return pedidoNovo.IdPedido;
         }
 
-        public void VerificaCapacidadeProducaoSetor(uint idPedido, DateTime dataEntrega, float totM2Adicionar, uint idProcessoAdicionar)
-        {
-            VerificaCapacidadeProducaoSetor(null, idPedido, dataEntrega, totM2Adicionar, idProcessoAdicionar);
-        }
-
         public void VerificaCapacidadeProducaoSetor(GDASession session, uint idPedido, DateTime dataEntrega, float totM2Adicionar, uint idProcessoAdicionar)
         {
             // Valida a capacidade de produção por setor através da data de fábrica do pedido:
@@ -5604,8 +5480,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valida se o produto possui imagem caso o reteiro do mesmo obrigue a ter imagem
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
         public void ValidarObrigatoriedadeDeImagemEmPecasAvulsas(GDA.GDASession sessao, int idPedido)
         {
             //Busca os produtos do pedido
@@ -5705,7 +5579,7 @@ namespace Glass.Data.DAL
             if (pedido.IdFunc == 0)
                 throw new Exception("Informe o vendedor do pedido antes de finalizá-lo.");
 
-            uint? idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? Instance.GetIdObra(idPedido) : null;
+            uint? idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? GetIdObra(null, idPedido) : null;
             if (idObra > 0)
             {
                 if (ObraDAO.Instance.ObtemSituacao(session, idObra.Value) != Obra.SituacaoObra.Confirmada)
@@ -6385,11 +6259,6 @@ namespace Glass.Data.DAL
 
                 #region Valida produtos reposição
 
-                /* Chamado 12090.
-                 * Aconteceu um caso em que o produto incluído em um pedido de reposição não existia no pedido original.
-                 * Por isso, fizemos a verificação abaixo, que valida a identificação do produto e a quantidade a ser reposta.
-                 */
-
                 if (pedido.IdPedidoAnterior > 0)
                 {
                     // Dicionário criado para salvar a identificação do produto e a quantidade total do mesmo no pedido original.
@@ -6430,15 +6299,6 @@ namespace Glass.Data.DAL
                 // Confirma o pedido
                 ConfirmaGarantiaReposicao(session, pedido.IdPedido, financeiro);
             }
-            /*
-            else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
-            {
-                Obra obra = ObraDAO.Instance.GetElementByPrimaryKey(pedido.IdObra.Value);
-
-                if (obra.Saldo < pedido.Total)
-                    throw new Exception("O valor do pedido é maior que o saldo da obra.");
-            }
-            */
 
             /* Chamado 22658. */
             if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
@@ -6506,12 +6366,7 @@ namespace Glass.Data.DAL
                 }
             }
         }
-
-        public void VerificaLimite(Pedido pedido, bool finalizarPedido)
-        {
-            VerificaLimite(null, pedido, finalizarPedido);
-        }
-
+        
         public void VerificaLimite(GDASession session, Pedido pedido, bool finalizarPedido)
         {
             var limite = ClienteDAO.Instance.ObtemValorCampo<decimal>(session, "limite", "id_Cli=" + pedido.IdCli);
@@ -6565,7 +6420,7 @@ namespace Glass.Data.DAL
                         Pedido ped = null;
                         string msg = string.Empty;
                         uint idCliente = PedidoDAO.Instance.ObtemValorCampo<uint>(trans, "idCli", "idPedido=" + idPedido);
-                        int? tipoVenda = GetTipoVenda(trans, idPedido);
+                        int? tipoVenda = ObtemTipoVenda(trans, idPedido);
                         Pedido.TipoPedidoEnum tipoPedido = GetTipoPedido(trans, idPedido);
                         uint idFuncVenda = ObtemValorCampo<uint>(trans, "idFuncVenda", "idPedido=" + idPedido);
                         uint? idFormaPagto = ObtemValorCampo<uint?>(trans, "idFormaPagto", "idPedido=" + idPedido);
@@ -7061,7 +6916,7 @@ namespace Glass.Data.DAL
 
                                     // Dá baixa no estoque da loja
                                     MovEstoqueDAO.Instance.BaixaEstoquePedido(trans, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed,
-                                        (decimal)(m2 ? p.TotM : qtdSaida), (decimal)(m2 ? p.TotM2Calc : 0), true, null);
+                                        (decimal)(m2 ? p.TotM : qtdSaida), (decimal)(m2 ? p.TotM2Calc : 0), true, null, null, null);
                                 }
                             }
 
@@ -7126,8 +6981,6 @@ namespace Glass.Data.DAL
         /// Marca o pedido como entregue após baixar o estoque do mesmo, se todos os produtos tiverem dado baixa e 
         /// se a empresa não trabalhar com produção de vidro ou não possuir vidros de produção no pedido
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
         public void MarcaPedidoEntregue(GDASession sessao, uint idPedido)
         {
             if (!PossuiProdutosPendentesSaida(sessao, idPedido) &&
@@ -7143,9 +6996,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Gera Instalações para o pedido
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <param name="dataEntrega"></param>
         public void GerarInstalacao(GDASession sessao, uint idPedido, DateTime? dataEntrega)
         {
             try
@@ -7590,12 +7440,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Reabrir Pedido
-
-        public bool PodeReabrir(uint idPedido)
-        {
-            return PodeReabrir(null, idPedido);
-        }
-
+        
         public bool PodeReabrir(GDASession session, uint idPedido)
         {
             var valorPagtoAntecipado = ObtemValorCampo<decimal>(session, "valorPagamentoAntecipado", "idPedido=" + idPedido);
@@ -7610,14 +7455,7 @@ namespace Glass.Data.DAL
 
             return PodeReabrir(session, idPedido, valorPagtoAntecipado, situacao, geradoParceiro, idCli, temEspelho, possuiObraAssociada, tipoPedido, importado, recebeuSinal);
         }
-
-        public bool PodeReabrir(uint idPedido, decimal valorPagtoAntecipado, Pedido.SituacaoPedido situacao,
-            bool geradoParceiro, uint idCli, bool temEspelho, bool possuiObraAssociada, Pedido.TipoPedidoEnum tipoPedido,
-            bool importado, bool recebeuSinal)
-        {
-            return PodeReabrir(null, idPedido, valorPagtoAntecipado, situacao, geradoParceiro, idCli, temEspelho, possuiObraAssociada, tipoPedido, importado, recebeuSinal);
-        }
-
+        
         public bool PodeReabrir(GDASession session, uint idPedido, decimal valorPagtoAntecipado, Pedido.SituacaoPedido situacao, bool geradoParceiro,
             uint idCli, bool temEspelho, bool possuiObraAssociada, Pedido.TipoPedidoEnum tipoPedido, bool importado, bool recebeuSinal)
         {
@@ -7792,7 +7630,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma pedido de obra
         /// </summary>
-        /// <param name="idPedido"></param>
         public void ConfirmarPedidoObra(uint idPedido, bool obraPagouPedidoInteiro)
         {
             using (var transaction = new GDATransaction())
@@ -7944,8 +7781,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido possui vidro comum ou vidro temperado
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="tipo">1-Comum, 2-Temperado</param>
         private bool ContemTipo(GDASession sessao, uint idPedido, int tipo)
         {
             var sql = @"Select Count(*) From produtos_pedido pp 
@@ -7974,8 +7809,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido está em conferência
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool EstaEmConferencia(uint idPedido)
         {
             string sql = "Select Count(*) From pedido_conferencia where idPedido=" + idPedido +
@@ -8146,12 +7979,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Altera situação do pedido
-
-        public int AlteraSituacao(uint idPedido, Pedido.SituacaoPedido situacao)
-        {
-            return AlteraSituacao(null, idPedido, situacao);
-        }
-
+        
         public int AlteraSituacao(GDASession sessao, uint idPedido, Pedido.SituacaoPedido situacao)
         {
             return objPersistence.ExecuteCommand(sessao, "Update pedido Set Situacao=" + (int)situacao + " Where idPedido=" + idPedido);
@@ -8186,8 +8014,7 @@ namespace Glass.Data.DAL
         /// Cancela o pedido, apagando contas a pagar, contas a receber,
         /// estornando produtos que foi dado baixa.
         /// </summary>
-        public void CancelarPedidoComTransacao(uint idPedido, string motivoCancelamento, bool gerarCredito, bool gerarDebitoComissao,
-            DateTime dataEstornoBanco)
+        public void CancelarPedidoComTransacao(uint idPedido, string motivoCancelamento, bool gerarCredito, bool gerarDebitoComissao, DateTime dataEstornoBanco)
         {
             lock (_cancelarPedidoLock)
             {
@@ -8216,8 +8043,7 @@ namespace Glass.Data.DAL
         /// Cancela o pedido, apagando contas a pagar, contas a receber,
         /// estornando produtos que foi dado baixa.
         /// </summary>
-        public void CancelarPedido(GDASession session, uint idPedido, string motivoCancelamento, bool gerarCredito,
-            bool gerarDebitoComissao, DateTime dataEstornoBanco)
+        public void CancelarPedido(GDASession session, uint idPedido, string motivoCancelamento, bool gerarCredito, bool gerarDebitoComissao, DateTime dataEstornoBanco)
         {
             Pedido ped = GetElementByPrimaryKey(session, idPedido);
             var gerarCreditoObra = false;
@@ -8428,9 +8254,9 @@ namespace Glass.Data.DAL
                         }
 
                         if (p.QtdSaida > 0)
-                            MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido,
-                                p.IdProdPed,
-                                (decimal)(m2 ? m2Saida : qtdCreditoEstoque), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
+                            MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdCreditoEstoque),
+                                (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)TipoCalculoGrupoProd.Qtd) &&
+                                tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
 
                         if (situacaoAtual == Pedido.SituacaoPedido.Confirmado && ProdutoDAO.Instance.IsVidro(session, (int)p.IdProd))
                             MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(null, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Entrada);
@@ -8571,14 +8397,11 @@ namespace Glass.Data.DAL
                                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)p.IdProd);
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(session, (int)p.IdProd);
 
-                                MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja,
-                                    idPedido, p.IdProdPed,
-                                    (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0),
-                                    false, null);
+                                MovEstoqueDAO.Instance.BaixaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa), (decimal)(m2 ? m2CalcAreaMinima : 0), false, null, null, null);
 
-                                MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja,
-                                    idPedido, p.IdProdPed,
-                                    (decimal)(m2 ? m2Saida : qtdBaixa), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
+                                MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdBaixa),
+                                    (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
+                                    tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null, null);
                             }
                         }
                         else
@@ -8620,9 +8443,9 @@ namespace Glass.Data.DAL
                                     idsProdQtde[(int)p.IdProd] += m2 ? p.TotM - m2Saida : qtdSaida;
 
                                 if (p.QtdSaida > 0)
-                                    MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja,
-                                        idPedido, p.IdProdPed,
-                                        (decimal)(m2 ? m2Saida : qtdCreditoEstoque), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
+                                    MovEstoqueDAO.Instance.CreditaEstoquePedido(session, p.IdProd, ped.IdLoja, idPedido, p.IdProdPed, (decimal)(m2 ? m2Saida : qtdCreditoEstoque),
+                                        (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)TipoCalculoGrupoProd.Qtd) &&
+                                        tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
                             }
 
                             if (situacaoAtual == Pedido.SituacaoPedido.Confirmado)
@@ -8798,8 +8621,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Estorna movimentações de funcionários
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="idFuncVenda"></param>
         internal void EstornaMovFunc(GDASession sessao, uint idPedido, uint idFuncVenda)
         {
             foreach (MovFunc m in MovFuncDAO.Instance.GetByPedido(sessao, idPedido))
@@ -8830,27 +8651,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca o percentual de desconto do pedido
-        
-        /// <summary>
-        /// Busca o percentual de desconto do pedido
-        /// </summary>
-        public float GetPercDesc(GDASession session, uint idPedido)
-        {
-            string sql = "Select Coalesce(if(tipoDesconto=1, desconto/100, desconto/(total+desconto)), 0) From pedido Where idPedido=" + idPedido;
-            return ExecuteScalar<float>(session, sql);
-        }
-
-        #endregion
-
         #region Verifica se o desconto do pedido está dentro do permitido
 
         /// <summary>
         /// Verifica se o desconto do pedido está dentro do permitido
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool DescontoPermitido(GDASession sessao, Pedido pedido)
         {
             string somaDesconto = "(select sum(coalesce(valorDescontoQtde,0)" + (PedidoConfig.RatearDescontoProdutos ? "+coalesce(valorDesconto,0)+coalesce(valorDescontoProd,0)" :
@@ -8958,165 +8763,12 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        #region Fast Delivery
-
-        public bool IsFastDelivery(uint idPedido)
-        {
-            return IsFastDelivery(null, idPedido);
-        }
-
-        public bool IsFastDelivery(GDASession sessao, uint idPedido)
-        {
-            string sql = "select Coalesce(FastDelivery, 0) from pedido where idPedido=" + idPedido;
-            int retorno = Convert.ToInt32(objPersistence.ExecuteScalar(sessao, sql));
-            return retorno == 1;
-        }
-
-        #endregion
-
-        #region Verifica o tipo do pedido
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public Pedido.TipoPedidoEnum GetTipoPedido(uint idPedido)
-        {
-            return GetTipoPedido(null, idPedido);
-        }
-
-        public Pedido.TipoPedidoEnum GetTipoPedido(GDASession sessao, uint idPedido)
-        {
-            return ObtemValorCampo<Pedido.TipoPedidoEnum>(sessao, "tipoPedido", "idPedido=" + idPedido);
-        }
-
-        #region Verifica se pedido é Mão de Obra
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verifica se pedido é mão de obra
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsMaoDeObra(uint idPedido)
-        {
-            return IsMaoDeObra(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se pedido é mão de obra
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsMaoDeObra(GDASession sessao, uint idPedido)
-        {
-            return GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra;
-        }
-
-        #endregion
-
-        #region Verifica se pedido é Produção
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verifica se pedido é Produção
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsProducao(uint idPedido)
-        {
-            return IsProducao(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se pedido é Produção
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsProducao(GDASession sessao, uint idPedido)
-        {
-            return GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.Producao;
-        }
-
-        #endregion
-
-        #region Verifica se pedido é Venda
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verific se pedido é Venda.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsVenda(uint idPedido)
-        {
-            return IsVenda(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verific se pedido é Venda.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsVenda(GDASession sessao, uint idPedido)
-        {
-            return !IsMaoDeObra(sessao, idPedido) && !IsProducao(sessao, idPedido);
-        }
-
-        #endregion
-
-        #region Verifica se o pedido é do tipo Revenda
-
-        /// <summary>
-        /// Verifica se o pedido é do tipo Revenda.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsRevenda(uint idPedido)
-        {
-            return GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.Revenda;
-        }
-
-        #endregion
-
-        #region Verifica se pedido é Mão de Obra Especial
-
-        /// <summary>
-        /// Verifica se pedido é mão de obra especial
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsMaoDeObraEspecial(uint idPedido)
-        {
-            return GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial;
-        }
-
-        #endregion
-
-        #region Verifica se os pedidos são de loja diferente
-
-        /// <summary>
-        /// Verifica se os pedidos são de loja diferente
-        /// </summary>
-        public bool PedidosLojasDiferentes(string idsPedidos)
-        {
-            var sql = string.Format("Select IdLoja from pedido where idPedido IN({0}) group by idloja", idsPedidos);
-            return this.CurrentPersistenceObject.LoadResult(sql, null).Count() > 1;
-        }
-
-        #endregion
-
-        #endregion
-        
+                
         #region Verifica se o pedido possui vidros para produção/estoque
         
         /// <summary>
         /// Verifica se o pedido possui vidros para produção
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool PossuiVidrosProducao(GDASession sessao, uint idPedido)
         {
             if (IsMaoDeObra(sessao, idPedido))
@@ -9134,15 +8786,6 @@ namespace Glass.Data.DAL
                  * Produtos sem associação de subgrupo não estavam sendo considerados como vidros de produção,
                  * por isso, colocamos uma condição que irá verificar se o produto não tem subgrupo. */
                 " OR COALESCE(p.IdSubgrupoProd, 0)=0)";
-            /*string sql = @"
-                Select Count(*) From produtos_pedido pp 
-                    Inner Join produto p On (pp.idProd=p.idProd)
-                Where pp.idPedido=" + idPedido + @"
-                    And p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @"  
-                    And p.idSubgrupoProd In (
-                        Select idSubgrupoProd From subgrupo_prod Where idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" 
-                            And (produtosEstoque=false or produtosEstoque is null)
-                    )";*/
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
         }
@@ -9168,9 +8811,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna a quantidade de vidros para retirada no estoque
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public int ObtemQtdVidrosProducao(GDASession session, uint idPedido)
         {
             string sql = @"
@@ -9189,8 +8829,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido possui vidros para retirada no estoque
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool PossuiVidrosEstoque(GDASession sessao, uint idPedido)
         {
             if (IsMaoDeObra(sessao, idPedido))
@@ -9202,8 +8840,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se existe algum produto no pedido passado que ainda não foi marcada saída
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool PossuiProdutosPendentesSaida(GDASession sessao, uint idPedido)
         {
             string sql = @"
@@ -9223,8 +8859,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o pedido para corte, se puder ser retornado
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public Pedido GetForCorte(uint idPedido, int situacao)
         {
             if (idPedido == 0 || situacao == 0)
@@ -9544,64 +9178,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
-        {
-            string sql = $@"
-                UPDATE pedido
-                SET TRANSACAO = {inicio}
-                WHERE idPedido = {idPedido}";
-
-            objPersistence.ExecuteCommand(sessao, sql);
-        }
-
-        #endregion
-
-        #region Retorna o total do Pedido
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Retorna o total do Pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public decimal GetTotal(uint idPedido)
-        {
-            return GetTotal(null, idPedido);
-        }
-
-        /// <summary>
-        /// Retorna o total do Pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public decimal GetTotal(GDASession sessao, uint idPedido)
-        {
-            string sql = "Select Coalesce(total, 0) from pedido Where idPedido=" + idPedido;
-            return ExecuteScalar<decimal>(sessao, sql);
-        }
-
-        /// <summary>
-        /// Retorna a comissão do comissionado do Pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public decimal GetComissao(uint idPedido)
-        {
-            string sql = "Select Coalesce(ValorComissao, 0) from pedido Where idPedido=" + idPedido;
-            return ExecuteScalar<decimal>(sql);
-        }
-        
-        public Pedido GetForTotalBruto(uint idPedido)
-        {
-            Pedido p = new Pedido();
-            p.IdPedido = idPedido;
-            p.Total = GetTotal(idPedido);
-            p.ValorComissao = GetComissao(idPedido);
-            p.TaxaPrazo = ObtemValorCampo<float>("taxaPrazo", "idPedido=" + idPedido);
-
-            return p;
-        }
-
         #endregion
 
         #region Listagem de Comissão
@@ -9611,10 +9187,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o SQL usado para retornar o valor da comissão pago a um funcionário/comissionado.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="tipoFunc"></param>
-        /// <param name="idInstalador"></param>
-        /// <returns></returns>
         internal string SqlTotalComissaoPago(string idPedido, Pedido.TipoComissao tipoFunc, uint idInstalador)
         {
             string campo = tipoFunc == Pedido.TipoComissao.Funcionario ? "c.idFunc" :
@@ -9638,14 +9210,7 @@ namespace Glass.Data.DAL
 
             return sql;
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="tipoFunc"></param>
-        /// <param name="idInstalador"></param>
-        /// <returns></returns>
+        
         internal string SqlTotalBaseCalcComissaoPago(string idPedido, Pedido.TipoComissao tipoFunc, uint idInstalador)
         {
             string campo = tipoFunc == Pedido.TipoComissao.Funcionario ? "c.idFunc" :
@@ -9668,14 +9233,7 @@ namespace Glass.Data.DAL
 
             return sql;
         }
-
-        public string SqlComissao(string idComissao, string idsPedidos, uint idPedido, Pedido.TipoComissao tipoFunc, uint idFunc,
-            string dataIni, string dataFim, bool semComissao, bool incluirComissaoPaga, string campoIds, uint idLoja, string tiposvenda = "")
-        {
-            return SqlComissao((GDASession)null, idComissao, idsPedidos, idPedido, tipoFunc, idFunc, dataIni, dataFim,
-                semComissao, incluirComissaoPaga, campoIds, idLoja, tiposvenda);
-        }
-
+        
         private string SqlComissao(GDASession session, string idComissao, string idsPedidos, uint idPedido, Pedido.TipoComissao tipoFunc, uint idFunc,
             string dataIni, string dataFim, bool semComissao, bool incluirComissaoPaga, string campoIds, uint idLoja, string tiposVenda = "")
         {
@@ -10089,9 +9647,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a data de entrefa do pedido
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="pedido"></param>
-        /// <param name="idPedido"></param>
         public void AtualizarDataEntregaCalculada(GDASession session, Pedido pedido, uint idPedido)
         {
             DateTime dataEntrega, dataFastDelivery;
@@ -10126,18 +9681,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// </summary>
-        /// <param name="tipoFunc"></param>
-        /// <param name="idComissao"></param>
-        /// <param name="ped"></param>
-        private void GetCamposComissao(Pedido.TipoComissao tipoFunc, uint idComissao, ref List<Pedido> ped)
-        {
-            GetCamposComissao(null, tipoFunc, idComissao, ref ped);
-        }
-
+        
         private void GetCamposComissao(GDASession session, Pedido.TipoComissao tipoFunc, uint idComissao, ref List<Pedido> ped)
         {
             if (ped.Count == 0)
@@ -10166,17 +9710,6 @@ namespace Glass.Data.DAL
                     p.TemRecebimento = (recebidas.ContainsKey(p.IdPedido) && recebidas[p.IdPedido]) ||
                         p.IdPagamentoAntecipado > 0 || p.IdSinal > 0 ||
                         (p.IdLiberarPedido > 0 && LiberarPedidoDAO.Instance.ObtemTipoPagto(session, p.IdLiberarPedido.Value) == (int)LiberarPedido.TipoPagtoEnum.AVista);
-
-                    /* if (Config.LiberarPedido && !p.TemRecebimento && (p.Situacao == Pedido.SituacaoPedido.LiberadoParcialmente ||
-                        p.Situacao == Pedido.SituacaoPedido.Confirmado))
-                    {
-                        foreach (var idLib in LiberarPedidoDAO.Instance.GetIdsLiberacaoByPedido(sessao, p.IdPedido))
-                            if (ContasReceberDAO.Instance.ObtemValorCampo<int>(sessao, "Count(*)", "idLiberarPedido=" + idLib + " And Coalesce(Recebida, False)") > 0)
-                            {
-                                p.TemRecebimento = true;
-                                break;
-                            }
-                    } */
 
                     pedidos.Add(p.IdPedido.ToString());
                 }
@@ -10334,16 +9867,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os IDs dos funcionarios/comissionados/instaladores para comissão.
         /// </summary>
-        /// <param name="dataIni"></param>
-        /// <param name="dataFim"></param>
-        /// <returns></returns>
         public string GetPedidosIdForComissao(Pedido.TipoComissao tipoFunc, uint idFunc, string dataIni, string dataFim)
         {
             string campo = tipoFunc == Pedido.TipoComissao.Funcionario || tipoFunc == Pedido.TipoComissao.Gerente ? "p.idFunc" :
                 tipoFunc == Pedido.TipoComissao.Comissionado ? "p.idComissionado" :
                 tipoFunc == Pedido.TipoComissao.Instalador ? "fe.idFunc" : "";
 
-            string retorno = GetValoresCampo(SqlComissao(null, null, 0, tipoFunc, idFunc, dataIni,
+            string retorno = GetValoresCampo(SqlComissao(null, null, null, 0, tipoFunc, idFunc, dataIni,
                 dataFim, true, false, campo, 0), "id", GetParamComissao(dataIni, dataFim));
 
             return retorno != String.Empty ? retorno : "0";
@@ -10352,12 +9882,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca pedidos que ainda não foi pago a comissão
         /// </summary>
-        /// <param name="tipoFunc">0-Funcionário, 1-Comissionado, 2-Instalador</param>
-        /// <param name="idFunc"></param>
-        /// <param name="dataIni"></param>
-        /// <param name="dataFim"></param>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
         public Pedido[] GetPedidosForComissao(Pedido.TipoComissao tipoFunc, uint idFunc, string dataIni, string dataFim, bool isRelatorio, uint idLoja, bool? comRecebimento, string tiposVenda)
         {
             return GetPedidosForComissao(tipoFunc, idFunc, dataIni, dataFim, isRelatorio, "0", idLoja, comRecebimento, tiposVenda);
@@ -10366,12 +9890,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca pedidos que ainda não foi pago a comissão
         /// </summary>
-        /// <param name="tipoFunc">0-Funcionário, 1-Comissionado, 2-Instalador</param>
-        /// <param name="idFunc"></param>
-        /// <param name="dataIni"></param>
-        /// <param name="dataFim"></param>
-        /// <param name="tiposPedidos"></param>
-        /// <returns></returns>
         public Pedido[] GetPedidosForComissao(Pedido.TipoComissao tipoFunc, uint idFunc, string dataIni, string dataFim, bool isRelatorio, string tiposPedidos, string tiposVenda)
         {
             return GetPedidosForComissao(tipoFunc, idFunc, dataIni, dataFim, isRelatorio, tiposPedidos, 0, null, tiposVenda);
@@ -10380,13 +9898,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca pedidos para o relatório de comissão
         /// </summary>
-        /// <param name="tipoFunc">0-Funcionário, 1-Comissionado, 2-Instalador</param>
-        /// <param name="idFunc"></param>
-        /// <param name="dataIni"></param>
-        /// <param name="dataFim"></param>
-        /// <param name="tiposPedidos"></param>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
         public Pedido[] GetPedidosForComissao(Pedido.TipoComissao tipoFunc, uint idFunc, string dataIni, string dataFim, bool isRelatorio,
             string tiposPedidos, uint idLoja, bool? comRecebimento, string tiposVenda)
         {
@@ -10412,10 +9923,10 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 criterio += "     Loja: " + LojaDAO.Instance.GetNome(idLoja);
 
-            string sql = SqlComissao(null, null, 0, tipoFunc, idFunc, dataIni, dataFim, false, tipoPed.Contains("1"), null, idLoja, tiposVenda).Replace("$$$", criterio);
+            string sql = SqlComissao(null, null, null, 0, tipoFunc, idFunc, dataIni, dataFim, false, tipoPed.Contains("1"), null, idLoja, tiposVenda).Replace("$$$", criterio);
 
             List<Pedido> retorno = objPersistence.LoadData(sql, GetParamComissao(dataIni, dataFim)).ToList();
-            GetCamposComissao(tipoFunc, 0, ref retorno);
+            GetCamposComissao(null, tipoFunc, 0, ref retorno);
 
             if (tipoFunc == Pedido.TipoComissao.Gerente)
             {
@@ -10448,10 +9959,10 @@ namespace Glass.Data.DAL
 
         public void CriaComissaoFuncionario(Pedido.TipoComissao tipoFunc, uint idFunc, string dataIni, string dataFim, string tiposVenda)
         {
-            var semComissao = objPersistence.LoadData(SqlComissao(null, null, 0, tipoFunc, idFunc, dataIni,
+            var semComissao = objPersistence.LoadData(SqlComissao(null, null, null, 0, tipoFunc, idFunc, dataIni,
                 dataFim, true, false, null, 0, tiposVenda), GetParamComissao(dataIni, dataFim)).ToList();
 
-            GetCamposComissao(tipoFunc, 0, ref semComissao);
+            GetCamposComissao(null, tipoFunc, 0, ref semComissao);
 
             /* Chamado 48565. */
             if (tipoFunc == Pedido.TipoComissao.Funcionario)
@@ -10463,32 +9974,24 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca pedidos de uma comissão.
         /// </summary>
-        /// <param name="idComissao"></param>
-        /// <param name="tipoFunc"></param>
-        /// <param name="idFunc"></param>
-        /// <returns></returns>
         public Pedido[] GetPedidosByComissao(uint idComissao, Pedido.TipoComissao tipoFunc, uint idFunc)
         {
-            string sql = SqlComissao(idComissao.ToString(), null, 0, tipoFunc, idFunc, null, null, true, false, null, 0);
+            string sql = SqlComissao(null, idComissao.ToString(), null, 0, tipoFunc, idFunc, null, null, true, false, null, 0);
             List<Pedido> ped = objPersistence.LoadData(sql);
 
-            GetCamposComissao(tipoFunc, idComissao, ref ped);
+            GetCamposComissao(null, tipoFunc, idComissao, ref ped);
             return ped.ToArray();
         }
 
         /// <summary>
         /// Busca os pedidos de uma comissão.
         /// </summary>
-        /// <param name="idComissao"></param>
-        /// <param name="tipoFunc"></param>
-        /// <param name="idFunc"></param>
-        /// <returns></returns>
         public Pedido GetPedidosByComissao(uint idPedido, uint idComissao, Pedido.TipoComissao tipoFunc, uint idFunc)
         {
-            string sql = SqlComissao(idComissao.ToString(), null, idPedido, tipoFunc, idFunc, null, null, true, false, null, 0);
+            string sql = SqlComissao(null, idComissao.ToString(), null, idPedido, tipoFunc, idFunc, null, null, true, false, null, 0);
             List<Pedido> ped = objPersistence.LoadData(sql);
 
-            GetCamposComissao(tipoFunc, idComissao, ref ped);
+            GetCamposComissao(null, tipoFunc, idComissao, ref ped);
             return ped.Count > 0 ? ped[0] : null;
         }
 
@@ -10507,193 +10010,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Reposição
-
-        public uint? IdReposicao(uint idPedido)
-        {
-            var sql = string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoAnterior={0}", idPedido);
-            var retorno = objPersistence.ExecuteScalar(sql);
-
-            return retorno != null ? retorno.ToString().StrParaUintNullable() : null;
-        }
-        /// <summary>
-        /// Verifica se o pedido Possui IdPedidoAnterior e se o pedido não está cancelado
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint? ObterIdPedidoAnterior(uint idPedido)
-        {
-            var sql = string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoAnterior={0} AND situacao <> {1}", idPedido, (int)Pedido.SituacaoPedido.Cancelado);
-            return ExecuteScalar<uint?>(sql);
-        }
-
-        /// <summary>
-        /// Verifica se entre os pedidos passados existe algum de reposição
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool ContemPedidoReposicao(GDASession sessao, string idPedido)
-        {
-            if (String.IsNullOrEmpty(idPedido))
-                return false;
-
-            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Reposição;
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se os pedidos passados são de reposição
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoReposicao(string idPedido)
-        {
-            return IsPedidoReposicao(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se os pedidos passados são de reposição
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoReposicao(GDASession sessao, string idPedido)
-        {
-            if (String.IsNullOrEmpty(idPedido))
-                return false;
-
-            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Reposição;
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) == idPedido.TrimEnd(',').Split(',').Length;
-        }
-
-        /// <summary>
-        /// Verifica se este pedido possui alguma reposição
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoReposto(GDASession sessao, uint idPedido)
-        {
-            if (idPedido == 0)
-                return false;
-
-            string sql = "select count(*) from pedido where idPedidoAnterior=" + idPedido;
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se o pedido está marcado para gerar pedido de produção de corte
-        /// </summary>
-        public bool GerarPedidoProducaoCorte(GDASession sessao, uint idPedido)
-        {
-            if (idPedido == 0)
-                return false;
-
-            string sql = "select GerarPedidoProducaoCorte from pedido where idPedido=" + idPedido;
-
-            return (bool)objPersistence.ExecuteScalar(sessao, sql);
-        }
-
-        /// <summary>
-        /// Verifica se o pedido infomrado e um pedido de produção para corte
-        /// </summary>
-        public bool IsPedidoProducaoCorte(GDASession sessao, uint idPedido)
-        {
-            if (idPedido == 0)
-                return false;
-
-            string sql = "SELECT COUNT(*) FROM pedido WHERE IdPedidoRevenda IS NOT NULL AND TipoPedido = " + (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao + " AND IdPedido=" + idPedido;
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se este pedido possui alguma reposição
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoReposto(uint idPedido)
-        {
-            return IsPedidoReposto(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se no pedido foi expedido box
-        /// </summary>
-        public bool IsPedidoExpedicaoBox(uint idPedido)
-        {
-            return IsPedidoExpedicaoBox(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se no pedido foi expedido box
-        /// </summary>
-        public bool IsPedidoExpedicaoBox(GDASession session, uint idPedido)
-        {
-            if (idPedido == 0)
-                return false;
-
-            var sql =
-                string.Format(
-                    @"SELECT * FROM
-                        (SELECT COUNT(*) FROM produto_pedido_producao WHERE IdPedidoExpedicao={0})
-                    AS temp;", idPedido);
-
-            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se os pedidos passados são de garantia
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoGarantia(string idPedido)
-        {
-            return IsPedidoGarantia(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se os pedidos passados são de garantia
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoGarantia(GDASession session, string idPedido)
-        {
-            if (String.IsNullOrEmpty(idPedido))
-                return false;
-
-            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Garantia;
-
-            return objPersistence.ExecuteSqlQueryCount(session, sql) == idPedido.TrimEnd(',').Split(',').Length;
-        }
-
-        /// <summary>
-        /// Verifica se os pedidos passados são vendas para funcionários
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoFuncionario(string idPedido)
-        {
-            if (String.IsNullOrEmpty(idPedido))
-                return false;
-
-            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Funcionario;
-
-            return objPersistence.ExecuteSqlQueryCount(sql) == idPedido.TrimEnd(',').Split(',').Length;
-        }
-
-        #endregion
-
         #region Atualiza o peso dos produtos e do pedido
         
         /// <summary>
         /// Atualiza o peso dos produtos e do pedido.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
         public void AtualizaPeso(GDASession sessao, uint idPedido)
         {
             string sql = @"
@@ -10913,7 +10234,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualizar valor do custo do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
         public void UpdateCustoPedido(GDASession sessao, uint idPedido)
         {
             // Atualiza valor do custo do pedido
@@ -10931,7 +10251,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a observação do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
         public void AtualizaObs(uint idPedido, string obs)
         {
             string sql = "update pedido set obs=?obs Where idpedido=" + idPedido;
@@ -10946,7 +10265,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a loja do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
         public void AtualizaLoja(uint idPedido, uint idLoja)
         {
             string sql = "update pedido set idLoja=?idLoja Where idpedido=" + idPedido;
@@ -10982,8 +10300,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna pedidos a partir de uma string com os IDs.
         /// </summary>
-        /// <param name="idsPedido"></param>
-        /// <returns></returns>
         public Pedido[] GetByString(GDASession sessao, string idsPedido)
         {
             bool temFiltro;
@@ -10998,8 +10314,6 @@ namespace Glass.Data.DAL
         /// (APAGAR: quando alterar para utilizar transação)
         /// Retorna pedidos para comissão a partir de uma string com os IDs.
         /// </summary>
-        /// <param name="idsPedido"></param>
-        /// <returns></returns>
         public Pedido[] GetByString(string idsPedido, uint idFunc, Pedido.TipoComissao tipoFunc, string dataIni, string dataFim)
         {
             return GetByString(null, idsPedido, idFunc, tipoFunc, dataIni, dataFim);
@@ -11008,11 +10322,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna pedidos para comissão a partir de uma string com os IDs.
         /// </summary>
-        /// <param name="idsPedido"></param>
-        /// <returns></returns>
         public Pedido[] GetByString(GDASession sessao, string idsPedido, uint idFunc, Pedido.TipoComissao tipoFunc, string dataIni, string dataFim)
         {
-            List<Pedido> retorno = objPersistence.LoadData(sessao, SqlComissao(null, idsPedido, 0, tipoFunc, idFunc, dataIni, dataFim, false, false, null, 0),
+            List<Pedido> retorno = objPersistence.LoadData(sessao, SqlComissao(null, null, idsPedido, 0, tipoFunc, idFunc, dataIni, dataFim, false, false, null, 0),
                 GetParamComissao(dataIni, dataFim));
 
             if (tipoFunc != Pedido.TipoComissao.Todos)
@@ -11083,9 +10395,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o percentual de comissão de um pedido.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public float RecuperaPercComissao(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<float>(sessao, "percComissao", "idPedido=" + idPedido);
@@ -11151,9 +10460,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera se o pedido deve gerar comissão ou não
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="motivo"></param>
-        /// <param name="ignorar"></param>
         public void IgnorarComissaoPedido(uint idPedido, string motivo, bool ignorar)
         {
             if (idPedido == 0)
@@ -11204,13 +10510,7 @@ namespace Glass.Data.DAL
         internal bool AplicarAcrescimo(GDASession sessao, Pedido pedido, int tipoAcrescimo, decimal acrescimo,
             IEnumerable<ProdutosPedido> produtosPedido)
         {
-            return DescontoAcrescimo.Instance.AplicarAcrescimo(
-                sessao,
-                pedido,
-                tipoAcrescimo,
-                acrescimo,
-                produtosPedido
-            );
+            return DescontoAcrescimo.Instance.AplicarAcrescimo(sessao, pedido, tipoAcrescimo, acrescimo, produtosPedido);
         }
 
         #endregion
@@ -11291,23 +10591,10 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Recupera o valor do desconto
-
+        
         /// <summary>
         /// Calcula o desconto por quantidade e o desconto por ambiente contido nos produtos do pedido e nos seus beneficiamentos
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public decimal GetDescontoProdutos(uint idPedido)
-        {
-            return GetDescontoProdutos(null, idPedido);
-        }
-
-        /// <summary>
-        /// Calcula o desconto por quantidade e o desconto por ambiente contido nos produtos do pedido e nos seus beneficiamentos
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public decimal GetDescontoProdutos(GDASession sessao, uint idPedido)
         {
             string sql;
@@ -11467,8 +10754,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica a situação do pedido com relação à produção
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool IsLiberadoEntregaFinanc(GDASession sessao, uint idPedido)
         {
             string sql = "Select Count(*) From pedido Where liberadoFinanc=true And idPedido=" + idPedido;
@@ -11561,7 +10846,7 @@ namespace Glass.Data.DAL
 
             // Garante que há etiquetas na produção
             if ((ExecuteScalar<int>(sessao, string.Format(sql, "")) == 0 || quantidadePerda > 0) &&
-                !(ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca && IsMaoDeObra(idPedido)))
+                !(ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca && IsMaoDeObra(null, idPedido)))
             {
                 // Se este pedido tiver sido reposto e se não houver peças na produção, pode ser que todas as peças
                 // em produção deste pedido sejam perdas, se for o caso, verifica se o pedido que foi reposto está pronto/entregue,
@@ -11737,7 +11022,7 @@ namespace Glass.Data.DAL
 
                             if (PCPConfig.EmailSMS.EnviarSMSPedidoPronto)
                             {
-                                var idClientePedido = ObtemIdCliente(idPedido);
+                                var idClientePedido = ObtemIdCliente(null, idPedido);
 
                                 if (!(IsPedidoImportado(null, idPedido) && Geral.NaoEnviarEmailPedidoProntoPedidoImportado.Contains(idClientePedido)))
                                     SMS.EnviaSMSPedidoPronto(sessao, idPedido);
@@ -11766,18 +11051,7 @@ namespace Glass.Data.DAL
                             object[] parametros = new object[] { loja.Cnpj, 2, Glass.Conversoes.StrParaUint(ObtemValorCampo<string>(sessao, "codCliente", "idPedido=" + idPedido)) };
 
                             object retornoWS = WebService.ChamarWebService(urlService, "SyncService", "MarcarPedidoPronto", parametros);
-
-                            //string[] dados = retornoWS as string[];
-
-                            //if (dados[0] == "1")
-                            //{
-                            //    throw new Exception("Ocorreu um erro e não foi possível avisar ao cliente que o pedido está pronto: " + dados[1] + ".");
-                            //}
                         }
-                        //else
-                        //{
-                        //    throw new Exception("Atenção: Para pedidos importados é necessário o preenchimento da URL do sistema do cliente no cadastro do mesmo.");
-                        //}
                     }
                 }
                 catch (Exception ex)
@@ -11786,92 +11060,14 @@ namespace Glass.Data.DAL
                 }
             }
         }
-
-        /// <summary>
-        /// Atualiza a situação da produção do pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="situacaoProducao">Pode ser null para verificar todos as situações.</param>
-        /// <param name="dataLeitura"></param>
-        public void AtualizaSituacaoProducao(uint idPedido, SituacaoProdutoProducao? situacaoProducao, DateTime dataLeitura)
-        {
-            AtualizaSituacaoProducao(null, idPedido, situacaoProducao, dataLeitura);
-        }
-
-        #endregion
-
-        #region Verifica se o pedido está confirmado
         
-        /// <summary>
-        /// Verifica se o pedido está confirmado ou liberado parcialmente.
-        /// </summary>
-        public bool IsPedidoLiberado(GDASession session, uint idPedido)
-        {
-            return objPersistence.ExecuteSqlQueryCount(session, "select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" +
-                (int)Pedido.SituacaoPedido.Confirmado + ")") > 0;
-        }
-        
-        /// <summary>
-        /// Verifica se o pedido está confirmado ou liberado parcialmente.
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoConfirmado(GDASession session, uint idPedido)
-        {
-            int situacao = PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado;
-            return objPersistence.ExecuteSqlQueryCount(session, "select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" +
-                situacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0;
-        }
-
-        /// <summary>
-        /// Verifica se o pedido está confirmado, liberado ou liberado parcialmente.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoConfirmadoLiberado(uint idPedido)
-        {
-            return IsPedidoConfirmadoLiberado(idPedido, false);
-        }
-
-        /// <summary>
-        /// Verifica se o pedido está confirmado, liberado ou liberado parcialmente.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool IsPedidoConfirmadoLiberado(uint idPedido, bool nf)
-        {
-            string situacoes = (!nf || !(PedidoConfig.LiberarPedido && FiscalConfig.BloquearEmissaoNFeApenasPedidosLiberados) ?
-                (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " : "") +
-                (int)Pedido.SituacaoPedido.Confirmado + ", " +
-                (int)Pedido.SituacaoPedido.LiberadoParcialmente;
-
-            if (FiscalConfig.PermitirGerarNotaPedidoConferido)
-                situacoes += ", " + (int)Pedido.SituacaoPedido.Conferido;
-
-            return objPersistence.ExecuteSqlQueryCount("select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" + situacoes + ")") > 0;
-        }
-
         #endregion
 
         #region Verifica se o pedido tem sinal a receber
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Verifica se o pedido tem sinal a receber.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public bool TemSinalReceber(uint idPedido)
-        {
-            return TemSinalReceber(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Verifica se o pedido tem sinal a receber.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool TemSinalReceber(GDASession sessao, uint idPedido)
         {
             var sql = @"Select Count(*) From pedido p Where p.valorEntrada > 0 And p.idSinal Is Null And p.idPagamentoAntecipado is null And Coalesce(p.valorPagamentoAntecipado, 0) < p.total And 
@@ -11887,8 +11083,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido tem sinal a receber.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool TemPagamentoAntecipadoReceber(GDASession sessao, uint idPedido)
         {
             string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where 
@@ -11901,8 +11095,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido tem pagamento antecipado recebido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool TemPagamentoAntecipadoRecebido(GDASession sessao, uint idPedido)
         {
             string sql = @"select count(*) from pedido where idCli in (select id_Cli from cliente where 
@@ -11919,13 +11111,11 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o(s) pedido(s) possuem
         /// </summary>
-        /// <param name="idsPedido"></param>
-        /// <returns></returns>
         public bool PedidosPossuemST(string idsPedido)
         {
             foreach (var idPedido in idsPedido.TrimEnd(',').Split(','))
             {
-                var idLojaPedido = ObtemIdLoja(Conversoes.StrParaUint(idPedido));
+                var idLojaPedido = ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
                 if (!LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLojaPedido))
                     return false;
             }
@@ -11942,8 +11132,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se no pedido possui cálculos de projeto
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool PossuiCalculoProjeto(uint idPedido)
         {
             string sql = "Select Count(*) From ambiente_pedido Where idItemProjeto>0 And idPedido=" + idPedido;
@@ -12105,6 +11293,348 @@ namespace Glass.Data.DAL
 
         #region Obtém valor de campos do pedido
 
+        public uint? IdReposicao(uint idPedido)
+        {
+            var sql = string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoAnterior={0}", idPedido);
+            var retorno = objPersistence.ExecuteScalar(sql);
+
+            return retorno != null ? retorno.ToString().StrParaUintNullable() : null;
+        }
+        /// <summary>
+        /// Verifica se o pedido Possui IdPedidoAnterior e se o pedido não está cancelado
+        /// </summary>
+        public uint? ObterIdPedidoAnterior(uint idPedido)
+        {
+            var sql = string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoAnterior={0} AND situacao <> {1}", idPedido, (int)Pedido.SituacaoPedido.Cancelado);
+            return ExecuteScalar<uint?>(sql);
+        }
+
+        /// <summary>
+        /// Verifica se entre os pedidos passados existe algum de reposição
+        /// </summary>
+        public bool ContemPedidoReposicao(GDASession sessao, string idPedido)
+        {
+            if (String.IsNullOrEmpty(idPedido))
+                return false;
+
+            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Reposição;
+
+            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos passados são de reposição
+        /// </summary>
+        public bool IsPedidoReposicao(GDASession sessao, string idPedido)
+        {
+            if (String.IsNullOrEmpty(idPedido))
+                return false;
+
+            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Reposição;
+
+            return objPersistence.ExecuteSqlQueryCount(sessao, sql) == idPedido.TrimEnd(',').Split(',').Length;
+        }
+
+        /// <summary>
+        /// Verifica se este pedido possui alguma reposição
+        /// </summary>
+        public bool IsPedidoReposto(GDASession sessao, uint idPedido)
+        {
+            if (idPedido == 0)
+                return false;
+
+            string sql = "select count(*) from pedido where idPedidoAnterior=" + idPedido;
+
+            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se o pedido está marcado para gerar pedido de produção de corte
+        /// </summary>
+        public bool GerarPedidoProducaoCorte(GDASession sessao, uint idPedido)
+        {
+            if (idPedido == 0)
+                return false;
+
+            string sql = "select GerarPedidoProducaoCorte from pedido where idPedido=" + idPedido;
+
+            return (bool)objPersistence.ExecuteScalar(sessao, sql);
+        }
+
+        /// <summary>
+        /// Verifica se o pedido infomrado e um pedido de produção para corte
+        /// </summary>
+        public bool IsPedidoProducaoCorte(GDASession sessao, uint idPedido)
+        {
+            if (idPedido == 0)
+                return false;
+
+            string sql = "SELECT COUNT(*) FROM pedido WHERE IdPedidoRevenda IS NOT NULL AND TipoPedido = " + (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao + " AND IdPedido=" + idPedido;
+
+            return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se no pedido foi expedido box
+        /// </summary>
+        public bool IsPedidoExpedicaoBox(GDASession session, uint idPedido)
+        {
+            if (idPedido == 0)
+                return false;
+
+            var sql =
+                string.Format(
+                    @"SELECT * FROM
+                        (SELECT COUNT(*) FROM produto_pedido_producao WHERE IdPedidoExpedicao={0})
+                    AS temp;", idPedido);
+
+            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos passados são de garantia
+        /// </summary>
+        public bool IsPedidoGarantia(GDASession session, string idPedido)
+        {
+            if (String.IsNullOrEmpty(idPedido))
+                return false;
+
+            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Garantia;
+
+            return objPersistence.ExecuteSqlQueryCount(session, sql) == idPedido.TrimEnd(',').Split(',').Length;
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos passados são vendas para funcionários
+        /// </summary>
+        public bool IsPedidoFuncionario(string idPedido)
+        {
+            if (String.IsNullOrEmpty(idPedido))
+                return false;
+
+            string sql = "select count(*) from pedido where idPedido In (" + idPedido.TrimEnd(',') + ") and tipoVenda=" + (int)Pedido.TipoVendaPedido.Funcionario;
+
+            return objPersistence.ExecuteSqlQueryCount(sql) == idPedido.TrimEnd(',').Split(',').Length;
+        }
+
+        /// <summary>
+        /// Retorna o total do Pedido
+        /// </summary>
+        public decimal GetTotal(GDASession sessao, uint idPedido)
+        {
+            string sql = "Select Coalesce(total, 0) from pedido Where idPedido=" + idPedido;
+            return ExecuteScalar<decimal>(sessao, sql);
+        }
+
+        /// <summary>
+        /// Retorna a comissão do comissionado do Pedido
+        /// </summary>
+        public decimal GetComissao(uint idPedido)
+        {
+            string sql = "Select Coalesce(ValorComissao, 0) from pedido Where idPedido=" + idPedido;
+            return ExecuteScalar<decimal>(sql);
+        }
+
+        public Pedido GetForTotalBruto(uint idPedido)
+        {
+            Pedido p = new Pedido();
+            p.IdPedido = idPedido;
+            p.Total = GetTotal(null, idPedido);
+            p.ValorComissao = GetComissao(idPedido);
+            p.TaxaPrazo = ObtemValorCampo<float>("taxaPrazo", "idPedido=" + idPedido);
+
+            return p;
+        }
+
+        /// <summary>
+        /// Verifica se o pedido está confirmado ou liberado parcialmente.
+        /// </summary>
+        public bool IsPedidoLiberado(GDASession session, uint idPedido)
+        {
+            return objPersistence.ExecuteSqlQueryCount(session, "select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" +
+                (int)Pedido.SituacaoPedido.Confirmado + ")") > 0;
+        }
+
+        /// <summary>
+        /// Verifica se o pedido está confirmado ou liberado parcialmente.
+        /// </summary>
+        public bool IsPedidoConfirmado(GDASession session, uint idPedido)
+        {
+            int situacao = PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado;
+            return objPersistence.ExecuteSqlQueryCount(session, "select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" +
+                situacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0;
+        }
+
+        /// <summary>
+        /// Verifica se o pedido está confirmado, liberado ou liberado parcialmente.
+        /// </summary>
+        public bool IsPedidoConfirmadoLiberado(uint idPedido, bool nf)
+        {
+            string situacoes = (!nf || !(PedidoConfig.LiberarPedido && FiscalConfig.BloquearEmissaoNFeApenasPedidosLiberados) ?
+                (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " : "") +
+                (int)Pedido.SituacaoPedido.Confirmado + ", " +
+                (int)Pedido.SituacaoPedido.LiberadoParcialmente;
+
+            if (FiscalConfig.PermitirGerarNotaPedidoConferido)
+                situacoes += ", " + (int)Pedido.SituacaoPedido.Conferido;
+
+            return objPersistence.ExecuteSqlQueryCount("select count(*) from pedido where idPedido=" + idPedido + " and situacao in (" + situacoes + ")") > 0;
+        }
+
+        /// <summary>
+        /// Busca o percentual de desconto do pedido
+        /// </summary>
+        public float GetPercDesc(GDASession session, uint idPedido)
+        {
+            string sql = "Select Coalesce(if(tipoDesconto=1, desconto/100, desconto/(total+desconto)), 0) From pedido Where idPedido=" + idPedido;
+            return ExecuteScalar<float>(session, sql);
+        }
+
+        public Pedido.TipoPedidoEnum GetTipoPedido(GDASession sessao, uint idPedido)
+        {
+            return ObtemValorCampo<Pedido.TipoPedidoEnum>(sessao, "tipoPedido", "idPedido=" + idPedido);
+        }
+
+        /// <summary>
+        /// Verifica se pedido é mão de obra
+        /// </summary>
+        public bool IsMaoDeObra(GDASession sessao, uint idPedido)
+        {
+            return GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra;
+        }
+
+        /// <summary>
+        /// Verifica se pedido é Produção
+        /// </summary>
+        public bool IsProducao(GDASession sessao, uint idPedido)
+        {
+            return GetTipoPedido(sessao, idPedido) == Pedido.TipoPedidoEnum.Producao;
+        }
+
+        /// <summary>
+        /// Verific se pedido é Venda.
+        /// </summary>
+        public bool IsVenda(GDASession sessao, uint idPedido)
+        {
+            return !IsMaoDeObra(sessao, idPedido) && !IsProducao(sessao, idPedido);
+        }
+
+        /// <summary>
+        /// Verifica se o pedido é do tipo Revenda.
+        /// </summary>
+        public bool IsRevenda(uint idPedido)
+        {
+            return GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.Revenda;
+        }
+
+        /// <summary>
+        /// Verifica se pedido é mão de obra especial
+        /// </summary>
+        public bool IsMaoDeObraEspecial(uint idPedido)
+        {
+            return GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos são de loja diferente
+        /// </summary>
+        public bool PedidosLojasDiferentes(string idsPedidos)
+        {
+            var sql = string.Format("Select IdLoja from pedido where idPedido IN({0}) group by idloja", idsPedidos);
+            return this.CurrentPersistenceObject.LoadResult(sql, null).Count() > 1;
+        }
+
+        public uint? GetFormaPagto(GDASession sessao, uint idPedido)
+        {
+            return PedidoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idFormaPagto", "idPedido=" + idPedido);
+        }
+
+        /// <summary>
+        /// Retorna os IDs dos pedidos de um cliente.
+        /// </summary>
+        public string GetIdsByCliente(uint idCli, string nomeCliente)
+        {
+            bool temFiltro;
+            string filtroAdicional;
+
+            return GetValoresCampo(Sql(0, 0, null, null, 0, idCli, nomeCliente, 0, null, 0, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null, 0, 0, 0, "",
+                true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional), "idPedido");
+        }
+
+        /// <summary>
+        /// Retorna os IDs dos pedidos de uma impressão
+        /// </summary>
+        /// <returns></returns>
+        public string GetIdsByImpressao(uint idImpressao)
+        {
+            var sql =
+                @"SELECT DISTINCT pi.IdPedido
+                FROM produto_impressao pi
+                WHERE pi.idImpressao = ?idImpressao";
+
+            var idsString =
+                objPersistence.LoadResult(sql, new GDAParameter("?idImpressao", idImpressao))
+                    .Select(f => f.GetString(0))
+                    .ToList();
+
+            var idsInt = new List<int>();
+
+            if (!idsString.Any())
+                return string.Empty;
+
+            foreach (var id in idsString)
+                if (id.StrParaIntNullable().GetValueOrDefault() > 0)
+                    idsInt.Add(id.StrParaInt());
+
+            if (!idsInt.Any())
+                return string.Empty;
+
+            return string.Join(",", Array.ConvertAll(idsInt.ToArray(), (x => x.ToString())));
+
+        }
+
+        /// <summary>
+        /// Busca idPedido pelo orçamento
+        /// </summary>
+        /// <returns></returns>
+        public uint GetIdPedidoByOrcamento(uint idOrcamento)
+        {
+            var sql = "Select idPedido From pedido Where situacao<>" + (int)Pedido.SituacaoPedido.Cancelado +
+                " And idOrcamento=" + idOrcamento + " limit 1";
+
+            object obj = objPersistence.ExecuteScalar(sql);
+
+            var idPedido = obj != null && obj.ToString() != String.Empty ? Glass.Conversoes.StrParaUint(obj.ToString()) : 0;
+
+            return idPedido;
+        }
+
+        public bool IsFastDelivery(GDASession sessao, uint idPedido)
+        {
+            string sql = "select Coalesce(FastDelivery, 0) from pedido where idPedido=" + idPedido;
+            int retorno = Convert.ToInt32(objPersistence.ExecuteScalar(sessao, sql));
+            return retorno == 1;
+        }
+
+        /// <summary>
+        /// Recupera o ID do cliente de um pedido.
+        /// </summary>
+        public uint GetIdCliente(GDASession sessao, uint idPedido)
+        {
+            object retorno = objPersistence.ExecuteScalar(sessao, "select coalesce(idCli,0) from pedido where idPedido=" + idPedido);
+            return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? Glass.Conversoes.StrParaUint(retorno.ToString()) : 0;
+        }
+
+        /// <summary>
+        /// Recupera o ID da obra de um pedido.
+        /// </summary>
+        public uint? GetIdObra(GDASession sessao, uint idPedido)
+        {
+            object retorno = objPersistence.ExecuteScalar(sessao, "select idObra from pedido where idPedido=" + idPedido);
+            return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? (uint?)Glass.Conversoes.StrParaUint(retorno.ToString()) : null;
+        }
+
         public bool ObtemOrdemCargaParcial(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<bool>("OrdemCargaParcial", "idPedido=" + idPedido);
@@ -12113,6 +11643,11 @@ namespace Glass.Data.DAL
         public bool ObtemDeveTransferir(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<bool>("deveTransferir", "idPedido=" + idPedido);
+        }
+
+        public bool ObterApenasTransferencia(GDASession sessao, int idPedido)
+        {
+            return ObtemValorCampo<bool?>("ApenasTransferencia", $"IdPedido={ idPedido }").GetValueOrDefault();
         }
 
         public uint? ObtemFormaPagto(GDASession sessao, uint idPedido)
@@ -12150,36 +11685,15 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<decimal>(session, "valorIpi", "idPedido=" + idPedido) > 0;
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Obtém a data de entrega do pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public DateTime? ObtemDataEntrega(uint idPedido)
-        {
-            return ObtemDataEntrega(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém a data de entrega do pedido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public DateTime? ObtemDataEntrega(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<DateTime?>(sessao, "dataEntrega", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// Obtém a data de entrega do pedido.
-        /// </summary>
-        public DateTime ObtemDataPedido(uint idPedido)
-        {
-            return ObtemDataPedido(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém a data de entrega do pedido.
         /// </summary>
@@ -12191,8 +11705,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém os três primeiros ids relacionados ao sinal
         /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
         public string ObtemIdsPeloSinal(uint idSinal)
         {
             // Foi retirada a opção idAcertoParcial para otimizar o comando
@@ -12227,9 +11739,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém os ids dos pedidos no período de confirmação do pedido informado.
         /// </summary>
-        /// <param name="dataIniConfPed">Data inicial da confirmação do pedido</param>
-        /// <param name="dataFimConfPed">Data final da confirmação do pedido</param>
-        /// <returns></returns>
         public string ObtemIdsPelaDataConf(DateTime? dataIniConf, DateTime? dataFimConf)
         {
             var sql = "Select idPedido From pedido Where 1";
@@ -12251,29 +11760,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o id do proejto do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint? ObtemIdProjeto(uint idPedido)
         {
             return ObtemValorCampo<uint?>("idProjeto", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Obtém o idSinal do pedido passado
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint? ObtemIdSinal(uint idPedido)
-        {
-            return ObtemIdSinal(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém o idSinal do pedido passado
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint? ObtemIdSinal(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint?>(sessao, "idSinal", "idPedido=" + idPedido);
@@ -12282,90 +11776,38 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o idSinal ou pagamento antecipado do pedido passado
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint? ObtemIdSinalOuPagtoAntecipado(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint?>(sessao, "Coalesce(idSinal, IdPagamentoAntecipado) AS IdSinal", "idPedido=" + idPedido);
         }
-
+        
         /// <summary>
         /// Obtém o idParcela do pedido passado.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns>ID da parcela.</returns>
-        public uint? ObtemIdParcela(uint idPedido)
-        {
-            return ObtemIdParcela(null, idPedido);
-        }
-
-        /// <summary>
-        /// Obtém o idParcela do pedido passado.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns>ID da parcela.</returns>
         public uint? ObtemIdParcela(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint?>(sessao, "idParcela", "idPedido=" + idPedido);
         }
-
+        
         /// <summary>
         /// Obtém o idPagamentoAntecipado do pedido passado.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns>ID do pagamento antecipado.</returns>
-        public uint? ObtemIdPagamentoAntecipado(uint idPedido)
-        {
-            return ObtemIdPagamentoAntecipado(null, idPedido);
-        }
-
-        /// <summary>
-        /// Obtém o idPagamentoAntecipado do pedido passado.
-        /// </summary>
-        /// <param name="session"></param>
-        /// <param name="idPedido"></param>
-        /// <returns>ID do pagamento antecipado.</returns>
         public uint? ObtemIdPagamentoAntecipado(GDASession session, uint idPedido)
         {
             return ObtemValorCampo<uint?>(session, "idPagamentoAntecipado", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Obtém o cliente do pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint ObtemIdCliente(uint idPedido)
-        {
-            return ObtemIdCliente(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém o cliente do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint ObtemIdCliente(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idCli", "idPedido=" + idPedido);
         }
-
+        
         /// <summary>
         /// Obtem o vendedor do pedido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint ObtemIdFunc(uint idPedido)
-        {
-            return ObtemIdFunc(null, idPedido);
-        }
-
-        /// <summary>
-        /// Obtem o vendedor do pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint ObtemIdFunc(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idFunc", "idPedido=" + idPedido);
@@ -12383,44 +11825,18 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<uint>(sessao, "UsuCad", "idPedido=" + idPedido);
         }
-
+        
         /// <summary>
         /// Obtem o funcionário que colocou o desconto no pedido.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint? ObtemIdFuncDesc(uint idPedido)
-        {
-            return ObtemIdFuncDesc(null, idPedido);
-        }
-
-        /// <summary>
-        /// Obtem o funcionário que colocou o desconto no pedido.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint? ObtemIdFuncDesc(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint?>(sessao, "idFuncDesc", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Obtém a loja do pedido
-        /// </summary>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        public uint ObtemIdLoja(uint idPedido)
-        {
-            return ObtemIdLoja(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém a loja do pedido
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
         public uint ObtemIdLoja(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idLoja", "idPedido=" + idPedido);
@@ -12445,15 +11861,7 @@ namespace Glass.Data.DAL
 
             return resultado.TrimEnd(',');
         }
-
-        /// <summary>
-        /// Obtém o cliente do pedido
-        /// </summary>
-        public string ObtemPedCli(uint idPedido)
-        {
-            return ObtemPedCli(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém o cliente do pedido
         /// </summary>
@@ -12465,29 +11873,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o comissionado do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public uint ObtemIdComissionado(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<uint>(sessao, "idComissionado", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Obtém a situação do pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public Pedido.SituacaoPedido ObtemSituacao(uint idPedido)
-        {
-            return ObtemSituacao(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Obtém a situação do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public Pedido.SituacaoPedido ObtemSituacao(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<Pedido.SituacaoPedido>(sessao, "situacao", "idPedido=" + idPedido);
@@ -12504,8 +11897,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém a situação da produção do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public int ObtemSituacaoProducao(GDASession sessao, uint idPedido)
         {
             string sql = "Select situacaoProducao From pedido Where idPedido=" + idPedido;
@@ -12514,33 +11905,10 @@ namespace Glass.Data.DAL
 
             return obj == null || obj.ToString().Trim() == String.Empty ? 0 : Glass.Conversoes.StrParaInt(obj.ToString());
         }
-
-        /// <summary>
-        /// Obtém a situação da produção do pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public int ObtemSituacaoProducao(uint idPedido)
-        {
-            return ObtemSituacaoProducao(null, idPedido);
-        }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Retorna o tipo de venda de um pedido
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public int ObtemTipoVenda(uint idPedido)
-        {
-            return ObtemTipoVenda(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Retorna o tipo de venda de um pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public int ObtemTipoVenda(GDASession sessao, uint idPedido)
         {
             string sql = "Select tipoVenda From pedido Where idPedido=" + idPedido;
@@ -12553,8 +11921,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna o tipo de venda de um pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public Pedido.TipoPedidoEnum ObterTipoPedido(GDASession sessao, uint idPedido)
         {
             string sql = "SELECT TipoPedido FROM pedido WHERE idPedido=" + idPedido;
@@ -12566,8 +11932,6 @@ namespace Glass.Data.DAL
         /// (APAGAR: quando alterar para utilizar transação)
         /// Obtém o tipo de entrega do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public int ObtemTipoEntrega(uint idPedido)
         {
             return ObtemTipoEntrega(null, idPedido);
@@ -12576,8 +11940,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o tipo de entrega do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public int ObtemTipoEntrega(GDASession sessao, uint idPedido)
         {
             string sql = "Select tipoEntrega From pedido Where idPedido=" + idPedido;
@@ -12590,8 +11952,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o funcionário responsável pelo pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public string ObtemNomeFuncResp(GDASession session, uint idPedido)
         {
             return ExecuteScalar<string>(session, @"
@@ -12604,8 +11964,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o funcionário que comprou o pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public string ObtemNomeFuncVenda(uint idPedido)
         {
             string sql = "Select nome From funcionario Where idFunc in " +
@@ -12631,8 +11989,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém o valor do ICMS do pedido
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns>Retorna o valor do IPI do pedido.</returns>
         public decimal ObtemValorIpi(GDASession session, uint idPedido)
         {
             string sql = "Select valorIpi From pedido Where idPedido=" + idPedido;
@@ -12679,17 +12035,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<float>(sessao, "taxaFastDelivery", "idPedido=" + idPedido);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public decimal ObtemValorEntrada(uint idPedido)
-        {
-            return ObtemValorEntrada(null, idPedido);
-        }
-
+        
         public decimal ObtemValorEntrada(GDASession sessao, uint idPedido)
         {
             return ObtemValorCampo<decimal>(sessao, "valorEntrada", "idPedido=" + idPedido);
@@ -12759,18 +12105,6 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("cidadeObra", "idPedido=" + idPedido);
         }
         
-        public void ObtemDadosComissaoDescontoAcrescimo(GDASession sessao, uint idPedido, out int tipoDesconto, out decimal desconto, out int tipoAcrescimo, out decimal acrescimo,
-            out float percComissao, out uint? idComissionado)
-        {
-            string where = "idPedido=" + idPedido;
-            tipoDesconto = ObtemValorCampo<int>(sessao, "tipoDesconto", where);
-            desconto = ObtemValorCampo<decimal>(sessao, "desconto", where);
-            tipoAcrescimo = ObtemValorCampo<int>(sessao, "tipoAcrescimo", where);
-            acrescimo = ObtemValorCampo<decimal>(sessao, "acrescimo", where);
-            percComissao = RecuperaPercComissao(sessao, idPedido);
-            idComissionado = ObtemValorCampo<uint?>(sessao, "idComissionado", where);
-        }
-        
         public bool IsPedidoImportado(GDASession session, uint idPedido)
         {
             return ObtemValorCampo<bool>(session, "importado", "idPedido=" + idPedido);
@@ -12802,6 +12136,18 @@ namespace Glass.Data.DAL
             return total - GetComissaoPedido(idPedido);
         }
 
+        /// <summary>
+        /// Verifica se o pedido está atrasado pela data de entrega.
+        /// </summary>
+        public bool IsPedidoAtrasado(GDASession session, uint idPedido, bool forLiberacao)
+        {
+            if (forLiberacao && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente)
+                return false;
+
+            string sql = "select count(*) from pedido where dataEntrega<=date(now()) and idPedido=" + idPedido;
+            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+        }
+
         internal decimal GetTotalParaLiberacao(GDASession sessao, uint idPedido)
         {
             decimal total = PedidoEspelhoDAO.Instance.ObtemValorCampo<decimal>(sessao, "total", "idPedido=" + idPedido);
@@ -12813,7 +12159,7 @@ namespace Glass.Data.DAL
 
         internal decimal GetTotalBruto(uint idPedido, bool espelho)
         {
-            decimal total = !espelho ? GetTotal(idPedido) : PedidoEspelhoDAO.Instance.ObtemValorCampo<decimal>("total", "idPedido=" + idPedido);
+            decimal total = !espelho ? GetTotal(null, idPedido) : PedidoEspelhoDAO.Instance.ObtemValorCampo<decimal>("total", "idPedido=" + idPedido);
             float taxaPrazo = ObtemValorCampo<float>("taxaPrazo", "idPedido=" + idPedido);
 
             decimal acrescimo = total - GetTotalSemAcrescimo(idPedido, total);
@@ -13014,6 +12360,14 @@ namespace Glass.Data.DAL
             return ids;
         }
 
+        /// <summary>
+        /// Verifica se o pedido foi gerado por um parceiro.
+        /// </summary>
+        public bool IsGeradoParceiro(GDASession session, uint idPedido)
+        {
+            return ObtemValorCampo<bool>(session, "geradoParceiro", "idPedido=" + idPedido);
+        }
+
         #endregion
 
         #region Data de entrega mínima do pedido
@@ -13021,31 +12375,18 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se a data de entrega de um pedido deve ser bloqueada.
         /// </summary>
-        public bool BloquearDataEntregaMinima(uint? idPedido)
-        {
-            return BloquearDataEntregaMinima(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se a data de entrega de um pedido deve ser bloqueada.
-        /// </summary>
         public bool BloquearDataEntregaMinima(GDASession session, uint? idPedido)
         {
             var tipoPedido = idPedido > 0 ? GetTipoPedido(session, idPedido.Value) : Pedido.TipoPedidoEnum.Producao;
-
-            // Comentado: não bloqueia a data de entrega mínima se o pedido for de revenda
-            //int configDias = tipoPedido == Pedido.TipoPedidoEnum.Venda ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido :
-            //    tipoPedido == Pedido.TipoPedidoEnum.Revenda ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda : 0;
-
             var configDias = tipoPedido == Pedido.TipoPedidoEnum.Venda ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido : 0;
-
             int? tipoEntrega = idPedido > 0 ? (int?)ObtemTipoEntrega(session, idPedido.Value) : null;
+
             if (tipoEntrega > 0 && PedidoConfig.DiasMinimosEntregaTipo.Keys.Contains((Pedido.TipoEntregaPedido)tipoEntrega.Value))
                 configDias = Math.Max(configDias, PedidoConfig.DiasMinimosEntregaTipo[(Pedido.TipoEntregaPedido)tipoEntrega.Value]);
 
             return configDias > 0 &&
                 !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega) &&
-                (!(idPedido > 0) || !IsFastDelivery(idPedido.Value));
+                (!(idPedido > 0) || !IsFastDelivery(null, idPedido.Value));
         }
 
         /// <summary>
@@ -13076,31 +12417,14 @@ namespace Glass.Data.DAL
 
             return dataEntregaAtual.Date >= dataComparar.Date ? dataEntregaAtual : dataComparar;
         }
-
-        /// <summary>
-        /// Recupera a data de entrega mínima para um pedido.
-        /// </summary>
-        public bool GetDataEntregaMinima(uint idCli, uint? idPedido, out DateTime dataEntregaMinima,
-            out DateTime dataFastDelivery)
-        {
-            return GetDataEntregaMinima(null, idCli, idPedido, out dataEntregaMinima, out dataFastDelivery);
-        }
-
+        
         public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, out DateTime dataEntregaMinima, out DateTime dataFastDelivery)
         {
             int? tipoPedido = idPedido > 0 ? (int?)GetTipoPedido(session, idPedido.Value) : null;
             int? tipoEntrega = idPedido > 0 ? (int?)ObtemTipoEntrega(session, idPedido.Value) : null;
             return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, out dataEntregaMinima, out dataFastDelivery);
         }
-
-        /// <summary>
-        /// Recupera a data de entrega mínima para um pedido.
-        /// </summary>
-        public bool GetDataEntregaMinima(uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, out DateTime dataEntregaMinima, out DateTime dataFastDelivery)
-        {
-            return GetDataEntregaMinima((GDASession)null, idCli, idPedido, tipoPedido, tipoEntrega, out dataEntregaMinima, out dataFastDelivery);
-        }
-
+        
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
@@ -13112,7 +12436,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
-        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, out DateTime dataEntregaMinima, out DateTime dataFastDelivery, int numeroDiasUteisMinimoNaoConfig)
+        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, out DateTime dataEntregaMinima, out DateTime dataFastDelivery,
+            int numeroDiasUteisMinimoNaoConfig)
         {
             bool temp;
             DateTime? dataBase = idPedido > 0 ? (DateTime?)GetDataPedido(session, idPedido.Value) : null;
@@ -13120,30 +12445,23 @@ namespace Glass.Data.DAL
             if (dataBase != null && dataBase.Value.Date < DateTime.Now.Date)
                 dataBase = DateTime.Now;
 
-            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out temp, numeroDiasUteisMinimoNaoConfig);
+            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out temp, numeroDiasUteisMinimoNaoConfig, false);
         }
 
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
-        public bool GetDataEntregaMinima(uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima, out DateTime dataFastDelivery, out bool desabilitarCampo)
+        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima,
+            out DateTime dataFastDelivery, out bool desabilitarCampo)
         {
-            return GetDataEntregaMinima(null, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out desabilitarCampo);
+            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out desabilitarCampo, 0, false);
         }
 
         /// <summary>
         /// Recupera a data de entrega mínima para um pedido.
         /// </summary>
-        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima, out DateTime dataFastDelivery, out bool desabilitarCampo)
-        {
-            return GetDataEntregaMinima(session, idCli, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima, out dataFastDelivery, out desabilitarCampo, 0);
-        }
-        
-        /// <summary>
-        /// Recupera a data de entrega mínima para um pedido.
-        /// </summary>
-        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase,
-            out DateTime dataEntregaMinima, out DateTime dataFastDelivery, out bool desabilitarCampo, int numeroDiasUteisMinimoNaoConfig, bool fastDelivery = false)
+        public bool GetDataEntregaMinima(GDASession session, uint idCli, uint? idPedido, int? tipoPedido, int? tipoEntrega, DateTime? dataBase, out DateTime dataEntregaMinima,
+            out DateTime dataFastDelivery, out bool desabilitarCampo, int numeroDiasUteisMinimoNaoConfig, bool throwException, bool fastDelivery = false)
         {
             try
             {
@@ -13316,14 +12634,16 @@ namespace Glass.Data.DAL
                 desabilitarCampo = false;
                 dataEntregaMinima = dataBase ?? DateTime.Now;
                 dataFastDelivery = dataEntregaMinima;
-                return false;
+                if (!throwException)
+                    return false;
+                throw;
             }
         }
 
         /// <summary>
         /// Recalcula a data de entrega do pedido baseando-se na data passada e atualiza o pedido
         /// </summary>
-        public void RecalcularEAtualizarDataEntregaPedido(GDASession session, uint idPedido, DateTime? dataBase, out bool enviarMensagem)
+        public void RecalcularEAtualizarDataEntregaPedido(GDASession session, uint idPedido, DateTime? dataBase, out bool enviarMensagem, bool throwException)
         {
             uint idCliente = PedidoDAO.Instance.ObtemIdCliente(session, idPedido);
             int? tipoPedido = (int?)GetTipoPedido(session, idPedido);
@@ -13334,7 +12654,7 @@ namespace Glass.Data.DAL
             enviarMensagem = false;
 
             GetDataEntregaMinima(session, idCliente, idPedido, tipoPedido, tipoEntrega, dataBase, out dataEntregaMinima,
-                out dataFastDelivery, out desabilitarCampo, 0, fastDelivey);
+                out dataFastDelivery, out desabilitarCampo, 0, throwException, fastDelivey);
 
             if (dataFastDelivery != DateTime.MinValue && dataEntregaMinima != DateTime.MinValue)
             {
@@ -14085,79 +13405,18 @@ namespace Glass.Data.DAL
             pedidoNovo.IdComissionado = pedido.IdComissionado;
             pedidoNovo.PercComissao = pedido.PercComissao;
             pedidoNovo.DataEntrega = pedido.DataEntrega;
+            pedidoNovo.IdTransportador = pedido.IdTransportador;
 
             return pedidoNovo;
         }
 
         #endregion
 
-        #region Recupera o ID da obra de um pedido
-
-        public uint? GetIdObra(uint idPedido)
-        {
-            return GetIdObra(null, idPedido);
-        }
-
-        /// <summary>
-        /// Recupera o ID da obra de um pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint? GetIdObra(GDASession sessao, uint idPedido)
-        {
-            object retorno = objPersistence.ExecuteScalar(sessao, "select idObra from pedido where idPedido=" + idPedido);
-            return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? (uint?)Glass.Conversoes.StrParaUint(retorno.ToString()) : null;
-        }
-
-        #endregion
-
-        #region Recupera o ID do cliente de um pedido
-
-        /// <summary>
-        /// Recupera o ID do cliente de um pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint GetIdCliente(uint idPedido)
-        {
-            return GetIdCliente(null, idPedido);
-        }
-
-        /// <summary>
-        /// Recupera o ID do cliente de um pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public uint GetIdCliente(GDASession sessao, uint idPedido)
-        {
-            object retorno = objPersistence.ExecuteScalar(sessao, "select coalesce(idCli,0) from pedido where idPedido=" + idPedido);
-            return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? Glass.Conversoes.StrParaUint(retorno.ToString()) : 0;
-        }
-
-        #endregion
-
         #region Altera os dados do pedido de um parceiro
-
+        
         /// <summary>
         /// Altera os dados do pedido de um parceiro.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <param name="codPedCli"></param>
-        /// <param name="valorEntrada"></param>
-        /// <param name="obs"></param>
-        public void UpdateParceiro(uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib, int? idTransportador)
-        {
-            UpdateParceiro(null, idPedido, codPedCli, valorEntrada, obs, obsLib, idTransportador);
-        }
-
-        /// <summary>
-        /// Altera os dados do pedido de um parceiro.
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idPedido"></param>
-        /// <param name="codPedCli"></param>
-        /// <param name="valorEntrada"></param>
-        /// <param name="obs"></param>
         public void UpdateParceiro(GDASession sessao, uint idPedido, string codPedCli, string valorEntrada, string obs, string obsLib, int? idTransportador)
         {
             string sql = "update pedido set codCliente=?codPedCli, obs=?obs, ObsLiberacao=?obsLib{0}, IdTransportador=?idTransp where idPedido=" + idPedido;
@@ -14178,21 +13437,10 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, sql, lstParam.ToArray());
         }
-
+        
         /// <summary>
         /// Gera parcelas padrão do cliente parceiro
         /// </summary>
-        /// <param name="ped"></param>
-        public void GeraParcelaParceiro(ref Pedido ped)
-        {
-            GeraParcelaParceiro(null, ref ped);
-        }
-
-        /// <summary>
-        /// Gera parcelas padrão do cliente parceiro
-        /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="ped"></param>
         public void GeraParcelaParceiro(GDASession sessao, ref Pedido ped)
         {
             Parcelas parc = ParcelasDAO.Instance.GetPadraoCliente(sessao, ped.IdCli);
@@ -14260,33 +13508,6 @@ namespace Glass.Data.DAL
             }
 
             return false;
-        }
-
-        #endregion
-
-        #region Recupera o tipo de venda do pedido
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Recupera o tipo de venda do pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public int? GetTipoVenda(uint idPedido)
-        {
-            return GetTipoVenda(null, idPedido);
-        }
-
-        /// <summary>
-        /// Recupera o tipo de venda do pedido.
-        /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
-        public int? GetTipoVenda(GDASession sessao, uint idPedido)
-        {
-            string sql = "select tipoVenda from pedido where idPedido=" + idPedido;
-            object retorno = objPersistence.ExecuteScalar(sessao, sql);
-            return retorno != null && retorno != DBNull.Value && retorno.ToString() != "" ? (int?)Glass.Conversoes.StrParaInt(retorno.ToString()) : null;
         }
 
         #endregion
@@ -14506,30 +13727,6 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-
-        #region Verifica se o pedido está atrasado pela data de entrega
-
-        /// <summary>
-        /// Verifica se o pedido está atrasado pela data de entrega.
-        /// </summary>
-        public bool IsPedidoAtrasado(uint idPedido, bool forLiberacao)
-        {
-            return IsPedidoAtrasado(null, idPedido, forLiberacao);
-        }
-
-        /// <summary>
-        /// Verifica se o pedido está atrasado pela data de entrega.
-        /// </summary>
-        public bool IsPedidoAtrasado(GDASession session, uint idPedido, bool forLiberacao)
-        {
-            if (forLiberacao && !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente)
-                return false;
-
-            string sql = "select count(*) from pedido where dataEntrega<=date(now()) and idPedido=" + idPedido;
-            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
-        }
-
-        #endregion
         
         #region Recupera os pedidos de um sinal
 
@@ -14599,15 +13796,13 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o pedido pode ser exportado.
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool PodeExportar(uint idPedido)
         {
-            var pcpFinalizado = GetTipoPedido(idPedido) == Pedido.TipoPedidoEnum.Revenda ? true :
+            var pcpFinalizado = GetTipoPedido(null, idPedido) == Pedido.TipoPedidoEnum.Revenda ? true :
                 PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == PedidoEspelho.SituacaoPedido.Finalizado ||
                 PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == PedidoEspelho.SituacaoPedido.Impresso;
 
-            bool pode = PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido) && pcpFinalizado &&
+            bool pode = IsPedidoConfirmadoLiberado(idPedido, false) && pcpFinalizado &&
                  PedidoExportacaoDAO.Instance.PodeExportar(idPedido);
 
             return pode;
@@ -14772,12 +13967,10 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Exibir Nota Promissória?
         /// </summary>
-        /// <param name="idPedido"></param>
-        /// <returns></returns>
         public bool ExibirNotaPromissoria(uint idPedido)
         {
-            int tipoVenda = ObtemTipoVenda(idPedido);
-            Pedido.SituacaoPedido situacao = ObtemSituacao(idPedido);
+            int tipoVenda = ObtemTipoVenda(null, idPedido);
+            Pedido.SituacaoPedido situacao = ObtemSituacao(null, idPedido);
             return ExibirNotaPromissoria(tipoVenda, situacao);
         }
 
@@ -15011,27 +14204,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #endregion
-
-        #region Verifica se o pedido foi gerado por um parceiro
-
-        /// <summary>
-        /// Verifica se o pedido foi gerado por um parceiro.
-        /// </summary>
-        public bool IsGeradoParceiro(uint idPedido)
-        {
-            return IsGeradoParceiro(null, idPedido);
-        }
-
-        /// <summary>
-        /// Verifica se o pedido foi gerado por um parceiro.
-        /// </summary>
-        public bool IsGeradoParceiro(GDASession session, uint idPedido)
-        {
-            return ObtemValorCampo<bool>(session, "geradoParceiro", "idPedido=" + idPedido);
-        }
-
-        #endregion
-
+        
         #region Parcelas do pedido
 
         public enum TipoCalculoParcelas
@@ -15044,7 +14217,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recalcula as parcelas do pedido.
         /// </summary>
-        /// <param name="objPedido"></param>
         public void RecalculaParcelas(GDASession sessao, ref Pedido objPedido, TipoCalculoParcelas tipoCalculo)
         {
             uint tipoPagtoCli = ClienteDAO.Instance.ObtemValorCampo<uint>(sessao, "tipoPagto", "id_Cli=" + objPedido.IdCli);
@@ -15137,10 +14309,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a rentabilidade do pedido.
         /// </summary>
-        public void AtualizarRentabilidade(
-            GDA.GDASession sessao, uint idPedido,
-            decimal percentualRentabilidade, decimal rentabilidadeFinanceira,
-            decimal percentualComissao)
+        public void AtualizarRentabilidade(GDA.GDASession sessao, uint idPedido, decimal percentualRentabilidade, decimal rentabilidadeFinanceira, decimal percentualComissao)
         {
             objPersistence.ExecuteCommand(sessao,
                 @"UPDATE pedido SET 
@@ -15694,6 +14863,9 @@ namespace Glass.Data.DAL
             {
                 objUpdate.DataPedido = objUpdate.DataPedido.AddHours(ped.DataCad.Hour).AddMinutes(ped.DataCad.Minute).AddSeconds(ped.DataCad.Second);
             }
+
+            bool enviarMensagem = false;
+            RecalcularEAtualizarDataEntregaPedido(session, objUpdate.IdPedido, null, out enviarMensagem, objUpdate.FastDelivery);
 
             // Remove o idObra caso não seja mais obra o tipo de venda.
             if (objUpdate.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)
@@ -16918,7 +16090,7 @@ namespace Glass.Data.DAL
 
                 if (!isReposicaoGarantia)
                 {
-                    if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido && tipoVenda.GetValueOrDefault() > 0 && GetTipoVenda(session, idPedido) != tipoVenda)
+                    if (Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido && tipoVenda.GetValueOrDefault() > 0 && ObtemTipoVenda(session, idPedido) != tipoVenda)
                         return string.Format("false|Este pedido não foi vendido como '{0}'.", Pedido.GetDescrTipoVenda(tipoVenda));
 
                     /* Chamado 65135. */
@@ -17026,7 +16198,7 @@ namespace Glass.Data.DAL
                     if (idPedido == 0)
                         throw new Exception("Inserção do pedido retornou 0.");
 
-                    var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? GetIdObra(idPedido) : null;
+                    var idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? GetIdObra(null, idPedido) : null;
 
                     var retornoValidacao = string.Empty;
 
@@ -17262,8 +16434,7 @@ namespace Glass.Data.DAL
 
         }
         
-        public IEnumerable<IMedidaItemProjeto> SalvarMedidasAreaInstalacaoApp(GDASession session, ProjetoModelo projetoModelo,
-            ItemProjeto itemProjeto, IEnumerable<IMedidaItemProjeto> medidasItemProjeto)
+        public IEnumerable<IMedidaItemProjeto> SalvarMedidasAreaInstalacaoApp(GDASession session, ProjetoModelo projetoModelo, ItemProjeto itemProjeto, IEnumerable<IMedidaItemProjeto> medidasItemProjeto)
         {
             // Insere a quantidade
             var medidaQtd = new MedidaItemProjeto();
@@ -17388,5 +16559,15 @@ namespace Glass.Data.DAL
         }
 
         #endregion
+
+        public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
+        {
+            string sql = $@"
+                UPDATE pedido
+                SET TRANSACAO = {inicio}
+                WHERE idPedido = {idPedido}";
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
     }
 }

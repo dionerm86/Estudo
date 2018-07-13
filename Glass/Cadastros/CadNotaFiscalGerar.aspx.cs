@@ -158,7 +158,7 @@ namespace Glass.UI.Web.Cadastros
                         ((HiddenField) grdPedidos.Rows[i].Cells[0].FindControl("hdfIdPedido")).Value);
                 string notasGeradas = PedidosNotaFiscalDAO.Instance.NotasFiscaisGeradas(null, idPedido);
 
-                hdfIdCliente.Value = PedidoDAO.Instance.ObtemIdCliente(idPedido).ToString();
+                hdfIdCliente.Value = PedidoDAO.Instance.ObtemIdCliente(null, idPedido).ToString();
 
                 HiddenField hdfNotasGeradas = (HiddenField) grdPedidos.Rows[i].Cells[0].FindControl("hdfNotasGeradas");
                 hdfNotasGeradas.Value = notasGeradas;
@@ -191,7 +191,7 @@ namespace Glass.UI.Web.Cadastros
                                         Conversoes.StrParaFloat(PedidoEspelhoDAO.Instance.GetTotal(idPedido).ToString());
                                 else
                                     valorLiberado =
-                                        Conversoes.StrParaFloat(PedidoDAO.Instance.GetTotal(idPedido).ToString());
+                                        Conversoes.StrParaFloat(PedidoDAO.Instance.GetTotal(null, idPedido).ToString());
                             }
                         }
                     }
@@ -238,7 +238,7 @@ namespace Glass.UI.Web.Cadastros
 
         private void BuscaClientesVinculados(string idPedido)
         {
-            string idCli = PedidoDAO.Instance.GetIdCliente(Glass.Conversoes.StrParaUint(idPedido)).ToString();
+            string idCli = PedidoDAO.Instance.GetIdCliente(null, Glass.Conversoes.StrParaUint(idPedido)).ToString();
             odsClienteVinculado.SelectParameters[0].DefaultValue = idCli;
             ddlClienteVinculado.DataBind();
         }

@@ -7481,7 +7481,12 @@ namespace Glass.Data.DAL
 
         public DateTime? ObtemDataEntradaSaida(uint idNf)
         {
-            return ObtemValorCampo<DateTime?>("dataSaidaEnt", "idNf=" + idNf);
+            return ObtemDataEntradaSaida(null, idNf);
+        }
+
+        public DateTime? ObtemDataEntradaSaida(GDASession session, uint idNf)
+        {
+            return ObtemValorCampo<DateTime?>(session, "DataSaidaEnt", $"IdNf={ idNf }");
         }
 
         /// <summary>

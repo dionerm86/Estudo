@@ -33,7 +33,7 @@ namespace Glass.UI.Web.Listas
                     return "Erro\tÉ possível imprimir somente etiquetas de box de pedidos de Revenda.";
     
                 // Verifica se o pedido está confirmado.
-                if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido))
+                if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido, false))
                     return "Erro\tO pedido " + idPedido + " ainda não foi confirmado.";
     
                 var str = new StringBuilder();

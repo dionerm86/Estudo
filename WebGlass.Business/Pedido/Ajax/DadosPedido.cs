@@ -97,7 +97,7 @@ namespace WebGlass.Business.Pedido.Ajax
             bool desabilitarCampo;
             string data = string.Empty;
 
-            if (PedidoDAO.Instance.GetDataEntregaMinima(Glass.Conversoes.StrParaUint(idCli), Glass.Conversoes.StrParaUintNullable(idPedido),
+            if (PedidoDAO.Instance.GetDataEntregaMinima(null, Glass.Conversoes.StrParaUint(idCli), Glass.Conversoes.StrParaUintNullable(idPedido),
                 Glass.Conversoes.StrParaInt(tipoPedido), Glass.Conversoes.StrParaInt(tipoEntrega), Conversoes.ConverteData(dataBase), out dataEntrega,
                 out dataFastDelivery, out desabilitarCampo))
             {

@@ -98,7 +98,7 @@ namespace Glass.UI.Web.Controls
 
             dtvPedido = dtvPedido.FindControl("dtvPedido");
 
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(Conversoes.StrParaUint(Request["idPedido"]));
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, Conversoes.StrParaUint(Request["idPedido"]));
 
             Control codProd = null;
             if (linhaControle.FindControl("lblChild_CodProdComposicaoIns") != null)

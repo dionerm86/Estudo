@@ -25,7 +25,7 @@ namespace WebGlass.Business.Obra.Ajax
 
         public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && !isComposicao)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno);
@@ -40,7 +40,7 @@ namespace WebGlass.Business.Obra.Ajax
 
         public string IsProdutoObraPcp(string idPedido, string codInterno, bool isComposicao)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra && !isComposicao)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno, Glass.Conversoes.StrParaUintNullable(idPedido));
@@ -58,7 +58,7 @@ namespace WebGlass.Business.Obra.Ajax
             if (string.IsNullOrEmpty(idPedido))
                 idPedido = "0";
 
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 var prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
@@ -88,7 +88,7 @@ namespace WebGlass.Business.Obra.Ajax
 
         public string GetTamanhoMaximoProdutoPcp(string idPedido, string codInterno, string totM2Produto, string idProdPed)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 var prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);

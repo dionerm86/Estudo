@@ -223,7 +223,7 @@ namespace Glass.Data.DAL
 
                     if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
                     {
-                        var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(prodPedEsp.IdPedido);
+                        var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(null, prodPedEsp.IdPedido);
 
                         if (idLojaPedidoAux == 0)
                             idLojaPedidoAux = idLojaPedido;
@@ -315,7 +315,7 @@ namespace Glass.Data.DAL
                                 CodCliente =
                                     PedidoDAO.Instance.ObtemValorCampo<string>("codCliente",
                                         "idPedido=" + prodPedEsp.IdPedido),
-                                IdCliente = PedidoDAO.Instance.ObtemIdCliente(prodPedEsp.IdPedido)
+                                IdCliente = PedidoDAO.Instance.ObtemIdCliente(null, prodPedEsp.IdPedido)
                             };
                             etiqueta.NomeCliente = ClienteDAO.Instance.GetNome(etiqueta.IdCliente);
                             etiqueta.IdPedido = prodPedEsp.IdPedido.ToString();
@@ -334,7 +334,7 @@ namespace Glass.Data.DAL
                             if (PCPConfig.ExibirLarguraAlturaCorteCerto)
                                 etiqueta.AlturaLargura = etiqueta.Largura + " X " + etiqueta.Altura;
 
-                            etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(prodPedEsp.IdPedido).GetValueOrDefault();
+                            etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, prodPedEsp.IdPedido).GetValueOrDefault();
 
                             lstEtiqueta.Add(etiqueta);
 
@@ -1394,7 +1394,7 @@ namespace Glass.Data.DAL
                             /* Chamado 33177. */
                             if (Configuracoes.PCPConfig.PreencherReposicaoGarantiaCampoForma && etiq.IdProdPedEsp > 0)
                             {
-                                var tipoVenda = PedidoDAO.Instance.GetTipoVenda(session, idPedido).GetValueOrDefault();
+                                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, idPedido);
 
                                 if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
                                     etiq.Forma = "REPOSICAO";

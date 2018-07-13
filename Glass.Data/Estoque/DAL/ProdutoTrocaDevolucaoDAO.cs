@@ -120,10 +120,10 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca dados do produto troca/devolução
-
-        public decimal ObterQtde(GDASession session, int idProdTrocaDev)
+        
+        public decimal ObterCustoProd(GDASession session, int idProdTrocaDev)
         {
-            return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdTrocaDev={0}", idProdTrocaDev));
+            return ObtemValorCampo<decimal>(session, "CustoProd", $"IdProdTrocaDev={ idProdTrocaDev }");
         }
 
         #endregion

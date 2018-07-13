@@ -29,7 +29,7 @@ namespace Glass.UI.Web.Listas
             if (ppe == null)
                 return;
     
-            if (PedidoDAO.Instance.IsPedidoReposicao(ppe.IdPedido.ToString()))
+            if (PedidoDAO.Instance.IsPedidoReposicao(null, ppe.IdPedido.ToString()))
                 foreach (TableCell c in e.Row.Cells)
                     c.ForeColor = Color.Red;
         }

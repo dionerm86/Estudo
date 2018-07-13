@@ -40,7 +40,7 @@ namespace Glass.UI.Web.Cadastros
     
             if (Request["idPedido"] != null)
             {
-                hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]))).ToString();
+                hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(null, Glass.Conversoes.StrParaUint(Request["idPedido"]))).ToString();
                 hdfPedidoMaoDeObra.Value = isMaoDeObra.ToString().ToLower();
                 hdfPedidoProducao.Value = isProducao.ToString().ToLower();
             }
@@ -70,7 +70,7 @@ namespace Glass.UI.Web.Cadastros
             // e se o pedido tiver com opção readonly
             if (!IsPostBack)
             {
-                uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
+                uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
                 lnkProjeto.Visible = !isMaoDeObra &&
                     (idObra == null || idObra == 0) && !isProducao && dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             }
@@ -127,7 +127,7 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsPedidoMaoDeObra()
         {
             if (Request["idPedido"] != null)
-                return PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -135,7 +135,7 @@ namespace Glass.UI.Web.Cadastros
         protected bool IsPedidoProducao()
         {
             if (Request["idPedido"] != null)
-                return PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsProducao(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -534,14 +534,14 @@ namespace Glass.UI.Web.Cadastros
         protected void Icms_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
             sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
     
         protected void Ipi_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
             sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja), null);
         }
     
@@ -612,7 +612,7 @@ namespace Glass.UI.Web.Cadastros
             benef.CampoAplicacao = linhaControle.FindControl("txtAplIns");
             benef.CampoProcesso = linhaControle.FindControl("txtProcIns");
     
-            benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(Conversoes.StrParaUint(Request["idPedido"])) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
+            benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(null, Conversoes.StrParaUint(Request["idPedido"])) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
                 TipoBenef.MaoDeObraEspecial : TipoBenef.Venda;
         }
     
@@ -709,11 +709,11 @@ namespace Glass.UI.Web.Cadastros
         {
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
             uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
-            uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
+            uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
     
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido))).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido))).ToString().Replace(",", ".");
         }
     
         protected void txtPercentual_Load(object sender, EventArgs e)
