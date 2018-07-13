@@ -102,7 +102,7 @@ const app = new Vue({
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirListaClientes: function (ficha, exportarExcel) {
-      var filtroReal = formatarFiltros_();
+      var filtroReal = this.formatarFiltros_();
 
       if (filtro.nomeCliente && filtro.nomeCliente.indexOf('&') >= 0) {
         this.exibirMensagem("O filtro Nome/Apelido do cliente não deve conter o caractere '&', pois ele é utilizado como chave para geração do relatório. Tente filtrar sem o nome do cliente ou apenas com a primeira parte do nome antes do '&'.");

@@ -47,6 +47,7 @@ Vue.component('cliente-filtros', {
       situacaoAtual: null,
       lojaAtual: null,
       cidadeAtual: null,
+      ufAtual: null,
       rotaAtual: null,
       tabelaDescontoAcrescimoAtual: null
     };
@@ -150,6 +151,17 @@ Vue.component('cliente-filtros', {
     cidadeAtual: {
       handler: function(atual) {
         this.filtroAtual.idCidade = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'ufAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    ufAtual: {
+      handler: function (atual) {
+        this.filtroAtual.uf = atual;
       },
       deep: true
     },

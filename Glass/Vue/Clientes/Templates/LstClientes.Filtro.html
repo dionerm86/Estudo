@@ -35,7 +35,7 @@
         </span>
         <span class="form-group">
             <label for="cidade">Cidade</label>
-            <campo-busca-cidade v-bind:cidade.sync="cidadeAtual"></campo-busca-cidade>
+            <campo-busca-cidade v-bind:cidade.sync="cidadeAtual" v-bind:uf.sync="ufAtual"></campo-busca-cidade>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
