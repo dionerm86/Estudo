@@ -4850,144 +4850,194 @@ namespace Glass.Data.DAL
         {
             var nomeCliente = ClienteDAO.Instance.GetNomeCliente("c");
 
-            var sqlQtdeVolume = @"
-                SELECT count(*) 
+            var sqlQtdeVolume = @"SELECT COUNT(*) 
                 FROM volume v
                     LEFT JOIN ordem_carga oc ON (v.IdOrdemCarga = oc.IdOrdemCarga)
-                WHERE v.idPedido = p.idPedido";
+                WHERE v.IdPedido = p.IdPedido";
+
+            var sqlCodigoRota = $@"SELECT CONCAT(r.CodInterno, ' - ', r.Descricao) FROM rota r
+                WHERE r.IdRota IN (SELECT rc.IdRota FROM rota_cliente rc WHERE rc.IdCliente=c.Id_Cli)";
 
             if (idOrdemCarga > 0)
-                sqlQtdeVolume += " AND v.IdOrdemCarga = " + idOrdemCarga;
+            {
+                sqlQtdeVolume += $" AND v.IdOrdemCarga = { idOrdemCarga }";
+            }
+
             if (ignorarGerados)
-                sqlQtdeVolume += " AND (COALESCE(v.IdOrdemCarga, 0) = 0 OR oc.Situacao = " + (int)OrdemCarga.SituacaoOCEnum.Finalizado + ")";
+            {
+                sqlQtdeVolume += $" AND (COALESCE(v.IdOrdemCarga, 0) = 0 OR oc.Situacao = { (int)OrdemCarga.SituacaoOCEnum.Finalizado })";
+            }
 
-            var campos = selecionar ? @"p.*, " + nomeCliente + @" as NomeCliente, l.NomeFantasia as NomeLoja, tmp.QtdePendente, tmp.TotMPendente, tmp.PesoPendente,
-                CAST(COALESCE(tmp.peso, 0) as decimal(12,2)) as pesoOC, COALESCE(tmp.totM, 0) as totMOC, COALESCE(tmp.QtdePecasVidro, 0) as QtdePecasVidro,
-                (SELECT CONCAT(r.codInterno,' - ',r.descricao) FROM rota r WHERE r.idRota IN (SELECT rc.idRota FROM rota_cliente rc WHERE rc.idCliente=c.id_Cli)) as codRota,
-                c.Tel_Cont AS RptTelCont, c.Tel_Cel AS RptTelCel, c.Tel_Res AS RptTelRes, COALESCE(tmp.ValorTotal, 0) as ValorTotalOC,
-                (" + sqlQtdeVolume + ") as QtdeVolume" : "COUNT(*)";
+            var campos = selecionar ? $@"p.*, { nomeCliente } AS NomeCliente, l.NomeFantasia AS NomeLoja, tmp.QtdePendente, tmp.TotMPendente, tmp.PesoPendente,
+                CAST(COALESCE(tmp.Peso, 0) AS DECIMAL(12, 2)) AS PesoOC, COALESCE(tmp.TotM, 0) AS TotMOC, COALESCE(tmp.QtdePecasVidro, 0) AS QtdePecasVidro,
+                ({ sqlCodigoRota }) AS CodRota, c.Tel_Cont AS RptTelCont, c.Tel_Cel AS RptTelCel, c.Tel_Res AS RptTelRes, COALESCE(tmp.ValorTotal, 0) AS ValorTotalOC,
+                ({ sqlQtdeVolume }) AS QtdeVolume" : "COUNT(*)";
 
-            var campoQtde = idOrdemCarga > 0 ? "IF(ic1.IdProdPed IS NULL, pp.qtde - COALESCE(ic.Qtde, 0), ic1.Qtde)" : ignorarGerados ? "pp.Qtde - COALESCE(ic.Qtde, 0)" : "pp.Qtde";
+            var campoQtde = idOrdemCarga > 0 ? "IF(ic1.IdProdPed IS NULL, pp.Qtde - COALESCE(ic.Qtde, 0), ic1.Qtde)" : ignorarGerados ? "pp.Qtde - COALESCE(ic.Qtde, 0)" : "pp.Qtde";
 
-            var sql = @"
-                SELECT " + campos + @"
+            var sql = $@"SELECT { campos }
                 FROM pedido p
-                    LEFT JOIN cliente c ON (p.idCli = c.id_cli)
-                    LEFT JOIN loja l ON (p.idLoja = l.idLoja)
+                    LEFT JOIN cliente c ON (p.IdCli = c.Id_Cli)
+                    LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
                     LEFT JOIN ( 
-                        select idPedido, sum(qtdePecasVidro) as qtdePecasVidro, sum(qtdePendente) as qtdePendente,
-                            SUM(peso / qtdePecasVidro * qtdePendente) as pesoPendente, 
-                            sum(totM / qtdePecasVidro * qtdePendente) as totMPendente,
-                            sum(peso) as peso, sum(totM) as totM, Sum(ValorTotal) as ValorTotal
-                        from (
-
-                            SELECT idProdPed, idPedido, qtde as qtdePecasVidro, qtdePendente, totM, peso, ValorTotal
+                        SELECT IdPedido,
+                            SUM(QtdePecasVidro) AS QtdePecasVidro,
+                            SUM(QtdePendente) AS QtdePendente,
+                            SUM(Peso / QtdePecasVidro * QtdePendente) AS PesoPendente, 
+                            SUM(TotM / QtdePecasVidro * QtdePendente) AS TotMPendente,
+                            SUM(Peso) AS Peso,
+                            SUM(TotM) AS TotM,
+                            SUM(ValorTotal) AS ValorTotal
+                        FROM (
+                            SELECT IdProdPed,
+                                IdPedido,
+                                Qtde AS QtdePecasVidro,
+                                QtdePendente,
+                                TotM,
+                                Peso,
+                                ValorTotal
                             FROM (
-                                SELECT pp.idProdPed, pp.idPedido, {0} as Qtde, (pp.qtde - COALESCE(ppp.QtdePronto, 0)) as QtdePendente,
-                                ((pp.TotM / pp.qtde) * ({0})) as TotM, ((pp.peso / pp.Qtde) * ({0})) as peso, (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.qtde) * {0}) as ValorTotal
+                                SELECT pp.IdProdPed,
+                                    pp.IdPedido,
+                                    { campoQtde } AS Qtde,
+                                    (pp.Qtde - COALESCE(ppp.QtdePronto, 0)) AS QtdePendente,
+                                    ((pp.TotM / pp.Qtde) * ({ campoQtde })) AS TotM,
+                                    ((pp.Peso / pp.Qtde) * ({ campoQtde })) AS Peso,
+                                    (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.Qtde) * { campoQtde }) AS ValorTotal
                                 FROM produtos_pedido pp
-                                INNER JOIN produto prod ON (pp.idProd = prod.idProd)
-                                LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                                LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
+                                INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
+                                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
                                 LEFT JOIN 
                                     (
-			                                SELECT IdProdPed, count(*) as QtdePronto
-			                                FROM produto_pedido_producao
-			                                WHERE SituacaoProducao IN (" + (int)SituacaoProdutoProducao.Pronto + "," + (int)SituacaoProdutoProducao.Entregue + @")
-			                                GROUP BY IdProdPed
-                                    ) as ppp ON (pp.IdProdPedEsp = ppp.idProdPed)
+			                            SELECT ppp.IdProdPed,
+                                            COUNT(*) AS QtdePronto
+			                            FROM produto_pedido_producao ppp
+                                            INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed=ppe.IdProdPed)
+			                            WHERE ppe.IdPedido IN ({ idsPedidos })
+                                            AND ppp.SituacaoProducao IN ({ (int)SituacaoProdutoProducao.Pronto },{ (int)SituacaoProdutoProducao.Entregue })
+			                            GROUP BY IdProdPed
+                                    ) AS ppp ON (pp.IdProdPedEsp = ppp.IdProdPed)
 	                                LEFT JOIN 
                                     (
-		                                SELECT IdProdPed, count(*) as Qtde
+		                                SELECT IdProdPed,
+                                            COUNT(*) AS Qtde
 		                                FROM item_carregamento
-		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
+		                                WHERE IdProdPed > 0
+                                            AND IdPedido IN ({ idsPedidos })
+                                            AND IdOrdemCarga <> { idOrdemCarga }
 		                                GROUP BY IdProdPed
-                                    ) as ic ON (ic.IdProdPed = pp.IdProdPed)
+                                    ) AS ic ON (ic.IdProdPed = pp.IdProdPed)
                                     LEFT JOIN 
                                     (
-		                                SELECT IdProdPed, count(*) as Qtde
+		                                SELECT IdProdPed,
+                                            COUNT(*) AS Qtde
 		                                FROM item_carregamento
-		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga = " + idOrdemCarga + @"
+		                                WHERE IdProdPed > 0
+                                            AND IdPedido IN ({ idsPedidos })
+                                            AND IdOrdemCarga = { idOrdemCarga }
 		                                GROUP BY IdProdPed
-                                    ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
-                             WHERE pp.idPedido IN (" + idsPedidos + @")
+                                    ) AS ic1 ON (ic1.IdProdPed = pp.IdProdPed)
+                             WHERE pp.IdPedido IN ({ idsPedidos })
                                 AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 0
-                                    AND COALESCE(pp.InvisivelFluxo, 0) = 0
-                                    AND COALESCE(sgp.produtosEstoque, 0) = 0
-                                    AND pp.qtde > 0
-                                    AND gp.idGrupoProd IN (" + (int)NomeGrupoProd.Vidro + "," + (int)NomeGrupoProd.MaoDeObra + @")
+                                    AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
+                                    AND (sgp.ProdutosEstoque IS NULL OR sgp.ProdutosEstoque = 0)
+                                    AND pp.Qtde > 0
+                                    AND gp.IdGrupoProd IN ({ (int)NomeGrupoProd.Vidro },{ (int)NomeGrupoProd.MaoDeObra })
                                     AND pp.IdProdPedParent IS NULL
-                                GROUP BY pp.idProdPed
+                                GROUP BY pp.IdProdPed
                                 HAVING Qtde > 0
-                            ) as tmp1
+                            ) AS tmp1
 
-                            UNION ALL SELECT pp.idProdPed, pp.idPedido, ({0}) as qtdePecasVidro, 0 as qtdePendente, ((pp.TotM / pp.qtde) * ({0})) as TotM, 
-                                 ((pp.peso / pp.Qtde) * ({0})) as peso,
-                                 (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.qtde) * {0}) as ValorTotal
+                            UNION ALL
+
+                            SELECT pp.IdProdPed,
+                                pp.IdPedido,
+                                ({ campoQtde }) AS QtdePecasVidro,
+                                0 AS QtdePendente,
+                                ((pp.TotM / pp.Qtde) * ({ campoQtde })) AS TotM,
+                                ((pp.Peso / pp.Qtde) * ({ campoQtde })) AS Peso,
+                                (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.Qtde) * { campoQtde }) AS ValorTotal
                             FROM produtos_pedido pp
-                                INNER JOIN produto prod ON (pp.idProd = prod.idProd)
-                                LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                                LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                                LEFT JOIN produto_pedido_producao ppp ON (pp.IDPRODPEDESP = ppp.idProdPed)
-                                LEFT JOIN setor s ON (ppp.idSetor = s.idSetor)
+                                INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
+                                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                                LEFT JOIN produto_pedido_producao ppp ON (pp.IdProdPedEsp = ppp.IdProdPed)
+                                LEFT JOIN setor s ON (ppp.IdSetor = s.IdSetor)
                                 LEFT JOIN 
                                     (
-		                                SELECT IdProdPed, count(*) as Qtde
+		                                SELECT IdProdPed,
+                                            COUNT(*) AS Qtde
 		                                FROM item_carregamento
-		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
+		                                WHERE IdProdPed > 0
+                                            AND IdPedido IN ({ idsPedidos })
+                                            AND IdOrdemCarga <> { idOrdemCarga }
 		                                GROUP BY IdProdPed
-                                    ) as ic ON (ic.IdProdPed = pp.IdProdPed)
+                                    ) AS ic ON (ic.IdProdPed = pp.IdProdPed)
                                     LEFT JOIN 
                                     (
-		                                SELECT IdProdPed, count(*) as Qtde
+		                                SELECT IdProdPed,
+                                            COUNT(*) AS Qtde
 		                                FROM item_carregamento
-		                                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga = " + idOrdemCarga + @"
+		                                WHERE IdProdPed > 0
+                                            AND IdPedido IN ({ idsPedidos })
+                                            AND IdOrdemCarga = { idOrdemCarga }
 		                                GROUP BY IdProdPed
                                     ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
-                             WHERE pp.idPedido IN (" + idsPedidos + @")
+                             WHERE pp.IdPedido IN ({ idsPedidos })
                                 AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 0
-                                AND COALESCE(pp.InvisivelFluxo, 0) = 0
-                                AND COALESCE(sgp.produtosEstoque, 0) = 1
-                                AND pp.qtde > 0
-                                AND gp.idGrupoProd IN (" + (int)NomeGrupoProd.Vidro + "," + (int)NomeGrupoProd.MaoDeObra + @")
+                                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
+                                AND (sgp.ProdutosEstoque IS NOT NULL AND sgp.ProdutosEstoque = 1)
+                                AND pp.Qtde > 0
+                                AND gp.IdGrupoProd IN ({ (int)NomeGrupoProd.Vidro },{ (int)NomeGrupoProd.MaoDeObra })
                                 AND pp.IdProdPedParent IS NULL
-                            GROUP BY pp.idProdPed
-                            HAVING qtdePecasVidro > 0
-                            UNION ALL SELECT pp.idProdPed, pp.idPedido, 0 as qtdePecasVidro, 0 as qtdePendente, 0 as totM, (pp.peso / pp.qtde) * ({0}) as peso,
-                                (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.qtde) * {0}) as ValorTotal
-                            FROM produtos_pedido pp
-                                INNER JOIN produto prod ON (pp.idProd = prod.idProd)
-                                LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                                LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd)
-                                LEFT JOIN 
-                                (
-		                            SELECT vpp.IdProdPed, SUM(vpp.Qtde) as Qtde
-		                            FROM volume_produtos_pedido vpp
-			                            INNER JOIN item_carregamento ic ON (vpp.IdVolume = ic.IdVolume)
-		                            WHERE ic.idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
-		                            GROUP BY vpp.IdProdPed
-                                ) as ic ON (ic.IdProdPed = pp.IdProdPed)
-                                LEFT JOIN 
-                                (
-		                            SELECT vpp.IdProdPed, SUM(vpp.Qtde) as Qtde
-		                            FROM volume_produtos_pedido vpp
-			                            INNER JOIN item_carregamento ic ON (vpp.IdVolume = ic.IdVolume)
-		                            WHERE ic.idPedido IN (" + idsPedidos + @") AND IdOrdemCarga = " + idOrdemCarga + @"
-		                            GROUP BY vpp.IdProdPed
-                                ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
-                            WHERE pp.idPedido IN (" + idsPedidos + @")
-                                AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 1
-                                AND COALESCE(pp.InvisivelFluxo, 0 ) = 0
-                                AND pp.qtde > 0
-                                AND pp.IdProdPedParent IS NULL
-                            GROUP BY pp.idProdPed
-                            HAVING peso > 0
-                        ) as dados
-                        group by idPedido
-                    ) as tmp ON (p.idPedido = tmp.idPedido)
-                WHERE p.idPedido in (" + idsPedidos + ")";
+                            GROUP BY pp.IdProdPed
+                            HAVING QtdePecasVidro > 0
 
-            sql = string.Format(sql, campoQtde);
+                            UNION ALL
+
+                            SELECT pp.IdProdPed,
+                                pp.IdPedido,
+                                0 AS QtdePecasVidro,
+                                0 AS QtdePendente,
+                                0 AS TotM,
+                                (pp.Peso / pp.Qtde) * ({ campoQtde }) AS Peso,
+                                (((pp.Total + pp.ValorIpi + pp.ValorIcms) / pp.Qtde) * { campoQtde }) AS ValorTotal
+                            FROM produtos_pedido pp
+                                INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
+                                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
+                                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
+                                LEFT JOIN 
+                                (
+		                            SELECT vpp.IdProdPed,
+                                        SUM(vpp.Qtde) AS Qtde
+		                            FROM volume_produtos_pedido vpp
+			                            INNER JOIN item_carregamento ic ON (vpp.IdVolume = ic.IdVolume)
+		                            WHERE ic.IdPedido IN ({ idsPedidos })
+                                        AND IdOrdemCarga <> { idOrdemCarga }
+		                            GROUP BY vpp.IdProdPed
+                                ) AS ic ON (ic.IdProdPed = pp.IdProdPed)
+                                LEFT JOIN 
+                                (
+		                            SELECT vpp.IdProdPed,
+                                        SUM(vpp.Qtde) AS Qtde
+		                            FROM volume_produtos_pedido vpp
+			                            INNER JOIN item_carregamento ic ON (vpp.IdVolume = ic.IdVolume)
+		                            WHERE ic.IdPedido IN ({ idsPedidos })
+                                        AND IdOrdemCarga = { idOrdemCarga }
+		                            GROUP BY vpp.IdProdPed
+                                ) AS ic1 ON (ic1.IdProdPed = pp.IdProdPed)
+                            WHERE pp.IdPedido IN ({ idsPedidos })
+                                AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 1
+                                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
+                                AND pp.Qtde > 0
+                                AND pp.IdProdPedParent IS NULL
+                            GROUP BY pp.IdProdPed
+                            HAVING Peso > 0
+                        ) AS dados
+                        GROUP BY IdPedido
+                    ) AS tmp ON (p.IdPedido = tmp.IdPedido)
+                WHERE p.IdPedido IN ({ idsPedidos })";
 
             return sql;
         }

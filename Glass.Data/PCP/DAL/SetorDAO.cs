@@ -84,12 +84,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sql).ToList().ToArray();
         }
-
-        public Setor ObterSetorPorNome(string nome)
-        {
-            return ObterSetorPorNome(null, nome);
-        }
-
+        
         public Setor ObterSetorPorNome(GDASession sessao, string nome)
         {
             string sql = "select s.*, cast(group_concat(sb.idBenefConfig) as char) as benefSetor from setor s Left Join setor_benef sb On (s.idSetor=sb.idSetor) where descricao =?nome";
@@ -97,11 +92,11 @@ namespace Glass.Data.DAL
             return objPersistence.LoadOneData(sessao, sql, new GDA.GDAParameter("?nome", nome));
         }
 
-        public string ObterIdsSetoresPorTipo(TipoSetor tipo)
+        public Setor ObterSetorPeloNumSeq(GDASession sessao, int numSeq)
         {
-            return String.Join(",", ExecuteMultipleScalar<string>("Select Cast(idSetor as char) From setor Where tipo=" + (int)tipo).ToArray());
+            return objPersistence.LoadOneData(sessao, $"SELECT s.* FROM setor s WHERE NumSeq={ numSeq }");
         }
-        
+
         #endregion
 
         #region Troca posição do setor
