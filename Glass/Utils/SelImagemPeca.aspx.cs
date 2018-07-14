@@ -293,7 +293,7 @@ namespace Glass.UI.Web.Utils
                         permitirAlterarImagem = itens != null && itens.Length > 0 && !string.IsNullOrEmpty(itens[0]);
 
                         // Recupera o setor de marcação
-                        Setor setor = SetorDAO.Instance.ObterSetorPorNome("Marcação");
+                        Setor setor = SetorDAO.Instance.ObterSetorPorNome(null, "Marcação");
 
                         // Se for permitido alterar imagem da peça, verifica se o item não tem arquivo sag e se não passou pelo setor de marcação
                         if (setor != null && setor.IdSetor > 0 && permitirAlterarImagem && itens != null && itens.Length > 0)

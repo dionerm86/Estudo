@@ -77,8 +77,8 @@ namespace Glass.UI.Web.Relatorios
                 decimal totalContasRecAntecip = ContasReceberDAO.Instance.GetDebitosByTipo(Glass.Conversoes.StrParaUint(txtNumCli.Text), ContasReceberDAO.TipoDebito.ContasAReceberAntecipadas);
                 decimal totalPedidos = ContasReceberDAO.Instance.GetDebitosByTipo(Glass.Conversoes.StrParaUint(txtNumCli.Text), ContasReceberDAO.TipoDebito.PedidosEmAberto);
                 decimal creditoCliente = ClienteDAO.Instance.GetCredito(Glass.Conversoes.StrParaUint(txtNumCli.Text));
-                decimal limiteConfigurado = ClienteDAO.Instance.ObtemLimite(Glass.Conversoes.StrParaUint(txtNumCli.Text));
-    
+                decimal limiteConfigurado = ClienteDAO.Instance.ObtemLimite(null, Glass.Conversoes.StrParaUint(txtNumCli.Text));
+
                 lblTotalChequesEmAberto.Text = buscarCheques ? totalChequesEmAberto.ToString("C") : String.Empty;
                 lblTotalChequesDevolvidos.Text = buscarCheques ? totalChequesDevolvidos.ToString("C") : String.Empty;
                 lblTotalChequesProtestados.Text = buscarCheques ? totalChequesProtestados.ToString("C") : String.Empty;

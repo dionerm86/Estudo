@@ -2156,9 +2156,9 @@ namespace Glass.Data.DAL
             return GetElement(idCliente).Uf;
         }
 
-        public decimal ObtemLimite(uint idCliente)
+        public decimal ObtemLimite(GDASession sessao, uint idCliente)
         {
-            return ObtemValorCampo<decimal>("limite", "id_Cli=" + idCliente);
+            return ObtemValorCampo<decimal>(sessao, "limite", "id_Cli=" + idCliente);
         }
 
         public string ObtemEnderecoCompleto(uint idCliente)
