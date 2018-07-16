@@ -525,7 +525,7 @@ namespace Glass.PCP.Negocios.Componentes
                     {
                         var idSetorCarregamento = SetorDAO.Instance.ObtemIdSetorExpCarregamento(transaction);
                         var idsSetorEntregue = SetorDAO.Instance.ObterIdsSetorTipoEntregue(transaction);
-                        var idSetorLeitura = idSetorCarregamento > 0 ? (int)idSetorCarregamento : idsSetorEntregue?.Any(f => f > 0) ?? false ? idsSetorEntregue.FirstOrDefault(f => f > 0) : 0;
+                        var idSetorLeitura = idsSetorEntregue?.Any(f => f > 0) ?? false ? idsSetorEntregue.FirstOrDefault(f => f > 0) : 0;
 
                         if (idSetorLeitura == 0)
                         {
