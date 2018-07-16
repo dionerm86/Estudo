@@ -959,18 +959,24 @@ namespace Glass.Data.DAL
                             }
 
                             // Verifica se o cliente possui redução de cálculo da Nfe
-                            bool isVenda = ProdutoDAO.Instance.IsProdutoVenda(transaction, (int)prodNf.IdProd);
+                            var isVenda = ProdutoDAO.Instance.IsProdutoVenda(transaction, (int)prodNf.IdProd);
 
                             if (isVenda && percReducaoNfe > 0)
+                            {
                                 prodNf.Total = prodNf.Total - (prodNf.Total * ((decimal)percReducaoNfe / 100));
+                            }
                             else if (!isVenda && percReducaoNfeRevenda > 0)
+                            {
                                 prodNf.Total = prodNf.Total - (prodNf.Total * ((decimal)percReducaoNfeRevenda / 100));
-
-                            bool clienteCalcIpi = ClienteDAO.Instance.IsCobrarIpi(transaction, idCliente);
-                            bool clienteCalcIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(transaction, idCliente);
-                            bool calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(transaction, prodNf.IdNaturezaOperacao.Value);
-                            bool calcIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(transaction, prodNf.IdNaturezaOperacao.Value);
-                            var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
+                            }
+                            
+                            var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(transaction, pp.IdPedido);
+                            var lojaCalculaIcmsStPedido = LojaDAO.Instance.ObtemCalculaIcmsStPedido(transaction, idLojaPedido);
+                            var lojaCalculaIpiPedido = LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido);
+                            var clienteCalcIpi = ClienteDAO.Instance.IsCobrarIpi(transaction, idCliente);
+                            var clienteCalcIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(transaction, idCliente);
+                            var calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(transaction, prodNf.IdNaturezaOperacao.Value);
+                            var calcIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(transaction, prodNf.IdNaturezaOperacao.Value);
 
                             // Retira a alíquota do IPI no total do produto (e do icms st para tempera e vidrometro)
                             if ((FiscalConfig.NotaFiscalConfig.RatearIpiNfPedido ||
@@ -984,18 +990,18 @@ namespace Glass.Data.DAL
 
                                 // Se o cliente estiver marcado para calcular icms st, zera a alíquota, pois não poderá rateá-la na nota
                                 // Necessário para resolver o chamado 6806
-                                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) && clienteCalcIcmsSt)
+                                if (lojaCalculaIcmsStPedido && clienteCalcIcmsSt)
                                     aliqIcms = 0;
 
-                                if (!LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido) || !clienteCalcIpi)
+                                if (!lojaCalculaIpiPedido || !clienteCalcIpi)
                                 {
                                     // Caso a alíquota de icms esteja zerada (automaticamente não considerando a diferença no cálculo do ICMS ST 
                                     // que a cobrança do IPI iria causar) e o cliente calcule ICMS ST no pedido considerando o IPI no cálculo
                                     // e o cliente esteja marcado para calcular ICMS no pedido mas não para calcular IPI no mesmo porém a nota 
                                     // calcule ICMS ST e IPI, é necessário recalcular este produto considerando a AliqICMSInterna junto com a 
                                     // alíquota do IPI e depois adicionando o valor da AliqICMSInterna somente
-                                    bool recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
-                                        (!clienteCalcIpi || !LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido)) && clienteCalcIcmsSt && LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido);
+                                    var recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
+                                        (!clienteCalcIpi || !lojaCalculaIpiPedido) && clienteCalcIcmsSt && lojaCalculaIcmsStPedido;
 
                                     if (recalcularIcmsStProd)
                                         aliqIcms = prod.AliqICMSInterna;
@@ -1008,8 +1014,7 @@ namespace Glass.Data.DAL
                                 }
 
                                 // Recalcula os valores de ICMS e IPI se o pedido tiver calculado o IPI mas não o ICMS
-                                else if ((!LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) || !clienteCalcIcmsSt) && calcIcmsSt &&
-                                    FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
+                                else if ((!lojaCalculaIcmsStPedido || !clienteCalcIcmsSt) && calcIcmsSt && FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                                 {
                                     decimal aliqIcmsCalc = (decimal)IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, idProd, nf.IdLoja.Value, nf.IdFornec, nf.IdCliente);
 
@@ -1060,8 +1065,7 @@ namespace Glass.Data.DAL
                             }
 
                             // Retira o valor do icms st da nota, caso não tenha IPI mas tenha ICMS ST
-                            else if ((!LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) || !clienteCalcIcmsSt) && calcIcmsSt &&
-                                FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
+                            else if ((!lojaCalculaIcmsStPedido || !clienteCalcIcmsSt) && calcIcmsSt && FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                             {
                                 // Chamado 46155.
                                 // O valor do IPI afeta o cálculo da propriedade AliqICMSInterna, portanto, caso o cálculo do IPI não deva ser feito
@@ -1188,12 +1192,44 @@ namespace Glass.Data.DAL
 
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
+                            var liberacao = idsLiberarPedidos?.Split(',');
+                            if (liberacao.Count() == 1)
+                            {
+                                var cr = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, Glass.Conversoes.StrParaUint(liberacao.FirstOrDefault()), true)?.ToArray();
+
+                                if (cr != null)
+                                {
+                                    nf.NumParc = cr?.Length ?? 1;
+                                    if (nf.NumParc > 1)
+                                    {
+                                        nf.DatasParcelas = new DateTime[cr.Length];
+                                        nf.ValoresParcelas = new decimal[cr.Length];
+
+                                        decimal valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+
+                                        for (int i = 0; i < cr.Length; i++)
+                                        {
+                                            nf.DatasParcelas[i] = cr[i].DataVec;
+                                            nf.ValoresParcelas[i] = valorParcelas;
+                                        }
+                                        var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
+                                        if (difParcelaNota != 0)
+                                        {
+                                            nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (nf.DatasParcelas?.Count() == 0)
+                            {
+                                nf.NumParc = 1;
+                                nf.DatasParcelas = new DateTime[1];
+                                nf.ValoresParcelas = new decimal[1];
+                                nf.DatasParcelas[0] = DateTime.Now;
+                                nf.ValoresParcelas[0] = nf.TotalNota;
+                            }
                             nf.FormaPagto = (int)LiberarPedido.TipoPagtoEnum.APrazo;
-                            nf.NumParc = 1;
-                            nf.DatasParcelas = new DateTime[1];
-                            nf.ValoresParcelas = new decimal[1];
-                            nf.DatasParcelas[0] = DateTime.Now;
-                            nf.ValoresParcelas[0] = nf.TotalNota;
 
                             Update(transaction, nf);
                         }
@@ -7445,7 +7481,12 @@ namespace Glass.Data.DAL
 
         public DateTime? ObtemDataEntradaSaida(uint idNf)
         {
-            return ObtemValorCampo<DateTime?>("dataSaidaEnt", "idNf=" + idNf);
+            return ObtemDataEntradaSaida(null, idNf);
+        }
+
+        public DateTime? ObtemDataEntradaSaida(GDASession session, uint idNf)
+        {
+            return ObtemValorCampo<DateTime?>(session, "DataSaidaEnt", $"IdNf={ idNf }");
         }
 
         /// <summary>

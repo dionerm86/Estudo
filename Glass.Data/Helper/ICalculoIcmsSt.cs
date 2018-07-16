@@ -5,9 +5,9 @@ namespace Glass.Data.Helper
 {
     public interface ICalculoIcmsSt
     {
-        float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool saida);
+        NFeUtils.ConfigNFe.TipoCalculoIcmsSt ObterCalculoAliquotaIcmsSt();
 
-        float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool incluirIpiNoCalculo, bool saida);
+        float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool saida);
 
         decimal ObtemBaseCalculoIcmsSt(Model.IProdutoIcmsSt produto, bool saida);
 
@@ -22,7 +22,7 @@ namespace Glass.Data.Helper
 
     public static class CalculoIcmsStFactory
     {
-        public static ICalculoIcmsSt ObtemInstancia(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, int? idCfop, string produtoNfCst, int? idNf)
+        public static ICalculoIcmsSt ObtemInstancia(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, int? idCfop, string produtoNfCst, int? idNf, bool calcularIpi)
         {
             var cnaeCliente = idCliente > 0 ? ClienteDAO.Instance.ObtemValorCampo<string>(sessao, "Cnae", string.Format("Id_Cli={0}", idCliente)) : null;
             float? percentualCargaTributaria = null;
@@ -39,7 +39,7 @@ namespace Glass.Data.Helper
 
             return Configuracoes.FiscalConfig.NotaFiscalConfig.CalcularIcmsStUtilizandoWebServiceMT && !string.IsNullOrEmpty(cnaeCliente) ?
                 new CalculoIcmsStMT(sessao, idCliente.Value, cnaeCliente, percentualCargaTributaria) as ICalculoIcmsSt :
-                new CalculoIcmsStGeral(sessao, idLoja, idCliente ?? 0, idFornec) as ICalculoIcmsSt;
+                new CalculoIcmsStGeral(sessao, idLoja, idCliente ?? 0, idFornec, calcularIpi) as ICalculoIcmsSt;
         }
     }
 }

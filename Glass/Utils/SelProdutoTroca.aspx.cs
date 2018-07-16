@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Utils
                 lblAmbiente.Visible = PedidoConfig.DadosPedido.AmbientePedido;
                 txtAmbiente.Visible = PedidoConfig.DadosPedido.AmbientePedido;
                 imgPesq2.Visible = PedidoConfig.DadosPedido.AmbientePedido;
-                grdProdutos.Columns[1].Visible = PedidoDAO.Instance.PossuiVidrosEstoque(Request["idPedido"].StrParaUint());
+                grdProdutos.Columns[1].Visible = PedidoDAO.Instance.PossuiVidrosEstoque(null, Request["idPedido"].StrParaUint());
             }
         }
     

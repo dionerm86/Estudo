@@ -3542,7 +3542,7 @@ namespace Glass.Data.DAL
                 else if (cheque.IdLiberarPedido != null && LiberarPedidoDAO.Instance.ObtemValorCampo<LiberarPedido.SituacaoLiberarPedido>("situacao",
                     "idLiberarPedido=" + cheque.IdLiberarPedido.Value) != LiberarPedido.SituacaoLiberarPedido.Cancelado)
                     throw new Exception("Cheque utilizado na liberação " + cheque.IdLiberarPedido.Value + ". Cancele a liberação para continuar.");
-                else if (cheque.IdPedido != null && PedidoDAO.Instance.ObtemSituacao(cheque.IdPedido.Value) != Pedido.SituacaoPedido.Cancelado)
+                else if (cheque.IdPedido != null && PedidoDAO.Instance.ObtemSituacao(null, cheque.IdPedido.Value) != Pedido.SituacaoPedido.Cancelado)
                     throw new Exception("Cheque utilizado no pedido " + cheque.IdPedido.Value + ". Cancele o pedido para continuar.");
                 else
                 {
@@ -3574,6 +3574,9 @@ namespace Glass.Data.DAL
             try
             {
                 Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
+
+                if (string.IsNullOrWhiteSpace(c.DataVenc.ToString()))
+                    return "A data de vencimento do cheque deve ser informada.";
 
                 //Caso algum dos dados abaixo tenham sido alterados valida se o cheque já existe
                 if (c1.Banco != c.Banco || c1.Num != c.Num || (c1.DigitoNum?.ToString() ?? string.Empty) != (c.DigitoNum?.ToString() ?? string.Empty))

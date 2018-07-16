@@ -118,7 +118,7 @@ namespace Glass.UI.Web.Controls
 
             dtvPedido = dtvPedido.FindControl("dtvPedido");
 
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(Conversoes.StrParaUint(Request["idPedido"]));
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, Conversoes.StrParaUint(Request["idPedido"]));
 
             Control codProd = null;
             if (linhaControle.FindControl("lblChild_CodProdComposicaoIns") != null)
@@ -284,7 +284,7 @@ namespace Glass.UI.Web.Controls
             prodPed.AliqIcms = aliquotaIcms;
             prodPed.ValorIcms = valorIcms;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
             var loja = LojaDAO.Instance.GetElement(idLoja);
             if (loja.CalcularIpiPedido && ClienteDAO.Instance.IsCobrarIpi(null, idCliente))
                 prodPed.AliqIpi = ProdutoDAO.Instance.ObtemAliqIpi(prodPed.IdProd);
@@ -301,7 +301,7 @@ namespace Glass.UI.Web.Controls
             try
             {
                 // Se o pedido estiver diferente de ativo-ativo/conferência não permite inserir produtos
-                var situacao = PedidoDAO.Instance.ObtemSituacao(prodPed.IdPedido);
+                var situacao = PedidoDAO.Instance.ObtemSituacao(null, prodPed.IdPedido);
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Ativo && situacao != Glass.Data.Model.Pedido.SituacaoPedido.AtivoConferencia)
                 {
                     MensagemAlerta.ShowMsg("Não é possível incluir produtos em pedidos que não estejam ativos.", Page);

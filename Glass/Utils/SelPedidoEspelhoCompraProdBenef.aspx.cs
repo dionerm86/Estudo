@@ -48,9 +48,9 @@ namespace Glass.UI.Web.Utils
                 // Caso o id da loja esteja zerado significa que é a primeira vez que a estrutura de repetição está sendo executada
                 // então o id da loja deve ser salvo para ser feita a comparação.
                 if (idLoja == 0)
-                    idLoja = Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(Glass.Conversoes.StrParaUint(id));
+                    idLoja = Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(null, Glass.Conversoes.StrParaUint(id));
                 // Caso os pedidos possuam lojas diferentes então é retornada uma mensagem de erro.
-                else if (idLoja != Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(Glass.Conversoes.StrParaUint(id)))
+                else if (idLoja != Glass.Data.DAL.PedidoDAO.Instance.ObtemIdLoja(null, Glass.Conversoes.StrParaUint(id)))
                     return "Erro;Selecione somente pedidos da mesma loja.";
             }
     

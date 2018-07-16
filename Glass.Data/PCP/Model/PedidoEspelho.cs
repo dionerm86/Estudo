@@ -456,7 +456,7 @@ namespace Glass.Data.Model
                 flagSituacao = Situacao == (int)SituacaoPedido.Finalizado || Situacao == (int)SituacaoPedido.Impresso;
 
                 // Apenas pedidos de venda
-                flagTipoPedido = PedidoDAO.Instance.IsVenda(IdPedido);
+                flagTipoPedido = PedidoDAO.Instance.IsVenda(null, IdPedido);
 
                 return flagSituacao && flagTipoPedido && TemProdutosComprar;
             }
@@ -490,11 +490,11 @@ namespace Glass.Data.Model
                     return false;
 
                 bool pedidoLiberado = new List<Pedido.SituacaoPedido> { Pedido.SituacaoPedido.Confirmado, 
-                    Pedido.SituacaoPedido.LiberadoParcialmente }.Contains(PedidoDAO.Instance.ObtemSituacao(IdPedido));
+                    Pedido.SituacaoPedido.LiberadoParcialmente }.Contains(PedidoDAO.Instance.ObtemSituacao(null, IdPedido));
 
                 // Se o pedido estiver liberado não pode ser aberto, pois caso os clones sejam apagados por alterações nos produtos,
                 // os produtos liberados perderão referência
-                if (PedidoConfig.LiberarPedido && pedidoLiberado && PedidoDAO.Instance.GetTipoPedido(IdPedido) != Pedido.TipoPedidoEnum.Producao)
+                if (PedidoConfig.LiberarPedido && pedidoLiberado && PedidoDAO.Instance.GetTipoPedido(null, IdPedido) != Pedido.TipoPedidoEnum.Producao)
                      return false;
 
                 //Valida se o pedido ja tem OC se tiver não pode reabrir o espelho
@@ -504,6 +504,11 @@ namespace Glass.Data.Model
                 //Se usar o controle de gerenciamento de projeto cnc e o pedido ja tiver sido projetado não pode reabrir
                 //o pedido espelho.
                 if (PCPConfig.UsarControleGerenciamentoProjCnc && SituacaoCnc == (int)SituacaoCncEnum.Projetado)
+                    return false;
+
+                var possuiExportacao = PedidoExportacaoDAO.Instance.VerificarPossuiExportacao((int)IdPedido);
+
+                if (possuiExportacao)
                     return false;
 
                 // A opção de reabrir pedido impresso não pode existir, pois caso o pedido tenha algum projeto,
@@ -711,7 +716,7 @@ namespace Glass.Data.Model
             {
                 if (idObra == null)
                 {
-                    idObra = new Lazy<uint?>(() => PedidoDAO.Instance.GetIdObra(IdPedido));
+                    idObra = new Lazy<uint?>(() => PedidoDAO.Instance.GetIdObra(null, IdPedido));
                 }
 
                 return idObra.Value;
@@ -764,7 +769,7 @@ namespace Glass.Data.Model
             {
                 if (idParcela == null)
                 {
-                    idParcela = new Lazy<uint?>(() => PedidoDAO.Instance.ObtemIdParcela(IdPedido));
+                    idParcela = new Lazy<uint?>(() => PedidoDAO.Instance.ObtemIdParcela(null, IdPedido));
                 }
 
                 return idParcela.Value;

@@ -9,8 +9,6 @@ namespace Glass.Data.DAL
 {
     public sealed class AcertoDAO : BaseDAO<Acerto, AcertoDAO>
     {
-        //private AcertoDAO() { }
-
         #region Busca acertos do cliente
 
         private string SqlList(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim,
@@ -198,8 +196,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna todos os acertos do cliente passado
         /// </summary>
-        /// <param name="idCli"></param>
-        /// <returns></returns>
         public IList<Acerto> GetByCliRpt(uint idCli)
         {
             bool temFiltro;
@@ -264,22 +260,14 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca detalhes do acerto
-
-        /// <summary>
-        /// Retorna dados do Acerto
-        /// </summary>
-        public Acerto GetAcertoDetails(uint idAcerto)
-        {
-            return GetAcertoDetails(null, idAcerto);
-        }
-
+        
         /// <summary>
         /// Retorna dados do Acerto
         /// </summary>
         public Acerto GetAcertoDetails(GDASession session, uint idAcerto)
         {
             string formaPagto = string.Empty;
-            var totalParcelas = Glass.Data.DAL.ContasReceberDAO.Instance.ObterNumParcMaxAcerto(session, idAcerto);
+            var totalParcelas = ContasReceberDAO.Instance.ObterNumParcMaxAcerto(session, idAcerto);
 
             // Busca movimentações relacionadas a este acerto e agrupadas pela forma de pagto
             foreach (var pa in PagtoAcertoDAO.Instance.GetByAcerto(session, idAcerto))
@@ -290,8 +278,7 @@ namespace Glass.Data.DAL
 
                 /* Chamado 56306. */
                 if (pa.IdFormaPagto == (int)Pagto.FormaPagto.Deposito && idContaBanco.GetValueOrDefault() == 0)
-                    idContaBanco = ExecuteScalar<uint?>(session, string.Format("SELECT IdContaBanco FROM deposito_nao_identificado WHERE IdAcerto={0} AND ValorMov=?valor;", idAcerto),
-                        new GDAParameter("?valor", pa.ValorPagto));
+                    idContaBanco = (uint?)DepositoNaoIdentificadoDAO.Instance.ObterIdContaBancoPeloAcertoValor(session, (int)idAcerto, pa.ValorPagto);
                 
                 if (idContaBanco > 0)
                     formaPagto += string.Format(" ({0})", ContaBancoDAO.Instance.GetDescricao(session, idContaBanco.Value));
@@ -327,75 +314,8 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna todos os pedidos do acerto
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
-        public IList<Pedido> GetPedidosInAcerto(uint idAcerto)
-        {
-            PersistenceObject<Pedido> obj = new PersistenceObject<Pedido>(GDA.GDASettings.GetProviderConfiguration("WebGlass"));
-
-            string sql = @"
-                Select p.*, c.Nome as NomeCliente, f.Nome as NomeFunc, l.NomeFantasia as nomeLoja 
-                From pedido p Left Join cliente c On (p.idCli=c.id_Cli) 
-                    Left Join funcionario f On (p.IdFunc=f.IdFunc) 
-                    Left Join loja l On (p.IdLoja = l.IdLoja) 
-                Where p.idPedido In (
-                    Select c.IdPedido From contas_receber c where c.idAcerto=" + idAcerto + ")";
-
-            return obj.LoadData(sql).ToList();
-        }
-
-        /// <summary>
-        /// Retorna todos os ids dos pedidos do acerto.
-        /// </summary>
-        public string ObterIdsPedido(GDASession session, int idAcerto)
-        {
-            var sql =
-                string.Format(
-                    @"SELECT CAST(GROUP_CONCAT(IdPedido) AS CHAR)
-                    FROM pedido p
-                    WHERE p.IdPedido IN
-                        (SELECT c.IdPedido FROM contas_receber c WHERE c.IdAcerto={0})", idAcerto);
-
-            object ids = objPersistence.ExecuteScalar(session, sql);
-
-            return ids != null ? ids.ToString() : string.Empty;
-        }
-
-        /// <summary>
-        /// Retorna todos os ids das liberações de pedido do acerto.
-        /// </summary>
-        public string ObterIdsLiberarPedido(GDASession session, int idAcerto)
-        {
-            var sql =
-                string.Format(
-                    @"SELECT CAST(GROUP_CONCAT(IdLiberarPedido) AS CHAR)
-                    FROM liberarpedido
-                    WHERE IdLiberarPedido IN
-                        (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={0})", idAcerto);
-
-            object ids = objPersistence.ExecuteScalar(session, sql);
-
-            return ids != null ? ids.ToString() : string.Empty;
-        }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
         /// Obtém o id do cliente
         /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
-        public uint ObtemIdCliente(uint idAcerto)
-        {
-            return ObtemIdCliente(null, idAcerto);
-        }
-
-        /// <summary>
-        /// Obtém o id do cliente
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
         public uint ObtemIdCliente(GDASession sessao, uint idAcerto)
         {
             string sql = "Select id_Cli From acerto Where idAcerto=" + idAcerto;
@@ -410,15 +330,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Verifica se o pedido possui algum acerto
-
-        /// <summary>
-        /// Verifica se o pedido possui algum acerto
-        /// </summary>
-        public bool ExisteAcerto(uint idPedido)
-        {
-            return ExisteAcerto(null, idPedido);
-        }
-
+        
         /// <summary>
         /// Verifica se o pedido possui algum acerto
         /// </summary>
@@ -432,66 +344,14 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza taxa de antecipação
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Atualizar a taxa de antecipação da empresa
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <param name="txAntecip"></param>
-        public void AtualizaTaxaAntecip(uint idAcerto, decimal txAntecip)
-        {
-            AtualizaTaxaAntecip(null, idAcerto, txAntecip);
-        }
-
+        
         /// <summary>
         /// Atualizar a taxa de antecipação da empresa
         /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <param name="txAntecip"></param>
         public void AtualizaTaxaAntecip(GDASession sessao, uint idAcerto, decimal txAntecip)
         {
             objPersistence.ExecuteCommand(sessao, "update acerto set taxaAntecip=?tx where idAcerto=" + idAcerto,
                 new GDAParameter("?tx", txAntecip));
-        }
-
-        #endregion
-
-        #region Atualiza Número de Autorização Construcard
-
-        /// <summary>
-        /// Atualizar o Número de Autorização Construcard
-        /// </summary>
-        public void AtualizaNumAutConstrucard(GDASession sessao, uint idAcerto, string numAutConstrucard)
-        {
-            objPersistence.ExecuteCommand(sessao, "update acerto set numAutConstrucard=?num where idAcerto=" + idAcerto,
-                new GDAParameter("?num", numAutConstrucard));
-        }
-
-        #endregion
-
-        #region Busca os IDs das contas recebidas no acerto
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Busca os IDs das contas recebidas no acerto.
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
-        public string GetIdsContasR(uint idAcerto)
-        {
-            return GetIdsContasR(null, idAcerto);
-        }
-
-        /// <summary>
-        /// Busca os IDs das contas recebidas no acerto.
-        /// </summary>
-        /// <param name="idAcerto"></param>
-        /// <returns></returns>
-        public string GetIdsContasR(GDASession sessao, uint idAcerto)
-        {
-            string sql = "select cast(group_concat(idContaR) as char) from contas_receber where idAcerto=" + idAcerto;
-            return ExecuteScalar<string>(sessao, sql);
         }
 
         #endregion

@@ -20,14 +20,15 @@ namespace Glass.Data.wsPNFeAutorizacao {
     using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
-    
-    
+    using NFeUtils;
+
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="NFeAutorizacao4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeAutorizacao4")]
-    public partial class NFeAutorizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class NFeAutorizacao4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IAutorizacao {
         
         private System.Threading.SendOrPostCallback nfeAutorizacaoLoteOperationCompleted;
         

@@ -250,46 +250,26 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<uint>(sessao, "idCidade", "idLoja=" + idLoja);
         }
 
-        public bool ObtemCalculaIcmsPedido(GDASession sessao, uint idLoja)
+        public bool ObtemCalculaIcmsStPedido(GDASession sessao, uint idLoja)
         {
-            return ObtemValorCampo<bool>(sessao, "CalcularIcmsPedido", "idLoja=" + idLoja);
-        }
-
-        public bool ObtemCalculaIcmsPedido(uint idLoja)
-        {
-            return ObtemValorCampo<bool>("CalcularIcmsPedido", "idLoja=" + idLoja);
+            return ObtemValorCampo<bool>(sessao, "CalcularIcmsPedido", $"IdLoja={ idLoja }");
         }
 
         public bool ObtemCalculaIpiPedido(GDASession sessao, uint idLoja)
         {
-            return ObtemValorCampo<bool>(sessao, "CalcularIpiPedido", "idLoja=" + idLoja);
+            return ObtemValorCampo<bool>(sessao, "CalcularIpiPedido", $"IdLoja={ idLoja }");
         }
-
-        public bool ObtemCalculaIpiPedido(uint idLoja)
+        
+        public bool ObtemCalculaIcmsStLiberacao(GDASession sessao, uint idLoja)
         {
-            return ObtemValorCampo<bool>("CalcularIpiPedido", "idLoja=" + idLoja);
+            return ObtemValorCampo<bool>(sessao, "CalcularIcmsLiberacao", $"IdLoja={ idLoja }");
         }
-
-        public bool ObtemCalculaIcmsLiberacao(GDASession sessao, uint idLoja)
-        {
-            return ObtemValorCampo<bool>(sessao, "CalcularIcmsLiberacao", "idLoja=" + idLoja);
-        }
-
-        public bool ObtemCalculaIcmsLiberacao(uint idLoja)
-        {
-            return ObtemValorCampo<bool>("CalcularIcmsLiberacao", "idLoja=" + idLoja);
-        }
-
+        
         public bool ObtemCalculaIpiLiberacao(GDASession sessao, uint idLoja)
         {
-            return ObtemValorCampo<bool>(sessao, "CalcularIpiLiberacao", "idLoja=" + idLoja);
+            return ObtemValorCampo<bool>(sessao, "CalcularIpiLiberacao", $"IdLoja={ idLoja }");
         }
-
-        public bool ObtemCalculaIpiLiberacao(uint idLoja)
-        {
-            return ObtemValorCampo<bool>("CalcularIpiLiberacao", "idLoja=" + idLoja);
-        }
-
+        
         #region Obtém identificação da loja
 
         /// <summary>

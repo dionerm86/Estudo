@@ -147,5 +147,10 @@ namespace Glass.Data.DAL
 
             return descrBenef;
         }
+
+        public decimal ObterCustoTotalPeloIdProdPed(GDASession session, int idProdPed)
+        {
+            return ObtemValorCampo<decimal>(session, "SUM(Custo)", $"IdProdPed={ idProdPed }");
+        }
     }
 }

@@ -322,7 +322,7 @@ namespace Glass.UI.Web.Relatorios
                 /* Chamado 43775. */
                 var idLojaPedido =
                     EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja && lstEtiq != null && lstEtiq.Length > 0 && lstEtiq[0].IdPedido.StrParaInt() > 0 ?
-                        PedidoDAO.Instance.ObtemIdLoja(lstEtiq[0].IdPedido.StrParaUint()) : 0;
+                        PedidoDAO.Instance.ObtemIdLoja(null, lstEtiq[0].IdPedido.StrParaUint()) : 0;
 
                 if (Request["reposicao"] == "true")
                     report.ReportPath = NomeArquivoRelatorioReposicao((int)idLojaPedido);

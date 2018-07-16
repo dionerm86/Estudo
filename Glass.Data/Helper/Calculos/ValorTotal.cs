@@ -13,15 +13,15 @@ namespace Glass.Data.Helper.Calculos
           ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
           bool usarChapaVidro = true, bool valorBruto = false)
         {
-            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, numeroBeneficiamentos,
-            usarChapaVidro, valorBruto);
+            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, false, numeroBeneficiamentos,
+             usarChapaVidro, valorBruto);
         }
 
         /// <summary>
         /// Método utilizado para calcular o valor total e o total de m² de um produto.
         /// </summary>
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, bool compra, int numeroBeneficiamentos,
             bool usarChapaVidro = true, bool valorBruto = false)
         {
             AtualizaDadosProdutosCalculo(produto, sessao, container);
@@ -30,9 +30,7 @@ namespace Glass.Data.Helper.Calculos
                 return;
 
             var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
-
-            var compra = produto is ProdutosCompra;
+            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);            
             
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
@@ -55,7 +53,7 @@ namespace Glass.Data.Helper.Calculos
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
         {
-            if (container.MaoDeObra)
+            if (container?.MaoDeObra ?? false)
                 return valor.Value;
 
             return 2;

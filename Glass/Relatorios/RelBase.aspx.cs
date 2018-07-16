@@ -710,7 +710,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstImpostoServ = ImpostoServDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["idImpostoServ"]), Request["dataIni"],
                             Request["dataFim"], Glass.Conversoes.StrParaFloat(Request["valorIni"]), Glass.Conversoes.StrParaFloat(Request["valorFim"]),
                             Glass.Conversoes.StrParaUint(Request["idFornec"]), Request["nomeFornec"], ImpostoServ_Contabil, Glass.Conversoes.StrParaInt(Request["tipoPagto"]),
-                            bool.Parse(Request["centroCustoDivergente"]));
+                            bool.Parse(Request["centroCustoDivergente"]), Glass.Conversoes.StrParaInt(Request["situacao"]));
 
                         report.DataSources.Add(new ReportDataSource("ImpostoServ", lstImpostoServ.ToArray()));
 
@@ -978,7 +978,7 @@ namespace Glass.UI.Web.Relatorios
                 case "Acerto":
                     {
                         report.ReportPath = "Relatorios/rptAcerto.rdlc";
-                        var acerto = AcertoDAO.Instance.GetAcertoDetails(Glass.Conversoes.StrParaUint(Request["idAcerto"]));
+                        var acerto = AcertoDAO.Instance.GetAcertoDetails(null, Glass.Conversoes.StrParaUint(Request["idAcerto"]));
                         var lstContasReceber = ContasReceberDAO.Instance.GetByAcerto(null, acerto.IdAcerto, false);
                         var lstContasReceberReneg = ContasReceberDAO.Instance.GetRenegByAcerto(acerto.IdAcerto, false);
                         var lstCheque = ChequesDAO.Instance.GetByAcerto(acerto.IdAcerto);
@@ -1345,12 +1345,12 @@ namespace Glass.UI.Web.Relatorios
                             exibirComissao = true;
 
                         // Insere na variável idLojaLogotipo o id da loja do pedido da primeira comissão da lista, para fazer a comparação de lojas
-                        idLojaLogotipo = PedidoDAO.Instance.ObtemIdLoja(lstComissaoDetalhada[0].IdPedido);
+                        idLojaLogotipo = PedidoDAO.Instance.ObtemIdLoja(null, lstComissaoDetalhada[0].IdPedido);
 
                         // Verifica se a loja de todos os pedidos é a mesma, caso seja, então a logomarca a ser buscada será a logomarca desta loja
                         // caso contrário será buscada a logomarca da loja do funcionário que gerou a comissão.
                         foreach (var comissao in lstComissaoDetalhada)
-                            if (idLojaLogotipo != PedidoDAO.Instance.ObtemIdLoja(comissao.IdPedido))
+                            if (idLojaLogotipo != PedidoDAO.Instance.ObtemIdLoja(null, comissao.IdPedido))
                             {
                                 idLojaLogotipo = FuncionarioDAO.Instance.ObtemIdLoja(comissao.IdFunc);
                                 break;
@@ -2039,12 +2039,12 @@ namespace Glass.UI.Web.Relatorios
                         var idLoja = 0;
 
                         if (idPedido > 0)
-                            idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(idPedido);
+                            idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
                         if (idLiberarPedido > 0)
                             idLoja = (int)LiberarPedidoDAO.Instance.ObtemIdLoja(idLiberarPedido);
 
-                        var calcularIcmsPedido = idLoja > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido((uint)idLoja) :
-                            (Glass.Conversoes.StrParaUint(Request["idLoja"]) > 0 ? LojaDAO.Instance.ObtemCalculaIcmsPedido(Glass.Conversoes.StrParaUint(Request["idLoja"])) :
+                        var calcularIcmsPedido = idLoja > 0 ? LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, (uint)idLoja) :
+                            (Glass.Conversoes.StrParaUint(Request["idLoja"]) > 0 ? LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, Glass.Conversoes.StrParaUint(Request["idLoja"])) :
                             PedidoConfig.Impostos.CalcularIcmsPedido);
 
                         report.ReportPath = "Relatorios/rptListaLiberacao" + (calcularIcmsPedido ? "Icms" : "") + ".rdlc";
@@ -2881,7 +2881,7 @@ namespace Glass.UI.Web.Relatorios
                 case "ProdutosLiberar":
                     {
                         report.ReportPath = "Relatorios/rptProdutosLiberar.rdlc";
-                        var ProdutosLiberar_prodPed = ProdutosPedidoDAO.Instance.GetForLiberacao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                        var ProdutosLiberar_prodPed = ProdutosPedidoDAO.Instance.GetForLiberacao(null, Request["idPedido"], true, true);
 
                         report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", Glass.Data.RelDAL.ProdutosPedidoRptDAL.Instance.CopiaLista(ProdutosLiberar_prodPed)));
 
@@ -3423,9 +3423,9 @@ namespace Glass.UI.Web.Relatorios
                                 continue;
 
                             var idPedido = Glass.Conversoes.StrParaUint(prodPed[prodPed.Count - 1].IdPedido.ToString());
-                            var codPedCli = PedidoDAO.Instance.ObtemPedCli(idPedido);
-                            var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(idPedido);
-                            var idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                            var codPedCli = PedidoDAO.Instance.ObtemPedCli(null, idPedido);
+                            var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, idPedido);
+                            var idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                             var nomeCliente = ClienteDAO.Instance.GetNome(idCliente);
                             var codRota = RotaDAO.Instance.ObtemCodRota(idCliente);
                             var descrRota = RotaDAO.Instance.ObtemDescrRota(idCliente);
@@ -3567,7 +3567,7 @@ namespace Glass.UI.Web.Relatorios
                                         coalesce(pc.produtoBenef, false) And pc.idPedido=" + prodCaixa.IdPedido, "idCompra", ",", null);
                                     prodPedCaixa.IdPedido = prodCaixa.IdPedido;
 
-                                    var idClienteCx = PedidoDAO.Instance.ObtemIdCliente(prodPedCaixa.IdPedido);
+                                    var idClienteCx = PedidoDAO.Instance.ObtemIdCliente(null, prodPedCaixa.IdPedido);
                                     var nomeClienteCx = ClienteDAO.Instance.GetNomeByPedido(prodPedCaixa.IdPedido);
 
                                     prodPedCaixa.IdCliente = idClienteCx;
@@ -3937,7 +3937,8 @@ namespace Glass.UI.Web.Relatorios
             if (Request["EnvioEmail"] != null && Request["EnvioEmail"].ToLower() == "true")
                 textoRodape = String.Empty;
 
-            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(diretorioLogotipos, idLojaLogotipo)));
+            lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(PageRequest, idLojaLogotipo)));
+            //lstParam.Add(new ReportParameter("Logotipo", Logotipo.GetReportLogo(diretorioLogotipos, idLojaLogotipo)));
             lstParam.Add(new ReportParameter("TextoRodape", textoRodape));
             lstParam.Add(new ReportParameter("CorRodape", "DimGray"));
 

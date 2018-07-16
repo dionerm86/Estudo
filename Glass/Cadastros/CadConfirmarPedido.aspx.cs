@@ -196,8 +196,8 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod]
         public string IsPedidosAlterados(string idPedido, string dataTela)
         {
-            var idsSinais = PedidoDAO.Instance.ObtemIdSinal(idPedido.StrParaUint());
-            var idsPagtoAntecip = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(idPedido.StrParaUint());
+            var idsSinais = PedidoDAO.Instance.ObtemIdSinal(null, idPedido.StrParaUint());
+            var idsPagtoAntecip = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, idPedido.StrParaUint());
             return WebGlass.Business.Pedido.Fluxo.BuscarEValidar.Ajax.IsPedidosAlterados(idPedido, idsSinais.GetValueOrDefault(0).ToString(), idsPagtoAntecip.GetValueOrDefault(0).ToString(), dataTela);
         }
 

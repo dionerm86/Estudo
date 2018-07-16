@@ -85,7 +85,7 @@ namespace Glass.Data.Model.Calculos
                 new DadosCliente()
                 {
                     Revenda = id > 0 && ClienteDAO.Instance.IsRevenda(id),
-                    CobrarAreaMinima = id > 0 && TipoClienteDAO.Instance.CobrarAreaMinima(id)
+                    CobrarAreaMinima = id == 0 || TipoClienteDAO.Instance.CobrarAreaMinima(id)
                 };
 
             return ObterUsandoCache(

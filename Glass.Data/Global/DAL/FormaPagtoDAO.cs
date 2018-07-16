@@ -362,7 +362,7 @@ namespace Glass.Data.DAL
         {
             string formasPagto = (uint)Glass.Data.Model.Pagto.FormaPagto.Boleto + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + "," +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.ChequeTerceiro + "," + (uint)Glass.Data.Model.Pagto.FormaPagto.Dinheiro + "," +
-                (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito;
+                (uint)Glass.Data.Model.Pagto.FormaPagto.Deposito + "," + (uint)Pagto.FormaPagto.Credito;
 
             if (FinanceiroConfig.FormaPagamento.PermitirFormaPagtoPermutaApenasAdministrador)
             {
@@ -372,7 +372,7 @@ namespace Glass.Data.DAL
             else
                 formasPagto += "," + (uint)Pagto.FormaPagto.Permuta;
 
-            string sql = "Select *, true as utilizarPagamento From formapagto where !apenasSistema and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
+            string sql = $"Select *, true as utilizarPagamento From formapagto where (!apenasSistema OR IdFormaPagto={ (uint)Pagto.FormaPagto.Credito }) and IdFormaPagto In (" + formasPagto + ") Order By Descricao";
 
             List<FormaPagto> lst = objPersistence.LoadData(sql).ToList();
             lst.Insert(0, new FormaPagto());

@@ -595,13 +595,13 @@ namespace Glass.Data.Helper
             if (string.IsNullOrWhiteSpace(idAplicacao) || string.IsNullOrWhiteSpace(idPedido))
                 return;
 
-            var fastDelivery = PedidoDAO.Instance.IsFastDelivery(idPedido.StrParaUint());
+            var fastDelivery = PedidoDAO.Instance.IsFastDelivery(null, idPedido.StrParaUint());
 
             if (fastDelivery && EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(idAplicacao.StrParaUint()).NaoPermitirFastDelivery)
                 throw new Exception("Esta Aplicacao não permite fast delivery, para inserir, desmarque a opção fast delivery do pedido");
 
             var tipoPedidoApl = EtiquetaAplicacaoDAO.Instance.ObtemTipoPedido(idAplicacao.StrParaUint());
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(idPedido.StrParaUint());
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, idPedido.StrParaUint());
 
             if (string.IsNullOrEmpty(tipoPedidoApl) || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 return;
@@ -656,7 +656,7 @@ namespace Glass.Data.Helper
         public static void VerificaEtiquetaProcesso(string idProcesso, string idPedido)
         {
             var tipoPedidoProc = EtiquetaProcessoDAO.Instance.ObtemTipoPedido(idProcesso.StrParaUint());
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(idPedido.StrParaUint());
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, idPedido.StrParaUint());
 
             if (string.IsNullOrEmpty(tipoPedidoProc) || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 return;

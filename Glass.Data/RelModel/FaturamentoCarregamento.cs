@@ -101,7 +101,7 @@ namespace Glass.Data.RelModel
             {
                 var aux = new List<string>();
 
-                if (PedidoDAO.Instance.GetTipoVenda(null, idPedido) == (int)Pedido.TipoVendaPedido.AVista)
+                if (PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Pedido.TipoVendaPedido.AVista)
                     aux.Add("\t** Pedido à vista não pode ser faturado." + Environment.NewLine);
 
                 if (NotaFiscalDAO.Instance.ExistsByPedido(null, idPedido))

@@ -684,7 +684,7 @@ namespace Glass.Data.DAL
 
                     /* Chamado 47326. */
                     if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda &&
-                        PedidoDAO.Instance.ObtemSituacao(idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                        PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
                         PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsPedidos, out idsPedidosErro, true, false);
                 }
                 catch (ValidacaoPedidoFinanceiroException f)
@@ -825,15 +825,35 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, sql);
 
-            // Calcula o valor do ICMS do projeto
-            if (LojaDAO.Instance.ObtemCalculaIcmsPedido(sessao, proj.IdLoja))
-            {
-                var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int)proj.IdLoja, (int?)proj.IdCliente, null, null, null, null);
+            var lojaCalculaIcmsStPedido = false;
+            var clienteCalculaIcmsSt = false;
+            var lojaCalculaIpiPedido = false;
+            var clienteCalculaIpi = false;
 
-                string idProd = "mip.idProd";
-                string total = "mip.Total + coalesce(mip.ValorBenef, 0)";
-                string desconto = null;
-                string aliquotaIcmsSt = "mip.AliqIcms";
+            if (proj.IdLoja > 0)
+            {
+                lojaCalculaIcmsStPedido = LojaDAO.Instance.ObtemCalculaIcmsStPedido(sessao, proj.IdLoja);
+                lojaCalculaIpiPedido = LojaDAO.Instance.ObtemCalculaIpiPedido(sessao, proj.IdLoja);
+            }
+
+            if (proj.IdCliente > 0)
+            {
+                clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(sessao, proj.IdCliente.Value);
+                clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(sessao, proj.IdCliente.Value);
+            }
+
+            var calcularIcmsSt = lojaCalculaIcmsStPedido && clienteCalculaIcmsSt;
+            var calcularIpi = lojaCalculaIpiPedido && clienteCalculaIpi;
+
+            // Calcula o valor do ICMS do projeto
+            if (lojaCalculaIcmsStPedido)
+            {
+                var calcIcmsSt = CalculoIcmsStFactory.ObtemInstancia(sessao, (int)proj.IdLoja, (int?)proj.IdCliente, null, null, null, null, calcularIpi);
+
+                var idProd = "mip.idProd";
+                var total = "mip.Total + coalesce(mip.ValorBenef, 0)";
+                var desconto = string.Empty;
+                var aliquotaIcmsSt = "mip.AliqIcms";
 
                 sql = @"
                     update material_item_projeto mip

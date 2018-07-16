@@ -379,6 +379,13 @@ function incluirItem(percComissao) {
     // Volta metragem quadrada para o original
     totM2 = FindControl("lblTotM2", "span").innerHTML + FindControl("lblTotM2Calc", "span").innerHTML;
     
+    var retornoValidacao = LstOrcamentoRapido.ValidarTamanhoDosProdutos(FindControl("hdfIdProd", "input").value, altura, largura, servicosInfo)
+
+    if (retornoValidacao != null && retornoValidacao.value != "" && retornoValidacao.value != null) {
+        alert(retornoValidacao.value);
+        return false;
+    }
+
     // Adiciona a linha à tabela
     var row = criarLinha(FindControl("hdfIdProd", "input").value, codProd, valorPrimario, total, altura, alturaCalc, largura, qtde,
         FindControl("Redondo_chkSelecao", "input") != null ? FindControl("Redondo_chkSelecao", "input").checked : false, totM2, descricao,

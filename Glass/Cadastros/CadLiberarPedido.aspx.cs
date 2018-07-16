@@ -48,7 +48,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var idsPedidos = hdfPedidosAbertos.Value.Split(',');
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(idsPedidos.First().StrParaUint());
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idsPedidos.First().StrParaUint());
                 var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
                 legenda.Visible = (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && Liberacao.DadosLiberacao.LiberarPedidoProdutos;
 
@@ -414,7 +414,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 var idsPedidos = hdfPedidosAbertos.Value.Split(',');
 
-                var idLoja = PedidoDAO.Instance.ObtemIdLoja(idsPedidos.First().StrParaUint());
+                var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idsPedidos.First().StrParaUint());
                 ignorar = LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
             }
 
@@ -442,10 +442,10 @@ namespace Glass.UI.Web.Cadastros
         {
             var idPedido = e.Row.DataItem != null ? Glass.Conversoes.StrParaUint(DataBinder.Eval(e.Row.DataItem, "IdPedido").ToString()) : 0;
     
-            if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(idPedido, true)))
+            if (!Liberacao.DadosLiberacao.LiberarPedidoProdutos && (idPedido > 0 && !PedidoDAO.Instance.IsPedidoAtrasado(null, idPedido, true)))
                 return;
 
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(idPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
             var naoIgnorar = !LojaDAO.Instance.GetIgnorarLiberarProdutosProntos(null, idLoja);
 
             if (PCPConfig.UsarConferenciaFluxo && (Liberacao.DadosLiberacao.LiberarProdutosProntos && naoIgnorar) && e.Row.FindControl("hdfCorLinha") != null)
@@ -475,7 +475,7 @@ namespace Glass.UI.Web.Cadastros
                 if (idPedido != _idPedido)
                 {
                     _idPedido = idPedido;
-                    _isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+                    _isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
                 }
 
                
@@ -801,14 +801,14 @@ namespace Glass.UI.Web.Cadastros
                 // Recupera a variável que será usada para cálculo do percentual calculado para o pedido
                 // Usado para liberação parcial - aplica o desconto e subtrai parte do valor 
                 // da entrada relativo ao percentual do pedido que está sendo liberado
-                var dividir = !existeEspelho || pedido.DescontoTotal == 0 ? 0 : pedidoEspelho.TotalSemDesconto;
+                var dividir = (!existeEspelho || pedido.DescontoTotal == 0 || PedidoConfig.RatearDescontoProdutos) ? 0 : pedidoEspelho.TotalSemDesconto;
 
                 // Define o tipo de desconto: se o valor calculado for do pedido espelho, usa o desconto do pedido espelho também
                 pedido.DescontoTotalPcp = PCPConfig.UsarConferenciaFluxo && dividir > 0;
 
                 // Caso não deva ser utilizado o total do pedido PCP e não exista conferência para este pedido, utilizad o total sem desconto
                 // do pedido original
-                dividir = pedido.DescontoTotalPcp ? dividir : !existeEspelho ? pedido.TotalSemDesconto : pedidoEspelho.TotalSemDesconto;
+                dividir = (pedido.DescontoTotalPcp || PedidoConfig.RatearDescontoProdutos) ? dividir : !existeEspelho ? pedido.TotalSemDesconto : pedidoEspelho.TotalSemDesconto;
 
                 // Remove o fast delivery do total calculado do pedido, aplica o desconto logo abaixo e depois aplica o fast delivery novamente
                 // Faz o mesmo com o dividir
@@ -860,8 +860,8 @@ namespace Glass.UI.Web.Cadastros
             qtdeProdutosLiberar = qtdeProdutosLiberar.TrimEnd(';');
     
             // Se for pedido de liberação ou de garantia, permite liberar
-            bool isGarantiaReposicao = !String.IsNullOrEmpty(idsPedido) && (PedidoDAO.Instance.IsPedidoGarantia(idsPedido) || 
-                PedidoDAO.Instance.IsPedidoReposicao(idsPedido)) && totalPedidos == 0;
+            bool isGarantiaReposicao = !String.IsNullOrEmpty(idsPedido) && (PedidoDAO.Instance.IsPedidoGarantia(null, idsPedido) || 
+                PedidoDAO.Instance.IsPedidoReposicao(null, idsPedido)) && totalPedidos == 0;
     
             hdfIsGarantiaReposicao.Value = isGarantiaReposicao.ToString().ToLower();
     
@@ -1010,7 +1010,7 @@ namespace Glass.UI.Web.Cadastros
                 var idPedidoStr = ((HiddenField)r.Cells[0].FindControl("hdfIdPedido")).Value;
                 int? tipoVenda = Glass.Conversoes.StrParaIntNullable(tipoVendaStr);
     
-                if (!retorno.Contains(tipoVenda) && !PedidoDAO.Instance.IsPedidoReposicao(idPedidoStr) && !PedidoDAO.Instance.IsPedidoGarantia(idPedidoStr))
+                if (!retorno.Contains(tipoVenda) && !PedidoDAO.Instance.IsPedidoReposicao(null, idPedidoStr) && !PedidoDAO.Instance.IsPedidoGarantia(null, idPedidoStr))
                     retorno.Add(tipoVenda);
             }
     

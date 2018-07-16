@@ -170,10 +170,10 @@ namespace Glass.Data.DAL
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 // Se a atualização da situação do pedido não tiver sido realizada, lança exceção
                 if (registrosAfetados <= 0)
@@ -190,10 +190,10 @@ namespace Glass.Data.DAL
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(null, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 throw new Exception("Este pedido já foi para a conferência.");
             }
@@ -259,7 +259,7 @@ namespace Glass.Data.DAL
             if (!Config.PossuiPermissao(Config.FuncaoMenuConferencia.ControleConferenciaMedicao))
                 throw new Exception("Apenas funcionário Supervisor Temperado pode finalizar conferências.");
 
-            Pedido.SituacaoPedido situacaoPedido = PedidoDAO.Instance.ObtemSituacao(idPedido);
+            Pedido.SituacaoPedido situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
             int situacaoConf = ObtemValorCampo<int>("situacao", "idPedido=" + idPedido);
 
             try
@@ -274,7 +274,7 @@ namespace Glass.Data.DAL
                     " Where idPedido=" + idPedido);
 
                 // Se a situação do pedido não tiver sido alterada, lança exceção
-                if (PedidoDAO.Instance.ObtemSituacao(idPedido) != Pedido.SituacaoPedido.Conferido)
+                if (PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.Conferido)
                     throw new Exception("Não foi possível atualizar a situação do pedido para conferido.");
             }
             catch (Exception ex)

@@ -1193,8 +1193,8 @@ namespace Glass.Data.DAL
 
             if (idPedido > 0)
             {
-                uint? idSinal = PedidoDAO.Instance.ObtemIdSinal(idPedido);
-                uint? idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(idPedido);
+                uint? idSinal = PedidoDAO.Instance.ObtemIdSinal(null, idPedido);
+                uint? idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, idPedido);
 
                 var filtro = "";
 
@@ -2627,7 +2627,9 @@ namespace Glass.Data.DAL
                 throw new Exception("Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de uma liberação de pedido à vista.");
             }
 
-            if (contaReceber.IdLiberarPedido > 0 && contaReceber.IdFormaPagto > 0 && contaReceber.IdFormaPagto != (uint)Pagto.FormaPagto.Prazo &&
+            if ((contaReceber.IdLiberarPedido > 0 ||
+                 (NotaFiscalDAO.Instance.IsAutorizada(contaReceber.IdNf.GetValueOrDefault()) && PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(contaReceber.IdLiberarPedido.GetValueOrDefault()).Count() > 0))
+                 && contaReceber.IdFormaPagto > 0 && contaReceber.IdFormaPagto != (uint)Pagto.FormaPagto.Prazo &&
                 UtilsPlanoConta.GetPlanoSinal(contaReceber.IdFormaPagto.Value) == contaReceber.IdConta)
             {
                 throw new Exception("Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de um pagamento de entrada de uma liberação de pedidos à prazo.");
@@ -3709,8 +3711,10 @@ namespace Glass.Data.DAL
                         throw new Exception(
                             "Esta conta foi liberada para a entrega. Desfaça a liberação antes de cancelar o recebimento.");
 
-                    if (contaRec.IdLiberarPedido > 0 && contaRec.IdFormaPagto > 0 &&
-                        contaRec.IdFormaPagto != (uint)Glass.Data.Model.Pagto.FormaPagto.Prazo &&
+                    if ((contaRec.IdLiberarPedido > 0 ||
+                        (NotaFiscalDAO.Instance.IsAutorizada(contaRec.IdNf.GetValueOrDefault()) &&
+                            PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(contaRec.IdLiberarPedido.GetValueOrDefault()).Count() > 0))
+                        && contaRec.IdFormaPagto > 0 && contaRec.IdFormaPagto != (uint)Glass.Data.Model.Pagto.FormaPagto.Prazo &&
                         UtilsPlanoConta.GetPlanoSinal(contaRec.IdFormaPagto.Value) == contaRec.IdConta)
                         throw new Exception(
                             "Esta conta recebida não pode ser cancelada pois a mesma foi gerada a partir de um pagamento de entrada de uma liberação de pedidos à prazo.");
@@ -5337,11 +5341,11 @@ namespace Glass.Data.DAL
                 }
                 else if (contaReceber.IdAcerto > 0)
                 {
-                    var idsPedido = AcertoDAO.Instance.ObterIdsPedido(null, (int)contaReceber.IdAcerto.Value);
+                    var idsPedido = PedidoDAO.Instance.ObterIdsPedidoPeloAcerto(null, (int)contaReceber.IdAcerto.Value);
 
                     if (string.IsNullOrEmpty(idsPedido))
                     {
-                        var idsLiberarPedido = AcertoDAO.Instance.ObterIdsLiberarPedido(null, (int)contaReceber.IdAcerto.Value);
+                        var idsLiberarPedido = LiberarPedidoDAO.Instance.ObterIdsLiberarPedidoPeloAcerto(null, (int)contaReceber.IdAcerto.Value);
 
                         if (!string.IsNullOrEmpty(idsLiberarPedido))
                         {
@@ -5929,6 +5933,16 @@ namespace Glass.Data.DAL
         public uint ObtemIdLoja(GDASession session, uint idContaR)
         {
             return ObtemValorCampo<uint>(session, "idLoja", "idContaR=" + idContaR);
+        }
+
+        /// <summary>
+        /// Busca os IDs das contas recebidas no acerto.
+        /// </summary>
+        public string ObterIdsContasRPeloAcerto(GDASession sessao, int idAcerto)
+        {
+            var idsContaR = ExecuteMultipleScalar<int>(sessao, $"SELECT DISTINCT(IdContaR) FROM contas_receber WHERE IdAcerto={ idAcerto }");
+
+            return string.Join(",", idsContaR?.Where(f => f > 0)?.ToList() ?? new List<int>());
         }
 
         #endregion

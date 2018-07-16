@@ -148,10 +148,10 @@ namespace Glass.Data.Helper
         #endregion
 
         #region Fila de e-mail e SMS
-        
+
         private void ProcessaFilaEmailSms()
         {
-             var lstDataEnvioSmsAdmin = PCPConfig.EmailSMS.HorariosEnvioEmailSmsAdmin;
+            var lstDataEnvioSmsAdmin = PCPConfig.EmailSMS.HorariosEnvioEmailSmsAdmin;
 
             try
             {
@@ -216,13 +216,13 @@ namespace Glass.Data.Helper
 
                             if (System.Configuration.ConfigurationManager.AppSettings["EnvioNovoSMS"] == "true")
                             {
-                                var resposta = SMS.EnviaSMS(sms.CodMensagem, sms.NomeLoja, sms.CelCliente, sms.Mensagem);
-                                FilaSmsDAO.Instance.IndicaEnvio(sms.IdSms, 0, resposta);
+                                var resposta = ZenviaSMS.EnviaSMS(sms.CodMensagem, sms.NomeLoja, sms.CelCliente, sms.Mensagem);
+                                FilaSmsDAO.Instance.IndicaEnvio(resposta.Response.StatusCode == 0, sms.IdSms, resposta.Response.StatusCode, resposta.Response.DetailDescription);
                             }
                             else
                             {
                                 SMSSend.responseSendMessage resposta = SMS.EnviaSMSOld(sms.CodMensagem, sms.NomeLoja, sms.CelCliente, sms.Mensagem);
-                                FilaSmsDAO.Instance.IndicaEnvio(sms.IdSms, resposta.result, resposta.resultDesc);
+                                FilaSmsDAO.Instance.IndicaEnvio(true, sms.IdSms, resposta.result, resposta.resultDesc);
                             }
                         }
                         catch (Exception ex)
@@ -272,7 +272,7 @@ namespace Glass.Data.Helper
                 // Inativa os clientes que não fazem compras há um tempo (definido no config)
                 ClienteDAO.Instance.InativarPelaUltimaCompra();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErroDAO.Instance.InserirFromException("InativarPelaUltimaCompra", ex);
             }
@@ -363,7 +363,7 @@ namespace Glass.Data.Helper
 
                 // Envia as mensagens
                 new Sync.Utils.StatusSistema.StatusSistema().ColetaMensagemErro(
-                    System.Configuration.ConfigurationManager.AppSettings["sistema"], 
+                    System.Configuration.ConfigurationManager.AppSettings["sistema"],
                     System.Configuration.ConfigurationManager.AppSettings["SiteSuporte"],
                     mensagens);
 

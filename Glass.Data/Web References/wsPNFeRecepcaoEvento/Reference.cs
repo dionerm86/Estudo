@@ -20,6 +20,7 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
     using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
+    using NFeUtils;
     
     
     /// <remarks/>
@@ -27,7 +28,7 @@ namespace Glass.Data.wsPNFeRecepcaoEvento {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="NFeRecepcaoEvento4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeRecepcaoEvento4")]
-    public partial class NFeRecepcaoEvento4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class NFeRecepcaoEvento4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IRecepcaoEvento {
         
         private System.Threading.SendOrPostCallback nfeRecepcaoEventoOperationCompleted;
         

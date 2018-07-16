@@ -16,38 +16,40 @@ namespace Glass.Data.Helper
             _cnae = cnae;
             _margemLucro = MargemLucroCnaeMTDAO.Instance.ObtemDadosMargemLucro(sessao, _cnae);
             /* Chamado 44504. */
-            _percCargaTributaria = percentualCargaTributaria.HasValue ? percentualCargaTributaria.Value :
-                CargaTributariaMediaMTDAO.Instance.ObtemDadosCargaTributaria(sessao, _cnae);
+            _percCargaTributaria = percentualCargaTributaria > 0 ? percentualCargaTributaria.Value : CargaTributariaMediaMTDAO.Instance.ObtemDadosCargaTributaria(sessao, _cnae);
         }
 
-        public float ObtemAliquotaInternaIcmsSt(Glass.Data.Model.IProdutoIcmsSt produto, bool saida)
+        public NFeUtils.ConfigNFe.TipoCalculoIcmsSt ObterCalculoAliquotaIcmsSt()
         {
-            return ObtemAliquotaInternaIcmsSt(produto, false, saida);
+            return Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt;
         }
 
-        public float ObtemAliquotaInternaIcmsSt(Glass.Data.Model.IProdutoIcmsSt produto, bool incluirIpiNoCalculo, bool saida)
+        public float ObtemAliquotaInternaIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             // Esse método ainda não é alterado com base nos tipos de cálculo de ICMS ST
             // conforme definido na tela de configurações
-
-            var valor = ObtemValorIcmsSt(produto, saida);
-            
+            var valor = ObtemValorIcmsSt(produto, saida);            
             return produto.Total > 0 ? (float)((valor / produto.Total) * 100) : 0;
         }
 
-        public decimal ObtemBaseCalculoIcmsSt(Glass.Data.Model.IProdutoIcmsSt produto, bool saida)
+        public decimal ObtemBaseCalculoIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             if (produto.AliquotaIcms == 0)
+            {
                 return 0;
+            }
 
             var valorIcmsSt = ObtemValorIcmsSt(produto, saida);
+
             return (produto.ValorIcms + valorIcmsSt) / (decimal)(produto.AliquotaIcms / 100);
         }
 
         public float ObtemAliquotaIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             if (produto.AliquotaIcms == 0)
+            {
                 return 0;
+            }
 
             var valorIcmsSt = ObtemValorIcmsSt(produto, saida);
             var baseCalculo = ObtemBaseCalculoIcmsSt(produto, saida);
@@ -55,23 +57,24 @@ namespace Glass.Data.Helper
             return (float)(valorIcmsSt / baseCalculo) * 100;
         }
 
-        public decimal ObtemValorIcmsSt(Glass.Data.Model.IProdutoIcmsSt produto, bool saida)
+        public decimal ObtemValorIcmsSt(Model.IProdutoIcmsSt produto, bool saida)
         {
             if (produto.AliquotaIcms == 0)
+            {
                 return 0;
+            }
 
-            var baseCalculo = produto.Total + produto.ValorIpi + produto.ValorFrete + produto.ValorSeguro +
-                produto.ValorOutrasDespesas - produto.ValorDesconto;
+            var baseCalculo = produto.Total + produto.ValorIpi + produto.ValorFrete + produto.ValorSeguro + produto.ValorOutrasDespesas - produto.ValorDesconto;
+            var valorAgregado = baseCalculo * (decimal)(_margemLucro / 100);
 
-            decimal valorAgregado = baseCalculo * (decimal)(_margemLucro / 100);
             return valorAgregado * (decimal)(_percCargaTributaria / 100);
         }
 
         public string ObtemSqlAliquotaInternaIcmsSt(GDA.GDASession sessao, string idProd, string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
         {
-            string valorIcmsSt = ObtemSqlValorIcmsSt(campoTotal, campoValorDesconto, campoAliquotaIcmsSt, campoFastDelivery);
+            var valorIcmsSt = ObtemSqlValorIcmsSt(campoTotal, campoValorDesconto, campoAliquotaIcmsSt, campoFastDelivery);
 
-            return string.Format("({0} / {1}) * 100", valorIcmsSt, campoTotal);
+            return $"({ valorIcmsSt } / { campoTotal }) * 100";
         }
 
         public string ObtemSqlValorIcmsSt(string campoTotal, string campoValorDesconto, string campoAliquotaIcmsSt, string campoFastDelivery)
@@ -79,9 +82,9 @@ namespace Glass.Data.Helper
             campoValorDesconto = !string.IsNullOrWhiteSpace(campoValorDesconto) ? campoValorDesconto : "0";
             campoFastDelivery = !string.IsNullOrWhiteSpace(campoFastDelivery) ? campoFastDelivery : "1";
 
-            var valorAgregado = string.Format("coalesce(({0} - {1}) * {2}, 0) * coalesce({3} / 100, 0)", campoTotal, campoValorDesconto, campoFastDelivery, _margemLucro.ToString(CultureInfo.InvariantCulture));
+            var valorAgregado = $"COALESCE(({ campoTotal } - { campoValorDesconto }) * { campoFastDelivery }, 0) * COALESCE({ _margemLucro.ToString(CultureInfo.InvariantCulture) } / 100, 0)";
 
-            return String.Format("(select {0} * coalesce({1} / 100, 0))", valorAgregado, _percCargaTributaria.ToString(CultureInfo.InvariantCulture));
+            return $"(SELECT { valorAgregado } * COALESCE({ _percCargaTributaria.ToString(CultureInfo.InvariantCulture) } / 100, 0))";
         }
     }
 }

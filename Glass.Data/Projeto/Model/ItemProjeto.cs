@@ -283,7 +283,7 @@ namespace Glass.Data.Model
                     if (IdProjeto > 0)
                         _idFunc =  ProjetoDAO.Instance.ObtemValorCampo<uint>("idFunc", "idProjeto=" + IdProjeto.Value);
                     else if (IdPedido > 0)
-                        _idFunc = PedidoDAO.Instance.ObtemIdFunc(IdPedido.Value);
+                        _idFunc = PedidoDAO.Instance.ObtemIdFunc(null, IdPedido.Value);
                     else if (IdPedidoEspelho > 0)
                         _idFunc = PedidoEspelhoDAO.Instance.ObtemValorCampo<uint>("idFuncConf", "idPedido=" + IdPedidoEspelho.Value);
                     else if (IdOrcamento > 0)

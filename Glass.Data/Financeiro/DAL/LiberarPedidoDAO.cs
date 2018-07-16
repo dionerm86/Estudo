@@ -6,6 +6,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using System.Linq;
 using Glass.Configuracoes;
+using System.Text;
 
 namespace Glass.Data.DAL
 {
@@ -297,6 +298,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     // Cria a liberação de pedidos à vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
@@ -305,6 +308,8 @@ namespace Glass.Data.DAL
 
                     // Finaliza a liberação criada acima, gerando movimentação no caixa, conta bancária, estoque etc.
                     FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -337,6 +342,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
+
                     // Cria a liberação de pedidos à vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
@@ -348,6 +355,8 @@ namespace Glass.Data.DAL
                         IdReferencia = idLiberarPedido,
                         TipoRecebimento = UtilsFinanceiro.TipoReceb.LiberacaoAVista
                     });
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -1681,12 +1690,16 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
+
                     var idLiberarPedido = CriarLiberacaoAPrazo(transaction, idCliente, idsPedido, idsProdutosPedido,
                         idsProdutoPedidoProducao, qtdeLiberar, totalASerPago, numParcelas, diasParcelas, valoresParcelas, idParcela,
                         receberEntrada, formasPagto, tiposCartao, valoresPagos, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
                         utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, descontarComissao, parcelasCartao,
                         tipoDesconto, desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto,
                         numAutCartao);
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -1889,10 +1902,10 @@ namespace Glass.Data.DAL
             foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
             {
                 //Verifica se o pedido está para receber sinal e não recebeu
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(id.StrParaUint());
-                var entrada = PedidoDAO.Instance.ObtemValorEntrada(id.StrParaUint());
-                var idSinal = PedidoDAO.Instance.ObtemIdSinal(id.StrParaUint());
-                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(id.StrParaUint());
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, id.StrParaUint());
+                var entrada = PedidoDAO.Instance.ObtemValorEntrada(null, id.StrParaUint());
+                var idSinal = PedidoDAO.Instance.ObtemIdSinal(null, id.StrParaUint());
+                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, id.StrParaUint());
                 var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
 
                 if (entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0)
@@ -2378,7 +2391,7 @@ namespace Glass.Data.DAL
             // Atualiza o total comprado pelo cliente
             ClienteDAO.Instance.AtualizaTotalComprado(session, idCliente);
 
-            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
+            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido);
             if (idsPedidoLiberado.Any())
                 CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
 
@@ -2422,6 +2435,8 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
 
                     uint idLiberarPedido;
 
@@ -2619,6 +2634,8 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                         new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
+
                     transaction.Commit();
                     transaction.Close();
 
@@ -2657,6 +2674,8 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), true);
 
                     uint idLiberarPedido;
 
@@ -2839,6 +2858,8 @@ namespace Glass.Data.DAL
                     WHERE IdLiberarPedido = {1}";
                     objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                         new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+
+                    PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
 
                     transaction.Commit();
                     transaction.Close();
@@ -3472,6 +3493,9 @@ namespace Glass.Data.DAL
                     dicProduto[idProd] += qtdALiberar;
             }
 
+            //armazena os produtos que não tem estoque disponível
+            var produtosSemEstoque = new StringBuilder();
+
             // Verifica se há estoque disponível para os produtos sendo liberados
             foreach (KeyValuePair<uint, float> item in dicProduto)
             {
@@ -3500,13 +3524,19 @@ namespace Glass.Data.DAL
                     // esta situação ocorre somente quando o controle de estoque não está bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
-                        mensagem = "A liberação não pode ser realizada pois o produto " +
+                        produtosSemEstoque.Append(
                             ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key) + " - " +
-                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + " não possui estoque disponível.";
-
-                        return false;
+                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + ",     ");
                     }
                 }
+            }
+
+            //verifica se algum produto não tem estoque e caso não adiciona na mensagem
+            if (!string.IsNullOrWhiteSpace(produtosSemEstoque.ToString()))
+            {
+                mensagem = string.Format("A liberação não pode ser realizada pois o(s) produto(s) {0} não possui(em) estoque disponível.", produtosSemEstoque);
+
+                return false;
             }
 
             return true;
@@ -3629,7 +3659,7 @@ namespace Glass.Data.DAL
                 return true;
 
             /* Chamado 46495. */
-            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false);
+            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false, false);
 
             return produtosNaoLiberados == null || produtosNaoLiberados.Count() == 0;
         }
@@ -4019,6 +4049,20 @@ namespace Glass.Data.DAL
         public int ObterIdNf(GDASession sessao, int idLiberarPedido)
         {
             return ExecuteScalar<int>(sessao, "SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdLiberarPedido = " + idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Retorna todos os ids das liberações de pedido do acerto.
+        /// </summary>
+        public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
+        {
+            var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
+                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                FROM liberarpedido
+                WHERE IdLiberarPedido IN
+                    (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");
+
+            return string.Join(",", idsLiberarPedido?.Where(f => f > 0)?.ToList() ?? new List<int>());
         }
 
         #endregion

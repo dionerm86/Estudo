@@ -12,23 +12,28 @@ namespace Glass.Data.RelDAL
 {
     public sealed class GraficoProdPerdaDiariaDAO : BaseDAO<GraficoProdPerdaDiaria, GraficoProdPerdaDiariaDAO>
     {
-        private string Sql(string idsSetor, string mes, string ano, bool selecionar)
+        private string SqlProducaoPerdaDiaria(string idsSetor, string mes, string ano, bool selecionar)
         {
             var sqlTotalM2Producao = string.Empty;
             var sqlTotalM2Reposicao = string.Empty;
             var sqlTotalM2DadosReposicao = string.Empty;
 
-            return Sql(idsSetor, mes, ano, selecionar, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
+            return SqlProducaoPerdaDiaria(idsSetor, mes, ano, selecionar, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
         }
 
-        private string Sql(string idsSetor, string mes, string ano, bool selecionar, out string sqlTotalM2Producao, out string sqlTotalM2Reposicao,
+        private string SqlProducaoPerdaDiaria(string idsSetor, string mes, string ano, bool selecionar, out string sqlTotalM2Producao, out string sqlTotalM2Reposicao,
             out string sqlTotalM2DadosReposicao)
         {
+            var dataIni = new DateTime(ano.StrParaInt(), mes.StrParaInt(), 1);
+            var dataFim = new DateTime(ano.StrParaInt(), mes.StrParaInt(), DateTime.DaysInMonth(ano.StrParaInt(), mes.StrParaInt())).AddDays(1).AddSeconds(-1);
+            var sqlLeituraProducao = LeituraProducaoDAO.Instance.ObterSqlParaGraficoProdPerdaDiaria(null, idsSetor?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), dataIni, dataFim);
+
             var idsProdPed = ExecuteMultipleScalar<int>($@"SELECT DISTINCT(ppp.IdProdPed)
 		        FROM produto_pedido_producao ppp
-			        INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-			        AND MONTH(lp.DataLeitura)={ mes }
-                    AND YEAR(lp.DataLeitura)={ ano }");
+			        INNER JOIN ({ sqlLeituraProducao }) lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
+                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
+		        WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }, { (int)ProdutoPedidoProducao.SituacaoEnum.Perda })",
+                new GDAParameter("?dataIni", dataIni), new GDAParameter("?dataFim", dataFim));
 
             sqlTotalM2Producao = $@"SELECT DAY(ppp.DataLeitura) AS Dia,
                     ppp.IdSetor,
@@ -58,7 +63,7 @@ namespace Glass.Data.RelDAL
                             s.Descricao,
                             lp.Dataleitura
 		                FROM produto_pedido_producao ppp
-			                INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
+			                INNER JOIN ({ sqlLeituraProducao }) lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
 			                INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
                         WHERE ppp.IdProdPed IN ({ string.Join(",", idsProdPed) })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
                         LEFT JOIN
@@ -300,19 +305,18 @@ namespace Glass.Data.RelDAL
 
         private string SqlPerdaPorProduto(int idSetor, string mes, string ano, bool selecionar, bool incluirTotM2, bool incluirTrocaDevolucao, bool somenteTrocaDevolucao)
         {
-            var sqlTotM2 = incluirTotM2 ? @"
+            var dataIni = new DateTime(ano.StrParaInt(), mes.StrParaInt(), 1);
+            var dataFim = new DateTime(ano.StrParaInt(), mes.StrParaInt(), DateTime.DaysInMonth(ano.StrParaInt(), mes.StrParaInt())).AddDays(1).AddSeconds(-1);
+            var sqlLeituraProducao = LeituraProducaoDAO.Instance.ObterSqlParaPerdaPorProduto(null, idSetor, dataIni, dataFim);
+
+            var sqlTotM2 = incluirTotM2 ? $@"
                     select idSetor, descricao, desafioPerda, metaPerda, TotProdM2, 0 as TotPerdaM2, espessura, corVidro
                     from (
                         select ltpd.idSetor, stor.descricao, stor.desafioPerda, stor.metaPerda,
 	                        sum(ltpd.totProdM2) as TotProdM2, 0 as TotPerdaM2, prod.espessura, crvd.descricao as corVidro
                         from (
 	                        select pdpe.idProd, temp.idSetor, sum(pdpe.TotM / pdpe.qtde) as totProdM2
-	                        from (
-		                        select idProdPedProducao, idSetor
-		                        from leitura_producao
-                                where dataLeitura >= ?dataIni 
-                                    and dataLeitura <= ?dataFim " +
-                                    (idSetor > 0 ? " and idSetor = " + idSetor.ToString() : "").ToString() + @"
+	                        from ( { sqlLeituraProducao }
                             ) as temp
 		                        inner join produto_pedido_producao pdpp on (temp.idProdPedProducao = pdpp.idProdPedProducao)
 		                        inner join produtos_pedido_espelho pdpe on (pdpe.idProdPed = pdpp.idProdPed)
@@ -538,12 +542,15 @@ namespace Glass.Data.RelDAL
 
         public IList<GraficoProdPerdaDiaria> GetList(string idsSetor, string mes, string ano, string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(idsSetor, mes, ano, true), sortExpression, startRow, pageSize).ToList();
+            var dataIni = new DateTime(ano.StrParaInt(), mes.StrParaInt(), 1);
+            var dataFim = new DateTime(ano.StrParaInt(), mes.StrParaInt(), DateTime.DaysInMonth(ano.StrParaInt(), mes.StrParaInt())).AddDays(1).AddSeconds(-1);
+
+            return LoadDataWithSortExpression(SqlProducaoPerdaDiaria(idsSetor, mes, ano, true), sortExpression, startRow, pageSize).ToList();
         }
 
         public int GetCount(string idsSetor, string mes, string ano)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(idsSetor, mes, ano, false));
+            return objPersistence.ExecuteSqlQueryCount(SqlProducaoPerdaDiaria(idsSetor, mes, ano, false));
         }
 
         public GraficoProdPerdaDiaria[] GetForRpt(string idsSetor, string mes, string ano)
@@ -552,7 +559,7 @@ namespace Glass.Data.RelDAL
             var sqlTotalM2Reposicao = string.Empty;
             var sqlTotalM2DadosReposicao = string.Empty;
 
-            Sql(idsSetor, mes, ano, true, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
+            SqlProducaoPerdaDiaria(idsSetor, mes, ano, true, out sqlTotalM2Producao, out sqlTotalM2Reposicao, out sqlTotalM2DadosReposicao);
 
             var totalM2Producao = objPersistence.LoadData(sqlTotalM2Producao)?.ToList() ?? new List<GraficoProdPerdaDiaria>();
             var totalM2Reposicao = objPersistence.LoadData(sqlTotalM2Reposicao)?.ToList() ?? new List<GraficoProdPerdaDiaria>();
@@ -582,22 +589,22 @@ namespace Glass.Data.RelDAL
 
                 if (totalM2Producao.Any(f => f.Dia == dia))
                 {
-                    dadosDia.TotProdM2 = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
-                    dadosDia.TotPerdaM2 = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.TotProdM2 += totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 += totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
                     dadosDia.DescricaoSetor = totalM2Producao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
                 }
 
                 if (totalM2Reposicao.Any(f => f.Dia == dia))
                 {
-                    dadosDia.TotProdM2 = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
-                    dadosDia.TotPerdaM2 = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.TotProdM2 += totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 += totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
                     dadosDia.DescricaoSetor = totalM2Reposicao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
                 }
 
                 if (totalM2DadosReposicao.Any(f => f.Dia == dia))
                 {
-                    dadosDia.TotProdM2 = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
-                    dadosDia.TotPerdaM2 = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
+                    dadosDia.TotProdM2 += totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotProdM2 ?? 0;
+                    dadosDia.TotPerdaM2 += totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.TotPerdaM2 ?? 0;
                     dadosDia.DescricaoSetor = totalM2DadosReposicao.FirstOrDefault(f => f.Dia == dia)?.DescricaoSetor ?? dadosDia.DescricaoSetor;
                 }
 
@@ -608,9 +615,9 @@ namespace Glass.Data.RelDAL
             double prodAcumulada = 0;
             double perdaAcumulada = 0;
 
-            if (diasBuscados.Count > 0)
+            if (retorno.Count > 0)
             {
-                for (var i = 0; i < diasBuscados.Count; i++)
+                for (var i = 0; i < retorno.Count; i++)
                 {
                     diasDecorridos++;
                     prodAcumulada += retorno[i].TotProdM2;

@@ -174,9 +174,10 @@
                 <Value>=Parameters!Logotipo.Value</Value>
                 <MIMEType>image/png</MIMEType>
                 <Sizing>FitProportional</Sizing>
-                <Left>2.86407cm</Left>
-                <Height>1.18132cm</Height>
-                <Width>2.02035cm</Width>
+                <Top>0.12347cm</Top>
+                <Left>1.31984cm</Left>
+                <Height>1.19628cm</Height>
+                <Width>4.60752cm</Width>
                 <Visibility>
                   <Hidden>=(Parameters!Logotipo.Value = "" OR Parameters!Logotipo.Value = ".")</Hidden>
                 </Visibility>
@@ -286,7 +287,6 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>0cm</Top>
             <Left>0.02281cm</Left>
             <Height>4.43063cm</Height>
             <Width>7.98662cm</Width>
@@ -371,7 +371,6 @@
               </Textbox>
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
-            <Top>0cm</Top>
             <Left>8.00942cm</Left>
             <Height>1.3462cm</Height>
             <Width>8.84444cm</Width>
@@ -452,7 +451,6 @@
               </Textbox>
             </ReportItems>
             <DataElementOutput>ContentsOnly</DataElementOutput>
-            <Top>0cm</Top>
             <Left>16.86092cm</Left>
             <Height>1.3462cm</Height>
             <Width>3.7993cm</Width>

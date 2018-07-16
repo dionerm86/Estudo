@@ -105,7 +105,7 @@ namespace Glass.Fiscal.Negocios.Componentes.Calculadoras
                 if (Configuracoes.PedidoConfig.Pedido_FastDelivery.FastDelivery && pedido.FastDelivery)
                     percFastDelivery = 1 + (Configuracoes.PedidoConfig.Pedido_FastDelivery.TaxaFastDelivery / 100f);
 
-                return Data.DAL.PedidoDAO.Instance.GetTotalSemDesconto(pedido.IdPedido, (pedido.Total / (decimal)percFastDelivery));
+                return Data.DAL.PedidoDAO.Instance.GetTotalSemDesconto(null, pedido.IdPedido, (pedido.Total / (decimal)percFastDelivery));
             });
 
             foreach (var produtoPedido in produtosPedido)

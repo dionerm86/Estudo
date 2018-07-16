@@ -138,9 +138,9 @@ namespace Glass.Data.NFeUtils
 
         #region Autorização
 
-        public static wsPNFeAutorizacao.NFeAutorizacao4 NFeAutorizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IAutorizacao NFeAutorizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeAutorizacao.NFeAutorizacao4();
+            IAutorizacao retorno = new wsPNFeAutorizacao.NFeAutorizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -155,7 +155,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nfeautorizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANAutorizacao.NFeAutorizacao4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://www.svc.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
@@ -169,9 +174,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeAutorizacao.NFeAutorizacao4 NFeAutorizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IAutorizacao NFeAutorizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeAutorizacao.NFeAutorizacao4();
+            IAutorizacao retorno = new wsHNFeAutorizacao.NFeAutorizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -186,7 +191,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nfeautorizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANAutorizacao.NFeAutorizacao4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://hom.svc.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
@@ -204,9 +214,9 @@ namespace Glass.Data.NFeUtils
 
         #region Consulta protocolo
 
-        public static wsPNFeConsultaProtocolo.NFeConsultaProtocolo4 NFeConsultaProtocoloProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IConsultaProtocolo NFeConsultaProtocoloProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeConsultaProtocolo.NFeConsultaProtocolo4();
+            IConsultaProtocolo retorno = new wsPNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -221,7 +231,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeConsultaProtocolo4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nfeconsultaprotocolo4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANConsultaProtocolo.NFeConsultaProtocolo4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://www.svc.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
@@ -235,9 +250,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeConsultaProtocolo.NFeConsultaProtocolo4 NFeConsultaProtocoloHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IConsultaProtocolo NFeConsultaProtocoloHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeConsultaProtocolo.NFeConsultaProtocolo4();
+            IConsultaProtocolo retorno = new wsHNFeConsultaProtocolo.NFeConsultaProtocolo4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -252,7 +267,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeConsultaProtocolo4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nfeconsultaprotocolo4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANConsultaProtocolo.NFeConsultaProtocolo4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://hom.svc.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
@@ -270,9 +290,9 @@ namespace Glass.Data.NFeUtils
 
         #region Inutilização
 
-        public static wsPNFeInutilizacao.NFeInutilizacao4 NFeInutilizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IInutilizacao NFeInutilizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeInutilizacao.NFeInutilizacao4();
+            IInutilizacao retorno = new wsPNFeInutilizacao.NFeInutilizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -287,7 +307,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeInutilizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nfeinutilizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANInutilizacao.NFeInutilizacao4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 default: retorno.Url = string.Empty; break;
             }
@@ -299,9 +324,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeInutilizacao.NFeInutilizacao4 NFeInutilizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IInutilizacao NFeInutilizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeInutilizacao.NFeInutilizacao4();
+            IInutilizacao retorno = new wsHNFeInutilizacao.NFeInutilizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -316,7 +341,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeInutilizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nfeinutilizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANInutilizacao.NFeInutilizacao4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 default: retorno.Url = string.Empty; break;
             }
@@ -332,9 +362,9 @@ namespace Glass.Data.NFeUtils
 
         #region Recepção evento
 
-        public static wsPNFeRecepcaoEvento.NFeRecepcaoEvento4 NFeRecepcaoEventoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IRecepcaoEvento NFeRecepcaoEventoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeRecepcaoEvento.NFeRecepcaoEvento4();
+            IRecepcaoEvento retorno = new wsPNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -349,7 +379,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeRecepcaoEvento4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANRecepcaoEvento.NFeRecepcaoEvento4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://www.svc.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
@@ -363,9 +398,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeRecepcaoEvento.NFeRecepcaoEvento4 NFeRecepcaoEventoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IRecepcaoEvento NFeRecepcaoEventoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeRecepcaoEvento.NFeRecepcaoEvento4();
+            IRecepcaoEvento retorno = new wsHNFeRecepcaoEvento.NFeRecepcaoEvento4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -380,7 +415,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeRecepcaoEvento4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nferecepcaoevento4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANRecepcaoEvento.NFeRecepcaoEvento4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://hom.svc.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
@@ -398,9 +438,9 @@ namespace Glass.Data.NFeUtils
 
         #region Retorno autorização
 
-        public static wsPNFeRetAutorizacao.NFeRetAutorizacao4 NFeRetornoAutorizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IRetornoAutorizacao NFeRetornoAutorizacaoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeRetAutorizacao.NFeRetAutorizacao4();
+            IRetornoAutorizacao retorno = new wsPNFeRetAutorizacao.NFeRetAutorizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -415,7 +455,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeRetAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nferetautorizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANRetAutorizacao.NFeRetAutorizacao4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://www.svc.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
@@ -429,9 +474,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeRetAutorizacao.NFeRetAutorizacao4 NFeRetornoAutorizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IRetornoAutorizacao NFeRetornoAutorizacaoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeRetAutorizacao.NFeRetAutorizacao4();
+            IRetornoAutorizacao retorno = new wsHNFeRetAutorizacao.NFeRetAutorizacao4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -446,7 +491,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeRetAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nferetautorizacao4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANRetAutorizacao.NFeRetAutorizacao4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://hom.svc.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
@@ -464,9 +514,9 @@ namespace Glass.Data.NFeUtils
 
         #region Status serviço
 
-        public static wsPNFeStatusServico.NFeStatusServico4 NFeStatusServicoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IStatusServico NFeStatusServicoProducao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsPNFeStatusServico.NFeStatusServico4();
+            IStatusServico retorno = new wsPNFeStatusServico.NFeStatusServico4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -481,7 +531,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/NFeStatusServico4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANStatus.NFeStatusServico4();
+                        retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://www.svc.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
@@ -495,9 +550,9 @@ namespace Glass.Data.NFeUtils
             return retorno;
         }
 
-        public static wsHNFeStatusServico.NFeStatusServico4 NFeStatusServicoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
+        public static IStatusServico NFeStatusServicoHomologacao(NotaFiscal notaFiscal, string caminhoCert, string uf)
         {
-            var retorno = new wsHNFeStatusServico.NFeStatusServico4();
+            IStatusServico retorno = new wsHNFeStatusServico.NFeStatusServico4();
 
             switch (ObterServidorAutorizadorNFe(notaFiscal, uf))
             {
@@ -512,7 +567,12 @@ namespace Glass.Data.NFeUtils
                 case "PR": retorno.Url = "https://homologacao.nfe.sefa.pr.gov.br/nfe/NFeStatusServico4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfe-homologacao.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx?wsdl"; break;
-                case "SVAN": retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl"; break;
+                case "SVAN":
+                    {
+                        retorno = new wsNFeSVANStatus.NFeStatusServico4();
+                        retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl";
+                        break;
+                    }
                 case "SVRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SVCAN": retorno.Url = "https://hom.svc.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl"; break;
                 case "SVCRS": retorno.Url = "https://nfe-homologacao.svrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
@@ -571,7 +631,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeAutorizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeAutorizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeAutorizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeAutorizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeAutorizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeAutorizacao4.asmx?wsdl"; break;
@@ -623,7 +683,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeConsulta4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeConsultaProtocolo4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeConsultaProtocolo4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeConsulta4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeConsulta4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeConsultaProtocolo4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeConsulta/NfeConsulta4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeConsultaProtocolo4.asmx?wsdl"; break;
@@ -675,7 +735,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeInutilizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeInutilizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeInutilizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeInutilizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeInutilizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeInutilizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/nfeinutilizacao/nfeinutilizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeInutilizacao4.asmx?wsdl"; break;
@@ -727,7 +787,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/RecepcaoEvento4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeRecepcaoEvento4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeRecepcaoEvento4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/RecepcaoEvento4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/RecepcaoEvento4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeRecepcaoEvento4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeRecepcaoEvento4.asmx?wsdl"; break;
@@ -779,7 +839,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeRetAutorizacao4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeRetAutorizacao4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeRetAutorizacao4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeRetAutorizacao4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeRetAutorizacao4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeRetAutorizacao4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeRetAutorizacao/NFeRetAutorizacao4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeRetAutorizacao4.asmx?wsdl"; break;
@@ -831,7 +891,7 @@ namespace Glass.Data.NFeUtils
                 case "AM": retorno.Url = "https://nfce.sefaz.am.gov.br/nfce-services/services/NfeStatusServico4?wsdl"; break;
                 case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/NFeStatusServico4?wsdl"; break;
                 case "MS": retorno.Url = "https://nfce.fazenda.ms.gov.br/ws/NFeStatusServico4?wsdl"; break;
-                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/v2/services/NfeStatusServico4?wsdl"; break;
+                case "MT": retorno.Url = "https://nfce.sefaz.mt.gov.br/nfcews/services/NfeStatusServico4?wsdl"; break;
                 case "PR": retorno.Url = "https://nfce.sefa.pr.gov.br/nfce/NFeStatusServico4?wsdl"; break;
                 case "RS": retorno.Url = "https://nfce.sefazrs.rs.gov.br/ws/NfeStatusServico/NfeStatusServico4.asmx?wsdl"; break;
                 case "SP": retorno.Url = "https://nfce.fazenda.sp.gov.br/ws/NFeStatusServico4.asmx?wsdl"; break;

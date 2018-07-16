@@ -177,7 +177,7 @@ namespace WebGlass.Business.Medicao.Ajax
                 !PedidoDAO.Instance.Exists(idPedido.StrParaUintNullable().GetValueOrDefault()))
                 return "Erro;Este pedido não existe.";
 
-            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(idPedido.StrParaUint());
+            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, idPedido.StrParaUint());
 
             if (situacaoPedido == Glass.Data.Model.Pedido.SituacaoPedido.Ativo ||
                 situacaoPedido == Glass.Data.Model.Pedido.SituacaoPedido.AtivoConferencia ||

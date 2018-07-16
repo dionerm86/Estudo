@@ -607,7 +607,7 @@ namespace Glass.Data.Helper
                                 tipoReceb == TipoReceb.PedidoAVista || tipoReceb == TipoReceb.SinalPedido ?
                                     pedido != null ? pedido.IdPedido.ToString() : null : null;
                             var idsContasR = !string.IsNullOrEmpty(contasReceber) ? contasReceber :
-                                tipoReceb == TipoReceb.Acerto ? AcertoDAO.Instance.GetIdsContasR(sessao, acerto.IdAcerto) :
+                                tipoReceb == TipoReceb.Acerto ? ContasReceberDAO.Instance.ObterIdsContasRPeloAcerto(sessao, (int)acerto.IdAcerto) :
                                 tipoReceb == TipoReceb.ContaReceber ? conta.IdContaR.ToString() : null;
                             var idsChequesR = tipoReceb == TipoReceb.ChequeDevolvido || tipoReceb == TipoReceb.ChequeProprioDevolvido || tipoReceb == TipoReceb.ChequeProprioReapresentado ||
                                 tipoReceb == TipoReceb.ChequeReapresentado ? AcertoChequeDAO.Instance.GetIdsChequesByAcertoCheque(sessao, idAcertoCheque.Value) : null;

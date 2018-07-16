@@ -1474,13 +1474,14 @@ namespace Glass.Data.DAL
 
                             if (qtdBaixa > 0)
                             {
-                                uint idLoja = MovEstoqueDAO.Instance.ObtemValorCampo<uint>(transaction, "idLoja", "idCompra=" + idCompra + " limit 1");
+                                var idLoja = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdCompra(transaction, (int)idCompra);
 
-                                if (idLoja == 0)
+                                if (idLoja.GetValueOrDefault() == 0)
+                                {
                                     idLoja = UserInfo.GetUserInfo.IdLoja;
+                                }
 
-                                MovEstoqueDAO.Instance.BaixaEstoqueCompra(transaction, p.IdProd, idLoja, compra.IdCompra, p.IdProdCompra,
-                                    (m2 ? (decimal)p.TotM : (decimal)qtdBaixa));
+                                MovEstoqueDAO.Instance.BaixaEstoqueCompra(transaction, p.IdProd, idLoja.Value, compra.IdCompra, p.IdProdCompra, (m2 ? (decimal)p.TotM : qtdBaixa));
                             }
 
                             objPersistence.ExecuteCommand(transaction, "update produtos_compra set qtdeEntrada=0 where idProdCompra=" + p.IdProdCompra);

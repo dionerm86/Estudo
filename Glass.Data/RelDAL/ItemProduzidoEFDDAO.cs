@@ -12,36 +12,7 @@ namespace Glass.Data.RelDAL
     {
         public IEnumerable<Sync.Fiscal.EFD.Entidade.IItemProduzido> ObtemItensProduzidosParaEFD(int idLoja, DateTime dataIni, DateTime dataFim)
         {
-            var sqlProducaoPeriodo = @"
-                SELECT lp.IdProdPedProducao
-		        FROM leitura_producao lp
-		        WHERE lp.DataLeitura >= ?dtIni
-        	        AND lp.DataLeitura <= ?dtFim
-        	        AND lp.IdSetor = 1
-                GROUP BY lp.IdProdPedProducao";
-
-            var sqlProducaoAnterior = @"
-                SELECT lp.IdProdPedProducao
-			    FROM leitura_producao lp
-            	LEFT JOIN
-                (
-                	SELECT lp.idProdPedProducao
-                	FROM leitura_producao lp
-                		INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
-                        LEFT JOIN roteiro_producao_etiqueta rpe ON (lp.IdProdPedProducao = rpe.IdProdPedProducao AND lp.IdSetor = rpe.idsetor)
-            		WHERE lp.DataLeitura < ?dtIni
-                		AND (COALESCE(rpe.UltimoSetor, 0) = 1 OR s.Tipo IN (" + (int)TipoSetor.Pronto + "," + (int)TipoSetor.Entregue + "," + (int)TipoSetor.ExpCarregamento + @"))
-                	GROUP BY lp.idProdPedProducao
-                ) as tmp ON (tmp.IdProdPedProducao = lp.IdProdPedProducao)
-                WHERE lp.DataLeitura <= ?dtAnteriorIni
-            	    AND lp.IdSetor = 1
-                    AND tmp.IdProdPedProducao IS NULL
-     		    GROUP BY lp.IdProdPedProducao";
-
-            var idsProducao = ExecuteMultipleScalar<int>(sqlProducaoPeriodo, GetParams(dataIni, dataFim, null));
-            idsProducao.AddRange(ExecuteMultipleScalar<int>(sqlProducaoAnterior, GetParams(dataIni, dataFim, dataIni.Date.AddDays(-1))));
-
-            idsProducao = idsProducao.GroupBy(f => f).Select(f => f.Key).ToList();
+            var idsProdPedProducao = LeituraProducaoDAO.Instance.ObterIdsProdPedProducaoPeloIdSetorDataLeitura(null, 1, dataIni, dataFim);
 
             var sqlDadosProducao = string.Format(@"
                 SELECT ppp.IdProdPedProducao, ppp.NumEtiqueta, lp.DataLeitura,
@@ -59,7 +30,7 @@ namespace Glass.Data.RelDAL
                     AND p.IdLoja = {3}
 	                AND ppp.Situacao = 1
                     AND ppp.IdProdPedProducao IN ({0})",
-                string.Join(",", idsProducao.Select(f => f.ToString()).ToArray()),
+                string.Join(",", idsProdPedProducao),
                 (int)TipoMercadoria.ProdutoEmProcesso, (int)TipoMercadoria.ProdutoAcabado, idLoja);
 
             var itens = objPersistence.LoadData(sqlDadosProducao).ToList();

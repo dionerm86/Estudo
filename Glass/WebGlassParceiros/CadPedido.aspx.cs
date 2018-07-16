@@ -14,7 +14,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected void Page_Load(object sender, EventArgs e)
         {
             if (UserInfo.GetUserInfo.IdCliente == null || UserInfo.GetUserInfo.IdCliente == 0 ||
-                (Request["idPedido"] != null && UserInfo.GetUserInfo.IdCliente != PedidoDAO.Instance.GetIdCliente(Glass.Conversoes.StrParaUint(Request["idPedido"]))))
+                (Request["idPedido"] != null && UserInfo.GetUserInfo.IdCliente != PedidoDAO.Instance.GetIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"]))))
             {
                 Response.Redirect("~/LstPedidos.aspx");
                 return;
@@ -121,7 +121,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             // e se o pedido tiver com opção readonly
             if (!IsPostBack)
             {
-                uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
+                uint? idObra = Request["idPedido"] != null ? PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) : null;
                 lnkProjeto.Visible = !isMaoDeObra && !isRevenda &&
                     (idObra == null || idObra == 0) && !isProducao && dtvPedido.CurrentMode == DetailsViewMode.ReadOnly;
             }
@@ -237,7 +237,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         [Ajax.AjaxMethod]
         public string IsProdutoObra(string idPedido, string codInterno, bool isComposicao)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && !isComposicao)
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
@@ -257,7 +257,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         [Ajax.AjaxMethod]
         public string GetTamanhoMaximoProduto(string idPedido, string codInterno, string totM2Produto)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0)
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
@@ -702,7 +702,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             try
             {
                 // Cria um registro na tabela em conferencia para este pedido
-                PedidoConferenciaDAO.Instance.NovaConferencia(idPedido, PedidoDAO.Instance.ObtemIdSinal(idPedido) > 0);
+                PedidoConferenciaDAO.Instance.NovaConferencia(idPedido, PedidoDAO.Instance.ObtemIdSinal(null, idPedido) > 0);
                 Voltar();
             }
             catch (Exception ex)
@@ -879,7 +879,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
     
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
-                bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(idPedido));
+                bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
     
                 // Verifica qual valor será utilizado
                 if (isRevenda) // Se for cliente revenda, valor de atacado
@@ -916,7 +916,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
             {
-                DateTime? dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                DateTime? dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
     
                 return dataEntrega != null ? dataEntrega.Value.ToString("dd/MM/yyyy") : "";
             }
@@ -927,7 +927,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected string GetDataPedido()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.ObtemDataPedido(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString("dd/MM/yyyy");
+                return PedidoDAO.Instance.ObtemDataPedido(null, Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString("dd/MM/yyyy");
             else
                 return "";
         }
@@ -945,7 +945,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected bool IsPedidoMaoDeObra()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -953,7 +953,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected bool IsPedidoProducao()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsProducao(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -973,8 +973,8 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected void Icms_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
     
         #endregion   
@@ -1087,11 +1087,11 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected void txtDataEntrega_Load(object sender, EventArgs e)
         {
             uint? idPedido = Request["idPedido"] != null ? (uint?)Glass.Conversoes.StrParaUint(Request["idPedido"]) : null;
-            uint idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(idPedido.Value) : 0;
+            uint idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(null, idPedido.Value) : 0;
             DateTime dataMinima, dataFastDelivery;
     
             if ((!IsPostBack || dtvPedido.CurrentMode == DetailsViewMode.Edit) && 
-                PedidoDAO.Instance.GetDataEntregaMinima(idCli, idPedido, null, null, out dataMinima, out dataFastDelivery))
+                PedidoDAO.Instance.GetDataEntregaMinima(null, idCli, idPedido, null, null, out dataMinima, out dataFastDelivery))
             {
                 ((HiddenField)((TextBox)sender).Parent.FindControl("hdfDataEntregaFD")).Value = dataFastDelivery.ToString("dd/MM/yyyy");
                 ((HiddenField)((TextBox)sender).Parent.FindControl("hdfDataEntregaNormal")).Value = dataMinima.ToString("dd/MM/yyyy");
@@ -1104,7 +1104,7 @@ namespace Glass.UI.Web.WebGlassParceiros
         protected bool GetBloquearDataEntrega()
         {
             uint? idPedido = Request["idPedido"] != null ? (uint?)Glass.Conversoes.StrParaUint(Request["idPedido"]) : null;
-            return PedidoDAO.Instance.BloquearDataEntregaMinima(idPedido);
+            return PedidoDAO.Instance.BloquearDataEntregaMinima(null, idPedido);
         }
     
         protected void ddlTipoEntrega_Load(object sender, EventArgs e)
@@ -1145,7 +1145,7 @@ namespace Glass.UI.Web.WebGlassParceiros
             try
             {
                 if (!String.IsNullOrEmpty(Request["idPedido"]))
-                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
+                    return Glass.Data.DAL.PedidoDAO.Instance.GetDescontoProdutos(null, Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().Replace(",", ".");
                 else
                     return "0";
             }
@@ -1245,7 +1245,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 string obsLib = ((TextBox)dtvPedido.FindControl("txtObsLib")).Text;
                 var idTransportador = ((DropDownList)dtvPedido.FindControl("drpTransportador")).SelectedValue;
 
-                PedidoDAO.Instance.UpdateParceiro(idPedido, codPedCli, null, obs, obsLib, Glass.Conversoes.StrParaIntNullable(idTransportador));
+                PedidoDAO.Instance.UpdateParceiro(null, idPedido, codPedCli, null, obs, obsLib, Glass.Conversoes.StrParaIntNullable(idTransportador));
                 Glass.MensagemAlerta.ShowMsg("Pedido atualizado!", Page);
             }
             catch (Exception ex)

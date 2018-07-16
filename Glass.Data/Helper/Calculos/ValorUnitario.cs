@@ -32,7 +32,7 @@ namespace Glass.Data.Helper.Calculos
                 return null;
 
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.Largura, container);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -62,7 +62,7 @@ namespace Glass.Data.Helper.Calculos
                 return null;
 
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.Largura, container);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;

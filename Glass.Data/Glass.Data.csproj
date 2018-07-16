@@ -383,12 +383,10 @@
     <Compile Include="Estoque\DAL\MovEstoqueCentroCustoDAO.cs" />
     <Compile Include="Estoque\DAL\MovInternaEstoqueFiscalDAO.cs" />
     <Compile Include="Estoque\DAL\MovMateriaPrimaDAO.cs" />
-    <Compile Include="Estoque\DAL\MovReservaLiberacaoDAO.cs" />
     <Compile Include="Estoque\Model\ChapaTrocadaDevolvida.cs" />
     <Compile Include="Estoque\Model\MovEstoqueCentroCusto.cs" />
     <Compile Include="Estoque\Model\MovInternaEstoqueFiscal.cs" />
     <Compile Include="Estoque\Model\MovMateriaPrima.cs" />
-    <Compile Include="Estoque\Model\MovReservaLiberacao.cs" />
     <Compile Include="Exceptions\LogoutException.cs" />
     <Compile Include="Financeiro\DAL\BandeiraCartaoDAO.cs" />
     <Compile Include="Financeiro\DAL\ChequesAcertoChequeDAO.cs" />
@@ -618,6 +616,7 @@
     <Compile Include="Helper\ICalculoIcmsSt.cs" />
     <Compile Include="Helper\IntermacConfig.cs" />
     <Compile Include="Helper\LogArquivo.cs" />
+    <Compile Include="Helper\ZenviaSMS.cs" />
     <Compile Include="Instalacao\DAL\FixacaoVidroDAO.cs" />
     <Compile Include="Global\DAL\FormaPagtoDAO.cs" />
     <Compile Include="Global\DAL\FornecedorDAO.cs" />
@@ -735,6 +734,12 @@
     <Compile Include="Model\Interfaces\IProdutoIcmsSt.cs" />
     <Compile Include="Model\Calculos\ContainerCalculoDTO.cs" />
     <Compile Include="Model\Calculos\ProdutoCalculoDTO.cs" />
+    <Compile Include="NFeUtils\IAutorizacao.cs" />
+    <Compile Include="NFeUtils\IConsultaProtocolo.cs" />
+    <Compile Include="NFeUtils\IInutilizacao.cs" />
+    <Compile Include="NFeUtils\IRecepcaoEvento.cs" />
+    <Compile Include="NFeUtils\IRetornoAutorizacao.cs" />
+    <Compile Include="NFeUtils\IStatusServico.cs" />
     <Compile Include="Orcamento\DAL\FotosOrcamentoDAO.cs" />
     <Compile Include="Orcamento\Model\AmbienteOrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
@@ -809,11 +814,6 @@
     <Compile Include="Financeiro\DAL\ProdutoFornecedorCotacaoCompraDAO.cs" />
     <Compile Include="Global\DAL\ProdutoFornecedorDAO.cs" />
     <Compile Include="Estoque\DAL\ProdutoInventarioEstoqueDAO.cs" />
-    <Compile Include="Pedido\DAL\PedidoDAO.1.cs" />
-    <Compile Include="Pedido\DAL\PedidoDAO.2.cs" />
-    <Compile Include="Pedido\DAL\PedidoDAO.3.cs" />
-    <Compile Include="Pedido\DAL\PedidoDAO.4.cs" />
-    <Compile Include="Pedido\DAL\PedidoDAO.5.cs" />
     <Compile Include="Pedido\DAL\PedidoRentabilidadeDAO.cs" />
     <Compile Include="Pedido\DAL\ProdutoMoldeDAO.cs" />
     <Compile Include="Fiscal\DAL\ProdutoNfAdicaoDAO.cs" />
@@ -1726,6 +1726,36 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\wsNFeSVANAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsNFeSVANConsultaProtocolo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsNFeSVANInutilizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsNFeSVANRecepcaoEvento\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsNFeSVANRetAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsNFeSVANStatus\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="Web References\wsPConsultaCadastro\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -2231,7 +2261,7 @@
     <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
     </None>
     <EmbeddedResource Include="Resources\FML_Basico.calcpackage" />
     <None Include="Web References\wsHConsultaCadastro\cadconsultacadastro4.wsdl" />
@@ -2326,6 +2356,36 @@
     </None>
     <None Include="Web References\wsHSVRSMDFeStatusServico\MDFeStatusServico.wsdl" />
     <None Include="Web References\wsHSVRSMDFeStatusServico\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANAutorizacao\NFeAutorizacao4.wsdl" />
+    <None Include="Web References\wsNFeSVANAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANConsultaProtocolo\NFeConsultaProtocolo4.wsdl" />
+    <None Include="Web References\wsNFeSVANConsultaProtocolo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANInutilizacao\NFeInutilizacao4.wsdl" />
+    <None Include="Web References\wsNFeSVANInutilizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANRecepcaoEvento\NFeRecepcaoEvento4.wsdl" />
+    <None Include="Web References\wsNFeSVANRecepcaoEvento\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANRetAutorizacao\NFeRetAutorizacao4.wsdl" />
+    <None Include="Web References\wsNFeSVANRetAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsNFeSVANStatus\NFeStatusServico4.wsdl" />
+    <None Include="Web References\wsNFeSVANStatus\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -3808,6 +3868,72 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_SMSSend_WSSend</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANAutorizacao\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeAutorizacao4/NFeAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANAutorizacao_NFeAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANConsultaProtocolo\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeConsultaProtocolo4/NFeConsultaProtocolo4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANConsultaProtocolo_NFeConsultaProtocolo4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANInutilizacao\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeInutilizacao4/NFeInutilizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANInutilizacao_NFeInutilizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANRecepcaoEvento\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeRecepcaoEvento4/NFeRecepcaoEvento4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANRecepcaoEvento_NFeRecepcaoEvento4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANRetAutorizacao\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeRetAutorizacao4/NFeRetAutorizacao4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANRetAutorizacao_NFeRetAutorizacao4</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsNFeSVANStatus\</RelPath>
+      <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANStatus_NFeStatusServico4</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>

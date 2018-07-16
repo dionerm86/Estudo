@@ -316,9 +316,9 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(dataNiverFim))
             {
-                filtroAdicional += !String.IsNullOrEmpty(dataNiverIni) && DateTime.Parse(dataCadIni + " 00:00") <= DateTime.Parse(dataNiverFim + " 00:00") ?
-                "MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim)" :
-                "(MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
+                filtroAdicional += !String.IsNullOrEmpty(dataNiverIni) && DateTime.Parse(dataNiverIni + " 00:00") <= DateTime.Parse(dataNiverFim + " 00:00") ?
+                "And MONTH(Data_nasc) * 100 + DAY(Data_Nasc) <= MONTH(?dataNiverFim) * 100 + DAY(?dataNiverFim)" :
+                "And (MONTH(Data_nasc) + 12) * 100 + DAY(Data_Nasc) <= (MONTH(?dataNiverFim) + 12) * 100 + DAY(?dataNiverFim))";
                 criterio = "Data Aniversário Fim: " + dataNiverFim + "    ";
             }
 
@@ -2156,9 +2156,9 @@ namespace Glass.Data.DAL
             return GetElement(idCliente).Uf;
         }
 
-        public decimal ObtemLimite(uint idCliente)
+        public decimal ObtemLimite(GDASession sessao, uint idCliente)
         {
-            return ObtemValorCampo<decimal>("limite", "id_Cli=" + idCliente);
+            return ObtemValorCampo<decimal>(sessao, "limite", "id_Cli=" + idCliente);
         }
 
         public string ObtemEnderecoCompleto(uint idCliente)

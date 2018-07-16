@@ -163,6 +163,8 @@ namespace Glass.UI.Web.Cadastros
 
             bool visivelPedidoInterno = Config.PossuiPermissao(Config.FuncaoMenuEstoque.AnexarArquivoPedidoInterno);
 
+            bool visivelCheque = Request["tipo"] == "cheque";
+
             IFoto.TipoFoto tipo = GetTipo();
 
             // Exibe/Esconde opção de cadastrar/editar/excluir fotos
@@ -176,19 +178,17 @@ namespace Glass.UI.Web.Cadastros
                     tipo == IFoto.TipoFoto.PedidoInterno ? visivelPedidoInterno :
                     /* Chamado 44690. */
                     tipo == IFoto.TipoFoto.Sugestao ? visivelCliente :
-
+                    tipo == IFoto.TipoFoto.Cheque ? visivelCheque :
                     tipo == IFoto.TipoFoto.Pedido ? visivelPedido :
                     tipo == IFoto.TipoFoto.ImpostoServ ? visivelFinanceiroPagto :
                     tipo == IFoto.TipoFoto.ConciliacaoBancaria ? visivelFinanceiroPagto :
                     tipo == IFoto.TipoFoto.DevolucaoPagto ? visivelFinanceiro :
                     tipo == IFoto.TipoFoto.Orcamento ? visivelOrcamento :
                     tipo == IFoto.TipoFoto.Obra ? visivelFinanceiro :
-                    tipo == IFoto.TipoFoto.Fornecedor ? visivelFornecedor:visivelLiberacao;
-            
+                    tipo == IFoto.TipoFoto.Fornecedor ? visivelFornecedor:visivelLiberacao;            
 
             trTitle2.Visible = trTitle1.Visible;
             trCadastro.Visible = trTitle1.Visible;
-
 
             System.Collections.Generic.IList<IFoto> lstFotos;
 
@@ -330,8 +330,12 @@ namespace Glass.UI.Web.Cadastros
                 switch (Request["tipo"])
                 {
                     case "pedido":
+
+                        if (PedidoEspelhoDAO.Instance.IsPedidoImpresso(null, foto.IdParent))
+                            return ("Não é possível inserir imagem em pedidos que já possuam etiqueta(s) impressa(s).");
+
                         // Se o tipo for pedido e o nome do arquivo não for o id de um pedido válido então o arquivo não é anexado.
-                        if (!PedidoDAO.Instance.Exists(idReferencia))
+                        else if (!PedidoDAO.Instance.Exists(idReferencia))
                         {
                             arquivosNaoAnexados += arquivo.FileName + ", ";
                             continue;

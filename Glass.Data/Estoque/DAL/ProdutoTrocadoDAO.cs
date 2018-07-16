@@ -240,6 +240,11 @@ namespace Glass.Data.DAL
             return ExecuteScalar<decimal>(session, sql);
         }
 
+        public decimal ObterCustoProd(GDASession session, int idProdTrocado)
+        {
+            return ObtemValorCampo<decimal>(session, "CustoProd", $"IdProdTrocado={ idProdTrocado }");
+        }
+
         #endregion
 
         #region Verifica se o produto foi trocado ou devolvido

@@ -33,15 +33,13 @@ namespace Glass.UI.Web.Cadastros.Producao
             {
                 if (!RetalhoProducaoDAO.Instance.ValidaRetalhos(dadosRetalho, idsP[1].StrParaUint(), idsP[0].StrParaUint()))
                     throw new Exception();
+                Page.ClientScript.RegisterStartupScript(this.GetType(), "Imprimir", string.Format("imprimirRetalhos('{0}');", hdfIdProdNF.Value), true);
             }
-            catch
+            catch (Exception ex)
             {
-                MensagemAlerta.ShowMsg("Erro de validação de retalhos.\r\nVerifique se a altura e largura do retalho são menores que a chapa assim como a metragem total.", this.Page);
-                return;
+                Glass.MensagemAlerta.ErrorMsg("Falha ao atualizar dados do Pedido.", ex, this.Page);
             }
 
-
-            Page.ClientScript.RegisterStartupScript(this.GetType(), "Imprimir", string.Format("imprimirRetalhos('{0}');", hdfIdProdNF.Value), true);
         }
     }
 }

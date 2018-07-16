@@ -305,8 +305,9 @@ namespace WebGlass.Business.Pedido.Fluxo
 
 
                     // Dá entrada no estoque da loja
-                    MovEstoqueDAO.Instance.CreditaEstoquePedido(sessao, p.IdProd, idLoja, p.IdPedido, p.IdProdPed,
-                        (decimal)(m2 ? (p.TotM / p.Qtde) * qtdMov : qtdMov), (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado);
+                    MovEstoqueDAO.Instance.CreditaEstoquePedido(sessao, p.IdProd, idLoja, p.IdPedido, p.IdProdPed, (decimal)(m2 ? (p.TotM / p.Qtde) * qtdMov : qtdMov),
+                        (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
+                        tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null, null);
                 }
             }
         }
@@ -363,8 +364,9 @@ namespace WebGlass.Business.Pedido.Fluxo
                     var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)p.IdProd);
 
                     // Dá saída no estoque da loja
-                    MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, p.IdProd, idLoja, p.IdPedido, p.IdProdPed,
-                        (decimal)(m2 ? (p.TotM / p.Qtde) * qtdMov : qtdMov), 0, (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null);
+                    MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, p.IdProd, idLoja, p.IdPedido, p.IdProdPed, (decimal)(m2 ? (p.TotM / p.Qtde) * qtdMov : qtdMov), 0,
+                        (GrupoProdDAO.Instance.IsVidro((int)p.IdGrupoProd) && tipoCalculo != (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd) &&
+                        tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != Glass.Data.Model.TipoSubgrupoProd.ChapasVidroLaminado, null, null, null);
                 }
             }
         }

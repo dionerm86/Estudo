@@ -20,6 +20,7 @@ namespace Glass.Data.wsHNFeConsultaProtocolo {
     using System.Web.Services.Protocols;
     using System.Xml.Serialization;
     using System.ComponentModel;
+    using NFeUtils;
     
     
     /// <remarks/>
@@ -27,7 +28,7 @@ namespace Glass.Data.wsHNFeConsultaProtocolo {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Web.Services.WebServiceBindingAttribute(Name="NFeConsultaProtocolo4Soap", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeConsultaProtocolo4")]
-    public partial class NFeConsultaProtocolo4 : System.Web.Services.Protocols.SoapHttpClientProtocol {
+    public partial class NFeConsultaProtocolo4 : System.Web.Services.Protocols.SoapHttpClientProtocol, IConsultaProtocolo {
         
         private System.Threading.SendOrPostCallback nfeConsultaNFOperationCompleted;
         

@@ -112,6 +112,14 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(String.Format(sql, idPedido)) > 0;
         }
 
+        //Verifica se o pedido passado possui alguma exportação que não esteja cancelada
+        public bool VerificarPossuiExportacao(int idPedido)
+        {
+            string sql = @"select Count(*) from pedido_exportacao where idPedido={0} AND SituacaoExportacao <> {1}";
+
+            return objPersistence.ExecuteSqlQueryCount(String.Format(sql, idPedido, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado)) > 0;
+        }
+
         #endregion
 
         #region Verifica se um pedido pode ser exportado

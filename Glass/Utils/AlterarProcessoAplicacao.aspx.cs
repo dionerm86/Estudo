@@ -280,7 +280,7 @@ namespace Glass.UI.Web.Utils
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
 
                 int tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
-                bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(idPedido));
+                bool isRevenda = ClienteDAO.Instance.IsRevenda(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
 
                 // Verifica qual valor será utilizado
                 if (isRevenda) // Se for cliente revenda, valor de atacado
@@ -299,7 +299,7 @@ namespace Glass.UI.Web.Utils
         protected bool IsPedidoMaoDeObra()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsMaoDeObra(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsMaoDeObra(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -315,7 +315,7 @@ namespace Glass.UI.Web.Utils
         protected bool IsPedidoProducao()
         {
             if (!String.IsNullOrEmpty(Request["idPedido"]))
-                return PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"]));
+                return PedidoDAO.Instance.IsProducao(null, Glass.Conversoes.StrParaUint(Request["idPedido"]));
             else
                 return false;
         }
@@ -327,15 +327,15 @@ namespace Glass.UI.Web.Utils
         protected void Icms_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja), null);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja), null);
         }
 
         protected void Ipi_Load(object sender, EventArgs e)
         {
             var idPedido = Request["idPedido"];
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(Conversoes.StrParaUint(idPedido));
-            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja), null);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, Conversoes.StrParaUint(idPedido));
+            sender.GetType().GetProperty("Visible").SetValue(sender, LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja), null);
         }
 
         #endregion
@@ -356,7 +356,7 @@ namespace Glass.UI.Web.Utils
             Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)sender;
             GridViewRow linhaControle = benef.Parent.Parent as GridViewRow;
 
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(Conversoes.StrParaUint(Request["idPedido"]));
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, Conversoes.StrParaUint(Request["idPedido"]));
 
             Control codProd = null;
             if (linhaControle.FindControl("lblCodProdIns") != null)
@@ -422,8 +422,8 @@ namespace Glass.UI.Web.Utils
         protected void CalcularDataEntrega(ref string dataEntregaFD, ref string dataEntregaNormal, bool forcarAtualizacao)
         {
             var idPedido = Request["idPedido"] != null ? Request["idPedido"].StrParaUintNullable() : null;
-            var idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(idPedido.Value) : 0;
-            var dataBase = idPedido > 0 ? PedidoDAO.Instance.ObtemDataPedido(idPedido.Value) : FuncionarioDAO.Instance.ObtemDataAtraso(UserInfo.GetUserInfo.CodUser);
+            var idCli = idPedido > 0 ? PedidoDAO.Instance.GetIdCliente(null, idPedido.Value) : 0;
+            var dataBase = idPedido > 0 ? PedidoDAO.Instance.ObtemDataPedido(null, idPedido.Value) : FuncionarioDAO.Instance.ObtemDataAtraso(UserInfo.GetUserInfo.CodUser);
 
             DateTime dataMinima, dataFastDelivery;
 
@@ -491,11 +491,11 @@ namespace Glass.UI.Web.Utils
         {
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
             uint idFuncAtual = Glass.Conversoes.StrParaUint(idFuncAtualStr);
-            uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(idPedido).GetValueOrDefault() : 0;
+            uint idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(null, idPedido).GetValueOrDefault() : 0;
 
             return (idFuncDesc == 0 || UserInfo.IsAdministrador(idFuncAtual) || alterouDesconto.ToLower() == "true" ?
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)) :
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido))).ToString().Replace(",", ".");
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncAtual, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)) :
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido))).ToString().Replace(",", ".");
         }
 
         protected bool IsReposicao(object tipoVenda)

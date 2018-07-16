@@ -903,13 +903,13 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 1000px">
-                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
+                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar() ? "": "display: none") %>'>
                                                 <tr>
                                                     <td align="center" bgcolor="#D2D2D2" colspan="4">
                                                         <asp:Label ID="Label9" runat="server" Font-Bold="True" Text="Dados Financeiros"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label36" runat="server" Text="Média de compra mensal"></asp:Label>
                                                     </td>
@@ -929,7 +929,7 @@
                                                         <asp:Label ID="Label73" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label32" runat="server" Text="Limite"
                                                             ToolTip="Caso o limite esteja zerado o Cliente será ilimitado."></asp:Label>
@@ -967,7 +967,7 @@
                                                             FormasPagto='<%# Bind("FormasPagto") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
                                                         <asp:Label ID="Label83" runat="server" Text="Data Limite do Cad."></asp:Label>
                                                     </td>
@@ -977,7 +977,7 @@
                                                     <td nowrap="nowrap" class="dtvHeader" align="left"></td>
                                                     <td align="left"></td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td nowrap="nowrap" class="dtvHeader" align="left">
                                                         <asp:Label ID="Label56" runat="server" Text="Parcelas"></asp:Label>
                                                     </td>
@@ -986,7 +986,7 @@
                                                             FormaPagtoPadrao='<%# Bind("TipoPagto") %>' ParcelasNaoUsar='<%# Bind("Parcelas") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label33" runat="server" Text="Revenda"></asp:Label>
                                                     </td>
@@ -1002,7 +1002,7 @@
                                                         <asp:Label ID="Label10" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
                                                         <asp:Label ID="lblPercRedNfeVenda" runat="server" Text="Perc. Desconto (Venda)" Visible='<%# (bool)ExibirPercRedNfe() %>'></asp:Label>
                                                     </td>
@@ -1021,7 +1021,7 @@
                                                         </asp:TextBox>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">Tabela Desconto/Acréscimo
                                                     </td>
                                                     <td align="left">
@@ -1037,7 +1037,7 @@
                                                         <asp:CheckBox ID="chkPagamentoAntesProducao" runat="server" Checked='<%# Bind("PagamentoAntesProducao") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style='<%= !Glass.Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido ? "display: none": "" %>; padding: 4px; width: 170px;'>
                                                         <asp:Label ID="Label3" runat="server" Text="Cobrar ICMS ST no pedido"></asp:Label>
                                                     </td>
@@ -1052,7 +1052,7 @@
                                                         <asp:CheckBox ID="chkCobrarIpi" runat="server" Checked='<%# Bind("CobrarIpi") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
                                                         <asp:Label ID="Label86" runat="server" Text="Conta Bancária"></asp:Label></td>
                                                     <td>
@@ -1070,7 +1070,7 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
                                                         <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobrança"></asp:Label>
                                                     </td>
@@ -1842,13 +1842,13 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 1000px">
-                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
+                                            <table id="tblDadosFinanc" style='<%# "width: 100%;" + (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar() ? "": "display: none") %>'>
                                                 <tr>
                                                     <td align="center" bgcolor="#D2D2D2" colspan="4">
                                                         <asp:Label ID="Label9" runat="server" Font-Bold="True" Text="Dados Financeiros"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label18" runat="server" Text="Média de compra mensal"></asp:Label>
                                                     </td>
@@ -1868,7 +1868,7 @@
                                                         <asp:Label ID="Label73" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label321" runat="server" Text="Limite"
                                                             ToolTip="Caso o limite esteja zerado o Cliente será ilimitado."></asp:Label>
@@ -1907,7 +1907,7 @@
                                                         <asp:Label ID="Label10" runat="server" Text="%"></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label35" runat="server" Text="Crédito"></asp:Label>
                                                     </td>
@@ -1925,7 +1925,7 @@
                                                         <asp:Label ID="lblPercNfe" runat="server" Text="%" Visible='<%# PercReducaoNfeVisible() %>'></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td class="dtvHeader">
                                                         <asp:Label ID="Label83" runat="server" Text="Data Limite do Cad."></asp:Label>
                                                     </td>
@@ -1942,7 +1942,7 @@
                                                         <asp:Label ID="Label13" runat="server" Text="%" Visible='<%# PercReducaoNfeVisible() %>'></asp:Label>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">Tabela Desconto/Acréscimo
                                                     </td>
                                                     <td align="left">
@@ -1958,7 +1958,7 @@
                                                         align="left">
                                                         <asp:CheckBox ID="chkPagamentoAntesProducao" runat="server" Checked='<%# Bind("PagamentoAntesProducao") %>' />
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style="width: 170px">
                                                         <asp:Label ID="Label33" runat="server" Text="Revenda"></asp:Label>
                                                     </td>
@@ -1966,7 +1966,7 @@
                                                         <asp:CheckBox ID="chkRevenda" runat="server" Checked='<%# Bind("Revenda") %>' Enabled="<%# Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuCadastro.MarcarClienteRevenda) %>" />
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style='padding: 4px; <%= !Glass.Configuracoes.PedidoConfig.Impostos.CalcularIpiPedido ? "visibility: hidden": "" %>; width: 170px;'>
                                                         <asp:Label ID="Label38" runat="server" Text="Cobrar IPI no pedido"></asp:Label>
                                                     </td>
@@ -1982,7 +1982,7 @@
                                                             FormasPagto='<%# Bind("FormasPagto") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader" style='padding: 4px; <%= !Glass.Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido ? "visibility: hidden": "" %>; width: 170px;'>
                                                         <asp:Label ID="Label3" runat="server" Text="Cobrar ICMS ST no pedido"></asp:Label>
                                                     </td>
@@ -1998,7 +1998,7 @@
                                                             ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' IdCliente='<%# Eval("IdCli") %>' />
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr style='<%# (ExibirInformacoesFinanceiras() ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader">
                                                         <asp:Label ID="Label85" runat="server" Text="Conta Bancária"></asp:Label></td>
                                                     <td>
@@ -2016,7 +2016,7 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                 </tr>
-                                                <tr class="alt">
+                                                <tr class="alt" style='<%# (ExibirInformacoesFinanceiras() || ExigirEmailClienteAoInserirOuAtualizar()  ? "": "display: none") %>'>
                                                     <td align="left" class="dtvHeader"  style="width: 170px">
                                                         <asp:Label ID="lblEmailCobranca" runat="server" Text="Email Cobrança"></asp:Label>
                                                     </td>

@@ -34,7 +34,7 @@ namespace Glass.UI.Web.Relatorios
     
                 return new JavaScriptData(
                     UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 && 
-                        PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente ||
+                        PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente ||
                         (tipo != TipoRelatorioPedido.Normal && tipo != TipoRelatorioPedido.Pcp),
                     "false"
                 );
@@ -70,7 +70,7 @@ namespace Glass.UI.Web.Relatorios
             TipoRelatorioPedido tipo = !String.IsNullOrEmpty(Request["tipo"]) ? (TipoRelatorioPedido)Glass.Conversoes.StrParaInt(Request["tipo"]) : TipoRelatorioPedido.Normal;
     
             // (ACESSO EXTERNO) Verifica se o usuário tem acesso à este relatório
-            if (UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 && PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente)
+            if (UserInfo.GetUserInfo != null && UserInfo.GetUserInfo.IdCliente > 0 && PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])) != UserInfo.GetUserInfo.IdCliente)
                 return;
     
             if (!PCPConfig.CriarClone && tipo == TipoRelatorioPedido.Pcp)
@@ -178,8 +178,8 @@ namespace Glass.UI.Web.Relatorios
                 report.DataSources.Add(new ReportDataSource("ProdutosPedidoRpt", ProdutosPedidoRptDAL.Instance.CopiaLista(prodPedido.ToArray())));
             }
 
-            lstParam.Add(new ReportParameter("LojaCalculaICMSPedido", LojaDAO.Instance.ObtemCalculaIcmsPedido(idLoja).ToString()));
-            lstParam.Add(new ReportParameter("LojaCalculaIPIPedido", LojaDAO.Instance.ObtemCalculaIpiPedido(idLoja).ToString()));
+            lstParam.Add(new ReportParameter("LojaCalculaICMSPedido", LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLoja).ToString()));
+            lstParam.Add(new ReportParameter("LojaCalculaIPIPedido", LojaDAO.Instance.ObtemCalculaIpiPedido(null, idLoja).ToString()));
             lstParam.Add(new ReportParameter("TemProdutoLamComposicao", pedido[0].TemProdutoLamComposicao.ToString()));
 
             report.DataSources.Add(new ReportDataSource("ParcelasPedido", parcPedido));

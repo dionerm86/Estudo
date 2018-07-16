@@ -65,9 +65,9 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         if (idPedido > 0)
                         {
                             projeto.IdPedido = idPedido;
-                            projeto.NomeCliente = ClienteDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdCliente(idPedido));
-                            projeto.NomeFunc = FuncionarioDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdFunc(idPedido));
-                            projeto.DataCad = PedidoDAO.Instance.ObtemDataPedido(idPedido);
+                            projeto.NomeCliente = ClienteDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
+                            projeto.NomeFunc = FuncionarioDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdFunc(null, idPedido));
+                            projeto.DataCad = PedidoDAO.Instance.ObtemDataPedido(null, idPedido);
                             projeto.TipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
                         }
                     }
@@ -130,8 +130,8 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         lstMedidas.AddRange(MedidaItemProjetoDAO.Instance.GetListByItemProjeto(itemProjeto[i].IdItemProjeto));
                     }
 
-                    lstParam.Add(new ReportParameter("Pedido_PedCli", projeto.IdPedido > 0 ? PedidoDAO.Instance.ObtemPedCli(projeto.IdPedido) : string.Empty));
-                    lstParam.Add(new ReportParameter("FastDelivery", PedidoDAO.Instance.IsFastDelivery(projeto.IdPedido).ToString()));
+                    lstParam.Add(new ReportParameter("Pedido_PedCli", projeto.IdPedido > 0 ? PedidoDAO.Instance.ObtemPedCli(null, projeto.IdPedido) : string.Empty));
+                    lstParam.Add(new ReportParameter("FastDelivery", PedidoDAO.Instance.IsFastDelivery(null, projeto.IdPedido).ToString()));
                     lstParam.Add(new ReportParameter("ExibirImagemModelo", (true).ToString()));    
                     lstParam.Add(new ReportParameter("CorObs", Glass.Configuracoes.ProjetoConfig.RelatorioImagemProjeto.CorObsNoRelatorio));
                     lstParam.Add(new ReportParameter("TemEdicaoCadProject", "true"));    

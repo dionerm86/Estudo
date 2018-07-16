@@ -527,9 +527,9 @@ namespace Glass.Data.DAL
                 throw new Exception("Não é possível criar o retalho, pois a peça ainda não passou pelo corte");
 
             // Garante que a etiqueta ainda não esteja temperada
-            string setores = LeituraProducaoDAO.Instance.ObtemSetoresLidos(session, idProdPedProducao);
-            foreach (string s in setores.Split(','))
-                if (!String.IsNullOrEmpty(s) && Utils.ObtemSetor(Glass.Conversoes.StrParaUint(s)).Forno)
+            var idsSetor = LeituraProducaoDAO.Instance.ObterSetoresLidos(session, (int)idProdPedProducao);
+            foreach (var s in idsSetor?.Where(f => f > 0))
+                if (Utils.ObtemSetor((uint)s)?.Forno ?? false)
                     throw new Exception("Peça já passou pelo forno. Não é possível gerar retalhos de peças temperadas.");
 
             // Separa os valores dos retalhos
@@ -636,6 +636,7 @@ namespace Glass.Data.DAL
                                 novoProduto.IdProdOrig = produto.IdProd;
                                 novoProduto.Situacao = Glass.Situacao.Ativo;
                                 novoProduto.Obs = observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null;
+                                novoProduto.DadosBaixaEstoque.Clear();
 
                                 /* Chamado 31821. */
                                 novoProduto.Usucad = usuario != null ? usuario.CodUser : UserInfo.GetUserInfo.CodUser;
@@ -651,6 +652,7 @@ namespace Glass.Data.DAL
                             else
                             {
                                 novoProduto.Descricao = produto.Descricao;
+                                novoProduto.DadosBaixaEstoque.Clear();
 
                                 // Chamado 65546
                                 var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;

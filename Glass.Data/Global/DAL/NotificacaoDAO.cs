@@ -118,7 +118,7 @@ namespace Glass.Data.DAL
             {
                 var ultDataNotificacao = ObtemDataUltNotificacaoSetorInoperante(session, d.IdSetor);
 
-                if (ultDataNotificacao == null || LeituraProducaoDAO.Instance.TeveLeituraPosterior(session, d.IdSetor, ultDataNotificacao.Value))
+                if (ultDataNotificacao == null || LeituraProducaoDAO.Instance.VerificarSetorTeveLeituraPosterior(session, d.IdSetor, ultDataNotificacao.Value))
                 {
                     Insert(session, new Notificacao()
                     {
