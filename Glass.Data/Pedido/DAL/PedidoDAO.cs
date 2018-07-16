@@ -5457,10 +5457,13 @@ namespace Glass.Data.DAL
         {
             var pedidos = idsPedidos.Split(',');
             var idsPedidosErro = new List<uint>();
+
             foreach (var idPedido in pedidos)
             {
                 string erro = "";
-                if (!VerificaSinalPagamentoReceber(sessao, idPedido, out erro))
+                var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido.StrParaUint());
+                if ((!VerificaSinalPagamentoReceber(sessao, idPedido, out erro) && !string.IsNullOrWhiteSpace(erro)) ||
+                   (ClienteDAO.Instance.ObtemLimite(sessao, idCliente) - (ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null) + PedidoDAO.Instance.GetTotal(sessao, idPedido.StrParaUint())) < 0))
                 {
                     idsPedidosErro.Add(Conversoes.StrParaUint(idPedido));
                 }
