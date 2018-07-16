@@ -248,7 +248,7 @@ namespace Glass.Data.DAL
                 return false;
             }
 
-            var numSeqSetor = ObtemValorCampo<int>(sessao, "NumSeq", $"IdSetor={ idSetor }");
+            var numSeqSetor = SetorDAO.Instance.ObtemNumSeq(sessao, idSetor);
 
             var sql = $@"SELECT COUNT(*)=0 FROM leitura_producao lp
                     INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)

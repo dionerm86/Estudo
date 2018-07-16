@@ -383,7 +383,7 @@ namespace Glass.Data.DAL
                 WHERE IdSetor NOT IN ({ string.Join(",", idsSetor) })
                     AND s.Situacao={ (int)Situacao.Ativo }
                     AND s.ImpedirAvanco IS NOT NULL AND s.ImpedirAvanco=1
-                    AND s.NumSeq<{ numSeqSetor })";
+                    AND s.NumSeq<{ numSeqSetor }";
 
             sql += !isTemperado ? " AND (Forno IS NULL OR Forno = 0)" : string.Empty;
 
