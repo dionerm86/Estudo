@@ -558,8 +558,15 @@ namespace Glass.Data.DAL
             if (ProdutoDAO.Instance.IsProdutoLamComposicao(session, (int)idProd))
                 throw new Exception("A peça é um produto composto, portanto as peças de composição já foram temperadas e, por isso, não é possível gerar o retalho.");
 
-            if ((alturas.Any(f => f > alturaPeca) || larguras.Any(f => f > larguraPeca)) && (alturas.Any(f => f > larguraPeca) || larguras.Any(f => f > alturaPeca)))
-                return false;
+            var pecas = new List<int[]>();
+
+            for (int i = 0; i < alturas.Length; i++)
+            {
+                pecas.Add(new[] { alturas[i], larguras[i] });
+            }
+
+            if (ValidaMedidasRetalho(pecas, alturaPeca, larguraPeca).Count() > 0)
+                throw new Exception(string.Join("\n", ValidaMedidasRetalho(pecas, alturaPeca, larguraPeca).ToArray()));
 
             totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
 
@@ -570,6 +577,22 @@ namespace Glass.Data.DAL
                 return false;
 
             return true;
+        }
+
+        public List<string> ValidaMedidasRetalho(List<int[]> pecas, int altura, int largura)
+        {
+
+            var validacoes = new List<string>();
+
+            foreach (var peca in pecas)
+            {
+                if (peca[0] > altura && peca[1] > altura)
+                    validacoes.Add($"As Medidas da peça {peca[0]} X {peca[1]} ultrapassam os limites para a altura {altura}.");
+                if (peca[0] > largura && peca[1] > largura)
+                    validacoes.Add($"As Medidas da peça {peca[0]} X {peca[1]} ultrapassam os limites para a largura {largura}.");
+            }
+
+            return validacoes;
         }
 
         #endregion
