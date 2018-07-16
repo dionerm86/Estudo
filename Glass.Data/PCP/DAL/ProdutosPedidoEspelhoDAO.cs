@@ -2014,6 +2014,23 @@ namespace Glass.Data.DAL
 
         #region Retorna o valor de campos isolados
 
+        /// <summary>
+        /// Busca os ids dos produtos pelos pedidos.
+        /// </summary>
+        public List<int> ObterIdsProdPedPelosIdsPedido(GDASession sessao, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT IdProdPed 
+                FROM produtos_pedido
+                WHERE IdPedido IN ({ string.Join(",", idsPedido) });";
+
+            return ExecuteMultipleScalar<int>(sessao, sql);
+        }
+
         public uint? ObtemIdAmbientePedido(uint idProdPed)
         {
             return ObtemIdAmbientePedido(null, idProdPed);
@@ -3943,8 +3960,12 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
-                if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
+                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
+
+                if (idsLojaSubgrupoProd.Count(f => f > 0) > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaPedido))
+                {
                     throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
+                }
 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
                 //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.

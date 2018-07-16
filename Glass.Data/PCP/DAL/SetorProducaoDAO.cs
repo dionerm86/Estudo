@@ -72,24 +72,6 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        private string SqlUltLeituras(string ids, int idSetor)
-        {
-            string sql = @"
-                            SELECT lp.IdProdPedProducao,
-                                   null AS IdsSetores,
-                                   lp.DataLeitura AS SETOR0,
-                                   f.Nome AS FUNC0
-                            FROM leitura_producao lp
-                            LEFT JOIN funcionario f ON (lp.IdFuncLeitura = f.IdFunc)
-                            WHERE lp.IdProdPedProducao IN (" + ids + @") AND
-                                  lp.IdSetor = " + idSetor;
-//                                  lp.DataLeitura = (SELECT MAX(DataLeitura) 
-//                                                    FROM leitura_producao   
-//                                                    WHERE IdProdPedProducao = lp.IdProdPedProducao)";
-
-            return sql;
-        }
-
         public IList<SetorProducao> GetLeiturasSetores(string ids)
         {
             return GetLeiturasSetores(null, ids);
@@ -117,7 +99,7 @@ namespace Glass.Data.DAL
 
         public IList<SetorProducao> GetUltLeiturasSetores(string ids, int idSetor)
         {
-            return objPersistence.LoadData(SqlUltLeituras(ids, idSetor)).ToList();
+            return objPersistence.LoadData(LeituraProducaoDAO.Instance.ObterSqlUltimasLeiturasSetor(ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), idSetor)).ToList();
         }
 
         public IList<SetorProducao> GetUltLeiturasSetores(ProdutoPedidoProducao[] itens, int idSetor)

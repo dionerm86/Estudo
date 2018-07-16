@@ -364,93 +364,30 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtém os setores não lidos anteriores ao setor passado marcados com impedir avanço
         /// </summary>
-        /// <param name="numEtiqueta"></param>
-        /// <param name="idSetor"></param>
-        /// <returns></returns>
         public IList<Setor> ObtemSetoresObrigatoriosNaoLidos(GDASession sessao, uint idProdPedProducao, uint idSetor)
         {
-            string sqlIsTemperado = @"
+            var sqlIsTemperado = $@"
                 SELECT sp.`ISVIDROTEMPERADO`
                 FROM `subgrupo_prod` sp
                     LEFT JOIN produto p ON sp.`IDSUBGRUPOPROD` = p.`IDSUBGRUPOPROD`
                     LEFT JOIN `produtos_pedido_espelho` ppe ON p.`IDPROD` = ppe.`IDPROD`
                     LEFT JOIN `produto_pedido_producao` ppp ON ppe.`IDPRODPED` = ppp.`IDPRODPED`
-                WHERE ppp.`IDPRODPEDPRODUCAO` = " + idProdPedProducao;
+                WHERE ppp.`IDPRODPEDPRODUCAO` = { idProdPedProducao }";
 
-            bool isTemperado = ExecuteScalar<bool>(sessao, sqlIsTemperado);
+            var isTemperado = ExecuteScalar<bool>(sessao, sqlIsTemperado);
+            var numSeqSetor = ObtemValorCampo<int>(sessao, "NumSeq", $"IdSetor={ idSetor }");
+            var idsSetor = LeituraProducaoDAO.Instance.ObterSetoresLidos(sessao, (int)idProdPedProducao);
 
-            string sql = @"
-                Select s.* From setor s
-                Where idSetor not in (
-                        Select idSetor From leitura_producao
-                        Where idProdPedProducao=" + idProdPedProducao + @"
-                    )
-                    And s.situacao=" + (int)Situacao.Ativo + @"
-                    And s.impedirAvanco=true
-                    And s.numSeq<" + ObtemValorCampo<int>(sessao, "numSeq", "idSetor=" + idSetor);
+            string sql = $@"
+                SELECT s.* FROM setor s
+                WHERE IdSetor NOT IN ({ string.Join(",", idsSetor) })
+                    AND s.Situacao={ (int)Situacao.Ativo }
+                    AND s.ImpedirAvanco IS NOT NULL AND s.ImpedirAvanco=1
+                    AND s.NumSeq<{ numSeqSetor }";
 
-            sql += !isTemperado ? " And forno = 0" : "";
+            sql += !isTemperado ? " AND (Forno IS NULL OR Forno = 0)" : string.Empty;
 
             return objPersistence.LoadData(sessao, sql).ToList();
-        }
-
-        #endregion
-
-        #region Verifica se a peça já está impressa
-
-        /// <summary>
-        /// Verifica se a peça já está impressa.
-        /// </summary>
-        /// <param name="idSetor"></param>
-        /// <param name="idProdPedProducao"></param>
-        /// <returns></returns>
-        public bool IsPecaImpressa(GDASession sessao, uint idProdPedProducao)
-        {
-            // Garante que a leitura está sendo feita em uma peça impressa
-            return objPersistence.ExecuteSqlQueryCount(sessao, "select count(*) from leitura_producao " +
-                "where idProdPedProducao=" + idProdPedProducao + " and idSetor=1") > 0;
-        }
-
-        /// <summary>
-        /// Verifica se a peça já está impressa.
-        /// </summary>
-        /// <param name="idSetor"></param>
-        /// <param name="idProdPedProducao"></param>
-        /// <returns></returns>
-        public bool IsPecaImpressa(uint idProdPedProducao)
-        {
-            return IsPecaImpressa(null, idProdPedProducao);
-        }
-
-        #endregion
-
-        #region Verifica se o setor passado vem depois de todos os já lidos na peça passada
-
-        /// <summary>
-        /// Verifica se o setor passado vem depois de todos os já lidos na peça passada
-        /// </summary>
-        public bool IsUltimoSetor(GDASession sessao, uint idSetor, uint idProdPedProducao)
-        {
-            // Alterado para não usar método por causa de possível erro
-            var numSeqSetor = ObtemValorCampo<int>(sessao, "numSeq", "idSetor=" + idSetor);
-
-            var sql = string.Format(@"SELECT COUNT(*) FROM leitura_producao lp 
-                    INNER JOIN setor s ON (lp.IdSetor=s.IdSetor)
-                WHERE lp.IdProdPedProducao={0}
-                    And s.NumSeq>{1} AND (s.PermitirLeituraForaRoteiro IS NULL OR s.PermitirLeituraForaRoteiro=0)", idProdPedProducao, numSeqSetor);
-
-            return objPersistence.ExecuteSqlQueryCount(sessao, sql) == 0;
-        }
-
-        /// <summary>
-        /// Verifica se o setor passado vem depois de todos os já lidos na peça passada
-        /// </summary>
-        /// <param name="idSetor"></param>
-        /// <param name="idProdPedProducao"></param>
-        /// <returns></returns>
-        public bool IsUltimoSetor(uint idSetor, uint idProdPedProducao)
-        {
-            return IsUltimoSetor(null, idSetor, idProdPedProducao);
         }
 
         #endregion
@@ -531,23 +468,14 @@ namespace Glass.Data.DAL
         {
             return ExecuteScalar<uint>(sessao, "SELECT idSetor FROM setor WHERE tipo=" + (int)TipoSetor.ExpCarregamento + " and situacao=" + (int)Glass.Situacao.Ativo);
         }
-
+        
         /// <summary>
         /// Busca os setor marcado como entrega
         /// </summary>
         /// <returns></returns>
-        public uint ObtemIdSetorEntrega()
+        public List<int> ObterIdsSetorTipoEntregue(GDASession sessao)
         {
-            return ObtemIdSetorEntrega(null);
-        }
-
-        /// <summary>
-        /// Busca os setor marcado como entrega
-        /// </summary>
-        /// <returns></returns>
-        public uint ObtemIdSetorEntrega(GDASession sessao)
-        {
-            return ExecuteScalar<uint>(sessao, "SELECT idSetor FROM setor WHERE tipo=" + (int)TipoSetor.Entregue + " and situacao=" + (int)Glass.Situacao.Ativo);
+            return ExecuteMultipleScalar<int>(sessao, $"SELECT IdSetor FROM setor WHERE Tipo={ (int)TipoSetor.Entregue } AND Situacao={ (int)Situacao.Ativo }");
         }
 
         #endregion
@@ -565,26 +493,6 @@ namespace Glass.Data.DAL
             object obj = objPersistence.ExecuteScalar(sql);
 
             return obj != null && obj.ToString() != String.Empty ? obj.ToString() : "0";
-        }
-
-        #endregion
-
-        #region Busca setor inoperantes
-
-        public List<string> ObtemSetoresInoperantes(DateTime dataIni)
-        {
-            var sql = @"
-                    SELECT s.Descricao
-	                FROM setor s
-                    WHERE s.Situacao = 1
-		                AND s.IdSetor NOT IN 
-                            (
-                                SELECT IdSetor 
-				                FROM leitura_producao
-				                WHERE dataleitura > ?dt
-                            )";
-
-            return ExecuteMultipleScalar<string>(sql, new GDAParameter("?dt", dataIni));
         }
 
         #endregion
@@ -674,45 +582,6 @@ namespace Glass.Data.DAL
         public bool ExibirNoRelatorio(GDASession sessao, int idSetor)
         {
             return ObtemValorCampo<bool>(sessao, "ExibirRelatorio", "IdSetor=?idSetor", new GDAParameter("?idSetor", idSetor));
-        }
-
-        #endregion
-
-        #region Métodos sobrescritos
-
-        public override int DeleteByPrimaryKey(uint Key)
-        {
-            // Verifica se este alguma peça foi inserida neste setor
-            /*if (Glass.Conversoes.StrParaInt(CurrentPersistenceObject.ExecuteScalar("Select Count(*) From leitura_producao Where idSetor=" + Key).ToString()) > 0)
-                throw new Exception("Este Setor não pode ser excluído por haver peças relacionadas ao mesmo.");
-
-            LogAlteracaoDAO.Instance.ApagaLogSetor(Key);
-            int retorno = GDAOperations.Delete(new Setor { IdSetor = (int)Key });
-
-            // Recarrega listagem de setores
-            Utils.GetSetores = SetorDAO.Instance.GetOrdered();
-
-            // Apaga os beneficiamentos
-            SetorBenefDAO.Instance.DeleteBySetor((int)Key);
-
-            return retorno;*/
-
-            throw new NotImplementedException();
-        }
-
-        public override int Delete(Setor objDelete)
-        {
-            return DeleteByPrimaryKey(objDelete.IdSetor);
-        }
-
-        public override uint Insert(Setor objInsert)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int Update(Setor objUpdate)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion

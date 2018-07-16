@@ -299,7 +299,7 @@ namespace Glass.UI.Web.Utils
                         if (setor != null && setor.IdSetor > 0 && permitirAlterarImagem && itens != null && itens.Length > 0)
                             foreach (string etiq in itens)
                                 permitirAlterarImagem = permitirAlterarImagem && !EtiquetaArquivoOtimizacaoDAO.Instance.TemArquivoSAG(etiq) &&
-                                    !LeituraProducaoDAO.Instance.PassouSetor(etiq, (uint)setor.IdSetor);
+                                    !LeituraProducaoDAO.Instance.PassouSetor(null, etiq, (uint)setor.IdSetor);
                     }
                     else if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido))
                         permitirAlterarImagem = true;

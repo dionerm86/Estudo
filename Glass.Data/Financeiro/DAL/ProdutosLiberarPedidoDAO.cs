@@ -226,11 +226,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os IDs dos pedidos de uma liberação.
         /// </summary>
-        /// <param name="idLiberarPedido"></param>
-        /// <returns></returns>
-        public uint[] GetIdsPedidoByLiberacao(uint idLiberarPedido)
+        public uint[] GetIdsPedidoByLiberacao(GDASession session, uint idLiberarPedido)
         {
-            string ids = GetIdsPedidoByLiberacaoString(idLiberarPedido);
+            string ids = GetIdsPedidoByLiberacaoString(session, idLiberarPedido);
 
             return Array.ConvertAll<string, uint>(ids.Split(','), new Converter<string, uint>(
                 delegate(string id)
