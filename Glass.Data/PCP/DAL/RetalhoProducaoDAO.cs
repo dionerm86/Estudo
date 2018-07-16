@@ -565,8 +565,10 @@ namespace Glass.Data.DAL
                 pecas.Add(new[] { alturas[i], larguras[i] });
             }
 
-            if (ValidaMedidasRetalho(pecas, alturaPeca, larguraPeca).Count() > 0)
-                throw new Exception(string.Join("\n", ValidaMedidasRetalho(pecas, alturaPeca, larguraPeca).ToArray()));
+            var validaMedidasRetalho = ValidaMedidasRetalho(pecas, alturaPeca, larguraPeca);
+
+            if (validaMedidasRetalho.Count() > 0)
+                throw new Exception(string.Join("\n", validaMedidasRetalho.ToArray()));
 
             totMPeca = Global.CalculosFluxo.ArredondaM2(session, larguraPeca, alturaPeca, qtdePeca, (int)idProd, isRedondo);
 
