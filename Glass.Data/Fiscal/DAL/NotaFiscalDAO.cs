@@ -1188,40 +1188,41 @@ namespace Glass.Data.DAL
 
                         #region Gera parcelas da nota
 
+
                         nf = GetElement(transaction, nf.IdNf);
 
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
                             var liberacao = idsLiberarPedidos?.Split(',');
-                            if (liberacao.Count() == 1)
+
+                            if (liberacao?.Count() == 1)
                             {
-                                var cr = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, Glass.Conversoes.StrParaUint(liberacao.FirstOrDefault()), true)?.ToArray();
+                                var contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, liberacao.FirstOrDefault().StrParaUint(), true)?.ToArray();
 
-                                if (cr != null)
+                                if (contasReceber != null)
                                 {
-                                    nf.NumParc = cr?.Length ?? 1;
-                                    if (nf.NumParc > 1)
+                                    nf.NumParc = contasReceber?.Length ?? 1;
+                                    nf.DatasParcelas = new DateTime[nf.NumParc.Value];
+                                    nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+
+                                    var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+
+                                    for (var i = 0; i < contasReceber.Length; i++)
                                     {
-                                        nf.DatasParcelas = new DateTime[cr.Length];
-                                        nf.ValoresParcelas = new decimal[cr.Length];
+                                        nf.DatasParcelas[i] = contasReceber[i].DataVec;
+                                        nf.ValoresParcelas[i] = valorParcelas;
+                                    }
 
-                                        decimal valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+                                    var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
 
-                                        for (int i = 0; i < cr.Length; i++)
-                                        {
-                                            nf.DatasParcelas[i] = cr[i].DataVec;
-                                            nf.ValoresParcelas[i] = valorParcelas;
-                                        }
-                                        var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
-                                        if (difParcelaNota != 0)
-                                        {
-                                            nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
-                                        }
+                                    if (difParcelaNota != 0)
+                                    {
+                                        nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
                                     }
                                 }
                             }
 
-                            if (nf.DatasParcelas?.Count() == 0)
+                            if ((nf.DatasParcelas?.Count()).GetValueOrDefault() == 0)
                             {
                                 nf.NumParc = 1;
                                 nf.DatasParcelas = new DateTime[1];
@@ -1229,6 +1230,7 @@ namespace Glass.Data.DAL
                                 nf.DatasParcelas[0] = DateTime.Now;
                                 nf.ValoresParcelas[0] = nf.TotalNota;
                             }
+
                             nf.FormaPagto = (int)LiberarPedido.TipoPagtoEnum.APrazo;
 
                             Update(transaction, nf);
