@@ -2014,6 +2014,23 @@ namespace Glass.Data.DAL
 
         #region Retorna o valor de campos isolados
 
+        /// <summary>
+        /// Busca os ids dos produtos pelos pedidos.
+        /// </summary>
+        public List<int> ObterIdsProdPedPelosIdsPedido(GDASession sessao, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT IdProdPed 
+                FROM produtos_pedido
+                WHERE IdPedido IN ({ string.Join(",", idsPedido) });";
+
+            return ExecuteMultipleScalar<int>(sessao, sql);
+        }
+
         public uint? ObtemIdAmbientePedido(uint idProdPed)
         {
             return ObtemIdAmbientePedido(null, idProdPed);

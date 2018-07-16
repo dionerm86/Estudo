@@ -3462,39 +3462,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RetiraExpedicaoByPedido(GDASession sessao, uint idLiberacao)
         {
-            string sql = @"
-                Delete From leitura_producao  
-                Where idSetor In (
-                    select * from (
-                        Select idSetor 
-                        From setor 
-                        Where tipo=" + (int)TipoSetor.Entregue + @"
-                    ) as temp
-                ) 
-                And idProdPedProducao In (
-                    select * from (
-                        Select idProdPedProducao 
-                        From produto_pedido_producao 
-                        Where idProdPed In (
-                            select * from (
-                                Select idProdPed 
-                                From produtos_pedido_espelho 
-                                Where idPedido In (
-                                    select * from (
-                                        Select idPedido 
-                                        From produtos_liberar_pedido 
-                                        Where idLiberarPedido=" + idLiberacao + @"
-                                    ) as temp
-                                )
-                            ) as temp
-                        )
-                    ) as temp
-                )";
+            LeituraProducaoDAO.Instance.ApagarPeloIdLiberarPedido(sessao, (int)idLiberacao);
 
-            // Exclui as leituras feitas na expedição
-            objPersistence.ExecuteCommand(sessao, sql);
-
-            sql = @"
+            var sql = @"
                 Update produto_pedido_producao ppp 
                 Set ppp.idSetor=(
                     Select lprod.idSetor From leitura_producao lprod  
@@ -4380,7 +4350,7 @@ namespace Glass.Data.DAL
                         if (releitura)
                         {
                             var leituraExp = LeituraProducaoDAO.Instance.GetByProdPedProducao(sessao, idProdPedProducao)
-                                .Where(f => f.IdSetor == SetorDAO.Instance.ObtemIdSetorEntrega(sessao) ||
+                                .Where(f => SetorDAO.Instance.ObterIdsSetorTipoEntregue(sessao)?.Contains((int)f.IdSetor) ?? false ||
                                     f.IdSetor == SetorDAO.Instance.ObtemIdSetorExpCarregamento(sessao)).FirstOrDefault();
 
                             if (leituraExp != null)
@@ -5073,7 +5043,7 @@ namespace Glass.Data.DAL
                         return retorno;
                     }
 
-                    if (!LeuProducao(transaction, numEtiqueta))
+                    if (!LeituraProducaoDAO.Instance.VerificarEtiquetaLida(transaction, numEtiqueta))
                         throw new Exception("Não é possível repor uma peça que ainda não foi impressa.");
 
                     if (obs != null && obs.Length > 250)
@@ -5112,7 +5082,7 @@ namespace Glass.Data.DAL
                     UsoRetalhoProducaoDAO.Instance.CancelarAssociacao(transaction, idProdPedProducao);
 
                     // Exclui leituras feitas nesta peça
-                    objPersistence.ExecuteCommand(transaction, "Delete From leitura_producao Where idProdPedProducao=" + idProdPedProducao);
+                    LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(transaction, new List<int>() { (int)idProdPedProducao });
 
                     #region Remove a associação da peça ou da chapa
 
@@ -5305,10 +5275,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    // Caso esta peça tenha sido gerada pela otimização, atualiza a data da leitura
-                    objPersistence.ExecuteCommand(session, @"Update leitura_producao Set dataLeitura=?dataLeitura, idFuncLeitura=?idFunc 
-                    Where dataLeitura is null And idProdPedProducao=" + idProdPedProducao,
-                        new GDAParameter("?dataLeitura", dataLeitura), new GDAParameter("?idFunc", idFunc));
+                    LeituraProducaoDAO.Instance.AtualizarDataLeituraIdFuncPeloIdProdPedProducao(session, (int)idProdPedProducao, dataLeitura.GetValueOrDefault(), (int)idFunc);
                 }
 
                 atualizarSitPedido = true;
@@ -5525,23 +5492,6 @@ namespace Glass.Data.DAL
         {
             return objPersistence.ExecuteSqlQueryCount("Select Count(*) From produto_pedido_producao Where idProdPed=" + idProdPed + " And situacao=" +
                 (int)ProdutoPedidoProducao.SituacaoEnum.Producao) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se a peça passada foi lida em algum setor da produção
-        /// </summary>
-        public bool LeuProducao(GDASession sessao, string numEtiqueta)
-        {
-            // Valida a etiqueta
-            ValidaEtiquetaProducao(sessao, ref numEtiqueta);
-
-            return objPersistence.ExecuteSqlQueryCount(@"
-                Select Count(*) 
-                From leitura_producao 
-                Where dataLeitura is not null 
-                    And idprodPedProducao=(
-                        Select idprodpedproducao from produto_pedido_producao Where Situacao = ?sit AND numEtiqueta=?numEtiqueta limit 1
-                    )", new GDAParameter("?numEtiqueta", numEtiqueta), new GDAParameter("?sit", (int)ProdutoPedidoProducao.SituacaoEnum.Producao)) > 0;
         }
 
         #endregion
@@ -6213,6 +6163,11 @@ namespace Glass.Data.DAL
             return ExecuteScalar<string>(sessao, sql);
         }
 
+        public int ObterIdProdPedProducaoPelaEtiqueta(GDASession session, string numEtiqueta)
+        {
+            return ObtemValorCampo<int>(session, "IdProdPedProducao", "NumEtiqueta=?numEtiqueta", new GDAParameter("?numEtiqueta", numEtiqueta));
+        }
+
         #endregion
 
         #region Volta o setor de uma peça
@@ -6374,14 +6329,16 @@ namespace Glass.Data.DAL
                 // Exclui último setor lido
                 if (idSetor > 1)
                 {
-                    uint idLeituraProd = ExecuteScalar<uint>(sessao, "select idLeituraProd from leitura_producao where idSetor=" + idSetor +
-                        " and idProdPedProducao=" + idProdPedProducao);
-
+                    var idLeituraProd = LeituraProducaoDAO.Instance.ObterIdLeituraPeloIdProdPedProducaoIdSetor(sessao, (int)idProdPedProducao, (int)idSetor);
                     var leitura = LeituraProducaoDAO.Instance.GetElementByPrimaryKey(sessao, idLeituraProd);
-                    item.DataLeituraSetorVoltarPeca = leitura.DataLeitura;
-                    item.NomeFuncLeituraSetorVoltarPeca = FuncionarioDAO.Instance.GetNome(sessao, leitura.IdFuncLeitura);
 
-                    objPersistence.ExecuteCommand(sessao, "Delete from leitura_producao Where idLeituraProd=" + leitura.IdLeituraProd);
+                    if (leitura?.IdLeituraProd > 0)
+                    {
+                        item.DataLeituraSetorVoltarPeca = leitura.DataLeitura;
+                        item.NomeFuncLeituraSetorVoltarPeca = FuncionarioDAO.Instance.GetNome(sessao, leitura.IdFuncLeitura);
+
+                        LeituraProducaoDAO.Instance.DeleteByPrimaryKey(sessao, leitura.IdLeituraProd);
+                    }
                 }
 
                 // Recupera o idPedidoExpedicao para alterar a situação da produção do pedido de revenda de box, se for o caso
@@ -6646,7 +6603,7 @@ namespace Glass.Data.DAL
             }
 
             // Apaga as leituras dessa peça
-            objPersistence.ExecuteCommand(sessao, "Delete From leitura_producao Where idProdPedProducao=" + idProdPedProducao);
+            LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, new List<int>() { (int)idProdPedProducao });
 
             var idsSetores = new List<uint>();
 
@@ -8118,6 +8075,14 @@ namespace Glass.Data.DAL
         {
             var sql = @"SELECT * FROM produto_pedido_producao WHERE IdProdPed=" + idProdPed;
             return objPersistence.LoadData(session, sql).ToList();
+        }
+
+        /// <summary>
+        /// Obtém os produtos de produção pelos ID's produto de pedido.
+        /// </summary>
+        public List<int> ObterIdsProdPedProducaoPelosIdProdPed(GDASession session, List<int> idsProdPed)
+        {            
+            return ExecuteMultipleScalar<int>(session, $"SELECT IdProdPedProducao FROM produto_pedido_producao WHERE IdProdPed IN ({ string.Join(",", idsProdPed) });")?.ToList() ?? new List<int>();
         }
 
         #endregion

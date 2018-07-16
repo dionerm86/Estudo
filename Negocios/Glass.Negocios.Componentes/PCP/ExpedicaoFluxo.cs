@@ -523,9 +523,17 @@ namespace Glass.PCP.Negocios.Componentes
 
                     else
                     {
-                        Glass.Data.DAL.ProdutoPedidoProducaoDAO.Instance
-                            .AtualizaSituacao(transaction, (uint)idFunc, null, numEtiqueta, Glass.Data.DAL.SetorDAO.Instance.ObtemIdSetorEntrega(), false, false, null, null, null,
-                            (uint?)idPedidoExp, 0, null, null, false, null, false, 0);
+                        var idSetorCarregamento = SetorDAO.Instance.ObtemIdSetorExpCarregamento(transaction);
+                        var idsSetorEntregue = SetorDAO.Instance.ObterIdsSetorTipoEntregue(transaction);
+                        var idSetorLeitura = idSetorCarregamento > 0 ? (int)idSetorCarregamento : idsSetorEntregue?.Any(f => f > 0) ?? false ? idsSetorEntregue.FirstOrDefault(f => f > 0) : 0;
+
+                        if (idSetorLeitura == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar o setor de expedição de carregamento.");
+                        }
+
+                        ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(transaction, (uint)idFunc, null, numEtiqueta, (uint)idSetorLeitura, false, false, null, null, null, (uint?)idPedidoExp, 0,
+                            null, null, false, null, false, 0);
                     }
 
                     #endregion

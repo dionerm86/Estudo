@@ -5742,7 +5742,7 @@ namespace Glass.UI.Web.Utils
                 {
                     idProdPedProducao = idsProdPedProducao[i];
 
-                    var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(idProdPedProducao);
+                    var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(null, idProdPedProducao);
 
                     if (leituras.Count == 0)
                         continue;
@@ -5750,7 +5750,7 @@ namespace Glass.UI.Web.Utils
                     var corrigiuRoteiro = CorrigirPecasRoteiro(idProdPedProducao, leituras);
 
                     if (corrigiuRoteiro)
-                        leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(idProdPedProducao);
+                        leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(null, idProdPedProducao);
 
                     AtualizaSetorProdutoPedidoProducao(idProdPedProducao, leituras);
                 }

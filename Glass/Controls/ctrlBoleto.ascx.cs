@@ -38,7 +38,7 @@ namespace Glass.UI.Web.Controls
                 if(PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido((uint)idLiberarPedido).Length == 0)
                     throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois a liberação: {0} não esta vinculada a mesma.", idLiberarPedido));
 
-                foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao((uint)idLiberarPedido))
+                foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(null, (uint)idLiberarPedido))
                 {
                     if (!idsPedidosNf.Contains(idPedLib))
                     {

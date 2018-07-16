@@ -1380,7 +1380,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     try
                     {
-                        var idsPedidoLiberados = string.Join(",", ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(idLiberarPedido));
+                        var idsPedidoLiberados = string.Join(",", ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(null, idLiberarPedido));
                         var idClienteLiberar = LiberarPedidoDAO.Instance.GetIdCliente(idLiberarPedido);
                         var percReducao = ClienteDAO.Instance.GetPercReducaoNFe(idClienteLiberar).ToString();
                         var percReducaoRevenda = ClienteDAO.Instance.GetPercReducaoNFeRevenda(idClienteLiberar).ToString();

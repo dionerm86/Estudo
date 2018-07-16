@@ -293,13 +293,13 @@ namespace Glass.UI.Web.Utils
                         permitirAlterarImagem = itens != null && itens.Length > 0 && !string.IsNullOrEmpty(itens[0]);
 
                         // Recupera o setor de marcação
-                        Setor setor = SetorDAO.Instance.ObterSetorPorNome("Marcação");
+                        Setor setor = SetorDAO.Instance.ObterSetorPorNome(null, "Marcação");
 
                         // Se for permitido alterar imagem da peça, verifica se o item não tem arquivo sag e se não passou pelo setor de marcação
                         if (setor != null && setor.IdSetor > 0 && permitirAlterarImagem && itens != null && itens.Length > 0)
                             foreach (string etiq in itens)
                                 permitirAlterarImagem = permitirAlterarImagem && !EtiquetaArquivoOtimizacaoDAO.Instance.TemArquivoSAG(etiq) &&
-                                    !LeituraProducaoDAO.Instance.PassouSetor(etiq, (uint)setor.IdSetor);
+                                    !LeituraProducaoDAO.Instance.PassouSetor(null, etiq, (uint)setor.IdSetor);
                     }
                     else if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido))
                         permitirAlterarImagem = true;

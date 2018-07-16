@@ -2864,9 +2864,13 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(ids))
                 {
                     if (temCarregamento && situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
-                        objPersistence.ExecuteCommand(sessao, @"Update leitura_producao Set dataLeitura = null Where idProdPedProducao In (" + ids + ")");
+                    {
+                        LeituraProducaoDAO.Instance.AtualizarDataLeituraIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), null);
+                    }
                     else
-                        objPersistence.ExecuteCommand(sessao, @"Delete From leitura_producao Where idProdPedProducao In (" + ids + ")");
+                    {
+                        LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
+                    }
 
                     /* Chamado 45146. */
                     foreach (var id in ids.Split(','))
@@ -3216,15 +3220,14 @@ namespace Glass.Data.DAL
                     select coalesce(numEtiqueta, numEtiquetaCanc) from produto_pedido_producao
                     where idProdPedProducao in (" + ids + @")
                 ) as temp);
-                
-                delete from leitura_producao
-                where idProdPedProducao in (" + ids + @");
 
                 delete from roteiro_producao_etiqueta
                 where idProdPedProducao in (" + ids + @");
                 
                 delete from produto_pedido_producao
                 where idProdPedProducao in (" + ids + @")";
+
+            LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
 
             objPersistence.ExecuteCommand(sessao, sql);
         }
