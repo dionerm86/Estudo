@@ -945,18 +945,17 @@ namespace Glass.Data.DAL
         {
             var campoQtde = "IF(ic1.IdProdPed IS NULL, pp.qtde - COALESCE(ic.Qtde, 0), ic1.Qtde)";
 
-            var campos = string.Format(@"pp.IdPedido, p.CodCliente AS CodPedCliente, CONCAT(prod.CodInterno, ' - ', prod.Descricao) AS DescrProduto, CAST(({0}) AS DECIMAL(12, 2)) AS Qtde,
-                pp.Altura, pp.Largura, CAST(ROUND(((pp.TotM2Calc / pp.Qtde) * {0}), 2) AS DECIMAL(12, 2)) AS TotM2Calc,
-                CAST(ROUND(IF(sgp.TipoSubgrupo IN ({1},{2}),
-                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({0}), 2) AS DECIMAL(12, 2)) AS Peso",
-                campoQtde, (int)TipoSubgrupoProd.VidroDuplo, (int)TipoSubgrupoProd.VidroLaminado);
+            var campos = $@"pp.IdPedido, p.CodCliente AS CodPedCliente, CONCAT(prod.CodInterno, ' - ', prod.Descricao) AS DescrProduto, CAST(({campoQtde}) AS DECIMAL(12, 2)) AS Qtde,
+                pp.Altura, pp.Largura, CAST(ROUND(((pp.TotM2Calc / pp.Qtde) * {campoQtde}), 2) AS DECIMAL(12, 2)) AS TotM2Calc,
+                CAST(ROUND(IF(sgp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.VidroDuplo},{(int)TipoSubgrupoProd.VidroLaminado}),
+                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({campoQtde}), 2) AS DECIMAL(12, 2)) AS Peso";
 
             var camposVolume = @"
                 v.IdPedido, p.CodCliente as CodPedCliente, CONCAT('Volume: ', v.idVolume, '  Data de Fechamento: ', v.dataFechamento) as DescrProduto,
                 null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso";
 
-            var sql = @"
-                SELECT " + camposVolume + @"
+            var sql = $@"
+                SELECT { camposVolume }
                 FROM volume v
                     LEFT JOIN pedido p ON (v.idPedido = p.idPedido)
                     LEFT JOIN volume_produtos_pedido vpp ON (v.idVolume = vpp.idVolume)
@@ -965,15 +964,17 @@ namespace Glass.Data.DAL
                     (
 			                SELECT IdProdPed, count(*) as QtdePronto
 			                FROM produto_pedido_producao
-			                WHERE SituacaoProducao IN (" + (int)SituacaoProdutoProducao.Pronto + "," + (int)SituacaoProdutoProducao.Entregue + @")
+			                WHERE
+                                IdProdPed in (select IdProdPed FROM produtos_pedido_espelho WHERE IdPedido in ({idsPedidos}))
+                                AND SituacaoProducao IN ({ (int)SituacaoProdutoProducao.Pronto },{ (int)SituacaoProdutoProducao.Entregue })
 			                GROUP BY IdProdPed
                     ) as ppp ON (pp.IdProdPedEsp = ppp.idProdPed)
-                WHERE v.idPedido IN (" + idsPedidos + @") AND v.IdOrdemCarga = " + idOrdemCarga + @"
+                WHERE v.idPedido IN ({ idsPedidos }) AND v.IdOrdemCarga = { idOrdemCarga }
                 GROUP BY v.IdVolume";
 
-            sql += @"
+            sql += $@"
                 UNION ALL
-                SELECT " + campos + @"
+                SELECT { campos }
                 FROM produtos_pedido pp
                     INNER JOIN pedido p ON (pp.idPedido = p.idPedido)
                     INNER JOIN produto prod ON (pp.idProd = prod.idProd)
@@ -984,25 +985,25 @@ namespace Glass.Data.DAL
                     (
 		                SELECT IdProdPed, count(*) as Qtde
 		                FROM item_carregamento
-		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga <> " + idOrdemCarga + @"
+		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN ({ idsPedidos }) AND IdOrdemCarga <> { idOrdemCarga }
 		                GROUP BY IdProdPed
                     ) as ic ON (ic.IdProdPed = pp.IdProdPed)
                     LEFT JOIN 
                     (
 		                SELECT IdProdPed, count(*) as Qtde
 		                FROM item_carregamento
-		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN (" + idsPedidos + @") AND IdOrdemCarga = " + idOrdemCarga + @"
+		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN ({ idsPedidos }) AND IdOrdemCarga = { idOrdemCarga }
 		                GROUP BY IdProdPed
                     ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
                 WHERE COALESCE(sgp.geraVolume, gp.geraVolume, FALSE) = FALSE
                     AND COALESCE(pp.invisivelFluxo, FALSE) = FALSE
-                    AND COALESCE(ppp.situacao, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + ") = " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                    AND pp.idPedido IN(" + idsPedidos + @")
+                    AND COALESCE(ppp.situacao, { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }) = { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                    AND pp.idPedido IN({ idsPedidos })
                     AND pp.IdProdPedParent IS NULL";
 
             sql += " GROUP BY pp.idProdPed";
 
-            return "SELECT * FROM (" + sql + ") as tmp WHERE IdPedido IS NOT NULL";
+            return $"SELECT * FROM ({ sql }) as tmp WHERE IdPedido IS NOT NULL";
         }
 
         /// <summary>
