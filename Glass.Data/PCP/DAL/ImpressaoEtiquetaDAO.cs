@@ -1322,6 +1322,10 @@ namespace Glass.Data.DAL
                         var forma = string.Empty;
                         var nomeArquivo = ObterNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, null, null, forIntermac, out forma, converterCaractereEspecial);
 
+                        // Verifica se é um arquivo .zip
+                        if (Utils.VerificarArquivoZip(arqMesa) && !StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(nomeArquivo), ".zip"))
+                            nomeArquivo = System.IO.Path.GetFileNameWithoutExtension(nomeArquivo) + ".zip";
+
                         lstArqMesa.Add(arqMesa);
                         lstCodArq.Add(nomeArquivo);
 

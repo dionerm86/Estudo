@@ -1000,7 +1000,7 @@ namespace Glass.Data.Helper
         /// </summary>
         public static string GetArqConfigIntermacVirtualPath
         {
-            get { return "~/Upload/Intermac/bsolid/"; }
+            get { return "~/Upload/Intermac/"; }
         }
 
         /// <summary>
@@ -1683,7 +1683,20 @@ namespace Glass.Data.Helper
         //        return null;
 
         //    return (Control)ctrl;
-        //}        
+        //}   
+        
+
+        /// <summary>
+        /// Verifica se o buffer informado contém dados de um arquivo ZIP.
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public static bool VerificarArquivoZip(byte[] buffer)
+        {
+            // Verifica se é um arquivo .zip
+            return buffer?.Length > 3 &&
+                buffer[0] == 0x50 && buffer[1] == 0x4B && buffer[2] == 0x03 && buffer[3] == 0x04;
+        }     
 
     }
 }

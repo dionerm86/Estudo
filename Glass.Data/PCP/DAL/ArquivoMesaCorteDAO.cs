@@ -11896,20 +11896,49 @@ namespace Glass.Data.DAL
                             break;
                         }
 
-                        // var dxfOptions = new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true };
-
                         if (forIntermac)
                         {
                             if (PCPConfig.EmpresaGeraArquivoIntermac && !forCadProject && flags.Any(f => f.Descricao.ToLower() == "intermac"))
                             {
-                                //if (IntermacConfig.BiesseImporterContext == null)
-                                //    throw new Exception("O contexto para geração do arquivo INTERMAC esta nulo. Verifique se os arquivos bsolid estão no sistema.");
+                                var contextos = ConfiguracaoBiesse.Instancia.Contextos;
 
-                                //var dxfDocument = projeto.SaveDxf(dxfOptions);
+                                if (contextos.Count() == 1)
+                                {
+                                    var contexto = contextos.First();
+                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true });
+                                    var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
+                                    using (var resultado = importer.Execute(espessura))
+                                        resultado.Save(arquivo);
+                                }
+                                else
+                                {
+                                    // Adiciona os arquivos
+                                    var zip = new ZipFile(arquivo);
+                                    
+                                    foreach(var contexto in contextos)
+                                    {
+                                        var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true });
+                                        var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
 
-                                //var importer = new CalcEngine.Biesse.DxfImporter(IntermacConfig.BiesseImporterContext, dxfDocument, "VertMax Sx_Dx");
+                                        using (var resultado = importer.Execute(espessura))
+                                        {
+                                            var arquivoIso = new System.IO.MemoryStream();
+                                            resultado.Save(arquivoIso, CalcEngine.Biesse.DxfImporterResultOptions.ISO);
+                                            arquivoIso.Position = 0;
+                                            var fileName = System.IO.Path.Combine(contexto.Nome, resultado.GetFileName(CalcEngine.Biesse.DxfImporterResultOptions.ISO));
+                                            zip.AddFileStream(fileName, null, arquivoIso);
 
-                                //importer.Execute(arquivo, espessura, projeto.ValidCustomParameters);
+                                            var arquivoWorks = new System.IO.MemoryStream();
+                                            resultado.Save(arquivoWorks, CalcEngine.Biesse.DxfImporterResultOptions.Works);
+                                            arquivoWorks.Position = 0;
+                                            fileName = System.IO.Path.Combine(contexto.Nome, resultado.GetFileName(CalcEngine.Biesse.DxfImporterResultOptions.Works));
+                                            zip.AddFileStream(fileName, null, arquivoWorks);
+                                        }
+                                        
+                                    }
+
+                                    zip.Save();
+                                }
                             }
 
                             break;
