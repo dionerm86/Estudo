@@ -1199,9 +1199,9 @@ namespace Glass.Data.DAL
                             {
                                 var contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, liberacao.FirstOrDefault().StrParaUint(), true)?.ToArray();
 
-                                if (contasReceber != null)
+                                if (contasReceber?.Length > 0)
                                 {
-                                    nf.NumParc = contasReceber?.Length ?? 1;
+                                    nf.NumParc = contasReceber.Length;
                                     nf.DatasParcelas = new DateTime[nf.NumParc.Value];
                                     nf.ValoresParcelas = new decimal[nf.NumParc.Value];
 

@@ -67,8 +67,29 @@ namespace Glass.Data.Handlers
                 using (ZipFile zip = new ZipFile(context.Response.OutputStream))
                 {
                     for (var i = 0; i < lstArqMesa.Count; i++)
-                        zip.AddFileStream(lstCodArq[i].Replace("  ", "").Replace(" ", ""), "", new System.IO.MemoryStream(lstArqMesa[i]));
+                    {
+                        if (Glass.Data.Helper.Utils.VerificarArquivoZip(lstArqMesa[i]))
+                        {
+                            using (var zip2 = ZipFile.Read(lstArqMesa[i]))
+                            {
+                                foreach(var entryFileName in zip2.EntryFilenames)
+                                {
+                                    var entryStream = new System.IO.MemoryStream();
+                                    zip2.Extract(entryFileName, entryStream);
+                                    entryStream.Position = 0;
 
+                                    var fileName = System.IO.Path.GetFileName(entryFileName);
+                                    var extension = System.IO.Path.GetExtension(fileName)?.ToLower();
+                                    if (extension == ".cni" || extension == ".xml")
+                                        fileName = System.IO.Path.GetFileNameWithoutExtension(lstCodArq[i].Trim()) + extension;
+
+                                    zip.AddFileStream(fileName, System.IO.Path.GetDirectoryName(entryFileName), entryStream);
+                                }
+                            }
+                        }
+                        else
+                            zip.AddFileStream(lstCodArq[i].Replace("  ", "").Replace(" ", ""), "", new System.IO.MemoryStream(lstArqMesa[i]));
+                    }
                     zip.Save();
                 }
             }

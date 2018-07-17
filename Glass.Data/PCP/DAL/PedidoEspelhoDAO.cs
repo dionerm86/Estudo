@@ -4394,26 +4394,42 @@ namespace Glass.Data.DAL
             {
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, false, true, false);
 
-                var caminhoSalvarIntermac = PCPConfig.CaminhoSalvarIntermac;
-
-                if (Directory.Exists(caminhoSalvarIntermac))
+                // Percorre os arquivos de mesa gerados
+                for (var i = 0; i < lstArqMesa.Count; i++)
                 {
-                    for (var i = 0; i < lstArqMesa.Count; i++)
+                    if (Helper.Utils.VerificarArquivoZip(lstArqMesa[i]))
                     {
-                        var nomeArquivoDxf = caminhoSalvarIntermac + lstCodArq[i];
-
-                        if (!File.Exists(nomeArquivoDxf))
+                        using (var zipFile = ZipFile.Read(lstArqMesa[i]))
                         {
-                            using (var fs = File.Create(nomeArquivoDxf))
-                            {
-                                fs.Write(lstArqMesa[i], 0, lstArqMesa[i].Length);
-                            }
+                            var arquivosContexto = zipFile.EntryFilenames
+                                .GroupBy(f => System.IO.Path.GetDirectoryName(f).Split('/').FirstOrDefault());
 
-                            /* Chamado 16982. */
-                            if (!File.Exists(nomeArquivoDxf))
-                                throw new Exception("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
-                                    "onde as marcações são salvas, está disponível no servidor. Caso esteja, finalize o pedido novamente. " +
-                                    "Caminho onde as marcações são salvas no servidor: " + caminhoSalvarIntermac);
+                            foreach (var arquivos in arquivosContexto)
+                            {
+                                // Tenta recuperar o contexto de configuração
+                                var contexto = ConfiguracaoBiesse.Instancia.Contextos.FirstOrDefault(f => f.Nome == arquivos.Key);
+
+                                if (contexto != null)
+                                {
+                                    foreach (var arquivo in arquivos)
+                                    {
+                                        // Recupera o nome do arquivo de destino
+                                        var nome = System.IO.Path.GetFileNameWithoutExtension(lstCodArq[i]);
+
+                                        var destino = System.IO.Path.Combine(contexto.DiretorioSaida, arquivo.Substring(arquivos.Key.Length + 1));
+                                        destino = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(destino), nome + System.IO.Path.GetExtension(destino));
+
+                                        if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(destino)))
+                                            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(destino));
+
+                                        using (var stream = System.IO.File.Create(destino))
+                                        {
+                                            zipFile.Extract(arquivo, stream);
+                                            stream.Flush();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

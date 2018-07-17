@@ -5012,9 +5012,16 @@ namespace Glass.Data.DAL
                         throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
                             ". Efetue o estorno antes.");
 
+                    var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(transaction, idPedido);
+                    var possuiLiberacaoParcial = false;
+
+                    if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
+                    {
+                        possuiLiberacaoParcial = ExecuteScalar<bool>(transaction, "SELECT IdProdLiberarPedido FROM produtos_liberar_pedido WHERE idProdPedProducao =" + idProdPedProducao);
+                    }
+
                     if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
-                        (PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.Confirmado ||
-                        PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.LiberadoParcialmente))
+                        (situacaoPedido == Pedido.SituacaoPedido.Confirmado || possuiLiberacaoParcial))
                     {
                         throw new Exception("Não é possível marcar perda em peças de pedido mão de obra liberados.");
                     }

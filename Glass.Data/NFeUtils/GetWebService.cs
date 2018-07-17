@@ -45,6 +45,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(UserInfo.GetUserInfo.IdLoja, null));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -67,6 +68,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(UserInfo.GetUserInfo.IdLoja, null));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -170,6 +172,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -206,6 +209,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -246,6 +250,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -282,6 +287,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -320,6 +326,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -354,6 +361,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -394,6 +402,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -430,6 +439,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -470,6 +480,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -506,6 +517,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -546,6 +558,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -582,6 +595,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -642,6 +656,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -666,6 +681,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -694,6 +710,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -718,6 +735,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -746,6 +764,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -770,6 +789,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -798,6 +818,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -822,6 +843,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -850,6 +872,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -874,6 +897,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -902,6 +926,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
@@ -926,6 +951,7 @@ namespace Glass.Data.NFeUtils
             retorno.Timeout = 200000;
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
         }
