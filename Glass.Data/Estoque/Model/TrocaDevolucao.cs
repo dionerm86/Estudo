@@ -267,8 +267,8 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (IdPedido > 0 && PedidoDAO.Instance.IsPedidoReposicao(IdPedido.ToString()) || 
-                    PedidoDAO.Instance.IsPedidoGarantia(IdPedido.ToString()))
+                if (IdPedido > 0 && PedidoDAO.Instance.IsPedidoReposicao(null, IdPedido.ToString()) || 
+                    PedidoDAO.Instance.IsPedidoGarantia(null, IdPedido.ToString()))
                     return String.Empty;
 
                 decimal utilizado = CreditoUtilizadoFinalizar != null ? CreditoUtilizadoFinalizar.Value : 0;
@@ -294,7 +294,7 @@ namespace Glass.Data.Model
             get
             {
                 return IdPedido > 0 &&
-                    PedidoDAO.Instance.IsPedidoReposto(IdPedido.Value) &&
+                    PedidoDAO.Instance.IsPedidoReposto(null, IdPedido.Value) &&
                     PedidoReposicaoDAO.Instance.PedidoParaTroca(PedidoDAO.Instance.IdReposicao(IdPedido.Value).GetValueOrDefault());
             }
         }

@@ -1049,7 +1049,7 @@ namespace Glass.Data.DAL
             if (posicao > 0)
                 sql += " Having linha=" + posicao;
 
-            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
             return String.Format(sql, isMaoDeObra ? "idAmbientePedido" : "idProdPed",
                 isMaoDeObra ? "ambiente_pedido_espelho" : "produtos_pedido_espelho",
 
@@ -1373,7 +1373,7 @@ namespace Glass.Data.DAL
             // Adiciona os beneficiamentos feitos nos produtos como itens do pedido
             foreach (ProdutosPedidoEspelho ppe in lstProdPedEsp)
             {
-                if (PedidoDAO.Instance.IsMaoDeObra(ppe.IdPedido) && ppe.IdAmbientePedido != null)
+                if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido) && ppe.IdAmbientePedido != null)
                 {
                     int? qtdAmb = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<int?>("Qtde", "idAmbientePedido=" + ppe.IdAmbientePedido.Value);
                     if (qtdAmb > 1)
@@ -2013,6 +2013,23 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Retorna o valor de campos isolados
+
+        /// <summary>
+        /// Busca os ids dos produtos pelos pedidos.
+        /// </summary>
+        public List<int> ObterIdsProdPedPelosIdsPedido(GDASession sessao, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT IdProdPed 
+                FROM produtos_pedido
+                WHERE IdPedido IN ({ string.Join(",", idsPedido) });";
+
+            return ExecuteMultipleScalar<int>(sessao, sql);
+        }
 
         public uint? ObtemIdAmbientePedido(uint idProdPed)
         {
@@ -3134,7 +3151,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoFml)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3195,7 +3212,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoDxf)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3943,8 +3960,12 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
-                if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
+                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
+
+                if (idsLojaSubgrupoProd.Count(f => f > 0) > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaPedido))
+                {
                     throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
+                }
 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
                 //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
@@ -3987,6 +4008,33 @@ namespace Glass.Data.DAL
                             objInsert.Largura = prod.Largura.GetValueOrDefault();
                         }
                     }
+
+                    var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                    var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                    var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                    var retorno = string.Empty;
+
+                    if (objInsert.Beneficiamentos != null)
+                    {
+                        foreach (var prodBenef in objInsert.Beneficiamentos)
+                        {
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                                objInsert.Altura < tamanhoMinimoBisote && objInsert.Largura < tamanhoMinimoBisote)
+                                retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                                objInsert.Altura < tamanhoMinimoLapidacao && objInsert.Largura < tamanhoMinimoLapidacao)
+                                retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                        }
+                    }
+
+                    if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objInsert.IdProd)).IsVidroTemperado &&
+                            objInsert.Altura < tamanhoMinimoTemperado && objInsert.Largura < tamanhoMinimoTemperado)
+                        retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                    if (!string.IsNullOrWhiteSpace(retorno))
+                        throw new Exception(retorno);
                 }
 
                 var isPedidoProducaoCorte = (pedidoEspelho as IContainerCalculo).IsPedidoProducaoCorte;
@@ -4201,6 +4249,33 @@ namespace Glass.Data.DAL
                 
                 objUpdate.IdProdPedParentOrig = ProdutosPedidoDAO.Instance.ObterIdProdPedParentByEsp(sessao, objUpdate.IdProdPed);
                 var isPedidoProducaoCorte = container.IsPedidoProducaoCorte;
+
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (objUpdate.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objUpdate.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            objUpdate.Altura < tamanhoMinimoBisote && objUpdate.Largura < tamanhoMinimoBisote)
+                            retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            objUpdate.Altura < tamanhoMinimoLapidacao && objUpdate.Largura < tamanhoMinimoLapidacao)
+                            retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                    }
+                }
+
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd)).IsVidroTemperado &&
+                        objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
 
                 ValorTotal.Instance.Calcular(
                     sessao,

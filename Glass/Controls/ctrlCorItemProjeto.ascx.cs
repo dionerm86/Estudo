@@ -97,7 +97,7 @@ namespace Glass.UI.Web.Controls
                     idPedido = idPedidoEspelho;
 
                 tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido.Value);
-                idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido.Value);
+                idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido.Value);
             }
             else
             {

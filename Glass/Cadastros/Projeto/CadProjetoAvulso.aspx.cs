@@ -47,8 +47,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (idPedido > 0)
                 {
-                    hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(idPedido)).ToString();
-                    hdfTipoVenda.Value = ((int)PedidoDAO.Instance.GetTipoVenda(idPedido)).ToString();
+                    hdfTipoPedido.Value = ((int)PedidoDAO.Instance.GetTipoPedido(null, idPedido)).ToString();
+                    hdfTipoVenda.Value = ((int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido)).ToString();
                 }
 
                 if (String.IsNullOrEmpty(hdfIdAmbientePedido.Value))
@@ -329,7 +329,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             // Se o campo ambiente estiver vazio, busca o ped cli do pedido, se a empresa estiver configurada para isso
             if (txtAmbiente.Text == String.Empty && ProjetoConfig.BuscarPedCliAoInserirProjeto &&
                 (!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) || !String.IsNullOrEmpty(hdfIdPedidoEspelho.Value)))
-                txtAmbiente.Text = PedidoDAO.Instance.ObtemPedCli(Glass.Conversoes.StrParaUint(!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) ?
+                txtAmbiente.Text = PedidoDAO.Instance.ObtemPedCli(null, Glass.Conversoes.StrParaUint(!String.IsNullOrEmpty(hdfIdPedidoOriginal.Value) ?
                     hdfIdPedidoOriginal.Value : hdfIdPedidoEspelho.Value));
 
             // Define se o projeto está sendo visualizado após confirmado
@@ -423,7 +423,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         [Ajax.AjaxMethod]
         public string IsProdutoObra(string idPedido, string codInterno)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0)
             {
                 ProdutoObraDAO.DadosProdutoObra retorno = ProdutoObraDAO.Instance.IsProdutoObra(idObra.Value, codInterno);
@@ -439,7 +439,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         [Ajax.AjaxMethod]
         public string GetTamanhoMaximoProduto(string idPedido, string codInterno, string totM2Produto)
         {
-            uint? idObra = PedidoDAO.Instance.GetIdObra(Glass.Conversoes.StrParaUint(idPedido));
+            uint? idObra = PedidoDAO.Instance.GetIdObra(null, Glass.Conversoes.StrParaUint(idPedido));
             if (idObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
             {
                 ProdutoObra prod = ProdutoObraDAO.Instance.GetByCodInterno(idObra.Value, codInterno);
@@ -516,7 +516,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (idPedido > 0)
                 {
-                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedido.Value);
+                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido.Value);
                     if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Ativo && situacao != Glass.Data.Model.Pedido.SituacaoPedido.AtivoConferencia &&
                         situacao != Glass.Data.Model.Pedido.SituacaoPedido.EmConferencia)
                         return "Erro;O pedido precisa estar aberto para incluir novos projetos no mesmo.";
@@ -623,8 +623,8 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 if (!String.IsNullOrEmpty(idPedido) && idPedido != "0")
                 {
-                    pedidoReposicao = PedidoDAO.Instance.GetTipoVenda(Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
-                    isPedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(Glass.Conversoes.StrParaUint(idPedido)) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+                    pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, Glass.Conversoes.StrParaUint(idPedido)) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
+                    isPedidoMaoObraEspecial = PedidoDAO.Instance.GetTipoPedido(null, Glass.Conversoes.StrParaUint(idPedido)) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
                 }
 
                 if (isPedidoMaoObraEspecial)
@@ -805,6 +805,36 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (grdMaterialProjeto.Columns[12].Visible)
                 materItem.Obs = ((TextBox)grdMaterialProjeto.FooterRow.FindControl("txtObsIns")).Text;
 
+            var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+            var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+            var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+            var retorno = string.Empty;
+
+            if (materItem.Beneficiamentos != null)
+            {
+                foreach (var prodBenef in materItem.Beneficiamentos)
+                {
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                        materItem.Altura < tamanhoMinimoBisote && materItem.Largura < tamanhoMinimoBisote)
+                        retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
+
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                        materItem.Altura < tamanhoMinimoLapidacao && materItem.Largura < tamanhoMinimoLapidacao)
+                        retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
+                }
+            }
+
+            if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)materItem.IdProd)).IsVidroTemperado &&
+                    materItem.Altura < tamanhoMinimoTemperado && materItem.Largura < tamanhoMinimoTemperado)
+                retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm.";
+
+            if (!string.IsNullOrWhiteSpace(retorno))
+            {
+                MensagemAlerta.ShowMsg(retorno, Page);
+                return;
+            }
+
             try
             {
                 #region insere Material Item Projeto
@@ -878,19 +908,19 @@ namespace Glass.UI.Web.Cadastros.Projeto
             if (!String.IsNullOrEmpty(Request["IdPedido"]))
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-                idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
 
-                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(idPedido) : null;
+                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(null, idPedido) : null;
             }
 
             if (!String.IsNullOrEmpty(Request["IdPedidoEspelho"]))
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedidoEspelho"]);
-                idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
 
-                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(idPedido) : null;
+                idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(null, idPedido) : null;
             }
 
             // Busca o grupo deste modelo
@@ -1119,7 +1149,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         protected void btnConfCalc_Load(object sender, EventArgs e)
         {
-            if (Request["idPedido"] != null && PedidoDAO.Instance.IsGeradoParceiro(Glass.Conversoes.StrParaUint(Request["idPedido"])))
+            if (Request["idPedido"] != null && PedidoDAO.Instance.IsGeradoParceiro(null, Glass.Conversoes.StrParaUint(Request["idPedido"])))
                 btnConfCalc.OnClientClick = "if (!confirm('AS MEDIDAS CALCULADAS NESSE PROJETO SÃO DE SUA RESPONSABILIDADE.\\nDESEJA CONFIRMAR AS MEDIDAS?')) return false";
         }
 
@@ -1528,7 +1558,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
     
             if (idPedido > 0)
             {
-                benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
+                benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
                     TipoBenef.MaoDeObraEspecial : TipoBenef.Venda;
             }
         }

@@ -51,8 +51,8 @@ namespace Glass.Data.DAL
                     uint? idCliente = ip.IdCliente;
                     int? tipoEntrega = ip.TipoEntrega;
 
-                    uint? idObra = ip.IdPedido > 0 ? PedidoDAO.Instance.GetIdObra(ip.IdPedido.Value) :
-                        ip.IdPedidoEspelho > 0 ? PedidoDAO.Instance.GetIdObra(ip.IdPedidoEspelho.Value) :
+                    uint? idObra = ip.IdPedido > 0 ? PedidoDAO.Instance.GetIdObra(null, ip.IdPedido.Value) :
+                        ip.IdPedidoEspelho > 0 ? PedidoDAO.Instance.GetIdObra(null, ip.IdPedidoEspelho.Value) :
                         null;
 
                     ip.IdOrcamento = null;

@@ -22,7 +22,7 @@ namespace WebGlass.Business.Instalacao.Ajax
 
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
 
-            if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido))
+            if (!PedidoDAO.Instance.IsPedidoConfirmadoLiberado(idPedido, false))
                 return "Erro;Pedido não está confirmado.";
 
             return "Ok;";
@@ -42,7 +42,7 @@ namespace WebGlass.Business.Instalacao.Ajax
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
 
-                if (Glass.Configuracoes.Geral.ControlePCP && PedidoDAO.Instance.GetTipoPedido(idPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda &&
+                if (Glass.Configuracoes.Geral.ControlePCP && PedidoDAO.Instance.GetTipoPedido(null, idPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda &&
                     (!PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) || PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == Glass.Data.Model.PedidoEspelho.SituacaoPedido.Aberto))
                     return "Erro\tPara gerar uma nova ordem de instalação deste pedido é necessário que o mesmo esteja finalizado no PCP.";
 
@@ -90,7 +90,7 @@ namespace WebGlass.Business.Instalacao.Ajax
         {
             uint idPedido = Glass.Conversoes.StrParaUint(idPedidoStr);
 
-            if (Glass.Configuracoes.Geral.ControlePCP && PedidoDAO.Instance.GetTipoPedido(idPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda &&
+            if (Glass.Configuracoes.Geral.ControlePCP && PedidoDAO.Instance.GetTipoPedido(null, idPedido) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda &&
                 (!PedidoEspelhoDAO.Instance.ExisteEspelho(idPedido) || PedidoEspelhoDAO.Instance.ObtemSituacao(idPedido) == Glass.Data.Model.PedidoEspelho.SituacaoPedido.Aberto))
                 return "Erro\tPara gerar uma nova ordem de instalação deste pedido é necessário que o mesmo esteja finalizado no PCP.";
 

@@ -66,7 +66,7 @@ namespace Glass.Data.RelDAL
 
         public NotaPromissoria[] GetByAcertoRenegociado(uint idAcerto)
         {
-            Acerto acerto = AcertoDAO.Instance.GetAcertoDetails(idAcerto);
+            Acerto acerto = AcertoDAO.Instance.GetAcertoDetails(null, idAcerto);
 
             uint idLoja = FuncionarioDAO.Instance.ObtemIdLoja(acerto.UsuCad);
 

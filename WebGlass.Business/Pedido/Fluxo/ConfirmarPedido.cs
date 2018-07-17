@@ -124,7 +124,7 @@ namespace WebGlass.Business.Pedido.Fluxo
 
                 var mensagemFinal = Glass.MensagemAlerta.FormatErrorMsg("Falha ao finalizar pedido.", ex);
                 uint idPedido = uint.TryParse(idsPedidosErro.Split(',')[0], out idPedido) ? idPedido : 0;
-                var isSinal = PedidoDAO.Instance.TemSinalReceber(idPedido);
+                var isSinal = PedidoDAO.Instance.TemSinalReceber(null, idPedido);
 
                 scriptExecutar = "alert('" + mensagemFinal + "');";
 

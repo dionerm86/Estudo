@@ -16,7 +16,7 @@ namespace WebGlass.Business.PedidoEspelho.Fluxo
                     throw new Exception("Para finalizar o pedido confirme o projeto " + item.CodigoModelo + 
                         " (ambiente '" + item.Ambiente + "').");
 
-            if (PedidoDAO.Instance.IsMaoDeObra(idPedido))
+            if (PedidoDAO.Instance.IsMaoDeObra(null, idPedido))
             {
                 var ambientes = AmbientePedidoEspelhoDAO.Instance.GetByPedido(idPedido);
 

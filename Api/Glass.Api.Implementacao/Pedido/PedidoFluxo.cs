@@ -42,12 +42,12 @@ namespace Glass.Api.Implementacao.Pedido
 
             // Altera os dados do pedido
             DateTime dataEntrega, dataFastDelivery;
-            Glass.Data.DAL.PedidoDAO.Instance.GetDataEntregaMinima(Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente.Value, idPedido, out dataEntrega, out dataFastDelivery);
+            Glass.Data.DAL.PedidoDAO.Instance.GetDataEntregaMinima(null, Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente.Value, idPedido, out dataEntrega, out dataFastDelivery);
 
-            uint? idFuncCli = Glass.Data.DAL.ClienteDAO.Instance.ObtemIdFunc(Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente.Value);
+            uint? idFuncCli = Glass.Data.DAL.ClienteDAO.Instance.ObtemIdFunc(null, Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente.Value);
 
             var ped = Glass.Data.DAL.PedidoDAO.Instance.GetElementByPrimaryKey(idPedido);
-            Glass.Data.DAL.PedidoDAO.Instance.GeraParcelaParceiro(ref ped);
+            Glass.Data.DAL.PedidoDAO.Instance.GeraParcelaParceiro(null, ref ped);
 
             ped.GeradoParceiro = true;
             ped.DataEntrega = dataEntrega;

@@ -174,7 +174,7 @@ namespace Glass.UI.Web.Listas
     
                 try
                 {
-                    PedidoDAO.Instance.AlteraLiberarFinanc(idPedido, liberar);
+                    PedidoDAO.Instance.AlteraLiberarFinanc(null, idPedido, liberar);
                 }
                 catch (Exception ex) { Glass.MensagemAlerta.ErrorMsg("", ex, Page); }
     

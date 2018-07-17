@@ -262,18 +262,7 @@ namespace Glass.Data.DAL
         {
             return (Volume.SituacaoVolume)ObtemValorCampo<int>(sessao, "situacao", "idVolume=" + idVolume);
         }
-
-        /// <summary>
-        /// (APAGAR: quando alterar para utilizar transação)
-        /// Busca o pedido do volume
-        /// </summary>
-        /// <param name="idVolume"></param>
-        /// <returns></returns>
-        public uint GetIdPedido(uint idVolume)
-        {
-            return GetIdPedido(null, idVolume);
-        }
-
+        
         /// <summary>
         /// Busca o pedido do volume
         /// </summary>
@@ -291,9 +280,9 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public uint GetIdLoja(uint idVolume)
         {
-            var idPedido = GetIdPedido(idVolume);
+            var idPedido = GetIdPedido(null, idVolume);
 
-            return PedidoDAO.Instance.ObtemIdLoja(idPedido);
+            return PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
         }
 
         #endregion

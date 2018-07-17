@@ -5,6 +5,7 @@ using Glass.Data.DAL;
 using GDA;
 using Glass.Data.Model;
 using Glass.Data.Helper;
+using System.Linq;
 
 namespace Glass.Data.RelDAL
 {
@@ -52,10 +53,10 @@ namespace Glass.Data.RelDAL
             {
                 sql += " And (ped.idPedido=" + idPedido;
 
-                if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(idPedido))
+                if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, idPedido))
                     sql += " Or ped.IdPedidoAnterior=" + idPedido;
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, idPedido))
                     sql += " Or ppp.idPedidoExpedicao=" + idPedido;
 
                 sql += ")";
@@ -76,7 +77,9 @@ namespace Glass.Data.RelDAL
 
             if (idFunc > 0)
             {
-                sql += " And ppp.idProdPedProducao in (select idProdPedProducao from leitura_producao where idFuncLeitura=" + idFunc + ")";
+                var idsProdPedProducao = LeituraProducaoDAO.Instance.ObterIdsProdPedProducaoPeloIdFunc(null, (int)idFunc);
+
+                sql += $" AND ppp.IdProdPedProducao IN ({ (idsProdPedProducao?.Any(f => f > 0) ?? false ? string.Join(",", idsProdPedProducao) : "0") })";
                 criterio += "Funcionário: " + FuncionarioDAO.Instance.GetNome(idFunc) + "    ";
             }
 

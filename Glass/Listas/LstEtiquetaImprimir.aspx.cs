@@ -113,7 +113,7 @@ namespace Glass.UI.Web.Listas
 
                 bool permissaoImpEtiq = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas);
                 bool permissaoImpMaoDeObra = Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
-                bool pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+                bool pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
 
                 if (!permissaoImpEtiq && !permissaoImpMaoDeObra)
                     return "Erro\tVocê não tem permissão para imprimir etiquetas.";
@@ -144,7 +144,7 @@ namespace Glass.UI.Web.Listas
                     {
                         string idsImpressoes = ImpressaoEtiquetaDAO.Instance.GetIdsByPedido(null, idPedido);
 
-                        string producao = PedidoDAO.Instance.IsProducao(idPedido) ? ", que não seja para estoque," : "";
+                        string producao = PedidoDAO.Instance.IsProducao(null, idPedido) ? ", que não seja para estoque," : "";
                         string msg = "Erro\tNão há nenhum produto" + producao + " que atende aos filtros selecionados neste Pedido que não tenha sido impresso.";
     
                         if (!String.IsNullOrEmpty(idsImpressoes))
@@ -444,7 +444,7 @@ namespace Glass.UI.Web.Listas
         [Ajax.AjaxMethod()]
         public string PodeImprimirPedidoImportado(string idPedido)
         {
-            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(idPedido.StrParaUint()))
+            if (PCPConfig.PermitirImpressaoDePedidosImportadosApenasConferidos && PedidoDAO.Instance.IsPedidoImportado(null, idPedido.StrParaUint()))
                 return PedidoEspelhoDAO.Instance.IsPedidoConferido(idPedido.StrParaUint()).ToString();
 
             return "true";

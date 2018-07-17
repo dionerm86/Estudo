@@ -838,7 +838,7 @@ namespace Glass.Data.DAL
                     throw new Exception(ex.Message);
                 }
 
-                PedidoDAO.Instance.AtualizaSituacaoProducao(ObtemIdPedido(idInstalacao), null, DateTime.Now);
+                PedidoDAO.Instance.AtualizaSituacaoProducao(null, ObtemIdPedido(idInstalacao), null, DateTime.Now);
 
                 LogCancelamentoDAO.Instance.LogInstalacao(GetElementByPrimaryKey(idInstalacao), "Cancelamento de instalação", true);
             }
@@ -875,7 +875,7 @@ namespace Glass.Data.DAL
                     throw new Exception(ex.Message);
                 }
 
-                PedidoDAO.Instance.AtualizaSituacaoProducao(ObtemIdPedido(idInstalacao), null, DateTime.Now);
+                PedidoDAO.Instance.AtualizaSituacaoProducao(null, ObtemIdPedido(idInstalacao), null, DateTime.Now);
             }
         }
 

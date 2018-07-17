@@ -20,6 +20,21 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<int>(Config.ConfigEnum.LarguraMaximaVidro); }
             }
+
+            public static int AlturaELarguraMinimasParaPecasTemperadas
+            {
+                get { return Config.GetConfigItem<int>(Config.ConfigEnum.AlturaELarguraMinimasParaPecasTemperadas); }
+            }
+
+            public static int AlturaELarguraMinimaParaPecasComBisote
+            {
+                get { return Config.GetConfigItem<int>(Config.ConfigEnum.AlturaELarguraMinimaParaPecasComBisote); }
+            }
+
+            public static int AlturaELarguraMinimaParaPecasComLapidacao
+            {
+                get { return Config.GetConfigItem<int>(Config.ConfigEnum.AlturaELarguraMinimaParaPecasComLapidacao); }
+            }
         }
     }
 }

@@ -651,11 +651,11 @@ namespace Glass.Data.Model
                     retorno += string.Format("Pedido(s): {0} ", LiberarPedidoDAO.Instance.IdsPedidos(null, IdLiberarPedido.Value.ToString()));
                 else if (IdAcerto > 0 && FinanceiroConfig.FinanceiroRec.ExibirIdPedidoComAcertoContasRec)
                 {
-                    var idsPedido = AcertoDAO.Instance.ObterIdsPedido(null, (int)IdAcerto.Value);
+                    var idsPedido = PedidoDAO.Instance.ObterIdsPedidoPeloAcerto(null, (int)IdAcerto.Value);
 
                     if (string.IsNullOrEmpty(idsPedido) && IdLiberarPedido.GetValueOrDefault() == 0)
                     {
-                        var idsLiberarPedido = AcertoDAO.Instance.ObterIdsLiberarPedido(null, (int)IdAcerto.Value);
+                        var idsLiberarPedido = LiberarPedidoDAO.Instance.ObterIdsLiberarPedidoPeloAcerto(null, (int)IdAcerto.Value);
 
                         if (!string.IsNullOrEmpty(idsLiberarPedido))
                             idsPedido += LiberarPedidoDAO.Instance.IdsPedidos(null, idsLiberarPedido);

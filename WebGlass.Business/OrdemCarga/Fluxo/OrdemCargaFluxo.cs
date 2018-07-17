@@ -35,7 +35,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             if (idPedido > 0)
             {
-                idCli = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCli = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 nomeCli = "";
 
                 var idRotaCli = ClienteDAO.Instance.ObtemIdRota(idCli);
@@ -323,7 +323,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             foreach (var idPedido in idsPedidos.Split(','))
             {
-                var tipoVenda = PedidoDAO.Instance.GetTipoVenda(sessao, Glass.Conversoes.StrParaUint(idPedido));
+                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, Glass.Conversoes.StrParaUint(idPedido));
 
                 if (tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista && PCPConfig.HabilitarFaturamentoCarregamento)
                     throw new Exception("Não é possível finalizar OC com pedidos a vista se a configuração de efetuar faturamento do carregamento estiver ativa.");
@@ -349,7 +349,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             if (idPedido > 0)
             {
-                idCli = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+                idCli = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
                 nomeCli = "";
 
                 var idRotaCli = ClienteDAO.Instance.ObtemIdRota(idCli);
@@ -712,7 +712,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
             foreach (var idPedido in idsPedidos.Split(','))
             {
-                var tipoVenda = PedidoDAO.Instance.GetTipoVenda(sessao, Glass.Conversoes.StrParaUint(idPedido));
+                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, Glass.Conversoes.StrParaUint(idPedido));
 
                 if (tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista && PCPConfig.HabilitarFaturamentoCarregamento)
                     throw new Exception("Não é possível finalizar OC com pedidos a vista se a configuração de efetuar faturamento do carregamento estiver ativa.");

@@ -28,10 +28,10 @@ namespace Glass.UI.Web.Cadastros
             }
             else
             {
-                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedido);
+                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
                 var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
     
-                if (PedidoDAO.Instance.IsProducao(idPedido))
+                if (PedidoDAO.Instance.IsProducao(null, idPedido))
                 {
                     Glass.MensagemAlerta.ShowMsg("Este pedido é um pedido para produção. Não é possível selecionar um pedido desse tipo.", Page);
                     tbSaida.Visible = false;
@@ -81,7 +81,7 @@ namespace Glass.UI.Web.Cadastros
 
                 // Chamado 69935
                 uint idPedido = Glass.Conversoes.StrParaUint(txtNumPedido.Text);
-                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedido);
+                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedido);
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
                 {
                     Glass.MensagemAlerta.ShowMsg(string.Format("Este pedido ainda não foi {0}.",

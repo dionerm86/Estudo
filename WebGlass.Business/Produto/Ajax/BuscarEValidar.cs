@@ -553,7 +553,7 @@ namespace WebGlass.Business.Produto.Ajax
                     }
                 }
                 // Se o pedido tiver forma de pagamento Obra, não permite inserir produto com tipo subgrupo VidroLaminado ou VidroDuplo sem produto de composição.
-                if (PedidoDAO.Instance.GetIdObra(idPedido) > 0 &&
+                if (PedidoDAO.Instance.GetIdObra(null, idPedido) > 0 &&
                     (subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroLaminado || subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroDuplo))
                 {
                     if (!ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa((uint)prod.IdProd))
@@ -589,7 +589,7 @@ namespace WebGlass.Business.Produto.Ajax
                 // Retorna a espessura do produto
                 retorno += ";" + prod.Espessura;
 
-                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(idPedido);
+                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(null, idPedido);
                 // Retorna a alíquota ICMS do produto
                 retorno += ";" + (LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, idLojaPedido) ? prod.AliqICMSInterna.ToString().Replace(',', '.') : "0");
 
@@ -717,7 +717,7 @@ namespace WebGlass.Business.Produto.Ajax
                     }
                 }
                 // Se o pedido tiver forma de pagamento Obra, não permite inserir produto com tipo subgrupo VidroLaminado ou VidroDuplo sem produto de composição.
-                if (PedidoDAO.Instance.GetIdObra(idPedido) > 0 &&
+                if (PedidoDAO.Instance.GetIdObra(null, idPedido) > 0 &&
                     (subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroLaminado || subGrupo.TipoSubgrupo == TipoSubgrupoProd.VidroDuplo))
                 {
                     if (!ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa((uint)prod.IdProd))
@@ -733,7 +733,7 @@ namespace WebGlass.Business.Produto.Ajax
 
                     bool pedidoReposicao = false;
                     if (!string.IsNullOrEmpty(idPedidoStr))
-                        pedidoReposicao = PedidoDAO.Instance.GetTipoVenda(idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
+                        pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
                     
                     // Recupera o valor de tabela do produto
                     int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;

@@ -486,7 +486,11 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.AlturaMaximaVidro);
                 itens.Add(Config.ConfigEnum.LarguraMaximaVidro);
             }
-            
+
+            itens.Add(Config.ConfigEnum.AlturaELarguraMinimasParaPecasTemperadas);
+            itens.Add(Config.ConfigEnum.AlturaELarguraMinimaParaPecasComBisote);
+            itens.Add(Config.ConfigEnum.AlturaELarguraMinimaParaPecasComLapidacao);
+
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedido);
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedidoRevenda);
             itens.Add(Config.ConfigEnum.NumeroDiasUteisDataEntregaPedidoMaoDeObra);

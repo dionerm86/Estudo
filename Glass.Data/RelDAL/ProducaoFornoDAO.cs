@@ -14,93 +14,89 @@ namespace Glass.Data.RelDAL
 
         private string Sql(string dataIni, string dataFim, bool selecionar)
         {
-            var sqlNomePrimSetor = @"(
-                select descricao
-                from setor
-                where numSeq=2) as nomePrimSetor";
+            var setor = SetorDAO.Instance.ObterSetorPeloNumSeq(null, 2);
+            var idsSetorForno = SetorDAO.Instance.ObtemIdsSetorForno();
+            var criterio = $"Data início: { dataIni }    Data fim: { dataFim }";
+            var campos = selecionar ? $@"DATE(Data) AS Data,
+                CAST(SUM(TotM2PrimSetor) AS DECIMAL(12,2)) AS TotM2PrimSetor,
+                CAST(SUM(TotM2FornoProducao) AS DECIMAL(12,2)) AS TotM2FornoProducao,
+                CAST(SUM(TotM2FornoPerda) AS DECIMAL(12,2)) AS TotM2FornoPerda, 
+                CAST(COALESCE(totM.TotM2Venda, 0) AS DECIMAL (12,2)) AS TotM2PedidoVenda,
+                CAST(COALESCE(totM.TotM2Producao, 0) AS DECIMAL (12,2)) AS TotM2PedidoProducao,
+                NULL AS Obs, '$$$' AS Criterio, '{ setor.Descricao }' AS NomePrimSetor" : "DISTINCT DATE(Data)";
+            
+            var campoTotM2 = $"ROUND(SUM(pp.TotM/(pp.Qtde*IF(p.TipoPedido={ (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1))), 4)";
 
-            var criterio = "Data início: " + dataIni + "    Data fim: " + dataFim;
-            var campos = selecionar ? @"Date(Data) As Data,
-                Cast(Sum(TotM2PrimSetor) As decimal(12,2)) As TotM2PrimSetor,
-                Cast(Sum(TotM2FornoProducao) As decimal(12,2)) As TotM2FornoProducao,
-                Cast(Sum(TotM2FornoPerda) As decimal(12,2)) As TotM2FornoPerda, 
-                Cast(Coalesce(totM.TotM2Venda, 0) As Decimal (12,2)) As TotM2PedidoVenda,
-                Cast(Coalesce(totM.TotM2Producao, 0) As Decimal (12,2)) As TotM2PedidoProducao,
-                Null As Obs, '$$$' As Criterio, " + sqlNomePrimSetor : "Distinct Date(Data)";
+            var reposicaoPeca = Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca;
 
-            var campoTotM2 = "round(sum(pp.totM/(pp.Qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1))), 4)";
-
-            var reposicaoPeca = Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca;
-
-            var sql = @"
-                select " + campos + @"
-                from (
-                    select lp.DataLeitura as Data, " + campoTotM2 + @" as TotM2PrimSetor, 0 as TotM2FornoProducao, 0 as TotM2FornoPerda
-                    from leitura_producao lp
-                        left join produto_pedido_producao ppp on (lp.idProdPedProducao=ppp.idProdPedProducao)
-                        left join produtos_pedido_espelho pp on (ppp.idProdPed=pp.idProdPed)
-                        left join ambiente_pedido_espelho a on (pp.idAmbientePedido=a.idAmbientePedido)
-                        left join pedido p on (pp.idPedido=p.idPedido)
-                    where lp.DataLeitura>=?dataIni
-                        and lp.DataLeitura<=?dataFim
-                        and lp.idSetor=(select idSetor from setor where numSeq=2)
-                        and ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                        and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
-                        and (pp.InvisivelFluxo=false or pp.InvisivelFluxo is null)
-                    group by date(lp.DataLeitura)
+            var sql = $@"
+                SELECT { campos }
+                FROM (
+                    SELECT lp.DataLeitura AS Data, { campoTotM2 } AS TotM2PrimSetor, 0 AS TotM2FornoProducao, 0 AS TotM2FornoPerda
+                    FROM leitura_producao lp
+                        LEFT JOIN produto_pedido_producao ppp ON (lp.IdProdPedProducao=ppp.IdProdPedProducao)
+                        LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
+                        LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
+                        LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
+                    WHERE lp.DataLeitura>=?dataIni
+                        AND lp.DataLeitura<=?dataFim
+                        AND lp.IdSetor={ setor.IdSetor }
+                        AND ppp.Situacao={ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                        AND p.Situacao<>{ (int)Pedido.SituacaoPedido.Cancelado }
+                        AND (pp.InvisivelFluxo=FALSE OR pp.InvisivelFluxo IS NULL)
+                    GROUP BY DATE(lp.DataLeitura)
                     
-                    union all select lp.DataLeitura as Data, 0 as TotM2PrimSetor, " + campoTotM2 + @" as TotM2FornoProducao, 0 as TotM2FornoPerda
-                    from leitura_producao lp
-                        left join produto_pedido_producao ppp on (lp.idProdPedProducao=ppp.idProdPedProducao)
-                        left join produtos_pedido_espelho pp on (ppp.idProdPed=pp.idProdPed)
-                        left join ambiente_pedido_espelho a on (pp.idAmbientePedido=a.idAmbientePedido)
-                        left join pedido p on (pp.idPedido=p.idPedido)
-                    where lp.DataLeitura>=?dataIni
-                        and lp.DataLeitura<=?dataFim
-                        and lp.idSetor in (select idSetor from setor where forno=true)
-                        and ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                        and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
-                        and (pp.InvisivelFluxo=false or pp.InvisivelFluxo is null)
-                    group by date(lp.DataLeitura)
+                    UNION ALL SELECT lp.DataLeitura AS Data, 0 AS TotM2PrimSetor, { campoTotM2 } AS TotM2FornoProducao, 0 AS TotM2FornoPerda
+                    FROM leitura_producao lp
+                        LEFT JOIN produto_pedido_producao ppp ON (lp.IdProdPedProducao=ppp.IdProdPedProducao)
+                        LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
+                        LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
+                        LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
+                    WHERE lp.DataLeitura>=?dataIni
+                        AND lp.DataLeitura<=?dataFim
+                        AND lp.IdSetor IN ({ idsSetorForno })
+                        AND ppp.Situacao={ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                        AND p.Situacao<>{ (int)Pedido.SituacaoPedido.Cancelado }
+                        AND (pp.InvisivelFluxo=FALSE OR pp.InvisivelFluxo IS NULL)
+                    GROUP BY DATE(lp.DataLeitura)
                     
-                    union all select " + (reposicaoPeca ? "ppp.dataRepos" : "ppp.dataPerda") +
-                        @" as Data, 0 as TotM2PrimSetor, 0 as TotM2FornoProducao, " + campoTotM2 + @" as TotM2FornoPerda
-                    from produto_pedido_producao ppp
-                        left join produtos_pedido_espelho pp on (ppp.idProdPed=pp.idProdPed)
-                        left join ambiente_pedido_espelho a on (pp.idAmbientePedido=a.idAmbientePedido)
-                        left join pedido p on (pp.idPedido=p.idPedido)
-                    where
-                        " + (reposicaoPeca ?
-                        "ppp.idSetorRepos In (select idSetor from setor where forno=true) And ppp.dataRepos>=?dataIni And ppp.dataRepos<=?dataFim" :
-                        "ppp.dataPerda>=?dataIni And ppp.dataPerda<=?dataFim") + @"
-                        and ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                        and p.situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
-                        and (pp.InvisivelFluxo=false or pp.InvisivelFluxo is null)
-                    group by date(" + (reposicaoPeca ? "ppp.dataRepos" : "ppp.dataPerda") + @")
-                ) as producao_forno
-
-                Left Join
-                    (Select 
-                        dataPedido,
+                    UNION ALL SELECT { (reposicaoPeca ? "ppp.DataRepos" : "ppp.DataPerda") } AS Data, 0 AS TotM2PrimSetor, 0 AS TotM2FornoProducao, { campoTotM2 } AS TotM2FornoPerda
+                    FROM produto_pedido_producao ppp
+                        LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
+                        LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
+                        LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
+                    WHERE
+                        { (reposicaoPeca ?
+                            $"ppp.IdSetorRepos IN ({ idsSetorForno }) AND ppp.DataRepos>=?dataIni AND ppp.DataRepos<=?dataFim" :
+                            "ppp.DataPerda>=?dataIni AND ppp.DataPerda<=?dataFim") }
+                        AND ppp.Situacao={ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                        AND p.Situacao<>{ (int)Pedido.SituacaoPedido.Cancelado }
+                        AND (pp.InvisivelFluxo=FALSE OR pp.InvisivelFluxo IS NULL)
+                    GROUP BY DATE({ (reposicaoPeca ? "ppp.DataRepos" : "ppp.DataPerda") })
+                ) AS producao_forno
+                
+                LEFT JOIN
+                    (SELECT 
+                        DataPedido,
                         SUM(TotMVenda) AS TotM2Venda,
                         SUM(TotMProd) AS TotM2Producao
-                    From
-                        (Select 
-                        Date(p.datapedido) As dataPedido,
-                            If(tipoPedido In (" + (int)Pedido.TipoPedidoEnum.Revenda + "," + (int)Pedido.TipoPedidoEnum.Venda + @"), pp.totM, 0) As totMVenda,
-                            If(tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @", pp.totM, 0) As totMProd
-                        From
+                    FROM
+                        (SELECT 
+                        DATE(p.DataPedido) AS DataPedido,
+                            IF(TipoPedido IN ({ (int)Pedido.TipoPedidoEnum.Revenda },{ (int)Pedido.TipoPedidoEnum.Venda }), pp.TotM, 0) AS TotMVenda,
+                            IF(TipoPedido={ (int)Pedido.TipoPedidoEnum.Producao }, pp.TotM, 0) AS totMProd
+                        FROM
                             produtos_pedido pp
-                        Inner Join pedido p ON (pp.idPedido = p.idPedido)
-                        Where p.tipoPedido In (" + (int)Pedido.TipoPedidoEnum.Revenda + "," + (int)Pedido.TipoPedidoEnum.Venda + "," +
-                            (int)Pedido.TipoPedidoEnum.Producao + @") And p.situacao <> " + (int)Pedido.SituacaoPedido.Cancelado + @" And
-                            !Coalesce(pp.InvisivelFluxo, False) And p.dataPedido Is Not Null
-                            And p.dataPedido >= ?dataIni and p.dataPedido <= ?dataFim) As temp
-                    Group By DATE(DataPedido)) As totM ON (DATE(totM.DataPedido)=Date(producao_forno.data))
-                Group By Date(Data)";
+                        INNER JOIN pedido p ON (pp.IdPedido = p.IdPedido)
+                        WHERE p.TipoPedido IN ({ (int)Pedido.TipoPedidoEnum.Revenda },{ (int)Pedido.TipoPedidoEnum.Venda },{ (int)Pedido.TipoPedidoEnum.Producao })
+                            AND p.Situacao <> { (int)Pedido.SituacaoPedido.Cancelado }
+                            AND !COALESCE(pp.InvisivelFluxo, FALSE) AND p.DataPedido IS NOT NULL
+                            AND p.DataPedido >= ?dataIni AND p.DataPedido <= ?dataFim) AS temp
+                    GROUP BY DATE(DataPedido)) AS TotM ON (DATE(totM.DataPedido)=DATE(producao_forno.Data))
+                GROUP BY DATE(Data)";
 
             sql = sql.Replace("$$$", criterio);
-            return selecionar ? sql : "Select Count(*) From (" + sql + ") As temp";
+            return selecionar ? sql : $"SELECT COUNT(*) FROM ({ sql }) AS temp";
         }
 
         private GDAParameter[] GetParams(string dataIni, string dataFim)

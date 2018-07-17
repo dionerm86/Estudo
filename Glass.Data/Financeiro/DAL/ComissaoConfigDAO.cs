@@ -71,8 +71,8 @@ namespace Glass.Data.DAL
             int numFaixaInt = GetNumeroFaixaInt(valor, comissao);
 
             // Recupera informações do pedido
-            uint idCli = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? PedidoDAO.Instance.ObtemIdCliente(idPedido) : 0;
-            uint idFuncPedido = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? PedidoDAO.Instance.ObtemIdFunc(idPedido) : 0;
+            uint idCli = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? PedidoDAO.Instance.ObtemIdCliente(null, idPedido) : 0;
+            uint idFuncPedido = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? PedidoDAO.Instance.ObtemIdFunc(null, idPedido) : 0;
             uint? idFuncCli = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? ClienteDAO.Instance.ObtemIdFunc(idCli) : null;
             float percComissao = Configuracoes.ComissaoConfig.UsarPercComissaoCliente ? ClienteDAO.Instance.ObtemPercComissaoFunc(idCli) : 0;
             float percComissaoPed = PedidoDAO.Instance.ObtemPercComissaoAdmin(idPedido);
