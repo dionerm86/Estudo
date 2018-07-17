@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Processos.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -34,12 +35,22 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                     {
                         Id = p.IdProcesso,
                         Codigo = p.CodInterno,
-                        IdAplicacao = p.IdAplicacao,
-                        CodigoAplicacao = p.CodAplicacao,
+                        Aplicacao = this.ObterAplicacao(p.IdAplicacao, p.CodAplicacao),
                     });
 
                 return this.Lista(processos);
             }
+        }
+
+        private IdCodigoDto ObterAplicacao(int? id, string codigo)
+        {
+            return !id.HasValue || string.IsNullOrWhiteSpace(codigo)
+                ? null
+                : new IdCodigoDto
+                {
+                    Id = id.Value,
+                    Codigo = codigo,
+                };
         }
     }
 }

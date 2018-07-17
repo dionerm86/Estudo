@@ -84,6 +84,7 @@
                 <button v-on:click.prevent="excluir_(item)" title="Excluir" v-if="item.permissoes.excluir && !inserindo && numeroLinhaEdicao === -1">
                     <img src="../Images/ExcluirGrid.gif">
                 </button>
+                <slot name="itemIconesEsquerda" v-bind:item="item" v-bind:index="index"></slot>
             </td>
             <td>
                 {{ item.produto.codigo }}
@@ -143,7 +144,12 @@
                 {{ item.percentualComissao | percentual }}
             </td>
             <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
-            <td></td>
+            <td>
+                <button title="Exibir Produtos da Composição" v-if="item.possuiFilhos">
+                    <img src="../Images/box.png">
+                </button>
+                <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
+            </td>
         </template>
         <template slot="itemEditando">
             <td style="white-space: nowrap">

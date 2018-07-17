@@ -31,6 +31,7 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
                 Descricao = produtoPedido.DescrProduto,
                 DescricaoComBeneficiamentos = produtoPedido.DescricaoProdutoComBenef,
                 Espessura = produtoPedido.Espessura,
+                Vidro = produtoPedido.IsVidro == "true",
             };
 
             this.Quantidade = produtoPedido.Qtde;
@@ -72,6 +73,7 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
 
             this.Observacao = produtoPedido.Obs;
             this.PercentualComissao = (double)produtoPedido.PercComissao;
+            this.PossuiFilhos = produtoPedido.IsProdLamComposicao;
             this.Permissoes = new PermissoesDto
             {
                 Editar = produtoPedido.PodeEditar,

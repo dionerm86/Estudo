@@ -196,19 +196,19 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         <img src="../Images/cifrao.png" title="Pagamento Antecipado" key="sinalEPagamentoAntecipado" v-else-if="item.sinalEPagamentoAntecipado.temPagamentoAntecipado">
                         <img src="../Images/cifrao.png" :title="item.sinalEPagamentoAntecipado.valorSinal | moeda | textoSinal" v-else-if="item.sinalEPagamentoAntecipado.idSinal"
                             key="sinalEPagamentoAntecipado">
-                        <span v-if="item.liberacao && item.liberacao.observacao" @mouseover="exibirDivComoPopup(`obsLiberacao_${item.id}`, $event)"
+                        <span v-if="item.liberacao && item.liberacao.observacao" @mouseover="exibirDivComoPopup('obsLiberacao_' + item.id, $event)"
                             onmouseout="UnTip()">
                             <img src="../Images/Nota.gif" title="Observação da Liberação">
-                            <div :id="`obsLiberacao_${item.id}`" style="display: none">
+                            <div :id="'obsLiberacao_' + item.id" style="display: none">
                                 Observação da Liberação:
                                 <div>
                                     {{ item.liberacao.observacao }}
                                 </div>
                             </div>
                         </span>
-                        <span v-if="item.permissoes.finalizacoesFinanceiro" @mouseover="exibirDivComoPopup(`obsFinFinanc_${item.id}`, $event)" onmouseout="UnTip()">
+                        <span v-if="item.permissoes.finalizacoesFinanceiro" @mouseover="exibirDivComoPopup('obsFinFinanc_' + item.id, $event)" onmouseout="UnTip()">
                             <img src="../Images/money_hist.gif" title="Finalizações financeiro">
-                            <div :id="`obsFinFinanc_${item.id}`" style="display: none">
+                            <div :id="'obsFinFinanc_' + item.id" style="display: none">
                                 <lista-paginada :funcao-recuperar-itens="buscarObservacoesFinanceiro" :filtro="{ id: item.id }" :ordenacao="ordenacaoObservacoesFinanceiro"
                                     :numero-registros="5">
                                     <template slot="cabecalho">
@@ -234,7 +234,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                                 </lista-paginada>
                             </div>
                         </span>
-                        <img src="../Images/carregamento.png" :title='`Ordem de Carga: ${exibirOrdensDeCarga(item)}`' v-if="item.idsOrdensDeCarga && item.idsOrdensDeCarga.length > 0"
+                        <img src="../Images/carregamento.png" :title="'Ordem de Carga: ' + exibirOrdensDeCarga(item)" v-if="item.idsOrdensDeCarga && item.idsOrdensDeCarga.length > 0"
                             style="width: 16px; height: 16px">
                     </td>
                 </template>

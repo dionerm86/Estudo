@@ -157,6 +157,44 @@ Vue.component('pedido-produtos', {
     listaAtualizada: function () {
       this.atualizar_++;
       this.$emit('lista-atualizada');
+    },
+
+    /**
+     * Exibe a tela com as imagens de peça de um item de venda.
+     */
+    abrirImagemPecas: function (item) {
+      this.abrirJanela(
+        600,
+        800,
+        '../Utils/SelImagemPeca.aspx?tipo=pedido'
+          + '&idPedido=' + this.pedido.id
+          + '&idProdPed=' + item.id
+          + '&pecaAvulsa=' + !item.possuiFilhos
+      );
+    },
+
+    /**
+     * Exibe uma div como 'popup'.
+     * @param {string} nome O nome da DIV que será exibida.
+     * @param {Object} event O objeto com o evento JavaScript.
+     */
+    exibirDivComoPopup: function (nome, event) {
+      var botao = event.target;
+
+      for (var iTip = 0; iTip < 2; iTip++) {
+        TagToTip(
+          nome,
+          FADEIN,
+          300,
+          COPYCONTENT,
+          false,
+          FIX,
+          [
+            botao,
+            9 - getTableWidth(nome),
+            -25 - getTableHeight(nome)
+          ]);
+      }
     }
   },
 

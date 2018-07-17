@@ -4,5 +4,29 @@
         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" tipo-validacao-produto="Pedido"
         v-bind:quantidade-ambiente="ambiente ? ambiente.quantidade : null" v-bind:obrigar-processo-e-aplicacao-roteiro="configuracoes.obrigarProcessoEAplicacaoRoteiro"
         v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar"
-        v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada"></lista-itens-venda>
+        v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada">
+        <template slot="itemIconesDireita" slot-scope="{ item, index }">
+            <button title="Exibir imagem das peças" v-on:click.prevent="abrirImagemPecas(item)"
+                v-if="item.produto && item.produto.vidro">
+                <img src="../Images/imagem.gif">
+            </button>
+            <button title="Observação da peça" v-on:click.prevent="exibirDivComoPopup('tbObsCalc_' + item.id, $event)"
+                v-if="item.produto && item.produto.vidro">
+                <img src="../Images/blocodenotas.png">
+            </button>
+            <table v-bind:id="'tbObsCalc_' + item.id" cellspacing="0" style="display: none;">
+                <tr>
+                    <td align="center">
+                        <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
+                               type="button" value="Salvar" />
+                    </td>
+                </tr>
+            </table>
+        </template>
+    </lista-itens-venda>
 </section>

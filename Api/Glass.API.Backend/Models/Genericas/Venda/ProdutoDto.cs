@@ -33,5 +33,12 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         [DataMember]
         [JsonProperty("espessura")]
         public double Espessura { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o produto é um vidro.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("vidro")]
+        public bool Vidro { get; set; }
     }
 }

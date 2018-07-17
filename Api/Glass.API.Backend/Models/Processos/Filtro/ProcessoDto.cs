@@ -18,14 +18,7 @@ namespace Glass.API.Backend.Models.Processos.Filtro
         /// Obtém ou define o identificador da aplicação vinculada ao processo.
         /// </summary>
         [DataMember]
-        [JsonProperty("idAplicacao")]
-        public int? IdAplicacao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o código interno da aplicação vinculada ao processo.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("codigoAplicacao")]
-        public string CodigoAplicacao { get; set; }
+        [JsonProperty("aplicacao")]
+        public IdCodigoDto Aplicacao { get; set; }
     }
 }

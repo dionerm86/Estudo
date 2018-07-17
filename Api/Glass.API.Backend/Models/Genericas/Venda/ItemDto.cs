@@ -126,6 +126,13 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         public double PercentualComissao { get; set; }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se o produto possui filhos (no caso de produto composição/laminado).
+        /// </summary>
+        [DataMember]
+        [JsonProperty("possuiFilhos")]
+        public bool PossuiFilhos { get; set; }
+
+        /// <summary>
         /// Recupera um objeto IdCodigoDto de acordo com os valores informados.
         /// </summary>
         /// <param name="id">O identificador do item.</param>

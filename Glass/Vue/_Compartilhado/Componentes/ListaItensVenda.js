@@ -505,6 +505,8 @@
      */
     processoAtual: {
       handler: function (atual) {
+        this.validarFormulario_(this.$el);
+
         if (!this.itemVenda || !this.itemVenda.processo) {
           return;
         }
@@ -512,10 +514,10 @@
         this.itemVenda.processo.id = atual ? atual.id : null;
         this.itemVenda.processo.codigo = atual ? atual.codigo : null;
 
-        if (atual && atual.idAplicacao) {
+        if (atual && atual.aplicacao) {
           this.aplicacaoAtual = {
-            id: atual.idAplicacao,
-            codigo: atual.codigoAplicacao
+            id: atual.aplicacao.id,
+            codigo: atual.aplicacao.codigo
           };
         }
       },
@@ -528,6 +530,8 @@
      */
     aplicacaoAtual: {
       handler: function (atual) {
+        this.validarFormulario_(this.$el);
+
         if (!this.itemVenda || !this.itemVenda.aplicacao) {
           return;
         }
