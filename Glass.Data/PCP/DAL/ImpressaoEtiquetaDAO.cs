@@ -1334,36 +1334,39 @@ namespace Glass.Data.DAL
                         var idPedido = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(session, etiq.IdProdPedEsp);
                         var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(session, idPedido);
 
-                        /* Chamado 57976. */
-                        if (pedidoImportado)
+                        if (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta)
                         {
-                            var caminhoSalvarFMLPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
-                                TipoArquivoMesaCorte.FML);
+                            /* Chamado 57976. */
+                            if (pedidoImportado)
+                            {
+                                var caminhoSalvarFMLPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
+                                    TipoArquivoMesaCorte.FML);
 
-                            var caminhoSalvarDXFPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
-                                TipoArquivoMesaCorte.DXF);
+                                var caminhoSalvarDXFPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
+                                    TipoArquivoMesaCorte.DXF);
 
-                            if (System.IO.File.Exists(caminhoSalvarFMLPedidoImportado) || System.IO.File.Exists(caminhoSalvarDXFPedidoImportado))
-                                continue;
-                        }
-                        
-                        var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "IdMaterItemProj", string.Format("IdProdPed={0}", etiq.IdProdPedEsp));
+                                if (System.IO.File.Exists(caminhoSalvarFMLPedidoImportado) || System.IO.File.Exists(caminhoSalvarDXFPedidoImportado))
+                                    continue;
+                            }
 
-                        //Verifica se tem arquivo dxf salvo editado anteriormente.
-                        if (idMaterItemProj > 0)
-                        {
-                            var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), etiq.IdProdPedEsp);
-                            
-                            if (System.IO.File.Exists(caminhoDxf))
-                                continue;
+                            var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "IdMaterItemProj", string.Format("IdProdPed={0}", etiq.IdProdPedEsp));
 
-                            var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj.Value);
-                            var caminhoDxfProjeto = pecaItemProjeto != null && pecaItemProjeto.IdPecaItemProj > 0 ?
-                                string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProjectProjeto(), pecaItemProjeto.IdPecaItemProj) : string.Empty;
-                            
-                            if (!string.IsNullOrWhiteSpace(caminhoDxfProjeto) && System.IO.File.Exists(caminhoDxfProjeto))
-                                continue;
-                        }
+                            //Verifica se tem arquivo dxf salvo editado anteriormente.
+                            if (idMaterItemProj > 0)
+                            {
+                                var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), etiq.IdProdPedEsp);
+
+                                if (System.IO.File.Exists(caminhoDxf))
+                                    continue;
+
+                                var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj.Value);
+                                var caminhoDxfProjeto = pecaItemProjeto != null && pecaItemProjeto.IdPecaItemProj > 0 ?
+                                    string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProjectProjeto(), pecaItemProjeto.IdPecaItemProj) : string.Empty;
+
+                                if (!string.IsNullOrWhiteSpace(caminhoDxfProjeto) && System.IO.File.Exists(caminhoDxfProjeto))
+                                    continue;
+                            }
+                        }                           
 
                         var produtoPossuiImagemAssociada = ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(session, etiq.IdProdPedEsp);
                         var idAplicacao = ProdutosPedidoEspelhoDAO.Instance.ObtemIdAplicacao(session, etiq.IdProdPedEsp);
