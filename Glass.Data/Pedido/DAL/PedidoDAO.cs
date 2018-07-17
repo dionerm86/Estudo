@@ -380,7 +380,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(codCliente))
             {
-                fa.Append(" And (p.CodCliente like ?codCliente");
+                fa.Append(" And (p.CodCliente like ?codCliente OR p.PedCliExterno like ?codCliente");
 
                 fa.Append(")");
             }

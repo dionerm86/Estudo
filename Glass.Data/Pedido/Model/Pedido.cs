@@ -967,6 +967,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMETRANSPORTADOR", DirectionParameter.InputOptional)]
         public string NomeTransportador { get; set; }
 
+        public string CodCliComCodCliExterno
+        {
+            get
+            { return CodCliente + " - " + PedCliExterno; }
+        }
+
         #region Finalização / Confirmação do Financeiro
 
         [PersistenceProperty("MOTIVOERROFINALIZARFINANC", DirectionParameter.InputOptional)]

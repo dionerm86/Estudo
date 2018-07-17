@@ -562,7 +562,7 @@
                         <asp:BoundField DataField="IdPedidoExibir" HeaderText="Num" SortExpression="IdPedido" />
                         <asp:BoundField DataField="IdProjeto" HeaderText="Proj." SortExpression="IdProjeto" />
                         <asp:BoundField DataField="IdOrcamento" HeaderText="Orça." SortExpression="IdOrcamento" />
-                        <asp:BoundField DataField="CodCliente" HeaderText="Pedido Cli." SortExpression="CodCliente" />
+                        <asp:BoundField DataField="CodCliComCodCliExterno" HeaderText="Pedido Cli." SortExpression="CodCliente" />
                         <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
