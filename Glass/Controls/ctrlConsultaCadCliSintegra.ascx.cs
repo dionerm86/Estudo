@@ -49,19 +49,18 @@ namespace Glass.UI.Web.Controls
         [Ajax.AjaxMethod()]
         public string ConsultaSitCadContribuinte(string idCliente)
         {
+            uint idCli = Glass.Conversoes.StrParaUint(idCliente);
+            Cliente cli = ClienteDAO.Instance.GetElement(idCli);
+
             try
             {
-                uint idCli = Glass.Conversoes.StrParaUint(idCliente);
-    
-                Cliente cli = ClienteDAO.Instance.GetElement(idCli);
-    
                 if (cli == null)
                     return "Cliente não encontrado.";
-    
-                string retorno =  ConsultaSituacao.ConsultaSitCadastroContribuinte(cli.Uf, cli.CpfCnpj);
-    
-                if (cli.Situacao == 2 && 
-                    cli.Obs.Contains("Última pesquisa ao cadastro do sintegra há mais de") && 
+
+                string retorno = ConsultaSituacao.ConsultaSitCadastroContribuinte(cli.Uf, cli.CpfCnpj);
+
+                if (cli.Situacao == 2 &&
+                    cli.Obs.Contains("Última pesquisa ao cadastro do sintegra há mais de") &&
                     retorno.Contains("Situação: Habilitado."))
                     return "confirm&&" + retorno;
                 else
@@ -69,9 +68,16 @@ namespace Glass.UI.Web.Controls
             }
             catch (Exception ex)
             {
+                var mensagem = string.Empty;
+                if (ex.Message.Contains("URI está vazio."))
+                {
+                    mensagem = "A consulta ao Sintegra ainda não está habilitada na versão 4.00 da NF-e para o seu Estado, assim que possível será disponibilizada.";
+                    ClienteDAO.Instance.AtualizaUltimaConsultaSintegra(cli.CpfCnpj);
+                    return Glass.MensagemAlerta.FormatErrorMsg("Info.:", new Exception(mensagem));
+                }
+
                 return Glass.MensagemAlerta.FormatErrorMsg("Falha ao chamar WebService.", ex);
             }
-    
         }
     
         /// <summary>
