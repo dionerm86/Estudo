@@ -15,6 +15,11 @@ namespace Glass.API.Backend.Atributos
         /// <inheritdoc/>
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
+            if (actionExecutedContext.Response == null || actionExecutedContext.Response.Headers == null)
+            {
+                return;
+            }
+
             if (actionExecutedContext.Response.Headers.CacheControl == null)
             {
                 actionExecutedContext.Response.Headers.CacheControl = new CacheControlHeaderValue();

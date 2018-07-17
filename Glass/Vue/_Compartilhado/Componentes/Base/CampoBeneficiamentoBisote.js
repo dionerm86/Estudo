@@ -57,6 +57,7 @@ Vue.component('campo-beneficiamento-bisote', {
       }
 
       this.inputValidar.setCustomValidity(mensagem);
+      this.inputValidar.reportValidity();
     }
   },
 

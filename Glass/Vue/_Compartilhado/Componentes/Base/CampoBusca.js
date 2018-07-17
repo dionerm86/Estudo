@@ -113,6 +113,15 @@ Vue.component('campo-busca', {
 
   methods: {
     /**
+     * Exibe os itens que podem ser selecionados.
+     */
+    exibir: function() {
+      this.buscando = true;
+      this.$el.children[1].style.minWidth = (this.$el.clientWidth - 2) + 'px';
+      this.$el.children[1].style.maxWidth = (this.$el.clientWidth * 2) + 'px';
+    },
+
+    /**
      * Realiza a busca dos itens com base no nome informado no controle.
      * @param {number} id O ID do item que será buscado.
      * @param {string} nome O nome que será usado para a busca.

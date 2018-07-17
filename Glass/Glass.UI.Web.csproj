@@ -1077,7 +1077,7 @@
     <Content Include="Images\note_add.gif" />
     <Content Include="Images\numDown.gif" />
     <Content Include="Images\numUp.gif" />
-    <Content Include="Images\não curtir.gif" />
+    <Content Include="Images\nao curtir.gif" />
     <Content Include="Images\offline.gif" />
     <Content Include="Images\ok.gif" />
     <Content Include="Images\ok.wav" />

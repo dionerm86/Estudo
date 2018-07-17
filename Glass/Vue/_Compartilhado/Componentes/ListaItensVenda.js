@@ -112,6 +112,17 @@
     },
 
     /**
+     * Indica se os dados de etiqueta (processo e aplicação) são obrigatórios pelo roteiro de produção.
+     * @type {?boolean}
+     */
+    obrigarProcessoEAplicacaoRoteiro: {
+      required: false,
+      twoWay: false,
+      default: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    },
+
+    /**
      *
      * @param {!Object} filtro O filtro informado pelo controle lista-paginada.
      * @param {!number} pagina O número da página que está sendo exibida no controle lista-paginada.
@@ -395,34 +406,36 @@
         form = form.parentNode;
       }
 
-      if (!form.checkValidity()) {
-        return false;
-      }
-
       var mensagemProcesso = '';
       var mensagemAplicacao = '';
 
       if (this.produtoAtual && this.produtoAtual.exigirProcessoEAplicacao) {
-        if (!this.processoAtual) {
-          mensagemProcesso = this.configuracoes.obrigarProcessoEAplicacaoRoteiro
+        if (!this.processoAtual || !this.processoAtual.id) {
+          mensagemProcesso = this.obrigarProcessoEAplicacaoRoteiro
             ? 'É obrigatório informar o processo caso algum setor seja to tipo "Por Roteiro" ou "Por Benef.".'
             : 'Informe o processo.';
-
-          this.exibirMensagem('Processo não informado', mensagemProcesso);
-          return false;
         }
 
-        if (!this.aplicacaoAtual) {
-          mensagemAplicacao = this.configuracoes.obrigarProcessoEAplicacaoRoteiro
+        if (!this.aplicacaoAtual || !this.aplicacaoAtual.id) {
+          mensagemAplicacao = this.obrigarProcessoEAplicacaoRoteiro
             ? 'É obrigatório informar a aplicação caso algum setor seja to tipo "Por Roteiro" ou "Por Benef.".'
             : 'Informe a aplicação.';
-
-          this.exibirMensagem('Aplicação não informada', mensagemAplicacao);
-          return false;
         }
+
+        const alterarCampo = function (tipo, mensagem, el) {
+          var campo = el.querySelector('.lista-itens-venda__' + tipo + ' input[type=search]');
+
+          if (campo) {
+            campo.setCustomValidity(mensagem);
+            campo.reportValidity();
+          }
+        }
+
+        alterarCampo('processo', mensagemProcesso, this.$el);
+        alterarCampo('aplicacao', mensagemAplicacao, this.$el);
       }
 
-      return !mensagemProcesso && !mensagemAplicacao;
+      return form.checkValidity();
     }
   },
 

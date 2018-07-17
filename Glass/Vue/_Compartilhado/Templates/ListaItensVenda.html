@@ -160,7 +160,8 @@
                 </span>
                 <div style="display: none">
                     <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="itemVenda && itemVenda.produto"
-                        v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"></campo-busca-produto>
+                        v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                        required></campo-busca-produto>
                 </div>
             </td>
             <td>
@@ -202,10 +203,10 @@
                 <input type="number" step="0.01" min="produtoAtual ? produtoAtual.valorMinimo : 0" v-model.number="itemVenda.valorUnitario"
                     style="width: 50px" required>
             </td>
-            <td>
+            <td class="lista-itens-venda__processo">
                 <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="itemVenda"></campo-busca-etiqueta-processo>
             </td>
-            <td>
+            <td class="lista-itens-venda__aplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
@@ -260,7 +261,8 @@
             </td>
             <td colspan="2">
                 <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="inserindo && itemVenda && itemVenda.produto"
-                    v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"></campo-busca-produto>
+                    v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    required></campo-busca-produto>
             </td>
             <td>
                 <campo-quantidade v-bind:quantidade.sync="itemVenda.quantidade" v-bind:percentual-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.percentual"
@@ -299,10 +301,10 @@
                     {{ itemVenda.valorUnitario | moeda }}
                 </span>
             </td>
-            <td>
+            <td class="lista-itens-venda__processo">
                 <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
             </td>
-            <td>
+            <td class="lista-itens-venda__aplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>

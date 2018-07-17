@@ -58,6 +58,7 @@ Vue.component('campo-beneficiamento-lapidacao', {
 
       for (var select of this.selectsValidar) {
         select.setCustomValidity(mensagem);
+        select.reportValidity();
       }
 
       if (!mensagem !== this.valido) {

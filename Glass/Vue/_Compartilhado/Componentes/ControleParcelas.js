@@ -73,19 +73,19 @@ Vue.component('controle-parcelas', {
     calcularParcelas: function () {
       if (this.verificarDeveCalcular()) {
         this.parcelasAtuais = [];
+      }
 
-        for (var i = 0; i < this.parcelas.numeroParcelas; i++) {
+      for (var i = 0; i < this.parcelas.numeroParcelas; i++) {
+        if (this.verificarDeveCalcular()) {
           this.parcelasAtuais.push({
             valor: this.calcularValorParcela(this.parcelas.numeroParcelas == i + 1),
             data: this.calcularDataParcela(i)
           });
         }
-      }
 
-      for (var i = 0; i < this.parcelas.numeroParcelas; i++) {
         this.parcelasAtuais[i].dataMinima = i === 0
           ? this.dataMinima
-          : this.adicionarDias(this.parcelasAtuais[i - 1].data, 1);
+          : this.adicionarDias(this.parcelasAtuais[i - 1].data, 1)
       }
 
       this.validarTotal();
@@ -166,7 +166,7 @@ Vue.component('controle-parcelas', {
      */
     validarTotal: function () {
       this.invalido = this.total !== this.totalParcelas;
-      
+
       if (this.controlesValor === null) {
         this.controlesValor = this.$el.children[0].querySelector('input[type=number]');
       }
@@ -177,6 +177,7 @@ Vue.component('controle-parcelas', {
 
       for (var controleValor of this.controlesValor) {
         controleValor.setCustomValidity(mensagem);
+        controleValor.reportValidity();
       }
     }
   },
@@ -187,7 +188,7 @@ Vue.component('controle-parcelas', {
 
   computed: {
     /**
-     * Propriedade computada com o estilo para o controle de parcelas. 
+     * Propriedade computada com o estilo para o controle de parcelas.
      */
     estiloControle: function () {
       return {

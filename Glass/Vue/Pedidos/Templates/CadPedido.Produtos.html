@@ -2,6 +2,7 @@
     <lista-itens-venda v-bind:mao-de-obra="pedidoMaoDeObra" v-bind:producao-corte="pedidoProducaoCorte" v-bind:mao-de-obra-especial="pedidoMaoDeObraEspecial"
         v-bind:filtro="filtro" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" tipo-validacao-produto="Pedido"
-        v-bind:quantidade-ambiente="ambiente ? ambiente.quantidade : null" v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar"
-        v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada"></lista-itens-venda>
+        v-bind:quantidade-ambiente="ambiente ? ambiente.quantidade : null" v-bind:obrigar-processo-e-aplicacao-roteiro="configuracoes.obrigarProcessoEAplicacaoRoteiro"
+        v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar"
+        v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada"></lista-itens-venda>
 </section>

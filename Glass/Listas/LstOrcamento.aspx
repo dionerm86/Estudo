@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstOrcamento.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstOrcamento.aspx.cs"
     Inherits="Glass.UI.Web.Listas.LstOrcamento" Title="Orçamentos" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">

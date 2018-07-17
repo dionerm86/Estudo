@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstPedidos.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="LstPedidos.aspx.cs"
 Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
