@@ -685,7 +685,7 @@ namespace Glass.Data.DAL
                                 novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
                                 novoProduto.ValorObra = m2 * produto.ValorObra;
 
-                                ProdutoDAO.Instance.Update(transaction, novoProduto);
+                                ProdutoDAO.Instance.Update(transaction, novoProduto, true);
                             }
 
                             for (int q = 0; q < Glass.Conversoes.StrParaInt(quantidadeArray[i]); q++)
