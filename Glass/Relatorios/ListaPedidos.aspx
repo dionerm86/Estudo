@@ -744,7 +744,6 @@
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdPedido" HeaderText="Num" SortExpression="IdPedido" />
-                        <asp:BoundField DataField="IdOrcamento" HeaderText="Orca" SortExpression="IdOrcamento" />
                         <asp:BoundField DataField="NfeAssociada" HeaderText="Num. NFe" SortExpression="NfeAssociada" />
                         <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
@@ -756,6 +755,7 @@
                                 <asp:TextBox ID="TextBox1" runat="server" Text='<%# Bind("RptCidade") %>'></asp:TextBox>
                             </EditItemTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="RptBairro" HeaderText="Bairro" SortExpression="RptBairro" />
                         <asp:BoundField DataField="CodCliente" HeaderText="Pedido Cli." SortExpression="CodCliente" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
                         <asp:BoundField DataField="TotalComDescontoConcatenado" HeaderText="Total" SortExpression="TotalComDescontoConcatenado" />
@@ -783,7 +783,6 @@
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="DescricaoTipoPedido" HeaderText="Tipo" SortExpression="DescricaoTipoPedido" />
-                        <asp:BoundField DataField="FastDeliveryString" HeaderText="Fast Delivery?" SortExpression="FastDeliveryString" />
                         <asp:BoundField DataField="TotM" HeaderText="Total m²" SortExpression="TotM" />
                         <asp:BoundField DataField="Peso" HeaderText="Peso total" SortExpression="Peso" />
                     </Columns>

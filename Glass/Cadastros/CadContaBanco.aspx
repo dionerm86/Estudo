@@ -154,10 +154,10 @@
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtCodCliente" runat="server" Text='<%# Bind("CodCliente") %>' 
-                                    MaxLength="15"></asp:TextBox>
+                                    MaxLength="21"></asp:TextBox>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtCodCliente" runat="server" MaxLength="15" 
+                                <asp:TextBox ID="txtCodCliente" runat="server" MaxLength="21" 
                                     Text='<%# Bind("CodCliente") %>'></asp:TextBox>
                             </InsertItemTemplate>
                         </asp:TemplateField>

@@ -92,7 +92,7 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
-        public float GetQtdeByProdPed(uint idProdPed, uint? idProdPedProducao)
+        public float GetQtdeByProdPed(GDASession session, uint idProdPed, uint? idProdPedProducao)
         {
             string sqlBase = @"select coalesce(sum(qtdeCalc), 0) from produtos_liberar_pedido
                 where qtdeCalc>0 and idProdPed=" + idProdPed;

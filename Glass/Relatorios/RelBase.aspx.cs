@@ -761,16 +761,16 @@ namespace Glass.UI.Web.Relatorios
                         if (Request["simples"] == "true")
                             pedidos = PedidoDAO.Instance.PesquisarRelatorioVendasPedidosSimples(Request["dtFimEnt"], Request["dtIniEnt"], Request["idsRota"]);
                         else
-                            pedidos = PedidoDAO.Instance.PesquisarRelatorioVendasPedidos(Request["altura"].StrParaFloat(), Request["cidade"].StrParaInt(), Request["codCliente"], Request["codProd"],
-                                Request["comSemNf"], Request["dtFimEnt"], Request["dataFimInst"], Request["dtFim"], Request["dataFimPronto"], Request["dtFimSit"], Request["dtIniEnt"],
-                                Request["dataIniInst"], Request["dtIni"], Request["dataIniPronto"], Request["dtIniSit"], Request["desconto"].StrParaInt(), Request["descrProd"],
-                                Request["exibirProdutos"] == "true", Request["rel"] == "ListaPedidosRota" ? true : false, Request["fastDelivery"].StrParaInt(), Request["idCarregamento"].StrParaInt(), Request["idCli"],
-                                Request["idFunc"].StrParaInt(), Request["idMedidor"].StrParaInt(), Request["idOC"].StrParaInt(), Request["IdOrcamento"].StrParaInt(), Request["IdPedido"].StrParaInt(),
-                                Request["idsBenef"], Request["idsGrupos"], Request["idsPedidos"], Request["idsRota"], Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(),
-                                Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"], Request["diasDifProntoLib"].StrParaInt(), Request["observacao"],
-                                Request["ordenacao"].StrParaInt(), Request["origemPedido"].StrParaInt(), Request["pedidosSemAnexos"] == "true", Request["situacao"], Request["situacaoProd"],
-                                Request["tipo"], Request["tipoCliente"], Request["tipoEntrega"].StrParaInt(), Request["tipoFiscal"].StrParaInt(), Request["tipoVenda"],
-                                Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt(), Request["bairro"], Request["dataInicioMedicao"], Request["dataFimMedicao"]);
+                            pedidos = PedidoDAO.Instance.PesquisarRelatorioVendasPedidos(Request["altura"].StrParaFloat(), Request["bairro"], Request["cidade"].StrParaInt(), Request["codCliente"],
+                                Request["codProd"], Request["comSemNf"], Request["dtFimEnt"], Request["dataFimInst"], Request["dataFimMedicao"], Request["dtFim"], Request["dataFimPronto"], Request["dtFimSit"],
+                                Request["dtIniEnt"], Request["dataIniInst"], Request["dataInicioMedicao"], Request["dtIni"], Request["dataIniPronto"], Request["dtIniSit"], Request["desconto"].StrParaInt(),
+                                Request["descrProd"], Request["exibirProdutos"] == "true", Request["rel"] == "ListaPedidosRota" ? true : false, Request["fastDelivery"].StrParaInt(),
+                                Request["idCarregamento"].StrParaInt(), Request["idCli"], Request["idFunc"].StrParaInt(), Request["idMedidor"].StrParaInt(), Request["idOC"].StrParaInt(),
+                                Request["IdOrcamento"].StrParaInt(), Request["IdPedido"].StrParaInt(), Request["idsBenef"], Request["idsGrupos"], Request["idsPedidos"], Request["idsRota"],
+                                Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(), Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"],
+                                Request["diasDifProntoLib"].StrParaInt(), Request["observacao"], Request["ordenacao"].StrParaInt(), Request["origemPedido"].StrParaInt(), Request["pedidosSemAnexos"] == "true",
+                                Request["situacao"], Request["situacaoProd"], Request["tipo"], Request["tipoCliente"], Request["tipoEntrega"].StrParaInt(), Request["tipoFiscal"].StrParaInt(),
+                                Request["tipoVenda"], Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt());
 
                         if (Request["rel"] == "ListaPedidosProd")
                             lstParam.Add(new ReportParameter("FastDelivery", PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString()));
