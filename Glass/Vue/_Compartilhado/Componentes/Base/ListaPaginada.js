@@ -195,9 +195,13 @@ Vue.component('lista-paginada', {
      * @type {number}.
      */
     numeroColunas: function() {
-      return this.$slots.cabecalho.filter(function(h) {
+      var numero = this.$slots.cabecalho.filter(function(h) {
         return h.tag;
       }).length;
+
+      this.$emit('numero-colunas-lista', numero);
+
+      return numero;
     },
 
     /**

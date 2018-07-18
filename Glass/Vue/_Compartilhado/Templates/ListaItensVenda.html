@@ -1,6 +1,6 @@
-﻿<form>
+<form>
     <lista-paginada v-bind:exibir-inclusao="true" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
-        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
+        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:numero-colunas-lista="atualizaNumeroColunasLista">
         <template slot="cabecalho">
             <th></th>
             <th>
@@ -38,7 +38,7 @@
                     Tot. m² cálc.
                 </a>
             </th>
-            <th>
+            <th v-if="exibirValoresMonetarios">
                 <a href="#" v-on:click.prevent="ordenar('valorUnitario')">
                     Valor vendido
                 </a>
@@ -58,17 +58,17 @@
                     Ped. Cli.
                 </a>
             </th>
-            <th>
+            <th v-if="exibirValoresMonetarios">
                 <a href="#" v-on:click.prevent="ordenar('total')">
                     Total
                 </a>
             </th>
-            <th>
+            <th v-if="exibirValoresMonetarios">
                 <a href="#" v-on:click.prevent="ordenar('valorBeneficiamentos')">
                     V. Benef.
                 </a>
             </th>
-            <th>
+            <th v-if="exibirValoresMonetarios">
                 <a href="#" v-on:click.prevent="ordenar('percentualComissaoProduto')">
                     Perc. Comissão Prod.
                 </a>
@@ -110,7 +110,7 @@
             <td>
                 {{ item.areaEmM2.paraCalculo | decimal }}
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 {{ item.valorUnitario | moeda }}
             </td>
             <td>
@@ -126,13 +126,13 @@
             <td>
                 {{ item.codigoPedidoCliente }}
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 {{ item.total | moeda }}
                 <span v-if="item.descontoPorQuantidade && item.descontoPorQuantidade.percentual > 0">
                     (Desconto de {{ item.descontoPorQuantidade.percentual | percentual }})
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <span v-if="item.beneficiamentos">
                     {{ item.beneficiamentos.valor | moeda }}
                 </span>
@@ -140,16 +140,29 @@
                     {{ 0 | moeda }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 {{ item.percentualComissao | percentual }}
             </td>
             <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
             <td>
-                <button title="Exibir Produtos da Composição" v-if="item.possuiFilhos">
+                <button v-bind:title="(exibindoFilhos ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1"
+                    v-on:click="exibindoFilhos = !exibindoFilhos">
                     <img src="../Images/box.png">
                 </button>
                 <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
             </td>
+            <template v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1">
+                </tr>
+                <tr v-if="exibindoFilhos">
+                    <td></td>
+                    <td v-bind:colspan="numeroColunasLista - 1">
+                        <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
+                            v-bind:filtro="{ idProdutoPai: item.id, item }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
+                            v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProduto"
+                            v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
+                            v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:exibir-valores-monetarios="false"></lista-itens-venda>
+                    </td>
+            </template>
         </template>
         <template slot="itemEditando">
             <td style="white-space: nowrap">
@@ -205,7 +218,7 @@
                     {{ itemVenda.areaEmM2.paraCalculo | decimal }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <input type="number" step="0.01" min="produtoAtual ? produtoAtual.valorMinimo : 0" v-model.number="itemVenda.valorUnitario"
                     style="width: 50px" required>
             </td>
@@ -215,21 +228,21 @@
             <td class="lista-itens-venda__aplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <input type="number" v-model.number="itemVenda.valorUnitario" style="width: 60px" step="0.01" required
                     v-bind:min="produtoAtual.valorMinimo" v-if="itemVenda && produtoAtual && produtoAtual.podeEditarValorUnitario">
                 <span v-else-if="itemVenda">
                     {{ itemVenda.valorUnitario | moeda }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <campo-total v-bind:total.sync="itemVenda.total" v-bind:area-m2="itemVenda.areaEmM2.real" v-bind:area-calculada-m2="itemVenda.areaEmM2.paraCalculo"
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
                     v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <span v-if="itemVenda.beneficiamentos">
                     {{ itemVenda.beneficiamentos.valor | moeda }}
                 </span>
@@ -237,7 +250,7 @@
                     {{ 0 | moeda }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <input type="number" step="0.01" v-model.number="itemVenda.percentualComissao" min="0" style="width: 50px" />
             </td>
             <slot name="itemEditando" v-bind:item="itemVenda"></slot>
@@ -300,7 +313,7 @@
                     {{ itemVenda.areaEmM2.paraCalculo | decimal }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <input type="number" v-model.number="itemVenda.valorUnitario" style="width: 60px" step="0.01" required
                     v-bind:min="produtoAtual.valorMinimo" v-if="inserindo && itemVenda && produtoAtual && produtoAtual.podeEditarValorUnitario">
                 <span v-else-if="inserindo && itemVenda">
@@ -316,14 +329,14 @@
             <td>
                 <input type="text" v-model="itemVenda.codigoPedidoCliente" maxlength="50" style="width: 50px" v-if="inserindo && itemVenda">
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <campo-total v-bind:total.sync="itemVenda.total" v-bind:area-m2="itemVenda.areaEmM2.real" v-bind:area-calculada-m2="itemVenda.areaEmM2.paraCalculo"
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
                     v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <span v-if="inserindo && itemVenda.beneficiamentos">
                     {{ itemVenda.beneficiamentos.valor | moeda }}
                 </span>
@@ -331,7 +344,7 @@
                     {{ 0 | moeda }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirValoresMonetarios">
                 <input type="number" step="0.01" v-model.number="itemVenda.percentualComissao" min="0" style="width: 50px" v-if="inserindo && itemVenda" />
             </td>
             <slot name="itemIncluir" v-bind:item="itemVenda"></slot>

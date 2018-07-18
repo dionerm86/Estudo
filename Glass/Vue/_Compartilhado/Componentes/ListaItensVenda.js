@@ -1,4 +1,4 @@
-﻿Vue.component('lista-itens-venda', {
+Vue.component('lista-itens-venda', {
   mixins: [Mixins.Clonar, Mixins.Patch],
   props: {
     /**
@@ -123,7 +123,7 @@
     },
 
     /**
-     *
+     * Função que busca os itens de venda para serem exibidos no controle.
      * @param {!Object} filtro O filtro informado pelo controle lista-paginada.
      * @param {!number} pagina O número da página que está sendo exibida no controle lista-paginada.
      * @param {!number} numeroRegistros O número de registros que serão exibidos na tela.
@@ -182,12 +182,23 @@
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarFuncaoOuVazio
+    },
+
+    /**
+     * Define se as colunas de valores monetários serão exibidas na lista.
+     * @type {boolean}
+     */
+    exibirValoresMonetarios: {
+      required: false,
+      twoWay: false,
+      default: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 
   data: function () {
     return {
-      atualizar__: 0,
+      controleAtualizacao: 0,
       inserindo: false,
       itemVenda: {},
       itemVendaOriginal: {},
@@ -201,11 +212,35 @@
       dadosValidacaoProdutoAtual: this.dadosValidacaoProduto,
       numeroBeneficiamentosParaAreaMinima: 0,
       processoAtual: null,
-      aplicacaoAtual: null
+      aplicacaoAtual: null,
+      numeroColunasLista: 0,
+      exibindoFilhos: false
     };
   },
 
   methods: {
+    /**
+     * Atualiza o número de colunas da lista
+     */
+    atualizaNumeroColunasLista: function (numero) {
+      this.numeroColunasLista = numero;
+    },
+
+    /**
+     * Função que busca os produtos filhos de itens de venda compostos/laminados.
+     * @param {!Object} filtro O filtro informado pelo controle lista-paginada.
+     * @param {!number} pagina O número da página que está sendo exibida no controle lista-paginada.
+     * @param {!number} numeroRegistros O número de registros que serão exibidos na tela.
+     * @param {string} ordenacao O campo pelo qual o resultado será ordenado.
+     * @returns {Promise} Uma Promise com a busca dos itens de venda, de acordo com o filtro.
+     */
+    buscarFilhos: function (filtro, pagina, numeroRegistros, ordenacao) {
+      var novoFiltro = this.filtro || {};
+      novoFiltro.idProdutoPai = filtro.idProdutoPai;
+
+      return this.buscarItensVenda(novoFiltro, pagina, numeroRegistros, ordenacao);
+    },
+
     /**
      * Atualiza os dados para ordenação do resultado.
      * @param {string} campo O campo pelo qual o resultado deve ser ordenado.
@@ -244,7 +279,7 @@
 
         this.excluir(item)
           .then(function (resposta) {
-            vm.atualizar__++;
+            vm.controleAtualizacao++;
           })
           .catch(function (erro) {
             if (erro && erro.mensagem) {
@@ -276,7 +311,7 @@
 
         this.inserir(this.itemVenda)
           .then(function (resposta) {
-            vm.atualizar__++;
+            vm.controleAtualizacao++;
             vm.cancelar();
           })
           .catch(function (erro) {
@@ -304,7 +339,7 @@
 
         this.atualizar(itemVendaAtualizar)
           .then(function (resposta) {
-            vm.atualizar__++;
+            vm.controleAtualizacao++;
             vm.cancelar();
           })
           .catch(function (erro) {
@@ -555,10 +590,10 @@
     },
 
     /**
-     * Observador para a variável 'atualizar__'.
+     * Observador para a variável 'controleAtualizacao'.
      * Emite um evento informando que a lista de produtos foi alterada.
      */
-    'atualizar__': function () {
+    controleAtualizacao: function () {
       this.$emit('lista-atualizada');
     },
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="GetProdutosPedidoController.cs" company="Sync Softwares">
+// <copyright file="GetProdutosPedidoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -36,6 +36,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
         {
             using (var sessao = new GDATransaction())
             {
+                filtro = filtro ?? new FiltroListaDto();
                 var validacao = this.ValidarIdsPedidoEAmbiente(sessao, idPedido, filtro.IdAmbiente);
 
                 if (validacao != null)
@@ -43,13 +44,13 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
                     return validacao;
                 }
 
-                filtro = filtro ?? new FiltroListaDto();
-
                 try
                 {
                     var produtos = ProdutosPedidoDAO.Instance.GetList(
                         (uint)idPedido,
                         (uint)filtro.IdAmbiente.GetValueOrDefault(),
+                        filtro.IdProdutoPai > 0,
+                        (uint)filtro.IdProdutoPai.GetValueOrDefault(),
                         filtro.ObterTraducaoOrdenacao(),
                         filtro.ObterPrimeiroRegistroRetornar(),
                         filtro.NumeroRegistros);
@@ -59,7 +60,9 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
                         filtro,
                         () => ProdutosPedidoDAO.Instance.GetCount(
                             (uint)idPedido,
-                            (uint)filtro.IdAmbiente.GetValueOrDefault()));
+                            (uint)filtro.IdAmbiente.GetValueOrDefault(),
+                            filtro.IdProdutoPai > 0,
+                            (uint)filtro.IdProdutoPai.GetValueOrDefault()));
                 }
                 catch (Exception e)
                 {

@@ -1,4 +1,4 @@
-﻿// <copyright file="FiltroListaDto.cs" company="Sync Softwares">
+// <copyright file="FiltroListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -24,5 +24,10 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
         /// Obtém ou define o filtro pelo ambiente do pedido.
         /// </summary>
         public int? IdAmbiente { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do produto pai (para produtos laminados/compostos).
+        /// </summary>
+        public int? IdProdutoPai { get; set; }
     }
 }
