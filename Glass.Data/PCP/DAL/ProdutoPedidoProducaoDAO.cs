@@ -5017,7 +5017,10 @@ namespace Glass.Data.DAL
 
                     if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
                     {
-                        possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.ObtemIdLiberarPedidoByProdPedProducao(transaction, idProdPedProducao) > 0;
+                        var idprodped = ObtemIdProdPed(transaction, numEtiqueta);
+                        var produtoPedido = ProdutosPedidoDAO.Instance.GetByProdPedEsp(transaction, idprodped, false);
+
+                        possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(transaction, produtoPedido.IdProdPed, idProdPedProducao) > 0;
                     }
 
                     if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&

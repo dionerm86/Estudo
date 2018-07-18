@@ -92,7 +92,7 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
-        public float GetQtdeByProdPed(uint idProdPed, uint? idProdPedProducao)
+        public float GetQtdeByProdPed(GDASession session, uint idProdPed, uint? idProdPedProducao)
         {
             string sqlBase = @"select coalesce(sum(qtdeCalc), 0) from produtos_liberar_pedido
                 where qtdeCalc>0 and idProdPed=" + idProdPed;
@@ -123,11 +123,6 @@ namespace Glass.Data.DAL
         public uint ObtemIdProdLiberarPedido(GDASession session, uint idLiberarPedido, uint idProdPed)
         {
             return ObtemValorCampo<uint>(session, "idProdLiberarPedido", "idLiberarPedido=" + idLiberarPedido + " And idProdPed=" + idProdPed);
-        }
-
-        public uint ObtemIdLiberarPedidoByProdPedProducao(GDASession session, uint idProdPedProducao)
-        {
-            return ObtemValorCampo<uint>(session, "idLiberarPedido", "idProdPedProducao=" + idProdPedProducao);
         }
 
         public void DeleteByLiberarPedido(uint idLiberarPedido)

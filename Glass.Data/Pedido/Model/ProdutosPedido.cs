@@ -856,7 +856,7 @@ namespace Glass.Data.Model
 
                 if (_qtdeLiberados == -1)
                 {
-                    _qtdeLiberados = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(IdProdPed, IdProdPedProducaoConsulta);
+                    _qtdeLiberados = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(null, IdProdPed, IdProdPedProducaoConsulta);
                     if (((_qtdeLiberados > 1 && _qtdeLiberados < qtde) || (!TemLiberacaoEtiqueta && _qtdeLiberados != (Qtde * _qtdeAmbiente))) && 
                         !String.IsNullOrEmpty(NumEtiquetaConsulta))
                     {
