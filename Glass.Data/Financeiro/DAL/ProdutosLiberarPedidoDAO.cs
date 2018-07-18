@@ -125,6 +125,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<uint>(session, "idProdLiberarPedido", "idLiberarPedido=" + idLiberarPedido + " And idProdPed=" + idProdPed);
         }
 
+        public uint ObtemIdLiberarPedidoByProdPedProducao(GDASession session, uint idProdPedProducao)
+        {
+            return ObtemValorCampo<uint>(session, "idLiberarPedido", "idProdPedProducao=" + idProdPedProducao);
+        }
+
         public void DeleteByLiberarPedido(uint idLiberarPedido)
         {
             objPersistence.ExecuteCommand("delete from produtos_liberar_pedido where idLiberarPedido=" + idLiberarPedido);

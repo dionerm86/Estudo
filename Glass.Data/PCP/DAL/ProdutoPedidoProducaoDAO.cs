@@ -5017,7 +5017,7 @@ namespace Glass.Data.DAL
 
                     if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
                     {
-                        possuiLiberacaoParcial = ExecuteScalar<bool>(transaction, "SELECT IdProdLiberarPedido FROM produtos_liberar_pedido WHERE idProdPedProducao =" + idProdPedProducao);
+                        possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.ObtemIdLiberarPedidoByProdPedProducao(transaction, idProdPedProducao) > 0;
                     }
 
                     if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
