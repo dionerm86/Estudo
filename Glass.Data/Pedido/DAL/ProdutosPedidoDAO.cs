@@ -2893,16 +2893,16 @@ namespace Glass.Data.DAL
         /// </summary>
         public float TotalMedidasObra(GDASession sessao, uint idObra, string codInterno, uint? idPedidoPcp)
         {
-            string sql = @"Select Coalesce(Sum(pp.totM2Calc),0) From produtos_pedido pp
+            string sql = $@"Select Coalesce(Sum(pp.totM2Calc),0) From produtos_pedido pp
                 Inner Join produto p On (pp.idProd=p.idProd) Where p.codInterno=?codInterno And 
-                pp.idPedido In (Select * From (Select idPedido From pedido Where idObra=" + idObra + " And situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + ") As temp) And ";
+                pp.idPedido In (Select * From (Select idPedido From pedido Where idObra={ idObra } And situacao<>{ (int)Pedido.SituacaoPedido.Cancelado }) As temp) And ";
 
             if (idPedidoPcp > 0)
-                sql += "((pp.idPedido<>" + idPedidoPcp + @" And If((Select Count(*) From pedido_espelho Where idPedido=pp.idPedido)>0, 
+                sql += $@"((pp.idPedido<>{ idPedidoPcp } And If((Select Count(*) From pedido_espelho Where idPedido=pp.idPedido)>0, 
                     pp.invisivelFluxo Is Null Or pp.invisivelFluxo=False, pp.invisivelPedido Is Null Or pp.invisivelPedido=False)) 
-                    Or (pp.invisivelFluxo Is Null Or pp.invisivelFluxo=false))";
+                    Or (pp.invisivelFluxo Is Null Or pp.invisivelFluxo=false)) And COALESCE(pp.IdProdPedParent,0) = 0";
             else
-                sql += "(pp.invisivelPedido Is Null Or pp.invisivelPedido=False)";
+                sql += "(pp.invisivelPedido Is Null Or pp.invisivelPedido=False) And COALESCE(pp.IdProdPedParent,0) = 0";
 
             return float.Parse(objPersistence.ExecuteScalar(sessao, sql, new GDAParameter("?codInterno", codInterno)).ToString());
         }
