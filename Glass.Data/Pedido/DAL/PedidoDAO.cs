@@ -2067,34 +2067,17 @@ namespace Glass.Data.DAL
         #region Listagem/Relatório de vendas de pedidos
 
         #region SQL
-
-        private string SqlVendasPedidos(float? altura, int? cidade, string codCliente, string codigoProduto, string comSemNF, bool countLimit, string dataFimEntrega,
-            string dataFimInstalacao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido,
-            string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, bool exibirRota, int? fastDelivery, out string filtroAdicional, int? idCarregamento,
-            string idCliente, int? idFunc, int? idMedidor, int? idOC, int? idOrcamento, int? idPedido, string idsBenef, string idsGrupo, string idsPedidos, string idsRota, string idsSubgrupoProd,
-            int? idVendAssoc, int? largura, LoginUsuario login, string loja, string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido,
-            bool paraRelatorio, bool pedidosSemAnexos, string situacao, string situacaoProducao, out bool temFiltro, string tiposPedido, string tipoCliente, int? tipoEntrega,
-            int? tipoFiscal, string tiposVenda, bool totaisListaPedidos, bool trazerPedCliVinculado, int? usuarioCadastro)
-        {
-            return SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, countLimit, dataFimEntrega,
-                dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido,
-                 dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, exibirRota, fastDelivery, out filtroAdicional, idCarregamento,
-                 idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, idsPedidos, idsRota, idsSubgrupoProd,
-                 idVendAssoc, largura, login, loja, nomeCliente, numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido,
-                 paraRelatorio, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
-                 tipoFiscal, tiposVenda, totaisListaPedidos, trazerPedCliVinculado, usuarioCadastro, null, null, null);
-        }
-
+        
         /// <summary>
         /// Retorna o SQL da tela de vendas de pedidos, aplicando os filtros de acordo com os parâmetros informados.
         /// </summary>
-        private string SqlVendasPedidos(float? altura, int? cidade, string codCliente, string codigoProduto, string comSemNF, bool countLimit, string dataFimEntrega,
-            string dataFimInstalacao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido,
+        private string SqlVendasPedidos(float? altura, string bairro, int? cidade, string codCliente, string codigoProduto, string comSemNF, bool countLimit, string dataFimEntrega, string dataFimInstalacao,
+            string dataFimMedicao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
             string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, bool exibirRota, int? fastDelivery, out string filtroAdicional, int? idCarregamento,
             string idCliente, int? idFunc, int? idMedidor, int? idOC, int? idOrcamento, int? idPedido, string idsBenef, string idsGrupo, string idsPedidos, string idsRota, string idsSubgrupoProd,
-            int? idVendAssoc, int? largura, LoginUsuario login, string loja, string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido,
-            bool paraRelatorio, bool pedidosSemAnexos, string situacao, string situacaoProducao, out bool temFiltro, string tiposPedido, string tipoCliente, int? tipoEntrega,
-            int? tipoFiscal, string tiposVenda, bool totaisListaPedidos, bool trazerPedCliVinculado, int? usuarioCadastro, string bairro, string dataInicioMedicao, string dataFimMedicao)
+            int? idVendAssoc, int? largura, LoginUsuario login, string loja, string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool paraRelatorio,
+            bool pedidosSemAnexos, string situacao, string situacaoProducao, out bool temFiltro, string tiposPedido, string tipoCliente, int? tipoEntrega, int? tipoFiscal, string tiposVenda,
+            bool totaisListaPedidos, bool trazerPedCliVinculado, int? usuarioCadastro)
         {
             login = login ?? UserInfo.GetUserInfo;
 
@@ -2128,9 +2111,9 @@ namespace Glass.Data.DAL
                 CAST(COALESCE({0}.AliquotaIcms, {1}.AliquotaIcms) AS DECIMAL (12,2)) AS AliquotaIcms,
                 CAST(COALESCE({0}.ValorIcms, {1}.ValorIcms) AS DECIMAL (12,2)) AS ValorIcms", PCPConfig.UsarConferenciaFluxo ? "pe" : "p", PCPConfig.UsarConferenciaFluxo ? "p" : "pe");
 
-            var campos = string.Format(@"{0}, p.IdPedido, p.IdLoja, p.IdFunc, p.IdCli, p.IdFormaPagto, p.IdOrcamento, p.PrazoEntrega, p.TipoEntrega, p.TipoVenda, p.DataEntrega, p.ValorEntrega,
-                p.Situacao, p.ValorEntrada, p.DataCad, p.UsuCad, p.NumParc, p.Obs, p.DataConf, p.UsuConf, p.DataCanc, p.UsuCanc, p.EnderecoObra, p.BairroObra, p.CidadeObra, p.LocalObra,
-                p.IdFormaPagto2, p.IdTipoCartao, p.IdTipoCartao2, p.CodCliente, p.NumAutConstrucard, p.IdComissionado, p.PercComissao, p.ValorComissao, p.IdPedidoAnterior, p.FastDelivery,
+            var campos = string.Format(@"{0}, p.IdPedido, p.IdLoja, p.IdFunc, p.IdCli, p.IdFormaPagto, p.IdOrcamento, p.PrazoEntrega, p.TipoEntrega, p.TipoVenda, p.DataEntrega, p.ValorEntrega, p.Situacao,
+                p.ValorEntrada, p.DataCad, p.UsuCad, p.NumParc, p.Obs, p.DataConf, p.UsuConf, p.DataCanc, p.UsuCanc, COALESCE(c.Bairro, p.BairroObra) AS Bairro, p.EnderecoObra, p.BairroObra, p.CidadeObra,
+                p.LocalObra, p.IdFormaPagto2, p.IdTipoCartao, p.IdTipoCartao2, p.CodCliente, p.NumAutConstrucard, p.IdComissionado, p.PercComissao, p.ValorComissao, p.IdPedidoAnterior, p.FastDelivery,
                 p.DataPedido, p.IdObra, p.IdMedidor, p.TaxaPrazo, p.TipoPedido, p.TaxaFastDelivery, p.TemperaFora, p.SituacaoProducao, p.IdFuncVenda, p.DataEntregaOriginal, p.GeradoParceiro,
                 {1} AS NomeCliente, f.Nome AS NomeFunc, l.NomeFantasia AS NomeLoja, l.Telefone AS TelefoneLoja, fp.Descricao AS FormaPagto, cid.NomeCidade AS Cidade, p.ValorCreditoAoConfirmar,
                 p.CreditoGeradoConfirmar, p.CreditoUtilizadoConfirmar, c.IdFunc AS IdFuncCliente, fc.Nome AS NomeFuncCliente, p.IdParcela, p.CepObra, p.IdSinal, p.idPagamentoAntecipado,
@@ -2553,8 +2536,7 @@ namespace Glass.Data.DAL
             }
 
             #endregion
-
-
+            
             #region Data de medição do pedido
 
             if (!string.IsNullOrWhiteSpace(dataInicioMedicao) || !string.IsNullOrWhiteSpace(dataFimMedicao))
@@ -2573,7 +2555,7 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(bairro))
             {
-                filtroAdicional += " And (p.bairroObra like ?bairro Or c.bairro like ?bairro)";
+                filtroAdicional += " AND (p.BairroObra LIKE ?bairro OR c.Bairro LIKE ?bairro)";
                 criterio += string.Format(formatoCriterio, "Bairro:", bairro);
             }
 
@@ -2670,85 +2652,118 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna uma lista de pedidos, com base nos parâmetros, para a listagem da tela de vendas de pedidos.
         /// </summary>
-        public Pedido[] PesquisarListaVendasPedidos(float? altura, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
-            string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto,
-            string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc, int? idMedidor, int? idOrcamento, int? idOC,
-            int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja, string nomeCliente,
-            int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao, string situacaoProducao, string tiposPedido, string tipoCliente,
-            int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro, string bairro, string dataInicioMedicao, string dataFimMedicao, string sortExpression, int startRow, int pageSize)
+        public Pedido[] PesquisarListaVendasPedidos(float? altura, string bairro, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
+            string dataFimMedicao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
+            string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc,
+            int? idMedidor, int? idOrcamento, int? idOC, int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja,
+            string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao, string situacaoProducao, string tiposPedido,
+            string tipoCliente, int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
             string filtroAdicional;
 
-            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao && FiltrosVazios(altura, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao,
-                 dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto,
-                 dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento,idCliente, idFunc, idMedidor, idOrcamento, idOC,
-                 idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente,
-                 numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao, tipoCliente,
-                 tipoEntrega, tipoFiscal, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao))
+            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao &&
+                FiltrosVazios(altura, bairro, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega,
+                dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento, idCliente, idFunc, idMedidor,
+                idOrcamento, idOC, idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente, numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao,
+                tipoCliente, tipoEntrega, tipoFiscal, usuarioCadastro))
+            {
                 return new List<Pedido>().ToArray();
+            }
+            
+            var sql = SqlVendasPedidos(altura, bairro, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao,
+                dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery,
+                out filtroAdicional, idCarregamento, idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo,
+                loja, nomeCliente, numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
+                tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
 
-
-            var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao,
-                dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery, out filtroAdicional, idCarregamento,
-                idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo, loja, nomeCliente,
-                numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
-                tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
-
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional, ObterParametrosFiltrosVendasPedidos(codCliente, codigoProduto, dataFimEntrega,
-                dataFimPedido, dataFimInstalacao, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto,
-                nomeCliente, observacao, bairro, dataInicioMedicao, dataFimMedicao)).ToArray();
-        }
-
-        private bool FiltrosVazios(float? altura, int? cidade, string codCliente, string codigoProduto, string dataFimEntrega, string dataFimInstalacao,
-            string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto,
-            string dataInicioSituacao, int? desconto, string descricaoProduto, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc, int? idMedidor, int? idOrcamento, int? idOC,
-            int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja, string nomeCliente,
-            int? numeroDiasDiferencaProntoLib, int? origemPedido, string situacao, string situacaoProducao, string tipoCliente,
-            int? tipoEntrega, int? tipoFiscal, int? usuarioCadastro, string bairro, string dataInicioMedicao, string dataFimMedicao)
-        {
-            return altura.GetValueOrDefault() == 0 && cidade.GetValueOrDefault() == 0 && string.IsNullOrEmpty(codCliente) && string.IsNullOrEmpty(codigoProduto) &&
-                string.IsNullOrEmpty(dataFimEntrega) && string.IsNullOrEmpty(dataFimInstalacao) && string.IsNullOrEmpty(dataFimPedido) && string.IsNullOrEmpty(dataFimPronto) &&
-                string.IsNullOrEmpty(dataFimSituacao) && string.IsNullOrEmpty(dataInicioEntrega) && string.IsNullOrEmpty(dataInicioInstalacao) && string.IsNullOrEmpty(dataInicioPedido) &&
-                string.IsNullOrEmpty(dataInicioPronto) && string.IsNullOrEmpty(dataInicioSituacao) && desconto.GetValueOrDefault() == 0 && string.IsNullOrEmpty(descricaoProduto) &&
-                fastDelivery.GetValueOrDefault() == 0 && idCarregamento.GetValueOrDefault() == 0 && string.IsNullOrEmpty(idCliente) && idFunc.GetValueOrDefault() == 0 && idMedidor.GetValueOrDefault() == 0 &&
-                idOrcamento.GetValueOrDefault() == 0 && idOC.GetValueOrDefault() == 0 && idPedido.GetValueOrDefault() == 0 && string.IsNullOrEmpty(idsBenef) && string.IsNullOrEmpty(idsGrupo) &&
-                string.IsNullOrEmpty(idsRota) && string.IsNullOrEmpty(idsSubgrupoProd) && idVendAssoc.GetValueOrDefault() == 0 && largura.GetValueOrDefault() == 0 && string.IsNullOrEmpty(loja) &&
-                string.IsNullOrEmpty(nomeCliente) && numeroDiasDiferencaProntoLib.GetValueOrDefault() == 0 && origemPedido.GetValueOrDefault() == 0 && string.IsNullOrEmpty(situacao) &&
-                string.IsNullOrEmpty(situacaoProducao) && string.IsNullOrEmpty(tipoCliente) && tipoEntrega.GetValueOrDefault() == 0 && tipoFiscal.GetValueOrDefault() == 0 && usuarioCadastro.GetValueOrDefault() == 0 &&
-                string.IsNullOrEmpty(bairro) && string.IsNullOrEmpty(dataInicioMedicao) && string.IsNullOrEmpty(dataFimMedicao);
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional, ObterParametrosFiltrosVendasPedidos(bairro, codCliente, codigoProduto, dataFimEntrega,
+                dataFimPedido, dataFimInstalacao, dataFimMedicao, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto,
+                dataInicioSituacao, descricaoProduto, nomeCliente, observacao)).ToArray();
         }
 
         /// <summary>
         /// Retorna a quantidade de pedidos, com base nos parâmetros, para a paginação da listagem da tela de vendas de pedidos.
         /// </summary>
-        public int PesquisarListaVendasPedidosCount(float? altura, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
-            string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto,
-            string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc, int? idMedidor, int? idOrcamento, int? idOC,
-            int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja, string nomeCliente,
-            int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao, string situacaoProducao, string tiposPedido, string tipoCliente,
-            int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro, string bairro, string dataInicioMedicao, string dataFimMedicao)
+        public int PesquisarListaVendasPedidosCount(float? altura, string bairro, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
+            string dataFimMedicao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
+            string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc,
+            int? idMedidor, int? idOrcamento, int? idOC, int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja,
+            string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao, string situacaoProducao, string tiposPedido,
+            string tipoCliente, int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro)
         {
             bool temFiltro;
             string filtroAdicional;
 
-            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao && FiltrosVazios(altura, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao,
-                 dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto,
-                 dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento, idCliente, idFunc, idMedidor, idOrcamento, idOC,
-                 idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente,
-                 numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao, tipoCliente,
-                 tipoEntrega, tipoFiscal, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao))
-            return 0;
+            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao &&
+                FiltrosVazios(altura, bairro, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega,
+                dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento, idCliente, idFunc, idMedidor,
+                idOrcamento, idOC, idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente, numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao,
+                tipoCliente, tipoEntrega, tipoFiscal, usuarioCadastro))
+            {
+                return 0;
+            }
 
-            var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, true, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega,
-            dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery, out filtroAdicional, idCarregamento, idCliente,
-            idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo, loja, nomeCliente,
-             numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
-            tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
+            var sql = SqlVendasPedidos(altura, bairro, cidade, codCliente, codigoProduto, comSemNF, true, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao,
+                dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery,
+                out filtroAdicional, idCarregamento, idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo,
+                loja, nomeCliente, numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
+                tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : string.Empty);
 
-            return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, ObterParametrosFiltrosVendasPedidos(codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao,
-                dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto, nomeCliente, observacao,
-                bairro, dataInicioMedicao, dataFimMedicao));
+            return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, ObterParametrosFiltrosVendasPedidos(bairro, codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao,
+                dataFimMedicao, dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto,
+                nomeCliente, observacao));
+        }
+
+        private bool FiltrosVazios(float? altura, string bairro, int? cidade, string codCliente, string codigoProduto, string dataFimEntrega, string dataFimInstalacao, string dataFimMedicao,
+            string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
+            string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc, int? idMedidor, int? idOrcamento,
+            int? idOC, int? idPedido, string idsBenef, string idsGrupo, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, string loja, string nomeCliente,
+            int? numeroDiasDiferencaProntoLib, int? origemPedido, string situacao, string situacaoProducao, string tipoCliente, int? tipoEntrega, int? tipoFiscal, int? usuarioCadastro)
+        {
+            return altura.GetValueOrDefault() == 0 &&
+                cidade.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(codCliente) &&
+                string.IsNullOrWhiteSpace(codigoProduto) &&
+                string.IsNullOrWhiteSpace(dataFimEntrega) &&
+                string.IsNullOrWhiteSpace(dataFimInstalacao) &&
+                string.IsNullOrWhiteSpace(dataFimPedido) &&
+                string.IsNullOrWhiteSpace(dataFimPronto) &&
+                string.IsNullOrWhiteSpace(dataFimSituacao) &&
+                string.IsNullOrWhiteSpace(dataInicioEntrega) &&
+                string.IsNullOrWhiteSpace(dataInicioInstalacao) &&
+                string.IsNullOrWhiteSpace(dataInicioPedido) &&
+                string.IsNullOrWhiteSpace(dataInicioPronto) &&
+                string.IsNullOrWhiteSpace(dataInicioSituacao) &&
+                desconto.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(descricaoProduto) &&
+                fastDelivery.GetValueOrDefault() == 0 &&
+                idCarregamento.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(idCliente) &&
+                idFunc.GetValueOrDefault() == 0 &&
+                idMedidor.GetValueOrDefault() == 0 &&
+                idOrcamento.GetValueOrDefault() == 0 &&
+                idOC.GetValueOrDefault() == 0 &&
+                idPedido.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(idsBenef) &&
+                string.IsNullOrWhiteSpace(idsGrupo) &&
+                string.IsNullOrWhiteSpace(idsRota) &&
+                string.IsNullOrWhiteSpace(idsSubgrupoProd) &&
+                idVendAssoc.GetValueOrDefault() == 0 &&
+                largura.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(loja) &&
+                string.IsNullOrWhiteSpace(nomeCliente) &&
+                numeroDiasDiferencaProntoLib.GetValueOrDefault() == 0 &&
+                origemPedido.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(situacao) &&
+                string.IsNullOrWhiteSpace(situacaoProducao) &&
+                string.IsNullOrWhiteSpace(tipoCliente) &&
+                tipoEntrega.GetValueOrDefault() == 0 &&
+                tipoFiscal.GetValueOrDefault() == 0 &&
+                usuarioCadastro.GetValueOrDefault() == 0 &&
+                string.IsNullOrWhiteSpace(bairro) &&
+                string.IsNullOrWhiteSpace(dataInicioMedicao) &&
+                string.IsNullOrWhiteSpace(dataFimMedicao);
         }
 
         #endregion
@@ -2758,25 +2773,24 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna uma lista de pedidos, com base nos parâmetros, para os relatórios da listagem da tela de vendas de pedidos.
         /// </summary>
-        public Pedido[] PesquisarRelatorioVendasPedidos(float? altura, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
-            string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto,
-            string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, bool exibirRota, int? fastDelivery, int? idCarregamento, string idCliente, int? idFunc, int? idMedidor, int? idOC,
-            int? idOrcamento, int? idPedido, string idsBenef, string idsGrupo, string idsPedidos, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura, LoginUsuario login,
-            string loja, string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao,
-            string situacaoProducao, string tiposPedido, string tipoCliente, int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro,
-            string bairro, string dataInicioMedicao, string dataFimMedicao)
+        public Pedido[] PesquisarRelatorioVendasPedidos(float? altura, string bairro, int? cidade, string codCliente, string codigoProduto, string comSemNF, string dataFimEntrega, string dataFimInstalacao,
+            string dataFimMedicao, string dataFimPedido, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
+            string dataInicioPronto, string dataInicioSituacao, int? desconto, string descricaoProduto, bool exibirProdutos, bool exibirRota, int? fastDelivery, int? idCarregamento, string idCliente,
+            int? idFunc, int? idMedidor, int? idOC, int? idOrcamento, int? idPedido, string idsBenef, string idsGrupo, string idsPedidos, string idsRota, string idsSubgrupoProd, int? idVendAssoc, int? largura,
+            LoginUsuario login, string loja, string nomeCliente, int? numeroDiasDiferencaProntoLib, string observacao, int? ordenacao, int? origemPedido, bool pedidosSemAnexos, string situacao,
+            string situacaoProducao, string tiposPedido, string tipoCliente, int? tipoEntrega, int? tipoFiscal, string tiposVenda, bool trazerPedCliVinculado, int? usuarioCadastro)
         {
             bool temFiltro;
             string filtroAdicional;
 
-            var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao,
-                dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, exibirRota, fastDelivery,
+            var sql = SqlVendasPedidos(altura, bairro, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao,
+                dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, exibirRota, fastDelivery,
                 out filtroAdicional, idCarregamento, idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, idsPedidos, idsRota, idsSubgrupoProd, idVendAssoc, largura, login, loja,
                 nomeCliente, numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, true, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente,
-                tipoEntrega, tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao).Replace("?filtroAdicional?", filtroAdicional);
+                tipoEntrega, tipoFiscal, tiposVenda, false, trazerPedCliVinculado, usuarioCadastro).Replace("?filtroAdicional?", filtroAdicional);
 
-            return objPersistence.LoadData(sql, ObterParametrosFiltrosVendasPedidos(codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao, dataFimPronto, dataFimSituacao,
-                dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto, nomeCliente, observacao, bairro, dataInicioMedicao, dataFimMedicao)).ToArray();
+            return objPersistence.LoadData(sql, ObterParametrosFiltrosVendasPedidos(bairro, codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao, dataFimMedicao, dataFimPronto,
+                dataFimSituacao, dataInicioEntrega, dataInicioInstalacao,dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto, nomeCliente, observacao)).ToArray();
         }
 
         #endregion
@@ -2797,31 +2811,29 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            if (altura.GetValueOrDefault() == 0 && cidade.GetValueOrDefault() == 0 && string.IsNullOrEmpty(codCliente) && string.IsNullOrEmpty(codigoProduto) &&
-                string.IsNullOrEmpty(dataFimEntrega) && string.IsNullOrEmpty(dataFimInstalacao) && string.IsNullOrEmpty(dataFimPedido) && string.IsNullOrEmpty(dataFimPronto) &&
-                string.IsNullOrEmpty(dataFimSituacao) && string.IsNullOrEmpty(dataInicioEntrega) && string.IsNullOrEmpty(dataInicioInstalacao) && string.IsNullOrEmpty(dataInicioPedido) &&
-                string.IsNullOrEmpty(dataInicioPronto) && string.IsNullOrEmpty(dataInicioSituacao) && desconto.GetValueOrDefault() == 0 && string.IsNullOrEmpty(descricaoProduto) &&
-                fastDelivery.GetValueOrDefault() == 0 && idCarregamento.GetValueOrDefault() == 0 && string.IsNullOrEmpty(idCliente) && idFunc.GetValueOrDefault() == 0 && idMedidor.GetValueOrDefault() == 0 &&
-                idOrcamento.GetValueOrDefault() == 0 && idOC.GetValueOrDefault() == 0 && idPedido.GetValueOrDefault() == 0 && string.IsNullOrEmpty(idsBenef) && string.IsNullOrEmpty(idsGrupo) &&
-                string.IsNullOrEmpty(idsRota) && string.IsNullOrEmpty(idsSubgrupoProd) && idVendAssoc.GetValueOrDefault() == 0 && largura.GetValueOrDefault() == 0 && string.IsNullOrEmpty(loja) &&
-                string.IsNullOrEmpty(nomeCliente) && numeroDiasDiferencaProntoLib.GetValueOrDefault() == 0 && origemPedido.GetValueOrDefault() == 0 && string.IsNullOrEmpty(situacao) &&
-                string.IsNullOrEmpty(situacaoProducao) && string.IsNullOrEmpty(tipoCliente) && tipoEntrega.GetValueOrDefault() == 0 && tipoFiscal.GetValueOrDefault() == 0 && usuarioCadastro.GetValueOrDefault() == 0 &&
-                string.IsNullOrEmpty(bairro) && string.IsNullOrEmpty(dataInicioMedicao) && string.IsNullOrEmpty(dataFimMedicao))
+
+            if (PedidoConfig.ListaVendasPedidosVaziaPorPadrao &&
+                FiltrosVazios(altura, bairro, cidade, codCliente, codigoProduto, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao, dataInicioEntrega,
+                dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, fastDelivery, idCarregamento, idCliente, idFunc, idMedidor,
+                idOrcamento, idOC, idPedido, idsBenef, idsGrupo, idsRota, idsSubgrupoProd, idVendAssoc, largura, loja, nomeCliente, numeroDiasDiferencaProntoLib, origemPedido, situacao, situacaoProducao,
+                tipoCliente, tipoEntrega, tipoFiscal, usuarioCadastro))
+            {
                 return new TotalListaPedidos();
+            }
 
             // Passa o parâmetro totaisListaPedidos como true para recuperar somente os campos que serão somados.
-            var sql = SqlVendasPedidos(altura, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimPedido, dataFimPronto, dataFimSituacao,
-                dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery, out filtroAdicional, idCarregamento,
-                idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo, loja, nomeCliente,
-                 numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
-                tipoFiscal, tiposVenda, true, trazerPedCliVinculado, usuarioCadastro, bairro, dataInicioMedicao, dataFimMedicao).Replace("?filtroAdicional?", filtroAdicional);
+            var sql = SqlVendasPedidos(altura, bairro, cidade, codCliente, codigoProduto, comSemNF, false, dataFimEntrega, dataFimInstalacao, dataFimMedicao, dataFimPedido, dataFimPronto, dataFimSituacao,
+                dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, desconto, descricaoProduto, exibirProdutos, false, fastDelivery,
+                out filtroAdicional, idCarregamento, idCliente, idFunc, idMedidor, idOC, idOrcamento, idPedido, idsBenef, idsGrupo, null, idsRota, idsSubgrupoProd, idVendAssoc, largura, UserInfo.GetUserInfo,
+                loja, nomeCliente, numeroDiasDiferencaProntoLib, observacao, ordenacao, origemPedido, false, pedidosSemAnexos, situacao, situacaoProducao, out temFiltro, tiposPedido, tipoCliente, tipoEntrega,
+                tipoFiscal, tiposVenda, true, trazerPedCliVinculado, usuarioCadastro).Replace("?filtroAdicional?", filtroAdicional);
 
             // Soma somente os campos que serão exibidos na tela.
             // TotalReal: total do pedido comercial, mesmo exibido na listagem e relatório de vendas pedidos.
             sql = string.Format("SELECT CAST(CONCAT(SUM(TotalReal), ';', SUM(TotM), ';', SUM(Peso)) AS CHAR) FROM ({0}) AS Temp", sql);
 
-            return new TotalListaPedidos(ExecuteScalar<string>(sql, ObterParametrosFiltrosVendasPedidos(codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao, dataFimPronto,
-                dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto, nomeCliente, observacao, bairro, dataInicioMedicao, dataFimMedicao)));
+            return new TotalListaPedidos(ExecuteScalar<string>(sql, ObterParametrosFiltrosVendasPedidos(bairro, codCliente, codigoProduto, dataFimEntrega, dataFimPedido, dataFimInstalacao, dataFimMedicao,
+                dataFimPronto, dataFimSituacao, dataInicioEntrega, dataInicioInstalacao, dataInicioMedicao, dataInicioPedido, dataInicioPronto, dataInicioSituacao, descricaoProduto, nomeCliente, observacao)));
         }
 
         #endregion
@@ -2831,11 +2843,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os parâmetros que devem ser substituídos no SQL, com base nos filtros informados.
         /// </summary>
-        private GDAParameter[] ObterParametrosFiltrosVendasPedidos(string codCliente, string codigoProduto, string dataFimEntrega, string dataFimPedido, string dataFimInstalacao,
-            string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioPedido, string dataInicioPronto, string dataInicioSituacao,
-            string descricaoProduto, string nomeCliente, string observacao, string bairro, string dataInicioMedicao, string dataFimMedicao)
+        private GDAParameter[] ObterParametrosFiltrosVendasPedidos(string bairro, string codCliente, string codigoProduto, string dataFimEntrega, string dataFimPedido, string dataFimInstalacao,
+            string dataFimMedicao, string dataFimPronto, string dataFimSituacao, string dataInicioEntrega, string dataInicioInstalacao, string dataInicioMedicao, string dataInicioPedido,
+            string dataInicioPronto, string dataInicioSituacao, string descricaoProduto, string nomeCliente, string observacao)
         {
             var parametros = new List<GDAParameter>();
+
+            if (!string.IsNullOrWhiteSpace(bairro))
+                parametros.Add(new GDAParameter("?bairro", "%" + bairro + "%"));
 
             if (!string.IsNullOrWhiteSpace(codCliente))
                 parametros.Add(new GDAParameter("?codCliente", "%" + codCliente + "%"));
@@ -2852,6 +2867,9 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrWhiteSpace(dataFimInstalacao))
                 parametros.Add(new GDAParameter("?dataFimInst", DateTime.Parse(dataFimInstalacao + " 23:59")));
 
+            if (!string.IsNullOrWhiteSpace(dataFimMedicao))
+                parametros.Add(new GDAParameter("?dataFimMedicao", DateTime.Parse(dataFimMedicao + " 23:59")));
+
             if (!string.IsNullOrWhiteSpace(dataFimPronto))
                 parametros.Add(new GDAParameter("?dataFimPronto", DateTime.Parse(dataFimPronto + " 23:59")));
 
@@ -2863,6 +2881,9 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrWhiteSpace(dataInicioInstalacao))
                 parametros.Add(new GDAParameter("?dataIniInst", DateTime.Parse(dataInicioInstalacao + " 00:00")));
+
+            if (!string.IsNullOrWhiteSpace(dataInicioMedicao))
+                parametros.Add(new GDAParameter("?dataInicioMedicao", DateTime.Parse(dataInicioMedicao + " 00:00")));
 
             if (!string.IsNullOrWhiteSpace(dataInicioPedido))
                 parametros.Add(new GDAParameter("?dtIni", DateTime.Parse(dataInicioPedido + " 00:00")));
@@ -2878,15 +2899,6 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrWhiteSpace(observacao))
                 parametros.Add(new GDAParameter("?observacao", "%" + observacao + "%"));
-
-            if (!string.IsNullOrWhiteSpace(bairro))
-                parametros.Add(new GDAParameter("?bairro", "%" + bairro + "%"));
-
-            if (!string.IsNullOrWhiteSpace(dataInicioMedicao))
-                parametros.Add(new GDAParameter("?dataInicioMedicao", DateTime.Parse(dataInicioMedicao + " 00:00")));
-
-            if (!string.IsNullOrWhiteSpace(dataFimMedicao))
-                parametros.Add(new GDAParameter("?dataFimMedicao", DateTime.Parse(dataFimMedicao + " 23:59")));
 
             return parametros.Count > 0 ? parametros.ToArray() : null;
         }
