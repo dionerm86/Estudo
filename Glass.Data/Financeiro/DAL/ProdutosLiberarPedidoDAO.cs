@@ -101,8 +101,8 @@ namespace Glass.Data.DAL
             if (idProdPedProducao > 0)
                 sql += " and idProdPedProducao=" + idProdPedProducao;
 
-            float retorno = ExecuteScalar<float>(sql);
-            return retorno > 0 ? retorno : ExecuteScalar<float>(sqlBase + " and idProdPedProducao is null");
+            float retorno = ExecuteScalar<float>(session, sql);
+            return retorno > 0 ? retorno : ExecuteScalar<float>(session, sqlBase + " and idProdPedProducao is null");
         }
 
         public decimal ObterQtde(GDASession session, int idProdLiberarPedido)
