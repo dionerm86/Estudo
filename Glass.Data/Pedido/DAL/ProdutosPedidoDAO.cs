@@ -2364,6 +2364,7 @@ namespace Glass.Data.DAL
                     left join produto p on (pp.idProd=p.idProd)
                     left join ambiente_pedido ap on (pp.idAmbientePedido=ap.idAmbientePedido)
                 where pp.idPedido in (" + idsPedidos + @")
+                    AND (IdProdPedParent IS NULL OR IdProdPedParent=0)
                     and (pp.invisivel{0}=false or pp.invisivel{0} is null)
                     and pp.idProdPed not in (
                         select pt.idProdPed
