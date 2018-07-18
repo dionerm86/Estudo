@@ -4613,7 +4613,7 @@ namespace Glass.Data.DAL
         /// <param name="objUpdate"></param>
         public override int Update(GDASession session, Produto objUpdate)
         {
-            return Update(objUpdate, true);
+            return Update(session, objUpdate, true);
         }
 
         /// <summary>
