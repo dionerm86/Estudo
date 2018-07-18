@@ -584,7 +584,7 @@ namespace Glass.Data.DAL
             {
                 sql = string.Format(@"
                     SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, pt.QtdeTrocaDevolucao, ({0} / (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0))) * {1} * {2} AS TotM2Nf,
-                        CAST((pp.Total / {3}) * {1} * {2} AS DECIMAL (12,2)) AS TotalNf, {4} * {2} AS QtdNf,
+                        CAST(((pp.Total / {3}) * {1} * {2}) - IFNULL(pt.Total,0.00) AS DECIMAL (12,2)) AS TotalNf, {4} * {2} AS QtdNf,
                         CAST((pp.ValorBenef / {3}) * {1} * {2} AS DECIMAL (12,2)) AS ValorBenefNf, pt.QtdeTrocaDevolucao,
                         (pp.Qtde - IF({8}, COALESCE(pt.QtdeTrocaDevolucao, 0), 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
                         pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf
@@ -620,12 +620,12 @@ namespace Glass.Data.DAL
                         FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower(),
                         // Posição 9.
                         string.Format("{0}", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ?
-                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao
+                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao, SUM(pt.Total) AS Total
                                 FROM produto_trocado pt
                                     INNER JOIN troca_devolucao td ON (pt.IdTrocaDevolucao=td.IdTrocaDevolucao)
                                 WHERE td.Situacao = {0}
                                 GROUP BY pt.IdProdPed", (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada) :
-                            "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao"),
+                            "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao, 0 AS Total"),
                         // Posição 10.
                         "{0}");
 
@@ -644,7 +644,7 @@ namespace Glass.Data.DAL
             {
                 sql = string.Format(@"
                     SELECT p.Descricao AS DescrProduto, p.CodInterno, pp.*, SUM(({0} / (pp.Qtde - COALESCE(pt.QtdeTrocaDevolucao, 0))) * {1} * {2}) AS TotM2Nf,
-                        CAST(SUM((pp.Total / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS TotalNf,
+                        CAST(SUM((pp.Total / {3}) * {4} * {2}) - IFNULL(pt.Total,0.00) AS DECIMAL(12,2)) AS TotalNf,
                         SUM({1} * {2}) AS QtdNf, CAST(SUM((pp.ValorBenef / {3}) * {4} * {2}) AS DECIMAL(12,2)) AS ValorBenefNf, 
                         p.IdGrupoProd, p.IdSubgrupoProd, SUM(pp.Qtde - COALESCE(pt.QtdeTrocaDevolucao, 0)) AS QtdeOriginal {5}
                     FROM produtos_pedido pp
@@ -726,12 +726,12 @@ namespace Glass.Data.DAL
                         FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF.ToString().ToLower(),
                         // Posição 16.
                         string.Format("{0}", FiscalConfig.NotaFiscalConfig.DeduzirQtdTrocaProdutoNF ?
-                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao
+                            string.Format(@"SELECT pt.IdProdPed, SUM(pt.Qtde) AS QtdeTrocaDevolucao, SUM(pt.Total) AS Total
                                 FROM produto_trocado pt
                                     INNER JOIN troca_devolucao td ON (pt.IdTrocaDevolucao=td.IdTrocaDevolucao)
                                 WHERE td.Situacao = {0}
                                 GROUP BY pt.IdProdPed", (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada) :
-                                "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao"),
+                                "SELECT NULL AS IdProdPed, 0 AS QtdeTrocaDevolucao, 0 AS Total"),
                         // Posição 17.
                         "{0}");
             }
