@@ -2502,7 +2502,14 @@ namespace Glass.Data.Helper
                     // Esta verificação foi inserida para evitar que a condição do IF possua parêntesis entre as operações.
                     // Para aceitar parêntesis é necessário alterar a lógica de interpretação para ser feita semelhante ao interpretador de expressão geral.
                     if (condicoes.Contains(")"))
+                    {
                         throw new Exception("Não é possível inserir parêntesis em uma condição da função IF.");
+                    }
+
+                    if (condicoes?.Split('=')?.Count() > 2 || condicoes?.Split('<')?.Count() > 2 || condicoes?.Split('>')?.Count() > 2)
+                    {
+                        throw new Exception("A separação de parêntesis da expressão não existe ou é inválida. Todas operações matemáticas devem estar dentro de parêntesis. Ex.: A+B-C ERRADO. ((A+B)-C) CORRETO.");
+                    }
 
                     #endregion
 
