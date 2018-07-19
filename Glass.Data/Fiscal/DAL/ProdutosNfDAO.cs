@@ -1269,12 +1269,7 @@ namespace Glass.Data.DAL
                 returnValue = base.Insert(session, objInsert);
                 //LogAlteracaoDAO.Instance.LogProdutoNotaFiscal(new ProdutosNf(), LogAlteracaoDAO.SequenciaObjeto.Atual);
 
-                /* Chamado 14947.
-                 * É necessário que a nota de devolução do tipo EntradaTerceiros atualize o valor total da nota. */
-                // Atualiza os totais da nota fiscal se for emissão normal
-                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objInsert.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Normal ||
-                    NotaFiscalDAO.Instance.ObtemFinalidade(session, objInsert.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
-                    NotaFiscalDAO.Instance.UpdateTotalNf(session, objInsert.IdNf);
+                NotaFiscalDAO.Instance.UpdateTotalNf(session, objInsert.IdNf);
 
                 // Busca observação da CFOP do produto e salva nas informações complementares da nota
                 if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf) == (int)NotaFiscal.TipoDoc.Saída && objInsert.IdCfop > 0 &&
