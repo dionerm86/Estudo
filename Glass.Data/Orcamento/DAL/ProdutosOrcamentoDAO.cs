@@ -974,8 +974,7 @@ namespace Glass.Data.DAL
                         prod,
                         Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
                         true,
-                        prod.Beneficiamentos.CountAreaMinimaSession(session),
-                        prod.Beneficiamentos.CountAreaMinimaSession(session) > 0
+                        prod.Beneficiamentos.CountAreaMinimaSession(session)
                     );
                 }
             }
