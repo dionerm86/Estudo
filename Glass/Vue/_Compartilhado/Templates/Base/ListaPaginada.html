@@ -5,14 +5,18 @@
         </tr>
     </thead>
     <tbody>
-        <tr v-for="(item, index) in itens" v-bind:class="estiloLinhaAlternada(index)">
-            <slot name="itemEditando" v-if="index === linhaEditando">
-                {{ item }}
-            </slot>
-            <slot name="item" v-bind:item="item" v-bind:index="index" v-else>
-                {{ item }}
-            </slot>
-        </tr>
+        <template v-for="(item, index) in itens">
+            <tr v-bind:class="estiloLinhaAlternada(index)">
+                <slot name="itemEditando" v-if="index === linhaEditando">
+                    {{ item }}
+                </slot>
+                <slot name="item" v-bind:item="item" v-bind:index="index" v-else>
+                    {{ item }}
+                </slot>
+            </tr>
+            <slot name="novaLinhaItem" v-bind:item="item" v-bind:index="index"
+                 v-bind:classe="estiloLinhaAlternada(index)" v-if="index !== linhaEditando"></slot>
+        </template>
         <tr v-if="exibirInclusao && linhaEditando === -1" v-bind:class="estiloLinhaAlternada(itens.length)">
             <slot name="itemIncluir"></slot>
         </tr>

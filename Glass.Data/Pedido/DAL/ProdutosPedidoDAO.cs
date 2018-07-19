@@ -5281,9 +5281,17 @@ namespace Glass.Data.DAL
         /// </summary>
         public void AtualizaObs(uint idProdPed, string obs)
         {
+            AtualizaObs(null, idProdPed, obs);
+        }
+
+        /// <summary>
+        /// Atualiza observação do produto do pedido
+        /// </summary>
+        public void AtualizaObs(GDASession sessao, uint idProdPed, string obs)
+        {
             string sql = "Update produtos_pedido Set obs=?obs Where idprodped=" + idProdPed;
 
-            objPersistence.ExecuteCommand(sql, new GDAParameter("?obs", obs));
+            this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?obs", obs));
         }
 
         /// <summary>

@@ -92,6 +92,13 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao
         public decimal? Total { get; set; }
 
         /// <summary>
+        /// Obtém ou define a observação do produto do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("observacao")]
+        public string Observacao { get; set; }
+
+        /// <summary>
         /// Obtém ou define os beneficiamentos do produto do pedido.
         /// </summary>
         [DataMember]

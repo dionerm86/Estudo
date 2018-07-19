@@ -1,5 +1,5 @@
 <form>
-    <lista-paginada v-bind:exibir-inclusao="true" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
+    <lista-paginada v-bind:exibir-inclusao="exibirValoresMonetarios" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
         v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:numero-colunas-lista="atualizaNumeroColunasLista">
         <template slot="cabecalho">
             <th></th>
@@ -144,25 +144,26 @@
                 {{ item.percentualComissao | percentual }}
             </td>
             <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
-            <td>
+            <td style="white-space: nowrap">
                 <button v-bind:title="(exibindoFilhos ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1"
-                    v-on:click="exibindoFilhos = !exibindoFilhos">
+                    v-on:click.prevent="exibindoFilhos = !exibindoFilhos">
                     <img src="../Images/box.png">
                 </button>
                 <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
             </td>
-            <template v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1">
-                </tr>
-                <tr v-if="exibindoFilhos">
-                    <td></td>
-                    <td v-bind:colspan="numeroColunasLista - 1">
-                        <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
-                            v-bind:filtro="{ idProdutoPai: item.id, item }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
-                            v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProduto"
-                            v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
-                            v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:exibir-valores-monetarios="false"></lista-itens-venda>
-                    </td>
-            </template>
+        </template>
+        <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
+            v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos">
+            <tr v-bind:class="classe" style="border-top: none">
+                <td></td>
+                <td v-bind:colspan="numeroColunasLista - 1">
+                    <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
+                        v-bind:filtro="{ idProdutoPai: item.id, item }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
+                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProduto"
+                        v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
+                        v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:exibir-valores-monetarios="false"></lista-itens-venda>
+                </td>
+            </tr>
         </template>
         <template slot="itemEditando">
             <td style="white-space: nowrap">

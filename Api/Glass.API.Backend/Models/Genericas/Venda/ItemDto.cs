@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Models.Genericas.Venda
     /// Classe que encapsula os dados de um produto de venda (orçamento/pedido/PCP).
     /// </summary>
     [DataContract(Name = "Produto")]
-    public class ItemDto
+    public abstract class ItemDto
     {
         /// <summary>
         /// Obtém ou define o identificador do produto de venda.

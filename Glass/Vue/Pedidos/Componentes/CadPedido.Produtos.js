@@ -81,6 +81,7 @@ Vue.component('pedido-produtos', {
       return Servicos.Pedidos.Produtos.obter(
         filtroOriginal.idPedido,
         filtroOriginal.idAmbiente,
+        filtroOriginal.idProdutoPai,
         pagina,
         numeroRegistros,
         ordenacao
@@ -176,9 +177,10 @@ Vue.component('pedido-produtos', {
     /**
      * Exibe uma div como 'popup'.
      * @param {string} nome O nome da DIV que será exibida.
+     * @param {string} titulo O título da DIV que será exibida.
      * @param {Object} event O objeto com o evento JavaScript.
      */
-    exibirDivComoPopup: function (nome, event) {
+    exibirDivComoPopup: function (nome, titulo, event) {
       var botao = event.target;
 
       for (var iTip = 0; iTip < 2; iTip++) {
@@ -188,13 +190,52 @@ Vue.component('pedido-produtos', {
           300,
           COPYCONTENT,
           false,
+          TITLE,
+          titulo,
+          CLOSEBTN,
+          true,
+          CLOSEBTNTEXT,
+          'Fechar (Não salva as alterações)',
+          CLOSEBTNCOLORS,
+          [
+            '#cc0000',
+            '#ffffff',
+            '#D3E3F6',
+            '#0000cc'
+          ],
+          STICKY,
+          false,
           FIX,
           [
             botao,
             9 - getTableWidth(nome),
-            -25 - getTableHeight(nome)
-          ]);
+            7
+          ]
+        );
       }
+    },
+
+    /**
+     * Salva a observação de um produto de pedido.
+     * @param {Object} item O produto que será atualizado.
+     * @param {Object} event O objeto com o evento JavaScript.
+     */
+    salvarObservacao: function (item, event) {
+      if (!item || !event) {
+        return;
+      }
+
+      var vm = this;
+
+      Servicos.Pedidos.Produtos.salvarObservacao(this.pedido.id, item.id, item.observacao)
+        .then(function (resposta) {
+          UnTip();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        })
     }
   },
 

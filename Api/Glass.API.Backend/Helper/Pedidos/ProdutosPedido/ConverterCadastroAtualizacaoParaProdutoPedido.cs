@@ -64,6 +64,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
 
             destino.CodPedCliente = this.cadastro.CodigoPedidoCliente ?? destino.CodPedCliente;
             destino.Total = this.cadastro.Total ?? destino.Total;
+            destino.Obs = this.cadastro.Observacao ?? destino.Obs;
 
             this.ConverterBeneficiamentos(destino);
         }

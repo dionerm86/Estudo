@@ -1,4 +1,4 @@
-<section v-if="pedido && (!configuracoes.exibirAmbientes || ambiente)">
+ï»¿<section v-if="pedido && (!configuracoes.exibirAmbientes || ambiente)">
     <lista-itens-venda v-bind:mao-de-obra="pedidoMaoDeObra" v-bind:producao-corte="pedidoProducaoCorte" v-bind:mao-de-obra-especial="pedidoMaoDeObraEspecial"
         v-bind:filtro="filtro" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" tipo-validacao-produto="Pedido"
@@ -6,15 +6,15 @@
         v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar"
         v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada">
         <template slot="itemIconesDireita" slot-scope="{ item, index }">
-            <button title="Exibir imagem das peças" v-on:click.prevent="abrirImagemPecas(item)"
+            <button title="Exibir imagem das peÃ§as" v-on:click.prevent="abrirImagemPecas(item)"
                 v-if="item.produto && item.produto.vidro">
                 <img src="../Images/imagem.gif">
             </button>
-            <button title="Observação da peça" v-on:click.prevent="exibirDivComoPopup('tbObsCalc_' + item.id, $event)"
+            <button title="ObservaÃ§Ã£o da peÃ§a" v-on:click.prevent="exibirDivComoPopup('tbObsCalc_' + item.id, 'ObservaÃ§Ã£o', $event)"
                 v-if="item.produto && item.produto.vidro">
                 <img src="../Images/blocodenotas.png">
             </button>
-            <table v-bind:id="'tbObsCalc_' + item.id" cellspacing="0" style="display: none;">
+            <table v-bind:id="'tbObsCalc_' + item.id" class="cadpedido-produtos__observacao" cellspacing="0" style="display: none;">
                 <tr>
                     <td align="center">
                         <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
@@ -22,8 +22,9 @@
                 </tr>
                 <tr>
                     <td align="center">
-                        <input id="btnSalvarObs" onclick='setCalcObs(<%# Eval("IdProdPed") %>, this); return false;'
-                               type="button" value="Salvar" />
+                        <button v-on:click.prevent="salvarObservacao(item, $event)">
+                            Salvar
+                        </button>
                     </td>
                 </tr>
             </table>

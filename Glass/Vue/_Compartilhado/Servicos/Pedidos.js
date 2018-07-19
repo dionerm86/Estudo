@@ -99,18 +99,20 @@ Servicos.Pedidos = (function(http) {
        * Recupera a lista de produtos de um pedido.
        * @param {!number} idPedido O identificador do pedido que será usado para busca dos produtos.
        * @param {?number} idAmbiente O identificador do ambiente que contém os produtos (se necessário).
+       * @param {?number} idProdutoPai O identificador do produto "pai" (para produtos de composição/laminados).
        * @param {number} pagina O número da página de resultados a ser exibida.
        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
        * @param {string} ordenacao A ordenação para o resultado.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      obter: function(idPedido, idAmbiente, pagina, numeroRegistros, ordenacao) {
+      obter: function(idPedido, idAmbiente, idProdutoPai, pagina, numeroRegistros, ordenacao) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
 
         var filtro = {
           idAmbiente,
+          idProdutoPai,
           pagina,
           numeroRegistros,
           ordenacao
@@ -174,6 +176,27 @@ Servicos.Pedidos = (function(http) {
         }
 
         return http().patch(API + idPedido + '/produtos/' + idProduto, produto);
+      },
+
+      /**
+       * Altera a observação de um produto de pedido.
+       * @param {!number} idPedido O identificador do pedido que será usado para busca do produto.
+       * @param {!number} idProduto O identificador do produto que será alterado.
+       * @param {string} observacao A nova observação do produto de pedido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      salvarObservacao: function (idPedido, idProduto, observacao) {
+        if (!idPedido) {
+          throw new Error('Pedido é obrigatório.');
+        }
+
+        if (!idProduto) {
+          throw new Error('Produto é obrigatório.');
+        }
+
+        return http().patch(API + idPedido + '/produtos/' + idProduto + '/observacao', {
+          observacao: observacao || ''
+        });
       }
     },
 
