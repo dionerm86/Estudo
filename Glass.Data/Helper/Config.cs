@@ -742,7 +742,8 @@ namespace Glass.Data.Helper
             NomeArquivoDxfComAspasECedilha = 1529,
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
             NomeArquivoMesaBarraPorCeCedilha = 1531,
-            ListaVendasPedidosVaziaPorPadrao = 1532
+            ListaVendasPedidosVaziaPorPadrao = 1532,
+            UsarTLS12NFe = 1533
 
             #endregion
         }

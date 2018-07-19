@@ -173,7 +173,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -212,7 +212,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -255,7 +255,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -294,7 +294,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -335,7 +335,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -372,7 +372,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -415,7 +415,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -454,7 +454,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -497,7 +497,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -536,7 +536,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -579,7 +579,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
@@ -618,7 +618,7 @@ namespace Glass.Data.NFeUtils
             retorno.ClientCertificates.Add(GetCertificado(notaFiscal.IdLoja.Value, caminhoCert));
             retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
 
-            if (uf == "CE")
+            if (Configuracoes.FiscalConfig.UsarTLS12NFe)
                 System.Net.ServicePointManager.SecurityProtocol = (System.Net.SecurityProtocolType)3072;
 
             return retorno;
