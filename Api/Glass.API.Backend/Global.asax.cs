@@ -16,7 +16,7 @@ namespace Glass.API.Backend
         /// </summary>
         protected void Application_Start()
         {
-            new Api.Host.Bootstrapper().Run();
+            new Bootstrapper().Run();
 
             GlobalConfiguration.Configure(config =>
             {

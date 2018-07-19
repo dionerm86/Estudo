@@ -1,6 +1,6 @@
 <form>
     <lista-paginada v-bind:exibir-inclusao="exibirValoresMonetarios" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
-        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:numero-colunas-lista="atualizaNumeroColunasLista">
+        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
         <template slot="cabecalho">
             <th></th>
             <th>
@@ -158,10 +158,30 @@
                 <td></td>
                 <td v-bind:colspan="numeroColunasLista - 1">
                     <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
-                        v-bind:filtro="{ idProdutoPai: item.id, item }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
-                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProduto"
+                        v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
+                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno"
                         v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
-                        v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:exibir-valores-monetarios="false"></lista-itens-venda>
+                        v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:exibir-valores-monetarios="false"
+                        v-on:lista-atualizada="listaAtualizada">
+                        <template slot="cabecalho">
+                            <slot name="cabecalho"></slot>
+                        </template>
+                        <template slot="itemIconesEsquerda" slot-scope="{ item, index }">
+                            <slot name="itemIconesEsquerda" v-bind:item="item" v-bind:index="index"></slot>
+                        </template>
+                        <template slot="item" slot-scope="{ item, index }">
+                            <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
+                        </template>
+                        <template slot="itemIconesDireita" slot-scope="{ item, index }">
+                            <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
+                        </template>
+                        <template slot="itemEditando" slot-scope="{ item }">
+                            <slot name="itemEditando" v-bind:item="item"></slot>
+                        </template>
+                        <template slot="itemIncluir" slot-scope="{ item }">
+                            <slot name="itemIncluir" v-bind:item="item"></slot>
+                        </template>
+                    </lista-itens-venda>
                 </td>
             </tr>
         </template>

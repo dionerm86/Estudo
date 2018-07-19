@@ -20,7 +20,7 @@ Vue.component('campo-busca-produto', {
       required: false,
       twoWay: false,
       default: null,
-      validator: Mixins.Validacao.validarValoresOuVazio('Pedido')
+      validator: Mixins.Validacao.validarValoresOuVazio('Pedido', 'ProdutoPedido')
     },
 
     /**

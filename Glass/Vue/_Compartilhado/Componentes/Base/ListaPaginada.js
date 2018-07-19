@@ -81,7 +81,7 @@ Vue.component('lista-paginada', {
       twoWay: false,
       default: false,
       validator: Mixins.Validacao.validarBooleanOuVazio
-    }
+    },
   },
 
   data: function() {
@@ -195,13 +195,9 @@ Vue.component('lista-paginada', {
      * @type {number}.
      */
     numeroColunas: function() {
-      var numero = this.$slots.cabecalho.filter(function(h) {
+      return this.$slots.cabecalho.filter(function(h) {
         return h.tag;
       }).length;
-
-      this.$emit('numero-colunas-lista', numero);
-
-      return numero;
     },
 
     /**

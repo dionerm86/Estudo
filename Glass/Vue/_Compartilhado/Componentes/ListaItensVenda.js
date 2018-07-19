@@ -213,19 +213,11 @@ Vue.component('lista-itens-venda', {
       numeroBeneficiamentosParaAreaMinima: 0,
       processoAtual: null,
       aplicacaoAtual: null,
-      numeroColunasLista: 0,
       exibindoFilhos: false
     };
   },
 
   methods: {
-    /**
-     * Atualiza o número de colunas da lista
-     */
-    atualizaNumeroColunasLista: function (numero) {
-      this.numeroColunasLista = numero;
-    },
-
     /**
      * Função que busca os produtos filhos de itens de venda compostos/laminados.
      * @param {!Object} filtro O filtro informado pelo controle lista-paginada.
@@ -333,6 +325,7 @@ Vue.component('lista-itens-venda', {
 
       if (this.atualizar) {
         var itemVendaAtualizar = this.patch(this.itemVenda, this.itemVendaOriginal);
+        itemVendaAtualizar.id = this.itemVenda.id;
         itemVendaAtualizar.beneficiamentos = this.clonar(this.itemVenda.beneficiamentos);
 
         var vm = this;
@@ -471,6 +464,13 @@ Vue.component('lista-itens-venda', {
       }
 
       return form.checkValidity();
+    },
+
+    /**
+     * Recarrega os produtos de composição ao realizar uma alteração na lista.
+     */
+    listaAtualizada: function () {
+      this.controleAtualizacao++;
     }
   },
 
@@ -503,6 +503,23 @@ Vue.component('lista-itens-venda', {
         && this.itemVenda.areaEmM2
         && this.produtoAtual
         && this.produtoAtual.exibirBeneficiamentos;
+    },
+
+    /**
+     * Propriedade computada que retorna o número de colunas da lista paginada.
+     * @type {number}
+     */
+    numeroColunasLista: function () {
+      return this.$children[0].numeroColunas;
+    },
+
+    /**
+     * Propriedade computada com o tipo de validação para uso nos produtos de composição.
+     * @type {string}
+     */
+    tipoValidacaoProdutoInterno: function () {
+      var tipoValidacao = 'Produto' + this.tipoValidacaoProduto;
+      return tipoValidacao.replace('ProdutoProduto', 'Produto');
     }
   },
 

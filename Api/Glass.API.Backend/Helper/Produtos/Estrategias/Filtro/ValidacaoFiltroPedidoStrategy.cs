@@ -20,14 +20,17 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
     internal class ValidacaoFiltroPedidoStrategy : IValidacaoFiltro
     {
         private readonly ApiController apiController;
+        private readonly bool produtoComposicao;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ValidacaoFiltroPedidoStrategy"/>.
         /// </summary>
         /// <param name="apiController">O controller que está sendo executado.</param>
-        public ValidacaoFiltroPedidoStrategy(ApiController apiController)
+        /// <param name="produtoComposicao">Indica se a validação será feita para um produto de composição.</param>
+        public ValidacaoFiltroPedidoStrategy(ApiController apiController, bool produtoComposicao)
         {
             this.apiController = apiController;
+            this.produtoComposicao = produtoComposicao;
         }
 
         /// <inheritdoc/>
@@ -192,7 +195,9 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                 bool subgrupoPermiteItemRevendaNaVenda = produto.IdSubgrupoProd.HasValue
                     && SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda(produto.IdSubgrupoProd.Value);
 
-                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && !subgrupoPermiteItemRevendaNaVenda)
+                if (!this.produtoComposicao
+                    && PedidoConfig.DadosPedido.BloquearItensTipoPedido
+                    && !subgrupoPermiteItemRevendaNaVenda)
                 {
                     if ((produto.IdGrupoProd != (uint)NomeGrupoProd.Vidro
                         || (produto.IdGrupoProd == (uint)NomeGrupoProd.Vidro
@@ -248,7 +253,8 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                 bool subgrupoPermiteItemRevendaNaVenda = produto.IdSubgrupoProd.HasValue
                     && SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda(produto.IdSubgrupoProd.Value);
 
-                if (PedidoConfig.DadosPedido.BloquearItensTipoPedido
+                if (!this.produtoComposicao
+                    && PedidoConfig.DadosPedido.BloquearItensTipoPedido
                     && !subgrupoPermiteItemRevendaNaVenda
                     && ((produto.IdGrupoProd == (uint)NomeGrupoProd.Vidro
                         && !SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd))

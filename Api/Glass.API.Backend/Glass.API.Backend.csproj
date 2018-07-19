@@ -223,9 +223,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Glass.Api.Host\App_Start\Bootstrapper.cs">
-      <Link>App_Start\Bootstrapper.cs</Link>
-    </Compile>
+    <Compile Include="App_Start\Bootstrapper.cs" />
     <Compile Include="App_Start\GdaConfig.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -432,6 +430,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Mef.config" />
+    <Content Include="AppSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

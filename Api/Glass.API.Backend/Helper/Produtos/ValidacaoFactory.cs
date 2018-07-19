@@ -25,7 +25,9 @@ namespace Glass.API.Backend.Helper.Produtos
             switch ((tipoValidacao ?? string.Empty).ToLowerInvariant())
             {
                 case "pedido":
-                    return new ValidacaoFiltroPedidoStrategy(apiController);
+                    return new ValidacaoFiltroPedidoStrategy(apiController, false);
+                case "produtopedido":
+                    return new ValidacaoFiltroPedidoStrategy(apiController, true);
             }
 
             return new ValidacaoFiltroSemOperacaoStrategy();
