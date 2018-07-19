@@ -1094,7 +1094,7 @@ namespace Glass.Data.DAL
                     }
 
                     // Só altera se o saldo tiver sido alterado
-                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario))
+                    if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario) && lstCx[i].MudarSaldo.GetValueOrDefault())
                     {
                         if (lstCx[i].TipoMov == 1)
                             saldo += lstCx[i].Valor;

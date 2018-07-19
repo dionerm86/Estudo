@@ -59,6 +59,7 @@ namespace Glass.Data.RelModel
             Peso = ped.Peso;
             DadosVidrosVendidos = ped.DadosVidrosVendidos;
             RptCidade = ped.RptCidade;
+            RptBairro = ped.RptBairro;
             RptNomeLoja = ped.RptNomeLoja;
             RptTotal = ped.RptTotal;
             Criterio = ped.Criterio;

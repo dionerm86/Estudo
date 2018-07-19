@@ -11,6 +11,7 @@ namespace Glass.Data.DAL
         private string Sql(int idFornada, int idPedido, string dataIni, string dataFim, string numEtiqueta,
             int espessura, string idsCorVidro, bool agruparCorEspessura, bool selecionar)
         {
+            var idsSetorForno = SetorDAO.Instance.ObtemIdsSetorForno();
             var campos = agruparCorEspessura? "p.IdCorVidro, p.Espessura, cv.Descricao as CorVidro, SUM(ppe.TotM / ppe.Qtde) AS M2Lido, count(*) AS QtdeLida" : 
                 @"f.*, SUM(ppe.TotM / ppe.Qtde) as M2Lido, COUNT(*) as QtdeLida, 
                 GROUP_CONCAT(ppp.NumEtiqueta SEPARATOR ', ') as Etiquetas, '{0}' as Criterio";
@@ -22,7 +23,8 @@ namespace Glass.Data.DAL
 	                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
                     INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
                     INNER JOIN cor_vidro cv ON (p.IdCorVidro = cv.IdCorVidro)
-                WHERE 1 {1}";
+                    INNER JOIN leitura_producao lp ON (lp.IDPRODPEDPRODUCAO = ppp.IDPRODPEDPRODUCAO)
+                WHERE lp.IdSetor IN ({2}) AND ppp.Situacao={3} {1}";
 
             sql += " GROUP BY " + (agruparCorEspessura ? "p.IdCorVidro, p.Espessura" : "f.IdFornada");
 
@@ -51,13 +53,13 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(dataIni))
             {
-                where += " AND f.DataCad >= ?dataIni";
+                where += " AND lp.DataLeitura >= ?dataIni";
                 lstCriterio.Add("Período inicial: " + dataIni);
             }
 
             if (!string.IsNullOrEmpty(dataFim))
             {
-                where += " AND f.DataCad <= ?dataFim";
+                where += " AND lp.DataLeitura <= ?dataFim";
                 lstCriterio.Add("Período final: " + dataFim);
             }
 
@@ -93,7 +95,7 @@ namespace Glass.Data.DAL
             if (!selecionar)
                 sql = "SELECT COUNT(*) FROM (" + sql + ") as tmp";
 
-            sql = string.Format(sql, string.Format(campos, string.Join(", ", lstCriterio)), where);
+            sql = string.Format(sql, string.Format(campos, string.Join(", ", lstCriterio)), where, idsSetorForno, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
 
             return sql;
         }

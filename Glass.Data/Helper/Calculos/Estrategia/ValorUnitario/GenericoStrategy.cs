@@ -32,7 +32,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorUnitario
         {
             if (produto.Altura > 0 && produto.Largura > 0)
             {
-                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto.Container, produto, true);
+                var calcularMultiploDe5 = produto.DadosProduto.DadosGrupoSubgrupo.ProdutoEVidro() && produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo() != TipoCalculoGrupoProd.Qtd;
+
+                produto.TotM = CalculoM2.Instance.Calcular(sessao, produto.Container, produto, calcularMultiploDe5);
             }
         }
     }

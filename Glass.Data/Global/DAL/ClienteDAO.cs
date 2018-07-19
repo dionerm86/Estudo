@@ -3070,9 +3070,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza a situação de um cliente.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idsCliente"></param>
-        /// <param name="motivo"></param>
         public void AtualizaSituacaoComTransacao(SituacaoCliente situacao, string idsCliente, string motivo)
         {
             using (var transaction = new GDATransaction())
@@ -3134,36 +3131,41 @@ namespace Glass.Data.DAL
         public void InativarPelaUltimaCompra()
         {
             if (FinanceiroConfig.PeriodoInativarClienteUltimaCompra == 0)
+            {
                 return;
+            }
+
+            var cnpjsLoja = LojaDAO.Instance.ObtemCnpj();
 
             // Para verificar se o cliente não compra há mais de x dias, além de fazer esta verificação, considera também
             // os clientes que nunca fizeram compras e que foram cadastrados há mais de x dias
-            string sql = @"select c.id_Cli from cliente c 
-                    {0}
-                where lower(c.nome)<>'consumidor final' and c.situacao=" + (int)SituacaoCliente.Ativo + @"
-                    and ((c.dt_Ult_Compra is null and c.dataCad<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + @" day)) 
-                    or c.dt_Ult_Compra<=date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaCompra + " day))";
+            var sql = $@"SELECT c.Id_Cli FROM cliente c 
+                    { "{0}" }
+                WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
+                    AND LOWER(c.Nome)<>'consumidor final'
+                    AND c.Situacao={ (int)SituacaoCliente.Ativo }
+                    AND ((c.Dt_Ult_Compra IS NULL AND c.DataCad<=DATE_SUB(NOW(), INTERVAL { FinanceiroConfig.PeriodoInativarClienteUltimaCompra } DAY))
+                    OR c.Dt_Ult_Compra<=DATE_SUB(NOW(), INTERVAL { FinanceiroConfig.PeriodoInativarClienteUltimaCompra } DAY))";
 
-            string join = String.Empty;
-
-            int numeroDiasConsiderar = FinanceiroConfig.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente;
+            var join = string.Empty;
+            var numeroDiasConsiderar = FinanceiroConfig.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente;
 
             if (numeroDiasConsiderar > 0)
             {
-                join = @"left join (
-		                select * from (
-			                select idRegistroAlt, dataAlt
-			                from log_alteracao
-			                where tabela=" + (int)LogAlteracao.TabelaAlteracao.Cliente + @" and campo='Situação' and valorAtual='Ativo'
-			                order by numEvento desc
-		                ) as temp
-		                group by idRegistroAlt
-	                ) l on (l.idRegistroAlt=c.id_Cli)";
+                join = $@"LEFT JOIN (
+		                SELECT * FROM (
+			                SELECT IdRegistroAlt, DataAlt
+			                FROM log_alteracao
+			                WHERE Tabela={ (int)LogAlteracao.TabelaAlteracao.Cliente } AND Campo='Situação' AND ValorAtual='Ativo'
+			                ORDER BY NumEvento DESC
+		                ) AS temp
+		                GROUP BY IdRegistroAlt
+	                ) l ON (l.IdRegistroAlt=c.Id_Cli)";
 
-                sql += " and (l.idRegistroAlt is null or date_add(l.dataAlt, interval " + numeroDiasConsiderar + " day) < now())";
+                sql += $" AND (l.IdRegistroAlt IS NULL OR DATE_ADD(l.DataAlt, INTERVAL { numeroDiasConsiderar } DAY) < NOW())";
             }
 
-            string idsClientes = GetValoresCampo(String.Format(sql, join), "id_Cli");
+            var idsClientes = GetValoresCampo(string.Format(sql, join), "Id_Cli");
 
             // Inativa os clientes
             if (!string.IsNullOrWhiteSpace(idsClientes))
@@ -3179,13 +3181,18 @@ namespace Glass.Data.DAL
         public void InativaPelaUltConSintegra()
         {
             if (FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra < 1)
+            {
                 return;
+            }
 
-            var sql = @"SELECT ID_CLI 
-                        FROM cliente 
-                        WHERE LOWER(NOME) <> 'consumidor final' 
-                            AND LOWER(TIPO_PESSOA) = 'j' 
-                            AND DTULTCONSINTEGRA <= date_sub(now(), interval " + FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra + " day)";
+            var cnpjsLoja = LojaDAO.Instance.ObtemCnpj();
+
+            var sql = $@"SELECT Id_Cli
+                FROM cliente c
+                WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
+                    AND LOWER(c.Nome) <> 'consumidor final' 
+                    AND LOWER(c.Tipo_Pessoa) = 'j' 
+                    AND c.DtUltConSintegra <= DATE_SUB(NOW(), INTERVAL { FinanceiroConfig.PeriodoInativarClienteUltimaConsultaSintegra } DAY)";
 
             var ids = ExecuteMultipleScalar<int>(sql);
 
@@ -3203,13 +3210,15 @@ namespace Glass.Data.DAL
         /// </summary>
         public void InativaPelaDataLimiteCad()
         {
-            var sql = @"
-                SELECT Id_cli 
+            var cnpjsLoja = LojaDAO.Instance.ObtemCnpj();
+
+            var sql = $@"SELECT Id_cli 
                 FROM cliente
-                WHERE LOWER(nome) <> 'consumidor final'
-                    AND dataLimiteCad IS NOT NULL
-                    AND date(dataLimiteCad) < curdate()
-                    AND situacao=" + (int)SituacaoCliente.Ativo;
+                WHERE REPLACE(REPLACE(REPLACE(c.Cpf_Cnpj, '.', ''), '-', ''), '/', '') NOT IN ({ string.Join(",", cnpjsLoja.Select(f => $"'{ f.Replace(".", "").Replace("-", "").Replace("/", "") }'").ToList()) })
+                    AND LOWER(Nome) <> 'consumidor final'
+                    AND DataLimiteCad IS NOT NULL
+                    AND Date(DataLimiteCad) < CURDATE()
+                    AND Situacao={ (int)SituacaoCliente.Ativo }";
 
             var ids = ExecuteMultipleScalar<int>(sql);
 
