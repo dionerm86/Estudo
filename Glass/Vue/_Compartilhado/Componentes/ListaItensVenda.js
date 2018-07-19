@@ -213,7 +213,7 @@ Vue.component('lista-itens-venda', {
       numeroBeneficiamentosParaAreaMinima: 0,
       processoAtual: null,
       aplicacaoAtual: null,
-      exibindoFilhos: false
+      filhosEmExibicao: []
     };
   },
 
@@ -471,6 +471,20 @@ Vue.component('lista-itens-venda', {
      */
     listaAtualizada: function () {
       this.controleAtualizacao++;
+    },
+
+    exibindoFilhos: function (indice) {
+      return this.filhosEmExibicao.indexOf(indice) > -1;
+    },
+
+    alternarExibicaoFilhos: function (indice) {
+      var i = this.filhosEmExibicao.indexOf(indice);
+
+      if (i > -1) {
+        this.filhosEmExibicao.splice(i, 1);
+      } else {
+        this.filhosEmExibicao.push(indice);
+      }
     }
   },
 

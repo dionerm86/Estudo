@@ -145,15 +145,15 @@
             </td>
             <slot name="item" v-bind:item="item" v-bind:index="index"></slot>
             <td style="white-space: nowrap">
-                <button v-bind:title="(exibindoFilhos ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1"
-                    v-on:click.prevent="exibindoFilhos = !exibindoFilhos">
+                <button v-bind:title="(exibindoFilhos(index) ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1"
+                    v-on:click.prevent="alternarExibicaoFilhos(index)">
                     <img src="../Images/box.png">
                 </button>
                 <slot name="itemIconesDireita" v-bind:item="item" v-bind:index="index"></slot>
             </td>
         </template>
         <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
-            v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos">
+            v-if="item.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos(index)">
             <tr v-bind:class="classe" style="border-top: none">
                 <td></td>
                 <td v-bind:colspan="numeroColunasLista - 1">
