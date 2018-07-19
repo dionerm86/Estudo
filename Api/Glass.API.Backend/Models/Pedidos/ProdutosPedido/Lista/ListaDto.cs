@@ -67,6 +67,7 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
                 Valor = produtoPedido.ValorBenef,
                 Altura = produtoPedido.AlturaBenef,
                 Largura = produtoPedido.LarguraBenef,
+                Espessura = produtoPedido.EspessuraBenef,
                 Redondo = produtoPedido.Redondo,
                 Itens = produtoPedido.Beneficiamentos?.ObterListaBeneficiamentos(),
             };

@@ -275,13 +275,32 @@
                 <input type="number" step="0.01" v-model.number="itemVenda.percentualComissao" min="0" style="width: 50px" />
             </td>
             <slot name="itemEditando" v-bind:item="itemVenda"></slot>
-            <td>
+            <td style="white-space: nowrap">
+                <template v-if="maoDeObra && itemVenda && itemVenda.beneficiamentos">
+                    <span>
+                        <select v-model="itemVenda.beneficiamentos.largura">
+                            <option></option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        <select v-model="itemVenda.beneficiamentos.altura">
+                            <option></option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        Esp.:
+                        <input type="number" v-model.number="itemVenda.beneficiamentos.espessura"
+                            style="width: 40px" min="0" step="0.01" />
+                    </span>
+                </template>
                 <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
-                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
-                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
-                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
-                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
-                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:espessura-produto="itemVenda.produto.espessura"
+                    v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos" v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura"
+                    v-bind:quantidade-produto="itemVenda.quantidade" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real"
+                    v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo" v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo"
+                    v-bind:cliente-revenda="clienteRevenda" v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
                     v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
                     v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
                     v-if="vIfControleBeneficiamentos"></controle-beneficiamentos>
@@ -370,12 +389,31 @@
             </td>
             <slot name="itemIncluir" v-bind:item="itemVenda"></slot>
             <td>
+                <template v-if="inserindo && maoDeObra && itemVenda && itemVenda.beneficiamentos">
+                    <span>
+                        <select v-model="itemVenda.beneficiamentos.largura">
+                            <option></option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        <select v-model="itemVenda.beneficiamentos.altura">
+                            <option></option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                        </select>
+                        Esp.:
+                        <input type="number" v-model.number="itemVenda.beneficiamentos.espessura"
+                               style="width: 40px" min="0" step="0.01" />
+                    </span>
+                </template>
                 <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
-                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
-                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
-                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
-                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
-                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:espessura-produto="itemVenda.produto.espessura"
+                    v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos" v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura"
+                    v-bind:quantidade-produto="itemVenda.quantidade" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real"
+                    v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo" v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo"
+                    v-bind:cliente-revenda="clienteRevenda" v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
                     v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
                     v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
                     v-if="inserindo && vIfControleBeneficiamentos"></controle-beneficiamentos>

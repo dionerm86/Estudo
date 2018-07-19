@@ -43,7 +43,7 @@ Vue.component('campo-altura', {
     permiteEditar: {
       required: false,
       twoWay: false,
-      default: true,
+      default: false,
       validator: Mixins.Validacao.validarBooleanOuVazio
     },
 

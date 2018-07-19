@@ -36,6 +36,13 @@ namespace Glass.API.Backend.Models.Genericas
         public int? Largura { get; set; }
 
         /// <summary>
+        /// Obtém ou define a espessura do beneficiamento.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("espessura")]
+        public double? Espessura { get; set; }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se o produto é redondo.
         /// </summary>
         [DataMember]

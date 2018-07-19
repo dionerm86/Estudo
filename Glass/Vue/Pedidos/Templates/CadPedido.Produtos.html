@@ -14,20 +14,14 @@
                 v-if="item.produto && item.produto.vidro">
                 <img src="../Images/blocodenotas.png">
             </button>
-            <table v-bind:id="'tbObsCalc_' + item.id" class="cadpedido-produtos__observacao" cellspacing="0" style="display: none;">
-                <tr>
-                    <td align="center">
-                        <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center">
-                        <button v-on:click.prevent="salvarObservacao(item, $event)">
-                            Salvar
-                        </button>
-                    </td>
-                </tr>
-            </table>
+            <div v-bind:id="'tbObsCalc_' + item.id" class="cadpedido-produtos__observacao" style="display: none;">
+                <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
+                <div style="text-align: center">
+                    <button v-on:click.prevent="salvarObservacao(item, $event)">
+                        Salvar
+                    </button>
+                </div>
+            </div>
         </template>
     </lista-itens-venda>
 </section>

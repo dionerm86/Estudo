@@ -21,6 +21,13 @@ namespace Glass.Data.Beneficiamentos.Total.Dto
         public int Id { get; set; }
 
         /// <summary>
+        /// Obtém ou define a espessura do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("espessura")]
+        public double Espessura { get; set; }
+
+        /// <summary>
         /// Obtém ou define a altura do produto.
         /// </summary>
         [DataMember]

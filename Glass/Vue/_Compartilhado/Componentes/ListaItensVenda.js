@@ -473,10 +473,18 @@ Vue.component('lista-itens-venda', {
       this.controleAtualizacao++;
     },
 
+    /**
+     * Indica se os filhos (produtos de composição) estão sendo exibidos na lista.
+     * @param {!number} indice O número da linha que está sendo verificada.
+     * @returns {boolean} Verdadeiro, se os itens estiverem sendo exibidos.
+     */
     exibindoFilhos: function (indice) {
       return this.filhosEmExibicao.indexOf(indice) > -1;
     },
 
+    /**
+     * Alterna a exibição dos filhos (produtos de composição).
+     */
     alternarExibicaoFilhos: function (indice) {
       var i = this.filhosEmExibicao.indexOf(indice);
 

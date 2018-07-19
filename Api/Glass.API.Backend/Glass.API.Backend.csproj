@@ -316,6 +316,7 @@
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
     <Compile Include="Models\Beneficiamentos\Configuracoes\ControleDto.cs" />
     <Compile Include="Models\Beneficiamentos\Filtro\BeneficiamentoDto.cs" />
+    <Compile Include="Models\Beneficiamentos\Total\DadosBeneficiamentosDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\DadosEntradaDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />

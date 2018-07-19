@@ -25,21 +25,7 @@ namespace Glass.API.Backend.Models.Beneficiamentos.Total
         /// Obtém ou define o beneficiamento que foi aplicado.
         /// </summary>
         [DataMember]
-        [JsonProperty("beneficiamento")]
-        public Filtro.BeneficiamentoDto Beneficiamento { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o beneficiamento selecionado no controle.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("itensSelecionados")]
-        public IEnumerable<Genericas.ItemBeneficiamentoDto> ItensSelecionados { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se o beneficiamento será cobrado.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("cobrar")]
-        public bool CobrarBeneficiamento { get; set; }
+        [JsonProperty("beneficiamentos")]
+        public IEnumerable<DadosBeneficiamentosDto> Beneficiamentos { get; set; }
     }
 }

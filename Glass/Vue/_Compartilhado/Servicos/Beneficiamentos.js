@@ -42,11 +42,15 @@ Servicos.Beneficiamentos = (function(http) {
         return Promise.reject();
       }
 
-      if (!Array.isArray(itensSelecionados)) {
+      if (!itensSelecionados.dadosCalculo) {
+        throw new Error('É necessário informar os dados de produto para cálculo.');
+      }
+
+      if (!Array.isArray(itensSelecionados.beneficiamentos)) {
         throw new Error('Beneficiamentos precisam estar no formato de array.');
       }
 
-      if (!itensSelecionados.length) {
+      if (!itensSelecionados.beneficiamentos.length) {
         return Promise.reject();
       }
 

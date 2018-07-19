@@ -50,6 +50,16 @@ Vue.component('controle-beneficiamentos', {
     },
 
     /**
+     * Espessura do produto atual.
+     * @type {!number}
+     */
+    espessuraProduto: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Indica os beneficiamentos padrão do produto atual.
      * @type {!Object[]}
      */
@@ -316,6 +326,7 @@ Vue.component('controle-beneficiamentos', {
         const dadosCalculo = {
           produto: {
             id: this.idProduto,
+            espessura: this.espessuraProduto,
             altura: this.alturaProduto,
             largura: this.larguraProduto,
             quantidade: this.quantidadeProduto,
@@ -336,10 +347,6 @@ Vue.component('controle-beneficiamentos', {
         var selecionados = this.clonar(this.beneficiamentosAgrupados)
           .filter(function (item) {
             return item.itensSelecionados && item.itensSelecionados.length;
-          })
-          .map(function (item) {
-            item.dadosCalculo = dadosCalculo;
-            return item;
           });
 
         var itensSelecionados = selecionados
@@ -365,7 +372,10 @@ Vue.component('controle-beneficiamentos', {
             .length > 0;
 
           if (redondo === this.redondo) {
-            Servicos.Beneficiamentos.calcularTotal(selecionados)
+            Servicos.Beneficiamentos.calcularTotal({
+              dadosCalculo,
+              beneficiamentos: selecionados
+            })
               .then(function (resposta) {
                 var valorTotal = 0;
                 var itensSelecionados = vm.beneficiamentosAgrupados

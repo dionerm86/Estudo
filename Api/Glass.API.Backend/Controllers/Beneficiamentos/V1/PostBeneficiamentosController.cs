@@ -29,25 +29,26 @@ namespace Glass.API.Backend.Controllers.Beneficiamentos.V1
         [Route("total")]
         [SwaggerResponse(200, "Valor total dos beneficiamentos calculado.", Type = typeof(IEnumerable<TotalDto>))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        public IHttpActionResult CalcularTotalBeneficiamentos([FromBody] IEnumerable<DadosEntradaDto> dadosEntrada)
+        public IHttpActionResult CalcularTotalBeneficiamentos([FromBody] DadosEntradaDto dadosEntrada)
         {
             if (dadosEntrada == null)
             {
                 return this.ErroValidacao("Os dados de entrada são obrigatórios.");
             }
 
-            var validacao = this.ValidarBeneficiamentosSelecionados(dadosEntrada);
+            dadosEntrada.Beneficiamentos = dadosEntrada.Beneficiamentos ?? new DadosBeneficiamentosDto[0];
+            var validacao = this.ValidarBeneficiamentosSelecionados(dadosEntrada.Beneficiamentos);
 
             if (validacao != null)
             {
                 return validacao;
             }
 
-            var calculado = dadosEntrada.SelectMany(item =>
+            var calculado = dadosEntrada.Beneficiamentos.SelectMany(item =>
                 item.ItensSelecionados.Select(itemSelecionado =>
                 {
                     var total = item.CobrarBeneficiamento
-                        ? ValorTotal.Instance.Calcular(item.DadosCalculo, item.Beneficiamento, itemSelecionado)
+                        ? ValorTotal.Instance.Calcular(dadosEntrada.DadosCalculo, item.Beneficiamento, itemSelecionado)
                         : new Data.Beneficiamentos.Total.Dto.TotalDto();
 
                     return new TotalDto
@@ -62,9 +63,9 @@ namespace Glass.API.Backend.Controllers.Beneficiamentos.V1
             return this.Lista(calculado);
         }
 
-        private IHttpActionResult ValidarBeneficiamentosSelecionados(IEnumerable<DadosEntradaDto> dadosEntrada)
+        private IHttpActionResult ValidarBeneficiamentosSelecionados(IEnumerable<DadosBeneficiamentosDto> dadosBeneficiamentos)
         {
-            foreach (var item in dadosEntrada)
+            foreach (var item in dadosBeneficiamentos)
             {
                 if (item.Beneficiamento == null)
                 {
