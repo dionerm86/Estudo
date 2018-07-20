@@ -50,32 +50,18 @@ namespace Glass.Data.Beneficiamentos.Total.Dto
         public Model.TipoCalculoBenef TipoCalculo { get; set; }
 
         /// <summary>
-        /// Obtém ou define o custo unitário do beneficiamento.
+        /// Obtém ou define um valor que indica se o cálculo do beneficiamento considera a espessura do produto.
         /// </summary>
         [DataMember]
-        [JsonProperty("custoUnitario")]
-        public decimal CustoUnitario { get; set; }
+        [JsonProperty("calculoPorEspessura")]
+        public bool CalculoPorEspessura { get; set; }
 
         /// <summary>
-        /// Obtém ou define o valor unitário (atacado) do beneficiamento.
+        /// Obtém ou define os preços e custos do beneficiamento.
         /// </summary>
         [DataMember]
-        [JsonProperty("valorAtacadoUnitario")]
-        public decimal ValorAtacadoUnitario { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor unitário (balcão) do beneficiamento.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorBalcaoUnitario")]
-        public decimal ValorBalcaoUnitario { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor unitário (obra) do beneficiamento.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorObraUnitario")]
-        public decimal ValorObraUnitario { get; set; }
+        [JsonProperty("precos")]
+        public IEnumerable<PrecoBeneficiamentoDto> Precos { get; set; }
 
         /// <summary>
         /// Obtém ou define s lista de filhos de um beneficiamento (opções que podem ser selecionadas).

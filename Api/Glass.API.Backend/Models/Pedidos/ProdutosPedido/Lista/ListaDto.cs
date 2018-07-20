@@ -5,6 +5,7 @@
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Genericas.Venda;
+using Glass.Data.DAL;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -74,7 +75,13 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
 
             this.Observacao = produtoPedido.Obs;
             this.PercentualComissao = (double)produtoPedido.PercComissao;
-            this.PossuiFilhos = produtoPedido.IsProdLamComposicao;
+            this.Composicao = new ComposicaoDto
+            {
+                PossuiFilhos = produtoPedido.IsProdLamComposicao,
+                PermitirInserirFilhos = produtoPedido.IsProdLamComposicao
+                    && !ProdutosPedidoDAO.Instance.IsProdLaminado(produtoPedido.IdProdPed),
+            };
+
             this.Permissoes = new PermissoesDto
             {
                 Editar = produtoPedido.PodeEditar,

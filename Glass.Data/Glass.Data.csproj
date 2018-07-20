@@ -265,6 +265,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Beneficiamentos\Total\Dto\PrecoBeneficiamentoDto.cs" />
     <Compile Include="Beneficiamentos\Total\Dto\BeneficiamentoDto.cs" />
     <Compile Include="Beneficiamentos\Total\Dto\DadosCalculoDto.cs" />
     <Compile Include="Beneficiamentos\Total\Dto\DadosProdutoDto.cs" />
@@ -277,6 +278,7 @@
     <Compile Include="Beneficiamentos\Total\Estrategia\QuantidadeStrategy.cs" />
     <Compile Include="Beneficiamentos\Total\Estrategia\SemAlteracaoStrategy.cs" />
     <Compile Include="Beneficiamentos\Total\Estrategia\ValorTotalStrategyFactory.cs" />
+    <Compile Include="Beneficiamentos\Total\SelecionaPrecoBeneficiamento.cs" />
     <Compile Include="Beneficiamentos\ValorTotal.cs" />
     <Compile Include="Carregamento\DAL\ItemCarregamentoDAO.cs" />
     <Compile Include="Carregamento\DAL\OrdemCargaDAO.cs" />

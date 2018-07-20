@@ -25,9 +25,9 @@ namespace Glass.Data.Beneficiamentos.Total.Estrategia
         }
 
         /// <inheritdoc/>
-        public decimal CalcularCusto(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado)
+        public decimal CalcularCusto(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado, decimal custoUnitario)
         {
-            return this.CalcularValor(dadosCalculo, beneficiamento, itemSelecionado, beneficiamento.CustoUnitario);
+            return this.CalcularValor(dadosCalculo, beneficiamento, itemSelecionado, custoUnitario);
         }
 
         private decimal ObterBaseCalculo(DadosCalculoDto dadosCalculo, int alturas, int larguras)

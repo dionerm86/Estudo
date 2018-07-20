@@ -65,7 +65,7 @@ namespace Glass.API.Backend.Controllers.Beneficiamentos.V1
             IEnumerable<BenefConfigPreco> listaPrecos)
         {
             var filhos = listaBeneficiamentos.Where(filho => filho.IdParent == beneficiamento.IdBenefConfig);
-            var preco = listaPrecos.FirstOrDefault(item => item.IdBenefConfig == beneficiamento.IdBenefConfig);
+            var precos = listaPrecos.Where(item => item.IdBenefConfig == beneficiamento.IdBenefConfig);
 
             return new BeneficiamentoDto
             {
@@ -73,12 +73,25 @@ namespace Glass.API.Backend.Controllers.Beneficiamentos.V1
                 Nome = beneficiamento.Descricao,
                 TipoControle = beneficiamento.TipoControle,
                 TipoCalculo = beneficiamento.TipoCalculo,
-                CustoUnitario = preco?.Custo ?? 0,
-                ValorAtacadoUnitario = preco?.ValorAtacado ?? 0,
-                ValorBalcaoUnitario = preco?.ValorBalcao ?? 0,
-                ValorObraUnitario = preco?.ValorObra ?? 0,
                 PermitirCobrancaOpcional = beneficiamento.CobrancaOpcional,
+                CalculoPorEspessura = beneficiamento.TipoEspessura != TipoEspessuraBenef.ItemNaoPossui,
+                Precos = precos.Select(preco => this.ConverterPrecosParaDto(preco)),
                 Filhos = filhos.Select(filho => this.ConverterBeneficiamentoParaDto(filho, listaBeneficiamentos, listaPrecos)),
+            };
+        }
+
+        private Data.Beneficiamentos.Total.Dto.PrecoBeneficiamentoDto ConverterPrecosParaDto(
+            BenefConfigPreco preco)
+        {
+            return new Data.Beneficiamentos.Total.Dto.PrecoBeneficiamentoDto
+            {
+                IdSubgrupo = preco.IdSubgrupoProd,
+                IdCor = preco.IdCorVidro,
+                Espessura = preco.Espessura,
+                CustoUnitario = preco.Custo,
+                ValorAtacadoUnitario = preco.ValorAtacado,
+                ValorBalcaoUnitario = preco.ValorBalcao,
+                ValorObraUnitario = preco.ValorObra,
             };
         }
     }

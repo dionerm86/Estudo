@@ -21,6 +21,20 @@ namespace Glass.Data.Beneficiamentos.Total.Dto
         public int Id { get; set; }
 
         /// <summary>
+        /// Obtém ou define o identificador do subgrupo do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idSubgrupo")]
+        public int? IdSubgrupo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador da cor do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idCor")]
+        public int? IdCor { get; set; }
+
+        /// <summary>
         /// Obtém ou define a espessura do produto.
         /// </summary>
         [DataMember]

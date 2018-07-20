@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.Data.Beneficiamentos.Total;
 using Glass.Data.Beneficiamentos.Total.Dto;
 using Glass.Data.Beneficiamentos.Total.Estrategia;
 using Glass.Pool;
@@ -23,11 +24,15 @@ namespace Glass.Data.Beneficiamentos
         /// <param name="beneficiamento">Os dados do beneficiamento aplicado.</param>
         /// <param name="itemSelecionado">Os dados do item selecionado (pode ser o pai ou um dos filhos).</param>
         /// <returns>Um valor que indica o total daquele beneficiamento aplicado para o produto.</returns>
-        public TotalDto Calcular(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado)
+        public TotalDto Calcular(
+            DadosCalculoDto dadosCalculo,
+            BeneficiamentoDto beneficiamento,
+            ItemBeneficiamentoDto itemSelecionado)
         {
             var selecionado = this.ObterBeneficiamentoSelecionado(beneficiamento, itemSelecionado);
+            var preco = new SelecionaPrecoBeneficiamento().ObterPrecoBeneficiamento(dadosCalculo, selecionado);
 
-            var valorUnitario = this.ObterValorUnitario(dadosCalculo, selecionado, beneficiamento.TipoControle);
+            var valorUnitario = this.ObterValorUnitario(dadosCalculo, preco, beneficiamento.TipoControle);
             valorUnitario = this.ObterValorComPercentualComissao(valorUnitario, dadosCalculo.PercentualComissao);
 
             var estrategia = ValorTotalStrategyFactory.Instance.ObterEstrategia(selecionado);
@@ -36,11 +41,13 @@ namespace Glass.Data.Beneficiamentos
             {
                 ValorUnitario = valorUnitario,
                 ValorTotal = estrategia.CalcularValor(dadosCalculo, selecionado, itemSelecionado, valorUnitario),
-                CustoTotal = estrategia.CalcularCusto(dadosCalculo, selecionado, itemSelecionado),
+                CustoTotal = estrategia.CalcularCusto(dadosCalculo, selecionado, itemSelecionado, preco.CustoUnitario),
             };
         }
 
-        private BeneficiamentoDto ObterBeneficiamentoSelecionado(BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado)
+        private BeneficiamentoDto ObterBeneficiamentoSelecionado(
+            BeneficiamentoDto beneficiamento,
+            ItemBeneficiamentoDto itemSelecionado)
         {
             if (beneficiamento.Id == itemSelecionado.Id)
             {
@@ -60,7 +67,10 @@ namespace Glass.Data.Beneficiamentos
             return null;
         }
 
-        private decimal ObterValorUnitario(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, Model.TipoControleBenef tipoControle)
+        private decimal ObterValorUnitario(
+            DadosCalculoDto dadosCalculo,
+            PrecoBeneficiamentoDto precoBeneficiamento,
+            Model.TipoControleBenef tipoControle)
         {
             var percentualDescontoAcrescimo = (decimal)dadosCalculo.PercentualDescontoAcrescimoCliente;
             if (!dadosCalculo.UsarDescontoAcrescimoClienteNosBeneficiamentos
@@ -72,12 +82,12 @@ namespace Glass.Data.Beneficiamentos
 
             if (dadosCalculo.ValorBeneficiamentoEstaEditavelNoControle)
             {
-                return beneficiamento.CustoUnitario * percentualDescontoAcrescimo;
+                return precoBeneficiamento.CustoUnitario * percentualDescontoAcrescimo;
             }
 
             if (dadosCalculo.ClienteRevenda)
             {
-                return beneficiamento.ValorAtacadoUnitario * percentualDescontoAcrescimo;
+                return precoBeneficiamento.ValorAtacadoUnitario * percentualDescontoAcrescimo;
             }
 
             var tiposEntregaBalcao = new[]
@@ -88,10 +98,10 @@ namespace Glass.Data.Beneficiamentos
 
             if (tiposEntregaBalcao.Contains(dadosCalculo.TipoEntrega))
             {
-                return beneficiamento.ValorBalcaoUnitario * percentualDescontoAcrescimo;
+                return precoBeneficiamento.ValorBalcaoUnitario * percentualDescontoAcrescimo;
             }
 
-            return beneficiamento.ValorObraUnitario * percentualDescontoAcrescimo;
+            return precoBeneficiamento.ValorObraUnitario * percentualDescontoAcrescimo;
         }
 
         private decimal ObterValorComPercentualComissao(decimal valor, double percentualComissao)

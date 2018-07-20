@@ -33,6 +33,9 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
             this.Id = produto.IdProd;
             this.Codigo = produto.CodInterno;
             this.Descricao = produto.Descricao;
+            this.IdGrupo = produto.IdGrupoProd;
+            this.IdSubgrupo = produto.IdSubgrupoProd;
+            this.IdCor = produto.IdCorVidro ?? produto.IdCorAluminio ?? produto.IdCorFerragem;
             this.Espessura = produto.Espessura;
             this.Altura = this.ObterAltura(produto, tipoCalculo);
             this.Largura = this.ObterLargura(produto);
@@ -49,6 +52,27 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
         [DataMember]
         [JsonProperty("descricao")]
         public string Descricao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do grupo do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idGrupo")]
+        public int IdGrupo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do subgrupo do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idSubgrupo")]
+        public int? IdSubgrupo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador da cor do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idCor")]
+        public int? IdCor { get; set; }
 
         /// <summary>
         /// Obtém ou define a espessura do produto.

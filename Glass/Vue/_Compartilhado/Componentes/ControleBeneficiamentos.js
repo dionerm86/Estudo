@@ -50,6 +50,26 @@ Vue.component('controle-beneficiamentos', {
     },
 
     /**
+     * Identificador do subgrupo do produto atual.
+     * @type {!number}
+     */
+    idSubgrupoProduto: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
+     * Identificador da cor do produto atual.
+     * @type {!number}
+     */
+    idCorProduto: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Espessura do produto atual.
      * @type {!number}
      */
@@ -326,6 +346,8 @@ Vue.component('controle-beneficiamentos', {
         const dadosCalculo = {
           produto: {
             id: this.idProduto,
+            idSubgrupo: this.idSubgrupoProduto,
+            idCor: this.idCorProduto,
             espessura: this.espessuraProduto,
             altura: this.alturaProduto,
             largura: this.larguraProduto,

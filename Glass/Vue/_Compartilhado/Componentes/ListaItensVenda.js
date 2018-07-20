@@ -185,10 +185,10 @@ Vue.component('lista-itens-venda', {
     },
 
     /**
-     * Define se as colunas de valores monetários serão exibidas na lista.
+     * Indica se a lista está sendo exibida para um produto de composição.
      * @type {boolean}
      */
-    exibirValoresMonetarios: {
+    permitirInserir: {
       required: false,
       twoWay: false,
       default: true,

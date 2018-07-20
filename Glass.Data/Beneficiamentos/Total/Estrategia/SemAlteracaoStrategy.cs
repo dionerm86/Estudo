@@ -13,13 +13,13 @@ namespace Glass.Data.Beneficiamentos.Total.Estrategia
     internal class SemAlteracaoStrategy : ICalculoValorTotalStrategy
     {
         /// <inheritdoc/>
-        public decimal CalcularCusto(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado)
+        public decimal CalcularValor(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado, decimal valorUnitario)
         {
             return 0;
         }
 
         /// <inheritdoc/>
-        public decimal CalcularValor(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado, decimal valorUnitario)
+        public decimal CalcularCusto(DadosCalculoDto dadosCalculo, BeneficiamentoDto beneficiamento, ItemBeneficiamentoDto itemSelecionado, decimal custoUnitario)
         {
             return 0;
         }
