@@ -702,26 +702,7 @@ namespace Glass.Data.DAL
 
                 AtualizaSaldoPedidosAbertosObra(sessao, ref pedido);
 
-                #region Busca as parcelas do pedido
-
-                var lstParc = ParcelasPedidoDAO.Instance.GetByPedido(sessao, idPedido).ToArray();
-
-                var parcelas = lstParc.Length + " vez(es): ";
-
-                pedido.ValoresParcelas = new decimal[lstParc.Length];
-                pedido.DatasParcelas = new DateTime[lstParc.Length];
-
-                for (var i = 0; i < lstParc.Length; i++)
-                {
-                    pedido.ValoresParcelas[i] = lstParc[i].Valor;
-                    pedido.DatasParcelas[i] = lstParc[i].Data != null ? lstParc[i].Data.Value : new DateTime();
-                    parcelas += lstParc[i].Valor.ToString("c") + "-" + (lstParc[i].Data != null ? lstParc[i].Data.Value.ToString("d") : "") + ",  ";
-                }
-
-                if (lstParc.Length > 0 && pedido.TipoVenda != (int)Pedido.TipoVendaPedido.AVista)
-                    pedido.DescrParcelas = parcelas.TrimEnd(' ').TrimEnd(',');
-
-                #endregion
+                PreencherParcelasPedido(sessao, pedido);
 
                 // Se for à Prazo e tiver recebido sinal
                 if (pedido.TipoVenda == 2 && pedido.RecebeuSinal)
@@ -759,6 +740,42 @@ namespace Glass.Data.DAL
             catch
             {
                 return null;
+            }
+        }
+
+        public void PreencherParcelasPedido(GDASession sessao, Pedido pedido)
+        {
+            var lstParc = ParcelasPedidoDAO.Instance.GetByPedido(sessao, pedido.IdPedido).ToArray();
+            var parcelas = lstParc.Length + " vez(es): ";
+
+            pedido.ValoresParcelas = new decimal[lstParc.Length];
+            pedido.DatasParcelas = new DateTime[lstParc.Length];
+
+            for (var i = 0; i < lstParc.Length; i++)
+            {
+                pedido.ValoresParcelas[i] = lstParc[i].Valor;
+                pedido.DatasParcelas[i] = lstParc[i].Data != null ? lstParc[i].Data.Value : new DateTime();
+                parcelas += lstParc[i].Valor.ToString("c") + "-" + (lstParc[i].Data != null ? lstParc[i].Data.Value.ToString("d") : "") + ",  ";
+            }
+
+            if (lstParc.Length > 0 && pedido.TipoVenda != (int)Pedido.TipoVendaPedido.AVista)
+                pedido.DescrParcelas = parcelas.TrimEnd(' ').TrimEnd(',');
+        }
+
+        public void AtualizarParcelasPedido(GDASession sessao, Pedido pedido)
+        {
+            if (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.APrazo && pedido.IdParcela == 0)
+                return;
+
+            var alterouValor =
+                pedido.Total != ParcelasPedidoDAO.Instance.ObtemTotalPorPedido(sessao, pedido.IdPedido) + pedido.ValorEntrada + pedido.ValorPagamentoAntecipado;
+
+            PreencherParcelasPedido(sessao, pedido);
+
+            if (pedido.ValoresParcelas != null && alterouValor)
+            {
+                RecalculaParcelas(sessao, ref pedido, TipoCalculoParcelas.Valor);
+                SalvarParcelas(sessao, pedido);
             }
         }
 
