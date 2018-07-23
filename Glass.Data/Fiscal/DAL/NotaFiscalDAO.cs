@@ -9131,7 +9131,7 @@ namespace Glass.Data.DAL
                     objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                     throw new Exception("O cliente selecionado está inativado.");
 
-                if (string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(objInsert.IdCliente.Value).Replace("/", "")))
+                if (objInsert.IdCliente > 0 && string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(objInsert.IdCliente.Value).Replace("/", "")))
                     throw new Exception("O cliente não possui Cidade/UF informado no seu cadastro.");
 
                 // Não permite inserir notas para fornecedores inativos
@@ -9301,7 +9301,7 @@ namespace Glass.Data.DAL
                 objUpdate.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(objUpdate.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                 throw new Exception("O cliente selecionado está inativo.");
 
-            if (string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(objUpdate.IdCliente.Value).Replace("/", "")))
+            if (objUpdate.IdCliente > 0 && string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(objUpdate.IdCliente.Value).Replace("/", "")))
                 throw new Exception("O cliente não possui Cidade/UF informado no seu cadastro.");
 
             // Verifica se a data de saída é menor que a data de emissão da nota
