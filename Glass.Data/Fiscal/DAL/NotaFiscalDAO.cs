@@ -4333,6 +4333,12 @@ namespace Glass.Data.DAL
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
 
+                var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList();
+                if (pagtoNotaFiscal.Count() == 0)
+                {
+                    throw new Exception("Informe os valores da forma de pagamento.");
+                }
+
                 #region Verificações para emissão assíncrona
 
                 if (loja.Uf.ToUpper() == "BA" || loja.Uf.ToUpper() == "SP")
