@@ -77,8 +77,7 @@ namespace Glass.Data.DAL
                                 " há poucos segundos. Aguarde um minuto e gere novamente");
 
                 // Utilizado no decorrer do método para transferência de nota fiscal.
-                var sessionTransf = FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf ?
-                    new GDASession(GDA.GDASettings.GetProviderConfiguration("Notas")) : null;
+                var transactionTransf = FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf ? new GDATransaction(GDASettings.GetProviderConfiguration("Notas")) : null;
 
                 uint idNaturezaOperacaoDestino = 0, idNaturezaOperacaoDestinoProd = 0;
                 var dicNaturezaOperacaoProdDestino = new Dictionary<uint, uint>();
@@ -326,7 +325,7 @@ namespace Glass.Data.DAL
                 {
                     // Valida os dados do cliente na base de destino.
                     var clienteOrigemCpfCnpj = ClienteDAO.Instance.ObtemCpfCnpj(idCli > 0 ? idCli : idCliente);
-                    var clienteDestino = ClienteDAO.Instance.GetByCpfCnpj(sessionTransf, clienteOrigemCpfCnpj);
+                    var clienteDestino = ClienteDAO.Instance.GetByCpfCnpj(transactionTransf, clienteOrigemCpfCnpj);
 
                     if (clienteDestino == null)
                         throw new Exception("O cliente não esta cadastrado no sistema para o qual a nota fiscal será transferida.");
@@ -339,14 +338,14 @@ namespace Glass.Data.DAL
                         var codInternoCfopOrigem = CfopDAO.Instance.ObtemCodInterno(idCfopOrigem);
                         var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(idNaturezaOperacao.Value);
                         // Recupera os dados de CFOP e natureza de operação do sistema de destino.
-                        var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(sessionTransf, codInternoCfopOrigem);
-                        idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(sessionTransf, idCfopDestino, codInternoNatOpOrigem);
+                        var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(transactionTransf, codInternoCfopOrigem);
+                        idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(transactionTransf, idCfopDestino, codInternoNatOpOrigem);
 
                         #region Valida informações do CFOP e natureza de operação
 
                         // Recupera o código interno do CFOP e da natureza de operação de destino.
-                        var codInternoCfopDestino = CfopDAO.Instance.ObtemCodInterno(sessionTransf, idCfopDestino);
-                        var codInternoNatOpDestino = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(sessionTransf, idNaturezaOperacaoDestino);
+                        var codInternoCfopDestino = CfopDAO.Instance.ObtemCodInterno(transactionTransf, idCfopDestino);
+                        var codInternoNatOpDestino = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(transactionTransf, idNaturezaOperacaoDestino);
 
                         // Verifica se as informações no sistema de origem e destino são iguais.
                         if ((codInternoCfopOrigem + " - " + codInternoNatOpOrigem).ToUpper() != (codInternoCfopDestino + " - " + codInternoNatOpDestino).ToUpper())
@@ -392,10 +391,10 @@ namespace Glass.Data.DAL
 
                 using (var transaction = new GDATransaction())
                 {
-                    // Se der algum erro ao buscar os produtos do pedido, ignora, para não perder o número da NF gerado
                     try
                     {
                         transaction.BeginTransaction();
+                        transactionTransf.BeginTransaction();
 
                         #region Insere a nota fiscal
 
@@ -872,14 +871,14 @@ namespace Glass.Data.DAL
                                     var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(transaction, prodNf.IdNaturezaOperacao.Value);
 
                                     // Recupera os dados de CFOP e natureza de operação do sistema de destino.
-                                    var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(sessionTransf, codInternoCfopOrigem);
-                                    idNaturezaOperacaoDestinoProd = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(sessionTransf, idCfopDestino, codInternoNatOpOrigem);
+                                    var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(transactionTransf, codInternoCfopOrigem);
+                                    idNaturezaOperacaoDestinoProd = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(transactionTransf, idCfopDestino, codInternoNatOpOrigem);
 
                                     #region Valida informações do CFOP e natureza de operação
 
                                     // Recupera o código interno do CFOP e da natureza de operação de destino.
-                                    var codInternoCfopDestino = CfopDAO.Instance.ObtemCodInterno(sessionTransf, idCfopDestino);
-                                    var codInternoNatOpDestino = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(sessionTransf, idNaturezaOperacaoDestinoProd);
+                                    var codInternoCfopDestino = CfopDAO.Instance.ObtemCodInterno(transactionTransf, idCfopDestino);
+                                    var codInternoNatOpDestino = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(transactionTransf, idNaturezaOperacaoDestinoProd);
 
                                     // Verifica se as informações no sistema de origem e destino são iguais.
                                     if ((codInternoCfopOrigem + " - " + codInternoNatOpOrigem).ToUpper() != (codInternoCfopDestino + " - " + codInternoNatOpDestino).ToUpper())
@@ -1135,12 +1134,15 @@ namespace Glass.Data.DAL
                             }
 
                             //Se for transferir a nf de loja salva a natureza da operação da loja destino
-                            dicNaturezaOperacaoProdDestino.Add(prodNf.IdProdNf, idNaturezaOperacaoDestinoProd);
+                            dicNaturezaOperacaoProdDestino.Add(prodNf.IdProdNf, idNaturezaOperacaoDestinoProd > 0 ? idNaturezaOperacaoDestinoProd : idNaturezaOperacaoDestino);
 
                             // Insere os dados na tabela produto_nf_item_projeto
-                            ProdutoNfItemProjetoDAO.Instance.DeleteByIdProdNf(idProdNf);
+                            ProdutoNfItemProjetoDAO.Instance.DeleteByIdProdNf(transaction, idProdNf);
+
                             if (idProdParaNf > 0)
+                            {
                                 ProdutoNfItemProjetoDAO.Instance.Inserir(transaction, idProdNf, pp.IdsItemProjeto);
+                            }
 
                             // Importa os beneficiamentos do produtoPedido para o produtoNf
                             ProdutoNfBenefDAO.Instance.ImportaProdPedBenef(transaction, pp.IdProdPed, idProdNf);
@@ -1251,7 +1253,7 @@ namespace Glass.Data.DAL
                         //Se for ms vidros transfere a nf para outro banco e apaga a original.
 
                         if (FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf)
-                            return TransfereNFeBanco(transaction, idNf, idNaturezaOperacaoDestino, dicNaturezaOperacaoProdDestino);
+                            return TransfereNFeBanco(transaction, transactionTransf, idNf, idNaturezaOperacaoDestino, dicNaturezaOperacaoProdDestino);
 
                         #endregion
 
@@ -1265,11 +1267,23 @@ namespace Glass.Data.DAL
                             }
                         }
 
+                        if (transactionTransf != null)
+                        {
+                            transactionTransf.Commit();
+                            transactionTransf.Close();
+                        }
+
                         transaction.Commit();
                         transaction.Close();
                     }
                     catch (Exception ex)
                     {
+                        if (transactionTransf != null)
+                        {
+                            transactionTransf.Rollback();
+                            transactionTransf.Close();
+                        }
+
                         transaction.Rollback();
                         transaction.Close();
 
@@ -9813,92 +9827,91 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Transfere a NF-e de um banco para outro.
         /// </summary>
-        private uint TransfereNFeBanco(GDASession session, uint idNf, uint idNaturezaOperacaoDestino, Dictionary<uint, uint> dicNaturezaOperacaoProdDestino)
+        private uint TransfereNFeBanco(GDASession session, GDASession sessionTransf, uint idNf, uint idNaturezaOperacaoDestino, Dictionary<uint, uint> dicNaturezaOperacaoProdDestino)
         {
-            /* Chamado 52139. */
-            using (var transactionTransferencia = new GDATransaction(GDASettings.GetProviderConfiguration("Notas")))
+            try
             {
-                try
+                var nf = GetElement(session, idNf);
+                var prods = ProdutosNfDAO.Instance.GetByNf(session, idNf);
+                var parcelas = ParcelaNfDAO.Instance.GetByNf(session, idNf);
+                var idLoja = LojaDAO.Instance.GetLojaByCNPJIE(sessionTransf, "06.915.743/0001-78", null, false).StrParaUint();
+
+                if (idLoja == 0)
+                    throw new Exception("A loja para exportação não foi encontrada.");
+
+                nf.IdLoja = idLoja;
+
+                if (nf.IdCliente > 0)
                 {
-                    transactionTransferencia.BeginTransaction();
-
-                    var nf = GetElement(session, idNf);
-                    var prods = ProdutosNfDAO.Instance.GetByNf(session, idNf);
-                    var parcelas = ParcelaNfDAO.Instance.GetByNf(session, idNf);
-                    var idLoja = LojaDAO.Instance.GetLojaByCNPJIE(transactionTransferencia, "06.915.743/0001-78", null, false).StrParaUint();
-
-                    if (idLoja == 0)
-                        throw new Exception("A loja para exportação não foi encontrada.");
-
-                    nf.IdLoja = idLoja;
-                    if (nf.IdCliente > 0)
-                        nf.IdCliente = ClienteDAO.Instance.ObterIdPorCpfCnpj(transactionTransferencia, nf.CpfCnpjDestRem);
-                    if (nf.IdFornec > 0)
-                        nf.IdFornec = FornecedorDAO.Instance.ObterIdPorCpfCnpj(transactionTransferencia, nf.CpfCnpjDestRem);
-                    nf.NumeroNFe = ProxNumeroNFe(transactionTransferencia, nf.IdLoja.GetValueOrDefault(), nf.Serie.StrParaInt());
-
-                    //Caso não tenha selecionado a natureza da operação
-                    if (idNaturezaOperacaoDestino == 0)
-                    {
-                        // Recupera os dados do CFOP e natureza de operação do sistema de origem.
-                        var codInternoCfopOrigem = CfopDAO.Instance.ObtemCodInterno(nf.IdCfop.GetValueOrDefault(0));
-                        var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(nf.IdNaturezaOperacao.GetValueOrDefault(0));
-
-                        // Recupera os dados de CFOP e natureza de operação do sistema de destino.
-                        var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(transactionTransferencia, codInternoCfopOrigem);
-                        idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(transactionTransferencia, idCfopDestino, codInternoNatOpOrigem);
-                    }
-
-                    nf.IdNaturezaOperacao = idNaturezaOperacaoDestino;
-
-                    /* Chamado 52139. */
-                    if (prods == null || prods.Count() == 0)
-                        throw new Exception("Não é possível efetuar uma transferência de nota fiscal caso a nota fiscal original não possua produtos.");
-
-                    var novoIdNf = Insert(transactionTransferencia, nf);
-
-                    /* Chamado 52139. */
-                    if (novoIdNf == 0)
-                        throw new Exception("Não foi possível transferir a nota fiscal. Foi inserida uma nota com o mesmo cliente e " +
-                            "loja há menos de 60 segundos. Aguarde alguns segundos e tente novamente.");
-
-                    foreach (var prod in prods)
-                    {
-                        prod.IdNf = novoIdNf;
-                        prod.IdProd = ProdutoDAO.Instance.ObterIdPorCodInterno(transactionTransferencia, prod.CodInterno);
-                        prod.IdNaturezaOperacao = dicNaturezaOperacaoProdDestino[prod.IdProdNf];
-                        // Necessário zerar para não atualizar um produtoNF antigo no método calcular imposto executado antes de Insert.
-                        prod.IdProdNf = 0;
-                        ProdutosNfDAO.Instance.Insert(transactionTransferencia, prod);
-                    }
-
-                    foreach (var parc in parcelas)
-                    {
-                        parc.IdNf = novoIdNf;
-                        ParcelaNfDAO.Instance.Insert(transactionTransferencia, parc);
-                    }
-
-                    /* Chamado 52139. */
-                    LogNfDAO.Instance.NewLog(transactionTransferencia, nf.IdNf, "Transferência NF-e", 0, "Transferência efetuada com sucesso.");
-
-                    ProdutosNfDAO.Instance.DeleteByNotaFiscal(session, idNf);
-                    PedidosNotaFiscalDAO.Instance.DeleteByNotaFiscal(session, idNf);
-                    ParcelaNfDAO.Instance.DeleteFromNf(session, idNf);
-
-                    DeleteNotaFiscal(session, idNf);
-
-                    transactionTransferencia.Commit();
-                    transactionTransferencia.Close();
-
-                    return novoIdNf;
+                    nf.IdCliente = ClienteDAO.Instance.ObterIdPorCpfCnpj(sessionTransf, nf.CpfCnpjDestRem);
                 }
-                catch (Exception ex)
+
+                if (nf.IdFornec > 0)
                 {
-                    transactionTransferencia.Rollback();
-                    transactionTransferencia.Close();
-
-                    throw new Exception("Falha ao exportar NF-e", ex);
+                    nf.IdFornec = FornecedorDAO.Instance.ObterIdPorCpfCnpj(sessionTransf, nf.CpfCnpjDestRem);
                 }
+
+                nf.NumeroNFe = ProxNumeroNFe(sessionTransf, nf.IdLoja.GetValueOrDefault(), nf.Serie.StrParaInt());
+
+                //Caso não tenha selecionado a natureza da operação
+                if (idNaturezaOperacaoDestino == 0)
+                {
+                    // Recupera os dados do CFOP e natureza de operação do sistema de origem.
+                    var codInternoCfopOrigem = CfopDAO.Instance.ObtemCodInterno(session, nf.IdCfop.GetValueOrDefault());
+                    var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(session, nf.IdNaturezaOperacao.GetValueOrDefault());
+
+                    // Recupera os dados de CFOP e natureza de operação do sistema de destino.
+                    var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(sessionTransf, codInternoCfopOrigem);
+                    idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(sessionTransf, idCfopDestino, codInternoNatOpOrigem);
+                }
+
+                nf.IdNaturezaOperacao = idNaturezaOperacaoDestino;
+
+                /* Chamado 52139. */
+                if (prods == null || prods.Count() == 0)
+                {
+                    throw new Exception("Não é possível efetuar uma transferência de nota fiscal caso a nota fiscal original não possua produtos.");
+                }
+
+                var novoIdNf = Insert(sessionTransf, nf);
+
+                /* Chamado 52139. */
+                if (novoIdNf == 0)
+                {
+                    throw new Exception("Não foi possível transferir a nota fiscal. Foi inserida uma nota com o mesmo cliente e " +
+                          "loja há menos de 60 segundos. Aguarde alguns segundos e tente novamente.");
+                }
+
+                foreach (var prod in prods)
+                {
+                    prod.IdNf = novoIdNf;
+                    prod.IdProd = ProdutoDAO.Instance.ObterIdPorCodInterno(sessionTransf, prod.CodInterno);
+                    prod.IdNaturezaOperacao = dicNaturezaOperacaoProdDestino[prod.IdProdNf];
+                    // Necessário zerar para não atualizar um produtoNF antigo no método calcular imposto executado antes de Insert.
+                    prod.IdProdNf = 0;
+                    ProdutosNfDAO.Instance.Insert(sessionTransf, prod);
+                }
+
+                foreach (var parc in parcelas)
+                {
+                    parc.IdNf = novoIdNf;
+                    ParcelaNfDAO.Instance.Insert(sessionTransf, parc);
+                }
+
+                /* Chamado 52139. */
+                LogNfDAO.Instance.NewLog(sessionTransf, nf.IdNf, "Transferência NF-e", 0, "Transferência efetuada com sucesso.");
+
+                ProdutosNfDAO.Instance.DeleteByNotaFiscal(session, idNf);
+                PedidosNotaFiscalDAO.Instance.DeleteByNotaFiscal(session, idNf);
+                ParcelaNfDAO.Instance.DeleteFromNf(session, idNf);
+
+                DeleteNotaFiscal(session, idNf);
+                
+                return novoIdNf;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Falha ao exportar NF-e", ex);
             }
         }
 
