@@ -4333,10 +4333,11 @@ namespace Glass.Data.DAL
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
 
-                var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList();
-                if (pagtoNotaFiscal.Count() == 0)
+                var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList() ?? new List<PagtoNotaFiscal>();
+
+                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0)
                 {
-                    throw new Exception("Informe os valores da forma de pagamento.");
+                    throw new Exception("Informe os valores de recebimento da nota fiscal.");
                 }
 
                 #region Verificações para emissão assíncrona
