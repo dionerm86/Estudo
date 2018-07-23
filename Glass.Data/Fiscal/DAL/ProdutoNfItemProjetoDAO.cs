@@ -16,10 +16,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Apaga os registros a partir do produto NF.
         /// </summary>
-        /// <param name="idProdNf"></param>
-        public void DeleteByIdProdNf(uint idProdNf)
+        public void DeleteByIdProdNf(GDASession session, uint idProdNf)
         {
-            objPersistence.ExecuteCommand("delete from produto_nf_item_projeto where idProdNf=" + idProdNf);
+            objPersistence.ExecuteCommand(session, "delete from produto_nf_item_projeto where idProdNf=" + idProdNf);
         }
 
         /// <summary>

@@ -3524,9 +3524,12 @@ namespace Glass.Data.DAL
                     // esta situação ocorre somente quando o controle de estoque não está bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
-                        produtosSemEstoque.Append(
-                            ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key) + " - " +
-                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + ",     ");
+                        var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key);
+                        var descricaoProduto = ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key);
+
+                        produtosSemEstoque.Append($@"{ codInternoProduto } - { descricaoProduto }
+                            Estoque disponível: { qtdEstoqueReal }
+                            Quantidade liberada: { qtdLiberar }\n");
                     }
                 }
             }
@@ -4057,7 +4060,7 @@ namespace Glass.Data.DAL
         public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
         {
             var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
-                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                $@"SELECT DISTINCT(IdLiberarPedido)
                 FROM liberarpedido
                 WHERE IdLiberarPedido IN
                     (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");

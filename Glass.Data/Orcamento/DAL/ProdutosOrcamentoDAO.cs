@@ -1302,10 +1302,16 @@ namespace Glass.Data.DAL
 
                 if (objUpdate.IdProduto > 0)
                 {
-                    if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((int)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProduto)).IsVidroTemperado &&
-                            objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objUpdate.IdProduto);
+                    var idSubGrupoProd = (int?)ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)objUpdate.IdProduto);
+
+                    if (GrupoProdDAO.Instance.IsVidroTemperado(session, idGrupoProd, idSubGrupoProd)
+                        && objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    {
                         retornoValidacao += $"A altura ou largura minima para peças com tempera é de {tamanhoMinimoTemperado}mm.";
+                    }
                 }
+
                 if (!string.IsNullOrWhiteSpace(retornoValidacao))
                     throw new Exception(retornoValidacao);
 

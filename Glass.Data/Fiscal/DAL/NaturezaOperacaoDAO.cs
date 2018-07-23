@@ -321,6 +321,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<float>(session, "percReducaoBcIcms", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
+        /// <summary>
+        /// Retorna o CSOSN configurado para a natureza de operação.
+        /// </summary>
+        public string ObterCsosn(GDASession sessao, int idNaturezaOperacao)
+        {
+            return ObtemValorCampo<string>(sessao, "Csosn", $"IdNaturezaOperacao={ idNaturezaOperacao }");
+        }
+
         #endregion
 
         #region Busca os ids de naturezas de operação a partir de um CFOP

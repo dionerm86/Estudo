@@ -1113,7 +1113,7 @@ namespace Glass.UI.Web.Relatorios
                     }
                 case "ListaInstalacao":
                     {
-                        report.ReportPath = "Relatorios/rptListaInstalacao.rdlc";
+                        report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptListaInstalacao{0}.rdlc");
                         var lstInstalacao = InstalacaoDAO.Instance.GetForRpt(Glass.Conversoes.StrParaUint(Request["IdPedido"]), Glass.Conversoes.StrParaUint(Request["IdOrdemInst"]),
                             Glass.Conversoes.StrParaUint(Request["idOrcamento"]), Glass.Conversoes.StrParaUint(Request["idEquipe"]), Request["tiposInstalacao"], Request["situacoes"],
                             Request["dataIni"], Request["dataFim"], Request["dataIniEnt"], Request["dataFimEnt"], Request["dataIniOrdemInst"], Request["dataFimOrdemInst"],
