@@ -394,7 +394,11 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
-                        transactionTransf.BeginTransaction();
+
+                        if (transactionTransf != null)
+                        {
+                            transactionTransf.BeginTransaction();
+                        }
 
                         #region Insere a nota fiscal
 
