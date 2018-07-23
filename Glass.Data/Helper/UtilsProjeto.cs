@@ -2213,7 +2213,8 @@ namespace Glass.Data.Helper
 
             // Contador usado para sair do while (parênteses)
             var contWhilePar = 0;
-
+            // Variável criada para verificar se a expressão original foi alterada ou se o sistema está em loop infinito.
+            var expressaoAnteriorValidar = expressao;
             var resultadoExpressao = 0F;
 
             // Resolve as expressões dentro dos parênteses primeiro
@@ -2506,11 +2507,6 @@ namespace Glass.Data.Helper
                         throw new Exception("Não é possível inserir parêntesis em uma condição da função IF.");
                     }
 
-                    if (condicoes?.Split('=')?.Count() > 2 || condicoes?.Split('<')?.Count() > 2 || condicoes?.Split('>')?.Count() > 2)
-                    {
-                        throw new Exception("A separação de parêntesis da expressão não existe ou é inválida. Todas operações matemáticas devem estar dentro de parêntesis. Ex.: A+B-C ERRADO. ((A+B)-C) CORRETO.");
-                    }
-
                     #endregion
 
                     #region Interpretador das condições da função IF
@@ -2644,13 +2640,18 @@ namespace Glass.Data.Helper
                 #endregion
 
                 // Refaz a variável expressão buscando apenas o resultado da expressão calculada dentro dos parênteses
-                expressao =
-                    expressao.Substring(0, innerExprIniPos) +
-                    exprTemp +
-                    expressao.Substring(expressao.Substring(0, innerExprFinPos).Length + 1);
+                expressao = expressao.Substring(0, innerExprIniPos) + exprTemp + expressao.Substring(expressao.Substring(0, innerExprFinPos).Length + 1);
+
+                if (expressao.Equals(expressaoAnteriorValidar))
+                {
+                    throw new Exception($"Expressão de cálculo inválida. Não foi possível preencher o valor dos parâmetros. Verifique a posição dos parêntesis e parâmetros utilizados. Expressão: { expressao }");
+                }
+                else
+                {
+                    expressaoAnteriorValidar = expressao;
+                }
 
                 /* Chamado 41325. */
-                //if (contWhilePar >= 8 && !exprTemp.Contains("*") && !exprTemp.Contains("/") && !exprTemp.Contains("+"))
                 if (contWhilePar >= 128 && !exprTemp.Contains("*") && !exprTemp.Contains("/") && !exprTemp.Contains("+"))
                 {
                     expressao = expressao.Replace("(", "").Replace(")", "");
