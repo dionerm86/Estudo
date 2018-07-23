@@ -9891,6 +9891,7 @@ namespace Glass.Data.DAL
                     prod.IdNf = novoIdNf;
                     prod.IdProd = ProdutoDAO.Instance.ObterIdPorCodInterno(sessionTransf, prod.CodInterno);
                     prod.IdNaturezaOperacao = dicNaturezaOperacaoProdDestino[prod.IdProdNf];
+                    prod.Csosn = NaturezaOperacaoDAO.Instance.ObterCsosn(sessionTransf, (int?)prod.IdNaturezaOperacao ?? 0);
                     // Necessário zerar para não atualizar um produtoNF antigo no método calcular imposto executado antes de Insert.
                     prod.IdProdNf = 0;
                     ProdutosNfDAO.Instance.Insert(sessionTransf, prod);
