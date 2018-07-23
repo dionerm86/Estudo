@@ -1302,8 +1302,8 @@ namespace Glass.Data.DAL
 
                 if (objUpdate.IdProduto > 0)
                 {
-                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd((int)objUpdate.IdProduto);
-                    var idSubGrupoProd = (int?)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProduto);
+                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objUpdate.IdProduto);
+                    var idSubGrupoProd = (int?)ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)objUpdate.IdProduto);
 
                     if (GrupoProdDAO.Instance.IsVidroTemperado(session, idGrupoProd, idSubGrupoProd)
                         && objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
