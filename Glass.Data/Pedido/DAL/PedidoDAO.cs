@@ -10120,6 +10120,7 @@ namespace Glass.Data.DAL
                     (
                         SELECT pp1.IdProdPedParent, sum(pp1.peso) as peso
                         FROM produtos_pedido pp1
+                        WHERE pp1.IdPedido={0}
                         GROUP BY pp1.IdProdPedParent
                     ) as pesoFilhos ON (pp.IdProdPed = pesoFilhos.IdProdPedParent)
                 SET pp.peso = coalesce(IF(sgp.TipoSubgrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @"), pesoFilhos.peso * pp.Qtde, peso.peso), 0)
