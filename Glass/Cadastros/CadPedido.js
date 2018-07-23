@@ -1399,7 +1399,10 @@ function validarProduto() {
         return false;
     }
 
-    if (FindControl("hdfPedidoMaoDeObra", "input").value == "true" && FindControl("drpAltBenef", "select").value == "0" && FindControl("drpLargBenef", "select").value == "0") {
+    if (FindControl("hdfPedidoMaoDeObra", "input").value == "true" &&
+        FindControl("hdfTipoCalc", "input").value == "3" && //Perímetro deve ser validado
+        FindControl("drpAltBenef", "select").value == "0" &&
+        FindControl("drpLargBenef", "select").value == "0") {
         alert("Defina altura ou largura do beneficiamento para continuar.");
         return false;
     }
