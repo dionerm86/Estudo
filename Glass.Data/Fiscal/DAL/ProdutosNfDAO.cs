@@ -1424,23 +1424,19 @@ namespace Glass.Data.DAL
                             CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objUpdate.IdNaturezaOperacao.Value)))));
 
                     objUpdate.Mva = (float)Math.Round((decimal)objUpdate.Mva, 2);
+                    
+                    var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
 
-                    // Calcula os impostos do produto já atualizando o mesmo e os totais da Nota, desde que não seja nota de ajuste
-                    if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) != (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste)
-                    {
-                        var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
+                    //Remove o produto da lista que foi adicionado para o calculo do imposto.
+                    var prodRemover = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
+                    produtosNf.Remove(prodRemover);
 
-                        //Remove o produto da lista que foi adicionado para o calculo do imposto.
-                        var prodRemover = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
-                        produtosNf.Remove(prodRemover);
+                    produtosNf.Add(objUpdate);
 
-                        produtosNf.Add(objUpdate);
+                    CalcImposto(session, ref produtosNf, true, false);
 
-                        CalcImposto(session, ref produtosNf, true, false);
-
-                        /* Chamado 63976. */
-                        objUpdate = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
-                    }
+                    /* Chamado 63976. */
+                    objUpdate = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
                 }
 
                 //Se nao for cst de origem 3, 5 ou 8 apaga o numero de controle da FCI caso esteja preenchido
@@ -1451,12 +1447,7 @@ namespace Glass.Data.DAL
                 LogAlteracaoDAO.Instance.LogProdutoNotaFiscal(prodNfOld, LogAlteracaoDAO.SequenciaObjeto.Atual);
                 base.Update(session, objUpdate);
 
-                /* Chamado 14947.
-                 * É necessário que a nota de devolução do tipo EntradaTerceiros atualize o valor total da nota. */
-                // Atualiza os totais da nota fiscal se for emissão normal
-                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Normal ||
-                    NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
-                    NotaFiscalDAO.Instance.UpdateTotalNf(session, objUpdate.IdNf);
+                NotaFiscalDAO.Instance.UpdateTotalNf(session, objUpdate.IdNf);
 
                 // Busca observação da CFOP do produto e salva nas informações complementares da nota
                 if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf) == (int)NotaFiscal.TipoDoc.Saída && objUpdate.IdCfop > 0 &&
