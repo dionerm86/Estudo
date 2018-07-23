@@ -39,11 +39,11 @@
       <HintPath>..\..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine">
+    <Reference Include="CalcEngine, Version=1.8.49.49, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.1.8.49\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Biesse">
+    <Reference Include="CalcEngine.Biesse, Version=1.8.49.49, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Biesse.1.8.49\lib\net40\CalcEngine.Biesse.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -51,19 +51,19 @@
       <HintPath>..\..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf">
+    <Reference Include="CalcEngine.Dxf, Version=1.8.49.49, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Dxf.1.8.49\lib\net35\CalcEngine.Dxf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Forvet">
+    <Reference Include="CalcEngine.Forvet, Version=1.8.49.49, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Forvet.1.8.49\lib\net35\CalcEngine.Forvet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Optima">
+    <Reference Include="CalcEngine.Optima, Version=1.8.49.49, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Optima.1.8.49\lib\net35\CalcEngine.Optima.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.SGlass">
+    <Reference Include="CalcEngine.SGlass, Version=1.8.49.49, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.SGlass.1.8.49\lib\net35\CalcEngine.SGlass.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -87,16 +87,8 @@
       <HintPath>..\..\packages\Colosoft.Data.1.0.0\lib\net40\Colosoft.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.Data.Caching, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4582941062e92565, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.Data.Caching.1.0.0\lib\net40\Colosoft.Data.Caching.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Colosoft.Data.Schema, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d550d59fa5ddf895, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.Data.Schema.1.0.0\lib\net40\Colosoft.Data.Schema.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Colosoft.DataAccess, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddb5805976f37b7c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Colosoft.DataAccess.1.0.0\lib\net40\Colosoft.DataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6b4df30fccf43e6b, processorArchitecture=MSIL">
@@ -115,7 +107,7 @@
       <HintPath>..\..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FC">
+    <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Forvet.1.8.49\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -138,38 +130,6 @@
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NPOI.2.2.1\lib\net40\NPOI.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OOXML, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NPOI.2.2.1\lib\net40\NPOI.OOXML.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OpenXml4Net, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NPOI.2.2.1\lib\net40\NPOI.OpenXml4Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OpenXmlFormats, Version=2.2.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NPOI.2.2.1\lib\net40\NPOI.OpenXmlFormats.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.5.7.10213\lib\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.mocks, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.Mocks.2.6.4\lib\nunit.mocks.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="pnunit.framework, Version=1.0.3865.21394, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NUnit.2.5.7.10213\lib\pnunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Sync.Fiscal.Comum">
       <HintPath>..\..\Dlls\Sync.Fiscal.Comum.dll</HintPath>
     </Reference>
@@ -187,23 +147,15 @@
     <Reference Include="System.Core">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.IO.Abstractions">
+    <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Biesse.1.8.49\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Linq.Dynamics">
+    <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.1.8.49\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
@@ -376,18 +328,7 @@
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ArquivoCartaoNaoIdentificadoPesquisa.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.CartaoNaoIdentificadoPesquisa.datasource" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -403,5 +344,12 @@
     <ItemGroup>
       <Analyzer Remove="@(Analyzer)" />
     </ItemGroup>
+  </Target>
+  <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
 </Project>
