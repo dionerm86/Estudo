@@ -4057,7 +4057,7 @@ namespace Glass.Data.DAL
         public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
         {
             var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
-                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                $@"SELECT DISTINCT(IdLiberarPedido)
                 FROM liberarpedido
                 WHERE IdLiberarPedido IN
                     (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");
