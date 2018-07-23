@@ -4221,9 +4221,14 @@ namespace Glass.Data.DAL
 
             // Atualiza o total do pedido
             if (objInsert.IdProdPedParent.GetValueOrDefault(0) == 0)
+            {
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido, false, true, false, true);
+                PedidoDAO.Instance.AtualizarParcelasPedido(session, pedido);
+            }
             else
+            { 
                 PedidoDAO.Instance.AtualizaPeso(session, objInsert.IdPedido);
+            }
 
             //Atualiza o produto pedido
             if (!insersaoComposicao && objInsert.IdProdPedParent.GetValueOrDefault(0) > 0)
@@ -4356,6 +4361,7 @@ namespace Glass.Data.DAL
                 try
                 {
                     PedidoDAO.Instance.UpdateTotalPedido(transaction, pedido, false, true, false, true);
+                    PedidoDAO.Instance.AtualizarParcelasPedido(transaction, pedido);
                 }
                 catch (Exception ex)
                 {
@@ -4763,7 +4769,10 @@ namespace Glass.Data.DAL
 
                 /* Chamado 61922. */
                 if (atualizarTotalPedido)
+                {
                     PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido, false, true, false, true);
+                    PedidoDAO.Instance.AtualizarParcelasPedido(sessao, pedido);
+                }
 
                 if (atualizaDataEntrega)
                 {
