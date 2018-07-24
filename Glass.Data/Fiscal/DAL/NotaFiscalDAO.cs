@@ -2898,11 +2898,11 @@ namespace Glass.Data.DAL
             // Campos usados no totalizador da nota, após somar os valores do DIFAL
             decimal totalIcmsUFDestino = 0;
             decimal totalIcmsUFRemetente = 0;
-            decimal totalOutrasDespesasAplicado = 0;
-            decimal totalFreteAplicado = 0;
+            decimal valorFreteAplicado = 0;
+            decimal valorOutrasDespesasAplicado = 0;
+            decimal valorSeguroAplicado = 0;
             var contadorPnf = 0;
             var totalIcmsFCP = 0m;
-            decimal valorOutrasDespesasAplicado = 0;
 
             try
             {
@@ -3039,37 +3039,63 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, prod, "qTrib", Formatacoes.TrataValorDecimal(qtdPnfTrib, 4));
                     ManipulacaoXml.SetNode(doc, prod, "vUnTrib", Formatacoes.TrataValorDecimal(valorUnitTrib, 10));
 
-                    // Trata o valor de frete do produto, no XML, para que não ocorra diferença entre o somatório de frete dos produtos com o total de frete da nota.
-                    if (nf.ValorFrete > 0 && Formatacoes.TrataValorDecimal(pnf.ValorFrete, 2) != "0.00")
+                    if (nf.ValorFrete > 0)
                     {
-                        /* Chamado 63752. */
-                        var valorFrete = Math.Round(pnf.ValorFrete, 2);
-                        totalFreteAplicado += valorFrete;
-
-                        if (contadorPnf == lstProdNf.Count() && Math.Abs(nf.ValorFrete - totalFreteAplicado) <= (decimal)0.3)
-                            valorFrete += (nf.ValorFrete - totalFreteAplicado);
-
-                        ManipulacaoXml.SetNode(doc, prod, "vFrete", Formatacoes.TrataValorDecimal(valorFrete, 2));
-                    }
-
-                    if (nf.ValorSeguro > 0) ManipulacaoXml.SetNode(doc, prod, "vSeg", Formatacoes.TrataValorDecimal(pnf.ValorSeguro, 2));
-                    if (Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2) != "0.00") ManipulacaoXml.SetNode(doc, prod, "vDesc", Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2));
-
-                    if (nf.OutrasDespesas > 0)
-                    {
-                        decimal valorOutraDespesasProduto = 0;
+                        decimal valorFreteProduto = 0;
 
                         if (contadorPnf < lstProdNf.Count())
                         {
-                            valorOutraDespesasProduto = Math.Round(nf.OutrasDespesas / lstProdNf.Count(), 2);
+                            valorFreteProduto = Math.Round(nf.ValorFrete / lstProdNf.Count(), 2);
                         }
                         else
                         {
-                            valorOutraDespesasProduto = nf.OutrasDespesas - valorOutrasDespesasAplicado;
+                            valorFreteProduto = nf.ValorFrete - valorFreteAplicado;
                         }
 
-                        valorOutrasDespesasAplicado += valorOutraDespesasProduto;
-                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutraDespesasProduto, 2));
+                        valorFreteAplicado += valorFreteProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vFrete", Formatacoes.TrataValorDecimal(valorFreteProduto, 2));
+                    }
+
+                    if (nf.ValorSeguro > 0)
+                    {
+                        decimal valorSeguroProduto = 0;
+
+                        if (contadorPnf < lstProdNf.Count())
+                        {
+                            valorSeguroProduto = Math.Round(nf.ValorSeguro / lstProdNf.Count(), 2);
+                        }
+                        else
+                        {
+                            valorSeguroProduto = nf.ValorFrete - valorSeguroAplicado;
+                        }
+
+                        valorSeguroAplicado += valorSeguroProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vSeg", Formatacoes.TrataValorDecimal(valorSeguroProduto, 2));
+                    }
+
+                    if (Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2) != "0.00")
+                    {
+                        ManipulacaoXml.SetNode(doc, prod, "vDesc", Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2));
+                    }
+
+                    if (nf.OutrasDespesas > 0)
+                    {
+                        decimal valorOutrasDespesasProduto = 0;
+
+                        if (contadorPnf < lstProdNf.Count())
+                        {
+                            valorOutrasDespesasProduto = Math.Round(nf.OutrasDespesas / lstProdNf.Count(), 2);
+                        }
+                        else
+                        {
+                            valorOutrasDespesasProduto = nf.OutrasDespesas - valorOutrasDespesasAplicado;
+                        }
+
+                        valorOutrasDespesasAplicado += valorOutrasDespesasProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutrasDespesasProduto, 2));
                     }
 
                     ManipulacaoXml.SetNode(doc, prod, "indTot", nf.TotalProd == 0 && nfeComplAjuste ? "0" : "1"); // Indica se o valor do item compões a NF, 0-Não Compõe, 1-Compõe
