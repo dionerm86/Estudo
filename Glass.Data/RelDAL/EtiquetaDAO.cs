@@ -669,8 +669,13 @@ namespace Glass.Data.RelDAL
             if (etiq.BarCodeData == null)
                 etiq.BarCodeData = etiq.NumEtiqueta;
 
-            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta && 
-                etiq.PossuiFml && //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML)
+            var possuiFML = false;
+
+            if (PCPConfig.EmpresaGeraArquivoFml)
+                possuiFML = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true);
+
+            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
+                possuiFML && //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML)
                 etiq.BarCodeData != null &&
                 etiq.BarCodeData[0].ToString().ToUpper() != "C" && 
                 etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
