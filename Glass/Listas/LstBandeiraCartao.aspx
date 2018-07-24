@@ -28,7 +28,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit" Visible='<%# Eval("PodeExcluir") %>'
+                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit"
                                     ImageUrl="~/Images/edit.gif" ToolTip="Editar" />
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("PodeExcluir") %>'
                                     ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
@@ -52,6 +52,24 @@
                             <FooterTemplate>
                                 <asp:TextBox ID="txtDescricao" runat="server"></asp:TextBox>
                             </FooterTemplate>
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="drpSituacao" runat="server"
+                                    SelectedValue='<%# Bind("Situacao") %>'>
+                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
+                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
+                                </asp:DropDownList>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:DropDownList ID="drpSituacao" runat="server">
+                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
+                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
+                                </asp:DropDownList>
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:Label runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                            </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>

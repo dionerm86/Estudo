@@ -58,7 +58,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public TipoCartaoCredito[] ObtemListaPorTipo(int tipo)
         {
-            string sql = Sql(true);
+            string sql = Sql(true) + " AND tc.Situacao=1 ";
 
             if (tipo == 1)
                 sql += " And idTipoCartao In (2,4,6)";
@@ -70,7 +70,7 @@ namespace Glass.Data.DAL
 
         public IList<TipoCartaoCredito> GetOrdered()
         {
-            return objPersistence.LoadData("Select * From tipo_cartao_credito Order By idTipoCartao").ToList();
+            return objPersistence.LoadData("Select * From tipo_cartao_credito WHERE Situacao=1 Order By idTipoCartao").ToList();
         }
 
         public IList<TipoCartaoCredito> ObterListaTipoCartao()

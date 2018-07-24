@@ -85,6 +85,9 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
         public int IdContaRecChequeDev { get; set; }
 
+        [PersistenceProperty("SITUACAO")]
+        public Glass.Situacao Situacao { get; set; }
+
         #endregion
 
         #region Propriedades de Suporte
