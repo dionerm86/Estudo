@@ -87,7 +87,7 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => f.IdVolume.GetValueOrDefault(0) > 0).ToList();
+                    .Where(f => f.IdVolume > 0).ToList();
             }
         }
 
@@ -125,7 +125,7 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => f.IdVolume.GetValueOrDefault(0) > 0)
+                    .Where(f => f.IdVolume > 0)
                     .Count();
             }
         }
@@ -153,8 +153,9 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => (f.IdVolume == null) &&
-                        f.IdFuncLeitura.GetValueOrDefault(0) > 0 && f.DataLeitura != null)
+                    .Where(f => (f.IdVolume == null &&
+                        f.IdFuncLeitura > 0 && f.DataLeitura != null) ||
+                        f.ExpedidoManualmente)
                     .Count();
             }
         }
@@ -181,7 +182,7 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => f.IdFuncLeitura.GetValueOrDefault(0) > 0 && f.DataLeitura != null)
+                    .Where(f => (f.IdFuncLeitura > 0 && f.DataLeitura != null) || f.ExpedidoManualmente)
                     .Sum(f => f.Peso);
             }
         }
@@ -198,8 +199,8 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => (f.IdVolume == null) &&
-                        f.IdFuncLeitura == null && f.DataLeitura == null)
+                    .Where(f => f.IdVolume == null &&
+                        f.IdFuncLeitura == null && f.DataLeitura == null && !f.ExpedidoManualmente)
                     .Count();
             }
         }
@@ -212,7 +213,7 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => (f.IdVolume.GetValueOrDefault(0) > 0) &&
+                    .Where(f => f.IdVolume > 0 &&
                         f.IdFuncLeitura == null && f.DataLeitura == null)
                     .Count();
             }
@@ -226,7 +227,7 @@ namespace Glass.PCP.Negocios.Entidades
             get
             {
                 return ItensExp
-                    .Where(f => f.IdFuncLeitura == null && f.DataLeitura == null)
+                    .Where(f => f.IdFuncLeitura == null && f.DataLeitura == null && !f.ExpedidoManualmente)
                     .Sum(f => f.Peso);
             }
         }

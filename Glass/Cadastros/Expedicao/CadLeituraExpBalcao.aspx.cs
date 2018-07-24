@@ -201,7 +201,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             {
                 var item = ((Glass.PCP.Negocios.Entidades.ItemExpBalcao)e.Row.DataItem);
                 foreach (TableCell cell in e.Row.Cells)
-                    cell.ForeColor = item.Expedido ? Color.Green : (item.TrocadoDevolvido ? Color.Blue : Color.Red);
+                    cell.ForeColor = item.Expedido || item.ExpedidoManualmente ? Color.Green : (item.TrocadoDevolvido ? Color.Blue : Color.Red);
             }
         }
 

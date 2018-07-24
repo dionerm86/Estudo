@@ -62,7 +62,9 @@ namespace Glass.PCP.Negocios.Entidades
             }
         }
 
-        public bool Expedido { get { return (IdFuncLeitura.GetValueOrDefault(0) > 0 && DataLeitura != null)  ; } }
+        public bool Expedido { get { return IdFuncLeitura > 0 && DataLeitura != null; } }
+
+        public bool ExpedidoManualmente { get; set; }
 
         #region Peças
 
