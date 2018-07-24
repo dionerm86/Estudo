@@ -242,6 +242,7 @@ namespace Glass.Data.Helper
             Simonica,
             SmartGlass,
             SulGlass,
+            SupremaGlass,
             SyncLite,
             SyncProjEsp,
 

@@ -1032,6 +1032,7 @@
                         <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProd" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtLote" Name="lote" PropertyName="Text" Type="String" />                        
                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />

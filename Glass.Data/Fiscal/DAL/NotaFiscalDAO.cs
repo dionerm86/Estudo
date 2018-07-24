@@ -5612,8 +5612,8 @@ namespace Glass.Data.DAL
         private string SqlPorSituacao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
-            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, string lote, bool selecionar)
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
+            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
