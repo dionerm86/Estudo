@@ -31,6 +31,26 @@ Vue.component('campo-quantidade', {
     },
 
     /**
+     * Percentual de desconto por quantidade máximo.
+     * @type {?number}
+     */
+    percentualDescontoPorQuantidadeMaximo: {
+      required: false,
+      twoWay: true,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
+     * Percentual de desconto de tabela.
+     * @type {?number}
+     */
+    percentualDescontoTabela: {
+      required: false,
+      twoWay: true,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Indica se a quantidade pode ser decimal ou não.
      * @type {?boolean}
      */
@@ -73,12 +93,6 @@ Vue.component('campo-quantidade', {
       default: true,
       validator: Mixins.Validacao.validarBoolean
     }
-  },
-
-  data: function() {
-    return {
-      exibirDescontoPorQuantidade_: false
-    };
   },
 
   computed: {
@@ -136,6 +150,12 @@ Vue.component('campo-quantidade', {
      */
     incremento: function() {
       return this.permiteDecimal ? 0.01 : 1;
+    },
+
+    exibirDescontoPorQuantidade_: function () {
+      return this.percentualDescontoPorQuantidade > 0
+        || this.percentualDescontoPorQuantidadeMaximo > 0
+        || this.percentualDescontoTabela > 0;
     }
   },
 

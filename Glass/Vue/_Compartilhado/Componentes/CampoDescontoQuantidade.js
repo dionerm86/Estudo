@@ -32,6 +32,26 @@ Vue.component('campo-desconto-quantidade', {
     },
 
     /**
+     * Percentual de desconto por quantidade máximo.
+     * @type {?number}
+     */
+    percentualMaximo: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
+     * Percentual de desconto de tabela.
+     * @type {?number}
+     */
+    percentualTabela: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * ID do produto para busca do desconto por quantidade.
      * @type {?number}
      */
@@ -50,14 +70,6 @@ Vue.component('campo-desconto-quantidade', {
       twoWay: false,
       validator: Mixins.Validacao.validarNumeroOuVazio
     }
-  },
-
-  data: function() {
-    return {
-      percentualDescontoMaximo: 0,
-      descontoTabela: 0,
-      percentualDescontoValidar: 0
-    };
   },
 
   computed: {

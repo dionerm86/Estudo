@@ -41,7 +41,7 @@
                         </span>
                     </label>
                     <input type="number" v-model.number="item.itensSelecionados[0].custo" min="0" step="0.01"
-                           v-bind:style="estiloValor" v-if="item.itensSelecionados && item.itensSelecionados.length">
+                        v-bind:style="estiloValor" v-if="item.itensSelecionados && item.itensSelecionados.length">
                     <input type="number" value="0" disabled v-bind:style="estiloValor" v-else>
                     <span v-if="!tipoCobrancaValor(item.beneficiamento)">
                         %

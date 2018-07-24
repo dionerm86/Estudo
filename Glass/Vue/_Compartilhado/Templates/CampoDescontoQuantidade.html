@@ -5,15 +5,15 @@
                 Desconto máximo:
             </span>
             <span style="float: right">
-                {{ percentualDescontoMaximo | percentual }}
+                {{ percentualMaximo | percentual }}
             </span>
         </div>
-        <div style="padding: 3px">
+        <div style="padding: 3px" v-if="percentualTabela > 0">
             <span>
                 Desconto de tabela:
             </span>
             <span style="float: right">
-                {{ descontoTabela | percentual }}
+                {{ percentualTabela | percentual }}
             </span>
         </div>
         <div style="padding: 3px">
@@ -21,7 +21,7 @@
                 Desconto aplicado:
             </span>
             <span>
-                <input type="number" step="0.01" min="0" v-bind:max="percentualDescontoValidar" v-model.number="percentualAtual" style="width: 50px"> %
+                <input type="number" step="0.01" min="0" v-bind:max="percentualMaximo" v-model.number="percentualAtual" style="width: 50px"> %
             </span>
         </div>
     </div>

@@ -227,7 +227,7 @@ Vue.component('lista-itens-venda', {
      * @returns {Promise} Uma Promise com a busca dos itens de venda, de acordo com o filtro.
      */
     buscarFilhos: function (filtro, pagina, numeroRegistros, ordenacao) {
-      var novoFiltro = this.filtro || {};
+      var novoFiltro = this.clonar(this.filtro || {});
       novoFiltro.idProdutoPai = filtro.idProdutoPai;
 
       return this.buscarItensVenda(novoFiltro, pagina, numeroRegistros, ordenacao);
