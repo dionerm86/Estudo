@@ -669,13 +669,23 @@ namespace Glass.Data.RelDAL
             if (etiq.BarCodeData == null)
                 etiq.BarCodeData = etiq.NumEtiqueta;
 
-            var possuiFML = false;
+            var possuiFml = false;
+            var possuiDxf = false;
+            var possuiSGlass = false;
+            var possuiIntermac = false;
 
             if (PCPConfig.EmpresaGeraArquivoFml)
-                possuiFML = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true);
+                possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true);
+            if (PCPConfig.EmpresaGeraArquivoDxf)
+                possuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+            if (PCPConfig.EmpresaGeraArquivoSGlass)
+                possuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+            if (PCPConfig.EmpresaGeraArquivoIntermac)
+                possuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(null, (int)etiq.IdProdPedEsp, etiq.NumEtiqueta);
 
             if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
-                possuiFML && //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML)
+                //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML/DXF/SGLASS/Intermac)
+                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) && 
                 etiq.BarCodeData != null &&
                 etiq.BarCodeData[0].ToString().ToUpper() != "C" && 
                 etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
