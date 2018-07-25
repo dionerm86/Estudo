@@ -153,6 +153,18 @@
 
                 </td>
             </tr>
+            <tr>
+                <td>Situação
+                </td>
+                <td>
+                    <asp:DropDownList ID="drpSituacao" runat="server" >
+                        <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
+                        <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
+                    </asp:DropDownList>
+                    <asp:Button ID="btnSalvarSituacao" runat="server" Text="Salvar Situação"
+                        OnClick="btnSalvarSituacao_Click"/>
+                </td>
+            </tr>
         </table>
 
         <fieldset>

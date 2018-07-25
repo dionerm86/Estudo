@@ -32,6 +32,12 @@ namespace Glass.Data.DAL
                 SELECT COUNT(IDTIPOCARTAO) FROM tipo_cartao_credito WHERE OPERADORA={0}", idOperadoraCartao)) > 0;
         }
 
+        public bool OperadoraCartaoEmUsoAtivos(uint idOperadoraCartao)
+        {
+            return objPersistence.ExecuteSqlQueryCount(string.Format(@"
+                SELECT COUNT(IDTIPOCARTAO) FROM tipo_cartao_credito WHERE OPERADORA={0} AND SITUACAO=1", idOperadoraCartao)) > 0;
+        }
+
         /// <summary>
         /// Retorna a descrição da operadora de cartão
         /// </summary>
@@ -46,12 +52,23 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<uint>("IdOperadoraCartao", "Descricao=?descricao", new GDA.GDAParameter("?descricao", descricao));
         }
+        public IList<OperadoraCartao> GetAtivas()
+        {
+            var sql = Sql(true) + " AND Situacao=1 ";
+            return objPersistence.LoadData(sql).ToList();
+        }
+
 
         #region Métodos Sobrescritos
 
         public override int Update(OperadoraCartao objUpdate)
         {
-            LogAlteracaoDAO.Instance.LogOperadoraCartao(GetElementByPrimaryKey(objUpdate.IdOperadoraCartao), objUpdate);
+            var oldObject = GetElementByPrimaryKey(objUpdate.IdOperadoraCartao);
+            LogAlteracaoDAO.Instance.LogOperadoraCartao(oldObject, objUpdate);
+
+            if (objUpdate.Situacao != oldObject.Situacao && objUpdate.Situacao == Situacao.Inativo && OperadoraCartaoEmUsoAtivos(objUpdate.IdOperadoraCartao))
+                throw new Exception("A operadora de cartão não pode ser alterada pois está em uso em cartões ativos.");
+
             return base.Update(objUpdate);
         }
 

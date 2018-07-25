@@ -52,11 +52,12 @@
             var descrProd = FindControl("txtDescr", "input").value;
             var valorInicial = FindControl("txtValorInicial", "input").value;
             var valorFinal = FindControl("txtValorFinal", "input").value;
-         
+            var lote = FindControl("txtLote", "input").value;
+
             var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
             nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
             formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
-            valorInicial, valorFinal).value;
+            valorInicial, valorFinal, lote).value;
         
             //var campoIdNf = document.getElementById("campoIdNf");
             //

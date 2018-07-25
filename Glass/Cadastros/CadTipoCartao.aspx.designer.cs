@@ -31,6 +31,24 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.DropDownList drpCartao;
         
         /// <summary>
+        /// drpSituacao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpSituacao;
+        
+        /// <summary>
+        /// btnSalvarSituacao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnSalvarSituacao;
+        
+        /// <summary>
         /// drpContaBanco control.
         /// </summary>
         /// <remarks>

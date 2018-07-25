@@ -1291,11 +1291,11 @@ namespace Glass.Data.DAL
                     foreach (var prodBenef in objUpdate.Beneficiamentos)
                     {
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                            objUpdate.Altura < tamanhoMinimoBisote && objUpdate.Largura < tamanhoMinimoBisote)
+                            objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote)
                             retornoValidacao += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
 
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                            objUpdate.Altura < tamanhoMinimoLapidacao && objUpdate.Largura < tamanhoMinimoLapidacao)
+                            objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao)
                             retornoValidacao += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
                     }
                 }

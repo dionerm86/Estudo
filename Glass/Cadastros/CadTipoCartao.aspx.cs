@@ -23,6 +23,10 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("~/Listas/LstTipoCartao.aspx");
 
                 drpCartao.SelectedValue = idTipoCartao.ToString();
+
+                var tipoCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(idTipoCartao);
+                drpSituacao.SelectedValue = tipoCartao.Situacao.ToString();
+
                 CarregaPlanoContas(idTipoCartao);
 
                 if (!UserInfo.GetUserInfo.IsAdminSync)
@@ -281,6 +285,19 @@ namespace Glass.UI.Web.Cadastros
 
             }
             catch { }
+        }
+
+        protected void btnSalvarSituacao_Click(object sender, EventArgs e)
+        {
+            var situacao = drpSituacao.SelectedValue;
+            var idTipoCartao = drpCartao.SelectedValue.StrParaUint();
+
+            var tipoCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(idTipoCartao);
+            tipoCartao.Situacao = (Glass.Situacao)Enum.Parse(typeof(Glass.Situacao), situacao);
+
+            TipoCartaoCreditoDAO.Instance.Update(tipoCartao);
+
+            Response.Redirect("~/Listas/LstTipoCartao.aspx");
         }
     }
 }

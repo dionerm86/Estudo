@@ -408,11 +408,11 @@ namespace Glass.UI.Web
         public static string ObterIdNf(string numeroNFe, string idPedido, string modelo, string idLoja, string idCliente, string nomeCliente, string tipoFiscal, string idFornec,
             string nomeFornec, string codRota, string tipoDoc, string situacao, string dataIni, string dataFim, string idCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, string formaPagto, string idsFormaPagtoNotaFiscal, string tipoNf, string finalidade, string formaEmissao,
-            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal)
+            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
         {
             return Glass.Data.Helper.MetodosAjax.ObterIdNf(numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota, tipoDoc,
                 situacao, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal);
+                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, lote);
         }
     
         /// <summary>

@@ -671,11 +671,11 @@ namespace Glass.UI.Web.Listas
                 foreach (var prodBenef in prodOrca.Beneficiamentos)
                 {
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                        prodOrca.Altura < tamanhoMinimoBisote && prodOrca.Largura < tamanhoMinimoBisote)
+                        prodOrca.Altura < tamanhoMinimoBisote || prodOrca.Largura < tamanhoMinimoBisote)
                         retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
 
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                        prodOrca.Altura < tamanhoMinimoLapidacao && prodOrca.Largura < tamanhoMinimoLapidacao)
+                        prodOrca.Altura < tamanhoMinimoLapidacao || prodOrca.Largura < tamanhoMinimoLapidacao)
                         retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
                 }
             }
