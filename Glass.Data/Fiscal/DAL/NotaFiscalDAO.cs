@@ -6057,11 +6057,11 @@ namespace Glass.Data.DAL
         public List<uint> GetListPorSituacaoAjax(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
         {
             return objPersistence.LoadResult(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, null, valorInicial, valorFinal, null, 0, false, false, true),
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, null, 0, false, false, true),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null))
                 .Select(f => f.GetUInt32(0))
