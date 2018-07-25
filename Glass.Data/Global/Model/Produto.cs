@@ -741,7 +741,16 @@ namespace Glass.Data.Model
 
                     var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
                     var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
-                    var calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+                    var calcularIpi = false;
+
+                    if (IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo > 0)
+                    {
+                        calcularIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(null, IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo.Value) && AliqIPI > 0;
+                    }
+                    else
+                    {
+                        calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+                    }
 
                     _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
@@ -764,9 +773,18 @@ namespace Glass.Data.Model
                         throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
                     }
 
-                    var calcularIpi = IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo > 0
-                        && NaturezaOperacaoDAO.Instance.CalculaIpi(null, IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo.Value)
-                        && AliqIPI > 0;
+                    var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
+                    var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
+                    var calcularIpi = false;
+
+                    if (IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo > 0)
+                    {
+                        calcularIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(null, IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo.Value) && AliqIPI > 0;
+                    }
+                    else
+                    {
+                        calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+                    }
 
                     _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
