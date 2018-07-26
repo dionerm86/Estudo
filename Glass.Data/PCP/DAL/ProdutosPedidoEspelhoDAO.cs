@@ -3137,7 +3137,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se a peça possui FML associado
         /// </summary>
-        public bool PossuiFml(GDASession sessao, uint idProdPed, string etiqueta, bool paraDestaqueEtiqueta)
+        public bool PossuiFml(GDASession sessao, uint idProdPed, string etiqueta, bool paraDestaqueEtiqueta, bool considerarFmlBasico = false)
         {
             // Se não tiver Id Produto Pedido não possui FML
             if (idProdPed == 0)
@@ -3177,6 +3177,7 @@ namespace Glass.Data.DAL
                 var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
+                    (considerarFmlBasico ? tipoArquivo == TipoArquivoMesaCorte.FMLBasico : true) ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !Instance.PossuiImagemAssociada(idProdPed);
             }
@@ -3188,6 +3189,7 @@ namespace Glass.Data.DAL
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, !paraDestaqueEtiqueta);
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
+                    (considerarFmlBasico ? tipoArquivo == TipoArquivoMesaCorte.FMLBasico : true) ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !pecaProjMod.ImagemEditada &&
                     !Instance.PossuiImagemAssociada(idProdPed) &&
