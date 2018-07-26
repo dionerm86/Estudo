@@ -212,7 +212,8 @@
             <td>
                 <campo-quantidade v-bind:quantidade.sync="itemVenda.quantidade" v-bind:percentual-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.percentual"
                     v-bind:valor-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.valor" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
-                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="idCliente" v-if="itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
+                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-grupo-produto="produtoAtual ? produtoAtual.idGrupo : null" v-bind:id-subgrupo-produto="produtoAtual ? produtoAtual.idSubgrupo : null"
+                    v-bind:id-cliente="idCliente" v-if="itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
                 <span v-if="maoDeObra && quantidadeAmbiente">
                     x {{ quantidadeAmbiente }} peças de vidro
                 </span>
@@ -261,7 +262,8 @@
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
-                    v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
+                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
             <td>
                 <span v-if="itemVenda.beneficiamentos">
@@ -327,7 +329,8 @@
             <td>
                 <campo-quantidade v-bind:quantidade.sync="itemVenda.quantidade" v-bind:percentual-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.percentual"
                     v-bind:valor-desconto-por-quantidade.sync="itemVenda.descontoPorQuantidade.valor" v-bind:permite-decimal="produtoAtual && produtoAtual.quantidade && produtoAtual.quantidade.permiteDecimal"
-                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-cliente="idCliente" v-if="inserindo && itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
+                    v-bind:id-produto="produtoAtual ? produtoAtual.id : null" v-bind:id-grupo-produto="produtoAtual ? produtoAtual.idGrupo : null" v-bind:id-subgrupo-produto="produtoAtual ? produtoAtual.idSubgrupo : null"
+                    v-bind:id-cliente="idCliente" v-if="inserindo && itemVenda && itemVenda.descontoPorQuantidade"></campo-quantidade>
                 <span v-if="inserindo && maoDeObra && quantidadeAmbiente">
                     x {{ quantidadeAmbiente }} peças de vidro
                 </span>
@@ -375,7 +378,8 @@
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
-                    v-bind:dados-adicionais-validacao="dadosValidacaoProduto" v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
+                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
             <td>
                 <span v-if="inserindo && itemVenda.beneficiamentos">

@@ -4,11 +4,12 @@ using Glass.Data.DAL;
 using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
+using Glass.Pool;
 using System;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class ValorUnitario : BaseCalculo<ValorUnitario>
+    sealed class ValorUnitario : Singleton<ValorUnitario>
     {
         private ValorUnitario() { }
 
@@ -21,12 +22,9 @@ namespace Glass.Data.Helper.Calculos
         }
 
         public decimal? RecalcularValor(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-            bool valorBruto = false, bool forcarRecalculo = false)
+            bool valorBruto = false)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
-
-            if (!forcarRecalculo && !DeveExecutar(produto))
-                return null;
+            produto.InicializarParaCalculo(sessao, container);
 
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
@@ -56,10 +54,7 @@ namespace Glass.Data.Helper.Calculos
         public decimal? CalcularValor(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
             decimal baseCalculo)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
-
-            if (!DeveExecutar(produto))
-                return null;
+            produto.InicializarParaCalculo(sessao, container);
 
             var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
             var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
@@ -80,7 +75,7 @@ namespace Glass.Data.Helper.Calculos
 
         private void AtualizaValorUnitario(IProdutoCalculo produto, bool valorBruto)
         {
-            decimal valorUnitario = Math.Max(produto.DadosProduto.ValorTabela(), PedidoConfig.DadosPedido.AlterarValorUnitarioProduto ? produto.ValorUnit:0);
+            decimal valorUnitario = Math.Max(produto.DadosProduto.ValorTabela(), PedidoConfig.DadosPedido.AlterarValorUnitarioProduto ? produto.ValorUnit : 0);
 
             if (produto is ProdutoTrocado && produto.ValorTabelaPedido > 0)
                 valorUnitario = produto.ValorTabelaPedido;
@@ -202,8 +197,6 @@ namespace Glass.Data.Helper.Calculos
                 alturaBeneficiamento,
                 larguraBeneficiamento
             );
-
-            AtualizarDadosCache(produto);
 
             return valorUnitario;
         }

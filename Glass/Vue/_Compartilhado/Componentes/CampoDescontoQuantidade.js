@@ -69,6 +69,17 @@ Vue.component('campo-desconto-quantidade', {
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
+     * Indica se o percentual de desconto pode ser alterado.
+     * @type {boolean}
+     */
+    permitirAlterarDesconto: {
+      required: false,
+      twoWay: false,
+      default: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 

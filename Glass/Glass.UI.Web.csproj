@@ -34,6 +34,7 @@
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <UseVSHostingProcess>true</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -43,6 +44,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ajax">
@@ -1677,6 +1679,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Aplicacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Beneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cep.js" />

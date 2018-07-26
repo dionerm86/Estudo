@@ -1,4 +1,5 @@
 Vue.component('campo-quantidade', {
+  mixins: [Mixins.ExecutarTimeout],
   props: {
     /**
      * Quantidade selecionada no controle.
@@ -31,26 +32,6 @@ Vue.component('campo-quantidade', {
     },
 
     /**
-     * Percentual de desconto por quantidade máximo.
-     * @type {?number}
-     */
-    percentualDescontoPorQuantidadeMaximo: {
-      required: false,
-      twoWay: true,
-      validator: Mixins.Validacao.validarNumeroOuVazio
-    },
-
-    /**
-     * Percentual de desconto de tabela.
-     * @type {?number}
-     */
-    percentualDescontoTabela: {
-      required: false,
-      twoWay: true,
-      validator: Mixins.Validacao.validarNumeroOuVazio
-    },
-
-    /**
      * Indica se a quantidade pode ser decimal ou não.
      * @type {?boolean}
      */
@@ -72,6 +53,26 @@ Vue.component('campo-quantidade', {
     },
 
     /**
+     * ID do grupo do produto para busca do desconto por quantidade.
+     * @type {?number}
+     */
+    idGrupoProduto: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
+     * ID do subgrupo do produto para busca do desconto por quantidade.
+     * @type {?number}
+     */
+    idSubgrupoProduto: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * ID do cliente para busca do desconto por quantidade.
      * @type {?number}
      */
@@ -83,7 +84,7 @@ Vue.component('campo-quantidade', {
 
     /**
      * Indica se o campo de desconto por quantidade deve ser exibido ou não.
-     * Se estiver marcado como 'true', o controle de quantidade será exibido de acordo com
+     * Se estiver marcado como 'true', o controle de desconto por quantidade será exibido de acordo com
      * seu controle interno.
      * @type {?boolean}
      */
@@ -92,6 +93,52 @@ Vue.component('campo-quantidade', {
       twoWay: false,
       default: true,
       validator: Mixins.Validacao.validarBoolean
+    },
+
+    /**
+     * Indica se o percentual de desconto pode ser alterado.
+     * @type {boolean}
+     */
+    permitirAlterarDescontoPorQuantidade: {
+      required: false,
+      twoWay: false,
+      default: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    }
+  },
+
+  data: function() {
+    return {
+      percentualDescontoPorQuantidadeMaximo: 0,
+      percentualDescontoTabela: 0
+    }
+  },
+
+  methods: {
+    /**
+     * Atualiza os percentuais de desconto para o controle de desconto por quantidade.
+     */
+    atualizarDadosDescontoPorQuantidade: function () {
+      this.executarTimeout('atualizarDadosDescontoPorQuantidade', function () {
+        var vm = this;
+
+        Servicos.DescontoPorQuantidade.obterDados(
+          this.idProduto,
+          this.idGrupoProduto,
+          this.idSubgrupoProduto,
+          this.idCliente,
+          this.quantidadeAtual
+        )
+          .then(function (resposta) {
+            vm.percentualDescontoPorQuantidadeMaximo = resposta.data.percentualDescontoPorQuantidade;
+            vm.percentualDescontoTabela = resposta.data.percentualDescontoTabela;
+          })
+          .catch(function (erro) {
+            if (erro && erro.mensagem) {
+              vm.exibirMensagem('Erro', erro.mensagem);
+            }
+          })
+      });
     }
   },
 
@@ -107,6 +154,7 @@ Vue.component('campo-quantidade', {
       },
       set: function(valor) {
         if (valor !== this.quantidade) {
+          this.atualizarDadosDescontoPorQuantidade();
           this.$emit('update:quantidade', valor);
         }
       }
@@ -152,10 +200,32 @@ Vue.component('campo-quantidade', {
       return this.permiteDecimal ? 0.01 : 1;
     },
 
+    /**
+     * Propriedade computada que indica se o controle de desconto por quantidade deve ser exibido.
+     * @type {boolean}
+     */
     exibirDescontoPorQuantidade_: function () {
       return this.percentualDescontoPorQuantidade > 0
         || this.percentualDescontoPorQuantidadeMaximo > 0
         || this.percentualDescontoTabela > 0;
+    }
+  },
+
+  watch: {
+    /**
+     * Observador para a variável 'idProduto'.
+     * Atualiza os dados de desconto por quantidade.
+     */
+    idProduto: function () {
+      this.atualizarDadosDescontoPorQuantidade();
+    },
+
+    /**
+     * Observador para a variável 'idCliente'.
+     * Atualiza os dados de desconto por quantidade.
+     */
+    idCliente: function () {
+      this.atualizarDadosDescontoPorQuantidade();
     }
   },
 

@@ -135,6 +135,16 @@
     },
 
     /**
+     * Percentual de desconto por quantidade.
+     * @type {number}
+     */
+    percentualDescontoPorQuantidade: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Número de beneficiamentos para que seja considerada a área mínima no cálculo.
      * @type {?number}
      */
@@ -190,6 +200,7 @@
             numeroBeneficiamentosParaAreaMinima: this.numeroBeneficiamentosParaAreaMinima,
             valorUnitario: this.valorUnitario,
             tipoValidacao: this.tipoValidacao,
+            percentualDescontoPorQuantidade: this.percentualDescontoPorQuantidade,
             dadosAdicionaisValidacao: this.codificarJson(this.dadosAdicionaisValidacao)
           };
 
@@ -315,6 +326,14 @@
      * Recalcula a área quando o valor for alterado.
      */
     valorUnitario: function () {
+      this.calcularTotal();
+    },
+
+    /**
+     * Observador da propriedade 'percentualDescontoPorQuantidade'.
+     * Recalcula a área quando o valor for alterado.
+     */
+    percentualDescontoPorQuantidade: function () {
       this.calcularTotal();
     }
   },

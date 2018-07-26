@@ -237,6 +237,8 @@
     <Compile Include="Controllers\Comissionados\V1\GetComissionadosController.cs" />
     <Compile Include="Controllers\Datas\V1\PostDatasController.cs" />
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
+    <Compile Include="Controllers\DescontoQuantidade\V1\DescontoQuantidadeController.cs" />
+    <Compile Include="Controllers\DescontoQuantidade\V1\GetDescontoQuantidadeController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
     <Compile Include="Controllers\Obras\V1\GetObrasController.cs" />
     <Compile Include="Controllers\Clientes\V1\GetClientesController.cs" />
@@ -326,6 +328,8 @@
     <Compile Include="Models\Clientes\Filtro\ComissionadoDto.cs" />
     <Compile Include="Models\Clientes\Filtro\RotaDto.cs" />
     <Compile Include="Models\Datas\Validacao\DadosEntradaDto.cs" />
+    <Compile Include="Models\DescontoQuantidade\Dados\DadosEntradaDto.cs" />
+    <Compile Include="Models\DescontoQuantidade\Dados\DadosDescontoQuantidadeDto.cs" />
     <Compile Include="Models\Genericas\CidadeDto.cs" />
     <Compile Include="Models\Genericas\EnderecoDto.cs" />
     <Compile Include="Models\Genericas\IdDto.cs" />

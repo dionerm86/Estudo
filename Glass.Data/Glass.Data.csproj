@@ -572,7 +572,6 @@
     <Compile Include="Handlers\Danfes.cs" />
     <Compile Include="Helper\CalculoIcmsStGeral.cs" />
     <Compile Include="Helper\CalculoIcmsStMT.cs" />
-    <Compile Include="Helper\Calculos\BaseCalculo.cs" />
     <Compile Include="Helper\Calculos\Cache\CacheCalculo.cs" />
     <Compile Include="Helper\Calculos\CalculoM2.cs" />
     <Compile Include="Helper\Calculos\Estrategia\DescontoAcrescimo\Comissao\BaseComissaoStrategy.cs" />

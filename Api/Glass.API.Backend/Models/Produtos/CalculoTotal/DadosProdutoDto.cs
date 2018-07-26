@@ -40,5 +40,12 @@ namespace Glass.API.Backend.Models.Produtos.CalculoTotal
         [DataMember]
         [JsonProperty("valorUnitario")]
         public decimal ValorUnitario { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o percentual de desconto por quantidade.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("percentualDescontoPorQuantidade")]
+        public double PercentualDescontoPorQuantidade { get; set; }
     }
 }

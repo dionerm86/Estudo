@@ -1,6 +1,7 @@
 ﻿var Percentual = Percentual || {};
 Percentual.formatar = new Intl.NumberFormat('pt-BR', {
-  style: 'percent'
+  style: 'percent',
+  maximumFractionDigits: 3
 });
 
 /**
@@ -13,5 +14,5 @@ Vue.filter('percentual', function (valor) {
     return valor;
   }
 
-  return Percentual.formatar.format(valor);
+  return Percentual.formatar.format(valor / 100);
 });

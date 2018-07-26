@@ -3114,7 +3114,8 @@ namespace Glass.Data.DAL
 
             var produtoCalculo = new ProdutoCalculoDTO()
             {
-                IdProduto = (uint)idProd
+                IdProduto = (uint)idProd,
+                PercDescontoQtde = percDescontoQtde
             };
 
             produtoCalculo.InicializarParaCalculo(sessao, containerCalculo);

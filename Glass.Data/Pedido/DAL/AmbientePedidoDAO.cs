@@ -746,7 +746,7 @@ namespace Glass.Data.DAL
 
                 foreach (ProdutosPedido pp in produtosPedido)
                 {
-                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, pedido, pp, forcarRecalculo: true);
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, pedido, pp);
                     pp.ValorVendido = valorUnitario ?? pp.ValorVendido;
 
                     ValorTotal.Instance.Calcular(

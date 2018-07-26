@@ -620,12 +620,15 @@ Vue.component('lista-itens-venda', {
      * Observador para a variável 'itemVenda.descontoPorQuantidade'.
      * Atualiza o percentual de desconto por quantidade no objeto de dados adicionais.
      */
-    'itemVenda.descontoPorQuantidade': function (atual) {
-      if (!this.dadosValidacaoProdutoAtual) {
-        return;
-      }
+    'itemVenda.descontoPorQuantidade': {
+      handler: function (atual) {
+        if (!this.dadosValidacaoProdutoAtual) {
+          return;
+        }
 
-      this.dadosValidacaoProdutoAtual.percentualDescontoQuantidade = atual ? atual.percentual : 0;
+        this.dadosValidacaoProdutoAtual.percentualDescontoQuantidade = atual ? atual.percentual : 0;
+      },
+      deep: true
     },
 
     /**

@@ -5,7 +5,6 @@
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Produtos;
-using Glass.API.Backend.Helper.Produtos.Estrategias.CalculoTotal;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Produtos.CalculoAreaM2;
 using Glass.API.Backend.Models.Produtos.CalculoTotal;
@@ -52,7 +51,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
 
                 var totalCalculado = new TotalCalculadoDto
                 {
-                    Total = this.CalcularTotal(sessao, dadosProduto, estrategiaValidacao),
+                    Total = this.CalcularTotal(sessao, dadosProduto),
                 };
 
                 validacao = estrategiaValidacao.ValidarDepoisCalculo(sessao, totalCalculado, dadosProduto.DadosAdicionaisValidacao);
@@ -148,7 +147,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 2);
         }
 
-        private decimal CalcularTotal(GDASession sessao, Models.Produtos.CalculoTotal.DadosProdutoDto dadosProduto, IValidacaoCalculoTotal estrategiaValidacao)
+        private decimal CalcularTotal(GDASession sessao, Models.Produtos.CalculoTotal.DadosProdutoDto dadosProduto)
         {
             return Global.CalculosFluxo.CalcularTotal(
                 sessao,
@@ -161,7 +160,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 dadosProduto.AreaM2,
                 dadosProduto.AreaCalculadaM2,
                 dadosProduto.ValorUnitario,
-                estrategiaValidacao.ObterPercentualDescontoQuantidade(dadosProduto.DadosAdicionaisValidacao),
+                dadosProduto.PercentualDescontoPorQuantidade,
                 dadosProduto.CalcularMultiploDe5,
                 dadosProduto.NumeroBeneficiamentosParaAreaMinima);
         }
