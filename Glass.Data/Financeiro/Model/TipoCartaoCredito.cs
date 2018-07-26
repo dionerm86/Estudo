@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Colosoft;
 using System.Collections.Generic;
 using System;
+using Glass.Log;
 
 namespace Glass.Data.Model
 {
@@ -85,6 +86,7 @@ namespace Glass.Data.Model
         [PersistenceForeignKey(typeof(PlanoContas), "IdConta")]
         public int IdContaRecChequeDev { get; set; }
 
+        [Log("Situação")]
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }
 

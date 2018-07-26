@@ -316,6 +316,23 @@ namespace Glass.Financeiro.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Identificador da conta recebimento cheque devolução
+        /// </summary>
+        public Situacao Situacao
+        {
+            get { return DataModel.Situacao; }
+            set
+            {
+                if (DataModel.Situacao != value &&
+                    RaisePropertyChanging("Situacao", value))
+                {
+                    DataModel.Situacao = value;
+                    RaisePropertyChanged("Situacao");
+                }
+            }
+        }
+
         public List<int> IdsContasRecebimento
         {
             get

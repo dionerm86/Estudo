@@ -293,9 +293,14 @@ namespace Glass.UI.Web.Cadastros
             var idTipoCartao = drpCartao.SelectedValue.StrParaUint();
 
             var tipoCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(idTipoCartao);
+
+            var situacaoAnterior = tipoCartao.Situacao;
+
             tipoCartao.Situacao = (Glass.Situacao)Enum.Parse(typeof(Glass.Situacao), situacao);
 
             TipoCartaoCreditoDAO.Instance.Update(tipoCartao);
+
+            TipoCartaoCreditoDAO.Instance.AtualizaLogSituacao(null, (int)idTipoCartao, situacaoAnterior.ToString(), situacao);
 
             Response.Redirect("~/Listas/LstTipoCartao.aspx");
         }
