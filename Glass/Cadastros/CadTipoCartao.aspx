@@ -377,7 +377,7 @@
             <asp:HiddenField ID="hdfRecPrazo" runat="server" />
             <asp:HiddenField ID="hdfRecChequeDev" runat="server" />
         </fieldset>
-        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCartao" runat="server" SelectMethod="GetOrdered"
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCartao" runat="server" SelectMethod="GetAll"
             TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
         </colo:VirtualObjectDataSource>
         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContaBanco" runat="server" SelectMethod="GetAll"
