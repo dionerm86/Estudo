@@ -286,7 +286,7 @@ namespace Glass.Data.DAL
                         }
                     case Helper.UtilsFinanceiro.TipoReceb.Obra:
                         {
-                            ObraDAO.Instance.FinalizarPrePagamentoVista(session, dados.IdReferencia, string.Empty);
+                            ObraDAO.Instance.FinalizarPrePagamentoVista(session, dados.IdReferencia);
                             break;
                         }
                     default:
