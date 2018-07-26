@@ -33,10 +33,8 @@ namespace Glass.UI.Web.Utils
                 var lstEtiquetas = new List<string>();
                 var pedidosAlteradosAposExportacao = new List<int>();
 
-            if (EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
-                EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
-            {
-                try
+                if (EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+                    EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter)
                 {
                     // Lê o arquivo de otimização enviado
                     XmlDocument xmlDoc = new XmlDocument();
@@ -222,9 +220,38 @@ namespace Glass.UI.Web.Utils
                     {
                         continue;
                     }
-                        
+
+                    var quantidadePecaImpressa = ProdutoImpressaoDAO.Instance.QuantidadeImpressa(null, (int)ppe.IdProdPed);
+
+                    if (ppe.IsProdutoLaminadoComposicao || ppe.IsProdFilhoLamComposicao)
+                    {
+                        var quantidadeAImprimir = 0;
+
+                        if (ppe.IsProdutoLaminadoComposicao)
+                        {
+                            quantidadeAImprimir = (int)ppe.QtdeImpressaoProdLamComposicao - quantidadePecaImpressa;
+                        }
+                        else if (ppe.IsProdFilhoLamComposicao)
+                        {
+                            quantidadeAImprimir = (int)(ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, ppe.IdProdPedParent.Value) * ppe.Qtde);
+                            var idProdPedParentPai = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, ppe.IdProdPedParent.Value);
+
+                            if (idProdPedParentPai > 0)
+                            {
+                                quantidadeAImprimir *= (int)ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(null, idProdPedParentPai.Value);
+                            }
+
+                            quantidadeAImprimir -= quantidadePecaImpressa;
+                        }
+
+                        if (quantidadeAImprimir == 0)
+                        {
+                            qtdPecasImpressas -= quantidadePecaImpressa;
+                            continue;
+                        }
+                    }
                     // Verificar se o produto já foi totalmente impresso
-                    if (ppe.Qtde == ppe.QtdImpresso && !ppe.PecaReposta)
+                    else if (ppe.Qtde == ppe.QtdImpresso && !ppe.PecaReposta)
                     {
                         qtdPecasImpressas -= ProdutoImpressaoDAO.Instance.QuantidadeImpressa(null, (int)ppe.IdProdPed);
                         continue;

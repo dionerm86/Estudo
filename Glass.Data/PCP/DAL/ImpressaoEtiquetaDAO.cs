@@ -1789,10 +1789,10 @@ namespace Glass.Data.DAL
 
                         if (prodPed.IdPedido > 0)
                         {
-                            var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido);
+                            var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido).GetValueOrDefault();
+                            var dataUltimaExportacaoEtiqueta = ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta);
 
-                            if (dataFinalizacaoPCP != null && dataFinalizacaoPCP >
-                                ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta))
+                            if (dataUltimaExportacaoEtiqueta != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta)
                             {
                                 pedidosAlteradosAposExportacao.Add((int)prodPed.IdPedido);
                                 continue;
