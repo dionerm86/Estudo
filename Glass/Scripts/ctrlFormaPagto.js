@@ -589,7 +589,7 @@ function alteraVisibilidade(nomeTabela, numPagto, formaPagto, atualizarOpcoesSel
         if (fp != "")
             formaPagtoSelecionada = true;
 
-        if (fp != "boleto" && fp != "deposito" && fp != "cartao" && fp != "cartao nao identificado" && fp != "")
+        if (fp != "boleto" && fp != "deposito" && fp != "")
             habilitarDataRec = false;
     }
 

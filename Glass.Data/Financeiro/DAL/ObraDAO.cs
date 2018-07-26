@@ -550,9 +550,7 @@ namespace Glass.Data.DAL
 
                     CriarPrePagamentoVista(transaction, caixaDiario, juros, obra, recebimentoGerarCredito);
 
-                    var dataRecebimento = obra.DataRecebimento == null ? string.Empty : obra.DataRecebimento?.ToString("dd/MM/yyyy");
-
-                    FinalizarPrePagamentoVista(transaction, (int)obra.IdObra, dataRecebimento);
+                    FinalizarPrePagamentoVista(transaction, (int)obra.IdObra);
 
                     transaction.Commit();
                     transaction.Close();
@@ -841,7 +839,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    FinalizarPrePagamentoVista(transaction, idObra, string.Empty);
+                    FinalizarPrePagamentoVista(transaction, idObra);
 
                     transaction.Commit();
                     transaction.Close();
@@ -860,14 +858,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Finaliza o pré pagamento à vista da obra.
         /// </summary>
-        public void FinalizarPrePagamentoVista(GDASession session, int idObra, string dataRecebimentoObra)
+        public void FinalizarPrePagamentoVista(GDASession session, int idObra)
         {
             #region Declaração de variáveis
 
             UtilsFinanceiro.DadosRecebimento retorno = null;
             var usuarioLogado = UserInfo.GetUserInfo;
             var obra = GetElement(session, (uint)idObra);
-            var dataRecebimento = !string.IsNullOrEmpty(dataRecebimentoObra) ? dataRecebimentoObra : obra.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
+            var dataRecebimento = obra.DataRecebimento.GetValueOrDefault(DateTime.Now).ToString("dd/MM/yyyy");
             var totalPago = obra.TotalPago.GetValueOrDefault();
             var totalPagar = obra.TotalPagar.GetValueOrDefault();
             var idLojaRecebimento = obra.IdLojaRecebimento.GetValueOrDefault();
