@@ -7,7 +7,7 @@ using Glass.Data.Model;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro
+namespace Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro.Lista
 {
     /// <summary>
     /// Classe que encapsula os dados da lista de observações do financeiro.

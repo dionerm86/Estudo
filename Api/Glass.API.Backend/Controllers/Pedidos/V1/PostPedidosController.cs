@@ -75,7 +75,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="finalizarConferencia">Define se após gerar a conferência a mesma será finalizada.</param>
         /// <returns>Um status HTTP indicando se o pedido foi finalizado.</returns>
         [HttpPost]
-        [Route("{id}/finalizar")]
+        [Route("{id}/confirmarGerandoConferencia")]
         [SwaggerResponse(202, "Pedido finalizado e gerado conferência.", Type = typeof(MensagemDto))]
         [SwaggerResponse(300, "Necessário definir se o pedido será enviado para validação no financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na finalização do pedido.", Type = typeof(MensagemDto))]

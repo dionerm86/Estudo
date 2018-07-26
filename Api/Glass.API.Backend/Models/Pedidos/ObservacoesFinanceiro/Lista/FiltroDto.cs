@@ -5,7 +5,7 @@
 using Glass.API.Backend.Helper.Pedidos;
 using Glass.API.Backend.Models.Genericas;
 
-namespace Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro
+namespace Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro.Lista
 {
     /// <summary>
     /// Classe que contém os dados de filtro de pedido.
@@ -19,10 +19,5 @@ namespace Glass.API.Backend.Models.Pedidos.ObservacoesFinanceiro
             : base(item => new TraducaoOrdenacaoListaObservacoesFinanceiro(item.Ordenacao))
         {
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador do pedido.
-        /// </summary>
-        public int IdPedido { get; set; }
     }
 }

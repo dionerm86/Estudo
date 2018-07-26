@@ -194,57 +194,6 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         }
 
         /// <summary>
-        /// Recupera a lista de observações do financeiro para um pedido.
-        /// </summary>
-        /// <param name="filtro">Os filtros de entrada para o método.</param>
-        /// <returns>Uma lista JSON com as observações do financeiro encontradas.</returns>
-        [HttpGet]
-        [Route("{idPedido}/observacoesFinanceiro")]
-        [SwaggerResponse(200, "Observações do financeiro sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Pedidos.ObservacoesFinanceiro.ListaObservacaoFinanceiroDto>))]
-        [SwaggerResponse(204, "Observações do financeiro não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Observações do financeiro paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Pedidos.ObservacoesFinanceiro.ListaObservacaoFinanceiroDto>))]
-        [SwaggerResponse(400, "Erro de valor ou formato do campo id.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Pedido informado não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterObservacoesFinanceiro([FromUri] Models.Pedidos.ObservacoesFinanceiro.FiltroDto filtro)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var validacao = this.ValidarIdPedido(filtro.IdPedido);
-
-                if (validacao != null)
-                {
-                    return validacao;
-                }
-
-                filtro = filtro ?? new Models.Pedidos.ObservacoesFinanceiro.FiltroDto();
-
-                var observacoes = ObservacaoFinalizacaoFinanceiroDAO.Instance.ObtemObservacoesFinalizacao(
-                    (uint)filtro.IdPedido,
-                    0,
-                    null,
-                    0,
-                    null,
-                    null,
-                    null,
-                    filtro.ObterTraducaoOrdenacao(),
-                    filtro.ObterPrimeiroRegistroRetornar(),
-                    filtro.NumeroRegistros);
-
-                return this.ListaPaginada(
-                    observacoes.Select(o => new Models.Pedidos.ObservacoesFinanceiro.ListaObservacaoFinanceiroDto(o)),
-                    filtro,
-                    () => ObservacaoFinalizacaoFinanceiroDAO.Instance.ObtemNumeroObservacoesFinalizacao(
-                        (uint)filtro.IdPedido,
-                        0,
-                        null,
-                        0,
-                        null,
-                        null,
-                        null));
-            }
-        }
-
-        /// <summary>
         /// Recupera a lista de situações de pedido.
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos de situações de pedido.</returns>

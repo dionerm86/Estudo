@@ -260,6 +260,8 @@
     <Compile Include="Controllers\Lojas\V1\LojasController.cs" />
     <Compile Include="Controllers\Pedidos\V1\AmbientesPedido\AmbientesPedidoController.cs" />
     <Compile Include="Controllers\Pedidos\V1\GetPedidosController.cs" />
+    <Compile Include="Controllers\Pedidos\V1\ObservacoesFinanceiro\GetObservacoesFinanceiroController.cs" />
+    <Compile Include="Controllers\Pedidos\V1\ObservacoesFinanceiro\ObservacoesFinanceiroController.cs" />
     <Compile Include="Controllers\Pedidos\V1\PatchPedidosController.cs" />
     <Compile Include="Controllers\Orcamentos\V1\GetOrcamentosController.cs" />
     <Compile Include="Controllers\Orcamentos\V1\OrcamentosController.cs" />
@@ -395,14 +397,14 @@
     <Compile Include="Models\Pedidos\Detalhe\DetalheDto.cs" />
     <Compile Include="Models\Pedidos\Detalhe\PermissoesDto.cs" />
     <Compile Include="Models\Pedidos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\FiltroDto.cs" />
+    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Pedidos\Lista\DatasEntregaDto.cs" />
     <Compile Include="Models\Pedidos\Lista\LiberacaoDto.cs" />
     <Compile Include="Models\Pedidos\Lista\ListaDto.cs" />
     <Compile Include="Models\Pedidos\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Pedidos\Lista\ProducaoDto.cs" />
     <Compile Include="Models\Pedidos\Lista\SinalEPagamentoAntecipadoDto.cs" />
-    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\ListaObservacaoFinanceiroDto.cs" />
+    <Compile Include="Models\Pedidos\ObservacoesFinanceiro\Lista\ListaObservacaoFinanceiroDto.cs" />
     <Compile Include="Models\Pedidos\Detalhe\ObraDto.cs" />
     <Compile Include="Models\Pedidos\Detalhe\ParcelasDto.cs" />
     <Compile Include="Models\Pedidos\Detalhe\SinalDto.cs" />
