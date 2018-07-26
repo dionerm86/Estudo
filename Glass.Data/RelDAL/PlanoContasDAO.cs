@@ -104,15 +104,15 @@ namespace Glass.Data.RelDAL
                 (select descricao from categoria_conta where numSeq > plano_contas.numSeqCateg and tipo=" +
                 (int)Glass.Data.Model.TipoCategoriaConta.SubtotalAgregado + " order by numSeq limit 1) as grupoSubtotalAgregado";
 
-            string campoGeralSintetico = selecionar ? "IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, " +
+            string campoGeralSintetico = selecionar ? "IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, tipoMov, " +
                 "ABS(CAST(SUM(Valor) as DECIMAL(12,2))) as Valor, IdsPagto" + camposVenc + grupoSubtotal + (agruparMes ? ", Mes, Ano" : "") :
                 "idConta, ABS(CAST(SUM(Valor) as DECIMAL(12,2))) as Valor" + camposVenc;
 
-            string campoGeralAnalitico = selecionar ? @"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornec, 
+            string campoGeralAnalitico = selecionar ? @"IdConta, PlanoConta, GrupoConta, NumSeqGrupo, DescrCategoria, NumSeqCateg, TipoCategoria, NomeCliente, NomeFornec, TipoMov, 
                 CAST(Valor as DECIMAL(12,2)) as Valor, Data, IdCompra, " + campoIdPagto + ", IdDeposito, IdPedido, IdAcerto, IdLiberarPedido, Obs" + camposVenc + grupoSubtotal : "Sum(cont)";
 
             string camposCxDiario = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
-                cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, null as NomeFornec, 
+                cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, null as NomeFornec, c.TipoMov,
                 " + campoValorCxDiario + @" as Valor, c.DataCad as Data, null as idCompra, null as idPagto, NULL AS IdsPagto, null as IdDeposito, c.idPedido, c.idAcerto,
                 c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" + (agruparMes ? ", month(c.dataCad) as Mes, year(c.dataCad) as Ano" : "") :
                 (sintetico ? "c.IdConta, SUM(c.Valor*if(c.TipoMov=1,1,-1)) as Valor" : "Count(*) as cont");
@@ -122,7 +122,7 @@ namespace Glass.Data.RelDAL
                     selecionar ?
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
-                            null as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 
+                            null as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, null as TipoMov,
                             {0} * -1 as Valor, if (cp.idChequePagto is not null, ch.dataReceb, cp.DataPagto) as Data, cp.IdCompra, {2},
                             null as IdDeposito, null as IdPedido, null as IdAcerto, null as IdLiberarPedido, cp.DataVenc,
                             Convert(Concat('[', Coalesce(cp.Obs, ''), '];[', Coalesce(pag.obs, ''), '];[', Coalesce(imps.Obs, ''),']') Using utf8) As Obs {1}",
@@ -135,7 +135,7 @@ namespace Glass.Data.RelDAL
             // pois o valor da movimentação já é o valor recebido em determinada forma de pagamento.
             var camposCxGeral = selecionar ? @"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                 cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria, cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, 
-                 " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, " +
+                c.TipoMov, " + campoValorCxGeral + @" as Valor, Cast(Date_Format(Coalesce(c.DataMovBanco, c.DataMov), '%Y/%m/%d') as Date) as Data, c.idCompra, " +
                 (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(c.IdPagto)) AS IdsPagto" : "c.IdPagto, CAST(c.IdPagto AS CHAR) AS IdsPagto") +
                 @", null as idDeposito, c.idPedido, c.idAcerto, c.idLiberarPedido, null as DataVenc, Convert(c.Obs Using utf8) As Obs" +
                 (agruparMes ? ", month(Coalesce(c.dataMovBanco, c.dataMov)) as Mes, year(Coalesce(c.dataMovBanco, c.dataMov)) as Ano" : "") :
@@ -146,7 +146,7 @@ namespace Glass.Data.RelDAL
                     selecionar ?
                         string.Format(@"p.idConta, p.Descricao as PlanoConta, g.Descricao as GrupoConta, cat.idCategoriaConta, 
                             cat.Descricao as DescrCategoria,g.numSeq as NumSeqGrupo, cat.numSeq as NumSeqCateg, cat.Tipo As TipoCategoria,
-                            cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor,
+                            cli.Nome as NomeCliente, Coalesce(f.RazaoSocial, f.NomeFantasia) as NomeFornecedor, m.TipoMov,
                             {0} as Valor, Cast(Date_Format(m.DataMov, '%Y/%m/%d') as Date) as Data, null as idCompra, " +
                             (!detalhado ? "NULL AS IdPagto, GROUP_CONCAT(DISTINCT(m.IdPagto)) AS IdsPagto" : "m.IdPagto, CAST(m.IdPagto AS CHAR) AS IdsPagto") +
                             @", m.idDeposito, m.idPedido, m.idAcerto, m.idLiberarPedido, null as DataVenc, Convert(m.Obs Using utf8) As Obs {1}",

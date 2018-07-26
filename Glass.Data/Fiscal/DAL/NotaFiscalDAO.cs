@@ -862,6 +862,8 @@ namespace Glass.Data.DAL
                                         new GDAParameter("?infCompl", obsCfop + ". " + nf.InfCompl));
                             }
 
+                            prod.IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo = prodNf.IdNaturezaOperacao;
+
                             #region Transferência de nota fiscal
 
                             if (FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf)
@@ -986,8 +988,6 @@ namespace Glass.Data.DAL
                                 FiscalConfig.NotaFiscalConfig.AliquotaIcmsStRatearIpiNfPedido != ConfigNFe.TipoCalculoIcmsStNf.NaoCalcular) &&
                                 prod.AliqIPI > 0 && calcIpi)
                             {
-                                prod.IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo = prodNf.IdNaturezaOperacao;
-
                                 decimal aliqIcms = calcIcmsSt ?
                                     (FiscalConfig.NotaFiscalConfig.AliquotaIcmsStRatearIpiNfPedido == ConfigNFe.TipoCalculoIcmsStNf.CalculoPadrao ? prod.AliqICMSInterna :
                                     FiscalConfig.NotaFiscalConfig.AliquotaIcmsStRatearIpiNfPedido == ConfigNFe.TipoCalculoIcmsStNf.AliquotaIcmsStComIpi ?
@@ -4363,7 +4363,10 @@ namespace Glass.Data.DAL
 
                 var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList() ?? new List<PagtoNotaFiscal>();
 
-                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0)
+                var idCfopNotaFiscal = GetIdCfop(null, idNf);
+                bool cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(null, idCfopNotaFiscal);
+
+                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0 && !cfopDevolucao)
                 {
                     throw new Exception("Informe os valores de recebimento da nota fiscal.");
                 }
