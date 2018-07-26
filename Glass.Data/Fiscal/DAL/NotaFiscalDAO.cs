@@ -4363,7 +4363,10 @@ namespace Glass.Data.DAL
 
                 var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList() ?? new List<PagtoNotaFiscal>();
 
-                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0)
+                var idCfopNotaFiscal = GetIdCfop(null, idNf);
+                bool cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(null, idCfopNotaFiscal);
+
+                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0 && !cfopDevolucao)
                 {
                     throw new Exception("Informe os valores de recebimento da nota fiscal.");
                 }
