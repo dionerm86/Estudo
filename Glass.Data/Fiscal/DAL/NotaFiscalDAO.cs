@@ -1201,32 +1201,38 @@ namespace Glass.Data.DAL
 
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
-                            var liberacao = idsLiberarPedidos?.Split(',');
+                            ContasReceber[] contasReceber = null;
+                            var idLiberarPedido = (idsLiberarPedidos?.Split(',')?[0]?.StrParaInt()).GetValueOrDefault();
+                            var idPedido = (idsPedidos?.Split(',')?[0]?.StrParaInt()).GetValueOrDefault();
 
-                            if (liberacao?.Count() == 1)
+                            if (idLiberarPedido > 0)
                             {
-                                var contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, liberacao.FirstOrDefault().StrParaUint(), true)?.ToArray();
+                                contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, (uint)idLiberarPedido, true)?.ToArray();
+                            }
+                            else if (idPedido > 0)
+                            {
+                                contasReceber = ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
+                            }
 
-                                if (contasReceber?.Length > 0)
+                            if (contasReceber?.Length > 0)
+                            {
+                                nf.NumParc = contasReceber.Length;
+                                nf.DatasParcelas = new DateTime[nf.NumParc.Value];
+                                nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+
+                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+
+                                for (var i = 0; i < contasReceber.Length; i++)
                                 {
-                                    nf.NumParc = contasReceber.Length;
-                                    nf.DatasParcelas = new DateTime[nf.NumParc.Value];
-                                    nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+                                    nf.DatasParcelas[i] = contasReceber[i].DataVec;
+                                    nf.ValoresParcelas[i] = valorParcelas;
+                                }
 
-                                    var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+                                var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
 
-                                    for (var i = 0; i < contasReceber.Length; i++)
-                                    {
-                                        nf.DatasParcelas[i] = contasReceber[i].DataVec;
-                                        nf.ValoresParcelas[i] = valorParcelas;
-                                    }
-
-                                    var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
-
-                                    if (difParcelaNota != 0)
-                                    {
-                                        nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
-                                    }
+                                if (difParcelaNota != 0)
+                                {
+                                    nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
                                 }
                             }
 
