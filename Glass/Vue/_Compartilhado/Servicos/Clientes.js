@@ -109,9 +109,7 @@ Servicos.Clientes = (function(http) {
     ativar: function (filtro) {
       filtro = filtro || {};
 
-      return http().post(API + 'ativar', {
-        params: filtro
-      });
+      return http().post(API + 'ativar', filtro);
     },
 
     /**
@@ -123,12 +121,7 @@ Servicos.Clientes = (function(http) {
       filtro = filtro || {};
       filtro.idVendedorNovo = idVendedorNovo;
 
-      return http().post(API + 'alterarVendedor', {
-        params: {
-          filtro,
-          idVendedorNovo: idVendedorNovo
-        }
-      });
+      return http().post(API + 'alterarVendedor', filtro);
     },
 
     /**
@@ -140,12 +133,7 @@ Servicos.Clientes = (function(http) {
       filtro = filtro || {};
       filtro.idRotaNova = idRotaNova;
 
-      return http().post(API + 'alterarRota', {
-        params: {
-          filtro,
-          idRotaNova: idRotaNova
-        }
-      });
+      return http().post(API + 'alterarRota', filtro);
     }
   };
 })(function() {

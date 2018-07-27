@@ -104,8 +104,8 @@ const app = new Vue({
     abrirListaClientes: function (ficha, exportarExcel) {
       var filtroReal = this.formatarFiltros_();
 
-      if (filtro.nomeCliente && filtro.nomeCliente.indexOf('&') >= 0) {
-        this.exibirMensagem("O filtro Nome/Apelido do cliente não deve conter o caractere '&', pois ele é utilizado como chave para geração do relatório. Tente filtrar sem o nome do cliente ou apenas com a primeira parte do nome antes do '&'.");
+      if (this.filtro.nomeCliente && this.filtro.nomeCliente.indexOf('&') >= 0) {
+        this.exibirMensagem("O filtro nome do cliente não deve conter o caractere '&', pois ele é utilizado como chave para geração do relatório. Tente filtrar sem o nome do cliente ou apenas com a primeira parte do nome antes do '&'.");
         return false;
       }
 
@@ -119,6 +119,28 @@ const app = new Vue({
     },
 
     /**
+     * Ativa/inativa o cliente.
+     * @param {Object} item O cliente que será ativado/inativado.
+     */
+    alterarSituacao: function (item) {
+      if (!this.perguntar("Tem certeza que deseja alterar a situação deste cliente?")) {
+        return;
+      }
+
+      var vm = app;
+
+      Servicos.Clientes.alterarSituacao(item.id)
+        .then(function (resposta) {
+          vm.atualizarLista();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
+
+    /**
      * Ativa os clientes, com base nos filtros da tela.
      */
     ativarClientes: function () {
@@ -128,13 +150,12 @@ const app = new Vue({
 
       var vm = this;
 
-      var filtroUsar = this.clonar(filtro || {});
+      var filtroUsar = this.clonar(this.filtro || {});
 
       Servicos.Clientes.ativar(filtroUsar)
         .then(function (resposta) {
           vm.exibirMensagem('Clientes ativados com sucesso!');
-          vm.filtro.refresh_++;
-          vm.filtrar();
+          vm.atualizarLista();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -151,52 +172,10 @@ const app = new Vue({
     },
 
     /**
-     * Altera o vendedor dos clientes definidos nos filtros.
-     */
-    alterarVendedor: function (idVendedorNovo) {
-      var vm = this;
-
-      var filtroUsar = this.clonar(filtro || {});
-
-      Servicos.Clientes.alterarVendedor(filtroUsar, idVendedorNovo)
-        .then(function (resposta) {
-          vm.exibirMensagem('Vendedor alterado com sucesso!');
-          vm.filtro.refresh_++;
-          vm.filtrar();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
-    },
-
-    /**
      * Abre uma tela para alterar as rotas dos clientes, com base nos filtros da tela.
      */
     abrirAlteracaoRota: function () {
       this.abrirJanela(200, 400, '../Utils/AlterarRotaClientes.aspx?vue=true');
-    },
-
-    /**
-     * Altera a rota dos clientes definidos nos filtros.
-     */
-    alterarRota: function (idRotaNova) {
-      var vm = this;
-
-      var filtroUsar = this.clonar(filtro || {});
-
-      Servicos.Clientes.alterarRota(filtroUsar, idRotaNova)
-        .then(function (resposta) {
-          vm.exibirMensagem('Rota alterada com sucesso!');
-          vm.filtro.refresh_++;
-          vm.filtrar();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
     },
 
     /**
@@ -212,31 +191,7 @@ const app = new Vue({
 
       Servicos.Clientes.excluir(item.id)
         .then(function (resposta) {
-          vm.filtro.refresh_++;
-          vm.filtrar();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
-    },
-
-    /**
-     * Ativa/inativa o cliente.
-     * @param {Object} item O cliente que será ativado/inativado.
-     */
-    alterarSituacao: function (item) {
-      if (!this.perguntar("Tem certeza que deseja alterar a situação deste cliente?")) {
-        return;
-      }
-
-      var vm = this;
-
-      Servicos.Clientes.alterarSituacao(item.id)
-        .then(function (resposta) {
-          vm.filtro.refresh_++;
-          vm.filtrar();
+          vm.atualizarLista();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -256,35 +211,42 @@ const app = new Vue({
         }
       }
 
-      incluirFiltro('idCli', filtro.id);
-      incluirFiltro('nome', filtro.nomeCliente);
-      incluirFiltro('cpfCnpj', filtro.cpfCnpj);
-      incluirFiltro('idLoja', filtro.idLoja);
-      incluirFiltro('telefone', filtro.telefone);
-      incluirFiltro('endereco', filtro.endereco);
-      incluirFiltro('bairro', filtro.bairro);
-      incluirFiltro('idCidade', filtro.idCidade);
-      incluirFiltro('idTipoCliente', filtro.tipo);
-      incluirFiltro('situacao', filtro.situacao);
-      incluirFiltro('codRota', filtro.codRota);
-      incluirFiltro('idFunc', filtro.idVendedor);
-      incluirFiltro('tipoFiscal', filtro.tipoFiscal);
-      incluirFiltro('formasPagto', filtro.formasPagamento);
-      incluirFiltro('dataCadIni', filtro.periodoCadastroInicio);
-      incluirFiltro('dataCadFim', filtro.periodoCadastroFim);
-      incluirFiltro('dataSemCompraIni', filtro.periodoSemCompraInicio);
-      incluirFiltro('dataSemCompraFim', filtro.periodoSemCompraFim);
-      incluirFiltro('dataInativadoIni', filtro.periodoInativadoInicio);
-      incluirFiltro('dataInativadoFim', filtro.periodoInativadoFim);
-      incluirFiltro('idTabelaDesconto', filtro.idTabelaDescontoAcrescimo);
-      incluirFiltro('apenasSemRota', filtro.apenasSemRota);
-      incluirFiltro('agruparVend', filtro.agruparVendedor);
-      incluirFiltro('exibirHistorico', filtro.exibirHistorico);
-      incluirFiltro('uf', filtro.uf);
+      incluirFiltro('idCli', this.filtro.id);
+      incluirFiltro('nome', this.filtro.nomeCliente);
+      incluirFiltro('cpfCnpj', this.filtro.cpfCnpj);
+      incluirFiltro('idLoja', this.filtro.idLoja);
+      incluirFiltro('telefone', this.filtro.telefone);
+      incluirFiltro('endereco', this.filtro.endereco);
+      incluirFiltro('bairro', this.filtro.bairro);
+      incluirFiltro('idCidade', this.filtro.idCidade);
+      incluirFiltro('idTipoCliente', this.filtro.tipo);
+      incluirFiltro('situacao', this.filtro.situacao);
+      incluirFiltro('codRota', this.filtro.codigoRota);
+      incluirFiltro('idFunc', this.filtro.idVendedor);
+      incluirFiltro('tipoFiscal', this.filtro.tipoFiscal);
+      incluirFiltro('formasPagto', this.filtro.formasPagamento);
+      incluirFiltro('dataCadIni', (this.filtro.periodoCadastroInicio || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('dataCadFim', (this.filtro.periodoCadastroFim || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('dataSemCompraIni', (this.filtro.periodoSemCompraInicio || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('dataSemCompraFim', (this.filtro.periodoSemCompraFim || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('dataInativadoIni', (this.filtro.periodoInativadoInicio || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('dataInativadoFim', (this.filtro.periodoInativadoFim || {}).toLocaleDateString('pt-BR'));
+      incluirFiltro('idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo);
+      incluirFiltro('apenasSemRota', this.filtro.apenasSemRota);
+      incluirFiltro('agruparVend', this.filtro.agruparVendedor);
+      incluirFiltro('exibirHistorico', this.filtro.exibirHistorico);
+      incluirFiltro('uf', this.filtro.uf);
 
       return filtros.length > 0
         ? '&' + filtros.join('&')
         : '';
+    },
+
+    /**
+     * Atualiza a lista de clientes
+     */
+    atualizarLista: function () {
+      this.$children[1].atualizar();
     }
   },
 
@@ -308,3 +270,52 @@ const app = new Vue({
       });
   }
 });
+
+var AlteracaoEmLote = AlteracaoEmLote || {};
+
+/**
+ * Objeto com os dados para alteração de dados de cliente em lote.
+ */
+AlteracaoEmLote.Popup = {
+  /**
+   * Altera a rota dos clientes definidos nos filtros.
+   * @param {?number} idRotaNova O identificador da nova rota que os clientes pertencerão.
+   */
+  alterarRota: function (idRotaNova) {
+    var vm = app;
+
+    var filtroUsar = app.clonar(app.filtro || {});
+
+    Servicos.Clientes.alterarRota(filtroUsar, idRotaNova)
+      .then(function (resposta) {
+        vm.exibirMensagem('Rota alterada com sucesso!');
+        vm.atualizarLista();
+      })
+      .catch(function (erro) {
+        if (erro && erro.mensagem) {
+          vm.exibirMensagem('Erro', erro.mensagem);
+        }
+      });
+  },
+
+  /**
+   * Altera o vendedor dos clientes definidos nos filtros.
+   * @param {?number} idVendedorNovo O identificador do novo vendedor ao qual os clientes pertencerão.
+   */
+  alterarVendedor: function (idVendedorNovo) {
+    var vm = app;
+
+    var filtroUsar = app.clonar(app.filtro || {});
+
+    Servicos.Clientes.alterarVendedor(filtroUsar, idVendedorNovo)
+      .then(function (resposta) {
+        vm.exibirMensagem('Vendedor alterado com sucesso!');
+        vm.atualizarLista();
+      })
+      .catch(function (erro) {
+        if (erro && erro.mensagem) {
+          vm.exibirMensagem('Erro', erro.mensagem);
+        }
+      });
+  }
+};

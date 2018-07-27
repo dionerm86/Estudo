@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Utils
 
                 if (this.Request["vue"] == "true")
                 {
-                    retorno = $"window.opener.app.alterarRota({idRota}); window.close();";
+                    retorno = $"window.opener.AlteracaoEmLote.Popup.alterarRota({idRota}); window.close();";
                 }
                 else
                 {

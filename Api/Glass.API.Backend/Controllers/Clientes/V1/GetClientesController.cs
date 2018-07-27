@@ -79,7 +79,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.PeriodoInativadoFim,
                         null,
                         null,
-                        filtro.IdTabelaDesconto,
+                        filtro.IdTabelaDescontoAcrescimo,
                         filtro.ApenasSemRota,
                         0,
                         filtro.Uf,

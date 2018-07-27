@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Utils
 
                 if (this.Request["vue"] == "true")
                 {
-                    retorno = $"window.opener.app.alterarVendedor({idVendedor}); window.close();";
+                    retorno = $"window.opener.AlteracaoEmLote.Popup.alterarVendedor({idVendedor}); window.close();";
                 }
                 else
                 {

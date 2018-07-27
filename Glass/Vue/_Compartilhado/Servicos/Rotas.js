@@ -11,8 +11,13 @@ Servicos.Rotas = (function(http) {
      * Recupera a lista de rotas para uso no controle de seleção.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    obterFiltro: function () {
-      return http().get(API + 'filtro');
+    obterFiltro: function (id, codigo) {
+      return http().get(API + 'filtro', {
+        params: {
+          id: id,
+          codigo: codigo
+        }
+      });
     }
   };
 })(function() {

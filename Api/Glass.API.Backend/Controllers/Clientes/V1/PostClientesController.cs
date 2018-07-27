@@ -66,7 +66,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         [HttpPost]
         [Route("ativar")]
         [SwaggerResponse(202, "Cliente ativados.", Type = typeof(MensagemDto))]
-        public IHttpActionResult Ativar([FromUri] Models.Clientes.Lista.FiltroDto filtro)
+        public IHttpActionResult Ativar([FromBody] Models.Clientes.Lista.FiltroDto filtro)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.Tipo,
                         filtro.CodigoRota,
                         filtro.IdVendedor,
-                        filtro.TipoFiscal.ToArray(),
+                        filtro.TipoFiscal != null ? filtro.TipoFiscal.ToArray() : null,
                         filtro.FormasPagamento,
                         filtro.PeriodoCadastroInicio,
                         filtro.PeriodoCadastroFim,
@@ -92,7 +92,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.PeriodoSemCompraFim,
                         filtro.PeriodoInativadoInicio,
                         filtro.PeriodoInativadoFim,
-                        filtro.IdTabelaDesconto,
+                        filtro.IdTabelaDescontoAcrescimo,
                         filtro.ApenasSemRota,
                         filtro.Uf);
 
@@ -113,12 +113,11 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         /// Altera o vendedor dos clientes com base no filtro passado.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos clientes.</param>
-        /// <param name="idVendedorNovo">Vendedor que será alterado.</param>
         /// <returns>Um status HTTP indicando se o vendedor os clientes foram alterados.</returns>
         [HttpPost]
         [Route("alterarVendedor")]
         [SwaggerResponse(202, "Vendedor alterado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarVendedor([FromUri] Models.Clientes.Lista.FiltroDto filtro, int? idVendedorNovo)
+        public IHttpActionResult AlterarVendedor([FromBody] Models.Clientes.Lista.FiltroDto filtro)
         {
             try
             {
@@ -134,10 +133,10 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.Bairro,
                         filtro.IdCidade,
                         filtro.Tipo,
-                        filtro.Situacao.Select(f => (int)f).ToArray(),
+                        filtro.Situacao != null ? filtro.Situacao.Select(f => (int)f).ToArray() : null,
                         filtro.CodigoRota,
                         filtro.IdVendedor,
-                        filtro.TipoFiscal.ToArray(),
+                        filtro.TipoFiscal != null ? filtro.TipoFiscal.ToArray() : null,
                         filtro.FormasPagamento,
                         filtro.PeriodoCadastroInicio,
                         filtro.PeriodoCadastroFim,
@@ -145,9 +144,9 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.PeriodoSemCompraFim,
                         filtro.PeriodoInativadoInicio,
                         filtro.PeriodoInativadoFim,
-                        filtro.IdTabelaDesconto,
+                        filtro.IdTabelaDescontoAcrescimo,
                         filtro.ApenasSemRota,
-                        idVendedorNovo.GetValueOrDefault(),
+                        filtro.IdVendedorNovo.GetValueOrDefault(),
                         filtro.Uf);
 
                 if (!resultado)
@@ -167,12 +166,11 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         /// Altera a rota dos clientes com base no filtro passado.
         /// </summary>
         /// <param name="filtro">Os filtros para a busca dos clientes.</param>
-        /// <param name="idRotaNova">Rota que será alterada.</param>
         /// <returns>Um status HTTP indicando se a rota foi alterada nos clientes.</returns>
         [HttpPost]
         [Route("alterarRota")]
         [SwaggerResponse(202, "Rota alterada.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarRota([FromUri] Models.Clientes.Lista.FiltroDto filtro, int? idRotaNova)
+        public IHttpActionResult AlterarRota([FromBody] Models.Clientes.Lista.FiltroDto filtro)
         {
             try
             {
@@ -188,10 +186,10 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.Bairro,
                         filtro.IdCidade,
                         filtro.Tipo,
-                        filtro.Situacao.Select(f => (int)f).ToArray(),
+                        filtro.Situacao != null ? filtro.Situacao.Select(f => (int)f).ToArray() : null,
                         filtro.CodigoRota,
                         filtro.IdVendedor,
-                        filtro.TipoFiscal.ToArray(),
+                        filtro.TipoFiscal != null ? filtro.TipoFiscal.ToArray() : null,
                         filtro.FormasPagamento,
                         filtro.PeriodoCadastroInicio,
                         filtro.PeriodoCadastroFim,
@@ -199,9 +197,9 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                         filtro.PeriodoSemCompraFim,
                         filtro.PeriodoInativadoInicio,
                         filtro.PeriodoInativadoFim,
-                        filtro.IdTabelaDesconto,
+                        filtro.IdTabelaDescontoAcrescimo,
                         filtro.ApenasSemRota,
-                        idRotaNova.GetValueOrDefault(),
+                        filtro.IdRotaNova.GetValueOrDefault(),
                         filtro.Uf);
 
                 if (!resultado)

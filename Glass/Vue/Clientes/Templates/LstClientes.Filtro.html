@@ -70,13 +70,13 @@
         </span>
         <span class="form-group">
             <label for="rota">Rota</label>
-            <campo-busca-com-popup v-bind:id.sync="filtroAtual.codigoRota" v-bind:nome.sync="filtroAtual.codigoRota" v-bind:item-selecionado.sync="rotaAtual" v-bind:funcao-buscar-itens="obterItensFiltroRotas"
-                url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px" required></campo-busca-com-popup>
+            <campo-busca-com-popup v-bind:nome.sync="filtroAtual.codigoRota" v-bind:item-selecionado.sync="rotaAtual" v-bind:funcao-buscar-itens="obterItensFiltroRotas"
+                url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px"></campo-busca-com-popup>
         </span>
         <span class="form-group">
             <label>Vendedor</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idVendedor" texto-selecionar="Selecione o vendedor"
-                v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"></lista-selecao-multipla>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -92,7 +92,7 @@
         </span>
         <span class="form-group">
             <label>Período sem comprar</label>
-            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoSemComprarInicio" v-bind:data-hora-final.sync="filtroAtual.periodoSemComprarFim"></campo-data-hora-periodo>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoSemCompraInicio" v-bind:data-hora-final.sync="filtroAtual.periodoSemCompraFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

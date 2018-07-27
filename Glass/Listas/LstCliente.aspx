@@ -9,8 +9,8 @@
     %>
     <div id="app">
         <cliente-filtros :filtro.sync="filtro"></cliente-filtros>
-        <section v-if="configuracoes.cadastrarCliente">
-            <a :href="obterLinkInserirCliente()">
+        <section>
+            <a :href="obterLinkInserirCliente()" v-if="configuracoes.cadastrarCliente">
                 Inserir Cliente
             </a>
         </section>

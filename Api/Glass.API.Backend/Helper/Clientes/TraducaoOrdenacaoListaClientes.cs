@@ -32,37 +32,16 @@ namespace Glass.API.Backend.Helper.Clientes
                 case "id":
                     return "IdCli";
 
-                case "codigopedidocliente":
-                    return "CodCliente";
+                case "ultcompra":
+                    return "DtUltCompra";
 
-                case "cliente":
-                    return "NomeCliente";
-
-                case "loja":
-                    return "NomeLoja";
-
-                case "vendedor":
-                    return "NomeFunc";
-
-                case "tipovenda":
-                    return "DescrTipoVenda";
-
-                case "datafinalizacao":
-                    return "DataFin";
-
-                case "dataconfirmacao":
-                    return "DataConf";
-
-                case "idprojeto":
-                case "idorcamento":
-                case "total":
-                case "datapedido":
-                case "dataentrega":
-                case "datapronto":
-                case "dataliberacao":
+                case "cpfcnpj":
+                case "endereco":
+                case "telcont":
+                case "telcel":
                 case "situacao":
-                case "situacaoproducao":
-                case "tipopedido":
+                case "email":
+                case "totalcomprado":
                     return campo;
 
                 default:

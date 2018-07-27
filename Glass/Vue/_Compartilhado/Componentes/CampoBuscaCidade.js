@@ -41,9 +41,6 @@ Vue.component('campo-busca-cidade', {
       Servicos.Cidades.listarUfs()
         .then(function (resposta) {
           var ufAtual = vm.ufAtual;
-          if (!ufAtual && resposta.data.length > 0) {
-            ufAtual = resposta.data[0];
-          }
 
           resposta.data.sort(function(a, b) {
             return a.localeCompare(b);

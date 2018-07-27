@@ -195,8 +195,8 @@ const app = new Vue({
 
       Servicos.Pedidos.reabrir(item.id)
         .then(function(resposta) {
-          this.filtro.refresh_++;
-          this.filtrar();
+          vm.filtro.refresh_++;
+          vm.filtrar();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {

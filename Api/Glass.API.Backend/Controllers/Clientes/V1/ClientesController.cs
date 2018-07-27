@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
 
             if (validacao == null && !ClienteDAO.Instance.Exists(sessao, id))
             {
-                return this.NaoEncontrado("Pedido não encontrado.");
+                return this.NaoEncontrado("Cliente não encontrado.");
             }
 
             return null;
