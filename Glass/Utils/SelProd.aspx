@@ -1,8 +1,8 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelProd.aspx.cs" Inherits="Glass.UI.Web.Utils.SelProd"
     Title="Produtos" MasterPageFile="~/Layout.master" %>
-    
+
 <%@ Register Src="../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc1" %>
-    
+
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
 </asp:Content>
 
@@ -10,6 +10,14 @@
     <script type="text/javascript">
 
         function setProduto(codInterno, idProd) {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, idProd, codInterno);
+                    closeWindow();
+                }
+            }
+
             if (FindControl("hdfCallback", "input").value == "setVidro")
                 window.opener.setVidro(codInterno);
             else if (FindControl("hdfCallback", "input").value == "setParent")
@@ -100,7 +108,7 @@
                     <tr>
                         <td align="center">
                             <asp:GridView GridLines="None" ID="grdProduto" runat="server" AllowPaging="True"
-                                AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdProd" DataSourceID="odsProduto" 
+                                AllowSorting="True" AutoGenerateColumns="False" DataKeyNames="IdProd" DataSourceID="odsProduto"
                                 CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                                 EditRowStyle-CssClass="edit" EmptyDataText="Nenhum produto encontrado.">
                                 <Columns>
@@ -113,9 +121,9 @@
                                     </asp:TemplateField>
                                     <asp:BoundField DataField="CodInterno" HeaderText="Código" SortExpression="CodInterno" />
                                     <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
-                                    <asp:BoundField DataField="Largura" HeaderText="Largura" 
+                                    <asp:BoundField DataField="Largura" HeaderText="Largura"
                                         SortExpression="Largura" />
-                                    <asp:BoundField DataField="Altura" HeaderText="Altura" 
+                                    <asp:BoundField DataField="Altura" HeaderText="Altura"
                                         SortExpression="Altura" />
                                     <asp:BoundField DataField="DescrTipoProduto" HeaderText="Tipo" SortExpression="DescrTipoProduto" />
                                     <asp:BoundField DataField="CustoCompra" DataFormatString="{0:C}" HeaderText="Custo"
@@ -136,7 +144,7 @@
                                     </asp:BoundField>
                                     <asp:BoundField DataField="ValorReposicao" DataFormatString="{0:C}" HeaderText="Reposição"
                                         SortExpression="ValorReposicao" />
-                                    <asp:BoundField DataField="EstoqueDisponivel" HeaderText="Disponível" 
+                                    <asp:BoundField DataField="EstoqueDisponivel" HeaderText="Disponível"
                                         SortExpression="EstoqueDisponivel" />
                                     <asp:BoundField DataField="DescrEstoqueFiscal" HeaderText="Estoque Fiscal" SortExpression="DescrEstoqueFiscal" />
                                     <asp:TemplateField>

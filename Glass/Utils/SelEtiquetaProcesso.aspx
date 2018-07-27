@@ -9,6 +9,14 @@
 
         function setProc(idProcesso, codInterno, descr, codAplicacao) {
 
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, idProcesso, codInterno);
+                    closeWindow();
+                }
+            }
+
             if (GetQueryString("idProdPed") != "" && GetQueryString("idProdPed") != 'undefined' && GetQueryString("idProdPed") != null)
                 window.opener.setProcComposicao(idProcesso, codInterno, codAplicacao, GetQueryString("idProdPed"));
             else
