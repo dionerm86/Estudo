@@ -195,8 +195,7 @@ const app = new Vue({
 
       Servicos.Pedidos.reabrir(item.id)
         .then(function(resposta) {
-          this.filtro.refresh_++;
-          this.filtrar();
+          vm.atualizarLista();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -223,8 +222,7 @@ const app = new Vue({
 
       Servicos.Pedidos.alterarLiberacaoFinanceira(item.id, liberar)
         .then(function(resposta) {
-          vm.filtro.refresh_++;
-          vm.filtrar();
+          vm.atualizarLista();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -291,7 +289,7 @@ const app = new Vue({
     },
 
     /**
-     * 
+     *
      */
     abrirRelatoriosTotais: function (usarValoresQueryString, alturaJanela, larguraJanela, url, filtro) {
       var byVend = usarValoresQueryString ? GetQueryString('byVend') : '';
@@ -327,10 +325,10 @@ const app = new Vue({
       incluirFiltro('diasProntoLib', filtro.diferencaDiasEntreProntoELiberado);
       incluirFiltro('valorDe', filtro.valorPedidoMinimo);
       incluirFiltro('valorAte', filtro.valorPedidoMaximo);
-      incluirFiltro('dataCadIni', filtro.periodoCadastroInicio);
-      incluirFiltro('dataCadFim', filtro.periodoCadastroFim);
-      incluirFiltro('dataFinIni', filtro.periodoFinalizacaoInicio);
-      incluirFiltro('dataFinFim', filtro.periodoFinalizacaoFim);
+      incluirFiltro('dataCadIni', filtro.periodoCadastroInicio.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataCadFim', filtro.periodoCadastroFim.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataFinIni', filtro.periodoFinalizacaoInicio.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataFinFim', filtro.periodoFinalizacaoFim.toLocaleDateString('pt-BR'));
       incluirFiltro('funcFinalizacao', filtro.codigoUsuarioFinalizacao);
       incluirFiltro('tipo', filtro.tipo);
       incluirFiltro('fastDelivery', filtro.fastDelivery);
@@ -393,6 +391,13 @@ const app = new Vue({
             .sort()
             .join(', ')
         : '';
+    },
+
+    /**
+     * Força a atualização da lista de pedidos, com base no filtro atual.
+     */
+    atualizarLista: function () {
+      this.$children[1].atualizar();
     }
   },
 
