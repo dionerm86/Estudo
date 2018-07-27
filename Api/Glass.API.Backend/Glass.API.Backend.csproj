@@ -314,6 +314,8 @@
     <Compile Include="Helper\ITraducaoOrdenacao.cs" />
     <Compile Include="Helper\Pedidos\ProdutosPedido\ConverterCadastroAtualizacaoParaProdutoPedido.cs" />
     <Compile Include="Helper\Pedidos\ProdutosPedido\TraducaoOrdenacaoListaProdutosPedido.cs" />
+    <Compile Include="Helper\Respostas\NaoAceitavel.cs" />
+    <Compile Include="Helper\Respostas\Item.cs" />
     <Compile Include="Helper\Respostas\MultiplaEscolha.cs" />
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
@@ -359,7 +361,7 @@
     <Compile Include="Helper\Respostas\ErroInternoServidor.cs" />
     <Compile Include="Helper\Respostas\ErroValidacao.cs" />
     <Compile Include="Helper\Respostas\BaseStatusMensagem.cs" />
-    <Compile Include="Helper\Respostas\Item.cs" />
+    <Compile Include="Helper\Respostas\BaseItem.cs" />
     <Compile Include="Helper\Respostas\Lista.cs" />
     <Compile Include="Helper\Respostas\NaoEncontrado.cs" />
     <Compile Include="Helper\Respostas\ListaPaginada.cs" />
@@ -430,6 +432,7 @@
     <Compile Include="Models\Produtos\Filtro\QuantidadeDto.cs" />
     <Compile Include="Models\Produtos\Filtro\LarguraDto.cs" />
     <Compile Include="Models\Produtos\Filtro\ProdutoDto.cs" />
+    <Compile Include="Models\Produtos\Filtro\EstoqueDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

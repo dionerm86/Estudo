@@ -193,6 +193,17 @@ Vue.component('lista-itens-venda', {
       twoWay: false,
       default: true,
       validator: Mixins.Validacao.validarBooleanOuVazio
+    },
+
+    /**
+     * Função executada ao definir que o popup de falta de estoque deve ser exibido.
+     * @type {Function}
+     * @param {number} idProduto O identificador do produto atual.
+     */
+    exibirPopupFaltaEstoque: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarFuncaoOuVazio
     }
   },
 
@@ -493,6 +504,32 @@ Vue.component('lista-itens-venda', {
       } else {
         this.filhosEmExibicao.push(indice);
       }
+    },
+
+    /**
+     * Realiza a validação do estoque para o produto atual.
+     */
+    validarEstoque: function () {
+      if (!this.produtoAtual || !this.produtoAtual.estoque) {
+        return;
+      }
+
+      var valorComparar;
+      switch (this.produtoAtual.estoque.unidade) {
+        case "m²":
+          valorComparar = this.itemVenda.areaEmM2.real;
+          break;
+
+        case "ml":
+          valorComparar = this.itemVenda.altura.paraCalculo;
+          break;
+
+        default:
+          valorComparar = this.itemVenda.quantidade;
+          break;
+      }
+
+      //if (this.produtoAtual.)
     }
   },
 

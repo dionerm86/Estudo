@@ -5,7 +5,7 @@
  */
 Vue.filter('data', function (valor) {
   var data = valor
-    ? new Date(valor).toLocaleDateString()
+    ? new Date(valor).toLocaleDateString('pt-BR')
     : null;
 
   return data && data.toString() !== 'Invalid Date'

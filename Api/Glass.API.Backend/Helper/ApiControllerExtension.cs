@@ -16,7 +16,7 @@ namespace Glass.API.Backend
     internal static class ApiControllerExtension
     {
         /// <summary>
-        /// Retorna uma resposta para um único item.
+        /// Retorna uma resposta para um único item, com código de resposta HTTP 200.
         /// </summary>
         /// <typeparam name="T">O tipo do item.</typeparam>
         /// <param name="apiController">O controller que está sendo executado.</param>
@@ -131,6 +131,18 @@ namespace Glass.API.Backend
         public static SemConteudo SemConteudo(this ApiController apiController)
         {
             return new SemConteudo(apiController);
+        }
+
+        /// <summary>
+        /// Retorna uma resposta para um único item, com código de resposta HTTP 406.
+        /// </summary>
+        /// <typeparam name="T">O tipo do item.</typeparam>
+        /// <param name="apiController">O controller que está sendo executado.</param>
+        /// <param name="item">O item que será retornado.</param>
+        /// <returns>A resposta HTTP.</returns>
+        public static NaoAceitavel<T> NaoAceitavel<T>(this ApiController apiController, T item)
+        {
+            return new NaoAceitavel<T>(apiController, item);
         }
     }
 }

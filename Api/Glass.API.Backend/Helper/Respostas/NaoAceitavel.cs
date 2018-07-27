@@ -1,4 +1,4 @@
-﻿// <copyright file="Item.cs" company="Sync Softwares">
+﻿// <copyright file="NaoAceitavel.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -9,17 +9,17 @@ namespace Glass.API.Backend.Helper.Respostas
 {
     /// <summary>
     /// Classe que contém uma resposta com um único item no payload.
-    /// Status de resposta "OK".
+    /// Status de resposta "NotAcceptable".
     /// </summary>
     /// <typeparam name="T">O tipo do item.</typeparam>
-    internal class Item<T> : BaseItem<T>
+    internal class NaoAceitavel<T> : BaseItem<T>
     {
         /// <summary>
-        /// Inicia uma nova instância da classe <see cref="Item{T}"/>.
+        /// Inicia uma nova instância da classe <see cref="NaoAceitavel{T}"/>.
         /// </summary>
         /// <param name="apiController">O controller que está sendo executado.</param>
         /// <param name="item">O item que será retornado.</param>
-        public Item(ApiController apiController, T item)
+        public NaoAceitavel(ApiController apiController, T item)
             : base(apiController, item)
         {
         }
@@ -27,7 +27,7 @@ namespace Glass.API.Backend.Helper.Respostas
         /// <inheritdoc/>
         protected override HttpStatusCode CodigoStatus
         {
-            get { return HttpStatusCode.OK; }
+            get { return HttpStatusCode.NotAcceptable; }
         }
     }
 }

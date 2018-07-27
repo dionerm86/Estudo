@@ -165,6 +165,13 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
         [JsonProperty("tamanhoMaximoObra")]
         public double? TamanhoMaximoObra { get; set; }
 
+        /// <summary>
+        /// Obtém ou define os dados de estoque do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("estoque")]
+        public EstoqueDto Estoque { get; set; }
+
         private AlturaDto ObterAltura(Produto produto, TipoCalculoGrupoProd tipoCalculo)
         {
             var tiposCalculoAlturaDecimal = new[]

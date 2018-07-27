@@ -16,6 +16,7 @@ namespace Glass.API.Backend.Helper.Respostas
     /// </summary>
     internal class SemConteudo : IHttpActionResult
     {
+        private static readonly object VAZIO = new { };
         private readonly ApiController apiController;
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace Glass.API.Backend.Helper.Respostas
         {
             Func<HttpResponseMessage> obterResposta = () =>
             {
-                return this.apiController.Request.CreateResponse(HttpStatusCode.NoContent, new { });
+                return this.apiController.Request.CreateResponse(HttpStatusCode.NoContent, VAZIO);
             };
 
             return Task.Run(obterResposta, cancellationToken);

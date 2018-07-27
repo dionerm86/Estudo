@@ -4233,10 +4233,18 @@ namespace Glass.Data.DAL
             var idGrupoProd = ObtemIdGrupoProd(idProd);
             var idSubgrupoProd = ObtemIdSubgrupoProd(idProd);
 
-            if (idSubgrupoProd > 0)
-                return SubgrupoProdDAO.Instance.ObtemValorCampo<bool>("exibirMensagemEstoque", "idSubgrupoProd=" + idSubgrupoProd.Value);
-            else
-                return GrupoProdDAO.Instance.ObtemValorCampo<bool>("exibirMensagemEstoque", "idGrupoProd=" + idGrupoProd);
+            return ExibirMensagemEstoque(null, idGrupoProd, idSubgrupoProd);
+        }
+
+        /// <summary>
+        /// Verifica se a mensagem de estoque deve ser exibida.
+        /// </summary>
+        /// <returns></returns>
+        public bool ExibirMensagemEstoque(GDASession sessao, int idGrupoProd, int? idSubgrupoProd)
+        {
+            return idSubgrupoProd > 0
+                ? SubgrupoProdDAO.Instance.ObtemValorCampo<bool>(sessao, "exibirMensagemEstoque", "idSubgrupoProd=" + idSubgrupoProd.Value)
+                : GrupoProdDAO.Instance.ObtemValorCampo<bool>(sessao, "exibirMensagemEstoque", "idGrupoProd=" + idGrupoProd);
         }
 
         #endregion

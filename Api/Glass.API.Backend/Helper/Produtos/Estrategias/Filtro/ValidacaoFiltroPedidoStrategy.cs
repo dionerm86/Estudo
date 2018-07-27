@@ -100,6 +100,7 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
 
             produtoDto.DescontoAcrescimoCliente = this.ObterDadosDescontoAcrescimoCliente(sessao, dadosAdicionais, produto);
             produtoDto.TamanhoMaximoObra = this.ObterTamanhoMaximoObra(sessao, dadosAdicionais, produto);
+            produtoDto.Estoque = this.ObterEstoque(sessao, dadosAdicionais, produto);
 
             return produtoDto;
         }
@@ -405,6 +406,76 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
             }
 
             return null;
+        }
+
+        private EstoqueDto ObterEstoque(GDASession sessao, DadosAdicionaisFiltroPedidoDto dadosAdicionais, Produto produto)
+        {
+            var pedidoProducao = dadosAdicionais.TipoPedido == Data.Model.Pedido.TipoPedidoEnum.Producao;
+
+            var bloquearEstoque = !pedidoProducao
+                && GrupoProdDAO.Instance.BloquearEstoque(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd);
+
+            var estoqueReal = ProdutoLojaDAO.Instance.GetEstoque(
+                sessao,
+                (uint)dadosAdicionais.IdLoja,
+                (uint)produto.IdProd,
+                pedidoProducao);
+
+            var estoqueAtual = bloquearEstoque
+                ? 999999999
+                : estoqueReal;
+
+            var retorno = new EstoqueDto
+            {
+                QuantidadeReal = estoqueReal,
+                QuantidadeAtual = estoqueAtual,
+                NumeroBarrasAluminio = null,
+                Unidade = "peças",
+                ExibirPopupFaltaEstoque = PedidoConfig.DadosPedido.ExibePopupVidrosEstoque
+                    && ProdutoDAO.Instance.ExibirMensagemEstoque(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd),
+            };
+
+            var tipoCalculo = (TipoCalculoGrupoProd)produto.TipoCalculo;
+
+            this.CalcularQuantidadeBarrasAluminio(tipoCalculo, retorno);
+            this.VerificarUnidadeEstoqueEM2(tipoCalculo, retorno);
+
+            return retorno;
+        }
+
+        private void CalcularQuantidadeBarrasAluminio(TipoCalculoGrupoProd tipoCalculo, EstoqueDto estoque)
+        {
+            var tiposCalculoBarrasAluminio = new[]
+            {
+                TipoCalculoGrupoProd.MLAL0,
+                TipoCalculoGrupoProd.MLAL05,
+                TipoCalculoGrupoProd.MLAL1,
+                TipoCalculoGrupoProd.MLAL6,
+            };
+
+            if (!tiposCalculoBarrasAluminio.Contains(tipoCalculo))
+            {
+                return;
+            }
+
+            estoque.Unidade = "ml";
+            estoque.NumeroBarrasAluminio = (int)Math.Ceiling(estoque.QuantidadeAtual / 6);
+        }
+
+        private void VerificarUnidadeEstoqueEM2(TipoCalculoGrupoProd tipoCalculo, EstoqueDto estoque)
+        {
+            var tiposCalculoM2 = new[]
+            {
+                TipoCalculoGrupoProd.M2,
+                TipoCalculoGrupoProd.M2Direto,
+            };
+
+            if (!tiposCalculoM2.Contains(tipoCalculo))
+            {
+                return;
+            }
+
+            estoque.Unidade = "m²";
         }
     }
 }

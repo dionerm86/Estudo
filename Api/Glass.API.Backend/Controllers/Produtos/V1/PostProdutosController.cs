@@ -9,7 +9,6 @@ using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Produtos.CalculoAreaM2;
 using Glass.API.Backend.Models.Produtos.CalculoTotal;
 using Swashbuckle.Swagger.Annotations;
-using System;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Produtos.V1
@@ -20,7 +19,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
     public partial class ProdutosController : BaseController
     {
         /// <summary>
-        /// Recupera um produto para o controle de filtro.
+        /// Calcula o valor total de um produto.
         /// </summary>
         /// <param name="dadosProduto">Os dados do produto para realização do cálculo.</param>
         /// <returns>Um objeto JSON com os dados de produtos para o controle.</returns>
@@ -66,7 +65,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         }
 
         /// <summary>
-        /// Recupera um produto para o controle de filtro.
+        /// Calcula a área, em m², para um produto.
         /// </summary>
         /// <param name="dadosProduto">Os dados do produto para realização do cálculo.</param>
         /// <returns>Um objeto JSON com os dados de produtos para o controle.</returns>
@@ -115,41 +114,41 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
 
         private double CalcularAreaM2Real(GDASession sessao, Models.Produtos.CalculoAreaM2.DadosProdutoDto dadosProduto)
         {
-            return Math.Round(
-                Global.CalculosFluxo.ArredondaM2(
-                    sessao,
-                    dadosProduto.Largura,
-                    (int)dadosProduto.Altura,
-                    (float)dadosProduto.Quantidade,
-                    dadosProduto.IdProduto,
-                    dadosProduto.Redondo,
-                    (float)dadosProduto.Espessura,
-                    dadosProduto.CalcularMultiploDe5),
-                2);
+            var areaReal = Global.CalculosFluxo.ArredondaM2(
+                sessao,
+                dadosProduto.Largura,
+                (int)dadosProduto.Altura,
+                (float)dadosProduto.Quantidade,
+                dadosProduto.IdProduto,
+                dadosProduto.Redondo,
+                (float)dadosProduto.Espessura,
+                dadosProduto.CalcularMultiploDe5);
+
+            return areaReal.Arredondar(2);
         }
 
         private double CalcularAreaM2Calculo(GDASession sessao, Models.Produtos.CalculoAreaM2.DadosProdutoDto dadosProduto, bool usarChapaDeVidro)
         {
-            return Math.Round(
-                Global.CalculosFluxo.CalcM2Calculo(
-                    sessao,
-                    (uint)dadosProduto.IdCliente,
-                    (int)dadosProduto.Altura,
-                    dadosProduto.Largura,
-                    (float)dadosProduto.Quantidade,
-                    dadosProduto.IdProduto,
-                    dadosProduto.Redondo,
-                    dadosProduto.NumeroBeneficiamentosParaAreaMinima,
-                    0,
-                    usarChapaDeVidro,
-                    (float)dadosProduto.Espessura,
-                    dadosProduto.CalcularMultiploDe5),
-                2);
+            var areaCalculada = Global.CalculosFluxo.CalcM2Calculo(
+                sessao,
+                (uint)dadosProduto.IdCliente,
+                (int)dadosProduto.Altura,
+                dadosProduto.Largura,
+                (float)dadosProduto.Quantidade,
+                dadosProduto.IdProduto,
+                dadosProduto.Redondo,
+                dadosProduto.NumeroBeneficiamentosParaAreaMinima,
+                0,
+                usarChapaDeVidro,
+                (float)dadosProduto.Espessura,
+                dadosProduto.CalcularMultiploDe5);
+
+            return areaCalculada.Arredondar(2);
         }
 
         private decimal CalcularTotal(GDASession sessao, Models.Produtos.CalculoTotal.DadosProdutoDto dadosProduto)
         {
-            return Global.CalculosFluxo.CalcularTotal(
+            var total = Global.CalculosFluxo.CalcularTotal(
                 sessao,
                 dadosProduto.IdCliente,
                 dadosProduto.IdProduto,
@@ -163,6 +162,8 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                 dadosProduto.PercentualDescontoPorQuantidade,
                 dadosProduto.CalcularMultiploDe5,
                 dadosProduto.NumeroBeneficiamentosParaAreaMinima);
+
+            return total.Arredondar(2);
         }
     }
 }
