@@ -331,7 +331,7 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 //where += " And ped.IdLoja=" + idLoja;
                 /* Chamado 48035. */
-                where += string.Format(" AND (ped.IdLoja={0} OR ped.TipoPedido={1})", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
+                where += string.Format(" AND (ped.IdLoja={0} OR (ped.TipoPedido={1} AND COALESCE(ped.IdPedidoRevenda, 0) = 0))", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
 
             if (idProdPed > 0)
                 where += " and pp.idProdPed=" + idProdPed;
