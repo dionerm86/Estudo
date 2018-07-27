@@ -9,13 +9,23 @@ Vue.component('campo-busca-cidade', {
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjetoOuVazio
+    },
+
+    /**
+     * UF selecionada.
+     * @type {string}
+     */
+    uf: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarStringOuVazio
     }
   },
 
   data: function() {
     return {
       idAtual: (this.cidade || {}).id || 0,
-      ufAtual: (this.cidade || {}).uf || '',
+      ufAtual: (this.cidade || {}).uf || this.uf || '',
       nomeAtual: (this.cidade || {}).nome || '',
       ufs: []
     };
@@ -31,9 +41,6 @@ Vue.component('campo-busca-cidade', {
       Servicos.Cidades.listarUfs()
         .then(function (resposta) {
           var ufAtual = vm.ufAtual;
-          if (!ufAtual && resposta.data.length > 0) {
-            ufAtual = resposta.data[0];
-          }
 
           resposta.data.sort(function(a, b) {
             return a.localeCompare(b);
@@ -92,8 +99,12 @@ Vue.component('campo-busca-cidade', {
      * Observador para a variável 'ufAtual'.
      * Limpa as variáveis de ID e nome atual se alterar a UF.
      */
-    ufAtual: function() {
+    ufAtual: function(atual) {
       this.cidadeAtual = null;
+      
+      if (atual !== this.uf) {
+        this.$emit("update:uf", atual);
+      }
     }
   },
 

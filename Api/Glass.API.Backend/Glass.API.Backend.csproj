@@ -233,17 +233,25 @@
     <Compile Include="Controllers\Beneficiamentos\V1\GetBeneficiamentosController.cs" />
     <Compile Include="Controllers\Cep\V1\GetCepController.cs" />
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
+    <Compile Include="Controllers\Clientes\V1\DeleteClientesController.cs" />
+    <Compile Include="Controllers\Clientes\V1\PostClientesController.cs" />
     <Compile Include="Controllers\Comissionados\V1\ComissionadosController.cs" />
     <Compile Include="Controllers\Comissionados\V1\GetComissionadosController.cs" />
     <Compile Include="Controllers\Datas\V1\PostDatasController.cs" />
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\DescontoQuantidadeController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\GetDescontoQuantidadeController.cs" />
+    <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
+    <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\GetTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
     <Compile Include="Controllers\Obras\V1\GetObrasController.cs" />
     <Compile Include="Controllers\Clientes\V1\GetClientesController.cs" />
     <Compile Include="Controllers\Clientes\V1\ClientesController.cs" />
     <Compile Include="Controllers\Orcamentos\V1\PostOrcamentosController.cs" />
+    <Compile Include="Controllers\FormasPagamento\V1\GetFormasPagamentoController.cs" />
+    <Compile Include="Controllers\FormasPagamento\V1\FormasPagamentoController.cs" />
     <Compile Include="Controllers\Parcelas\V1\GetParcelasController.cs" />
     <Compile Include="Controllers\Parcelas\V1\ParcelasController.cs" />
     <Compile Include="Controllers\Pedidos\V1\AmbientesPedido\DeleteAmbientesPedidoController.cs" />
@@ -291,6 +299,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
@@ -327,10 +336,14 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Clientes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ClienteBaseDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ClienteDto.cs" />
     <Compile Include="Models\Clientes\Filtro\ComissionadoDto.cs" />
     <Compile Include="Models\Clientes\Filtro\RotaDto.cs" />
+    <Compile Include="Models\Clientes\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Datas\Validacao\DadosEntradaDto.cs" />
     <Compile Include="Models\DescontoQuantidade\Dados\DadosEntradaDto.cs" />
     <Compile Include="Models\DescontoQuantidade\Dados\DadosDescontoQuantidadeDto.cs" />

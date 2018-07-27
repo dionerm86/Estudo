@@ -32,6 +32,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de funcionários ativos associados à clientes.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterAtivosAssociadosAClientes: function () {
+      return http().get(API + 'ativosAssociadosAClientes');
+    },
+
+    /**
      * Recupera a lista de funcionários medidores.
      * @param {!number} idVendedor O identificador do vendedor que será feita a busca.
      * @returns {Promise} Uma promise com o resultado da busca.

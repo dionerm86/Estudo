@@ -110,6 +110,29 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         }
 
         /// <summary>
+        /// Obtém uma lista de funcionários ativos associados à clientes.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos funcionários ativos associados à clientes.</returns>
+        [HttpGet]
+        [Route("ativosAssociadosAClientes")]
+        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Funcionários não encontrados.")]
+        public IHttpActionResult ObterAtivosAssociadosAClientes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = FuncionarioDAO.Instance.GetAtivosAssociadosCliente()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(funcionarios);
+            }
+        }
+
+        /// <summary>
         /// Obtem a data de trabalho a ser considerada no pedido para o funcionário passado.
         /// </summary>
         /// <param name="id">O identificador do funcionário.</param>

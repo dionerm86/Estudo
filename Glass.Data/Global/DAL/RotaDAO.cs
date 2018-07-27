@@ -66,6 +66,25 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData("SELECT * FROM rota WHERE situacao = ?sit ORDER BY Descricao", new GDAParameter("?sit", Situacao.Ativo)).ToList();
         }
 
+        public IList<Rota> ObtemAtivasPorIdCodigo(int? id, string codigo)
+        {
+            var sql = $"SELECT * FROM rota WHERE situacao={(int)Situacao.Ativo}";
+            var parametros = new List<GDAParameter>();
+
+            if (id > 0)
+            {
+                sql += $" AND IdRota={id}";
+            }
+
+            if (!string.IsNullOrEmpty(codigo))
+            {
+                sql += " AND CodInterno LIKE ?codInterno";
+                parametros.Add(new GDAParameter("?codInterno", $"%{codigo}%"));
+            }
+
+            return this.objPersistence.LoadData(sql + " ORDER BY Descricao", parametros.Count > 0 ? parametros.ToArray() : null).ToList();
+        }
+
         #endregion
 
         #region Busca pelo código interno

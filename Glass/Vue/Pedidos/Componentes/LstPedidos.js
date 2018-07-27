@@ -195,8 +195,7 @@ const app = new Vue({
 
       Servicos.Pedidos.reabrir(item.id)
         .then(function(resposta) {
-          this.filtro.refresh_++;
-          this.filtrar();
+          vm.atualizarLista();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -223,8 +222,7 @@ const app = new Vue({
 
       Servicos.Pedidos.alterarLiberacaoFinanceira(item.id, liberar)
         .then(function(resposta) {
-          vm.filtro.refresh_++;
-          vm.filtrar();
+          vm.atualizarLista();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -331,10 +329,10 @@ const app = new Vue({
       incluirFiltro('diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado);
       incluirFiltro('valorDe', this.filtro.valorPedidoMinimo);
       incluirFiltro('valorAte', this.filtro.valorPedidoMaximo);
-      incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio);
-      incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim);
-      incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio);
-      incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim);
+      incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio.toLocaleDateString('pt-BR'));
+      incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim.toLocaleDateString('pt-BR'));
       incluirFiltro('funcFinalizacao', this.filtro.codigoUsuarioFinalizacao);
       incluirFiltro('tipo', this.filtro.tipo);
       incluirFiltro('fastDelivery', this.filtro.fastDelivery);
@@ -397,6 +395,13 @@ const app = new Vue({
             .sort()
             .join(', ')
         : '';
+    },
+
+    /**
+     * Força a atualização da lista de pedidos, com base no filtro atual.
+     */
+    atualizarLista: function () {
+      this.$children[1].atualizar();
     }
   },
 

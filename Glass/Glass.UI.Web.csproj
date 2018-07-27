@@ -471,6 +471,9 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadPedido.js" />
+    <Content Include="Vue\Clientes\Componentes\LstClientes.Filtro.js" />
+    <Content Include="Vue\Clientes\Componentes\LstClientes.js" />
+    <Content Include="Vue\Clientes\Templates\LstClientes.Filtro.html" />
     <Content Include="Cadastros\CadRetificarAntecipContaRec.aspx" />
     <Content Include="Cadastros\CadRetificarArquivoRemessa.aspx" />
     <Content Include="Cadastros\CadRetificarComissaoContaRecebida.aspx" />
@@ -1680,6 +1683,10 @@
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\FormasPagamento.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Aplicacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Beneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cep.js" />
