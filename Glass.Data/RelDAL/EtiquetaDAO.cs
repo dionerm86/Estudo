@@ -675,7 +675,7 @@ namespace Glass.Data.RelDAL
             var possuiIntermac = false;
 
             if (PCPConfig.EmpresaGeraArquivoFml)
-                possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true);
+                possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true, true);
             if (PCPConfig.EmpresaGeraArquivoDxf)
                 possuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
             if (PCPConfig.EmpresaGeraArquivoSGlass)

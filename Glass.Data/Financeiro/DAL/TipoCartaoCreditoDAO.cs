@@ -190,6 +190,11 @@ namespace Glass.Data.DAL
             LogAlteracaoDAO.Instance.LogTipoCartao(session, idTipoCartao, idLoja, descricaoAnterior, descricao);
         }
 
+        public void AtualizaLogSituacao(GDASession session, int idTipoCartao, string situacaoAnterior, string novaSituacao)
+        {
+            LogAlteracaoDAO.Instance.LogTipoCartao(session, idTipoCartao, (int)Helper.UserInfo.GetUserInfo.IdLoja, situacaoAnterior, novaSituacao);
+        }
+
         public TipoCartaoEnum ObterTipoCartao(GDASession session, int idTipoCartao)
         {
             return ExecuteScalar<TipoCartaoEnum>(session, "SELECT Tipo FROM tipo_cartao_credito WHERE IdTipoCartao = " + idTipoCartao);

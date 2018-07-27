@@ -17,6 +17,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("DESCRICAO")]
         public string Descricao { get; set; }
 
+        [Log("Situação")]
         [PersistenceProperty("SITUACAO")]
         public Glass.Situacao Situacao { get; set; }
 

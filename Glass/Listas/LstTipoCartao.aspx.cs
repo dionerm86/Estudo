@@ -31,6 +31,7 @@ namespace Glass.UI.Web.Listas
                 tipoCartao.Bandeira = bandeira;
                 tipoCartao.Tipo = tipo;
                 tipoCartao.NumParc = /* Chamado 47874. */ tipo == Data.Model.TipoCartaoEnum.Debito ? 1 : 0;
+                tipoCartao.Situacao = Situacao.Ativo;
 
                 var resultado = fluxo.SalvarTipoCartaoCredito(tipoCartao);
 

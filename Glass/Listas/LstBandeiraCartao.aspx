@@ -61,12 +61,6 @@
                                     <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
                                 </asp:DropDownList>
                             </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server">
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
-                            </FooterTemplate>
                             <ItemTemplate>
                                 <asp:Label runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
                             </ItemTemplate>
