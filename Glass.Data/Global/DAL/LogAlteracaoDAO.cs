@@ -1353,9 +1353,9 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cria o Log de Alterações para o tipo de cartão.
+        /// Cria o Log de Alterações para os juros de parcelaso do tipo de cartão.
         /// </summary>
-        public void LogTipoCartao(GDASession session, int idTipoCartao, int idLoja, string descricaoAnterior, string descricaoNova)
+        public void LogTipoCartaoJurosParcelas(GDASession session, int idTipoCartao, int idLoja, string descricaoAnterior, string descricaoNova)
         {
             var tabela = LogAlteracao.TabelaAlteracao.TipoCartao;
 
@@ -1376,6 +1376,14 @@ namespace Glass.Data.DAL
 
                 Insert(session, item);
             }
+        }
+
+        /// <summary>
+        /// Cria o Log de Alterações para o tipo de cartão.
+        /// </summary>
+        public void LogTipoCartao(GDASession sessao, TipoCartaoCredito antigo, TipoCartaoCredito novo)
+        {
+            InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.TipoCartao, (uint)novo.IdTipoCartao, antigo, novo);
         }
 
         /// <summary>
@@ -1731,9 +1739,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="bandeiraCartaoAtual"></param>
         /// <param name="bandeiraCartaoNova"></param>
-        public void LogBandeiraCartao(BandeiraCartao bandeiraCartaoAtual, BandeiraCartao bandeiraCartaoNova)
+        public void LogBandeiraCartao(GDASession transaction, BandeiraCartao bandeiraCartaoAtual, BandeiraCartao bandeiraCartaoNova)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.BandeiraCartao, bandeiraCartaoAtual.IdBandeiraCartao, bandeiraCartaoAtual, bandeiraCartaoNova);
+            InserirLog(transaction, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.BandeiraCartao, bandeiraCartaoAtual.IdBandeiraCartao, bandeiraCartaoAtual, bandeiraCartaoNova);
         }
 
         /// <summary>
@@ -1741,9 +1749,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="operadoraCartaoAtual"></param>
         /// <param name="operadoraCartaoNova"></param>
-        public void LogOperadoraCartao(OperadoraCartao operadoraCartaoAtual, OperadoraCartao operadoraCartaoNova)
+        public void LogOperadoraCartao(GDASession transaction, OperadoraCartao operadoraCartaoAtual, OperadoraCartao operadoraCartaoNova)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.OperadoraCartao, operadoraCartaoAtual.IdOperadoraCartao, operadoraCartaoAtual, operadoraCartaoNova);
+            InserirLog(transaction, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.OperadoraCartao, operadoraCartaoAtual.IdOperadoraCartao, operadoraCartaoAtual, operadoraCartaoNova);
         }
 
         /// <summary>

@@ -157,12 +157,14 @@
                 <td>Situação
                 </td>
                 <td>
-                    <asp:DropDownList ID="drpSituacao" runat="server" >
-                        <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                        <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                    </asp:DropDownList>
-                    <asp:Button ID="btnSalvarSituacao" runat="server" Text="Salvar Situação"
-                        OnClick="btnSalvarSituacao_Click"/>
+                    <asp:DropDownList ID="drpSituacao" runat="server" AppendDataBoundItems="true" 
+                        DataSourceID="odsSituacao" DataValueField="Key" DataTextField="Translation">
+                    </asp:DropDownList>                    
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                        <asp:Button ID="btnSalvar" runat="server" Text="Salvar" OnClick="btnSalvarCartao_Click"/>
                 </td>
             </tr>
         </table>
@@ -387,5 +389,11 @@
         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server"
             SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
         </colo:VirtualObjectDataSource>
+        <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacao" runat="server"
+            SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+            <SelectParameters>
+                <asp:Parameter Name="typeName" DefaultValue="Glass.Situacao, Glass.Comum" />
+            </SelectParameters>
+        </colo:virtualobjectdatasource>
     </div>
 </asp:Content>

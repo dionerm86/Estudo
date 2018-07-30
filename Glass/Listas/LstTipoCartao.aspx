@@ -135,10 +135,16 @@
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource runat="server" ID="odsOperadoraCartao" Culture="pt-BR"
-                    SelectMethod="GetAtivas" TypeName="Glass.Data.DAL.OperadoraCartaoDAO">
+                    SelectMethod="PesquisarOperadoraCartaoPelaSituacao" TypeName="Glass.Data.DAL.OperadoraCartaoDAO">
+                    <SelectParameters>
+                        <asp:Parameter Name="situacao" Type="Int32" DefaultValue="1" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource runat="server" ID="odsBandeiraCartao" Culture="pt-BR"
-                    SelectMethod="GetAtivas" TypeName="Glass.Data.DAL.BandeiraCartaoDAO">
+                    SelectMethod="PesquisarBandeiraCartaoPelaSituacao" TypeName="Glass.Data.DAL.BandeiraCartaoDAO">
+                    <SelectParameters>
+                        <asp:Parameter Name="situacao" Type="Int32" DefaultValue="1" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

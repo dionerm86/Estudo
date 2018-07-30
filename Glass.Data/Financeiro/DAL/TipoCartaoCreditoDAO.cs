@@ -52,13 +52,31 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Obtém a situação do tipo de cartão
+        /// </summary>
+        public Situacao ObtemSituacaoTipoCartao(uint idTipoCartao)
+        {
+            return ObtemSituacaoTipoCartao(null, idTipoCartao);
+        }
+
+        /// <summary>
+        /// Obtém a situação do tipo de cartão
+        /// </summary>
+        public Situacao ObtemSituacaoTipoCartao(GDASession sessao, uint idTipoCartao)
+        {
+            return ObtemValorCampo<Situacao>(sessao, "situacao", "idTipoCartao=" + idTipoCartao);
+        }
+
+        /// <summary>
         /// Obtém os tipos de cartão de acordo com o tipo do recebimento
         /// </summary>
         /// <param name="tipo">0-Todos, 1-Apenas Débito, 2-Apenas Crédito</param>
         /// <returns></returns>
-        public TipoCartaoCredito[] ObtemListaPorTipo(int tipo)
+        public TipoCartaoCredito[] ObtemListaPorTipo(int tipo, Glass.Situacao situacao)
         {
-            string sql = Sql(true) + " AND tc.Situacao=1 ";
+            string sql = Sql(true);
+
+            sql += string.Format(" AND tc.Situacao={0} ", (int)situacao);
 
             if (tipo == 1)
                 sql += " And idTipoCartao In (2,4,6)";
@@ -68,9 +86,9 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql + " Order By idTipoCartao").ToList().ToArray();
         }
 
-        public IList<TipoCartaoCredito> GetOrdered()
+        public IList<TipoCartaoCredito> GetOrdered(Glass.Situacao situacao)
         {
-            return objPersistence.LoadData("Select * From tipo_cartao_credito WHERE Situacao=1 Order By idTipoCartao").ToList();
+            return objPersistence.LoadData(string.Format("Select * From tipo_cartao_credito WHERE Situacao={0} Order By idTipoCartao", (int)situacao)).ToList();
         }
 
         public IList<TipoCartaoCredito> ObterListaTipoCartao()
@@ -184,15 +202,10 @@ namespace Glass.Data.DAL
                     }
         }
 
-        public void AtualizaLog(GDASession session, int idTipoCartao, string descricaoAnterior, int idLoja)
+        public void AtualizaLogJurosParcelas(GDASession session, int idTipoCartao, string descricaoAnterior, int idLoja)
         {
             var descricao = JurosParcelaCartaoDAO.Instance.ObtemDescricaoJurosParcelas(session, idTipoCartao, idLoja);
-            LogAlteracaoDAO.Instance.LogTipoCartao(session, idTipoCartao, idLoja, descricaoAnterior, descricao);
-        }
-
-        public void AtualizaLogSituacao(GDASession session, int idTipoCartao, string situacaoAnterior, string novaSituacao)
-        {
-            LogAlteracaoDAO.Instance.LogTipoCartao(session, idTipoCartao, (int)Helper.UserInfo.GetUserInfo.IdLoja, situacaoAnterior, novaSituacao);
+            LogAlteracaoDAO.Instance.LogTipoCartaoJurosParcelas(session, idTipoCartao, idLoja, descricaoAnterior, descricao);
         }
 
         public TipoCartaoEnum ObterTipoCartao(GDASession session, int idTipoCartao)
@@ -333,6 +346,36 @@ namespace Glass.Data.DAL
         }
 
         #region Métodos Sobrescritos
+
+        public override int Update(TipoCartaoCredito objUpdate)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    var antigo = GetElementByPrimaryKey(transaction, objUpdate.IdTipoCartao);
+
+                    var retorno = Update(transaction, objUpdate);
+
+                    LogAlteracaoDAO.Instance.LogTipoCartao(transaction, antigo, objUpdate);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException("Alterar Tipo Cartão", ex);
+                    throw ex;
+                }
+            }
+        }
 
         /// <summary>
         /// Remove o tipo de cartão do sistema, caso ele não esteja em uso.

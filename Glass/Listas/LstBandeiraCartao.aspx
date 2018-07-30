@@ -55,11 +55,10 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server"
-                                    SelectedValue='<%# Bind("Situacao") %>'>
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
+                                <asp:DropDownList ID="drpSituacao" runat="server" AppendDataBoundItems="true" 
+                                    SelectedValue='<%# Bind("Situacao") %>'
+                                    DataSourceID="odsSituacao" DataValueField="Key" DataTextField="Translation">
+                                </asp:DropDownList> 
                             </EditItemTemplate>
                             <ItemTemplate>
                                 <asp:Label runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
@@ -88,6 +87,12 @@
                     StartRowIndexParameterName="startRow" MaximumRowsParameterName="pageSize" SortParameterName="sortExpression"
                     UpdateMethod="Update" DeleteMethod="Delete" SelectMethod="GetList" SelectCountMethod="GetCount">
                 </colo:VirtualObjectDataSource>
+                <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacao" runat="server"
+                    SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Situacao, Glass.Comum" />
+                    </SelectParameters>
+                </colo:virtualobjectdatasource>
             </td>
         </tr>
     </table>
