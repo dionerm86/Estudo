@@ -6061,7 +6061,42 @@ namespace Glass.Data.DAL
                 var prodsDiasMinEntrega = lstProd.Where(f => f.IdAplicacao.GetValueOrDefault() > 0).Select(f => new KeyValuePair<int, uint>((int)f.IdProd, f.IdAplicacao.Value)).ToList();
                 if (!EtiquetaAplicacaoDAO.Instance.VerificaPrazoEntregaAplicacao(session, prodsDiasMinEntrega, pedido.DataEntrega.GetValueOrDefault(), out msgDiasMinEntrega))
                     throw new Exception(msgDiasMinEntrega);
-            }                        
+            }
+
+            // Verifica se há pedidos atrasados que impedem a finalização deste pedido
+            var numPedidosBloqueio = GetCountBloqueioEmissao(session, pedido.IdCli);
+            if (numPedidosBloqueio > 0)
+            {
+                var dias = " há pelo menos " + PedidoConfig.NumeroDiasPedidoProntoAtrasado + " dias ";
+                var inicio = numPedidosBloqueio > 1 ? "Os pedidos " : "O pedido ";
+                var fim = numPedidosBloqueio > 1 ? " estão prontos" + dias + "e ainda não foram liberados" : " está pronto" + dias + "e ainda não foi liberado";
+
+                LancarExceptionValidacaoPedidoFinanceiro("Não é possível finalizar esse pedido. " + inicio + GetIdsBloqueioEmissao(session, pedido.IdCli) +
+                    fim + " para o cliente.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
+            // Verifica se o cliente está inativo
+            if (ClienteDAO.Instance.GetSituacao(session, pedido.IdCli) != (int)SituacaoCliente.Ativo)
+                LancarExceptionValidacaoPedidoFinanceiro("O cliente selecionado está inativo. Motivo: " +
+                    ClienteDAO.Instance.ObtemValorCampo<string>(session, "obs", "id_Cli=" + pedido.IdCli), idPedido, true, null,
+                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+
+            // Bloqueia a forma de pagamento se o cliente não puder usá-la
+            if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Todos) > 0)
+            {
+                if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Prazo) == 0 && pedido.TipoVenda == 2)
+                    LancarExceptionValidacaoPedidoFinanceiro("O cliente " + pedido.IdCli + " - " + ClienteDAO.Instance.GetNome(session, pedido.IdCli) +
+                        " não pode fazer compras à prazo.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
+            //Verifica se o cliente possui contas a receber vencidas se nao for garantia
+            if ((ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + pedido.IdCli)) &&
+                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, pedido.IdCli) &&
+                pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
+            {
+                LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", idPedido, true,
+                    null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
 
             // Verifica se pode liberar o epdido com base na rentailidade do mesmo
             if (Configuracoes.RentabilidadeConfig.ControlarFaixaRentabilidadeLiberacao &&
@@ -6354,42 +6389,7 @@ namespace Glass.Data.DAL
 
                 // Confirma o pedido
                 ConfirmaGarantiaReposicao(session, pedido.IdPedido, financeiro);
-            }
-
-            // Verifica se há pedidos atrasados que impedem a finalização deste pedido
-            var numPedidosBloqueio = GetCountBloqueioEmissao(session, pedido.IdCli);
-            if (numPedidosBloqueio > 0)
-            {
-                var dias = " há pelo menos " + PedidoConfig.NumeroDiasPedidoProntoAtrasado + " dias ";
-                var inicio = numPedidosBloqueio > 1 ? "Os pedidos " : "O pedido ";
-                var fim = numPedidosBloqueio > 1 ? " estão prontos" + dias + "e ainda não foram liberados" : " está pronto" + dias + "e ainda não foi liberado";
-
-                LancarExceptionValidacaoPedidoFinanceiro("Não é possível finalizar esse pedido. " + inicio + GetIdsBloqueioEmissao(session, pedido.IdCli) +
-                    fim + " para o cliente.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
-            // Verifica se o cliente está inativo
-            if (ClienteDAO.Instance.GetSituacao(session, pedido.IdCli) != (int)SituacaoCliente.Ativo)
-                LancarExceptionValidacaoPedidoFinanceiro("O cliente selecionado está inativo. Motivo: " +
-                    ClienteDAO.Instance.ObtemValorCampo<string>(session, "obs", "id_Cli=" + pedido.IdCli), idPedido, true, null,
-                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-
-            // Bloqueia a forma de pagamento se o cliente não puder usá-la
-            if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Todos) > 0)
-            {
-                if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Prazo) == 0 && pedido.TipoVenda == 2)
-                    LancarExceptionValidacaoPedidoFinanceiro("O cliente " + pedido.IdCli + " - " + ClienteDAO.Instance.GetNome(session, pedido.IdCli) +
-                        " não pode fazer compras à prazo.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
-            //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if ((ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + pedido.IdCli)) &&
-                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, pedido.IdCli) &&
-                pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
-            {
-                LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", idPedido, true,
-                    null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
+            }            
 
             /* Chamado 22658. */
             if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
