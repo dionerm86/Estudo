@@ -26,7 +26,7 @@ namespace Glass.Data.Helper
             if (foto.ApenasImagens && !Arquivos.IsImagem(foto.Extensao))
                 throw new Exception("Apenas imagens podem ser cadastradas.");
 
-            if (foto.Tipo != IFoto.TipoFoto.TrocaDevolucao)
+            if (foto.Tipo == IFoto.TipoFoto.Pedido)
             {
                 if (PedidoEspelhoDAO.Instance.IsPedidoImpresso(null, foto.IdParent))
                     throw new Exception("Não é possível inserir imagem em pedidos que já possuam etiqueta(s) impressa(s).");
