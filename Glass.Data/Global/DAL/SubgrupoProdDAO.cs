@@ -4,6 +4,7 @@ using GDA;
 using Glass.Data.Model;
 using Glass.Data.Helper;
 using System.Linq;
+using Glass.Configuracoes;
 
 namespace Glass.Data.DAL
 {
@@ -434,17 +435,24 @@ namespace Glass.Data.DAL
 
         public bool IsSubgrupoGeraVolume(GDASession session, uint idGrupo, uint idSubgrupo)
         {
-            var sql = @"
+            if (!OrdemCargaConfig.UsarControleOrdemCarga)
+            {
+                return false;
+            }
+            else
+            {
+                var sql = @"
                 SELECT count(*)
                 FROM grupo_prod gp
                     LEFT JOIN subgrupo_prod sgp ON (sgp.idGrupoProd = gp.idGrupoProd)
                 WHERE COALESCE(sgp.geraVolume, gp.geraVolume, false) = true
                     AND gp.idGrupoProd = {0}";
 
-            if (idSubgrupo > 0)
-                sql += " AND sgp.idSubgrupoProd = " + idSubgrupo;
+                if (idSubgrupo > 0)
+                    sql += " AND sgp.idSubgrupoProd = " + idSubgrupo;
 
-            return ExecuteScalar<int>(session, string.Format(sql, idGrupo)) > 0;
+                return ExecuteScalar<int>(session, string.Format(sql, idGrupo)) > 0;
+            }            
         }
 
         #endregion
