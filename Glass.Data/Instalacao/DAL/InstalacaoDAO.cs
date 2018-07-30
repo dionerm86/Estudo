@@ -749,7 +749,7 @@ namespace Glass.Data.DAL
 
         #region Retificar Ordem de Instalação
 
-        public void RetificarOrdemInst(uint idOrdemInst, string idsInstalacao, string idsEquipes, DateTime dataInstalacao)
+        public void RetificarOrdemInst(uint idOrdemInst, string idsInstalacao, string idsEquipes, DateTime dataInstalacao, string obs)
         {
             // Retira as Instalações da Ordem de Instalação que está sendo retificada
             objPersistence.ExecuteCommand("Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.Aberta + ", idOrdemInstalacao=null," +
@@ -759,8 +759,8 @@ namespace Glass.Data.DAL
             // Coloca Instalações na Ordem de Instalação que está sendo retificada
             // Retira as Instalações da Ordem de Instalação que está sendo retificada
             objPersistence.ExecuteCommand("Update instalacao set situacao=" + (int)Instalacao.SituacaoInst.EmAndamento + ", idOrdemInstalacao=" + idOrdemInst +
-                ", DataInstalacao=?dataInst, dataOrdemInstalacao=now() Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")",
-                new GDAParameter("?dataInst", dataInstalacao));
+                ", DataInstalacao=?dataInst, dataOrdemInstalacao=now(), obs=?obs Where idInstalacao In (" + idsInstalacao.TrimEnd(',') + ")",
+                new GDAParameter("?dataInst", dataInstalacao), new GDAParameter("?obs", obs));
 
             foreach (string i in idsInstalacao.TrimEnd(',').Split(','))
                 foreach (string e in idsEquipes.TrimEnd(',').Split(','))

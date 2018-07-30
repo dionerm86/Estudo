@@ -59,6 +59,7 @@
 
         FindControl("hdfIdOrdemInst", "input").value = idOrdemInst.value;
         FindControl("ctrlDataInst_txtData", "input").value = dadosOrdemInst[1];
+        FindControl("txtObs", "textarea").value = dadosOrdemInst[2];
 
         var instalacoes = response[2].split('|');
 
@@ -146,7 +147,8 @@
         var idsInst = FindControl('hdfIdInstalacao', 'input').value;
         var dataInst = FindControl('ctrlDataInst_txtData', 'input').value;
         var idOrdemInst = FindControl('hdfIdOrdemInst', 'input').value;
-        
+        var obs = FindControl("txtObs", "textarea").value;
+
         var idsEquipe = new Array();
         for (i = 1; i <= 5; i++)
         {
@@ -195,7 +197,7 @@
         }
         
         var noCache = new Date();
-        var response = CadRetificarOrdemInst.Retificar(idOrdemInst, idsInst, idsEquipe, dataInst, noCache.getMilliseconds()).value;
+        var response = CadRetificarOrdemInst.Retificar(idOrdemInst, idsInst, idsEquipe, dataInst, noCache.getMilliseconds(), obs).value;
         
         if (response == null) {
             alert("Falha ao Retificar Ordem de Instalação.");
@@ -506,6 +508,16 @@
                         <td align="right">
                             <asp:ImageButton ID="imbRemoveEquipe10" runat="server" ImageUrl="../Images/ExcluirGrid.gif"
                                 OnClientClick="return removeEquipe(10);" />
+                        </td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td>
+                            <asp:Label ID="Label1" runat="server" Text="Observação" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtObs" runat="server" Rows="4" TextMode="MultiLine" Width="350px"></asp:TextBox>
                         </td>
                     </tr>
                 </table>
