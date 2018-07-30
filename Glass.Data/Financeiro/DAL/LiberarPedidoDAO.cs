@@ -2919,7 +2919,9 @@ namespace Glass.Data.DAL
 
                 var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) || !PCPConfig.ControlarProducao);
                 var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int?)prodPed.IdSubgrupoProd);
-                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
+                var subGrupoVolume = !OrdemCargaConfig.UsarControleOrdemCarga ? false : SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
                 var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, prodPed.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
                 var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
 

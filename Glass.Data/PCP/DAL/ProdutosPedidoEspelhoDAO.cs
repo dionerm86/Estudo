@@ -331,7 +331,7 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 //where += " And ped.IdLoja=" + idLoja;
                 /* Chamado 48035. */
-                where += string.Format(" AND (ped.IdLoja={0} OR ped.TipoPedido={1})", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
+                where += string.Format(" AND (ped.IdLoja={0} OR (ped.TipoPedido={1} AND COALESCE(ped.IdPedidoRevenda, 0) = 0))", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
 
             if (idProdPed > 0)
                 where += " and pp.idProdPed=" + idProdPed;
@@ -3190,10 +3190,11 @@ namespace Glass.Data.DAL
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
                     (considerarFmlBasico ? tipoArquivo == TipoArquivoMesaCorte.FMLBasico : true) ||
-                    flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
+                    ((flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !pecaProjMod.ImagemEditada &&
                     !Instance.PossuiImagemAssociada(idProdPed) &&
-                    !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj);
+                    !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj)) ||
+                    PossuiEdicaoCadProject(idProdPed));
             }
         }
 
@@ -3240,8 +3241,7 @@ namespace Glass.Data.DAL
                 var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.DXF || flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString())) &&
-                    ((!PossuiImagemAssociada(idProdPed)) ||
-                    File.Exists(string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPed)));
+                    ((!PossuiImagemAssociada(idProdPed)) || PossuiEdicaoCadProject(idProdPed));
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
@@ -3255,7 +3255,7 @@ namespace Glass.Data.DAL
                     ((!pecaProjMod.ImagemEditada &&
                     !PossuiImagemAssociada(idProdPed) &&
                     !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj)) ||
-                    File.Exists(string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPed)));
+                    PossuiEdicaoCadProject(idProdPed));
             }
         }
 
