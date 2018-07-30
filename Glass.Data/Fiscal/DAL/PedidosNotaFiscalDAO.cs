@@ -72,6 +72,33 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData("select * from pedidos_nota_fiscal where idLiberarPedido=" + idLiberarPedido).ToArray();
         }
 
+        public List<int> ObterIdsNf(GDASession session, List<int> idsLiberarPedido, List<int> idsPedido, NotaFiscal.SituacaoEnum? situacaoNotaFiscal)
+        {
+            var sql = $@"SELECT DISTINCT(pnf.IdNf) FROM pedidos_nota_fiscal pnf
+                    INNER JOIN nota_fiscal nf ON (pnf.IdNf=nf.IdNf)
+                WHERE 1";
+
+            if (idsLiberarPedido?.Any(f => f > 0) ?? false)
+            {
+                sql += $" AND pnf.IdLiberarPedido IN ({ string.Join(",", idsLiberarPedido) })";
+            }
+            else if (idsPedido?.Any(f => f > 0) ?? false)
+            {
+                sql += $" AND pnf.IdPedido IN ({ string.Join(",", idsPedido) })";
+            }
+            else
+            {
+                return new List<int>();
+            }
+
+            if (situacaoNotaFiscal.HasValue)
+            {
+                sql += $" AND nf.Situacao = { (int)situacaoNotaFiscal.Value }";
+            }
+
+            return ExecuteMultipleScalar<int>(session, sql)?.ToList() ?? new List<int>();
+        }
+
         public string NotasFiscaisGeradas(GDASession session, uint idPedido)
         {
             var sql = string.Format(@"SELECT CAST(GROUP_CONCAT(nf.NumeroNfe SEPARATOR ', ') AS CHAR) FROM pedidos_nota_fiscal pnf

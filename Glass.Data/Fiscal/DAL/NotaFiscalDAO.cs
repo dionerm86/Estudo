@@ -1202,16 +1202,49 @@ namespace Glass.Data.DAL
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
                             ContasReceber[] contasReceber = null;
-                            var idLiberarPedido = (idsLiberarPedidos?.Split(',')?[0]?.StrParaInt()).GetValueOrDefault();
-                            var idPedido = (idsPedidos?.Split(',')?[0]?.StrParaInt()).GetValueOrDefault();
 
-                            if (idLiberarPedido > 0)
+                            if (!string.IsNullOrWhiteSpace(idsLiberarPedidos))
                             {
-                                contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, (uint)idLiberarPedido, true)?.ToArray();
+                                foreach (var idLiberarPedido in (idsLiberarPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
+                                {
+                                    contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, (uint)idLiberarPedido, true)?.ToArray();
+
+                                    if (contasReceber?.Count() > 0)
+                                    {
+                                        break;
+                                    }
+                                }
                             }
-                            else if (idPedido > 0)
+
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0 && !string.IsNullOrWhiteSpace(idsPedidos))
                             {
-                                contasReceber = ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
+                                foreach (var idPedido in (idsPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
+                                {
+                                    ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
+
+                                    if (contasReceber?.Count() > 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0)
+                            {
+                                var idsNotaFiscal = PedidosNotaFiscalDAO.Instance.ObterIdsNf(transaction, idsLiberarPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList() ?? new List<int>(),
+                                    idsPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList(), NotaFiscal.SituacaoEnum.Autorizada);
+
+                                if (idsNotaFiscal?.Any(f => f > 0) ?? false)
+                                {
+                                    foreach (var idNotaFiscal in idsNotaFiscal)
+                                    {
+                                        contasReceber = ContasReceberDAO.Instance.GetByNf(transaction, (uint)idNotaFiscal)?.ToArray();
+                                        if (contasReceber?.Count() > 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
                             }
 
                             if (contasReceber?.Length > 0)
