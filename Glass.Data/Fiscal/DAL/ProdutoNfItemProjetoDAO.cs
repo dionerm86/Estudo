@@ -116,7 +116,18 @@ namespace Glass.Data.DAL
                         MedidaItemProjetoDAO.Instance.InsereMedida(sessao, ip.IdItemProjeto, m.IdMedidaProjeto, m.Valor);
 
                     List<PecaProjetoModelo> pecasModelo = PecaProjetoModeloDAO.Instance.GetByModelo(pm.IdProjetoModelo);
-                    
+
+                    //Preenche a altura e largura da peça para que o sistema crie corretamente o 
+                    //material item projeto para dar baixa nas peças de cesta
+                    foreach (var pecas in pecasModelo)
+                    {
+                        if (pecas.Altura == 0 || pecas.Largura == 0)
+                        {
+                            pecas.Altura = 1;
+                            pecas.Largura = 1;
+                        }
+                    }
+
                     foreach (PecaItemProjeto p in pecasItemProjeto)
                     {
                         pecasModelo.Find(x => x.IdPecaProjMod == p.IdPecaProjMod).IdProd = p.IdProd.GetValueOrDefault();

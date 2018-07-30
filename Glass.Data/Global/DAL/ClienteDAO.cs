@@ -2208,10 +2208,15 @@ namespace Glass.Data.DAL
 
         public string ObtemCidadeUf(uint idCliente)
         {
+            return ObtemCidadeUf(null, idCliente);
+        }
+
+        public string ObtemCidadeUf(GDASession session, uint idCliente)
+        {
             string where = "id_Cli=" + idCliente;
-            uint idCidade = ObtemValorCampo<uint>("idCidade", where);
-            var cidade = CidadeDAO.Instance.GetNome(idCidade);
-            var uf = CidadeDAO.Instance.ObtemValorCampo<string>("nomeUf", "idCidade=" + idCidade);
+            uint idCidade = ObtemValorCampo<uint>(session, "idCidade", where);
+            var cidade = CidadeDAO.Instance.GetNome(session, idCidade);
+            var uf = CidadeDAO.Instance.ObtemValorCampo<string>(session, "nomeUf", "idCidade=" + idCidade);
             return cidade + "/" + uf;
         }
 
