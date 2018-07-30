@@ -1345,7 +1345,7 @@ namespace Glass.UI.Web.Controls
             // Variáveis de controle
             string retorno = "";
     
-            foreach (TipoCartaoCredito tc in TipoCartaoCreditoDAO.Instance.GetOrdered())
+            foreach (TipoCartaoCredito tc in TipoCartaoCreditoDAO.Instance.GetOrdered(Situacao.Ativo))
                 for (int i = 0; i < tc.NumParc; i++)
                 {
                     JurosParcelaCartao juros = JurosParcelaCartaoDAO.Instance.GetByTipoCartaoNumParc((uint)tc.IdTipoCartao, UserInfo.GetUserInfo.IdLoja, i + 1);

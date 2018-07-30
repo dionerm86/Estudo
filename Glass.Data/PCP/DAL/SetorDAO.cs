@@ -380,14 +380,14 @@ namespace Glass.Data.DAL
 
             string sql = $@"
                 SELECT s.* FROM setor s
-                WHERE IdSetor NOT IN ({ string.Join(",", idsSetor) })
+                WHERE IdSetor NOT IN ({ (idsSetor.Any(f => f > 0) ? string.Join(",", idsSetor) : "0") })
                     AND s.Situacao={ (int)Situacao.Ativo }
                     AND s.ImpedirAvanco IS NOT NULL AND s.ImpedirAvanco=1
                     AND s.NumSeq<{ numSeqSetor }";
 
             sql += !isTemperado ? " AND (Forno IS NULL OR Forno = 0)" : string.Empty;
 
-            return objPersistence.LoadData(sessao, sql).ToList();
+            return objPersistence.LoadData(sessao, sql)?.ToList() ?? new List<Setor>();
         }
 
         #endregion

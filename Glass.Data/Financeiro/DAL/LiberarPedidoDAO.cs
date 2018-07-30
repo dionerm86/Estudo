@@ -573,7 +573,8 @@ namespace Glass.Data.DAL
                         IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null,
                         IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null,
                         ValorPagto = valoresPagos.ElementAtOrDefault(i),
-                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
+                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null,
+                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null
                     };
 
                     PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
@@ -2919,7 +2920,9 @@ namespace Glass.Data.DAL
 
                 var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) || !PCPConfig.ControlarProducao);
                 var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int?)prodPed.IdSubgrupoProd);
-                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
+                var subGrupoVolume = !OrdemCargaConfig.UsarControleOrdemCarga ? false : SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
                 var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, prodPed.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
                 var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
 
@@ -3524,9 +3527,12 @@ namespace Glass.Data.DAL
                     // esta situação ocorre somente quando o controle de estoque não está bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
-                        produtosSemEstoque.Append(
-                            ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key) + " - " +
-                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + ",     ");
+                        var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key);
+                        var descricaoProduto = ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key);
+
+                        produtosSemEstoque.Append($@"{ codInternoProduto } - { descricaoProduto }
+                            Estoque disponível: { qtdEstoqueReal }
+                            Quantidade liberada: { qtdLiberar }\n");
                     }
                 }
             }
@@ -4057,7 +4063,7 @@ namespace Glass.Data.DAL
         public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
         {
             var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
-                $@"SELECT DISTINCT(IdLiberarPedido) AS CHAR)
+                $@"SELECT DISTINCT(IdLiberarPedido)
                 FROM liberarpedido
                 WHERE IdLiberarPedido IN
                     (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");

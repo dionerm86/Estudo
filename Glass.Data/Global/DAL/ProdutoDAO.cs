@@ -33,7 +33,7 @@ namespace Glass.Data.DAL
                     select pc.idProd, c.idLoja, sum(pc.totM) as totMComprando, sum(pc.qtde) as qtdeComprando
                     from produtos_compra pc
                         inner Join compra c On (pc.idCompra=c.idCompra)
-                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + @") 
+                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @") 
                         and (c.estoqueBaixado=false or c.estoqueBaixado is null)
                     group by pc.idProd" +
                         (!String.IsNullOrEmpty(aliasProdutoLoja) ? ", c.idLoja" : "") + @"
@@ -1403,7 +1403,20 @@ namespace Glass.Data.DAL
         {
             filtroAdicional = " and p.situacao=" + (int)Glass.Situacao.Ativo;
 
-            var parametroIdLoja = UserInfo.GetUserInfo.IsAdministrador ? string.Empty : "AND pl.IdLoja=" + UserInfo.GetUserInfo.IdLoja;
+            var parametroIdLoja = string.Empty;
+
+            // Busca os produtos que não forem compras
+            if (idPedido > 0)
+            {
+                // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
+                parametroIdLoja = " AND pl.IdLoja=" + PedidoDAO.Instance.ObtemIdLoja(null, (uint)idPedido);
+                filtroAdicional += " And (p.compra is null or p.compra=0)";
+            }
+            else if (idLoja > 0)
+            {
+                parametroIdLoja = " AND pl.IdLoja=" + idLoja;
+                filtroAdicional += " And (p.compra is null or p.compra=0)";
+            }
 
             string campos = selecionar ? @"
                 p.*, Concat(g.Descricao, if(sg.Descricao is null, '', Concat(' - ', sg.descricao))) as DescrTipoProduto, 
@@ -1447,18 +1460,9 @@ namespace Glass.Data.DAL
                 filtroAdicional += string.Format(" AND p.Largura={0}", largura);
 
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
-            if (idPedido == 0 && idLoja == 0)
+            if (idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-
-            // Busca os produtos que não forem compras
-            if (idPedido > 0)
-            {
-                // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
-                sql = String.Format(sql, " And pl.idLoja=" + PedidoDAO.Instance.ObtemIdLoja(null, (uint)idPedido));
-
-                filtroAdicional += " And (p.compra is null or p.compra=0)";
-            }
-
+           
             if (idLoja > 0)
                 filtroAdicional += " And p.IdProd Not In (Select IdProd From produto_loja Where IdLoja=" + idLoja + ")";
 

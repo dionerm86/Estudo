@@ -1186,7 +1186,7 @@ namespace Glass.Data.DAL
             try
             {
                 /* Chamado 34268. */
-                if (ProdutoImpressaoDAO.Instance.NfPossuiPecaImpressa(null, (int)objInsert.IdNf))
+                if (ProdutoImpressaoDAO.Instance.NfPossuiPecaImpressa(session, (int)objInsert.IdNf))
                     throw new Exception("Não é possível inserir produtos nesta nota fiscal porque existem etiquetas associadas à ela.");
 
                 // Se esta NF não puder ser editada, emite o erro.
@@ -1197,14 +1197,14 @@ namespace Glass.Data.DAL
 
                 var tipoDocumentoNotaFiscal = NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf);
 
-                if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objInsert.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
+                if (!NaturezaOperacaoDAO.Instance.ValidarCfop(session, (int)objInsert.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
                     throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
 
                 uint idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf).GetValueOrDefault();
                 float totM2 = objInsert.TotM, altura = objInsert.Altura, totM2Calc = 0;
                 decimal total = objInsert.Total, custoProd = 0;
 
-                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorUnitario, 0, false, 0,
+                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorUnitario, 0, false, 0,
                     false, false, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, true, 0);
 
                 objInsert.TotM = totM2;
@@ -1213,19 +1213,19 @@ namespace Glass.Data.DAL
                 objInsert.Total = Math.Round(total, 2);
 
                 // Calcula o peso do produto
-                objInsert.Peso = Utils.CalcPeso((int)objInsert.IdProd, objInsert.Espessura, objInsert.TotM, objInsert.Qtde, objInsert.Altura, true);
+                objInsert.Peso = Utils.CalcPeso(session, (int)objInsert.IdProd, objInsert.Espessura, objInsert.TotM, objInsert.Qtde, objInsert.Altura, true);
 
                 // Se o NCM não tiver sido informado, busca do produto
-                if (String.IsNullOrEmpty(objInsert.Ncm))
+                if (string.IsNullOrEmpty(objInsert.Ncm))
                 {
-                    var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(objInsert.IdNf);
-                    objInsert.Ncm = ProdutoDAO.Instance.ObtemNcm((int)objInsert.IdProd, idLoja);
+                    var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(session, objInsert.IdNf);
+                    objInsert.Ncm = ProdutoDAO.Instance.ObtemNcm(session, (int)objInsert.IdProd, idLoja);
                 }
 
                 // Informa a altura e largura do item nas observações dos produtos na nota
                 var tipoDoc = NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf);
-                if (String.IsNullOrEmpty(objInsert.InfAdic) && (tipoDoc == (int)NotaFiscal.TipoDoc.Saída || tipoDoc == (int)NotaFiscal.TipoDoc.Entrada) &&
-                    Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(ProdutoDAO.Instance.ObtemIdGrupoProd((int)objInsert.IdProd)))
+                if (string.IsNullOrEmpty(objInsert.InfAdic) && (tipoDoc == (int)NotaFiscal.TipoDoc.Saída || tipoDoc == (int)NotaFiscal.TipoDoc.Entrada) &&
+                    Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objInsert.IdProd)))
                 {
                     if (FiscalConfig.NotaFiscalConfig.ExibirLarguraEAlturaInfAdicProduto)
                         objInsert.InfAdic = objInsert.Largura + "x" + objInsert.Altura;
@@ -1246,7 +1246,7 @@ namespace Glass.Data.DAL
                         (tipoDoc == (int)NotaFiscal.TipoDoc.Saída ||
                         /* Chamado 32984 e 39660. */
                         (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada &&
-                        CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objInsert.IdNaturezaOperacao.Value)))));
+                        CfopDAO.Instance.IsCfopDevolucao(session, NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objInsert.IdNaturezaOperacao.Value)))));
 
                 objInsert.Mva = (float)Math.Round((decimal)objInsert.Mva, 2);
 
@@ -1269,12 +1269,7 @@ namespace Glass.Data.DAL
                 returnValue = base.Insert(session, objInsert);
                 //LogAlteracaoDAO.Instance.LogProdutoNotaFiscal(new ProdutosNf(), LogAlteracaoDAO.SequenciaObjeto.Atual);
 
-                /* Chamado 14947.
-                 * É necessário que a nota de devolução do tipo EntradaTerceiros atualize o valor total da nota. */
-                // Atualiza os totais da nota fiscal se for emissão normal
-                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objInsert.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Normal ||
-                    NotaFiscalDAO.Instance.ObtemFinalidade(session, objInsert.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
-                    NotaFiscalDAO.Instance.UpdateTotalNf(session, objInsert.IdNf);
+                NotaFiscalDAO.Instance.UpdateTotalNf(session, objInsert.IdNf);
 
                 // Busca observação da CFOP do produto e salva nas informações complementares da nota
                 if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf) == (int)NotaFiscal.TipoDoc.Saída && objInsert.IdCfop > 0 &&
@@ -1429,23 +1424,19 @@ namespace Glass.Data.DAL
                             CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objUpdate.IdNaturezaOperacao.Value)))));
 
                     objUpdate.Mva = (float)Math.Round((decimal)objUpdate.Mva, 2);
+                    
+                    var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
 
-                    // Calcula os impostos do produto já atualizando o mesmo e os totais da Nota, desde que não seja nota de ajuste
-                    if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) != (int)NotaFiscal.FinalidadeEmissaoEnum.Ajuste)
-                    {
-                        var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
+                    //Remove o produto da lista que foi adicionado para o calculo do imposto.
+                    var prodRemover = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
+                    produtosNf.Remove(prodRemover);
 
-                        //Remove o produto da lista que foi adicionado para o calculo do imposto.
-                        var prodRemover = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
-                        produtosNf.Remove(prodRemover);
+                    produtosNf.Add(objUpdate);
 
-                        produtosNf.Add(objUpdate);
+                    CalcImposto(session, ref produtosNf, true, false);
 
-                        CalcImposto(session, ref produtosNf, true, false);
-
-                        /* Chamado 63976. */
-                        objUpdate = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
-                    }
+                    /* Chamado 63976. */
+                    objUpdate = produtosNf.Where(f => f.IdProdNf == objUpdate.IdProdNf).FirstOrDefault();
                 }
 
                 //Se nao for cst de origem 3, 5 ou 8 apaga o numero de controle da FCI caso esteja preenchido
@@ -1456,12 +1447,7 @@ namespace Glass.Data.DAL
                 LogAlteracaoDAO.Instance.LogProdutoNotaFiscal(prodNfOld, LogAlteracaoDAO.SequenciaObjeto.Atual);
                 base.Update(session, objUpdate);
 
-                /* Chamado 14947.
-                 * É necessário que a nota de devolução do tipo EntradaTerceiros atualize o valor total da nota. */
-                // Atualiza os totais da nota fiscal se for emissão normal
-                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Normal ||
-                    NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
-                    NotaFiscalDAO.Instance.UpdateTotalNf(session, objUpdate.IdNf);
+                NotaFiscalDAO.Instance.UpdateTotalNf(session, objUpdate.IdNf);
 
                 // Busca observação da CFOP do produto e salva nas informações complementares da nota
                 if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf) == (int)NotaFiscal.TipoDoc.Saída && objUpdate.IdCfop > 0 &&

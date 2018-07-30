@@ -14,7 +14,7 @@ function setProduto(codInterno) {
     try {
         limpaCampos();
         FindControl("txtCodProd", "input").value = codInterno;
-        loadProduto(orcamentoRapido);
+        loadProduto(GetQueryString('orcamentoRapido'));
     }
     catch (err) {
 

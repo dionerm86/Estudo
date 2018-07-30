@@ -938,29 +938,27 @@ namespace Glass.Data.DAL
             {
                 // Calcula o valor e o percentual a mais de sinal que ser� rateado entre os pedidos
                 var totalRatear = Math.Round(totalPago - totalPagar, 2);
-                var percentualRatear = totalRatear / totalPago;
-                decimal totalRateado = 0;
 
-                for (var i = 0; i < pedidos.Length; i++)
+                for (int i = 0; i < pedidos.Length; i++)
                 {
-                    var pedido = PedidoDAO.Instance.GetElement(session, pedidos.OrderBy(f => f.Total).ToList()[i].IdPedido);
+                    Pedido ped = PedidoDAO.Instance.GetElement(session, pedidos.OrderBy(f => f.Total).ToList()[i].IdPedido);
 
-                    if (i < (pedidos.Length - 1))
+                    if (ped.ValorEntrada + totalRatear > ped.Total)
                     {
-                        // Acrescenta ao valor da entrada o percentual do rateio sobre o valor do pedido ou o restante do valor da entrada que 
-                        // complete o total do pedido, o que for menor dos dois, para que o valor da entrada n�o fique maior que o valor do pedido
-                        var novoValor = Math.Round(Math.Min(pedido.Total * percentualRatear, pedido.Total - pedido.ValorEntrada), 2);
-
-                        totalRateado += novoValor;
-                        pedido.ValorEntrada += novoValor;
+                        totalRatear -= (ped.Total - ped.ValorEntrada);
+                        ped.ValorEntrada = ped.Total;
                     }
                     else
                     {
-                        pedido.ValorEntrada = Math.Round(pedido.ValorEntrada + totalRatear - totalRateado, 2);
+                        ped.ValorEntrada = Math.Round(ped.ValorEntrada + totalRatear, 2);
+                        totalRatear = 0;
                     }
 
-                    PedidoDAO.Instance.RecalculaParcelas(session, ref pedido, PedidoDAO.TipoCalculoParcelas.Valor);
-                    PedidoDAO.Instance.UpdateBase(session, pedido);
+                    PedidoDAO.Instance.RecalculaParcelas(session, ref ped, PedidoDAO.TipoCalculoParcelas.Valor);
+                    PedidoDAO.Instance.UpdateBase(session, ped);
+
+                    if (totalRatear == 0)
+                        break;
                 }
             }
 

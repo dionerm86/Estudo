@@ -271,7 +271,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<int> ObtemMovEstoqueChapaCortePeca(GDASession session, uint idProdPedProducao, string numEtiqueta)
         {
-            if (string.IsNullOrWhiteSpace(numEtiqueta))
+            if (string.IsNullOrWhiteSpace(numEtiqueta) || numEtiqueta.Contains("R"))
             {
                 return new List<int>();
             }

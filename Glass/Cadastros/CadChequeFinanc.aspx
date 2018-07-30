@@ -79,6 +79,7 @@
         }
 
         function validaCheque() {
+            var idCheque = '<%= Request["IdCheque"] %>';
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var banco = FindControl("txtBanco", "input").value;
             var agencia = FindControl("txtAgencia", "input").value;
@@ -87,7 +88,7 @@
             var digitoNum = FindControl("txtDigitoNum", "input").value;
 
             // Verifica se o cheque já existe
-            var validaCheque = CadChequeFinanc.ValidaCheque(idCliente, banco, agencia, conta, numCheque, digitoNum).value.split('|');
+            var validaCheque = CadChequeFinanc.ValidaCheque(idCheque, idCliente, banco, agencia, conta, numCheque, digitoNum).value.split('|');
             if (validaCheque[0] == "false") {
                 alert(validaCheque[1]);
                 return false;

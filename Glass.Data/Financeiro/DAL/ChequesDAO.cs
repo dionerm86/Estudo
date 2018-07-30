@@ -2047,22 +2047,27 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se existe algum cheque com os dados informados
         /// </summary>
-        public bool ExisteCheque(string banco, string agencia, string conta, int numero)
+        public bool ExisteCheque(int idCheque, string banco, string agencia, string conta, int numero)
         {
-            return ExisteCheque(null, banco, agencia, conta, numero);
+            return ExisteCheque(null, idCheque, banco, agencia, conta, numero);
         }
 
 
         /// <summary>
         /// Verifica se existe algum cheque com os dados informados
         /// </summary>
-        public bool ExisteCheque(GDASession session, string banco, string agencia, string conta, int numero)
+        public bool ExisteCheque(GDASession session, int idCheque, string banco, string agencia, string conta, int numero)
         {
             string sql =
                 "Select Count(*) From cheques Where banco=?banco and agencia=?agencia and conta=?conta and num=" +
                 numero +
                 " and situacao Not In (" + (int) Cheques.SituacaoCheque.Cancelado + "," +
                 (int) Cheques.SituacaoCheque.Trocado + ")";
+
+            if (idCheque > 0)
+            {
+                sql += $" AND IdCheque<>{idCheque}";
+            }
 
             return objPersistence.ExecuteSqlQueryCount(session, sql, new GDAParameter("?banco", banco),
                 new GDAParameter("?agencia", agencia),
@@ -4143,7 +4148,7 @@ namespace Glass.Data.DAL
                     objInsert.Origem = (int)Cheques.OrigemCheque.FinanceiroPagto;
 
                     if ((objInsert.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && objInsert.IdCliente > 0 &&
-                        ExisteChequeDigito(transaction, objInsert.IdCliente.Value, 0, objInsert.Num, objInsert.DigitoNum))) || ExisteCheque(transaction, objInsert.Banco, objInsert.Agencia, objInsert.Conta, objInsert.Num))
+                        ExisteChequeDigito(transaction, objInsert.IdCliente.Value, 0, objInsert.Num, objInsert.DigitoNum))) || ExisteCheque(transaction, 0, objInsert.Banco, objInsert.Agencia, objInsert.Conta, objInsert.Num))
                         throw new Exception("Este cheque já foi cadastrado no sistema.");
 
                     // Verifica se o cheque pode movimentar o Caixa Geral ou a Conta Bancaria

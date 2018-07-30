@@ -321,6 +321,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<float>(session, "percReducaoBcIcms", "idNaturezaOperacao=" + idNaturezaOperacao);
         }
 
+        /// <summary>
+        /// Retorna o CSOSN configurado para a natureza de operação.
+        /// </summary>
+        public string ObterCsosn(GDASession sessao, int idNaturezaOperacao)
+        {
+            return ObtemValorCampo<string>(sessao, "Csosn", $"IdNaturezaOperacao={ idNaturezaOperacao }");
+        }
+
         #endregion
 
         #region Busca os ids de naturezas de operação a partir de um CFOP
@@ -415,10 +423,14 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valida se o cfop pode ser utilizado na nota fiscal
         /// </summary>
-        /// <param name="idNaturezaOperacao"></param>
-        /// <param name="tipoDocumento"></param>
-        /// <returns></returns>
-        public bool ValidarCfop(int idNaturezaOperacao, int tipoDocumento)        {            var natOp = NaturezaOperacaoDAO.Instance.ObtemElemento(idNaturezaOperacao);
+        public bool ValidarCfop(int idNaturezaOperacao, int tipoDocumento)        {
+            return ValidarCfop(null, idNaturezaOperacao, tipoDocumento);
+        }
+
+        /// <summary>
+        /// Valida se o cfop pode ser utilizado na nota fiscal
+        /// </summary>
+        public bool ValidarCfop(GDASession session, int idNaturezaOperacao, int tipoDocumento)        {            var natOp = ObtemElemento(session, idNaturezaOperacao);
 
             //Se a nota fiscal for de entrada valida se o cfop é um cfop para notas de entrada
             if (tipoDocumento == 1 || tipoDocumento == 3)            {                if (natOp.CodCfop.StartsWith("1") || natOp.CodCfop.StartsWith("2") || natOp.CodCfop.StartsWith("3"))                    return true;                return false;            }

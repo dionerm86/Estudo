@@ -100,7 +100,7 @@ namespace Glass.PCP.Negocios.Componentes
                         AND (p.GerarPedidoProducaoCorte IS NULL OR p.GerarPedidoProducaoCorte=0)")
                     .Add("?id", idLiberarPedido)
                     .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.TotM, prod.CodInterno,
+                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
                             prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
                     .Add("?tipoSubGrupo", TipoSubgrupoProd.ChapasVidro)
                 .GroupBy("pp.IdProdPed")
@@ -111,7 +111,7 @@ namespace Glass.PCP.Negocios.Componentes
                     .InnerJoin<ProdutosLiberarPedido>("p.IdPedidoRevenda = plp.IdPedido", "plp")
                     .InnerJoin<Produto>("pp.IdProd=prod.IdProd", "prod")
                     .LeftJoin<SubgrupoProd>("sgp.IdSubgrupoProd=prod.IdSubgrupoProd", "sgp")
-                    .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.TotM, prod.CodInterno,
+                    .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
                             prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
                     .Where(string.Format(@"plp.IdLiberarPedido = ?id
                             AND p.TipoEntrega=?tipoEntrega 
@@ -125,8 +125,6 @@ namespace Glass.PCP.Negocios.Componentes
                     .Add("?situacao", Glass.Data.Model.Pedido.SituacaoPedido.Cancelado)
                     .GroupBy("pp.IdProdPed")
                 );
-
-            consultaRevenda.Execute();
 
             var consultaRevendaExp = SourceContext.Instance.CreateQuery()
                 .From<ProdutoPedidoProducao>("ppp")
@@ -320,6 +318,7 @@ namespace Glass.PCP.Negocios.Componentes
                         Peso = ir.Peso / ir.Qtde,
                         CodProduto = ir.CodInterno,
                         DescProduto = ir.DescrProduto,
+                        ExpedidoManualmente = ir.Qtde == ir.QtdSaida,
                         Altura = ir.Altura,
                         Largura = ir.Largura,
                         M2 = ir.TotM / ir.Qtde

@@ -95,6 +95,11 @@
                                 <asp:Label ID="lblTipo" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Tipo")).Format() %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
+                            <ItemTemplate>
+                                <asp:Label runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc1:ctrlLogPopup ID="ctrlLogPopupTipoCartaoParc" runat="server" Tabela="TipoCartao" IdRegistro='<%# (uint)(int)Eval("IdTipoCartao") %>'/>
@@ -130,10 +135,16 @@
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource runat="server" ID="odsOperadoraCartao" Culture="pt-BR"
-                    SelectMethod="GetAll" TypeName="Glass.Data.DAL.OperadoraCartaoDAO">
+                    SelectMethod="PesquisarOperadoraCartaoPelaSituacao" TypeName="Glass.Data.DAL.OperadoraCartaoDAO">
+                    <SelectParameters>
+                        <asp:Parameter Name="situacao" Type="Int32" DefaultValue="1" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource runat="server" ID="odsBandeiraCartao" Culture="pt-BR"
-                    SelectMethod="GetAll" TypeName="Glass.Data.DAL.BandeiraCartaoDAO">
+                    SelectMethod="PesquisarBandeiraCartaoPelaSituacao" TypeName="Glass.Data.DAL.BandeiraCartaoDAO">
+                    <SelectParameters>
+                        <asp:Parameter Name="situacao" Type="Int32" DefaultValue="1" />
+                    </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

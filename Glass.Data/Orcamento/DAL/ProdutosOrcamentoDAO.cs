@@ -974,8 +974,7 @@ namespace Glass.Data.DAL
                         prod,
                         Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
                         true,
-                        prod.Beneficiamentos.CountAreaMinimaSession(session),
-                        prod.Beneficiamentos.CountAreaMinimaSession(session) > 0
+                        prod.Beneficiamentos.CountAreaMinimaSession(session)
                     );
                 }
             }
@@ -1292,21 +1291,27 @@ namespace Glass.Data.DAL
                     foreach (var prodBenef in objUpdate.Beneficiamentos)
                     {
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                            objUpdate.Altura < tamanhoMinimoBisote && objUpdate.Largura < tamanhoMinimoBisote)
+                            objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote)
                             retornoValidacao += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
 
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                            objUpdate.Altura < tamanhoMinimoLapidacao && objUpdate.Largura < tamanhoMinimoLapidacao)
+                            objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao)
                             retornoValidacao += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
                     }
                 }
 
                 if (objUpdate.IdProduto > 0)
                 {
-                    if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((int)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProduto)).IsVidroTemperado &&
-                            objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objUpdate.IdProduto);
+                    var idSubGrupoProd = (int?)ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)objUpdate.IdProduto);
+
+                    if (GrupoProdDAO.Instance.IsVidroTemperado(session, idGrupoProd, idSubGrupoProd)
+                        && objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    {
                         retornoValidacao += $"A altura ou largura minima para peças com tempera é de {tamanhoMinimoTemperado}mm.";
+                    }
                 }
+
                 if (!string.IsNullOrWhiteSpace(retornoValidacao))
                     throw new Exception(retornoValidacao);
 

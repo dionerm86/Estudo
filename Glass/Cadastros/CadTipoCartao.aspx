@@ -153,6 +153,20 @@
 
                 </td>
             </tr>
+            <tr>
+                <td>Situação
+                </td>
+                <td>
+                    <asp:DropDownList ID="drpSituacao" runat="server" AppendDataBoundItems="true" 
+                        DataSourceID="odsSituacao" DataValueField="Key" DataTextField="Translation">
+                    </asp:DropDownList>                    
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                        <asp:Button ID="btnSalvar" runat="server" Text="Salvar" OnClick="btnSalvarCartao_Click"/>
+                </td>
+            </tr>
         </table>
 
         <fieldset>
@@ -365,7 +379,7 @@
             <asp:HiddenField ID="hdfRecPrazo" runat="server" />
             <asp:HiddenField ID="hdfRecChequeDev" runat="server" />
         </fieldset>
-        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCartao" runat="server" SelectMethod="GetOrdered"
+        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCartao" runat="server" SelectMethod="GetAll"
             TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
         </colo:VirtualObjectDataSource>
         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsContaBanco" runat="server" SelectMethod="GetAll"
@@ -375,5 +389,11 @@
         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server"
             SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
         </colo:VirtualObjectDataSource>
+        <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacao" runat="server"
+            SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+            <SelectParameters>
+                <asp:Parameter Name="typeName" DefaultValue="Glass.Situacao, Glass.Comum" />
+            </SelectParameters>
+        </colo:virtualobjectdatasource>
     </div>
 </asp:Content>

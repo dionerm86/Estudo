@@ -99,7 +99,7 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string ValidaCheque(string idCliente, string banco, string agencia, string conta, string numero, string digitoNum)
         {
-            if (ChequesDAO.Instance.ExisteCheque(banco, agencia, conta, Glass.Conversoes.StrParaInt(numero)))
+            if (ChequesDAO.Instance.ExisteCheque(0, banco, agencia, conta, Glass.Conversoes.StrParaInt(numero)))
                 return "false|Já foi cadastrado um cheque com os dados informados.";
     
             if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && !String.IsNullOrEmpty(idCliente) && idCliente != "0" && 

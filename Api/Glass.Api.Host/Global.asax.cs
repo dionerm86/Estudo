@@ -12,8 +12,8 @@ namespace Glass.Api.Host
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
 
-            //Configura as imagens de projeto
-            ImagesConfig.Configure();
+            // Configura as imagens de projeto
+            // ImagesConfig.Configure();
         }
     }
 }

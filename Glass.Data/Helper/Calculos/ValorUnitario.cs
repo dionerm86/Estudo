@@ -31,8 +31,8 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -61,8 +61,8 @@ namespace Glass.Data.Helper.Calculos
             if (!DeveExecutar(produto))
                 return null;
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -178,9 +178,9 @@ namespace Glass.Data.Helper.Calculos
                 - desconto;
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
-            if (container.MaoDeObra)
+            if (container?.MaoDeObra ?? false && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
                 return valor.GetValueOrDefault();
 
             return 2;

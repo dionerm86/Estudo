@@ -2375,7 +2375,7 @@ namespace Glass.Data.DAL
 
             #region Filtros
 
-            sql += string.Format(" AND pp.IdProdPedParent IS NOT NULL AND ppp.Situacao IN ({0}, {1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+            sql += " AND pp.IdProdPedParent IS NOT NULL";
 
             if (idProdPedProducaoParent > 0)
             {
