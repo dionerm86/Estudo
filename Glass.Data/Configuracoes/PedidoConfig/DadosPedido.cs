@@ -122,6 +122,14 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ListaApenasPedidosVendedor); }
             }
+
+            /// <summary>
+            /// Define se é possível alterar a data de entrega do pedido para datas inferiores à data atual
+            /// </summary>
+            public static bool AlterarDataEntregaPedidoDataRetroativa
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.AlterarDataEntregaPedidoDataRetroativa); }
+            }
         }
     }
 }

@@ -13038,7 +13038,11 @@ namespace Glass.Data.DAL
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
 
-                    if (DateTime.Now.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
+                    if (PedidoConfig.DadosPedido.AlterarDataEntregaPedidoDataRetroativa &&
+                       objUpdate.DataCad > objUpdate.DataEntrega.GetValueOrDefault().Date)
+                        throw new Exception("A data selecionada não pode ser inferior a " + objUpdate.DataCad.ToShortDateString());
+                    else if (!PedidoConfig.DadosPedido.AlterarDataEntregaPedidoDataRetroativa &&
+                        DateTime.Now.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
                         throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
