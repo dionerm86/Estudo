@@ -33,7 +33,7 @@ namespace Glass.Data.DAL
                     select pc.idProd, c.idLoja, sum(pc.totM) as totMComprando, sum(pc.qtde) as qtdeComprando
                     from produtos_compra pc
                         inner Join compra c On (pc.idCompra=c.idCompra)
-                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + @") 
+                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @") 
                         and (c.estoqueBaixado=false or c.estoqueBaixado is null)
                     group by pc.idProd" +
                         (!String.IsNullOrEmpty(aliasProdutoLoja) ? ", c.idLoja" : "") + @"
