@@ -87,9 +87,9 @@ namespace Glass.UI.Web.Cadastros
         /// Verifica se o cheque já existe ou se deve ser bloqueado pelo dígito verificador
         /// </summary>
         [Ajax.AjaxMethod()]
-        public string ValidaCheque(string idCliente, string banco, string agencia, string conta, string numero, string digitoNum)
+        public string ValidaCheque(string idCheque, string idCliente, string banco, string agencia, string conta, string numero, string digitoNum)
         {
-            if (ChequesDAO.Instance.ExisteCheque(banco, agencia, conta, Conversoes.StrParaInt(numero)))
+            if (ChequesDAO.Instance.ExisteCheque(idCheque.StrParaInt(), banco, agencia, conta, Conversoes.StrParaInt(numero)))
                 return "false|Já foi cadastrado um cheque com os dados informados.";
 
             if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && !String.IsNullOrEmpty(idCliente) && idCliente != "0" &&
