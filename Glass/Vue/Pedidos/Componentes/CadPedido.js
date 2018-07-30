@@ -42,11 +42,12 @@
     /**
      * Busca os dados de um pedido.
      * @param {?number} id O número do pedido.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     buscarPedido: function (id) {
       var vm = this;
 
-      Servicos.Pedidos.obterDetalhe(id)
+      return Servicos.Pedidos.obterDetalhe(id)
         .then(function(resposta) {
           vm.pedido = resposta.data;
         })
@@ -290,11 +291,32 @@
      * Coloca o pedido atual em conferência, se possível.
      */
     colocarEmConferencia: function() {
-      if (!emConferencia()) {
-        return;
+      if (!this.perguntar('Conferência', 'Mudar pedido para em conferência?')) {
+        return false;
       }
 
-      // TODO
+      if (this.pedido.entrada === 0
+        && !this.perguntar('Conferência', 'O sinal não foi inserido, clique em "Cancelar" para inserir o sinal do pedido ou em "OK" para continuar.')) {
+
+        return false;
+      }
+
+      if (this.pedido.total === 0) {
+        this.exibirMensagem('Conferência', 'O pedido não possui valor total, insira um produto "Conferência" com o valor total do Pedido.');
+        return false;
+      }
+
+      var vm = this;
+
+      Servicos.Pedidos.colocarEmConferencia(this.pedido.id)
+        .then(function (resposta) {
+          vm.redirecionarParaListagem();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        })
     },
 
     /**
@@ -562,18 +584,25 @@
         this.editando = false;
         this.deveCalcularDataEntregaMinima = false;
       } else if (this.inserindo) {
-        var idRelDinamico = GetQueryString('idRelDinamico');
-        var byVend = GetQueryString('byVend');
-        var url = '../Listas/LstPedidos.aspx';
-
-        if (idRelDinamico) {
-          url = '../Relatorios/Dinamicos/ListaDinamico.aspx?id=' + idRelDinamico;
-        } else if (byVend === '1') {
-          url += '?ByVend=1';
-        }
-
-        window.location.assign(url);
+        this.redirecionarParaListagem();
       }
+    },
+
+    /**
+     * Redireciona a tela atual para a tela de listagem correspondente.
+     */
+    redirecionarParaListagem: function() {
+      var idRelDinamico = GetQueryString('idRelDinamico');
+      var byVend = GetQueryString('byVend');
+      var url = '../Listas/LstPedidos.aspx';
+
+      if (idRelDinamico) {
+        url = '../Relatorios/Dinamicos/ListaDinamico.aspx?id=' + idRelDinamico;
+      } else if (byVend === '1') {
+        url += '?ByVend=1';
+      }
+
+      window.location.assign(url);
     },
 
     /**
@@ -655,6 +684,7 @@
         idLoja: item && item.loja ? item.loja.id : null,
         idObra: item && item.obra ? item.obra.id : null,
         nomeCliente: item && item.cliente ? item.cliente.nome : null,
+        podeEditarCliente: item && item.permissoes ? item.permissoes.alterarCliente : true,
         dataPedido: item && item.DataPedido ? new Date(item.dataPedido) : new Date(),
         fastDelivery: item && item.fastDelivery ? item.fastDelivery.aplicado : null,
         codigoPedidoCliente: item ? item.codigoPedidoCliente : null,
@@ -779,7 +809,12 @@
       });
 
     if (id) {
-      this.buscarPedido(id);
+      this.buscarPedido(id)
+        .then(function () {
+          if (!vm.pedido || !vm.pedido.permissoes.podeEditar) {
+            vm.redirecionarParaListagem();
+          }
+        });
     }
   },
 
@@ -868,7 +903,7 @@
     /**
      * Propriedade computada que retorna se o controle de parcelas deve ser criado na tela
      */
-    vIfCampoParcelas: function() {
+    vIfControleParcelas: function() {
       return this.vIfNumeroParcelas;
     },
 

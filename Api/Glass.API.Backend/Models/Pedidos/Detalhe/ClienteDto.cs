@@ -48,12 +48,5 @@ namespace Glass.API.Backend.Models.Pedidos.Detalhe
         [DataMember]
         [JsonProperty("observacao")]
         public string Observacao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se o cliente pode ser editado.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("podeEditar")]
-        public bool PodeEditar { get; set; }
     }
 }

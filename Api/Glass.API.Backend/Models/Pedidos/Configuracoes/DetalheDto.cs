@@ -83,6 +83,10 @@ namespace Glass.API.Backend.Models.Pedidos.Configuracoes
             this.ObrigarProcessoEAplicacaoRoteiro = PedidoConfig.DadosPedido.ObrigarProcAplVidros
                 && PCPConfig.ControlarProducao
                 && Utils.GetSetores.Any(x => x.SetorPertenceARoteiro);
+
+            this.ExibirColunasProcessoEAplicacao = Geral.ControlePCP;
+            this.SistemaLite = Geral.SistemaLite;
+            this.AcrescimoDescontoItens = OrcamentoConfig.Desconto.DescontoAcrescimoItensOrcamento;
         }
 
         /// <summary>
@@ -413,6 +417,27 @@ namespace Glass.API.Backend.Models.Pedidos.Configuracoes
         [DataMember]
         [JsonProperty("obrigarProcessoEAplicacaoRoteiro")]
         public bool ObrigarProcessoEAplicacaoRoteiro { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se as colunas de processo e aplicação serão exibidas.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("exibirColunasProcessoEAplicacao")]
+        public bool ExibirColunasProcessoEAplicacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o sistema atual é a versão Lite.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("sistemaLite")]
+        public bool SistemaLite { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se pode-se aplicar acréscimo e desconto aos itens.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("acrescimoDescontoItens")]
+        public bool AcrescimoDescontoItens { get; set; }
 
         private string ObterCorParaHtml(Color cor)
         {

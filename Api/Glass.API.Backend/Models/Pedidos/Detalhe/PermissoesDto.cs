@@ -47,5 +47,12 @@ namespace Glass.API.Backend.Models.Pedidos.Detalhe
         [DataMember]
         [JsonProperty("alterarDesconto")]
         public bool AlterarDesconto { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o pedido pode ser editado (usado para validação).
+        /// </summary>
+        [DataMember]
+        [JsonProperty("podeEditar")]
+        public bool PodeEditar { get; set; }
     }
 }

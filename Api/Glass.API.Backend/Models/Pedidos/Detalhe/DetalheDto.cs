@@ -34,7 +34,6 @@ namespace Glass.API.Backend.Models.Pedidos.Detalhe
                 Telefone = pedido.RptTelContCli,
                 Endereco = pedido.EnderecoCompletoCliente,
                 Observacao = pedido.ObsCliente,
-                PodeEditar = pedido.ClienteEnabled,
             };
 
             this.PercentualComissao = pedido.PercentualComissao;
@@ -239,6 +238,8 @@ namespace Glass.API.Backend.Models.Pedidos.Detalhe
                 AlterarCliente = pedido.ClienteEnabled,
                 AlterarTipoVenda = !(pedido.IdSinal > 0) || Glass.Configuracoes.PedidoConfig.LiberarPedido,
                 AlterarVendedor = pedido.SelVendEnabled,
+                AlterarDesconto = pedido.DescontoEnabled,
+                PodeEditar = pedido.EditVisible,
             };
         }
 

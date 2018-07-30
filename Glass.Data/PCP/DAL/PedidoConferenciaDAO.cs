@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
+﻿using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -18,15 +18,15 @@ namespace Glass.Data.DAL
 
             string campos = selecionar ? "pc.*, conf.Nome as Conferente, vend.Nome as Vendedor, l.NomeFantasia as NomeLoja, " +
                 "c.Nome as NomeCliente, p.DataEntrega, Coalesce(c.Tel_Cont, c.Tel_Res, c.Tel_Cel) as TelCli, " +
-                "Concat(p.EnderecoObra, ' - ', p.BairroObra, ' - ', p.CidadeObra) as LocalObra, '$$$' as Criterio ": "Count(*)";
+                "Concat(p.EnderecoObra, ' - ', p.BairroObra, ' - ', p.CidadeObra) as LocalObra, '$$$' as Criterio " : "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From pedido_conferencia pc 
-                    Left Join pedido p On (pc.IdPedido=p.IdPedido) 
-                    Left Join cliente c On (p.idCli=c.id_Cli) 
-                    Left Join funcionario conf On (pc.IdConferente=conf.IdFunc) 
-                    Left Join funcionario vend On (p.IdFunc=vend.IdFunc) 
-                    Left Join loja l On (p.IdLoja=l.IdLoja) 
+                Select " + campos + @" From pedido_conferencia pc
+                    Left Join pedido p On (pc.IdPedido=p.IdPedido)
+                    Left Join cliente c On (p.idCli=c.id_Cli)
+                    Left Join funcionario conf On (pc.IdConferente=conf.IdFunc)
+                    Left Join funcionario vend On (p.IdFunc=vend.IdFunc)
+                    Left Join loja l On (p.IdLoja=l.IdLoja)
                 Where (p.Situacao=" + (int)Pedido.SituacaoPedido.AtivoConferencia + @"
                     Or p.situacao=" + (int)Pedido.SituacaoPedido.EmConferencia + @"
                     Or pc.situacao=" + (int)PedidoConferencia.SituacaoConferencia.Finalizada + ")";
@@ -153,47 +153,57 @@ namespace Glass.Data.DAL
         /// <param name="recebeuSinal"></param>
         public void NovaConferencia(uint idPedido, bool recebeuSinal)
         {
-            if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From pedido_conferencia where idPedido=" + idPedido) <= 0)
+            NovaConferencia(null, idPedido, recebeuSinal);
+        }
+
+        /// <summary>
+        /// Cria uma conferência para o pedido, alterando a situação do pedido
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <param name="recebeuSinal"></param>
+        public void NovaConferencia(GDASession sessao, uint idPedido, bool recebeuSinal)
+        {
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From pedido_conferencia where idPedido=" + idPedido) <= 0)
             {
                 PedidoConferencia pedConf = new PedidoConferencia();
                 pedConf.IdPedido = idPedido;
                 pedConf.Situacao = (int)PedidoConferencia.SituacaoConferencia.Aberta;
 
                 // Insere novo pedido_confer
-                Insert(pedConf);
+                Insert(sessao, pedConf);
 
                 // Se a conferencia ainda assim não tiver sido inserida, lança mensagem de erro.
-                if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From pedido_conferencia where idPedido=" + idPedido) <= 0)
+                if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From pedido_conferencia where idPedido=" + idPedido) <= 0)
                     throw new Exception("Falha ao enviar Pedido para Conferência.");
 
                 int registrosAfetados = 0;
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    registrosAfetados = PedidoDAO.Instance.AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 // Se a atualização da situação do pedido não tiver sido realizada, lança exceção
                 if (registrosAfetados <= 0)
                 {
-                    DeleteByPrimaryKey(idPedido);
+                    DeleteByPrimaryKey(sessao, idPedido);
                     throw new Exception("Falha ao enviar Pedido para Conferência.");
                 }
             }
             else
             {
-                if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From pedido_conferencia where idPedido=" + idPedido +
+                if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From pedido_conferencia where idPedido=" + idPedido +
                     " And Situacao=" + (int)PedidoConferencia.SituacaoConferencia.Finalizada) > 0)
                     throw new Exception("Este pedido já foi para conferência e a mesma já foi finalizada.");
 
                 if (recebeuSinal)
                     // Ativo/Conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.AtivoConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.AtivoConferencia);
                 else
                     // Em conferência
-                    PedidoDAO.Instance.AlteraSituacao(idPedido, Pedido.SituacaoPedido.EmConferencia);
+                    PedidoDAO.Instance.AlteraSituacao(sessao, idPedido, Pedido.SituacaoPedido.EmConferencia);
 
                 throw new Exception("Este pedido já foi para a conferência.");
             }
@@ -265,8 +275,8 @@ namespace Glass.Data.DAL
             try
             {
                 // Altera situação da conferência para finalizada e marca a data de término da conferência
-                objPersistence.ExecuteCommand("Update pedido_conferencia set situacao=" + 
-                    (int)PedidoConferencia.SituacaoConferencia.Finalizada + ", DataFim=?dataFim Where idPedido=" + 
+                objPersistence.ExecuteCommand("Update pedido_conferencia set situacao=" +
+                    (int)PedidoConferencia.SituacaoConferencia.Finalizada + ", DataFim=?dataFim Where idPedido=" +
                     idPedido, new GDAParameter("?dataFim", DateTime.Now));
 
                 // Altera a situação do pedido para conferido

@@ -542,6 +542,19 @@ Servicos.Pedidos = (function(http) {
           idParcela
         }
       });
+    },
+
+    /**
+     * Coloca o pedido atual em conferência.
+     * @param {number} idPedido O identificador do pedido que terá a conferência gerada.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    colocarEmConferencia: function (idPedido) {
+      if (!idPedido) {
+        throw new Error('Pedido é obrigatório.');
+      }
+
+      return http().post(API + idPedido + '/emConferencia');
     }
   };
 })(function() {

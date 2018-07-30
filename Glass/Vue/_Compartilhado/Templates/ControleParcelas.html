@@ -1,6 +1,6 @@
 <span>
     <span v-bind:style="estiloControle">
-        <span v-for="(parcela, index) in parcelasAtuais" v-bind:key="index">
+        <span v-for="(parcela, index) in parcelasAtuais.detalhes" v-bind:key="index">
             <div v-bind:style="obterEstiloParcela(index)">
                 <label>
                     {{ index + 1 }}ª parcela
@@ -11,7 +11,7 @@
                     Valor
                 </label>
                 <input type="number" v-model.number="parcela.valor" step="0.01" v-bind:min="valorMinimoParcela"
-                    style="width: 70px" required v-on:change="validarTotal" v-bind="$attrs" />
+                    style="width: 70px" v-bind="$attrs" />
             </div>
             <div v-bind:style="obterEstiloParcela(index)">
                 <label>
@@ -27,7 +27,7 @@
             </div>
         </span>
     </span>
-    <div style="color: red" v-if="invalido">
+    <div style="color: red; padding-top: 6px" v-if="invalido">
         Soma das parcelas não coincide com o valor total. <br>
         Valor esperado: {{ total | moeda }} <br>
         Valor informado: {{ totalParcelas | moeda }}

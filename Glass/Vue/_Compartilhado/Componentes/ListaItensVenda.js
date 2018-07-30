@@ -206,6 +206,26 @@ Vue.component('lista-itens-venda', {
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarFuncaoOuVazio
+    },
+
+    /**
+     * Indica se as colunas de processo e aplicação serão exibidas na lista.
+     * @type {boolean}
+     */
+    exibirColunasProcessoEAplicacao: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    },
+
+    /**
+     * Indica se a empresa vende vidro (caso não venda, esconde algumas colunas).
+     * @type {boolean}
+     */
+    empresaVendeVidro: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 
@@ -461,7 +481,7 @@ Vue.component('lista-itens-venda', {
       var mensagemProcesso = '';
       var mensagemAplicacao = '';
 
-      if (this.produtoAtual && this.produtoAtual.exigirProcessoEAplicacao) {
+      if (this.produtoAtual && this.exibirColunasProcessoEAplicacao && this.produtoAtual.exigirProcessoEAplicacao) {
         if (!this.processoAtual || !this.processoAtual.id) {
           mensagemProcesso = this.obrigarProcessoEAplicacaoRoteiro
             ? 'É obrigatório informar o processo caso algum setor seja to tipo "Por Roteiro" ou "Por Benef.".'
@@ -601,7 +621,8 @@ Vue.component('lista-itens-venda', {
         && this.itemVenda.altura
         && this.itemVenda.areaEmM2
         && this.produtoAtual
-        && this.produtoAtual.exibirBeneficiamentos;
+        && this.produtoAtual.exibirBeneficiamentos
+        && this.empresaVendeVidro;
     },
 
     /**

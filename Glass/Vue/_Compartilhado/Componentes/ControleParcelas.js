@@ -60,7 +60,7 @@ Vue.component('controle-parcelas', {
 
   data: function () {
     return {
-      parcelasAtuais: (this.parcelas || {}).detalhes || [],
+      parcelasAtuais: this.parcelas || {},
       controlesValor: null,
       invalido: false
     }
@@ -71,21 +71,24 @@ Vue.component('controle-parcelas', {
      * Preenche o valor, data e data mínima das parcelas.
      */
     calcularParcelas: function () {
-      if (this.verificarDeveCalcular()) {
-        this.parcelasAtuais = [];
+      var deveCalcular = this.verificarDeveCalcular();
+
+      if (deveCalcular) {
+        this.parcelasAtuais = this.clonar(this.parcelas || {});
+        this.parcelasAtuais.detalhes = [];
       }
 
-      for (var i = 0; i < this.parcelas.numeroParcelas; i++) {
-        if (this.verificarDeveCalcular()) {
-          this.parcelasAtuais.push({
-            valor: this.calcularValorParcela(this.parcelas.numeroParcelas == i + 1),
+      for (var i = 0; i < this.parcelasAtuais.numeroParcelas; i++) {
+        if (deveCalcular) {
+          this.parcelasAtuais.detalhes.push({
+            valor: this.calcularValorParcela(this.parcelasAtuais.numeroParcelas == i + 1),
             data: this.calcularDataParcela(i)
           });
         }
 
-        this.parcelasAtuais[i].dataMinima = i === 0
+        this.parcelasAtuais.detalhes[i].dataMinima = i === 0
           ? this.dataMinima
-          : this.adicionarDias(this.parcelasAtuais[i - 1].data, 1)
+          : this.adicionarDias(this.parcelasAtuais.detalhes[i - 1].data, 1)
       }
 
       this.validarTotal();
@@ -96,8 +99,9 @@ Vue.component('controle-parcelas', {
      * @returns {boolean} Um valor que indica se as parcelas devem ser calculadas
      */
     verificarDeveCalcular: function () {
-      return this.parcelasAtuais === null
-        || this.parcelasAtuais.length !== this.parcelas.numeroParcelas
+      return !this.parcelasAtuais
+        || !this.parcelasAtuais.detalhes
+        || this.parcelasAtuais.detalhes.length !== this.parcelasAtuais.numeroParcelas
         || this.total.toFixed(2) !== this.totalParcelas.toFixed(2);
     },
 
@@ -116,8 +120,8 @@ Vue.component('controle-parcelas', {
         var valorParcelaBruto = this.total / this.parcelas.numeroParcelas;
         valorParcelaNormalizado = arredondar(valorParcelaBruto);
       } else {
-        var totalParcelasAnteriores = this.parcelasAtuais
-          .slice(0, this.parcelasAtuais.length - 2)
+        var totalParcelasAnteriores = this.parcelasAtuais.detalhes
+          .slice(0, this.parcelasAtuais.numeroParcelas - 1)
           .reduce(function (acumulador, parcela) {
             return acumulador + parcela.valor;
           }, 0);
@@ -135,8 +139,8 @@ Vue.component('controle-parcelas', {
      */
     calcularDataParcela: function (posicao) {
       var dias = 30 * posicao;
-      if (this.parcelas.dias && this.parcelas.dias.length >= posicao) {
-        dias = parseInt(this.parcelas.dias[posicao]);
+      if (this.parcelasAtuais.dias && this.parcelasAtuais.dias.length >= posicao) {
+        dias = parseInt(this.parcelasAtuais.dias[posicao]);
       }
 
       return this.adicionarDias(new Date(this.dataMinima), dias);
@@ -154,7 +158,7 @@ Vue.component('controle-parcelas', {
 
       if (indice === 0) {
         estilo.paddingLeft = '0';
-      } else if (indice === this.parcelas.numeroParcelas - 1) {
+      } else if (indice === this.parcelasAtuais.numeroParcelas - 1) {
         estilo.paddingRight = '0';
       }
 
@@ -169,15 +173,20 @@ Vue.component('controle-parcelas', {
 
       if (this.controlesValor === null) {
         this.controlesValor = this.$el.children[0].querySelector('input[type=number]');
+
+        if (this.controlesValor && !Array.isArray(this.controlesValor)) {
+          this.controlesValor = [this.controlesValor];
+        }
       }
 
-      var mensagem = this.invalido
-        ? 'Valor inválido.'
-        : '';
+      if (this.controlesValor) {
+        var mensagem = this.invalido
+          ? 'Valor inválido.'
+          : '';
 
-      for (var controleValor of this.controlesValor) {
-        controleValor.setCustomValidity(mensagem);
-        controleValor.reportValidity();
+        for (var controleValor of this.controlesValor) {
+          controleValor.setCustomValidity(mensagem);
+        }
       }
     }
   },
@@ -209,9 +218,14 @@ Vue.component('controle-parcelas', {
      * Propriedade computada que retorna o valor total das parcelas atuais do controle.
      */
     totalParcelas: function () {
-      var total = this.parcelasAtuais.reduce(function (acumulador, parcela) {
-        return acumulador + parcela.valor;
-      }, 0);
+      var total = 0;
+
+      if (this.parcelasAtuais && this.parcelasAtuais.detalhes) {
+        total = this.parcelasAtuais.detalhes.reduce(function (acumulador, parcela) {
+          var valor = parcela.valor ? parcela.valor : 0;
+          return acumulador + valor;
+        }, 0);
+      }
 
       return parseFloat((total + 0.001).toFixed(2));
     }
@@ -233,8 +247,11 @@ Vue.component('controle-parcelas', {
     parcelas: {
       handler: function (atual) {
         this.controlesValor = null;
-        this.parcelasAtuais = (atual || {}).detalhes || [];
-        this.calcularParcelas();
+        this.parcelasAtuais = atual || {};
+
+        if (!atual['detalhes']) {
+          this.calcularParcelas();
+        }
       },
       deep: true
     },
@@ -245,13 +262,11 @@ Vue.component('controle-parcelas', {
      */
     parcelasAtuais: {
       handler: function (atual) {
+        this.validarTotal();
         var parcelas = this.parcelas || {};
 
-        if (!this.equivalentes(atual, parcelas.detalhes)) {
-          var novo = this.clonar(parcelas);
-          novo.detalhes = atual || [];
-
-          this.$emit('update:parcelas', novo);
+        if (!this.equivalentes(atual, parcelas)) {
+          this.$emit('update:parcelas', atual);
         }
       },
       deep: true

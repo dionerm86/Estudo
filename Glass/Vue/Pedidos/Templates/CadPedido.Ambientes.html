@@ -32,12 +32,12 @@
                         Altura
                     </a>
                 </th>
-                <th v-if="pedidoMaoDeObra">
+                <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
                     <a href="#" v-on:click.prevent="ordenar('processo')">
                         Proc.
                     </a>
                 </th>
-                <th v-if="pedidoMaoDeObra">
+                <th v-if="pedidoMaoDeObra && configuracoes.exibirColunasProcessoEAplicacao && !configuracoes.sistemaLite">
                     <a href="#" v-on:click.prevent="ordenar('aplicacao')">
                         Apl.
                     </a>
@@ -47,17 +47,17 @@
                         Redondo
                     </a>
                 </th>
-                <th>
+                <th v-if="pedidoMaoDeObra || configuracoes.acrescimoDescontoItens">
                     <a href="#" v-on:click.prevent="ordenar('valorProdutos')">
                         Valor produtos
                     </a>
                 </th>
-                <th>
+                <th v-if="configuracoes.acrescimoDescontoItens">
                     <a href="#" v-on:click.prevent="ordenar('acrescimo')">
                         Acréscimo
                     </a>
                 </th>
-                <th>
+                <th v-if="configuracoes.acrescimoDescontoItens">
                     <a href="#" v-on:click.prevent="ordenar('desconto')">
                         Desconto
                     </a>

@@ -43,12 +43,12 @@
                     Valor vendido
                 </a>
             </th>
-            <th>
+            <th v-if="exibirColunasProcessoEAplicacao">
                 <a href="#" v-on:click.prevent="ordenar('processo')">
                     Proc.
                 </a>
             </th>
-            <th>
+            <th v-if="exibirColunasProcessoEAplicacao">
                 <a href="#" v-on:click.prevent="ordenar('aplicacao')">
                     Apl.
                 </a>
@@ -113,12 +113,12 @@
             <td>
                 {{ item.valorUnitario | moeda }}
             </td>
-            <td>
+            <td v-if="exibirColunasProcessoEAplicacao">
                 <span v-if="item.processo">
                     {{ item.processo.codigo }}
                 </span>
             </td>
-            <td>
+            <td v-if="exibirColunasProcessoEAplicacao">
                 <span v-if="item.aplicacao">
                     {{ item.aplicacao.codigo }}
                 </span>
@@ -132,7 +132,7 @@
                     (Desconto de {{ item.descontoPorQuantidade.percentual | percentual }})
                 </span>
             </td>
-            <td>
+            <td v-if="empresaVendeVidro">
                 <span v-if="item.beneficiamentos">
                     {{ item.beneficiamentos.valor | moeda }}
                 </span>
@@ -153,7 +153,7 @@
             </td>
         </template>
         <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
-            v-if="item.composicao.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos(index)">
+            v-if="item.composicao.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos(index) && empresaVendeVidro">
             <tr v-bind:class="classe" style="border-top: none">
                 <td></td>
                 <td v-bind:colspan="numeroColunasLista - 1">
@@ -162,7 +162,7 @@
                         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno"
                         v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
                         v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:permitir-inserir="item.composicao.permitirInserirFilhos"
-                        v-on:lista-atualizada="listaAtualizada">
+                        v-bind:exibir-colunas-processo-e-aplicacao="exibirColunasProcessoEAplicacao" v-bind:empresa-vende-vidro="empresaVendeVidro" v-on:lista-atualizada="listaAtualizada">
                         <template slot="cabecalho">
                             <slot name="cabecalho"></slot>
                         </template>
@@ -244,10 +244,10 @@
                 <input type="number" step="0.01" min="produtoAtual ? produtoAtual.valorMinimo : 0" v-model.number="itemVenda.valorUnitario"
                     style="width: 50px" required>
             </td>
-            <td class="lista-itens-venda__processo">
+            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao">
                 <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="itemVenda"></campo-busca-etiqueta-processo>
             </td>
-            <td class="lista-itens-venda__aplicacao">
+            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
@@ -265,7 +265,7 @@
                     v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
                     v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
-            <td>
+            <td v-if="empresaVendeVidro">
                 <span v-if="itemVenda.beneficiamentos">
                     {{ itemVenda.beneficiamentos.valor | moeda }}
                 </span>
@@ -377,10 +377,10 @@
                     {{ itemVenda.valorUnitario | moeda }}
                 </span>
             </td>
-            <td class="lista-itens-venda__processo">
+            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao">
                 <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
             </td>
-            <td class="lista-itens-venda__aplicacao">
+            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
@@ -394,7 +394,7 @@
                     v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
                     v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
-            <td>
+            <td v-if="empresaVendeVidro">
                 <span v-if="inserindo && itemVenda.beneficiamentos">
                     {{ itemVenda.beneficiamentos.valor | moeda }}
                 </span>

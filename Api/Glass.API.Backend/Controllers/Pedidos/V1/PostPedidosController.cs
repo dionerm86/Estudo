@@ -322,5 +322,49 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                 }
             }
         }
+
+        /// <summary>
+        /// Altera a liberação financeira de um pedido.
+        /// </summary>
+        /// <param name="id">O identificador do pedido.</param>
+        /// <param name="dados">Dados de entrada do método.</param>
+        /// <returns>Um status HTTP que indica se a liberação financeira do pedido foi alterada.</returns>
+        [HttpPost]
+        [Route("{id}/emConferencia")]
+        [SwaggerResponse(202, "Pedido colocado em conferência sem erros.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ColocarEmConferencia(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdPedido(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                if (ProdutosPedidoDAO.Instance.CountInPedido(sessao, (uint)id) == 0)
+                {
+                    return this.ErroValidacao("Inclua pelo menos um produto no pedido para finalizá-lo.");
+                }
+
+                try
+                {
+                    // Cria um registro na tabela em conferencia para este pedido
+                    PedidoConferenciaDAO.Instance.NovaConferencia(
+                        sessao,
+                        (uint)id,
+                        PedidoDAO.Instance.ObtemIdSinal(sessao, (uint)id) > 0);
+
+                    return this.Aceito($"Conferência do pedido {id} gerada com sucesso.");
+                }
+                catch (Exception ex)
+                {
+                    return this.ErroValidacao($"Erro ao gerar conferência do pedido {id}.", ex);
+                }
+            }
+        }
     }
 }
