@@ -42,6 +42,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.StatusCode = 404;
             context.Response.StatusDescription = "Not Found";
             context.Response.Flush();
+            context.Response.End();
         }
 
         /// <summary>
@@ -53,6 +54,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = "Unauthorized";
             context.Response.Flush();
+            context.Response.End();
         }
 
         /// <summary>
