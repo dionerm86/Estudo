@@ -20,6 +20,7 @@
                 if (idControle) {
                     window.opener.Busca.Popup.atualizar(idControle, idComissionado, nome);
                     closeWindow();
+                    return;
                 }
             }
 

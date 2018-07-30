@@ -39,6 +39,7 @@
                 if (idControle) {
                     window.opener.Busca.Popup.atualizar(idControle, idCli, nome);
                     closeWindow();
+                    return;
                 }
             }
 

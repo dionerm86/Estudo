@@ -119,6 +119,10 @@ Vue.component('campo-quantidade', {
      * Atualiza os percentuais de desconto para o controle de desconto por quantidade.
      */
     atualizarDadosDescontoPorQuantidade: function () {
+      if (!this.idProduto || !this.idCliente) {
+        return;
+      }
+
       this.executarTimeout('atualizarDadosDescontoPorQuantidade', function () {
         var vm = this;
 

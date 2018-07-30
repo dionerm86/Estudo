@@ -11,6 +11,7 @@
                 if (idControle) {
                     window.opener.Busca.Popup.atualizar(idControle, idObra, descricao);
                     closeWindow();
+                    return;
                 }
             }
 

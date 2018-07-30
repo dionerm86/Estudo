@@ -14,6 +14,7 @@
                 if (idControle) {
                     window.opener.Busca.Popup.atualizar(idControle, idAplicacao, codInterno);
                     closeWindow();
+                    return;
                 }
             }
 

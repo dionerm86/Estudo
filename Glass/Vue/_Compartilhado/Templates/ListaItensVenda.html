@@ -297,16 +297,29 @@
                             style="width: 40px" min="0" step="0.01" />
                     </span>
                 </template>
-                <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
-                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:id-subgrupo-produto="produtoAtual.idSubgrupo"
-                    v-bind:id-cor-produto="produtoAtual.idCor" v-bind:espessura-produto="itemVenda.produto.espessura" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
-                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
-                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
-                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
-                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
-                    v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
-                    v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
-                    v-if="vIfControleBeneficiamentos"></controle-beneficiamentos>
+                <span v-bind:style="estiloContainerBeneficiamentos" v-if="vIfControleBeneficiamentos">
+                    <img src="/Images/gear_add.gif" title="Espessura e Beneficiamentos" style="cursor: pointer"
+                        v-on:click="exibirBeneficiamentos = !exibirBeneficiamentos" />
+                    <span v-if="exibirBeneficiamentos">
+                        <div style="text-align: center">
+                            Espessura
+                            <input type="number" v-model.number="itemVenda.produto.espessura" style="width: 40px"
+                                v-bind:disabled="itemVenda.produto.espessura > 0" step="0.01" min="0.01"
+                                v-if="itemVenda && itemVenda.produto">
+                        </div>
+                        <div style="padding-top: 8px">
+                            <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
+                                v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:id-subgrupo-produto="produtoAtual.idSubgrupo"
+                                v-bind:id-cor-produto="produtoAtual.idCor" v-bind:espessura-produto="itemVenda.produto.espessura" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
+                                v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
+                                v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
+                                v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
+                                v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                                v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
+                                v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"></controle-beneficiamentos>
+                        </div>
+                    </span>
+                </span>
             </td>
         </template>
         <template slot="itemIncluir">
@@ -413,16 +426,29 @@
                             style="width: 40px" min="0" step="0.01" />
                     </span>
                 </template>
-                <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
-                    v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:id-subgrupo-produto="produtoAtual.idSubgrupo"
-                    v-bind:id-cor-produto="produtoAtual.idCor" v-bind:espessura-produto="itemVenda.produto.espessura" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
-                    v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
-                    v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
-                    v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
-                    v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
-                    v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
-                    v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"
-                    v-if="inserindo && vIfControleBeneficiamentos"></controle-beneficiamentos>
+                <span v-bind:style="estiloContainerBeneficiamentos" v-if="inserindo && vIfControleBeneficiamentos">
+                    <img src="/Images/gear_add.gif" title="Beneficiamentos" style="cursor: pointer"
+                        v-on:click="exibirBeneficiamentos = !exibirBeneficiamentos" />
+                    <span v-if="exibirBeneficiamentos">
+                        <div style="text-align: center">
+                            Espessura
+                            <input type="number" v-model.number="itemVenda.produto.espessura" style="width: 40px"
+                                v-bind:disabled="itemVenda.produto.espessura > 0" step="0.01" min="0.01"
+                                v-if="itemVenda && itemVenda.produto">
+                        </div>
+                        <div style="padding-top: 8px">
+                            <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
+                                v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:id-subgrupo-produto="produtoAtual.idSubgrupo"
+                                v-bind:id-cor-produto="produtoAtual.idCor" v-bind:espessura-produto="itemVenda.produto.espessura" v-bind:beneficiamentos-padrao="produtoAtual.beneficiamentos"
+                                v-bind:altura-produto="itemVenda.altura.paraCalculo" v-bind:largura-produto="itemVenda.largura" v-bind:quantidade-produto="itemVenda.quantidade"
+                                v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-bind:area-m2-produto="itemVenda.areaEmM2.real" v-bind:area-calculada-m2-produto="itemVenda.areaEmM2.paraCalculo"
+                                v-bind:valor-unitario-produto="itemVenda.valorUnitario" v-bind:custo-unitario-produto="produtoAtual.custo" v-bind:cliente-revenda="clienteRevenda"
+                                v-bind:percentual-desconto-acrescimo-cliente="(produtoAtual.descontoAcrescimoCliente || {}).percentual"
+                                v-bind:usar-desconto-acrescimo-cliente-nos-beneficiamentos="(produtoAtual.descontoAcrescimoCliente || {}).usarNosBeneficiamentos" v-bind:tipo-entrega="tipoEntrega || 0"
+                                v-bind:percentual-comissao="percentualComissao || 0" v-bind:tipo-beneficiamentos="tipoBeneficiamentos"></controle-beneficiamentos>
+                        </div>
+                    </span>
+                </span>
             </td>
         </template>
     </lista-paginada>

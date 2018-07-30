@@ -4,7 +4,7 @@
         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" tipo-validacao-produto="Pedido"
         v-bind:quantidade-ambiente="ambiente ? ambiente.quantidade : null" v-bind:obrigar-processo-e-aplicacao-roteiro="configuracoes.obrigarProcessoEAplicacaoRoteiro"
         v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar"
-        v-bind:inserir="inserir" v-on:lista-atualizada="listaAtualizada">
+        v-bind:inserir="inserir" v-bind:exibir-popup-falta-estoque="exibirPopupEstoque" v-on:lista-atualizada="listaAtualizada">
         <template slot="itemIconesDireita" slot-scope="{ item, index }">
             <button title="Exibir imagem das peças" v-on:click.prevent="abrirImagemPecas(item)"
                 v-if="item.produto && item.produto.vidro">

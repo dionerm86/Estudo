@@ -236,6 +236,22 @@ Vue.component('pedido-produtos', {
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         })
+    },
+
+    /**
+     * Função executada ao definir que o popup de falta de estoque deve ser exibido.
+     * @param {number} idProduto O identificador do produto atual.
+     * @param {number} altura A altura do popup.
+     * @param {number} largura A largura do popup.
+     */
+    exibirPopupEstoque: function (idProduto, altura, largura) {
+      this.abrirJanela(
+        altura,
+        largura,
+        '../Utils/DadosEstoque.aspx'
+          * '?idProd=' + idProduto
+          + "&idPedido=" + this.pedido.id
+      );
     }
   },
 

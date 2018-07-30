@@ -412,25 +412,25 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
         {
             var pedidoProducao = dadosAdicionais.TipoPedido == Data.Model.Pedido.TipoPedidoEnum.Producao;
 
-            var bloquearEstoque = !pedidoProducao
-                && GrupoProdDAO.Instance.BloquearEstoque(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd);
-
             var estoqueReal = ProdutoLojaDAO.Instance.GetEstoque(
                 sessao,
                 (uint)dadosAdicionais.IdLoja,
                 (uint)produto.IdProd,
                 pedidoProducao);
 
+            var bloquearEstoque = !pedidoProducao
+                && GrupoProdDAO.Instance.BloquearEstoque(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd);
+
             var estoqueAtual = bloquearEstoque
-                ? 999999999
-                : estoqueReal;
+                ? estoqueReal
+                : 999999999;
 
             var retorno = new EstoqueDto
             {
                 QuantidadeReal = estoqueReal,
                 QuantidadeAtual = estoqueAtual,
                 NumeroBarrasAluminio = null,
-                Unidade = "peças",
+                Unidade = "peça(s)",
                 ExibirPopupFaltaEstoque = PedidoConfig.DadosPedido.ExibePopupVidrosEstoque
                     && ProdutoDAO.Instance.ExibirMensagemEstoque(sessao, produto.IdGrupoProd, produto.IdSubgrupoProd),
             };

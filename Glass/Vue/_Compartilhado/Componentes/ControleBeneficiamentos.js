@@ -269,13 +269,6 @@ Vue.component('controle-beneficiamentos', {
       backgroundColor: '#DAF1F8'
     };
 
-    const estiloContainerBeneficiamentos = {
-      display: 'inline-grid',
-      gridTemplateColumns: 'repeat(2, max-content)',
-      gridGap: '4px',
-      alignItems: 'center'
-    };
-
     return {
       uuid: null,
       beneficiamentos: null,
@@ -285,8 +278,7 @@ Vue.component('controle-beneficiamentos', {
       estiloControles,
       estiloValor,
       unidadeMonetaria: Formatacao.unidadeMonetaria(),
-      exibirBeneficiamentos: false,
-      estiloContainerBeneficiamentos
+      exibirBeneficiamentos: false
     };
   },
 

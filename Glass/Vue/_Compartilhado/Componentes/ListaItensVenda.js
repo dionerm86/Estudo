@@ -199,6 +199,8 @@ Vue.component('lista-itens-venda', {
      * Função executada ao definir que o popup de falta de estoque deve ser exibido.
      * @type {Function}
      * @param {number} idProduto O identificador do produto atual.
+     * @param {number} altura A altura do popup.
+     * @param {number} largura A largura do popup.
      */
     exibirPopupFaltaEstoque: {
       required: true,
@@ -208,6 +210,13 @@ Vue.component('lista-itens-venda', {
   },
 
   data: function () {
+    const estiloContainerBeneficiamentos = {
+      display: 'inline-grid',
+      gridTemplateColumns: 'repeat(2, max-content)',
+      gridGap: '4px',
+      alignItems: 'center'
+    };
+
     return {
       controleAtualizacao: 0,
       inserindo: false,
@@ -224,7 +233,9 @@ Vue.component('lista-itens-venda', {
       numeroBeneficiamentosParaAreaMinima: 0,
       processoAtual: null,
       aplicacaoAtual: null,
-      filhosEmExibicao: []
+      filhosEmExibicao: [],
+      exibirBeneficiamentos: false,
+      estiloContainerBeneficiamentos
     };
   },
 
@@ -367,6 +378,8 @@ Vue.component('lista-itens-venda', {
      * @param {Object} item O produto que será usado como base, no caso de edição.
      */
     iniciarCadastroOuAtualizacao_: function (item) {
+      this.exibirBeneficiamentos = false;
+
       this.produtoAtual = item && item.produto
         ? {
           id: item.produto.id,
@@ -514,6 +527,11 @@ Vue.component('lista-itens-venda', {
         return;
       }
 
+      if (this.produtoAtual.estoque.quantidadeAtual === 0) {
+        this.exibirMensagem('Estoque', 'Não há nenhuma peça deste produto no estoque.');
+        return;
+      }
+
       var valorComparar;
       switch (this.produtoAtual.estoque.unidade) {
         case "m²":
@@ -521,7 +539,7 @@ Vue.component('lista-itens-venda', {
           break;
 
         case "ml":
-          valorComparar = this.itemVenda.altura.paraCalculo;
+          valorComparar = this.itemVenda.altura.paraCalculo * this.itemVenda.quantidade;
           break;
 
         default:
@@ -529,7 +547,29 @@ Vue.component('lista-itens-venda', {
           break;
       }
 
-      //if (this.produtoAtual.)
+      var estoqueMenor = valorComparar > this.produtoAtual.estoque.quantidadeAtual;
+
+      if (estoqueMenor) {
+        var barras = this.produtoAtual.estoque.numeroBarrasAluminio > 0
+          ? ' (' + this.produtoAtual.estoque.numeroBarrasAluminio + ' barras)'
+          : '';
+
+        var mensagem = 'Há apenas '
+          + this.produtoAtual.estoque.quantidadeAtual
+          + ' '
+          + this.produtoAtual.estoque.unidade
+          + barras
+          + ' deste produto no estoque.';
+
+        this.itemVenda.quantidade = null;
+        this.exibirMensagem('Estoque', mensagem);
+      }
+
+      if (this.produtoAtual.estoque.exibirPopupFaltaEstoque
+        && (estoqueMenor || this.produtoAtual.estoque.quantidadeReal <= 0)) {
+
+        this.exibirPopupFaltaEstoque(this.produtoAtual.id, 400, 600);
+      }
     }
   },
 
@@ -606,6 +646,7 @@ Vue.component('lista-itens-venda', {
         }
 
         this.itemVenda.valorUnitario = atual ? atual.valorUnitario : null;
+        this.validarEstoque();
       },
       deep: true
     },
@@ -649,6 +690,36 @@ Vue.component('lista-itens-venda', {
 
         this.itemVenda.aplicacao.id = atual ? atual.id : null;
         this.itemVenda.aplicacao.codigo = atual ? atual.codigo : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'itemVenda.altura'.
+     * Valida o estoque para o produto atual.
+     */
+    'itemVenda.altura': {
+      handler: function() {
+        this.validarEstoque();
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'itemVenda.quantidade'.
+     * Valida o estoque para o produto atual.
+     */
+    'itemVenda.quantidade': function() {
+      this.validarEstoque();
+    },
+
+    /**
+     * Observador para a variável 'itemVenda.areaEmM2'.
+     * Valida o estoque para o produto atual.
+     */
+    'itemVenda.areaEmM2': {
+      handler: function() {
+        this.validarEstoque();
       },
       deep: true
     },

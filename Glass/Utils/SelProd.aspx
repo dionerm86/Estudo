@@ -13,8 +13,9 @@
             if (GetQueryString("buscaComPopup") === "true") {
                 var idControle = GetQueryString("id-controle");
                 if (idControle) {
-                    window.opener.Busca.Popup.atualizar(idControle, idProd, codInterno);
+                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
                     closeWindow();
+                    return;
                 }
             }
 
