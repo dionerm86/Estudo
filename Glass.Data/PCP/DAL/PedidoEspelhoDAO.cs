@@ -2147,6 +2147,32 @@ namespace Glass.Data.DAL
 
             foreach (var prod in produtosPedidoEspelho)
             {
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (prod.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in prod.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            (prod.Altura < tamanhoMinimoBisote || prod.Largura < tamanhoMinimoBisote))
+                            retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            (prod.Altura < tamanhoMinimoLapidacao || prod.Largura < tamanhoMinimoLapidacao))
+                            retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                    }
+                }
+
+                if (tamanhoMinimoTemperado > 0 && SubgrupoProdDAO.Instance.IsVidroTemperado(session, prod.IdProd) && prod.Altura < tamanhoMinimoTemperado && prod.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
+
                 /* Chamado 15834.
                     * Esta verificação irá obrigar o usuário a excluir o ambiente vazio, que por sua vez, faz com que
                     * a exportação de pedido gere vários produtos incorretos com quantidade "0,5". */

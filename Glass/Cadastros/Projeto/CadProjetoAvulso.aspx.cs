@@ -816,11 +816,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 foreach (var prodBenef in materItem.Beneficiamentos)
                 {
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                        materItem.Altura < tamanhoMinimoBisote || materItem.Largura < tamanhoMinimoBisote)
+                            (materItem.Altura < tamanhoMinimoBisote || materItem.Largura < tamanhoMinimoBisote))
                         retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
 
                     if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                        materItem.Altura < tamanhoMinimoLapidacao || materItem.Largura < tamanhoMinimoLapidacao)
+                        (materItem.Altura < tamanhoMinimoLapidacao || materItem.Largura < tamanhoMinimoLapidacao))
                         retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
                 }
             }

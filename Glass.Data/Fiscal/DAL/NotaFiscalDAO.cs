@@ -3894,13 +3894,18 @@ namespace Glass.Data.DAL
                                     nomeUfDestino.ToUpper().Contains("SE") ||
                                     nomeUfDestino.ToUpper().Contains("TO");
 
-                                var percentualIcmsInterestadual =
-                                    pnf.CstOrig == 1 ? 4 :
-                                        origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
+                                decimal percentualIcmsInterestadual = 0;
 
-                                var valorDifal =
-                                    (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) -
-                                    (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
+                                if (nomeUfOrigem.ToUpper().Contains("SP") && nomeUfDestino.ToUpper().Contains("MG"))
+                                {
+                                    percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
+                                }
+                                else
+                                {
+                                    percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
+                                }
+
+                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * (percentualIcmsInterestadual / 100));
 
                                 var percentualIcmsUFDestino =
                                     DateTime.Now.Year == 2016 ? (decimal)0.4 :
@@ -4098,7 +4103,7 @@ namespace Glass.Data.DAL
                         for (int i = 0; i < lstParcNf.Length; i++)
                         {
                             XmlElement dup = doc.CreateElement("dup");
-                            ManipulacaoXml.SetNode(doc, dup, "nDup", i.ToString().PadLeft(3, '0'));
+                            ManipulacaoXml.SetNode(doc, dup, "nDup", (i + 1).ToString().PadLeft(3, '0'));
                             ManipulacaoXml.SetNode(doc, dup, "dVenc", lstParcNf[i].Data.Value.ToString("yyyy-MM-dd"));
                             ManipulacaoXml.SetNode(doc, dup, "vDup", Formatacoes.TrataValorDecimal(lstParcNf[i].Valor, 2));
                             cobr.AppendChild(dup);

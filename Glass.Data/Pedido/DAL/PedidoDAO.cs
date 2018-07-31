@@ -5810,6 +5810,32 @@ namespace Glass.Data.DAL
 
                 foreach (var prod in lstProd)
                 {
+                    var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                    var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                    var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                    var retorno = string.Empty;
+
+                    if (prod.Beneficiamentos != null)
+                    {
+                        foreach (var prodBenef in prod.Beneficiamentos)
+                        {
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                                (prod.Altura < tamanhoMinimoBisote || prod.Largura < tamanhoMinimoBisote))
+                                retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                                (prod.Altura < tamanhoMinimoLapidacao || prod.Largura < tamanhoMinimoLapidacao))
+                                retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                        }
+                    }
+
+                    if (tamanhoMinimoTemperado > 0 && SubgrupoProdDAO.Instance.IsVidroTemperado(session, prod.IdProd) && prod.Altura < tamanhoMinimoTemperado && prod.Largura < tamanhoMinimoTemperado)
+                        retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+                    if (!string.IsNullOrWhiteSpace(retorno))
+                        throw new Exception(retorno);
+
                     float qtdProd = 0;
                     var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
 
@@ -13403,20 +13429,11 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    var situacaoPedidoEspelho = existeEspelho ? PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido) : (PedidoEspelho.SituacaoPedido?)null;
-                    var podeAtualizar = situacaoPedidoEspelho == null ||
-                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando ||
-                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
-                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum;
+                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
 
-                    if (podeAtualizar)
+                    if (existeEspelho)
                     {
-                        AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
-
-                        if (existeEspelho)
-                        {
-                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
-                        }
+                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
                     }
                 }
 

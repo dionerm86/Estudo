@@ -4133,11 +4133,11 @@ namespace Glass.Data.DAL
                     foreach (var prodBenef in objInsert.Beneficiamentos)
                     {
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                            objInsert.Altura < tamanhoMinimoBisote || objInsert.Largura < tamanhoMinimoBisote)
+                            (objInsert.Altura < tamanhoMinimoBisote || objInsert.Largura < tamanhoMinimoBisote))
                             retorno += $"O altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
 
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                            objInsert.Altura < tamanhoMinimoLapidacao || objInsert.Largura < tamanhoMinimoLapidacao)
+                            (objInsert.Altura < tamanhoMinimoLapidacao || objInsert.Largura < tamanhoMinimoLapidacao))
                             retorno += $"O altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
                     }
                 }
@@ -4635,11 +4635,11 @@ namespace Glass.Data.DAL
                     foreach (var prodBenef in objUpdate.Beneficiamentos)
                     {
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                            objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote)
+                            (objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote))
                             retorno += $"O altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
 
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                            objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao)
+                            (objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao))
                             retorno += $"O altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
                     }
                 }
