@@ -3828,7 +3828,7 @@ namespace Glass.Data.DAL
 
                     #region DIFAL
 
-                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao));
+                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", $"IdNaturezaOperacao={ pnf.IdNaturezaOperacao }");
 
                     if (pnf.IdNaturezaOperacao > 0 && naturezaCalculaDifal)
                     {
@@ -3851,23 +3851,13 @@ namespace Glass.Data.DAL
 
                                 if (dadosIcms == null)
                                 {
-                                    throw new Exception(string.Format("A natureza de operação associada ao produto {0} está marcada para calcular DIFAL, portanto, informe as alíquotas de ICMS no cadastro do produto.",
-                                        ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
+                                    var codInternoProd = ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd);
+                                    throw new Exception($"A natureza de operação, associada ao produto { codInternoProd }, está marcada para calcular DIFAL. Portanto, informe as alíquotas de ICMS no cadastro do produto.");
                                 }
-                                                                
-                                var percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
-                                var valorDifal = pnf.BcIcms * (percentualIcmsInterestadual / 100);
 
-                                var percentualIcmsUFDestino =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
-
-                                var percentualIcmsUFRemetente =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
-
+                                var valorDifal = pnf.BcIcms * ((decimal)dadosIcms.AliquotaInterestadual / 100);
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 1;
+                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 var valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 var valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
@@ -3883,12 +3873,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
-
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
-                                    DateTime.Now.Year == 2016 ? Formatacoes.TrataValorDecimal(40, 2) :
-                                    DateTime.Now.Year == 2017 ? Formatacoes.TrataValorDecimal(60, 2) :
-                                    DateTime.Now.Year == 2018 ? Formatacoes.TrataValorDecimal(80, 2) : Formatacoes.TrataValorDecimal(100, 2));
-
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal((percentualIcmsUFDestino * 100), 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
@@ -4336,17 +4321,7 @@ namespace Glass.Data.DAL
             try
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
-
-                var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList() ?? new List<PagtoNotaFiscal>();
-
-                var idCfopNotaFiscal = GetIdCfop(null, idNf);
-                bool cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(null, idCfopNotaFiscal);
-
-                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0 && !cfopDevolucao)
-                {
-                    throw new Exception("Informe os valores de recebimento da nota fiscal.");
-                }
-
+                
                 #region Verificações para emissão assíncrona
 
                 if (loja.Uf.ToUpper() == "BA" || loja.Uf.ToUpper() == "SP")
