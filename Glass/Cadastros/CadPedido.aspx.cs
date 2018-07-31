@@ -1085,11 +1085,11 @@ namespace Glass.UI.Web.Cadastros
                     foreach (var prodBenef in prodPed.Beneficiamentos)
                     {
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
-                            prodPed.Altura < tamanhoMinimoBisote || prodPed.Largura < tamanhoMinimoBisote)
+                            (prodPed.Altura < tamanhoMinimoBisote || prodPed.Largura < tamanhoMinimoBisote))
                             retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.<br></br>";
 
                         if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
-                            prodPed.Altura < tamanhoMinimoLapidacao || prodPed.Largura < tamanhoMinimoLapidacao)
+                           (prodPed.Altura < tamanhoMinimoLapidacao || prodPed.Largura < tamanhoMinimoLapidacao))
                             retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
                     }
                 }

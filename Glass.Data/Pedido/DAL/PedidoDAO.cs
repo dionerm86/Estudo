@@ -5810,6 +5810,32 @@ namespace Glass.Data.DAL
 
                 foreach (var prod in lstProd)
                 {
+                    var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                    var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                    var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                    var retorno = string.Empty;
+
+                    if (prod.Beneficiamentos != null)
+                    {
+                        foreach (var prodBenef in prod.Beneficiamentos)
+                        {
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                                (prod.Altura < tamanhoMinimoBisote || prod.Largura < tamanhoMinimoBisote))
+                                retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                                (prod.Altura < tamanhoMinimoLapidacao || prod.Largura < tamanhoMinimoLapidacao))
+                                retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                        }
+                    }
+
+                    if (tamanhoMinimoTemperado > 0 && SubgrupoProdDAO.Instance.IsVidroTemperado(session, prod.IdProd) && prod.Altura < tamanhoMinimoTemperado && prod.Largura < tamanhoMinimoTemperado)
+                        retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+                    if (!string.IsNullOrWhiteSpace(retorno))
+                        throw new Exception(retorno);
+
                     float qtdProd = 0;
                     var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
 
