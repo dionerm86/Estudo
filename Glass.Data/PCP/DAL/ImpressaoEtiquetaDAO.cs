@@ -953,6 +953,10 @@ namespace Glass.Data.DAL
                         if (String.IsNullOrEmpty(etiqueta.CodOtimizacao))
                             throw new Exception("O produto " + etiqueta.DescrProd + " não possui código de otimização, informe-o no cadastro de produto.");
 
+                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(transaction, (int)idProd);
+                        if (String.IsNullOrEmpty(shapeId) && isPecaReposta.Value && produtoProducao)
+                            shapeId = ProdutoDAO.Instance.ObtemForma(transaction, idProd, null);
+
                         /* Chamado 18056. */
                         shapeId = String.IsNullOrEmpty(shapeId) ? String.Empty : shapeId;
 
