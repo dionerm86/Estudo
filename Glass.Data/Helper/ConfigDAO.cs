@@ -552,7 +552,6 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.AdicionalVidroRedondoAte12mm);
             itens.Add(Config.ConfigEnum.AdicionalVidroRedondoAcima12mm);
             itens.Add(Config.ConfigEnum.PermitirApenasPedidosDeVendaNoEcommerce);
-            itens.Add(Config.ConfigEnum.AlterarDataEntregaPedidoDataRetroativa);
 
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }

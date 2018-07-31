@@ -333,7 +333,6 @@ namespace Glass.Data.Helper
             AlturaELarguraMinimasParaPecasTemperadas = 371,
             AlturaELarguraMinimaParaPecasComBisote = 372,
             AlturaELarguraMinimaParaPecasComLapidacao = 373,
-            AlterarDataEntregaPedidoDataRetroativa = 375,
 
             #region Configs Suporte (Antiga config interna)
 
