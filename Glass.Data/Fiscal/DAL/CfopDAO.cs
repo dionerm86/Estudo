@@ -218,21 +218,6 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        /// <summary>
-        /// Verifica se o CFOP é de Retorno de mercadoria.
-        /// </summary>
-        public bool IsCfopRetornoMercadoria(GDASession session, uint idCfop)
-        {
-            return IsCfopRetornoMercadoria(ObtemValorCampo<string>(session, "codInterno", "idCfop=" + idCfop));
-        }
-
-        public bool IsCfopRetornoMercadoria(string codInterno)
-        {
-            List<string> cfopRetornoMercadoria = new List<string>() { "1902", "1906", "1913", "1914",
-                "1916", "1925", "2916", "5902", "5916", "5925" };
-            return cfopRetornoMercadoria.Contains(codInterno);
-        }
-
         #region Verifica se o CFOP é de devolução
 
         /// <summary>
