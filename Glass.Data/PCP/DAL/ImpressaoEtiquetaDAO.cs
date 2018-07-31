@@ -1315,9 +1315,12 @@ namespace Glass.Data.DAL
                     // Preenche o idArquivoMesaCorte aqui para que ao chamar o método de buscar a aresta, passe o idArquivoMesaCorte correto
                     etiq.IdArquivoMesaCorte = idArquivoMesaCorte;
 
+                    var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp);
+                    var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(session, (int)idProd);
+
                     /* Chamado 16479.
                      * Peças repostas não podem gerar arquivo de marcação, devem gerar o arquivo .ASC com forma inexistente. */
-                    if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta))
+                    if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta || produtoProducao))
                     {
                         var forma = string.Empty;
                         var nomeArquivo = ObterNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, null, null, forIntermac, out forma, converterCaractereEspecial);
@@ -1376,9 +1379,7 @@ namespace Glass.Data.DAL
                         var idAplicacao = ProdutosPedidoEspelhoDAO.Instance.ObtemIdAplicacao(session, etiq.IdProdPedEsp);
                         var aplicacaoGeraFormaInexistente = EtiquetaAplicacaoDAO.Instance.ObtemGerarFormaInexistente(session, idAplicacao);
                         var idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(session, etiq.IdProdPedEsp);
-                        var processoGeraFormaInexistente = EtiquetaProcessoDAO.Instance.ObtemGerarFormaInexistente(session, idProcesso);
-                        var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp);
-                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(session, (int)idProd);
+                        var processoGeraFormaInexistente = EtiquetaProcessoDAO.Instance.ObtemGerarFormaInexistente(session, idProcesso);                        
 
                         if ((tipoArquivo != (int)TipoArquivoMesaCorte.DXF || produtoPossuiImagemAssociada) && ((aplicacaoGeraFormaInexistente || processoGeraFormaInexistente) && !produtoProducao))
                         {
