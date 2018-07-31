@@ -3931,7 +3931,7 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
                                     DateTime.Now.Year == 2016 ?
                                         Formatacoes.TrataValorDecimal(40, 2) :
