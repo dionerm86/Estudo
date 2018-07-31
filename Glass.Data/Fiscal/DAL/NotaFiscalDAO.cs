@@ -9500,6 +9500,11 @@ namespace Glass.Data.DAL
 
                     for (int i = 0; i < objUpdate.NumParc; i++)
                     {
+                        if (objUpdate.DatasParcelas[i] == DateTime.MinValue)
+                        {
+                            throw new Exception("Informe uma data valida para as parcelas da Nota Fiscal");
+                        }
+
                         parcela.Valor = objUpdate.ValoresParcelas[i];
                         parcela.Data = objUpdate.DatasParcelas[i];
                         parcela.NumBoleto = objUpdate.BoletosParcelas != null && objUpdate.BoletosParcelas.Length > 0 ? objUpdate.BoletosParcelas[i] : null;
