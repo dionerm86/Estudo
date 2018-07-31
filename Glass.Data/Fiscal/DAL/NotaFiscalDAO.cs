@@ -3828,12 +3828,12 @@ namespace Glass.Data.DAL
 
                     #region DIFAL
 
-                    if (pnf.IdNaturezaOperacao > 0 &&
-                        NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool?>("CalcularDifal",
-                            string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao)).GetValueOrDefault())
+                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao));
+
+                    if (pnf.IdNaturezaOperacao > 0 && naturezaCalculaDifal)
                     {
-                        var codigoCfop =
-                            CfopDAO.Instance.ObtemCodInterno(NaturezaOperacaoDAO.Instance.ObtemIdCfop(pnf.IdNaturezaOperacao.Value)).Substring(0, 1);
+                        var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(pnf.IdNaturezaOperacao.Value);
+                        var codigoCfop = CfopDAO.Instance.ObtemCodInterno(idCfop)?.Substring(0, 1) ?? string.Empty;
 
                         // Salva as tags do DIFAL somente se o CFOP for interestadual.
                         if (codigoCfop == "2" || codigoCfop == "6")
@@ -3842,70 +3842,21 @@ namespace Glass.Data.DAL
 
                             if (notaFiscal.IdCliente > 0)
                             {
-                                var idCidadeCliente =
-                                    ClienteDAO.Instance.ObtemValorCampo<int?>("IdCidade",
-                                        string.Format("Id_Cli={0}", notaFiscal.IdCliente));
-                                var nomeUfDestino =
-                                    CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF",
-                                        string.Format("IdCidade={0}", idCidadeCliente));
-
+                                var idCidadeCliente = ClienteDAO.Instance.ObtemValorCampo<int?>("IdCidade", string.Format("Id_Cli={0}", notaFiscal.IdCliente));
+                                var nomeUfDestino = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF", string.Format("IdCidade={0}", idCidadeCliente));
                                 var idCidadeLoja = LojaDAO.Instance.ObtemIdCidade(notaFiscal.IdLoja.Value);
-                                var nomeUfOrigem =
-                                    CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF",
-                                        string.Format("IdCidade={0}", idCidadeLoja));
-
+                                var nomeUfOrigem = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF", string.Format("IdCidade={0}", idCidadeLoja));
                                 var idTipoCliente = ClienteDAO.Instance.ObtemIdTipoCliente(notaFiscal.IdCliente.Value);
-
                                 var dadosIcms = IcmsProdutoUfDAO.Instance.ObtemPorProduto(null, pnf.IdProd, nomeUfOrigem, nomeUfDestino, idTipoCliente);
 
                                 if (dadosIcms == null)
-                                    throw new Exception(
-                                        string.Format("A natureza de operação associada ao produto {0} está marcada para calcular DIFAL, portanto, informe as alíquotas de ICMS no cadastro do produto.",
-                                            ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
-
-                                var origemSulSudesteExcetoES =
-                                    nomeUfOrigem.ToUpper().Contains("MG") ||
-                                    nomeUfOrigem.ToUpper().Contains("PR") ||
-                                    nomeUfOrigem.ToUpper().Contains("RJ") ||
-                                    nomeUfOrigem.ToUpper().Contains("RS") ||
-                                    nomeUfOrigem.ToUpper().Contains("SC") ||
-                                    nomeUfOrigem.ToUpper().Contains("SP");
-
-                                var destinoNorteNordesteCentroOesteES =
-                                    nomeUfDestino.ToUpper().Contains("AC") ||
-                                    nomeUfDestino.ToUpper().Contains("AL") ||
-                                    nomeUfDestino.ToUpper().Contains("AM") ||
-                                    nomeUfDestino.ToUpper().Contains("AP") ||
-                                    nomeUfDestino.ToUpper().Contains("BA") ||
-                                    nomeUfDestino.ToUpper().Contains("CE") ||
-                                    nomeUfDestino.ToUpper().Contains("DF") ||
-                                    nomeUfDestino.ToUpper().Contains("ES") ||
-                                    nomeUfDestino.ToUpper().Contains("GO") ||
-                                    nomeUfDestino.ToUpper().Contains("MA") ||
-                                    nomeUfDestino.ToUpper().Contains("MS") ||
-                                    nomeUfDestino.ToUpper().Contains("MT") ||
-                                    nomeUfDestino.ToUpper().Contains("PA") ||
-                                    nomeUfDestino.ToUpper().Contains("PB") ||
-                                    nomeUfDestino.ToUpper().Contains("PE") ||
-                                    nomeUfDestino.ToUpper().Contains("PI") ||
-                                    nomeUfDestino.ToUpper().Contains("RN") ||
-                                    nomeUfDestino.ToUpper().Contains("RO") ||
-                                    nomeUfDestino.ToUpper().Contains("RR") ||
-                                    nomeUfDestino.ToUpper().Contains("SE") ||
-                                    nomeUfDestino.ToUpper().Contains("TO");
-
-                                decimal percentualIcmsInterestadual = 0;
-
-                                if (nomeUfOrigem.ToUpper().Contains("SP") && nomeUfDestino.ToUpper().Contains("MG"))
                                 {
-                                    percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
+                                    throw new Exception(string.Format("A natureza de operação associada ao produto {0} está marcada para calcular DIFAL, portanto, informe as alíquotas de ICMS no cadastro do produto.",
+                                        ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
                                 }
-                                else
-                                {
-                                    percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
-                                }
-
-                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * (percentualIcmsInterestadual / 100));
+                                                                
+                                var percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
+                                var valorDifal = pnf.BcIcms * (percentualIcmsInterestadual / 100);
 
                                 var percentualIcmsUFDestino =
                                     DateTime.Now.Year == 2016 ? (decimal)0.4 :
@@ -3930,16 +3881,14 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
+
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
-                                    DateTime.Now.Year == 2016 ?
-                                        Formatacoes.TrataValorDecimal(40, 2) :
-                                        DateTime.Now.Year == 2017 ?
-                                            Formatacoes.TrataValorDecimal(60, 2) :
-                                            DateTime.Now.Year == 2018 ?
-                                                Formatacoes.TrataValorDecimal(80, 2) :
-                                                Formatacoes.TrataValorDecimal(100, 2));
+                                    DateTime.Now.Year == 2016 ? Formatacoes.TrataValorDecimal(40, 2) :
+                                    DateTime.Now.Year == 2017 ? Formatacoes.TrataValorDecimal(60, 2) :
+                                    DateTime.Now.Year == 2018 ? Formatacoes.TrataValorDecimal(80, 2) : Formatacoes.TrataValorDecimal(100, 2));
+
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
