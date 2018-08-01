@@ -657,7 +657,9 @@ namespace Glass.Data.Helper
                                 // Verifica se foram inseridos cheques com os mesmos dados
                                 foreach (var cIns in retorno.lstChequesInseridos)
                                 {
-                                    if (cheque.Banco == cIns.Banco && cheque.Agencia == cIns.Agencia && cheque.Conta == cIns.Conta && cheque.Num == cIns.Num)
+                                    var isChequeExiste = ChequesDAO.Instance.ExisteCheque(sessao, (int?)cIns.IdCheque ?? 0, cIns.Banco, cIns.Agencia, cIns.Conta, cIns.Num);
+
+                                    if (isChequeExiste)
                                     {
                                         throw new Exception("Existe um ou mais cheques cadastrados com os mesmos dados.");
                                     }

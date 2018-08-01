@@ -39,6 +39,17 @@ namespace Glass.UI.Web
         /// </summary>
         private void CriarMenu(LoginUsuario login)
         {
+            if (!Request.Url.ToString().ToLower().Contains("lstproducao.aspx") && !mnuGeral.Visible && !IsPopup())
+            {
+                Erro erro = new Erro();
+                erro.DataErro = DateTime.Now;
+                erro.IdFuncErro = UserInfo.GetUserInfo.CodUser;
+                erro.Mensagem = "Menu não está visível";
+                erro.UrlErro = "Falha no menu";
+                ErroDAO.Instance.Insert(erro);
+                mnuGeral.Visible = true;
+            }
+
             if (!mnuGeral.Visible || IsPopup())
                 return;
 

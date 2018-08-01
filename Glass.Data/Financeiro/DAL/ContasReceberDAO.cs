@@ -1800,11 +1800,11 @@ namespace Glass.Data.DAL
 
             var sqlObra = @"SELECT COALESCE(IF(mb.IdMovBanco>0, CONCAT('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), IF(cx.IdCaixaGeral>0, ' Cx. Geral', IF(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
                 FROM contas_receber c
-                    LEFT JOIN caixa_geral cx ON (c.IdObra=cx.IdObra)
-                    LEFT JOIN caixa_diario cd ON (c.IdObra=cd.IdObra)
-                    LEFT JOIN mov_banco mb ON (c.IdObra=mb.IdObra)
+                    LEFT JOIN caixa_geral cx ON (c.IdObra=cx.IdObra AND c.IdConta=cx.IdConta AND c.ValorRec=cx.ValorMov)
+                    LEFT JOIN caixa_diario cd ON (c.IdObra=cd.IdObra AND c.IdConta=cd.IdConta AND c.ValorRec=cd.Valor)
+                    LEFT JOIN mov_banco mb ON (c.IdObra=mb.IdObra AND c.IdConta=mb.IdConta AND c.ValorRec=mb.ValorMov)
                     LEFT JOIN conta_banco cb ON (mb.IdContaBanco=cb.IdContaBanco)
-                WHERE c.IdObra=?id
+                WHERE c.IdObra=?id AND c.IdFormaPagto=?fp
                 ORDER BY COALESCE(cx.IdCaixaGeral, 0), COALESCE(cd.IdCaixaDiario, 0), COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
             var sqlAntecip = @"SELECT COALESCE(IF(mb.IdMovBanco>0, CONCAT('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), ' ') , '')
@@ -1914,7 +1914,7 @@ namespace Glass.Data.DAL
 
                 if (cr.IdObra > 0)
                 {
-                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()));
+                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()).Replace("?fp", cr.IdFormaPagto.ToString()));
 
                     if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
                     {
@@ -3786,8 +3786,10 @@ namespace Glass.Data.DAL
                     contaRec.Juros = 0;
                     Update(transaction, contaRec);
 
-                    LogCancelamentoDAO.Instance.LogContaReceber(contaRec, "Cancelamento do recebimento", true);
-                    
+                    ChequesContasReceberDAO.Instance.ExcluirPelaContaReceber(transaction, (int)idContaR);
+
+                    LogCancelamentoDAO.Instance.LogContaReceber(transaction, contaRec, "Cancelamento do recebimento", true);
+
                     transaction.Commit();
                     transaction.Close();
                 }

@@ -4321,18 +4321,7 @@ namespace Glass.Data.DAL
             try
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
-
-                var pagtoNotaFiscal = PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).ToList() ?? new List<PagtoNotaFiscal>();
-
-                var idCfopNotaFiscal = GetIdCfop(null, idNf);
-                bool cfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(null, idCfopNotaFiscal);
-                bool cfopRetornoMercadoria = CfopDAO.Instance.IsCfopRetornoMercadoria(null, idCfopNotaFiscal);
-
-                if (pagtoNotaFiscal.Sum(f => f.Valor) == 0 && (!cfopDevolucao && !cfopRetornoMercadoria))
-                {
-                    throw new Exception("Informe os valores de recebimento da nota fiscal.");
-                }
-
+                
                 #region Verificações para emissão assíncrona
 
                 if (loja.Uf.ToUpper() == "BA" || loja.Uf.ToUpper() == "SP")
