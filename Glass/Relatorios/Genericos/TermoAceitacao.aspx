@@ -4,6 +4,8 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 <script type="text/javascript">
 
+    var data;
+
     function openRpt() {
         var idPedido = FindControl("txtNumPedido", "input");
 
@@ -12,12 +14,17 @@
             return false;
         }
 
-        var pedido = "ped=" + (idPedido != null ? idPedido.value : "0");
-        var infAdic = FindControl("txtInfAdic", "textarea").value.replace(/\n/g, "\\n");
-
-        openWindow(600, 800, "RelBase.aspx?rel=termoaceitacao&" + pedido + "&infAdic=" + infAdic);
+        var rel = openWindow(600, 800, "RelBase.aspx?postData=getPostData()");
+        data = new Object();
+        data["rel"] = "termoaceitacao";
+        data["ped"] = (idPedido != null ? idPedido.value : "0");
+        data["infAdic"] = FindControl("txtInfAdic", "textarea").value.replace(/\n/g, "\\n")
 
         return false;
+    }
+
+    function getPostData() {
+        return data;
     }
      
 </script>

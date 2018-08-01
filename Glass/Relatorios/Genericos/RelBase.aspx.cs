@@ -222,7 +222,7 @@ namespace Glass.UI.Web.Relatorios.Genericos
                     if (pedTermo.IdOrcamento == null)
                         pedTermo.IdOrcamento = 0;
 
-                    pedTermo.InfoAdicional = Request["infAdic"];
+                    pedTermo.InfoAdicional = Request["infAdic"]?.Replace("\\n", "\n") ?? string.Empty;
 
                     report.ReportPath = Data.Helper.Utils.CaminhoRelatorio("Relatorios/Genericos/rptAceitacao{0}.rdlc");
 
