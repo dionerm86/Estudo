@@ -3786,8 +3786,10 @@ namespace Glass.Data.DAL
                     contaRec.Juros = 0;
                     Update(transaction, contaRec);
 
-                    LogCancelamentoDAO.Instance.LogContaReceber(contaRec, "Cancelamento do recebimento", true);
-                    
+                    ChequesContasReceberDAO.Instance.ExcluirPelaContaReceber(transaction, (int)idContaR);
+
+                    LogCancelamentoDAO.Instance.LogContaReceber(transaction, contaRec, "Cancelamento do recebimento", true);
+
                     transaction.Commit();
                     transaction.Close();
                 }
