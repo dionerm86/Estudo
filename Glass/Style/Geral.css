@@ -32,9 +32,9 @@ input, textarea, select {
     padding: 1px 2px;
   }
 
-  input:invalid, textarea:invalid, select:invalid {
-    border-color: red;
-  }
+    input:invalid, textarea:invalid, select:invalid {
+      border-color: red;
+    }
 
 a {
   text-decoration: none;
@@ -358,48 +358,78 @@ section {
       padding-left: initial;
     }
 
-  div.detalhes span, section.detalhes span {
-    display: inline-block;
-    text-align: left;
-    padding-left: initial;
+  div.edicao, section.edicao {
+    display: inline-grid;
+    grid-gap: 8px 20px;
+    grid-template-columns: repeat(4, max-content);
   }
 
-    div.detalhes span label, section.detalhes span label {
+  div.detalhes, section.detalhes {
+    display: inline-grid;
+    grid-gap: 8px 20px;
+    grid-template-columns: repeat(6, max-content);
+  }
+
+    div.detalhes span, section.detalhes span,
+    div.edicao span, section.edicao span {
+      padding-left: initial;
+    }
+
+    div.detalhes label, section.detalhes label,
+    div.edicao label, section.edicao label {
       padding-right: 4px;
       font-weight: bold;
       position: initial;
     }
 
-  div.detalhes, section.detalhes {
-    display: inline-grid;
-    grid-gap: 8px 20px;
-    grid-template-columns: repeat(3, max-content);
-  }
-
-    div.detalhes > span, section.detalhes > span {
+    div.detalhes > *, section.detalhes > *,
+    div.edicao > *, section.edicao > * {
+      text-align: left;
       display: inline-block;
       margin: auto 0;
+      vertical-align: middle;
     }
 
-      div.detalhes > span > *, section.detalhes > span > * {
-        vertical-align: middle;
-      }
+    div.detalhes > .colspan2, section.detalhes > .colspan2,
+    div.edicao > .colspan2, section.edicao > .colspan2 {
+      grid-column: span 2;
+    }
 
-      div.detalhes > span.colspan2, section.detalhes > span.colspan2 {
-        grid-column: span 2;
-      }
-
-      div.detalhes > span.colspan3, section.detalhes > span.colspan3 {
-        grid-column: span 3;
-      }
-
-    div.detalhes *.botoes, section.detalhes *.botoes {
-      text-align: center;
-      padding-top: 4px;
+    div.detalhes > .colspan3, section.detalhes > .colspan3,
+    div.edicao > .colspan3, section.edicao > .colspan3 {
       grid-column: span 3;
     }
 
-    div.detalhes > *:not([class*="botoes"]) button, section.detalhes > *:not([class*="botoes"]) button {
+    div.detalhes > .colspan4, section.detalhes > .colspan4,
+    div.edicao > .colspan4, section.edicao > .colspan4 {
+      grid-column: span 4;
+    }
+
+    div.detalhes > .colspan5, section.detalhes > .colspan5 {
+      grid-column: span 5;
+    }
+
+    div.detalhes > .colspan6, section.detalhes > .colspan6 {
+      grid-column: span 6;
+      text-align: center;
+    }
+
+    div.detalhes *.botoes, section.detalhes *.botoes,
+    div.edicao *.botoes, section.edicao *.botoes {
+      text-align: center;
+      padding-top: 4px;
+    }
+
+    div.detalhes *.botoes, section.detalhes *.botoes {
+      grid-column: span 6;
+    }
+
+    div.detalhes *.edicao, section.edicao *.botoes {
+      grid-column: span 4;
+    }
+
+    div.detalhes > *:not([class*="botoes"]) button, section.detalhes > *:not([class*="botoes"]) button,
+    div.edicao > *:not([class*="botoes"]) button, section.edicao > *:not([class*="botoes"]) button {
       border: 0;
       background-color: transparent;
       cursor: pointer;

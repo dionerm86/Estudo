@@ -10,70 +10,67 @@
             "~/Vue/Pedidos/Templates/CadPedido.Ambientes.html",
             "~/Vue/Pedidos/Templates/CadPedido.Produtos.html")
     %>
-
     <div id="app">
         <div v-if="editando || inserindo">
-            <section class="detalhes">
-                <span class="form-group">
-                    <label>
-                        Cliente
-                    </label>
-                    <campo-busca-cliente :cliente.sync="clienteAtual" :exibir-informacoes-compra="true" tipo-validacao="Pedido"
-                        :cor-texto-observacoes="configuracoes.corTextoObservacoesCliente" :disabled="!pedido.podeEditarCliente"
-                        v-if="pedido" required></campo-busca-cliente>
-                </span>
-                <span class="form-group">
-                    <label>
-                        Data Ped.
-                    </label>
+            <section class="edicao">
+                <label>
+                    Cliente
+                </label>
+                <campo-busca-cliente :cliente.sync="clienteAtual" :exibir-informacoes-compra="true" tipo-validacao="Pedido"
+                    :cor-texto-observacoes="configuracoes.corTextoObservacoesCliente" :disabled="!pedido.podeEditarCliente"
+                    v-if="pedido" required></campo-busca-cliente>
+                <label>
+                    Data Ped.
+                </label>
+                <span>
                     {{ pedido.dataPedido | data }}
+                    <span v-if="configuracoes.exibirFastDelivery && configuracoes.marcarFastDelivery" style="margin-left: 8px">
+                        <input id="fastDelivery" type="checkbox" v-model="pedido.fastDelivery" />
+                        <label for="fastDelivery">
+                            Fast Delivery
+                        </label>
+                    </span>
                 </span>
-                <span class="form-group" v-if="configuracoes.exibirFastDelivery && configuracoes.marcarFastDelivery">
-                    <input id="fastDelivery" type="checkbox" v-model="pedido.fastDelivery" />
-                    <label for="fastDelivery">
-                        Fast Delivery
-                    </label>
-                </span>
-                <span class="form-group">
-                    <label>
-                        Cód. Ped. Cli.
-                    </label>
+                <label>
+                    Cód. Ped. Cli.
+                </label>
+                <span>
                     <input v-model="pedido.codigoPedidoCliente" :disabled="pedido && pedido.importado" />
                 </span>
-                <span class="form-group">
-                    <label>
-                        Orçamento
-                    </label>
+                <label>
+                    Orçamento
+                </label>
+                <span>
                     <input type="number" v-model="pedido.idOrcamento" style="width: 50px" />
                 </span>
-                <span class="form-group">
-                    <label>
-                        Loja
-                    </label>
-                    <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" :disabled="!configuracoes.usarControleOrdemCarga && !configuracoes.alterarLojaPedido && !clientePermiteAlterarLoja"></lista-selecao-lojas>
+                <label>
+                    Loja
+                </label>
+                <span>
+                    <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" :disabled="!configuracoes.usarControleOrdemCarga && !configuracoes.alterarLojaPedido && !clientePermiteAlterarLoja" class="colspan2"></lista-selecao-lojas>
+                    <span v-if="configuracoes.exibirDeveTransferir">
+                        <input id="deveTransferir" type="checkbox" v-model="pedido.deveTransferir" :disabled="!clientePermiteAlterarLoja" />
+                        <label for="deveTransferir">
+                            Deve transferir?
+                        </label>
+                    </span>
                 </span>
-                <span class="form-group" v-if="configuracoes.exibirDeveTransferir">
-                    <label for="deveTransferir">
-                        Deve transferir?
-                    </label>
-                    <input id="deveTransferir" type="checkbox" v-model="pedido.deveTransferir" :disabled="!clientePermiteAlterarLoja" />
-                </span>
-                <span class="form-group">
-                    <label>
-                        Tipo Pedido
-                    </label>
+                <label>
+                    Tipo Pedido
+                </label>
+                <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoPedidoAtual" :funcao-recuperar-itens="obterTiposPedido" :disabled="(editando && configuracoes.bloquearItensTipoPedido) || pedidoMaoDeObra || pedidoProducao" required></lista-selecao-id-valor>
                 </span>
-                <span class="form-group" v-if="configuracoes.gerarPedidoProducaoCorte && pedido.tipo == configuracoes.tipoPedidoRevenda">
+                <span v-if="configuracoes.gerarPedidoProducaoCorte && pedido.tipo == configuracoes.tipoPedidoRevenda">
                     <input type="checkbox" id="gerarPedidoProducaoCorte" v-model="pedido.gerarPedidoCorte" />
                     <label for="gerarPedidoProducaoCorte">
                         Gerar pedido de produção para corte
                     </label>
                 </span>
-                <span class="form-group">
-                    <label>
-                        Tipo Venda
-                    </label>
+                <label>
+                    Tipo Venda
+                </label>
+                <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoVendaAtual" :funcao-recuperar-itens="obterTiposVendaCliente" :filtro-recuperar-itens="filtroTiposVendaCliente"
                         :disabled="editando && pedido.sinal && pedido.sinal.id > 0 && !configuracoes.usarLiberacaoPedido" required></lista-selecao-id-valor>
                     <span v-if="pedido && pedido.tipoVenda == configuracoes.tipoVendaObra">
@@ -85,154 +82,140 @@
                             Saldo Atual: {{ obraAtual.saldo - obraAtual.totalPedidosAbertosObra | moeda }}
                         </template>
                     </span>
-                    <span class="form-group" v-if="vIfNumeroParcelas">
+                    <span v-if="vIfNumeroParcelas">
                         <label>
                             Num. Parcelas
                         </label>
                         <lista-selecao-parcelas :parcela.sync="parcelaAtual" :id-cliente="pedido.idCliente" :pode-editar="configuracoes.permitirAlterarDataParcelas" required></lista-selecao-parcelas>
                     </span>
                 </span>
-                <span class="form-group" v-if="pedido && pedido.tipoVenda == configuracoes.tipoVendaFuncionario">
+                <template v-if="pedido && pedido.tipoVenda == configuracoes.tipoVendaFuncionario">
                     <label>
                         Funcionário comprador
                     </label>
-                    <lista-selecao-id-valor :item-selecionado.sync="funcionarioCompradorAtual" :funcao-recuperar-itens="obterFuncionariosCompradores" required></lista-selecao-id-valor>
-                </span>
-                <span class="form-group">
-                    <label>
-                        Tipo Entrega
-                    </label>
+                    <span>
+                        <lista-selecao-id-valor :item-selecionado.sync="funcionarioCompradorAtual" :funcao-recuperar-itens="obterFuncionariosCompradores" required></lista-selecao-id-valor>
+                    </span>
+                </template>
+                <label>
+                    Tipo Entrega
+                </label>
+                <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoEntregaAtual" :funcao-recuperar-itens="obterTiposEntrega" required></lista-selecao-id-valor>
                 </span>
-                <span class="form-group">
-                    <label>
-                        Forma Pagto.
-                    </label>
-                    <template v-if="pedido.tipoVenda == configuracoes.tipoVendaAPrazo || pedido.tipoVenda == configuracoes.tipoVendaReposicao || pedido.tipoVenda == configuracoes.tipoVendaGarantia ||
-                        (configuracoes.UsarControleDescontoFormaPagamentoDadosProduto && pedido.tipoVenda == configuracoes.tipoVendaAVista)">
-                        <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormasPagamento" :filtro-recuperar-itens="filtroFormasPagamento" required></lista-selecao-id-valor>
-                        <span class="form-group">
-                            <lista-selecao-id-valor :item-selecionado.sync="tipoCartaoAtual" :funcao-recuperar-itens="obterTiposCartao" v-if="pedido.formaPagamento.id == configuracoes.idFormaPagamentoCartao" required></lista-selecao-id-valor>
-                        </span>
-                    </template>
+                <label>
+                    Forma Pagto.
+                </label>
+                <span v-if="pedido.tipoVenda == configuracoes.tipoVendaAPrazo || pedido.tipoVenda == configuracoes.tipoVendaReposicao || pedido.tipoVenda == configuracoes.tipoVendaGarantia ||
+                    (configuracoes.UsarControleDescontoFormaPagamentoDadosProduto && pedido.tipoVenda == configuracoes.tipoVendaAVista)">
+                    <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormasPagamento" :filtro-recuperar-itens="filtroFormasPagamento" required></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="tipoCartaoAtual" :funcao-recuperar-itens="obterTiposCartao" v-if="pedido.formaPagamento.id == configuracoes.idFormaPagamentoCartao" required></lista-selecao-id-valor>
                 </span>
-                <span class="form-group">
-                    <label>
-                        Data Entrega
-                    </label>
-                    <campo-data-hora :data-hora.sync="pedido.entrega.data" :data-minima="dataEntregaMinima"
-                        :permitir-feriado="false" :permitir-fim-de-semana="false"
-                        :disabled="datasEntrega && datasEntrega.desabilitarCampo" required></campo-data-hora>
-                </span>
-                <span class="form-group" v-if="configuracoes.exibirValorFretePedido">
+                <label>
+                    Data Entrega
+                </label>
+                <campo-data-hora :data-hora.sync="pedido.entrega.data" :data-minima="dataEntregaMinima"
+                    :permitir-feriado="false" :permitir-fim-de-semana="false"
+                    :disabled="datasEntrega && datasEntrega.desabilitarCampo" required></campo-data-hora>
+                <template v-if="configuracoes.exibirValorFretePedido">
                     <label>
                         Valor do Frete
                     </label>
                     <input type="number" v-model.number="pedido.valorEntrega" style="width: 80px;" />
-                </span>
-                <span class="form-group" v-if="vIfValorEntrada">
+                </template>
+                <template v-if="vIfValorEntrada">
                     <label>
                         Valor Entrada
                     </label>
-                    <template v-if="vIfCampoEntrada">
-                        <input type="number" v-model="pedido.valorEntrada" />
-                    </template>
-                    <template v-else>
+                    <input type="number" v-model.number="pedido.valorEntrada" v-if="vIfCampoEntrada" />
+                    <span v-else>
                         {{ pedido.textoSinal }}
-                    </template>
-                </span>
-                <span class="form-group">
-                    <label>
-                        Desconto
-                    </label>
-                    <campo-acrescimo-desconto :tipo.sync="pedido.desconto.tipo" :valor.sync="pedido.desconto.valor" :disabled="disabledCampoDesconto" v-if="vIfCampoDesconto"></campo-acrescimo-desconto>
-                    <span style="color: blue" v-else>
-                        Desconto só pode ser dado em pedidos à vista
                     </span>
+                </template>
+                <label>
+                    Desconto
+                </label>
+                <campo-acrescimo-desconto :tipo.sync="pedido.desconto.tipo" :valor.sync="pedido.desconto.valor" :disabled="disabledCampoDesconto" v-if="vIfCampoDesconto"></campo-acrescimo-desconto>
+                <span style="color: blue" v-else>
+                    Desconto só pode ser dado em pedidos à vista
                 </span>
-                <span class="form-group">
-                    <label>
-                        Total
-                    </label>
+                <label>
+                    Total
+                </label>
+                <span>
                     {{ pedido.total | moeda }}
                 </span>
-                <span class="form-group">
-                    <label>
-                        Acréscimo
-                    </label>
-                    <campo-acrescimo-desconto :tipo.sync="pedido.acrescimo.tipo" :valor.sync="pedido.acrescimo.valor"></campo-acrescimo-desconto>
-                </span>
-                <span class="form-group">
-                    <label>
-                        Funcionário
-                    </label>
+                <label>
+                    Acréscimo
+                </label>
+                <campo-acrescimo-desconto :tipo.sync="pedido.acrescimo.tipo" :valor.sync="pedido.acrescimo.valor"></campo-acrescimo-desconto>
+                <label>
+                    Funcionário
+                </label>
+                <span>
                     <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
-                <span class="form-group colspan3">
-                    <label>
-                        Transportador
-                    </label>
+                <label>
+                    Transportador
+                </label>
+                <span class="colspan3">
                     <lista-selecao-id-valor :item-selecionado.sync="transportadorAtual" :funcao-recuperar-itens="obterTransportadores"></lista-selecao-id-valor>
                 </span>
                 <template v-if="pedido && pedido.entrega.tipo != configuracoes.tipoEntregaBalcao">
-                    <span class="form-group">
-                        <label>
-                            Local da Obra
-                        </label>
+                    <label>
+                        Local da Obra
+                    </label>
+                    <span class="colspan3">
                         <button @click.prevent="preencherEnderecoObra">
                             <img src="../Images/home.gif" title="Buscar endereço do cliente" />
                         </button>
-                    </span>
-                    <span class="form-group colspan2">
                         <campo-endereco :endereco="pedido.enderecoObra" required>
                     </span>
                 </template>
-                <span class="form-group colspan3">
-                    <controle-parcelas :parcelas.sync="parcelaAtual" v-if="vIfControleParcelas" :data-minima="pedido.dataPedido" :total="totalParaCalculoParcelas"></controle-parcelas>
+                <span class="colspan6" v-if="vIfControleParcelas">
+                    <controle-parcelas :parcelas.sync="parcelaAtual" :data-minima="pedido.dataPedido" :total="totalParaCalculoParcelas"></controle-parcelas>
                 </span>
                 <template v-if="configuracoes.usarComissaoNoPedido">
-                    <span class="form-group">
+                    <label>
+                        Comissionado:
+                    </label>
+                    <span v-if="!configuracoes.usarComissionadoDoCliente">
+                        <campo-busca-com-popup :id.sync="pedido.comissionado.id" campo-nome="descricao" :item-selecionado.sync="comissionadoAtual" :funcao-buscar-itens="obterComissionados"
+                            :url-popup="'/Utils/SelComissionado.aspx'" :largura-popup="760" :altura-popup="590" style="width: 90px" required></campo-busca-com-popup>
                         <label>
-                            Comissionado:
+                            Percentual:
                         </label>
-                    </span>
-                    <template v-if="!configuracoes.usarComissionadoDoCliente">
-                        <span class="form-group">
-                            <campo-busca-com-popup :id.sync="pedido.comissionado.id" campo-nome="descricao" :item-selecionado.sync="comissionadoAtual" :funcao-buscar-itens="obterComissionados"
-                                :url-popup="'/Utils/SelComissionado.aspx'" :largura-popup="760" :altura-popup="590" style="width: 90px" required></campo-busca-com-popup>
-                        </span>
-                        <span class="form-group">
-                            <label>
-                                Percentual:
-                            </label>
-                            <input type="number" v-model="pedido.percentualComissao" :disabled="configuracoes.alterarPercentualComissionado" />
-                        </span>
-                        <span class="form-group">
-                            <label>
-                                Valor comissão:
-                            </label>
+                        <input type="number" v-model="pedido.percentualComissao" :disabled="configuracoes.alterarPercentualComissionado" />
+                        <label>
+                            Valor comissão:
+                        </label>
+                        <span>
                             {{ pedido.valorComissao | moeda }}
                         </span>
-                    </template>
+                    </span>
                 </template>
-                <span class="form-group colspan3" v-if="configuracoes.usarControleMedicao">
+                <template v-if="configuracoes.usarControleMedicao">
                     <label>
                         Medidor
                     </label>
-                    <lista-selecao-id-valor :item-selecionado.sync="medidorAtual" :funcao-recuperar-itens="obterMedidores"></lista-selecao-id-valor>
-                </span>
-                <span class="form-group colspan3">
-                    <label>
-                        Observação
-                    </label>
+                    <span class="colspan3">
+                        <lista-selecao-id-valor :item-selecionado.sync="medidorAtual" :funcao-recuperar-itens="obterMedidores"></lista-selecao-id-valor>
+                    </span>
+                </template>
+                <label>
+                    Observação
+                </label>
+                <span class="colspan3">
                     <textarea v-model="pedido.observacao" style="width: 650px"></textarea>
                 </span>
-                <span class="form-group colspan3" v-if="configuracoes.usarLiberacaoPedido">
+                <template v-if="configuracoes.usarLiberacaoPedido">
                     <label>
                         Observação liberação
                     </label>
-                    <textarea v-model="pedido.observacaoLiberacao" style="width: 650px"></textarea>
-                </span>
+                    <span class="colspan3">
+                        <textarea v-model="pedido.observacaoLiberacao" style="width: 650px"></textarea>
+                    </span>
+                </template>
                 <span class="botoes">
                     <span>
                         <button @click.prevent="inserirPedido" v-if="inserindo">
@@ -250,10 +233,10 @@
         </div>
         <div v-else>
             <section class="detalhes">
+                <label>
+                    Num. Pedido
+                </label>
                 <span>
-                    <label>
-                        Num. Pedido
-                    </label>
                     <span style="font-size: medium">
                         {{ pedido.id }}
                     </span>
@@ -261,145 +244,118 @@
                         ({{ pedido.tipo.nome }})
                     </span>
                 </span>
-                <span>
-                    <label>
-                        Cliente
-                    </label>
-                    <span v-if="pedido && pedido.cliente">
-                        {{ pedido.cliente.id }}
-                        -
-                        {{ pedido.cliente.nome }}
-                    </span>
+                <label>
+                    Cliente
+                </label>
+                <span class="colspan3" v-if="pedido && pedido.cliente">
+                    {{ pedido.cliente.id }}
+                    -
+                    {{ pedido.cliente.nome }}
                 </span>
-                <span>
-                    <label>
-                        Funcionário
-                    </label>
-                    <span v-if="pedido && pedido.vendedor">
-                        {{ pedido.vendedor.nome }}
-                    </span>
+                <label>
+                    Funcionário
+                </label>
+                <span v-if="pedido && pedido.vendedor">
+                    {{ pedido.vendedor.nome }}
                 </span>
-                <span>
-                    <label>
-                        Tel. Cliente
-                    </label>
-                    <span v-if="pedido && pedido.cliente">
-                        {{ pedido.cliente.telefone }}
-                    </span>
+                <label>
+                    Tel. Cliente
+                </label>
+                <span v-if="pedido && pedido.cliente">
+                    {{ pedido.cliente.telefone }}
                 </span>
-                <span>
-                    <label>
-                        Loja
-                    </label>
-                    <span v-if="pedido && pedido.loja">
-                        {{ pedido.loja.nome }}
-                    </span>
+                <label>
+                    Loja
+                </label>
+                <span v-if="pedido && pedido.loja">
+                    {{ pedido.loja.nome }}
                 </span>
-                <span class="colspan3">
-                    <label>
-                        Endereço Cliente
-                    </label>
-                    <span v-if="pedido && pedido.cliente">
-                        {{ pedido.cliente.endereco }}
-                    </span>
+                <label>
+                    Endereço Cliente
+                </label>
+                <span v-if="pedido && pedido.cliente" class="colspan5">
+                    {{ pedido.cliente.endereco }}
                 </span>
                 <template v-if="pedido.obra">
-                    <span>
-                        <label>
-                            Endereço Obra
-                        </label>
-                        <span>
-                            {{ pedido.obra.endereco }}
-                        </span>
+                    <label>
+                        Endereço Obra
+                    </label>
+                    <span class="colspan5">
+                        {{ pedido.obra.endereco }}
                     </span>
                 </template>
-                <span v-if="pedido && pedido.sinal">
+                <template v-if="pedido && pedido.sinal">
                     <label>
                         Valor Entrada
                     </label>
                     <span>
                         {{ pedido.sinal.valor }}
                     </span>
+                </template>
+                <label>
+                    Tipo Venda
+                </label>
+                <span v-if="pedido && pedido.tipoVenda">
+                    {{ pedido.tipoVenda.nome }}
                 </span>
-                <span>
-                    <label>
-                        Tipo Venda
-                    </label>
-                    <span v-if="pedido && pedido.tipoVenda">
-                        {{ pedido.tipoVenda.nome }}
-                    </span>
+                <label>
+                    Tipo Entrega
+                </label>
+                <span v-if="pedido && pedido.entrega && pedido.entrega.tipo">
+                    {{ pedido.entrega.tipo.nome }}
                 </span>
-                <span>
-                    <label>
-                        Tipo Entrega
-                    </label>
-                    <span v-if="pedido && pedido.entrega && pedido.entrega.tipo">
-                        {{ pedido.entrega.tipo.nome }}
-                    </span>
+                <label>
+                    Situação
+                </label>
+                <span v-if="pedido && pedido.situacao">
+                    {{ pedido.situacao.nome }}
                 </span>
-                <span>
-                    <label>
-                        Situação
-                    </label>
-                    <span v-if="pedido && pedido.situacao">
-                        {{ pedido.situacao.nome }}
-                    </span>
+                <label>
+                    Data Ped.
+                </label>
+                <span v-if="pedido">
+                    {{ pedido.dataPedido | data }}
                 </span>
-                <span>
-                    <label>
-                        Data Ped.
-                    </label>
-                    <span v-if="pedido">
-                        {{ pedido.dataPedido | data }}
-                    </span>
+                <label>
+                    Data Entrega
+                </label>
+                <span v-if="pedido && pedido.entrega">
+                    {{ pedido.entrega.data | data }}
                 </span>
-                <span>
-                    <label>
-                        Data Entrega
-                    </label>
-                    <span v-if="pedido && pedido.entrega">
-                        {{ pedido.entrega.data | data }}
-                    </span>
+                <span v-else></span>
+                <label>
+                    Valor do Frete
+                </label>
+                <span v-if="pedido && pedido.entrega">
+                    {{ pedido.entrega.valor | moeda }}
                 </span>
-                <span>
-                    <label>
-                        Valor do Frete
-                    </label>
-                    <span v-if="pedido && pedido.entrega">
-                        {{ pedido.entrega.valor | moeda }}
+                <span v-else>
+                    {{ 0 | moeda }}
+                </span>
+                <label>
+                    Desconto
+                </label>
+                <span v-if="pedido && pedido.desconto && pedido.desconto.valor">
+                    <span v-if="pedido.desconto.tipo == 1">
+                        {{ pedido.desconto.valor | percentual }}
                     </span>
                     <span v-else>
-                        {{ 0 | moeda }}
+                        {{ pedido.desconto.valor | moeda }}
                     </span>
                 </span>
-                <span>
-                    <label>
-                        Desconto
-                    </label>
-                    <span v-if="pedido && pedido.desconto">
-                        <span v-if="pedido.desconto.tipo == 1">
-                            {{ pedido.desconto.valor | percentual }}
-                        </span>
-                        <span v-else>
-                            {{ pedido.desconto.valor | moeda }}
-                        </span>
-                    </span>
-                    <span v-else>
-                        {{ 0 | moeda }}
-                    </span>
+                <span v-else>
+                    {{ 0 | moeda }}
                 </span>
-                <span>
-                    <label>
-                        Comissão
-                    </label>
-                    <span v-if="pedido && pedido.comissionado && pedido.comissionado.comissao">
-                        {{ pedido.comissionado.comissao.valor | moeda }}
-                    </span>
-                    <span v-else>
-                        {{ 0 | moeda }}
-                    </span>
+                <label>
+                    Comissão
+                </label>
+                <span v-if="pedido && pedido.comissionado && pedido.comissionado.comissao">
+                    {{ pedido.comissionado.comissao.valor | moeda }}
                 </span>
-                <span v-if="configuracoes.calcularIcms">
+                <span v-else>
+                    {{ 0 | moeda }}
+                </span>
+                <template v-if="configuracoes.calcularIcms">
                     <label>
                         Valor ICMS
                     </label>
@@ -409,8 +365,8 @@
                     <span v-else>
                         {{ 0 | moeda }}
                     </span>
-                </span>
-                <span v-if="configuracoes.calcularIpi">
+                </template>
+                <template v-if="configuracoes.calcularIpi">
                     <label>
                         Valor IPI
                     </label>
@@ -420,8 +376,8 @@
                     <span v-else>
                         {{ 0 | moeda }}
                     </span>
-                </span>
-                <span class="colspan3" v-if="!configuracoes.empresaNaoVendeVidro">
+                </template>
+                <span class="colspan6" v-if="!configuracoes.empresaNaoVendeVidro">
                     <label>
                         Total
                     </label>
@@ -429,7 +385,7 @@
                         {{ pedido.total | moeda }}
                     </span>
                 </span>
-                <span class="colspan3" v-else>
+                <span class="colspan6" v-else>
                     <span>
                         <label>
                             Total Bruto
@@ -447,74 +403,67 @@
                         </span>
                     </span>
                 </span>
-                <span>
-                    <label>
-                        Forma Pagto.
-                    </label>
-                    <span v-if="pedido && pedido.formaPagamento">
-                        {{ pedido.formaPagamento.nome }}
-                    </span>
+                <label>
+                    Forma Pagto.
+                </label>
+                <span v-if="pedido && pedido.formaPagamento">
+                    {{ pedido.formaPagamento.nome }}
                 </span>
-                <span v-if="configuracoes.exibirFastDelivery">
+                <template v-if="configuracoes.exibirFastDelivery">
                     <label>
                         Fast Delivery
                     </label>
                     <span v-if="pedido && pedido.fastDelivery">
                         {{ pedido.fastDelivery.aplicado | simNao }}
                     </span>
-                </span>
-                <span v-if="configuracoes.exibirDeveTransferir">
+                </template>
+                <template v-if="configuracoes.exibirDeveTransferir">
                     <label>
                         Deve transferir?
                     </label>
                     <span v-if="pedido">
                         {{ pedido.deveTransferir | simNao }}
                     </span>
-                </span>
-                <span v-if="pedido && pedido.funcionarioComprador">
+                </template>
+                <template v-if="pedido && pedido.funcionarioComprador">
                     <label>
                         Funcionário comp.
                     </label>
                     <span>
                         {{ pedido.funcionarioComprador.nome }}
                     </span>
-                </span>
-                <span v-if="pedido && pedido.transportador">
+                </template>
+                <template v-if="pedido && pedido.transportador">
                     <label>
                         Transportador
                     </label>
                     <span>
                         {{ pedido.transportador.nome }}
                     </span>
+                </template>
+                <label>
+                    Observação
+                </label>
+                <span class="colspan5" v-if="pedido" style="color: blue">
+                    {{ pedido.observacao }}
                 </span>
-                <span>
-                    <label>
-                        Observação
-                    </label>
-                    <span v-if="pedido" style="color: blue">
-                        {{ pedido.observacao }}
-                    </span>
-                </span>
-                <span class="colspan3">
-                    <label>
-                        Obs. do Cliente
-                    </label>
-                    <span v-if="pedido && pedido.cliente" style="color: red" v-html="pedido.cliente.observacao">
-                    </span>
+                <label>
+                    Obs. do Cliente
+                </label>
+                <span class="colspan5" v-if="pedido && pedido.cliente" style="color: red"
+                    v-html="pedido.cliente.observacao">
                 </span>
                 <template v-if="configuracoes.exibirRentabilidade && pedido && pedido.rentabilidade">
+                    <label>
+                        Rentabilidade
+                    </label>
                     <span>
-                        <label>
-                            Rentabilidade
-                        </label>
-                        <span>
-                            {{ pedido.rentabilidade.percentual | percentual }}
-                        </span>
+                        {{ pedido.rentabilidade.percentual | percentual }}
                     </span>
+                    <label>
+                        Rent. Financeira
+                    </label>
                     <span>
-                        <label>
-                            Rent. Financeira
-                        </label>
                         <span>
                             {{ pedido.rentabilidade.valor | moeda }}
                         </span>

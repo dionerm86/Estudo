@@ -470,7 +470,6 @@
     <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
-    <Content Include="Cadastros\CadPedido.js" />
     <Content Include="Vue\Clientes\Componentes\LstClientes.Filtro.js" />
     <Content Include="Vue\Clientes\Componentes\LstClientes.js" />
     <Content Include="Vue\Clientes\Templates\LstClientes.Filtro.html" />
