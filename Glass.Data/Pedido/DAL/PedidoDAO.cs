@@ -13429,11 +13429,20 @@ namespace Glass.Data.DAL
                     ((ped.TipoEntrega != objUpdate.TipoEntrega || ped.IdCli != objUpdate.IdCli) ||
                     (PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista && (ped.TipoVenda != objUpdate.TipoVenda || objUpdate.IdFormaPagto != ped.IdFormaPagto || objUpdate.IdParcela != ped.IdParcela))))
                 {
-                    AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
+                    var situacaoPedidoEspelho = existeEspelho ? PedidoEspelhoDAO.Instance.ObtemSituacao(session, objUpdate.IdPedido) : (PedidoEspelho.SituacaoPedido?)null;
+                    var podeAtualizar = situacaoPedidoEspelho == null ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Processando ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.Aberto ||
+                        situacaoPedidoEspelho == PedidoEspelho.SituacaoPedido.ImpressoComum;
 
-                    if (existeEspelho)
+                    if (podeAtualizar)
                     {
-                        PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
+                        AtualizarValorTabelaProdutosPedido(session, aplicarDesconto, ped, objUpdate);
+
+                        if (existeEspelho)
+                        {
+                            PedidoEspelhoDAO.Instance.AtualizarValorTabelaProdutosPedidoEspelho(session, ped, objUpdate);
+                        }
                     }
                 }
 
