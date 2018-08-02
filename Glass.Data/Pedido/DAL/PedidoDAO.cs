@@ -6088,42 +6088,7 @@ namespace Glass.Data.DAL
                 if (!EtiquetaAplicacaoDAO.Instance.VerificaPrazoEntregaAplicacao(session, prodsDiasMinEntrega, pedido.DataEntrega.GetValueOrDefault(), out msgDiasMinEntrega))
                     throw new Exception(msgDiasMinEntrega);
             }
-
-            // Verifica se há pedidos atrasados que impedem a finalização deste pedido
-            var numPedidosBloqueio = GetCountBloqueioEmissao(session, pedido.IdCli);
-            if (numPedidosBloqueio > 0)
-            {
-                var dias = " há pelo menos " + PedidoConfig.NumeroDiasPedidoProntoAtrasado + " dias ";
-                var inicio = numPedidosBloqueio > 1 ? "Os pedidos " : "O pedido ";
-                var fim = numPedidosBloqueio > 1 ? " estão prontos" + dias + "e ainda não foram liberados" : " está pronto" + dias + "e ainda não foi liberado";
-
-                LancarExceptionValidacaoPedidoFinanceiro("Não é possível finalizar esse pedido. " + inicio + GetIdsBloqueioEmissao(session, pedido.IdCli) +
-                    fim + " para o cliente.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
-            // Verifica se o cliente está inativo
-            if (ClienteDAO.Instance.GetSituacao(session, pedido.IdCli) != (int)SituacaoCliente.Ativo)
-                LancarExceptionValidacaoPedidoFinanceiro("O cliente selecionado está inativo. Motivo: " +
-                    ClienteDAO.Instance.ObtemValorCampo<string>(session, "obs", "id_Cli=" + pedido.IdCli), idPedido, true, null,
-                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-
-            // Bloqueia a forma de pagamento se o cliente não puder usá-la
-            if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Todos) > 0)
-            {
-                if (ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Prazo) == 0 && pedido.TipoVenda == 2)
-                    LancarExceptionValidacaoPedidoFinanceiro("O cliente " + pedido.IdCli + " - " + ClienteDAO.Instance.GetNome(session, pedido.IdCli) +
-                        " não pode fazer compras à prazo.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
-            //Verifica se o cliente possui contas a receber vencidas se nao for garantia
-            if ((ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", "id_Cli=" + pedido.IdCli)) &&
-                ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, pedido.IdCli) &&
-                pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
-            {
-                LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", idPedido, true,
-                    null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
+            
             // Verifica se pode liberar o epdido com base na rentailidade do mesmo
             if (Configuracoes.RentabilidadeConfig.ControlarFaixaRentabilidadeLiberacao &&
                 RentabilidadeHelper.ObterVerificadorLiberacao<Pedido>().VerificarRequerLiberacao(session, pedido))
@@ -6145,13 +6110,13 @@ namespace Glass.Data.DAL
                 situacao != Pedido.SituacaoPedido.EmConferencia && situacao != Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro)
                 throw new Exception("Apenas pedidos abertos podem ser finalizados.");
 
+            #region Calcula o sinal/parcelas do pedido
+
             var pagamentoAntesProducao = ClienteDAO.Instance.IsPagamentoAntesProducao(session, pedido.IdCli);
             var percSinalMinimo = ClienteDAO.Instance.GetPercMinSinalPedido(session, pedido.IdCli);
             var tipoPagto = ClienteDAO.Instance.ObtemValorCampo<uint?>(session, "tipoPagto", "id_Cli=" + pedido.IdCli);
-
-            #region Calcula o sinal/parcelas do pedido
-
             var calculouSinal = false;
+
             // Comentado porque na Alternativa teria que ter calculado o sinal do pedido de revenda mas não foi calculado;
             if (percSinalMinimo > 0 && /*(pedido.Importado || ((pagamentoAntesProducao || pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda) && */
                 ((pedido.ValorEntrada == 0 && pedido.ValorPagamentoAntecipado == 0) ||
@@ -6205,28 +6170,74 @@ namespace Glass.Data.DAL
                 (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo))
                 throw new Exception("Não é possível finalizar o pedido, pois a forma de pagamento não foi selecionada.");
 
-            #endregion
-
-            // Verifica se o cliente deve pagar um percentual mínimo de sinal
-            if (pedido.ValorPagamentoAntecipado == 0 && (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo || (PedidoConfig.LiberarPedido && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista && (pagamentoAntesProducao || pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda))) && percSinalMinimo != null)
-            {
-                var valorMinimoSinal = Math.Round(pedido.Total * (decimal)(percSinalMinimo.Value / 100), 2);
-                if (pedido.ValorEntrada < valorMinimoSinal)
-                    LancarExceptionValidacaoPedidoFinanceiro("Esse cliente deve pagar um percentual mínimo de " +
-                        percSinalMinimo + "% como sinal.\\nValor mínimo para o sinal: " + valorMinimoSinal.ToString("C"),
-                        idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
-            }
-
             // Verifica se o valor de entrada somado ao valor do pagamento antecipado ultrapassam o valor total do pedido, chamado 9875.
             if ((pedido.ValorEntrada + pedido.ValorPagamentoAntecipado) > pedido.Total)
             {
                 throw new Exception("Não é possível finalizar o pedido. Motivo: " +
                     "O valor de entrada somado ao valor pago antecipadamente ultrapassa o valor total do pedido.");
-                /* Chamado 22608. */
-                /*LancarExceptionValidacaoPedidoFinanceiro("Não é possível finalizar o pedido. Motivo: " +
-                    "O valor de entrada somado ao valor pago antecipadamente ultrapassa o valor total do pedido.",
-                    idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);*/
             }
+
+            #endregion
+
+            #region Validações pedido financeiro
+
+            // Verifica se há pedidos atrasados que impedem a finalização deste pedido
+            var numPedidosBloqueio = GetCountBloqueioEmissao(session, pedido.IdCli);
+            var nomeCliente = ClienteDAO.Instance.GetNome(session, pedido.IdCli);
+            var situacaoCliente = ClienteDAO.Instance.GetSituacao(session, pedido.IdCli);
+            var obsCliente = ClienteDAO.Instance.ObtemValorCampo<string>(session, "obs", $"Id_Cli={ pedido.IdCli }");
+            var bloquearPedidoClienteContaVencida = ClienteDAO.Instance.ObtemValorCampo<bool>(session, "bloquearPedidoContaVencida", $"Id_Cli={ pedido.IdCli }");
+            var clientePossuiContaVencida = ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, pedido.IdCli);
+            var quantidadeParcelasCliente = ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Todos);
+            var quantidadeParcelasPrazoCliente = ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Prazo);
+
+            // Verifica se o cliente deve pagar um percentual mínimo de sinal
+            if (pedido.ValorPagamentoAntecipado == 0 && percSinalMinimo != null && (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo ||
+                (PedidoConfig.LiberarPedido && pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista && (pagamentoAntesProducao || pedido.TipoPedido == (int)Pedido.TipoPedidoEnum.Venda))))
+            {
+                var valorMinimoSinal = Math.Round(pedido.Total * (decimal)(percSinalMinimo.Value / 100), 2);
+
+                if (pedido.ValorEntrada < valorMinimoSinal)
+                {
+                    LancarExceptionValidacaoPedidoFinanceiro($@"Esse cliente deve pagar um percentual mínimo de { percSinalMinimo }% como sinal.\\nValor mínimo para o sinal: { valorMinimoSinal.ToString("C") }",
+                        idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                }
+            }
+
+            if (numPedidosBloqueio > 0)
+            {
+                var dias = $"há pelo menos { PedidoConfig.NumeroDiasPedidoProntoAtrasado } dias";
+                var inicio = numPedidosBloqueio > 1 ? "Os pedidos " : "O pedido ";
+                var fim = numPedidosBloqueio > 1 ? $" estão prontos { dias } e ainda não foram liberados" : $" está pronto { dias } e ainda não foi liberado";
+                var idsPedidoBloqueioEmissao = GetIdsBloqueioEmissao(session, pedido.IdCli);
+
+                LancarExceptionValidacaoPedidoFinanceiro($"Não é possível finalizar esse pedido. { inicio }{ idsPedidoBloqueioEmissao }{ fim } para o cliente.", idPedido, true, null,
+                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
+            // Verifica se o cliente está inativo
+            if (situacaoCliente != (int)SituacaoCliente.Ativo)
+            {
+                LancarExceptionValidacaoPedidoFinanceiro($"O cliente selecionado está inativo. Motivo: { obsCliente }", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
+            // Bloqueia a forma de pagamento se o cliente não puder usá-la
+            if (quantidadeParcelasCliente > 0)
+            {
+                if (quantidadeParcelasPrazoCliente == 0 && pedido.TipoVenda == 2)
+                {
+                    LancarExceptionValidacaoPedidoFinanceiro($@"O cliente { pedido.IdCli } - { nomeCliente } não pode fazer compras à prazo.", idPedido, true, null,
+                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                }
+            }
+
+            //Verifica se o cliente possui contas a receber vencidas se nao for garantia
+            if (bloquearPedidoClienteContaVencida && clientePossuiContaVencida && pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
+            {
+                LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+            }
+
+            #endregion
 
             //Valida se todas os produtos do pedido não necessitam de imagem nelas
             ValidarObrigatoriedadeDeImagemEmPecasAvulsas(session, (int)idPedido);
