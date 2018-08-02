@@ -37,9 +37,10 @@ namespace Glass.Otimizacao.Negocios
         /// <summary>
         /// Realiza a importação do resultado de uma otimização.
         /// </summary>
+        /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
         /// <param name="arquivos">Arquivos da otimização.</param>
         /// <returns></returns>
-        ImportacaoOtimizacao Importar(IEnumerable<IConteudoArquivoOtimizacao> arquivos);
+        ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IConteudoArquivoOtimizacao> arquivos);
 
         /// <summary>
         /// Recupera os itens da otimização.

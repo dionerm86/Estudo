@@ -280,6 +280,28 @@ namespace Glass.Otimizacao.eCutter
             writer.WriteEndElement();
         }
 
+        /// <summary>
+        /// Serializa o resultado da operação de autenticação.
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="autenticacao"></param>
+        /// <param name="token"></param>
+        public static void Serializar(System.Xml.XmlWriter writer, AutenticacaoProtocolo autenticacao, string token)
+        {
+            writer.WriteStartElement("Success");
+            writer.WriteValue(autenticacao.Sucesso);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Token");
+            writer.WriteValue(token);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Message");
+            writer.WriteValue(autenticacao.Mensagem);
+            writer.WriteEndElement();
+
+        }
+
         #endregion
     }
 }
