@@ -17,6 +17,10 @@
 
         function addCarregamento() {
             var idCarregamento = FindControl("txtNumCarregamento", "input").value;
+
+            if (FindControl("nfTransferencia", "tr").style.display == "none")
+                return;
+
             if (Trim(idCarregamento) == "") {
                 alert("Selecione um carregamento para continuar.");
                 FindControl("txtNumCarregamento", "input").value = "";
