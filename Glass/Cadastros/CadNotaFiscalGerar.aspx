@@ -17,6 +17,10 @@
 
         function addCarregamento() {
             var idCarregamento = FindControl("txtNumCarregamento", "input").value;
+
+            if (FindControl("nfTransferencia", "tr").style.display == "none")
+                return;
+
             if (Trim(idCarregamento) == "") {
                 alert("Selecione um carregamento para continuar.");
                 FindControl("txtNumCarregamento", "input").value = "";
@@ -433,8 +437,7 @@
                                         <asp:Label ID="Label1" runat="server" Text="Carregamento" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtNumCarregamento" runat="server" Width="70px" onkeypress="return soNumeros(event, true, true)"
-                                            onkeydown="if (isEnter(event)) cOnClick('imbAddCarregamento', null);"></asp:TextBox>
+                                        <asp:TextBox ID="txtNumCarregamento" runat="server" Width="70px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                                     </td>
                                     <td>
                                         <asp:ImageButton ID="imbAddCarregamento" runat="server" ImageUrl="~/Images/Insert.gif"

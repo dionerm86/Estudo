@@ -900,6 +900,7 @@ namespace Glass.Data.DAL
                             throw new Exception("Informe o código de otimização da peça no cadastro de produtos.");
 
                         var idProd = etiqueta.IdProdPedEsp > 0 ? (int)ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(transaction, etiqueta.IdProdPedEsp) : 0;
+                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(transaction, (int)idProd);
                         var idsBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetByProdutoPedido(transaction, etiqueta.IdProdPedEsp).Select(f => (int)f.IdBenefConfig).ToList();
                         var descricaoBeneficiamento = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(transaction, etiqueta.IdProdPedEsp);
                         var idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(transaction, etiqueta.IdProdPedEsp);
@@ -943,7 +944,7 @@ namespace Glass.Data.DAL
                             shapeId = String.Empty;
 
                         // Chamado 15432: Se a peça tiver XXXXXX ou 999999, não deve zerar o shapeId, a menos que a empresa gere SAG de peça reposta
-                        if (isPecaReposta.Value && shapeId != null && !shapeId.Contains("XXXXXX") && !shapeId.Contains("999999") && !PCPConfig.GerarMarcacaoPecaReposta)
+                        if (isPecaReposta.Value && shapeId != null && !shapeId.Contains("XXXXXX") && !shapeId.Contains("999999") && !PCPConfig.GerarMarcacaoPecaReposta && !produtoProducao)
                             shapeId = string.Empty;
 
                         // Chamado 17954: Se tiver que gerar marcação de peça reposta
@@ -952,10 +953,6 @@ namespace Glass.Data.DAL
 
                         if (String.IsNullOrEmpty(etiqueta.CodOtimizacao))
                             throw new Exception("O produto " + etiqueta.DescrProd + " não possui código de otimização, informe-o no cadastro de produto.");
-
-                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(transaction, (int)idProd);
-                        if (String.IsNullOrEmpty(shapeId) && isPecaReposta.Value && produtoProducao)
-                            shapeId = ProdutoDAO.Instance.ObtemForma(transaction, idProd, null);
 
                         /* Chamado 18056. */
                         shapeId = String.IsNullOrEmpty(shapeId) ? String.Empty : shapeId;

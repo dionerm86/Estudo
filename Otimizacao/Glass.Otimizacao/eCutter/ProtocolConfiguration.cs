@@ -11,7 +11,7 @@ namespace Glass.Otimizacao.eCutter
     /// <summary>
     /// Configuração do procolo para comunicação com o eCutter.
     /// </summary>
-    public class ProtocolConfiguration : System.Xml.Serialization.IXmlSerializable
+    public class ProtocolConfiguration : IXmlSerializable
     {
         #region Variáveis Locais
 
