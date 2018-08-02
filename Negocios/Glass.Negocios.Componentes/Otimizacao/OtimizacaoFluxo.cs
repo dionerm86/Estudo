@@ -198,9 +198,10 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Realiza a importação do resultado de uma otimização.
         /// </summary>
+        /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
         /// <param name="arquivos">Arquivos da otimização.</param>
         /// <returns></returns>
-        public ImportacaoOtimizacao Importar(IEnumerable<IConteudoArquivoOtimizacao> arquivos)
+        public ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IConteudoArquivoOtimizacao> arquivos)
         {
             var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
 

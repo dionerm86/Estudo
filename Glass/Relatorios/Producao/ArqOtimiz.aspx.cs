@@ -22,7 +22,7 @@ namespace Glass.UI.Web.Relatorios.Producao
             address = address.Substring(0, address.IndexOf("/relatorios", StringComparison.InvariantCultureIgnoreCase));
             var token = Request.Cookies[System.Web.Security.FormsAuthentication.FormsCookieName]?.Value;
 
-            var uri = new Uri($"{address}/handlers/ecutteroptimizationservice.ashx?token={token}&id=");
+            var uri = new Uri($"{address}/handlers/ecutteroptimizationservice.ashx?launcher=OptyWay&token={token}&id=");
 
             return $"ecutter-opt{uri.AbsoluteUri.Substring(uri.Scheme.Length)}";
         }
