@@ -154,10 +154,10 @@ namespace Glass.UI.Web.Cadastros
                 // Salva o arquivo CalcEngine.
                 using (var m = new System.IO.MemoryStream(fluArquivoCalcEngine.FileBytes))
                 {
-                    if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
-                        throw new Exception("O arquivo inserido está com falhas de validação");
+                    //if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
+                    //    throw new Exception("O arquivo inserido está com falhas de validação");
 
-                    m.Position = 0;
+                    //m.Position = 0;
 
                     var buffer = new byte[1024];
                     var read = 0;
@@ -242,10 +242,10 @@ namespace Glass.UI.Web.Cadastros
 
             using (var m = new System.IO.MemoryStream(fluArquivoCalcEngine.FileBytes))
             {
-                if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
-                    throw new Exception("O arquivo inserido está com falhas de validação");
+                //if (!ArquivoMesaCorteDAO.Instance.ValidarCadastroCalcEngine(m))
+                //    throw new Exception("O arquivo inserido está com falhas de validação");
 
-                m.Position = 0;
+                //m.Position = 0;
 
                 var buffer = new byte[1024];
                 var read = 0;
