@@ -5111,7 +5111,7 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(transaction, dados.IdProdImpressao, idProdPedProducao);
+                        ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, dados.IdProdImpressao, idProdPedProducao);
                     }
 
                     #endregion
@@ -6466,6 +6466,7 @@ namespace Glass.Data.DAL
                         if (idProd > 0)
                             MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, idProd.Value, idLojaMovChapa, idProdPedProducao, 1, false, false);
                     }
+
                     #region Ajusta o estoque e a Reserva da chapa no pedido de revenda
 
                     if (setor.Corte)
@@ -6508,9 +6509,8 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
-
-                    //Marca a chapa novamente como disponivel
+                    ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(sessao, idProdImpressao, idProdPedProducao);
+                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, new List<int> { (int)idProdImpressao });
                     ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(sessao, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdImpressaoChapa));
 
                     //Se a peça possui retalho e o mesmo não tiver sido associado na impressao da peça remove a associação.

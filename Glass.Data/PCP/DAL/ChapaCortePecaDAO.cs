@@ -276,7 +276,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove a leitura da chapa da peça informada
         /// </summary>
-        public void DeleteByIdProdImpressaoPeca(GDASession sessao, uint idProdImpressaoPeca, uint idProdPedProducao)
+        public void AtualizarReferenciaMovimentacaoEstoque(GDASession sessao, uint idProdImpressaoPeca, uint idProdPedProducao)
         {
             var idProdImpressaoChapa = ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
             var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, (uint)idProdImpressaoChapa);
@@ -325,7 +325,7 @@ namespace Glass.Data.DAL
             }
 
             #endregion
-        }
+        }        
 
         /// <summary>
         /// Remove a leitura da chapa das peças informadas.
