@@ -918,7 +918,7 @@ namespace Glass.Data.DAL
                         var isPecaReposta = new Lazy<bool>(() => ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, etiqueta.IdPedido + "-" + etiqueta.NumItem.Replace(" ", ""), false));
 
                         string nomeCliente = etiqueta.NomeCliente.Length > 12 ? etiqueta.NomeCliente.Substring(0, 12).ToUpper() : etiqueta.NomeCliente.ToUpper();
-                        var formaProduto = gerarArqMesa && isPecaReposta.Value ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd, idProdBaixa);
+                        var formaProduto = gerarArqMesa && isPecaReposta.Value && !produtoProducao ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd, idProdBaixa);
                         string shapeId = !String.IsNullOrEmpty(etiqueta.Forma) ? etiqueta.Forma : formaProduto;
 
                         if (shapeId == "XXXXXXXX" && !String.IsNullOrEmpty(formaProduto))
