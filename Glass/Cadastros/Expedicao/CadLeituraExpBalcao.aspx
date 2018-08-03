@@ -1,6 +1,8 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="CadLeituraExpBalcao.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.Expedicao.CadLeituraExpBalcao" %>
 
+<%@ Register Src="../../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup"
+    TagPrefix="uc1" %>
 <!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -329,6 +331,12 @@
                                                                         <HeaderStyle HorizontalAlign="Left" />
                                                                         <ItemStyle HorizontalAlign="Left" />
                                                                     </asp:TemplateField>
+                                                                    <asp:TemplateField>
+                                                                        <ItemTemplate>
+                                                                            <asp:PlaceHolder ID="pchAnexos" runat="server"><a href="#" onclick='openWindow(600, 700, &#039;../CadFotos.aspx?id=<%# Eval("IdPedido") %>&amp;tipo=pedido&#039;); return false;'>
+                                                                                <img border="0px" src="../../Images/Clipe.gif" /></a></asp:PlaceHolder>
+                                                                        </ItemTemplate>
+                                                                    </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Pedido Cli." SortExpression="PedCli">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label55" runat="server" Text='<%# Eval("PedCli") %>'></asp:Label>
@@ -360,6 +368,13 @@
                                                                     <asp:TemplateField HeaderText="M²" SortExpression="M2">
                                                                         <ItemTemplate>
                                                                             <asp:Label ID="Label20" runat="server" Text='<%# Eval("M2", "{0:N2}") %>'></asp:Label>
+                                                                        </ItemTemplate>
+                                                                        <HeaderStyle HorizontalAlign="Left" />
+                                                                        <ItemStyle HorizontalAlign="Left" />
+                                                                    </asp:TemplateField>
+                                                                    <asp:TemplateField>
+                                                                        <ItemTemplate>
+                                                                            <uc1:ctrlimagempopup id="ctrlImagemPopup1" runat="server" imageurl='<%# Eval("ImagemPecaUrl") != null ? Eval("ImagemPecaUrl").ToString().Replace("../", "~/") : null %>' />
                                                                         </ItemTemplate>
                                                                         <HeaderStyle HorizontalAlign="Left" />
                                                                         <ItemStyle HorizontalAlign="Left" />

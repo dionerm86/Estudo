@@ -81,7 +81,7 @@ namespace Glass.PCP.Negocios.Componentes
                     .Add("?situacaoPPP", ProdutoPedidoProducao.SituacaoEnum.Producao)
                     .Add("?id", idLiberarPedido)
                     .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-                .Select(@"p.IdPedido, ppp.IdProdPedProducao, ppp.NumEtiqueta, p.CodCliente as PedCli,
+                .Select(@"p.IdPedido, ppp.IdProdPedProducao, ppp.NumEtiqueta, p.CodCliente as PedCli, pp.IdProdPedEsp, ppp.NumEtiqueta AS PedidoEtiqueta,
                             (pp.Peso / pp.Qtde) as Peso, prod.CodInterno as CodProduto, prod.Descricao as DescProduto, pp.Altura, pp.Largura,
                             (pp.TotM / pp.Qtde) as M2")
                 .GroupBy("ppp.IdProdPedProducao");
@@ -321,7 +321,9 @@ namespace Glass.PCP.Negocios.Componentes
                         ExpedidoManualmente = ir.Qtde == ir.QtdSaida,
                         Altura = ir.Altura,
                         Largura = ir.Largura,
-                        M2 = ir.TotM / ir.Qtde
+                        M2 = ir.TotM / ir.Qtde,
+                        IdProdPedEsp = ir.IdProdPedEsp ?? 0,
+                        PedidoEtiqueta = ir.IdPedido.ToString()
                     };
 
                     var itemExp = itensRevendaExp
