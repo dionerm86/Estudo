@@ -28,7 +28,8 @@
             if(idSubGrupo == "") idSubGrupo = 0;
             
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaProdutoPedidoInterno&idPedido=" + idPedido + "&dataIni=" + dtIni +
-                "&dataFim=" + dtFim + "&idFunc=" + idFunc + "&idFuncReceb=" + idFuncAut + "&exportarExcel=" + exportarExcel);
+                "&dataFim=" + dtFim + "&idFunc=" + idFunc + "&idFuncReceb=" + idFuncAut +
+                "&idGrupo=" + idGrupo + "&idSubGrupo=" + idSubGrupo + "&exportarExcel=" + exportarExcel);
 
             return false;
         }
@@ -140,13 +141,11 @@
                     EmptyDataText="Não há pedidos internos cadastrados." AllowPaging="True" AllowSorting="True"
                     OnRowCommand="grdPedidos_RowCommand">
                     <Columns>
-                        <asp:BoundField DataField="codInterno" HeaderText="Cod. Produto" SortExpression="codInterno"
-                            ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField DataField="descrProduto" HeaderText="Produto" SortExpression="descrProduto"
-                            ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField DataField="QtdeSomada" HeaderText="Qtde" SortExpression="Qtde" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField DataField="TotM2" HeaderText="Total M²" SortExpression="TotM" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField DataField="Custo" HeaderText="Custo" SortExpression="Custo" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField DataField="codInterno" HeaderText="Cod. Produto" SortExpression="codInterno" />
+                        <asp:BoundField DataField="descrProduto" HeaderText="Produto" SortExpression="descrProduto" />
+                        <asp:BoundField DataField="QtdeSomada" HeaderText="Qtde" SortExpression="Qtde"/>
+                        <asp:BoundField DataField="TotM2" HeaderText="Total M²" SortExpression="TotM" />
+                        <asp:BoundField DataField="Custo" HeaderText="Custo" SortExpression="Custo" DataFormatString="{0:C}" />
                     </Columns>
                     <PagerStyle CssClass="pgr" />
                     <EditRowStyle CssClass="edit" />
