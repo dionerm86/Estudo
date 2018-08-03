@@ -11908,7 +11908,8 @@ namespace Glass.Data.DAL
                                     var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
                                     {
                                         IncludeBounds = true,
-                                        IncludeProjectVariables = true
+                                        IncludeProjectVariables = true,
+                                        ConfigureGroupsLeads = true
                                     });
                                     var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
                                     using (var resultado = importer.Execute(espessura))
@@ -11924,7 +11925,8 @@ namespace Glass.Data.DAL
                                         var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
                                         {
                                             IncludeBounds = true,
-                                            IncludeProjectVariables = true
+                                            IncludeProjectVariables = true,
+                                            ConfigureGroupsLeads = true
                                         });
                                         var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
 
