@@ -13096,7 +13096,7 @@ namespace Glass.Data.DAL
                     }
 
                     if (objUpdate.DataCad.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
-                        throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
+                        throw new Exception("A data selecionada não pode ser inferior a " + objUpdate.DataCad.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
