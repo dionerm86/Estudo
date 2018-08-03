@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Colosoft;
 
 namespace Glass.Otimizacao.Negocios.Componentes
 {
@@ -11,6 +12,28 @@ namespace Glass.Otimizacao.Negocios.Componentes
     /// </summary>
     public class OtimizacaoFluxo : IOtimizacaoFluxo
     {
+        #region Propriedades
+
+        /// <summary>
+        /// Obtém o repositório da solução.
+        /// </summary>
+        protected IRepositorioSolucaoOtimizacao Repositorio { get; }
+
+        #endregion
+
+        #region Construtores
+
+        /// <summary>
+        /// Construtor padrão.
+        /// </summary>
+        /// <param name="repositorioSolucaoOtimizacao"></param>
+        public OtimizacaoFluxo(IRepositorioSolucaoOtimizacao repositorioSolucaoOtimizacao)
+        {
+            Repositorio = repositorioSolucaoOtimizacao;
+        }
+
+        #endregion
+
         #region Métodos Privados
 
         /// <summary>
@@ -134,7 +157,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// </summary>
         /// <param name="arquivo"></param>
         /// <returns></returns>
-        private ImportacaoOtimizacao ImportarArquivoOptyWay(IConteudoArquivoOtimizacao arquivo)
+        private ImportacaoOtimizacao ImportarArquivoOptyWay(IArquivoSolucaoOtimizacao arquivo)
         {
             var proditosPedidoEspelho = new List<Data.Model.ProdutosPedidoEspelho>();
             var etiquetasJaImpressas = string.Empty;
@@ -174,6 +197,50 @@ namespace Glass.Otimizacao.Negocios.Componentes
         #region Métodos Públicos
 
         /// <summary>
+        /// Verifica se existe uma solução de otimização configurada para o arquivo de otimização.
+        /// </summary>
+        /// <param name="idArquivoOtimizacao">Identificador do arquiv de otimização.</param>
+        /// <returns></returns>
+        public bool PossuiSolucaoOtimizacao(int idArquivoOtimizacao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>()
+                .Where("IdArquivoOtimizacao=?id")
+                .Add("?id", idArquivoOtimizacao)
+                .ExistsResult();
+        }
+
+        /// <summary>
+        /// Obtém a solução de otimização pelo arquivo de otimização.
+        /// </summary>
+        /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
+        /// <returns></returns>
+        public Entidades.SolucaoOtimizacao ObterSolucaoOtimizacaoPelaArquivoOtimizacao(int idArquivoOtimizacao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>()
+                .Where("IdArquivoOtimizacao=?id")
+                .Add("?id", idArquivoOtimizacao)
+                .ProcessResult<Entidades.SolucaoOtimizacao>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Obtém a solução de otimização.
+        /// </summary>
+        /// <param name="idSolucaoOtimizacao">Identificador da solução.</param>
+        /// <returns></returns>
+        public Entidades.SolucaoOtimizacao ObterSolucaoOtimizacao(int idSolucaoOtimizacao)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>()
+                .Where("IdSolucaoOtimizacao=?id")
+                .Add("?id", idSolucaoOtimizacao)
+                .ProcessResult<Entidades.SolucaoOtimizacao>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
         /// Recupera a sessão de otimização associado com o identificador do arquivo de otimização.
         /// </summary>
         /// <param name="idArquivoOtimizacao"></param>
@@ -201,19 +268,43 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
         /// <param name="arquivos">Arquivos da otimização.</param>
         /// <returns></returns>
-        public ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IConteudoArquivoOtimizacao> arquivos)
+        public ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IArquivoSolucaoOtimizacao> arquivos)
         {
-            var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
+            var solucaoOtimizacao = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>()
+                .Where("IdArquivoOtimizacao=?id")
+                .Add("?id", idArquivoOtimizacao)
+                .ProcessResult<Entidades.SolucaoOtimizacao>()
+                .FirstOrDefault();
 
-            foreach(var arquivo in arquivos)
+            if (solucaoOtimizacao == null)
             {
-                if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
-                     tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
-                     StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
-                    return ImportarArquivoOptyWay(arquivo);
+                solucaoOtimizacao = new Entidades.SolucaoOtimizacao()
+                {
+                    IdArquivoOtimizacao = idArquivoOtimizacao
+                };
+
+                SourceContext.Instance.ExecuteSave(solucaoOtimizacao);
             }
 
-            throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
+            Repositorio.SalvarArquivos(solucaoOtimizacao, arquivos);
+
+            return new ImportacaoOtimizacao
+            {
+                IdArquivoOtimizacao = 0
+            };
+
+            //var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
+
+            //foreach(var arquivo in arquivos)
+            //{
+            //    if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+            //         tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
+            //         StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
+            //        return ImportarArquivoOptyWay(arquivo);
+            //}
+
+            //throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
         }
 
         /// <summary>

@@ -36,6 +36,13 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<eCutter.IAutenticadorProtocolo>();
 
+        /// <summary>
+        /// Obtém o repositório das soluções de otimização.
+        /// </summary>
+        private IRepositorioSolucaoOtimizacao RepositorioSolucaoOtimizacao =>
+            Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                    .GetInstance<IRepositorioSolucaoOtimizacao>();
+
         #endregion
 
         #region Métodos Privados
@@ -87,7 +94,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
         /// <param name="context"></param>
         /// <param name="arquivo"></param>
         /// <returns></returns>
-        private eCutter.ResultadoSalvarTransacao Importar(HttpContext context, IEnumerable<Otimizacao.Negocios.IConteudoArquivoOtimizacao> arquivos)
+        private eCutter.ResultadoSalvarTransacao Importar(HttpContext context, IEnumerable<IArquivoSolucaoOtimizacao> arquivos)
         {
             if (!arquivos.Any())
                 return new eCutter.ResultadoSalvarTransacao(false, null, new[]
@@ -252,7 +259,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
             if (requestType == "post")
             {
-                var arquivos = new List<Otimizacao.Negocios.IConteudoArquivoOtimizacao>();
+                var arquivos = new List<IArquivoSolucaoOtimizacao>();
 
                 for (var i = 0; i < context.Request.Files.Count; i++)
                     arquivos.Add(new ConteudoArquivoOtimizacao(context.Request.Files[i]));
@@ -272,6 +279,41 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
                 context.Response.Flush();
                 context.Response.End();
+            }
+            else if (!string.IsNullOrEmpty(context.Request["optimizationsolution"]))
+            {
+                var solucaoOtimizacao = OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(int.Parse(id));
+
+                if (solucaoOtimizacao == null)
+                {
+                    NaoEncontrado(context);
+                    return;
+                }
+
+                var arquivo = RepositorioSolucaoOtimizacao.ObterArquivos(solucaoOtimizacao)
+                    .FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(f.Nome), ".optsln"));
+
+                if (arquivo != null)
+                {
+                    using (var stream = arquivo.Abrir())
+                    {
+                        context.Response.ContentType = "application/ecutter-optimization";
+                        context.Response.AddHeader("Content-Disposition", $"attachment; filename={arquivo.Nome}");
+                        context.Response.AddHeader("Content-Length", stream.Length.ToString());
+
+                        var buffer = new byte[1024];
+                        var read = 0;
+
+                        var outputStream = context.Response.OutputStream;
+                        while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            outputStream.Write(buffer, 0, read);
+
+                        outputStream.Flush();
+                    }
+                }
+                else
+                    NaoEncontrado(context);
+
             }
             // Verifica se é uma requisição para recuperar o estoque de chapas
             else if (!string.IsNullOrEmpty(context.Request["sheetstock"]))
@@ -301,7 +343,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                        CloseOutput = false
                    });
 
-                Otimizacao.eCutter.Serializador.Serializar(writer, sessaoOtimizacao.ObterPecasPadrao());
+                eCutter.Serializador.Serializar(writer, sessaoOtimizacao.ObterPecasPadrao());
                 writer.Flush();
                 context.Response.Flush();
 
@@ -334,9 +376,13 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                         break;
                 }
 
+                var possuiSolucaoOtimizacao = OtimizacaoFluxo.PossuiSolucaoOtimizacao(int.Parse(id));
+                
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(eCutter.ProtocolConfiguration));
                 serializer.Serialize(context.Response.OutputStream, 
-                    new eCutter.ProtocolConfiguration(context.Request.Url, id, formato));
+                    new eCutter.ProtocolConfiguration(context.Request.Url, id,
+                        possuiSolucaoOtimizacao ? eCutter.ProtocolContentType.OptimizationSolution : eCutter.ProtocolContentType.UriReferences, 
+                        formato));
 
                 context.Response.Flush();
             }
@@ -351,7 +397,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
         /// Implementação que encapsula o arquivo postado com um conteúdo
         /// do arquivo de otimização.
         /// </summary>
-        class ConteudoArquivoOtimizacao : Negocios.IConteudoArquivoOtimizacao
+        class ConteudoArquivoOtimizacao : IArquivoSolucaoOtimizacao
         {
             #region Variáveis Locais
 

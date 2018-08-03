@@ -746,6 +746,7 @@
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
     <Compile Include="Otimizacao\Model\PlanoCorte.cs" />
+    <Compile Include="Otimizacao\Model\SolucaoOtimizacao.cs" />
     <Compile Include="PCP\DAL\AmbientePedidoEspelhoRentabilidadeDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineVariavelDAO.cs" />
