@@ -10,6 +10,12 @@ namespace Glass.Data.Helper
     /// </summary>
     public sealed class ConfiguracaoBiesse
     {
+        #region Variaveis Locais
+
+        public List<Exception> _erros = new List<Exception>();
+
+        #endregion
+
         #region Propriedades
 
         /// <summary>
@@ -21,6 +27,11 @@ namespace Glass.Data.Helper
         /// Obtém os contextos de configuração.
         /// </summary>
         public IEnumerable<Contexto> Contextos { get; private set; } = new List<Contexto>();
+
+        /// <summary>
+        /// Obtém os erros da configuração.
+        /// </summary>
+        public IEnumerable<Exception> Erros => _erros;
 
         #endregion
 
@@ -58,8 +69,9 @@ namespace Glass.Data.Helper
                     {
                         importerContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), dir);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        _erros.Add(ex);
                         // Igonra erros ao carregar o contexto
                         continue;
                     }
@@ -80,8 +92,9 @@ namespace Glass.Data.Helper
                                 diretorioSaida = configuracao.DiretorioSaida ?? Configuracoes.PCPConfig.CaminhoSalvarIntermac;
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            _erros.Add(ex);
                             // Ignora erros
                         }
                     }

@@ -77,7 +77,7 @@ namespace Glass.UI.Web
             {
                 var ticket = System.Web.Security.FormsAuthentication.Decrypt(cookie.Value);
 
-                if (ticket != null && ticket.IssueDate < _dataInicioSistema && !System.Diagnostics.Debugger.IsAttached)
+                if (ticket != null && ticket.IssueDate < _dataInicioSistema)
                 {
                     System.Web.Security.FormsAuthentication.SignOut();
                     System.Web.Security.FormsAuthentication.RedirectToLoginPage();

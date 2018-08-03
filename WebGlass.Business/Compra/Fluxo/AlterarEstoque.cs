@@ -14,13 +14,30 @@ namespace WebGlass.Business.Compra.Fluxo
 
         public void BaixarEstoque(uint idCompra)
         {
-            // Verifica se o Pedido possui produtos
-            if (ProdutosCompraDAO.Instance.CountInCompra(idCompra) == 0)
-                throw new Exception("Inclua pelo menos um produto na compra para creditar o estoque.");
-
-            // Credita o estoque pela compra apenas se a empresa não credita manualmente
-            if (!EstoqueConfig.EntradaEstoqueManual)
-                CompraDAO.Instance.CreditarEstoqueCompra(null, CompraDAO.Instance.GetElementByPrimaryKey(idCompra));
+            using (var transaction = new GDA.GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+                    // Verifica se o Pedido possui produtos
+                    if (ProdutosCompraDAO.Instance.CountInCompra(idCompra) == 0)
+                        throw new Exception("Inclua pelo menos um produto na compra para creditar o estoque.");
+                    // Credita o estoque pela compra apenas se a empresa não credita manualmente
+                    if (!EstoqueConfig.EntradaEstoqueManual)
+                    {
+                        var compra = CompraDAO.Instance.GetElementByPrimaryKey(transaction, idCompra);
+                        CompraDAO.Instance.CreditarEstoqueCompra(transaction, compra);
+                    }
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
         }
 
         static volatile object _aumentarEstoqueLock = new object();

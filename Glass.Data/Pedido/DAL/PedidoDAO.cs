@@ -11380,8 +11380,18 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    if (novaDataEntrega.Date < DateTime.Now.Date)
-                        throw new Exception(string.Format("A data selecionada não pode ser inferior a {0}.", DateTime.Now.ToShortDateString()));
+                    var dataInvalida = new StringBuilder();
+
+                    foreach (var idPedido in idsPedidos)
+                    {
+                        var datacad = ObterDataCad(idPedido);
+
+                        if(datacad.Date > novaDataEntrega.Date)
+                            dataInvalida.Append(string.Format("A data de entrega do pedido {0} não pode ser inferior a {1}.", idPedido, datacad));
+                    }
+
+                    if(dataInvalida.Length > 0)
+                        throw new Exception(dataInvalida.ToString());
 
                     var ped = objPersistence.LoadData(transaction, "select * from pedido where idPedido in (" + idsPedidos + ")").ToArray();
 
@@ -12238,6 +12248,16 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<bool>(session, "importado", "idPedido=" + idPedido);
         }
+
+        public DateTime ObterDataCad(uint idPedido)
+        {
+            return ObterDataCad(null, idPedido);
+        }
+
+        public DateTime ObterDataCad(GDASession session, uint idPedido)
+        {
+            return ObtemValorCampo<DateTime>(session, "DataCad", "idPedido=" + idPedido);
+        }
         
         public string ObtemCancelados(GDASession session, string idsPedido)
         {
@@ -13075,7 +13095,7 @@ namespace Glass.Data.DAL
                         PedidoEspelhoDAO.Instance.VerificaCapacidadeProducaoSetor(session, objUpdate.IdPedido, dataFabrica, 0, 0);
                     }
 
-                    if (DateTime.Now.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
+                    if (objUpdate.DataCad.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
                         throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
