@@ -11905,7 +11905,11 @@ namespace Glass.Data.DAL
                                 if (contextos.Count() == 1)
                                 {
                                     var contexto = contextos.First();
-                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true });
+                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
+                                    {
+                                        IncludeBounds = true,
+                                        IncludeProjectVariables = true
+                                    });
                                     var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
                                     using (var resultado = importer.Execute(espessura))
                                         resultado.Save(arquivo);
@@ -11917,7 +11921,11 @@ namespace Glass.Data.DAL
                                     
                                     foreach(var contexto in contextos)
                                     {
-                                        var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions() { IncludeBounds = true });
+                                        var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
+                                        {
+                                            IncludeBounds = true,
+                                            IncludeProjectVariables = true
+                                        });
                                         var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
 
                                         using (var resultado = importer.Execute(espessura))
