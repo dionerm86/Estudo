@@ -11384,7 +11384,7 @@ namespace Glass.Data.DAL
 
                     foreach (var idPedido in idsPedidos)
                     {
-                        var datacad = ObterDataCad(idPedido);
+                        var datacad = ObterDataCad(transaction, idPedido);
 
                         if(datacad.Date > novaDataEntrega.Date)
                             dataInvalida.Append(string.Format("A data de entrega do pedido {0} não pode ser inferior a {1}.", idPedido, datacad));
