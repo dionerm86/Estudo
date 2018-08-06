@@ -1638,6 +1638,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoComMascara.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHora.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHoraPeriodo.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecaoIdValor.js" />
@@ -1675,6 +1676,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\ExecutarTimeout.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Html.js" />
     <Content Include="Vue\_Compartilhado\Mixins\JsonQuerystring.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\SistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Mensagens.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Merge.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
@@ -1718,6 +1720,7 @@
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoComMascara.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHora.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHoraPeriodo.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\IndicadorSistemaOcupado.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaPaginada.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecao.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecaoIdValor.html" />

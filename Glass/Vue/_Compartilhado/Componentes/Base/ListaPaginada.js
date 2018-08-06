@@ -119,6 +119,8 @@ Vue.component('lista-paginada', {
     atualizar: function() {
       var vm = this;
 
+      this.indicarBloqueio();
+
       this.funcaoRecuperarItens(this.filtro, this.paginaAtual, this.numeroRegistros, this.ordenacao)
         .then(function(resposta) {
           var links = resposta.headers.link;
@@ -145,6 +147,9 @@ Vue.component('lista-paginada', {
           }
 
           vm.itens = [];
+        })
+        .then(function () {
+          vm.finalizarBloqueio();
         });
     },
 

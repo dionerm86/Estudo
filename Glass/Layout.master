@@ -34,14 +34,26 @@
     </asp:ContentPlaceHolder>
 </head>
 <body>
+    <div id="sistemaOcupado">
+        <indicador-sistema-ocupado></indicador-sistema-ocupado>
+    </div>
     <script type="text/javascript">
-
         Vue.prototype.$http = axios.create({
             baseURL: '<%= ConfigurationManager.AppSettings["backendUrl"] %>',
             headers: {
                 'Authorization': 'Bearer <%= ObterCookieAuth() %>'
             }
         });
+
+        var hub = new Vue({
+            el: '#sistemaOcupado'
+        });
+
+        Vue.prototype.$http.interceptors.request.use(
+            function (config) {
+                hub.indicarProcessamento();
+                return config;
+            });
 
         Vue.prototype.$http.interceptors.response.use(
             function (resposta) {
@@ -66,6 +78,8 @@
                 }
 
                 resposta.data = converteData(resposta.data);
+
+                hub.finalizarProcessamento();
                 return resposta;
             },
             function (erro) {
@@ -100,6 +114,7 @@
                     }
                 }
 
+                hub.finalizarProcessamento();
                 return Promise.reject({ codigo, mensagem })
             });
 
@@ -134,17 +149,17 @@
     </div>
     <script type="text/javascript">
         window.opener = !!window.opener ? window.opener : window.parent;
-        
+
         var isPopup = <%= IsPopup().ToString().ToLower() %>;
         if (isPopup)
             document.body.style.display = "none";
-            
+
         var itensEsconderPopup = ["<%= linhaMenu.ClientID %>", "rodape"];
-        
+
         var exibirCabecalho = <%= (Request["exibirCabecalhoPopup"] == "true").ToString().ToLower() %>;
         if (!exibirCabecalho)
             itensEsconderPopup.push("cabecalho");
-        
+
         function hidePopup()
         {
             for (i = 0; i < itensEsconderPopup.length; i++)
@@ -153,38 +168,38 @@
                 if (!!item)
                     item.style.display = "none";
             }
-            
+
             var titulo = document.getElementById("<%= titulo.ClientID %>").cells[0];
-            
+
             if (!exibirCabecalho) {
                 titulo.style.paddingTop = "0px";
                 titulo.style.border = "";
             }
-            
+
             titulo.className = "";
-            
+
             document.getElementById("tabelaPrincipal").style.width = "100%";
             document.getElementById("tabelaPrincipal").style.height = "";
             document.getElementById("tdConteudo").style.borderColor = "white";
             document.getElementById("tdConteudo").height = "";
             document.getElementById("tdConteudo").style.paddingLeft = "0px";
             document.getElementById("tdConteudo").style.paddingRight = "0px";
-            
+
             document.body.style.display = "";
         }
-        
+
         var paginaBloqueada = false;
         var elementoBloqueou = null;
-        
+
         function bloquearPagina()
         {
             paginaBloqueada = true;
-            
+
 	        try
 	        {
                 if (elementoBloqueou != null)
                     elementoBloqueou.disabled = false;
-                
+
 	            elementoBloqueou = document.activeElement;
 	            elementoBloqueou.disabled = true;
 	        }
@@ -192,9 +207,9 @@
 	        {
 	            elementoBloqueou = null;
 	        }
-		    
+
 	        <%= popupAguardar.ClientID %>.Abrir();
-            
+
             window.onbeforeunload = function()
             {
                 if (paginaBloqueada)
@@ -203,14 +218,14 @@
                         "Tem certeza que deseja sair?";
             }
         }
-        
+
         function desbloquearPagina(removerDiv)
         {
             paginaBloqueada = false;
-            
+
             if (elementoBloqueou != null)
                 elementoBloqueou.disabled = false;
-            
+
             if (removerDiv == true)
                 <%= popupAguardar.ClientID %>.Fechar();
         }
@@ -220,16 +235,16 @@
             var botao = FindControl("btnAtualizarPagina", "input");
             if (botao != null) botao.click();
         }
-        
+
         // Impede que ao F5 reenvie informações de postback, ao pressioná-lo irá apenas "entrar" na página novamente.
         document.onkeydown = function (e) {
             if (e.keyCode === 116) {
                 atualizarPaginaBotao();
                 return false;
-                /*redirectUrl(window.location.href + (window.location.href.toString().indexOf("?") > 0 ? "&" : "?") + 
+                /*redirectUrl(window.location.href + (window.location.href.toString().indexOf("?") > 0 ? "&" : "?") +
                     "ref" + Math.random() + "=1");*/
             }
-        };  
+        };
     </script>
 
     <form id="form1" runat="server">
@@ -297,8 +312,8 @@
                             <br />
                             <asp:LinkButton runat="server" ID="lnkAvaliacoesPendentes" Font-Size="Small" ForeColor="Red" Visible="false" Text="Por favor, avalie aqui nosso último atendimento!" OnClientClick="openWindow(600, 800, '../Utils/AvaliacaoAtendimento.aspx'); return false;" />
                             <asp:Label ID="lblPedidosAguardandoFinanceiro" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
-                            <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>     
-                            <br /> 
+                            <asp:Label ID="lblQuantidadeProdutosEstoqueMinimo" runat="server" CssClass="textoTopo" Font-Size="Small" ForeColor="Red"></asp:Label>
+                            <br />
                             <div style="margin-bottom:5px;"></div>
                             <asp:LinkButton ID="lnkMensagens" runat="server" OnClick="lnkMensagens_Click" ToolTip="Mensagens Recebidas"> <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
                             <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" OnClick="lnkMensagens_Click"
@@ -309,7 +324,7 @@
                                 NavigateUrl="~/Utils/Config.aspx"> <img border="0" src='<%= ResolveUrl("~/Images/Configuracoes.png") %>' /></asp:HyperLink>
                             <asp:LinkButton ID="lnkLogout" runat="server" OnClick="lnkLgout_Click" CausesValidation="False"> <img border="0" src='<%= ResolveUrl("~/Images/Logout.png") %>' /></asp:LinkButton>
                             <br/>
-                            
+
                         </td>
                     </tr>
                 </table>
@@ -360,11 +375,11 @@
     <script type="text/javascript">
         if (document.getElementById("rodape") != null)
             document.getElementById("rodape").style.display = "none";
-            
+
         atualizaValidadores();
 
         $(document).ready(function()
-        {            
+        {
             if (<%= IsPopupControle().ToString().ToLower() %> || window != window.top)
             {
                 // Altera a função __doPostBack, se ela existir
@@ -377,23 +392,23 @@
                     triggerEvent(theForm, "submit");
                     oldPostBack(eventTarget, eventArgument);
                 }
-                
+
                 $("a[href]").each(function()
                 {
                     if (this.href.indexOf("mailto:") == -1 && this.href.indexOf("javascript:") == -1)
-                        this.href += (this.href.indexOf("?") > -1 ? "&" : "?") + 
+                        this.href += (this.href.indexOf("?") > -1 ? "&" : "?") +
                             "popup=true&controlePopup=true";
                 });
             }
         });
 
     </script>
-        
+
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-117324359-4"></script>
         <script>
             var codigoAcompanhamentoAnalytics = "<%= System.Configuration.ConfigurationManager.AppSettings["CodigoAcompanhamentoAnalytics"] %>";
-            
+
             if (codigoAcompanhamentoAnalytics != undefined && codigoAcompanhamentoAnalytics != null && codigoAcompanhamentoAnalytics != ""){
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
