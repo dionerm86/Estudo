@@ -13,15 +13,19 @@
     <div id="app">
         <div v-if="editando || inserindo">
             <section class="edicao">
-                <label>
-                    Cliente
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Cliente
+                    </label>
+                </span>
                 <campo-busca-cliente :cliente.sync="clienteAtual" :exibir-informacoes-compra="true" tipo-validacao="Pedido"
                     :cor-texto-observacoes="configuracoes.corTextoObservacoesCliente" :disabled="!pedido.podeEditarCliente"
                     v-if="pedido" required></campo-busca-cliente>
-                <label>
-                    Data Ped.
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Data Ped.
+                    </label>
+                </span>
                 <span>
                     {{ pedido.dataPedido | data }}
                     <span v-if="configuracoes.exibirFastDelivery && configuracoes.marcarFastDelivery" style="margin-left: 8px">
@@ -31,21 +35,27 @@
                         </label>
                     </span>
                 </span>
-                <label>
-                    Cód. Ped. Cli.
-                </label>
-                <span>
-                    <input v-model="pedido.codigoPedidoCliente" :disabled="pedido && pedido.importado" />
+                <span class="cabecalho">
+                    <label>
+                        Cód. Ped. Cli.
+                    </label>
                 </span>
-                <label>
-                    Orçamento
-                </label>
+                <span>
+                    <input type="text" v-model="pedido.codigoPedidoCliente" :disabled="pedido && pedido.importado" />
+                </span>
+                <span class="cabecalho">
+                    <label>
+                        Orçamento
+                    </label>
+                </span>
                 <span>
                     <input type="number" v-model="pedido.idOrcamento" style="width: 50px" />
                 </span>
-                <label>
-                    Loja
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Loja
+                    </label>
+                </span>
                 <span>
                     <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" :disabled="!configuracoes.usarControleOrdemCarga && !configuracoes.alterarLojaPedido && !clientePermiteAlterarLoja" class="colspan2"></lista-selecao-lojas>
                     <span v-if="configuracoes.exibirDeveTransferir">
@@ -55,9 +65,11 @@
                         </label>
                     </span>
                 </span>
-                <label>
-                    Tipo Pedido
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Tipo Pedido
+                    </label>
+                </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoPedidoAtual" :funcao-recuperar-itens="obterTiposPedido" :disabled="(editando && configuracoes.bloquearItensTipoPedido) || pedidoMaoDeObra || pedidoProducao" required></lista-selecao-id-valor>
                 </span>
@@ -67,9 +79,11 @@
                         Gerar pedido de produção para corte
                     </label>
                 </span>
-                <label>
-                    Tipo Venda
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Tipo Venda
+                    </label>
+                </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoVendaAtual" :funcao-recuperar-itens="obterTiposVendaCliente" :filtro-recuperar-itens="filtroTiposVendaCliente"
                         :disabled="editando && pedido.sinal && pedido.sinal.id > 0 && !configuracoes.usarLiberacaoPedido" required></lista-selecao-id-valor>
@@ -90,81 +104,105 @@
                     </span>
                 </span>
                 <template v-if="pedido && pedido.tipoVenda == configuracoes.tipoVendaFuncionario">
-                    <label>
-                        Funcionário comprador
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Funcionário comprador
+                        </label>
+                    </span>
                     <span>
                         <lista-selecao-id-valor :item-selecionado.sync="funcionarioCompradorAtual" :funcao-recuperar-itens="obterFuncionariosCompradores" required></lista-selecao-id-valor>
                     </span>
                 </template>
-                <label>
-                    Tipo Entrega
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Tipo Entrega
+                    </label>
+                </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoEntregaAtual" :funcao-recuperar-itens="obterTiposEntrega" required></lista-selecao-id-valor>
                 </span>
-                <label>
-                    Forma Pagto.
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Forma Pagto.
+                    </label>
+                </span>
                 <span v-if="pedido.tipoVenda == configuracoes.tipoVendaAPrazo || pedido.tipoVenda == configuracoes.tipoVendaReposicao || pedido.tipoVenda == configuracoes.tipoVendaGarantia ||
                     (configuracoes.UsarControleDescontoFormaPagamentoDadosProduto && pedido.tipoVenda == configuracoes.tipoVendaAVista)">
                     <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormasPagamento" :filtro-recuperar-itens="filtroFormasPagamento" required></lista-selecao-id-valor>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoCartaoAtual" :funcao-recuperar-itens="obterTiposCartao" v-if="pedido.formaPagamento.id == configuracoes.idFormaPagamentoCartao" required></lista-selecao-id-valor>
                 </span>
-                <label>
-                    Data Entrega
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Data Entrega
+                    </label>
+                </span>
                 <campo-data-hora :data-hora.sync="pedido.entrega.data" :data-minima="dataEntregaMinima"
                     :permitir-feriado="false" :permitir-fim-de-semana="false"
                     :disabled="datasEntrega && datasEntrega.desabilitarCampo" required></campo-data-hora>
                 <template v-if="configuracoes.exibirValorFretePedido">
-                    <label>
-                        Valor do Frete
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Valor do Frete
+                        </label>
+                    </span>
                     <input type="number" v-model.number="pedido.valorEntrega" style="width: 80px;" />
                 </template>
                 <template v-if="vIfValorEntrada">
-                    <label>
-                        Valor Entrada
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Valor Entrada
+                        </label>
+                    </span>
                     <input type="number" v-model.number="pedido.valorEntrada" v-if="vIfCampoEntrada" />
                     <span v-else>
                         {{ pedido.textoSinal }}
                     </span>
                 </template>
-                <label>
-                    Desconto
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Desconto
+                    </label>
+                </span>
                 <campo-acrescimo-desconto :tipo.sync="pedido.desconto.tipo" :valor.sync="pedido.desconto.valor" :disabled="disabledCampoDesconto" v-if="vIfCampoDesconto"></campo-acrescimo-desconto>
                 <span style="color: blue" v-else>
                     Desconto só pode ser dado em pedidos à vista
                 </span>
-                <label>
-                    Total
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Total
+                    </label>
+                </span>
                 <span>
                     {{ pedido.total | moeda }}
                 </span>
-                <label>
-                    Acréscimo
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Acréscimo
+                    </label>
+                </span>
                 <campo-acrescimo-desconto :tipo.sync="pedido.acrescimo.tipo" :valor.sync="pedido.acrescimo.valor"></campo-acrescimo-desconto>
-                <label>
-                    Funcionário
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Funcionário
+                    </label>
+                </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
-                <label>
-                    Transportador
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Transportador
+                    </label>
+                </span>
                 <span class="colspan3">
                     <lista-selecao-id-valor :item-selecionado.sync="transportadorAtual" :funcao-recuperar-itens="obterTransportadores"></lista-selecao-id-valor>
                 </span>
                 <template v-if="pedido && pedido.entrega.tipo != configuracoes.tipoEntregaBalcao">
-                    <label>
-                        Local da Obra
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Local da Obra
+                        </label>
+                    </span>
                     <span class="colspan3">
                         <button @click.prevent="preencherEnderecoObra">
                             <img src="../Images/home.gif" title="Buscar endereço do cliente" />
@@ -176,9 +214,11 @@
                     <controle-parcelas :parcelas.sync="parcelaAtual" :data-minima="pedido.dataPedido" :total="totalParaCalculoParcelas"></controle-parcelas>
                 </span>
                 <template v-if="configuracoes.usarComissaoNoPedido">
-                    <label>
-                        Comissionado:
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Comissionado:
+                        </label>
+                    </span>
                     <span v-if="!configuracoes.usarComissionadoDoCliente">
                         <campo-busca-com-popup :id.sync="pedido.comissionado.id" campo-nome="descricao" :item-selecionado.sync="comissionadoAtual" :funcao-buscar-itens="obterComissionados"
                             :url-popup="'/Utils/SelComissionado.aspx'" :largura-popup="760" :altura-popup="590" style="width: 90px" required></campo-busca-com-popup>
@@ -195,23 +235,29 @@
                     </span>
                 </template>
                 <template v-if="configuracoes.usarControleMedicao">
-                    <label>
-                        Medidor
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Medidor
+                        </label>
+                    </span>
                     <span class="colspan3">
                         <lista-selecao-id-valor :item-selecionado.sync="medidorAtual" :funcao-recuperar-itens="obterMedidores"></lista-selecao-id-valor>
                     </span>
                 </template>
-                <label>
-                    Observação
-                </label>
+                <span class="cabecalho">
+                    <label>
+                        Observação
+                    </label>
+                </span>
                 <span class="colspan3">
                     <textarea v-model="pedido.observacao" style="width: 650px"></textarea>
                 </span>
                 <template v-if="configuracoes.usarLiberacaoPedido">
-                    <label>
-                        Observação liberação
-                    </label>
+                    <span class="cabecalho">
+                        <label>
+                            Observação liberação
+                        </label>
+                    </span>
                     <span class="colspan3">
                         <textarea v-model="pedido.observacaoLiberacao" style="width: 650px"></textarea>
                     </span>
