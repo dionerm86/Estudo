@@ -11384,7 +11384,7 @@ namespace Glass.Data.DAL
 
                     foreach (var idPedido in idsPedidos)
                     {
-                        var datacad = ObterDataCad(idPedido);
+                        var datacad = ObterDataCad(transaction, idPedido);
 
                         if(datacad.Date > novaDataEntrega.Date)
                             dataInvalida.Append(string.Format("A data de entrega do pedido {0} não pode ser inferior a {1}.", idPedido, datacad));
@@ -13096,7 +13096,7 @@ namespace Glass.Data.DAL
                     }
 
                     if (objUpdate.DataCad.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
-                        throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
+                        throw new Exception("A data selecionada não pode ser inferior a " + objUpdate.DataCad.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
