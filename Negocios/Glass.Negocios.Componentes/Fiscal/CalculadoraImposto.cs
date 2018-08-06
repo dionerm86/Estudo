@@ -157,6 +157,9 @@ namespace Glass.Fiscal.Negocios.Componentes
                 (item.NaturezaOperacao.CalcIcms || 
                  item.NaturezaOperacao.CalcIcmsSt))
             {
+                // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
+                var naoIncluirOutrasDespBCIcms = (int)Container.FinalidadeEmissao == (int)Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
+
                 /* Chamado 50313. */
                 if (!item.Referencia.NaturezaOperacao.CalcIcms && item.Referencia.NaturezaOperacao.CalcIcmsSt)
                     item.AliqIcms = ProvedorIcmsProdutoUf.ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
@@ -174,6 +177,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                     {
                         item.BcIcms = item.Total +
                             (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0)
+                            + (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas)
                             + item.ValorIof + item.ValorDespesaAduaneira - item.ValorDesconto;
 
                         if (Container.NotaFiscalImportadaSistema)
@@ -211,9 +215,6 @@ namespace Glass.Fiscal.Negocios.Componentes
                 {
                     if (item.AliqIcms > 0)
                     {
-                        // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
-                        var naoIncluirOutrasDespBCIcms = (int)Container.FinalidadeEmissao == (int)Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
-
                         item.BcIcms = (item.Total +
                             (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0)
                             + (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas) + item.ValorIof + item.ValorDespesaAduaneira - (percentualDesconto * item.Total));
