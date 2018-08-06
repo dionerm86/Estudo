@@ -23,11 +23,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se o produto possui beneficiamento
         /// </summary>
-        /// <param name="idProd"></param>
-        /// <returns></returns>
-        public bool ProdutoPossuiBenef(uint idProd)
+        public bool ProdutoPossuiBenef(GDASession session, uint idProd)
         {
-            return ExecuteScalar<bool>($"SELECT COUNT(*)>0 FROM produto WHERE IdProd={ idProd }");
+            return ExecuteScalar<bool>(session, $"SELECT COUNT(*)>0 FROM produto WHERE IdProd={ idProd }");
         }
 
         public void DeleteByProd(uint idProd)

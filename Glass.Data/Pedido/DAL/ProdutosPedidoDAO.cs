@@ -4223,7 +4223,6 @@ namespace Glass.Data.DAL
             if (objInsert.IdProdPedParent.GetValueOrDefault(0) == 0)
             {
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido, false, true, false, true);
-                PedidoDAO.Instance.AtualizarParcelasPedido(session, pedido);
             }
             else
             { 
@@ -4251,6 +4250,11 @@ namespace Glass.Data.DAL
             }
 
             AplicarComissaoDescontoAcrescimo(session, PedidoDAO.Instance.GetElement(session, objInsert.IdPedido));
+
+            if (objInsert.IdProdPedParent.GetValueOrDefault() == 0)
+            {
+                PedidoDAO.Instance.AtualizarParcelasPedido(session, (int)objInsert.IdPedido);
+            }
 
             return returnValue;
         }
@@ -4361,7 +4365,6 @@ namespace Glass.Data.DAL
                 try
                 {
                     PedidoDAO.Instance.UpdateTotalPedido(transaction, pedido, false, true, false, true);
-                    PedidoDAO.Instance.AtualizarParcelasPedido(transaction, pedido);
                 }
                 catch (Exception ex)
                 {
@@ -4376,6 +4379,11 @@ namespace Glass.Data.DAL
                 }
 
                 AplicarComissaoDescontoAcrescimo(transaction, PedidoDAO.Instance.GetElement(transaction, prodPed.IdPedido));
+
+                if (objDelete.IdProdPedParent.GetValueOrDefault() == 0)
+                {
+                    PedidoDAO.Instance.AtualizarParcelasPedido(transaction, (int)prodPed.IdPedido);
+                }
 
                 if (transaction != null && fazerCommit)
                 {
@@ -4569,7 +4577,7 @@ namespace Glass.Data.DAL
 
         public override int Update(GDASession sessao, ProdutosPedido objUpdate)
         {
-            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdPedido);
+            var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdPedido);
             return Update(sessao, objUpdate, pedido);
         }
 
@@ -4587,7 +4595,7 @@ namespace Glass.Data.DAL
 
                 if (objUpdate.IdAplicacao > 0)
                 {
-                    var aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdAplicacao.Value);
+                    var aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdAplicacao.Value);
                         
                     if (aplicacao != null && aplicacao.NaoPermitirFastDelivery)
                         throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", objUpdate.DescrProduto, aplicacao.CodInterno));
@@ -4614,14 +4622,10 @@ namespace Glass.Data.DAL
                     produtosPedido.Remove(remover);
                     produtosPedido.Add(objUpdate);
 
-                    bool acrescimoRemovido = AmbientePedidoDAO.Instance.RemoverAcrescimo(
-                        sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
+                    bool acrescimoRemovido = AmbientePedidoDAO.Instance.RemoverAcrescimo(sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
+                    bool descontoRemovido = AmbientePedidoDAO.Instance.RemoverDesconto(sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
 
-                    bool descontoRemovido = AmbientePedidoDAO.Instance.RemoverDesconto(
-                        sessao, pedido, objUpdate.IdAmbientePedido.Value, produtosPedido);
-
-                    AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido,
-                        acrescimoRemovido || descontoRemovido);
+                    AmbientePedidoDAO.Instance.FinalizarAplicacaoAcrescimoDesconto(sessao, pedido, produtosPedido, acrescimoRemovido || descontoRemovido);
                 }
 
                 var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
@@ -4644,11 +4648,10 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd)).IsVidroTemperado &&
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)objUpdate.IdProd)).IsVidroTemperado &&
                         objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
                     retorno += $"O altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
-
-
+                
                 if (!string.IsNullOrWhiteSpace(retorno))
                     throw new Exception(retorno);
 
@@ -4665,7 +4668,7 @@ namespace Glass.Data.DAL
                     var idTipoCartao = pedido.IdTipoCartao;
                     var idParcela = pedido.IdParcela;
                     var descontoFormPagtoProdNovo = DescontoFormaPagamentoDadosProdutoDAO.Instance.ObterDescontoFormaPagamentoDadosProduto(sessao, (uint)tipoVenda, idFormaPagto, idTipoCartao, idParcela,
-                        (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)objUpdate.IdProd), (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd));
+                        (uint)ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)objUpdate.IdProd), (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)objUpdate.IdProd));
 
                     var produtoPedidoInserido = GetByPedido(sessao, objUpdate.IdPedido);
                     if (produtoPedidoInserido != null && produtoPedidoInserido.Count > 0)
@@ -4728,15 +4731,15 @@ namespace Glass.Data.DAL
                 var prodPedAtual = GetElementByPrimaryKey(sessao, objUpdate.IdProdPed);
 
                 // Chamado 68239: Se o produto tem beneficiamento pré-cadastrado, verifica se os benefs deste produto_pedido foi apagado e caso tenha sido, recupera
-                if (objUpdate.Beneficiamentos.Count == 0 && ProdutoBenefDAO.Instance.ProdutoPossuiBenef(objUpdate.IdProd))
-                    objUpdate.Beneficiamentos = ProdutoDAO.Instance.GetElementByPrimaryKey(objUpdate.IdProd).Beneficiamentos;
+                if (objUpdate.Beneficiamentos.Count == 0 && ProdutoBenefDAO.Instance.ProdutoPossuiBenef(sessao, objUpdate.IdProd))
+                    objUpdate.Beneficiamentos = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdProd).Beneficiamentos;
 
                 objUpdate.ValorDescontoQtde = 0;
                 UpdateBase(sessao, objUpdate, pedido);
 
                 //Chamado 54616
                 //Se for produto de composição atualiza o valor do pai
-                if (objUpdate.IdProdPedParent.GetValueOrDefault(0) > 0 &&
+                if (objUpdate.IdProdPedParent > 0 &&
                     (objUpdate.Qtde != prodPedAtual.Qtde || objUpdate.Altura != prodPedAtual.Altura || objUpdate.Largura != prodPedAtual.Largura || objUpdate.ValorVendido != prodPedAtual.ValorVendido) && !PedidoConfig.NaoRecalcularValorProdutoComposicaoAoAlterarAlturaLargura)
                 {
                     var prodPedParent = GetElement(sessao, (uint)objUpdate.IdProdPedParent, false, true, false);
@@ -4771,7 +4774,7 @@ namespace Glass.Data.DAL
                 if (atualizarTotalPedido)
                 {
                     PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido, false, true, false, true);
-                    PedidoDAO.Instance.AtualizarParcelasPedido(sessao, pedido);
+                    PedidoDAO.Instance.AtualizarParcelasPedido(sessao, (int)pedido.IdPedido);
                 }
 
                 if (atualizaDataEntrega)

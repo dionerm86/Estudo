@@ -762,13 +762,17 @@ namespace Glass.Data.DAL
                 pedido.DescrParcelas = parcelas.TrimEnd(' ').TrimEnd(',');
         }
 
-        public void AtualizarParcelasPedido(GDASession sessao, Pedido pedido)
+        public void AtualizarParcelasPedido(GDASession sessao, int idPedido)
         {
-            if (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.APrazo && pedido.IdParcela == 0)
-                return;
+            var pedido = GetElementByPrimaryKey(sessao, idPedido);
 
-            var alterouValor =
-                pedido.Total != ParcelasPedidoDAO.Instance.ObtemTotalPorPedido(sessao, pedido.IdPedido) + pedido.ValorEntrada + pedido.ValorPagamentoAntecipado;
+            if (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.APrazo && pedido.IdParcela.GetValueOrDefault() == 0)
+            {
+                return;
+            }
+
+            var totalParcelas = ParcelasPedidoDAO.Instance.ObtemTotalPorPedido(sessao, pedido.IdPedido);
+            var alterouValor = pedido.Total != totalParcelas + pedido.ValorEntrada + pedido.ValorPagamentoAntecipado;
 
             PreencherParcelasPedido(sessao, pedido);
 
