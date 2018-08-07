@@ -25,9 +25,16 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
         /// <summary>
         /// Fluxo de negócio da otimização.
         /// </summary>
-        private Otimizacao.Negocios.IOtimizacaoFluxo OtimizacaoFluxo =>
+        private Negocios.IOtimizacaoFluxo OtimizacaoFluxo =>
             Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<Otimizacao.Negocios.IOtimizacaoFluxo>();
+
+        /// <summary>
+        /// Obtém o autenticador do protocolo do eCutter.
+        /// </summary>
+        private eCutter.IAutenticadorProtocolo Autenticator =>
+            Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                    .GetInstance<eCutter.IAutenticadorProtocolo>();
 
         #endregion
 
@@ -42,6 +49,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.StatusCode = 404;
             context.Response.StatusDescription = "Not Found";
             context.Response.Flush();
+            context.Response.End();
         }
 
         /// <summary>
@@ -53,6 +61,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.StatusCode = 401;
             context.Response.StatusDescription = "Unauthorized";
             context.Response.Flush();
+            context.Response.End();
         }
 
         /// <summary>
@@ -86,9 +95,16 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     new eCutter.MensagemTransacao("Falha", "Não foi encontrado o arquivo de importação.", eCutter.TipoMensagemTransacao.Erro)
                 });
 
+            var idArquivoOtimizacao = 0;
+            if (!int.TryParse(context.Request["id"], out idArquivoOtimizacao))
+                return new eCutter.ResultadoSalvarTransacao(false, null, new[]
+                {
+                    new eCutter.MensagemTransacao("Falha", "Não foi encontrado o identificador do arquivo de otimização.", eCutter.TipoMensagemTransacao.Erro)
+                });
+
             try
             {
-                var importacao = OtimizacaoFluxo.Importar(arquivos);
+                var importacao = OtimizacaoFluxo.Importar(idArquivoOtimizacao, arquivos);
 
                 var url = context.Request.Url.AbsoluteUri;
                 url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase)) + "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
@@ -107,6 +123,109 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             }
         }
 
+        /// <summary>
+        /// Realiza a autenticação.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="usuario"></param>
+        /// <param name="senha"></param>
+        private void Autenticar(HttpContext context, string usuario, string senha)
+        {
+            eCutter.AutenticacaoProtocolo autenticacao;
+
+            try
+            {
+                autenticacao = Autenticator.Autenticar(usuario, senha);
+            }
+            catch (Exception ex)
+            {
+                autenticacao = new eCutter.AutenticacaoProtocolo
+                {
+                    Sucesso = false,
+                    Mensagem = ex.Message
+                };
+            }
+
+            string token = null;
+            if (autenticacao.Sucesso)
+            {
+                var ticket = new System.Web.Security.FormsAuthenticationTicket(autenticacao.Usuario, true, 10);
+                token = System.Web.Security.FormsAuthentication.Encrypt(ticket);
+            }
+
+            var writer = XmlWriter.Create(context.Response.OutputStream,
+                    new XmlWriterSettings
+                    {
+                        CloseOutput = false
+                    });
+
+            writer.WriteStartElement("Authentication");
+            Otimizacao.eCutter.Serializador.Serializar(writer, autenticacao, token);
+            writer.WriteEndElement();
+            writer.Flush();
+            context.Response.Flush();
+        }
+
+        /// <summary>
+        /// Verifica os dados de autenticação.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private bool VerificarAutenticacao(HttpContext context)
+        {
+            var requestType = context.Request.RequestType?.ToLower();
+
+            // Verifica se está sendo solicitada uma autenticação
+            if (requestType == "post" && context.Request.Form["operation"] == "authentication")
+            {
+                var usuario = context.Request.Form["username"];
+                var senha = context.Request.Form["password"];
+
+                Autenticar(context, usuario, senha);
+                return false;
+            }
+            else
+            {
+                string token = context.Request.Headers["x-token"];
+
+                if (string.IsNullOrEmpty(token))
+                    token = context.Request["token"];
+
+                // Verifica se o token de segurança foi informado
+                if (string.IsNullOrEmpty(token))
+                {
+                    NaoAutorizado(context);
+                    return false;
+                }
+
+                try
+                {
+                    // Recupera o ticket de autenticação
+                    var ticket = System.Web.Security.FormsAuthentication.Decrypt(token);
+
+                    // Verifica se o ticket expirou
+                    if (ticket.Expired)
+                    {
+                        NaoAutorizado(context);
+                        return false;
+                    }
+                    else if (context.Request.Form["operation"] == "check-token")
+                    {
+                        return false;
+                    }
+
+                    HttpContext.Current.User = new Colosoft.Security.Principal.DefaultPrincipal(new Colosoft.Security.Principal.DefaultIdentity(ticket.Name, null, !ticket.Expired));
+                }
+                catch
+                {
+                    NaoAutorizado(context);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Métodos Públicos
@@ -117,6 +236,8 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
         /// <param name="context"></param>
         public void ProcessRequest(HttpContext context)
         {
+            var requestType = context.Request.RequestType?.ToLower();
+
             var id = context.Request["id"];
 
             // Verifica foi informado o identificador do plano de otimização
@@ -126,36 +247,10 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 return;
             }
 
-            var token = context.Request["token"];
-
-            // Verifica se o token de segurança foi informado
-            if (string.IsNullOrEmpty(token))
-            {
-                NaoAutorizado(context);
+            if (!VerificarAutenticacao(context))
                 return;
-            }
 
-            try
-            {
-                // Recupera o ticket de autenticação
-                var ticket = System.Web.Security.FormsAuthentication.Decrypt(token);
-
-                // Verifica se o ticket expirou
-                if (ticket.Expired)
-                {
-                    NaoAutorizado(context);
-                    return;
-                }
-
-                HttpContext.Current.User = new Colosoft.Security.Principal.DefaultPrincipal(new Colosoft.Security.Principal.DefaultIdentity(ticket.Name, null, !ticket.Expired));
-            }
-            catch
-            {
-                NaoAutorizado(context);
-                return;
-            }
-
-            if (StringComparer.InvariantCultureIgnoreCase.Equals(context.Request.RequestType, "POST"))
+            if (requestType == "post")
             {
                 var arquivos = new List<Otimizacao.Negocios.IConteudoArquivoOtimizacao>();
 
@@ -164,8 +259,8 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
                 var resultado = Importar(context, arquivos);
 
-                var writer = System.Xml.XmlWriter.Create(context.Response.OutputStream,
-                   new System.Xml.XmlWriterSettings
+                var writer = XmlWriter.Create(context.Response.OutputStream,
+                   new XmlWriterSettings
                    {
                        CloseOutput = false
                    });
@@ -176,6 +271,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 writer.Flush();
 
                 context.Response.Flush();
+                context.Response.End();
             }
             // Verifica se é uma requisição para recuperar o estoque de chapas
             else if (!string.IsNullOrEmpty(context.Request["sheetstock"]))
@@ -255,7 +351,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
         /// Implementação que encapsula o arquivo postado com um conteúdo
         /// do arquivo de otimização.
         /// </summary>
-        class ConteudoArquivoOtimizacao : Otimizacao.Negocios.IConteudoArquivoOtimizacao
+        class ConteudoArquivoOtimizacao : Negocios.IConteudoArquivoOtimizacao
         {
             #region Variáveis Locais
 

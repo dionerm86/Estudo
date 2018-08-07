@@ -84,8 +84,7 @@ namespace Glass.Data.DAL
                 uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
                 uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
 
-                uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
-                    $"SELECT idLoja FROM mov_estoque WHERE idNf={ idNf.GetValueOrDefault(0) } AND idProd={ idProd.GetValueOrDefault() } AND tipoMov={ (int)MovEstoque.TipoMovEnum.Entrada } order by idmovestoque desc limit 1");
+                var idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.Value, (int)idProd.Value, MovEstoque.TipoMovEnum.Entrada);
 
                 var idLojaFuncionario = UserInfo.GetUserInfo.IdLoja;
                 var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
@@ -161,19 +160,16 @@ namespace Glass.Data.DAL
 
             return objPersistence.ExecuteSqlQueryCount(sql) > 0 && !ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(null, codChapa);
         }
- 
-         /// <summary>
+
+        /// <summary>
         /// Obtém o plano de corte associado à chapa
         /// </summary>
-        /// <param name="codChapa"></param>
-        /// <returns></returns>
-        public string ObtemPlanoCorteVinculado(string codChapa)
+        public string ObtemPlanoCorteVinculado(GDASession session, string codChapa)
         {
-            uint idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(codChapa,
-                ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa));
+            var tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codChapa);
+            var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(session, codChapa, tipoEtiqueta);
 
-            return ObtemValorCampo<string>("PlanoCorte", $"IdProdImpressaoChapa={ idProdImpressaoChapa } AND PlanoCorte IS NOT NULL AND COALESCE(PecaReposta,FALSE) = FALSE");
-
+            return ObtemValorCampo<string>(session, "PlanoCorte", $"IdProdImpressaoChapa={ idProdImpressaoChapa } AND PlanoCorte IS NOT NULL AND COALESCE(PecaReposta,FALSE) = FALSE");
         }
 
         public bool ValidarChapa(GDASession sessao, Produto produto)
@@ -280,7 +276,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Remove a leitura da chapa da peça informada
         /// </summary>
-        public void DeleteByIdProdImpressaoPeca(GDASession sessao, uint idProdImpressaoPeca, uint idProdPedProducao)
+        public void AtualizarReferenciaMovimentacaoEstoque(GDASession sessao, uint idProdImpressaoPeca, uint idProdPedProducao)
         {
             var idProdImpressaoChapa = ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
             var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, (uint)idProdImpressaoChapa);
@@ -312,20 +308,24 @@ namespace Glass.Data.DAL
                                 new GDAParameter("?numEtiqueta", numEtiquetaPecaAssociarMovEstoque));
 
                             if (idProdPedProducaoAssiciarMovEstoque > 0)
+                            {
                                 // Associa a movimentação de estoque ao novo produto de produção.
-                                objPersistence.ExecuteCommand(sessao, $"UPDATE mov_estoque SET IdProdPedProducao={ idProdPedProducaoAssiciarMovEstoque.Value } WHERE IdMovEstoque in ({string.Join(",", idsMovEstoque) })");
+                                MovEstoqueDAO.Instance.AtualizarIdProdPedProducao(sessao, idProdPedProducaoAssiciarMovEstoque.Value, idsMovEstoque);
+                            }
                         }
                     }
                 }
                 // Na movimentação de estoque, salva no campo OBS o número da etiqueta da chapa. Pois, a referência da chapa é recuperada através do produto de produção,
                 // caso ele seja apagado ou seja associado à outra chapa, esta movimentação ficará com a referência incorreta.
                 else
-                    objPersistence.ExecuteCommand(sessao, string.Format($"UPDATE mov_estoque SET IdProdPedProducao=NULL, Obs=?obs WHERE IdMovEstoque in ({ string.Join(", ", idsMovEstoque) })"),
-                        new GDAParameter("?obs", ($"Etiqueta: { numEtiquetaChapa }|{ ObtemPlanoCorteVinculado(numEtiquetaChapa) ?? ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdPedProducao) ?? "" }.").Replace("|.", ".")));
+                {
+                    var planoCorteVinculado = ObtemPlanoCorteVinculado(sessao, numEtiquetaChapa);
+                    MovEstoqueDAO.Instance.AtualizarMovimentacaoChapaCortePeca(sessao, (int)idProdPedProducao, idsMovEstoque, numEtiquetaChapa, planoCorteVinculado);
+                }
             }
 
             #endregion
-        }
+        }        
 
         /// <summary>
         /// Remove a leitura da chapa das peças informadas.

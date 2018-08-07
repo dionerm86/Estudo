@@ -641,9 +641,57 @@ namespace Glass.UI.Web.Listas
                 return "Erro\t" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao excluir produto do orçamento.", ex);
             }
         }
-    
+
+        [Ajax.AjaxMethod]
+        public string ValidarTamanhoDosProdutos(string idProd, string altura, string largura, string servicos)
+        {
+            ProdutosOrcamento prodOrca;
+
+            prodOrca = new ProdutosOrcamento();
+
+            prodOrca.IdProduto = Glass.Conversoes.StrParaUintNullable(idProd);
+            prodOrca.Altura = !String.IsNullOrEmpty(altura) ? Single.Parse(altura, System.Globalization.NumberStyles.Any) : 0;
+            prodOrca.Largura = !String.IsNullOrEmpty(largura) ? Glass.Conversoes.StrParaInt(largura) : 0;
+
+            if (!String.IsNullOrEmpty(servicos))
+            {
+                GenericBenefCollection benef = new GenericBenefCollection();
+                benef.AddBenefFromServicosInfo(servicos);
+                prodOrca.Beneficiamentos = benef;
+            }
+
+            var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+            var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+            var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+            var retorno = string.Empty;
+
+            if (prodOrca.Beneficiamentos != null)
+            {
+                foreach (var prodBenef in prodOrca.Beneficiamentos)
+                {
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                        (prodOrca.Altura < tamanhoMinimoBisote || prodOrca.Largura < tamanhoMinimoBisote))
+                        retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
+
+                    if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                        (prodOrca.Altura < tamanhoMinimoLapidacao || prodOrca.Largura < tamanhoMinimoLapidacao))
+                        retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
+                }
+            }
+
+            if (prodOrca.IdProduto > 0)
+            {
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((int)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)prodOrca.IdProduto)).IsVidroTemperado &&
+                        prodOrca.Altura < tamanhoMinimoTemperado && prodOrca.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com tempera é de {tamanhoMinimoTemperado}mm.";
+            }
+
+            return retorno;
+        }
+
         #endregion
-    
+
         protected bool IsPopup()
         {
             return (Page.Master as Painel).IsPopup();

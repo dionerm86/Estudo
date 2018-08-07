@@ -92,7 +92,7 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
-        public float GetQtdeByProdPed(uint idProdPed, uint? idProdPedProducao)
+        public float GetQtdeByProdPed(GDASession session, uint idProdPed, uint? idProdPedProducao)
         {
             string sqlBase = @"select coalesce(sum(qtdeCalc), 0) from produtos_liberar_pedido
                 where qtdeCalc>0 and idProdPed=" + idProdPed;
@@ -101,13 +101,18 @@ namespace Glass.Data.DAL
             if (idProdPedProducao > 0)
                 sql += " and idProdPedProducao=" + idProdPedProducao;
 
-            float retorno = ExecuteScalar<float>(sql);
-            return retorno > 0 ? retorno : ExecuteScalar<float>(sqlBase + " and idProdPedProducao is null");
+            float retorno = ExecuteScalar<float>(session, sql);
+            return retorno > 0 ? retorno : ExecuteScalar<float>(session, sqlBase + " and idProdPedProducao is null");
         }
 
         public decimal ObterQtde(GDASession session, int idProdLiberarPedido)
         {
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdLiberarPedido={0}", idProdLiberarPedido));
+        }
+
+        public int ObterIdProdPed(GDASession session, int idProdLiberarPedido)
+        {
+            return ObtemValorCampo<int>(session, "IdProdPed", $"IdProdLiberarPedido={ idProdLiberarPedido }");
         }
 
         public uint ObtemIdProdLiberarPedido(uint idLiberarPedido, uint idProdPed)
@@ -136,7 +141,7 @@ namespace Glass.Data.DAL
                 // Alterações neste trecho devem ser feitas também em ProdutosPedidoDAO.GetForRpt(uint, bool, bool)
                 if (plp.Redondo)
                 {
-                    if (!PedidoDAO.Instance.IsMaoDeObra(plp.IdPedido) && !plp.DescrProduto.ToLower().Contains("redondo"))
+                    if (!PedidoDAO.Instance.IsMaoDeObra(null, plp.IdPedido) && !plp.DescrProduto.ToLower().Contains("redondo"))
                         plp.DescrProduto += " REDONDO";
 
                     plp.LarguraProd = 0;
@@ -221,11 +226,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os IDs dos pedidos de uma liberação.
         /// </summary>
-        /// <param name="idLiberarPedido"></param>
-        /// <returns></returns>
-        public uint[] GetIdsPedidoByLiberacao(uint idLiberarPedido)
+        public uint[] GetIdsPedidoByLiberacao(GDASession session, uint idLiberarPedido)
         {
-            string ids = GetIdsPedidoByLiberacaoString(idLiberarPedido);
+            string ids = GetIdsPedidoByLiberacaoString(session, idLiberarPedido);
 
             return Array.ConvertAll<string, uint>(ids.Split(','), new Converter<string, uint>(
                 delegate(string id)
@@ -235,42 +238,42 @@ namespace Glass.Data.DAL
                 }
             ));
         }
-
-        public decimal GetValorIcmsForLiberacao(uint idCliente, uint idProdutoPedido, float qntdeLiberada)
-        {
-            return GetValorIcmsForLiberacao(null, idCliente, idProdutoPedido, qntdeLiberada);
-        }
-
+        
         public decimal GetValorIcmsForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
-            ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja((uint)pp.IdLoja);
+            var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, (uint)pp.IdLoja);
+            var lojaCalculaIcmsStLiberacao = LojaDAO.Instance.ObtemCalculaIcmsStLiberacao(session, idLoja);
+            var clienteCalculaIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente);
+            var pedidoCalculouIcmsSt = PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido);
 
-            if (LojaDAO.Instance.ObtemCalculaIcmsLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIcmsSt(session, idCliente) || PedidoDAO.Instance.CobrouICMSST(session, pp.IdPedido)))
+            if (lojaCalculaIcmsStLiberacao && clienteCalculaIcmsSt && pedidoCalculouIcmsSt)
             {
                 if (pp.ValorIcms == 00 || pp.Qtde == 0)
+                {
                     return 0;
+                }
 
                 return (pp.ValorIcms / Convert.ToDecimal(pp.Qtde)) * Convert.ToDecimal(qntdeLiberada);
             }
 
             return 0;
         }
-
-        public decimal GetValorIpiForLiberacao(uint idCliente, uint idProdutoPedido, float qntdeLiberada)
-        {
-            return GetValorIpiForLiberacao(null, idCliente, idProdutoPedido, qntdeLiberada);
-        }
-
+        
         public decimal GetValorIpiForLiberacao(GDASession session, uint idCliente, uint idProdutoPedido, float qntdeLiberada)
         {
-            ProdutosPedido pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
-            var idLoja = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
+            var pp = ProdutosPedidoDAO.Instance.GetElement(session, idProdutoPedido);
+            var idLoja = PedidoDAO.Instance.ObtemIdLoja(null, pp.IdPedido);
+            var lojaCalculaIpiLiberacao = LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja);
+            var clienteCalculaIpi = ClienteDAO.Instance.IsCobrarIpi(session, idCliente);
+            var pedidoCalculouIpi = PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido);
 
-            if (LojaDAO.Instance.ObtemCalculaIpiLiberacao(session, idLoja) && (ClienteDAO.Instance.IsCobrarIpi(session, idCliente) || PedidoDAO.Instance.CobrouIPI(session, pp.IdPedido)))
+            if (lojaCalculaIpiLiberacao && clienteCalculaIpi && pedidoCalculouIpi)
             {
                 if (pp.ValorIpi == 00 || pp.Qtde == 0)
+                {
                     return 0;
+                }
 
                 return (pp.ValorIpi / Convert.ToDecimal(pp.Qtde)) * Convert.ToDecimal(qntdeLiberada);
             }

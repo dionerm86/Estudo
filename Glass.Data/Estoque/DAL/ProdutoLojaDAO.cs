@@ -811,7 +811,7 @@ namespace Glass.Data.DAL
                 retorno = (int)base.Insert(objUpdate);
             }
 
-            bool possuiMovReal = ExecuteScalar<bool>("Select Count(*)>0 From mov_estoque Where idProd=" + objUpdate.IdProd + " And idLoja=" + objUpdate.IdLoja);
+            var possuiMovReal = MovEstoqueDAO.Instance.VerificarIdProdIdLojaPossuiMovimentacao(null, objUpdate.IdProd, objUpdate.IdLoja);
             bool possuiMovFiscal = ExecuteScalar<bool>("Select Count(*)>0 From mov_estoque_fiscal Where idProd=" + objUpdate.IdProd + " And idLoja=" + objUpdate.IdLoja);
 
             // Se a quantidade alterada for maior que a quantidade atual, gera uma movimentação de estoque creditando o estoque,
@@ -844,8 +844,7 @@ namespace Glass.Data.DAL
             {
                 decimal qtdMov = possuiMovFiscal ? (decimal)(atual.EstoqueFiscal - objUpdate.EstoqueFiscal) : (decimal)objUpdate.EstoqueFiscal;
 
-                MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual((uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
-                    qtdMov, null, DateTime.Now, null);
+                MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(null, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja, qtdMov, null, DateTime.Now, null);
             }
 
             LogAlteracaoDAO.Instance.LogProdutoLoja(atual);
@@ -905,6 +904,26 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
+        /// <summary>
+        /// Atualiza a tabela produto_loja com o saldo do estoque
+        /// </summary>
+        public void AtualizarProdutoLoja(GDASession sessao, int idProd, int idLoja)
+        {
+            NewProd(sessao, idProd, idLoja);
+
+            var saldoQtde = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(sessao, null, (uint)idProd, (uint)idLoja, null, false);
+
+            objPersistence.ExecuteCommand(sessao, $"UPDATE produto_loja SET QtdEstoque=?qtd WHERE IdProd={ idProd } AND IdLoja={ idLoja }", new GDAParameter("?qtd", saldoQtde));
+        }
+
+        /// <summary>
+        /// Atualiza o total de M2 do produto loja.
+        /// </summary>
+        public void AtualizarTotalM2(GDASession session, int idProd, int idLoja, decimal totalM2)
+        {
+            objPersistence.ExecuteCommand(session, $"UPDATE produto_loja SET M2=QtdEstoque*{ totalM2.ToString().Replace(',', '.') } WHERE IdProd={ idProd } AND IdLoja={ idLoja }");
+        }
+
         #endregion
 
         #region Atualiza o estoque mínimo por grupo/subgrupo
@@ -912,9 +931,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Atualiza o estoque mínimo por grupo/subgrupo.
         /// </summary>
-        /// <param name="qtdeMin"></param>
-        /// <param name="idGrupo"></param>
-        /// <param name="idSubgrupo"></param>
         public void AtualizaEstoqueMinimo(float qtdeMin, uint idLoja, uint idGrupo, uint? idSubgrupo)
         {
             foreach (Produto p in ProdutoDAO.Instance.GetByGrupoSubgrupo((int)idGrupo, (int?)idSubgrupo))

@@ -120,10 +120,10 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Busca dados do produto troca/devolução
-
-        public decimal ObterQtde(GDASession session, int idProdTrocaDev)
+        
+        public decimal ObterCustoProd(GDASession session, int idProdTrocaDev)
         {
-            return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdTrocaDev={0}", idProdTrocaDev));
+            return ObtemValorCampo<decimal>(session, "CustoProd", $"IdProdTrocaDev={ idProdTrocaDev }");
         }
 
         #endregion
@@ -170,8 +170,12 @@ namespace Glass.Data.DAL
                 float altura = objInsert.Altura, totM2 = objInsert.TotM, totM2Calc = objInsert.TotM2Calc;
                 decimal custo = objInsert.CustoProd, total = objInsert.Total;
 
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objInsert.IdProd);
+                var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, (uint)objInsert.IdPedido);
+
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objInsert.IdProd, objInsert.Largura,
-                    objInsert.Qtde, 1, objInsert.ValorVendido, objInsert.Espessura, objInsert.Redondo, 2, false, true, ref custo,
+                    objInsert.Qtde, 1, objInsert.ValorVendido, objInsert.Espessura, objInsert.Redondo, 2, false, 
+                    tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte, ref custo,
                     ref altura, ref totM2, ref totM2Calc, ref total, false, objInsert.Beneficiamentos.CountAreaMinimaSession(session));
 
                 objInsert.CustoProd = custo;
@@ -404,9 +408,13 @@ namespace Glass.Data.DAL
                 float altura = objUpdate.Altura, totM2 = objUpdate.TotM, totM2Calc = objUpdate.TotM2Calc;
                 decimal custo = objUpdate.CustoProd, total = objUpdate.Total;
 
+                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(session, (int)objUpdate.IdProd);
+                var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, (uint)objUpdate.IdPedido);
+
                 Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objUpdate.IdProd,
                     objUpdate.Largura, objUpdate.Qtde, 1, objUpdate.ValorVendido, objUpdate.Espessura, objUpdate.Redondo, 2,
-                    false, true, ref custo, ref altura, ref totM2, ref totM2Calc, ref total, false,
+                    false, tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte, 
+                    ref custo, ref altura, ref totM2, ref totM2Calc, ref total, false,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(session));
 
                 objUpdate.CustoProd = custo;

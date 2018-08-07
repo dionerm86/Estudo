@@ -39,5 +39,6 @@ namespace Glass.Data.Model.Calculos
         public decimal ValorUnit { get; set; }
         public decimal ValorUnitarioBruto { get; set; }
         public decimal CustoProd { get; set; }
+        public int TipoCalc { get; set; }
     }
 }

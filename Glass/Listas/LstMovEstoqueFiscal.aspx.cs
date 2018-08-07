@@ -58,7 +58,7 @@ namespace Glass.UI.Web.Listas
                     MovEstoqueFiscalDAO.Instance.CreditaEstoqueManual(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
                         Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
                 else
-                    MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
+                    MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(null, idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
                         Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
     
                 data.DataString = null;

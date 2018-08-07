@@ -226,6 +226,11 @@ namespace Glass.Data.DAL
             return count == 0 ? 1 : count;
         }
 
+        public int CountInCompra(GDASession session, uint idCompra)
+        {
+            return objPersistence.ExecuteSqlQueryCount(session, Sql(idCompra, null, false));
+        }
+
         public int CountInCompra(uint idCompra)
         {
             return objPersistence.ExecuteSqlQueryCount(Sql(idCompra, null, false));
@@ -343,6 +348,11 @@ namespace Glass.Data.DAL
         public decimal ObterQtde(GDASession session, int idProdCompra)
         {
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdCompra={0}", idProdCompra));
+        }
+
+        public decimal ObterTotal(GDASession session, int idProdCompra)
+        {
+            return ObtemValorCampo<decimal>(session, "Total", $"IdProdCompra={ idProdCompra }");
         }
 
         #endregion

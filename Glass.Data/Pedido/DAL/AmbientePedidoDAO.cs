@@ -352,10 +352,10 @@ namespace Glass.Data.DAL
         /// </summary>
         public bool ValidaDesconto(GDASession sessao, AmbientePedido ambientePedido, out string msg)
         {
-            var tipoVenda = PedidoDAO.Instance.GetTipoVenda(sessao, ambientePedido.IdPedido);
+            var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(sessao, ambientePedido.IdPedido);
 
             //Verificar se o pedido possui o tipo Venda antes de validar o desconto
-            if (tipoVenda == null && ambientePedido.Desconto > 0)
+            if (tipoVenda == 0 && ambientePedido.Desconto > 0)
             {
                 msg = "Informe o tipo venda do pedido antes de aplicar desconto";
                 return false;
@@ -385,7 +385,7 @@ namespace Glass.Data.DAL
                 percDescAmbiente = (ambientePedido.Desconto / totalBrutoAmbiente) * 100;
 
             var descontoMaximoPedido = Conversoes.StrParaDecimal(PedidoConfig.Desconto.GetDescontoMaximoPedido(UserInfo.GetUserInfo.CodUser,
-                tipoVenda.Value, (int?)PedidoDAO.Instance.ObtemIdParcela(ambientePedido.IdPedido)).ToString());
+                tipoVenda, (int?)PedidoDAO.Instance.ObtemIdParcela(null, ambientePedido.IdPedido)).ToString());
 
             // Verifica se o desconto lançado é maior que o máximo configurado no pedido
             if (percDescAmbiente > descontoMaximoPedido)
@@ -754,7 +754,7 @@ namespace Glass.Data.DAL
                         pedido,
                         pp,
                         Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
-                        !(pedido as IContainerCalculo).IsPedidoProducaoCorte,
+                        pp.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !(pedido as IContainerCalculo).IsPedidoProducaoCorte,
                         pp.Beneficiamentos.CountAreaMinimaSession(sessao)
                     );
                 }
@@ -876,7 +876,7 @@ namespace Glass.Data.DAL
 
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;
-                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, idPedido, null, out enviarMensagem);
+                PedidoDAO.Instance.RecalcularEAtualizarDataEntregaPedido(session, idPedido, null, out enviarMensagem, false);
 
                 return retorno;
             }

@@ -154,9 +154,7 @@ namespace Glass.Data.Helper
                                     #region Arquivo de mesa
 
                                     uint? idArquivoMesaCorte = null;
-                                    var dadosArquivoMesaCorte = new ArquivoMesaCorte();
-                                    dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
-
+                                                                       
                                     var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
                                     if (ppe.IdMaterItemProj.GetValueOrDefault() > 0)
@@ -203,6 +201,9 @@ namespace Glass.Data.Helper
 
                                     foreach (var tipoArquivo in tiposArquivo)
                                     {
+                                        var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                                        dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
+
                                         using (var ms = new MemoryStream())
                                         {
                                             var tipoArq = (int)tipoArquivo.Value;
@@ -217,11 +218,11 @@ namespace Glass.Data.Helper
                                                 dadosArquivoMesaCorte.Arquivo = ms.ToArray();
                                             }
                                         }
-                                    }
 
-                                    if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
-                                        ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-
+                                        if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
+                                            ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
+                                    }                                   
+                                    
                                     #endregion
                                 }
                             }
@@ -278,9 +279,7 @@ namespace Glass.Data.Helper
 
                                 #region Arquivo de mesa
 
-                                uint? idArquivoMesaCorte = null;
-                                var dadosArquivoMesaCorte = new ArquivoMesaCorte();
-                                dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
+                                uint? idArquivoMesaCorte = null;                               
 
                                 var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
@@ -327,6 +326,9 @@ namespace Glass.Data.Helper
 
                                 foreach (var tipoArquivo in tiposArquivo)
                                 {
+                                    var dadosArquivoMesaCorte = new ArquivoMesaCorte();
+                                    dadosArquivoMesaCorte.IdProdPed = (int)pp.IdProdPed;
+
                                     using (var ms = new MemoryStream())
                                     {
                                         var tipoArq = (int)tipoArquivo.Value;
@@ -341,11 +343,11 @@ namespace Glass.Data.Helper
                                             dadosArquivoMesaCorte.Arquivo = ms.ToArray();
                                         }
                                     }
-                                }
 
-                                if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
-                                    ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-
+                                    if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
+                                        ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
+                                }                               
+                                
                                 #endregion
                             }
                         }
@@ -1096,13 +1098,14 @@ namespace Glass.Data.Helper
                                 #endregion
 
                                 foreach (var a in itens[i].ArquivoMesaCorte)
-                                    foreach (var arquivo in a.Arquivo)
-                                        foreach (var id in dados[i].produtosPedido[(uint)a.IdProdPed])
-                                        {
-                                            var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
-                                            if (idProdPedEsp > 0)
-                                                ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, a);
-                                        }
+                                {
+                                    foreach (var id in dados[i].produtosPedido[(uint)a.IdProdPed])
+                                    {
+                                        var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
+                                        if (idProdPedEsp > 0)
+                                            ArquivoMesaCorteDAO.Instance.SalvarArquivoMesaCorte(transaction, idProdPedEsp.Value, a);
+                                    }
+                                }
 
                                 #endregion
 

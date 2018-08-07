@@ -330,6 +330,9 @@ namespace Glass.Data.Helper
             CalcularRentabilidade = 368,
             UsarComissaoPorProduto = 369,
             ControlarFaixaRentabilidadeLiberacao = 370,
+            AlturaELarguraMinimasParaPecasTemperadas = 371,
+            AlturaELarguraMinimaParaPecasComBisote = 372,
+            AlturaELarguraMinimaParaPecasComLapidacao = 373,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -739,7 +742,8 @@ namespace Glass.Data.Helper
             NomeArquivoDxfComAspasECedilha = 1529,
             PermitirImpressaoDePedidosImportadosApenasConferidos = 1530,
             NomeArquivoMesaBarraPorCeCedilha = 1531,
-            ListaVendasPedidosVaziaPorPadrao = 1532
+            ListaVendasPedidosVaziaPorPadrao = 1532,
+            UsarTLS12NFe = 1533
 
             #endregion
         }

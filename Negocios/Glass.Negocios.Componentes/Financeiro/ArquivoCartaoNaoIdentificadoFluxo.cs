@@ -209,7 +209,7 @@ namespace Glass.Financeiro.Negocios.Componentes
         /// </summary>
         private int ObterTipoCartao(string nomeCartao, string bandeira)
         {
-            var tiposCartaoCredito = TipoCartaoCreditoDAO.Instance.ObtemListaPorTipo(0);
+            var tiposCartaoCredito = TipoCartaoCreditoDAO.Instance.ObtemListaPorTipo(0, Situacao.Ativo);
 
             if (tiposCartaoCredito == null)
                 return 0;

@@ -219,7 +219,9 @@ namespace Glass.Data.Helper
             }
 
             // Indica que o usuário fez o login, se necessário
-            HttpContext.Current.Session["idUsuario"] = loginUsuario.CodUser;
+            if (HttpContext.Current.Session != null)
+                HttpContext.Current.Session["idUsuario"] = loginUsuario.CodUser;
+
             LoginSistemaDAO.Instance.Entrar(loginUsuario.CodUser, loginUsuario.UsuarioSync);
 
             // Se o usuário já estiver na lista de usuários, apenas atualiza a data de última atividade

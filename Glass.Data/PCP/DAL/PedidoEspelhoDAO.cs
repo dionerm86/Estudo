@@ -1863,9 +1863,9 @@ namespace Glass.Data.DAL
                 idFunc = ObtemIdFuncDesc(idPedido).GetValueOrDefault(idFunc);
 
             string sql = "Select Count(*) from pedido_espelho p Where idPedido=" + idPedido + @" And (
-                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)).ToString().Replace(",", ".") + @") Or
+                (tipoDesconto=1 And desconto<=" + PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @") Or
                 (tipoDesconto=2 And round(desconto/(total+" + somaDesconto + (!PedidoConfig.RatearDescontoProdutos ? "+desconto" : "") + "),2)<=(" +
-                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.GetTipoVenda(idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(idPedido)).ToString().Replace(",", ".") + @"/100))
+                PedidoConfig.Desconto.GetDescontoMaximoPedido(idFunc, (int)PedidoDAO.Instance.ObtemTipoVenda(null, idPedido), (int)PedidoDAO.Instance.ObtemIdParcela(null, idPedido)).ToString().Replace(",", ".") + @"/100))
             )";
 
             return ExecuteScalar<int>(sql) > 0;
@@ -2147,6 +2147,32 @@ namespace Glass.Data.DAL
 
             foreach (var prod in produtosPedidoEspelho)
             {
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (prod.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in prod.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            (prod.Altura < tamanhoMinimoBisote || prod.Largura < tamanhoMinimoBisote))
+                            retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}.";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            (prod.Altura < tamanhoMinimoLapidacao || prod.Largura < tamanhoMinimoLapidacao))
+                            retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}.";
+                    }
+                }
+
+                if (tamanhoMinimoTemperado > 0 && SubgrupoProdDAO.Instance.IsVidroTemperado(session, prod.IdProd) && prod.Altura < tamanhoMinimoTemperado && prod.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
+
                 /* Chamado 15834.
                     * Esta verificação irá obrigar o usuário a excluir o ambiente vazio, que por sua vez, faz com que
                     * a exportação de pedido gere vários produtos incorretos com quantidade "0,5". */
@@ -2365,7 +2391,8 @@ namespace Glass.Data.DAL
                 // Se a empresa deve salvar o arquivo de marcação das peças então o método devido é chamado.
                 if (PCPConfig.EmpresaGeraArquivoFml)
                     GerarArquivoFmlPeloPedido(session, produtosPedidoEspelho.ToArray(), true);
-                else if (PCPConfig.EmpresaGeraArquivoDxf)
+
+                if (PCPConfig.EmpresaGeraArquivoDxf)
                     GerarArquivoDxfPeloPedido(session, produtosPedidoEspelho.ToArray());
 
                 if (PCPConfig.EmpresaGeraArquivoSGlass)
@@ -2823,7 +2850,7 @@ namespace Glass.Data.DAL
                     ContasReceber conta = new ContasReceber
                     {
                         IdLoja = UserInfo.GetUserInfo.IdLoja,
-                        IdCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido),
+                        IdCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido),
                         IdPedido = idPedido,
                         IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ValorExcedente),
                         DataVec = DateTime.Now,
@@ -3262,7 +3289,7 @@ namespace Glass.Data.DAL
                 bool temPecaReposta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<int>(session, "Count(*)",
                     "pecaReposta=true And idProdPed In (Select idProdPed From produtos_pedido Where idPedido=" + idPedido + ")") > 0;
 
-                if ((PedidoDAO.Instance.IsPedidoReposicao(a) || temPecaReposta) && !alterarReposicao)
+                if ((PedidoDAO.Instance.IsPedidoReposicao(null, a) || temPecaReposta) && !alterarReposicao)
                     continue;
 
                 var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(session, idPedido);
@@ -4393,26 +4420,42 @@ namespace Glass.Data.DAL
             {
                 ImpressaoEtiquetaDAO.Instance.MontaArquivoMesaOptyway(session, lstEtiqueta, lstArqMesa, lstCodArq, lstErrosArq, 0, false, 0, false, true, false);
 
-                var caminhoSalvarIntermac = PCPConfig.CaminhoSalvarIntermac;
-
-                if (Directory.Exists(caminhoSalvarIntermac))
+                // Percorre os arquivos de mesa gerados
+                for (var i = 0; i < lstArqMesa.Count; i++)
                 {
-                    for (var i = 0; i < lstArqMesa.Count; i++)
+                    if (Helper.Utils.VerificarArquivoZip(lstArqMesa[i]))
                     {
-                        var nomeArquivoDxf = caminhoSalvarIntermac + lstCodArq[i];
-
-                        if (!File.Exists(nomeArquivoDxf))
+                        using (var zipFile = ZipFile.Read(lstArqMesa[i]))
                         {
-                            using (var fs = File.Create(nomeArquivoDxf))
-                            {
-                                fs.Write(lstArqMesa[i], 0, lstArqMesa[i].Length);
-                            }
+                            var arquivosContexto = zipFile.EntryFilenames
+                                .GroupBy(f => System.IO.Path.GetDirectoryName(f).Split('/').FirstOrDefault());
 
-                            /* Chamado 16982. */
-                            if (!File.Exists(nomeArquivoDxf))
-                                throw new Exception("Algumas marcações não foram salvas no servidor. Verifique se a pasta, " +
-                                    "onde as marcações são salvas, está disponível no servidor. Caso esteja, finalize o pedido novamente. " +
-                                    "Caminho onde as marcações são salvas no servidor: " + caminhoSalvarIntermac);
+                            foreach (var arquivos in arquivosContexto)
+                            {
+                                // Tenta recuperar o contexto de configuração
+                                var contexto = ConfiguracaoBiesse.Instancia.Contextos.FirstOrDefault(f => f.Nome == arquivos.Key);
+
+                                if (contexto != null)
+                                {
+                                    foreach (var arquivo in arquivos)
+                                    {
+                                        // Recupera o nome do arquivo de destino
+                                        var nome = System.IO.Path.GetFileNameWithoutExtension(lstCodArq[i]);
+
+                                        var destino = System.IO.Path.Combine(contexto.DiretorioSaida, arquivo.Substring(arquivos.Key.Length + 1));
+                                        destino = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(destino), nome + System.IO.Path.GetExtension(destino));
+
+                                        if (!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(destino)))
+                                            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(destino));
+
+                                        using (var stream = System.IO.File.Create(destino))
+                                        {
+                                            zipFile.Extract(arquivo, stream);
+                                            stream.Flush();
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }

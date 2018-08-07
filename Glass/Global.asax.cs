@@ -45,7 +45,7 @@ namespace Glass.UI.Web
                     }
 
                     //Configura o arquivos da Biesse
-                    // Data.Helper.IntermacConfig.BiesseImporterContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), Data.Helper.Utils.ArqConfigIntermacPath(Context));
+                    Data.Helper.ConfiguracaoBiesse.Instancia.Inicializar(Data.Helper.Utils.ArqConfigIntermacPath(Context));
                 }
                 catch
                 {
@@ -80,7 +80,7 @@ namespace Glass.UI.Web
             {
                 var ticket = System.Web.Security.FormsAuthentication.Decrypt(cookie.Value);
 
-                if (ticket != null && ticket.IssueDate < _dataInicioSistema && !System.Diagnostics.Debugger.IsAttached)
+                if (ticket != null && ticket.IssueDate < _dataInicioSistema)
                 {
                     System.Web.Security.FormsAuthentication.SignOut();
                     System.Web.Security.FormsAuthentication.RedirectToLoginPage();

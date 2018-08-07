@@ -197,6 +197,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             // Verifica se a etiqueta é uma etiqueta de pedido
             if (etiqueta.ToUpper().Substring(0, 1).Equals("P"))
             {
+                if (ProducaoConfig.TelaMarcacaoPeca.ImpedirLeituraTodasPecasPedido)
+                    throw new Exception("Não é permitido marcar leitura em todas as peças do pedido de uma só vez.");
+
                 ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref etiqueta);
 
                 var etiquetas = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByPedido(null, etiqueta.Substring(1).StrParaUint());
@@ -637,7 +640,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         public bool IsEtiquetaRevenda(string etiqueta)
         {
             uint idPedido = Glass.Conversoes.StrParaUint(etiqueta.Split('-')[0]);
-            return PedidoDAO.Instance.IsProducao(idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R");
+            return PedidoDAO.Instance.IsProducao(null, idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R");
         }
 
         /// <summary>
@@ -1377,7 +1380,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     try
                     {
-                        var idsPedidoLiberados = string.Join(",", ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(idLiberarPedido));
+                        var idsPedidoLiberados = string.Join(",", ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(null, idLiberarPedido));
                         var idClienteLiberar = LiberarPedidoDAO.Instance.GetIdCliente(idLiberarPedido);
                         var percReducao = ClienteDAO.Instance.GetPercReducaoNFe(idClienteLiberar).ToString();
                         var percReducaoRevenda = ClienteDAO.Instance.GetPercReducaoNFeRevenda(idClienteLiberar).ToString();

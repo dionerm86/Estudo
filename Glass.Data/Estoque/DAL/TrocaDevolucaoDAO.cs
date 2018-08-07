@@ -956,8 +956,7 @@ namespace Glass.Data.DAL
                                             false, false, null, null, null, trocaDevolucao.IdPedido, 0, null, null, false, null, true, 0);
 
                                         var leitura = LeituraProducaoDAO.Instance.ObtemUltimaLeitura(transaction, idProdPedProducao);
-                                        objPersistence.ExecuteCommand(transaction, "UPDATE leitura_producao SET DataLeitura= ?dt, IdCavalete = " + idCavalete + " WHERE IdLeituraProd = "
-                                            + leitura.IdLeituraProd, new GDAParameter("?dt", dataLeitura));
+                                        LeituraProducaoDAO.Instance.AtualizarDataLeituraCavalete(transaction, (int)leitura.IdLeituraProd, idCavalete, dataLeitura.GetValueOrDefault(DateTime.Now));
 
                                         if (tipoSetor == TipoSetor.ExpCarregamento)
                                             objPersistence.ExecuteCommand(transaction, "UPDATE item_carregamento SET IdProdPedProducao = " + idProdPedProducao + " WHERE IdItemCarregamento = " + idItemCarregamento);

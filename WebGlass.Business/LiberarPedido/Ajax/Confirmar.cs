@@ -273,7 +273,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                         /* Chamado 15029.
                          * Caso todos os pedidos tenham sido cadastrados com o tipo de venda Obra, então a forma de pagamento não deve ser
                          * solicitada, pois, o valor do pedido foi descontado no valor da obra. */
-                        if (Glass.Data.DAL.PedidoDAO.Instance.ObtemTipoVenda(Glass.Conversoes.StrParaUint(id)) !=
+                        if (Glass.Data.DAL.PedidoDAO.Instance.ObtemTipoVenda(null, Glass.Conversoes.StrParaUint(id)) !=
                             (int) Glass.Data.Model.Pedido.TipoVendaPedido.Obra)
                             return "Erro\tInforme a forma de pagamento da liberação.";
                     }

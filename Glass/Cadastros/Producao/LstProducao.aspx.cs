@@ -109,7 +109,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             if (idPedido > 0)
             {
                 int qtdPecaEstoque = ProdutosPedidoEspelhoDAO.Instance.ObtemQtdPecasVidroEstoquePedido(idPedido);
-                if (qtdPecaEstoque > 0 && !PedidoDAO.Instance.IsProducao(idPedido))
+                if (qtdPecaEstoque > 0 && !PedidoDAO.Instance.IsProducao(null, idPedido))
                     lblPecasEstoque.Text = "Este pedido possui " + qtdPecaEstoque + " peça(s) de estoque.";
 
                 if (ProdutosPedidoEspelhoDAO.Instance.PossuiPecaASerImpressa(idPedido) && !lblPecasEstoque.Text.Contains("Este pedido possui peças não impressas."))

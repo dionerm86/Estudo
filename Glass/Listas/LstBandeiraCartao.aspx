@@ -28,7 +28,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit" Visible='<%# Eval("PodeExcluir") %>'
+                                <asp:ImageButton ID="imbEditar" runat="server" CommandName="Edit"
                                     ImageUrl="~/Images/edit.gif" ToolTip="Editar" />
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("PodeExcluir") %>'
                                     ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Excluir" />
@@ -53,6 +53,17 @@
                                 <asp:TextBox ID="txtDescricao" runat="server"></asp:TextBox>
                             </FooterTemplate>
                         </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Situação" SortExpression="Situacao">
+                            <EditItemTemplate>
+                                <asp:DropDownList ID="drpSituacao" runat="server" AppendDataBoundItems="true" 
+                                    SelectedValue='<%# Bind("Situacao") %>'
+                                    DataSourceID="odsSituacao" DataValueField="Key" DataTextField="Translation">
+                                </asp:DropDownList> 
+                            </EditItemTemplate>
+                            <ItemTemplate>
+                                <asp:Label runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc1:ctrlLogPopup ID="ctrlLogPopup" runat="server" Tabela="BandeiraCartao" IdRegistro='<%# Eval("IdBandeiraCartao") %>' />
@@ -76,6 +87,12 @@
                     StartRowIndexParameterName="startRow" MaximumRowsParameterName="pageSize" SortParameterName="sortExpression"
                     UpdateMethod="Update" DeleteMethod="Delete" SelectMethod="GetList" SelectCountMethod="GetCount">
                 </colo:VirtualObjectDataSource>
+                <colo:virtualobjectdatasource Culture="pt-BR" ID="odsSituacao" runat="server"
+                    SelectMethod="GetTranslatesFromTypeName" TypeName="Colosoft.Translator">
+                    <SelectParameters>
+                        <asp:Parameter Name="typeName" DefaultValue="Glass.Situacao, Glass.Comum" />
+                    </SelectParameters>
+                </colo:virtualobjectdatasource>
             </td>
         </tr>
     </table>

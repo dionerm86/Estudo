@@ -29,8 +29,8 @@ namespace Glass.Data.Helper.Calculos
             if (produto.Container?.IdObra > 0 && PedidoConfig.DadosPedido.UsarControleNovoObra)
                 return null;
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -56,8 +56,8 @@ namespace Glass.Data.Helper.Calculos
         {
             produto.InicializarParaCalculo(sessao, container);
 
-            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
+            var alturaBenef = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
+            var larguraBenef = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var compra = produto is ProdutosCompra;
             var nf = produto is ProdutosNf;
@@ -94,6 +94,10 @@ namespace Glass.Data.Helper.Calculos
             {
                 produto.Altura = DefinirAlturaUsar(produto);
 
+                var calcularMultiploDe5 = true;
+                if (produto.Container is Pedido)
+                    calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
+
                 // Deve passar o parâmetro usarChapaVidro como true, para que caso o produto tenha sido calculado por chapa,
                 // não calcule incorretamente o total do mesmo (retornado pela variável total abaixo), estava ocorrendo
                 // erro ao chamar esta função a partir de ProdutosPedidoDAO.InsereAtualizaProdProj(), sendo que o produto sendo calculado
@@ -103,7 +107,7 @@ namespace Glass.Data.Helper.Calculos
                     produto.Container,
                     produto,
                     ArredondarAluminio.ArredondarApenasCalculo,
-                    true,
+                    calcularMultiploDe5,
                     produto.Beneficiamentos.CountAreaMinimaSession(sessao),
                     true,
                     valorBruto
@@ -173,9 +177,9 @@ namespace Glass.Data.Helper.Calculos
                 - desconto;
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
-            if (container.MaoDeObra)
+            if (container?.MaoDeObra ?? false && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
                 return valor.GetValueOrDefault();
 
             return 2;
@@ -184,6 +188,10 @@ namespace Glass.Data.Helper.Calculos
         private decimal? CalcularValor(GDASession sessao, IProdutoCalculo produto, decimal baseCalculo,
             bool compra, bool nf, int alturaBeneficiamento, int larguraBeneficiamento)
         {
+            var calcularMultiploDe5 = true;
+            if (produto.Container is Pedido)
+                calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !produto.Container.IsPedidoProducaoCorte;
+
             var estrategia = ValorUnitarioStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
             var valorUnitario = estrategia.Calcular(
@@ -191,7 +199,7 @@ namespace Glass.Data.Helper.Calculos
                 produto,
                 baseCalculo,
                 ArredondarAluminio.ArredondarApenasCalculo,
-                true,
+                calcularMultiploDe5,
                 nf,
                 produto.Beneficiamentos.CountAreaMinimaSession(null),
                 alturaBeneficiamento,

@@ -14,12 +14,12 @@ namespace Glass.UI.Web.Utils
             Ajax.Utility.RegisterTypeForAjax(typeof(Utils.SetMotivoCanc));
     
             uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(idPedido);
+            uint idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idPedido);
     
             // A opção de gerar crédito para o cliente só pode ser usada se o pedido tiver sido totalmente recebido e se for à vista,
             // caso contrário, o crédito gerado poderá ser diferente do valor já pago pelo cliente ou o acerto poderá ser cancelado posteriormente
             gerarCredito.Visible = !PedidoConfig.LiberarPedido && 
-                PedidoDAO.Instance.ObtemTipoVenda(idPedido) == (int)Data.Model.Pedido.TipoVendaPedido.AVista &&
+                PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Data.Model.Pedido.TipoVendaPedido.AVista &&
                 // Se a FormaPagto for diferente de Cartão
                 PedidoDAO.Instance.ObtemFormaPagto(idPedido) != 5 &&
                 (CaixaDiarioDAO.Instance.ExistsByPedido(idPedido) ||

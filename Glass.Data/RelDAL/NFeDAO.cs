@@ -131,9 +131,12 @@ namespace Glass.Data.RelDAL
             {
                 // Busca tags com duplicatas
                 XmlNodeList xmlListDup = xmlInfNFe["cobr"].GetElementsByTagName("dup");
+
+                string nFat = xmlInfNFe["cobr"]["fat"] != null ? GetNodeValue(xmlInfNFe, "cobr/fat", "nFat") : string.Empty;
+
                 foreach (XmlElement xmlDup in xmlListDup)
                     nfe.Fatura +=
-                        "Num.: " + xmlDup["nDup"].InnerXml +
+                        "Num.: " + nFat + "-" + xmlDup["nDup"].InnerXml +
                         " Venc.: " + DateTime.Parse(xmlDup["dVenc"].InnerXml).ToString("dd/MM/yyyy") +
                         " Valor: " + xmlDup["vDup"].InnerXml.Replace('.', ',') + "   /   ";
 

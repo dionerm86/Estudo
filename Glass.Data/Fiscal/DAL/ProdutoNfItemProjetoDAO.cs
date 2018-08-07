@@ -16,10 +16,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Apaga os registros a partir do produto NF.
         /// </summary>
-        /// <param name="idProdNf"></param>
-        public void DeleteByIdProdNf(uint idProdNf)
+        public void DeleteByIdProdNf(GDASession session, uint idProdNf)
         {
-            objPersistence.ExecuteCommand("delete from produto_nf_item_projeto where idProdNf=" + idProdNf);
+            objPersistence.ExecuteCommand(session, "delete from produto_nf_item_projeto where idProdNf=" + idProdNf);
         }
 
         /// <summary>
@@ -51,8 +50,8 @@ namespace Glass.Data.DAL
                     uint? idCliente = ip.IdCliente;
                     int? tipoEntrega = ip.TipoEntrega;
 
-                    uint? idObra = ip.IdPedido > 0 ? PedidoDAO.Instance.GetIdObra(ip.IdPedido.Value) :
-                        ip.IdPedidoEspelho > 0 ? PedidoDAO.Instance.GetIdObra(ip.IdPedidoEspelho.Value) :
+                    uint? idObra = ip.IdPedido > 0 ? PedidoDAO.Instance.GetIdObra(null, ip.IdPedido.Value) :
+                        ip.IdPedidoEspelho > 0 ? PedidoDAO.Instance.GetIdObra(null, ip.IdPedidoEspelho.Value) :
                         null;
 
                     ip.IdOrcamento = null;
@@ -117,7 +116,18 @@ namespace Glass.Data.DAL
                         MedidaItemProjetoDAO.Instance.InsereMedida(sessao, ip.IdItemProjeto, m.IdMedidaProjeto, m.Valor);
 
                     List<PecaProjetoModelo> pecasModelo = PecaProjetoModeloDAO.Instance.GetByModelo(pm.IdProjetoModelo);
-                    
+
+                    //Preenche a altura e largura da peça para que o sistema crie corretamente o 
+                    //material item projeto para dar baixa nas peças de cesta
+                    foreach (var pecas in pecasModelo)
+                    {
+                        if (pecas.Altura == 0 || pecas.Largura == 0)
+                        {
+                            pecas.Altura = 1;
+                            pecas.Largura = 1;
+                        }
+                    }
+
                     foreach (PecaItemProjeto p in pecasItemProjeto)
                     {
                         pecasModelo.Find(x => x.IdPecaProjMod == p.IdPecaProjMod).IdProd = p.IdProd.GetValueOrDefault();

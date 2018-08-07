@@ -26,7 +26,8 @@ namespace Glass.UI.Web.Listas
 
             OperadoraCartaoDAO.Instance.Insert(new OperadoraCartao
             {
-                Descricao = descricao
+                Descricao = descricao,
+                Situacao = Situacao.Ativo
             });
 
             grdOperadoraCartao.DataBind();

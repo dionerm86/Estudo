@@ -223,7 +223,7 @@ namespace Glass.Data.DAL
 
                     if (EtiquetaConfig.RelatorioEtiqueta.ModeloEtiquetaPorLoja)
                     {
-                        var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(prodPedEsp.IdPedido);
+                        var idLojaPedido = (int)PedidoDAO.Instance.ObtemIdLoja(null, prodPedEsp.IdPedido);
 
                         if (idLojaPedidoAux == 0)
                             idLojaPedidoAux = idLojaPedido;
@@ -315,7 +315,7 @@ namespace Glass.Data.DAL
                                 CodCliente =
                                     PedidoDAO.Instance.ObtemValorCampo<string>("codCliente",
                                         "idPedido=" + prodPedEsp.IdPedido),
-                                IdCliente = PedidoDAO.Instance.ObtemIdCliente(prodPedEsp.IdPedido)
+                                IdCliente = PedidoDAO.Instance.ObtemIdCliente(null, prodPedEsp.IdPedido)
                             };
                             etiqueta.NomeCliente = ClienteDAO.Instance.GetNome(etiqueta.IdCliente);
                             etiqueta.IdPedido = prodPedEsp.IdPedido.ToString();
@@ -334,7 +334,7 @@ namespace Glass.Data.DAL
                             if (PCPConfig.ExibirLarguraAlturaCorteCerto)
                                 etiqueta.AlturaLargura = etiqueta.Largura + " X " + etiqueta.Altura;
 
-                            etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(prodPedEsp.IdPedido).GetValueOrDefault();
+                            etiqueta.DataEntrega = PedidoDAO.Instance.ObtemDataEntrega(null, prodPedEsp.IdPedido).GetValueOrDefault();
 
                             lstEtiqueta.Add(etiqueta);
 
@@ -900,6 +900,7 @@ namespace Glass.Data.DAL
                             throw new Exception("Informe o código de otimização da peça no cadastro de produtos.");
 
                         var idProd = etiqueta.IdProdPedEsp > 0 ? (int)ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(transaction, etiqueta.IdProdPedEsp) : 0;
+                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(transaction, (int)idProd);
                         var idsBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetByProdutoPedido(transaction, etiqueta.IdProdPedEsp).Select(f => (int)f.IdBenefConfig).ToList();
                         var descricaoBeneficiamento = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(transaction, etiqueta.IdProdPedEsp);
                         var idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(transaction, etiqueta.IdProdPedEsp);
@@ -917,7 +918,7 @@ namespace Glass.Data.DAL
                         var isPecaReposta = new Lazy<bool>(() => ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(transaction, etiqueta.IdPedido + "-" + etiqueta.NumItem.Replace(" ", ""), false));
 
                         string nomeCliente = etiqueta.NomeCliente.Length > 12 ? etiqueta.NomeCliente.Substring(0, 12).ToUpper() : etiqueta.NomeCliente.ToUpper();
-                        var formaProduto = gerarArqMesa && isPecaReposta.Value ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd, idProdBaixa);
+                        var formaProduto = gerarArqMesa && isPecaReposta.Value && !produtoProducao ? String.Empty : ProdutoDAO.Instance.ObtemForma(transaction, idProd, idProdBaixa);
                         string shapeId = !String.IsNullOrEmpty(etiqueta.Forma) ? etiqueta.Forma : formaProduto;
 
                         if (shapeId == "XXXXXXXX" && !String.IsNullOrEmpty(formaProduto))
@@ -943,7 +944,7 @@ namespace Glass.Data.DAL
                             shapeId = String.Empty;
 
                         // Chamado 15432: Se a peça tiver XXXXXX ou 999999, não deve zerar o shapeId, a menos que a empresa gere SAG de peça reposta
-                        if (isPecaReposta.Value && shapeId != null && !shapeId.Contains("XXXXXX") && !shapeId.Contains("999999") && !PCPConfig.GerarMarcacaoPecaReposta)
+                        if (isPecaReposta.Value && shapeId != null && !shapeId.Contains("XXXXXX") && !shapeId.Contains("999999") && !PCPConfig.GerarMarcacaoPecaReposta && !produtoProducao)
                             shapeId = string.Empty;
 
                         // Chamado 17954: Se tiver que gerar marcação de peça reposta
@@ -1077,8 +1078,8 @@ namespace Glass.Data.DAL
                                 //5 - Total da pecas no pedido (306 .. 337)
                                 arqOtimiz += ProdutosPedidoEspelhoDAO.Instance.ObtemQtdPecasVidroPedido(transaction, etiqueta.IdPedido.StrParaUint()).ToString().PadLeft(32);
 
-                                //6 - Posicao em que a peca cai no plano de corte (338 .. 369)
-                                arqOtimiz += "".PadLeft(32);
+                                //6 - Numero da etiquta do produto importado (338 .. 369)
+                                arqOtimiz += etiqueta.NumEtiquetaCliente.PadLeft(32);
 
                                 //7 - Produto (370 .. 401)
                                 var prod = !string.IsNullOrEmpty(etiqueta.DescrProd) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.DescrProd) : "";
@@ -1315,12 +1316,19 @@ namespace Glass.Data.DAL
                     // Preenche o idArquivoMesaCorte aqui para que ao chamar o método de buscar a aresta, passe o idArquivoMesaCorte correto
                     etiq.IdArquivoMesaCorte = idArquivoMesaCorte;
 
+                    var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp);
+                    var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(session, (int)idProd);
+
                     /* Chamado 16479.
                      * Peças repostas não podem gerar arquivo de marcação, devem gerar o arquivo .ASC com forma inexistente. */
-                    if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta))
+                    if (arqMesa != null && arqMesa.Length > 0 && idArquivoMesaCorte != null && (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta || produtoProducao))
                     {
                         var forma = string.Empty;
                         var nomeArquivo = ObterNomeArquivo(session, etiq, (TipoArquivoMesaCorte)tipoArquivo, null, null, forIntermac, out forma, converterCaractereEspecial);
+
+                        // Verifica se é um arquivo .zip
+                        if (Utils.VerificarArquivoZip(arqMesa) && !StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(nomeArquivo), ".zip"))
+                            nomeArquivo = System.IO.Path.GetFileNameWithoutExtension(nomeArquivo) + ".zip";
 
                         lstArqMesa.Add(arqMesa);
                         lstCodArq.Add(nomeArquivo);
@@ -1334,44 +1342,45 @@ namespace Glass.Data.DAL
                         var idPedido = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(session, etiq.IdProdPedEsp);
                         var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(session, idPedido);
 
-                        /* Chamado 57976. */
-                        if (pedidoImportado)
+                        if (!pecaEstaReposta || PCPConfig.GerarMarcacaoPecaReposta)
                         {
-                            var caminhoSalvarFMLPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
-                                TipoArquivoMesaCorte.FML);
+                            /* Chamado 57976. */
+                            if (pedidoImportado)
+                            {
+                                var caminhoSalvarFMLPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
+                                    TipoArquivoMesaCorte.FML);
 
-                            var caminhoSalvarDXFPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
-                                TipoArquivoMesaCorte.DXF);
+                                var caminhoSalvarDXFPedidoImportado = ArquivoMesaCorteDAO.Instance.CaminhoSalvarArquivoPedidoImportado(session, etiq.NumEtiqueta, (int)etiq.IdProdPedEsp,
+                                    TipoArquivoMesaCorte.DXF);
 
-                            if (System.IO.File.Exists(caminhoSalvarFMLPedidoImportado) || System.IO.File.Exists(caminhoSalvarDXFPedidoImportado))
-                                continue;
-                        }
-                        
-                        var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "IdMaterItemProj", string.Format("IdProdPed={0}", etiq.IdProdPedEsp));
+                                if (System.IO.File.Exists(caminhoSalvarFMLPedidoImportado) || System.IO.File.Exists(caminhoSalvarDXFPedidoImportado))
+                                    continue;
+                            }
 
-                        //Verifica se tem arquivo dxf salvo editado anteriormente.
-                        if (idMaterItemProj > 0)
-                        {
-                            var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), etiq.IdProdPedEsp);
-                            
-                            if (System.IO.File.Exists(caminhoDxf))
-                                continue;
+                            var idMaterItemProj = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "IdMaterItemProj", string.Format("IdProdPed={0}", etiq.IdProdPedEsp));
 
-                            var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj.Value);
-                            var caminhoDxfProjeto = pecaItemProjeto != null && pecaItemProjeto.IdPecaItemProj > 0 ?
-                                string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProjectProjeto(), pecaItemProjeto.IdPecaItemProj) : string.Empty;
-                            
-                            if (!string.IsNullOrWhiteSpace(caminhoDxfProjeto) && System.IO.File.Exists(caminhoDxfProjeto))
-                                continue;
-                        }
+                            //Verifica se tem arquivo dxf salvo editado anteriormente.
+                            if (idMaterItemProj > 0)
+                            {
+                                var caminhoDxf = string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), etiq.IdProdPedEsp);
+
+                                if (System.IO.File.Exists(caminhoDxf))
+                                    continue;
+
+                                var pecaItemProjeto = PecaItemProjetoDAO.Instance.GetByMaterial(session, idMaterItemProj.Value);
+                                var caminhoDxfProjeto = pecaItemProjeto != null && pecaItemProjeto.IdPecaItemProj > 0 ?
+                                    string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProjectProjeto(), pecaItemProjeto.IdPecaItemProj) : string.Empty;
+
+                                if (!string.IsNullOrWhiteSpace(caminhoDxfProjeto) && System.IO.File.Exists(caminhoDxfProjeto))
+                                    continue;
+                            }
+                        }                           
 
                         var produtoPossuiImagemAssociada = ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(session, etiq.IdProdPedEsp);
                         var idAplicacao = ProdutosPedidoEspelhoDAO.Instance.ObtemIdAplicacao(session, etiq.IdProdPedEsp);
                         var aplicacaoGeraFormaInexistente = EtiquetaAplicacaoDAO.Instance.ObtemGerarFormaInexistente(session, idAplicacao);
                         var idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(session, etiq.IdProdPedEsp);
-                        var processoGeraFormaInexistente = EtiquetaProcessoDAO.Instance.ObtemGerarFormaInexistente(session, idProcesso);
-                        var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, etiq.IdProdPedEsp);
-                        var produtoProducao = ProdutoDAO.Instance.IsProdutoProducao(session, (int)idProd);
+                        var processoGeraFormaInexistente = EtiquetaProcessoDAO.Instance.ObtemGerarFormaInexistente(session, idProcesso);                        
 
                         if ((tipoArquivo != (int)TipoArquivoMesaCorte.DXF || produtoPossuiImagemAssociada) && ((aplicacaoGeraFormaInexistente || processoGeraFormaInexistente) && !produtoProducao))
                         {
@@ -1394,7 +1403,7 @@ namespace Glass.Data.DAL
                             /* Chamado 33177. */
                             if (Configuracoes.PCPConfig.PreencherReposicaoGarantiaCampoForma && etiq.IdProdPedEsp > 0)
                             {
-                                var tipoVenda = PedidoDAO.Instance.GetTipoVenda(session, idPedido).GetValueOrDefault();
+                                var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, idPedido);
 
                                 if (tipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
                                     etiq.Forma = "REPOSICAO";
@@ -1782,10 +1791,10 @@ namespace Glass.Data.DAL
 
                         if (prodPed.IdPedido > 0)
                         {
-                            var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido);
+                            var dataFinalizacaoPCP = PedidoEspelhoDAO.Instance.ObtemDataConf(transaction, prodPed.IdPedido).GetValueOrDefault();
+                            var dataUltimaExportacaoEtiqueta = ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta);
 
-                            if (dataFinalizacaoPCP != null && dataFinalizacaoPCP >
-                                ArquivoOtimizacaoDAO.Instance.ObtemDataUltimaExportacaoEtiqueta(transaction, etiqueta))
+                            if (dataUltimaExportacaoEtiqueta != DateTime.MinValue && dataFinalizacaoPCP > dataUltimaExportacaoEtiqueta)
                             {
                                 pedidosAlteradosAposExportacao.Add((int)prodPed.IdPedido);
                                 continue;
@@ -2864,9 +2873,13 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrEmpty(ids))
                 {
                     if (temCarregamento && situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
-                        objPersistence.ExecuteCommand(sessao, @"Update leitura_producao Set dataLeitura = null Where idProdPedProducao In (" + ids + ")");
+                    {
+                        LeituraProducaoDAO.Instance.AtualizarDataLeituraIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), null);
+                    }
                     else
-                        objPersistence.ExecuteCommand(sessao, @"Delete From leitura_producao Where idProdPedProducao In (" + ids + ")");
+                    {
+                        LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
+                    }
 
                     /* Chamado 45146. */
                     foreach (var id in ids.Split(','))
@@ -3216,15 +3229,14 @@ namespace Glass.Data.DAL
                     select coalesce(numEtiqueta, numEtiquetaCanc) from produto_pedido_producao
                     where idProdPedProducao in (" + ids + @")
                 ) as temp);
-                
-                delete from leitura_producao
-                where idProdPedProducao in (" + ids + @");
 
                 delete from roteiro_producao_etiqueta
                 where idProdPedProducao in (" + ids + @");
                 
                 delete from produto_pedido_producao
                 where idProdPedProducao in (" + ids + @")";
+
+            LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, ids?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
 
             objPersistence.ExecuteCommand(sessao, sql);
         }

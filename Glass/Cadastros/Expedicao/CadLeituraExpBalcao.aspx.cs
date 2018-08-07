@@ -201,7 +201,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             {
                 var item = ((Glass.PCP.Negocios.Entidades.ItemExpBalcao)e.Row.DataItem);
                 foreach (TableCell cell in e.Row.Cells)
-                    cell.ForeColor = item.Expedido ? Color.Green : (item.TrocadoDevolvido ? Color.Blue : Color.Red);
+                    cell.ForeColor = item.Expedido || item.ExpedidoManualmente ? Color.Green : (item.TrocadoDevolvido ? Color.Blue : Color.Red);
             }
         }
 
@@ -240,7 +240,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         public string IsEtiquetaRevenda(string etiqueta)
         {
             uint idPedido = Glass.Conversoes.StrParaUint(etiqueta.Split('-')[0]);
-            return (PedidoDAO.Instance.IsProducao(idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R")).ToString();
+            return (PedidoDAO.Instance.IsProducao(null, idPedido) || etiqueta.ToUpper().Substring(0, 1).Equals("N") || etiqueta.ToUpper().Substring(0, 1).Equals("R")).ToString();
         }
 
         [Ajax.AjaxMethod()]

@@ -63,6 +63,8 @@
         // Atualizar automaticamente
         setTimeout(function() { atualizarPagina() }, 1000 * <%= TempoSegundosAtualizar %>);
 
+        setInterval(function(){ PainelGraficos.GetUsuarioLogado() } , 60000 * 5 );
+
         function aplicaEscala(objeto, escala)
         {
             objeto.css("zoom", escala);

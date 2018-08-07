@@ -565,6 +565,14 @@ namespace Glass.Data.Model
             set { Custo = value; }
         }
 
+        int IProdutoCalculo.TipoCalc
+        {
+            get
+            {
+                return TipoCalculoUsado;
+            }
+        }
+
         #endregion
 
         #region IAmbienteCalculo

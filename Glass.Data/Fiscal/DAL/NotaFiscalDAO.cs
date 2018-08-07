@@ -1,16 +1,16 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.EFD;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using Glass.Data.NFeUtils;
+using Glass.Global;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using Glass.Data.NFeUtils;
 using System.IO;
-using System.Xml;
-using Glass.Data.EFD;
 using System.Linq;
-using Glass.Configuracoes;
-using Glass.Global;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Glass.Data.DAL
 {
@@ -77,8 +77,7 @@ namespace Glass.Data.DAL
                                 " há poucos segundos. Aguarde um minuto e gere novamente");
 
                 // Utilizado no decorrer do método para transferência de nota fiscal.
-                var sessionTransf = FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf ?
-                    new GDASession(GDA.GDASettings.GetProviderConfiguration("Notas")) : null;
+                var sessionTransf = FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf ? new GDASession(GDASettings.GetProviderConfiguration("Notas")) : null;
 
                 uint idNaturezaOperacaoDestino = 0, idNaturezaOperacaoDestinoProd = 0;
                 var dicNaturezaOperacaoProdDestino = new Dictionary<uint, uint>();
@@ -158,7 +157,7 @@ namespace Glass.Data.DAL
                  * Esse dicionário foi criado para aplicar o percentual de quantidade do produto nele próprio, ao invés de somá-lo ao desconto do pedido e aplicar para todos os produtos. */
                 var produtosPedidoPercentualDescontoQtde = new Dictionary<int, decimal>();
 
-                if(peds.Any(f => f.IdTransportador != peds.First().IdTransportador))
+                if (peds.Any(f => f.IdTransportador != peds.First().IdTransportador))
                     throw new Exception("Não é possível gerar nota fiscal com pedidos que possuem transportadoras diferentes.");
 
                 // Verifica se pedido foi confirmado
@@ -205,7 +204,7 @@ namespace Glass.Data.DAL
                             }
 
                             var totalPedidoCalculado = totalPedido + descontoPedido + descontoQtdeProdutos - valorIpi - valorIcms - valorFrete;
-                            
+
                             if (!FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe)
                             {
                                 // Salva, em um dicionário, o percentual de desconto do pedido.
@@ -392,11 +391,10 @@ namespace Glass.Data.DAL
 
                 using (var transaction = new GDATransaction())
                 {
-                    // Se der algum erro ao buscar os produtos do pedido, ignora, para não perder o número da NF gerado
                     try
                     {
                         transaction.BeginTransaction();
-
+                        
                         #region Insere a nota fiscal
 
                         var totalLiberado = LiberarPedidoDAO.Instance.GetTotalLiberado(transaction, idsLiberarPedidos);
@@ -464,7 +462,7 @@ namespace Glass.Data.DAL
                         {
                             nf.MunicOcor = nomeCidadeLoja;
                         }
-                        
+
                         if (FiscalConfig.NotaFiscalConfig.InformarOrcamentoNFe)
                         {
                             var idsOrcamentos = OrcamentoDAO.Instance.ObtemIdsOrcamento(transaction, idsPedidos);
@@ -474,7 +472,7 @@ namespace Glass.Data.DAL
                                 nf.InfCompl = $"Orçamento(s): { idsOrcamentos }. { nf.InfCompl }";
                             }
                         }
-                        
+
                         if (FiscalConfig.NotaFiscalConfig.InformarPedidoClienteNFe)
                         {
                             var pedidos = idsPedidos.Split(',');
@@ -494,7 +492,7 @@ namespace Glass.Data.DAL
                             var textoPedidos = !FiscalConfig.NotaFiscalConfig.ExibirDescricaoPedidoInfCompl ? string.Empty : "Pedido(s): ";
                             nf.InfCompl = $"{ textoPedidos }{ idsPedidos }. { nf.InfCompl }";
                         }
-                        
+
                         #region Informações de transporte
 
                         var tiposEntrega = idsPedidos.Split(',').Select(f => new
@@ -612,7 +610,7 @@ namespace Glass.Data.DAL
                         }
 
                         #endregion
-                        
+
                         #region Busca o FCI caso necessário
 
                         foreach (var pp in lstProd)
@@ -859,6 +857,8 @@ namespace Glass.Data.DAL
                                         new GDAParameter("?infCompl", obsCfop + ". " + nf.InfCompl));
                             }
 
+                            prod.IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo = prodNf.IdNaturezaOperacao;
+
                             #region Transferência de nota fiscal
 
                             if (FiscalConfig.NotaFiscalConfig.ExportarNotaFiscalOutroBD && transferirNf)
@@ -959,18 +959,24 @@ namespace Glass.Data.DAL
                             }
 
                             // Verifica se o cliente possui redução de cálculo da Nfe
-                            bool isVenda = ProdutoDAO.Instance.IsProdutoVenda(transaction, (int)prodNf.IdProd);
+                            var isVenda = ProdutoDAO.Instance.IsProdutoVenda(transaction, (int)prodNf.IdProd);
 
                             if (isVenda && percReducaoNfe > 0)
+                            {
                                 prodNf.Total = prodNf.Total - (prodNf.Total * ((decimal)percReducaoNfe / 100));
+                            }
                             else if (!isVenda && percReducaoNfeRevenda > 0)
+                            {
                                 prodNf.Total = prodNf.Total - (prodNf.Total * ((decimal)percReducaoNfeRevenda / 100));
+                            }
 
-                            bool clienteCalcIpi = ClienteDAO.Instance.IsCobrarIpi(transaction, idCliente);
-                            bool clienteCalcIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(transaction, idCliente);
-                            bool calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(transaction, prodNf.IdNaturezaOperacao.Value);
-                            bool calcIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(transaction, prodNf.IdNaturezaOperacao.Value);
-                            var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(pp.IdPedido);
+                            var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(transaction, pp.IdPedido);
+                            var lojaCalculaIcmsStPedido = LojaDAO.Instance.ObtemCalculaIcmsStPedido(transaction, idLojaPedido);
+                            var lojaCalculaIpiPedido = LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido);
+                            var clienteCalcIpi = ClienteDAO.Instance.IsCobrarIpi(transaction, idCliente);
+                            var clienteCalcIcmsSt = ClienteDAO.Instance.IsCobrarIcmsSt(transaction, idCliente);
+                            var calcIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(transaction, prodNf.IdNaturezaOperacao.Value);
+                            var calcIcmsSt = NaturezaOperacaoDAO.Instance.CalculaIcmsSt(transaction, prodNf.IdNaturezaOperacao.Value);
 
                             // Retira a alíquota do IPI no total do produto (e do icms st para tempera e vidrometro)
                             if ((FiscalConfig.NotaFiscalConfig.RatearIpiNfPedido ||
@@ -984,18 +990,18 @@ namespace Glass.Data.DAL
 
                                 // Se o cliente estiver marcado para calcular icms st, zera a alíquota, pois não poderá rateá-la na nota
                                 // Necessário para resolver o chamado 6806
-                                if (LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) && clienteCalcIcmsSt)
+                                if (lojaCalculaIcmsStPedido && clienteCalcIcmsSt)
                                     aliqIcms = 0;
 
-                                if (!LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido) || !clienteCalcIpi)
+                                if (!lojaCalculaIpiPedido || !clienteCalcIpi)
                                 {
                                     // Caso a alíquota de icms esteja zerada (automaticamente não considerando a diferença no cálculo do ICMS ST 
                                     // que a cobrança do IPI iria causar) e o cliente calcule ICMS ST no pedido considerando o IPI no cálculo
                                     // e o cliente esteja marcado para calcular ICMS no pedido mas não para calcular IPI no mesmo porém a nota 
                                     // calcule ICMS ST e IPI, é necessário recalcular este produto considerando a AliqICMSInterna junto com a 
                                     // alíquota do IPI e depois adicionando o valor da AliqICMSInterna somente
-                                    bool recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
-                                        (!clienteCalcIpi || !LojaDAO.Instance.ObtemCalculaIpiPedido(transaction, idLojaPedido)) && clienteCalcIcmsSt && LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido);
+                                    var recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
+                                        (!clienteCalcIpi || !lojaCalculaIpiPedido) && clienteCalcIcmsSt && lojaCalculaIcmsStPedido;
 
                                     if (recalcularIcmsStProd)
                                         aliqIcms = prod.AliqICMSInterna;
@@ -1008,8 +1014,7 @@ namespace Glass.Data.DAL
                                 }
 
                                 // Recalcula os valores de ICMS e IPI se o pedido tiver calculado o IPI mas não o ICMS
-                                else if ((!LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) || !clienteCalcIcmsSt) && calcIcmsSt &&
-                                    FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
+                                else if ((!lojaCalculaIcmsStPedido || !clienteCalcIcmsSt) && calcIcmsSt && FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                                 {
                                     decimal aliqIcmsCalc = (decimal)IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, idProd, nf.IdLoja.Value, nf.IdFornec, nf.IdCliente);
 
@@ -1060,8 +1065,7 @@ namespace Glass.Data.DAL
                             }
 
                             // Retira o valor do icms st da nota, caso não tenha IPI mas tenha ICMS ST
-                            else if ((!LojaDAO.Instance.ObtemCalculaIcmsPedido(transaction, idLojaPedido) || !clienteCalcIcmsSt) && calcIcmsSt &&
-                                FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
+                            else if ((!lojaCalculaIcmsStPedido || !clienteCalcIcmsSt) && calcIcmsSt && FiscalConfig.NotaFiscalConfig.RatearIcmsStNfPedido)
                             {
                                 // Chamado 46155.
                                 // O valor do IPI afeta o cálculo da propriedade AliqICMSInterna, portanto, caso o cálculo do IPI não deva ser feito
@@ -1131,12 +1135,15 @@ namespace Glass.Data.DAL
                             }
 
                             //Se for transferir a nf de loja salva a natureza da operação da loja destino
-                            dicNaturezaOperacaoProdDestino.Add(prodNf.IdProdNf, idNaturezaOperacaoDestinoProd);
+                            dicNaturezaOperacaoProdDestino.Add(prodNf.IdProdNf, idNaturezaOperacaoDestinoProd > 0 ? idNaturezaOperacaoDestinoProd : idNaturezaOperacaoDestino);
 
                             // Insere os dados na tabela produto_nf_item_projeto
-                            ProdutoNfItemProjetoDAO.Instance.DeleteByIdProdNf(idProdNf);
+                            ProdutoNfItemProjetoDAO.Instance.DeleteByIdProdNf(transaction, idProdNf);
+
                             if (idProdParaNf > 0)
+                            {
                                 ProdutoNfItemProjetoDAO.Instance.Inserir(transaction, idProdNf, pp.IdsItemProjeto);
+                            }
 
                             // Importa os beneficiamentos do produtoPedido para o produtoNf
                             ProdutoNfBenefDAO.Instance.ImportaProdPedBenef(transaction, pp.IdProdPed, idProdNf);
@@ -1184,40 +1191,80 @@ namespace Glass.Data.DAL
 
                         #region Gera parcelas da nota
 
+
                         nf = GetElement(transaction, nf.IdNf);
 
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
-                            var liberacao = idsLiberarPedidos?.Split(',');
-                            if (liberacao.Count() == 1)
+                            ContasReceber[] contasReceber = null;
+
+                            if (!string.IsNullOrWhiteSpace(idsLiberarPedidos))
                             {
-                                var cr = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, Glass.Conversoes.StrParaUint(liberacao.FirstOrDefault()), true)?.ToArray();
-
-                                if (cr != null)
+                                foreach (var idLiberarPedido in (idsLiberarPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
                                 {
-                                    nf.NumParc = cr?.Length ?? 1;
-                                    if (nf.NumParc > 1)
+                                    contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, (uint)idLiberarPedido, true)?.ToArray();
+
+                                    if (contasReceber?.Count() > 0)
                                     {
-                                        nf.DatasParcelas = new DateTime[cr.Length];
-                                        nf.ValoresParcelas = new decimal[cr.Length];
+                                        break;
+                                    }
+                                }
+                            }
 
-                                        decimal valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0 && !string.IsNullOrWhiteSpace(idsPedidos))
+                            {
+                                foreach (var idPedido in (idsPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
+                                {
+                                    ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
 
-                                        for (int i = 0; i < cr.Length; i++)
+                                    if (contasReceber?.Count() > 0)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0)
+                            {
+                                var idsNotaFiscal = PedidosNotaFiscalDAO.Instance.ObterIdsNf(transaction, idsLiberarPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList() ?? new List<int>(),
+                                    idsPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList(), NotaFiscal.SituacaoEnum.Autorizada);
+
+                                if (idsNotaFiscal?.Any(f => f > 0) ?? false)
+                                {
+                                    foreach (var idNotaFiscal in idsNotaFiscal)
+                                    {
+                                        contasReceber = ContasReceberDAO.Instance.GetByNf(transaction, (uint)idNotaFiscal)?.ToArray();
+                                        if (contasReceber?.Count() > 0)
                                         {
-                                            nf.DatasParcelas[i] = cr[i].DataVec;
-                                            nf.ValoresParcelas[i] = valorParcelas;
-                                        }
-                                        var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
-                                        if (difParcelaNota != 0)
-                                        {
-                                            nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                            break;
                                         }
                                     }
                                 }
                             }
 
-                            if (nf.DatasParcelas?.Count() == 0)
+                            if (contasReceber?.Length > 0)
+                            {
+                                nf.NumParc = contasReceber.Length;
+                                nf.DatasParcelas = new DateTime[nf.NumParc.Value];
+                                nf.ValoresParcelas = new decimal[nf.NumParc.Value];
+
+                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+
+                                for (var i = 0; i < contasReceber.Length; i++)
+                                {
+                                    nf.DatasParcelas[i] = contasReceber[i].DataVec;
+                                    nf.ValoresParcelas[i] = valorParcelas;
+                                }
+
+                                var difParcelaNota = nf.TotalNota - nf.ValoresParcelas.Sum();
+
+                                if (difParcelaNota != 0)
+                                {
+                                    nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                }
+                            }
+
+                            if ((nf.DatasParcelas?.Count()).GetValueOrDefault() == 0)
                             {
                                 nf.NumParc = 1;
                                 nf.DatasParcelas = new DateTime[1];
@@ -1225,6 +1272,7 @@ namespace Glass.Data.DAL
                                 nf.DatasParcelas[0] = DateTime.Now;
                                 nf.ValoresParcelas[0] = nf.TotalNota;
                             }
+
                             nf.FormaPagto = (int)LiberarPedido.TipoPagtoEnum.APrazo;
 
                             Update(transaction, nf);
@@ -1307,7 +1355,7 @@ namespace Glass.Data.DAL
                 }
 
                 valorRecebRelativo = totalFormaPagtoLiberacao > 0 ? (valorParcelasNf > 0 ? valorParcelasNf : notaFiscal.TotalNota) / totalFormaPagtoLiberacao : 1;
-                
+
                 foreach (var idLiberarPedido in idsLiberarPedido.Where(f => f > 0))
                 {
                     var formaPagamentoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, (uint)idLiberarPedido);
@@ -1522,7 +1570,7 @@ namespace Glass.Data.DAL
                 try
                 {
                     transaction.BeginTransaction();
-                    
+
                     var retorno = GerarNfCompra(transaction, idsCompras, idFornec, idNaturezaOperacao, naturezasOperacao, idLoja,
                         tipoCompra, idConta, numeroNFe, dataCadastro, produtosCompra);
 
@@ -1564,7 +1612,7 @@ namespace Glass.Data.DAL
                 if (comp.Situacao != Compra.SituacaoEnum.Finalizada && comp.Situacao != Compra.SituacaoEnum.EmAndamento)
                     throw new Exception("Essa compra ainda não foi finalizada.");
             }
-            
+
             uint? cidadeLoja = FornecedorDAO.Instance.ObtemValorCampo<uint?>(sessao, "idCidade", "idFornec=" + idFornec);
 
             // Verifica se a cidade do fornecedor foi informada
@@ -1756,7 +1804,7 @@ namespace Glass.Data.DAL
                 // Verifica se o produto é calculado por ML e se a altura foi informada
                 if (tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.ML && prodNf.Altura == 0)
                     throw new Exception("O comprimento do produto " + prod.Descricao + " está zerado.");
-                
+
                 // Calcula o valor unitário
                 if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)
                     prodNf.ValorUnitario = prodNf.Total / (decimal)prodNf.Qtde;
@@ -2130,7 +2178,7 @@ namespace Glass.Data.DAL
 
             #region Parcelas
 
-            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista && 
+            if (!nf.Consumidor && nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista &&
                 PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.BoletoBancario))
                 throw new Exception("A nota fiscal não pode ser à vista e ter forma de pagamento boleto.");
 
@@ -2531,7 +2579,7 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, ide, "dhSaiEnt", nf.DataSaidaEnt.Value.ToString("yyyy-MM-ddTHH:mm:sszzz"));
 
                 ManipulacaoXml.SetNode(doc, ide, "tpNF", (nf.TipoDocumento - 1).ToString());
-                
+
                 var idDest = 1;
 
                 if (cfop.CodInterno[0] == '2' || cfop.CodInterno[0] == '6')
@@ -2758,7 +2806,7 @@ namespace Glass.Data.DAL
 
                         infNFe.AppendChild(dest);
                     }
-                    else if(nf.Consumidor && !string.IsNullOrEmpty(nf.Cpf) && ClienteDAO.Instance.IsConsumidorFinal((uint)cliente.IdCli))
+                    else if (nf.Consumidor && !string.IsNullOrEmpty(nf.Cpf) && ClienteDAO.Instance.IsConsumidorFinal((uint)cliente.IdCli))
                     {
                         XmlElement dest = doc.CreateElement("dest");
                         ManipulacaoXml.SetNode(doc, dest, "CPF", Formatacoes.TrataStringDocFiscal(nf.Cpf));
@@ -2825,7 +2873,7 @@ namespace Glass.Data.DAL
                     dest.AppendChild(enderDest);
 
                     ManipulacaoXml.SetNode(doc, dest, "indIEDest", ((int)indIeDest).ToString());
-                    
+
                     if (indIeDest == IndicadorIEDestinatario.ContribuinteICMS)
                     {
                         if (inscEstadual != null && (pj || produtorRural))
@@ -2872,11 +2920,11 @@ namespace Glass.Data.DAL
             // Campos usados no totalizador da nota, após somar os valores do DIFAL
             decimal totalIcmsUFDestino = 0;
             decimal totalIcmsUFRemetente = 0;
-            decimal totalOutrasDespesasAplicado = 0;
-            decimal totalFreteAplicado = 0;
+            decimal valorFreteAplicado = 0;
+            decimal valorOutrasDespesasAplicado = 0;
+            decimal valorSeguroAplicado = 0;
             var contadorPnf = 0;
             var totalIcmsFCP = 0m;
-            decimal valorOutrasDespesasAplicado = 0;
 
             try
             {
@@ -2950,7 +2998,7 @@ namespace Glass.Data.DAL
                     if (FiscalConfig.NotaFiscalConfig.ConcatenarPrimeiraLetraBeneficiamentoCodigoProduto)
                     {
                         var caracteresBeneficiamento = new List<char>();
-                        
+
                         // Percorre todos os beneficiamentos dos produtos.
                         foreach (var produtoNfBenef in ProdutoNfBenefDAO.Instance.ObterPeloProdutoNf((int)pnf.IdProdNf))
                             // Caso a descrição do beneficiamento possua alguma informação e o caractere não tenha sido adicionado
@@ -2999,7 +3047,7 @@ namespace Glass.Data.DAL
 
                         if (cest == null)
                             throw new Exception(string.Format("CEST não encontrado. Verifique o Produto {0} - {1}", produtoOriginal.CodInterno, produtoOriginal.Descricao));
-                        
+
                         ManipulacaoXml.SetNode(doc, prod, "CEST", cest.Codigo);
                     }
 
@@ -3013,37 +3061,63 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, prod, "qTrib", Formatacoes.TrataValorDecimal(qtdPnfTrib, 4));
                     ManipulacaoXml.SetNode(doc, prod, "vUnTrib", Formatacoes.TrataValorDecimal(valorUnitTrib, 10));
 
-                    // Trata o valor de frete do produto, no XML, para que não ocorra diferença entre o somatório de frete dos produtos com o total de frete da nota.
-                    if (nf.ValorFrete > 0 && Formatacoes.TrataValorDecimal(pnf.ValorFrete, 2) != "0.00")
+                    if (nf.ValorFrete > 0)
                     {
-                        /* Chamado 63752. */
-                        var valorFrete = Math.Round(pnf.ValorFrete, 2);
-                        totalFreteAplicado += valorFrete;
-
-                        if (contadorPnf == lstProdNf.Count() && Math.Abs(nf.ValorFrete - totalFreteAplicado) <= (decimal)0.3)
-                            valorFrete += (nf.ValorFrete - totalFreteAplicado);
-
-                        ManipulacaoXml.SetNode(doc, prod, "vFrete", Formatacoes.TrataValorDecimal(valorFrete, 2));
-                    }
-
-                    if (nf.ValorSeguro > 0) ManipulacaoXml.SetNode(doc, prod, "vSeg", Formatacoes.TrataValorDecimal(pnf.ValorSeguro, 2));
-                    if (Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2) != "0.00") ManipulacaoXml.SetNode(doc, prod, "vDesc", Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2));
-
-                    if (nf.OutrasDespesas > 0)
-                    {
-                        decimal valorOutraDespesasProduto = 0;
+                        decimal valorFreteProduto = 0;
 
                         if (contadorPnf < lstProdNf.Count())
                         {
-                            valorOutraDespesasProduto = Math.Round(nf.OutrasDespesas / lstProdNf.Count(), 2);
+                            valorFreteProduto = Math.Round(nf.ValorFrete / lstProdNf.Count(), 2);
                         }
                         else
                         {
-                            valorOutraDespesasProduto = nf.OutrasDespesas - valorOutrasDespesasAplicado;
+                            valorFreteProduto = nf.ValorFrete - valorFreteAplicado;
                         }
 
-                        valorOutrasDespesasAplicado += valorOutraDespesasProduto;
-                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutraDespesasProduto, 2));
+                        valorFreteAplicado += valorFreteProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vFrete", Formatacoes.TrataValorDecimal(valorFreteProduto, 2));
+                    }
+
+                    if (nf.ValorSeguro > 0)
+                    {
+                        decimal valorSeguroProduto = 0;
+
+                        if (contadorPnf < lstProdNf.Count())
+                        {
+                            valorSeguroProduto = Math.Round(nf.ValorSeguro / lstProdNf.Count(), 2);
+                        }
+                        else
+                        {
+                            valorSeguroProduto = nf.ValorFrete - valorSeguroAplicado;
+                        }
+
+                        valorSeguroAplicado += valorSeguroProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vSeg", Formatacoes.TrataValorDecimal(valorSeguroProduto, 2));
+                    }
+
+                    if (Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2) != "0.00")
+                    {
+                        ManipulacaoXml.SetNode(doc, prod, "vDesc", Formatacoes.TrataValorDecimal(pnf.ValorDesconto, 2));
+                    }
+
+                    if (nf.OutrasDespesas > 0)
+                    {
+                        decimal valorOutrasDespesasProduto = 0;
+
+                        if (contadorPnf < lstProdNf.Count())
+                        {
+                            valorOutrasDespesasProduto = Math.Round(nf.OutrasDespesas / lstProdNf.Count(), 2);
+                        }
+                        else
+                        {
+                            valorOutrasDespesasProduto = nf.OutrasDespesas - valorOutrasDespesasAplicado;
+                        }
+
+                        valorOutrasDespesasAplicado += valorOutrasDespesasProduto;
+
+                        ManipulacaoXml.SetNode(doc, prod, "vOutro", Formatacoes.TrataValorDecimal(valorOutrasDespesasProduto, 2));
                     }
 
                     ManipulacaoXml.SetNode(doc, prod, "indTot", nf.TotalProd == 0 && nfeComplAjuste ? "0" : "1"); // Indica se o valor do item compões a NF, 0-Não Compõe, 1-Compõe
@@ -3104,7 +3178,7 @@ namespace Glass.Data.DAL
                         XmlElement detExport = doc.CreateElement("detExport");
                         ManipulacaoXml.SetNode(doc, detExport, "nDraw", Formatacoes.TrataStringDocFiscal(pnf.NumACDrawback));
 
-                        if(!string.IsNullOrWhiteSpace(pnf.NumRegExportacao) || !string.IsNullOrWhiteSpace(pnf.ChaveAcessoExportacao) || pnf.QtdeExportada > 0)
+                        if (!string.IsNullOrWhiteSpace(pnf.NumRegExportacao) || !string.IsNullOrWhiteSpace(pnf.ChaveAcessoExportacao) || pnf.QtdeExportada > 0)
                         {
                             XmlElement exportInd = doc.CreateElement("exportInd");
 
@@ -3126,7 +3200,7 @@ namespace Glass.Data.DAL
                     // Insere o total de tributos no XML, conforme lei da transparência
                     if (pnf.ValorTotalTrib > 0)
                         ManipulacaoXml.SetNode(doc, imposto, "vTotTrib", Formatacoes.TrataValorDecimal(pnf.ValorTotalTrib, 2));
-                    
+
                     #region ICMS
 
                     XmlElement icms = doc.CreateElement("ICMS");
@@ -3754,12 +3828,12 @@ namespace Glass.Data.DAL
 
                     #region DIFAL
 
-                    if (pnf.IdNaturezaOperacao > 0 &&
-                        NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool?>("CalcularDifal",
-                            string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao)).GetValueOrDefault())
+                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", $"IdNaturezaOperacao={ pnf.IdNaturezaOperacao }");
+
+                    if (pnf.IdNaturezaOperacao > 0 && naturezaCalculaDifal)
                     {
-                        var codigoCfop =
-                            CfopDAO.Instance.ObtemCodInterno(NaturezaOperacaoDAO.Instance.ObtemIdCfop(pnf.IdNaturezaOperacao.Value)).Substring(0, 1);
+                        var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(pnf.IdNaturezaOperacao.Value);
+                        var codigoCfop = CfopDAO.Instance.ObtemCodInterno(idCfop)?.Substring(0, 1) ?? string.Empty;
 
                         // Salva as tags do DIFAL somente se o CFOP for interestadual.
                         if (codigoCfop == "2" || codigoCfop == "6")
@@ -3768,76 +3842,22 @@ namespace Glass.Data.DAL
 
                             if (notaFiscal.IdCliente > 0)
                             {
-                                var idCidadeCliente =
-                                    ClienteDAO.Instance.ObtemValorCampo<int?>("IdCidade",
-                                        string.Format("Id_Cli={0}", notaFiscal.IdCliente));
-                                var nomeUfDestino =
-                                    CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF",
-                                        string.Format("IdCidade={0}", idCidadeCliente));
-
+                                var idCidadeCliente = ClienteDAO.Instance.ObtemValorCampo<int?>("IdCidade", string.Format("Id_Cli={0}", notaFiscal.IdCliente));
+                                var nomeUfDestino = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF", string.Format("IdCidade={0}", idCidadeCliente));
                                 var idCidadeLoja = LojaDAO.Instance.ObtemIdCidade(notaFiscal.IdLoja.Value);
-                                var nomeUfOrigem =
-                                    CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF",
-                                        string.Format("IdCidade={0}", idCidadeLoja));
-
+                                var nomeUfOrigem = CidadeDAO.Instance.ObtemValorCampo<string>("NomeUF", string.Format("IdCidade={0}", idCidadeLoja));
                                 var idTipoCliente = ClienteDAO.Instance.ObtemIdTipoCliente(notaFiscal.IdCliente.Value);
-
                                 var dadosIcms = IcmsProdutoUfDAO.Instance.ObtemPorProduto(null, pnf.IdProd, nomeUfOrigem, nomeUfDestino, idTipoCliente);
 
                                 if (dadosIcms == null)
-                                    throw new Exception(
-                                        string.Format("A natureza de operação associada ao produto {0} está marcada para calcular DIFAL, portanto, informe as alíquotas de ICMS no cadastro do produto.",
-                                            ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
+                                {
+                                    var codInternoProd = ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd);
+                                    throw new Exception($"A natureza de operação, associada ao produto { codInternoProd }, está marcada para calcular DIFAL. Portanto, informe as alíquotas de ICMS no cadastro do produto.");
+                                }
 
-                                var origemSulSudesteExcetoES =
-                                    nomeUfOrigem.ToUpper().Contains("MG") ||
-                                    nomeUfOrigem.ToUpper().Contains("PR") ||
-                                    nomeUfOrigem.ToUpper().Contains("RJ") ||
-                                    nomeUfOrigem.ToUpper().Contains("RS") ||
-                                    nomeUfOrigem.ToUpper().Contains("SC") ||
-                                    nomeUfOrigem.ToUpper().Contains("SP");
-
-                                var destinoNorteNordesteCentroOesteES =
-                                    nomeUfDestino.ToUpper().Contains("AC") ||
-                                    nomeUfDestino.ToUpper().Contains("AL") ||
-                                    nomeUfDestino.ToUpper().Contains("AM") ||
-                                    nomeUfDestino.ToUpper().Contains("AP") ||
-                                    nomeUfDestino.ToUpper().Contains("BA") ||
-                                    nomeUfDestino.ToUpper().Contains("CE") ||
-                                    nomeUfDestino.ToUpper().Contains("DF") ||
-                                    nomeUfDestino.ToUpper().Contains("ES") ||
-                                    nomeUfDestino.ToUpper().Contains("GO") ||
-                                    nomeUfDestino.ToUpper().Contains("MA") ||
-                                    nomeUfDestino.ToUpper().Contains("MS") ||
-                                    nomeUfDestino.ToUpper().Contains("MT") ||
-                                    nomeUfDestino.ToUpper().Contains("PA") ||
-                                    nomeUfDestino.ToUpper().Contains("PB") ||
-                                    nomeUfDestino.ToUpper().Contains("PE") ||
-                                    nomeUfDestino.ToUpper().Contains("PI") ||
-                                    nomeUfDestino.ToUpper().Contains("RN") ||
-                                    nomeUfDestino.ToUpper().Contains("RO") ||
-                                    nomeUfDestino.ToUpper().Contains("RR") ||
-                                    nomeUfDestino.ToUpper().Contains("SE") ||
-                                    nomeUfDestino.ToUpper().Contains("TO");
-
-                                var percentualIcmsInterestadual =
-                                    pnf.CstOrig == 1 ? 4 :
-                                        origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
-
-                                var valorDifal =
-                                    (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) -
-                                    (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
-
-                                var percentualIcmsUFDestino =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
-
-                                var percentualIcmsUFRemetente =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
-
+                                var valorDifal = pnf.BcIcms * ((decimal)dadosIcms.AliquotaInterestadual / 100);
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 1;
+                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 var valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 var valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
@@ -3851,16 +3871,9 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
-                                    DateTime.Now.Year == 2016 ?
-                                        Formatacoes.TrataValorDecimal(40, 2) :
-                                        DateTime.Now.Year == 2017 ?
-                                            Formatacoes.TrataValorDecimal(60, 2) :
-                                            DateTime.Now.Year == 2018 ?
-                                                Formatacoes.TrataValorDecimal(80, 2) :
-                                                Formatacoes.TrataValorDecimal(100, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal((percentualIcmsUFDestino * 100), 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
@@ -3915,7 +3928,7 @@ namespace Glass.Data.DAL
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFDest", Formatacoes.TrataValorDecimal(totalIcmsUFDestino, 2));
                     ManipulacaoXml.SetNode(doc, icmsTot, "vICMSUFRemet", Formatacoes.TrataValorDecimal(totalIcmsUFRemetente, 2));
                 }
-                
+
                 // FCP
                 ManipulacaoXml.SetNode(doc, icmsTot, "vFCP", Formatacoes.TrataValorDecimal(nf.ValorFcp, 2));
                 ManipulacaoXml.SetNode(doc, icmsTot, "vBCST", Formatacoes.TrataValorDecimal(nf.BcIcmsSt, 2)); // Verificar
@@ -4024,7 +4037,7 @@ namespace Glass.Data.DAL
                         for (int i = 0; i < lstParcNf.Length; i++)
                         {
                             XmlElement dup = doc.CreateElement("dup");
-                            ManipulacaoXml.SetNode(doc, dup, "nDup", i.ToString().PadLeft(3, '0'));
+                            ManipulacaoXml.SetNode(doc, dup, "nDup", (i + 1).ToString().PadLeft(3, '0'));
                             ManipulacaoXml.SetNode(doc, dup, "dVenc", lstParcNf[i].Data.Value.ToString("yyyy-MM-dd"));
                             ManipulacaoXml.SetNode(doc, dup, "vDup", Formatacoes.TrataValorDecimal(lstParcNf[i].Valor, 2));
                             cobr.AppendChild(dup);
@@ -4067,7 +4080,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if(pagamentosNfe != null && pagamentosNfe.Any() && pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
+            if (pagamentosNfe != null && pagamentosNfe.Any() && pagamentosNfe.Sum(f => f.Valor) > nf.TotalNota)
                 ManipulacaoXml.SetNode(doc, pag, "vTroco", Formatacoes.TrataValorDecimal(pagamentosNfe.Sum(f => f.Valor) - nf.TotalNota, 2));
 
             #endregion
@@ -4088,7 +4101,7 @@ namespace Glass.Data.DAL
 
                 else if (nf.ValorTotalTrib > 0 && !nf.Consumidor)
                     nf.InfCompl += (!String.IsNullOrEmpty(nf.InfCompl) ? " " : "") + "Valor aproximado dos tributos: " + nf.ValorTotalTrib.ToString("C");
-                
+
                 var mensagemNaturezasOperacao = nf.MensagemNaturezasOperacao;
                 if (!String.IsNullOrEmpty(mensagemNaturezasOperacao))
                     nf.InfCompl += (!String.IsNullOrEmpty(nf.InfCompl) ? " " : "") + mensagemNaturezasOperacao;
@@ -4308,7 +4321,7 @@ namespace Glass.Data.DAL
             try
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
-
+                
                 #region Verificações para emissão assíncrona
 
                 if (loja.Uf.ToUpper() == "BA" || loja.Uf.ToUpper() == "SP")
@@ -4393,7 +4406,7 @@ namespace Glass.Data.DAL
 
                     if (!nf.Consumidor)
                         throw new Exception("Apenas notas fiscais de consumidor (NFC-e) podem ser emitidas em contingência offline.");
-                    
+
                     var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(nf.IdNaturezaOperacao.GetValueOrDefault(0));
                     var cfop = CfopDAO.Instance.ObtemCodInterno(idCfop);
 
@@ -5119,7 +5132,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Retorno de cancelamento da NF-e
-        
+
         /// <summary>
         /// Retorno do cancelamento da NF-e, grava log e altera situação da NF-e
         /// </summary>
@@ -5579,8 +5592,8 @@ namespace Glass.Data.DAL
         private string SqlPorSituacao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
-            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, string lote, bool selecionar)
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
+            string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
                 " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
@@ -5978,7 +5991,7 @@ namespace Glass.Data.DAL
 
             return LoadDataWithSortExpression(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, lote, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -5990,7 +6003,7 @@ namespace Glass.Data.DAL
         {
             return objPersistence.ExecuteSqlQueryCount(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, lote, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
@@ -5998,11 +6011,11 @@ namespace Glass.Data.DAL
         public List<uint> GetListPorSituacaoAjax(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
         {
             return objPersistence.LoadResult(SqlPorSituacao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, null, 0, false, false, null, true),
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, null, 0, false, false, true),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, null, null))
                 .Select(f => f.GetUInt32(0))
@@ -7477,7 +7490,12 @@ namespace Glass.Data.DAL
 
         public DateTime? ObtemDataEntradaSaida(uint idNf)
         {
-            return ObtemValorCampo<DateTime?>("dataSaidaEnt", "idNf=" + idNf);
+            return ObtemDataEntradaSaida(null, idNf);
+        }
+
+        public DateTime? ObtemDataEntradaSaida(GDASession session, uint idNf)
+        {
+            return ObtemValorCampo<DateTime?>(session, "DataSaidaEnt", $"IdNf={ idNf }");
         }
 
         /// <summary>
@@ -7957,7 +7975,7 @@ namespace Glass.Data.DAL
                 ") or n.serie<>'U' or n.serie is null) and n.idNf=" + idNf;
 
             string sql = "update nota_fiscal n set ";
-              
+
             // Calcula o valor total dos produtos, o Round deve ficar dentro da função Sum, para que não ocorram problema de R$0,01
             // do somatório dos produtos da nota com o que é exibido no DANFE
             sql += "TotalProd=Round((Select Sum(Round(pn.Total, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
@@ -8139,7 +8157,7 @@ namespace Glass.Data.DAL
                             throw new Exception("Informe a natureza de operação de todos os produtos da nota fiscal.");
 
                         #region Impede a finalização da NFe caso o CSOSN ou CST não tenham sido informados
-                        
+
                         var crt = LojaDAO.Instance.BuscaCrtLoja(transaction, nf.IdLoja.GetValueOrDefault());
                         var cst = false;
                         var csosn = false;
@@ -8254,10 +8272,10 @@ namespace Glass.Data.DAL
 
                         // Se as parcelas tiverem sido configuradas manualmente
                         // Se a forma de pagamento for à Prazo, ou se for outros e não houver pagamento em dinheiro, e sem pagamento.
-                        if (nf.FormaPagto == 2 || (nf.FormaPagto == 3 && 
+                        if (nf.FormaPagto == 2 || (nf.FormaPagto == 3 &&
                             !PagtoNotaFiscalDAO.Instance.ObtemPagamentos(null, (int)idNf).Any(p => p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.Dinheiro || p.FormaPagto == (int)FormaPagtoNotaFiscalEnum.SemPagamento)))
                         {
-                            if(nf.DatasParcelas.Distinct().Count() < nf.NumParc)
+                            if (nf.DatasParcelas.Distinct().Count() < nf.NumParc)
                                 throw new Exception("As parcelas precisam ter datas distintas.");
 
                             if (nf.NumParc <= FiscalConfig.NotaFiscalConfig.NumeroParcelasNFe)
@@ -8514,7 +8532,7 @@ namespace Glass.Data.DAL
                             }
                             else if (nf.TipoDocumento == (int)NotaFiscal.TipoDoc.NotaCliente)
                             {
-                                if(!EstoqueConfig.ControlarEstoqueVidrosClientes)
+                                if (!EstoqueConfig.ControlarEstoqueVidrosClientes)
                                 {
                                     var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
                                     logMovNotaFiscal.IdNf = nf.IdNf;
@@ -8534,7 +8552,7 @@ namespace Glass.Data.DAL
                             // Credita o estoque real
                             if (nf.GerarEstoqueReal && !EstoqueConfig.EntradaEstoqueManual)
                             {
-                                if(!MovEstoqueDAO.Instance.AlteraEstoque(transaction, p.IdProd))
+                                if (!MovEstoqueDAO.Instance.AlteraEstoque(transaction, p.IdProd))
                                 {
                                     var logMovNotaFiscal = new LogMovimentacaoNotaFiscal();
                                     logMovNotaFiscal.IdNf = nf.IdNf;
@@ -9120,6 +9138,9 @@ namespace Glass.Data.DAL
                     objInsert.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(sessao, objInsert.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                     throw new Exception("O cliente selecionado está inativado.");
 
+                if (objInsert.IdCliente > 0 && string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(sessao, objInsert.IdCliente.Value).Replace("/", "")))
+                    throw new Exception("O cliente não possui Cidade/UF informado no seu cadastro.");
+
                 // Não permite inserir notas para fornecedores inativos
                 if (objInsert.IdFornec > 0 && FornecedorDAO.Instance.GetSituacao(sessao, objInsert.IdFornec.Value) != (int)SituacaoFornecedor.Ativo)
                     throw new Exception("O fornecedor selecionado está inativado.");
@@ -9147,7 +9168,7 @@ namespace Glass.Data.DAL
                 if (objInsert.FinalidadeEmissao == 0)
                 {
                     var cfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(sessao, objInsert.IdNaturezaOperacao.GetValueOrDefault());
-                    if (CfopDAO.Instance.IsCfopDevolucao(cfop))
+                    if (CfopDAO.Instance.IsCfopDevolucao(sessao, cfop))
                         objInsert.FinalidadeEmissao = (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
                     else
                         objInsert.FinalidadeEmissao = (int)NotaFiscal.FinalidadeEmissaoEnum.Normal;
@@ -9160,7 +9181,7 @@ namespace Glass.Data.DAL
                         objInsert.IdCidade = LojaDAO.Instance.ObtemValorCampo<uint>(sessao, "idCidade", "idLoja=" + objInsert.IdLoja);
                     else if (objInsert.TipoDocumento == (int)NotaFiscal.TipoDoc.EntradaTerceiros || objInsert.TipoDocumento == (int)NotaFiscal.TipoDoc.NotaCliente)
                     {
-                        if (CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(sessao, objInsert.IdNaturezaOperacao.GetValueOrDefault())))
+                        if (CfopDAO.Instance.IsCfopDevolucao(sessao, NaturezaOperacaoDAO.Instance.ObtemIdCfop(sessao, objInsert.IdNaturezaOperacao.GetValueOrDefault())))
                             objInsert.IdCidade = ClienteDAO.Instance.ObtemValorCampo<uint>(sessao, "idCidade", "id_Cli=" + objInsert.IdCliente.GetValueOrDefault());
                         else
                             objInsert.IdCidade = FornecedorDAO.Instance.ObtemValorCampo<uint>(sessao, "idCidade", "idFornec=" + objInsert.IdFornec.GetValueOrDefault());
@@ -9202,7 +9223,7 @@ namespace Glass.Data.DAL
                     throw new Exception("A data de saída/entrada não pode ser inferior à data de emissão.");
 
                 //Verifica se o cfop pode ser utilizado na nota fiscal
-                if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objInsert.IdNaturezaOperacao.GetValueOrDefault(0), objInsert.TipoDocumento))
+                if (!NaturezaOperacaoDAO.Instance.ValidarCfop(sessao, (int)objInsert.IdNaturezaOperacao.GetValueOrDefault(), objInsert.TipoDocumento))
                     throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
 
                 objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
@@ -9216,7 +9237,7 @@ namespace Glass.Data.DAL
                     && ClienteDAO.Instance.IsConsumidorFinal(sessao, objInsert.IdCliente.GetValueOrDefault(0)) && !string.IsNullOrEmpty(objInsert.CpfCnpjDestRem))
                     objInsert.Cpf = objInsert.CpfCnpjDestRem;
 
-                var idNotaFiscal =  base.Insert(sessao, objInsert);
+                var idNotaFiscal = base.Insert(sessao, objInsert);
 
                 #region Informações de Pagamento
 
@@ -9281,11 +9302,14 @@ namespace Glass.Data.DAL
 
             if ((old.TipoDocumento == (int)NotaFiscal.TipoDoc.Entrada || old.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída) && objUpdate.IdLoja != old.IdLoja)
                 throw new Exception("A loja da nota não pode ser alterada depois da mesma já ter sido inserida");
-            
+
             // Não permite inserir notas para clientes inativos
             if (!Configuracoes.FiscalConfig.NotaFiscalConfig.PermitirEmitirNotaParaClienteBloqueadoOuInativo &&
                 objUpdate.IdCliente > 0 && ClienteDAO.Instance.GetSituacao(objUpdate.IdCliente.Value) != (int)SituacaoCliente.Ativo)
                 throw new Exception("O cliente selecionado está inativo.");
+
+            if (objUpdate.IdCliente > 0 && string.IsNullOrWhiteSpace(ClienteDAO.Instance.ObtemCidadeUf(objUpdate.IdCliente.Value).Replace("/", "")))
+                throw new Exception("O cliente não possui Cidade/UF informado no seu cadastro.");
 
             // Verifica se a data de saída é menor que a data de emissão da nota
             if (objUpdate.DataSaidaEnt != null && objUpdate.DataSaidaEnt.Value == objUpdate.DataEmissao)
@@ -9400,6 +9424,11 @@ namespace Glass.Data.DAL
 
                     for (int i = 0; i < objUpdate.NumParc; i++)
                     {
+                        if (objUpdate.DatasParcelas[i] == DateTime.MinValue)
+                        {
+                            throw new Exception("Informe uma data valida para as parcelas da Nota Fiscal");
+                        }
+
                         parcela.Valor = objUpdate.ValoresParcelas[i];
                         parcela.Data = objUpdate.DatasParcelas[i];
                         parcela.NumBoleto = objUpdate.BoletosParcelas != null && objUpdate.BoletosParcelas.Length > 0 ? objUpdate.BoletosParcelas[i] : null;
@@ -9528,7 +9557,7 @@ namespace Glass.Data.DAL
 
             var nfReferencia = NotaFiscalDAO.Instance.ExecuteScalar<string>(sessao, string.Format("SELECT numeronfe FROM nota_fiscal WHERE idsnfref LIKE '%{0}%'", idNf));
 
-            if(!string.IsNullOrEmpty(nfReferencia))
+            if (!string.IsNullOrEmpty(nfReferencia))
                 throw new Exception("Esta nota fiscal não pode ser excluída pois existem notas fiscais referenciando a mesma.\nNotas:" + nfReferencia);
 
             try
@@ -9568,7 +9597,7 @@ namespace Glass.Data.DAL
             if (informacaoCompl.Contains(observacaoNova))
                 return false;
 
-           return true;
+            return true;
         }
 
         #endregion
@@ -9578,7 +9607,7 @@ namespace Glass.Data.DAL
         public List<NotaFiscal> ObtemAutorizadasFinalizadas()
         {
             string sql = SqlPorSituacao(0, 0, 0, null, 0, 0, null, 0, 0, null, null, "2,13", 0, null, null, null, null, null, null, 0, null, 0, 0, 0,
-                null, null, null, null, null, null, 0, false, false, null, true);
+                null, null, null, null, null, null, null, 0, false, false, true);
             return objPersistence.LoadData(sql).ToList();
         }
 
@@ -9798,71 +9827,82 @@ namespace Glass.Data.DAL
         /// </summary>
         private uint TransfereNFeBanco(GDASession session, uint idNf, uint idNaturezaOperacaoDestino, Dictionary<uint, uint> dicNaturezaOperacaoProdDestino)
         {
-            /* Chamado 52139. */
-            using (var transactionTransferencia = new GDATransaction(GDASettings.GetProviderConfiguration("Notas")))
+            using (var transactionTransf = new GDATransaction(GDASettings.GetProviderConfiguration("Notas")))
             {
                 try
                 {
-                    transactionTransferencia.BeginTransaction();
+                    transactionTransf.BeginTransaction();
 
                     var nf = GetElement(session, idNf);
                     var prods = ProdutosNfDAO.Instance.GetByNf(session, idNf);
                     var parcelas = ParcelaNfDAO.Instance.GetByNf(session, idNf);
-                    var idLoja = LojaDAO.Instance.GetLojaByCNPJIE(transactionTransferencia, "06.915.743/0001-78", null, false).StrParaUint();
+                    var idLoja = LojaDAO.Instance.GetLojaByCNPJIE(transactionTransf, "06.915.743/0001-78", null, false).StrParaUint();
 
                     if (idLoja == 0)
                         throw new Exception("A loja para exportação não foi encontrada.");
 
                     nf.IdLoja = idLoja;
+
                     if (nf.IdCliente > 0)
-                        nf.IdCliente = ClienteDAO.Instance.ObterIdPorCpfCnpj(transactionTransferencia, nf.CpfCnpjDestRem);
+                    {
+                        nf.IdCliente = ClienteDAO.Instance.ObterIdPorCpfCnpj(transactionTransf, nf.CpfCnpjDestRem);
+                    }
+
                     if (nf.IdFornec > 0)
-                        nf.IdFornec = FornecedorDAO.Instance.ObterIdPorCpfCnpj(transactionTransferencia, nf.CpfCnpjDestRem);
-                    nf.NumeroNFe = ProxNumeroNFe(transactionTransferencia, nf.IdLoja.GetValueOrDefault(), nf.Serie.StrParaInt());
+                    {
+                        nf.IdFornec = FornecedorDAO.Instance.ObterIdPorCpfCnpj(transactionTransf, nf.CpfCnpjDestRem);
+                    }
+
+                    nf.NumeroNFe = ProxNumeroNFe(transactionTransf, nf.IdLoja.GetValueOrDefault(), nf.Serie.StrParaInt());
 
                     //Caso não tenha selecionado a natureza da operação
                     if (idNaturezaOperacaoDestino == 0)
                     {
                         // Recupera os dados do CFOP e natureza de operação do sistema de origem.
-                        var codInternoCfopOrigem = CfopDAO.Instance.ObtemCodInterno(nf.IdCfop.GetValueOrDefault(0));
-                        var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(nf.IdNaturezaOperacao.GetValueOrDefault(0));
+                        var codInternoCfopOrigem = CfopDAO.Instance.ObtemCodInterno(session, nf.IdCfop.GetValueOrDefault());
+                        var codInternoNatOpOrigem = NaturezaOperacaoDAO.Instance.ObtemCodigoInterno(session, nf.IdNaturezaOperacao.GetValueOrDefault());
 
                         // Recupera os dados de CFOP e natureza de operação do sistema de destino.
-                        var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(transactionTransferencia, codInternoCfopOrigem);
-                        idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(transactionTransferencia, idCfopDestino, codInternoNatOpOrigem);
+                        var idCfopDestino = CfopDAO.Instance.ObtemIdCfop(transactionTransf, codInternoCfopOrigem);
+                        idNaturezaOperacaoDestino = NaturezaOperacaoDAO.Instance.ObtemIdNatOpPorCfopCodInterno(transactionTransf, idCfopDestino, codInternoNatOpOrigem);
                     }
 
                     nf.IdNaturezaOperacao = idNaturezaOperacaoDestino;
 
                     /* Chamado 52139. */
                     if (prods == null || prods.Count() == 0)
+                    {
                         throw new Exception("Não é possível efetuar uma transferência de nota fiscal caso a nota fiscal original não possua produtos.");
+                    }
 
-                    var novoIdNf = Insert(transactionTransferencia, nf);
+                    var novoIdNf = Insert(transactionTransf, nf);
 
                     /* Chamado 52139. */
                     if (novoIdNf == 0)
+                    {
                         throw new Exception("Não foi possível transferir a nota fiscal. Foi inserida uma nota com o mesmo cliente e " +
-                            "loja há menos de 60 segundos. Aguarde alguns segundos e tente novamente.");
+                              "loja há menos de 60 segundos. Aguarde alguns segundos e tente novamente.");
+                    }
 
                     foreach (var prod in prods)
                     {
                         prod.IdNf = novoIdNf;
-                        prod.IdProd = ProdutoDAO.Instance.ObterIdPorCodInterno(transactionTransferencia, prod.CodInterno);
+                        prod.IdProd = ProdutoDAO.Instance.ObterIdPorCodInterno(transactionTransf, prod.CodInterno);
                         prod.IdNaturezaOperacao = dicNaturezaOperacaoProdDestino[prod.IdProdNf];
+                        prod.Csosn = NaturezaOperacaoDAO.Instance.ObterCsosn(transactionTransf, (int?)prod.IdNaturezaOperacao ?? 0);
                         // Necessário zerar para não atualizar um produtoNF antigo no método calcular imposto executado antes de Insert.
                         prod.IdProdNf = 0;
-                        ProdutosNfDAO.Instance.Insert(transactionTransferencia, prod);
+                        ProdutosNfDAO.Instance.Insert(transactionTransf, prod);
                     }
 
                     foreach (var parc in parcelas)
                     {
                         parc.IdNf = novoIdNf;
-                        ParcelaNfDAO.Instance.Insert(transactionTransferencia, parc);
+                        ParcelaNfDAO.Instance.Insert(transactionTransf, parc);
                     }
 
                     /* Chamado 52139. */
-                    LogNfDAO.Instance.NewLog(transactionTransferencia, nf.IdNf, "Transferência NF-e", 0, "Transferência efetuada com sucesso.");
+                    LogNfDAO.Instance.NewLog(transactionTransf, nf.IdNf, "Transferência NF-e", 0, "Transferência efetuada com sucesso.");
 
                     ProdutosNfDAO.Instance.DeleteByNotaFiscal(session, idNf);
                     PedidosNotaFiscalDAO.Instance.DeleteByNotaFiscal(session, idNf);
@@ -9870,15 +9910,15 @@ namespace Glass.Data.DAL
 
                     DeleteNotaFiscal(session, idNf);
 
-                    transactionTransferencia.Commit();
-                    transactionTransferencia.Close();
+                    transactionTransf.Commit();
+                    transactionTransf.Close();
 
                     return novoIdNf;
                 }
                 catch (Exception ex)
                 {
-                    transactionTransferencia.Rollback();
-                    transactionTransferencia.Close();
+                    transactionTransf.Rollback();
+                    transactionTransf.Close();
 
                     throw new Exception("Falha ao exportar NF-e", ex);
                 }

@@ -595,13 +595,13 @@ namespace Glass.Data.Helper
             if (string.IsNullOrWhiteSpace(idAplicacao) || string.IsNullOrWhiteSpace(idPedido))
                 return;
 
-            var fastDelivery = PedidoDAO.Instance.IsFastDelivery(idPedido.StrParaUint());
+            var fastDelivery = PedidoDAO.Instance.IsFastDelivery(null, idPedido.StrParaUint());
 
             if (fastDelivery && EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(idAplicacao.StrParaUint()).NaoPermitirFastDelivery)
                 throw new Exception("Esta Aplicacao não permite fast delivery, para inserir, desmarque a opção fast delivery do pedido");
 
             var tipoPedidoApl = EtiquetaAplicacaoDAO.Instance.ObtemTipoPedido(idAplicacao.StrParaUint());
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(idPedido.StrParaUint());
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, idPedido.StrParaUint());
 
             if (string.IsNullOrEmpty(tipoPedidoApl) || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 return;
@@ -656,7 +656,7 @@ namespace Glass.Data.Helper
         public static void VerificaEtiquetaProcesso(string idProcesso, string idPedido)
         {
             var tipoPedidoProc = EtiquetaProcessoDAO.Instance.ObtemTipoPedido(idProcesso.StrParaUint());
-            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(idPedido.StrParaUint());
+            var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, idPedido.StrParaUint());
 
             if (string.IsNullOrEmpty(tipoPedidoProc) || tipoPedido == Pedido.TipoPedidoEnum.Revenda)
                 return;
@@ -746,7 +746,7 @@ namespace Glass.Data.Helper
         public static string ObterIdNf(string numeroNFe, string idPedido, string modelo, string idLoja, string idCliente, string nomeCliente, string tipoFiscal, string idFornec,
             string nomeFornec, string codRota, string tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, string formaPagto, string idsFormaPagtoNotaFiscal, string tipoNf, string finalidade, string formaEmissao,
-            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal)
+            string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal, string lote)
         {
             try
             {
@@ -754,7 +754,7 @@ namespace Glass.Data.Helper
                     Convert.ToUInt32(idLoja), Convert.ToUInt32(idCliente), nomeCliente, Convert.ToInt32(tipoFiscal), Convert.ToUInt32(idFornec),
                     nomeFornec, codRota, Convert.ToInt32(tipoDoc), situacao, dataIni, dataFim, idsCfop, idsTiposCfop,
                     dataEntSaiIni, dataEntSaiFim, Convert.ToUInt32(formaPagto), idsFormaPagtoNotaFiscal, Convert.ToInt32(tipoNf),
-                    Convert.ToInt32(finalidade), Convert.ToInt32(formaEmissao), infCompl, codInternoProd, descrProd, valorInicial, valorFinal);
+                    Convert.ToInt32(finalidade), Convert.ToInt32(formaEmissao), infCompl, codInternoProd, descrProd, valorInicial, valorFinal, lote);
 
                 string valor = "";
                 foreach (uint n in lista)

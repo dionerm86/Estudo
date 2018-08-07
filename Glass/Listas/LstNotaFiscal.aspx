@@ -52,11 +52,12 @@
             var descrProd = FindControl("txtDescr", "input").value;
             var valorInicial = FindControl("txtValorInicial", "input").value;
             var valorFinal = FindControl("txtValorFinal", "input").value;
-         
+            var lote = FindControl("txtLote", "input").value;
+
             var retorno = MetodosAjax.ObterIdNf(numeroNfe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec,
             nomeFornec, codRota, "0", situacao, dataIni, dataFim, idsCfop, tiposCfop, dataEntSaiIni, dataEntSaiFim,
             formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao, infCompl, codInternoProd, descrProd,
-            valorInicial, valorFinal).value;
+            valorInicial, valorFinal, lote).value;
         
             //var campoIdNf = document.getElementById("campoIdNf");
             //
@@ -1032,6 +1033,7 @@
                         <asp:ControlParameter ControlID="txtInfCompl" Name="infCompl" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtCodProd" Name="codInternoProd" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtDescr" Name="descrProd" PropertyName="Text" Type="String" />
+                        <asp:ControlParameter ControlID="txtLote" Name="lote" PropertyName="Text" Type="String" />                        
                         <asp:ControlParameter ControlID="txtValorInicial" Name="valorInicial" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="txtValorFinal" Name="valorFinal" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="drpOrdenar" Name="ordenar" PropertyName="SelectedValue" Type="Int32" />

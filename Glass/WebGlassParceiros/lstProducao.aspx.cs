@@ -6,6 +6,7 @@ using System.Drawing;
 using Glass.Data.Model;
 using Glass.Data.ItemTemplates;
 using Glass.Configuracoes;
+using System.Collections.Generic;
 
 namespace Glass.UI.Web.WebGlassParceiros
 {
@@ -124,18 +125,36 @@ namespace Glass.UI.Web.WebGlassParceiros
     
             if (ProducaoConfig.TelaConsulta.ExibirNumeroEtiquetaNoInicioDaTabela)
                 QTD_COLUNAS_FINAL_GRID--;
-    
-            int numeroColuna = 0;
-            for (int i = 0; i < Data.Helper.Utils.GetSetores.Length; i++)
+
+            var numeroColuna = 0;
+            var setores = Data.Helper.Utils.GetSetores;
+
+            for (var i = 0; i < (setores?.Length).GetValueOrDefault(); i++)
             {
-                if (!Data.Helper.Utils.GetSetores[i].ExibirRelatorio)
+                if (!setores[i].ExibirRelatorio)
+                {
                     continue;
-    
-                ((TemplateField)grdPecas.Columns[QTD_COLUNAS_GRID + numeroColuna]).ItemTemplate = new MultipleItemTemplate(
-                    new MultipleItemTemplate.Item("VetDataLeitura[" + numeroColuna + "]", null),
-                    Data.Helper.Utils.GetSetores[i].Corte && PCPConfig.Etiqueta.UsarControleChapaCorte ? new MultipleItemTemplate.Item("NumEtiquetaChapa", null, typeof(string), "<br /><b>Chapa: {0}</b>", "", "", "TemLeitura[" + numeroColuna + "]") : null,
-                    Data.Helper.Utils.GetSetores[i].Corte && PCPConfig.Etiqueta.UsarControleChapaCorte ? new MultipleItemTemplate.Item("NumeroNFeChapa", null, typeof(string), "<i> NFe: {0}</i>", "", "", "TemLeitura[" + numeroColuna + "]") : null);
-    
+                }
+
+                var itens = new List<MultipleItemTemplate.Item>()
+                {
+                    new MultipleItemTemplate.Item($"VetDataLeitura[{ numeroColuna }]", string.Empty)
+                };
+                
+                if (lstSetor[i].Corte && PCPConfig.Etiqueta.UsarControleChapaCorte)
+                {
+                    var acrescimoLabel = $"[{ numeroColuna }]";
+                    var visibilidadeLabel = $"TemLeitura[{ numeroColuna }]";
+
+                    itens.AddRange(new[]
+                    {
+                        new MultipleItemTemplate.Item("NumEtiquetaChapa", acrescimoLabel, typeof(string), "<br /><b>Matéria-prima: {0}</b>", string.Empty, string.Empty, visibilidadeLabel),
+                        new MultipleItemTemplate.Item("NumeroNFeChapa", acrescimoLabel, typeof(string), "<i> NFe: {0}</i>", string.Empty, string.Empty, visibilidadeLabel)
+                    });
+                }
+
+                ((TemplateField)grdPecas.Columns[QTD_COLUNAS_GRID + numeroColuna]).ItemTemplate = new MultipleItemTemplate(itens.ToArray());
+
                 numeroColuna++;
             }
         }

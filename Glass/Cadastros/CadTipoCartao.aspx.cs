@@ -23,6 +23,10 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("~/Listas/LstTipoCartao.aspx");
 
                 drpCartao.SelectedValue = idTipoCartao.ToString();
+
+                var situacaoTipoCartao = TipoCartaoCreditoDAO.Instance.ObtemSituacaoTipoCartao((uint)idTipoCartao);
+                drpSituacao.SelectedValue = situacaoTipoCartao.ToString();
+
                 CarregaPlanoContas(idTipoCartao);
 
                 if (!UserInfo.GetUserInfo.IsAdminSync)
@@ -85,7 +89,7 @@ namespace Glass.UI.Web.Cadastros
                var contaAntiga = AssocContaBancoDAO.Instance.GetContaBancoCartao(idTipoCartao, idLoja);
 
                 AssocContaBancoDAO.Instance.AtualizarTipoCartao(idTipoCartao, idContaBanco, chkBloquearContaBanco.Checked, drpLoja.SelectedValue.StrParaUint());
-                LogAlteracaoDAO.Instance.LogTipoCartao(null, (int)idTipoCartao, (int)idLoja, ContaBancoDAO.Instance.GetDescricao(contaAntiga.IdContaBanco), ContaBancoDAO.Instance.GetDescricao(idContaBanco.GetValueOrDefault(0)));
+                LogAlteracaoDAO.Instance.LogTipoCartaoJurosParcelas(null, (int)idTipoCartao, (int)idLoja, ContaBancoDAO.Instance.GetDescricao(contaAntiga.IdContaBanco), ContaBancoDAO.Instance.GetDescricao(idContaBanco.GetValueOrDefault(0)));
 
                 MensagemAlerta.ShowMsg("Conta bancária associada ao cartão.", Page);
                 drpTipoCartao_SelectedIndexChanged(sender, e);
@@ -161,7 +165,7 @@ namespace Glass.UI.Web.Cadastros
                     JurosParcelaCartaoDAO.Instance.AlteraJurosParc(idTipoCartao, idLoja, i + 1, juros);
                 }
 
-                TipoCartaoCreditoDAO.Instance.AtualizaLog(null, (int)idTipoCartao, descricaoAnterior, (int)idLoja);
+                TipoCartaoCreditoDAO.Instance.AtualizaLogJurosParcelas(null, (int)idTipoCartao, descricaoAnterior, (int)idLoja);
 
                 return "Ok;Juros das parcelas salvos com sucesso!";
             }
@@ -281,6 +285,25 @@ namespace Glass.UI.Web.Cadastros
 
             }
             catch { }
+        }
+
+        protected void btnSalvarCartao_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var situacao = drpSituacao.SelectedValue;
+                var idTipoCartao = drpCartao.SelectedValue.StrParaUint();
+
+                var tipoCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(idTipoCartao);
+                tipoCartao.Situacao = (Situacao)Enum.Parse(typeof(Situacao), situacao);
+                TipoCartaoCreditoDAO.Instance.Update(tipoCartao);
+
+                Response.Redirect("~/Listas/LstTipoCartao.aspx");
+            }
+            catch (Exception ex)
+            {
+                Glass.MensagemAlerta.FormatErrorMsg("Falha ao salvar juros de parcela.", ex);
+            }
         }
     }
 }

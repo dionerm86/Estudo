@@ -29,11 +29,11 @@ namespace WebGlass.Business.ContasReceber.Fluxo
         {
             if (!PedidoConfig.LiberarPedido)
             {
-                if (!PedidoDAO.Instance.PedidoExists(idPedidoOuLiberarPedido))
+                if (!PedidoDAO.Instance.PedidoExists(null, idPedidoOuLiberarPedido))
                     throw new Exception("Não existe nenhum pedido com o número passado.");
                 else
                 {
-                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(idPedidoOuLiberarPedido);
+                    Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, idPedidoOuLiberarPedido);
 
                     if (situacao == Glass.Data.Model.Pedido.SituacaoPedido.Cancelado)
                         throw new Exception("Este pedido foi cancelado.");
@@ -41,7 +41,7 @@ namespace WebGlass.Business.ContasReceber.Fluxo
                     else if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
                         throw new Exception("Este pedido ainda não foi confirmado.");
 
-                    else if (PedidoDAO.Instance.ObtemTipoVenda(idPedidoOuLiberarPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista)
+                    else if (PedidoDAO.Instance.ObtemTipoVenda(null, idPedidoOuLiberarPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista)
                         throw new Exception("Este pedido não possui contas a receber.");
                 }
             }

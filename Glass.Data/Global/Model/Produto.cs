@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using GDA;
-using Glass.Data.Helper;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.EFD;
-using Glass.Configuracoes;
-using System.ComponentModel;
+using Glass.Data.Helper;
 using Glass.Log;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Text;
 
 namespace Glass.Data.Model
 {
@@ -156,7 +156,7 @@ namespace Glass.Data.Model
     }
 
     [PersistenceBaseDAO(typeof(ProdutoDAO))]
-	[PersistenceClass("produto")]
+    [PersistenceClass("produto")]
     [Colosoft.Data.Schema.Cache]
     public class Produto : ModelBaseCadastro, Sync.Fiscal.EFD.Entidade.IProduto, IProdutoIcmsSt
     {
@@ -209,7 +209,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDGENEROPRODUTO")]
         [PersistenceForeignKey(typeof(GeneroProduto), "IdGeneroProduto")]
         public int? IdGeneroProduto { get; set; }
-        
+
         [PersistenceProperty("IDARQUIVOMESACORTE")]
         [PersistenceForeignKey(typeof(ArquivoMesaCorte), "IdArquivoMesaCorte")]
         public int? IdArquivoMesaCorte { get; set; }
@@ -254,16 +254,16 @@ namespace Glass.Data.Model
         [Colosoft.Data.Schema.CacheIndexed]
         public Glass.Situacao Situacao { get; set; }
 
-		private string _descricao;
+        private string _descricao;
 
         [Log("Descrição", true)]
-		[PersistenceProperty("DESCRICAO")]
+        [PersistenceProperty("DESCRICAO")]
         [Colosoft.Data.Schema.CacheIndexed]
-		public string Descricao
-		{
-			get { return _descricao != null ? _descricao.ToUpper().Replace("\t", "") : _descricao; }
-			set { _descricao = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
-		}
+        public string Descricao
+        {
+            get { return _descricao != null ? _descricao.ToUpper().Replace("\t", "") : _descricao; }
+            set { _descricao = !String.IsNullOrEmpty(value) ? value.ToUpper() : value; }
+        }
 
         [Log("Custo Fab. Base")]
         [PersistenceProperty("CUSTOFABBASE")]
@@ -407,7 +407,7 @@ namespace Glass.Data.Model
         [Log("Local de Armazenagem")]
         [PersistenceProperty("LOCALARMAZENAGEM")]
         public string LocalArmazenagem { get; set; }
-        
+
         [Log("Processo", "CodInterno", typeof(EtiquetaProcessoDAO))]
         [PersistenceProperty("IDPROCESSO")]
         [PersistenceForeignKey(typeof(EtiquetaProcesso), "IdProcesso")]
@@ -457,13 +457,13 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("IDSCOMPRAS", DirectionParameter.InputOptional)]
         public string IdsCompras { get; set; }
-        
+
         public string DescrTipoMercadoria
-        { 
-            get 
+        {
+            get
             {
-                return TipoMercadoria != null ? DataSourcesEFD.Instance.GetDescrTipoMercadoria((int)TipoMercadoria) : ""; 
-            } 
+                return TipoMercadoria != null ? DataSourcesEFD.Instance.GetDescrTipoMercadoria((int)TipoMercadoria) : "";
+            }
         }
 
         public string DescrCstIpi { get { return Colosoft.Translator.Translate(CstIpi).Format(); } }
@@ -624,8 +624,8 @@ namespace Glass.Data.Model
         public uint? IdLiberarPedido { get; set; }
 
         [PersistenceProperty("VALORVENDIDO", DirectionParameter.InputOptional)]
-        public decimal ValorVendido { get; set; }        
- 
+        public decimal ValorVendido { get; set; }
+
         [PersistenceProperty("TOTALM2CHAPA", DirectionParameter.InputOptional)]
         public decimal TotalM2Chapa { get; set; }
 
@@ -730,11 +730,31 @@ namespace Glass.Data.Model
 
         public decimal AliqICMSInterna
         {
-            get 
+            get
             {
-                if (_aliqIcmsInterna == null && IdLojaIcms > 0)
-                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms,
-                        (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                if (_aliqIcmsInterna == null)
+                {
+                    if (IdLojaIcms == 0)
+                    {
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+                    }
+
+                    var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
+                    var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
+                    var calcularIpi = false;
+
+                    if (IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo > 0)
+                    {
+                        calcularIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(null, IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo.Value) && AliqIPI > 0;
+                    }
+                    else
+                    {
+                        calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+                    }
+
+                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                        .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                }
 
                 return _aliqIcmsInterna.GetValueOrDefault();
             }
@@ -746,13 +766,35 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (_aliqIcmsInternaComIpiNoCalculo == null && IdLojaIcms > 0)
-                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms,
-                        (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null).ObtemAliquotaInternaIcmsSt(this, true, SaidaIcms);
+                if (_aliqIcmsInternaComIpiNoCalculo == null)
+                {
+                    if (IdLojaIcms == 0)
+                    {
+                        throw new Exception("Indique a Loja para buscar a alíquota de ICMS interna.");
+                    }
+
+                    var lojaCalculaIpi = IdLojaIcms > 0 ? LojaDAO.Instance.ObtemCalculaIpiPedido(null, IdLojaIcms) : false;
+                    var clienteCalculaIpi = IdClienteIcms > 0 ? ClienteDAO.Instance.IsCobrarIpi(null, IdClienteIcms.Value) : false;
+                    var calcularIpi = false;
+
+                    if (IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo > 0)
+                    {
+                        calcularIpi = NaturezaOperacaoDAO.Instance.CalculaIpi(null, IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo.Value) && AliqIPI > 0;
+                    }
+                    else
+                    {
+                        calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
+                    }
+
+                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                        .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
+                }
 
                 return _aliqIcmsInternaComIpiNoCalculo.GetValueOrDefault();
             }
         }
+
+        internal uint? IdNaturezaOperacaoParaAliqICMSInternaComIpiNoCalculo { get; set; }
 
         public string DescrEstoque
         {
@@ -957,7 +999,7 @@ namespace Glass.Data.Model
 
         public string TituloValorTabelaUtilizado
         {
-            get 
+            get
             {
                 if (TipoValorTabela == 0)
                     return ClienteRevendaVend ? "Valor Atacado" : "Valor Balcão";
@@ -970,10 +1012,10 @@ namespace Glass.Data.Model
 
         public int TipoCalculo
         {
-            get 
-            { 
+            get
+            {
                 if (_tipoCalculo == null)
-                    _tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd); 
+                    _tipoCalculo = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(IdGrupoProd, IdSubgrupoProd);
 
                 return _tipoCalculo != null ? _tipoCalculo.Value : (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd;
             }
@@ -996,7 +1038,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return 
+                return
                     TipoCalculo == (int)TipoCalculoGrupoProd.M2 || TipoCalculo == (int)TipoCalculoGrupoProd.M2Direto ||
                     TipoCalculo == (int)TipoCalculoGrupoProd.QtdM2 || GrupoProdDAO.Instance.IsVidro(IdGrupoProd) ?
                     TotalM2.ToString("N2") + "m²" : "";
@@ -1020,7 +1062,7 @@ namespace Glass.Data.Model
 
         public float SugestaoCompra
         {
-            get 
+            get
             {
                 double retorno = (2 * EstoqueMinimo) + Reserva + (PedidoConfig.LiberarPedido ? Liberacao : 0) -
                     (UsarEstoqueM2 ? M2Estoque + TotMComprando : QtdeEstoque + QtdeComprando);
@@ -1070,7 +1112,7 @@ namespace Glass.Data.Model
             }
             set { _dadosBaixaEstoque = value; }
         }
-        
+
         public string DescrMateriaPrima
         {
             get
@@ -1152,7 +1194,7 @@ namespace Glass.Data.Model
                     if (!String.IsNullOrEmpty(dados.UfDestino))
                         retorno.AppendFormat("UF Destino: {0} ", dados.UfDestino);
 
-                    retorno.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}, Alíq. ICMS Interna Destinatário: {2}, Alíq. FCP Intraestadual: {3} Alíq. FCP Interestadual: {4} ", 
+                    retorno.AppendFormat("Alíq. ICMS Intraestadual: {0} Alíq. ICMS Interestadual: {1}, Alíq. ICMS Interna Destinatário: {2}, Alíq. FCP Intraestadual: {3} Alíq. FCP Interestadual: {4} ",
                         dados.AliquotaIntraestadual, dados.AliquotaInterestadual, dados.AliquotaInternaDestinatario, dados.AliquotaFCPIntraestadual, dados.AliquotaFCPInterestadual);
                 }
 
@@ -1253,12 +1295,12 @@ namespace Glass.Data.Model
 
         public string DescricaoProdutoBeneficiamento
         {
-            get 
+            get
             {
                 return !String.IsNullOrEmpty(Descricao) ?
                     (Descricao.ToUpper() + (!String.IsNullOrEmpty(DescricaoBeneficiamentos) ? " ( " + DescricaoBeneficiamentos + " )" : "")) : Descricao.ToUpper();
             }
-            
+
         }
 
         /// <summary>

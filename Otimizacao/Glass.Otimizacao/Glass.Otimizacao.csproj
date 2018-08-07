@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="eCutter\IAutenticadorProtocolo.cs" />
     <Compile Include="eCutter\MensagemTransacao.cs" />
     <Compile Include="eCutter\ProtocolConfiguration.cs" />
     <Compile Include="eCutter\ResultadoSalvarTransacao.cs" />

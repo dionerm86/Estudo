@@ -1526,6 +1526,7 @@
         TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
         <SelectParameters>
             <asp:Parameter Name="tipo" Type="Int32" DefaultValue="0" />
+            <asp:Parameter Name="situacao" Type="Int32" DefaultValue="1" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncVenda" runat="server" SelectMethod="GetOrdered"

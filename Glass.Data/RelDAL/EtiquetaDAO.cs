@@ -669,8 +669,26 @@ namespace Glass.Data.RelDAL
             if (etiq.BarCodeData == null)
                 etiq.BarCodeData = etiq.NumEtiqueta;
 
-            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta && etiq.BarCodeData != null &&
-                etiq.BarCodeData[0].ToString().ToUpper() != "C" && etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
+            var possuiFml = false;
+            var possuiDxf = false;
+            var possuiSGlass = false;
+            var possuiIntermac = false;
+
+            if (PCPConfig.EmpresaGeraArquivoFml)
+                possuiFml = ProdutosPedidoEspelhoDAO.Instance.PossuiFml(null, etiq.IdProdPedEsp, etiq.NumEtiqueta, true, true);
+            if (PCPConfig.EmpresaGeraArquivoDxf)
+                possuiDxf = ProdutosPedidoEspelhoDAO.Instance.PossuiDxf(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+            if (PCPConfig.EmpresaGeraArquivoSGlass)
+                possuiSGlass = ProdutosPedidoEspelhoDAO.Instance.PossuiSGlass(null, etiq.IdProdPedEsp, etiq.NumEtiqueta);
+            if (PCPConfig.EmpresaGeraArquivoIntermac)
+                possuiIntermac = ProdutosPedidoEspelhoDAO.Instance.PossuiIntermac(null, (int)etiq.IdProdPedEsp, etiq.NumEtiqueta);
+
+            if (PCPConfig.ConcatenarEspAltLargAoNumEtiqueta &&
+                //Chamado 76946 (Deve ser inserido no codigo de barras da etiqueta a altura/largura/espessura da peça apenas se possuir FML/DXF/SGLASS/Intermac)
+                (possuiFml || possuiDxf || possuiSGlass || possuiIntermac) && 
+                etiq.BarCodeData != null &&
+                etiq.BarCodeData[0].ToString().ToUpper() != "C" && 
+                etiq.BarCodeData[0].ToString().ToUpper() != "R" &&
                 etiq.BarCodeData[0].ToString().ToUpper() != "N")
             {
                 etiq.BarCodeData = (etiq.Espessura.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0') +
@@ -1000,7 +1018,7 @@ namespace Glass.Data.RelDAL
                 prodImp.IdAmbientePedido > 0 ? AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<int>(session, "largura", "idAmbientePedido=" + prodImp.IdAmbientePedido) :
                 ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<int>(session, "if(larguraReal>0, larguraReal, largura)", "idProdPed=" + prodImp.IdProdPed);
 
-            if (prodImp.IdPedido > 0 && alturaEtiqueta == 0 && larguraEtiqueta == 0 && PedidoDAO.Instance.IsMaoDeObra(prodImp.IdPedido.Value))
+            if (prodImp.IdPedido > 0 && alturaEtiqueta == 0 && larguraEtiqueta == 0 && PedidoDAO.Instance.IsMaoDeObra(null, prodImp.IdPedido.Value))
             {
                 var idAmbiente = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint>(session, "idAmbientePedido", "idProdPed=" + prodImp.IdProdPed);
                 alturaEtiqueta = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<float>(session, "altura", "idAmbientePedido=" + idAmbiente);
@@ -1120,7 +1138,7 @@ namespace Glass.Data.RelDAL
             {
                 etiqueta.IdPedido = prodImp.IdPedido.ToString();
                 etiqueta.TipoPedido = (int)PedidoDAO.Instance.GetTipoPedido(session, prodImp.IdPedido.Value);
-                etiqueta.TipoVendaPedido = (int)PedidoDAO.Instance.GetTipoVenda(session, prodImp.IdPedido.Value);
+                etiqueta.TipoVendaPedido = (int)PedidoDAO.Instance.ObtemTipoVenda(session, prodImp.IdPedido.Value);
 
                 etiqueta.NomeFuncCadPedido = PedidoDAO.Instance.ObtemNomeFuncResp(session, Glass.Conversoes.StrParaUint(etiqueta.IdPedido));
                 etiqueta.DataCadPedido = pedido.DataPedido;

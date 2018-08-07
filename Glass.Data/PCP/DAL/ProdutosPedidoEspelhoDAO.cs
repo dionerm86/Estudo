@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
             if (idLoja > 0)
                 //where += " And ped.IdLoja=" + idLoja;
                 /* Chamado 48035. */
-                where += string.Format(" AND (ped.IdLoja={0} OR ped.TipoPedido={1})", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
+                where += string.Format(" AND (ped.IdLoja={0} OR (ped.TipoPedido={1} AND COALESCE(ped.IdPedidoRevenda, 0) = 0))", idLoja, (int)Pedido.TipoPedidoEnum.Producao);
 
             if (idProdPed > 0)
                 where += " and pp.idProdPed=" + idProdPed;
@@ -1050,7 +1050,7 @@ namespace Glass.Data.DAL
             if (posicao > 0)
                 sql += " Having linha=" + posicao;
 
-            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(idPedido);
+            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
             return String.Format(sql, isMaoDeObra ? "idAmbientePedido" : "idProdPed",
                 isMaoDeObra ? "ambiente_pedido_espelho" : "produtos_pedido_espelho",
 
@@ -1374,7 +1374,7 @@ namespace Glass.Data.DAL
             // Adiciona os beneficiamentos feitos nos produtos como itens do pedido
             foreach (ProdutosPedidoEspelho ppe in lstProdPedEsp)
             {
-                if (PedidoDAO.Instance.IsMaoDeObra(ppe.IdPedido) && ppe.IdAmbientePedido != null)
+                if (PedidoDAO.Instance.IsMaoDeObra(null, ppe.IdPedido) && ppe.IdAmbientePedido != null)
                 {
                     int? qtdAmb = AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<int?>("Qtde", "idAmbientePedido=" + ppe.IdAmbientePedido.Value);
                     if (qtdAmb > 1)
@@ -2014,6 +2014,23 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Retorna o valor de campos isolados
+
+        /// <summary>
+        /// Busca os ids dos produtos pelos pedidos.
+        /// </summary>
+        public List<int> ObterIdsProdPedPelosIdsPedido(GDASession sessao, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT IdProdPed 
+                FROM produtos_pedido
+                WHERE IdPedido IN ({ string.Join(",", idsPedido) });";
+
+            return ExecuteMultipleScalar<int>(sessao, sql);
+        }
 
         public uint? ObtemIdAmbientePedido(uint idProdPed)
         {
@@ -3028,13 +3045,14 @@ namespace Glass.Data.DAL
 
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedidoEspelho, prodPed, !somarAcrescimoDesconto);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max((prodPed as IProdutoCalculo).DadosProduto.ValorTabela(), prodPed.ValorVendido);
+                var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, prodPed.IdPedido);
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedidoEspelho,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    true,
+                    prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -3121,7 +3139,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se a peça possui FML associado
         /// </summary>
-        public bool PossuiFml(GDASession sessao, uint idProdPed, string etiqueta, bool paraDestaqueEtiqueta)
+        public bool PossuiFml(GDASession sessao, uint idProdPed, string etiqueta, bool paraDestaqueEtiqueta, bool considerarFmlBasico = false)
         {
             // Se não tiver Id Produto Pedido não possui FML
             if (idProdPed == 0)
@@ -3135,7 +3153,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoFml)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3161,6 +3179,7 @@ namespace Glass.Data.DAL
                 var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
+                    (considerarFmlBasico ? tipoArquivo == TipoArquivoMesaCorte.FMLBasico : true) ||
                     flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !Instance.PossuiImagemAssociada(idProdPed);
             }
@@ -3172,10 +3191,12 @@ namespace Glass.Data.DAL
                 var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, !paraDestaqueEtiqueta);
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.FML ||
-                    flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
+                    (considerarFmlBasico ? tipoArquivo == TipoArquivoMesaCorte.FMLBasico : true) ||
+                    ((flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString())) &&
                     !pecaProjMod.ImagemEditada &&
                     !Instance.PossuiImagemAssociada(idProdPed) &&
-                    !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj);
+                    !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj)) ||
+                    PossuiEdicaoCadProject(idProdPed));
             }
         }
 
@@ -3196,7 +3217,7 @@ namespace Glass.Data.DAL
             if (pecaProjMod == null && PCPConfig.EmpresaGeraArquivoDxf)
             {
                 var idPedido = Instance.ObtemIdPedido(idProdPed);
-                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(idPedido);
+                var pedidoImportado = PedidoDAO.Instance.IsPedidoImportado(null, idPedido);
 
                 if (pedidoImportado)
                 {
@@ -3222,8 +3243,7 @@ namespace Glass.Data.DAL
                 var possuiArquivoMesaCorte = ProdutoDAO.Instance.ObtemIdArquivoMesaCorte(sessao, idProduto) > 0;
 
                 return possuiArquivoMesaCorte && (tipoArquivo == TipoArquivoMesaCorte.DXF || flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString())) &&
-                    ((!PossuiImagemAssociada(idProdPed)) ||
-                    File.Exists(string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPed)));
+                    ((!PossuiImagemAssociada(idProdPed)) || PossuiEdicaoCadProject(idProdPed));
             }
             // Se o prodtuto pedido for de um projeto, recupera através da peça projeto modelo.
             else
@@ -3237,7 +3257,7 @@ namespace Glass.Data.DAL
                     ((!pecaProjMod.ImagemEditada &&
                     !PossuiImagemAssociada(idProdPed) &&
                     !PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(pecaProjMod.IdPecaItemProj)) ||
-                    File.Exists(string.Format("{0}{1}.dxf", PCPConfig.CaminhoSalvarCadProject(true), idProdPed)));
+                    PossuiEdicaoCadProject(idProdPed));
             }
         }
 
@@ -3377,7 +3397,7 @@ namespace Glass.Data.DAL
 
             ProdutoDAO.Instance.CalcTotaisItemProd(null, idCliente, (int)prodPed.IdProd,
                 prodPed.Largura, qtde, qtdeAmbiente, prodPed.ValorVendido, prodPed.Espessura,
-                redondo, 0, false, !isPedidoProducaoCorte, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
+                redondo, 0, false, prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
                 alturaBenef, larguraBenef, false, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), true);
 
             var totMRevenda = produtosPedRevenda.Where(f => idsProd.Contains(f.IdProd)).Sum(f => f.TotM2Calc);
@@ -3944,8 +3964,12 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é possível inserir itens diferentes dos inseridos no pedido de revenda associado, ou metragens maiores que as estabelecidas anteriormente.");
 
                 var idsLojaSubgrupoProd = SubgrupoProdDAO.Instance.ObterIdsLojaPeloProduto(session, (int)objInsert.IdProd);
-                if (idsLojaSubgrupoProd.Any() && idsLojaSubgrupoProd.Any() && !idsLojaSubgrupoProd.Any(f => f == PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido)))
+                var idLojaPedido = PedidoDAO.Instance.ObtemIdLoja(session, objInsert.IdPedido);
+
+                if (idsLojaSubgrupoProd.Count(f => f > 0) > 0 && !idsLojaSubgrupoProd.Any(f => f == idLojaPedido))
+                {
                     throw new Exception("Esse produto não pode ser utilizado, pois as lojas do seu subgrupo são diferentes da loja do pedido.");
+                }
 
                 DescontoFormaPagamentoDadosProduto descontoFormPagtoProd = null;
                 //Bloqueio de produtos com Grupo e Subgrupo diferentes ao utilizar o controle de desconto por forma de pagamento e dados do produto.
@@ -3988,6 +4012,33 @@ namespace Glass.Data.DAL
                             objInsert.Largura = prod.Largura.GetValueOrDefault();
                         }
                     }
+
+                    var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                    var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                    var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                    var retorno = string.Empty;
+
+                    if (objInsert.Beneficiamentos != null)
+                    {
+                        foreach (var prodBenef in objInsert.Beneficiamentos)
+                        {
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                                (objInsert.Altura < tamanhoMinimoBisote || objInsert.Largura < tamanhoMinimoBisote))
+                                retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                            if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                                (objInsert.Altura < tamanhoMinimoLapidacao || objInsert.Largura < tamanhoMinimoLapidacao))
+                                retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                        }
+                    }
+
+                    if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objInsert.IdProd)).IsVidroTemperado &&
+                            objInsert.Altura < tamanhoMinimoTemperado && objInsert.Largura < tamanhoMinimoTemperado)
+                        retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                    if (!string.IsNullOrWhiteSpace(retorno))
+                        throw new Exception(retorno);
                 }
 
                 var isPedidoProducaoCorte = (pedidoEspelho as IContainerCalculo).IsPedidoProducaoCorte;
@@ -4000,7 +4051,7 @@ namespace Glass.Data.DAL
                     pedidoEspelho,
                     objInsert,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    !isPedidoProducaoCorte,
+                    objInsert.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     objInsert.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -4203,12 +4254,39 @@ namespace Glass.Data.DAL
                 objUpdate.IdProdPedParentOrig = ProdutosPedidoDAO.Instance.ObterIdProdPedParentByEsp(sessao, objUpdate.IdProdPed);
                 var isPedidoProducaoCorte = container.IsPedidoProducaoCorte;
 
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retorno = string.Empty;
+
+                if (objUpdate.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objUpdate.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            (objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote))
+                            retorno += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm. ";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            (objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao))
+                            retorno += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.   ";
+                    }
+                }
+
+                if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)objUpdate.IdProd)).IsVidroTemperado &&
+                        objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    retorno += $"A altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}mm. ";
+
+                if (!string.IsNullOrWhiteSpace(retorno))
+                    throw new Exception(retorno);
+
                 ValorTotal.Instance.Calcular(
                     sessao,
                     container,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    !isPedidoProducaoCorte,
+                    objUpdate.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 

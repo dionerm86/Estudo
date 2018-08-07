@@ -834,7 +834,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                var leituras = LeituraProducaoDAO.Instance.ObterSetoresLidos(IdProdPedProducao);
+                var leituras = LeituraProducaoDAO.Instance.ObterSetoresLidos(null, (int)IdProdPedProducao);
                 if (leituras != null && leituras.Count > 0)
                     // Verifica se algum dos setores que a peça foi lida não está sendo exibido no relatório.
                     return leituras.Any(s => !SetorDAO.Instance.ExibirNoRelatorio(s));

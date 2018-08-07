@@ -39,29 +39,56 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        private string SqlRptProdutoPedidoInterno(int idSubGrupo, string dataInicio, string dataFim,
-            int idGrupo, int idPedInterno, int idFuncCad, int idFuncReceb, bool selecionar)
+        private string SqlRptProdutoPedidoInterno(int idSubGrupo, string dataInicio, string dataFim, int idGrupo, int idPedInterno, int idFuncCad, int idFuncReceb, bool selecionar)
         {
-            string sql = @"
-                Select ppi.*, p.codInterno, p.descricao as descrProduto, sum(ppi.Qtde) as QtdeSomada, sum(ppi.TotM) as TotM2,
-                        round(sum((coalesce(p.CustoCompra, p.custoFabBase, 0) * coalesce(ppi.TotM, ppi.Qtde, 0))), 2) as Custo
-                    From pedido_interno pi
-                        Inner Join produto_pedido_interno ppi on (ppi.idPedidoInterno = pi.idPedidoInterno)
-                        Inner Join produto p on(p.idProd = ppi.idProd)
-                    Where 1 " +
-                      (String.IsNullOrEmpty(dataInicio) ? "" : " And pi.dataPedido >= ?dataIni").ToString() +
-                      (String.IsNullOrEmpty(dataFim) ? "" : " And pi.dataPedido <= ?dataFim").ToString() +
-                      (idSubGrupo > 0 ? " And p.idSubGrupoProd = " + idSubGrupo.ToString() : "").ToString() +
-                      (idGrupo > 0 ? " And p.idGrupoProd = " + idGrupo.ToString() : "").ToString() +
-                      (idPedInterno > 0 ? " And pi.idPedidoInterno = " + idPedInterno.ToString() : "").ToString() +
-                      (idFuncReceb > 0 ? " And idFunc = " + idFuncReceb.ToString() : "").ToString() +
-                      (idFuncCad > 0 ? " And idFuncCad = " + idFuncCad.ToString() : "").ToString() + @"
-                group by p.codInterno, p.descricao
-                order by pi.dataPedido
-            ";
+            var sql = $@"SELECT ppi.*, p.CodInterno, p.Descricao AS DescrProduto, SUM(ppi.Qtde) AS QtdeSomada, SUM(ppi.TotM) AS TotM2,
+                    ROUND(SUM((IF(p.CustoCompra > 0, p.CustoCompra, IF(p.CustoFabBase > 0, p.CustoFabBase, 0)) * IF(ppi.TotM > 0, ppi.TotM, IF(ppi.Qtde > 0, ppi.Qtde, 0)))), 2) AS Custo
+                FROM pedido_interno pi
+                    INNER JOIN produto_pedido_interno ppi ON (ppi.IdPedidoInterno = pi.IdPedidoInterno)
+                    INNER JOIN produto p ON (p.IdProd = ppi.IdProd)
+                WHERE 1";
+
+            if (idPedInterno > 0)
+            {
+                sql += $" AND pi.IdPedidoInterno={ idPedInterno }";
+            }
+
+            if (idFuncCad > 0)
+            {
+                sql += $" AND IdFuncCad={ idFuncCad }";
+            }
+
+            if (idFuncReceb > 0)
+            {
+                sql += $" AND IdFunc={ idFuncReceb }";
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataInicio))
+            {
+                sql += " AND pi.DataPedido >= ?dataIni";
+            }
+
+            if (!string.IsNullOrWhiteSpace(dataFim))
+            {
+                sql += " AND pi.DataPedido <= ?dataFim";
+            }
+
+            if (idGrupo > 0)
+            {
+                sql += $" AND p.IdGrupoProd={ idGrupo }";
+            }
+
+            if (idSubGrupo > 0)
+            {
+                sql += $" AND p.IdSubGrupoProd={ idSubGrupo }";
+            }
+
+            sql += " GROUP BY p.CodInterno, p.Descricao ORDER BY pi.DataPedido";
 
             if (!selecionar)
-                return "Select * From (" + sql + ")";
+            {
+                return $"SELECT * FROM ({ sql })";
+            }
 
             return sql;
         }
@@ -206,13 +233,14 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<decimal>(session, "Qtde", string.Format("IdProdPedInterno={0}", idProdPedInterno));
         }
 
+        public float ObterTotMQtde(GDASession session, int idProdPedInterno)
+        {
+            return ObtemValorCampo<float>(session, "COALESCE(TotM, Qtde, 0)", $"IdProdPedInterno={ idProdPedInterno }");
+        }
+
         /// <summary>
         /// Método para estornar os produtos ao estoque em caso de cancelamento de pedido confirmado
         /// </summary>
-        /// <param name="idLoja"></param>
-        /// <param name="idProduto"></param>
-        /// <param name="quantidade"></param>
-        /// <returns></returns>
         public int ExtornaProdutosPedidoInterno(uint idLoja, uint idProduto, float quantidade)
         {
             string sql = "UPDATE produto_loja SET QtdEstoque=?qt WHERE IdLoja=?l AND IdProd=?p";

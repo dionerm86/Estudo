@@ -356,6 +356,10 @@ namespace Glass.Configuracoes
                     (inscEstLoja == "06.200.648-7" || inscEstLoja == "062006487"))
                     return 6;
 
+                if (ControleSistema.GetSite() == ControleSistema.ClienteSistema.CasaDosEspelhos &&
+                    (inscEstLoja == "06.201.161-8" || inscEstLoja == "062011618"))
+                    return 2;
+
                 if ((ControleSistema.GetSite() == ControleSistema.ClienteSistema.Divine ||
                     ControleSistema.GetSite() == ControleSistema.ClienteSistema.Dividros ||
                     ControleSistema.GetSite() == ControleSistema.ClienteSistema.Invitra) &&

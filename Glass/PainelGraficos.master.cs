@@ -1,3 +1,4 @@
+using Glass.Data.Helper;
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
@@ -21,6 +22,9 @@ namespace Glass.UI.Web
     
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(PainelGraficos));
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
+
             if (!(Page.Master.Master as Layout).IsPopup())
                 Response.Redirect(Request.Url.ToString() + (Request.QueryString.Count > 0 ? "&" : "?") + "popup=true&exibirCabecalhoPopup=true", true);
 
@@ -33,6 +37,15 @@ namespace Glass.UI.Web
             lblMsgRodape.Text = "";
             foreach (var s in MensagensRodape)
                 lblMsgRodape.Text += s + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+        }
+
+        [Ajax.AjaxMethod()]
+        public void GetUsuarioLogado()
+        {
+            var usuario = UserInfo.GetUserInfo;
+            if (usuario == null || usuario.CodUser == null)
+                return;
+            UserInfo.SetActivity();
         }
     }
 }

@@ -42,7 +42,8 @@ namespace Glass.UI.Web.Cadastros
     
                 // Salva dados da ordem de instalação
                 str.Append(equipes.TrimEnd(',') + ";");
-                str.Append(lstInst[0].DataInstalacao != null ? lstInst[0].DataInstalacao.Value.ToString("dd/MM/yyyy") : String.Empty);
+                str.Append((lstInst[0].DataInstalacao != null ? lstInst[0].DataInstalacao.Value.ToString("dd/MM/yyyy") : String.Empty) + ";");
+                str.Append(lstInst[0].Obs);
                 str.Append("\t");
     
                 foreach (var inst in lstInst)
@@ -104,11 +105,11 @@ namespace Glass.UI.Web.Cadastros
         }
     
         [Ajax.AjaxMethod()]
-        public string Retificar(string idOrdemInst, string idsInstalacao, string idsEquipes, string dataInstalacao, string noCache)
+        public string Retificar(string idOrdemInst, string idsInstalacao, string idsEquipes, string dataInstalacao, string noCache, string obs)
         {
             try
             {
-                InstalacaoDAO.Instance.RetificarOrdemInst(Glass.Conversoes.StrParaUint(idOrdemInst), idsInstalacao, idsEquipes, DateTime.Parse(dataInstalacao));
+                InstalacaoDAO.Instance.RetificarOrdemInst(Glass.Conversoes.StrParaUint(idOrdemInst), idsInstalacao, idsEquipes, DateTime.Parse(dataInstalacao), obs);
                 return "ok\tok";
             }
             catch (Exception ex)

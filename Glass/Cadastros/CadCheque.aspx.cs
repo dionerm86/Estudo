@@ -53,7 +53,7 @@ namespace Glass.UI.Web.Cadastros
                 if (Cadastrar())
                     hdfTotal.Value = ChequesDAO.Instance.GetTotalInAcerto(Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString().Replace(",", ".");
     
-                hdfIdCliente.Value = AcertoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString();
+                hdfIdCliente.Value = AcertoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idAcerto"])).ToString();
     
                 if (!string.IsNullOrEmpty(Request["controlForma"]) && Request["controlForma"] != "9")
                     ((TextBox)dtvCheque.FindControl("txtTitular")).Text = ClienteDAO.Instance.GetNomeByAcerto(Glass.Conversoes.StrParaUint(Request["idAcerto"]));
@@ -63,7 +63,7 @@ namespace Glass.UI.Web.Cadastros
                 if (Cadastrar())
                     hdfTotal.Value = ChequesDAO.Instance.GetTotalInPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]), Request["IdContaR"] != null ? Glass.Conversoes.StrParaUint(Request["IdContaR"]) : 0, 0, Glass.Conversoes.StrParaInt(Request["origem"])).ToString().Replace(",", ".");
                 
-                hdfIdCliente.Value = PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString();
+                hdfIdCliente.Value = PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString();
     
                 if (!string.IsNullOrEmpty(Request["controlForma"]) && Request["controlForma"] != "9")
                     ((TextBox)dtvCheque.FindControl("txtTitular")).Text = ClienteDAO.Instance.GetNomeByPedido(Glass.Conversoes.StrParaUint(Request["idPedido"]));
@@ -99,7 +99,7 @@ namespace Glass.UI.Web.Cadastros
         [Ajax.AjaxMethod()]
         public string ValidaCheque(string idCliente, string banco, string agencia, string conta, string numero, string digitoNum)
         {
-            if (ChequesDAO.Instance.ExisteCheque(banco, agencia, conta, Glass.Conversoes.StrParaInt(numero)))
+            if (ChequesDAO.Instance.ExisteCheque(0, banco, agencia, conta, Glass.Conversoes.StrParaInt(numero)))
                 return "false|Já foi cadastrado um cheque com os dados informados.";
     
             if (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && !String.IsNullOrEmpty(idCliente) && idCliente != "0" && 

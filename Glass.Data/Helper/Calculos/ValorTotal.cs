@@ -36,8 +36,8 @@ namespace Glass.Data.Helper.Calculos
         {
             produto.InicializarParaCalculo(sessao, container);
 
-            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container);
-            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container);
+            var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
+            var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
@@ -58,9 +58,9 @@ namespace Glass.Data.Helper.Calculos
             this.IncluirDescontoPorQuantidade(produto);
         }
 
-        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container)
+        private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
-            if (container?.MaoDeObra ?? false)
+            if (container?.MaoDeObra ?? false && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
                 return valor.Value;
 
             return 2;

@@ -967,6 +967,12 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOMETRANSPORTADOR", DirectionParameter.InputOptional)]
         public string NomeTransportador { get; set; }
 
+        public string CodCliComCodCliExterno
+        {
+            get
+            { return CodCliente + " - " + PedCliExterno; }
+        }
+
         #region Finalização / Confirmação do Financeiro
 
         [PersistenceProperty("MOTIVOERROFINALIZARFINANC", DirectionParameter.InputOptional)]
@@ -1153,7 +1159,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalSemDesconto
         {
-            get { return PedidoDAO.Instance.GetTotalSemDesconto(IdPedido, Total); }
+            get { return PedidoDAO.Instance.GetTotalSemDesconto(null, IdPedido, Total); }
         }
 
         [XmlIgnore]
@@ -1174,7 +1180,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalRealSemDesconto
         {
-            get { return PedidoDAO.Instance.GetTotalSemDesconto(IdPedido, TotalReal); }
+            get { return PedidoDAO.Instance.GetTotalSemDesconto(null, IdPedido, TotalReal); }
         }
 
         [XmlIgnore]
@@ -1209,7 +1215,7 @@ namespace Glass.Data.Model
                 if (_totalParaLiberacao > 0)
                     return _totalParaLiberacao;
 
-                _totalParaLiberacao = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                _totalParaLiberacao = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 return _totalParaLiberacao;
             }
@@ -1221,7 +1227,7 @@ namespace Glass.Data.Model
         {
             get 
             {
-                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 if (IdPagamentoAntecipado > 0)
                     total -= ValorPagamentoAntecipado;
@@ -1246,7 +1252,7 @@ namespace Glass.Data.Model
 
                 var valorNegativoLiberar = new System.Text.StringBuilder("Valor Negativo para liberar. ");
 
-                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(IdPedido);
+                decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
                 if (PCPConfig.UsarConferenciaFluxo)
                     valorNegativoLiberar.Append("Sistema está configurado para considerar o valor confirmado para liberação. ");
@@ -1790,7 +1796,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ExibirReabrir
         {
-            get { return PedidoDAO.Instance.PodeReabrir(IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
+            get { return PedidoDAO.Instance.PodeReabrir(null, IdPedido, ValorPagamentoAntecipado, _situacao, GeradoParceiro, IdCli, TemEspelho, IdObra > 0, (Pedido.TipoPedidoEnum)TipoPedido, Importado, RecebeuSinal); }
         }
 
         [XmlIgnore]
@@ -2002,9 +2008,9 @@ namespace Glass.Data.Model
         {
             get
             {
-                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(IdPedido);
-                var situacaoProducao = PedidoDAO.Instance.ObtemSituacaoProducao(IdPedido);
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(IdPedido);
+                var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(null, IdPedido);
+                var situacaoProducao = PedidoDAO.Instance.ObtemSituacaoProducao(null, IdPedido);
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, IdPedido);
                 var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(IdPedido);
 
                 return tipoPedido == Pedido.TipoPedidoEnum.Venda && (situacaoPedido == Pedido.SituacaoPedido.Conferido || situacaoPedido == Pedido.SituacaoPedido.ConfirmadoLiberacao) &&
@@ -2892,7 +2898,7 @@ namespace Glass.Data.Model
         {
             get 
             {
-                if (!PedidoDAO.Instance.TemVolume(IdPedido))
+                if (!PedidoDAO.Instance.TemVolume(null, IdPedido))
                     return SituacaoVolumeEnum.SemVolume;
                 else if (PedidoDAO.Instance.TemVolumeAberto(IdPedido) || QtdePecasPendenteVolume > 0)
                     return SituacaoVolumeEnum.Pendente;

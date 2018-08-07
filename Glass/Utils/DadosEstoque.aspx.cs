@@ -56,7 +56,7 @@ namespace Glass.UI.Web.Utils
     
                 dadosProducao.Visible = prod != null && Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd) && !isCompra;
                 dadosReserva.Visible = !isCompra;
-                dadosCompra.Visible = isCompra || idOrcamento >= 0 || (idPedido > 0 ? PedidoDAO.Instance.GetTipoPedido(idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda : false);
+                dadosCompra.Visible = isCompra || idOrcamento >= 0 || (idPedido > 0 ? PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda : false);
             }
         }
     

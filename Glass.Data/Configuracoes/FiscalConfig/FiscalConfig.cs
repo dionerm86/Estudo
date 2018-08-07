@@ -231,5 +231,10 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirCheckGerarProdutoConjunto); }
         }
+
+        public static bool UsarTLS12NFe
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.UsarTLS12NFe); }
+        }
     }
 }

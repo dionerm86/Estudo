@@ -341,12 +341,12 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(Glass.Conversoes.StrParaUint(idPedido));
+                Glass.Data.Model.Pedido.SituacaoPedido situacao = PedidoDAO.Instance.ObtemSituacao(null, Glass.Conversoes.StrParaUint(idPedido));
 
                 if (situacao != Glass.Data.Model.Pedido.SituacaoPedido.Confirmado && situacao != Glass.Data.Model.Pedido.SituacaoPedido.LiberadoParcialmente)
                     return "Erro;A troca/devolução só pode ser feita se o pedido estiver " + (PedidoConfig.LiberarPedido ? "liberado" : "confirmado") + ".";
 
-                bool pedidosReposicao = PedidoDAO.Instance.IsPedidoReposto(Glass.Conversoes.StrParaUint(idPedido)) &&
+                bool pedidosReposicao = PedidoDAO.Instance.IsPedidoReposto(null, Glass.Conversoes.StrParaUint(idPedido)) &&
                     PedidoReposicaoDAO.Instance.PedidoParaTroca(PedidoDAO.Instance.IdReposicao(Glass.Conversoes.StrParaUint(idPedido)).GetValueOrDefault());
 
                 string trocasString = TrocaDevolucaoDAO.Instance.ObtemIdTrocaDevPorPedido(Glass.Conversoes.StrParaUint(idPedido));
@@ -358,7 +358,7 @@ namespace Glass.UI.Web.Cadastros
 
                 trocasString = String.Join(", ", trocas.ToArray());
 
-                return "Ok;" + PedidoDAO.Instance.ObtemIdCliente(Glass.Conversoes.StrParaUint(idPedido)) + ";" +
+                return "Ok;" + PedidoDAO.Instance.ObtemIdCliente(null, Glass.Conversoes.StrParaUint(idPedido)) + ";" +
                     trocasString + ";" +
                     pedidosReposicao.ToString().ToLower();
             }

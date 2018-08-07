@@ -17,7 +17,7 @@ namespace Glass.Data.RelModel
 
         public ProdutosLiberarPedidoRpt(ProdutosLiberarPedido plp)
         {
-            IsPedidoReposicao = PedidoDAO.Instance.IsPedidoReposicao(plp.IdPedido.ToString()) &&
+            IsPedidoReposicao = PedidoDAO.Instance.IsPedidoReposicao(null, plp.IdPedido.ToString()) &&
                 !PedidoReposicaoDAO.Instance.PedidoParaTroca(plp.IdPedido);
 
             IdAmbientePedido = plp.IdAmbientePedido;

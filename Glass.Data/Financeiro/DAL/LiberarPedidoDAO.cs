@@ -573,7 +573,8 @@ namespace Glass.Data.DAL
                         IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null,
                         IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null,
                         ValorPagto = valoresPagos.ElementAtOrDefault(i),
-                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
+                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null,
+                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null
                     };
 
                     PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
@@ -1902,10 +1903,10 @@ namespace Glass.Data.DAL
             foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
             {
                 //Verifica se o pedido está para receber sinal e não recebeu
-                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(id.StrParaUint());
-                var entrada = PedidoDAO.Instance.ObtemValorEntrada(id.StrParaUint());
-                var idSinal = PedidoDAO.Instance.ObtemIdSinal(id.StrParaUint());
-                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(id.StrParaUint());
+                var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, id.StrParaUint());
+                var entrada = PedidoDAO.Instance.ObtemValorEntrada(null, id.StrParaUint());
+                var idSinal = PedidoDAO.Instance.ObtemIdSinal(null, id.StrParaUint());
+                var idPagamentoAntecipado = PedidoDAO.Instance.ObtemIdPagamentoAntecipado(null, id.StrParaUint());
                 var idClientePedido = PedidoDAO.Instance.GetIdCliente(session, id.StrParaUint());
 
                 if (entrada > 0 && idSinal.GetValueOrDefault() == 0 && idPagamentoAntecipado.GetValueOrDefault() == 0)
@@ -2391,7 +2392,7 @@ namespace Glass.Data.DAL
             // Atualiza o total comprado pelo cliente
             ClienteDAO.Instance.AtualizaTotalComprado(session, idCliente);
 
-            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido);
+            var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido);
             if (idsPedidoLiberado.Any())
                 CarregamentoDAO.Instance.AlterarSituacaoFaturamentoCarregamentos(session, idsPedidoLiberado);
 
@@ -2919,7 +2920,9 @@ namespace Glass.Data.DAL
 
                 var saidaNaoVidro = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido && (!GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) || !PCPConfig.ControlarProducao);
                 var saidaBox = Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd) && SubgrupoProdDAO.Instance.IsSubgrupoProducao(sessao, (int)prodPed.IdGrupoProd, (int?)prodPed.IdSubgrupoProd);
-                var subGrupoVolume = SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
+                var subGrupoVolume = !OrdemCargaConfig.UsarControleOrdemCarga ? false : SubgrupoProdDAO.Instance.IsSubgrupoGeraVolume(sessao, prodPed.IdGrupoProd, prodPed.IdSubgrupoProd);
+
                 var entregaBalcao = PedidoDAO.Instance.ObtemTipoEntrega(sessao, prodPed.IdPedido) == (int)Pedido.TipoEntregaPedido.Balcao;
                 var volumeApenasDePedidosEntrega = OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega;
 
@@ -3524,9 +3527,12 @@ namespace Glass.Data.DAL
                     // esta situação ocorre somente quando o controle de estoque não está bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
-                        produtosSemEstoque.Append(
-                            ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key) + " - " +
-                            ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key) + ",     ");
+                        var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key);
+                        var descricaoProduto = ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key);
+
+                        produtosSemEstoque.Append($@"{ codInternoProduto } - { descricaoProduto }
+                            Estoque disponível: { qtdEstoqueReal }
+                            Quantidade liberada: { qtdLiberar }\n");
                     }
                 }
             }
@@ -3659,7 +3665,7 @@ namespace Glass.Data.DAL
                 return true;
 
             /* Chamado 46495. */
-            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false);
+            var produtosNaoLiberados = ProdutosPedidoDAO.Instance.GetForLiberacao(sessao, idPedido.ToString(), false, false);
 
             return produtosNaoLiberados == null || produtosNaoLiberados.Count() == 0;
         }
@@ -4049,6 +4055,20 @@ namespace Glass.Data.DAL
         public int ObterIdNf(GDASession sessao, int idLiberarPedido)
         {
             return ExecuteScalar<int>(sessao, "SELECT pnf.IdNf FROM pedidos_nota_fiscal pnf WHERE pnf.IdLiberarPedido = " + idLiberarPedido);
+        }
+
+        /// <summary>
+        /// Retorna todos os ids das liberações de pedido do acerto.
+        /// </summary>
+        public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
+        {
+            var idsLiberarPedido = ExecuteMultipleScalar<int>(session,
+                $@"SELECT DISTINCT(IdLiberarPedido)
+                FROM liberarpedido
+                WHERE IdLiberarPedido IN
+                    (SELECT c.IdLiberarPedido FROM contas_receber c WHERE c.IdAcerto={ idAcerto })");
+
+            return string.Join(",", idsLiberarPedido?.Where(f => f > 0)?.ToList() ?? new List<int>());
         }
 
         #endregion

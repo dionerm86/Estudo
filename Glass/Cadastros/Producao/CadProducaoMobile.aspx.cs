@@ -122,7 +122,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             try
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(numEtiqueta.Split('-')[0]);
-                return PedidoDAO.Instance.IsProducao(idPedido);
+                return PedidoDAO.Instance.IsProducao(null, idPedido);
             }
             catch
             {

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using GDA;
+using Glass.Data.DAL;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
 
 namespace Glass.PCP.Negocios.Entidades
 {
@@ -62,7 +66,9 @@ namespace Glass.PCP.Negocios.Entidades
             }
         }
 
-        public bool Expedido { get { return (IdFuncLeitura.GetValueOrDefault(0) > 0 && DataLeitura != null)  ; } }
+        public bool Expedido { get { return IdFuncLeitura > 0 && DataLeitura != null; } }
+
+        public bool ExpedidoManualmente { get; set; }
 
         #region Peças
 
@@ -96,6 +102,34 @@ namespace Glass.PCP.Negocios.Entidades
         public bool TrocadoDevolvido { get; set; }
 
         #endregion
+
+        [PersistenceProperty("PedidoEtiqueta", DirectionParameter.InputOptional)]
+        public string PedidoEtiqueta { get; set; }
+
+        [PersistenceProperty("IdProdPedEsp", DirectionParameter.InputOptional)]
+        public uint IdProdPedEsp { get; set; }
+
+        private string _imagemPecaUrl = null;
+
+        public string ImagemPecaUrl
+        {
+            get
+            {
+                if (IdProdPedEsp == 0)
+                    return "";
+
+                if (_imagemPecaUrl == null)
+                {
+                    ProdutosPedidoEspelho ppe = ProdutosPedidoEspelhoDAO.Instance.GetForImagemPeca(IdProdPedEsp);
+                    uint? idPecaItemProj = PecaItemProjetoDAO.Instance.ObtemIdPecaItemProjByIdProdPed(IdProdPedEsp);
+
+                    ppe.Item = idPecaItemProj > 0 ? UtilsProjeto.GetItemPecaFromEtiqueta(PecaItemProjetoDAO.Instance.ObtemItem(idPecaItemProj.Value), PedidoEtiqueta) : 0;
+                    _imagemPecaUrl = ppe.ImagemUrl;
+                }
+
+                return _imagemPecaUrl;
+            }
+        }
 
         #endregion
     }

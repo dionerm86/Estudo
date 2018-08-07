@@ -4073,10 +4073,6 @@
           <DataField>ValorSeguroString</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="ValorParcString">
-          <DataField>ValorParcString</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="OutrasDespesasString">
           <DataField>OutrasDespesasString</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -4171,6 +4167,10 @@
         </Field>
         <Field Name="CodNaturezaOperacao">
           <DataField>CodNaturezaOperacao</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DescrFaturas">
+          <DataField>DescrFaturas</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

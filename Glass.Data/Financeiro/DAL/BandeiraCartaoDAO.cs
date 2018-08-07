@@ -1,4 +1,5 @@
-﻿using Glass.Data.Model;
+﻿using GDA;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 
@@ -8,20 +9,30 @@ namespace Glass.Data.DAL
     {
         #region Busca Padrão
 
-        public string Sql(bool selecionar)
+        public string Sql(Situacao? situacao, bool selecionar)
         {
             var sql = "SELECT " + (selecionar ? "*" : "Count(*)") + " FROM bandeira_cartao WHERE 1";
+
+            if (situacao != null)
+                sql += string.Format(" AND Situacao={0} ", (int)situacao);
+
             return sql;
         }
 
         public IList<BandeiraCartao> GetList(string sortExpression, int startRow, int pageSize)
         {
-            return LoadDataWithSortExpression(Sql(true), sortExpression, startRow, pageSize);
+            return LoadDataWithSortExpression(Sql(null, true), sortExpression, startRow, pageSize);
         }
 
         public int GetCount()
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(false));
+            return objPersistence.ExecuteSqlQueryCount(Sql(null, false));
+        }
+
+        public IList<BandeiraCartao> PesquisarBandeiraCartaoPelaSituacao(Situacao situacao)
+        {
+            var sql = Sql(situacao, true);
+            return objPersistence.LoadData(sql).ToList();
         }
 
         #endregion
@@ -51,8 +62,36 @@ namespace Glass.Data.DAL
 
         public override int Update(BandeiraCartao objUpdate)
         {
-            LogAlteracaoDAO.Instance.LogBandeiraCartao(GetElementByPrimaryKey(objUpdate.IdBandeiraCartao), objUpdate);
-            return base.Update(objUpdate);
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+                    var oldObject = GetElementByPrimaryKey(transaction, objUpdate.IdBandeiraCartao);
+
+                    var posssuiCartoesAssociadosAtivos = objPersistence.ExecuteSqlQueryCount(transaction, string.Format(@"
+                            SELECT COUNT(IDTIPOCARTAO) FROM tipo_cartao_credito WHERE BANDEIRA={0} AND SITUACAO={1}", objUpdate.IdBandeiraCartao, (int)Situacao.Ativo)) > 0;
+
+                    if (oldObject.Situacao != objUpdate.Situacao && objUpdate.Situacao == Situacao.Inativo && posssuiCartoesAssociadosAtivos)
+                        throw new Exception("A bandeira de cartão não pode ser Inativada pois está em uso em cartões ativos.");
+
+                    var retorno = base.Update(transaction, objUpdate);
+                    LogAlteracaoDAO.Instance.LogBandeiraCartao(transaction, oldObject, objUpdate);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return retorno;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    ErroDAO.Instance.InserirFromException("Alterar Tipo Cartão", ex);
+                    throw ex;
+                }
+            }
         }
 
         public override int Delete(BandeiraCartao objDelete)

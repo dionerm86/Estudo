@@ -48,11 +48,6 @@ namespace Glass.UI.Web.Utils
                 ddlGrupo.SelectedValue = ((int)Glass.Data.Model.NomeGrupoProd.Vidro).ToString();
             }
 
-            if (Request["Parceiro"] == "1")
-            {
-                grdProduto.Columns[11].Visible = false;
-            }
-
             if (!IsPostBack)
             {
                 // Se tiver sido passado um idGrupoProd, filtra produtos pelo grupo passado
@@ -63,7 +58,7 @@ namespace Glass.UI.Web.Utils
                     txtDescr.Text = Request["descricao"];
     
                 if (!String.IsNullOrEmpty(Request["IdPedido"]))
-                    hdfPedidoProducao.Value = PedidoDAO.Instance.IsProducao(Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().ToLower();
+                    hdfPedidoProducao.Value = PedidoDAO.Instance.IsProducao(null, Glass.Conversoes.StrParaUint(Request["idPedido"])).ToString().ToLower();
                 else
                     hdfPedidoProducao.Value = "false";
     
@@ -91,12 +86,12 @@ namespace Glass.UI.Web.Utils
             {
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
     
-                if (PedidoDAO.Instance.IsMaoDeObra(idPedido))
+                if (PedidoDAO.Instance.IsMaoDeObra(null, idPedido))
                 {
                     ddlGrupo.SelectedValue = ((uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra).ToString();
                     ddlGrupo.Enabled = false;
                 }
-                else if (PedidoDAO.Instance.IsProducao(idPedido))
+                else if (PedidoDAO.Instance.IsProducao(null, idPedido))
                 {
                     ddlGrupo.SelectedValue = ((uint)Glass.Data.Model.NomeGrupoProd.Vidro).ToString();
                     ddlGrupo.Enabled = false;

@@ -39,16 +39,16 @@ namespace Glass.UI.Web.Cadastros
                     chkProdutosProntos.Visible = false;
             }
 
-            var calcularIcmsPedido = Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido;
+            var calcularIcmsStPedido = Configuracoes.PedidoConfig.Impostos.CalcularIcmsPedido;
             var calcularIpiPedido = Configuracoes.PedidoConfig.Impostos.CalcularIpiPedido;
-            var naoExibirAmbos = !calcularIcmsPedido && !calcularIpiPedido;
+            var naoExibirAmbos = !calcularIcmsStPedido && !calcularIpiPedido;
 
             if(naoExibirAmbos)
                 Data.Helper.Utils.BuscarColunaDetails("Impostos Pedido", dtvLoja).Visible = false;
                 
             else
             {
-                ((CheckBox)dtvLoja.FindControl("chkCalcularIcmsPedido")).Visible = calcularIcmsPedido;
+                ((CheckBox)dtvLoja.FindControl("chkCalcularIcmsPedido")).Visible = calcularIcmsStPedido;
                 ((CheckBox)dtvLoja.FindControl("chkCalcularIpiPedido")).Visible = calcularIpiPedido;
             }
 

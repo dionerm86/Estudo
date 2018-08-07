@@ -941,7 +941,9 @@ namespace Glass.Data.DAL
             if (idSetor == 1)
                 idsFuncImprEtiq = string.Join(",", ExecuteMultipleScalar<string>("SELECT DISTINCT IdFunc FROM impressao_etiqueta"));
             else
-                idsFuncLeitura = string.Join(",", ExecuteMultipleScalar<string>(string.Format("SELECT DISTINCT IdFuncLeitura FROM leitura_producao WHERE IdSetor={0}", idSetor)));
+            {
+                idsFuncLeitura = string.Join(",", LeituraProducaoDAO.Instance.ObterIdsFuncLeituraSetor(null, (int)idSetor));
+            }
 
             var sql = string.Format("SELECT IdFunc, Nome FROM funcionario WHERE IdFunc IN (SELECT IdFunc FROM funcionario_setor WHERE IdSetor={0}) {1} {2} ORDER BY Nome", idSetor, "{0}", "{1}");
 
@@ -1370,7 +1372,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Este funcionário não pode ser excluído por possuir projetos relacionados ao mesmo. Para impedir seu login no sistema, inative-o.");
 
             // Verifica se o funcionário possuir leituras na produção relacionados à seu id
-            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select count(*) From leitura_producao Where idFuncLeitura=" + Key).ToString()) > 0)
+            if (LeituraProducaoDAO.Instance.VerificarFuncionarioPossuiLeitura(null, (int)Key))
                 throw new Exception("Este funcionário não pode ser excluído por possuir leituras na produção relacionados ao mesmo. Para impedir seu login no sistema, inative-o.");
 
             // Verifica se o funcionário possui ordens de carga relacionados à seu id

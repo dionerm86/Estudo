@@ -242,7 +242,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>=FormatDateTime(First(Fields!DataCad.Value, "CreditoFornecedor"), DateFormat.ShortDate)</Value>
+                <Value>=First(Fields!DataCadString.Value, "CreditoFornecedor")</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -1359,6 +1359,10 @@
         </Field>
         <Field Name="ChequesPagto">
           <DataField>ChequesPagto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DataCadString">
+          <DataField>DataCadString</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

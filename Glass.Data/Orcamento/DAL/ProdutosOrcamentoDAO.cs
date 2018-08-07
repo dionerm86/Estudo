@@ -973,8 +973,7 @@ namespace Glass.Data.DAL
                         prod,
                         Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarEAtualizarProduto,
                         true,
-                        prod.Beneficiamentos.CountAreaMinimaSession(session),
-                        prod.Beneficiamentos.CountAreaMinimaSession(session) > 0
+                        prod.Beneficiamentos.CountAreaMinimaSession(session)
                     );
                 }
             }
@@ -1279,6 +1278,41 @@ namespace Glass.Data.DAL
                         );
                     }
                 }
+
+                var tamanhoMinimoBisote = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComBisote;
+                var tamanhoMinimoLapidacao = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimaParaPecasComLapidacao;
+                var tamanhoMinimoTemperado = Configuracoes.PedidoConfig.TamanhoVidro.AlturaELarguraMinimasParaPecasTemperadas;
+
+                var retornoValidacao = string.Empty;
+
+                if (objUpdate.Beneficiamentos != null)
+                {
+                    foreach (var prodBenef in objUpdate.Beneficiamentos)
+                    {
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Bisote &&
+                            (objUpdate.Altura < tamanhoMinimoBisote || objUpdate.Largura < tamanhoMinimoBisote))
+                            retornoValidacao += $"A altura ou largura minima para peças com bisotê é de {tamanhoMinimoBisote}mm.";
+
+                        if (BenefConfigDAO.Instance.GetElement(prodBenef.IdBenefConfig).TipoControle == Data.Model.TipoControleBenef.Lapidacao &&
+                            (objUpdate.Altura < tamanhoMinimoLapidacao || objUpdate.Largura < tamanhoMinimoLapidacao))
+                            retornoValidacao += $"A altura ou largura minima para peças com lapidação é de {tamanhoMinimoLapidacao}mm.";
+                    }
+                }
+
+                if (objUpdate.IdProduto > 0)
+                {
+                    var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objUpdate.IdProduto);
+                    var idSubGrupoProd = (int?)ProdutoDAO.Instance.ObtemIdSubgrupoProd(session, (int)objUpdate.IdProduto);
+
+                    if (GrupoProdDAO.Instance.IsVidroTemperado(session, idGrupoProd, idSubGrupoProd)
+                        && objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
+                    {
+                        retornoValidacao += $"A altura ou largura minima para peças com tempera é de {tamanhoMinimoTemperado}mm.";
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(retornoValidacao))
+                    throw new Exception(retornoValidacao);
 
                 int tipoDesconto = prodOrca.TipoDesconto;
                 decimal desconto = prodOrca.Desconto;

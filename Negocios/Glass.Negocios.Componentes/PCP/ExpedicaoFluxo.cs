@@ -81,7 +81,7 @@ namespace Glass.PCP.Negocios.Componentes
                     .Add("?situacaoPPP", ProdutoPedidoProducao.SituacaoEnum.Producao)
                     .Add("?id", idLiberarPedido)
                     .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-                .Select(@"p.IdPedido, ppp.IdProdPedProducao, ppp.NumEtiqueta, p.CodCliente as PedCli,
+                .Select(@"p.IdPedido, ppp.IdProdPedProducao, ppp.NumEtiqueta, p.CodCliente as PedCli, pp.IdProdPedEsp, ppp.NumEtiqueta AS PedidoEtiqueta,
                             (pp.Peso / pp.Qtde) as Peso, prod.CodInterno as CodProduto, prod.Descricao as DescProduto, pp.Altura, pp.Largura,
                             (pp.TotM / pp.Qtde) as M2")
                 .GroupBy("ppp.IdProdPedProducao");
@@ -100,7 +100,7 @@ namespace Glass.PCP.Negocios.Componentes
                         AND (p.GerarPedidoProducaoCorte IS NULL OR p.GerarPedidoProducaoCorte=0)")
                     .Add("?id", idLiberarPedido)
                     .Add("?tipoEntrega", Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.TotM, prod.CodInterno,
+                .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
                             prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
                     .Add("?tipoSubGrupo", TipoSubgrupoProd.ChapasVidro)
                 .GroupBy("pp.IdProdPed")
@@ -111,7 +111,7 @@ namespace Glass.PCP.Negocios.Componentes
                     .InnerJoin<ProdutosLiberarPedido>("p.IdPedidoRevenda = plp.IdPedido", "plp")
                     .InnerJoin<Produto>("pp.IdProd=prod.IdProd", "prod")
                     .LeftJoin<SubgrupoProd>("sgp.IdSubgrupoProd=prod.IdSubgrupoProd", "sgp")
-                    .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.TotM, prod.CodInterno,
+                    .Select(@"p.IdPedido, pp.IdProd, p.CodCliente as PedCli, pp.Peso, pp.Qtde, pp.QtdSaida, pp.TotM, prod.CodInterno,
                             prod.Descricao as DescrProduto, pp.Altura, pp.Largura, (sgp.TipoSubgrupo = ?tipoSubGrupo) as ChapaVidro")
                     .Where(string.Format(@"plp.IdLiberarPedido = ?id
                             AND p.TipoEntrega=?tipoEntrega 
@@ -125,8 +125,6 @@ namespace Glass.PCP.Negocios.Componentes
                     .Add("?situacao", Glass.Data.Model.Pedido.SituacaoPedido.Cancelado)
                     .GroupBy("pp.IdProdPed")
                 );
-
-            consultaRevenda.Execute();
 
             var consultaRevendaExp = SourceContext.Instance.CreateQuery()
                 .From<ProdutoPedidoProducao>("ppp")
@@ -320,9 +318,12 @@ namespace Glass.PCP.Negocios.Componentes
                         Peso = ir.Peso / ir.Qtde,
                         CodProduto = ir.CodInterno,
                         DescProduto = ir.DescrProduto,
+                        ExpedidoManualmente = ir.Qtde == ir.QtdSaida,
                         Altura = ir.Altura,
                         Largura = ir.Largura,
-                        M2 = ir.TotM / ir.Qtde
+                        M2 = ir.TotM / ir.Qtde,
+                        IdProdPedEsp = ir.IdProdPedEsp ?? 0,
+                        PedidoEtiqueta = ir.IdPedido.ToString()
                     };
 
                     var itemExp = itensRevendaExp
@@ -523,9 +524,17 @@ namespace Glass.PCP.Negocios.Componentes
 
                     else
                     {
-                        Glass.Data.DAL.ProdutoPedidoProducaoDAO.Instance
-                            .AtualizaSituacao(transaction, (uint)idFunc, null, numEtiqueta, Glass.Data.DAL.SetorDAO.Instance.ObtemIdSetorEntrega(), false, false, null, null, null,
-                            (uint?)idPedidoExp, 0, null, null, false, null, false, 0);
+                        var idSetorCarregamento = SetorDAO.Instance.ObtemIdSetorExpCarregamento(transaction);
+                        var idsSetorEntregue = SetorDAO.Instance.ObterIdsSetorTipoEntregue(transaction);
+                        var idSetorLeitura = idsSetorEntregue?.Any(f => f > 0) ?? false ? idsSetorEntregue.FirstOrDefault(f => f > 0) : 0;
+
+                        if (idSetorLeitura == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar o setor de expedição de carregamento.");
+                        }
+
+                        ProdutoPedidoProducaoDAO.Instance.AtualizaSituacao(transaction, (uint)idFunc, null, numEtiqueta, (uint)idSetorLeitura, false, false, null, null, null, (uint?)idPedidoExp, 0,
+                            null, null, false, null, false, 0);
                     }
 
                     #endregion

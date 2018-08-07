@@ -57,7 +57,7 @@ namespace WebGlass.Business.AmbientePedidoEspelho.Ajax
 
                                 temProdutos = true;
                                 tabelaProdutos += "<tr><td><input type='checkbox' value='" + p.IdProdPed + "' checked='checked'></td><td>" + p.CodInterno + "</td><td>" +
-                                    p.DescrProduto + " " + p.DescrBeneficiamentos + "</td><td>" + p.Qtde + (PedidoDAO.Instance.IsMaoDeObra(p.IdPedido) ? " x " +
+                                    p.DescrProduto + " " + p.DescrBeneficiamentos + "</td><td>" + p.Qtde + (PedidoDAO.Instance.IsMaoDeObra(null, p.IdPedido) ? " x " +
                                     p.QtdeAmbiente + " peça(s) de vidro" : "") + "</td><td>" + p.QtdeInstalada + "</td><td>" + p.Largura + "</td><td>" + p.AlturaLista + "</td></tr>";
                             }
 
@@ -99,7 +99,7 @@ namespace WebGlass.Business.AmbientePedidoEspelho.Ajax
 
                                 temProdutos = true;
                                 tabelaProdutos += "<tr><td><input type='checkbox' value='" + id + "' checked='checked'></td><td>" + p.CodInterno + "</td><td>" +
-                                    p.DescrProduto + " " + p.DescrBeneficiamentos + "</td><td>" + p.Qtde + (PedidoDAO.Instance.IsMaoDeObra(p.IdPedido) ? " x " +
+                                    p.DescrProduto + " " + p.DescrBeneficiamentos + "</td><td>" + p.Qtde + (PedidoDAO.Instance.IsMaoDeObra(null, p.IdPedido) ? " x " +
                                     p.QtdeAmbiente + " peça(s) de vidro" : "") + "</td><td>" + pp.QtdeInstalada + "</td><td>" + p.Largura + "</td><td>" + p.AlturaLista + "</td></tr>";
                             }
 

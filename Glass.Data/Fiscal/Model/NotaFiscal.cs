@@ -1194,6 +1194,22 @@ namespace Glass.Data.Model
         {
             get {return NotaFiscalDAO.Instance.ObterValoresPagosAntecipadamente((int) IdNf); }
         }
+
+        /// <summary>
+        /// Descrição das parcelas
+        /// </summary>
+        public string DescrFaturas
+        {
+            get
+            {
+                var retorno = string.Empty;
+                for (int i = 0; i < NumParc; i++)
+                    retorno += string.Format("Num.: {0} Venc.: {1} Valor.: {2} / ", i, DatasParcelas[i], ValoresParcelas[i]);
+                retorno = retorno.TrimEnd(' ').TrimEnd('/');
+                return retorno;
+            }
+        }
+
         #endregion
 
         #region INFe Members

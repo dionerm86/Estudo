@@ -26,7 +26,8 @@ namespace Glass.UI.Web.Listas
 
             BandeiraCartaoDAO.Instance.Insert(new BandeiraCartao
             {
-                Descricao = descricao
+                Descricao = descricao,
+                Situacao = Situacao.Ativo
             });
 
             grdBandeiraCartao.DataBind();

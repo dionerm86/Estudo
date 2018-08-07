@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(idLiberarPedido) && idLiberarPedido != "0")
             {
                 string idsPedidoStr = String.Empty;
-                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(idLiberarPedido.StrParaUint());
+                var idsPedido = PedidoDAO.Instance.GetIdsByLiberacao(null, idLiberarPedido.StrParaUint());
                 foreach (uint id in idsPedido)
                     idsPedidoStr += id + ",";
 
@@ -288,13 +288,13 @@ namespace Glass.Data.DAL
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
                 if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido &&
-                    PedidoDAO.Instance.IsPedidoReposto(idPedido.StrParaUint()))
+                    PedidoDAO.Instance.IsPedidoReposto(null, idPedido.StrParaUint()))
                     filtroPedido += " Or ped.IdPedidoAnterior=" + idPedido;
 
                 sql += filtroPedido;
                 filtroPedido += ")";
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(idPedido.StrParaUint()))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, idPedido.StrParaUint()))
                     sql += " Or ppp.idPedidoExpedicao=" + idPedido;
 
                 sql += ")";
@@ -1764,7 +1764,7 @@ namespace Glass.Data.DAL
 
             if (idLiberarPedido > 0)
             {
-                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao((uint)idLiberarPedido);
+                var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao(null, (uint)idLiberarPedido);
 
                 if (idsPedidoPelaLiberacao?.Count() > 0)
                 {
@@ -1783,12 +1783,12 @@ namespace Glass.Data.DAL
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2375,7 +2375,7 @@ namespace Glass.Data.DAL
 
             #region Filtros
 
-            sql += string.Format(" AND pp.IdProdPedParent IS NOT NULL AND ppp.Situacao IN ({0}, {1})", (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)ProdutoPedidoProducao.SituacaoEnum.Perda);
+            sql += " AND pp.IdProdPedParent IS NOT NULL";
 
             if (idProdPedProducaoParent > 0)
             {
@@ -2488,12 +2488,12 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
                 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2702,12 +2702,12 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND (ped.IdPedido={0}", idPedido);
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira teria que mudar totalmente a forma de fazer o count.
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
                 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -2984,12 +2984,12 @@ namespace Glass.Data.DAL
 
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
-                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto((uint)idPedido))
+                if (ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido && PedidoDAO.Instance.IsPedidoReposto(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
 
-                if (PedidoDAO.Instance.IsPedidoExpedicaoBox((uint)idPedido))
+                if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
                 }
@@ -3225,10 +3225,10 @@ namespace Glass.Data.DAL
                 // Na vidrália/colpany não tem como filtrar pelo ped.idPedidoAnterior sem dar timeout, para utilizar o filtro desta maneira
                 // teria que mudar totalmente a forma de fazer o count
                 if (Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Pedido &&
-                    PedidoDAO.Instance.IsPedidoReposto(idPedido))
+                    PedidoDAO.Instance.IsPedidoReposto(null, idPedido))
                     filtroPedido += " Or ped.IdPedidoAnterior=" + idPedido;
 
-                var isPedExped = PedidoDAO.Instance.IsPedidoExpedicaoBox(idPedido);
+                var isPedExped = PedidoDAO.Instance.IsPedidoExpedicaoBox(null, idPedido);
                 if (isPedExped)
                     filtroPedido += " Or ppp.idPedidoExpedicao=" + idPedido;
 
@@ -3462,39 +3462,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public void RetiraExpedicaoByPedido(GDASession sessao, uint idLiberacao)
         {
-            string sql = @"
-                Delete From leitura_producao  
-                Where idSetor In (
-                    select * from (
-                        Select idSetor 
-                        From setor 
-                        Where tipo=" + (int)TipoSetor.Entregue + @"
-                    ) as temp
-                ) 
-                And idProdPedProducao In (
-                    select * from (
-                        Select idProdPedProducao 
-                        From produto_pedido_producao 
-                        Where idProdPed In (
-                            select * from (
-                                Select idProdPed 
-                                From produtos_pedido_espelho 
-                                Where idPedido In (
-                                    select * from (
-                                        Select idPedido 
-                                        From produtos_liberar_pedido 
-                                        Where idLiberarPedido=" + idLiberacao + @"
-                                    ) as temp
-                                )
-                            ) as temp
-                        )
-                    ) as temp
-                )";
+            LeituraProducaoDAO.Instance.ApagarPeloIdLiberarPedido(sessao, (int)idLiberacao);
 
-            // Exclui as leituras feitas na expedição
-            objPersistence.ExecuteCommand(sessao, sql);
-
-            sql = @"
+            var sql = @"
                 Update produto_pedido_producao ppp 
                 Set ppp.idSetor=(
                     Select lprod.idSetor From leitura_producao lprod  
@@ -3968,9 +3938,7 @@ namespace Glass.Data.DAL
                         var idLojaFuncionario = FuncionarioDAO.Instance.ObtemIdLoja(sessao, idFunc);
 
                         //Verifica se a chapa teve entrada e recupera a loja que foi feito a movimentação pois a loja que deu entrada manual pode não ser é a mesma da nota fiscal
-                        var idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao, string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2}",
-                            idNf.GetValueOrDefault(0), idProdBaixa, (int)MovEstoque.TipoMovEnum.Entrada));
-
+                        var idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.GetValueOrDefault(), (int)idProdBaixa, MovEstoque.TipoMovEnum.Entrada);
                         var idLojaMovEstoqueChapa = idLojaMovEstoque ?? (idLojaNotaFiscal == 0 ? idLojaFuncionario : idLojaNotaFiscal);
 
                         /* Chamado 63113.
@@ -4382,7 +4350,7 @@ namespace Glass.Data.DAL
                         if (releitura)
                         {
                             var leituraExp = LeituraProducaoDAO.Instance.GetByProdPedProducao(sessao, idProdPedProducao)
-                                .Where(f => f.IdSetor == SetorDAO.Instance.ObtemIdSetorEntrega(sessao) ||
+                                .Where(f => SetorDAO.Instance.ObterIdsSetorTipoEntregue(sessao)?.Contains((int)f.IdSetor) ?? false ||
                                     f.IdSetor == SetorDAO.Instance.ObtemIdSetorExpCarregamento(sessao)).FirstOrDefault();
 
                             if (leituraExp != null)
@@ -4731,7 +4699,7 @@ namespace Glass.Data.DAL
             ProdutosPedidoDAO.Instance.MarcarSaida(sessao, (uint)idProdutoNovo, 1, idSaidaEstoque, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
             //Baixa o estoque da peça
-            MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null);
+            MovEstoqueDAO.Instance.BaixaEstoquePedido(sessao, (uint)prodImpressao.IdProd, idLoja, idPedidoExpedicao, idProdutoNovo.Value, 1, 0, false, null, null, null);
 
             //Atualiza a situação do pedido
             PedidoDAO.Instance.AtualizaSituacaoProducao(sessao, idPedidoExpedicao, null, DateTime.Now);
@@ -4826,7 +4794,7 @@ namespace Glass.Data.DAL
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de REVENDA desde que o pedido produção não seja para corte.
-                    if (idProdPedRevenda > 0 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
+                    if (idProdPedRevenda > 0 && prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
                         ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
 
                     if (idPedidoNovo != null)
@@ -4956,10 +4924,9 @@ namespace Glass.Data.DAL
                 float m2CalcAreaMinima = CalculoM2.Instance.CalcularM2Calculo(null, pedido, pp,
                     false, true, pp.Beneficiamentos.CountAreaMinima);
 
-                MovEstoqueDAO.Instance.CreditaEstoqueProducao(pp.IdProd, login.IdLoja, idProdPedProducao, 1, false, true);
+                MovEstoqueDAO.Instance.CreditaEstoqueProducao(null, pp.IdProd, login.IdLoja, idProdPedProducao, 1, false, true);
 
-                MovEstoqueDAO.Instance.BaixaEstoqueProducao(pp.IdProd, login.IdLoja, idProdPedProducao,
-                    (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0), true, true, true);
+                MovEstoqueDAO.Instance.BaixaEstoqueProducao(null, pp.IdProd, login.IdLoja, idProdPedProducao, (decimal)(m2 ? m2Calc : 1), (decimal)(m2 ? m2CalcAreaMinima : 0), true, true, true);
 
                 // Marca que este produto entrou em estoque
                 objPersistence.ExecuteCommand("Update produto_pedido_producao Set entrouEstoque=true Where idProdPedProducao=" + idProdPedProducao);
@@ -5045,9 +5012,19 @@ namespace Glass.Data.DAL
                         throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
                             ". Efetue o estorno antes.");
 
+                    var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(transaction, idPedido);
+                    var possuiLiberacaoParcial = false;
+
+                    if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
+                    {
+                        var idprodped = ObtemIdProdPed(transaction, numEtiqueta);
+                        var produtoPedido = ProdutosPedidoDAO.Instance.GetByProdPedEsp(transaction, idprodped, false);
+
+                        possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(transaction, produtoPedido.IdProdPed, idProdPedProducao) > 0;
+                    }
+
                     if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
-                        (PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.Confirmado ||
-                        PedidoDAO.Instance.ObtemSituacao(transaction, idPedido) == Pedido.SituacaoPedido.LiberadoParcialmente))
+                        (situacaoPedido == Pedido.SituacaoPedido.Confirmado || possuiLiberacaoParcial))
                     {
                         throw new Exception("Não é possível marcar perda em peças de pedido mão de obra liberados.");
                     }
@@ -5076,7 +5053,7 @@ namespace Glass.Data.DAL
                         return retorno;
                     }
 
-                    if (!LeuProducao(transaction, numEtiqueta))
+                    if (!LeituraProducaoDAO.Instance.VerificarEtiquetaLida(transaction, numEtiqueta))
                         throw new Exception("Não é possível repor uma peça que ainda não foi impressa.");
 
                     if (obs != null && obs.Length > 250)
@@ -5115,7 +5092,7 @@ namespace Glass.Data.DAL
                     UsoRetalhoProducaoDAO.Instance.CancelarAssociacao(transaction, idProdPedProducao);
 
                     // Exclui leituras feitas nesta peça
-                    objPersistence.ExecuteCommand(transaction, "Delete From leitura_producao Where idProdPedProducao=" + idProdPedProducao);
+                    LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(transaction, new List<int>() { (int)idProdPedProducao });
 
                     #region Remove a associação da peça ou da chapa
 
@@ -5134,7 +5111,7 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(transaction, dados.IdProdImpressao, idProdPedProducao);
+                        ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, dados.IdProdImpressao, idProdPedProducao);
                     }
 
                     #endregion
@@ -5308,10 +5285,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    // Caso esta peça tenha sido gerada pela otimização, atualiza a data da leitura
-                    objPersistence.ExecuteCommand(session, @"Update leitura_producao Set dataLeitura=?dataLeitura, idFuncLeitura=?idFunc 
-                    Where dataLeitura is null And idProdPedProducao=" + idProdPedProducao,
-                        new GDAParameter("?dataLeitura", dataLeitura), new GDAParameter("?idFunc", idFunc));
+                    LeituraProducaoDAO.Instance.AtualizarDataLeituraIdFuncPeloIdProdPedProducao(session, (int)idProdPedProducao, dataLeitura.GetValueOrDefault(), (int)idFunc);
                 }
 
                 atualizarSitPedido = true;
@@ -5528,23 +5502,6 @@ namespace Glass.Data.DAL
         {
             return objPersistence.ExecuteSqlQueryCount("Select Count(*) From produto_pedido_producao Where idProdPed=" + idProdPed + " And situacao=" +
                 (int)ProdutoPedidoProducao.SituacaoEnum.Producao) > 0;
-        }
-
-        /// <summary>
-        /// Verifica se a peça passada foi lida em algum setor da produção
-        /// </summary>
-        public bool LeuProducao(GDASession sessao, string numEtiqueta)
-        {
-            // Valida a etiqueta
-            ValidaEtiquetaProducao(sessao, ref numEtiqueta);
-
-            return objPersistence.ExecuteSqlQueryCount(@"
-                Select Count(*) 
-                From leitura_producao 
-                Where dataLeitura is not null 
-                    And idprodPedProducao=(
-                        Select idprodpedproducao from produto_pedido_producao Where Situacao = ?sit AND numEtiqueta=?numEtiqueta limit 1
-                    )", new GDAParameter("?numEtiqueta", numEtiqueta), new GDAParameter("?sit", (int)ProdutoPedidoProducao.SituacaoEnum.Producao)) > 0;
         }
 
         #endregion
@@ -6216,6 +6173,11 @@ namespace Glass.Data.DAL
             return ExecuteScalar<string>(sessao, sql);
         }
 
+        public int ObterIdProdPedProducaoPelaEtiqueta(GDASession session, string numEtiqueta)
+        {
+            return ObtemValorCampo<int>(session, "IdProdPedProducao", "NumEtiqueta=?numEtiqueta", new GDAParameter("?numEtiqueta", numEtiqueta));
+        }
+
         #endregion
 
         #region Volta o setor de uma peça
@@ -6377,14 +6339,16 @@ namespace Glass.Data.DAL
                 // Exclui último setor lido
                 if (idSetor > 1)
                 {
-                    uint idLeituraProd = ExecuteScalar<uint>(sessao, "select idLeituraProd from leitura_producao where idSetor=" + idSetor +
-                        " and idProdPedProducao=" + idProdPedProducao);
-
+                    var idLeituraProd = LeituraProducaoDAO.Instance.ObterIdLeituraPeloIdProdPedProducaoIdSetor(sessao, (int)idProdPedProducao, (int)idSetor);
                     var leitura = LeituraProducaoDAO.Instance.GetElementByPrimaryKey(sessao, idLeituraProd);
-                    item.DataLeituraSetorVoltarPeca = leitura.DataLeitura;
-                    item.NomeFuncLeituraSetorVoltarPeca = FuncionarioDAO.Instance.GetNome(sessao, leitura.IdFuncLeitura);
 
-                    objPersistence.ExecuteCommand(sessao, "Delete from leitura_producao Where idLeituraProd=" + leitura.IdLeituraProd);
+                    if (leitura?.IdLeituraProd > 0)
+                    {
+                        item.DataLeituraSetorVoltarPeca = leitura.DataLeitura;
+                        item.NomeFuncLeituraSetorVoltarPeca = FuncionarioDAO.Instance.GetNome(sessao, leitura.IdFuncLeitura);
+
+                        LeituraProducaoDAO.Instance.DeleteByPrimaryKey(sessao, leitura.IdLeituraProd);
+                    }
                 }
 
                 // Recupera o idPedidoExpedicao para alterar a situação da produção do pedido de revenda de box, se for o caso
@@ -6495,17 +6459,14 @@ namespace Glass.Data.DAL
                     if (quantidadeLeiturasChapa == 1)
                     {
                         uint? idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, idProdImpressaoChapa);
-                        uint? idLojaMovEstoque = (uint?)objPersistence.ExecuteScalar(sessao,
-                            string.Format("SELECT idLoja FROM mov_estoque WHERE idNf={0} AND idProd={1} AND tipoMov={2} order by idmovestoque desc limit 1",
-                                                idNf.GetValueOrDefault(0), idProd.GetValueOrDefault(), (int)MovEstoque.TipoMovEnum.Entrada));
-
+                        uint? idLojaMovEstoque = (uint?)MovEstoqueDAO.Instance.ObterIdLojaPeloIdNf(sessao, (int)idNf.GetValueOrDefault(), (int)idProd.GetValueOrDefault(), MovEstoque.TipoMovEnum.Entrada);
                         var idLojaNf = NotaFiscalDAO.Instance.ObtemIdLoja(sessao, idNf.GetValueOrDefault());
-
                         var idLojaMovChapa = idLojaMovEstoque ?? (idLojaNf == 0 ? idLojaConsiderar : idLojaNf);
 
                         if (idProd > 0)
                             MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, idProd.Value, idLojaMovChapa, idProdPedProducao, 1, false, false);
                     }
+
                     #region Ajusta o estoque e a Reserva da chapa no pedido de revenda
 
                     if (setor.Corte)
@@ -6548,9 +6509,8 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoPeca(sessao, idProdImpressao, idProdPedProducao);
-
-                    //Marca a chapa novamente como disponivel
+                    ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(sessao, idProdImpressao, idProdPedProducao);
+                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, new List<int> { (int)idProdImpressao });
                     ChapaTrocadaDevolvidaDAO.Instance.MarcarChapaComoDisponivel(sessao, ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(idProdImpressaoChapa));
 
                     //Se a peça possui retalho e o mesmo não tiver sido associado na impressao da peça remove a associação.
@@ -6653,7 +6613,7 @@ namespace Glass.Data.DAL
             }
 
             // Apaga as leituras dessa peça
-            objPersistence.ExecuteCommand(sessao, "Delete From leitura_producao Where idProdPedProducao=" + idProdPedProducao);
+            LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(sessao, new List<int>() { (int)idProdPedProducao });
 
             var idsSetores = new List<uint>();
 
@@ -8125,6 +8085,14 @@ namespace Glass.Data.DAL
         {
             var sql = @"SELECT * FROM produto_pedido_producao WHERE IdProdPed=" + idProdPed;
             return objPersistence.LoadData(session, sql).ToList();
+        }
+
+        /// <summary>
+        /// Obtém os produtos de produção pelos ID's produto de pedido.
+        /// </summary>
+        public List<int> ObterIdsProdPedProducaoPelosIdProdPed(GDASession session, List<int> idsProdPed)
+        {            
+            return ExecuteMultipleScalar<int>(session, $"SELECT IdProdPedProducao FROM produto_pedido_producao WHERE IdProdPed IN ({ string.Join(",", idsProdPed) });")?.ToList() ?? new List<int>();
         }
 
         #endregion

@@ -242,12 +242,8 @@ namespace Glass.Data.DAL
                             {
                                 var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(transaction, (int)prodPed.IdProd);
 
-                                MovEstoqueDAO.Instance.CreditaEstoquePedido(transaction, prodPed.IdProd, saida.IdLoja,
-                                    saida.IdPedido.Value,
-                                    prodPed.IdProdPed,
-                                    (decimal)qtdSaidaEstoque,
-                                    tipoSubgrupo != TipoSubgrupoProd.ChapasVidro &&
-                                    tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado);
+                                MovEstoqueDAO.Instance.CreditaEstoquePedido(transaction, prodPed.IdProd, saida.IdLoja, saida.IdPedido.Value, prodPed.IdProdPed, (decimal)qtdSaidaEstoque,
+                                    tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado, null, null);
                             }
                             else if (saida.IdLiberarPedido > 0)
                             {
