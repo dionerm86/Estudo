@@ -48,11 +48,6 @@ namespace Glass.UI.Web.Utils
                 ddlGrupo.SelectedValue = ((int)Glass.Data.Model.NomeGrupoProd.Vidro).ToString();
             }
 
-            if (Request["Parceiro"] == "1")
-            {
-                grdProduto.Columns[11].Visible = false;
-            }
-
             if (!IsPostBack)
             {
                 // Se tiver sido passado um idGrupoProd, filtra produtos pelo grupo passado
