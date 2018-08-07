@@ -15,7 +15,7 @@
             </a>
         </section>
         <section>
-            <lista-paginada :funcao-recuperar-itens="atualizarClientes" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum cliente encontrado">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="atualizarClientes" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum cliente encontrado">
                 <template slot="cabecalho">
                     <th></th>
                     <th>

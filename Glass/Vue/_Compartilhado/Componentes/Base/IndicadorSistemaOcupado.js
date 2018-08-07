@@ -40,26 +40,26 @@
       bloqueio,
       processamento,
       mensagem,
-      processos: 0,
-      bloqueios: 0
+      processando: false,
+      bloqueado: false
     }
   },
 
   created: function () {
     var vm = this;
 
-    this.$sistemaOcupado.$on('atualizar-processos', function (processos) {
-      vm.processos = processos;
+    this.$sistemaOcupado.$on('processando', function (processando) {
+      vm.processando = processando;
     });
 
-    this.$sistemaOcupado.$on('atualizar-bloqueios', function (bloqueios) {
-      vm.bloqueios = bloqueios;
+    this.$sistemaOcupado.$on('bloqueado', function (bloqueado) {
+      vm.bloqueado = bloqueado;
     });
   },
 
   destroyed: function() {
-    this.$sistemaOcupado.$off('atualizar-processos');
-    this.$sistemaOcupado.$off('atualizar-bloqueios');
+    this.$sistemaOcupado.$off('processando');
+    this.$sistemaOcupado.$off('bloqueado');
   },
 
   template: '#IndicadorSistemaOcupado-template'

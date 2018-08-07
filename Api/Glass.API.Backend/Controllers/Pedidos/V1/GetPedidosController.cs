@@ -372,7 +372,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var formasPagto = TipoCartaoCreditoDAO.Instance.ObtemListaPorTipo(0)
+                var formasPagto = TipoCartaoCreditoDAO.Instance.ObtemListaPorTipo(0, Situacao.Ativo)
                     .Select(s => new IdNomeDto
                     {
                         Id = s.IdTipoCartao,
@@ -441,7 +441,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     dataEntregaMinimaDto.DesabilitarCampo = false;
                 }
 
-                if (PedidoDAO.Instance.IsMaoDeObra((uint)id)
+                if (PedidoDAO.Instance.IsMaoDeObra(sessao, (uint)id)
                     || PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido == 0
                     || Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega)
                     || UserInfo.GetUserInfo.IsAdministrador)

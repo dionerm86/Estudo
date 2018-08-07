@@ -84,11 +84,23 @@ Vue.component('lista-paginada', {
     },
   },
 
-  data: function() {
+  data: function () {
+    const processamento = {
+      backgroundColor: 'white',
+      border: '1px solid #E2E2E4',
+      padding: '8px',
+      display: 'inline-grid',
+      gridTemplateColumns: 'repeat(2, max-content)',
+      alignItems: 'center',
+      gridGap: '0 4px'
+    };
+
     return {
       paginaAtual: 1,
       ultimaPagina: 0,
-      itens: []
+      itens: [],
+      bloqueio: false,
+      processamento
     };
   },
 
@@ -117,9 +129,8 @@ Vue.component('lista-paginada', {
      * e ordenação atual.
      */
     atualizar: function() {
+      this.bloqueio = true;
       var vm = this;
-
-      this.indicarBloqueio();
 
       this.funcaoRecuperarItens(this.filtro, this.paginaAtual, this.numeroRegistros, this.ordenacao)
         .then(function(resposta) {
@@ -149,7 +160,7 @@ Vue.component('lista-paginada', {
           vm.itens = [];
         })
         .then(function () {
-          vm.finalizarBloqueio();
+          vm.bloqueio = false;
         });
     },
 

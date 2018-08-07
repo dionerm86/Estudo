@@ -26,8 +26,8 @@ namespace Glass.API.Backend.Models.Pedidos.Configuracoes
         {
             if (idLoja > 0)
             {
-                this.CalcularIcms = LojaDAO.Instance.ObtemCalculaIcmsPedido((uint)idLoja);
-                this.CalcularIpi = LojaDAO.Instance.ObtemCalculaIpiPedido((uint)idLoja);
+                this.CalcularIcms = LojaDAO.Instance.ObtemCalculaIcmsStPedido(null, (uint)idLoja);
+                this.CalcularIpi = LojaDAO.Instance.ObtemCalculaIpiPedido(null, (uint)idLoja);
             }
             else
             {

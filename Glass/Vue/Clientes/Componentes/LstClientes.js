@@ -246,7 +246,7 @@ const app = new Vue({
      * Atualiza a lista de clientes
      */
     atualizarLista: function () {
-      this.$children[1].atualizar();
+      this.$refs.lista.atualizar();
     }
   },
 

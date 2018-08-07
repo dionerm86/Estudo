@@ -95,14 +95,14 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                 {
                     PedidoDAO.Instance.FinalizarPedido(sessao, (uint)id, false);
 
-                    if (PedidoDAO.Instance.ObtemSituacao((uint)id) != Data.Model.Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    if (PedidoDAO.Instance.ObtemSituacao(sessao, (uint)id) != Data.Model.Pedido.SituacaoPedido.ConfirmadoLiberacao)
                     {
                         var idPedidotmp = string.Empty;
                         var idPedidoErrotmp = string.Empty;
                         PedidoDAO.Instance.ConfirmarLiberacaoPedido(sessao, id.ToString(), out idPedidotmp, out idPedidoErrotmp, false, false);
                     }
 
-                    if (PedidoDAO.Instance.GetTipoPedido((uint)id) != Data.Model.Pedido.TipoPedidoEnum.Revenda)
+                    if (PedidoDAO.Instance.GetTipoPedido(sessao, (uint)id) != Data.Model.Pedido.TipoPedidoEnum.Revenda)
                     {
                         PedidoEspelhoDAO.Instance.GeraEspelho(sessao, (uint)id);
                     }

@@ -1,5 +1,5 @@
 <form>
-    <lista-paginada v-bind:exibir-inclusao="permitirInserir" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
+    <lista-paginada ref="lista" v-bind:exibir-inclusao="permitirInserir" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
         v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
         <template slot="cabecalho">
             <th></th>

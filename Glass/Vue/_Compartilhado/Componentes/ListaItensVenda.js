@@ -630,7 +630,7 @@ Vue.component('lista-itens-venda', {
      * @type {number}
      */
     numeroColunasLista: function () {
-      return this.$children[0].numeroColunas;
+      return this.$refs.lista.numeroColunas;
     },
 
     /**

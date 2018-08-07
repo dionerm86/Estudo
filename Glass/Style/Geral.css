@@ -7,6 +7,10 @@ input, button, textarea, select, .ui-dropdownchecklist-text {
   font-family: Tahoma,Verdana,Arial;
 }
 
+.ui-dropdownchecklist-text {
+  line-height: 19px;
+}
+
 body {
   background-color: #FFFFFF;
   font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -20,7 +24,8 @@ body, td {
   color: #000000;
 }
 
-input, textarea, select {
+input[type="text"], input[type="number"], input[type="search"], input[type="date"],
+input[type="time"], input[type="email"], input[type="password"], textarea, select {
   margin: 2px 0;
   line-height: 18px;
   border: 1px solid #a9a9a9;

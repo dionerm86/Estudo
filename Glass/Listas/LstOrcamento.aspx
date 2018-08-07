@@ -15,7 +15,7 @@
             </a>
         </section>
         <section>
-            <lista-paginada :funcao-recuperar-itens="atualizarOrcamentos" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum orçamento encontrado">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="atualizarOrcamentos" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum orçamento encontrado">
                 <template slot="cabecalho">
                     <th></th>
                     <th>

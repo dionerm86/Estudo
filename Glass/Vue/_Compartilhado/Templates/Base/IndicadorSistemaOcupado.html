@@ -1,5 +1,5 @@
 ﻿<div>
-    <div v-if="bloqueios > 0" v-bind:style="bloqueio">
+    <div v-if="bloqueado" v-bind:style="bloqueio">
         <iframe frameborder="0" v-bind:style="frame"></iframe>
         <span v-bind:style="mensagem">
             <img src="../Images/load.gif" height="96px" />
@@ -11,7 +11,7 @@
             </div>
         </span>
     </div>
-    <div v-else-if="processos > 0" v-bind:style="processamento">
+    <div v-else-if="processando" v-bind:style="processamento">
         <img src="../Images/load.gif" height="16px" />
         <span>
             Aguarde...

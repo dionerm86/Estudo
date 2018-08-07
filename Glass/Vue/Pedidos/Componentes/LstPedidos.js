@@ -264,7 +264,7 @@ const app = new Vue({
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     buscarObservacoesFinanceiro: function(filtroOriginal, pagina, numeroRegistros, ordenacao) {
-      return Servicos.Pedidos.obterListaObservacoesFinanceiro(filtroOriginal.id, paggina, numeroRegistros, ordenacao);
+      return Servicos.Pedidos.obterListaObservacoesFinanceiro(filtroOriginal.id, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -401,7 +401,7 @@ const app = new Vue({
      * Força a atualização da lista de pedidos, com base no filtro atual.
      */
     atualizarLista: function () {
-      this.$children[1].atualizar();
+      this.$refs.lista.atualizar();
     }
   },
 

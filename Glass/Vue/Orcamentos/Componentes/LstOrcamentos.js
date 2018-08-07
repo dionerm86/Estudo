@@ -151,6 +151,13 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Força a atualização da lista de orçamentos, com base no filtro atual.
+     */
+    atualizarLista: function () {
+      this.$refs.lista.atualizar();
     }
   },
 

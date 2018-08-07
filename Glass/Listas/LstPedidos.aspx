@@ -16,7 +16,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
             </a>
         </section>
         <section>
-            <lista-paginada :funcao-recuperar-itens="atualizarPedidos" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum pedido encontrado.">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="atualizarPedidos" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum pedido encontrado.">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
