@@ -1308,6 +1308,7 @@ namespace Glass.Data.DAL
                         }
                         catch (Exception ex)
                         {
+                            ErroDAO.Instance.InserirFromException($"MontaArquivoMesaOptway. Etiqueta {etiq.NumEtiqueta}", ex);
                             lstErrosArq.Add(new KeyValuePair<string, Exception>(etiq.NumEtiqueta, ex));
                         }
                         arqMesa = ms.ToArray();
