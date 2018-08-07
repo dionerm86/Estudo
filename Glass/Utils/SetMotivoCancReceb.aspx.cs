@@ -12,6 +12,11 @@ namespace Glass.UI.Web.Utils
             {
                 ctrlDataEstorno.Data = DateTime.Now;
                 estornoBanco.Visible = ExibirEstornoBanco();
+
+                if (Request["tipo"] == "sinal")
+                {
+                    chkGerarCredito.Visible = true;
+                }
             }
         }
     
@@ -28,7 +33,7 @@ namespace Glass.UI.Web.Utils
                         break;
     
                     case "sinal":
-                        SinalDAO.Instance.CancelarComTransacao(id, null, false, false, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
+                        SinalDAO.Instance.CancelarComTransacao(id, null, false, chkGerarCredito.Checked, txtMotivo.Text, ctrlDataEstorno.Data, false, true);
                         break;
     
                     case "acerto":
