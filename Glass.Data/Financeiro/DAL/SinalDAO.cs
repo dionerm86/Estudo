@@ -1407,10 +1407,6 @@ namespace Glass.Data.DAL
 
                 //Remove o pagamento das contas recebidas
                 PagtoContasReceberDAO.Instance.DeleteByIdContaR(session, string.Join(",", contasRec.Select(f => f.IdContaR.ToString()).ToArray()));
-
-                // Indica nos pedidos que o sinal não foi recebido
-                objPersistence.ExecuteCommand(session, "Update pedido Set " + (!sinal.IsPagtoAntecipado ? "idSinal" : "valorPagamentoAntecipado=Null, idPagamentoAntecipado") + "=Null Where " +
-                            (!sinal.IsPagtoAntecipado ? "idSinal=" : "idPagamentoAntecipado=") + idSinal);
             }
             else
             {
@@ -1422,6 +1418,10 @@ namespace Glass.Data.DAL
 
                 ClienteDAO.Instance.CreditaCredito(session, sinal.IdCliente, valorEstornoCredito);
             }
+
+            // Indica nos pedidos que o sinal não foi recebido
+            objPersistence.ExecuteCommand(session, "Update pedido Set " + (!sinal.IsPagtoAntecipado ? "idSinal" : "valorPagamentoAntecipado=Null, idPagamentoAntecipado") + "=Null Where " +
+                        (!sinal.IsPagtoAntecipado ? "idSinal=" : "idPagamentoAntecipado=") + idSinal);
 
             LogCancelamentoDAO.Instance.LogSinal(session, sinal, motivo, true);
 
