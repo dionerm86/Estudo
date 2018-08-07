@@ -1286,13 +1286,22 @@ namespace Glass.UI.Web.Utils
         [Ajax.AjaxMethod]
         public string SalvarConfiguracaoAresta(string idLoja, string configuracaoNova)
         {
-            var configuracaoAntiga = PCPConfig.ObtemArestaConfig;
+            var configuracaoAntiga = string.Empty;
 
-            ConfigDAO.Instance.SetValue(Config.ConfigEnum.ConfigAresta, idLoja.StrParaUint(), configuracaoNova);
+            try
+            {
+                configuracaoAntiga = PCPConfig.ObtemArestaConfig;
+                ConfigDAO.Instance.SetValue(Config.ConfigEnum.ConfigAresta, idLoja.StrParaUint(), configuracaoNova);
+                LogAlteracaoDAO.Instance.LogConfiguracaoAresta(null, configuracaoAntiga, configuracaoNova);
 
-            LogAlteracaoDAO.Instance.LogConfiguracaoAresta(null, configuracaoAntiga, configuracaoNova);
-
-            return ";Configuração da aresta salva";
+                return ";Configuração da aresta salva";
+            }
+            catch (Exception ex)
+            {
+                return $@";Não foi possível salvar a configuração da aresta. Falha: { ex?.Message ?? ex?.InnerException?.Message ?? string.Empty }.
+                    Configuração nova: { configuracaoNova }.
+                    Configuração atual: { configuracaoAntiga }.";
+            }
         }
 
         #endregion

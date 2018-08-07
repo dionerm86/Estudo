@@ -395,12 +395,17 @@ namespace Glass.Data.RelModel
 
         private static void CalculaValor(IContainerCalculo container, IProdutoCalculo produto)
         {
+            var calcularMultiploDe5 = true;
+
+            if (container is Pedido)
+                calcularMultiploDe5 = produto.TipoCalc == (int)TipoCalculoGrupoProd.M2 && !container.IsPedidoProducaoCorte;
+
             Helper.Calculos.ValorTotal.Instance.Calcular(
                 null,
                 container,
                 produto,
                 Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                true,
+                calcularMultiploDe5,
                 produto.Beneficiamentos.CountAreaMinima);
         }
 

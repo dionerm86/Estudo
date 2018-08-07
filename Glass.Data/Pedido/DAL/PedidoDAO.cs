@@ -762,13 +762,17 @@ namespace Glass.Data.DAL
                 pedido.DescrParcelas = parcelas.TrimEnd(' ').TrimEnd(',');
         }
 
-        public void AtualizarParcelasPedido(GDASession sessao, Pedido pedido)
+        public void AtualizarParcelasPedido(GDASession sessao, int idPedido)
         {
-            if (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.APrazo && pedido.IdParcela == 0)
-                return;
+            var pedido = GetElementByPrimaryKey(sessao, idPedido);
 
-            var alterouValor =
-                pedido.Total != ParcelasPedidoDAO.Instance.ObtemTotalPorPedido(sessao, pedido.IdPedido) + pedido.ValorEntrada + pedido.ValorPagamentoAntecipado;
+            if (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.APrazo && pedido.IdParcela.GetValueOrDefault() == 0)
+            {
+                return;
+            }
+
+            var totalParcelas = ParcelasPedidoDAO.Instance.ObtemTotalPorPedido(sessao, pedido.IdPedido);
+            var alterouValor = pedido.Total != totalParcelas + pedido.ValorEntrada + pedido.ValorPagamentoAntecipado;
 
             PreencherParcelasPedido(sessao, pedido);
 
@@ -13096,7 +13100,7 @@ namespace Glass.Data.DAL
                     }
 
                     if (objUpdate.DataCad.Date > objUpdate.DataEntrega.GetValueOrDefault().Date)
-                        throw new Exception("A data selecionada não pode ser inferior a " + DateTime.Now.ToShortDateString());
+                        throw new Exception("A data selecionada não pode ser inferior a " + objUpdate.DataCad.ToShortDateString());
 
                     // Atualiza a data de entrega do pedido.
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", objUpdate.IdPedido),
