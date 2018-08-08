@@ -737,5 +737,13 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirImpressaoDePedidosImportadosApenasConferidos); }
         }
+
+        /// <summary>
+        /// Numero de dias úteis anteriores a data fabrica para produtos filhos da composição do vidro laminado/duplo
+        /// </summary>
+        public static int DiasReduzirDataFabricaComposicaoDuploLaminado
+        {
+            get { return Config.GetConfigItem<int>(Config.ConfigEnum.DiasReduzirDataFabricaComposicaoDuploLaminado); }
+        }
     }
 }

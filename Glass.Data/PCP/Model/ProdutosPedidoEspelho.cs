@@ -883,6 +883,20 @@ namespace Glass.Data.Model
         /// </summary>
         public uint? IdProdPedParentOrig { get; set; }
 
+        /// <summary>
+        /// Data fabrica considerando os dias a retirar da composição
+        /// </summary>
+        public DateTime DataFabricaExibir
+        {
+            get
+            {
+                if (IdProdPedParent.GetValueOrDefault() > 0)
+                    return DataFabrica.AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+
+                return DataFabrica;
+            }
+        }
+
         public float PesoResumoCorte
         {
             get { return Peso; }

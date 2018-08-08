@@ -51,9 +51,35 @@ namespace Glass.Data.RelModel
 
         public uint? IdArquivoMesaCorte { get; set; }
 
-        public DateTime? DataEntrega { get; set; }
+        private DateTime? _dataEntrega;
+        public DateTime? DataEntrega
+        {
+            get
+            {
+                var idProdPedParent = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, IdProdPedEsp);
 
-        public DateTime? DataFabrica { get; set; }
+                if (idProdPedParent.GetValueOrDefault() > 0)
+                    return _dataEntrega.GetValueOrDefault().AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+
+                return _dataEntrega;
+            }
+            set { _dataEntrega = value; }
+        }
+
+        private DateTime? _dataFabrica;
+        public DateTime? DataFabrica
+        {
+            get
+            {
+                var idProdPedParent = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, IdProdPedEsp);
+
+                if (idProdPedParent.GetValueOrDefault() > 0)
+                    return _dataFabrica.GetValueOrDefault().AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+
+                return _dataFabrica;
+            }
+            set { _dataFabrica = value; }
+        }
 
         public DateTime DataImpressao { get; set; }
 
