@@ -11,8 +11,9 @@ namespace Glass.Data.Helper
         private string _codIbgeCidadeCliente;
         private bool _debitarIcmsDoIcmsSt, _calcularIpi;
         private GDA.GDASession _sessao;
+        private bool _notaFiscal;
 
-        public CalculoIcmsStGeral(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, bool calcularIpi)
+        public CalculoIcmsStGeral(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, bool calcularIpi, bool notaFiscal)
         {
             _idLoja = idLoja;
             _idCliente = idCliente;
@@ -22,10 +23,13 @@ namespace Glass.Data.Helper
             _codIbgeCidadeCliente = _idCliente > 0 ? CidadeDAO.Instance.ObtemCodIbgeCompleto(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente.Value)) : null;
             _debitarIcmsDoIcmsSt = true;
             _sessao = sessao;
+            _notaFiscal = notaFiscal;
         }
 
         public NFeUtils.ConfigNFe.TipoCalculoIcmsSt ObterCalculoAliquotaIcmsSt()
         {
+            if (_notaFiscal)
+                return Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt;
             return _calcularIpi ? Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt : NFeUtils.ConfigNFe.TipoCalculoIcmsSt.SemIpi;
         }
 
