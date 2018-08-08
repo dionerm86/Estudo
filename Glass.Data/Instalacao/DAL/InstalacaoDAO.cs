@@ -844,6 +844,18 @@ namespace Glass.Data.DAL
             }
         }
 
+        public bool PossuiIntalacoesNaoCanceladas(GDASession sessao, uint idLiberarPedido)
+        {
+            return objPersistence.ExecuteSqlQueryCount(sessao, $@"SELECT COUNT(*)
+                FROM instalacao 
+                WHERE 
+                    Situacao<>{(int)Instalacao.SituacaoInst.Cancelada}
+                    AND IdPedido IN (SELECT IdPedido 
+                                     FROM produtos_liberar_pedido 
+                                     WHERE IdLiberarPedido={idLiberarPedido} AND QtdeCalc>0);") > 0;
+        }
+
+
         /// <summary>
         /// Cancela instalação que já foi finalizada informando observação
         /// </summary>

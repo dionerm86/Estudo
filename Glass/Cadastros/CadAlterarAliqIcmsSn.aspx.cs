@@ -11,7 +11,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (!IsPostBack)
             {
-                ConfiguracaoLoja configLoja = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.AliquotaICMSSimplesNacional, UserInfo.GetUserInfo.IdLoja);
+                ConfiguracaoLoja configLoja = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.AliquotaICMSSimplesNacional, (UserInfo.GetUserInfo?.IdLoja).GetValueOrDefault());
                 txtAliquotaIcmsSn.Text = configLoja.ValorDecimal.ToString().Replace(".", ",");
             }
         }
@@ -19,7 +19,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                ConfiguracaoLoja configLoja = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.AliquotaICMSSimplesNacional, UserInfo.GetUserInfo.IdLoja);
+                ConfiguracaoLoja configLoja = ConfiguracaoLojaDAO.Instance.GetItem(Config.ConfigEnum.AliquotaICMSSimplesNacional, (UserInfo.GetUserInfo?.IdLoja).GetValueOrDefault());
                 configLoja.ValorDecimal = Glass.Conversoes.StrParaDecimalNullable(txtAliquotaIcmsSn.Text);
                 ConfiguracaoLojaDAO.Instance.Update(configLoja);
                 
