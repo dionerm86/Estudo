@@ -146,7 +146,6 @@ namespace Glass.Data.Helper
             var baseCalculo = ObtemBaseCalculoIcmsSt(produto, saida);
             var aliqIcmsProd = produto is Model.Produto ? produto.AliquotaIcms : IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
             var aliqIcmsStProd = produto.AliquotaIcmsSt;
-
             var valorIcmsADebitar = (produto.ValorIcms > 0 ? produto.ValorIcms : ((produto.Total - produto.ValorDesconto) * (decimal)(aliqIcmsProd / 100)));
 
             return baseCalculo * ((decimal)aliqIcmsStProd / 100) - (_debitarIcmsDoIcmsSt ? valorIcmsADebitar : 0);
