@@ -72,6 +72,7 @@
                                     </td>
                                 </tr>
                             </table>
+                            <asp:CheckBox ID="chkGerarCredito" Text="Gerar crédito para o cliente ao invés de estonar valor no caixa?"  Visible="false" runat="server" />
                         </td>
                     </tr>
                 </table>

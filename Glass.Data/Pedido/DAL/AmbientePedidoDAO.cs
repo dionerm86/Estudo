@@ -746,7 +746,7 @@ namespace Glass.Data.DAL
                         pedido,
                         pp,
                         Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.NaoArredondar,
-                        !(pedido as IContainerCalculo).IsPedidoProducaoCorte,
+                        pp.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !(pedido as IContainerCalculo).IsPedidoProducaoCorte,
                         pp.Beneficiamentos.CountAreaMinimaSession(sessao)
                     );
                 }

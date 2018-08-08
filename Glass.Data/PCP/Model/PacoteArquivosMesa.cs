@@ -133,13 +133,20 @@ namespace Glass.Data.Model
 
                                 while ((read = stream2.Read(buffer, 0, buffer.Length)) > 0)
                                     ms2.Write(buffer, 0, read);
+                                if (!System.IO.File.Exists(System.IO.Path.Combine(diretorio, (fileName + System.IO.Path.GetExtension(file.Name)).Replace("  ", "").Replace(" ", ""))))
+                                    throw new Exception($"Falha ao salvar o arquivo : {_nomes[i]} na pasta {diretorio}.");
 
                             }
                         }
                     }
                 }
                 else
+                {
                     System.IO.File.WriteAllBytes(System.IO.Path.Combine(diretorio, _nomes[i].Replace("  ", "").Replace(" ", "")), _arquivos[i]);
+
+                    if (!System.IO.File.Exists(System.IO.Path.Combine(diretorio, _nomes[i].Replace("  ", "").Replace(" ", ""))))
+                        throw new Exception($"Falha ao salvar o arquivo : {_nomes[i]} na pasta {diretorio}.");
+                }
             }
             
             // Verifica se existe algum erro tratado no momento da geração do arquivo.
