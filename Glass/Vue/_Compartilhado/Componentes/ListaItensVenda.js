@@ -590,6 +590,14 @@ Vue.component('lista-itens-venda', {
 
         this.exibirPopupFaltaEstoque(this.produtoAtual.id, 400, 600);
       }
+    },
+
+    /**
+     * Retorna o número de colunas da lista paginada.
+     * @type {number}
+     */
+    numeroColunasLista: function () {
+      return this.$refs.lista.numeroColunas();
     }
   },
 
@@ -623,14 +631,6 @@ Vue.component('lista-itens-venda', {
         && this.produtoAtual
         && this.produtoAtual.exibirBeneficiamentos
         && this.empresaVendeVidro;
-    },
-
-    /**
-     * Propriedade computada que retorna o número de colunas da lista paginada.
-     * @type {number}
-     */
-    numeroColunasLista: function () {
-      return this.$refs.lista.numeroColunas;
     },
 
     /**

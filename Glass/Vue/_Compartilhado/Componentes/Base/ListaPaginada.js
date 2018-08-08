@@ -171,6 +171,16 @@ Vue.component('lista-paginada', {
      */
     estiloLinhaAlternada: function(index) {
       return index % 2 === 0 ? '' : 'alt';
+    },
+
+    /**
+     * Retorna o número de colunas da lista.
+     * @type {number}.
+     */
+    numeroColunas: function () {
+      return this.$slots.cabecalho.filter(function (h) {
+        return h.tag;
+      }).length;
     }
   },
 
@@ -205,17 +215,6 @@ Vue.component('lista-paginada', {
   },
 
   computed: {
-    /**
-     * Propriedade computada que indica o número de colunas da lista.
-     * Usada para os números de página, que devem ter um 'colspan' com o tamanho da lista.
-     * @type {number}.
-     */
-    numeroColunas: function() {
-      return this.$slots.cabecalho.filter(function(h) {
-        return h.tag;
-      }).length;
-    },
-
     /**
      * Propriedade computada com a lista de páginas que serão exibidas na lista.
      * Calculada a partir da página atual, pode ter links ou texto (com base no retorno).

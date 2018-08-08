@@ -156,7 +156,7 @@
             v-if="item.composicao.possuiFilhos && !inserindo && numeroLinhaEdicao === -1 && exibindoFilhos(index) && empresaVendeVidro">
             <tr v-bind:class="classe" style="border-top: none">
                 <td></td>
-                <td v-bind:colspan="numeroColunasLista - 1">
+                <td v-bind:colspan="numeroColunasLista() - 1">
                     <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
                         v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
                         v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno"

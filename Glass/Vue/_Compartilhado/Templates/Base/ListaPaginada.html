@@ -22,7 +22,7 @@
                     </slot>
                 </tr>
                 <slot name="novaLinhaItem" v-bind:item="item" v-bind:index="index"
-                        v-bind:classe="estiloLinhaAlternada(index)" v-if="index !== linhaEditando"></slot>
+                    v-bind:classe="estiloLinhaAlternada(index)" v-if="index !== linhaEditando"></slot>
             </template>
             <tr v-if="exibirInclusao && linhaEditando === -1" v-bind:class="estiloLinhaAlternada(itens.length)">
                 <slot name="itemIncluir"></slot>
@@ -35,7 +35,7 @@
         </tbody>
         <tfoot class="pgr" v-if="itens.length > 0 && paginas.length > 1 && linhaEditando === -1">
             <tr>
-                <td v-bind:colspan="numeroColunas">
+                <td v-bind:colspan="numeroColunas()">
                     <table>
                         <tbody>
                             <tr>
