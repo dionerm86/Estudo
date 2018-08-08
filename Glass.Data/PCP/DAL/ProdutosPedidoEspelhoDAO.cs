@@ -351,17 +351,17 @@ namespace Glass.Data.DAL
                 where += " And p.idProd In (" + ids + ")";
             }
 
-            if (!String.IsNullOrEmpty(dataIni))
+            if (!string.IsNullOrEmpty(dataIni))
                 where += " and ped.dataEntrega>=?dataIni";
 
-            if (!String.IsNullOrEmpty(dataFim))
+            if (!string.IsNullOrEmpty(dataFim))
                 where += " and ped.dataEntrega<=?dataFim";
 
-            if (!String.IsNullOrEmpty(dataFabricaIni))
-                where += " and pedEsp.dataFabrica>=?dataFabricaIni";
+            if (!string.IsNullOrEmpty(dataFabricaIni))
+                where += " AND " + TratarDataFabricaComposicao("pedEsp.dataFabrica", "pp.IdProdPedParent") + ">=?dataFabricaIni";
 
-            if (!String.IsNullOrEmpty(dataFabricaFim))
-                where += " and pedEsp.dataFabrica<=?dataFabricaFim";
+            if (!string.IsNullOrEmpty(dataFabricaFim))
+                where += " AND " + TratarDataFabricaComposicao("pedEsp.dataFabrica", "pp.IdProdPedParent") + "<=?dataFabricaFim";
 
             switch (fastDelivery)
             {
@@ -531,6 +531,17 @@ namespace Glass.Data.DAL
             // Chamado 11754. o comando "SET group_concat_max_len = 4096;", é importante que este comando seja executado
             // para que o group_concat, feito para retornar as etiquetas do produto espelho, busque todas as etiquetas.
             return "SET group_concat_max_len = 4096; " + sql;
+        }
+
+        /// <summary>
+        /// Trata a data fábrica a ser considerada na busca do SQL para considerar os dias a serem reduzidos da data fabrica de produtos de composição
+        /// </summary>
+        public string TratarDataFabricaComposicao(string campoData, string campoIdProdPedParent)
+        {
+            return string.Format("(CASE WHEN ({2} > 0) THEN DATE_SUB({1}, INTERVAL {0} DAY) ELSE {1} END)",
+                PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado, // 0
+                campoData, // 1
+                campoIdProdPedParent); // 2
         }
 
         public bool IsProdToEtiq(uint idProdPed)
