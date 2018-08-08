@@ -1987,6 +1987,10 @@ namespace Glass.Data.DAL
         {
             NotaFiscal nf = GetElement(idNf);
 
+            var naturezaCalculaDifal = false;
+            decimal valorIcmsUFDestino = 0;
+            decimal valorIcmsUFRemetente = 0;
+
             // Verifica se NFe pode ser emitida
             if (nf.Situacao != (int)NotaFiscal.SituacaoEnum.Aberta && nf.Situacao == (int)NotaFiscal.SituacaoEnum.NaoEmitida &&
                 nf.Situacao == (int)NotaFiscal.SituacaoEnum.FalhaEmitir)
@@ -3828,7 +3832,7 @@ namespace Glass.Data.DAL
 
                     #region DIFAL
 
-                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao));
+                    naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao));
 
                     if (pnf.IdNaturezaOperacao > 0 && naturezaCalculaDifal)
                     {
@@ -3868,8 +3872,8 @@ namespace Glass.Data.DAL
                                     DateTime.Now.Year == 2017 ? (decimal)0.4 :
                                     DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
 
-                                var valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
-                                var valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
+                                valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
+                                valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
@@ -4104,6 +4108,11 @@ namespace Glass.Data.DAL
 
             try
             {
+                if (naturezaCalculaDifal && valorIcmsUFDestino > 0 && valorIcmsUFRemetente > 0)
+                {
+                    nf.InfCompl += $" Valor da partilha UF de destino: {valorIcmsUFDestino.ToString("C")}, Valor da partilha UF de origem: {valorIcmsUFRemetente.ToString("C")}.";
+                }
+
                 // Substitui valores dos campos #bcicms, #vicmsdest e #vicmsremet
                 if (nf.InfCompl != null)
                     nf.InfCompl = nf.InfCompl.Replace("#bcicms", nf.BcIcms.ToString("C"))
