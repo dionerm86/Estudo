@@ -29,7 +29,10 @@ namespace Glass.Data.Helper
         public NFeUtils.ConfigNFe.TipoCalculoIcmsSt ObterCalculoAliquotaIcmsSt()
         {
             if (_notaFiscal)
-                return Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt;
+            {
+                return NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo;
+            }
+
             return _calcularIpi ? Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt : NFeUtils.ConfigNFe.TipoCalculoIcmsSt.SemIpi;
         }
 

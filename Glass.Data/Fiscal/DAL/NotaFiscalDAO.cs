@@ -3859,19 +3859,40 @@ namespace Glass.Data.DAL
                                         ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
                                 }
 
-                                var percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
-                                var valorDifal = pnf.BcIcms * (percentualIcmsInterestadual / 100);
+                                var origemSulSudesteExcetoES =
+                                    nomeUfOrigem.ToUpper().Contains("MG") ||
+                                    nomeUfOrigem.ToUpper().Contains("PR") ||
+                                    nomeUfOrigem.ToUpper().Contains("RJ") ||
+                                    nomeUfOrigem.ToUpper().Contains("RS") ||
+                                    nomeUfOrigem.ToUpper().Contains("SC") ||
+                                    nomeUfOrigem.ToUpper().Contains("SP");
 
-                                var percentualIcmsUFDestino =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
+                                var destinoNorteNordesteCentroOesteES =
+                                    nomeUfDestino.ToUpper().Contains("AC") ||
+                                    nomeUfDestino.ToUpper().Contains("AL") ||
+                                    nomeUfDestino.ToUpper().Contains("AM") ||
+                                    nomeUfDestino.ToUpper().Contains("AP") ||
+                                    nomeUfDestino.ToUpper().Contains("BA") ||
+                                    nomeUfDestino.ToUpper().Contains("CE") ||
+                                    nomeUfDestino.ToUpper().Contains("ES") ||
+                                    nomeUfDestino.ToUpper().Contains("GO") ||
+                                    nomeUfDestino.ToUpper().Contains("MA") ||
+                                    nomeUfDestino.ToUpper().Contains("MS") ||
+                                    nomeUfDestino.ToUpper().Contains("MT") ||
+                                    nomeUfDestino.ToUpper().Contains("PA") ||
+                                    nomeUfDestino.ToUpper().Contains("PB") ||
+                                    nomeUfDestino.ToUpper().Contains("PE") ||
+                                    nomeUfDestino.ToUpper().Contains("PI") ||
+                                    nomeUfDestino.ToUpper().Contains("RN") ||
+                                    nomeUfDestino.ToUpper().Contains("RO") ||
+                                    nomeUfDestino.ToUpper().Contains("RR") ||
+                                    nomeUfDestino.ToUpper().Contains("SE") ||
+                                    nomeUfDestino.ToUpper().Contains("TO");
 
-                                var percentualIcmsUFRemetente =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
-
+                                var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
+                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
+                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
@@ -3885,14 +3906,9 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
-
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
-                                    DateTime.Now.Year == 2016 ? Formatacoes.TrataValorDecimal(40, 2) :
-                                    DateTime.Now.Year == 2017 ? Formatacoes.TrataValorDecimal(60, 2) :
-                                    DateTime.Now.Year == 2018 ? Formatacoes.TrataValorDecimal(80, 2) : Formatacoes.TrataValorDecimal(100, 2));
-
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", (percentualIcmsUFDestino * 100).ToString());
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
