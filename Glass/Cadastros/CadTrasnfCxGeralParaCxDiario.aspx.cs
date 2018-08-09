@@ -27,7 +27,7 @@ namespace Glass.UI.Web.Cadastros
                     decimal valorTransf = decimal.Parse(valor);
 
                     CaixaDiarioDAO.Instance.MovCaixa(transacao, Glass.Conversoes.StrParaUint(idLoja), null, 1, valorTransf, 0,
-                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario), null, 1, obs, true, false);
+                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario), null, 1, obs, true, null);
 
                     // Movimenta caixa geral
                     CaixaGeralDAO.Instance.MovCxGeral(transacao, null, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeralParaDiario),
