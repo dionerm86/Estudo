@@ -1412,9 +1412,7 @@ namespace Glass.Data.DAL
                 if (idLojaOrcamento > 0)
                     parametroIdLoja = $" AND pl.IdLoja={idLojaOrcamento} ";
             }
-
-            // Busca os produtos que não forem compras
-            if (idPedido > 0)
+            else if (idPedido > 0) // Busca os produtos que não forem compras
             {
                 // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
                 parametroIdLoja = " AND pl.IdLoja=" + PedidoDAO.Instance.ObtemIdLoja(null, (uint)idPedido);
@@ -1468,7 +1466,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += string.Format(" AND p.Largura={0}", largura);
 
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
-            if (idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
+            if (idOrcamento == 0 && idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
            
             if (idLoja > 0)
