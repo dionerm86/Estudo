@@ -1394,16 +1394,24 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool selecionar, out string filtroAdicional)
         {
             return SqlProd(idGrupo, idSubgrupo, descr, 0, 0, idPedido, idLoja, idCompra, paraPedidoProducao,
-            paraPedidoInterno, false, 0, 0, selecionar, out filtroAdicional);
+            paraPedidoInterno, false, 0, 0, 0, selecionar, out filtroAdicional);
         }
 
         private string SqlProd(int idGrupo, int idSubgrupo, string descr, int altura, int largura,
-            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto, uint idCliente,
+            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto, uint idCliente, int idOrcamento,
             bool selecionar, out string filtroAdicional)
         {
             filtroAdicional = " and p.situacao=" + (int)Glass.Situacao.Ativo;
 
             var parametroIdLoja = string.Empty;
+
+            if (idOrcamento > 0)
+            {
+                var idLojaOrcamento = OrcamentoDAO.Instance.GetIdLoja(null, (uint)idOrcamento);
+
+                if (idLojaOrcamento > 0)
+                    parametroIdLoja = $" AND pl.IdLoja={idLojaOrcamento} ";
+            }
 
             // Busca os produtos que não forem compras
             if (idPedido > 0)
@@ -1532,20 +1540,20 @@ namespace Glass.Data.DAL
             return GetProdutosCount(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), false);
         }
 
-        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente,
+        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente, int idOrcamento,
             string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, idOrcamento, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
         }
 
-        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente)
+        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente, int idOrcamento)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, idOrcamento, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
@@ -1560,7 +1568,7 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool parceiro, string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
@@ -1575,7 +1583,7 @@ namespace Glass.Data.DAL
             bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
