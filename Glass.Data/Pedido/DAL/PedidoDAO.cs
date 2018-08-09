@@ -5593,8 +5593,10 @@ namespace Glass.Data.DAL
 
                         var roteiroProducao = RoteiroProducaoDAO.Instance.GetElementByPrimaryKey(idRoteiroProducao);
 
+                        var pecaNeta = prodPed.IdProdPedParent > 0 && produtosPedido.Where(f => f.IdProdPed == prodPed.IdProdPedParent && f.IdProdPedParent > 0).Count() > 0;
+
                         //Verifica se oi roteiro obriga ter imagem na peça
-                        if (roteiroProducao.ObrigarAnexarImagemPecaAvulsa)
+                        if (!pecaNeta && roteiroProducao.ObrigarAnexarImagemPecaAvulsa)
                         {
                             throw new Exception(string.Format("o produto {0} está em processo que necessita que o produto possua imagem", prodPed.DescrProduto));
                         }
