@@ -112,6 +112,16 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(String.Format(sql, idPedido)) > 0;
         }
 
+        /// <summary>
+        /// Recupera os pedidos da exportação passada
+        /// </summary>
+        public int[] PesquisarPedidosExportacao(uint idExportacao)
+        {
+            var sql = "SELECT IdPedido FROM pedido_exportacao WHERE IdExportacao=" + idExportacao;
+
+            return ExecuteMultipleScalar<int>(sql).ToArray();
+        }
+
         //Verifica se o pedido passado possui alguma exportação que não esteja cancelada
         public bool VerificarPossuiExportacao(int idPedido)
         {
@@ -141,15 +151,24 @@ namespace Glass.Data.DAL
 
         #region Atualizações
 
-        public void InserirSituacaoExportado(uint idPedido, int situacao)
+        public void AtualizarSituacao(GDASession session, uint idPedido, int situacao)
+        {
+            var idExportacao = ObtemIdExportacao(idPedido);
+
+            var sql = string.Format("UPDATE pedido_exportacao SET SituacaoExportacao={0} WHERE IdPedido={1} AND IdExportacao={2}", situacao, idPedido, idExportacao);
+
+            objPersistence.ExecuteCommand(session, sql);
+        }
+
+        public void InserirSituacaoExportado(GDASession session, uint idPedido, int situacao)
         {
             if (situacao == (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado)
                 throw new Exception("Use o outro método, que contém o IdExportacao");
 
-            InserirSituacaoExportado(ObtemIdExportacao(idPedido), idPedido, situacao);
+            InserirSituacaoExportado(session, ObtemIdExportacao(idPedido), idPedido, situacao);
         }
 
-        public void InserirSituacaoExportado(uint idExportacao, uint idPedido, int situacao)
+        public void InserirSituacaoExportado(GDASession session, uint idExportacao, uint idPedido, int situacao)
         {
             PedidoExportacao model = new PedidoExportacao();
             model.IdExportacao = idExportacao;
@@ -157,7 +176,7 @@ namespace Glass.Data.DAL
             model.SituacaoExportacao = situacao;
             model.DataSituacao = DateTime.Now;
 
-            PedidoExportacaoDAO.Instance.Insert(model);
+            PedidoExportacaoDAO.Instance.Insert(session, model);
         }
 
         #endregion

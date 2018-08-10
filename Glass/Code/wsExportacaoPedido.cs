@@ -168,7 +168,7 @@ namespace Glass.UI.Web
             {
                 try
                 {
-                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
     
                     return new string[] { "0", "Pedido " + idPedidoCliente + " cancelado com sucesso." };
                 }
@@ -191,7 +191,7 @@ namespace Glass.UI.Web
             {
                 try
                 {
-                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Pronto);
+                    PedidoExportacaoDAO.Instance.InserirSituacaoExportado(null, idPedidoCliente, (int)PedidoExportacao.SituacaoExportacaoEnum.Pronto);
     
                     return new string[] { "0", "Pedido " + idPedidoCliente + " foi marcado como pronto com sucesso." };
                 }
@@ -199,6 +199,28 @@ namespace Glass.UI.Web
                 {
                     return new string[] { "1", "Ocorreu um erro: " + ex.Message + "." };
                 }
+            }
+            else
+            {
+                return new string[] { "1", GetDescrErroAutenticacao(aut) };
+            }
+        }
+
+        /// <summary>
+        /// Exporta os pedidos enviados pelo cliente para a base de dados do fornecedor.
+        /// </summary>
+        /// <param name="cpfCnpj">Autenticação do cliente no serviço</param>
+        /// <param name="pedido">Pedidos serializados</param>
+        /// <returns>string[] com duas posições. A 1ª indica o código de retorno(0 = sucesso; 1 = erro) e a 2ª indica a mensagem de retorno</returns>
+        [WebMethod(Description = "Verfica a situação dos pedidos passados")]
+        public string[] VerificarExportacaoPedidos(string cpfCnpj, int tipoUsuario, byte[] pedido)
+        {
+            int aut;
+            if ((aut = Autenticar(cpfCnpj, tipoUsuario)) > 0)
+            {
+                string[] resultado = UtilsExportacaoPedido.VerificarExportacaoPedidos(pedido);
+
+                return resultado;
             }
             else
             {

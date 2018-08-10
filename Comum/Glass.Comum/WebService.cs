@@ -105,6 +105,17 @@ namespace Glass
                     idPedidoCliente});
                 return ((string[])(results[0]));
             }
+
+            /// <remarks/>
+            [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://webglass.org/VerificarExportacaoPedidos", RequestNamespace = "http://webglass.org/", ResponseNamespace = "http://webglass.org/", Use = System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle = System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+            public string[] VerificarExportacaoPedidos(string cpfCnpj, int tipoUsuario, [System.Xml.Serialization.XmlElementAttribute(DataType = "base64Binary")] byte[] pedido)
+            {
+                object[] results = this.Invoke("VerificarExportacaoPedidos", new object[] {
+                    cpfCnpj,
+                    tipoUsuario,
+                    pedido});
+                return ((string[])(results[0]));
+            }
         }
 
         #endregion
@@ -141,7 +152,9 @@ namespace Glass
 
                 if (methodName == "CancelarPedido")
                     return client.CancelarPedido((string)args[0], (int)args[1], (int)args[2]);
-                else               
+                else if (methodName == "VerificarExportacaoPedidos")
+                    return client.VerificarExportacaoPedidos((string)args[0], (int)args[1], (byte[])args[2]);
+                else
                     return client.EnviarPedidosFornecedor((string)args[0], (int)args[1], (byte[])args[2]);
             }
             catch (Exception ex)

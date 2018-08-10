@@ -25,13 +25,14 @@ namespace Glass.Data.RelDAL
                 var login = UserInfo.GetUserInfo;
                 var administrador = login.IsAdministrador;
                 var cliente = login.IsCliente;
-                var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+                var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+                var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
                 var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
                 var orcamento = GraficoOrcamentosDAO.Instance.GetOrcamentos(idLoja, idVendedor, situacao, periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), 0, false);
                 var venda = ChartVendasDAO.Instance.GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, 0, 0, null,
                     periodoIni.ToString("dd/MM/yyyy"), periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), null, 0,
-                    cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+                    cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
 
                 if (orcamento.Count > 0 && venda.Length > 0)
                 {

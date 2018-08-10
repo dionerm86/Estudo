@@ -506,7 +506,7 @@ namespace Glass.Data.Helper
         /// Exporta os pedidos selecionados para um arquivo, retornando os bytes desse arquivo.
         /// </summary>
         /// <param name="idPedido"></param>
-        public static byte[] CriarExportacao(Dictionary<uint, bool> pedidos, uint[] idProduto)
+        public static byte[] ConfigurarExportacao(Dictionary<uint, bool> pedidos, uint[] idProduto)
         {
             if (pedidos.Count == 0)
                 throw new Exception("Selecione pelo menos 1 pedido para exportar.");
@@ -1181,6 +1181,167 @@ namespace Glass.Data.Helper
             retorno.NaoInseridos = retorno.NaoInseridos.TrimEnd(' ', ',');
 
             return retorno;
+        }
+
+        #endregion
+
+        #region Validar Pedidos
+
+        /// <summary>
+        /// Verifica se os pedidos passados estão exportados corretamente
+        /// </summary>
+        public static string[] VerificarExportacaoPedidos(byte[] buffer)
+        {
+            var retorno = new List<string>();
+            var pedido = Deserializar(Arquivos.Descompactar(buffer));
+
+            var cli = ClienteDAO.Instance.GetByCpfCnpj(null, pedido.Itens[0].Loja.Cnpj);
+
+            foreach (var item in pedido.Itens)
+            {
+                var exportado = PedidoDAO.Instance.CodigoClienteUsado(null, 0, (uint)cli.IdCli, item.Pedido.IdPedido.ToString(), true);
+                retorno.Add(string.Format("{0}|{1}", item.Pedido.IdPedido, exportado));
+            }
+
+            return retorno.ToArray();
+        }
+
+        #endregion
+
+        #region Atualizar Exportação
+
+        /// <summary>
+        /// Cria uma nova Exportação
+        /// </summary>
+        public static void CriarExportacao(uint idFornec, uint[] pedidos, Dictionary<uint, List<uint>> idsProdutosPedido)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    Exportacao nova = new Exportacao();
+                    nova.IdFornec = idFornec;
+                    nova.IdFunc = Helper.UserInfo.GetUserInfo.CodUser;
+                    nova.DataExportacao = DateTime.Now;
+                    uint idExportacao = ExportacaoDAO.Instance.Insert(nova);
+
+                    foreach (uint item in pedidos)
+                        PedidoExportacaoDAO.Instance.InserirSituacaoExportado(transaction, idExportacao, item,
+                            (int)PedidoExportacao.SituacaoExportacaoEnum.Exportando);
+
+                    foreach (KeyValuePair<uint, List<uint>> i in idsProdutosPedido)
+                        foreach (uint id in i.Value)
+                            ProdutoPedidoExportacaoDAO.Instance.InserirExportado(transaction, idExportacao, i.Key, id);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Processa o retorno da exportação
+        /// </summary>
+        public static void ProcessarDadosExportacao(string[] dados, Dictionary<uint, bool> listaPedidos)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    uint[] idsPedidosExportados;
+
+                    if (dados[0] == "0")
+                    {
+                        if (dados.Length > 2 && dados[2] != null)
+                        {
+                            idsPedidosExportados = Array.ConvertAll<string, uint>(dados[2].Split(','),
+                                delegate (string x) { return Glass.Conversoes.StrParaUint(x.Replace(" (PCP)", "")); });
+                        }
+                        else
+                        {
+                            idsPedidosExportados = new uint[listaPedidos.Count];
+                            listaPedidos.Keys.CopyTo(idsPedidosExportados, 0);
+                        }
+
+                        foreach (uint item in idsPedidosExportados)
+                        {
+                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item,
+                                (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
+
+                            listaPedidos.Remove(item);
+                        }
+
+                        foreach (var item in listaPedidos)
+                        {
+                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item.Key,
+                                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var item in listaPedidos)
+                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, item.Key,
+                                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    }
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Atualiza a situação dos pedidos no cliente
+        /// </summary>
+        public static void AtualizarPedidosExportacao(string[] dados)
+        {
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    foreach (var item in dados)
+                    {
+                        var pedidoExportado = new Tuple<uint, bool>(item.Split('|')[0].StrParaUint(), bool.Parse(item.Split('|')[1]));
+
+                        var situacao = PedidoExportacaoDAO.Instance.GetSituacaoExportacao(pedidoExportado.Item1);
+
+                        if (situacao == 0)
+                            throw new Exception($"Não há registro de exportação para o pedido {pedidoExportado.Item1} no sistema, crie uma exportação para ele para que a mesma possa ser atualizada. ");
+
+                        if (pedidoExportado.Item2 && (situacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando || situacao == PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
+                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
+                        else if (!pedidoExportado.Item2 && (situacao != PedidoExportacao.SituacaoExportacaoEnum.Cancelado))
+                            PedidoExportacaoDAO.Instance.AtualizarSituacao(transaction, pedidoExportado.Item1, (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+                    }
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+                    throw;
+                }
+            }
         }
 
         #endregion
