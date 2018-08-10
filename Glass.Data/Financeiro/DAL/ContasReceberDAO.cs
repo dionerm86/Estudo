@@ -6976,7 +6976,7 @@ namespace Glass.Data.DAL
                             decimal valor = 0;
 
                             // Calcula o valor da movimentação
-                            if (conta.IdContaRRef.GetValueOrDefault() > 0 && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
+                            if (conta.IdContaRRef.GetValueOrDefault() > 0 && MenuConfig.ExibirCartaoNaoIdentificado && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
                                 valor = ObtemValorVec(transaction, (uint)conta.IdContaRRef) - (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : valorJurosCartao);
                             else
                                 valor = conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? valorJurosCartao : 0);
