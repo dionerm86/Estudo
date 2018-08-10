@@ -752,6 +752,10 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                             if (xelICMS["pICMSST"] != null)
                                 produtoNF.AliqIcmsSt = float.Parse(xelICMS["pICMSST"].InnerText,
                                     CultureInfo.InvariantCulture);
+                            
+                            if (xelICMS["pMVAST"] != null)
+                                produtoNF.Mva = float.Parse(xelICMS["pMVAST"].InnerText,
+                                    CultureInfo.InvariantCulture);
 
                             //BC ICMS ST
                             if (xelICMS["vBCST"] != null)

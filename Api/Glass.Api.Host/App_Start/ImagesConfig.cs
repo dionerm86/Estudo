@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace Glass.Api.Host
@@ -30,7 +32,7 @@ namespace Glass.Api.Host
 
         private static string CreateMd5()
         {
-            var files = Directory.GetFiles(_diretorioModelosProjeto);
+            var files = ObterImagensAtivas().ToArray();
             var md5 = MD5.Create();
 
             for (int i = 0; i < files.Length; i++)
@@ -75,12 +77,20 @@ namespace Glass.Api.Host
 
             using (var zipFile = new Ionic.Zip.ZipFile(System.Text.Encoding.UTF8))
             {
-                zipFile.AddDirectory(_diretorioModelosProjeto);
+                zipFile.AddFiles(ObterImagensAtivas());
                 zipFile.Save(_arquivoModelosProjetoPath);
             }
 
             var checksum = CreateMd5();
             File.WriteAllText(_checksumPath, checksum);
+        }
+
+        private static IEnumerable<string> ObterImagensAtivas()
+        {
+            var imagens = Glass.Data.DAL.ProjetoModeloDAO.Instance.ObterImagens();
+
+            foreach (var img in imagens.Select(f => Path.Combine(_diretorioModelosProjeto, f)).Where(f => File.Exists(f)))
+                yield return img;
         }
     }
 }

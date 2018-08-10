@@ -102,7 +102,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And c.Nf Like ?Nf";
 
             if (soPcp)
-                filtroAdicional += " And c.IdPedidoEspelho Is Not Null";
+                filtroAdicional += " And IFNULL(c.IdPedidoEspelho, c.nf)";
 
             if (!String.IsNullOrEmpty(dataIni))
                 filtroAdicional += " And c.dataCad>=?dataIni";

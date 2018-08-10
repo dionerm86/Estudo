@@ -45,6 +45,11 @@ namespace Glass.UI.Web.Cadastros.Producao
             if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.MarcadorProducao)
                 Response.Redirect("~/WebGlass/Main.aspx");
 
+            if (PCPConfig.UsarNovoControleExpBalcao && funcSetor.Count > 0)
+            {
+                Response.Redirect("~/WebGlass/Main.aspx");
+            }
+
             // Se o usuário não possuir nenhum setor associado, só poderá visualizar a consulta de produção
             if (funcSetor.Count == 0)
             {

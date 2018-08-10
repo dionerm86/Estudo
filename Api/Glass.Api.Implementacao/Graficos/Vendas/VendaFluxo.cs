@@ -90,7 +90,7 @@ namespace Glass.Api.Graficos.Vendas.Implementacao
             var criterio = string.Empty;
             var idsLojas = LojaDAO.Instance.GetIdsLojasAtivas();
 
-            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 1, "loja", idsLojas, false, true, true, true,
+            var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 1, "loja", idsLojas, false, true, true, true, true,
                 out criterio);
 
             var retorno = new List<IVendasCurvaAbc>();
@@ -233,7 +233,7 @@ namespace Glass.Api.Graficos.Vendas.Implementacao
                 .Select(f => (uint)f.IdFunc).ToList();
 
             var dados = ChartVendasDAO.Instance.GetVendasForChart(0, 0, 0, 0, null, 0, dtIni.ToShortDateString(), dtFim.ToShortDateString(), null, 2, "emissor", idsVendedores, false, true, true,
-                true, out criterio);
+                true, true, out criterio);
 
             var retorno = new List<IVendasPorVendedor>();
             var lst = new List<IVendasPorVendedor>();

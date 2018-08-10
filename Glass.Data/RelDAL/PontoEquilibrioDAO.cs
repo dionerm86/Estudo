@@ -93,14 +93,15 @@ namespace Glass.Data.RelDAL
 
             var cliente = login == null ? false: login.IsCliente;
             var administrador = login == null ? true: login.IsAdministrador;
-            var emitirGarantiaReposicao = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = login == null ? true : Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
             
             string sql = PedidoDAO.Instance.SqlRptSit(0, "", 0, null, null, (idCliente > 0 ? idCliente.ToString() : null), nomeCliente, 0,
                 (idLoja > 0 ? idLoja.ToString() : null), (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente,
                 dataIni, dataFim, null, null, null, null, 0, 0, tipoPedido, 0, 0, 0, null, tipoVenda, 0, null, null, false, false, false, null, null, 0, null,
                 null, 0, 0, null, null, null, null, false, 0, 0, true, false, false, true, out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null,
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
+                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = string.Format(@"SELECT 1 AS Indice, 'Vendas' AS Item, CAST(SUM(p.Total) AS DECIMAL(12,2)) AS Valor, CAST(GROUP_CONCAT(p.IdProd) AS CHAR) AS Produtos FROM ({0}) AS p WHERE 1",
                 sql.Replace("SELECT", "SELECT plp.IdProdPed AS IdProd, "));
