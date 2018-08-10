@@ -348,10 +348,12 @@
     <Compile Include="Models\DescontoQuantidade\Dados\DadosEntradaDto.cs" />
     <Compile Include="Models\DescontoQuantidade\Dados\DadosDescontoQuantidadeDto.cs" />
     <Compile Include="Models\Genericas\CidadeDto.cs" />
+    <Compile Include="Models\Genericas\DataDto.cs" />
     <Compile Include="Models\Genericas\EnderecoDto.cs" />
     <Compile Include="Models\Genericas\IdDto.cs" />
     <Compile Include="Models\Genericas\Venda\ComposicaoDto.cs" />
     <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
+    <Compile Include="Models\Obras\Filtro\TipoObrasFiltradas.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\DadosEntradaDto.cs" />
     <Compile Include="Models\Obras\Filtro\ObraDto.cs" />

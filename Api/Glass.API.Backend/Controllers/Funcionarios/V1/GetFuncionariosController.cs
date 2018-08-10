@@ -139,11 +139,17 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <returns>A data de trabalho do funcionário.</returns>
         [HttpGet]
         [Route("{id}/dataTrabalho")]
+        [SwaggerResponse(200, "Data de trabalho encontrada.", Type = typeof(DataDto))]
         public IHttpActionResult ObterDataTrabalhoFuncionario(int id)
         {
             using (var sessao = new GDATransaction())
             {
-                return this.Item(FuncionarioDAO.Instance.ObtemDataAtraso(sessao, (uint)id));
+                var dataTrabalho = new DataDto
+                {
+                    Data = FuncionarioDAO.Instance.ObtemDataAtraso(sessao, (uint)id),
+                };
+
+                return this.Item(dataTrabalho);
             }
         }
     }

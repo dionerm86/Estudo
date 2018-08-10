@@ -53,7 +53,7 @@ namespace Glass.API.Backend.Models.Obras.Filtro
         /// Obtém ou define um valor que indica se devem ser buscadas obras que geraram crédito ou foram pagamento antecipado.
         /// </summary>
         [DataMember]
-        [JsonProperty("gerarCredito")]
-        public bool? GerarCredito { get; set; }
+        [JsonProperty("tipoObras")]
+        public TipoObrasFiltradas? TipoObras { get; set; }
     }
 }

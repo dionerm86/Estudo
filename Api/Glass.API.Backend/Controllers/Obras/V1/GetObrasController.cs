@@ -39,6 +39,8 @@ namespace Glass.API.Backend.Controllers.Obras.V1
                 ? string.Join(",", dadosEntrada.IdsPedidosIgnorar)
                 : null;
 
+            bool? gerarCredito = this.ObterFiltroGerarCredito(dadosEntrada.TipoObras);
+
             using (var sessao = new GDATransaction())
             {
                 var obras = ObraDAO.Instance.GetList(
@@ -52,7 +54,7 @@ namespace Glass.API.Backend.Controllers.Obras.V1
                     null,
                     null,
                     null,
-                    dadosEntrada.GerarCredito,
+                    gerarCredito,
                     idsPedidosIgnorar,
                     (uint)(dadosEntrada.Id ?? 0),
                     0,
@@ -62,6 +64,21 @@ namespace Glass.API.Backend.Controllers.Obras.V1
                     10);
 
                 return this.Lista(obras.Select(o => new ObraDto(o)));
+            }
+        }
+
+        private bool? ObterFiltroGerarCredito(TipoObrasFiltradas? tipoObras)
+        {
+            switch (tipoObras.GetValueOrDefault(TipoObrasFiltradas.Todas))
+            {
+                case TipoObrasFiltradas.GerarCredito:
+                    return true;
+
+                case TipoObrasFiltradas.PagamentoAntecipado:
+                    return false;
+
+                default:
+                    return null;
             }
         }
     }

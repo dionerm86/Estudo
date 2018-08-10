@@ -14,12 +14,12 @@ Servicos.Obras = (function(http) {
     obterParaControle: function (idObra, descricao, idCliente, idsPedidosIgnorar, situacao) {
       return http().get(API + 'filtro', {
         params: {
-          id,
+          id: idObra,
           descricao,
-          idCliente: this.pedido.idCliente,
-          idsPedidosIgnorar: this.pedido.id ? [this.pedido.id] : null,
-          situacao: this.configuracoes.situacaoObraConfirmada,
-          gerarCredito: false
+          idCliente: idCliente,
+          idsPedidosIgnorar: idsPedidosIgnorar,
+          situacao: situacao,
+          tipoObras: 'PagamentoAntecipado'
         }
       });
     }

@@ -495,7 +495,7 @@
 
         Servicos.Funcionarios.obterDataTrabalho(this.pedido.idVendedor)
           .then(function(resposta) {
-            vm.pedido.dataPedido = resposta.data;
+            vm.pedido.dataPedido = resposta.data.data;
           })
           .catch(function(erro) {
             if (erro && erro.mensagem) {
