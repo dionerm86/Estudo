@@ -4,7 +4,7 @@ var Servicos = Servicos || {};
  * Objeto com os serviços para a API de desconto por quantidade.
  */
 Servicos.DescontoPorQuantidade = (function(http) {
-  const API = '/api/v1/desconto-quantidade/';
+  const API = '/api/v1/descontoQuantidade/';
 
   return {
     /**

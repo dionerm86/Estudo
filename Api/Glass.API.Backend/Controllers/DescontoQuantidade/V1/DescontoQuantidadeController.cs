@@ -9,7 +9,7 @@ namespace Glass.API.Backend.Controllers.DescontoQuantidade.V1
     /// <summary>
     /// Controller de desconto por quantidade.
     /// </summary>
-    [RoutePrefix("api/v1/desconto-quantidade")]
+    [RoutePrefix("api/v1/descontoQuantidade")]
     public partial class DescontoQuantidadeController : BaseController
     {
     }
