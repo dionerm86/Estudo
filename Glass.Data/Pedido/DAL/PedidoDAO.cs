@@ -12360,6 +12360,16 @@ namespace Glass.Data.DAL
             return ExecuteMultipleScalar<int>(session, string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoRevenda={0}", idPedido));
         }
 
+        public List<int> ObterIdsPedidoNaoCancelados(GDASession session, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? true)
+            {
+                return new List<int>();
+            }
+
+            return ExecuteMultipleScalar<int>(session, $@"SELECT IdPedido FROM pedido WHERE IdPedido IN ({ string.Join(",", idsPedido) }) AND Situacao <> { (int)Pedido.SituacaoPedido.Cancelado };")?.ToList();
+        }
+
         /// <summary>
         /// Retorna o ID do último pedido inserido no sistema.
         /// </summary>
@@ -12521,6 +12531,26 @@ namespace Glass.Data.DAL
         public bool IsGeradoParceiro(GDASession session, uint idPedido)
         {
             return ObtemValorCampo<bool>(session, "geradoParceiro", "idPedido=" + idPedido);
+        }
+
+        #endregion
+
+        #region Verifica se o tipo do pedido pode ser alterado
+
+        /// <summary>
+        /// Verifica se o tipo do pedido pode ser alterado.
+        /// </summary>
+        private void VerificarAlterarTipoPedido(GDASession session, int idPedido)
+        {
+            var idsPedidoProducao = ObterIdsPedidoProducaoPeloIdPedidoRevenda(session, idPedido);
+            var idsPedidoNaoCancelados = ObterIdsPedidoNaoCancelados(session, idsPedidoProducao);
+
+            if (idsPedidoNaoCancelados?.Any(f => f > 0) ?? false)
+            {
+                throw new Exception($@"Não é possível alterar o tipo do pedido { idPedido }, pois ele está associado à pedidos de produção para corte.
+                    Cancele os pedidos associados para que seja possível alterar o tipo deste pedido.
+                    Pedidos de produção associados: { string.Join(", ", idsPedidoNaoCancelados) }.");
+            }
         }
 
         #endregion
@@ -12931,6 +12961,14 @@ namespace Glass.Data.DAL
                 if (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo && objUpdate.IdFormaPagto.GetValueOrDefault() == 0)
                 {
                     throw new Exception("Selecione a forma de pagamento do pedido");
+                }
+
+                /* Chamado 78183. */
+                if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && objUpdate.TipoPedido != ped.TipoPedido)
+                {
+                    VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
+                    objUpdate.GerarPedidoProducaoCorte = false;
+                    objPersistence.ExecuteCommand(session, $"UPDATE pedido SET GerarPedidoProducaoCorte=0 WHERE IdPedido = { objUpdate.IdPedido };");
                 }
 
                 /* Chamado 65135. */
@@ -14793,6 +14831,13 @@ namespace Glass.Data.DAL
                 {
                     throw new Exception("O cliente deve controlar estoque para ser utilizado em um pedido de mão-de-obra especial.");
                 }
+            }
+
+            /* Chamado 78183. */
+            if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && objUpdate.TipoPedido != ped.TipoPedido)
+            {
+                VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
+                objUpdate.GerarPedidoProducaoCorte = false;
             }
 
             #endregion
