@@ -254,6 +254,7 @@ namespace Glass.UI.Web.Relatorios
                 lstParam.Add(new ReportParameter("NumeroMateriais", numeroMateriais));
                 lstParam.Add(new ReportParameter("ExibirSaldoDevedor", FinanceiroConfig.FinanceiroRec.ExibirSaldoDevedorRelsRecebimento.ToString()));
                 lstParam.Add(new ReportParameter("ExibirProdutosCortados", (!produtosCortadosRpt.Any()).ToString()));
+                lstParam.Add(new ReportParameter("EnderecoLoja", LojaDAO.Instance.ObtemEnderecoCompleto(FuncionarioDAO.Instance.ObtemIdLoja(liberacao.IdFunc))));
 
                 report.DataSources.Add(new ReportDataSource("LiberarPedido", new LiberarPedido[] { liberacao }));
                 report.DataSources.Add(new ReportDataSource("ParcelaLiberacao", parcelasLiberacao));

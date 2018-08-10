@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.DAL;
 using Glass;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WebGlass.Business.Boleto.Fluxo
 {
@@ -67,7 +68,22 @@ namespace WebGlass.Business.Boleto.Fluxo
             }
             else if (codigoLiberacao > 0)
             {
-                var idsContasReceber = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null).Select(f => f.IdContaR).ToList();
+                var contasReceberLiberacao = ContasReceberDAO.Instance.GetByPedidoLiberacao(0, (uint)codigoLiberacao, null)?.ToList() ?? new List<Glass.Data.Model.ContasReceber>();
+
+                var idsContasReceber = new List<uint>();
+
+                if (Glass.Configuracoes.FinanceiroConfig.EmitirBoletoApenasContaTipoPagtoBoleto)
+                {
+                    var contasRecebimentoBoleto = UtilsPlanoConta.ContasRecebimentoBoleto().Split(',').Where(f => f != "0").Select(f => f.StrParaInt()).ToList();
+
+                    var idsContaR = contasReceberLiberacao.Where(f => contasRecebimentoBoleto.Contains((int)f.IdConta.GetValueOrDefault()))?.Select(f => f.IdContaR).ToList() ?? new List<uint>();
+
+                    idsContasReceber.AddRange(idsContaR);
+                }
+                else
+                {
+                    idsContasReceber.AddRange(contasReceberLiberacao.Select(f => f.IdContaR).ToList());
+                }
 
                 if (idsContasReceber.Count == 0)
                     return null;
