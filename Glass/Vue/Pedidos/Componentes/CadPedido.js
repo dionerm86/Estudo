@@ -190,7 +190,8 @@
         descricao,
         this.pedido.idCliente,
         this.pedido.id ? [this.pedido.id] : null,
-        this.configuracoes.situacaoObraConfirmada
+        this.configuracoes.situacaoObraConfirmada,
+        'PagamentoAntecipado'
       );
     },
 
@@ -743,7 +744,9 @@
           cidade: item && item.enderecoObra ? item.enderecoObra.cidade : null,
           cep: item && item.enderecoObra ? item.enderecoObra.cep : null
         },
-        total: item ? item.total : null
+        total: item ? item.total : null,
+        valorEntrada: item && item.sinal ? item.sinal.valor : null,
+        textoSinal: item ? item.textoSinal : null
       };
 
       if (this.inserindo) {
@@ -908,6 +911,17 @@
     },
 
     /**
+     * Propriedade computada que retorna se o controle de forma de pagamento deve ser criado na tela.
+     */
+    vIfFormaPagamento: function() {
+      return this.pedido.tipoVenda == this.configuracoes.tipoVendaAPrazo
+        || this.pedido.tipoVenda == this.configuracoes.tipoVendaReposicao
+        || this.pedido.tipoVenda == this.configuracoes.tipoVendaGarantia
+        || (this.configuracoes.UsarControleDescontoFormaPagamentoDadosProduto
+          && this.pedido.tipoVenda == this.configuracoes.tipoVendaAVista);
+    },
+
+    /**
      * Propriedade computada que retorna se será exibido o valor da entrada para preenchimento ou exibição
      */
     vIfValorEntrada: function() {
@@ -936,6 +950,13 @@
         !this.configuracoes.descontoApenasAVista ||
         (this.descontoPedidoUmaParcela && this.pedido.formaPagamento.parcelas.numeroParcelas == 1)
       );
+    },
+
+    /**
+     * Propriedade computada que retorna se a obra será exibida na tela.
+     */
+    vIfTipoVendaObra: function() {
+      return this.pedido.tipoVenda == this.configuracoes.tipoVendaObra
     },
 
     /**

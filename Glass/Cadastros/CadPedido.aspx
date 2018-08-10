@@ -87,7 +87,7 @@
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoVendaAtual" :funcao-recuperar-itens="obterTiposVendaCliente" :filtro-recuperar-itens="filtroTiposVendaCliente"
                         :disabled="editando && pedido.sinal && pedido.sinal.id > 0 && !configuracoes.usarLiberacaoPedido" required></lista-selecao-id-valor>
-                    <span v-if="pedido && pedido.tipoVenda == configuracoes.tipoVendaObra">
+                    <span v-if="vIfTipoVendaObra">
                         <campo-busca-com-popup :id.sync="pedido.idObra" :nome.sync="descricaoObraAtual" campo-nome="descricao" :item-selecionado.sync="obraAtual" :funcao-buscar-itens="obterObras" :disabled="!clienteAtual || clienteAtual.id == 0"
                             :url-popup="'/Utils/SelObra.aspx?situacao=4&tipo=1&idsPedidosIgnorar=' + (pedido.id || '') + '&idCliente=' + (clienteAtual.id || '')" :largura-popup="650" :altura-popup="560" style="width: 90px" required></campo-busca-com-popup>
                         <template v-if="obraAtual">
@@ -121,16 +121,17 @@
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoEntregaAtual" :funcao-recuperar-itens="obterTiposEntrega" required></lista-selecao-id-valor>
                 </span>
-                <span class="cabecalho">
-                    <label>
-                        Forma Pagto.
-                    </label>
-                </span>
-                <span v-if="pedido.tipoVenda == configuracoes.tipoVendaAPrazo || pedido.tipoVenda == configuracoes.tipoVendaReposicao || pedido.tipoVenda == configuracoes.tipoVendaGarantia ||
-                    (configuracoes.UsarControleDescontoFormaPagamentoDadosProduto && pedido.tipoVenda == configuracoes.tipoVendaAVista)">
-                    <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormasPagamento" :filtro-recuperar-itens="filtroFormasPagamento" required></lista-selecao-id-valor>
-                    <lista-selecao-id-valor :item-selecionado.sync="tipoCartaoAtual" :funcao-recuperar-itens="obterTiposCartao" v-if="pedido.formaPagamento.id == configuracoes.idFormaPagamentoCartao" required></lista-selecao-id-valor>
-                </span>
+                <template v-if="vIfFormaPagamento">
+                    <span class="cabecalho">
+                        <label>
+                            Forma Pagto.
+                        </label>
+                    </span>
+                    <span>
+                        <lista-selecao-id-valor :item-selecionado.sync="formaPagamentoAtual" :funcao-recuperar-itens="obterFormasPagamento" :filtro-recuperar-itens="filtroFormasPagamento" required></lista-selecao-id-valor>
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoCartaoAtual" :funcao-recuperar-itens="obterTiposCartao" v-if="pedido.formaPagamento.id == configuracoes.idFormaPagamentoCartao" required></lista-selecao-id-valor>
+                    </span>
+                </template>
                 <span class="cabecalho">
                     <label>
                         Data Entrega
@@ -145,7 +146,9 @@
                             Valor do Frete
                         </label>
                     </span>
-                    <input type="number" v-model.number="pedido.valorEntrega" style="width: 80px;" />
+                    <span>
+                        <input type="number" v-model.number="pedido.valorEntrega" style="width: 80px;" />
+                    </span>
                 </template>
                 <template v-if="vIfValorEntrada">
                     <span class="cabecalho">
@@ -153,8 +156,10 @@
                             Valor Entrada
                         </label>
                     </span>
-                    <input type="number" v-model.number="pedido.valorEntrada" v-if="vIfCampoEntrada" />
-                    <span v-else>
+                    <span v-if="vIfCampoEntrada" key="campoEntrada">
+                        <input type="number" v-model.number="pedido.valorEntrada" />
+                    </span>
+                    <span v-else key="campoEntrada">
                         {{ pedido.textoSinal }}
                     </span>
                 </template>
@@ -189,6 +194,8 @@
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
+                <span v-if="(vIfFormaPagamento && vIfValorEntrada) || vIfTipoVendaObra" class="colspan2">
+                </span>
                 <span class="cabecalho">
                     <label>
                         Transportador
@@ -210,7 +217,7 @@
                         <campo-endereco :endereco="pedido.enderecoObra" required>
                     </span>
                 </template>
-                <span class="colspan6" v-if="vIfControleParcelas">
+                <span class="colspan4" style="padding: 8px 0" v-if="vIfControleParcelas">
                     <controle-parcelas :parcelas.sync="parcelaAtual" :data-minima="pedido.dataPedido" :total="totalParaCalculoParcelas"></controle-parcelas>
                 </span>
                 <template v-if="configuracoes.usarComissaoNoPedido">

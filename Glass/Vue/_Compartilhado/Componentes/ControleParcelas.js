@@ -172,7 +172,7 @@ Vue.component('controle-parcelas', {
       this.invalido = this.total !== this.totalParcelas;
 
       if (this.controlesValor === null) {
-        this.controlesValor = this.$el.children[0].querySelector('input[type=number]');
+        this.controlesValor = this.$el.querySelector('input[type=number]');
 
         if (this.controlesValor && !Array.isArray(this.controlesValor)) {
           this.controlesValor = [this.controlesValor];
