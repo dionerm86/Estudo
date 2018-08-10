@@ -34,14 +34,15 @@ namespace Glass.Data.RelDAL
             var login = UserInfo.GetUserInfo;
             var cliente = login.IsCliente;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
             string sql = PedidoDAO.Instance.SqlRptSit(0, "", 0, null, null, idCli.ToString(), nomeCliente, 0, (idLoja > 0 ? idLoja.ToString() : null), 
                 (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente, dataIni, dataFim, null, 
                 null, null, null, 0, 0, null, 0, 0, 0, null, null, 0, null, null, false, false, false, null, null, 0, null, null, 0, 0, null, null, 
                 null, null, false, 0, 0, true, false, false, true, out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null, 
-                 cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
+                 cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
             string criterio = String.Empty;
 

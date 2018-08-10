@@ -54,14 +54,15 @@ namespace Glass.Data.RelDAL
 
             var cliente = login.IsCliente;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
 
             string sql = PedidoDAO.Instance.SqlRptSit(0, null, 0, null, null, null, null, 0, null, sit, dataIni, dataFim, null, null, null, null, 0, 0, tipo,
                 0, 0, 0, null, tipoVenda, 0, null, null, false, false, false, null, null, 0, null, null, 0, 0, null, null, null, null, false, 0, 0, true, false, false, true,
                 out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null,
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
+                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = @"
                 select cast(" + agruparFunc + @" as signed) as agrupar, " + idFunc + " as idFunc, " + nomeFunc + @" as nomeFunc, 

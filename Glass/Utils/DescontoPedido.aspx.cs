@@ -21,11 +21,19 @@ namespace Glass.UI.Web.Utils
                 principal.Visible = false;
                 return;
             }
-            
-            if ((PedidoDAO.Instance.IsPedidoReposicao(null, Request["idPedido"]) || PedidoDAO.Instance.IsPedidoGarantia(null, Request["idPedido"])) &&
-                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
+
+            if (PedidoDAO.Instance.IsPedidoReposicao(Request["idPedido"]) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
             {
-                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Você não tem permissão para editar pedidos de Garantia ou Reposição');closeWindow();\n", true);
+                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Você não tem permissão para editar pedidos de Reposição');closeWindow();\n", true);
+                principal.Visible = false;
+                return;
+            }
+
+            if (PedidoDAO.Instance.IsPedidoGarantia(Request["idPedido"]) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
+            {
+                Page.ClientScript.RegisterClientScriptBlock(GetType(), "fechar", "alert('Você não tem permissão para editar pedidos de Garantia');closeWindow();\n", true);
                 principal.Visible = false;
                 return;
             }

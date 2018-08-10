@@ -886,7 +886,7 @@ namespace Glass.Data.Helper
             AnexarArquivoLiberacaoListaPedido,
             AnexarArquivoPedido,
             EmitirPedido,
-            EmitirPedidoGarantiaReposicao,
+            EmitirPedidoGarantia,
             EmitirPedidoFuncionario,                        // 10
             IgnorarBloqueioDataEntrega,
             IgnorarBloqueioDescontoOrcamentoPedido,
@@ -897,7 +897,8 @@ namespace Glass.Data.Helper
             ConfirmarPedidoLiberacao,
             GerarReposicao,                                 
             ReposicaoDePeca,
-            ExibirRentabilidade
+            ExibirRentabilidade,                            // 20
+            EmitirPedidoReposicao                     
         }
 
         [ModuloAttr(Modulo.PCP)]
