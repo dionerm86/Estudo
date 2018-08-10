@@ -1704,5 +1704,17 @@ namespace Glass.Data.Properties {
                 return ((string)(this["Glass_Data_wsNFeSVANStatus_NFeStatusServico4"]));
             }
         }
+
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2")]
+        public string Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2
+        {
+            get
+            {
+                return ((string)(this["Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2"]));
+            }
+        }
     }
 }

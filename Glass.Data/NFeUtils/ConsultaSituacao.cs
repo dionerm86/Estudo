@@ -574,11 +574,14 @@ namespace Glass.Data.NFeUtils
 
             switch (uf)
             {
-                case "BA":
-                case "GO":
-                case "MS":
+                case "AC":
+                case "MG":
                 case "MT":
-                case "PR":
+                case "GO":
+                case "PB":
+                case "PE":
+                case "RN":
+                case "SC":
                 case "SP": return true;
                 default: return false;
             }
