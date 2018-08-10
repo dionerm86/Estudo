@@ -94,67 +94,32 @@ namespace Glass.UI.Web.Listas
                 else
                 {
                     List<uint> listaIdProduto = new List<uint>();
-    
-                    foreach(KeyValuePair<uint, List<uint>> i in idsProdutosPedido)
+                    Fornecedor fornecedor = FornecedorDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(ddlFornecedor.SelectedValue));
+                    Loja loja = LojaDAO.Instance.GetElement(UserInfo.GetUserInfo.IdLoja);
+
+                    foreach (KeyValuePair<uint, List<uint>> i in idsProdutosPedido)
                     {
-                        foreach(uint id in i.Value)
+                        foreach (uint id in i.Value)
                             listaIdProduto.Add(id);
                     }
-    
-                    byte[] buffer = UtilsExportacaoPedido.CriarExportacao(listaPedidos, listaIdProduto.ToArray());
-    
-                    Fornecedor fornecedor = FornecedorDAO.Instance.GetElement(Glass.Conversoes.StrParaUint(ddlFornecedor.SelectedValue));
+
+                    uint[] idsPedidosExportados = new uint[listaPedidos.Count];
+                    listaPedidos.Keys.CopyTo(idsPedidosExportados, 0);
+
+                    byte[] buffer = UtilsExportacaoPedido.ConfigurarExportacao(listaPedidos, listaIdProduto.ToArray());
+                    UtilsExportacaoPedido.CriarExportacao((uint)fornecedor.IdFornec, idsPedidosExportados, idsProdutosPedido);
 
                     var urlFornecedor = string.Format("{0}{1}", fornecedor.UrlSistema.ToLower().Substring(0, fornecedor.UrlSistema.ToLower().LastIndexOf("/webglass")).TrimEnd('/'),
                         "/service/wsexportacaopedido.asmx");
-    
-                    Loja loja = LojaDAO.Instance.GetElement(UserInfo.GetUserInfo.IdLoja);
-    
                     object[] parametros = new object[] { loja.Cnpj, 1, buffer };
-    
                     object retorno = WebService.ChamarWebService(urlFornecedor, "SyncService", "EnviarPedidosFornecedor", parametros);
-    
+
                     string[] dados = retorno as string[];
-    
-                    if (dados[0] == "0")
-                    {
-                        Exportacao nova = new Exportacao();
-                        nova.IdFornec = (uint)fornecedor.IdFornec;
-                        nova.IdFunc = UserInfo.GetUserInfo.CodUser;
-                        nova.DataExportacao = DateTime.Now;
-    
-                        uint idExportacao = ExportacaoDAO.Instance.Insert(nova);
-    
-                        uint[] idsPedidosExportados;
-    
-                        if (dados.Length > 2 && dados[2] != null)
-                        {
-                            idsPedidosExportados = Array.ConvertAll<string, uint>(dados[2].Split(','),
-                                delegate(string x) { return Glass.Conversoes.StrParaUint(x.Replace(" (PCP)", "")); });
-                        }
-                        else
-                        {
-                            idsPedidosExportados = new uint[listaPedidos.Count];
-                            listaPedidos.Keys.CopyTo(idsPedidosExportados, 0);
-                        }
-    
-                        foreach (uint item in idsPedidosExportados)
-                        {
-                            PedidoExportacaoDAO.Instance.InserirSituacaoExportado(idExportacao, item,
-                                (int)PedidoExportacao.SituacaoExportacaoEnum.Exportado);
-                        }
-    
-                        foreach (KeyValuePair<uint, List<uint>> i in idsProdutosPedido)
-                        { 
-                             foreach(uint id in i.Value)
-                             {
-                                 ProdutoPedidoExportacaoDAO.Instance.InserirExportado(idExportacao, i.Key, id);
-                             }
-                        }
-                    }
-    
+
+                    UtilsExportacaoPedido.ProcessarDadosExportacao(dados, listaPedidos);
+
                     Glass.MensagemAlerta.ShowMsg(dados[1], Page);
-    
+
                     grdPedido.DataBind();
                 }
             }
@@ -179,6 +144,43 @@ namespace Glass.UI.Web.Listas
     
             if (grid != null && grid.Visible)
                 grid.DataBind();
+        }
+
+        protected void grdPedido_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            Loja loja = LojaDAO.Instance.GetElement(UserInfo.GetUserInfo.IdLoja);
+
+            if (e.CommandName == "Consultar")
+            {
+                try
+                {
+                    if (ddlFornecedor.SelectedValue == "0")
+                        throw new Exception("Selecione o fornecedor para consulta");
+
+                    Fornecedor fornecedor = FornecedorDAO.Instance.GetElement(Conversoes.StrParaUint(ddlFornecedor.SelectedValue));
+                    Dictionary<uint, bool> listaPedidos = new Dictionary<uint, bool>();
+
+                    listaPedidos.Add(Glass.Conversoes.StrParaUint(e.CommandArgument.ToString()), true);
+
+                    byte[] buffer = UtilsExportacaoPedido.ConfigurarExportacao(listaPedidos, new uint[] { });
+                    var urlFornecedor = string.Format("{0}{1}", fornecedor.UrlSistema.ToLower().Substring(0, fornecedor.UrlSistema.ToLower()
+                        .LastIndexOf("/webglass")).TrimEnd('/'), "/service/wsexportacaopedido.asmx");
+
+                    object[] parametros = new object[] { loja.Cnpj, 1, buffer };
+
+                    object retorno = WebService.ChamarWebService(urlFornecedor, "SyncService", "VerificarExportacaoPedidos", parametros);
+
+                    UtilsExportacaoPedido.AtualizarPedidosExportacao(retorno as string[]);
+
+                    Glass.MensagemAlerta.ShowMsg("A Situação do pedido foi atualizada.", Page);
+
+                    grdPedido.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    MensagemAlerta.ErrorMsg("Falha ao consultar situação.", ex, Page);
+                }
+            }
         }
     }
 }

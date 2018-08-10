@@ -712,7 +712,7 @@ namespace Glass.Data.Helper
         {
             List<GenericModel> lstTipo = new List<GenericModel>();
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado, "Cancelado"));
-            lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Chegou, "Chegou"));
+            lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Exportando, "Exportando"));
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Exportado, "Exportado"));
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Pronto, "Pronto"));
 

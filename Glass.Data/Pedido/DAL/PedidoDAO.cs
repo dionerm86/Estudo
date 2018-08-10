@@ -15213,8 +15213,9 @@ namespace Glass.Data.DAL
             }
 
             // Só busca pedidos não exportados
-            filtroAdicional += String.Format(" and coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0}",
-                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+            filtroAdicional += String.Format(" and (coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0} OR " +
+                " coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{1})={1})",
+                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportando);
 
             /* Chamado 55675. */
             filtroAdicional += string.Format(" AND IF((p.TipoPedido={0} AND p.TipoEntrega={1}) OR p.TipoPedido={2}, 1, 0)",

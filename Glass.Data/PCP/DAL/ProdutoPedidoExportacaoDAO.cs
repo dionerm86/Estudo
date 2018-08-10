@@ -40,13 +40,13 @@ namespace Glass.Data.DAL
                 "idPedido", new GDAParameter("?idExportacao", idExportacao));
         }
 
-        public void InserirExportado(uint idExportacao, uint idPedido, uint idProd)
+        public void InserirExportado(GDASession session, uint idExportacao, uint idPedido, uint idProd)
         {
             ProdutoPedidoExportacao model = new ProdutoPedidoExportacao();
             model.IdExportacao = idExportacao;
             model.IdPedido = idPedido;
             model.IdProduto = idProd;
-            ProdutoPedidoExportacaoDAO.Instance.Insert(model);
+            Insert(session, model);
         }
     }
 }
