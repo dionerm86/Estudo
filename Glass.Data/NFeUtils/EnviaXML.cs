@@ -849,15 +849,25 @@ namespace Glass.Data.NFeUtils
         public static XmlNode ObterXmlConsultaCadastroContribuinte(string uf, XmlDocument xmlConsultaCadastro)
         {
             if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Producao)
-            {
-                GetWebService.ConsultaCadastroProducao(uf).consultaCadastro(xmlConsultaCadastro);
-            }
-            else if (ConfigNFe.TipoAmbiente == ConfigNFe.TipoAmbienteNfe.Homologacao)
-            {
-                GetWebService.ConsultaCadastroHomologacao(uf).consultaCadastro(xmlConsultaCadastro);
-            }
+                switch (uf)
+                {
+                    case "AC":
+                    case "MG":
+                    case "GO":
+                    case "PB":
+                    case "PE":
+                    case "RS":
+                    case "SC":
+                    case "SP": return GetWebService.ConsultaCadastroProducao(uf).consultaCadastro2(xmlConsultaCadastro);
+                    case "BA":
+                    case "CE":
+                    case "PR":
+                    case "MS":
+                    case "MT": return GetWebService.ConsultaCadastroProducao4(uf).consultaCadastro(xmlConsultaCadastro);
 
-            return null;
+                    default: return null;
+                }
+            return GetWebService.ConsultaCadastroHomologacao(uf).consultaCadastro(xmlConsultaCadastro);
         }
 
         public static XmlNode ObterXmlAutorizacaoNFe(NotaFiscal notaFiscal, XmlDocument xmlAutorizacaoNFe)

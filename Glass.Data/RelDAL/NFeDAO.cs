@@ -161,7 +161,18 @@ namespace Glass.Data.RelDAL
             string modFrete = GetNodeValue(xmlInfNFe, "transp", "modFrete");
             nfe.RazaoSocialTransp = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfNFe, "transp/transporta", "xNome"));
             nfe.CpfCnpjTransp = Formatacoes.MascaraCpfCnpj(GetNodeValue(xmlInfNFe, "transp/transporta", "CNPJ") + GetNodeValue(xmlInfNFe, "transp/transporta", "CPF"));
-            nfe.FretePorConta = modFrete == "0" ? "0 - Emitente" : modFrete == "1" ? "1 - Dest/Rem" : modFrete == "2" ? "2 - Terceiros" : modFrete == "3" ? "3 - Proprio/Rem" : "9 - Sem Frete";
+            
+            switch ((Model.ModalidadeFrete)(modFrete.StrParaInt()))
+            {
+                case Model.ModalidadeFrete.ContaDoRemetente: nfe.FretePorConta = "0 - Rem (CIF)"; break;
+                case Model.ModalidadeFrete.ContaDoDestinatario: nfe.FretePorConta = "1 - Dest (FOB)"; break;
+                case Model.ModalidadeFrete.ContaDeTerceiros: nfe.FretePorConta = "2 - Terceiros"; break;
+                case Model.ModalidadeFrete.ProprioContaDoRemetente: nfe.FretePorConta = "3 - Prop Rem"; break;
+                case Model.ModalidadeFrete.ProprioContaDoDestinatario: nfe.FretePorConta = "4 - Prop Dest"; break;
+                case Model.ModalidadeFrete.SemTransporte: nfe.FretePorConta = "9 - Sem Ocorr"; break;
+                default: break;
+            }
+
             nfe.CodAntt = GetNodeValue(xmlInfNFe, "transp/veicTransp", "RNTC");
             nfe.PlacaVeiculo = GetNodeValue(xmlInfNFe, "transp/veicTransp", "placa");
             nfe.UfVeiculo = GetNodeValue(xmlInfNFe, "transp/veicTransp", "UF");

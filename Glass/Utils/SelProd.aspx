@@ -174,6 +174,7 @@
             <asp:QueryStringParameter Name="idItemProjeto" QueryStringField="idItemProjeto" />
             <asp:QueryStringParameter Name="parceiro" QueryStringField="Parceiro" DefaultValue="0" />
             <asp:QueryStringParameter Name="idCliente" QueryStringField="idCliente" DefaultValue="0" />
+            <asp:QueryStringParameter DefaultValue="0" Name="idOrcamento" QueryStringField="idOrcamento" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGrupo" runat="server" SelectMethod="GetForFilter" TypeName="Glass.Data.DAL.GrupoProdDAO">

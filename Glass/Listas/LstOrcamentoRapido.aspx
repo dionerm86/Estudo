@@ -256,6 +256,11 @@
         return true;
     }
 
+    function getProduto() {
+        openWindow(500, 650, '../Utils/SelProd.aspx?idCliente='+ (GetQueryString('idCliente') != undefined ? GetQueryString('idCliente') : '') + 
+            ((GetQueryString('IdOrca') != undefined ? '&idOrcamento=' + GetQueryString('IdOrca') : "")));
+    }
+
     </script>
 
     <table>
@@ -315,7 +320,7 @@
                                         <asp:Label ID="lblDescrProd" Style="margin-left: 3px; margin-right: 5px" runat="server" />
                                     </td>
                                     <td>
-                                        <a href="#" onclick="openWindow(500, 650, '../Utils/SelProd.aspx?idCliente='+ (GetQueryString('idCliente') != undefined ? GetQueryString('idCliente') : '')); return false;"
+                                        <a href="#" onclick="getProduto(); return false;"
                                             tabindex="-1">
                                             <img src="../Images/Pesquisar.gif" border="0" /></a>&nbsp;
                                     </td>

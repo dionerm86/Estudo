@@ -387,10 +387,11 @@ namespace Glass.Data.Helper
         {
             var login = UserInfo.GetUserInfo;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
-            return GetTipoVenda(incluirVazio, paraFiltro, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+            return GetTipoVenda(incluirVazio, paraFiltro, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
         }
 
         /// <summary>
@@ -399,7 +400,7 @@ namespace Glass.Data.Helper
         /// <param name="incluirVazio">Inclui uma opção vazia</param>
         /// <param name="paraFiltro">Se for para filtro, sempre busca os tipos reposição e garantia</param>
         /// <returns></returns>
-        internal GenericModel[] GetTipoVenda(bool incluirVazio, bool paraFiltro, bool administrador, bool emitirGarantiaReposicao,
+        internal GenericModel[] GetTipoVenda(bool incluirVazio, bool paraFiltro, bool administrador, bool emitirGarantia, bool emitirReposicao,
             bool emitirPedidoFuncionario)
         {
             List<GenericModel> lst = new List<GenericModel>();
@@ -410,10 +411,13 @@ namespace Glass.Data.Helper
             lst.Add(new GenericModel(1, "À Vista"));
             lst.Add(new GenericModel(2, "À Prazo"));
 
-            if (paraFiltro || administrador || emitirGarantiaReposicao)
+            if (paraFiltro || administrador || emitirGarantia || emitirReposicao)
             {
-                lst.Add(new GenericModel(3, "Reposição"));
-                lst.Add(new GenericModel(4, "Garantia"));
+                if (emitirReposicao)
+                    lst.Add(new GenericModel(3, "Reposição"));
+
+                if (emitirGarantia)
+                    lst.Add(new GenericModel(4, "Garantia"));
             }
 
             lst.Add(new GenericModel(5, "Obra"));
@@ -712,7 +716,7 @@ namespace Glass.Data.Helper
         {
             List<GenericModel> lstTipo = new List<GenericModel>();
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado, "Cancelado"));
-            lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Chegou, "Chegou"));
+            lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Exportando, "Exportando"));
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Exportado, "Exportado"));
             lstTipo.Add(new GenericModel((int)PedidoExportacao.SituacaoExportacaoEnum.Pronto, "Pronto"));
 
