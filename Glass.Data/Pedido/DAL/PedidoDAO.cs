@@ -12992,7 +12992,8 @@ namespace Glass.Data.DAL
                 {
                     VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
                     objUpdate.GerarPedidoProducaoCorte = false;
-                    objPersistence.ExecuteCommand(session, $"UPDATE pedido SET GerarPedidoProducaoCorte=0 WHERE IdPedido = { objUpdate.IdPedido };");
+                    objPersistence.ExecuteCommand(session, $@"UPDATE pedido SET GerarPedidoProducaoCorte=0 WHERE IdPedido = { objUpdate.IdPedido };
+                        UPDATE pedido SET IdPedidoRevenda=NULL WHERE IdPedidoRevenda = { objUpdate.IdPedido };");
                 }
 
                 /* Chamado 65135. */
@@ -14862,6 +14863,7 @@ namespace Glass.Data.DAL
             {
                 VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
                 objUpdate.GerarPedidoProducaoCorte = false;
+                objPersistence.ExecuteCommand(session, $@"UPDATE pedido SET IdPedidoRevenda=NULL WHERE IdPedidoRevenda = { objUpdate.IdPedido };");
             }
 
             #endregion
