@@ -9,22 +9,6 @@ using System.Xml.Serialization;
 namespace Glass.Otimizacao.eCutter
 {
     /// <summary>
-    /// Possíveis tipos de conteúdo do protocolo.
-    /// </summary>
-    public enum ProtocolContentType
-    {
-        /// <summary>
-        /// Identifica que o conteúdo é disposto do Uri de referencia.
-        /// </summary>
-        UriReferences = 1,
-
-        /// <summary>
-        /// Identifica que o conteúdo é uma solução de otimização.
-        /// </summary>
-        OptimizationSolution,
-    }
-
-    /// <summary>
     /// Configuração do procolo para comunicação com o eCutter.
     /// </summary>
     public class ProtocolConfiguration : IXmlSerializable
@@ -41,11 +25,6 @@ namespace Glass.Otimizacao.eCutter
         /// Nome da solução.
         /// </summary>
         public string Name { get; }
-
-        /// <summary>
-        /// Obtém ou define o tipo de conteúdo.
-        /// </summary>
-        public ProtocolContentType ContentType { get; set; }
 
         /// <summary>
         /// Formato do estoque de chapas.
@@ -68,11 +47,6 @@ namespace Glass.Otimizacao.eCutter
         public string GetOptimizationPlanUri => $"{_enderecoServico}&optimizationplan=true";
 
         /// <summary>
-        /// Obtém a Uri que será usada para carregar a solução de otimização.
-        /// </summary>
-        public string GetOptimizationSolutionUri => $"{_enderecoServico}&optimizationsolution=true";
-
-        /// <summary>
         /// Uri que será usada para salva os dados da solução.
         /// </summary>
         public string SaveOptimizationUri => $"{_enderecoServico}";
@@ -80,7 +54,7 @@ namespace Glass.Otimizacao.eCutter
         /// <summary>
         /// Opções da operação de salvar a otimização.
         /// </summary>
-        public string[] SaveOptimizationOptions => new[] { "eCutter", "Optyway LabelTemp" };
+        public string[] SaveOptimizationOptions => new[] { "eCutter", "Optyway LabelTemp", "Optimization Package", "eCutter Labels" };
 
         /// <summary>
         /// Formato das peças padrão.
@@ -107,13 +81,11 @@ namespace Glass.Otimizacao.eCutter
         /// </summary>
         /// <param name="enderecoServico">Endereço do serviço.</param>
         /// <param name="nome">Nome da otimização.</param>
-        /// <param name="contentType">Tipo de conteudo.</param>
         /// <param name="optimizationPlanFormat">Formato do plano de otimização.</param>
-        public ProtocolConfiguration(Uri enderecoServico, string nome, ProtocolContentType contentType, string optimizationPlanFormat)
+        public ProtocolConfiguration(Uri enderecoServico, string nome, string optimizationPlanFormat)
         {
             Name = nome;
             _enderecoServico = enderecoServico;
-            ContentType = contentType;
             OptimizationPlanFormat = optimizationPlanFormat;
 
         }
@@ -146,12 +118,10 @@ namespace Glass.Otimizacao.eCutter
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
             writer.WriteElementString("Name", Name);
-            writer.WriteElementString("ContentType", ContentType.ToString());
             writer.WriteElementString("SheetStockFormat", SheetStockFormat);
             writer.WriteElementString("GetSheetStockUri", GetSheetStockUri);
             writer.WriteElementString("OptimizationPlanFormat", OptimizationPlanFormat);
             writer.WriteElementString("GetOptimizationPlanUri", GetOptimizationPlanUri);
-            writer.WriteElementString("GetOptimizationSolutionUri", GetOptimizationSolutionUri);
             writer.WriteElementString("SaveOptimizationUri", SaveOptimizationUri);
 
             writer.WriteStartElement("SaveOptimizationOptions");

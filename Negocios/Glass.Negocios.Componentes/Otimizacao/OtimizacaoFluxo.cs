@@ -289,6 +289,18 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
             Repositorio.SalvarArquivos(solucaoOtimizacao, arquivos);
 
+            foreach(var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            {
+                if (StringComparer.InvariantCultureIgnoreCase.Equals(
+                    System.IO.Path.GetExtension(arquivo.Nome), ".optlbl"))
+                {
+                    using (var conteudo = arquivo.Abrir())
+                    {
+                        var documento = eCutter.DocumentoEtiquetas.Open(conteudo);
+                    }
+                }
+            }
+
             return new ImportacaoOtimizacao
             {
                 IdArquivoOtimizacao = 0
