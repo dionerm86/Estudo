@@ -161,6 +161,9 @@ namespace Glass.Fiscal.Negocios.Componentes
                 if (!item.Referencia.NaturezaOperacao.CalcIcms && item.Referencia.NaturezaOperacao.CalcIcmsSt)
                     item.AliqIcms = ProvedorIcmsProdutoUf.ObterIcmsPorProduto(item.Produto, Container.Loja, Container.Fornecedor, Container.Cliente);
 
+                // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
+                var naoIncluirOutrasDespBCIcms = (int)Container.FinalidadeEmissao == (int)Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
+
                 //Se for NF de entrada e a natureza estiver marcada para calcular o icms de energia elétrica.
                 if (Container.TipoDocumento == Sync.Fiscal.Enumeracao.NFe.TipoDocumento.Entrada && item.NaturezaOperacao.CalcEnergiaEletrica)
                 {
@@ -172,9 +175,9 @@ namespace Glass.Fiscal.Negocios.Componentes
                 {
                     if (item.AliqIcms > 0)
                     {
-                        item.BcIcms = item.Total +
-                            (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0)
-                            + item.ValorIof + item.ValorDespesaAduaneira - item.ValorDesconto;
+                        item.BcIcms = item.Total + (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0) +
+                            (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas) +
+                            item.ValorIof + item.ValorDespesaAduaneira - item.ValorDesconto;
 
                         if (Container.NotaFiscalImportadaSistema)
                             item.BcIcms = item.BcIcms / (decimal)(1 - (item.AliqIcms / 100));
@@ -211,12 +214,10 @@ namespace Glass.Fiscal.Negocios.Componentes
                 {
                     if (item.AliqIcms > 0)
                     {
-                        // Não integra o valor do campo outras despesas na BC ICMS se for nota de devolução
-                        var naoIncluirOutrasDespBCIcms = (int)Container.FinalidadeEmissao == (int)Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
+                        item.BcIcms = (item.Total + (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0) +
+                            (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas) +
+                            item.ValorIof + item.ValorDespesaAduaneira - (percentualDesconto * item.Total));
 
-                        item.BcIcms = (item.Total +
-                            (Container.ModalidadeFrete == Data.Model.ModalidadeFrete.ContaDoRemetente ? item.ValorFrete : 0)
-                            + (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas) + item.ValorIof + item.ValorDespesaAduaneira - (percentualDesconto * item.Total));
                         if (item.NaturezaOperacao.IpiIntegraBcIcms) item.BcIcms += item.ValorIpi;
                         // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
                         // Se CST igual a 20 ou 70, calcula redução da BC ICMS.

@@ -4502,30 +4502,34 @@ namespace Glass.Data.DAL
                         #region Ajusta estoque do pedido de revenda que gerou o pedido produção de corte
 
                         var idProdChapa = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
-                        var produtoPedidoRevenda = ProdutosPedidoDAO.Instance.GetByPedido(sessao, (uint)idPedidoRevenda).FirstOrDefault(f => f.IdProd == idProdChapa && f.Qtde > f.QtdSaida);
+
+                        var produtosPedidoRevenda = ProdutosPedidoDAO.Instance.GetByPedido(sessao, (uint)idPedidoRevenda).Where(f => f.IdProd == idProdChapa);
+                        var produtoPedidoRevendaSaida = produtosPedidoRevenda.FirstOrDefault(f => f.Qtde > f.QtdSaida);
                         var idLojaPedidoRevenda = (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedidoRevenda);
                         var idProdQtdeReserva = new Dictionary<int, float>();
 
                         if (idProdChapa.GetValueOrDefault() == 0)
                             throw new Exception(string.Format("Não foi possível recuperar o produto da matéria-prima. Verifique se a etiqueta {0} está impressa.", codMateriaPrima));
 
+                        if (produtosPedidoRevenda.Count() > 0 && produtosPedidoRevenda.Sum(f => f.Qtde - f.QtdSaida) <= 0)
+                            throw new Exception($@"Todos os produtos do pedido de Revenda que correspondem a matéria prima da etiqueta {codMateriaPrima} já foram lidos no setor corte com outra(s) etiqueta(s) de matéria-prima.");
+
                         /* Chamado 65651. */
-                        if (produtoPedidoRevenda == null || produtoPedidoRevenda.IdProdPed == 0)
-                            throw new Exception(string.Format("Não foi possível recuperar o produto do pedido de revenda de número {2}. {0} {1}",
-                                "Verifique se o pedido de revenda contém o produto da matéria-prima informada (código: {3}).",
-                                idPedidoRevenda, ProdutoDAO.Instance.GetCodInterno(sessao, (int)idProdChapa.Value)));
+                        if (produtoPedidoRevendaSaida == null || produtoPedidoRevendaSaida.IdProdPed == 0)
+                            throw new Exception($@"Não foi possível recuperar o produto do pedido de revenda de número {idPedidoRevenda}.
+                                Verifique se o pedido de revenda contém o produto da matéria-prima informada (código: { ProdutoDAO.Instance.GetCodInterno(sessao, (int)idProdChapa.Value) }).");
 
                         // Atualiza o Qtd Saída dos produtos do pedido de revenda.
-                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
+                        ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevendaSaida.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, ObtemEtiqueta(idProdPedProducao));
 
                         // Verifica o tipo de cálculo do produto.
-                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevenda.IdProd);
+                        var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)produtoPedidoRevendaSaida.IdProd);
 
                         // Verifica o tipo de cálculo do produto.
-                        var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, produtoPedidoRevenda.Largura, (int)produtoPedidoRevenda.Altura, produtoPedidoRevenda.Qtde, 0, produtoPedidoRevenda.Redondo, 0, true);
+                        var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, produtoPedidoRevendaSaida.Largura, (int)produtoPedidoRevendaSaida.Altura, produtoPedidoRevendaSaida.Qtde, 0, produtoPedidoRevendaSaida.Redondo, 0, true);
 
                         // Ajusta o campo RESERVA do produto loja.
-                        ProdutoLojaDAO.Instance.TirarReserva(sessao, idLojaPedidoRevenda, new Dictionary<int, float>() { { (int)produtoPedidoRevenda.IdProd, 1F } }, null, null, null, null,
+                        ProdutoLojaDAO.Instance.TirarReserva(sessao, idLojaPedidoRevenda, new Dictionary<int, float>() { { (int)produtoPedidoRevendaSaida.IdProd, 1F } }, null, null, null, null,
                             (int)idPedidoRevenda, null, null, "ProdutoPedidoProducaoDAO - AtualizaSituacao");
 
                         #endregion
@@ -4794,7 +4798,7 @@ namespace Glass.Data.DAL
                     ProdutosPedidoDAO.Instance.MarcarSaida(sessao, prodPed.IdProdPed, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
 
                     // Marca saída desta peça no ProdutosPedido do pedido de REVENDA desde que o pedido produção não seja para corte.
-                    if (idProdPedRevenda > 0 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
+                    if (idProdPedRevenda > 0 && prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, idPedido))
                         ProdutosPedidoDAO.Instance.MarcarSaida(sessao, idProdPedRevenda.Value, 1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiqueta);
 
                     if (idPedidoNovo != null)

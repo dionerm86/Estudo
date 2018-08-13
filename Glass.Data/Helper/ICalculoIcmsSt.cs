@@ -39,7 +39,7 @@ namespace Glass.Data.Helper
 
             return Configuracoes.FiscalConfig.NotaFiscalConfig.CalcularIcmsStUtilizandoWebServiceMT && !string.IsNullOrEmpty(cnaeCliente) ?
                 new CalculoIcmsStMT(sessao, idCliente.Value, cnaeCliente, percentualCargaTributaria) as ICalculoIcmsSt :
-                new CalculoIcmsStGeral(sessao, idLoja, idCliente ?? 0, idFornec, calcularIpi) as ICalculoIcmsSt;
+                new CalculoIcmsStGeral(sessao, idLoja, idCliente ?? 0, idFornec, calcularIpi, idNf > 0) as ICalculoIcmsSt;
         }
     }
 }

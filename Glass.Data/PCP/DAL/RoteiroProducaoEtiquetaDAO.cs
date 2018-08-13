@@ -18,33 +18,48 @@ namespace Glass.Data.DAL
 
         internal string Sql(uint? idProdPed, uint? idAmbientePedido, string idsProdPed, bool usarJoin)
         {
-            return String.Format(@"
-                select s.idSetor {5}
-                from (
-			        select rp.idRoteiroProducao, ep.idProcesso
-			        from produtos_pedido_espelho ppe
-                        left join ambiente_pedido_espelho ape on (ppe.idAmbientePedido=ape.idAmbientePedido)
-                        left join pedido ped on (ppe.idPedido=ped.idPedido)
+            var filtro = "1=1";
+            var campos = "s.IdSetor";
+            var agrupamento = string.Empty;
+            var limite = string.Empty;
 
-                        /* Substitui a parte removida acima */
-                        inner join etiqueta_processo ep on (if(ped.tipoPedido<>{2}, ppe.idProcesso, ape.idProcesso)=ep.idProcesso)
-                        inner join roteiro_producao rp on (ep.idProcesso=rp.idProcesso)
+            if (idProdPed > 0)
+            {
+                filtro = $"ppe.IdProdPed={ idProdPed }";
+            }
+            else if (!string.IsNullOrEmpty(idsProdPed))
+            {
+                filtro = idsProdPed;
+            }
+            else if (idAmbientePedido > 0)
+            {
+                filtro = $"ppe.IdAmbientePedido={ idAmbientePedido }";
+            }
 
-			        where {0}
-                    {3}
-			        /* order by rp.idGrupoProd desc, rp.idSubgrupoProd desc */
-			        {4}
-		        ) as rp
-                    inner join roteiro_producao_setor rps on (rp.idRoteiroProducao=rps.idRoteiroProducao)
-                    inner join setor s on (rps.idSetor=s.idSetor and s.tipo in ({1}))",
+            if (usarJoin)
+            {
+                campos += ", rp.IdProcesso";
+                agrupamento = "group by ep.idProcesso";
+            }
+            else
+            {
+                limite = "LIMIT 1";
+            }
 
-                (idProdPed > 0 ? "ppe.idProdPed=" + idProdPed : !String.IsNullOrEmpty(idsProdPed) ? idsProdPed : 
-                    idAmbientePedido > 0 ? "ppe.idAmbientePedido=" + idAmbientePedido : "true"),
-                (int)TipoSetor.PorRoteiro,
-                (int)Pedido.TipoPedidoEnum.MaoDeObra,
-                usarJoin ? "group by ep.idProcesso" : String.Empty,
-                usarJoin ? String.Empty : "limit 1",
-                usarJoin ? ", rp.idProcesso" : String.Empty);
+            return $@"SELECT { campos }
+                FROM (
+			        SELECT rp.IdRoteiroProducao, ep.IdProcesso
+			        FROM produtos_pedido_espelho ppe
+                        LEFT JOIN ambiente_pedido_espelho ape ON (ppe.IdAmbientePedido=ape.IdAmbientePedido)
+                        LEFT JOIN pedido ped ON (ppe.IdPedido=ped.IdPedido)
+                        INNER JOIN etiqueta_processo ep ON (if(ped.TipoPedido<>{ (int)Pedido.TipoPedidoEnum.MaoDeObra }, ppe.IdProcesso, ape.IdProcesso)=ep.IdProcesso)
+                        INNER JOIN roteiro_producao rp ON (ep.IdProcesso=rp.IdProcesso)
+			        WHERE { filtro }
+                    { agrupamento }
+			        { limite }
+		        ) AS rp
+                    INNER JOIN roteiro_producao_setor rps ON (rp.IdRoteiroProducao=rps.IdRoteiroProducao)
+                    INNER JOIN setor s ON (rps.IdSetor=s.IdSetor AND s.Tipo IN ({ (int)TipoSetor.PorRoteiro }))";
         }
 
         /// <summary>

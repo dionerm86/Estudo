@@ -11,8 +11,9 @@ namespace Glass.Data.Helper
         private string _codIbgeCidadeCliente;
         private bool _debitarIcmsDoIcmsSt, _calcularIpi;
         private GDA.GDASession _sessao;
+        private bool _notaFiscal;
 
-        public CalculoIcmsStGeral(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, bool calcularIpi)
+        public CalculoIcmsStGeral(GDA.GDASession sessao, int idLoja, int? idCliente, int? idFornec, bool calcularIpi, bool notaFiscal)
         {
             _idLoja = idLoja;
             _idCliente = idCliente;
@@ -22,10 +23,16 @@ namespace Glass.Data.Helper
             _codIbgeCidadeCliente = _idCliente > 0 ? CidadeDAO.Instance.ObtemCodIbgeCompleto(sessao, ClienteDAO.Instance.ObtemIdCidade(sessao, (uint)_idCliente.Value)) : null;
             _debitarIcmsDoIcmsSt = true;
             _sessao = sessao;
+            _notaFiscal = notaFiscal;
         }
 
         public NFeUtils.ConfigNFe.TipoCalculoIcmsSt ObterCalculoAliquotaIcmsSt()
         {
+            if (_notaFiscal)
+            {
+                return NFeUtils.ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo;
+            }
+
             return _calcularIpi ? Configuracoes.FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt : NFeUtils.ConfigNFe.TipoCalculoIcmsSt.SemIpi;
         }
 
@@ -145,8 +152,7 @@ namespace Glass.Data.Helper
         {
             var baseCalculo = ObtemBaseCalculoIcmsSt(produto, saida);
             var aliqIcmsProd = produto is Model.Produto ? produto.AliquotaIcms : IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(null, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
-            var aliqIcmsStProd = produto.AliquotaIcmsSt;
-
+            var aliqIcmsStProd = produto is Model.Produto ? produto.AliquotaIcmsSt : IcmsProdutoUfDAO.Instance.ObterAliquotaIcmsSt(_sessao, (uint)produto.IdProd, (uint)_idLoja, (uint?)_idFornec, (uint?)_idCliente);
             var valorIcmsADebitar = (produto.ValorIcms > 0 ? produto.ValorIcms : ((produto.Total - produto.ValorDesconto) * (decimal)(aliqIcmsProd / 100)));
 
             return baseCalculo * ((decimal)aliqIcmsStProd / 100) - (_debitarIcmsDoIcmsSt ? valorIcmsADebitar : 0);

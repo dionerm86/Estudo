@@ -1987,6 +1987,10 @@ namespace Glass.Data.DAL
         {
             NotaFiscal nf = GetElement(idNf);
 
+            var naturezaCalculaDifal = false;
+            decimal valorIcmsUFDestino = 0;
+            decimal valorIcmsUFRemetente = 0;
+
             // Verifica se NFe pode ser emitida
             if (nf.Situacao != (int)NotaFiscal.SituacaoEnum.Aberta && nf.Situacao == (int)NotaFiscal.SituacaoEnum.NaoEmitida &&
                 nf.Situacao == (int)NotaFiscal.SituacaoEnum.FalhaEmitir)
@@ -3828,7 +3832,7 @@ namespace Glass.Data.DAL
 
                     #region DIFAL
 
-                    var naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", $"IdNaturezaOperacao={ pnf.IdNaturezaOperacao }");
+                    naturezaCalculaDifal = NaturezaOperacaoDAO.Instance.ObtemValorCampo<bool>("CalcularDifal", string.Format("IdNaturezaOperacao={0}", pnf.IdNaturezaOperacao));
 
                     if (pnf.IdNaturezaOperacao > 0 && naturezaCalculaDifal)
                     {
@@ -3851,15 +3855,46 @@ namespace Glass.Data.DAL
 
                                 if (dadosIcms == null)
                                 {
-                                    var codInternoProd = ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd);
-                                    throw new Exception($"A natureza de operação, associada ao produto { codInternoProd }, está marcada para calcular DIFAL. Portanto, informe as alíquotas de ICMS no cadastro do produto.");
+                                    throw new Exception(string.Format("A natureza de operação associada ao produto {0} está marcada para calcular DIFAL, portanto, informe as alíquotas de ICMS no cadastro do produto.",
+                                        ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
                                 }
 
-                                var valorDifal = pnf.BcIcms * ((decimal)dadosIcms.AliquotaInterestadual / 100);
-                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 1;
+                                var origemSulSudesteExcetoES =
+                                    nomeUfOrigem.ToUpper().Contains("MG") ||
+                                    nomeUfOrigem.ToUpper().Contains("PR") ||
+                                    nomeUfOrigem.ToUpper().Contains("RJ") ||
+                                    nomeUfOrigem.ToUpper().Contains("RS") ||
+                                    nomeUfOrigem.ToUpper().Contains("SC") ||
+                                    nomeUfOrigem.ToUpper().Contains("SP");
+
+                                var destinoNorteNordesteCentroOesteES =
+                                    nomeUfDestino.ToUpper().Contains("AC") ||
+                                    nomeUfDestino.ToUpper().Contains("AL") ||
+                                    nomeUfDestino.ToUpper().Contains("AM") ||
+                                    nomeUfDestino.ToUpper().Contains("AP") ||
+                                    nomeUfDestino.ToUpper().Contains("BA") ||
+                                    nomeUfDestino.ToUpper().Contains("CE") ||
+                                    nomeUfDestino.ToUpper().Contains("ES") ||
+                                    nomeUfDestino.ToUpper().Contains("GO") ||
+                                    nomeUfDestino.ToUpper().Contains("MA") ||
+                                    nomeUfDestino.ToUpper().Contains("MS") ||
+                                    nomeUfDestino.ToUpper().Contains("MT") ||
+                                    nomeUfDestino.ToUpper().Contains("PA") ||
+                                    nomeUfDestino.ToUpper().Contains("PB") ||
+                                    nomeUfDestino.ToUpper().Contains("PE") ||
+                                    nomeUfDestino.ToUpper().Contains("PI") ||
+                                    nomeUfDestino.ToUpper().Contains("RN") ||
+                                    nomeUfDestino.ToUpper().Contains("RO") ||
+                                    nomeUfDestino.ToUpper().Contains("RR") ||
+                                    nomeUfDestino.ToUpper().Contains("SE") ||
+                                    nomeUfDestino.ToUpper().Contains("TO");
+
+                                var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
+                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
                                 var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
-                                var valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
-                                var valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
+                                valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
+                                valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
 
                                 totalIcmsUFDestino += valorIcmsUFDestino;
@@ -3871,9 +3906,9 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal((percentualIcmsUFDestino * 100), 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(percentualIcmsUFDestino * 100, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
@@ -4089,6 +4124,11 @@ namespace Glass.Data.DAL
 
             try
             {
+                if (naturezaCalculaDifal && valorIcmsUFDestino > 0 && valorIcmsUFRemetente > 0)
+                {
+                    nf.InfCompl += $" Valor da partilha UF de destino: {valorIcmsUFDestino.ToString("C")}, Valor da partilha UF de origem: {valorIcmsUFRemetente.ToString("C")}.";
+                }
+
                 // Substitui valores dos campos #bcicms, #vicmsdest e #vicmsremet
                 if (nf.InfCompl != null)
                     nf.InfCompl = nf.InfCompl.Replace("#bcicms", nf.BcIcms.ToString("C"))
@@ -6029,7 +6069,7 @@ namespace Glass.Data.DAL
         private string SqlListaPadrao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
@@ -6342,6 +6382,17 @@ namespace Glass.Data.DAL
                 criterio += "Produto: " + descrProd + "    ";
             }
 
+            if (!string.IsNullOrEmpty(lote))
+            {
+                sql += @" 
+                    And n.idNf In (
+                        Select p.idNf from produtos_nf p 
+                        Where p.Lote Like ?lote
+                    )";
+
+                criterio += "Lote: " + lote + "    ";
+            }
+
             if (!String.IsNullOrEmpty(valorInicial))
             {
                 sql += " And n.TotalNota >= " + valorInicial.Replace(",", ".");
@@ -6384,14 +6435,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, null));
         }
@@ -6399,11 +6450,11 @@ namespace Glass.Data.DAL
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, null));
         }

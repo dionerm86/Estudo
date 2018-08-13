@@ -31,11 +31,11 @@ namespace Glass.Data.Helper.Calculos
             int largura = larguraUsar ?? produto.Largura;
 
             AjustarDadosChapaVidro(produto, ref possuiChapaVidro, ref altura, ref largura);
-
-            var quantidade = produto.Qtde * qtdeAmbiente;
-
-            float m2 = Calcular(produto, calcularMultiploDe5, altura, largura, quantidade);
-            m2 = Math.Max(m2, CalcularAreaMinimaProduto(produto, numeroBeneficiamentos, quantidade));
+            
+            float m2 = Calcular(produto, calcularMultiploDe5, altura, largura, produto.Qtde);
+            m2 = Math.Max(m2, CalcularAreaMinimaProduto(produto, numeroBeneficiamentos, produto.Qtde));
+            /* Chamado 77857. */
+            m2 *= qtdeAmbiente;
 
             return AplicarM2MinimoChapaVidro(produto, possuiChapaVidro, m2);
         }

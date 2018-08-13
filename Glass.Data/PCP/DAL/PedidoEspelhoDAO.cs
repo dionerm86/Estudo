@@ -4288,13 +4288,29 @@ namespace Glass.Data.DAL
                 {
                     var caminhoSalvarFml = PCPConfig.CaminhoSalvarFml;
 
-                    using (Glass.Seguranca.AutenticacaoRemota.Autenticar())
-                        try
-                        {
+                    System.IDisposable autenticacao = null;
+
+                    try
+                    {
+                        autenticacao = Glass.Seguranca.AutenticacaoRemota.Autenticar();
+
+                        if (autenticacao.GetType() != typeof(Glass.Seguranca.AutenticacaoRemota.AutenticacaoFake) && autenticacao == null)
+                            throw new Exception("Falha ao efetuar Autenticação Remota.");
+
+                        using (autenticacao)
                             if (System.IO.Directory.Exists(caminhoSalvarFml))
+                            {
                                 resultado.SalvarArquivos(caminhoSalvarFml);
-                        }
-                        catch { /* Ignora */ }
+                            }
+                            else
+                            {
+                                throw new Exception($"Não foi possível localizar o caminho: {caminhoSalvarFml.Replace("\\", "/")}");
+                            }
+                    }
+                    catch (Exception ex)
+                    {
+                        ErroDAO.Instance.InserirFromException("GerarArquivoFmlPeloPedido.", ex);
+                    }
                 }
             }
 

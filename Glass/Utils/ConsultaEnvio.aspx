@@ -209,8 +209,8 @@
                                     <asp:BoundField DataField="Mensagem" HeaderText="Mensagem" SortExpression="Mensagem" />
                                     <asp:BoundField DataField="DataCad" HeaderText="Data Cad." SortExpression="DataCad" />
                                     <asp:BoundField DataField="DataEnvio" HeaderText="Data Envio" SortExpression="DataEnvio" />
-                                    <asp:BoundField DataField="CodResultado" HeaderText="Cód. Resultado" 
-                                        SortExpression="CodResultado" />
+                                    <asp:BoundField DataField="CodResultado" HeaderText="Cód. Resultado" SortExpression="CodResultado" />
+                                    <asp:BoundField DataField="DescricaoResultado" HeaderText="Resultado" SortExpression="DescricaoResultado" />
                                     <asp:BoundField DataField="NumeroTentativas" HeaderText="Tentativas com erro" SortExpression="NumeroTentativas" />
                                 </Columns>
                                 <PagerStyle CssClass="pgr" />

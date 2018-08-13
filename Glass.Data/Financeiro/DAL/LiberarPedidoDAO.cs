@@ -3123,8 +3123,7 @@ namespace Glass.Data.DAL
 
             /* Chamado 53132.
              * Impede que a liberação seja cancelada caso existam instalações não canceladas para um ou mais pedidos dela. */
-            if (objPersistence.ExecuteSqlQueryCount(session, string.Format(@"SELECT COUNT(*) FROM instalacao WHERE (IdOrdemInstalacao IS NULL OR IdOrdemInstalacao=0) AND Situacao<>{0}
-                AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={1} AND QtdeCalc>0);", (int)Instalacao.SituacaoInst.Cancelada, idLiberarPedido)) > 0)
+            if (InstalacaoDAO.Instance.PossuiIntalacoesNaoCanceladas(session, idLiberarPedido))
                 throw new Exception("Um ou mais pedidos desta liberação possuem instalações geradas, cancele as instalações antes de cancelar esta liberação.");
 
             /* Chamado 70095. */

@@ -754,6 +754,7 @@ namespace Glass.Data.Helper
 
             itens.Add(Config.ConfigEnum.TipoDataEtiqueta);
             itens.Add(Config.ConfigEnum.DiasDataFabrica);
+            itens.Add(Config.ConfigEnum.DiasReduzirDataFabricaComposicaoDuploLaminado);
             itens.Add(Config.ConfigEnum.ExibirDadosPcpListaAposConferencia);
             itens.Add(Config.ConfigEnum.ExibirImpressaoPcpListaPedidos);
             itens.Add(Config.ConfigEnum.GerarOrcamentoFerragesAluminiosPCP);

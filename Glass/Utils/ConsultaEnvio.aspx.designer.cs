@@ -184,6 +184,24 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.GridView grdFilaEmail;
         
         /// <summary>
+        /// odsFilaEmail control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFilaEmail;
+        
+        /// <summary>
+        /// odsLoja control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsLoja;
+        
+        /// <summary>
         /// separador control.
         /// </summary>
         /// <remarks>
@@ -335,5 +353,14 @@ namespace Glass.UI.Web.Utils {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView grdFilaSms;
+        
+        /// <summary>
+        /// odsFilaSms control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFilaSms;
     }
 }

@@ -516,6 +516,10 @@
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="ObterListaTipoCartao"
         TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
+        <SelectParameters>
+            <asp:Parameter Name="situacao" Type="Int32"
+                DefaultValue="0" />
+        </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource runat="server" ID="odsTipo"
         SelectMethod="GetTranslatesFromTypeName" EnableViewState="false"

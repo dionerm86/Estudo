@@ -1078,8 +1078,8 @@ namespace Glass.Data.DAL
                                 //5 - Total da pecas no pedido (306 .. 337)
                                 arqOtimiz += ProdutosPedidoEspelhoDAO.Instance.ObtemQtdPecasVidroPedido(transaction, etiqueta.IdPedido.StrParaUint()).ToString().PadLeft(32);
 
-                                //6 - Posicao em que a peca cai no plano de corte (338 .. 369)
-                                arqOtimiz += "".PadLeft(32);
+                                //6 - Numero da etiquta do produto importado (338 .. 369)
+                                arqOtimiz += etiqueta.NumEtiquetaCliente.PadLeft(32);
 
                                 //7 - Produto (370 .. 401)
                                 var prod = !string.IsNullOrEmpty(etiqueta.DescrProd) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.DescrProd) : "";
@@ -1308,6 +1308,7 @@ namespace Glass.Data.DAL
                         }
                         catch (Exception ex)
                         {
+                            ErroDAO.Instance.InserirFromException($"MontaArquivoMesaOptway. Etiqueta {etiq.NumEtiqueta}", ex);
                             lstErrosArq.Add(new KeyValuePair<string, Exception>(etiq.NumEtiqueta, ex));
                         }
                         arqMesa = ms.ToArray();

@@ -163,13 +163,17 @@
                 <asp:GridView GridLines="None" ID="grdPedido" runat="server" AutoGenerateColumns="False"
                     DataSourceID="odsPedido" CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                     EditRowStyle-CssClass="edit" DataKeyNames="IdPedido" EmptyDataText="Nenhum pedido encontrado."
-                    OnRowDataBound="grdPedido_RowDataBound">
+                    OnRowDataBound="grdPedido_RowDataBound" OnRowCommand="grdPedido_RowCommand">
                     <PagerSettings PageButtonCount="20" />
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkMarcar" runat="server" />
                                 <asp:HiddenField ID="hdfIdPedido" runat="server" Value='<%# Eval("IdPedido") %>' />
+                                <asp:LinkButton ID="lnkConsulta" runat="server" CommandName="Consultar"
+                                     CommandArgument='<%# Eval("IdPedido") %>' Visible='<%# (int)Eval("SituacaoExportacao") != 0  %>' >
+                                    <img border="0" src="../Images/Pesquisar.gif" title="Consultar Situação" />
+                                </asp:LinkButton>
                             </ItemTemplate>
                             <HeaderTemplate>
                                 <asp:CheckBox ID="chkTodos" runat="server" onclick="checkAll(this.checked)" />
@@ -222,6 +226,9 @@
                                     onclick="checkAllBenef(this.checked)" Text="Exportar Beneficiamentos (todos)?" />
                             </HeaderTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="DescricaoSituacaoExportacao" HeaderText="Situação Exportação" SortExpression="DescricaoSituacaoExportacao">
+                            <ItemStyle Wrap="True" />
+                        </asp:BoundField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 </td> </tr>

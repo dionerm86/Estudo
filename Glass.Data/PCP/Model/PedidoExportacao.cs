@@ -14,7 +14,7 @@ namespace Glass.Data.Model
         {
             Exportado = 1,
             Pronto,
-            Chegou,
+            Exportando,
             Cancelado
         }
 
@@ -60,7 +60,7 @@ namespace Glass.Data.Model
                 switch (SituacaoExportacao)
                 {
                     case (int)SituacaoExportacaoEnum.Exportado: retorno = "Exportado"; break;
-                    case (int)SituacaoExportacaoEnum.Chegou: retorno = "Chegou"; break;
+                    case (int)SituacaoExportacaoEnum.Exportando: retorno = "Exportando"; break;
                     case (int)SituacaoExportacaoEnum.Pronto: retorno = "Pronto"; break;
                     case (int)SituacaoExportacaoEnum.Cancelado: retorno = "Cancelado"; break;
                 }

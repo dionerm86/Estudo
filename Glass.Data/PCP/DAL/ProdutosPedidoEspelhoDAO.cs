@@ -351,17 +351,17 @@ namespace Glass.Data.DAL
                 where += " And p.idProd In (" + ids + ")";
             }
 
-            if (!String.IsNullOrEmpty(dataIni))
+            if (!string.IsNullOrEmpty(dataIni))
                 where += " and ped.dataEntrega>=?dataIni";
 
-            if (!String.IsNullOrEmpty(dataFim))
+            if (!string.IsNullOrEmpty(dataFim))
                 where += " and ped.dataEntrega<=?dataFim";
 
-            if (!String.IsNullOrEmpty(dataFabricaIni))
-                where += " and pedEsp.dataFabrica>=?dataFabricaIni";
+            if (!string.IsNullOrEmpty(dataFabricaIni))
+                where += " AND " + TratarDataFabricaComposicao("pedEsp.dataFabrica", "pp.IdProdPedParent") + ">=?dataFabricaIni";
 
-            if (!String.IsNullOrEmpty(dataFabricaFim))
-                where += " and pedEsp.dataFabrica<=?dataFabricaFim";
+            if (!string.IsNullOrEmpty(dataFabricaFim))
+                where += " AND " + TratarDataFabricaComposicao("pedEsp.dataFabrica", "pp.IdProdPedParent") + "<=?dataFabricaFim";
 
             switch (fastDelivery)
             {
@@ -531,6 +531,17 @@ namespace Glass.Data.DAL
             // Chamado 11754. o comando "SET group_concat_max_len = 4096;", é importante que este comando seja executado
             // para que o group_concat, feito para retornar as etiquetas do produto espelho, busque todas as etiquetas.
             return "SET group_concat_max_len = 4096; " + sql;
+        }
+
+        /// <summary>
+        /// Trata a data fábrica a ser considerada na busca do SQL para considerar os dias a serem reduzidos da data fabrica de produtos de composição
+        /// </summary>
+        public string TratarDataFabricaComposicao(string campoData, string campoIdProdPedParent)
+        {
+            return string.Format("(CASE WHEN ({2} > 0) THEN DATE_SUB({1}, INTERVAL {0} DAY) ELSE {1} END)",
+                PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado, // 0
+                campoData, // 1
+                campoIdProdPedParent); // 2
         }
 
         public bool IsProdToEtiq(uint idProdPed)
@@ -3044,13 +3055,14 @@ namespace Glass.Data.DAL
                 
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedidoEspelho, prodPed, !somarAcrescimoDesconto, true);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max((prodPed as IProdutoCalculo).DadosProduto.ValorTabela(), prodPed.ValorVendido);
+                var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, prodPed.IdPedido);
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedidoEspelho,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    true,
+                    prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -3395,7 +3407,7 @@ namespace Glass.Data.DAL
 
             ProdutoDAO.Instance.CalcTotaisItemProd(null, idCliente, (int)prodPed.IdProd,
                 prodPed.Largura, qtde, qtdeAmbiente, prodPed.ValorVendido, prodPed.Espessura,
-                redondo, 0, false, !isPedidoProducaoCorte, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
+                redondo, 0, false, prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
                 alturaBenef, larguraBenef, false, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), true);
 
             var totMRevenda = produtosPedRevenda.Where(f => idsProd.Contains(f.IdProd)).Sum(f => f.TotM2Calc);
@@ -4049,7 +4061,7 @@ namespace Glass.Data.DAL
                     pedidoEspelho,
                     objInsert,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    !isPedidoProducaoCorte,
+                    objInsert.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     objInsert.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -4284,7 +4296,7 @@ namespace Glass.Data.DAL
                     container,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    !isPedidoProducaoCorte,
+                    objUpdate.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
  

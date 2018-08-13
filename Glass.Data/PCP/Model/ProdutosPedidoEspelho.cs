@@ -590,7 +590,8 @@ namespace Glass.Data.Model
             {
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
                 return Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
-                    Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, !isPedidoProducaoCorte).ToString();
+                    Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, 
+                    TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte).ToString();
             }
         }
 
@@ -881,6 +882,20 @@ namespace Glass.Data.Model
         /// IdProdPedParent do produto pedido original
         /// </summary>
         public uint? IdProdPedParentOrig { get; set; }
+
+        /// <summary>
+        /// Data fabrica considerando os dias a retirar da composição
+        /// </summary>
+        public DateTime DataFabricaExibir
+        {
+            get
+            {
+                if (IdProdPedParent.GetValueOrDefault() > 0)
+                    return DataFabrica.AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+
+                return DataFabrica;
+            }
+        }
 
         public float PesoResumoCorte
         {

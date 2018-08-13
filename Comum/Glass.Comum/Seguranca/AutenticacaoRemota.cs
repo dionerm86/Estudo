@@ -37,7 +37,7 @@ namespace Glass.Seguranca
 
         #region Tipos Aninhados
 
-        class AutenticacaoFake : IDisposable
+        public class AutenticacaoFake : IDisposable
         {
             public void Dispose()
             {
