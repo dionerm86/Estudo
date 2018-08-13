@@ -27,6 +27,9 @@
             var incluirContasAcertoParcial = FindControl("chkIncluirContasAcertoParcial", "input").checked;
             var incluirContasAntecipacaoBoleto = FindControl("chkIncluirContasAntecipacaoBoleto", "input").checked;
 
+            //Apaga os dados de hdfIdsContas para que caso eu filtre dados novamente na tela não considere contas antigas apenas as filtradas no momento.
+            FindControl("hdfIdsContas", "input").value = "";
+
             var contas = GerarArquivoRemessa.GetContas(tipoPeriodo, dataIni, dataFim, tiposConta, tipoContaSemSeparacao, formasPagto,
                 idCliente, nomeCliente, loja, idContaBancoCliente, "", incluirContasAcertoParcial, incluirContasAntecipacaoBoleto).value.split("\n");
 
