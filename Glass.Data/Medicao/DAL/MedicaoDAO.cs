@@ -268,13 +268,18 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public Medicao GetForRptUnico(uint idMedicao)
         {
-            string sql = "Select m.*, l.NomeFantasia as NomeLoja, if(l.idCidade is null, l.cidade, cid.NomeCidade) as cidadeLoja, " + 
-                "l.endereco as enderecoLoja, l.numero as numeroLoja, l.Bairro as bairroLoja, l.Telefone as telLoja, " + 
-                "f.Nome as NomeMedidor, vend.Nome as NomeVendedor From medicao m " +
-                "Left Join funcionario f On (m.idFuncMed=f.idfunc) " +
-                "Left Join funcionario vend On (m.idFunc=vend.idfunc) " +
-                "Left Join loja l On (m.idLoja=l.idLoja) " + 
-                "Left Join cidade cid On (cid.idCidade=l.idCidade) Where idMedicao=" + idMedicao;
+            string sql = @"Select m.*, l.NomeFantasia as NomeLoja, if(l.idCidade is null, l.cidade, cid.NomeCidade) as cidadeLoja,
+                l.endereco as enderecoLoja, l.numero as numeroLoja, l.Bairro as bairroLoja, l.Telefone as telLoja,
+                f.Nome as NomeMedidor, vend.Nome as NomeVendedor, 
+                COALESCE(o.EnderecoObra, p.EnderecoObra) AS EnderecoObra, COALESCE(o.BairroObra, p.BairroObra) AS BairroObra, COALESCE(o.CidadeObra, p.CidadeObra) AS CidadeObra
+                From medicao m
+                Left Join funcionario f On (m.idFuncMed=f.idfunc)
+                Left Join funcionario vend On (m.idFunc=vend.idfunc)
+                Left Join loja l On (m.idLoja=l.idLoja)
+                Left Join cidade cid On (cid.idCidade=l.idCidade) 
+                Left Join orcamento o On (m.IdOrcamento = o.IdOrcamento)
+                Left Join pedido p On (m.idPedido = p.IdPedido)
+                Where idMedicao=" + idMedicao;
 
             return objPersistence.LoadOneData(sql);
         }
