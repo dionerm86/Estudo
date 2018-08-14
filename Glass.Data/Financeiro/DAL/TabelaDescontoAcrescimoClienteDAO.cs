@@ -50,6 +50,16 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>("descricao", "idTabelaDesconto=" + idTabelaDesconto);
         }
 
+        public IList<TabelaDescontoAcrescimoCliente> GetForFilter()
+        {
+            
+            string sql = "SELECT * FROM tabela_desconto_acrescimo_cliente";
+
+            List<TabelaDescontoAcrescimoCliente> lst = objPersistence.LoadData(sql);
+
+            return lst.ToArray();
+        }
+
         public override uint Insert(TabelaDescontoAcrescimoCliente objInsert)
         {
             // Verifica se já existe uma tabela com o nome dado à esta
