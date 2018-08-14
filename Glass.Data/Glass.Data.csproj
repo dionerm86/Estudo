@@ -1131,6 +1131,7 @@
     <Compile Include="RelDAL\PrevisaoProducaoDAO.cs" />
     <Compile Include="RelDAL\ProducaoDiariaRealizadaDAO.cs" />
     <Compile Include="RelDAL\ProdutosCortadosRptDAO.cs" />
+    <Compile Include="RelDAL\PrecoProdutosTabelaDAO.cs" />
     <Compile Include="RelModel\ArquivoRemessaRetorno.cs" />
     <Compile Include="RelModel\CapacidadeProducao.cs" />
     <Compile Include="RelModel\ChapasDisponiveis.cs" />
@@ -1416,6 +1417,7 @@
     <Compile Include="RelModel\PecasPendentes.cs" />
     <Compile Include="RelModel\PontoEquilibrio.cs" />
     <Compile Include="RelModel\PosicaoMateriaPrimaChapa.cs" />
+    <Compile Include="RelModel\PrecoProdutosTabela.cs" />
     <Compile Include="RelModel\PrevFinanPedidos.cs" />
     <Compile Include="RelModel\PrevisaoProducao.cs" />
     <Compile Include="RelModel\ProducaoData.cs" />

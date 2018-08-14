@@ -2751,6 +2751,25 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "PrecoTab":
+                    {
+                        report.ReportPath = ProdutoConfig.TelaPrecoTabelaClienteRelatorio.UsarRelatorioPrecoTabelClienteRetrato ?
+                            Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptPrecoTabRetrato{0}.rdlc") : 
+                            Data.Helper.Utils.CaminhoRelatorio("Relatorios/rptPrecoTabRetrato.rdlc");
+
+                        lstParam.Add(new ReportParameter("ExibirPerc", (Request["ExibirPerc"] == "true").ToString()));
+                        lstParam.Add(new ReportParameter("ExibirValorOriginal", (Request["exibirValorOriginal"] == "true").ToString()));
+
+                        report.DataSources.Add(new ReportDataSource("PrecoProdutosTabela", 
+                            Glass.Data.RelDAL.PrecoProdutosTabelaDAO.Instance.GetPrecosTabelaProdutosRpt(Glass.Conversoes.StrParaUint(Request["idTabelaDesconto"]),
+                            Request["codInterno"], Request["descrProd"], Glass.Conversoes.StrParaUint(Request["idGrupo"]), Request["idsSubgrupo"], 
+                            Glass.Conversoes.StrParaUint(Request["tipoValor"]), Glass.Conversoes.StrParaDecimal(Request["alturaInicio"]),
+                            Glass.Conversoes.StrParaDecimal(Request["alturaFim"]), Glass.Conversoes.StrParaDecimal(Request["larguraInicio"]),
+                            Glass.Conversoes.StrParaDecimal(Request["larguraFim"]), Glass.Conversoes.StrParaInt(Request["ordenacao"]),
+                            bool.Parse(Request["produtoDesconto"])).ToArray()));
+
+                        break;
+                    }
                 case "ClientesCredito":
                     {
                         report.ReportPath = "Relatorios/rptListaClientesCredito.rdlc";

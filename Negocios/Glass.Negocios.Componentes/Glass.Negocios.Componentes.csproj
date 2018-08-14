@@ -384,6 +384,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Glass.Data.Model.LimiteChequeCpfCnpj.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.RelModel.PrecoProdutosTabela.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.ArquivoCartaoNaoIdentificadoPesquisa.datasource" />
     <None Include="Properties\DataSources\Glass.Financeiro.Negocios.Entidades.CartaoNaoIdentificadoPesquisa.datasource" />
   </ItemGroup>

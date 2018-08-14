@@ -1363,6 +1363,7 @@
     <Content Include="Relatorios\ListaPedidosSimples.aspx" />
     <Content Include="Relatorios\ListaPendenciaCarregamento.aspx" />
     <Content Include="Relatorios\ListaPlanoConta.aspx" />
+    <Content Include="Relatorios\ListaPrecoTab.aspx" />
     <Content Include="Relatorios\ListaPrecoTabCliente.aspx" />
     <Content Include="Relatorios\ListaProducaoInst.aspx" />
     <Content Include="Relatorios\ListaProducaoProd.aspx" />
@@ -6687,6 +6688,13 @@
     <Compile Include="Relatorios\ListaPlanoConta.aspx.designer.cs">
       <DependentUpon>ListaPlanoConta.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Relatorios\ListaPrecoTab.aspx.cs">
+      <DependentUpon>ListaPrecoTab.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Relatorios\ListaPrecoTab.aspx.designer.cs">
+      <DependentUpon>ListaPrecoTab.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Relatorios\ListaPrecoTabCliente.aspx.cs">
       <DependentUpon>ListaPrecoTabCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -8967,6 +8975,9 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptPrecoTabClienteRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptPrecoTabRetrato.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptProducaoInst.rdlc" />
