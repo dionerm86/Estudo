@@ -88,7 +88,10 @@ namespace Glass.Data.RelModel
             DescrTipoEntrega = ped.DescrTipoEntrega;
 
             if (mostrarDescontoTotal)
+            {
                 TextoDescontoTotalPerc = ped.TextoPercDescontoTotal;
+                DescontoTotal = ped.Desconto;
+            }
         }
 
         private void RelatorioPedido(Pedido ped)

@@ -1982,6 +1982,17 @@ namespace Glass.Data.DAL
             prodNf.ValorDesconto = Math.Round(percDesconto * Math.Round(prodNf.Total, 2), 2);
         }
 
+        internal decimal ObterTotalICMSDesoneradoDebitar(GDASession sessao, uint idNf)
+        {
+            var prodNf = GetByNf(sessao, idNf).Where(f => f.IdNaturezaOperacao > 0) ?? new List<ProdutosNf>();
+
+            if (prodNf.Count() == 0)
+                return 0;
+
+            return prodNf.Where(f => NaturezaOperacaoDAO.Instance.ObterDebitarIcmsDesonTotalNf(sessao, f.IdNaturezaOperacao.GetValueOrDefault()) == true || f.MotivoDesoneracao == (int)MotivoDesoneracaoEnum.SUFRAMA).Sum(f => f.ValorIcmsDesonerado);
+
+        }
+
         #endregion
 
         #region Rentabilidade

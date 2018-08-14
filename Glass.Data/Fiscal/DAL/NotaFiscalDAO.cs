@@ -8062,8 +8062,9 @@ namespace Glass.Data.DAL
                 AliqCofins=ValorCofins/(select sum(Round(bcCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf)*100, ";
 
             // Calcula valor da Nota, somando o FCP ST, frete, outras despesas, seguro, IPI, IPIDevolvido, ICMS ST e subtraindo o desconto
-            sql += "TotalNota=Round((totalProd + valorFcpSt + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
-                (isImportacao ? " + valorIcms" : "") + ") - desconto, 2), ";
+            sql += $@"TotalNota=Round((totalProd + valorFcpSt + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi {
+                (isImportacao ? " + valorIcms" : "") }) - desconto, 2) - (Select Sum(Round(pnf.ValorIcmsDesonerado,2)) from produtos_nf pnf inner join 
+                natureza_operacao nat on ((nat.IdNaturezaOperacao = pnf.IdNaturezaOperacao) And (nat.DebitarIcmsDesonTotalNf || pnf.MotivoDesoneracao = { (int)MotivoDesoneracaoEnum.SUFRAMA })) where pnf.idnf = n.IdNf), ";
 
             // Calcula o total dos tributos conforme lei da transparência
             sql += "ValorTotalTrib=(Select Sum(valorTotalTrib) From produtos_nf pnf Where idNf=n.idNf), ";
