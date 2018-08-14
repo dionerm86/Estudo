@@ -14,6 +14,11 @@ namespace Glass.Otimizacao.eCutter
     {
         #region Propriedades
 
+        /// <summary>
+        /// Obtém o tipo de etiqueta.
+        /// </summary>
+        public override TipoEtiqueta Tipo => TipoEtiqueta.Peca;
+
         [XmlAttribute("id")]
         public string IdPeca { get; set; }
 
@@ -78,7 +83,7 @@ namespace Glass.Otimizacao.eCutter
         public string DescricaoMaterialComposicao { get; set; }
 
         [XmlAttribute("isRotated")]
-        public bool IsRotated { get; set; }
+        public bool Rotacionada { get; set; }
 
         [XmlElement("Customer")]
         public string Cliente { get; set; }
@@ -93,6 +98,7 @@ namespace Glass.Otimizacao.eCutter
         public string Descricao { get; set; }
 
         public List<string> NotasExtendidas { get; } = new List<string>();
+
         #endregion
     }
 }

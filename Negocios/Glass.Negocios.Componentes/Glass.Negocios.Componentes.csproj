@@ -305,6 +305,7 @@
     <Compile Include="Instalacao\InstalacaoFluxo.cs" />
     <Compile Include="ObtemDescritorEntidade.cs" />
     <Compile Include="Otimizacao\AutenticadorProtocolo.cs" />
+    <Compile Include="Otimizacao\ConversorSolucaoOtimizacao.cs" />
     <Compile Include="Otimizacao\EntradaEstoqueChapa.cs" />
     <Compile Include="Otimizacao\EstoqueChapa.cs" />
     <Compile Include="Otimizacao\Material.cs" />

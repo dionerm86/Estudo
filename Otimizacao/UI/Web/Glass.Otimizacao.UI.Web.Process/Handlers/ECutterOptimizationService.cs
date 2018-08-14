@@ -114,6 +114,14 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             {
                 var importacao = OtimizacaoFluxo.Importar(idArquivoOtimizacao, arquivos);
 
+                if (importacao == null)
+                {
+                    return new eCutter.ResultadoSalvarTransacao(true, null, new[]
+                    {
+                        new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao)
+                    });
+                }
+
                 var url = context.Request.Url.AbsoluteUri;
                 url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase)) + "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
 

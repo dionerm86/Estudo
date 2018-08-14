@@ -19,6 +19,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
             {
                 Configure()
                     .Uid(f => f.IdSolucaoOtimizacao)
+                    .Child<PlanoOtimizacao, Data.Model.PlanoOtimizacao>("PlanosOtimizacao", f => f.PlanosOtimizacao, f => f.IdSolucaoOtimizacao)
                     .Creator(f => new SolucaoOtimizacao(f));
             }
         }
@@ -26,6 +27,11 @@ namespace Glass.Otimizacao.Negocios.Entidades
         #endregion
 
         #region Propriedades
+
+        /// <summary>
+        /// Obtém os planos de otimização.
+        /// </summary>
+        public Colosoft.Business.IEntityChildrenList<PlanoOtimizacao> PlanosOtimizacao { get; }
 
         /// <summary>
         /// Identificador da solução.
@@ -98,7 +104,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
         protected SolucaoOtimizacao(Colosoft.Business.EntityLoaderCreatorArgs<Data.Model.SolucaoOtimizacao> args)
             : base(args.DataModel, args.UIContext, args.TypeManager)
         {
-
+            PlanosOtimizacao = GetChild<PlanoOtimizacao>(args.Children, "PlanosOtimizacao");
         }
 
         /// <summary>
@@ -110,7 +116,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
         public SolucaoOtimizacao(Data.Model.SolucaoOtimizacao dataModel, string uiContext, Colosoft.Business.IEntityTypeManager entityTypeManager)
             : base(dataModel, uiContext, entityTypeManager)
         {
-
+            PlanosOtimizacao = CreateChild<Colosoft.Business.IEntityChildrenList<PlanoOtimizacao>>("PlanosOtimizacao");
         }
 
         #endregion

@@ -24,7 +24,7 @@ namespace Glass.Data.Model
         /// Obtém ou define o identificador do arquivo de otimização.
         /// </summary>
         [PersistenceProperty("IdArquivoOtimiz")]
-        [PersistenceForeignKey(typeof(ArquivoOtimizacao), "IdArquivoOtimizacao")]
+        [PersistenceForeignKey(typeof(ArquivoOtimizacao), nameof(ArquivoOtimizacao.IdArquivoOtimizacao))]
         public int IdArquivoOtimizacao { get; set; }
 
         /// <summary>

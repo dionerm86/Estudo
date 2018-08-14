@@ -192,6 +192,28 @@ namespace Glass.Otimizacao.Negocios.Componentes
             };
         }
 
+        /// <summary>
+        /// Obtém o documento com os dados de etiqueta da solução de otimização.
+        /// </summary>
+        /// <param name="solucaoOtimizacao"></param>
+        /// <returns></returns>
+        private eCutter.DocumentoEtiquetas ObterDocumentoEtiquetas(Entidades.SolucaoOtimizacao solucaoOtimizacao)
+        {
+            foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            {
+                if (StringComparer.InvariantCultureIgnoreCase.Equals(
+                    System.IO.Path.GetExtension(arquivo.Nome), ".optlbl"))
+                {
+                    using (var conteudo = arquivo.Abrir())
+                        return eCutter.DocumentoEtiquetas.Open(conteudo);
+                }
+            }
+
+            return null;
+        }
+
+        
+
         #endregion
 
         #region Métodos Públicos
@@ -277,46 +299,37 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .ProcessResult<Entidades.SolucaoOtimizacao>()
                 .FirstOrDefault();
 
-            if (solucaoOtimizacao == null)
-            {
+            var importacaoNova = solucaoOtimizacao == null;
+            if (importacaoNova)
                 solucaoOtimizacao = new Entidades.SolucaoOtimizacao()
                 {
                     IdArquivoOtimizacao = idArquivoOtimizacao
                 };
 
-                SourceContext.Instance.ExecuteSave(solucaoOtimizacao);
-            }
-
             Repositorio.SalvarArquivos(solucaoOtimizacao, arquivos);
+            
+            var documentoEtiquetas = ObterDocumentoEtiquetas(solucaoOtimizacao);
+            var conversor = new ConversorSolucaoOtimizacao(solucaoOtimizacao);
+            conversor.Executar(documentoEtiquetas);
 
-            foreach(var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            SourceContext.Instance.ExecuteSave(solucaoOtimizacao).ThrowInvalid();
+
+            if (importacaoNova)
             {
-                if (StringComparer.InvariantCultureIgnoreCase.Equals(
-                    System.IO.Path.GetExtension(arquivo.Nome), ".optlbl"))
+                var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
+
+                foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
                 {
-                    using (var conteudo = arquivo.Abrir())
-                    {
-                        var documento = eCutter.DocumentoEtiquetas.Open(conteudo);
-                    }
+                    if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+                         tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
+                         StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
+                        return ImportarArquivoOptyWay(arquivo);
                 }
+
+                throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
             }
-
-            return new ImportacaoOtimizacao
-            {
-                IdArquivoOtimizacao = 0
-            };
-
-            //var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
-
-            //foreach(var arquivo in arquivos)
-            //{
-            //    if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
-            //         tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
-            //         StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
-            //        return ImportarArquivoOptyWay(arquivo);
-            //}
-
-            //throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
+            else
+                return null;
         }
 
         /// <summary>

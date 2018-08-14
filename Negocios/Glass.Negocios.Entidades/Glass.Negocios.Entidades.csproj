@@ -281,6 +281,10 @@
     <Compile Include="IObtemDescritor.cs" />
     <Compile Include="Orcamento\ProdutosOrcamento.cs" />
     <Compile Include="Otimizacao\Material.cs" />
+    <Compile Include="Otimizacao\PecaPlanoCorte.cs" />
+    <Compile Include="Otimizacao\PlanoCorte.cs" />
+    <Compile Include="Otimizacao\PlanoOtimizacao.cs" />
+    <Compile Include="Otimizacao\RetalhoPlanoCorte.cs" />
     <Compile Include="Otimizacao\SolucaoOtimizacao.cs" />
     <Compile Include="PCP\ArquivoMesaCorte.cs" />
     <Compile Include="PCP\CapacidadeDiariaProducaoClassificacao.cs" />

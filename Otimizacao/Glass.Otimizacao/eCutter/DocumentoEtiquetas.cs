@@ -14,12 +14,18 @@ namespace Glass.Otimizacao.eCutter
     {
         #region Propriedades
 
+        /// <summary>
+        /// Obtém ou define a versão do documento de etiquetas.
+        /// </summary>
         [XmlAttribute("version")]
         public string Version { get; set; }
 
+        /// <summary>
+        /// Obtém ou define os planos de otimização.
+        /// </summary>
         [XmlArray("OptimizationPlans")]
         [XmlArrayItem("OptimizationPlan")]
-        public EtiquetaPlanoOtimizacao[] PlanosOtimizacao { get; set; }
+        public List<EtiquetaPlanoOtimizacao> PlanosOtimizacao { get; } = new List<EtiquetaPlanoOtimizacao>();
 
         #endregion
 

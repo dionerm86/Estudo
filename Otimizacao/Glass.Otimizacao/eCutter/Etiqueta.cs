@@ -17,7 +17,7 @@ namespace Glass.Otimizacao.eCutter
         /// Obtém o tipo da etiqueta.
         /// </summary>
         [XmlIgnore]
-        public TipoEtiqueta Tipo { get; set; }
+        public abstract TipoEtiqueta Tipo { get; }
 
         /// <summary>
         /// Obtém a posição da etiqueta.

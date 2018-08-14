@@ -13,10 +13,21 @@ namespace Glass.Otimizacao.eCutter
     public class EtiquetaRetalho : Etiqueta
     {
         #region Propriedades
+        
+        /// <summary>
+        /// Obtém o tipo da etiqueta.
+        /// </summary>
+        public override TipoEtiqueta Tipo => TipoEtiqueta.Retalho;
 
+        /// <summary>
+        /// Obtém ou define a largura do retalho.
+        /// </summary>
         [XmlAttribute("xDimension")]
         public double Largura { get; set; }
 
+        /// <summary>
+        /// Obtém ou define a altura do retalho.
+        /// </summary>
         [XmlAttribute("yDimension")]
         public double Altura { get; set; }
 

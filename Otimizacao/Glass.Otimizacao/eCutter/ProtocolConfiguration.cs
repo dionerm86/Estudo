@@ -117,12 +117,17 @@ namespace Glass.Otimizacao.eCutter
         /// <param name="writer"></param>
         void IXmlSerializable.WriteXml(XmlWriter writer)
         {
-            writer.WriteElementString("Name", Name);
-            writer.WriteElementString("SheetStockFormat", SheetStockFormat);
-            writer.WriteElementString("GetSheetStockUri", GetSheetStockUri);
-            writer.WriteElementString("OptimizationPlanFormat", OptimizationPlanFormat);
-            writer.WriteElementString("GetOptimizationPlanUri", GetOptimizationPlanUri);
-            writer.WriteElementString("SaveOptimizationUri", SaveOptimizationUri);
+            writer.WriteAttributeString("name", Name);
+            writer.WriteAttributeString("sheetStockFormat", SheetStockFormat);
+            writer.WriteAttributeString("getSheetStockUri", GetSheetStockUri);
+            writer.WriteAttributeString("optimizationPlanFormat", OptimizationPlanFormat);
+            writer.WriteAttributeString("getOptimizationPlanUri", GetOptimizationPlanUri);
+            writer.WriteAttributeString("saveOptimizationUri", SaveOptimizationUri);
+            writer.WriteAttributeString("standardPiecesFormat", StandardPiecesFormat);
+            writer.WriteAttributeString("getStandardPiecesUri", GetStandardPiecesUri);
+            writer.WriteStartAttribute("closeOnSave");
+            writer.WriteValue(CloseOnSave);
+            writer.WriteEndAttribute();
 
             writer.WriteStartElement("SaveOptimizationOptions");
 
@@ -137,10 +142,6 @@ namespace Glass.Otimizacao.eCutter
             }
 
             writer.WriteEndElement();
-
-            writer.WriteElementString("StandardPiecesFormat", StandardPiecesFormat);
-            writer.WriteElementString("GetStandardPiecesUri", GetStandardPiecesUri);
-            writer.WriteElementString("CloseOnSave", CloseOnSave.ToString().ToLower());
         }
 
         #endregion
