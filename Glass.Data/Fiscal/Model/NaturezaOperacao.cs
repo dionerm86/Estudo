@@ -102,6 +102,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("Ncm")]
         public string Ncm { get; set; }
 
+        [Log("DEBITARICMSDESONTOTALNF")]
+        [PersistenceProperty("DebitarIcmsDesonTotalNf")]
+        public bool DebitarIcmsDesonTotalNf { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

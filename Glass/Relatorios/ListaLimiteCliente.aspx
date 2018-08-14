@@ -187,6 +187,7 @@
                                 <asp:ListItem Value="3">Pedido</asp:ListItem>
                                 <asp:ListItem Value="4">Liberação</asp:ListItem>
                                 <asp:ListItem Value="5">Data Venc.</asp:ListItem>
+                                <asp:ListItem Value="6">Data Venc Cresc.</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>

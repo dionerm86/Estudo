@@ -1079,7 +1079,7 @@ namespace Glass.Data.DAL
                                 arqOtimiz += ProdutosPedidoEspelhoDAO.Instance.ObtemQtdPecasVidroPedido(transaction, etiqueta.IdPedido.StrParaUint()).ToString().PadLeft(32);
 
                                 //6 - Numero da etiquta do produto importado (338 .. 369)
-                                arqOtimiz += etiqueta.NumEtiquetaCliente.PadLeft(32);
+                                arqOtimiz += (etiqueta.NumEtiquetaCliente ?? string.Empty).PadLeft(32);
 
                                 //7 - Produto (370 .. 401)
                                 var prod = !string.IsNullOrEmpty(etiqueta.DescrProd) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.DescrProd) : "";

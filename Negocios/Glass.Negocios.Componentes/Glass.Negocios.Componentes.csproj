@@ -37,32 +37,32 @@
       <HintPath>..\..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine, Version=1.9.59.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.1.9.59\lib\net35\CalcEngine.dll</HintPath>
+    <Reference Include="CalcEngine, Version=1.9.81.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.1.9.81\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.9.59.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Biesse.1.9.59\lib\net40\CalcEngine.Biesse.dll</HintPath>
+    <Reference Include="CalcEngine.Biesse, Version=1.9.81.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Biesse.1.9.81\lib\net40\CalcEngine.Biesse.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.9.59.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Dxf.1.9.59\lib\net35\CalcEngine.Dxf.dll</HintPath>
+    <Reference Include="CalcEngine.Dxf, Version=1.9.81.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Dxf.1.9.81\lib\net35\CalcEngine.Dxf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.9.59.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Forvet.1.9.59\lib\net35\CalcEngine.Forvet.dll</HintPath>
+    <Reference Include="CalcEngine.Forvet, Version=1.9.81.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Forvet.1.9.81\lib\net35\CalcEngine.Forvet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.9.59.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Optima.1.9.59\lib\net35\CalcEngine.Optima.dll</HintPath>
+    <Reference Include="CalcEngine.Optima, Version=1.9.81.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.Optima.1.9.81\lib\net35\CalcEngine.Optima.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.9.59.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.SGlass.1.9.59\lib\net35\CalcEngine.SGlass.dll</HintPath>
+    <Reference Include="CalcEngine.SGlass, Version=1.9.81.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CalcEngine.SGlass.1.9.81\lib\net35\CalcEngine.SGlass.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
@@ -114,7 +114,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Forvet.1.9.59\lib\net35\FC.dll</HintPath>
+      <HintPath>..\..\packages\CalcEngine.Forvet.1.9.81\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="fcm.net">
@@ -190,11 +190,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Biesse.1.9.59\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\..\packages\CalcEngine.Biesse.1.9.81\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.1.9.59\lib\net35\System.Linq.Dynamics.dll</HintPath>
+      <HintPath>..\..\packages\CalcEngine.Dynamics.1.0.0\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -305,6 +305,7 @@
     <Compile Include="Instalacao\InstalacaoFluxo.cs" />
     <Compile Include="ObtemDescritorEntidade.cs" />
     <Compile Include="Otimizacao\AutenticadorProtocolo.cs" />
+    <Compile Include="Otimizacao\ConversorSolucaoOtimizacao.cs" />
     <Compile Include="Otimizacao\EntradaEstoqueChapa.cs" />
     <Compile Include="Otimizacao\EstoqueChapa.cs" />
     <Compile Include="Otimizacao\Material.cs" />

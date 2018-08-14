@@ -460,7 +460,7 @@
                                     <asp:Parameter DefaultValue="0" Name="idPedido" Type="UInt32" />
                                     <asp:Parameter DefaultValue="0" Name="idLiberarPedido" Type="UInt32" />
                                     <asp:Parameter Name="buscarItens" Type="String" />
-                                    <asp:Parameter Name="ordenar" Type="Int32" />
+                                    <asp:Parameter DefaultValue="6" Name="ordenar" Type="Int32" />
                                     <asp:Parameter Name="tipoBuscaData" Type="Int32" />
                                     <asp:Parameter Name="dataIni" Type="String" />
                                     <asp:Parameter Name="dataFim" Type="String" />

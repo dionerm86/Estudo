@@ -6340,6 +6340,8 @@ namespace Glass.Data.DAL
                     sortExpression = "idLiberarPedido"; break;
                 case 5:
                     sortExpression = "DataVec Desc"; break;
+                case 6:
+                    sortExpression = "DataVec ASC"; break;
             }
 
             return LoadDataWithSortExpression(SqlDebitos(idCliente, idPedido, idLiberarPedido, null, null, null, buscarItens, TipoDebito.Todos,

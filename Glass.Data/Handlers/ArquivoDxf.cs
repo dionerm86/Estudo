@@ -69,7 +69,8 @@ namespace Glass.Data.Handlers
                     for (var i = 0; i < lstArqMesa.Count; i++)
                         zip.AddFileStream(lstCodArq[i].Replace("  ", string.Empty).Replace(" ", string.Empty).Replace('ç', Convert.ToChar(135)), string.Empty, new System.IO.MemoryStream(lstArqMesa[i]));
 
-                    zip.AddStringAsFile(errosGeracaoMarcacao, "Situações com arquivos de mesa.error", string.Empty);
+                    if (!string.IsNullOrEmpty(errosGeracaoMarcacao))
+                        zip.AddStringAsFile(errosGeracaoMarcacao, "Situações com arquivos de mesa.error", string.Empty);
 
                     zip.Save();
                 }

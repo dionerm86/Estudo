@@ -13,6 +13,11 @@ namespace Glass.Otimizacao.Negocios.Componentes
         #region Propriedades
 
         /// <summary>
+        /// Obtém ou define o identificador da entrada.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
         /// Código do material.
         /// </summary>
         public string CodigoMaterial { get; set; }
