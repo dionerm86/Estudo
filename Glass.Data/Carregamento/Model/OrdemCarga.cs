@@ -170,7 +170,7 @@ namespace Glass.Data.Model
                     return "";
 
                 var idsPedidos =
-                    Pedidos.Select(
+                    Pedidos.OrderBy(f=> f.IdPedido).Select(
                         f =>
                             f.IdPedido +
                             (Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? " (" + f.CodCliente + ")" : "") +

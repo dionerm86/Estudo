@@ -76,6 +76,9 @@ namespace Glass.Otimizacao.eCutter
         /// <param name="entrada"></param>
         private static void Serializar(System.Xml.XmlWriter writer, IEntradaEstoqueChapa entrada)
         {
+            writer.WriteStartAttribute("id");
+            writer.WriteValue(entrada.Id);
+            writer.WriteEndAttribute();
             writer.WriteStartAttribute("materialCode");
             writer.WriteValue(entrada.CodigoMaterial);
             writer.WriteEndAttribute();

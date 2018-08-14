@@ -78,8 +78,14 @@ namespace Glass.Configuracoes
                 // Se o funcionário tiver permissão de ignorar bloqueio de desconto no orçamento e pedido
                 if (Config.PossuiPermissao((int)idFunc, Config.FuncaoMenuPedido.IgnorarBloqueioDescontoOrcamentoPedido))
                     return 100;
+
+                return GetDescontoMaximoPedidoConfigurado(sessao, idFunc, tipoVendaPedido, idParcela);
+            }
+
+            public static float GetDescontoMaximoPedidoConfigurado(GDA.GDASession sessao, uint idFunc, int tipoVendaPedido, int? idParcela)
+            {
                 // Se o funcionário for gerente, retorna o desconto máximo para gerente no pedido.
-                else if (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
+                if (Data.DAL.FuncionarioDAO.Instance.ObtemIdTipoFunc(sessao, idFunc) == (uint)Seguranca.TipoFuncionario.Gerente)
                 {
                     if (tipoVendaPedido == (int)Data.Model.Pedido.TipoVendaPedido.APrazo && !Data.DAL.ParcelasDAO.Instance.ObterParcelaAVista(sessao, idParcela ?? 0))
                     {

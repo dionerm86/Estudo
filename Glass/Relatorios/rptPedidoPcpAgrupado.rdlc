@@ -911,9 +911,6 @@
                   <GroupExpression>=Fields!Cor.Value</GroupExpression>
                   <GroupExpression>=Fields!Espessura.Value</GroupExpression>
                 </GroupExpressions>
-                <PageBreak>
-                  <BreakLocation>End</BreakLocation>
-                </PageBreak>
               </Group>
               <SortExpressions>
                 <SortExpression>

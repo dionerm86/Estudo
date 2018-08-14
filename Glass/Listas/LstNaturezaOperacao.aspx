@@ -350,6 +350,22 @@
                 <FooterStyle HorizontalAlign="Center" />
                 <ItemStyle HorizontalAlign="Center" />
             </asp:TemplateField>
+            <asp:TemplateField HeaderText="Debitar ICMS Desonerado do Total da NF." 
+                SortExpression="DebitarIcmsDesonTotalNf">
+                <ItemTemplate>
+                    <asp:CheckBox ID="chkDebitarIcmsDesonTotalNf" runat="server" 
+                        Checked='<%# Bind("DebitarIcmsDesonTotalNf") %>' Enabled="false" />
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <asp:CheckBox ID="CheckBox8" runat="server" 
+                        Checked='<%# Bind("DebitarIcmsDesonTotalNf") %>' />
+                </EditItemTemplate>
+                <FooterTemplate>
+                    <asp:CheckBox ID="DebitarIcmsDesonTotalNf" runat="server" />
+                </FooterTemplate>
+                <FooterStyle HorizontalAlign="Center" />
+                <ItemStyle HorizontalAlign="Center" />
+            </asp:TemplateField>
              <asp:TemplateField HeaderText="NCM" 
                 SortExpression="Ncm">
                 <ItemTemplate>

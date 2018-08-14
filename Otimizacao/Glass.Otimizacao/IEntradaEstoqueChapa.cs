@@ -13,6 +13,11 @@ namespace Glass.Otimizacao
         #region Propriedades
 
         /// <summary>
+        /// Obtém ou define o identificador da entrada.
+        /// </summary>
+        string Id { get; }
+
+        /// <summary>
         /// Código do material.
         /// </summary>
         string CodigoMaterial { get; }

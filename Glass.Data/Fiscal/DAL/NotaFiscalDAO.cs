@@ -8025,14 +8025,14 @@ namespace Glass.Data.DAL
             string where = " Where (n.tipoDocumento not in (" + (int)NotaFiscal.TipoDoc.EntradaTerceiros + "," + (int)NotaFiscal.TipoDoc.NotaCliente +
                 ") or n.serie<>'U' or n.serie is null) and n.idNf=" + idNf;
 
-            string sql = "update nota_fiscal n set ";
+            string sql = "UPDATE nota_fiscal n SET ";
 
             // Calcula o valor total dos produtos, o Round deve ficar dentro da função Sum, para que não ocorram problema de R$0,01
             // do somatório dos produtos da nota com o que é exibido no DANFE
-            sql += "TotalProd=Round((Select Sum(Round(pn.Total, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "TotalProd = COALESCE(ROUND((SELECT SUM(ROUND(pn.Total, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o IPI da nota
-            sql += "ValorIpi=Round((Select Sum(Round(pn.valorIpi, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "ValorIpi = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIpi, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             /* Chamado 14370.
              * O valor da base de cálculo de ICMS estava ficando diferente em 2 centavos por causa do desconto aplicado na nota fiscal.
@@ -8040,37 +8040,51 @@ namespace Glass.Data.DAL
              * com e sem desconto o valor da base de cálculo do ICMS ficou correto. */
             // Calcula a BC do ICMS e valor do ICMS (o round do pn.valorIcms foi alterado de 4 para 2, para resolver o chamado 10338)
             // sql += "BcIcms=Round((Select Sum(Round(pn.BcIcms, 2)) From produtos_nf pn Where pn.valorIcms>0 And pn.idNf=n.IdNf), 2), " +
-            sql += "BcIcms=(Select Sum(pn.BcIcms) From produtos_nf pn Where pn.valorIcms>0 And pn.idNf=n.IdNf), " +
-                "ValorIcms=Round((Select Sum(Round(pn.valorIcms, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcIcms = COALESCE((SELECT SUM(pn.BcIcms) FROM produtos_nf pn WHERE pn.ValorIcms > 0 AND pn.IdNf=n.IdNf), 0), " +
+                "ValorIcms = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIcms, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula a BC do FCP e valor do FCP
-            sql += "BcFcp=(Select Sum(pn.BcFcp) From produtos_nf pn Where pn.valorFcp>0 And pn.idNf=n.IdNf), " +
-                "ValorFcp=Round((Select Sum(Round(pn.valorFcp, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcFcp = COALESCE((SELECT SUM(pn.BcFcp) FROM produtos_nf pn WHERE pn.ValorFcp > 0 AND pn.IdNf=n.IdNf), 0), " +
+                "ValorFcp = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorFcp, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valor da BC do ICMS ST e valor do ICMS ST (o round do pn.ValorIcmsSt foi alterado de 4 para 2, para resolver o chamado 10338)
-            sql += "BcIcmsSt=Round((Select Sum(Round(pn.BcIcmsSt, 2)) From produtos_nf pn Where pn.BcIcmsSt>0 And pn.idNf=n.IdNf), 2), " +
-                "ValorIcmsSt=Round((Select Sum(Round(pn.ValorIcmsSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcIcmsSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.BcIcmsSt, 2)) FROM produtos_nf pn WHERE pn.BcIcmsSt > 0 AND pn.IdNf=n.IdNf), 2), 0), " +
+                "ValorIcmsSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIcmsSt, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valor da BC do FCP ST e valor do FCP ST
-            sql += "BcFcpSt=Round((Select Sum(Round(pn.BcFcpSt, 2)) From produtos_nf pn Where pn.BcFcpSt>0 And pn.idNf=n.IdNf), 2), " +
-                "ValorFcpSt=Round((Select Sum(Round(pn.ValorFcpSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcFcpSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.BcFcpSt, 2)) FROM produtos_nf pn WHERE pn.BcFcpSt > 0 AND pn.IdNf=n.IdNf), 2), 0), " +
+                "ValorFcpSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorFcpSt, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valores de PIS/Cofins
-            sql += @"ValorPis=Round((select sum(Round(valorPis, 2)) from produtos_nf where valorPis>0 and idNf=n.idNf), 2),
-                AliqPis=ValorPis/(select sum(Round(bcPis, 2)) from produtos_nf where valorPis>0 and idNf=n.idNf)*100, 
-                ValorCofins=Round((select sum(Round(valorCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf), 2),
-                AliqCofins=ValorCofins/(select sum(Round(bcCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf)*100, ";
+            sql += @"ValorPis = COALESCE(ROUND((SELECT SUM(ROUND(ValorPis, 2)) FROM produtos_nf WHERE ValorPis > 0 AND IdNf=n.IdNf), 2), 0),
+                AliqPis = (COALESCE(ValorPis, 0) / COALESCE((SELECT SUM(ROUND(BcPis, 2)) FROM produtos_nf WHERE ValorPis > 0 AND IdNf=n.IdNf), 0)) * 100,
+                ValorCofins = COALESCE(ROUND((SELECT SUM(ROUND(ValorCofins, 2)) FROM produtos_nf WHERE ValorCofins > 0 AND IdNf=n.IdNf), 2), 0),
+                AliqCofins = COALESCE(ValorCofins, 0) / COALESCE((SELECT SUM(ROUND(BcCofins, 2)) FROM produtos_nf WHERE ValorCofins > 0 AND IdNf=n.IdNf), 0) * 100, ";
 
             // Calcula valor da Nota, somando o FCP ST, frete, outras despesas, seguro, IPI, IPIDevolvido, ICMS ST e subtraindo o desconto
-            sql += "TotalNota=Round((totalProd + valorFcpSt + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
-                (isImportacao ? " + valorIcms" : "") + ") - desconto, 2), ";
+            sql += $@"TotalNota = ROUND((COALESCE(TotalProd, 0) +
+                COALESCE(ValorFcpSt, 0) +
+                COALESCE(ValorFrete, 0) +
+                COALESCE(OutrasDespesas, 0) +
+                COALESCE(ValorSeguro, 0) +
+                COALESCE(ValorIcmsSt, 0) +
+                COALESCE(ValorIpiDevolvido, 0) +
+                COALESCE(ValorIpi, 0)
+                { (isImportacao ? " + COALESCE(ValorIcms, 0)" : string.Empty) }) - COALESCE(Desconto, 0), 2) -
+
+                COALESCE((SELECT SUM(ROUND(pnf.ValorIcmsDesonerado,2)) FROM produtos_nf pnf
+                        INNER JOIN natureza_operacao nat ON (nat.IdNaturezaOperacao = pnf.IdNaturezaOperacao
+                            AND (nat.DebitarIcmsDesonTotalNf || pnf.MotivoDesoneracao = { (int)MotivoDesoneracaoEnum.SUFRAMA }))
+                    WHERE pnf.IdNf = n.IdNf), 0), ";
 
             // Calcula o total dos tributos conforme lei da transparência
-            sql += "ValorTotalTrib=(Select Sum(valorTotalTrib) From produtos_nf pnf Where idNf=n.idNf), ";
+            sql += "ValorTotalTrib = COALESCE((SELECT SUM(ValorTotalTrib) FROM produtos_nf pnf WHERE IdNf=n.IdNf), 0), ";
 
             // Calcula o peso bruto/líquido
-            sql += @"PesoBruto=COALESCE(PesoConteiner, 0) + ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 
-                PesoLiq=Round((Select Sum(pn.Peso) From produtos_nf pn Where pn.idNf=n.IdNf), 2) ";
+            sql += @"PesoBruto = COALESCE(PesoConteiner, 0) +
+                    COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), 
+
+                PesoLiq = COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0) ";
 
             sql += where;
 

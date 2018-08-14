@@ -437,6 +437,24 @@ namespace Glass.Fiscal.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Define se o ICMS Desonerado vai ser debitado do Total da Nota Fiscal.
+        /// </summary>
+        public bool DebitarIcmsDesonTotalNf
+        {
+            get { return DataModel.DebitarIcmsDesonTotalNf; }
+            set
+            {
+                if (DataModel.DebitarIcmsDesonTotalNf != value &&
+                    RaisePropertyChanging("DebitarIcmsDesonTotalNf", value))
+                {
+                    DataModel.DebitarIcmsDesonTotalNf = value;
+                    RaisePropertyChanged("DebitarIcmsDesonTotalNf");
+                }
+            }
+        }
+
+
         #endregion
 
         #region Construtores

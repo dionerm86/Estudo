@@ -393,7 +393,7 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
 
             itens.Add(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaior);
-
+            itens.Add(Config.ConfigEnum.AdministradorEnviarEmailDescontoMaior);
             itens.Add(Config.ConfigEnum.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado);
 
             itens.Add(Config.ConfigEnum.PermitirTrocaPorPedido);
