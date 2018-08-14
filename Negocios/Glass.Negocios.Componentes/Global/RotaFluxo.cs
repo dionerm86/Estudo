@@ -129,18 +129,6 @@ namespace Glass.Global.Negocios.Componentes
                     .And("IdRota<>?idRota")
                     .Add("?idRota", rota.IdRota);
 
-            if (rota.Situacao == Situacao.Inativo &&
-            SourceContext.Instance.CreateQuery()
-                .From<Data.Model.RotaCliente>()
-                .Where("IdRota=?idRota")
-                .Add("?idRota", rota.IdRota)
-                .ProcessLazyResult<Entidades.RotaCliente>()
-                .Count() > 0)
-                return new IMessageFormattable[]
-                {
-                    "Não é possível inativar uma rota que possui clientes vinculados.".GetFormatter()
-                };
-
             if (consulta.ExistsResult())
                 return new IMessageFormattable[]
                 {
