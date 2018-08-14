@@ -927,6 +927,37 @@ namespace Glass.Data.Helper
             }
         }
 
+        /// <summary>
+        /// Representa o possíveis tipos de estoque de chapa para otimização.
+        /// </summary>
+        public enum TipoEstoqueChapasOtimizacaoEnum
+        {
+            /// <summary>
+            /// O controle é feito internamente pelo WebGlass.
+            /// </summary>
+            Interno,
+            /// <summary>
+            /// O controle é feito externamente.
+            /// </summary>
+            Externo
+        }
+
+        public GenericModel[] GetTipoEstoqueChapasOtimizacao()
+        {
+            Converter<int, string> d = new Converter<int, string>(GetDescrTipoEstoqueChapasOtimizacao);
+            return DataSourcesEFD.Instance.GetFromEnum(typeof(TipoEstoqueChapasOtimizacaoEnum), d, false).ToArray();
+        }
+
+        public string GetDescrTipoEstoqueChapasOtimizacao(int tipoEstoqueChapa)
+        {
+            switch (tipoEstoqueChapa)
+            {
+                case (int)TipoEstoqueChapasOtimizacaoEnum.Interno: return "Interno";
+                case (int)TipoEstoqueChapasOtimizacaoEnum.Externo: return "Externo";
+                default: return "";
+            }
+        }
+
         public enum TipoDataEtiquetaEnum
         {
             Entrega,

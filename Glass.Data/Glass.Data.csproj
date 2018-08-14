@@ -329,6 +329,7 @@
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastro.cs" />
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastroProdutoOrcamento.cs" />
     <Compile Include="Configuracoes\OrdemCargaConfig\OrdemCargaConfig.cs" />
+    <Compile Include="Configuracoes\OtimizacaoConfig\OtimizacaoConfig.cs" />
     <Compile Include="Configuracoes\PCPConfig\EmailSMS.cs" />
     <Compile Include="Configuracoes\PCPConfig\Etiqueta.cs" />
     <Compile Include="Configuracoes\PCPConfig\PainelProducao.cs" />
