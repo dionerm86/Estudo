@@ -1037,7 +1037,7 @@ namespace Glass.Data.DAL
                         (uint?)idsContaBanco.ElementAt(i) : null;
                     pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
                     pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
-                    pagamentoContaReceber.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = pagamentoContaReceber.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : null;
                     pagamentoContaReceber.NumAutCartao = numerosAutorizacaoCartao.ElementAtOrDefault(i);
 
                     PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
