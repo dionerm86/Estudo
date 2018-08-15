@@ -464,14 +464,6 @@ Servicos.Pedidos = (function(http) {
     },
 
     /**
-     * Recupera os tipos de cartão para exibição no cadastro ou edição do pedido.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterTiposCartao: function() {
-      return http().get(API + 'tiposCartao');
-    },
-
-    /**
      * Recupera os tipos de entrega de pedido para exibição no cadastro ou edição do pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

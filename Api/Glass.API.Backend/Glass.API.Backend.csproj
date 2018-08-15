@@ -294,6 +294,8 @@
     <Compile Include="Controllers\Publico\V1\GetPublicoController.cs" />
     <Compile Include="Controllers\Publico\V1\PublicoController.cs" />
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
+    <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
+    <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
     <Compile Include="Controllers\Transportadores\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\GetTransportadoresController.cs" />
     <Compile Include="Global.asax.cs">

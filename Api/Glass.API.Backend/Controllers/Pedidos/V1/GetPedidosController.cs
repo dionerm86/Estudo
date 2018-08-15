@@ -242,8 +242,8 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <summary>
         /// Recupera a lista de tipos de pedido que o funcionário tem acesso.
         /// </summary>
-        /// <param name="maoDeObra">Identifica se o pedido é de mão de obra</param>
-        /// <param name="producao">Identifica </param>
+        /// <param name="maoDeObra">Identifica se o pedido é de mão de obra.</param>
+        /// <param name="producao">Identifica se o pedido é de produção.</param>
         /// <returns>Uma lista JSON com os dados básicos para tipos de pedido.</returns>
         [HttpGet]
         [Route("tiposPorFuncionario")]
@@ -353,29 +353,6 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     .Select(s => new IdNomeDto
                     {
                         Id = (int)(s.IdFormaPagto ?? 0),
-                        Nome = s.Descricao,
-                    });
-
-                return this.Lista(formasPagto);
-            }
-        }
-
-        /// <summary>
-        /// Recupera os tipos de cartão possíveis para o pedido.
-        /// </summary>
-        /// <returns>Uma lista JSON com os dados básicos para os tipos de cartão de pedido.</returns>
-        [HttpGet]
-        [Route("tiposCartao")]
-        [SwaggerResponse(200, "Tipos de cartão encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Tipos de cartão não encontradas.")]
-        public IHttpActionResult ObterTiposCartao()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var formasPagto = TipoCartaoCreditoDAO.Instance.ObtemListaPorTipo(0, Situacao.Ativo)
-                    .Select(s => new IdNomeDto
-                    {
-                        Id = s.IdTipoCartao,
                         Nome = s.Descricao,
                     });
 

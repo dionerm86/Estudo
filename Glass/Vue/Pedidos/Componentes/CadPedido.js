@@ -167,7 +167,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterTiposCartao: function() {
-      return Servicos.Pedidos.obterTiposCartao();
+      return Servicos.TiposCartao.obterParaControle();
     },
 
     /**
