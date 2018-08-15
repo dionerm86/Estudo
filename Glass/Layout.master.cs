@@ -347,9 +347,8 @@ namespace Glass.UI.Web
 
         protected void divChat_Load(object sender, EventArgs e)
         {
-            //divChat.Visible = AbrirChamado && !UserInfo.GetUserInfo.IsCliente;
             /* Chamado 45168. */
-            divChat.Visible = !IsPopup() && !UserInfo.GetUserInfo.IsCliente;
+            divChat.Visible = !IsPopup() && UserInfo.GetUserInfo.HabilitarChat;
         }
 
         public string ObterNomeUsuario()
