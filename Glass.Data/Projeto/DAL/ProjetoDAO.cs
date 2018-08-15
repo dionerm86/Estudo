@@ -685,12 +685,36 @@ namespace Glass.Data.DAL
                     /* Chamado 47326. */
                     if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda &&
                         PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    {
+                        if (PedidoConfig.PodeEditarPedidoGeradoParceiro)
+                        {
+                            try
+                            {
+                                // Deixa o pedido conferido.
+                                bool temp = false;
+                                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, ref temp, false);
+                            }
+                            catch (ValidacaoPedidoFinanceiroException f)
+                            {
+                                string mensagem = MensagemAlerta.FormatErrorMsg("", f);
+                                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, idPedido, mensagem);
+                                return idPedido;
+                            }
+                            catch (Exception ex)
+                            {
+                                erro = new Exception("Falha ao finalizar o pedido.", ex);
+                                ErroDAO.Instance.InserirFromException("GerarPedidoParceiro", erro);
+                                return idPedido;
+                            }
+                        }
+
                         PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsPedidos, out idsPedidosErro, true, false);
+                    }
                 }
                 catch (ValidacaoPedidoFinanceiroException f)
                 {
                     string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, f.IdsPedidos, mensagem);
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idPedido.ToString(), mensagem);
                     return idPedido;
                 }
                 catch (Exception ex)

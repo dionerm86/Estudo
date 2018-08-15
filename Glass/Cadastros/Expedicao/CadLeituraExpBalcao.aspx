@@ -541,7 +541,7 @@
         </div>
         <div id="divModuloSistema" style="display: none;">
             <div class="boxModuloSistema">
-                <iframe runat="server" id="frameModuloSistema" frameborder="0" style="display: none" />
+                <iframe runat="server" id="frameModuloSistema" frameBorder="0" style="display: none; width:100%; height:100%" />
             </div>
         </div>
         <div style="display: none;">
