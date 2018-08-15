@@ -701,18 +701,17 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    var pagamentoObra = new PagtoObra
-                    {
-                        IdObra = obra.IdObra,
-                        NumFormaPagto = contadorPagamento++,
-                        ValorPagto = obra.ValoresPagto[i],
-                        IdFormaPagto = obra.FormasPagto[i],
-                        IdContaBanco = obra.ContasBancoPagto[i] > 0 ? (uint?)obra.ContasBancoPagto[i] : null,
-                        IdDepositoNaoIdentificado = obra.DepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)obra.DepositoNaoIdentificado[i] : null,
-                        IdTipoCartao = obra.TiposCartaoPagto.ElementAtOrDefault(i) > 0 ? (uint?)obra.TiposCartaoPagto[i] : null,
-                        QuantidadeParcelaCartao = obra.ParcelasCartaoPagto.ElementAtOrDefault(i) > 0 ? (int?)obra.ParcelasCartaoPagto[i] : null,
-                        NumAutCartao = obra.NumAutCartao[i]
-                    };
+                    var pagamentoObra = new PagtoObra();
+
+                    pagamentoObra.IdObra = obra.IdObra;
+                    pagamentoObra.NumFormaPagto = contadorPagamento++;
+                    pagamentoObra.ValorPagto = obra.ValoresPagto[i];
+                    pagamentoObra.IdFormaPagto = obra.FormasPagto[i];
+                    pagamentoObra.IdContaBanco = obra.ContasBancoPagto[i] > 0 ? (uint?)obra.ContasBancoPagto[i] : null;
+                    pagamentoObra.IdDepositoNaoIdentificado = obra.DepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)obra.DepositoNaoIdentificado[i] : null;
+                    pagamentoObra.IdTipoCartao = obra.TiposCartaoPagto.ElementAtOrDefault(i) > 0 ? (uint?)obra.TiposCartaoPagto[i] : null;
+                    pagamentoObra.QuantidadeParcelaCartao = pagamentoObra.IdTipoCartao > 0 && obra.ParcelasCartaoPagto.ElementAtOrDefault(i) > 0 ? (int?)obra.ParcelasCartaoPagto[i] : null;
+                    pagamentoObra.NumAutCartao = obra.NumAutCartao[i];
 
                     PagtoObraDAO.Instance.Insert(session, pagamentoObra);
                 }
