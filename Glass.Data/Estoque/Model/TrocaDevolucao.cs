@@ -317,6 +317,8 @@ namespace Glass.Data.Model
             }
         }
 
+        public string IdNomeCliente { get { return IdCliente + " - " + NomeCliente; } }
+
         #endregion
     }
 }

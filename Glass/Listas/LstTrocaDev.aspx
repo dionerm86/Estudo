@@ -433,7 +433,7 @@
                         <asp:BoundField DataField="IdTrocaDevolucao" HeaderText="Cód." SortExpression="IdTrocaDevolucao" />
                         <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                         <asp:BoundField DataField="NomeFunc" HeaderText="Func. Solic." SortExpression="NomeFunc" />
-                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
+                        <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="DescrTipo" HeaderText="Tipo" SortExpression="DescrTipo" />
                         <asp:BoundField DataField="DataTroca" DataFormatString="{0:d}" HeaderText="Data"
                             SortExpression="DataTroca" />

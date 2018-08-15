@@ -1210,6 +1210,11 @@ namespace Glass.Data.Model
             }
         }
 
+        public string IdNomeDestRem
+        {
+            get { return (IdCliente > 0 ? IdCliente : IdFornec) + " - " + NomeDestRem; }
+        }
+
         #endregion
 
         #region INFe Members

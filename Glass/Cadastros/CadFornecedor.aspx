@@ -697,7 +697,7 @@
                                     CausesValidation="false" />
                                 <uc2:ctrlLinkQueryString ID="ctrlLinkQueryString1" runat="server" NameQueryString="IdFornec"
                                     Text='<%# Bind("IdFornec") %>' />
-                                <asp:HiddenField ID="hdfCredito" runat="server" Value='<%# Bind("Credito") %>' />
+                                <asp:HiddenField ID="hdfCredito" runat="server" Value='<%# Eval("Credito") %>' />
                             </EditItemTemplate>
                             <InsertItemTemplate>
                                 <asp:Button ID="btnInserir" runat="server" CommandName="Insert" Text="Inserir" OnClientClick="if (!onInsert()) return false;"

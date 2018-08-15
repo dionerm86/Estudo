@@ -10297,7 +10297,7 @@ namespace Glass.Data.DAL
                                 GetTotalSemDesconto(sessao, pedido.IdPedido, pedido.Total));
                         }
 
-                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela))
+                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedidoConfigurado(sessao, idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela))
                             Email.EnviaEmailDescontoMaior(sessao, pedido.IdPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela));
                     }
                 }
