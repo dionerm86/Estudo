@@ -334,7 +334,7 @@ namespace Glass.Data.Model
                 return IdMovBanco > 0 &&
                     IdConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCxGeralParaContaBancariaDinheiro) &&
                     IdConta != UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfContaBancariaParaCxGeralDinheiro) &&
-                    ((IdAcerto == null && IdAcertoCheque == null && IdAntecipContaRec == null && IdSinal == null &&
+                    ((IdAcerto == null && IdAcertoCheque == null && IdAntecipContaRec == null && IdSinal == null && IdCreditoFornecedor == null &&
                     IdCheque == null && IdContaBancoDest == null && IdContaPg == null && IdContaR == null && IdDeposito == null &&
                     IdLiberarPedido == null && IdObra == null && IdPagto == null && IdPedido == null && IdDepositoNaoIdentificado == null &&
                     IdCartaoNaoIdentificado == null && IdArquivoRemessa == null) || IdContaBancoDest != null);

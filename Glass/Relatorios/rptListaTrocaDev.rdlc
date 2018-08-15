@@ -791,14 +791,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="textbox28">
+                    <Textbox Name="IdNomeCliente">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!NomeCliente.Value</Value>
+                              <Value>=Fields!IdNomeCliente.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -807,7 +807,7 @@
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>textbox28</rd:DefaultName>
+                      <rd:DefaultName>IdNomeCliente</rd:DefaultName>
                       <Style>
                         <BackgroundColor>=IIf((RowNumber(Nothing) Mod 2 = 0),"White", "#EFF3FB")</BackgroundColor>
                         <PaddingLeft>2pt</PaddingLeft>
@@ -1958,6 +1958,10 @@
         </Field>
         <Field Name="NomeCliente">
           <DataField>NomeCliente</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdNomeCliente">
+          <DataField>IdNomeCliente</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="NomeFunc">
