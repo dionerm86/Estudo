@@ -745,6 +745,7 @@
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdPedido" HeaderText="Num. Pedido" SortExpression="IdPedido" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField DataField="IdOrcamento" HeaderText="Num. Orçamento" SortExpression="IdOrcamento" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="NfeAssociada" HeaderText="Num. NFe" SortExpression="NfeAssociada" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                         <asp:TemplateField HeaderText="Cidade" SortExpression="RptCidade">

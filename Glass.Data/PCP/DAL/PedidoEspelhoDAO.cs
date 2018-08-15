@@ -2712,8 +2712,7 @@ namespace Glass.Data.DAL
                     // Apaga arquivos gerados pela intermac
                     var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
                     var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}*.CNI", idPedido));
-                    foreach (var foundFile in arquivosIntermac)
-                        File.Delete(foundFile.FullName);
+                    DeletaArquivosIntermac(arquivosIntermac);
                 }
             }
 
@@ -3008,8 +3007,7 @@ namespace Glass.Data.DAL
                     // Apaga arquivos gerados pela intermac
                     var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
                     var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}'*.CNI", idPedido));
-                    foreach (var foundFile in arquivosIntermac)
-                        File.Delete(foundFile.FullName);
+                    DeletaArquivosIntermac(arquivosIntermac);
                 }
                 catch
                 {
@@ -3130,6 +3128,24 @@ namespace Glass.Data.DAL
                 logAlteracaoCancelamento.ValorAnterior = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
                 logAlteracaoCancelamento.ValorAtual = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.Conferido);
                 LogAlteracaoDAO.Instance.Insert(session, logAlteracaoCancelamento);
+            }
+        }
+
+        private static void DeletaArquivosIntermac(FileInfo[] arquivosIntermac)
+        {
+            var arquivosNaoDeletados = string.Empty;
+            foreach (var foundFile in arquivosIntermac)
+            {
+                File.Delete(foundFile.FullName);
+                if (File.Exists(foundFile.FullName))
+                {
+                    arquivosNaoDeletados += foundFile.Name + ",";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(arquivosNaoDeletados))
+            {
+                throw new Exception($"Não foi possível reabrir o pedido no momento.Não foi possível apagar o(s) arquivo(s) de marcação { arquivosNaoDeletados.TrimEnd(',') }, tente dentro de alguns instantes.");
             }
         }
 
