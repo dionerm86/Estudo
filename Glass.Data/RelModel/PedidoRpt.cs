@@ -86,6 +86,7 @@ namespace Glass.Data.RelModel
             ValorIpi = ped.ValorIpi;
             ValorEntrega = ped.ValorEntrega;
             DescrTipoEntrega = ped.DescrTipoEntrega;
+            IdOrcamento = ped.IdOrcamento;
 
             if (mostrarDescontoTotal)
             {
