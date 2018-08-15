@@ -564,18 +564,16 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    var pagamentoLiberarPedido = new PagtoLiberarPedido
-                    {
-                        IdLiberarPedido = liberarPedido.IdLiberarPedido,
-                        NumFormaPagto = ++contadorPagamento,
-                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
-                        IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null,
-                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null,
-                        IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null,
-                        ValorPagto = valoresPagos.ElementAtOrDefault(i),
-                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null,
-                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null
-                    };
+                    var pagamentoLiberarPedido = new PagtoLiberarPedido();
+                    pagamentoLiberarPedido.IdLiberarPedido = liberarPedido.IdLiberarPedido;
+                    pagamentoLiberarPedido.NumFormaPagto = ++contadorPagamento;
+                    pagamentoLiberarPedido.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                    pagamentoLiberarPedido.IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null;
+                    pagamentoLiberarPedido.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null;
+                    pagamentoLiberarPedido.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
+                    pagamentoLiberarPedido.ValorPagto = valoresPagos.ElementAtOrDefault(i);
+                    pagamentoLiberarPedido.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
+                    pagamentoLiberarPedido.QuantidadeParcelaCartao = pagamentoLiberarPedido.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null;
 
                     PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
                 }

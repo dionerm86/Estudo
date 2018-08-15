@@ -2857,7 +2857,7 @@ namespace Glass.Data.DAL
                         pagamentoAcerto.IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint)idsContaBanco.ElementAt(i) : (uint?)null;
                         pagamentoAcerto.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null;
                         pagamentoAcerto.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
-                        pagamentoAcerto.QuantidadeParcelaCartao = quantidadesParcelasCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelasCartao.ElementAt(i) : (int?)null;
+                        pagamentoAcerto.QuantidadeParcelaCartao = pagamentoAcerto.IdTipoCartao > 0 && quantidadesParcelasCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelasCartao.ElementAt(i) : (int?)null;
                         pagamentoAcerto.TaxaAntecipacao = taxasAntecipacao.ElementAtOrDefault(i) > 0 ? taxasAntecipacao.ElementAt(i) : (decimal?)null;
                         pagamentoAcerto.TipoBoleto = tiposBoleto.ElementAtOrDefault(i) > 0 ? tiposBoleto.ElementAt(i) : (int?)null;
                         pagamentoAcerto.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;

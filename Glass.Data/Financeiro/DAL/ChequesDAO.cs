@@ -2707,7 +2707,7 @@ namespace Glass.Data.DAL
                         pagamentoAcertoCheque.ValorPagto = valoresRecebimento.ElementAt(i);
                         pagamentoAcertoCheque.IdContaBanco = (uint)idContaBanco;
                         pagamentoAcertoCheque.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)idsDepositoNaoIdentificado.ElementAt(i) : null;
-                        pagamentoAcertoCheque.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                        pagamentoAcertoCheque.QuantidadeParcelaCartao = pagamentoAcertoCheque.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
                         pagamentoAcertoCheque.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : string.Empty;
 
                         PagtoAcertoChequeDAO.Instance.Insert(session, pagamentoAcertoCheque);
