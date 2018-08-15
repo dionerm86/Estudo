@@ -651,6 +651,9 @@ namespace Glass.Data.RelDAL
                             etiq.Obs += " Retalho: " + ret.NumeroEtiqueta;*/
                             var altura = ProdutoDAO.Instance.ObtemValorCampo<int>("Altura", "IdProd=" + ret.IdProd);
                             var largura = ProdutoDAO.Instance.ObtemValorCampo<int>("Largura", "IdProd=" + ret.IdProd);
+
+                            listaRetalhos[i] = listaRetalhos[i].Replace(retalhos[i], "").Replace("|,", "|");
+
                             return " Retalho: " + ret.NumeroEtiqueta + " (" + altura + " x " + largura + ")";
                         }
                     }
