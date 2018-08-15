@@ -63,6 +63,8 @@ namespace Glass.Data.RelModel
             QtdeNaoVidro = plp.QtdeNaoVidro;
             PesoVidro = plp.PesoVidro;
             PesoNaoVidro = plp.PesoNaoVidro;
+            IsVidroEstoqueQtde = ProdutoDAO.Instance.GetElement(IdProd).TipoCalculo == (int)TipoCalculoGrupoProd.Qtd &&
+                GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) && SubgrupoProdDAO.Instance.IsProdutoEstoque((int)IdSubgrupoProd);
 
             // Campos usados como base para o IResumoCorte
             IdProdLiberarPedido = plp.IdProdLiberarPedido;
@@ -221,6 +223,8 @@ namespace Glass.Data.RelModel
         public double PesoVidro { get; set; }
 
         public double PesoNaoVidro { get; set; }
+
+        public bool IsVidroEstoqueQtde { get; set; }
 
         #endregion
 
