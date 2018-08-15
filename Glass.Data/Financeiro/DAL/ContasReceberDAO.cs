@@ -8095,12 +8095,12 @@ namespace Glass.Data.DAL
                     AND numeroDocumentoCnab IS NULL
                     AND numArquivoRemessaCnab IS NULL";
 
-            if (!incluirContasAcertoParcial)
+            if (!incluirContasAcertoParcial && string.IsNullOrWhiteSpace(idsContas))
             {
                 sql += " AND c.IdAcertoParcial IS NULL";
             }
 
-            if (!incluirContasAntecipacaoBoleto)
+            if (!incluirContasAntecipacaoBoleto && string.IsNullOrWhiteSpace(idsContas))
             {
                 sql += " AND c.IdAntecipContaRec IS NULL";
             }
