@@ -422,6 +422,10 @@
                                             <asp:Label ID="Label20" runat="server" Text="Utilizar chat WebGlass"
                                                 Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
+                                        <td align="left" class="dtvAlternatingRow">
+                                            <asp:CheckBox ID="CheckBox2" runat="server" Checked='<%# Bind("HabilitarChat") %>' 
+                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />                                            
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left" class="dtvHeader">
@@ -749,6 +753,12 @@
                                         <td align="left">
                                             <asp:FileUpload ID="filImagem" runat="server" />
                                             <uc4:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl((int)Eval("IdFunc")) %>' />
+                                        </td>
+                                        <td align="left" class="dtvHeader">
+                                            <asp:Label ID="Label21" runat="server" Text="Habilitar Chat WebGlass" Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
+                                        </td>
+                                        <td align="left" class="dtvAlternatingRow">
+                                            <asp:CheckBox ID="chkHabilitarChat" runat="server" Checked='<%# Bind("HabilitarChat") %>' Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />                                            
                                         </td>
                                     </tr>
                                     <tr >

@@ -1248,7 +1248,7 @@ namespace Glass.Data.DAL
                                 nf.DatasParcelas = new DateTime[nf.NumParc.Value];
                                 nf.ValoresParcelas = new decimal[nf.NumParc.Value];
 
-                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 2);
 
                                 for (var i = 0; i < contasReceber.Length; i++)
                                 {
@@ -1260,7 +1260,7 @@ namespace Glass.Data.DAL
 
                                 if (difParcelaNota != 0)
                                 {
-                                    nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                    nf.ValoresParcelas[0] += difParcelaNota;
                                 }
                             }
 
