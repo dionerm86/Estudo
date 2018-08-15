@@ -40,12 +40,21 @@ namespace Glass.UI.Web.Cadastros
         {
             Response.Redirect("../Listas/LstProprietarioVeiculo.aspx");
         }
+
         protected void odsPropVeiculo_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
             var objInsert = (ProprietarioVeiculo)e.InputParameters[0];
-    
-            objInsert.Cnpj = !String.IsNullOrEmpty(objInsert.Cnpj) ? objInsert.Cnpj.Replace(".", "").Replace("/", "") : objInsert.Cnpj;
+
+            objInsert.Cnpj = !String.IsNullOrEmpty(objInsert.Cnpj) ? objInsert.Cnpj.Replace(".", "").Replace("/", "").Replace("-", "") : objInsert.Cnpj;
             objInsert.Cpf = !String.IsNullOrEmpty(objInsert.Cpf) ? objInsert.Cpf.Replace(".", "").Replace("-", "") : objInsert.Cpf;
+        }
+
+        protected void odsPropVeiculo_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
+        {
+            var objUpdate = (ProprietarioVeiculo)e.InputParameters[0];
+
+            objUpdate.Cnpj = !String.IsNullOrEmpty(objUpdate.Cnpj) ? objUpdate.Cnpj.Replace(".", "").Replace("/", "").Replace("-", "") : objUpdate.Cnpj;
+            objUpdate.Cpf = !String.IsNullOrEmpty(objUpdate.Cpf) ? objUpdate.Cpf.Replace(".", "").Replace("-", "") : objUpdate.Cpf;
         }
     }
 }
