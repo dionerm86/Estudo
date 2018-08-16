@@ -691,9 +691,8 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
-                return (float)(tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
-                    tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? TotMProduzindo : QtdeProduzindo);
+                return (float)(TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 ||
+                    TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto ? TotMProduzindo : QtdeProduzindo);
             }
         }
 
@@ -702,8 +701,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
-                string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(tipoCalc, true);
+                string descrTipoCalculo = Glass.Global.CalculosFluxo.GetDescrTipoCalculo(TipoCalc, true);
                 return Produzindo + descrTipoCalculo;
             }
         }
@@ -768,7 +766,13 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public int TipoCalc
         {
-            get { return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd); }
+            get
+            {
+                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(
+                Glass.Data.DAL.ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd),
+                Glass.Data.DAL.ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd)
+              );
+            }
         }
 
         [XmlIgnore]
