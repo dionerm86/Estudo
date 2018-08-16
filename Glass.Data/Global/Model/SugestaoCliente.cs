@@ -5,43 +5,6 @@ using Glass.Log;
 
 namespace Glass.Data.Model
 {
-    /// <summary>
-    /// Possíveis tipos de sugestão.
-    /// </summary>
-    public enum TipoSugestao
-    {
-        /// <summary>
-        /// Reclamação.
-        /// </summary>
-        [Description("Reclamação")]
-        Reclamacao = 1,
-        /// <summary>
-        /// Sugestão.
-        /// </summary>
-        [Description("Sugestão")]
-        Sugestao,
-        /// <summary>
-        /// Negociação.
-        /// </summary>
-        [Description("Negociação")]
-        Negociacao,
-        /// <summary>
-        /// Outros.
-        /// </summary>
-        [Description("Outros")]
-        Outros,
-        /// <summary>
-        /// Perfil.
-        /// </summary>
-        [Description("Perfil")]
-        Perfil,
-        /// <summary>
-        /// Cobrança.
-        /// </summary>
-        [Description("Cobrança")]
-        Cobranca
-    }
-
     [PersistenceBaseDAO(typeof(SugestaoClienteDAO))]
 	[PersistenceClass("sugestao_cliente")]
 	public class SugestaoCliente : ModelBaseCadastro
@@ -64,7 +27,7 @@ namespace Glass.Data.Model
         /// 5-Perfil
         /// </summary>
         [PersistenceProperty("TIPO")]
-        public TipoSugestao TipoSugestao { get; set; }
+        public int TipoSugestao { get; set; }
 
         [Log("Descrição")]
         [PersistenceProperty("DESCRICAO")]

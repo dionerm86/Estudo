@@ -24,7 +24,7 @@ namespace Glass.Global.Negocios
         /// <returns></returns>
         IList<Entidades.SugestaoClientePesquisa> PesquisarSugestoes(
             int? idSugestao, int? idCliente, int? idFunc, string nomeFuncionario, string nomeCliente, 
-            DateTime? dataInicio, DateTime? dataFim, Glass.Data.Model.TipoSugestao? tipo,
+            DateTime? dataInicio, DateTime? dataFim, int? tipo,
             string descricao, Glass.Situacao[] situacoes, int? idRota, int? idPedido, uint? idOrcamento, int? idVendedorAssoc);
 
         /// <summary>
