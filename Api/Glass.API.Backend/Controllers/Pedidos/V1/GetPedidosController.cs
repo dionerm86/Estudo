@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
+using Glass.API.Backend.Models.Pedidos.ValidarDescontoPedido;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
@@ -395,10 +396,18 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [HttpGet]
         [Route("{id}/dataEntregaMinima")]
         [SwaggerResponse(200, "Data de entrega mínima calculada.", Type = typeof(DataEntregaMinimaDto))]
+        [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult CalcularDataEntregaMinima(int id, int? idCliente = null, [FromUri] Data.Model.Pedido.TipoPedidoEnum? tipoPedido = null, [FromUri] Data.Model.Pedido.TipoEntregaPedido? tipoEntrega = null, DateTime? dataBase = null)
         {
             using (var sessao = new GDATransaction())
             {
+                var validacao = this.ValidarExistenciaIdPedido(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
                 DateTime dataEntregaMinima, dataFastDelivery;
                 bool desabilitarCampo;
                 var dataEntregaMinimaDto = new DataEntregaMinimaDto();
@@ -438,13 +447,13 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [HttpGet]
         [Route("{id}/verificarFastDelivery")]
         [SwaggerResponse(200, "Pode marcar fast delivery.")]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Não pode marcar fast delivery.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Não pode marcar fast delivery.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult VerificarMarcacaoFastDelivery(int id)
         {
             using (var sessao = new GDATransaction())
             {
-                var validacao = this.ValidarIdPedido(id);
+                var validacao = this.ValidarExistenciaIdPedido(sessao, id);
 
                 if (validacao != null)
                 {
@@ -455,44 +464,16 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
                 if (aplicacoesSemPermissaoFastDelivery.Any())
                 {
-                    return this.NaoEncontrado($"O pedido possui alguns produtos com aplicações que não podem ser usadas com Fast Delivery: {string.Join(", ", aplicacoesSemPermissaoFastDelivery)}.");
+                    var aplicacoesParaMensagem = string.Join(
+                        ", ",
+                        aplicacoesSemPermissaoFastDelivery
+                            .Select(aplicacao => aplicacao.ToUpper())
+                            .OrderBy(aplicacao => aplicacao));
+
+                    return this.ErroValidacao($"O pedido possui alguns produtos com aplicações que não podem ser usadas com Fast Delivery: {aplicacoesParaMensagem}.");
                 }
 
                 return this.Ok();
-            }
-        }
-
-        /// <summary>
-        /// Obtém uma lista de vendedores para cadastro de pedido.
-        /// </summary>
-        /// <param name="idVendedor">Identificador do vendedor já selecionado no pedido.</param>
-        /// <returns>Uma lista JSON com os dados básicos dos vendedores.</returns>
-        [HttpGet]
-        [Route("vendedores")]
-        [SwaggerResponse(200, "Vendedores encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Vendedores não encontrados.")]
-        public IHttpActionResult ObterVendedores(int? idVendedor = null)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var vendedores = FuncionarioDAO.Instance.GetVendedores()
-                    .Select(f => new IdNomeDto
-                    {
-                        Id = f.IdFunc,
-                        Nome = f.Nome,
-                    })
-                    .ToList();
-
-                if (idVendedor > 0 && !vendedores.Any(v => v.Id == idVendedor))
-                {
-                    vendedores.Add(new IdNomeDto()
-                    {
-                        Id = idVendedor.GetValueOrDefault(),
-                        Nome = FuncionarioDAO.Instance.GetNome((uint)idVendedor),
-                    });
-                }
-
-                return this.Lista(vendedores);
             }
         }
 
@@ -509,6 +490,9 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <returns>O desconto configurado para os parâmetros passados.</returns>
         [HttpGet]
         [Route("{id}/validacaoDescontoPedido")]
+        [SwaggerResponse(200, "Desconto válido.", Type = typeof(DescontoDto))]
+        [SwaggerResponse(400, "Desconto inválido.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ValidarDescontoPedido(int id, decimal descontoTela, int tipoDescontoTela, Data.Model.Pedido.TipoVendaPedido? tipoVenda = null, int? idFormaPagamento = null, int? idTipoCartao = null, int? idParcela = null)
         {
             if (tipoVenda == null)
@@ -518,32 +502,29 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
             using (var sessao = new GDATransaction())
             {
+                var validacao = this.ValidarExistenciaIdPedido(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
                 var descontoFormaPagto = this.ObterDescontoFormaPagamentoDadosProduto(sessao, id, tipoVenda, idFormaPagamento, idTipoCartao, idParcela);
 
-                var validacaoDesconto = this.ValidarDescontoPedido(sessao, id, descontoTela, tipoDescontoTela, tipoVenda.Value, idParcela, descontoFormaPagto);
+                var validacaoDesconto = this.ValidarDescontoPedidoComDescontoFormaPagamento(sessao, id, descontoTela, tipoDescontoTela, tipoVenda.Value, idParcela, descontoFormaPagto);
 
                 if (validacaoDesconto != null)
                 {
                     return validacaoDesconto;
                 }
 
-                return this.Item(descontoFormaPagto);
+                var descontoPermitido = new DescontoDto
+                {
+                    DescontoPermitido = descontoFormaPagto,
+                };
+
+                return this.Item(descontoPermitido);
             }
-        }
-
-        private decimal ObterDescontoMaximoPermitido(GDASession sessao, int idPedido, decimal descontoTela, int tipoDescontoTela, Data.Model.Pedido.TipoVendaPedido tipoVenda, int? idParcela)
-        {
-            var idFunc = UserInfo.GetUserInfo.CodUser;
-            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(sessao, (uint)idPedido).GetValueOrDefault() : 0;
-            var alterouDesconto = PedidoDAO.Instance.ObterDesconto(sessao, idPedido) != descontoTela ||
-                PedidoDAO.Instance.ObterTipoDesconto(sessao, idPedido) != tipoDescontoTela;
-
-            if (!UserInfo.GetUserInfo.IsAdministrador && idFuncDesc > 0 && !alterouDesconto)
-            {
-                idFunc = idFuncDesc;
-            }
-
-            return (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)tipoVenda, idParcela);
         }
 
         private decimal ObterDescontoFormaPagamentoDadosProduto(GDASession sessao, int idPedido, Data.Model.Pedido.TipoVendaPedido? tipoVenda, int? idFormaPagamento, int? idTipoCartao, int? idParcela)
@@ -563,7 +544,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
             return desconto;
         }
 
-        private IHttpActionResult ValidarDescontoPedido(GDASession sessao, int idPedido, decimal descontoTela, int tipoDescontoTela, Data.Model.Pedido.TipoVendaPedido tipoVenda, int? idParcela, decimal descontoFormaPagto)
+        private IHttpActionResult ValidarDescontoPedidoComDescontoFormaPagamento(GDASession sessao, int idPedido, decimal descontoTela, int tipoDescontoTela, Data.Model.Pedido.TipoVendaPedido tipoVenda, int? idParcela, decimal descontoFormaPagto)
         {
             var percDescontoMaximo = this.ObterDescontoMaximoPermitido(sessao, idPedido, descontoTela, tipoDescontoTela, tipoVenda, idParcela);
 
@@ -599,6 +580,21 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
             }
 
             return null;
+        }
+
+        private decimal ObterDescontoMaximoPermitido(GDASession sessao, int idPedido, decimal descontoTela, int tipoDescontoTela, Data.Model.Pedido.TipoVendaPedido tipoVenda, int? idParcela)
+        {
+            var idFunc = UserInfo.GetUserInfo.CodUser;
+            var idFuncDesc = Geral.ManterDescontoAdministrador ? PedidoDAO.Instance.ObtemIdFuncDesc(sessao, (uint)idPedido).GetValueOrDefault() : 0;
+            var alterouDesconto = PedidoDAO.Instance.ObterDesconto(sessao, idPedido) != descontoTela ||
+                PedidoDAO.Instance.ObterTipoDesconto(sessao, idPedido) != tipoDescontoTela;
+
+            if (!UserInfo.GetUserInfo.IsAdministrador && idFuncDesc > 0 && !alterouDesconto)
+            {
+                idFunc = idFuncDesc;
+            }
+
+            return (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(sessao, idFunc, (int)tipoVenda, idParcela);
         }
     }
 }

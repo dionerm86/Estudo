@@ -52,6 +52,11 @@
         Vue.prototype.$http.interceptors.request.use(
             function (config) {
                 hub.indicarProcessamento();
+
+                config.validateStatus = function(status) {
+                    return status < 400;
+                };
+
                 return config;
             });
 

@@ -43,12 +43,13 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// <summary>
         /// Obtém uma lista de vendedores.
         /// </summary>
+        /// <param name="idVendedorAtual">Identificador do vendedor já selecionado no pedido/orçamento/PCP.</param>
         /// <returns>Uma lista JSON com os dados básicos dos vendedores.</returns>
         [HttpGet]
         [Route("vendedores")]
         [SwaggerResponse(200, "Vendedores encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Vendedores não encontrados.")]
-        public IHttpActionResult ObterVendedores()
+        public IHttpActionResult ObterVendedores(int? idVendedorAtual = null)
         {
             using (var sessao = new GDATransaction())
             {
@@ -57,7 +58,17 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                     {
                         Id = f.IdFunc,
                         Nome = f.Nome,
+                    })
+                    .ToList();
+
+                if (idVendedorAtual > 0 && !vendedores.Any(v => v.Id == idVendedorAtual))
+                {
+                    vendedores.Add(new IdNomeDto()
+                    {
+                        Id = idVendedorAtual.GetValueOrDefault(),
+                        Nome = FuncionarioDAO.Instance.GetNome((uint)idVendedorAtual),
                     });
+                }
 
                 return this.Lista(vendedores);
             }

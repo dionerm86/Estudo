@@ -212,7 +212,7 @@
 
       Servicos.Pedidos.finalizar(this.pedido.id)
         .then(function (resposta) {
-          if (resposta.codigo == 300) {
+          if (resposta.codigo === 300) {
             vm.enviarValidacaoFinanceiro(resposta.mensagem);
             return;
           }
@@ -329,7 +329,7 @@
 
       Servicos.Pedidos.confirmarGerandoConferencia(this.pedido.id, finalizarConferencia)
         .then(function (resposta) {
-          if (resposta.codigo == 300) {
+          if (resposta.codigo === 300) {
             vm.enviarValidacaoFinanceiro(resposta.mensagem);
             return;
           }
@@ -429,7 +429,7 @@
             ? vm.datasEntrega.dataFastDelivery
             : vm.datasEntrega.dataMinimaCalculada;
 
-          if (vm.pedido.entrega.data == null || dataMinima < vm.pedido.entrega.data || forcarAtualizacao) {
+          if (vm.pedido.entrega.data === null || dataMinima < vm.pedido.entrega.data || forcarAtualizacao) {
             vm.pedido.entrega.data = dataMinima;
           }
 
@@ -557,12 +557,12 @@
         this.pedido.formaPagamento && this.pedido.formaPagamento.parcelas ? this.pedido.formaPagamento.parcelas.id : null
       )
         .then(function (resposta) {
-          if (vm.pedido.desconto.tipo != 1) {
+          if (vm.pedido.desconto.tipo !== 1) {
             vm.pedido.desconto.tipo = 1;
           }
 
-          if (vm.pedido.desconto.valor != resposta.data) {
-            vm.pedido.desconto.valor = resposta.data;
+          if (vm.pedido.desconto.valor !== resposta.data.descontoPermitido) {
+            vm.pedido.desconto.valor = resposta.data.descontoPermitido;
           }
         })
         .catch(function (erro) {
@@ -570,10 +570,8 @@
             vm.exibirMensagem('Erro', erro.mensagem);
           }
 
-          if (vm.pedido.desconto.valor && vm.pedido.desconto.valor != 0) {
-            vm.pedido.desconto.valor = 0;
-          }
-        })
+          vm.pedido.desconto.valor = 0;
+        });
     },
 
     /**
@@ -783,7 +781,7 @@
      * @returns {boolean} Um valor que indica se o formulário está válido.
      */
     validarBase_: function() {
-      if (this.obraAtual && this.obraAtual.idCliente != this.pedido.idCliente) {
+      if (this.obraAtual && this.obraAtual.idCliente !== this.pedido.idCliente) {
         this.exibirMensagem('Clientes diferentes', 'O cliente da obra selecionada é diferente do cliente do pedido.');
         return false;
       }
@@ -900,7 +898,7 @@
      * Propriedade computada que retorna se o controle de número de parcelas deve ser criado na tela
      */
     vIfNumeroParcelas: function() {
-      return this.editando && this.pedido && this.pedido.tipoVenda == this.configuracoes.tipoVendaAPrazo;
+      return this.editando && this.pedido && this.pedido.tipoVenda === this.configuracoes.tipoVendaAPrazo;
     },
 
     /**
@@ -914,11 +912,11 @@
      * Propriedade computada que retorna se o controle de forma de pagamento deve ser criado na tela.
      */
     vIfFormaPagamento: function() {
-      return this.pedido.tipoVenda == this.configuracoes.tipoVendaAPrazo
-        || this.pedido.tipoVenda == this.configuracoes.tipoVendaReposicao
-        || this.pedido.tipoVenda == this.configuracoes.tipoVendaGarantia
+      return this.pedido.tipoVenda === this.configuracoes.tipoVendaAPrazo
+        || this.pedido.tipoVenda === this.configuracoes.tipoVendaReposicao
+        || this.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia
         || (this.configuracoes.UsarControleDescontoFormaPagamentoDadosProduto
-          && this.pedido.tipoVenda == this.configuracoes.tipoVendaAVista);
+          && this.pedido.tipoVenda === this.configuracoes.tipoVendaAVista);
     },
 
     /**
@@ -928,8 +926,8 @@
       return (
         this.pedido
           && (!this.pedido.tipoVenda
-            || this.pedido.tipoVenda == this.configuracoes.tipoVendaAPrazo
-            || (this.pedido.tipoVenda == this.configuracoes.tipoVendaAVista
+            || this.pedido.tipoVenda === this.configuracoes.tipoVendaAPrazo
+            || (this.pedido.tipoVenda === this.configuracoes.tipoVendaAVista
               && this.configuracoes.usarLiberacaoPedido))
       );
     },
@@ -938,7 +936,7 @@
      * Propriedade computada que retorna se será exibido o valor da entrada para preenchimento
      */
     vIfCampoEntrada: function() {
-      return this.pedido.sinal == null || this.pedido.sinal.id == 0;
+      return this.pedido.sinal === null || this.pedido.sinal.id === 0;
     },
 
     /**
@@ -946,9 +944,9 @@
      */
     vIfCampoDesconto: function() {
       return (
-        this.pedido.tipoVenda == this.configuracoes.tipoVendaAVista ||
+        this.pedido.tipoVenda === this.configuracoes.tipoVendaAVista ||
         !this.configuracoes.descontoApenasAVista ||
-        (this.descontoPedidoUmaParcela && this.pedido.formaPagamento.parcelas.numeroParcelas == 1)
+        (this.descontoPedidoUmaParcela && this.pedido.formaPagamento.parcelas.numeroParcelas === 1)
       );
     },
 
@@ -956,7 +954,7 @@
      * Propriedade computada que retorna se a obra será exibida na tela.
      */
     vIfTipoVendaObra: function() {
-      return this.pedido.tipoVenda == this.configuracoes.tipoVendaObra
+      return this.pedido.tipoVenda === this.configuracoes.tipoVendaObra
     },
 
     /**
@@ -965,7 +963,7 @@
     disabledCampoDesconto: function() {
       return !(
         !this.configuracoes.descontoApenasAVista
-          || this.pedido.tipoVenda == this.configuracoes.tipoPedidoVenda
+          || this.pedido.tipoVenda === this.configuracoes.tipoPedidoVenda
           || this.pedido.formaPagamento.parcelas.parcelaAVista
       );
     }

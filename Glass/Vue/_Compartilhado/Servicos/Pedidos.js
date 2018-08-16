@@ -326,9 +326,7 @@ Servicos.Pedidos = (function(http) {
       }
 
       return http().post(API + idPedido + '/enviarValidacaoFinanceiro', {
-        params: {
-          mensagem: mensagem
-        }
+        mensagem
       });
     },
 
@@ -546,7 +544,7 @@ Servicos.Pedidos = (function(http) {
         throw new Error('Pedido é obrigatório.');
       }
 
-      return http().post(API + idPedido + '/emConferencia');
+      return http().post(API + idPedido + '/colocarEmConferencia');
     }
   };
 })(function() {
