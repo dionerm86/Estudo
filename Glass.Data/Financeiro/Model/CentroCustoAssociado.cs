@@ -15,6 +15,8 @@ namespace Glass.Data.Model
 
         public int IdContaPg { get; set; }
 
+        public int IdCte { get; set; }
+
         public int Identificador
         {
             get { return IdCompra > 0 ? IdCompra : IdImpostoServ > 0 ? IdImpostoServ : IdNf > 0 ? (int)NotaFiscalDAO.Instance.ObtemNumeroNf(null, (uint)IdNf) : IdContaPg; }
@@ -72,6 +74,9 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("Valor")]
         public decimal Valor { get; set; }
+
+        [PersistenceProperty("IDCTE")]
+        public int? IdCte { get; set; }
 
         #endregion
 

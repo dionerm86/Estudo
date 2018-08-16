@@ -15,7 +15,7 @@ namespace Glass.UI.Web.Utils
             {
                 if (CentroCustoDAO.Instance.GetCountReal() > 0 &&
                     CentroCustoAssociadoDAO.Instance.ObtemDadosCentroCustoCount(Glass.Conversoes.StrParaInt(Request["idCompra"]), Glass.Conversoes.StrParaInt(Request["idImpostoServ"]),
-                    Glass.Conversoes.StrParaInt(Request["idNf"]), Glass.Conversoes.StrParaInt(Request["idContaPg"])) == 0)
+                    Glass.Conversoes.StrParaInt(Request["idNf"]), Glass.Conversoes.StrParaInt(Request["idContaPg"]), Glass.Conversoes.StrParaInt(Request["IdCte"])) == 0)
                     foreach (TableCell c in grdCentroCustoAssociado.Rows[0].Cells)
                         c.Text = String.Empty;
             }
@@ -32,6 +32,7 @@ namespace Glass.UI.Web.Utils
                 centroCustoCompra.IdContaPg = Glass.Conversoes.StrParaIntNullable(Request["idContaPg"]);
                 centroCustoCompra.IdCentroCusto = Glass.Conversoes.StrParaInt(((DropDownList)grdCentroCustoAssociado.FooterRow.FindControl("ddlCentroCusto")).SelectedValue);
                 centroCustoCompra.Valor = Glass.Conversoes.StrParaDecimal(((TextBox)grdCentroCustoAssociado.FooterRow.FindControl("txtValor")).Text);
+                centroCustoCompra.IdCte = Glass.Conversoes.StrParaIntNullable(Request["IdCte"]);
 
                 CentroCustoAssociadoDAO.Instance.Insert(centroCustoCompra);
                 grdCentroCustoAssociado.DataBind();

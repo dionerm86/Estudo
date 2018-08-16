@@ -223,6 +223,16 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             set { _cte.Situacao = value; }
         }
 
+        public bool CentroCustoCompleto
+        {
+            get { return _cte.CentroCustoCompleto; }
+        }
+
+        public bool ExibirCentroCusto
+        {
+            get { return _cte.ExibirCentroCusto; }
+        }
+
         public string SituacaoString
         {
             get

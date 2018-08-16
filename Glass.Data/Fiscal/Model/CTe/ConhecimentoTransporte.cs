@@ -366,6 +366,30 @@ namespace Glass.Data.Model.Cte
             }
         }
 
+        /// <summary>
+        /// Verifica se o valor do centro de custo foi totalmente informado.
+        /// </summary>
+        public bool CentroCustoCompleto
+        {
+            get
+            {
+                return ValorTotal == CentroCustoAssociadoDAO.Instance.ObtemTotalPorCte((int)IdCte);
+            }
+        }
+
+        /// <summary>
+        /// Indica se é para exibir o centro de custo
+        /// </summary>
+        public bool ExibirCentroCusto
+        {
+            get
+            {
+                return Glass.Configuracoes.FiscalConfig.UsarControleCentroCusto &&
+                    CentroCustoDAO.Instance.GetCountReal() > 0 &&
+                    Situacao == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.FinalizadoTerceiros;
+            }
+        }
+
         #endregion
 
         #region ICTe Members
