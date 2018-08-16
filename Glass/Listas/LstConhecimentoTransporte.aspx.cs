@@ -226,10 +226,6 @@ namespace Glass.UI.Web.Listas
         public string ObtemIdLoja(string idCte)
         {
             var contasPagar = ContasPagarDAO.Instance.GetByCte(idCte.StrParaUint());
-
-            if (contasPagar.Length == 0)
-                return "1";
-            
             return contasPagar[0].IdLoja.ToString();
         }
     }

@@ -384,9 +384,12 @@ namespace Glass.Data.Model.Cte
         {
             get
             {
-                return Glass.Configuracoes.FiscalConfig.UsarControleCentroCusto &&
-                    CentroCustoDAO.Instance.GetCountReal() > 0 &&
-                    Situacao == (int)Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.FinalizadoTerceiros;
+                var contasPagar = ContasPagarDAO.Instance.GetByCte(IdCte);
+
+                return Configuracoes.FiscalConfig.UsarControleCentroCusto &&
+                    CentroCustoDAO.Instance.GetCountReal() > 0 && 
+                    contasPagar.Length > 0 &&
+                    Situacao == (int)SituacaoEnum.FinalizadoTerceiros;
             }
         }
 
