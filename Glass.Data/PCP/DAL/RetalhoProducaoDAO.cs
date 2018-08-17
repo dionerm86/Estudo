@@ -521,10 +521,21 @@ namespace Glass.Data.DAL
             if (idProdPedProducao == 0)
                 throw new Exception("Etiqueta não encontrada.");
 
+            uint idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(session, idProdPedProducao);
+            uint idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, idProdPed);
+            var tipoSubgrupoProd = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd);
+
             if (PCPConfig.ImpedirCriarRetalhoPecaRepostaNaoCortada &&
                 !LeituraProducaoDAO.Instance.PecaFoiCortada(session, idProdPedProducao) &&
-                !ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(session, idProdPedProducao, true))
+                !ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(session, idProdPedProducao, true) && tipoSubgrupoProd != TipoSubgrupoProd.VidroLaminado)
                 throw new Exception("Não é possível criar o retalho, pois a peça ainda não passou pelo corte");
+
+            var idsFilhos = ProdutoPedidoProducaoDAO.Instance.ObterIdProdPedProducaoFilhoPeloIdProdPedProducaoParent(session, (int)idProdPedProducao);
+
+            var idsProdutosDosFilhos = ProdutoPedidoProducaoDAO.Instance.ObterIdsProdPeloIdProdPedProducao(session, idsFilhos);
+
+            if (idsFilhos.Count() > 0 && (SubgrupoProdDAO.Instance.IsVidroTemperado(session, idProd) || SubgrupoProdDAO.Instance.IsVidroTemperado(session, idsProdutosDosFilhos)))
+                throw new Exception("Não é possível criar o retalho de peças laminadas temperadas");
 
             // Garante que a etiqueta ainda não esteja temperada
             var idsSetor = LeituraProducaoDAO.Instance.ObterSetoresLidos(session, (int)idProdPedProducao);
@@ -540,8 +551,6 @@ namespace Glass.Data.DAL
             if (alturaArray.Length != larguraArray.Length || alturaArray.Length != quantidadeArray.Length)
                 throw new Exception("Dados de retalhos inválidos.");
 
-            uint idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(session, idProdPedProducao);
-            uint idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(session, idProdPed);
             float alturaEtiq = ProdutosPedidoEspelhoDAO.Instance.ObtemAlturaProducao(session, idProdPed);
             int larguraEtiq = ProdutosPedidoEspelhoDAO.Instance.ObtemLarguraProducao(session, idProdPed);
             //float qtdeEtiq = ProdutosPedidoEspelhoDAO.Instance.ObtemQtde(idProdPed);
@@ -555,7 +564,7 @@ namespace Glass.Data.DAL
             float totMTotal = 0, totMPeca = 0;
 
             /* Chamado 66405. */
-            if (ProdutoDAO.Instance.IsProdutoLamComposicao(session, (int)idProd))
+            if (ProdutoDAO.Instance.IsProdutoLamComposicao(session, (int)idProd) && SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)idProd) == TipoSubgrupoProd.VidroDuplo)
                 throw new Exception("A peça é um produto composto, portanto as peças de composição já foram temperadas e, por isso, não é possível gerar o retalho.");
 
             var pecas = new List<int[]>();
