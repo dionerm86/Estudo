@@ -123,15 +123,15 @@
                                     <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
                                 &nbsp; <a href="#" onclick="openRpt('<%# Eval("Idorcamento") %>');">
                                     <img border="0" src="../Images/Relatorio.gif" title="Relatório do Orçamento" /></a>
-                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdMedicao") != null %>'>
-                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotosMedicao.aspx?IdMedicao=<%# Eval("IdMedicao") %>&#039;); return false;'>
-                                        <img border="0px" src="../Images/Fotos.gif" title="Fotos"></img></a> </asp:PlaceHolder>
+                                <asp:PlaceHolder ID="pchFotos" runat="server" Visible='<%# Eval("IdsMedicao") != null && !string.IsNullOrWhiteSpace(Eval("IdsMedicao").ToString()) %>'>
+                                    <a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?tipo=medicao&id=<%# Eval("IdsMedicao") %>&#039;); return false;'>
+                                        <img border="0px" src="../Images/Fotos.gif"></img></a></asp:PlaceHolder>
                             </ItemTemplate>
                             <HeaderStyle Wrap="False" />
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdOrcamento" HeaderText="Orçamento" SortExpression="IdOrcamento" />
-                        <asp:BoundField DataField="IdMedicao" HeaderText="Medição" SortExpression="IdMedicao" />
+                        <asp:BoundField DataField="IdsMedicao" HeaderText="Medição" />
                         <asp:BoundField DataField="NomeMedidor" HeaderText="Medidor" SortExpression="NomeMedidor" />
                         <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="NomeFuncAbrv" HeaderText="Funcionário" SortExpression="NomeFuncionario" />
