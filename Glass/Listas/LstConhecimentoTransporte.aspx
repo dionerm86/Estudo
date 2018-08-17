@@ -116,6 +116,19 @@
         openWindow(600, 800, "../Relatorios/CTe/RelBase.aspx?rel=CteTerceiros&idCte=" + idCte);
         return false;
     }
+
+    function exibirCentroCusto(idCte) {
+        var idLoja = LstConhecimentoTransporte.ObtemIdLoja(idCte).value;
+
+        if (idLoja == "")
+        {
+            alert("Não foram encontradas contas a pagar associadas a esse CTE para associação de centro de custo.");
+            return false;
+        }
+
+        openWindow(365, 700, '../Utils/SelCentroCusto.aspx?IdCte=' + idCte + "&compra=false" + "&idLoja=" + idLoja);
+        return true;
+    }
         
     </script>
     
@@ -447,6 +460,12 @@
                     </asp:TemplateField>
                     <asp:BoundField DataField="DescricaoTipoDocumentoCte" HeaderText="Tipo Documento CT-e"
                         SortExpression="DescricaoTipoDocumentoCte" />
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                             <asp:ImageButton ID="imbCentroCusto" runat="server" ImageUrl='<%# "~/Images/" + ((bool)Eval("CentroCustoCompleto") ? "cash_blue.png" : "cash_red.png") %>' Visible='<%# Eval("ExibirCentroCusto") %>' 
+                                ToolTip="Exibir Centro de Custos" OnClientClick='<%# "exibirCentroCusto(" + Eval("IdCte") + "); return false" %>' />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
                 <PagerStyle />
                 <EditRowStyle CssClass="edit"></EditRowStyle>

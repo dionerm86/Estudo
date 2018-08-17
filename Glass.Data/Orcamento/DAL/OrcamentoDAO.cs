@@ -330,13 +330,13 @@ namespace Glass.Data.DAL
             string campos = selecionar ? "o.*, f.Nome as NomeFuncionario, medidor.Nome as NomeMedidor, l.NomeFantasia as NomeLoja" : "Count(*)";
 
             string sql = "Select " + campos + " From orcamento o " +
-                "Inner Join medicao m On (o.idMedicao=m.idMedicao) " +
+                "Inner Join medicao m On (o.idOrcamento=m.idOrcamento) " +
                 "Left Join funcionario f On o.IdFunc=f.idFunc " +
                 "Left Join funcionario medidor On (m.idFuncMed=medidor.idfunc) " +
-                "Left Join loja l On o.idLoja=l.idLoja Where m.latitude is not null ";
+                "Left Join loja l On o.idLoja=l.idLoja Where 1 ";
 
             if (idMedicao > 0)
-                sql += " And o.idMedicao=" + idMedicao;
+                sql += " And m.idMedicao=" + idMedicao;
 
             if (!String.IsNullOrEmpty(dataFinIni))
                 sql += " And DataMedicao>=?dataIni";

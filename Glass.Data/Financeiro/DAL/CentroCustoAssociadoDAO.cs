@@ -9,7 +9,7 @@ namespace Glass.Data.DAL
     {
         #region Busca padrão
 
-        private string Sql(int idCentroCusto, int idCompra, int idImpostoServ, int idNf, int idContaPg, bool selecionar)
+        private string Sql(int idCentroCusto, int idCompra, int idImpostoServ, int idNf, int idContaPg, int idCte, bool selecionar)
         {
             var campos = selecionar ? "cca.*, cc.Descricao as DescricaoCentroCusto" : "count(*)";
 
@@ -36,6 +36,9 @@ namespace Glass.Data.DAL
             if (idCentroCusto > 0)
                 sql += " AND cca.IdCentroCusto = " + idCentroCusto;
 
+            if (idCte > 0)
+                sql += " AND cca.IdCte = " + idCte;
+
             return sql;
         }
 
@@ -47,12 +50,12 @@ namespace Glass.Data.DAL
         /// <param name="idNf"></param>
         /// <param name="idContaPg"></param>
         /// <returns></returns>
-        public IList<CentroCustoAssociado> ObtemDadosCentroCusto(int idCompra, int idImpostoServ, int idNf, int idContaPg)
+        public IList<CentroCustoAssociado> ObtemDadosCentroCusto(int idCompra, int idImpostoServ, int idNf, int idContaPg, int idCte)
         {
-            if (idCompra == 0 && idImpostoServ == 0 && idNf == 0 && idContaPg == 0)
+            if (idCompra == 0 && idImpostoServ == 0 && idNf == 0 && idContaPg == 0 && idCte == 0)
                 return new List<CentroCustoAssociado>() { new CentroCustoAssociado() };
 
-            var retorno = objPersistence.LoadData(Sql(0, idCompra, idImpostoServ, idNf, idContaPg, true)).ToList();
+            var retorno = objPersistence.LoadData(Sql(0, idCompra, idImpostoServ, idNf, idContaPg, idCte, true)).ToList();
 
             if (retorno.Count == 0 && CentroCustoDAO.Instance.GetCountReal() > 0)
                 retorno.Add(new CentroCustoAssociado());
@@ -60,12 +63,12 @@ namespace Glass.Data.DAL
             return retorno;
         }
 
-        public int ObtemDadosCentroCustoCount(int idCompra, int idImportoServ, int idNf, int idContaPg)
+        public int ObtemDadosCentroCustoCount(int idCompra, int idImportoServ, int idNf, int idContaPg, int idCte)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(0, idCompra, idImportoServ, idNf, idContaPg, false));
+            return objPersistence.ExecuteSqlQueryCount(Sql(0, idCompra, idImportoServ, idNf, idContaPg, idCte, false));
         }
 
-        public DetalhesCentroCustoAssociado ObtemDetalhesCentroCustoAssociado(int idCompra, int idImpostoServ, int idNf, int idContaPg)
+        public DetalhesCentroCustoAssociado ObtemDetalhesCentroCustoAssociado(int idCompra, int idImpostoServ, int idNf, int idContaPg, int idCte)
         {
             var retorno = new DetalhesCentroCustoAssociado();
 
@@ -91,6 +94,12 @@ namespace Glass.Data.DAL
             {
                 retorno.IdContaPg = idContaPg;
                 retorno.ValorAssociacao = ContasPagarDAO.Instance.ObtemValorCampo<decimal>("valorvenc", "idcontapg = " + idContaPg);
+                retorno.ValorTotal = ObtemTotalPorContaPagar(idContaPg);
+            }
+            else if (idCte > 0)
+            {
+                retorno.IdCte = idCte;
+                retorno.ValorAssociacao = CTe.ConhecimentoTransporteDAO.Instance.ObtemValorCampo<decimal>("ValorTotal", "idCte = " + idCte);
                 retorno.ValorTotal = ObtemTotalPorContaPagar(idContaPg);
             }
 
@@ -131,6 +140,22 @@ namespace Glass.Data.DAL
         public decimal ObtemTotalPorImpostoServ(GDASession session, int idImpostoServ)
         {
             return ExecuteScalar<decimal>(session, "SELECT sum(valor) FROM centro_custo_associado WHERE IdImpostoServ = " + idImpostoServ);
+        }
+
+        /// <summary>
+        /// Obtem o valor total dos centros de custo de um Cte
+        /// </summary>
+        public decimal ObtemTotalPorCte(int idCte)
+        {
+            return ObtemTotalPorCte(null, idCte);
+        }
+
+        /// <summary>
+        /// Obtem o valor total dos centros de custo de um Cte
+        /// </summary>
+        public decimal ObtemTotalPorCte(GDASession session, int idCte)
+        {
+            return ExecuteScalar<decimal>(session, "SELECT sum(valor) FROM centro_custo_associado WHERE IdCte = " + idCte);
         }
 
         /// <summary>
