@@ -5829,6 +5829,19 @@ namespace Glass.Data.DAL
             return retorno != null ? retorno.ToString() : string.Empty;
         }
 
+        //Busca os Ids do produto pelo idProdPedProducao
+        public int[] ObterIdsProdPeloIdProdPedProducao(GDASession session, IEnumerable<int> idsProdPedProducao)
+        {
+            if (idsProdPedProducao.Count() == 0)
+                return null;
+
+            var sql = $@"Select pe.IdProd from produtos_pedido_espelho pe
+                INNER JOIN produto_pedido_producao ppe ON (pe.IdProdPed = ppe.IdProdPed)
+                WHERE ppe.IdProdPedProducao IN({string.Join(",", idsProdPedProducao)})";
+
+            return ExecuteMultipleScalar<int>(sql).ToArray();
+        }
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Obtem o IdProdPed.
