@@ -138,7 +138,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         [HttpPost]
         [Route("{id}/enviarValidacaoFinanceiro")]
         [SwaggerResponse(202, "Pedido enviado para o financeiro.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na finalização do pedido.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação no envio do pedido para o financeiro.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado para o filtro informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult EnviarValidacaoFinanceiro(int id, [FromBody] DadosEntradaDto dadosEntrada)
         {
