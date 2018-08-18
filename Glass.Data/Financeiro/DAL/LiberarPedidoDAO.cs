@@ -1294,7 +1294,7 @@ namespace Glass.Data.DAL
             }
 
             // Atualiza o carregamento e as ocs parciais se houver.
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, produtosLiberarPedido.Select(f => f.IdProdPed).ToArray());
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido);
 
             #endregion
 
@@ -2378,7 +2378,7 @@ namespace Glass.Data.DAL
             #region Carregamento parcial
 
             //Atualiza o carregamento e as ocs parciais se houver
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsProdutosPedido);
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido);
 
             #endregion
 
@@ -2604,7 +2604,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
 
                     #endregion
 
@@ -2813,7 +2813,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
 
                     #endregion
 
