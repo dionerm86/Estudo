@@ -138,14 +138,30 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .From<Data.Model.Produto>("p")
                 .Where($"p.TipoMercadoria=?tipo AND p.IdProd IN({idsProd2})")
                 .Add("?tipo", Data.Model.TipoMercadoria.MateriaPrima)
-                .Select("p.CodOtimizacao, p.Descricao, p.Espessura")
+                .Select(@"p.CodOtimizacao, p.Descricao, p.Espessura, 
+                          p.RecorteX1, p.RecorteY1, p.RecorteX2, p.RecorteY2,
+                          p.TransversalMaxX, p.TransversalMaxY, 
+                          p.DesperdicioMinX, p.DesperdicioMinY,
+                          p.DistanciaMin, p.RecorteAutomaticoForma,
+                          p.AnguloRecorteAutomatico")
                 .Execute()
                 .Select(f => new Material
                 {
                     Codigo = f["CodOtimizacao"],
                     Descricao = f["Descricao"],
                     Tipo = TipoMaterial.Monolitico,
-                    Espessura1 = f["Espessura"]
+                    Espessura1 = f["Espessura"],
+                    RecorteX1 = f["RecorteX1"],
+                    RecorteY1 = f["RecorteY1"],
+                    RecorteX2 = f["RecorteX2"],
+                    RecorteY2 = f["RecorteY2"],
+                    TransversalMaxX = f["TransversalMaxX"],
+                    TransversalMaxY = f["TransversalMaxY"],
+                    DesperdicioMinX = f["DesperdicioMinX"],
+                    DesperdicioMinY = f["DesperdicioMinY"],
+                    DistanciaMin = f["DistanciaMin"],
+                    RecorteAutomaticoForma = f["RecorteAutomaticoForma"],
+                    AnguloRecorteAutomatico = f["AnguloRecorteAutomatico"]
                 }).ToList();
 
             foreach (var i in materiais)
@@ -186,10 +202,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
             // Salva arquivo otimizado
             xmlDoc.Save(System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, a.NomeArquivo));
 
-            return new ImportacaoOtimizacao
-            {
-                IdArquivoOtimizacao = (int)a.IdArquivoOtimizacao
-            };
+            return new ImportacaoOtimizacao((int)a.IdArquivoOtimizacao);
         }
 
         /// <summary>
@@ -211,8 +224,6 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
             return null;
         }
-
-        
 
         #endregion
 
@@ -279,7 +290,14 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .Select(f => f.GetInt32(0))
                 .ToList();
 
-            var estoque = new EstoqueChapa(ObterMateriais(idsProd), ObterEntradasEstoqueChapas(idsProd));
+            IEnumerable<IEntradaEstoqueChapa> entradasEstoqueChapa;
+
+            if (Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Interno)
+                entradasEstoqueChapa = ObterEntradasEstoqueChapas(idsProd);
+            else
+                entradasEstoqueChapa = new IEntradaEstoqueChapa[0];
+
+            var estoque = new EstoqueChapa(ObterMateriais(idsProd), entradasEstoqueChapa);
 
             return new SessaoOtimizacao(estoque, new IPecaPadrao[0]);
         }
@@ -314,22 +332,111 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
             SourceContext.Instance.ExecuteSave(solucaoOtimizacao).ThrowInvalid();
 
-            if (importacaoNova)
-            {
-                var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
+            //if (importacaoNova)
+            //{
+            //    var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
 
-                foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            //    foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            //    {
+            //        if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
+            //             tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
+            //             StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
+            //            return ImportarArquivoOptyWay(arquivo);
+            //    }
+
+            //    throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
+            //}
+            //else
+            //    return null;
+
+            return new ImportacaoOtimizacao(solucaoOtimizacao);
+        }
+
+        /// <summary>
+        /// Obtém os itens da otimização base no identificador da solução de otimização.
+        /// </summary>
+        /// <param name="idSolucaoOtimizacao"></param>
+        /// <returns></returns>
+        public IEnumerable<ItemOtimizacao> ObterItensPelaSolucao(int idSolucaoOtimizacao)
+        {
+            var etiquetas = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>("so")
+                .InnerJoin<Data.Model.PlanoOtimizacao>("so.IdSolucaoOtimizacao=po.IdSolucaoOtimizacao", "po")
+                .InnerJoin<Data.Model.PlanoCorte>("po.IdPlanoOtimizacao=pc.IdPlanoOtimizacao", "pc")
+                .InnerJoin<Data.Model.PecaPlanoCorte>("pc.IdPlanoCorte=ppc.IdPlanoCorte", "ppc")
+                .InnerJoin<Data.Model.ProdutoPedidoProducao>("ppp.IdProdPedProducao=ppc.IdProdPedProducao", "ppp")
+                .InnerJoin<Data.Model.ProdutosPedidoEspelho>("ppe.IdProdPed=ppp.IdProdPed", "ppe")
+                .InnerJoin<Data.Model.Produto>("p.IdProd=ppe.IdProd", "p")
+                .InnerJoin<Data.Model.CorVidro>("p.IdCorVidro=cv.IdCorVidro", "cv")
+                .InnerJoin<Data.Model.EtiquetaProcesso>("ep.IdProcesso=ppe.IdProcesso", "ep")
+                .InnerJoin<Data.Model.EtiquetaAplicacao>("ea.IdAplicacao=ppe.IdAplicacao", "ea")
+                .LeftJoin<Data.Model.ProdutoImpressao>("pi.IdProdPed=ppe.IdProdPed AND  pi.NumEtiqueta=ppp.NumEtiqueta AND (pi.Cancelado IS NULL OR pi.Cancelado=0)", "pi")
+                .Where("so.IdSolucaoOtimizacao=?id")
+                .Add("?id", idSolucaoOtimizacao)
+                .Select(@"ppe.IdProdPed, ppe.IdPedido, p.Descricao AS DescricaoProduto, 
+                         ppp.PecaReposta, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao,
+                         ppe.Qtde, ppe.QtdImpresso, ppe.AlturaReal, ppe.Altura, ppe.LarguraReal, ppe.Largura,
+                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, ppp.NumEtiqueta, pi.PlanoCorte, cv.Sigla AS Cor,
+                         ppe.Espessura")
+                .Execute()
+                .Select(f => new
                 {
-                    if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
-                         tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
-                         StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
-                        return ImportarArquivoOptyWay(arquivo);
-                }
+                    IdProdPed = f.GetInt32("IdProdPed"),
+                    IdPedido = f.GetInt32("IdPedido"),
+                    DescricaoProduto = f.GetString("DescricaoProduto"),
+                    PecaReposta = f.GetBoolean("PecaReposta"),
+                    CodProcesso = f.GetString("CodProcesso"),
+                    CodAplicacao = f.GetString("CodAplicacao"),
+                    Qtde = f.GetInt32("Qtde"),
+                    QtdImpresso = f.GetInt32("QtdImpresso"),
+                    AlturaReal = f.GetFloat("AlturaReal"),
+                    Altura = f.GetFloat("Altura"),
+                    LarguraReal = f.GetInt32("LarguraReal"),
+                    Largura = f.GetInt32("Largura"),
+                    Obs = f.GetString("Obs"),
+                    TotM = f.GetFloat("TotM"),
+                    TotM2Calc = f.GetFloat("TotM2Calc"),
+                    NumEtiqueta = f.GetString("NumEtiqueta"),
+                    PlanoCorte = f.GetString("PlanoCorte"),
+                    Cor = f.GetString("Cor"),
+                    Espessura = f.GetFloat("Espessura")
+                }).ToList();
 
-                throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
-            }
-            else
-                return null;
+            var itens = etiquetas
+                //.OrderBy(f => $"{f.Cor}|{f.Espessura}")
+                .GroupBy(f => $"{f.IdProdPed}|{f.PlanoCorte}|{f.PecaReposta}")
+                .Select(grupoProdPed =>
+                {
+                    var item = grupoProdPed.First();
+
+                    // Calcula a quantidade a imprimir
+                    var qtdAImprimir = !item.PecaReposta ? grupoProdPed.Count() : 0;
+
+                    float totM2 = item.PecaReposta ? (item.TotM / item.Qtde) : (item.TotM / item.Qtde) * qtdAImprimir;
+                    float totM2Calc = item.PecaReposta ? (item.TotM2Calc / item.Qtde) : (item.TotM2Calc / item.Qtde) * qtdAImprimir;
+
+                    return new ItemOtimizacao
+                    {
+                        IdProdPed = item.IdProdPed,
+                        IdPedido = item.IdPedido,
+                        DescricaoProduto = item.DescricaoProduto,
+                        PecaReposta = item.PecaReposta,
+                        CodProcesso = item.CodProcesso,
+                        CodAplicacao = item.CodAplicacao,
+                        Qtde = item.Qtde,
+                        QtdImpresso = item.QtdImpresso,
+                        QtdAImprimir = qtdAImprimir,
+                        AlturaProducao = item.AlturaReal > 0f ? item.AlturaReal : item.Altura,
+                        LarguraProducao = item.LarguraReal > 0 ? item.LarguraReal : item.Largura,
+                        Obs = item.Obs,
+                        TotM2 = (float)Math.Round(totM2, 3),
+                        TotM2Calc = (float)Math.Round(totM2Calc, 3),
+                        PlanoCorteEtiqueta = item.PlanoCorte,
+                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta)
+                    };
+                }).ToList();
+
+            return itens;
         }
 
         /// <summary>

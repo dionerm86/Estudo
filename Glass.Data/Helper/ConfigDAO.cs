@@ -752,6 +752,8 @@ namespace Glass.Data.Helper
             if (PCPConfig.Etiqueta.UsarPlanoCorte)
                 itens.Add(Config.ConfigEnum.TipoExportacaoEtiqueta);
 
+            itens.Add(Config.ConfigEnum.TipoEstoqueChapasOtimizacao);
+
             itens.Add(Config.ConfigEnum.TipoDataEtiqueta);
             itens.Add(Config.ConfigEnum.DiasDataFabrica);
             itens.Add(Config.ConfigEnum.DiasReduzirDataFabricaComposicaoDuploLaminado);

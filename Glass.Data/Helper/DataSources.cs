@@ -935,7 +935,7 @@ namespace Glass.Data.Helper
             /// <summary>
             /// O controle é feito internamente pelo WebGlass.
             /// </summary>
-            Interno,
+            Interno = 1,
             /// <summary>
             /// O controle é feito externamente.
             /// </summary>

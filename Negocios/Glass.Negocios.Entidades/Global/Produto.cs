@@ -1187,6 +1187,214 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Obtém ou define a distância da margem inferior da chapa.
+        /// </summary>
+        public double RecorteX1
+        {
+            get { return DataModel.RecorteX1; }
+            set
+            {
+                if (DataModel.RecorteX1 != value &&
+                    RaisePropertyChanging(nameof(RecorteX1), value))
+                {
+                    DataModel.RecorteX1 = value;
+                    RaisePropertyChanged(nameof(RecorteX1));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem esquerda da chapa.
+        /// </summary>
+        public double RecorteY1
+        {
+            get { return DataModel.RecorteY1; }
+            set
+            {
+                if (DataModel.RecorteY1 != value &&
+                    RaisePropertyChanging(nameof(RecorteY1), value))
+                {
+                    DataModel.RecorteY1 = value;
+                    RaisePropertyChanged(nameof(RecorteY1));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem superior da chapa.
+        /// </summary>
+        public double RecorteX2
+        {
+            get { return DataModel.RecorteX2; }
+            set
+            {
+                if (DataModel.RecorteX2 != value &&
+                    RaisePropertyChanging(nameof(RecorteX2), value))
+                {
+                    DataModel.RecorteX2 = value;
+                    RaisePropertyChanged(nameof(RecorteX2));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem direita da chapa.
+        /// </summary>
+        public double RecorteY2
+        {
+            get { return DataModel.RecorteY2; }
+            set
+            {
+                if (DataModel.RecorteY2 != value &&
+                    RaisePropertyChanging(nameof(RecorteY2), value))
+                {
+                    DataModel.RecorteY2 = value;
+                    RaisePropertyChanged(nameof(RecorteY2));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância máxima de lado X da chapa
+        /// da qual deve ser criada uma transversal.
+        /// </summary>
+        public double TransversalMaxX
+        {
+            get { return DataModel.TransversalMaxX; }
+            set
+            {
+                if (DataModel.TransversalMaxX != value &&
+                    RaisePropertyChanging(nameof(TransversalMaxX), value))
+                {
+                    DataModel.TransversalMaxX = value;
+                    RaisePropertyChanged(nameof(TransversalMaxX));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância máxima de lado Y da chapa
+        /// da qual deve ser criada uma transversal.
+        /// </summary>
+        public double TransversalMaxY
+        {
+            get { return DataModel.TransversalMaxY; }
+            set
+            {
+                if (DataModel.TransversalMaxY != value &&
+                    RaisePropertyChanging(nameof(TransversalMaxY), value))
+                {
+                    DataModel.TransversalMaxY = value;
+                    RaisePropertyChanged(nameof(TransversalMaxY));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a dimensão mínima em X da superfície de desperdício
+        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
+        /// de novo no estoque para otimizações posteriores.
+        /// </summary>
+        public double DesperdicioMinX
+        {
+            get { return DataModel.DesperdicioMinX; }
+            set
+            {
+                if (DataModel.DesperdicioMinX != value &&
+                    RaisePropertyChanging(nameof(DesperdicioMinX), value))
+                {
+                    DataModel.DesperdicioMinX = value;
+                    RaisePropertyChanged(nameof(DesperdicioMinX));
+                }
+            }
+        }
+
+        /// <summary>
+        ///  Obtém ou define a dimensão mínima em Y da superfície de desperdício
+        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
+        /// de novo no estoque para otimizações posteriores.
+        /// </summary>
+        public double DesperdicioMinY
+        {
+            get { return DataModel.DesperdicioMinY; }
+            set
+            {
+                if (DataModel.DesperdicioMinY != value &&
+                    RaisePropertyChanging(nameof(DesperdicioMinY), value))
+                {
+                    DataModel.DesperdicioMinY = value;
+                    RaisePropertyChanged(nameof(DesperdicioMinY));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a distância minima aceitavel durante a otimização 
+        /// entre dois cortes paralelos, com o intuito de facilitar ou tornar 
+        /// possível a abertura dos cortes.
+        /// </summary>
+        /// <example>
+        /// Ao configurar o valor em 20mm, será impossível encontrar no interior
+        /// de um plano de corte duas peças ou dois cortes próximos um do outro,
+        /// de distância inferior à anteriormente introduzida (20mm).
+        /// </example>
+        /// <remarks>
+        /// Evidentemente, esta distância não é tida em conta nos casos em que 
+        /// 2 peças compartilham o mesmo corte.
+        /// </remarks>
+        public double DistanciaMin
+        {
+            get { return DataModel.DistanciaMin; }
+            set
+            {
+                if (DataModel.DistanciaMin != value &&
+                    RaisePropertyChanging(nameof(DistanciaMin), value))
+                {
+                    DataModel.DistanciaMin = value;
+                    RaisePropertyChanged(nameof(DistanciaMin));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a configuração do valor de recorte que deve
+        /// introduzir-se nas formas no caso de esta conter ângulos 
+        /// inferiores ao configurado no campo "AnguloRecorteAutomatico".
+        /// </summary>
+        public double RecorteAutomaticoForma
+        {
+            get { return DataModel.RecorteAutomaticoForma; }
+            set
+            {
+                if (DataModel.RecorteAutomaticoForma != value &&
+                    RaisePropertyChanging(nameof(RecorteAutomaticoForma), value))
+                {
+                    DataModel.RecorteAutomaticoForma = value;
+                    RaisePropertyChanged(nameof(RecorteAutomaticoForma));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define o valor do ângulo ao qual o recorte deve
+        /// ser introduzido de forma automática.
+        /// </summary>
+        public double AnguloRecorteAutomatico
+        {
+            get { return DataModel.AnguloRecorteAutomatico; }
+            set
+            {
+                if (DataModel.AnguloRecorteAutomatico != value &&
+                    RaisePropertyChanging(nameof(AnguloRecorteAutomatico), value))
+                {
+                    DataModel.AnguloRecorteAutomatico = value;
+                    RaisePropertyChanged(nameof(AnguloRecorteAutomatico));
+                }
+            }
+        }
 
         #endregion
 

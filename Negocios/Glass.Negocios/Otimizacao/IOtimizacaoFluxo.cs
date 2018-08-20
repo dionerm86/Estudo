@@ -15,7 +15,34 @@ namespace Glass.Otimizacao.Negocios
         /// <summary>
         /// Identificador do arquivo de otimização importado.
         /// </summary>
-        public int IdArquivoOtimizacao { get; set; }
+        public int IdArquivoOtimizacao { get; }
+
+        /// <summary>
+        /// Obtém a solução da otimização.
+        /// </summary>
+        public Entidades.SolucaoOtimizacao Solucao { get; }
+
+        #endregion
+
+        #region Construtores
+
+        /// <summary>
+        /// Construtor usado quando a importação for feita pela solução de otimização.
+        /// </summary>
+        /// <param name="solucao"></param>
+        public ImportacaoOtimizacao(Entidades.SolucaoOtimizacao solucao)
+        {
+            Solucao = solucao;
+        }
+
+        /// <summary>
+        /// Construtor usado quando a importação for feita pelo arquivo de otimização.
+        /// </summary>
+        /// <param name="idArquivoOtimizacao"></param>
+        public ImportacaoOtimizacao(int idArquivoOtimizacao)
+        {
+            IdArquivoOtimizacao = idArquivoOtimizacao;
+        }
 
         #endregion
     }
@@ -62,6 +89,13 @@ namespace Glass.Otimizacao.Negocios
         /// <param name="arquivos">Arquivos da otimização.</param>
         /// <returns></returns>
         ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IArquivoSolucaoOtimizacao> arquivos);
+
+        /// <summary>
+        /// Obtém os itens da otimização base no identificador da solução de otimização.
+        /// </summary>
+        /// <param name="idSolucaoOtimizacao"></param>
+        /// <returns></returns>
+        IEnumerable<ItemOtimizacao> ObterItensPelaSolucao(int idSolucaoOtimizacao);
 
         /// <summary>
         /// Recupera os itens da otimização.

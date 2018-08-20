@@ -49,5 +49,11 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("Altura")]
         public double Altura { get; set; }
+
+        /// <summary>
+        /// Obtém ou define se o retalho é reaproveitavel.
+        /// </summary>
+        [PersistenceProperty("Reaproveitavel")]
+        public bool Reaproveitavel { get; set; }
     }
 }
