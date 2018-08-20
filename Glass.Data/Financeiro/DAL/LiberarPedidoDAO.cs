@@ -2999,6 +2999,65 @@ namespace Glass.Data.DAL
 
         #region Cancelar liberação
 
+        private void ValidarPecaEntregue(GDASession sessao, uint idLiberarPedido)
+        {
+            // Verifica se esta liberação já foi expedida na produção
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_pedido_producao ppp 
+                        inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
+                        inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
+                        @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
+            {
+                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta liberação (provavelmente parcial) não estão entregues, 
+                // ao invés de barrar se apenas uma peça estiver entregue
+                if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                {
+                    foreach (var prodLib in ProdutosLiberarPedidoDAO.Instance.PesquisarPorLiberacao(sessao, idLiberarPedido).ToList())
+                    {
+                        var qtdNaoEntregue = ExecuteScalar<int>(sessao,
+                            $@"Select Count(*) From produto_pedido_producao ppp 
+                                inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
+                                inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
+                            Where ppp.situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao} 
+                                and ppp.situacaoProducao<>{(int)SituacaoProdutoProducao.Entregue}
+                                and plp.idLiberarPedido={idLiberarPedido}
+                                and pp.idProdPed={prodLib.IdProdPed}");
+
+                        if (prodLib.QtdeCalc > qtdNaoEntregue)
+                        {
+                            throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+                }
+            }
+
+            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_pedido_producao ppp 
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
+                        @" and ppp.idPedidoExpedicao In 
+                            (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
+            {
+                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+            }
+
+            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_impressao pi 
+                    Where pi.idPedidoExpedicao In 
+                        (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
+            {
+                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+            }
+        }
+
         /// <summary>
         /// Cancela a liberação de um pedido.
         /// </summary>
@@ -3060,37 +3119,7 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && PossuiNotaFiscalAtiva(session, idLiberarPedido))
                 throw new Exception("Esta liberação possui uma ou mais notas fiscais não canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a liberação.");
 
-            // Verifica se esta liberação já foi expedida na produção
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_pedido_producao ppp 
-                        inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
-                        inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
-                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
-                        @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
-
-            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_pedido_producao ppp 
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
-                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
-                        @" and ppp.idPedidoExpedicao In 
-                            (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
-
-            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_impressao pi 
-                    Where pi.idPedidoExpedicao In 
-                        (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
+            ValidarPecaEntregue(session, idLiberarPedido);
 
             // Verifica se algum pedido dessa liberação já tem a comissão paga
             if (objPersistence.ExecuteSqlQueryCount(session,
