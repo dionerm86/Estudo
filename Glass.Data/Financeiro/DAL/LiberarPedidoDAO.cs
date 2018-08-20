@@ -1294,7 +1294,7 @@ namespace Glass.Data.DAL
             }
 
             // Atualiza o carregamento e as ocs parciais se houver.
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido);
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, string.Join(",",idsPedido));
 
             #endregion
 
