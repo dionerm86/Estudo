@@ -1187,6 +1187,13 @@ namespace Glass.Data.Model
             }
         }
 
+        public bool ExibirSalvarInutilizacao
+        {
+            get { return Situacao == (int)SituacaoEnum.Inutilizada || 
+                         Situacao == (int)SituacaoEnum.ProcessoInutilizacao || 
+                         Situacao == (int)SituacaoEnum.FalhaInutilizar; }
+        }
+
         /// <summary>
         /// Valor do sinal dos pedidos da nota fiscal
         /// </summary>
