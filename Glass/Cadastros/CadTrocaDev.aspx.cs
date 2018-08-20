@@ -277,7 +277,7 @@ namespace Glass.UI.Web.Cadastros
         {
             try
             {
-                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";

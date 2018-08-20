@@ -175,7 +175,7 @@ namespace Glass.UI.Web.Listas
         {
             try
             {
-                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
+                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";

@@ -342,7 +342,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 bool isPedidoProducao = pedidoProducao.ToLower() == "true";
                 bool isAmbienteMaoObra = ambienteMaoObra.ToLower() == "true";
                 
-                prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+                prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
     
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";

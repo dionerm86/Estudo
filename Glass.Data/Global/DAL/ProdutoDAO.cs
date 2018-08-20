@@ -362,11 +362,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public Produto GetElement(GDASession sessao, uint idProd, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetElement(GDASession sessao, uint idProd, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetElement(sessao, idProd);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -556,11 +557,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="codInterno"></param>
         /// <returns></returns>
-        public Produto GetByCodInterno(string codInterno, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetByCodInterno(string codInterno, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetByCodInterno(codInterno);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -1875,7 +1877,7 @@ namespace Glass.Data.DAL
             uint idProd = ExecuteScalar<uint>("select idProd from produto where codInterno=?cod",
                 new GDAParameter("?cod", codInterno));
 
-            var produto = GetByCodInterno(codInterno, idLoja, idCliente, idFornec, saida);
+            var produto = GetByCodInterno(codInterno, null, idLoja, idCliente, idFornec, saida);
             produto.Unidade = UnidadeMedidaDAO.Instance.ObtemCodigo((uint)produto.IdUnidadeMedida);
 
             return produto;

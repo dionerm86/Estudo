@@ -185,7 +185,7 @@ namespace Glass.Data.SIntegra
                 for (int i = 0; i < p.Length; i++)
                 {
                     if (!produtos.ContainsKey(p[i].IdProd))
-                        produtos.Add(p[i].IdProd, ProdutoDAO.Instance.GetElement(null, p[i].IdProd, (uint)n.IdLoja, n.IdCliente, n.IdFornec,
+                        produtos.Add(p[i].IdProd, ProdutoDAO.Instance.GetElement(null, p[i].IdProd, (int)n.IdNf, (uint)n.IdLoja, n.IdCliente, n.IdFornec,
                             (n.TipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
                             (n.TipoDocumento == (int)Glass.Data.Model.NotaFiscal.TipoDoc.Entrada &&
                             CfopDAO.Instance.IsCfopDevolucao((uint)n.IdCfop)))));
