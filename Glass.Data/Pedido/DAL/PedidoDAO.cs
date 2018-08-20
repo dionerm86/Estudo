@@ -13003,15 +13003,6 @@ namespace Glass.Data.DAL
                     throw new Exception("Selecione a forma de pagamento do pedido");
                 }
 
-                /* Chamado 78183. */
-                if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && objUpdate.TipoPedido != ped.TipoPedido)
-                {
-                    VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
-                    objUpdate.GerarPedidoProducaoCorte = false;
-                    objPersistence.ExecuteCommand(session, $@"UPDATE pedido SET GerarPedidoProducaoCorte=0 WHERE IdPedido = { objUpdate.IdPedido };
-                        UPDATE pedido SET IdPedidoRevenda=NULL WHERE IdPedidoRevenda = { objUpdate.IdPedido };");
-                }
-
                 /* Chamado 65135. */
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto && objUpdate.IdFormaPagto.GetValueOrDefault() == 0 &&
                     (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo))
