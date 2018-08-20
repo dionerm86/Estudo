@@ -874,7 +874,7 @@ namespace Glass.Data.DAL
         public IList<ContasReceber> GetForEfetuarAcerto(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNFe,
             uint idLoja, uint idCli, string nomeCli, string dtIni, string dtFim, uint idFormaPagto, bool contasVinculadas,
             string tipoContaContabil, bool naoBuscarReneg, int ordenar, bool buscarContasValorZerado, int numeroCTe,
-            string sortExpression, int startRow, int pageSize)
+            uint idTrocaDevolucao, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -882,9 +882,10 @@ namespace Glass.Data.DAL
             sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : (ordenar == 2 ? "c.dataVec Asc, c.idContaR Asc" :
                 ordenar == 1 ? "c.idCliente Asc, c.idContaR Asc" : ordenar == 3 ? "c.idPedido Asc, c.idContaR Asc" : "c.valorVec Asc, c.idContaR Asc");
 
-            string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, 0, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
+            string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
                 null, null, null, null, null, null, "", 0, 0, false, contasVinculadas, idFormaPagto, 0, 0, false, false, naoBuscarReneg ? 3 : 0,
-                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, out temFiltro, out filtroAdicional);
+                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe,
+                out temFiltro, out filtroAdicional);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional, 
                 GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, null, tipoContaContabil, null, null, null));
@@ -896,14 +897,16 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public int GetForEfetuarAcertoCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNFe,
             uint idLoja, uint idCli, string nomeCli, string dtIni, string dtFim, uint idFormaPagto, bool contasVinculadas,
-            string tipoContaContabil, bool naoBuscarReneg, int ordenar, bool buscarContasValorZerado, int numeroCTe)
+            string tipoContaContabil, bool naoBuscarReneg, int ordenar, bool buscarContasValorZerado, int numeroCTe,
+            uint idTrocaDevolucao)
         {
             bool temFiltro;
             string filtroAdicional;
 
-            string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, 0, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
+            string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
                 null, null, null, null, null, null, "", 0, 0, false, contasVinculadas, idFormaPagto, 0, 0, false, false, naoBuscarReneg ? 3 : 0,
-                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, out temFiltro, out filtroAdicional);
+                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, 
+                out temFiltro, out filtroAdicional);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
                 GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, null, tipoContaContabil, null, null, null));
@@ -973,10 +976,10 @@ namespace Glass.Data.DAL
 
                 if (formaPagto != null)
                 {
-
                     if (retorno.IdSinal > 0)
                     {
-                        formaPagto += " - " + (ObtemValorCampo<int>("NumParcMax", "IdContaRRef=" + retorno.IdContaR) > 0 ? " " + ObtemValorCampo<int>("NumParcMax", "IdContaRRef=" + retorno.IdContaR) + " parcela(s)" : string.Empty);
+                        var numParcMax = ObtemValorCampo<int>(session, "NumParcMax", $"IdContaRRef={ retorno.IdContaR }");
+                        formaPagto += $" - { (numParcMax > 0 ? $" { numParcMax } parcela(s)" : string.Empty) }";
                     }
 
                     retorno.FormaPagto = formaPagto;
@@ -2190,7 +2193,7 @@ namespace Glass.Data.DAL
                     pagamentoContaReceber.IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null;
                     pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
                     pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
-                    pagamentoContaReceber.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = pagamentoContaReceber.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
                     pagamentoContaReceber.TaxaAntecipacao = taxasAntecipacao.ElementAtOrDefault(i) > 0 ? (int?)taxasAntecipacao.ElementAt(i) : null;
                     pagamentoContaReceber.TipoBoleto = tiposBoleto.ElementAtOrDefault(i) > 0 ? (int?)tiposBoleto.ElementAt(i) : null;
                     pagamentoContaReceber.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
@@ -2857,7 +2860,7 @@ namespace Glass.Data.DAL
                         pagamentoAcerto.IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint)idsContaBanco.ElementAt(i) : (uint?)null;
                         pagamentoAcerto.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null;
                         pagamentoAcerto.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
-                        pagamentoAcerto.QuantidadeParcelaCartao = quantidadesParcelasCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelasCartao.ElementAt(i) : (int?)null;
+                        pagamentoAcerto.QuantidadeParcelaCartao = pagamentoAcerto.IdTipoCartao > 0 && quantidadesParcelasCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelasCartao.ElementAt(i) : (int?)null;
                         pagamentoAcerto.TaxaAntecipacao = taxasAntecipacao.ElementAtOrDefault(i) > 0 ? taxasAntecipacao.ElementAt(i) : (decimal?)null;
                         pagamentoAcerto.TipoBoleto = tiposBoleto.ElementAtOrDefault(i) > 0 ? tiposBoleto.ElementAt(i) : (int?)null;
                         pagamentoAcerto.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
@@ -6899,12 +6902,7 @@ namespace Glass.Data.DAL
                                 {
                                     // Calcula o valor dos juros
                                     valorTotalJurosCartao += conta.ValorJurosCartao;
-
-                                    // Calcula o valor da movimentação
-                                    if (conta.IdContaRRef.GetValueOrDefault() > 0 && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
-                                        valorTotalMov += ObtemValorVec(transaction, (uint)conta.IdContaRRef) - (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : conta.ValorJurosCartao);
-                                    else
-                                        valorTotalMov += conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? conta.ValorJurosCartao : 0);
+                                    valorTotalMov += conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? conta.ValorJurosCartao : 0);
                                 }
 
                                 MarcaContaComoRecebida(transaction, conta, dataMov);
@@ -6974,17 +6972,11 @@ namespace Glass.Data.DAL
                         {
                             // Calcula o valor dos juros
                             var valorJurosCartao = conta.ValorJurosCartao;
-
-                            decimal valor = 0;
-
-                            // Calcula o valor da movimentação
-                            if (conta.IdContaRRef.GetValueOrDefault() > 0 && MenuConfig.ExibirCartaoNaoIdentificado && ExecuteScalar<int>(transaction, "SELECT COUNT(*) FROM contas_receber WHERE IdContaRRef = " + conta.IdContaRRef) == 1)
-                                valor = ObtemValorVec(transaction, (uint)conta.IdContaRRef) - (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? 0 : valorJurosCartao);
-                            else
-                                valor = conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? valorJurosCartao : 0);
+                            var valor = conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? valorJurosCartao : 0);
 
                             // Gera a movimentação bancária
                             GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, conta.IdConta.Value, dataMov, tipoMov, valor);
+
                             // Gera a movimentação de juros
                             if (valorJurosCartao > 0)
                             {
@@ -8106,12 +8098,12 @@ namespace Glass.Data.DAL
                     AND numeroDocumentoCnab IS NULL
                     AND numArquivoRemessaCnab IS NULL";
 
-            if (!incluirContasAcertoParcial)
+            if (!incluirContasAcertoParcial && string.IsNullOrWhiteSpace(idsContas))
             {
                 sql += " AND c.IdAcertoParcial IS NULL";
             }
 
-            if (!incluirContasAntecipacaoBoleto)
+            if (!incluirContasAntecipacaoBoleto && string.IsNullOrWhiteSpace(idsContas))
             {
                 sql += " AND c.IdAntecipContaRec IS NULL";
             }
@@ -9121,6 +9113,8 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Contas a receber de cartão referenciadas
+
         /// <summary>
         /// Atualiza o campo IdContaRRef das parcelas de cartão.
         /// </summary>
@@ -9137,5 +9131,7 @@ namespace Glass.Data.DAL
 
             return numeroParcelaContaPagar;
         }
+
+        #endregion
     }
 }

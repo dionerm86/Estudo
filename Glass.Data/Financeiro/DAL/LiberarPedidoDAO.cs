@@ -564,18 +564,16 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    var pagamentoLiberarPedido = new PagtoLiberarPedido
-                    {
-                        IdLiberarPedido = liberarPedido.IdLiberarPedido,
-                        NumFormaPagto = ++contadorPagamento,
-                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
-                        IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null,
-                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null,
-                        IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null,
-                        ValorPagto = valoresPagos.ElementAtOrDefault(i),
-                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null,
-                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null
-                    };
+                    var pagamentoLiberarPedido = new PagtoLiberarPedido();
+                    pagamentoLiberarPedido.IdLiberarPedido = liberarPedido.IdLiberarPedido;
+                    pagamentoLiberarPedido.NumFormaPagto = ++contadorPagamento;
+                    pagamentoLiberarPedido.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                    pagamentoLiberarPedido.IdContaBanco = idsContaBanco.ElementAtOrDefault(i) > 0 ? idsContaBanco.ElementAt(i) : (int?)null;
+                    pagamentoLiberarPedido.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? idsDepositoNaoIdentificado.ElementAt(i) : (int?)null;
+                    pagamentoLiberarPedido.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint)idsTipoCartao.ElementAt(i) : (uint?)null;
+                    pagamentoLiberarPedido.ValorPagto = valoresPagos.ElementAtOrDefault(i);
+                    pagamentoLiberarPedido.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
+                    pagamentoLiberarPedido.QuantidadeParcelaCartao = pagamentoLiberarPedido.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : (int?)null;
 
                     PagtoLiberarPedidoDAO.Instance.Insert(session, pagamentoLiberarPedido);
                 }
@@ -1212,17 +1210,15 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    var pagamentoContaReceber = new PagtoContasReceber
-                    {
-                        IdContaR = idContaR,
-                        IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i),
-                        ValorPagto = valoresRecebimento.ElementAt(i),
-                        IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null,
-                        IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null,
-                        IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null,
-                        QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null,
-                        NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null
-                    };
+                    var pagamentoContaReceber = new PagtoContasReceber();
+                    pagamentoContaReceber.IdContaR = idContaR;
+                    pagamentoContaReceber.IdFormaPagto = (uint)idsFormaPagamento.ElementAt(i);
+                    pagamentoContaReceber.ValorPagto = valoresRecebimento.ElementAt(i);
+                    pagamentoContaReceber.IdContaBanco = idsFormaPagamento.ElementAt(i) != (uint)Pagto.FormaPagto.Dinheiro && idsContaBanco.ElementAtOrDefault(i) > 0 ? (uint?)idsContaBanco.ElementAt(i) : null;
+                    pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = pagamentoContaReceber.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
 
                     PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);
                 }
@@ -1298,7 +1294,7 @@ namespace Glass.Data.DAL
             }
 
             // Atualiza o carregamento e as ocs parciais se houver.
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, produtosLiberarPedido.Select(f => f.IdProdPed).ToArray());
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, string.Join(",",idsPedido));
 
             #endregion
 
@@ -2382,7 +2378,7 @@ namespace Glass.Data.DAL
             #region Carregamento parcial
 
             //Atualiza o carregamento e as ocs parciais se houver
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsProdutosPedido);
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido);
 
             #endregion
 
@@ -2608,7 +2604,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
 
                     #endregion
 
@@ -2817,7 +2813,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsProdutosPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
 
                     #endregion
 
@@ -3003,6 +2999,65 @@ namespace Glass.Data.DAL
 
         #region Cancelar liberação
 
+        private void ValidarPecaEntregue(GDASession sessao, uint idLiberarPedido)
+        {
+            // Verifica se esta liberação já foi expedida na produção
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_pedido_producao ppp 
+                        inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
+                        inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
+                        @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
+            {
+                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta liberação (provavelmente parcial) não estão entregues, 
+                // ao invés de barrar se apenas uma peça estiver entregue
+                if (OrdemCargaConfig.UsarOrdemCargaParcial)
+                {
+                    foreach (var prodLib in ProdutosLiberarPedidoDAO.Instance.PesquisarPorLiberacao(sessao, idLiberarPedido).ToList())
+                    {
+                        var qtdNaoEntregue = ExecuteScalar<int>(sessao,
+                            $@"Select Count(*) From produto_pedido_producao ppp 
+                                inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
+                                inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
+                            Where ppp.situacao={(int)ProdutoPedidoProducao.SituacaoEnum.Producao} 
+                                and ppp.situacaoProducao<>{(int)SituacaoProdutoProducao.Entregue}
+                                and plp.idLiberarPedido={idLiberarPedido}
+                                and pp.idProdPed={prodLib.IdProdPed}");
+
+                        if (prodLib.QtdeCalc > qtdNaoEntregue)
+                        {
+                            throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+                }
+            }
+
+            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_pedido_producao ppp 
+                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
+                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
+                        @" and ppp.idPedidoExpedicao In 
+                            (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
+            {
+                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+            }
+
+            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
+            if (objPersistence.ExecuteSqlQueryCount(sessao,
+                    @"Select Count(*) From produto_impressao pi 
+                    Where pi.idPedidoExpedicao In 
+                        (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
+            {
+                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
+            }
+        }
+
         /// <summary>
         /// Cancela a liberação de um pedido.
         /// </summary>
@@ -3064,37 +3119,7 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && PossuiNotaFiscalAtiva(session, idLiberarPedido))
                 throw new Exception("Esta liberação possui uma ou mais notas fiscais não canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a liberação.");
 
-            // Verifica se esta liberação já foi expedida na produção
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_pedido_producao ppp 
-                        inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
-                        inner join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
-                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
-                        @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
-
-            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_pedido_producao ppp 
-                    Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
-                        and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
-                        @" and ppp.idPedidoExpedicao In 
-                            (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
-
-            // Verifica se esta liberação já foi expedida na produção (pedidos de revenda)
-            if (objPersistence.ExecuteSqlQueryCount(session,
-                    @"Select Count(*) From produto_impressao pi 
-                    Where pi.idPedidoExpedicao In 
-                        (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
-            {
-                throw new Exception("Esta liberação possui peças que já foram marcadas como entregue. Verifique na produção a possibilidade de retirá-las desta situação.");
-            }
+            ValidarPecaEntregue(session, idLiberarPedido);
 
             // Verifica se algum pedido dessa liberação já tem a comissão paga
             if (objPersistence.ExecuteSqlQueryCount(session,

@@ -451,6 +451,11 @@ namespace Glass.Data.Model
             get { return CodInterno + " - " + DescrProduto; }
         }
 
+        public bool IsVidroEstoqueQtde
+        {
+            get { return TipoCalculoUsado == (int)TipoCalculoGrupoProd.Qtd && GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) && SubgrupoProdDAO.Instance.IsProdutoEstoque((int)IdSubgrupoProd); }
+        }
+
         #endregion
 
         #region Propriedades do Beneficiamento

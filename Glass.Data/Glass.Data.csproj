@@ -548,6 +548,8 @@
     <Compile Include="Global\Model\TipoEntrega.cs" />
     <Compile Include="Global\Model\TipoProdutoBeneficiamento.cs" />
     <Compile Include="Global\Model\RelatorioDinamico.cs" />
+    <Compile Include="Global\Model\TipoSugestaoCliente.cs" />
+    <Compile Include="Global\DAL\TipoSugestaoClienteDAO.cs" />
     <Compile Include="Handlers\ArquivoDxf.cs" />
     <Compile Include="Handlers\ArquivoIntermac.cs" />
     <Compile Include="Handlers\ArquivoSglass.cs" />

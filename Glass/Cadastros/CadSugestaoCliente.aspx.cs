@@ -98,10 +98,8 @@ namespace Glass.UI.Web.Cadastros
     
             if (idCli == 0)
                 return;
-    
-            Data.Model.TipoSugestao tipo = Data.Model.TipoSugestao.Negociacao;
-            
-            Enum.TryParse<Glass.Data.Model.TipoSugestao>(drpTipo.SelectedValue, out tipo);
+
+            var tipo = drpTipo.SelectedValue.StrParaInt();
 
             var sugestaoFluxo = ServiceLocator.Current.GetInstance<Glass.Global.Negocios.ISugestaoFluxo>();
 

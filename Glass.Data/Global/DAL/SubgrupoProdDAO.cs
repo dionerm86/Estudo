@@ -177,6 +177,21 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
         }
 
+        //Valida se algum dos produtos passados é de um subgrupo que está marcado como Vidro Temperado
+        public bool IsVidroTemperado(GDASession session, IEnumerable<int> idsProd)
+        {
+            if (idsProd.Count() == 0 || idsProd.FirstOrDefault() == 0)
+                return false;
+
+            string sql = $@"
+                Select count(*) 
+                From subgrupo_prod 
+                Where idGrupoProd=1 
+                    And isVidroTemperado=true And idSubgrupoProd In (Select idSubgrupoProd From produto Where idProd IN ({string.Join(",", idsProd)}) )";
+
+            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+        }
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>

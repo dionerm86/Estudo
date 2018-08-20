@@ -12,6 +12,8 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(LstConhecimentoTransporte));
+
             if (Request.QueryString["erroCte"] != null)
                 ClientScript.RegisterClientScriptBlock(GetType(), "erroCte", "alert('O arquivo desse cte não foi encontrado.')", true);
     
@@ -218,6 +220,13 @@ namespace Glass.UI.Web.Listas
                     drpRecebedor.DataTextField = "Nome";
                     break;
             }
+        }
+
+        [Ajax.AjaxMethod]
+        public string ObtemIdLoja(string idCte)
+        {
+            var contasPagar = ContasPagarDAO.Instance.GetByCte(idCte.StrParaUint());
+            return contasPagar[0].IdLoja.ToString();
         }
     }
 }

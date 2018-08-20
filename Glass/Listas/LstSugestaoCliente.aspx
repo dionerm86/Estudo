@@ -153,16 +153,15 @@
                             <asp:Label ID="Label23" runat="server" Text="Tipo" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipo" runat="server">
+                            <asp:DropDownList ID="drpTipo" runat="server" 
+                                DataSourceID="odsTipoSugestaoCliente"
+                                DataTextField="Descricao" 
+                                DataValueField="IdTipoSugestaoCliente" 
+                                AppendDataBoundItems="True">
                                 <asp:ListItem Value="">Todos</asp:ListItem>
-                                <asp:ListItem Value="Reclamacao">Reclamação</asp:ListItem>
-                                <asp:ListItem Value="Sugestao">Sugestão</asp:ListItem>
-                                <asp:ListItem Value="Negociacao">Negociação</asp:ListItem>
-                                <asp:ListItem Value="Perfil">Perfil</asp:ListItem>
-                                <asp:ListItem Value="Cobranca">Cobrança</asp:ListItem>
-                                <asp:ListItem Value="Outro">Outro</asp:ListItem>
                             </asp:DropDownList>
-                        </td>                        <td>
+                        </td>                        
+                        <td>
                             <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" Style="width: 16px" OnClick="imgPesq_click" />
                         </td>
@@ -334,6 +333,10 @@
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsVendedoresAssociados" runat="server"
                     SelectMethod="ObterFuncionariosAtivosAssociadosAClientes" TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
+                </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoSugestaoCliente" runat="server" 
+                    SelectMethod="ObterTiposSugestaoCliente"
+                    TypeName="Glass.Data.DAL.TipoSugestaoClienteDAO">
                 </colo:VirtualObjectDataSource>
             </td>
         </tr>

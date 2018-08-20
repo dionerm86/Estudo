@@ -78,7 +78,7 @@
         /// <summary>
         /// Tipo de sugestão.
         /// </summary>
-        public Glass.Data.Model.TipoSugestao TipoSugestao
+        public int TipoSugestao
         {
             get { return DataModel.TipoSugestao; }
             set
