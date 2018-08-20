@@ -7610,6 +7610,19 @@ namespace Glass.Data.DAL
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
                 return false;
 
+            // Se não for Gerente/Auxiliar verifica se o pedido é do usuário logado
+            var flagVendedor = true;
+            if (!geradoParceiro &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Gerente &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.AuxAdministrativo &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador)
+            {
+                var idFunc = ObtemIdFunc(session, idPedido);
+                var usuCad = ExecuteScalar<int>($"SELECT UsuCad FROM pedido WHERE IdPedido={idPedido}");
+
+                flagVendedor = idFunc == UserInfo.GetUserInfo.CodUser || usuCad == UserInfo.GetUserInfo.CodUser;
+            }
+
             return (((valorPagtoAntecipado == 0 || PedidoConfig.ReabrirPedidoComPagamentoAntecipado ||
                 /* Chamado 16956 e 17824. */
                 (possuiObraAssociada && ObraDAO.Instance.ObtemSituacao(session, GetIdObra(session, idPedido).Value) != Obra.SituacaoObra.Finalizada)) &&
@@ -7620,7 +7633,8 @@ namespace Glass.Data.DAL
                 && (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoOrdemCargaDAO.Instance.PedidoTemOC(session, idPedido)))
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && importado)
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(session, idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
-                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido));
+                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido))
+                && flagVendedor;
         }
 
         private static object _reabrirPedido = new object();
