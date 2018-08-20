@@ -24,7 +24,7 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
         /// </summary>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("configuracoes/lista")]
+        [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Orcamentos.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaOrcamentos()
         {
@@ -111,31 +111,6 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
                     });
 
                 return this.Lista(situacoes);
-            }
-        }
-
-        /// <summary>
-        /// Obtém uma lista de vendedores para filtro na listagem de orçamentos.
-        /// </summary>
-        /// <param name="id">O identificador do orçamento</param>
-        /// <returns>Uma lista JSON com os dados básicos dos vendedores.</returns>
-        [HttpGet]
-        [Route("{id}/vendedores")]
-        [SwaggerResponse(200, "Vendedores encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Vendedores não encontrados.")]
-        public IHttpActionResult ObterVendedores(int id)
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var vendedores = FuncionarioDAO.Instance.GetVendedoresOrca((uint)id)
-                    .Select(f => new IdNomeDto
-                    {
-                        Id = f.IdFunc,
-                        Nome = f.Nome,
-                    })
-                    .ToList();
-
-                return this.Lista(vendedores);
             }
         }
     }

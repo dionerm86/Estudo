@@ -9,10 +9,17 @@ Servicos.Funcionarios = (function(http) {
   return {
     /**
      * Recupera a lista de funcionários vendedores.
+     * @param {?number} [idVendedorAtual=null] O identificador do vendedor atual.
+     * @param {?boolean} [orcamento=null] Considerar no resultado os emissores de orçamentos?
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterVendedores: function () {
-      return http().get(API + 'vendedores');
+    obterVendedores: function (idVendedorAtual, orcamento) {
+      return http().get(API + 'vendedores', {
+        params: {
+          idVendedorAtual,
+          orcamento
+        }
+      });
     },
 
     /**

@@ -62,7 +62,7 @@ Vue.component('orcamento-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     recuperarVendedores: function() {
-      return Servicos.Orcamentos.obterVendedores();
+      return Servicos.Funcionarios.obterVendedores(null, true);
     }
   },
 

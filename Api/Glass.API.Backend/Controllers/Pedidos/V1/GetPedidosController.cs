@@ -50,7 +50,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
         /// <param name="exibirFinanceiro">Indica se a tela de listagem deve exibir detalhes do financeiro.</param>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("configuracoes/lista")]
+        [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Pedidos.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaPedidos(bool exibirFinanceiro = false)
         {

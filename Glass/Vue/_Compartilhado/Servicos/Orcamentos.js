@@ -57,7 +57,7 @@ Servicos.Orcamentos = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterConfiguracoesLista: function() {
-      return http().get(API + 'configuracoes/lista');
+      return http().get(API + 'configuracoes');
     },
 
     /**

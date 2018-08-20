@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         /// </summary>
         /// <returns>Um objeto JSON com as configurações da tela.</returns>
         [HttpGet]
-        [Route("configuracoes/lista")]
+        [Route("configuracoes")]
         [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Clientes.Configuracoes.ListaDto))]
         public IHttpActionResult ObterConfiguracoesListaClientes()
         {

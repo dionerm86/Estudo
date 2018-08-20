@@ -372,7 +372,7 @@ Servicos.Pedidos = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterConfiguracoesLista: function(exibirFinanceiro) {
-      return http().get(API + 'configuracoes/lista', {
+      return http().get(API + 'configuracoes', {
         params: {
           exibirFinanceiro: exibirFinanceiro || false
         }

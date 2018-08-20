@@ -103,7 +103,7 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterVendedores: function () {
-      return Servicos.Pedidos.obterVendedores(this.pedido.idVendedor);
+      return Servicos.Funcionarios.obterVendedores(this.pedido.idVendedor);
     },
 
     /**
