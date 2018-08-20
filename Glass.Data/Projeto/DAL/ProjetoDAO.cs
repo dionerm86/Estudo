@@ -690,8 +690,7 @@ namespace Glass.Data.DAL
                             try
                             {
                                 // Deixa o pedido conferido.
-                                bool temp = false;
-                                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, ref temp, false);
+                                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, false);
                             }
                             catch (ValidacaoPedidoFinanceiroException f)
                             {
