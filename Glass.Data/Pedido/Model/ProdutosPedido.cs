@@ -768,10 +768,9 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(
-                Glass.Data.DAL.ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd),
-                Glass.Data.DAL.ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd)
-              );
+                IdGrupoProd = IdGrupoProd > 0 ? IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd);
+                IdSubgrupoProd = IdSubgrupoProd > 0 ? IdSubgrupoProd : (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd);
+                return GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd);
             }
         }
 
