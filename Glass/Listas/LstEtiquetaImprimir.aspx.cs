@@ -39,14 +39,22 @@ namespace Glass.UI.Web.Listas
                 lnkArqOtimizacaoSemSag.Visible = PCPConfig.PermitirGerarArqOtimizacaoSemSag;
                 lnkArqOtimizacaoSemExportadas.Visible = PCPConfig.ExibirOpcaoExportarApenasNaoExportadasOptyway;
 
-                int idArquivoOtimizacao = 0;
-                if (int.TryParse(Request["idArquivoOtimizacao"], out idArquivoOtimizacao))
+                int id = 0;
+                if (int.TryParse(Request["idArquivoOtimizacao"], out id))
                 {
                     var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                         .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
 
-                    ItensOtimizacao = otimizacaoFluxo.ObterItens(idArquivoOtimizacao).Select(f => new EtiquetaProducao(f));
+                    ItensOtimizacao = otimizacaoFluxo.ObterItens(id).Select(f => new EtiquetaProducao(f));
                 }
+                else if (int.TryParse(Request["idSolucaoOtimizacao"], out id))
+                {
+                    var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
+                        .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
+
+                    ItensOtimizacao = otimizacaoFluxo.ObterItensPelaSolucao(id).Select(f => new EtiquetaProducao(f));
+                }
+                
             }
     
             if (!String.IsNullOrEmpty(hdfIdsPedidoNFe.Value) && !String.IsNullOrEmpty(hdfIdProdPedNf.Value))

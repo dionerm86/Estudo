@@ -52,6 +52,11 @@ namespace Glass.Otimizacao.eCutter
         public string SaveOptimizationUri => $"{_enderecoServico}";
 
         /// <summary>
+        /// Uri que será usada para cancelar a otimização.
+        /// </summary>
+        public string CancelOptimizationUri => $"{_enderecoServico}&cancel=true";
+
+        /// <summary>
         /// Opções da operação de salvar a otimização.
         /// </summary>
         public string[] SaveOptimizationOptions => new[] { "eCutter", "Optyway LabelTemp", "Optimization Package", "eCutter Labels" };
@@ -71,6 +76,47 @@ namespace Glass.Otimizacao.eCutter
         /// Identifica se o otimizador deve ser fechado quando a otimização for salva.
         /// </summary>
         public bool CloseOnSave => true;
+
+        /// <summary>
+        /// Obtém ou define se é para mesclar o estoque de chapas.
+        /// </summary>
+        public bool MergeSheetStock
+        {
+            get { return Parameters.ContainsKey("MergeSheetStock"); }
+            set
+            {
+                if (MergeSheetStock != value)
+                {
+                    if (!value)
+                        Parameters.Remove("MergeSheetStock");
+                    else
+                        Parameters.Add("MergeSheetStock", "true");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define se é para consolidar o estoque de chapas.
+        /// </summary>
+        public bool ConsolidateSheetStock
+        {
+            get { return Parameters.ContainsKey("ConsolidateSheetStock"); }
+            set
+            {
+                if (ConsolidateSheetStock != value)
+                {
+                    if (!value)
+                        Parameters.Remove("ConsolidateSheetStock");
+                    else
+                        Parameters.Add("ConsolidateSheetStock", "true");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém os parâmetros adicionais da configuração.
+        /// </summary>
+        public IDictionary<string, string> Parameters { get; } = new Dictionary<string, string>();
 
         #endregion
 
@@ -123,6 +169,7 @@ namespace Glass.Otimizacao.eCutter
             writer.WriteAttributeString("optimizationPlanFormat", OptimizationPlanFormat);
             writer.WriteAttributeString("getOptimizationPlanUri", GetOptimizationPlanUri);
             writer.WriteAttributeString("saveOptimizationUri", SaveOptimizationUri);
+            writer.WriteAttributeString("cancelOptimizationUri", CancelOptimizationUri);
             writer.WriteAttributeString("standardPiecesFormat", StandardPiecesFormat);
             writer.WriteAttributeString("getStandardPiecesUri", GetStandardPiecesUri);
             writer.WriteStartAttribute("closeOnSave");
@@ -139,6 +186,18 @@ namespace Glass.Otimizacao.eCutter
                     writer.WriteValue(option);
                     writer.WriteEndElement();
                 }
+            }
+
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Parameters");
+
+            foreach (var parameter in Parameters)
+            {
+                writer.WriteStartElement("Parameter");
+                writer.WriteAttributeString("name", parameter.Key);
+                writer.WriteValue(parameter.Value);
+                writer.WriteEndElement();
             }
 
             writer.WriteEndElement();

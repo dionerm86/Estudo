@@ -114,8 +114,8 @@
       <HintPath>..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.26340, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colosoft.WebControls.1.0.0\lib\net40\Colosoft.WebControls.dll</HintPath>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.20426, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
@@ -329,6 +329,7 @@
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastro.cs" />
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastroProdutoOrcamento.cs" />
     <Compile Include="Configuracoes\OrdemCargaConfig\OrdemCargaConfig.cs" />
+    <Compile Include="Configuracoes\OtimizacaoConfig\OtimizacaoConfig.cs" />
     <Compile Include="Configuracoes\PCPConfig\EmailSMS.cs" />
     <Compile Include="Configuracoes\PCPConfig\Etiqueta.cs" />
     <Compile Include="Configuracoes\PCPConfig\PainelProducao.cs" />

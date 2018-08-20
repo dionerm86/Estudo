@@ -129,6 +129,23 @@ namespace Glass.Otimizacao.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Obtém ou define se o retalho é reaproveitavel.
+        /// </summary>
+        public bool Reaproveitavel
+        {
+            get { return DataModel.Reaproveitavel; }
+            set
+            {
+                if (DataModel.Reaproveitavel != value &&
+                    RaisePropertyChanging(nameof(Reaproveitavel), value))
+                {
+                    DataModel.Reaproveitavel = value;
+                    RaisePropertyChanged(nameof(Reaproveitavel));
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

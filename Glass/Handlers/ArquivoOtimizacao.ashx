@@ -21,6 +21,13 @@ public class ArquivoOtimizacao : IHttpHandler
             return;
         }
 
+        if (UserInfo.GetUserInfo == null || UserInfo.GetUserInfo.CodUser == 0)
+        {
+            context.Response.Write("<script>alert(\"Não existe autenticação ativa para concluir essa operação!\"); window.history.back(); </script>");
+            context.Response.Flush();
+            return;
+        }
+
         // Define que apenas o Arquivo de Mesa será gerado
         bool apenasArqMesa = context.Request["apenasArqMesa"] == "true";
         var arquivoECutter = context.Request["ecutter"] == "true" || Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == DataSources.TipoExportacaoEtiquetaEnum.eCutter;
@@ -81,7 +88,7 @@ public class ArquivoOtimizacao : IHttpHandler
             Glass.Data.Model.ArquivoOtimizacao.DirecaoEnum.Exportar, (lstArqMesa.Count != 0 || apenasArqMesa) ? ".zip" : extensaoArquivo, lstEtiqueta, lstCodArq);
 
         a.ExtensaoArquivo = extensaoArquivo;
-            
+
         if (lstErrosArq.Any())
         {
             var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))

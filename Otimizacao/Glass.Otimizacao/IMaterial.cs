@@ -65,7 +65,7 @@ namespace Glass.Otimizacao
         /// <summary>
         /// Distancia mínima.
         /// </summary>
-        double DistanciaMinima { get; }
+        double DistanciaMin { get; }
 
         /// <summary>
         /// Recorte X1.
@@ -90,22 +90,22 @@ namespace Glass.Otimizacao
         /// <summary>
         /// Corte transversal em X.
         /// </summary>
-        double CorteTransversalX { get; }
+        double TransversalMaxX { get; }
 
         /// <summary>
         /// Corte transversal em Y.
         /// </summary>
-        double CorteTransversalY { get; }
+        double TransversalMaxY { get; }
 
         /// <summary>
         /// Valor mínimo em X para gerar um retalho.
         /// </summary>
-        double RetalhoMinX { get; }
+        double DesperdicioMinX { get; }
 
         /// <summary>
         /// Valor mínimo em Y para gerar um retalho.
         /// </summary>
-        double RetalhoMinY { get; }
+        double DesperdicioMinY { get; }
 
         /// <summary>
         /// Configura o valor de recorte que deve introduzir-se nas
@@ -118,7 +118,7 @@ namespace Glass.Otimizacao
         /// Valor de ângulo ao qual o recorte deve ser introduzido de
         /// forma automática.
         /// </summary>
-        double AnguloRecorteAutomaticoForma { get; }
+        double AnguloRecorteAutomatico { get; }
 
         #endregion
     }

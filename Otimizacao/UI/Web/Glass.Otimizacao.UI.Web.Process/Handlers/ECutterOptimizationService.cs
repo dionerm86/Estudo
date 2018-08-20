@@ -122,8 +122,22 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     });
                 }
 
+                // Verifica se nenhum plano de corte foi impotado
+                if (importacao.Solucao != null && !importacao.Solucao.PlanosOtimizacao.Any(f => f.PlanosCorte.Any()))
+                {
+                    return new eCutter.ResultadoSalvarTransacao(true, null, new[]
+                    {
+                        new eCutter.MensagemTransacao("Otimização incompleta", $"Nenhum plano de corte foi otimizado.", eCutter.TipoMensagemTransacao.Erro)
+                    });
+                }
+
                 var url = context.Request.Url.AbsoluteUri;
-                url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase)) + "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
+                url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase));
+                if (importacao.Solucao != null)
+                    url += "Listas/LstEtiquetaImprimir.aspx?idsolucaootimizacao=" + importacao.Solucao.IdSolucaoOtimizacao;
+                
+                else
+                    url += "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
 
                 // Adiciona no resultado o token correto
                 url = url.Replace($"token={context.Request.QueryString["Token"]}", $"token={token}");
@@ -274,12 +288,22 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
             if (requestType == "post")
             {
-                var arquivos = new List<IArquivoSolucaoOtimizacao>();
+                eCutter.ResultadoSalvarTransacao resultado = null;
 
-                for (var i = 0; i < context.Request.Files.Count; i++)
-                    arquivos.Add(new ConteudoArquivoOtimizacao(context.Request.Files[i]));
+                // Verifica se é a operação de cancelamento
+                if (context.Request.QueryString["cancel"] == "true")
+                {
+                    resultado = new eCutter.ResultadoSalvarTransacao(true, null, null);
+                }
+                else
+                {
+                    var arquivos = new List<IArquivoSolucaoOtimizacao>();
 
-                var resultado = Importar(context, token, arquivos);
+                    for (var i = 0; i < context.Request.Files.Count; i++)
+                        arquivos.Add(new ConteudoArquivoOtimizacao(context.Request.Files[i]));
+
+                    resultado = Importar(context, token, arquivos);
+                }
 
                 var writer = XmlWriter.Create(context.Response.OutputStream,
                    new XmlWriterSettings
@@ -287,8 +311,8 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                        CloseOutput = false
                    });
 
-                writer.WriteStartElement("ProtocolTransactionSaveResult");
-                Otimizacao.eCutter.Serializador.Serializar(writer, resultado);
+                writer.WriteStartElement("ProtocolTransactionOperationResult");
+                eCutter.Serializador.Serializar(writer, resultado);
                 writer.WriteEndElement();
                 writer.Flush();
 
@@ -332,6 +356,8 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             else if (!string.IsNullOrEmpty(context.Request["optimizationplan"]))
             {
                 var solucaoOtimizacao = OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(int.Parse(id));
+                var nomeSolucaoOtimizacao = string.Format("W{0}",
+                    id.Length > 3 ? id.Substring(id.Length - 3) : id);
 
                 if (solucaoOtimizacao != null)
                 {
@@ -343,8 +369,10 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                         using (var stream = arquivo.Abrir())
                         {
                             context.Response.ContentType = "application/ecutter-optimization";
-                            context.Response.AddHeader("Content-Disposition", $"attachment; filename={arquivo.Nome}");
+                            context.Response.AddHeader("Content-Disposition", $"attachment; filename={nomeSolucaoOtimizacao}.optsln");
                             context.Response.AddHeader("Content-Length", stream.Length.ToString());
+
+                            context.Response.Flush();
 
                             var buffer = new byte[1024];
                             var read = 0;
@@ -365,6 +393,8 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
                     if (System.IO.File.Exists(arquivo))
                     {
+                        context.Response.ContentType = "application/ecutter-optimization";
+                        context.Response.AddHeader("Content-Disposition", $"attachment; filename={nomeSolucaoOtimizacao}.optsln");
                         context.Response.WriteFile(arquivo);
                     }
                     else
@@ -394,7 +424,12 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(eCutter.ProtocolConfiguration));
                 serializer.Serialize(context.Response.OutputStream, 
-                    new eCutter.ProtocolConfiguration(context.Request.Url, id, formato));
+                    new eCutter.ProtocolConfiguration(context.Request.Url, id, formato)
+                    {
+                        MergeSheetStock = 
+                            Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Externo && 
+                            !possuiSolucaoOtimizacao
+                    });
 
                 context.Response.Flush();
             }
