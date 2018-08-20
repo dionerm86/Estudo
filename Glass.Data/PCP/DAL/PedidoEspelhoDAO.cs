@@ -2705,11 +2705,15 @@ namespace Glass.Data.DAL
                 if (!diretorioExiste && PCPConfig.EmpresaGeraArquivoSGlass)
                     diretorioExiste = Directory.Exists(PCPConfig.CaminhoSalvarProgramSGlass);
 
-                // Apaga arquivos gerados pela intermac
-                var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
-                var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}*.CNI", idPedido));
-                foreach (var foundFile in arquivosIntermac)
-                    File.Delete(foundFile.FullName);
+                if (PCPConfig.EmpresaGeraArquivoIntermac)
+                {
+                    diretorioExiste = true;
+
+                    // Apaga arquivos gerados pela intermac
+                    var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
+                    var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}*.CNI", idPedido));
+                    DeletaArquivosIntermac(arquivosIntermac);
+                }
             }
 
             if (diretorioExiste)
@@ -2726,6 +2730,7 @@ namespace Glass.Data.DAL
                         string forma;
                         var nomeArquivoDxf = ImpressaoEtiquetaDAO.Instance.ObterNomeArquivo(session, null, TipoArquivoMesaCorte.DXF, (int)prodPedEsp.IdProdPed, etiqueta, false, out forma, false);
                         var nomeArquivoFml = ImpressaoEtiquetaDAO.Instance.ObterNomeArquivo(session, null, TipoArquivoMesaCorte.FML, (int)prodPedEsp.IdProdPed, etiqueta, false, out forma, false);
+                        var nomeArquivoCni = ImpressaoEtiquetaDAO.Instance.ObterNomeArquivo(session, null, TipoArquivoMesaCorte.DXF, (int)prodPedEsp.IdProdPed, etiqueta, true, out forma, false);
 
                         using (Glass.Seguranca.AutenticacaoRemota.Autenticar())
                         {
@@ -2738,6 +2743,19 @@ namespace Glass.Data.DAL
                             var pathSglass = Path.Combine(PCPConfig.CaminhoSalvarProgramSGlass, Path.GetFileNameWithoutExtension(nomeArquivoDxf) + ".drawing");
                             if (File.Exists(pathSglass))
                                 File.Delete(pathSglass);
+
+                            if (PCPConfig.EmpresaGeraArquivoIntermac)
+                            {
+                                foreach(var contexto in ConfiguracaoBiesse.Instancia.Contextos)
+                                {
+                                    if (contexto.DiretorioSaida != null && System.IO.Directory.Exists(contexto.DiretorioSaida))
+                                    {
+                                        var filePattern = System.IO.Path.GetFileNameWithoutExtension(nomeArquivoCni) + ".*";
+                                        foreach (var arquivo in System.IO.Directory.GetFiles(contexto.DiretorioSaida, filePattern))
+                                            System.IO.File.Delete(arquivo);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -2989,8 +3007,7 @@ namespace Glass.Data.DAL
                     // Apaga arquivos gerados pela intermac
                     var dirCaminhoIntermac = new DirectoryInfo(PCPConfig.CaminhoSalvarIntermac);
                     var arquivosIntermac = dirCaminhoIntermac.GetFiles(string.Format("{0}'*.CNI", idPedido));
-                    foreach (var foundFile in arquivosIntermac)
-                        File.Delete(foundFile.FullName);
+                    DeletaArquivosIntermac(arquivosIntermac);
                 }
                 catch
                 {
@@ -3111,6 +3128,24 @@ namespace Glass.Data.DAL
                 logAlteracaoCancelamento.ValorAnterior = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.ConfirmadoLiberacao);
                 logAlteracaoCancelamento.ValorAtual = PedidoDAO.Instance.GetSituacaoPedido((int)Pedido.SituacaoPedido.Conferido);
                 LogAlteracaoDAO.Instance.Insert(session, logAlteracaoCancelamento);
+            }
+        }
+
+        private static void DeletaArquivosIntermac(FileInfo[] arquivosIntermac)
+        {
+            var arquivosNaoDeletados = string.Empty;
+            foreach (var foundFile in arquivosIntermac)
+            {
+                File.Delete(foundFile.FullName);
+                if (File.Exists(foundFile.FullName))
+                {
+                    arquivosNaoDeletados += foundFile.Name + ",";
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(arquivosNaoDeletados))
+            {
+                throw new Exception($"Não foi possível reabrir o pedido no momento.Não foi possível apagar o(s) arquivo(s) de marcação { arquivosNaoDeletados.TrimEnd(',') }, tente dentro de alguns instantes.");
             }
         }
 

@@ -1097,7 +1097,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!DataFabrica.Value</Value>
+                              <Value>=Fields!DataFabricaExibir.Value</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
                                 <Format>d</Format>
@@ -3073,6 +3073,10 @@
         <Field Name="AtualizarTotalPedido">
           <DataField>AtualizarTotalPedido</DataField>
           <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="DataFabricaExibir">
+          <DataField>DataFabricaExibir</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

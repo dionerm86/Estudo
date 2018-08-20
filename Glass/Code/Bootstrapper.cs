@@ -2,6 +2,8 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 
 namespace Glass.UI.Web
 {
@@ -10,6 +12,14 @@ namespace Glass.UI.Web
     /// </summary>
     public class Bootstrapper : Glass.UI.Web.Process.BaseBootstrapper
     {
+        protected override void ConfigureContainer()
+        {
+            base.ConfigureContainer();
+
+            Container.ComposeExportedValue<Glass.Otimizacao.IRepositorioSolucaoOtimizacao>(
+                new Glass.Otimizacao.RepositorioSolucaoOtimizacao(HttpContext.Current.Server.MapPath("~/Upload/Otimizacoes")));   
+        }
+
         protected override void ConfigureAggregateCatalog()
         {
             base.ConfigureAggregateCatalog();

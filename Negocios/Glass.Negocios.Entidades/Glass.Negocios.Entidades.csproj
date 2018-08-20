@@ -283,6 +283,11 @@
     <Compile Include="IObtemDescritor.cs" />
     <Compile Include="Orcamento\ProdutosOrcamento.cs" />
     <Compile Include="Otimizacao\Material.cs" />
+    <Compile Include="Otimizacao\PecaPlanoCorte.cs" />
+    <Compile Include="Otimizacao\PlanoCorte.cs" />
+    <Compile Include="Otimizacao\PlanoOtimizacao.cs" />
+    <Compile Include="Otimizacao\RetalhoPlanoCorte.cs" />
+    <Compile Include="Otimizacao\SolucaoOtimizacao.cs" />
     <Compile Include="PCP\ArquivoMesaCorte.cs" />
     <Compile Include="PCP\CapacidadeDiariaProducaoClassificacao.cs" />
     <Compile Include="PCP\Cavalete.cs" />
@@ -332,6 +337,10 @@
     <ProjectReference Include="..\..\Glass.Data\Glass.Data.csproj">
       <Project>{4f2eaa30-6616-4d69-8355-44557e20c398}</Project>
       <Name>Glass.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Otimizacao\Glass.Otimizacao\Glass.Otimizacao.csproj">
+      <Project>{876c89c4-d89e-4e70-ab98-52c008f0de85}</Project>
+      <Name>Glass.Otimizacao</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Rentabilidade\Glass.Rentabilidade\Glass.Rentabilidade.csproj">
       <Project>{049560e8-0306-483c-a782-8be14118a6ed}</Project>

@@ -162,6 +162,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("NumeroPdv")]
         public int NumeroPdv { get; set; }
 
+        [PersistenceProperty("HabilitarChat")]
+        public bool HabilitarChat { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

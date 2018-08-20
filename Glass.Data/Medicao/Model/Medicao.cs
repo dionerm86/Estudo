@@ -243,6 +243,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("IsMedicaoDefinitivaOrcamento", DirectionParameter.InputOptional)]
         public bool IsMedicaoDefinitivaOrcamento { get; set; }
 
+        [PersistenceProperty("EnderecoObra", DirectionParameter.InputOptional)]
+        public string EnderecoObra { get; set; }
+        [PersistenceProperty("BairroObra", DirectionParameter.InputOptional)]
+        public string BairroObra { get; set; }
+        [PersistenceProperty("CidadeObra", DirectionParameter.InputOptional)]
+        public string CidadeObra { get; set; }
+
 
         [PersistenceProperty("NomeFuncCad", DirectionParameter.InputOptional)]
         public string NomeFuncCad { get; set; }

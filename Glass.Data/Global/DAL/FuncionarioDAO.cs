@@ -1150,6 +1150,16 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>("NumeroPdv", "idFunc=" + idFunc);
         }
 
+        public bool ObtemHabilitarChat(uint idFunc)
+        {
+            return ObtemHabilitarChat(null, idFunc);
+        }
+
+        public bool ObtemHabilitarChat(GDASession sessao, uint idFunc)
+        {
+            return ObtemValorCampo<bool>(sessao, "HabilitarChat", "idFunc=" + idFunc);
+        }
+
         #endregion
 
         #region Busca funcionários usando filtros

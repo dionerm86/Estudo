@@ -1555,7 +1555,7 @@ namespace Glass.Data.DAL
             string dataIniInst, string dataFimInst, float altura, int largura, string codProd, string descrProd, string idsGrupos,
             string tipoCliente, bool trazerPedCliVinculado, int origemPedido, int desconto, bool selecionar, bool countLimit, bool forRpt,
             bool forGrafico, out bool temFiltro, out string filtroAdicional, int cidade, string comSemNF, int idMedidor,
-            bool apenasLiberados, uint idOC, string nomeUsuCad, bool loginCliente, bool administrador, bool emitirGarantiaReposicao,
+            bool apenasLiberados, uint idOC, string nomeUsuCad, bool loginCliente, bool administrador, bool emitirGarantia, bool emitirReposicao,
             bool emitirPedidoFuncionario)
         {
             temFiltro = false;
@@ -1900,7 +1900,7 @@ namespace Glass.Data.DAL
                 whereDadosVendidos += " and ped.tipoVenda in (" + tipoVenda + ")";
                 criterio += "Tipo de venda: ";
 
-                foreach (var g in DataSources.Instance.GetTipoVenda(false, true, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario))
+                foreach (var g in DataSources.Instance.GetTipoVenda(false, true, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario))
                     if (("," + tipoVenda + ",").Contains("," + g.Id + ","))
                         criterio += g.Descr + ", ";
 
@@ -2127,7 +2127,8 @@ namespace Glass.Data.DAL
             var formatoCriterio = "{0} {1}    ";
             var filtroFluxoProdutoPedido = string.Format("(Invisivel{0} IS NULL OR Invisivel{0}=0)", PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido");
 
-            var emitirGarantiaReposicao = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
             var administrador = login.IsAdministrador;
             var calcularLiberados = PedidoConfig.LiberarPedido;
@@ -2482,7 +2483,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += string.Format(" AND p.TipoVenda IN ({0})", tiposVenda);
                 whereDadosVendidos += string.Format(" AND ped.TipoVenda IN ({0})", tiposVenda);
                 var criterioTipoVenda = new List<string>();
-                var tiposVendaCadastrados = DataSources.Instance.GetTipoVenda(false, true, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+                var tiposVendaCadastrados = DataSources.Instance.GetTipoVenda(false, true, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
 
                 foreach (var tipoVenda in tiposVenda.Split(','))
                     criterioTipoVenda.Add(tiposVendaCadastrados.FirstOrDefault(f => f.Id.ToString() == tipoVenda).Descr);
@@ -3108,7 +3109,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Método que retorna o SQL utilizado para a busca dos dados do gráfico de vendas.
         /// </summary>
-        internal string SqlGraficoVendas(bool administrador, string dataFimSituacao, string dataInicioSituacao, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario, out string filtroAdicional,
+        internal string SqlGraficoVendas(bool administrador, string dataFimSituacao, string dataInicioSituacao,
+            bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario, out string filtroAdicional,
             int? idCliente, int? idFunc, int? idLoja, int? idVendAssoc, int? idRota, bool loginCliente, string nomeCliente, out bool temFiltro, string tipoPedido)
         {
             temFiltro = false;
@@ -3277,7 +3279,8 @@ namespace Glass.Data.DAL
 
             var cliente = login.IsCliente;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
             var dataInicio = dtIni != null ? dtIni.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "";
@@ -3286,7 +3289,7 @@ namespace Glass.Data.DAL
             var sql = !apenasAbertos ? SqlRptSit(idPedido, null, 0, codCliente, null, idCliente.Value.ToString(), null, 0, null, null, null,
                 null, dataInicio, dataFinal, null, null, 0, 0, null, 0, 0, 0, null, null, 0, null, null, false, false, false, null, null, 0, null, null, 0, 0,
                 null, null, null, null, false, 0, 0, selecionar, countLimit, false, false, out temFiltro, out filtroAdicional, 0, null, 0, false, 0, null,
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario) : "";
+                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario) : "";
 
             // Retira os pedidos liberados/confirmados da lista de clientes
             if (!PedidoConfig.ExibirPedidosLiberadosECommerce)
@@ -3382,13 +3385,14 @@ namespace Glass.Data.DAL
             var login = UserInfo.GetUserInfo;
             var cliente = login.IsCliente;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
             var sql = SqlRptSit((uint)idPedido, null, 0, null, null, idCliente > 0 ? idCliente.ToString() : null, nomeCliente, 0, idLoja, sit, dtIni, dtFim, null, null, null, null, 0,
                 0, null, 0, 0, 0, null, tv, 0, null, null, false, false, false, null, null, 0, null, null, 0, 0, null, null, null, null, false, 0, 0, selecionar,
                 !selecionar, false, false, out temFiltro, out filtroAdicional, 0, null, 0, true, 0, null,
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace(" as Criterio", " as Criterio1, '$$$' as Criterio");
+                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario).Replace(" as Criterio", " as Criterio1, '$$$' as Criterio");
 
             filtroAdicional += " and p.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao;
             var criterio = idLoja != "todas" ? "Loja: " + LojaDAO.Instance.GetNome(idLoja.StrParaUint()) + "    " : "Loja: Todas    ";
@@ -5275,7 +5279,7 @@ namespace Glass.Data.DAL
                         TotM2PendenteTotal = (f.TotM / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
                         PesoTotal = (f.Peso / f.Qtde) * QtdeProdPed,
                         PesoPendenteTotal = (f.Peso / f.Qtde) * (QtdeProdPed - quantidadePecasProntas),
-                        ValorTotal = ((f.Total + f.ValorIpi + f.ValorIcms) / (decimal)f.Qtde) * (decimal)QtdeProdPed
+                        ValorTotal = (((f.Total + f.ValorIpi + f.ValorIcms) / (decimal)f.Qtde) * (decimal)QtdeProdPed) * (decimal)(1 + (ObtemTaxaFastDelivery(null, f.IdPedido) / 100))
                     };
                 }).GroupBy(f => f.IdPedido))
                 {
@@ -5621,8 +5625,10 @@ namespace Glass.Data.DAL
 
                         var roteiroProducao = RoteiroProducaoDAO.Instance.GetElementByPrimaryKey(idRoteiroProducao);
 
+                        var pecaNeta = prodPed.IdProdPedParent > 0 && produtosPedido.Where(f => f.IdProdPed == prodPed.IdProdPedParent && f.IdProdPedParent > 0).Count() > 0;
+
                         //Verifica se oi roteiro obriga ter imagem na peça
-                        if (roteiroProducao.ObrigarAnexarImagemPecaAvulsa)
+                        if (!pecaNeta && roteiroProducao.ObrigarAnexarImagemPecaAvulsa)
                         {
                             throw new Exception(string.Format("o produto {0} está em processo que necessita que o produto possua imagem", prodPed.DescrProduto));
                         }
@@ -6408,7 +6414,7 @@ namespace Glass.Data.DAL
             else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
             {
                 if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
+                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
                     throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
 
                 #region Valida produtos reposição
@@ -6447,7 +6453,7 @@ namespace Glass.Data.DAL
             else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
             {
                 if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
+                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
                     throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
 
                 // Confirma o pedido
@@ -7626,6 +7632,19 @@ namespace Glass.Data.DAL
             if (PedidoConfig.ReabrirPedidoNaoPermitidoComSinalRecebido && recebeuSinal)
                 return false;
 
+            // Se não for Gerente/Auxiliar verifica se o pedido é do usuário logado
+            var flagVendedor = true;
+            if (!geradoParceiro &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Gerente &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.AuxAdministrativo &&
+                UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador)
+            {
+                var idFunc = ObtemIdFunc(session, idPedido);
+                var usuCad = ExecuteScalar<int>($"SELECT UsuCad FROM pedido WHERE IdPedido={idPedido}");
+
+                flagVendedor = idFunc == UserInfo.GetUserInfo.CodUser || usuCad == UserInfo.GetUserInfo.CodUser;
+            }
+
             return (((valorPagtoAntecipado == 0 || PedidoConfig.ReabrirPedidoComPagamentoAntecipado ||
                 /* Chamado 16956 e 17824. */
                 (possuiObraAssociada && ObraDAO.Instance.ObtemSituacao(session, GetIdObra(session, idPedido).Value) != Obra.SituacaoObra.Finalizada)) &&
@@ -7636,7 +7655,8 @@ namespace Glass.Data.DAL
                 && (!OrdemCargaConfig.UsarControleOrdemCarga || !PedidoOrdemCargaDAO.Instance.PedidoTemOC(session, idPedido)))
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && importado)
                 && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && PedidoExportacaoDAO.Instance.GetSituacaoExportacao(session, idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Exportado)
-                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido));
+                && !(tipoPedido == Pedido.TipoPedidoEnum.Revenda && Instance.PossuiImpressaoBox(session, idPedido))
+                && flagVendedor;
         }
 
         private static object _reabrirPedido = new object();
@@ -10317,8 +10337,10 @@ namespace Glass.Data.DAL
                                 GetTotalSemDesconto(sessao, pedido.IdPedido, pedido.Total));
                         }
 
-                        if (percDesconto > (decimal)PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela))
-                            Email.EnviaEmailDescontoMaior(sessao, pedido.IdPedido, 0, idFuncDesc, (float)percDesconto, PedidoConfig.Desconto.GetDescontoMaximoPedido(idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela));
+                        var descontoMaximoPedidoConfigurado = PedidoConfig.Desconto.GetDescontoMaximoPedidoConfigurado(sessao, idFuncDesc, pedido.TipoVenda ?? 0, (int?)pedido.IdParcela);
+
+                        if (percDesconto > (decimal)descontoMaximoPedidoConfigurado)
+                            Email.EnviaEmailDescontoMaior(sessao, pedido.IdPedido, 0, idFuncDesc, (float)percDesconto, descontoMaximoPedidoConfigurado);
                     }
                 }
 
@@ -11499,6 +11521,16 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se os pedidos passados são de reposição
         /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool IsPedidoReposicao(string idPedido)
+        {
+            return IsPedidoReposicao(null, idPedido);
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos passados são de reposição
+        /// </summary>
         public bool IsPedidoReposicao(GDASession sessao, string idPedido)
         {
             if (String.IsNullOrEmpty(idPedido))
@@ -11563,6 +11595,16 @@ namespace Glass.Data.DAL
                     AS temp;", idPedido);
 
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se os pedidos passados são de garantia
+        /// </summary>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool IsPedidoGarantia(string idPedido)
+        {
+            return IsPedidoGarantia(null, idPedido);
         }
 
         /// <summary>
@@ -12389,6 +12431,16 @@ namespace Glass.Data.DAL
             return ExecuteMultipleScalar<int>(session, string.Format("SELECT IdPedido FROM pedido WHERE IdPedidoRevenda={0}", idPedido));
         }
 
+        public List<int> ObterIdsPedidoNaoCancelados(GDASession session, List<int> idsPedido)
+        {
+            if (!idsPedido?.Any(f => f > 0) ?? true)
+            {
+                return new List<int>();
+            }
+
+            return ExecuteMultipleScalar<int>(session, $@"SELECT IdPedido FROM pedido WHERE IdPedido IN ({ string.Join(",", idsPedido) }) AND Situacao <> { (int)Pedido.SituacaoPedido.Cancelado };")?.ToList();
+        }
+
         /// <summary>
         /// Retorna o ID do último pedido inserido no sistema.
         /// </summary>
@@ -12550,6 +12602,26 @@ namespace Glass.Data.DAL
         public bool IsGeradoParceiro(GDASession session, uint idPedido)
         {
             return ObtemValorCampo<bool>(session, "geradoParceiro", "idPedido=" + idPedido);
+        }
+
+        #endregion
+
+        #region Verifica se o tipo do pedido pode ser alterado
+
+        /// <summary>
+        /// Verifica se o tipo do pedido pode ser alterado.
+        /// </summary>
+        private void VerificarAlterarTipoPedido(GDASession session, int idPedido)
+        {
+            var idsPedidoProducao = ObterIdsPedidoProducaoPeloIdPedidoRevenda(session, idPedido);
+            var idsPedidoNaoCancelados = ObterIdsPedidoNaoCancelados(session, idsPedidoProducao);
+
+            if (idsPedidoNaoCancelados?.Any(f => f > 0) ?? false)
+            {
+                throw new Exception($@"Não é possível alterar o tipo do pedido { idPedido }, pois ele está associado à pedidos de produção para corte.
+                    Cancele os pedidos associados para que seja possível alterar o tipo deste pedido.
+                    Pedidos de produção associados: { string.Join(", ", idsPedidoNaoCancelados) }.");
+            }
         }
 
         #endregion
@@ -12960,6 +13032,15 @@ namespace Glass.Data.DAL
                 if (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo && objUpdate.IdFormaPagto.GetValueOrDefault() == 0)
                 {
                     throw new Exception("Selecione a forma de pagamento do pedido");
+                }
+
+                /* Chamado 78183. */
+                if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && objUpdate.TipoPedido != ped.TipoPedido)
+                {
+                    VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
+                    objUpdate.GerarPedidoProducaoCorte = false;
+                    objPersistence.ExecuteCommand(session, $@"UPDATE pedido SET GerarPedidoProducaoCorte=0 WHERE IdPedido = { objUpdate.IdPedido };
+                        UPDATE pedido SET IdPedidoRevenda=NULL WHERE IdPedidoRevenda = { objUpdate.IdPedido };");
                 }
 
                 /* Chamado 65135. */
@@ -14572,14 +14653,15 @@ namespace Glass.Data.DAL
                 throw new Exception("Não foi informado o Tipo do pedido.");
 
             if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
-            !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
-            {
-                if (objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.GerarReposicao))
-                    throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
-                else if (objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
-                    throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
-            }
+                objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.GerarReposicao) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
+                throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
+
+            if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
+                objInsert.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
+                throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
 
             if (objInsert.TipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial)
             {
@@ -14720,17 +14802,16 @@ namespace Glass.Data.DAL
 
             #region Validações de permissão
 
-            if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao))
-            {
-                if (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição && !Config.PossuiPermissao(Config.FuncaoMenuPedido.GerarReposicao))
-                {
-                    throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
-                }
-                else if (objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
-                {
-                    throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
-                }
-            }
+            if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
+                objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.GerarReposicao) &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
+                throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
+
+            if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
+                objUpdate.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia &&
+                !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
+                throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
 
             #endregion
 
@@ -14822,6 +14903,14 @@ namespace Glass.Data.DAL
                 {
                     throw new Exception("O cliente deve controlar estoque para ser utilizado em um pedido de mão-de-obra especial.");
                 }
+            }
+
+            /* Chamado 78183. */
+            if (ped.TipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && objUpdate.TipoPedido != ped.TipoPedido)
+            {
+                VerificarAlterarTipoPedido(session, (int)objUpdate.IdPedido);
+                objUpdate.GerarPedidoProducaoCorte = false;
+                objPersistence.ExecuteCommand(session, $@"UPDATE pedido SET IdPedidoRevenda=NULL WHERE IdPedidoRevenda = { objUpdate.IdPedido };");
             }
 
             #endregion
@@ -15242,8 +15331,9 @@ namespace Glass.Data.DAL
             }
 
             // Só busca pedidos não exportados
-            filtroAdicional += String.Format(" and coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0}",
-                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado);
+            filtroAdicional += String.Format(" and (coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{0})={0} OR " +
+                " coalesce((" + PedidoExportacaoDAO.Instance.SqlSituacaoExportacao("p.idPedido") + "),{1})={1})",
+                (int)PedidoExportacao.SituacaoExportacaoEnum.Cancelado, (int)PedidoExportacao.SituacaoExportacaoEnum.Exportando);
 
             /* Chamado 55675. */
             filtroAdicional += string.Format(" AND IF((p.TipoPedido={0} AND p.TipoEntrega={1}) OR p.TipoPedido={2}, 1, 0)",

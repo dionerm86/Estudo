@@ -329,6 +329,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<string>(sessao, "Csosn", $"IdNaturezaOperacao={ idNaturezaOperacao }");
         }
 
+        public bool ObterDebitarIcmsDesonTotalNf(GDASession session, uint idNaturezaOperacao)
+        {
+            return ObtemValorCampo<bool>(session, "DebitarIcmsDesonTotalNf", "idNaturezaOperacao=" + idNaturezaOperacao);
+        }
+
         #endregion
 
         #region Busca os ids de naturezas de operação a partir de um CFOP
@@ -423,20 +428,38 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Valida se o cfop pode ser utilizado na nota fiscal
         /// </summary>
-        public bool ValidarCfop(int idNaturezaOperacao, int tipoDocumento)        {
+        public bool ValidarCfop(int idNaturezaOperacao, int tipoDocumento)
+        {
             return ValidarCfop(null, idNaturezaOperacao, tipoDocumento);
         }
 
         /// <summary>
         /// Valida se o cfop pode ser utilizado na nota fiscal
         /// </summary>
-        public bool ValidarCfop(GDASession session, int idNaturezaOperacao, int tipoDocumento)        {            var natOp = ObtemElemento(session, idNaturezaOperacao);
+        public bool ValidarCfop(GDASession session, int idNaturezaOperacao, int tipoDocumento)
+        {
+            var natOp = ObtemElemento(session, idNaturezaOperacao);
 
             //Se a nota fiscal for de entrada valida se o cfop é um cfop para notas de entrada
-            if (tipoDocumento == 1 || tipoDocumento == 3)            {                if (natOp.CodCfop.StartsWith("1") || natOp.CodCfop.StartsWith("2") || natOp.CodCfop.StartsWith("3"))                    return true;                return false;            }
+            if (tipoDocumento == 1 || tipoDocumento == 3)
+            {
+                if (natOp.CodCfop.StartsWith("1") || natOp.CodCfop.StartsWith("2") || natOp.CodCfop.StartsWith("3"))
+                    return true;
+
+                return false;
+            }
 
             //Se a nota fiscal for de saida valida se o cfop é um cfop para notas de saida
-            else if (tipoDocumento == 2)            {                if (natOp.CodCfop.StartsWith("5") || natOp.CodCfop.StartsWith("6") || natOp.CodCfop.StartsWith("7"))                    return true;                return false;            }            return true;        }
+            else if (tipoDocumento == 2)
+            {
+                if (natOp.CodCfop.StartsWith("5") || natOp.CodCfop.StartsWith("6") || natOp.CodCfop.StartsWith("7"))
+                    return true;
+
+                return false;
+            }
+
+            return true;
+        }
 
         #endregion
 

@@ -677,8 +677,8 @@ namespace Glass.Data.DAL
                     // Se for depósito não identificado, preenche a conta bancária no pagto sinal com o banco do depósito.
                         idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)DepositoNaoIdentificadoDAO.Instance.ObtemIdContaBanco(session, (int)idsDepositoNaoIdentificado.ElementAt(i)) : null;
                     pagamentoSinal.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (int?)idsDepositoNaoIdentificado.ElementAt(i) : null;
-                    pagamentoSinal.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
                     pagamentoSinal.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
+                    pagamentoSinal.QuantidadeParcelaCartao = pagamentoSinal.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? (int?)quantidadesParcelaCartao.ElementAt(i) : null;
                     pagamentoSinal.NumAutCartao = !string.IsNullOrWhiteSpace(numerosAutorizacaoCartao.ElementAtOrDefault(i)) ? numerosAutorizacaoCartao.ElementAt(i) : null;
 
                     PagtoSinalDAO.Instance.Insert(session, pagamentoSinal);
@@ -1037,7 +1037,7 @@ namespace Glass.Data.DAL
                         (uint?)idsContaBanco.ElementAt(i) : null;
                     pagamentoContaReceber.IdTipoCartao = idsTipoCartao.ElementAtOrDefault(i) > 0 ? (uint?)idsTipoCartao.ElementAt(i) : null;
                     pagamentoContaReceber.IdDepositoNaoIdentificado = idsDepositoNaoIdentificado.ElementAtOrDefault(i) > 0 ? (uint?)idsDepositoNaoIdentificado.ElementAt(i) : null;
-                    pagamentoContaReceber.QuantidadeParcelaCartao = quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : null;
+                    pagamentoContaReceber.QuantidadeParcelaCartao = pagamentoContaReceber.IdTipoCartao > 0 && quantidadesParcelaCartao.ElementAtOrDefault(i) > 0 ? quantidadesParcelaCartao.ElementAt(i) : null;
                     pagamentoContaReceber.NumAutCartao = numerosAutorizacaoCartao.ElementAtOrDefault(i);
 
                     PagtoContasReceberDAO.Instance.Insert(session, pagamentoContaReceber);

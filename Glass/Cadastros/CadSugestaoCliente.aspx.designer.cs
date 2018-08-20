@@ -94,6 +94,15 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.DropDownList drpTipo;
         
         /// <summary>
+        /// odsTipoSugestaoCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoSugestaoCliente;
+        
+        /// <summary>
         /// Label24 control.
         /// </summary>
         /// <remarks>

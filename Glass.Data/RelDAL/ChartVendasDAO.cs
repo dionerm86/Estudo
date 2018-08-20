@@ -21,7 +21,8 @@ namespace Glass.Data.RelDAL
             var tipoAgrupar = "nenhum";
             var administrador = login.IsAdministrador;
             var cliente = login.IsCliente;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
             criterio = string.Empty;
 
@@ -97,12 +98,12 @@ namespace Glass.Data.RelDAL
             }
 
             return GetVendasForChart(idLoja, tipoFunc, idVendedor, idCliente, nomeCliente, idRota, dataIni, dataFim, tipoPedido, agrupar, tipoAgrupar, ids.Select(x => (uint)x).ToList(),
-                cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario, out criterio);
+                cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario, out criterio);
         }
         
         public Dictionary<uint, List<ChartVendas>> GetVendasForChart(uint idLoja, int tipoFunc, uint idVendedor, uint idCliente, string nomeCliente, 
             uint idRota, string dataIni, string dataFim, string tipoPedido, int agrupar, string tipoAgrupar, List<uint> ids,
-            bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario, out string criterio)
+            bool cliente, bool administrador, bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario, out string criterio)
         {
             DateTime periodoIni = DateTime.Parse(dataIni);
             DateTime periodoFim = DateTime.Parse(dataFim).AddDays(1);
@@ -138,7 +139,7 @@ namespace Glass.Data.RelDAL
 
                     ChartVendas[] serie = GetVendas((int?)idLoja, tipoFunc, (int?)idVendedor, (int?)idCliente, (int?)idRota, nomeCliente, periodoIni.ToString("dd/MM/yyyy"),
                         periodoIni.AddMonths(1).AddDays(-1).ToString("dd/MM/yyyy"), tipoPedido, agrupar,
-                        cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario);
+                        cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario);
 
                     if (string.IsNullOrEmpty(criterio) && serie.Any(f => !string.IsNullOrEmpty(f.Criterio)))
                         criterio = serie.FirstOrDefault(f => !string.IsNullOrEmpty(f.Criterio)).Criterio;
@@ -222,7 +223,7 @@ namespace Glass.Data.RelDAL
         }
         
         public ChartVendas[] GetVendas(int? idLoja, int tipoFunc, int? idVendedor, int? idCliente, int? idRota, string nomeCliente,
-            string dataIni, string dataFim, string tipoPedido, int agrupar, bool cliente, bool administrador, bool emitirGarantiaReposicao, bool emitirPedidoFuncionario)
+            string dataIni, string dataFim, string tipoPedido, int agrupar, bool cliente, bool administrador, bool emitirGarantia, bool emitirReposicao, bool emitirPedidoFuncionario)
         {
             string data = PedidoConfig.LiberarPedido ? "DataLiberacao" : "DataConf";
 
@@ -232,7 +233,7 @@ namespace Glass.Data.RelDAL
             // Mesmos filtros utilizados no relatório de pedidos
             tipoPedido = !string.IsNullOrEmpty(tipoPedido) ? tipoPedido : "1,2,3";
 
-            var sql = PedidoDAO.Instance.SqlGraficoVendas(administrador, dataFim, dataIni, emitirGarantiaReposicao, emitirPedidoFuncionario, out filtroAdicional, idCliente,
+            var sql = PedidoDAO.Instance.SqlGraficoVendas(administrador, dataFim, dataIni, emitirGarantia, emitirReposicao, emitirPedidoFuncionario, out filtroAdicional, idCliente,
                 tipoFunc == 0 ? idVendedor : 0, idLoja, tipoFunc == 0 ? 0 : idVendedor, idRota, cliente, nomeCliente, out temFiltro, tipoPedido).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = @"
@@ -305,14 +306,15 @@ namespace Glass.Data.RelDAL
             var login = UserInfo.GetUserInfo;
             var cliente = login.IsCliente;
             var administrador = login.IsAdministrador;
-            var emitirGarantiaReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantiaReposicao);
+            var emitirGarantia = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia);
+            var emitirReposicao = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao);
             var emitirPedidoFuncionario = Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoFuncionario);
 
             string sql = PedidoDAO.Instance.SqlRptSit(0, "", 0, null, null, (idCliente > 0 ? idCliente.ToString() : null), nomeCliente, 0,
                 (idLoja > 0 ? idLoja.ToString() : null), (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente, 
                 dataIni, dataFim, null, null, null, null, 0, 0, tipoPedido, 0, 0, 0, null, tipoVenda, 0, null, null, false, false, false, null, null, 0, 
                 null, null, 0, 0, null, null, null, null, false, 0, 0, true, false, false, true, out temFiltro, out filtroAdicional, 0, null, 0, true, 0, 
-                null, cliente, administrador, emitirGarantiaReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
+                null, cliente, administrador, emitirGarantia, emitirReposicao, emitirPedidoFuncionario).Replace("?filtroAdicional?", filtroAdicional);
 
             sql = @"
                 Select p.idLoja, p.idFunc" + (tipoFunc == 0 ? "" : "Cliente") + @" as idFunc, Sum(TotalReal) as TotalVenda, 

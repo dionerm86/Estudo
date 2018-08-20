@@ -139,6 +139,17 @@
                             <asp:ImageButton ID="imgPesq5" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
+                        <td align="right" nowrap="nowrap" style='<%= !Glass.Configuracoes.PedidoConfig.LiberarPedido ? "display: none": "" %>'>
+                            <asp:Label ID="Label26" runat="server" Text="Troca/Dev." ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td align="right" nowrap="nowrap" style='<%= !Glass.Configuracoes.PedidoConfig.LiberarPedido ? "display: none": "" %>'>
+                            <asp:TextBox ID="txtTrocaDev" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
+                                onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
+                        </td>
+                        <td nowrap="nowrap">
+                            <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
+                                ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
                     </tr>
                 </table>
                 <table>
@@ -474,6 +485,7 @@
                 Type="Int32" />
             <asp:Parameter Name="buscarContasValorZerado" Type="Boolean" DefaultValue="false" />
             <asp:ControlParameter ControlID="txtCTe" Name="numeroCTe" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="txtTrocaDev" Name="idTrocaDevolucao" PropertyName="Text" Type="UInt32" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

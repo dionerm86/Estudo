@@ -361,11 +361,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public Produto GetElement(GDASession sessao, uint idProd, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetElement(GDASession sessao, uint idProd, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetElement(sessao, idProd);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -555,11 +556,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="codInterno"></param>
         /// <returns></returns>
-        public Produto GetByCodInterno(string codInterno, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetByCodInterno(string codInterno, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetByCodInterno(codInterno);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -1393,19 +1395,25 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool selecionar, out string filtroAdicional)
         {
             return SqlProd(idGrupo, idSubgrupo, descr, 0, 0, idPedido, idLoja, idCompra, paraPedidoProducao,
-            paraPedidoInterno, false, 0, 0, selecionar, out filtroAdicional);
+            paraPedidoInterno, false, 0, 0, 0, selecionar, out filtroAdicional);
         }
 
         private string SqlProd(int idGrupo, int idSubgrupo, string descr, int altura, int largura,
-            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto, uint idCliente,
+            int idPedido, int idLoja, int idCompra, bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro, int idItemProjeto, uint idCliente, int idOrcamento,
             bool selecionar, out string filtroAdicional)
         {
             filtroAdicional = " and p.situacao=" + (int)Glass.Situacao.Ativo;
 
             var parametroIdLoja = string.Empty;
 
-            // Busca os produtos que não forem compras
-            if (idPedido > 0)
+            if (idOrcamento > 0)
+            {
+                var idLojaOrcamento = OrcamentoDAO.Instance.GetIdLoja(null, (uint)idOrcamento);
+
+                if (idLojaOrcamento > 0)
+                    parametroIdLoja = $" AND pl.IdLoja={idLojaOrcamento} ";
+            }
+            else if (idPedido > 0) // Busca os produtos que não forem compras
             {
                 // Define que caso seja passado o pedido, busque estoque somente estoque disponível da loja do pedido passado.
                 parametroIdLoja = " AND pl.IdLoja=" + PedidoDAO.Instance.ObtemIdLoja(null, (uint)idPedido);
@@ -1459,7 +1467,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += string.Format(" AND p.Largura={0}", largura);
 
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
-            if (idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
+            if (idOrcamento == 0 && idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
            
             if (idLoja > 0)
@@ -1531,20 +1539,20 @@ namespace Glass.Data.DAL
             return GetProdutosCount(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), false);
         }
 
-        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente,
+        public IList<Produto> GetProdutos(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente, int idOrcamento,
             string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, idOrcamento, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
         }
 
-        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente)
+        public int GetProdutosCount(int idGrupo, int idSubgrupo, string descr, int altura, int largura, int idPedido, int idLoja, int idCompra, int pedidoInterno, int parceiro, int idItemProjeto, uint idCliente, int idOrcamento)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, false, Convert.ToBoolean(pedidoInterno), Convert.ToBoolean(parceiro), idItemProjeto, idCliente, idOrcamento, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
@@ -1559,7 +1567,7 @@ namespace Glass.Data.DAL
             bool paraPedidoInterno, bool parceiro, string sortExpression, int startRow, int pageSize)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, false, filtroAdicional, GetParamProd(descr));
@@ -1574,7 +1582,7 @@ namespace Glass.Data.DAL
             bool paraPedidoProducao, bool paraPedidoInterno, bool parceiro)
         {
             string filtroAdicional;
-            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, true, out filtroAdicional).
+            string sql = SqlProd(idGrupo, idSubgrupo, descr, altura, largura, idPedido, idLoja, idCompra, paraPedidoProducao, paraPedidoInterno, parceiro, 0, 0, 0, true, out filtroAdicional).
                 Replace("?filtroAdicional?", "");
 
             return GetCountWithInfoPaging(sql, false, filtroAdicional, GetParamProd(descr));
@@ -1868,7 +1876,7 @@ namespace Glass.Data.DAL
             uint idProd = ExecuteScalar<uint>("select idProd from produto where codInterno=?cod",
                 new GDAParameter("?cod", codInterno));
 
-            var produto = GetByCodInterno(codInterno, idLoja, idCliente, idFornec, saida);
+            var produto = GetByCodInterno(codInterno, null, idLoja, idCliente, idFornec, saida);
             produto.Unidade = UnidadeMedidaDAO.Instance.ObtemCodigo((uint)produto.IdUnidadeMedida);
 
             return produto;

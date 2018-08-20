@@ -634,7 +634,7 @@ Parameters!Agrupar.Value=4, "Data Emissão: " + Format(Fields!DataEmissao.Value,
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!NomeDestRem.Value</Value>
+                              <Value>=Fields!IdNomeDestRem.Value</Value>
                               <Style>
                                 <FontSize>8pt</FontSize>
                               </Style>
@@ -1762,6 +1762,10 @@ Parameters!Agrupar.Value=4, Format(Fields!DataEmissao.Value, "d"))</GroupExpress
         </Field>
         <Field Name="NomeDestRem">
           <DataField>NomeDestRem</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IdNomeDestRem">
+          <DataField>IdNomeDestRem</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="CpfCnpjDestRem">

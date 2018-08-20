@@ -61,7 +61,7 @@ namespace Glass.Global.Relatorios.SugestaoCliente
         /// Tipo de sugestão.
         /// </summary>
         [ReportDataSourceParameter("tipo")]
-        public Data.Model.TipoSugestao? Tipo { get; set; }
+        public int? Tipo { get; set; }
 
         /// <summary>
         /// Descrição.

@@ -744,7 +744,7 @@ namespace Glass.Data.DAL
 
                             uint idProd = idProdParaNf.GetValueOrDefault(pp.IdProd);
 
-                            Produto prod = ProdutoDAO.Instance.GetElement(transaction, idProd, idLoja, idCliente, null, true);
+                            var prod = ProdutoDAO.Instance.GetElement(transaction, idProd, (int)idNf, idLoja, idCliente, null, true);
 
                             if (prod == null)
                                 throw new Exception(string.Format("Um dos produtos dos pedidos não existe. IdProd: {0}", idProd));
@@ -1248,7 +1248,7 @@ namespace Glass.Data.DAL
                                 nf.DatasParcelas = new DateTime[nf.NumParc.Value];
                                 nf.ValoresParcelas = new decimal[nf.NumParc.Value];
 
-                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 4);
+                                var valorParcelas = Math.Round(nf.TotalNota / (decimal)nf.NumParc, 2);
 
                                 for (var i = 0; i < contasReceber.Length; i++)
                                 {
@@ -1260,7 +1260,7 @@ namespace Glass.Data.DAL
 
                                 if (difParcelaNota != 0)
                                 {
-                                    nf.ValoresParcelas[0] = difParcelaNota > 0 ? nf.ValoresParcelas[0] + difParcelaNota : nf.ValoresParcelas[0] - difParcelaNota;
+                                    nf.ValoresParcelas[0] += difParcelaNota;
                                 }
                             }
 
@@ -1717,7 +1717,7 @@ namespace Glass.Data.DAL
 
             foreach (ProdutosCompra pc in produtosCompra)
             {
-                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, idLoja, null, idFornec, false);
+                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, (int)idNf, idLoja, null, idFornec, false);
                 int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
 
                 // Recalcula as medidas dos alumínios para que o tamanho cobrado seja exato e o valor na nota fique correto
@@ -3859,19 +3859,40 @@ namespace Glass.Data.DAL
                                         ProdutoDAO.Instance.GetCodInterno((int)pnf.IdProd)));
                                 }
 
-                                var percentualIcmsInterestadual = (decimal)dadosIcms.AliquotaIntraestadual - (decimal)dadosIcms.AliquotaInterestadual;
-                                var valorDifal = pnf.BcIcms * (percentualIcmsInterestadual / 100);
+                                var origemSulSudesteExcetoES =
+                                    nomeUfOrigem.ToUpper().Contains("MG") ||
+                                    nomeUfOrigem.ToUpper().Contains("PR") ||
+                                    nomeUfOrigem.ToUpper().Contains("RJ") ||
+                                    nomeUfOrigem.ToUpper().Contains("RS") ||
+                                    nomeUfOrigem.ToUpper().Contains("SC") ||
+                                    nomeUfOrigem.ToUpper().Contains("SP");
 
-                                var percentualIcmsUFDestino =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
+                                var destinoNorteNordesteCentroOesteES =
+                                    nomeUfDestino.ToUpper().Contains("AC") ||
+                                    nomeUfDestino.ToUpper().Contains("AL") ||
+                                    nomeUfDestino.ToUpper().Contains("AM") ||
+                                    nomeUfDestino.ToUpper().Contains("AP") ||
+                                    nomeUfDestino.ToUpper().Contains("BA") ||
+                                    nomeUfDestino.ToUpper().Contains("CE") ||
+                                    nomeUfDestino.ToUpper().Contains("ES") ||
+                                    nomeUfDestino.ToUpper().Contains("GO") ||
+                                    nomeUfDestino.ToUpper().Contains("MA") ||
+                                    nomeUfDestino.ToUpper().Contains("MS") ||
+                                    nomeUfDestino.ToUpper().Contains("MT") ||
+                                    nomeUfDestino.ToUpper().Contains("PA") ||
+                                    nomeUfDestino.ToUpper().Contains("PB") ||
+                                    nomeUfDestino.ToUpper().Contains("PE") ||
+                                    nomeUfDestino.ToUpper().Contains("PI") ||
+                                    nomeUfDestino.ToUpper().Contains("RN") ||
+                                    nomeUfDestino.ToUpper().Contains("RO") ||
+                                    nomeUfDestino.ToUpper().Contains("RR") ||
+                                    nomeUfDestino.ToUpper().Contains("SE") ||
+                                    nomeUfDestino.ToUpper().Contains("TO");
 
-                                var percentualIcmsUFRemetente =
-                                    DateTime.Now.Year == 2016 ? (decimal)0.6 :
-                                    DateTime.Now.Year == 2017 ? (decimal)0.4 :
-                                    DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
-
+                                var percentualIcmsInterestadual = pnf.CstOrig == 1 ? 4 : origemSulSudesteExcetoES && destinoNorteNordesteCentroOesteES ? 7 : 12;
+                                var valorDifal = (pnf.BcIcms * ((decimal)dadosIcms.AliquotaInternaDestinatario / 100)) - (pnf.BcIcms * ((decimal)percentualIcmsInterestadual / 100));
+                                var percentualIcmsUFDestino = DateTime.Now.Year == 2018 ? (decimal)0.8 : 100;
+                                var percentualIcmsUFRemetente = DateTime.Now.Year == 2018 ? (decimal)0.2 : 0;
                                 valorIcmsUFDestino = Math.Round(valorDifal * percentualIcmsUFDestino, 2);
                                 valorIcmsUFRemetente = Math.Round(valorDifal * percentualIcmsUFRemetente, 2);
                                 var valorIcmsFCP = Math.Round(pnf.BcIcms * (FiscalConfig.PercentualFundoPobreza / 100), 2);
@@ -3885,14 +3906,9 @@ namespace Glass.Data.DAL
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vBCFCPUFDest", Formatacoes.TrataValorDecimal(pnf.BcIcms, 2));// Valor da Base de Cálculo do FCP na UF de destino.
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "pFCPUFDest", Formatacoes.TrataValorDecimal(FiscalConfig.PercentualFundoPobreza, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaIntraestadual, 2));
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInterestadual, 2));
-
-                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart",
-                                    DateTime.Now.Year == 2016 ? Formatacoes.TrataValorDecimal(40, 2) :
-                                    DateTime.Now.Year == 2017 ? Formatacoes.TrataValorDecimal(60, 2) :
-                                    DateTime.Now.Year == 2018 ? Formatacoes.TrataValorDecimal(80, 2) : Formatacoes.TrataValorDecimal(100, 2));
-
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSUFDest", Formatacoes.TrataValorDecimal((decimal)dadosIcms.AliquotaInternaDestinatario, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInter", Formatacoes.TrataValorDecimal(percentualIcmsInterestadual, 2));
+                                ManipulacaoXml.SetNode(doc, icmsUfDest, "pICMSInterPart", Formatacoes.TrataValorDecimal(percentualIcmsUFDestino * 100, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vFCPUFDest", Formatacoes.TrataValorDecimal(valorIcmsFCP, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFDest", Formatacoes.TrataValorDecimal(valorIcmsUFDestino, 2));
                                 ManipulacaoXml.SetNode(doc, icmsUfDest, "vICMSUFRemet", Formatacoes.TrataValorDecimal(valorIcmsUFRemetente, 2));
@@ -4771,7 +4787,60 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand("Update nota_fiscal set motivoInut=?motivo Where idNf=" + idNf,
                 new GDAParameter("?motivo", justificativa));
 
+            try
+            {
+                string fileName = Utils.GetNfeXmlPath + idNf + "-Inut.xml";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                xmlInut.Save(fileName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Falha ao salvar arquivo xml da Inutilização. " + ex.Message);
+            }
+
             return xmlInut;
+        }
+
+        /// <summary>
+        /// Salva o xml e o retorno da inutilização da nota
+        /// </summary>
+        public void SalvarRetornoXmlInutilizacao(uint idNf, XmlNode inutilizacao, XmlNode retorno)
+        {
+            XmlDocument xmlInut = new XmlDocument();
+            XmlNode declarationNode = xmlInut.CreateXmlDeclaration("1.0", "UTF-8", null);
+            xmlInut.AppendChild(declarationNode);
+
+            XmlElement procInutNFE = xmlInut.CreateElement("ProcInutNFE");
+            procInutNFE.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
+            procInutNFE.SetAttribute("versao", ConfigNFe.VersaoInutilizacao);
+            xmlInut.AppendChild(procInutNFE);
+            var inut = xmlInut.ImportNode(inutilizacao, true);
+            procInutNFE.AppendChild(inut);
+            
+            XmlElement retInutNFE = xmlInut.CreateElement("retInutNFE");
+            retInutNFE.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
+            retInutNFE.SetAttribute("versao", ConfigNFe.VersaoInutilizacao);
+            procInutNFE.AppendChild(retInutNFE);
+
+            var ret = xmlInut.ImportNode(retorno, true);
+            retInutNFE.AppendChild(ret);
+
+            try
+            {
+                string fileName = Utils.GetNfeXmlPath + idNf + "-Inut.xml";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                xmlInut.Save(fileName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Falha ao salvar arquivo xml da Inutilização. " + ex.Message);
+            }
         }
 
         #endregion
@@ -4813,6 +4882,29 @@ namespace Glass.Data.DAL
 
             // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
             conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("<Signature"), xmlProt.InnerXml);
+            using (FileStream arquivoNFe = File.OpenWrite(path))
+            using (StreamWriter salvaArquivoNFe = new StreamWriter(arquivoNFe))
+            {
+                salvaArquivoNFe.Write(conteudoArquivoNFe);
+                salvaArquivoNFe.Flush();
+            }
+        }
+
+        /// <summary>
+        /// Inclui o protocolo de denegação recebimento na NF-e.
+        /// </summary>
+        public void IncluirProtocoloNotaDenegada(string path, XmlNode xmlProt)
+        {
+            if (!File.Exists(path))
+                throw new Exception("Não foi possível anexar o protocolo de retorno, xml da nota não encontrado.");
+
+            string conteudoArquivoNFe = "";
+            using (FileStream arquivoNFe = File.OpenRead(path))
+            using (StreamReader textoArquivoNFe = new StreamReader(arquivoNFe))
+                conteudoArquivoNFe = textoArquivoNFe.ReadToEnd();
+
+            // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
+            conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("</NFe>"), xmlProt.InnerXml);
             using (FileStream arquivoNFe = File.OpenWrite(path))
             using (StreamWriter salvaArquivoNFe = new StreamWriter(arquivoNFe))
             {
@@ -5018,11 +5110,11 @@ namespace Glass.Data.DAL
                     // Gera log do ocorrido
                     LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", cStat.StrParaInt(), ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlProt?["infProt"]?["xMotivo"]?.InnerXml));
 
+                    var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
+                    
                     // Atualiza número do protocolo de uso da NFe
                     if (cStat == "100" || cStat == "150")
                     {
-                        var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
-
                         IncluiProtocoloXML(path, xmlProt);
                         AutorizaNotaFiscal(nf, xmlProt);
                     }
@@ -5036,6 +5128,7 @@ namespace Glass.Data.DAL
                                 new GDAParameter[] { new GDAParameter("?numProt", xmlProt?["infProt"]?["nProt"]?.InnerXml) });
                         }
 
+                        IncluirProtocoloNotaDenegada(path, xmlProt);
                         // Altera situação da NFe para denegada
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Denegada);
                     }
@@ -6053,7 +6146,7 @@ namespace Glass.Data.DAL
         private string SqlListaPadrao(uint idNf, uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente,
             int tipoFiscal, uint idFornec, string nomeFornec, string codRota, string situacao, int tipoDoc, string dataIni, string dataFim,
             string idsCfop, string idsTiposCfop, string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf,
-            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
+            int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
             string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
@@ -6366,6 +6459,17 @@ namespace Glass.Data.DAL
                 criterio += "Produto: " + descrProd + "    ";
             }
 
+            if (!string.IsNullOrEmpty(lote))
+            {
+                sql += @" 
+                    And n.idNf In (
+                        Select p.idNf from produtos_nf p 
+                        Where p.Lote Like ?lote
+                    )";
+
+                criterio += "Lote: " + lote + "    ";
+            }
+
             if (!String.IsNullOrEmpty(valorInicial))
             {
                 sql += " And n.TotalNota >= " + valorInicial.Replace(",", ".");
@@ -6408,14 +6512,14 @@ namespace Glass.Data.DAL
         public IList<NotaFiscal> GetListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor,
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote,
             int ordenar, string sortExpression, int startRow, int pageSize)
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "n.idNf desc" : sortExpression;
 
             return LoadDataWithSortExpression(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec, codRota,
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
-                infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
+                infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
                 valorInicial, valorFinal, cnpjFornecedor, null));
         }
@@ -6423,11 +6527,11 @@ namespace Glass.Data.DAL
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
             string nomeFornec, string codRota, int tipoDoc, string situacao, string dataIni, string dataFim, string idsCfop, string idsTiposCfop,
             string dataEntSaiIni, string dataEntSaiFim, uint formaPagto, string idsFormaPagtoNotaFiscal, int tipoNf, int finalidade, int formaEmissao, string infCompl,
-            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, int ordenar)
+            string codInternoProd, string descrProd, string valorInicial, string valorFinal, string cnpjFornecedor, string lote, int ordenar)
         {
             return objPersistence.ExecuteSqlQueryCount(SqlListaPadrao(0, numeroNFe, idPedido, modelo, idLoja, idCliente, nomeCliente, tipoFiscal, idFornec, nomeFornec,
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
-                formaEmissao, infCompl, codInternoProd, descrProd, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
+                formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
                 descrProd, valorInicial, valorFinal, cnpjFornecedor, null));
         }
@@ -7998,14 +8102,14 @@ namespace Glass.Data.DAL
             string where = " Where (n.tipoDocumento not in (" + (int)NotaFiscal.TipoDoc.EntradaTerceiros + "," + (int)NotaFiscal.TipoDoc.NotaCliente +
                 ") or n.serie<>'U' or n.serie is null) and n.idNf=" + idNf;
 
-            string sql = "update nota_fiscal n set ";
+            string sql = "UPDATE nota_fiscal n SET ";
 
             // Calcula o valor total dos produtos, o Round deve ficar dentro da função Sum, para que não ocorram problema de R$0,01
             // do somatório dos produtos da nota com o que é exibido no DANFE
-            sql += "TotalProd=Round((Select Sum(Round(pn.Total, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "TotalProd = COALESCE(ROUND((SELECT SUM(ROUND(pn.Total, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o IPI da nota
-            sql += "ValorIpi=Round((Select Sum(Round(pn.valorIpi, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "ValorIpi = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIpi, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             /* Chamado 14370.
              * O valor da base de cálculo de ICMS estava ficando diferente em 2 centavos por causa do desconto aplicado na nota fiscal.
@@ -8013,37 +8117,51 @@ namespace Glass.Data.DAL
              * com e sem desconto o valor da base de cálculo do ICMS ficou correto. */
             // Calcula a BC do ICMS e valor do ICMS (o round do pn.valorIcms foi alterado de 4 para 2, para resolver o chamado 10338)
             // sql += "BcIcms=Round((Select Sum(Round(pn.BcIcms, 2)) From produtos_nf pn Where pn.valorIcms>0 And pn.idNf=n.IdNf), 2), " +
-            sql += "BcIcms=(Select Sum(pn.BcIcms) From produtos_nf pn Where pn.valorIcms>0 And pn.idNf=n.IdNf), " +
-                "ValorIcms=Round((Select Sum(Round(pn.valorIcms, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcIcms = COALESCE((SELECT SUM(pn.BcIcms) FROM produtos_nf pn WHERE pn.ValorIcms > 0 AND pn.IdNf=n.IdNf), 0), " +
+                "ValorIcms = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIcms, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula a BC do FCP e valor do FCP
-            sql += "BcFcp=(Select Sum(pn.BcFcp) From produtos_nf pn Where pn.valorFcp>0 And pn.idNf=n.IdNf), " +
-                "ValorFcp=Round((Select Sum(Round(pn.valorFcp, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcFcp = COALESCE((SELECT SUM(pn.BcFcp) FROM produtos_nf pn WHERE pn.ValorFcp > 0 AND pn.IdNf=n.IdNf), 0), " +
+                "ValorFcp = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorFcp, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valor da BC do ICMS ST e valor do ICMS ST (o round do pn.ValorIcmsSt foi alterado de 4 para 2, para resolver o chamado 10338)
-            sql += "BcIcmsSt=Round((Select Sum(Round(pn.BcIcmsSt, 2)) From produtos_nf pn Where pn.BcIcmsSt>0 And pn.idNf=n.IdNf), 2), " +
-                "ValorIcmsSt=Round((Select Sum(Round(pn.ValorIcmsSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcIcmsSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.BcIcmsSt, 2)) FROM produtos_nf pn WHERE pn.BcIcmsSt > 0 AND pn.IdNf=n.IdNf), 2), 0), " +
+                "ValorIcmsSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorIcmsSt, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valor da BC do FCP ST e valor do FCP ST
-            sql += "BcFcpSt=Round((Select Sum(Round(pn.BcFcpSt, 2)) From produtos_nf pn Where pn.BcFcpSt>0 And pn.idNf=n.IdNf), 2), " +
-                "ValorFcpSt=Round((Select Sum(Round(pn.ValorFcpSt, 2)) From produtos_nf pn Where pn.idNf=n.IdNf), 2), ";
+            sql += "BcFcpSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.BcFcpSt, 2)) FROM produtos_nf pn WHERE pn.BcFcpSt > 0 AND pn.IdNf=n.IdNf), 2), 0), " +
+                "ValorFcpSt = COALESCE(ROUND((SELECT SUM(ROUND(pn.ValorFcpSt, 2)) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), ";
 
             // Calcula o valores de PIS/Cofins
-            sql += @"ValorPis=Round((select sum(Round(valorPis, 2)) from produtos_nf where valorPis>0 and idNf=n.idNf), 2),
-                AliqPis=ValorPis/(select sum(Round(bcPis, 2)) from produtos_nf where valorPis>0 and idNf=n.idNf)*100, 
-                ValorCofins=Round((select sum(Round(valorCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf), 2),
-                AliqCofins=ValorCofins/(select sum(Round(bcCofins, 2)) from produtos_nf where valorCofins>0 and idNf=n.idNf)*100, ";
+            sql += @"ValorPis = COALESCE(ROUND((SELECT SUM(ROUND(ValorPis, 2)) FROM produtos_nf WHERE ValorPis > 0 AND IdNf=n.IdNf), 2), 0),
+                AliqPis = (COALESCE(ValorPis, 0) / COALESCE((SELECT SUM(ROUND(BcPis, 2)) FROM produtos_nf WHERE ValorPis > 0 AND IdNf=n.IdNf), 0)) * 100,
+                ValorCofins = COALESCE(ROUND((SELECT SUM(ROUND(ValorCofins, 2)) FROM produtos_nf WHERE ValorCofins > 0 AND IdNf=n.IdNf), 2), 0),
+                AliqCofins = COALESCE(ValorCofins, 0) / COALESCE((SELECT SUM(ROUND(BcCofins, 2)) FROM produtos_nf WHERE ValorCofins > 0 AND IdNf=n.IdNf), 0) * 100, ";
 
             // Calcula valor da Nota, somando o FCP ST, frete, outras despesas, seguro, IPI, IPIDevolvido, ICMS ST e subtraindo o desconto
-            sql += "TotalNota=Round((totalProd + valorFcpSt + valorFrete + outrasDespesas + valorSeguro + valorIcmsSt + valorIpiDevolvido + valorIpi " +
-                (isImportacao ? " + valorIcms" : "") + ") - desconto, 2), ";
+            sql += $@"TotalNota = ROUND((COALESCE(TotalProd, 0) +
+                COALESCE(ValorFcpSt, 0) +
+                COALESCE(ValorFrete, 0) +
+                COALESCE(OutrasDespesas, 0) +
+                COALESCE(ValorSeguro, 0) +
+                COALESCE(ValorIcmsSt, 0) +
+                COALESCE(ValorIpiDevolvido, 0) +
+                COALESCE(ValorIpi, 0)
+                { (isImportacao ? " + COALESCE(ValorIcms, 0)" : string.Empty) }) - COALESCE(Desconto, 0), 2) -
+
+                COALESCE((SELECT SUM(ROUND(pnf.ValorIcmsDesonerado,2)) FROM produtos_nf pnf
+                        INNER JOIN natureza_operacao nat ON (nat.IdNaturezaOperacao = pnf.IdNaturezaOperacao
+                            AND (nat.DebitarIcmsDesonTotalNf || pnf.MotivoDesoneracao = { (int)MotivoDesoneracaoEnum.SUFRAMA }))
+                    WHERE pnf.IdNf = n.IdNf), 0), ";
 
             // Calcula o total dos tributos conforme lei da transparência
-            sql += "ValorTotalTrib=(Select Sum(valorTotalTrib) From produtos_nf pnf Where idNf=n.idNf), ";
+            sql += "ValorTotalTrib = COALESCE((SELECT SUM(ValorTotalTrib) FROM produtos_nf pnf WHERE IdNf=n.IdNf), 0), ";
 
             // Calcula o peso bruto/líquido
-            sql += @"PesoBruto=COALESCE(PesoConteiner, 0) + ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 
-                PesoLiq=Round((Select Sum(pn.Peso) From produtos_nf pn Where pn.idNf=n.IdNf), 2) ";
+            sql += @"PesoBruto = COALESCE(PesoConteiner, 0) +
+                    COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), 
+
+                PesoLiq = COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0) ";
 
             sql += where;
 

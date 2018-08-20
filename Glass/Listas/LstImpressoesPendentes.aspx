@@ -183,7 +183,7 @@
                         <asp:BoundField DataField="QtdImpresso" HeaderText="Qtd. Já Impresso" SortExpression="QtdImpresso"/>
                         <asp:BoundField DataField="DataPedido" DataFormatString="{0:d}" HeaderText="Data Pedido" SortExpression="DataPedido"/>
                         <asp:BoundField DataField="DataEntrega" HeaderText="Data Entrega" DataFormatString="{0:d}" SortExpression="DataEntrega"/>
-                        <asp:BoundField DataField="DataFabrica" DataFormatString="{0:d}" HeaderText="Data Fábrica" SortExpression="DataFabrica"/>
+                        <asp:BoundField DataField="DataFabricaExibir" DataFormatString="{0:d}" HeaderText="Data Fábrica" SortExpression="DataFabricaExibir"/>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />

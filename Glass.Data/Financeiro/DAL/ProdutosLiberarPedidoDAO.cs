@@ -77,6 +77,11 @@ namespace Glass.Data.DAL
             return retorno.ToArray();
         }
 
+        public List<ProdutosLiberarPedido> PesquisarPorLiberacao(GDASession sessao, uint idLiberarPedido)
+        {
+            return objPersistence.LoadData(sessao, $"SELECT * FROM produtos_liberar_pedido WHERE IdLiberarPedido={idLiberarPedido}");
+        }
+
         public ProdutosLiberarPedido[] GetByPedido(uint idPedido)
         {
             List<ProdutosLiberarPedido> retorno = objPersistence.LoadData(Sql(0, idPedido, null));

@@ -562,6 +562,38 @@ namespace Glass.Data.DAL
             return ids.Split(',').Select(f => f.StrParaUint());
         }
 
+        /// <summary>
+        /// Retorna o nome das imagens de projetos ativos para enviar para o aplicativo do e-commerce
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> ObterImagens()
+        {
+            var sql = @"
+                SELECT Codigo, count(*)
+                FROM projeto_modelo pm
+                    INNER JOIN peca_projeto_modelo ppm ON (pm.IdProjetoModelo = ppm.IdProjetoModelo)
+                WHERE situacao = 1 
+                GROUP BY pm.IdProjetoModelo";
+
+            var dados = objPersistence.LoadResult(sql).Select(f => new
+            {
+                CodModelo = f.GetString(0),
+                Qtde = f.GetInt32(1)
+            });
+
+            var imagens = new List<string>();
+
+            foreach (var d in dados)
+            {
+                imagens.Add(string.Format("{0}§E.jpg", d.CodModelo));
+
+                for (int i = 0; i < d.Qtde; i++)
+                    imagens.Add(string.Format("{0}§{1}.jpg", d.CodModelo, i + 1));
+            }
+
+            return imagens;
+        }
+
         #endregion
 
         #region Métodos Sobrescritos

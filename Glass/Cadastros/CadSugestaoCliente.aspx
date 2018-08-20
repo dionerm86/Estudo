@@ -58,14 +58,16 @@
                             &nbsp;&nbsp;<asp:Label ID="Label23" runat="server" Text="Tipo" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipo" runat="server">
-                                <asp:ListItem Value="Reclamacao">Reclamação</asp:ListItem>
-                                <asp:ListItem Value="Sugestao">Sugestão</asp:ListItem>
-                                <asp:ListItem Value="Negociacao">Negociação</asp:ListItem>
-                                <asp:ListItem Value="Perfil">Perfil</asp:ListItem>
-                                <asp:ListItem Value="Cobranca">Cobrança</asp:ListItem>
-                                <asp:ListItem Value="Outro">Outro</asp:ListItem>
+                            <asp:DropDownList ID="drpTipo" runat="server" 
+                                DataSourceID="odsTipoSugestaoCliente"
+                                DataTextField="Descricao" 
+                                DataValueField="IdTipoSugestaoCliente" 
+                                AppendDataBoundItems="True">
                             </asp:DropDownList>
+                            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoSugestaoCliente" runat="server" 
+                                SelectMethod="ObterTiposSugestaoCliente"
+                                TypeName="Glass.Data.DAL.TipoSugestaoClienteDAO">
+                            </colo:VirtualObjectDataSource>
                         </td>
                     </tr>
                 </table>

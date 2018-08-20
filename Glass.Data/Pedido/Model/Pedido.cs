@@ -2996,6 +2996,25 @@ namespace Glass.Data.Model
             }
         }
 
+        public PedidoExportacao.SituacaoExportacaoEnum SituacaoExportacao
+        {
+            get
+            {
+                return PedidoExportacaoDAO.Instance.GetSituacaoExportacao(IdPedido);
+            }
+        }
+
+        public string DescricaoSituacaoExportacao
+        {
+            get
+            {
+                if (SituacaoExportacao == 0)
+                    return "Não Exportado";
+
+                return SituacaoExportacao.ToString();
+            }
+        }
+
         #endregion
 
         #region IContainerCalculo

@@ -57,32 +57,32 @@
     <Reference Include="Boleto.Net">
       <HintPath>..\Dlls\Boleto.Net.dll</HintPath>
     </Reference>
-    <Reference Include="CalcEngine, Version=1.9.59.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.59\lib\net35\CalcEngine.dll</HintPath>
+    <Reference Include="CalcEngine, Version=1.9.81.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.1.9.81\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.9.59.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.59\lib\net40\CalcEngine.Biesse.dll</HintPath>
+    <Reference Include="CalcEngine.Biesse, Version=1.9.81.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Biesse.1.9.81\lib\net40\CalcEngine.Biesse.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.9.59.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.1.9.59\lib\net35\CalcEngine.Dxf.dll</HintPath>
+    <Reference Include="CalcEngine.Dxf, Version=1.9.81.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.1.9.81\lib\net35\CalcEngine.Dxf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.9.59.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.59\lib\net35\CalcEngine.Forvet.dll</HintPath>
+    <Reference Include="CalcEngine.Forvet, Version=1.9.81.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\CalcEngine.Forvet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.9.59.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Optima.1.9.59\lib\net35\CalcEngine.Optima.dll</HintPath>
+    <Reference Include="CalcEngine.Optima, Version=1.9.81.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Optima.1.9.81\lib\net35\CalcEngine.Optima.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.9.59.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.SGlass.1.9.59\lib\net35\CalcEngine.SGlass.dll</HintPath>
+    <Reference Include="CalcEngine.SGlass, Version=1.9.81.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.SGlass.1.9.81\lib\net35\CalcEngine.SGlass.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
@@ -181,8 +181,8 @@
       <HintPath>..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.26340, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colosoft.WebControls.1.0.0\lib\net40\Colosoft.WebControls.dll</HintPath>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26648, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
@@ -194,7 +194,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.59\lib\net35\FC.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
@@ -345,11 +345,11 @@
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.59\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Biesse.1.9.81\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.59\lib\net35\System.Linq.Dynamics.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Dynamics.1.0.0\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security" />
@@ -1380,6 +1380,7 @@
     <Content Include="Relatorios\ListaPedidosSimples.aspx" />
     <Content Include="Relatorios\ListaPendenciaCarregamento.aspx" />
     <Content Include="Relatorios\ListaPlanoConta.aspx" />
+    <Content Include="Relatorios\ListaPrecoTab.aspx" />
     <Content Include="Relatorios\ListaPrecoTabCliente.aspx" />
     <Content Include="Relatorios\ListaProducaoInst.aspx" />
     <Content Include="Relatorios\ListaProducaoProd.aspx" />
@@ -6854,6 +6855,13 @@
     <Compile Include="Relatorios\ListaPlanoConta.aspx.designer.cs">
       <DependentUpon>ListaPlanoConta.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Relatorios\ListaPrecoTab.aspx.cs">
+      <DependentUpon>ListaPrecoTab.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Relatorios\ListaPrecoTab.aspx.designer.cs">
+      <DependentUpon>ListaPrecoTab.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Relatorios\ListaPrecoTabCliente.aspx.cs">
       <DependentUpon>ListaPrecoTabCliente.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -9136,6 +9144,9 @@
     <EmbeddedResource Include="Relatorios\rptPrecoTabClienteRetrato.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\rptPrecoTabRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptProducaoInst.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProducaoInstDetalhada.rdlc" />
     <EmbeddedResource Include="Relatorios\rptProducaoProd.rdlc" />
@@ -9235,7 +9246,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>62047</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:15160/</IISUrl>
+          <IISUrl>http://localhost:15190/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

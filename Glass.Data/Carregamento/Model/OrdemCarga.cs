@@ -166,14 +166,17 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (Pedidos.Count == 0)
-                    return string.Empty;
+                if (Pedidos == null || Pedidos.Count == 0)
+                    return "";
 
-                var idsPedidoObs = Pedidos.Select(f => string.Format("{0}", f.IdPedido,
-                    Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? string.Format(" ({0})", f.CodCliente) : string.Empty,
-                    !string.IsNullOrEmpty(f.ObsLiberacao) ? string.Format(" - {0}", f.ObsLiberacao) : string.Empty));
+                var idsPedidos =
+                    Pedidos.OrderBy(f=> f.IdPedido).Select(
+                        f =>
+                            f.IdPedido +
+                            (Configuracoes.OrdemCargaConfig.ExibirPedCliRelCarregamento ? " (" + f.CodCliente + ")" : "") +
+                            (!string.IsNullOrEmpty(f.ObsLiberacao) ? " - " + f.ObsLiberacao : ""));
 
-                return string.Join(", ", idsPedidoObs.ToList());
+                return string.Join(", ", idsPedidos);
             }
         }
 

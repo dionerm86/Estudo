@@ -34,19 +34,18 @@ function showConsultaProducao(repeating) {
         iFrame.style.display = "inline";
 
         iFrame.contentWindow.location = "../Producao/LstProducao.aspx?producao=1&popup=true";
-        iFrame.style.width = "880px";
+        iFrame.style.width = "100%";
+        iFrame.style.height = "100%";
     }
 
     // Reajusta tamanho do iframe
-    if (iFrame.contentDocument.body != null) {
-        iFrame.style.height = iFrame.contentDocument.body.scrollHeight + "px";
-        iFrame.style.width = iFrame.contentDocument.documentElement.scrollWidth + "px";
+    if (iFrame.contentDocument.body != null && iFrame.contentDocument.body.scrollHeight > 150) {
+        iFrame.style.height = (iFrame.contentDocument.body.scrollHeight + 100) + "px";
+
     }
 
     if (iFrame.contentDocument.body == null || iFrame.contentDocument.body.scrollHeight <= 150)
         setTimeout(function () { showConsultaProducao(true); }, 500);
-
-    return false;
 
     return false;
 }

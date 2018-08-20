@@ -1326,6 +1326,24 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Busca as contas a pagar geradas pelo CTe
+        /// </summary>
+        public ContasPagar[] GetByCte(uint idCte)
+        {
+            return GetByCte(null, idCte);
+        }
+
+        /// <summary>
+        /// Busca as contas a pagar geradas pelo CTe
+        /// </summary>
+        public ContasPagar[] GetByCte(GDASession sessao, uint idCte)
+        {
+            string sql = "Select * From contas_pagar Where IdCte=" + idCte;
+
+            return objPersistence.LoadData(sessao, sql).ToArray();
+        }
+
+        /// <summary>
         /// Verifica se a compra tem contas a pagar à vista.
         /// </summary>
         /// <param name="idCompra"></param>

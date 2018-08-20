@@ -37,7 +37,7 @@ namespace Glass.Global.Negocios.Entidades
         /// <summary>
         /// Tipo de sugestão.
         /// </summary>
-        public Glass.Data.Model.TipoSugestao TipoSugestao { get; set; }
+        public int TipoSugestao { get; set; }
 
         /// <summary>
         /// Descrição da sugestão.

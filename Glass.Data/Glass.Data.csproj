@@ -52,32 +52,32 @@
       <HintPath>..\packages\CADProject.Remote.Client.1.0.3\lib\net40\CADProject.Remote.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine, Version=1.9.59.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.59\lib\net35\CalcEngine.dll</HintPath>
+    <Reference Include="CalcEngine, Version=1.9.81.0, Culture=neutral, PublicKeyToken=338adf0247ea9d68, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.1.9.81\lib\net35\CalcEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Biesse, Version=1.9.59.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.59\lib\net40\CalcEngine.Biesse.dll</HintPath>
+    <Reference Include="CalcEngine.Biesse, Version=1.9.81.0, Culture=neutral, PublicKeyToken=950a3a768abe9821, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Biesse.1.9.81\lib\net40\CalcEngine.Biesse.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Drawing.1.7.2.232\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Dxf, Version=1.9.59.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Dxf.1.9.59\lib\net35\CalcEngine.Dxf.dll</HintPath>
+    <Reference Include="CalcEngine.Dxf, Version=1.9.81.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Dxf.1.9.81\lib\net35\CalcEngine.Dxf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Forvet, Version=1.9.59.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.59\lib\net35\CalcEngine.Forvet.dll</HintPath>
+    <Reference Include="CalcEngine.Forvet, Version=1.9.81.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\CalcEngine.Forvet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.Optima, Version=1.9.59.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Optima.1.9.59\lib\net35\CalcEngine.Optima.dll</HintPath>
+    <Reference Include="CalcEngine.Optima, Version=1.9.81.0, Culture=neutral, PublicKeyToken=623f0300398dc53a, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.Optima.1.9.81\lib\net35\CalcEngine.Optima.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CalcEngine.SGlass, Version=1.9.59.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.SGlass.1.9.59\lib\net35\CalcEngine.SGlass.dll</HintPath>
+    <Reference Include="CalcEngine.SGlass, Version=1.9.81.0, Culture=neutral, PublicKeyToken=223900421e0d49c5, processorArchitecture=MSIL">
+      <HintPath>..\packages\CalcEngine.SGlass.1.9.81\lib\net35\CalcEngine.SGlass.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
@@ -116,12 +116,12 @@
       <HintPath>..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.26340, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Colosoft.WebControls.1.0.0\lib\net40\Colosoft.WebControls.dll</HintPath>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26648, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Forvet.1.9.59\lib\net35\FC.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
@@ -229,11 +229,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.Biesse.1.9.59\lib\net40\System.IO.Abstractions.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Biesse.1.9.81\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Linq.Dynamics, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ca26a82b62119865, processorArchitecture=MSIL">
-      <HintPath>..\packages\CalcEngine.1.9.59\lib\net35\System.Linq.Dynamics.dll</HintPath>
+      <HintPath>..\packages\CalcEngine.Dynamics.1.0.0\lib\net35\System.Linq.Dynamics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Management">
@@ -347,6 +347,7 @@
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastro.cs" />
     <Compile Include="Configuracoes\OrcamentoConfig\TelaCadastroProdutoOrcamento.cs" />
     <Compile Include="Configuracoes\OrdemCargaConfig\OrdemCargaConfig.cs" />
+    <Compile Include="Configuracoes\OtimizacaoConfig\OtimizacaoConfig.cs" />
     <Compile Include="Configuracoes\PCPConfig\EmailSMS.cs" />
     <Compile Include="Configuracoes\PCPConfig\Etiqueta.cs" />
     <Compile Include="Configuracoes\PCPConfig\PainelProducao.cs" />
@@ -565,6 +566,8 @@
     <Compile Include="Global\Model\TipoEntrega.cs" />
     <Compile Include="Global\Model\TipoProdutoBeneficiamento.cs" />
     <Compile Include="Global\Model\RelatorioDinamico.cs" />
+    <Compile Include="Global\Model\TipoSugestaoCliente.cs" />
+    <Compile Include="Global\DAL\TipoSugestaoClienteDAO.cs" />
     <Compile Include="Handlers\ArquivoDxf.cs" />
     <Compile Include="Handlers\ArquivoIntermac.cs" />
     <Compile Include="Handlers\ArquivoSglass.cs" />
@@ -763,7 +766,11 @@
     <Compile Include="Orcamento\Model\AmbienteOrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\OrcamentoRentabilidade.cs" />
     <Compile Include="Orcamento\Model\ProdutoOrcamentoRentabilidade.cs" />
+    <Compile Include="Otimizacao\Model\PecaPlanoCorte.cs" />
     <Compile Include="Otimizacao\Model\PlanoCorte.cs" />
+    <Compile Include="Otimizacao\Model\PlanoOtimizacao.cs" />
+    <Compile Include="Otimizacao\Model\RetalhoPlanoCorte.cs" />
+    <Compile Include="Otimizacao\Model\SolucaoOtimizacao.cs" />
     <Compile Include="PCP\DAL\AmbientePedidoEspelhoRentabilidadeDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineDAO.cs" />
     <Compile Include="PCP\DAL\ArquivoCalcEngineVariavelDAO.cs" />
@@ -825,7 +832,6 @@
     <Compile Include="Global\DAL\PaisDAO.cs" />
     <Compile Include="Fiscal\DAL\ParcelaNaoFiscalOriginalDAO.cs" />
     <Compile Include="Fiscal\DAL\ParcelaNfDAO.cs" />
-    <Compile Include="Fiscal\DAL\PedidosCupomFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\PedidosNotaFiscalDAO.cs" />
     <Compile Include="Global\DAL\PlanoContasDAO.cs" />
     <Compile Include="PCP\DAL\RoteiroProducaoSetorDAO.cs" />
@@ -1150,6 +1156,7 @@
     <Compile Include="RelDAL\PrevisaoProducaoDAO.cs" />
     <Compile Include="RelDAL\ProducaoDiariaRealizadaDAO.cs" />
     <Compile Include="RelDAL\ProdutosCortadosRptDAO.cs" />
+    <Compile Include="RelDAL\PrecoProdutosTabelaDAO.cs" />
     <Compile Include="RelModel\ArquivoRemessaRetorno.cs" />
     <Compile Include="RelModel\CapacidadeProducao.cs" />
     <Compile Include="RelModel\ChapasDisponiveis.cs" />
@@ -1185,7 +1192,6 @@
     <Compile Include="Financeiro\Model\SinalCompra.cs" />
     <Compile Include="Pedido\Model\TextoImprPedido.cs" />
     <Compile Include="Pedido\Model\TextoPedido.cs" />
-    <Compile Include="Fiscal\Model\PedidosCupomFiscal.cs" />
     <Compile Include="Financeiro\Model\PagtoObra.cs" />
     <Compile Include="Fiscal\Model\AjusteBeneficioIncentivo.cs" />
     <Compile Include="Fiscal\Model\AjusteContribuicao.cs" />
@@ -1435,6 +1441,7 @@
     <Compile Include="RelModel\PecasPendentes.cs" />
     <Compile Include="RelModel\PontoEquilibrio.cs" />
     <Compile Include="RelModel\PosicaoMateriaPrimaChapa.cs" />
+    <Compile Include="RelModel\PrecoProdutosTabela.cs" />
     <Compile Include="RelModel\PrevFinanPedidos.cs" />
     <Compile Include="RelModel\PrevisaoProducao.cs" />
     <Compile Include="RelModel\ProducaoData.cs" />
@@ -1808,6 +1815,11 @@
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="Web References\wsPNFeAutorizacao\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\wsPNFeConsultaCadastro2\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2445,6 +2457,11 @@
     </None>
     <None Include="Web References\wsPNFeAutorizacao\NFeAutorizacao4.wsdl" />
     <None Include="Web References\wsPNFeAutorizacao\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\wsPNFeConsultaCadastro2\CadConsultaCadastro2.wsdl" />
+    <None Include="Web References\wsPNFeConsultaCadastro2\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -3722,6 +3739,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>Glass_Data_wsPSPCTeStatus_CteStatusServico</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\wsPNFeConsultaCadastro2\</RelPath>
+      <UpdateFromURL>https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>Glass_Data_wsPNFeConsultaCadastro2_CadConsultaCadastro2</CachedSettingsPropName>
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://nfe.svrs.rs.gov.br/ws/NfeAutorizacao/NFeAutorizacao4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>

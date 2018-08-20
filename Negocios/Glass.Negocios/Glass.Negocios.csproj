@@ -160,7 +160,6 @@
     <Compile Include="Global\TipoNegociacaoProduto.cs" />
     <Compile Include="Instalacao\IInstalacaoFluxo.cs" />
     <Compile Include="Otimizacao\ItemOtimizacao.cs" />
-    <Compile Include="Otimizacao\IConteudoArquivoOtimizacao.cs" />
     <Compile Include="Otimizacao\IOtimizacaoFluxo.cs" />
     <Compile Include="PCP\ICapacidadeProducaoDiariaClassificacaoFluxo.cs" />
     <Compile Include="PCP\ICavaleteFluxo.cs" />

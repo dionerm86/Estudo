@@ -756,6 +756,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Habilitar chat.
+        /// </summary>
+        public bool HabilitarChat
+        {
+            get { return DataModel.HabilitarChat; }
+            set
+            {
+                if (DataModel.HabilitarChat != value &&
+                    RaisePropertyChanging("HabilitarChat", value))
+                {
+                    DataModel.HabilitarChat = value;
+                    RaisePropertyChanged("HabilitarChat");
+                }
+            }
+        }
+
+        /// <summary>
         /// Identifica se o funcionário é vendedor.
         /// </summary>
         public bool Vendedor

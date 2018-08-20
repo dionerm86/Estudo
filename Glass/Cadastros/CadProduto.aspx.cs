@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using Glass.Data.DAL;
@@ -49,7 +50,14 @@ namespace Glass.UI.Web.Cadastros
             // Somente se a empresa for do tipo "NaoVendeVidro", a opção Local de Armazenagem estará visível.
             if (!Glass.Configuracoes.Geral.NaoVendeVidro())
             {
-                dtvProduto.Fields[37].Visible = false;
+                foreach(DataControlField field in dtvProduto.Fields)
+                {
+                    if (field.SortExpression == "LocalArmazenagem")
+                    {
+                        field.Visible = false;
+                        break;
+                    }
+                }
             }
 
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));

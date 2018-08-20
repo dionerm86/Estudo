@@ -416,8 +416,11 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idsProdutosPedido"></param>
-        public void AtualizaCarregamentoParcial(GDASession session, uint[] idsProdutosPedido)
+        public void AtualizaCarregamentoParcial(GDASession session, string idsPedido)
         {
+
+            uint[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
+
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
                 return;
 

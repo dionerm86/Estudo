@@ -109,8 +109,8 @@
       <HintPath>..\..\..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.26340, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Colosoft.WebControls.1.0.0\lib\net40\Colosoft.WebControls.dll</HintPath>
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26648, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">

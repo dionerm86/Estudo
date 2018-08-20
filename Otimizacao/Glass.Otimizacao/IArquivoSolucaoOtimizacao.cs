@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Glass.Otimizacao.Negocios
+namespace Glass.Otimizacao
 {
     /// <summary>
-    /// Assinatura do conteúdo de um arquivo de otimização.
+    /// Assinatura do arquivo da solução de otimização.
     /// </summary>
-    public interface IConteudoArquivoOtimizacao
+    public interface IArquivoSolucaoOtimizacao
     {
         #region Propriedades
 
         /// <summary>
-        /// Nome do arquivo.
+        /// Obtém o nome do arquivo.
         /// </summary>
         string Nome { get; }
 
@@ -22,7 +22,7 @@ namespace Glass.Otimizacao.Negocios
         #region Métodos
 
         /// <summary>
-        /// Abre o conteúdo do arquivo.
+        /// Abrea a leitura do arquivo.
         /// </summary>
         /// <returns></returns>
         System.IO.Stream Abrir();

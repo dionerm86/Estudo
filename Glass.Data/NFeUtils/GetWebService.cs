@@ -23,22 +23,62 @@ namespace Glass.Data.NFeUtils
         {
             switch (uf.ToUpper())
             {
+                case "MA":
+                case "PA": return "SVAN";
+                case "AC":
+                case "PB":
+                case "RN":
+                case "SC": return "SVRS";
                 default: return uf.ToUpper();
             }
         }
 
-        public static wsPConsultaCadastro.CadConsultaCadastro4 ConsultaCadastroProducao(string uf)
+        public static wsPNFeConsultaCadastro2.CadConsultaCadastro2 ConsultaCadastroProducao(string uf)
+        {
+            var retorno = new wsPNFeConsultaCadastro2.CadConsultaCadastro2();
+
+            switch (ObterServidorConsultaCadastro(uf))
+            {
+                case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/v2/CadConsultaCadastro2?wsdl"; break;
+                case "MG": retorno.Url = "https://nfe.fazenda.mg.gov.br/nfe2/services/cadconsultacadastro2?wsdl"; break;
+                case "MT": retorno.Url = "https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro2?wsdl"; break;
+                case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro2.asmx?wsdl"; break;
+                case "PE": retorno.Url = "https://nfe.sefaz.pe.gov.br/nfe-service/services/CadConsultaCadastro2?wsdl"; break;
+                case "RS": retorno.Url = "https://cad.sefazrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx?wsdl"; break;
+                case "SVRS": retorno.Url = "https://cad.svrs.rs.gov.br/ws/cadconsultacadastro/cadconsultacadastro2.asmx"; break;
+                default: retorno.Url = string.Empty; break;
+
+            }
+            // Define 90 segundos de espera, para evitar timeout
+            retorno.Timeout = 90000;
+
+            // Define o certificado a ser utilizado na comunicação
+            retorno.ClientCertificates.Add(GetCertificado(UserInfo.GetUserInfo.IdLoja, null));
+
+            // Monta o cabeçalho do SOAP
+            retorno.SoapVersion = System.Web.Services.Protocols.SoapProtocolVersion.Soap12;
+            retorno.nfeCabecMsgValue = new wsPNFeConsultaCadastro2.nfeCabecMsg();
+            retorno.nfeCabecMsgValue.cUF = CidadeDAO.Instance.GetCodIbgeEstadoByEstado(uf);// Cód UF do Cliente
+            retorno.nfeCabecMsgValue.versaoDados = ConfigNFe.VersaoConsCad; // Versão da mensagem envelopada no SOAP
+
+            return retorno;
+        }
+
+        public static wsPConsultaCadastro.CadConsultaCadastro4 ConsultaCadastroProducao4(string uf)
         {
             var retorno = new wsPConsultaCadastro.CadConsultaCadastro4();
 
             switch (ObterServidorConsultaCadastro(uf))
             {
-                case "BA": retorno.Url = "https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4.asmx?wsdl"; break;
-                case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/CadConsultaCadastro4?wsdl"; break;
-                case "MS": retorno.Url = "https://nfe.fazenda.ms.gov.br/ws/CadConsultaCadastro4?wsdl"; break;
+                //Comentado pois não estão funcionando corretamente, e quando a url é retornada vazia é mostrada uma mensagem mais amigável para o cliente.
+                //Os Estados que estão funcionando alem do MT estão no método ConsultaCadastroProducao
+                //case "BA": retorno.Url = "https://nfe.sefaz.ba.gov.br/webservices/CadConsultaCadastro4/CadConsultaCadastro4.asmx?wsdl"; break;
+                //case "GO": retorno.Url = "https://nfe.sefaz.go.gov.br/nfe/services/CadConsultaCadastro4?wsdl"; break;
+                //case "MS": retorno.Url = "https://nfe.fazenda.ms.gov.br/ws/CadConsultaCadastro4?wsdl"; break;
+                //case "CE": retorno.Url = "https://nfe.sefaz.ce.gov.br/nfe4/services/CadConsultaCadastro4?wsdl"; break;
                 case "MT": retorno.Url = "https://nfe.sefaz.mt.gov.br/nfews/v2/services/CadConsultaCadastro4?wsdl"; break;
-                case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/CadConsultaCadastro4?wsdl"; break;
-                case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx?wsdl"; break;
+                //case "PR": retorno.Url = "https://nfe.sefa.pr.gov.br/nfe/CadConsultaCadastro4?wsdl"; break;
+                //case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/cadconsultacadastro4.asmx?wsdl"; break;
                 default: retorno.Url = string.Empty; break;
             }
 

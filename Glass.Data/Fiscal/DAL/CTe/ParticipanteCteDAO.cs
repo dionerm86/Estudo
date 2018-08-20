@@ -89,7 +89,7 @@ namespace Glass.Data.DAL.CTe
             objPersistence.ExecuteCommand(session, sql);
         }
 
-        internal List<uint> GetLojas(IEnumerable<ConhecimentoTransporte> ctes)
+        public List<uint> GetLojas(IEnumerable<ConhecimentoTransporte> ctes)
         {
             if (ctes.Count() == 0)
                 return new List<uint>();

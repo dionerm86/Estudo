@@ -11,13 +11,13 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using Ionic.Utils.Zip;
 
-public class NotaXmlLote : IHttpHandler 
-{    
-    public void ProcessRequest (HttpContext context) 
+public class NotaXmlLote : IHttpHandler
+{
+    public void ProcessRequest (HttpContext context)
     {
         context.Response.ContentType = "application/zip";
         context.Response.AddHeader("content-disposition", "attachment; filename=\"NFEs.zip\"");
-        
+
         uint numeroNfe = Glass.Conversoes.StrParaUint(context.Request["numeroNfe"]);
         uint idPedido = Glass.Conversoes.StrParaUint(context.Request["idPedido"]);
         uint idLoja = Glass.Conversoes.StrParaUint(context.Request["idLoja"]);
@@ -27,52 +27,63 @@ public class NotaXmlLote : IHttpHandler
         //int situacao = Glass.Conversoes.StrParaInt(context.Request["situacao"]);
         string situacao = context.Request["situacao"];
         int formaEmissao = Glass.Conversoes.StrParaInt(context.Request["formaEmissao"]);
+        string tipo = context.Request["tipo"];
+
         var notas = NotaFiscalDAO.Instance.GetListPorSituacao(
-            numeroNfe, 
-            idPedido, 
+            numeroNfe,
+            idPedido,
             context.Request["modelo"],
-            idLoja, 
+            idLoja,
             idCliente,
             context.Request["nomeCliente"],
             Glass.Conversoes.StrParaInt(context.Request["tipoFiscal"]),
             idFornec,
-            context.Request["nomeFornec"], 
-            context.Request["codRota"], 
-            tipoDoc, 
-            situacao, 
-            context.Request["dataIni"], 
+            context.Request["nomeFornec"],
+            context.Request["codRota"],
+            tipoDoc,
+            situacao,
+            context.Request["dataIni"],
             context.Request["dataFim"],
-            context.Request["idsCfop"], 
-            context.Request["tiposCfop"], 
+            context.Request["idsCfop"],
+            context.Request["tiposCfop"],
             context.Request["dataEntSaiIni"],
             context.Request["dataEntSaiFim"],
-            Glass.Conversoes.StrParaUint(context.Request["formaPagto"]), 
-            context.Request["idsFormaPagtoNotaFiscal"], 
+            Glass.Conversoes.StrParaUint(context.Request["formaPagto"]),
+            context.Request["idsFormaPagtoNotaFiscal"],
             Glass.Conversoes.StrParaInt(context.Request["tipoNf"]),
-            Glass.Conversoes.StrParaInt(context.Request["finalidade"]), 
-            formaEmissao, 
+            Glass.Conversoes.StrParaInt(context.Request["finalidade"]),
+            formaEmissao,
             context.Request["infCompl"],
             context.Request["codInternoProd"],
             context.Request["descrProd"],
             context.Request["valorInicial"],
             context.Request["valorFinal"], null, null,
-            Glass.Conversoes.StrParaInt(context.Request["ordenar"]), 
+            Glass.Conversoes.StrParaInt(context.Request["ordenar"]),
             null,
-            0, 
+            0,
             int.MaxValue);
-        
+
         using (ZipFile zip = new ZipFile(context.Response.OutputStream))
         {
             foreach (NotaFiscal nf in notas)
             {
-                if (String.IsNullOrEmpty(nf.ChaveAcesso))
-                    continue;
-                
-                string path = Glass.Data.Helper.Utils.GetNfeXmlPath + nf.ChaveAcesso + "-nfe.xml";
+                string path = string.Empty;
+
+                if (tipo == "inut")
+                {
+                    path = Utils.GetNfeXmlPath + nf.IdNf + "-Inut.xml";
+                }
+                else
+                {
+                    path = Utils.GetNfeXmlPath + nf.ChaveAcesso + "-nfe.xml";
+
+                    if (string.IsNullOrEmpty(nf.ChaveAcesso))
+                        continue;
+                }
 
                 if (!File.Exists(path))
                     continue;
-                
+
                 // Verifica se existe xml de cancelamento da nota
                 var pathNotaCanc = Utils.GetNfeXmlPath + "110111" + nf.ChaveAcesso + "-can.xml";
                 var baixarXmlCanc = nf.Situacao == (int)NotaFiscal.SituacaoEnum.Cancelada && File.Exists(pathNotaCanc);
@@ -109,23 +120,23 @@ public class NotaXmlLote : IHttpHandler
 
                     XmlDocument xml1 = new XmlDocument();
                     xml1.LoadXml(nfeProc.OuterXml);
-                        
+
                     if (baixarXmlCanc)
                         zip.AddFile(pathNotaCanc, "");
-                                        
+
                     zip.AddStringAsFile(xml1.OuterXml, nf.ChaveAcesso + "-nfe.xml", "");
                 }
                 else if (System.IO.File.Exists(path))
                 {
-                    zip.AddFile(path, "");
+                    zip.AddStringAsFile(xml.OuterXml, nf.NumeroNFe + ".xml", "");
                 }
             }
 
             zip.Save();
         }
-        
+
     }
- 
+
     public bool IsReusable {
         get {
             return false;

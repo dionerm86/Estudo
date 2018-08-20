@@ -393,7 +393,7 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.PermitirApenasContasMesmoTipoEncontroContas);
 
             itens.Add(Config.ConfigEnum.EnviarEmailAdministradorDescontoMaior);
-
+            itens.Add(Config.ConfigEnum.AdministradorEnviarEmailDescontoMaior);
             itens.Add(Config.ConfigEnum.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado);
 
             itens.Add(Config.ConfigEnum.PermitirTrocaPorPedido);
@@ -752,8 +752,11 @@ namespace Glass.Data.Helper
             if (PCPConfig.Etiqueta.UsarPlanoCorte)
                 itens.Add(Config.ConfigEnum.TipoExportacaoEtiqueta);
 
+            itens.Add(Config.ConfigEnum.TipoEstoqueChapasOtimizacao);
+
             itens.Add(Config.ConfigEnum.TipoDataEtiqueta);
             itens.Add(Config.ConfigEnum.DiasDataFabrica);
+            itens.Add(Config.ConfigEnum.DiasReduzirDataFabricaComposicaoDuploLaminado);
             itens.Add(Config.ConfigEnum.ExibirDadosPcpListaAposConferencia);
             itens.Add(Config.ConfigEnum.ExibirImpressaoPcpListaPedidos);
             itens.Add(Config.ConfigEnum.GerarOrcamentoFerragesAluminiosPCP);

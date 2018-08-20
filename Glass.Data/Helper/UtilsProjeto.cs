@@ -2843,7 +2843,7 @@ namespace Glass.Data.Helper
                         var valorRandomico = new Random();
 
                         // Substitui as variáveis de medidas pelos seus respectivos valores
-                        foreach (MedidaProjetoModelo mpm in medidas)
+                        foreach (MedidaProjetoModelo mpm in medidas.OrderByDescending(f => f.CalcTipoMedida.Length))
                             if (expressao.Contains(mpm.CalcTipoMedida))
                                 expressao = expressao.Replace(mpm.CalcTipoMedida, Math.Round((valorRandomico.NextDouble() * 100), 2).ToString().Replace(",", ".").ToString());
 

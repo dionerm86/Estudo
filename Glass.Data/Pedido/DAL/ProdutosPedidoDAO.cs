@@ -709,7 +709,7 @@ namespace Glass.Data.DAL
                         CAST((pp.ValorBenef / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)} AS DECIMAL (12,2)) AS ValorBenefNf,
                         pt.QtdeTrocaDevolucao,
                         (pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
-                        pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf
+                        pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf, plp.IdLiberarPedido
                     FROM produtos_pedido pp
                         LEFT JOIN produto p ON (pp.IdProd=p.IdProd)
                         LEFT JOIN pedido ped on (pp.IdPedido=ped.IdPedido)
@@ -723,7 +723,7 @@ namespace Glass.Data.DAL
                         AND IF({liberacaoParcial.ToString()}, lp.Situacao<>{(int)LiberarPedido.SituacaoLiberarPedido.Cancelado} OR lp.Situacao IS NULL, 1)";
 
                 sql += $@" GROUP BY pp.IdProdPed{(idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty)} 
-                                                HAVING IF(plp.idLiberarPedido>0,QtdeOriginal,pp.Qtde)> 0";
+                                                HAVING IF(idLiberarPedido>0,QtdeOriginal,pp.Qtde)> 0";
             }
 
             var lstProd = objPersistence.LoadData(sql).ToList();

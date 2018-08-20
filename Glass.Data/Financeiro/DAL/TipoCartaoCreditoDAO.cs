@@ -86,9 +86,16 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql + " Order By idTipoCartao").ToList().ToArray();
         }
 
-        public IList<TipoCartaoCredito> GetOrdered(Glass.Situacao situacao)
+        public IList<TipoCartaoCredito> GetOrdered(int situacao)
         {
-            return objPersistence.LoadData(string.Format("Select * From tipo_cartao_credito WHERE Situacao={0} Order By idTipoCartao", (int)situacao)).ToList();
+            string sql = "Select * From tipo_cartao_credito WHERE 1";
+
+            if (situacao > 0)
+            {
+                sql += $" And Situacao = {situacao}";
+            }
+
+            return objPersistence.LoadData(sql + " Order By idTipoCartao").ToList();
         }
 
         public IList<TipoCartaoCredito> ObterListaTipoCartao()

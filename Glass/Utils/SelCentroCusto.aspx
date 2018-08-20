@@ -136,6 +136,7 @@
                         <asp:QueryStringParameter Name="idImpostoServ" QueryStringField="idImpostoServ" Type="Int32" />
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="Int32" />
                         <asp:QueryStringParameter Name="idContaPg" QueryStringField="idContaPg" Type="Int32" />
+                        <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsDetalhesCentroCustoAssociado" runat="server"
@@ -145,6 +146,7 @@
                         <asp:QueryStringParameter Name="idImpostoServ" QueryStringField="idImpostoServ" Type="Int32" />
                         <asp:QueryStringParameter Name="idNf" QueryStringField="idNf" Type="Int32" />
                         <asp:QueryStringParameter Name="idContaPg" QueryStringField="idContaPg" Type="Int32" />
+                        <asp:QueryStringParameter Name="idCte" QueryStringField="idCte" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCentroCusto" runat="server" SelectMethod="ObtemParaSelecao" TypeName="Glass.Data.DAL.CentroCustoDAO">

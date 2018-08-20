@@ -296,7 +296,7 @@ namespace Glass.Data.Helper
                 var codSMS = DateTime.Now.DayOfYear.ToString() + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString() + idAdminEnvio;
 
                 /* Chamado 65394. */
-                //verifica a quantidade de caracteres da mensagem pois o limite de SMS é de 150.
+                //verifica a quantidade de caracteres da mensagem pois o limite de SMS é de 149.
                 if (mensagem.Length >= 150)
                     mensagem = mensagem.Substring(0, 149);
 

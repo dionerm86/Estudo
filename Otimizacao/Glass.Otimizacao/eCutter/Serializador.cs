@@ -76,6 +76,9 @@ namespace Glass.Otimizacao.eCutter
         /// <param name="entrada"></param>
         private static void Serializar(System.Xml.XmlWriter writer, IEntradaEstoqueChapa entrada)
         {
+            writer.WriteStartAttribute("id");
+            writer.WriteValue(entrada.Id);
+            writer.WriteEndAttribute();
             writer.WriteStartAttribute("materialCode");
             writer.WriteValue(entrada.CodigoMaterial);
             writer.WriteEndAttribute();
@@ -127,7 +130,7 @@ namespace Glass.Otimizacao.eCutter
             writer.WriteValue(material.Espessura4);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("minDistance");
-            writer.WriteValue(material.DistanciaMinima);
+            writer.WriteValue(material.DistanciaMin);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("trimX1");
             writer.WriteValue(material.RecorteX1);
@@ -142,22 +145,22 @@ namespace Glass.Otimizacao.eCutter
             writer.WriteValue(material.RecorteY2);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("xCrosscut");
-            writer.WriteValue(material.CorteTransversalX);
+            writer.WriteValue(material.TransversalMaxX);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("yCrosscut");
-            writer.WriteValue(material.CorteTransversalY);
+            writer.WriteValue(material.TransversalMaxY);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("minXOffcut");
-            writer.WriteValue(material.RetalhoMinX);
+            writer.WriteValue(material.DesperdicioMinX);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("minYOffcut");
-            writer.WriteValue(material.RetalhoMinY);
+            writer.WriteValue(material.DesperdicioMinY);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("autoShapeTrim");
             writer.WriteValue(material.RecorteAutomaticoForma);
             writer.WriteEndAttribute();
             writer.WriteStartAttribute("autoShapeTrimAngle");
-            writer.WriteValue(material.AnguloRecorteAutomaticoForma);
+            writer.WriteValue(material.AnguloRecorteAutomatico);
             writer.WriteEndAttribute();
             writer.WriteStartElement("Description");
             writer.WriteValue(material.Descricao);

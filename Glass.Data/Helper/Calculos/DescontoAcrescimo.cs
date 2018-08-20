@@ -369,7 +369,7 @@ namespace Glass.Data.Helper.Calculos
         private bool ReaplicarComissao(GDASession sessao, IContainerCalculo container,
             IEnumerable<IProdutoCalculo> produtos, bool reaplicar)
         {
-            if (reaplicar && container.PercComissao > 0)
+            if (reaplicar && container?.PercComissao > 0)
             {
                 bool aplicado = AplicarComissao(sessao, container, container.PercComissao, produtos);
                 RemoverDescontosConfiguracao(sessao, container, produtos);

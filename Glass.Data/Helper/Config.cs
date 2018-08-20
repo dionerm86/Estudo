@@ -333,6 +333,8 @@ namespace Glass.Data.Helper
             AlturaELarguraMinimasParaPecasTemperadas = 371,
             AlturaELarguraMinimaParaPecasComBisote = 372,
             AlturaELarguraMinimaParaPecasComLapidacao = 373,
+            DiasReduzirDataFabricaComposicaoDuploLaminado = 374,
+            TipoEstoqueChapasOtimizacao = 375,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -885,7 +887,7 @@ namespace Glass.Data.Helper
             AnexarArquivoLiberacaoListaPedido,
             AnexarArquivoPedido,
             EmitirPedido,
-            EmitirPedidoGarantiaReposicao,
+            EmitirPedidoGarantia,
             EmitirPedidoFuncionario,                        // 10
             IgnorarBloqueioDataEntrega,
             IgnorarBloqueioDescontoOrcamentoPedido,
@@ -896,7 +898,8 @@ namespace Glass.Data.Helper
             ConfirmarPedidoLiberacao,
             GerarReposicao,                                 
             ReposicaoDePeca,
-            ExibirRentabilidade
+            ExibirRentabilidade,                            // 20
+            EmitirPedidoReposicao                     
         }
 
         [ModuloAttr(Modulo.PCP)]

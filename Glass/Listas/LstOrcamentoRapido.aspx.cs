@@ -175,7 +175,7 @@ namespace Glass.UI.Web.Listas
         {
             try
             {
-                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
+                Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, UserInfo.GetUserInfo.IdLoja, Glass.Conversoes.StrParaUintNullable(idCli), null, true);
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";
@@ -188,11 +188,7 @@ namespace Glass.UI.Web.Listas
                     return "Erro;Produto inativo." + (!String.IsNullOrEmpty(prod.Obs) ? " Obs: " + prod.Obs : "");
                 else if (prod.Compra)
                     return "Erro;Produto apenas para compra.";
-                else if (!subGrupo.PermitirItemRevendaNaVenda && PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Venda && (prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.Vidro || (prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd))) && prod.IdGrupoProd != (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra))
-                    return "Erro;Produtos de revenda não podem ser incluídos em um orçamento de venda.";
-                else if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && orcamentoRapido == "false" && (tipoOrcamento == (int)Glass.Data.Model.Orcamento.TipoOrcamentoEnum.Revenda && ((prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.Vidro && !SubgrupoProdDAO.Instance.IsSubgrupoProducao(prod.IdGrupoProd, prod.IdSubgrupoProd)) || prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)))
-                    return "Erro;Produtos de venda não podem ser incluídos em um orçamento de revenda.";
-
+               
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
 
                 // Recupera o valor de tabela do produto

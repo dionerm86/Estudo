@@ -98,6 +98,21 @@ namespace Glass.Data.Helper
             get { return IdCliente > 0; }
         }
 
+        private bool? _habilitarChat;
+        public bool HabilitarChat
+        {
+            get
+            {
+                if (IsCliente)
+                    return false;
+
+                if (_habilitarChat == null)
+                    _habilitarChat = FuncionarioDAO.Instance.ObtemHabilitarChat(CodUser);
+
+                return _habilitarChat.GetValueOrDefault();
+            }
+        }
+
         #endregion
     }
 }

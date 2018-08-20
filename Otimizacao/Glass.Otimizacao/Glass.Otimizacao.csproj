@@ -42,17 +42,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="eCutter\DocumentoEtiquetas.cs" />
+    <Compile Include="eCutter\Etiqueta.cs" />
+    <Compile Include="eCutter\EtiquetaPeca.cs" />
+    <Compile Include="eCutter\EtiquetaPlanoCorte.cs" />
+    <Compile Include="eCutter\EtiquetaRetalho.cs" />
     <Compile Include="eCutter\IAutenticadorProtocolo.cs" />
     <Compile Include="eCutter\MensagemTransacao.cs" />
+    <Compile Include="eCutter\EtiquetaPlanoOtimizacao.cs" />
     <Compile Include="eCutter\ProtocolConfiguration.cs" />
     <Compile Include="eCutter\ResultadoSalvarTransacao.cs" />
     <Compile Include="eCutter\Serializador.cs" />
+    <Compile Include="eCutter\TipoEtiqueta.cs" />
+    <Compile Include="IArquivoSolucaoOtimizacao.cs" />
     <Compile Include="IEntradaEstoqueChapa.cs" />
     <Compile Include="IEstoqueChapa.cs" />
     <Compile Include="IMaterial.cs" />
     <Compile Include="IPecaPadrao.cs" />
+    <Compile Include="IRepositorioSolucaoOtimizacao.cs" />
     <Compile Include="ISessaoOtimizacao.cs" />
+    <Compile Include="ISolucaoOtimizacao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositorioSolucaoOtimizacao.cs" />
     <Compile Include="TipoCorteTransversal.cs" />
   </ItemGroup>
   <ItemGroup>

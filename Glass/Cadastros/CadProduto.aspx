@@ -67,6 +67,7 @@
 
         function atualizaTipoMercadoria(tipoMercadoria){
             FindControl("hdfTipoMercadoria", "input").value = tipoMercadoria;
+            verificarParametrosOtimizacao();
         }
 
         function alteraVisibilidade(idSubgrupo) {
@@ -174,6 +175,31 @@
                     FindControl("drpTipoMercadoria", "select").disabled = "";
                     break;
             }
+
+            verificarParametrosOtimizacao();
+        }
+
+        function verificarParametrosOtimizacao() {
+
+            var visivel = 
+                FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").value == "" &&
+                //MateriaPrima
+                FindControl("drpTipoMercadoria", "select").selectedIndex == 2;
+
+            var tabela = document.getElementById("<%= dtvProduto.ClientID %>");
+
+            // Recortes X1-Y2
+            tabela.rows[34].style.display = visivel ? "" : "none";
+            // Transversal Max X/Y
+            tabela.rows[35].style.display = visivel ? "" : "none";
+            // Desperdício Min X/Y
+            tabela.rows[36].style.display = visivel ? "" : "none";
+            // Distância Mínima
+            tabela.rows[37].style.display = visivel ? "" : "none";
+            // Recorte automático da forma
+            tabela.rows[38].style.display = visivel ? "" : "none";
+            // Ângulo recorte automático
+            tabela.rows[39].style.display = visivel ? "" : "none";
         }
 
         function setBaixaEstFiscal(codInterno) {
@@ -331,6 +357,32 @@
                 else
                     inputs[i].setAttribute("style", "text-transform:uppercase;");
             }
+        }
+
+        function defineValorPadrao(idControle, tipoControle, valorPadrao) {
+            var controle = FindControl(idControle, tipoControle);
+
+            if (controle != null && controle.value == "") {
+                controle.value = valorPadrao;
+            }
+        }
+
+        function inicializaValoresPadrao() {
+
+            defineValorPadrao("txtRecorteX1", "input", "0");
+            defineValorPadrao("txtRecorteY1", "input", "0");
+            defineValorPadrao("txtRecorteX2", "input", "0");
+            defineValorPadrao("txtRecorteY2", "input", "0");
+
+            defineValorPadrao("txtTransversalMaxX", "input", "9999");
+            defineValorPadrao("txtTransversalMaxY", "input", "9999");
+
+            defineValorPadrao("txtDesperdicioMinX", "input", "0");
+            defineValorPadrao("txtDesperdicioMinY", "input", "0");
+
+            defineValorPadrao("txtDistanciaMin", "input", "0");
+            defineValorPadrao("txtRecorteAutomaticoForma", "input", "0");
+            defineValorPadrao("txtAnguloRecorteAutomatico", "input", "0");
         }
 
         // Função chamada pelo popup de escolha da Aplicação do produto
@@ -1209,6 +1261,94 @@
                             </ItemTemplate>
                             <HeaderStyle Wrap="False" />
                         </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Recortes X1-Y2">
+                            <ItemTemplate>
+                                <asp:Label ID="lblRecorteX1" runat="server" Text='<%# Eval("RecorteX1") %>'></asp:Label>;
+                                <asp:Label ID="lblRecorteY1" runat="server" Text='<%# Eval("RecorteY1") %>'></asp:Label>;
+                                <asp:Label ID="lblRecorteX2" runat="server" Text='<%# Eval("RecorteX2") %>'></asp:Label>;
+                                <asp:Label ID="lblRecorteY2" runat="server" Text='<%# Eval("RecorteY2") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtRecorteX1" runat="server" Text='<%# Bind("RecorteX1") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteY1" runat="server" Text='<%# Bind("RecorteY1") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteX2" runat="server" Text='<%# Bind("RecorteX2") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteY2" runat="server" Text='<%# Bind("RecorteY2") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtRecorteX1" runat="server" Text='<%# Bind("RecorteX1") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteY1" runat="server" Text='<%# Bind("RecorteY1") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteX2" runat="server" Text='<%# Bind("RecorteX2") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtRecorteY2" runat="server" Text='<%# Bind("RecorteY2") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Transversal Max X/Y">
+                            <ItemTemplate>
+                                <asp:Label ID="lblTransversalMaxX" runat="server" Text='<%# Eval("TransversalMaxX") %>'></asp:Label>;
+                                <asp:Label ID="lblTransversalMaxY" runat="server" Text='<%# Eval("TransversalMaxY") %>'></asp:Label>;
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtTransversalMaxX" runat="server" Text='<%# Bind("TransversalMaxX") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtTransversalMaxY" runat="server" Text='<%# Bind("TransversalMaxY") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtTransversalMaxX" runat="server" Text='<%# Bind("TransversalMaxX") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtTransversalMaxY" runat="server" Text='<%# Bind("TransversalMaxY") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Desperdício Min X/Y">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDesperdicioMinX" runat="server" Text='<%# Eval("DesperdicioMinX") %>'></asp:Label>;
+                                <asp:Label ID="lblDesperdicioMinY" runat="server" Text='<%# Eval("DesperdicioMinY") %>'></asp:Label>;
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtDesperdicioMinX" runat="server" Text='<%# Bind("DesperdicioMinX") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtDesperdicioMinY" runat="server" Text='<%# Bind("DesperdicioMinY") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtDesperdicioMinX" runat="server" Text='<%# Bind("DesperdicioMinX") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                                <asp:TextBox ID="txtDesperdicioMinY" runat="server" Text='<%# Bind("DesperdicioMinY") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Distância mínima">
+                            <ItemTemplate>
+                                <asp:Label ID="lblDistanciaMin" runat="server" Text='<%# Eval("DistanciaMin") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtDistanciaMin" runat="server" Text='<%# Bind("DistanciaMin") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtDistanciaMin" runat="server" Text='<%# Bind("DistanciaMin") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Recorte Automático da Forma">
+                            <ItemTemplate>
+                                <asp:Label ID="lblRecorteAutomaticoForma" runat="server" Text='<%# Eval("RecorteAutomaticoForma") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtRecorteAutomaticoForma" runat="server" Text='<%# Bind("RecorteAutomaticoForma") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtRecorteAutomaticoForma" runat="server" Text='<%# Bind("RecorteAutomaticoForma") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
+                        <asp:TemplateField HeaderText="Ângulo de Recorte Automático">
+                            <ItemTemplate>
+                                <asp:Label ID="lblAnguloRecorteAutomatico" runat="server" Text='<%# Eval("AnguloRecorteAutomatico") %>'></asp:Label>
+                            </ItemTemplate>
+                            <EditItemTemplate>
+                                <asp:TextBox ID="txtAnguloRecorteAutomatico" runat="server" Text='<%# Bind("AnguloRecorteAutomatico") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </EditItemTemplate>
+                            <InsertItemTemplate>
+                                <asp:TextBox ID="txtAnguloRecorteAutomatico" runat="server" Text='<%# Bind("AnguloRecorteAutomatico") %>' onkeypress="return soNumeros(event, true, true)" style="width: 70px"></asp:TextBox>
+                            </InsertItemTemplate>
+                        </asp:TemplateField>
+
                         <asp:TemplateField HeaderText="Imagem" SortExpression="Imagem">
                             <ItemTemplate>
                                 <asp:Label ID="Label22" runat="server" Text='<%# Bind("Imagem") %>'></asp:Label>
@@ -1365,6 +1505,7 @@
     <script type="text/javascript">
         alteraVisibilidade(FindControl("drpSubgrupo", "select").value);
         txtToUpper();
+        inicializaValoresPadrao();
     </script>
 
 </asp:Content>

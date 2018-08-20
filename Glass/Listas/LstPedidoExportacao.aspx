@@ -81,6 +81,10 @@
                                 <asp:ImageButton ID="imgRelatorio" runat="server" 
                                     ImageUrl="~/Images/Relatorio.gif" 
                                     onclientclick='<%# "openRpt(" + Eval("IdExportacao") + "); return false" %>' />
+                                <asp:LinkButton ID="lnkConsulta" runat="server" CommandName="Consultar"
+                                     CommandArgument='<%# Eval("IdExportacao") %>'>
+                                    <img border="0" src="../Images/Pesquisar.gif" title="Consultar Situação dos Pedidos" />
+                                </asp:LinkButton>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdExportacao" HeaderText="Cód." 
