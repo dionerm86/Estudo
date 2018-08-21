@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Colosoft.Business;
+using Colosoft.Data;
 
 namespace Glass.Otimizacao.Negocios.Entidades
 {
@@ -9,7 +11,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
     /// Representa a entidade de negócio do retalho do plano de corte.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(RetalhoPlanoCorteLoader))]
-    public class RetalhoPlanoCorte : Colosoft.Business.Entity<Data.Model.RetalhoPlanoCorte>
+    public class RetalhoPlanoCorte : Colosoft.Business.Entity<Data.Model.RetalhoPlanoCorte>, IItemPlanoCorte
     {
         #region Tipos Aninhados
 

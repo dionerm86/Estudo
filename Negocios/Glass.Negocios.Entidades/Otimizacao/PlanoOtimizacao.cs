@@ -20,6 +20,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
                 Configure()
                     .Uid(f => f.IdPlanoOtimizacao)
                     .Child<PlanoCorte, Data.Model.PlanoCorte>("PlanosCorte", f => f.PlanosCorte, f => f.IdPlanoOtimizacao)
+                    .Reference<Global.Negocios.Entidades.Produto, Data.Model.Produto>("Produto", f => f.Produto, f => f.IdProduto)
                     .Creator(f => new PlanoOtimizacao(f));
             }
         }
@@ -32,6 +33,17 @@ namespace Glass.Otimizacao.Negocios.Entidades
         /// Obtém os planos de corte.
         /// </summary>
         public Colosoft.Business.IEntityChildrenList<PlanoCorte> PlanosCorte { get; }
+
+        /// <summary>
+        /// Obtém o produto associado com o plano.
+        /// </summary>
+        public Global.Negocios.Entidades.Produto Produto
+        {
+            get
+            {
+                return GetReference<Global.Negocios.Entidades.Produto>("Produto", true);
+            }
+        }
 
         /// <summary>
         /// Obtém ou define o identificador do plano de otimização.

@@ -501,6 +501,7 @@
     <Content Include="Images\favicon.ico" />
     <Content Include="Images\page_attach.gif" />
     <Content Include="Images\page_save.gif" />
+    <Content Include="Images\puzzle_arrow.png" />
     <Content Include="Images\table_gear.gif" />
     <Content Include="Images\tax.png" />
     <Content Include="Images\user_headset.gif" />

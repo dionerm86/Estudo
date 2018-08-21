@@ -9,7 +9,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
     /// Representa a entidade de negócio da peça do plano de corte.
     /// </summary>
     [Colosoft.Business.EntityLoader(typeof(PecaPlanoCorteLoader))]
-    public class PecaPlanoCorte : Colosoft.Business.Entity<Data.Model.PecaPlanoCorte>
+    public class PecaPlanoCorte : Colosoft.Business.Entity<Data.Model.PecaPlanoCorte>, IItemPlanoCorte
     {
         #region Tipos Aninhados
 
@@ -108,6 +108,23 @@ namespace Glass.Otimizacao.Negocios.Entidades
                 {
                     DataModel.Rotacionada = value;
                     RaisePropertyChanged(nameof(Rotacionada));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Obtém ou define a forma da peça.
+        /// </summary>
+        public string Forma
+        {
+            get { return DataModel.Forma; }
+            set
+            {
+                if (DataModel.Forma != value &&
+                    RaisePropertyChanging(nameof(Forma), value))
+                {
+                    DataModel.Forma = value;
+                    RaisePropertyChanged(nameof(Forma));
                 }
             }
         }

@@ -4632,10 +4632,10 @@ namespace Glass.Data.DAL
                 throw new Exception("Etiqueta não existe ou ainda não foi impressa no sistema.");
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, prodImpressao.IdProdImpressao))
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, (uint)prodImpressao.IdProdImpressao))
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
-            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, prodImpressao.IdProdImpressao))
+            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, (uint)prodImpressao.IdProdImpressao))
                 throw new Exception("Esta etiqueta já foi utilizada no setor de corte.");
 
             // Se a empresa obriga o financeiro a liberar pedido para entrega, verifica se o mesmo está liberado,
@@ -4692,7 +4692,7 @@ namespace Glass.Data.DAL
             }
 
             //Marca no produto_impressão o id do pedido de expedição
-            ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(sessao, idPedidoExpedicao, prodImpressao.IdProdImpressao);
+            ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(sessao, idPedidoExpedicao, (uint)prodImpressao.IdProdImpressao);
 
             //Faz o vinculo da chapa no corte para que a mesma não possa ser usada novamente
             ChapaCortePecaDAO.Instance.Inserir(sessao, codEtiquetaChapa, null, false, true);
@@ -5100,7 +5100,7 @@ namespace Glass.Data.DAL
 
                     #region Remove a associação da peça ou da chapa
 
-                    var quantidadeLeiturasChapa = ChapaCortePecaDAO.Instance.QtdeLeiturasChapa(transaction, dados.IdProdImpressao);
+                    var quantidadeLeiturasChapa = ChapaCortePecaDAO.Instance.QtdeLeiturasChapa(transaction, (uint)dados.IdProdImpressao);
 
                     // O ideal é agregar à esta condição o mesmo código do método RetiraPecaSituacao, para que a reposição fique correta.
                     // Além disso, temos que salvar os dados da chapa nos dados da reposição, pois se o usuário voltar a situação da peça, tudo deve ser revertido.
@@ -5111,11 +5111,11 @@ namespace Glass.Data.DAL
 
                     if (prodPedEsp.IsProdFilhoLamComposicao)
                     {
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, dados.IdProdImpressao);
+                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)dados.IdProdImpressao);
                     }
                     else
                     {
-                        ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, dados.IdProdImpressao, idProdPedProducao);
+                        ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, (uint)dados.IdProdImpressao, idProdPedProducao);
                     }
 
                     #endregion
@@ -6277,7 +6277,7 @@ namespace Glass.Data.DAL
                 {
                     // Chamado 16193: Não permite desfazer a perda da peça caso tenha retalhos associados
                     foreach (var r in RetalhoProducaoDAO.Instance.ObterLista(sessao, idProdPedProducao))
-                        if (UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(sessao, r.IdRetalhoProducao, 0))
+                        if (UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(sessao, (uint)r.IdRetalhoProducao, 0))
                             throw new Exception("Não é possível voltar essa peça ao estado anterior pois a mesma gerou retalhos.");
 
                     VoltarPecaReposta(sessao, idProdPedProducao);
@@ -6287,7 +6287,7 @@ namespace Glass.Data.DAL
 
                 foreach (var r in RetalhoProducaoDAO.Instance.ObterLista(sessao, idProdPedProducao))
                 {
-                    RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, r.IdRetalhoProducao, SituacaoRetalhoProducao.Cancelado);
+                    RetalhoProducaoDAO.Instance.AlteraSituacao(sessao, (uint)r.IdRetalhoProducao, SituacaoRetalhoProducao.Cancelado);
                     var idPedido = ObtemIdPedido(sessao, idProdPedProducao);
                     var idLojaConsiderar = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0 ?
                     PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido) : UserInfo.GetUserInfo.IdLoja;

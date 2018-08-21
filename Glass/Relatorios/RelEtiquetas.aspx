@@ -138,6 +138,7 @@
 
                 $("#hdfRetalhos").val(JSON.stringify($retalhos));
                 $("input[id*=hdfSomenteRetalhos]").val($("input[id*=hdfSomenteRetalhos]", window.opener.document).val());
+                $("input[id*=hdfIdSolucaoOtimizacao]").val($("input[id*=hdfIdSolucaoOtimizacao]", window.opener.document).val());
 
                 if (window.opener.document.location.href.toLowerCase().indexOf("lstetiquetaimprimir") > -1)
                 {
@@ -187,6 +188,7 @@
     <asp:HiddenField ID="hdfRetalhos" runat="server" />
     <asp:HiddenField ID="hdfSomenteRetalhos" runat="server" />
     <asp:HiddenField ID="hdfRetalhosProdutos" runat="server" />
+    <asp:HiddenField ID="hdfIdSolucaoOtimizacao" runat="server" />
     <asp:PlaceHolder ID="pchTabela" runat="server"></asp:PlaceHolder>
     </form>
 </body>

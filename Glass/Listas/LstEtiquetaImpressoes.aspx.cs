@@ -55,5 +55,17 @@ namespace Glass.UI.Web.Listas
                 Convert.ToUInt32(idFunc) == UserInfo.GetUserInfo.CodUser) ||
                 Config.PossuiPermissao(Config.FuncaoMenuPCP.CancelarImpressaoEtiqueta);
         }
+
+        protected string MontarEnderecoECutter()
+        {
+            var address = Request.Url.AbsoluteUri;
+
+            address = address.Substring(0, address.IndexOf("/listas", StringComparison.InvariantCultureIgnoreCase));
+            var token = Request.Cookies[System.Web.Security.FormsAuthentication.FormsCookieName]?.Value;
+
+            var uri = new Uri($"{address}/handlers/ecutteroptimizationservice.ashx?token={token}&id=");
+
+            return $"ecutter-opt{uri.AbsoluteUri.Substring(uri.Scheme.Length)}";
+        }
     }
 }

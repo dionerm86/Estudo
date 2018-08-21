@@ -1058,6 +1058,7 @@
                 <asp:HiddenField ID="hdfIdProdPedNf" runat="server" />
                 <asp:HiddenField ID="hdfIdsPedidoNFe" runat="server" Value="" />
                 <asp:HiddenField ID="hdfSomenteRetalhos" runat="server" />
+                <asp:HiddenField ID="hdfIdSolucaoOtimizacao" runat="server" />
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsProcesso" runat="server" SelectMethod="GetAll"
                     TypeName="Glass.Data.DAL.EtiquetaProcessoDAO">
                 </colo:VirtualObjectDataSource>

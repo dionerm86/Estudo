@@ -41,7 +41,12 @@ namespace Glass.Data.Model
         /// Vendido
         /// </summary>
         [Description("Perda")]
-        Perda
+        Perda,
+        /// <summary>
+        /// Indisponível.
+        /// </summary>
+        [Description("Indisponível")]
+        Indisponivel
     }
 
     [PersistenceBaseDAO(typeof(RetalhoProducaoDAO))]
@@ -57,7 +62,7 @@ namespace Glass.Data.Model
         #region Propriedades
 
         [PersistenceProperty("IdRetalhoProducao", PersistenceParameterType.IdentityKey)]
-        public uint IdRetalhoProducao { get; set; }
+        public int IdRetalhoProducao { get; set; }
 
         [PersistenceProperty("IdProdPedProducaoOrig")]
         public uint? IdProdPedProducaoOrig { get; set; }
@@ -173,7 +178,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_numEtiqueta == null)
-                    _numEtiqueta = RetalhoProducaoDAO.Instance.ObtemNumeroEtiqueta(IdRetalhoProducao);
+                    _numEtiqueta = RetalhoProducaoDAO.Instance.ObtemNumeroEtiqueta((uint)IdRetalhoProducao);
 
                 return _numEtiqueta;
             }
@@ -210,7 +215,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_cancelarVisible == null)
-                    _cancelarVisible = RetalhoProducaoDAO.Instance.PodeCancelar(null, IdRetalhoProducao);
+                    _cancelarVisible = RetalhoProducaoDAO.Instance.PodeCancelar(null, (uint)IdRetalhoProducao);
 
                 return _cancelarVisible.GetValueOrDefault();
             }
