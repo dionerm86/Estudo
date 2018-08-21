@@ -558,7 +558,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50879</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:50879/</IISUrl>
+          <IISUrl>http://localhost:15160/backend</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
