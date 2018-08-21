@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web;
+using System.Web.Optimization;
 
 namespace Glass.UI.Web
 {
@@ -11,7 +12,9 @@ namespace Glass.UI.Web
         protected void Application_Start(object sender, EventArgs e)
         {
             new Bootstrapper().Run();
-            
+
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
             Code.Tarefas.Agendador.IniciarCopiaContasPagarReceber();
 
             _dataInicioSistema = DateTime.Now;
@@ -56,12 +59,12 @@ namespace Glass.UI.Web
         protected void Session_Start(object sender, EventArgs e)
         {
             int tempo = 0;
-            
-            if(int.TryParse(System.Configuration.ConfigurationManager.AppSettings["TempoTimeOut"], out tempo))
+
+            if (int.TryParse(System.Configuration.ConfigurationManager.AppSettings["TempoTimeOut"], out tempo))
                 Session.Timeout = tempo;
             else
                 Session.Timeout = 20;
-           
+
         }
 
         protected void Application_BeginRequest(object sender, EventArgs e)
@@ -97,8 +100,8 @@ namespace Glass.UI.Web
             if (HttpContext.Current.Session == null)
             {
                 /*Response.Redirect(
-                    string.Format("~/Utils/Erro.aspx?url={0}&messagem={1}", 
-                        HttpUtility.HtmlEncode(httpContext.Request.Url.ToString()), 
+                    string.Format("~/Utils/Erro.aspx?url={0}&messagem={1}",
+                        HttpUtility.HtmlEncode(httpContext.Request.Url.ToString()),
                         HttpUtility.HtmlEncode((erro.Message ?? "").Length > 255 ? erro.Message.Substring(0, 255) : erro.Message)));*/
 
                 return;

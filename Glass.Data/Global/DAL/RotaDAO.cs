@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -64,6 +64,25 @@ namespace Glass.Data.DAL
         public IList<Rota> ObtemAtivas()
         {
             return objPersistence.LoadData("SELECT * FROM rota WHERE situacao = ?sit ORDER BY Descricao", new GDAParameter("?sit", Situacao.Ativo)).ToList();
+        }
+
+        public IList<Rota> ObtemAtivasPorIdCodigo(int? id, string codigo)
+        {
+            var sql = $"SELECT * FROM rota WHERE situacao={(int)Situacao.Ativo}";
+            var parametros = new List<GDAParameter>();
+
+            if (id > 0)
+            {
+                sql += $" AND IdRota={id}";
+            }
+
+            if (!string.IsNullOrEmpty(codigo))
+            {
+                sql += " AND CodInterno LIKE ?codInterno";
+                parametros.Add(new GDAParameter("?codInterno", $"%{codigo}%"));
+            }
+
+            return this.objPersistence.LoadData(sql + " ORDER BY Descricao", parametros.Count > 0 ? parametros.ToArray() : null).ToList();
         }
 
         #endregion
@@ -130,7 +149,7 @@ namespace Glass.Data.DAL
         public bool PedidoPertenceARota(GDASession sessao, uint idRota, uint idPedido)
         {
             string sql = @"
-                Select Count(*) From rota_cliente 
+                Select Count(*) From rota_cliente
                 Where idCliente In (
                     Select idCli From pedido
                     Where idPedido=" + idPedido + @"
@@ -204,6 +223,16 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Retorna se a rota é de entrega balcão.
+        /// </summary>
+        /// <param name="idRota">O identificador da rota</param>
+        /// <returns>Retorna se a rota é entrega balcão</returns>
+        public bool ObterEntregaBalcao(int idRota)
+        {
+            return this.ExecuteScalar<bool>($"SELECT EntregaBalcao FROM rota WHERE idRote={idRota}");
+        }
+
+        /// <summary>
         /// Recupera a data da rota por cliente.
         /// </summary>
         public DateTime? GetDataRota(uint idCli, DateTime dataInicial)
@@ -234,8 +263,8 @@ namespace Glass.Data.DAL
             // Calcula a rota considerando dias corridos
             if (RotaConfig.UsarDiasCorridosCalculoRota)
             {
-                // A comparação do número de dias percorrido com o número mínimo de dias da rota deve ser "numeroDias++ < rota.NumeroMinimoDiasEntrega", 
-                // porque dessa forma caso o último dia da contagem caia no dia da rota, esta data será usada, porém da forma como estava antes, 
+                // A comparação do número de dias percorrido com o número mínimo de dias da rota deve ser "numeroDias++ < rota.NumeroMinimoDiasEntrega",
+                // porque dessa forma caso o último dia da contagem caia no dia da rota, esta data será usada, porém da forma como estava antes,
                 // "numeroDias++ <= rota.NumeroMinimoDiasEntrega", a data usada será a da outra semana.
                 //while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
                 /* Chamado 54042. */
@@ -266,7 +295,7 @@ namespace Glass.Data.DAL
                         dataInicial = dataInicial.AddDays(1);
                 }
             }
-                
+
 
             return dataInicial;
         }
@@ -297,10 +326,20 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public string ObtemCodRota(uint idCliente)
         {
+            return ObtemCodRota(null, idCliente);
+        }
+
+        /// <summary>
+        /// Obtém código interno.
+        /// </summary>
+        /// <param name="idCliente">Id do cliente.</param>
+        /// <returns></returns>
+        public string ObtemCodRota(GDASession sessao, uint idCliente)
+        {
             string codRota = "";
-            if (RotaClienteDAO.Instance.IsClienteAssociado(idCliente))
-                codRota = ObtemValorCampo<string>("codInterno", "idRota In (Select idRota From rota_cliente Where idCliente=" + idCliente + ")");
-            
+            if (RotaClienteDAO.Instance.IsClienteAssociado(sessao, idCliente))
+                codRota = ObtemValorCampo<string>(sessao, "codInterno", "idRota In (Select idRota From rota_cliente Where idCliente=" + idCliente + ")");
+
             return codRota;
         }
 

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
-using Glass.Data.Helper;
-using System.Linq;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -18,17 +18,17 @@ namespace Glass.Data.DAL
             string campos = selecionar ? @"a.*, p.codInterno, ip.obs as obsProj, pp.totalProdutos, pp.valorAcrescimo,
                 pp.valorDesconto, pp.totM, ea.codInterno as codAplicacao, ep.codInterno as codProcesso" : "count(*)";
 
-            string sql = "Select " + campos + " From ambiente_pedido" + (isRelatorioPcp ? "_espelho" : String.Empty) + @" a 
+            string sql = "Select " + campos + " From ambiente_pedido" + (isRelatorioPcp ? "_espelho" : String.Empty) + @" a
                 " + (selecionar ? (isRelatorioPcp ? @"Left Join ambiente_pedido a1 On (a.idAmbientePedidoOrig=a1.idAmbientePedido)" : String.Empty) + @"
-                Left Join item_projeto ip On (a.idItemProjeto=ip.idItemProjeto) 
-                Left Join produto p on (a.idProd=p.idProd) 
+                Left Join item_projeto ip On (a.idItemProjeto=ip.idItemProjeto)
+                Left Join produto p on (a.idProd=p.idProd)
                 Left Join etiqueta_aplicacao ea on (a.idAplicacao=ea.idAplicacao)
                 Left Join etiqueta_processo ep on (a.idProcesso=ep.idProcesso)
                 Left Join pedido ped on (a.idPedido=ped.idPedido)" : String.Empty) + @"
                 Left Join (
                     select " + (isRelatorioPcp ? "coalesce(a.idAmbientePedidoOrig, " : "") + "pp.idAmbientePedido" + (isRelatorioPcp ? ") as idAmbientePedido" : "") + @",
                         count(*) as qtdeProd, cast(sum(pp.total+coalesce(pp.valorBenef,0)) as decimal(12,2)) as totalProdutos,
-                        cast(sum(coalesce(pp.valorAcrescimoProd,0)) as decimal(12,2)) as valorAcrescimo, cast(sum(coalesce(pp.valorDescontoProd,0)) 
+                        cast(sum(coalesce(pp.valorAcrescimoProd,0)) as decimal(12,2)) as valorAcrescimo, cast(sum(coalesce(pp.valorDescontoProd,0))
                         as decimal(12,2)) as valorDesconto, sum(pp.totM) as totM
                     from produtos_pedido" + (!isRelatorioPcp ? String.Empty : "_espelho") + @" pp
                         left join ambiente_pedido" + (!isRelatorioPcp ? String.Empty : "_espelho") + @" a on (pp.idAmbientePedido=a.idAmbientePedido and pp.idPedido=a.idPedido)
@@ -45,7 +45,7 @@ namespace Glass.Data.DAL
                 else
                     where += " And (a.idAmbientePedidoOrig=" + idAmbientePedido + " or (a.idAmbientePedidoOrig is null and a.idAmbientePedido=" + idAmbientePedido + "))";
             }
-            
+
             if (idPedido > 0)
                 where += " And a.idPedido=" + idPedido;
 
@@ -94,7 +94,7 @@ namespace Glass.Data.DAL
         public IList<AmbientePedido> GetForExportacao(uint idPedido, uint[] idsProdutosPedido, bool usarEspelho)
         {
             List<AmbientePedido> a = new List<AmbientePedido>(GetByPedido(null, idPedido, usarEspelho));
-            
+
             if (idsProdutosPedido.Length > 0)
             {
                 var idsProd = String.Empty;
@@ -107,7 +107,7 @@ namespace Glass.Data.DAL
                     left join produtos_pedido_espelho ppe on (pp.idProdPedEsp=ppe.idProdPed)
                     where pp.idProdPed in (" + idsProd.TrimEnd(',') + ")", usarEspelho ? "e" : String.Empty), null).Select(f => f.GetUInt32(0))
                        .ToList();
-                
+
                 for (int i = a.Count - 1; i >= 0; i--)
                     if (!idsAmbientesPedido.Contains(a[i].IdAmbientePedido))
                         a.RemoveAt(i);
@@ -194,7 +194,7 @@ namespace Glass.Data.DAL
 
         public uint? GetKeyByPedidoDescr(uint idPedido, string descricao)
         {
-            string sql = "select coalesce(idAmbientePedido, 0) from ambiente_pedido where idPedido=" + idPedido + 
+            string sql = "select coalesce(idAmbientePedido, 0) from ambiente_pedido where idPedido=" + idPedido +
                 " and descricao LIKE ?descr";
 
             return ExecuteScalar<uint?>(sql, new GDAParameter("?descr", "%" + descricao + "%"));
@@ -216,8 +216,16 @@ namespace Glass.Data.DAL
 
         public List<uint> GetIdsByPedido(uint idPedido)
         {
-            return objPersistence.LoadResult("select idAmbientePedido from ambiente_pedido where idPedido=" + idPedido, null).Select(f => f.GetUInt32(0))
-                       .ToList(); ;
+            return GetIdsByPedido(null, idPedido);
+        }
+
+        public List<uint> GetIdsByPedido(GDASession sessao, uint idPedido)
+        {
+            return objPersistence.LoadResult(
+                sessao,
+                "select idAmbientePedido from ambiente_pedido where idPedido=" + idPedido, null)
+                .Select(f => f.GetUInt32(0))
+                .ToList();
         }
 
         #region Retorna o IdAmbiente a partir do item projeto
@@ -273,7 +281,7 @@ namespace Glass.Data.DAL
         {
             using (var sessao = new GDASession())
             {
-                objPersistence.ExecuteCommand(sessao, 
+                objPersistence.ExecuteCommand(sessao,
                     "DELETE FROM ambiente_pedido_rentabilidade WHERE IdAmbientePedido IN (SELECT IdAmbientePedido FROM ambiente_pedido WHERE IdPedido=" + idPedido + ")");
                 objPersistence.ExecuteCommand(sessao, "Delete From ambiente_pedido Where idPedido=" + idPedido);
             }
@@ -401,7 +409,7 @@ namespace Glass.Data.DAL
                 if (DescontoAcrescimoClienteDAO.Instance.ClientePossuiDesconto(sessao, PedidoDAO.Instance.ObtemIdCliente(sessao, ambientePedido.IdPedido), 0, null,
                     ambientePedido.IdPedido, ambientePedido.IdAmbientePedido))
                 {
-                    // Mesmo que tenha desconto por grupo/subgrupo, permite lançar desconto no ambiente considerando que 
+                    // Mesmo que tenha desconto por grupo/subgrupo, permite lançar desconto no ambiente considerando que
                     // o desconto por grupo/subgrupo + o desconto dado no vidro presente no projeto seja menor ou igual
                     // ao desconto máximo configurado para este produto
                     //uint idItemProjeto = ObtemItemProjeto(ambientePedido.IdAmbientePedido);
@@ -439,7 +447,7 @@ namespace Glass.Data.DAL
                     //    if (percDescGrupoSubgrupo + percDescAmbiente > percDescMaxProduto)
                     //    {
                     //        msg = "O percentual de desconto máximo permitido neste ambiente é de " +
-                    //            (percDescMaxProduto - percDescGrupoSubgrupo) + "%, este valor foi excedido com o desconto por grupo/subgrupo " + 
+                    //            (percDescMaxProduto - percDescGrupoSubgrupo) + "%, este valor foi excedido com o desconto por grupo/subgrupo " +
                     //            "configurado para este cliente juntamente com o desconto aplicado no ambiente.";
                     //        return false;
                     //    }
@@ -592,7 +600,7 @@ namespace Glass.Data.DAL
                     select sum(totalBruto) as valor
                     from produtos_pedido
                     where {0}
-                    union all select sum(valor - valorAcrescimo - valorAcrescimoProd - 
+                    union all select sum(valor - valorAcrescimo - valorAcrescimoProd -
                         valorComissao + valorDesconto + valorDescontoProd) as valor
                     from produto_pedido_benef
                     where idProdPed in (select * from (
@@ -634,7 +642,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<int>(session, "TipoDesconto", "IdAmbientePedido=" + idAmbientePedido);
         }
- 
+
         /// <summary>
         /// Retorna a altura do ambiente do pedido espelho
         /// </summary>
@@ -738,7 +746,7 @@ namespace Glass.Data.DAL
 
                 foreach (ProdutosPedido pp in produtosPedido)
                 {
-                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, pedido, pp, forcarRecalculo: true);
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, pedido, pp);
                     pp.ValorVendido = valorUnitario ?? pp.ValorVendido;
 
                     ValorTotal.Instance.Calcular(
@@ -756,7 +764,7 @@ namespace Glass.Data.DAL
 
                 if (pedido.MaoDeObra)
                 {
-                    // Mantém a quantidade salva apenas se for mão de obra, porque se for projeto, deve manter a quantidade preenchida 
+                    // Mantém a quantidade salva apenas se for mão de obra, porque se for projeto, deve manter a quantidade preenchida
                     // no método ProdutosPedidoDAO.InsereAtualizaProdProj()
                     if (objUpdate.Qtde.GetValueOrDefault(0) == 0)
                         objUpdate.Qtde = qtdAmbienteAntiga;
@@ -793,7 +801,7 @@ namespace Glass.Data.DAL
 
             return retorno;
         }
-        
+
         public int DeleteComTransacao(AmbientePedido objDelete)
         {
             using (var transaction = new GDATransaction())

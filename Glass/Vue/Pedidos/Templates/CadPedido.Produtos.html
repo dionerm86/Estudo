@@ -1,0 +1,28 @@
+﻿<section v-if="pedido && (!configuracoes.exibirAmbientes || ambiente)">
+    <lista-itens-venda v-bind:mao-de-obra="pedidoMaoDeObra" v-bind:producao-corte="pedidoProducaoCorte" v-bind:mao-de-obra-especial="pedidoMaoDeObraEspecial"
+        v-bind:filtro="filtro" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
+        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" tipo-validacao-produto="Pedido"
+        v-bind:quantidade-ambiente="ambiente ? ambiente.quantidade : null" v-bind:obrigar-processo-e-aplicacao-roteiro="configuracoes.obrigarProcessoEAplicacaoRoteiro"
+        v-bind:buscar-itens-venda="buscarProdutos" v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar"
+        v-bind:inserir="inserir" v-bind:exibir-popup-falta-estoque="exibirPopupEstoque" v-bind:exibir-colunas-processo-e-aplicacao="configuracoes.exibirColunasProcessoEAplicacao || pedidoMaoDeObra"
+        v-bind:empresa-vende-vidro="!configuracoes.empresaNaoVendeVidro" v-on:lista-atualizada="listaAtualizada">
+        <template slot="itemIconesDireita" slot-scope="{ item, index }">
+            <button title="Exibir imagem das peças" v-on:click.prevent="abrirImagemPecas(item)"
+                v-if="item.produto && item.produto.vidro">
+                <img src="../Images/imagem.gif">
+            </button>
+            <button title="Observação da peça" v-on:click.prevent="exibirDivComoPopup('tbObsCalc_' + item.id, 'Observação', $event)"
+                v-if="item.produto && item.produto.vidro">
+                <img src="../Images/blocodenotas.png">
+            </button>
+            <div v-bind:id="'tbObsCalc_' + item.id" class="cadpedido-produtos__observacao" style="display: none;">
+                <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
+                <div style="text-align: center">
+                    <button v-on:click.prevent="salvarObservacao(item, $event)">
+                        Salvar
+                    </button>
+                </div>
+            </div>
+        </template>
+    </lista-itens-venda>
+</section>

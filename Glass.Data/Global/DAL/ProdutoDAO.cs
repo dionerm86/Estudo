@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
 using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using System.Linq;
 using Glass.Configuracoes;
-using Glass.Global;
-using Glass.Data.Model.Calculos;
+using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
+using Glass.Data.Model;
+using Glass.Data.Model.Calculos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -96,11 +95,11 @@ namespace Glass.Data.DAL
                 p.UsuAlt, p.Obs, p.CodOtimizacao, p.IdCorVidro, p.Altura, p.Largura, p.Csosn, p.Redondo, p.Forma, p.IdUnidadeMedida, p.CodigoEx,
                 p.IdGeneroProduto, p.TipoMercadoria, p.CstIpi, p.IdContaContabil, p.IdCorAluminio, p.IdCorFerragem, p.IdArquivoMesaCorte,
                 p.GtinProduto, p.GtinUnidTrib, p.IdUnidadeMedidaTrib, p.LocalArmazenagem, p.IdProcesso, p.IdAplicacao, p.ValorFiscal, p.IdProdOrig,
-                p.IdProdBase, CONCAT(g.Descricao, ' ', COALESCE(sg.Descricao, '')) AS DescrTipoProduto, 
-                f.NomeFantasia AS NomeFornecedor, pbe.Descricao AS DescrParent, pbe.CodInterno AS CodInternoParent, 
-                pbef.Descricao AS DescrBaixaEstFiscal, pbef.CodInterno AS CodInternoBaixaEstFiscal, cv.Descricao AS DescrCor, 
+                p.IdProdBase, CONCAT(g.Descricao, ' ', COALESCE(sg.Descricao, '')) AS DescrTipoProduto,
+                f.NomeFantasia AS NomeFornecedor, pbe.Descricao AS DescrParent, pbe.CodInterno AS CodInternoParent,
+                pbef.Descricao AS DescrBaixaEstFiscal, pbef.CodInterno AS CodInternoBaixaEstFiscal, cv.Descricao AS DescrCor,
                 pl.QtdeEstoque, pl.Reserva, pl.Liberacao, pl.M2 AS M2Estoque, ff.Nome AS DescrUsuCad, fff.Nome AS DescrUsuAlt,
-                pl.EstoqueMinimo, g.Descricao AS DescrGrupo, sg.Descricao AS DescrSubgrupo, um.Codigo AS Unidade, umt.Codigo AS UnidadeTrib, 
+                pl.EstoqueMinimo, g.Descricao AS DescrGrupo, sg.Descricao AS DescrSubgrupo, um.Codigo AS Unidade, umt.Codigo AS UnidadeTrib,
                 apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso, gp.Descricao AS DescrGeneroProd,
                 pcc.Descricao AS DescrContaContabil, COALESCE(ncm.Ncm, p.Ncm) AS Ncm, p.IdCest" : "COUNT(*)";
 
@@ -116,39 +115,39 @@ namespace Glass.Data.DAL
             }
 
             string sql = @"
-                Select " + campos + @" 
-                From produto p 
+                Select " + campos + @"
+                From produto p
                     Left Join (
                         Select pbe.idProd, pp.Descricao, pp.CodInterno
                         From produto_baixa_estoque pbe
-                            Left Join produto pp On (pbe.idProdBaixa=pp.idProd) 
+                            Left Join produto pp On (pbe.idProdBaixa=pp.idProd)
                         Group By pbe.idProd
                     ) As pbe ON (p.idProd=pbe.idProd)
                     Left Join (
                         Select pbef.idProd, ppp.Descricao, ppp.codInterno
                         From produto_baixa_estoque pbef
-                            Left Join produto ppp on (pbef.idProdBaixa=ppp.idProd) 
+                            Left Join produto ppp on (pbef.idProdBaixa=ppp.idProd)
                         Group By pbef.idProd
                     ) As pbef On (p.idProd=pbef.idProd)
-                    Inner Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd) 
-                    Left Join subgrupo_prod sg On (p.idSubgrupoProd=sg.idSubgrupoProd) 
-                    Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro) 
+                    Inner Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd)
+                    Left Join subgrupo_prod sg On (p.idSubgrupoProd=sg.idSubgrupoProd)
+                    Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left Join unidade_medida umt On (p.idUnidadeMedidaTrib=umt.idUnidadeMedida)
-                    Left Join fornecedor f On (p.idfornec=f.idfornec) 
-                    Left Join funcionario ff On (p.UsuCad=ff.idFunc) 
+                    Left Join fornecedor f On (p.idfornec=f.idfornec)
+                    Left Join funcionario ff On (p.UsuCad=ff.idFunc)
                     Left Join funcionario fff On (p.UsuAlt=fff.idFunc)
                     Left Join etiqueta_aplicacao apl On (p.idAplicacao=apl.idAplicacao)
                     Left Join etiqueta_processo prc On (p.idProcesso=prc.idProcesso)
                     Left Join genero_produto gp On (p.idGeneroProduto=gp.idGeneroProduto)
                     Left Join plano_conta_contabil pcc On (p.idContaContabil=pcc.idContaContabil)
                     Left Join (
-                        select idProd, idLoja, sum(Coalesce(qtdEstoque,0)) as qtdeEstoque, sum(Coalesce(reserva,0)) as reserva, 
+                        select idProd, idLoja, sum(Coalesce(qtdEstoque,0)) as qtdeEstoque, sum(Coalesce(reserva,0)) as reserva,
                             sum(Coalesce(liberacao, 0)) as liberacao, sum(Coalesce(m2, 0)) as m2, sum(Coalesce(estMinimo, 0)) as estoqueMinimo
                         from produto_loja
                         Where 1 " + (idLoja > 0 ? "And idLoja=" + idLoja : String.Empty) + @"
                         group by idProd" + (agruparEstoqueLoja ? ", idLoja" : "") + @"
-                    ) as pl On (p.idProd=pl.idProd) 
+                    ) as pl On (p.idProd=pl.idProd)
                     LEFT JOIN
                     (
                         SELECT *
@@ -362,11 +361,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProd"></param>
         /// <returns></returns>
-        public Produto GetElement(GDASession sessao, uint idProd, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetElement(GDASession sessao, uint idProd, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetElement(sessao, idProd);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -556,11 +556,12 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="codInterno"></param>
         /// <returns></returns>
-        public Produto GetByCodInterno(string codInterno, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
+        public Produto GetByCodInterno(string codInterno, int? idNf, uint idLoja, uint? idCliente, uint? idFornec, bool saida)
         {
             var retorno = GetByCodInterno(codInterno);
             if (retorno != null)
             {
+                retorno.IdNfIcms = idNf;
                 retorno.IdLojaIcms = idLoja;
                 retorno.IdClienteIcms = idCliente;
                 retorno.IdFornecIcms = idFornec;
@@ -688,9 +689,9 @@ namespace Glass.Data.DAL
 
                 // Calcula m² considerando que o pedido possa ter mais de uma liberação
                 (PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ?
-                    "if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" and ap.idAmbientePedido is not null, 
+                    "if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" and ap.idAmbientePedido is not null,
                         (pp.TotM2Calc/Coalesce(ap.qtde,1))*Sum(plp.qtdeCalc), (pp.TotM2Calc/pp.Qtde)*Sum(plp.qtdeCalc))" :
-                    "if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" and ap.idAmbientePedido is not null, 
+                    "if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" and ap.idAmbientePedido is not null,
                         pp.TotM*Sum(plp.qtdeCalc), (pp.TotM/pp.Qtde)*Sum(plp.qtdeCalc))") :
 
                 // Calcula m² considerando que o pedido não tenha mais de uma liberação
@@ -699,11 +700,11 @@ namespace Glass.Data.DAL
 
             string camposInt = selecionar ? "p.*, " + campoCusto + ", " + campoData + @" as dataFiltro,
                 (pp.altura* If(pp.totM > 0, 0, (" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @"))) as totalML1,
-                (pp.altura) as totalAltura1, " + campoTotal + @", cast(" + campoValorUnitario + @" as decimal(12,2)) as valorVendido1, 
-                ped.idFunc, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Coalesce(" + campoCalcTotM2 + @", 0) as totalM21, 
-                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as signed) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo, 
-                " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio, ped.idCli as idClienteVend, c.nome as nomeClienteVend, 
-                pp.idPedido," + (calcularLiberados ? " plp.idLiberarPedido," : "") + @" coalesce(cv.descricao, ca.descricao, cf.descricao, '-') as descrCor, ped.idCli, 
+                (pp.altura) as totalAltura1, " + campoTotal + @", cast(" + campoValorUnitario + @" as decimal(12,2)) as valorVendido1,
+                ped.idFunc, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Coalesce(" + campoCalcTotM2 + @", 0) as totalM21,
+                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as signed) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo,
+                " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio, ped.idCli as idClienteVend, c.nome as nomeClienteVend,
+                pp.idPedido," + (calcularLiberados ? " plp.idLiberarPedido," : "") + @" coalesce(cv.descricao, ca.descricao, cf.descricao, '-') as descrCor, ped.idCli,
                 p.codInterno As codigoProduto, ap.IdAmbientePedido as IdAmbiente, ap.Ambiente" :
                 string.Format("pp.idProd, ped.IdCli, pp.IdPedido, ap.IdAmbientePedido{0}", calcularLiberados ? ", plp.idLiberarPedido" : string.Empty);
 
@@ -711,10 +712,10 @@ namespace Glass.Data.DAL
             // devido ao fato de existir por exemplo 10 unidade de um produto no valor R$50,00 (no mesmo produto_pedido) e 1 unidade deste produto
             // no valor de R$200,00, como o AVG não considera a qtde do produtos_pedido mas sim a quantidade de resultados do SQL (neste caso 2),
             // faz com que o cálculo fique incorreto, por isso foi alterado para calcular o valor vendido com base no total e na qtde.
-            string campos = selecionar ? @"*, sum(totalAltura1) as totalAltura, round(sum(totalVend1),2) as totalVend, 
+            string campos = selecionar ? @"*, sum(totalAltura1) as totalAltura, round(sum(totalVend1),2) as totalVend,
                 round(sum(totalCusto1),2) as totalCusto, round(sum(totalM21),2) as totalM2, round(sum(totalML1),2) as totalML,
-                cast(sum(Coalesce(totalQtdeLong1,0)) as signed) as totalQtdeLong, 
-                Cast(sum(totalVend1)/if(tipoCalc in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"), 
+                cast(sum(Coalesce(totalQtdeLong1,0)) as signed) as totalQtdeLong,
+                Cast(sum(totalVend1)/if(tipoCalc in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"),
                 sum(totalM21), cast(sum(Coalesce(totalQtdeLong1,0)) as signed)) as decimal(12,2)) as valorVendido" : "Count(*)";
 
             if (semValor && String.IsNullOrEmpty(tipoPedido))
@@ -730,23 +731,23 @@ namespace Glass.Data.DAL
                 select " + campos + @"
                 from (
                     Select " + camposInt + @"
-                    From produtos_pedido pp 
-                        
-                        Inner Join (select idpedido, sum(total + coalesce(valorBenef, 0)) as totalProd, sum(custoProd) as custoProd from produtos_pedido 
+                    From produtos_pedido pp
+
+                        Inner Join (select idpedido, sum(total + coalesce(valorBenef, 0)) as totalProd, sum(custoProd) as custoProd from produtos_pedido
 		                    where invisivel" + (calcularValorPedComercial ? "Pedido" : "Fluxo") + @"=false or invisivel" + (calcularValorPedComercial ? "Pedido" : "Fluxo") + @" is null group by idpedido) pp1 on (pp.idpedido=pp1.idPedido)
 
                         Left Join ambiente_pedido ap On (pp.idAmbientePedido=ap.idAmbientePedido)
-                        Inner Join produto p On (pp.idProd=p.idProd) 
+                        Inner Join produto p On (pp.idProd=p.idProd)
                         Left Join (select idprodped, sum(custo) as custo from produto_pedido_benef) ppb On (ppb.idProdPed=pp.idProdPed)
                         Left Join cor_vidro cv on (p.idCorVidro=cv.idCorVidro)
                         Left Join cor_aluminio ca on (p.idCorAluminio=ca.idCorAluminio)
                         Left Join cor_ferragem cf on (p.idCorFerragem=cf.idCorFerragem)
-                        Inner Join pedido ped on (pp.idPedido=ped.idPedido) 
+                        Inner Join pedido ped on (pp.idPedido=ped.idPedido)
                         Left Join pedido_espelho pe On (ped.idPedido=pe.idPedido)
                         Left Join cliente c on (ped.idCli=c.id_Cli)
                         " + (calcularLiberados ? @"Left Join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
                         Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)" : "") + @"
-                        Inner Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
+                        Inner Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                         Left Join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd)
                     Where 1 ";
 
@@ -963,7 +964,7 @@ namespace Glass.Data.DAL
                         break;
 
                     case TipoBuscaMateriaPrima.Ambos:
-                        sql += " And (p.idProd In (" + ids + @") or p.idProd in (select * from (select distinct idProd from produto_baixa_estoque 
+                        sql += " And (p.idProd In (" + ids + @") or p.idProd in (select * from (select distinct idProd from produto_baixa_estoque
                             where idProdBaixa in (" + ids + ")) as temp))";
                         criterio += "Produto/Matéria-prima: " + descrProd + "    ";
                         break;
@@ -986,7 +987,7 @@ namespace Glass.Data.DAL
                         break;
 
                     case TipoBuscaMateriaPrima.Ambos:
-                        sql += " And (p.idProd In (" + ids + @") or p.idProd in (select * from (select distinct idProd from produto_baixa_estoque 
+                        sql += " And (p.idProd In (" + ids + @") or p.idProd in (select * from (select distinct idProd from produto_baixa_estoque
                             where idProdBaixa in (" + ids + ")) as temp))";
                         criterio += "Produto/Matéria-prima: " + descrProd + "    ";
                         break;
@@ -1207,13 +1208,13 @@ namespace Glass.Data.DAL
 
             string campos = selecionar ? String.Format(@"p.*, pc.dataFiltro, {0}(pc.altura) as totalAltura,
                 Round({0}(pc.total + coalesce(pc.valorBenef,0)), 2) as totalCusto, pc.idFunc, pc.idsCompras, pc.numeroNfe,
-                g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Round({0}(pc.TotM), 2) as totalM2, {0}(pc.Qtde) as totalQtde, 
+                g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Round({0}(pc.TotM), 2) as totalM2, {0}(pc.Qtde) as totalQtde,
                 coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio,
                 f.idFornec as idFornecComp, coalesce(f.nomeFantasia, f.razaoSocial) as nomeFornecComp", !forRpt ? "sum" : "") :
                 "count(distinct p.idProd)";
 
             string whereCfop = String.IsNullOrEmpty(tipoCfop) ? "" :
-                @" and nf.idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao no 
+                @" and nf.idNaturezaOperacao in (select idNaturezaOperacao from natureza_operacao no
                 inner join cfop on (no.idCfop=cfop.idCfop) where idTipoCfop in (" + tipoCfop + "))";
 
             if (!String.IsNullOrEmpty(whereCfop))
@@ -1222,15 +1223,15 @@ namespace Glass.Data.DAL
             string sql = @"
                 Select " + campos + @"
                 From (
-                    select idProd, cast(pc.idCompra as char) as idsCompras, null as numeroNfe, altura, totM, qtde, pc.total, valorBenef, 
+                    select idProd, cast(pc.idCompra as char) as idsCompras, null as numeroNfe, altura, totM, qtde, pc.total, valorBenef,
                         comp.dataFinalizada as dataFiltro, comp.usuCad as idFunc, comp.idFornec, comp.idLoja, null as idNf
                     from produtos_compra pc
-                        inner join compra comp on (pc.idCompra=comp.idCompra) 
+                        inner join compra comp on (pc.idCompra=comp.idCompra)
                         left join compra_nota_fiscal cnf on (comp.idCompra=cnf.idCompra)
                     where cnf.idCompra is null and comp.situacao In (" + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @")
 
-                    union all select idProd, group_concat(cnf.idCompra order by cnf.idCompra asc separator ', ') as idsCompras, nf.numeroNfe, 
-                        altura, totM, qtde, pnf.total, null as valorBenef, nf.dataEmissao as dataFiltro, nf.usuCad as idFunc, nf.idFornec, 
+                    union all select idProd, group_concat(cnf.idCompra order by cnf.idCompra asc separator ', ') as idsCompras, nf.numeroNfe,
+                        altura, totM, qtde, pnf.total, null as valorBenef, nf.dataEmissao as dataFiltro, nf.usuCad as idFunc, nf.idFornec,
                         nf.idLoja, pnf.idNf
                     from produtos_nf pnf
                         inner join nota_fiscal nf on (pnf.idNf=nf.idNf)
@@ -1238,9 +1239,9 @@ namespace Glass.Data.DAL
                     where nf.situacao=" + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros + whereCfop + @"
                     Group By pnf.idprodnf
                 ) as pc
-                    Inner Join produto p On (pc.idProd=p.idProd) 
+                    Inner Join produto p On (pc.idProd=p.idProd)
                     left join fornecedor f on (pc.idFornec=f.idFornec)
-                    Inner Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
+                    Inner Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                     Left Join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd)
                 Where 1";
 
@@ -1425,11 +1426,11 @@ namespace Glass.Data.DAL
             }
 
             string campos = selecionar ? @"
-                p.*, Concat(g.Descricao, if(sg.Descricao is null, '', Concat(' - ', sg.descricao))) as DescrTipoProduto, 
-                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as QtdeEstoque, 
-                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as Reserva, 
+                p.*, Concat(g.Descricao, if(sg.Descricao is null, '', Concat(' - ', sg.descricao))) as DescrTipoProduto,
+                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as QtdeEstoque,
+                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as Reserva,
                 (Select Sum(Liberacao) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as Liberacao,
-                (Select Sum(M2) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as M2Estoque, 
+                (Select Sum(M2) From produto_loja pl Where pl.idProd=p.idProd " + parametroIdLoja + @" {0}) as M2Estoque,
                  f.NomeFantasia as NomeFornecedor" : "Count(*)";
 
             // Se for para nota fiscal, busca estoque fiscal
@@ -1437,11 +1438,11 @@ namespace Glass.Data.DAL
                 campos += ", (Select Sum(EstoqueFiscal) From produto_loja pl Where pl.idProd=p.idProd) as EstoqueFiscal ";
 
             string sql = @"
-                Select " + campos + @" 
-                From produto p 
-                    Left Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd) 
-                    Left Join subgrupo_prod sg On (p.idSubgrupoProd=sg.idSubgrupoProd) 
-                    Left Join fornecedor f On (p.idfornec=f.idfornec) 
+                Select " + campos + @"
+                From produto p
+                    Left Join grupo_prod g On (p.idGrupoProd=g.idGrupoProd)
+                    Left Join subgrupo_prod sg On (p.idSubgrupoProd=sg.idSubgrupoProd)
+                    Left Join fornecedor f On (p.idfornec=f.idfornec)
                 Where 1 ?filtroAdicional?";
 
             if (idSubgrupo > 0)
@@ -1608,9 +1609,9 @@ namespace Glass.Data.DAL
             filtroAdicional = "";
 
             string campos = selecionar ? @"
-                p.*, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, 
-                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd) as QtdeEstoque, 
-                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd) as Reserva, 
+                p.*, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo,
+                (Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=p.idProd) as QtdeEstoque,
+                (Select Sum(Reserva) From produto_loja pl Where pl.idProd=p.idProd) as Reserva,
                 (Select Sum(Liberacao) From produto_loja pl Where pl.idProd=p.idProd) as Liberacao,
                 f.NomeFantasia as NomeFornecedor, gp.Descricao as DescrGeneroProd,
                 pcc.Descricao as DescrContaContabil, cv.Descricao as DescrCor,
@@ -1619,14 +1620,14 @@ namespace Glass.Data.DAL
             string criterio = String.Empty;
 
             string sql = @"
-                Select " + campos + @" 
-                From produto p 
-                    Left Join fornecedor f on (p.idFornec=f.idFornec) 
-                    Left Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
+                Select " + campos + @"
+                From produto p
+                    Left Join fornecedor f on (p.idFornec=f.idFornec)
+                    Left Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                     Left Join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd)
                     Left Join genero_produto gp On (p.idGeneroProduto=gp.idGeneroProduto)
                     Left Join plano_conta_contabil pcc On (p.idContaContabil=pcc.idContaContabil)
-                    Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro) 
+                    Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                     Left Join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left Join unidade_medida umt On (p.idUnidadeMedidaTrib=umt.idUnidadeMedida)
                 Where 1 ?filtroAdicional?";
@@ -1875,7 +1876,7 @@ namespace Glass.Data.DAL
             uint idProd = ExecuteScalar<uint>("select idProd from produto where codInterno=?cod",
                 new GDAParameter("?cod", codInterno));
 
-            var produto = GetByCodInterno(codInterno, idLoja, idCliente, idFornec, saida);
+            var produto = GetByCodInterno(codInterno, null, idLoja, idCliente, idFornec, saida);
             produto.Unidade = UnidadeMedidaDAO.Instance.ObtemCodigo((uint)produto.IdUnidadeMedida);
 
             return produto;
@@ -2566,9 +2567,9 @@ namespace Glass.Data.DAL
         public string ObtemUnidadeMedida(GDASession session, int idProd)
         {
             string sql = @"
-                Select codigo From unidade_medida 
+                Select codigo From unidade_medida
                 Where idUnidadeMedida=(
-                    Select idUnidadeMedida From produto 
+                    Select idUnidadeMedida From produto
                     Where idProd=" + idProd + @"
                 )";
 
@@ -2591,9 +2592,9 @@ namespace Glass.Data.DAL
         public string ObtemUnidadeMedidaTrib(GDASession session, uint idProd)
         {
             string sql = @"
-                Select codigo From unidade_medida 
+                Select codigo From unidade_medida
                 Where idUnidadeMedida=(
-                    Select idUnidadeMedidaTrib From produto 
+                    Select idUnidadeMedidaTrib From produto
                     Where idProd=" + idProd + @"
                 )";
 
@@ -3084,7 +3085,7 @@ namespace Glass.Data.DAL
             ContainerCalculoDTO.TipoContainer? tipo = null;
             var tipoVenda = 0;
             var idParcela = 0;
-            
+
             #region Recuperação dos dados do pedido, projeto e orçamento
 
             if (idPedido > 0)
@@ -3125,7 +3126,8 @@ namespace Glass.Data.DAL
 
             var produtoCalculo = new ProdutoCalculoDTO()
             {
-                IdProduto = (uint)idProd
+                IdProduto = (uint)idProd,
+                PercDescontoQtde = percDescontoQtde
             };
 
             produtoCalculo.InicializarParaCalculo(sessao, containerCalculo);
@@ -3154,6 +3156,16 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public decimal GetValorMinimo(uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
+            return GetValorMinimo(null, id, tipoBusca, revenda, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+        }
+
+        /// <summary>
+        /// Recupera o valor mínimo para um produto.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public decimal GetValorMinimo(GDASession sessao, uint id, TipoBuscaValorMinimo tipoBusca, bool revenda, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        {
             if (id == 0)
                 return 0;
 
@@ -3168,66 +3180,66 @@ namespace Glass.Data.DAL
             switch (tipoBusca)
             {
                 case TipoBuscaValorMinimo.ProdutoOrcamento:
-                    idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<int>("idProduto", "idProd=" + id);
-                    valorUnit = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<decimal>("valorProd", "idProd=" + id);
-                    percDescontoQtdeAtual = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProd=" + id);
-                    idParent = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>("idOrcamento", "idProd=" + id);
-                    tipoEntrega = OrcamentoDAO.Instance.ObtemValorCampo<int?>("tipoEntrega", "idOrcamento=" + idParent);
-                    idCliente = OrcamentoDAO.Instance.ObtemValorCampo<uint?>("idCliente", "idOrcamento=" + idParent);
+                    idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<int>(sessao, "idProduto", "idProd=" + id);
+                    valorUnit = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorProd", "idProd=" + id);
+                    percDescontoQtdeAtual = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<float>(sessao, "percDescontoQtde", "idProd=" + id);
+                    idParent = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(sessao, "idOrcamento", "idProd=" + id);
+                    tipoEntrega = OrcamentoDAO.Instance.ObtemValorCampo<int?>(sessao, "tipoEntrega", "idOrcamento=" + idParent);
+                    idCliente = OrcamentoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idCliente", "idOrcamento=" + idParent);
                     reposicao = false;
                     break;
 
                 case TipoBuscaValorMinimo.ProdutoPedido:
-                    idProd = (int)ProdutosPedidoDAO.Instance.ObtemIdProd(null, id);
-                    valorUnit = ProdutosPedidoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdPed=" + id);
-                    percDescontoQtdeAtual = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdPed=" + id);
-                    idParent = ProdutosPedidoDAO.Instance.ObtemIdPedido(id);
-                    tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idParent);
-                    idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idParent);
-                    reposicao = PedidoDAO.Instance.IsPedidoReposicao(null, idParent.ToString());
+                    idProd = (int)ProdutosPedidoDAO.Instance.ObtemIdProd(sessao, id);
+                    valorUnit = ProdutosPedidoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorVendido", "idProdPed=" + id);
+                    percDescontoQtdeAtual = ProdutosPedidoDAO.Instance.ObtemValorCampo<float>(sessao, "percDescontoQtde", "idProdPed=" + id);
+                    idParent = ProdutosPedidoDAO.Instance.ObtemIdPedido(sessao, id);
+                    tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(sessao, idParent);
+                    idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idParent);
+                    reposicao = PedidoDAO.Instance.IsPedidoReposicao(sessao, idParent.ToString());
                     break;
 
                 case TipoBuscaValorMinimo.ProdutoPedidoEspelho:
-                    idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<int>("idProd", "idProdPed=" + id);
-                    valorUnit = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdPed=" + id);
-                    percDescontoQtdeAtual = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdPed=" + id);
-                    idParent = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(id);
-                    tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idParent);
-                    idCliente = PedidoDAO.Instance.ObtemIdCliente(null, idParent);
-                    reposicao = PedidoDAO.Instance.IsPedidoReposicao(null, idParent.ToString());
+                    idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<int>(sessao, "idProd", "idProdPed=" + id);
+                    valorUnit = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorVendido", "idProdPed=" + id);
+                    percDescontoQtdeAtual = ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<float>(sessao, "percDescontoQtde", "idProdPed=" + id);
+                    idParent = ProdutosPedidoEspelhoDAO.Instance.ObtemIdPedido(sessao, id);
+                    tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(sessao, idParent);
+                    idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idParent);
+                    reposicao = PedidoDAO.Instance.IsPedidoReposicao(sessao, idParent.ToString());
                     break;
 
                 case TipoBuscaValorMinimo.ProdutoTrocaDevolucao:
-                    idProd = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<int>("idProd", "idProdTrocaDev=" + id);
-                    valorUnit = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdTrocaDev=" + id);
-                    percDescontoQtdeAtual = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdTrocaDev=" + id);
-                    idParent = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<uint>("idTrocaDevolucao", "idProdTrocaDev=" + id);
-                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
-                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPed.Value) : null;
-                    idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(idParent);
+                    idProd = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<int>(sessao, "idProd", "idProdTrocaDev=" + id);
+                    valorUnit = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorVendido", "idProdTrocaDev=" + id);
+                    percDescontoQtdeAtual = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<float>(sessao, "percDescontoQtde", "idProdTrocaDev=" + id);
+                    idParent = ProdutoTrocaDevolucaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idTrocaDevolucao", "idProdTrocaDev=" + id);
+                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idPedido", "idTrocaDevolucao=" + idParent);
+                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPed.Value) : null;
+                    idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(sessao, idParent);
                     reposicao = false;
                     break;
 
                 case TipoBuscaValorMinimo.ProdutoTrocado:
-                    idProd = ProdutoTrocadoDAO.Instance.ObtemValorCampo<int>("idProd", "idProdTrocado=" + id);
-                    valorUnit = ProdutoTrocadoDAO.Instance.ObtemValorCampo<decimal>("valorVendido", "idProdTrocado=" + id);
-                    percDescontoQtdeAtual = ProdutoTrocadoDAO.Instance.ObtemValorCampo<float>("percDescontoQtde", "idProdTrocado=" + id);
-                    idParent = ProdutoTrocadoDAO.Instance.ObtemValorCampo<uint>("idTrocaDevolucao", "idProdTrocado=" + id);
-                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>("idPedido", "idTrocaDevolucao=" + idParent);
-                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(idPed.Value) : null;
-                    idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(idParent);
+                    idProd = ProdutoTrocadoDAO.Instance.ObtemValorCampo<int>(sessao, "idProd", "idProdTrocado=" + id);
+                    valorUnit = ProdutoTrocadoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valorVendido", "idProdTrocado=" + id);
+                    percDescontoQtdeAtual = ProdutoTrocadoDAO.Instance.ObtemValorCampo<float>(sessao, "percDescontoQtde", "idProdTrocado=" + id);
+                    idParent = ProdutoTrocadoDAO.Instance.ObtemValorCampo<uint>(sessao, "idTrocaDevolucao", "idProdTrocado=" + id);
+                    idPed = TrocaDevolucaoDAO.Instance.ObtemValorCampo<uint?>(sessao, "idPedido", "idTrocaDevolucao=" + idParent);
+                    tipoEntrega = idPed > 0 ? (int?)PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPed.Value) : null;
+                    idCliente = TrocaDevolucaoDAO.Instance.ObtemIdCliente(sessao, idParent);
                     break;
 
                 case TipoBuscaValorMinimo.MaterialItemProjeto:
-                    idProd = MaterialItemProjetoDAO.Instance.ObtemValorCampo<int>("idProd", "idMaterItemProj=" + id);
-                    valorUnit = MaterialItemProjetoDAO.Instance.ObtemValorCampo<decimal>("valor", "idMaterItemProj=" + id);
+                    idProd = MaterialItemProjetoDAO.Instance.ObtemValorCampo<int>(sessao, "idProd", "idMaterItemProj=" + id);
+                    valorUnit = MaterialItemProjetoDAO.Instance.ObtemValorCampo<decimal>(sessao, "valor", "idMaterItemProj=" + id);
                     percDescontoQtdeAtual = 0;
-                    idParent = MaterialItemProjetoDAO.Instance.ObtemValorCampo<uint>("idItemProjeto", "idMaterItemProj=" + id);
-                    ItemProjetoDAO.Instance.GetTipoEntregaCliente(idParent, out tipoEntrega, out idCliente, out reposicao);
+                    idParent = MaterialItemProjetoDAO.Instance.ObtemValorCampo<uint>(sessao, "idItemProjeto", "idMaterItemProj=" + id);
+                    ItemProjetoDAO.Instance.GetTipoEntregaCliente(sessao, idParent, out tipoEntrega, out idCliente, out reposicao);
                     break;
             }
 
-            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao,
+            return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao,
                 Math.Max(percDescontoQtde, percDescontoQtdeAtual), valorUnit, idPedido, idProjeto, idOrcamento);
         }
 
@@ -3243,18 +3255,34 @@ namespace Glass.Data.DAL
         public decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda,
             bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            return GetValorMinimo(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
+            return GetValorMinimo(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde,
+                idPedido, idProjeto, idOrcamento);
         }
 
-        private decimal GetValorMinimo(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao,
+        /// <summary>
+        /// Recupera o valor mínimo para um produto.
+        /// </summary>
+        /// <param name="idProd"></param>
+        /// <param name="tipoEntrega"></param>
+        /// <param name="idCliente"></param>
+        /// <param name="desconto"></param>
+        /// <param name="acrescimo"></param>
+        /// <returns></returns>
+        public decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda,
+            bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        {
+            return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
+        }
+
+        private decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao,
             float percDescontoQtde, decimal valorNegociado, int? idPedido, int? idProjeto, int? idOrcamento)
         {
-            var idGrupoProd = ObtemValorCampo<int>("idGrupoProd", "idProd=" + idProd);
-            var idSubgrupoProd = ObtemValorCampo<int?>("idSubgrupoProd", "idProd=" + idProd);
+            var idGrupoProd = ObtemValorCampo<int>(sessao, "idGrupoProd", "idProd=" + idProd);
+            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "idSubgrupoProd", "idProd=" + idProd);
 
-            var desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(null, idCliente.GetValueOrDefault() > 0 ?
+            var desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente.GetValueOrDefault() > 0 ?
                 idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-            decimal valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+            decimal valorUnitario = GetValorTabela(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
 
             if (valorNegociado == 0)
                 return valorUnitario;
@@ -3575,7 +3603,7 @@ namespace Glass.Data.DAL
 		                    (SELECT primeironivelbaixa.IdProd FROM produto_baixa_estoque primeironivelbaixa
 			                    INNER JOIN produto primeironivelprod ON (primeironivelbaixa.IdProdBaixa=primeironivelprod.IdProd)
 			                    INNER JOIN subgrupo_prod primeironivelsubgrupo ON (primeironivelprod.IdSubgrupoProd=primeironivelsubgrupo.IdSubgrupoProd)
-			
+
 		                    WHERE primeironivelsubgrupo.TipoSubgrupo IN ({1},{2})) AS baixaprimeironivel ON (p.IdProd=baixaprimeironivel.IdProd)
 
                     WHERE p.IdProd={0} AND sp.TipoSubgrupo IN ({1},{2})",
@@ -3605,7 +3633,7 @@ namespace Glass.Data.DAL
         public bool ProdutoPossuiValorTabela(GDASession sessao, uint idProd, decimal valorTabela)
         {
             const decimal TOLERANCIA = 0.01M;
-            string sql = "select count(*) from produto where idProd=" + idProd + @" 
+            string sql = "select count(*) from produto where idProd=" + idProd + @"
                 and ((valorBalcao>=?valorInf and valorBalcao<=?valorSup) Or (valorObra>=?valorInf and valorObra<=?valorSup)
                 Or (valorAtacado>=?valorInf and valorAtacado<=?valorSup))";
 
@@ -3618,7 +3646,7 @@ namespace Glass.Data.DAL
             {
                 sql = @"
                     Select count(*) From (
-                        Select idLog From log_alteracao 
+                        Select idLog From log_alteracao
                         Where tabela=" + (int)LogAlteracao.TabelaAlteracao.Produto + @"
                             And idRegistroAlt=" + idProd + @"
                             And campo in ('Valor Balcão', 'Valor Obra', 'Valor Atacado')
@@ -3644,7 +3672,7 @@ namespace Glass.Data.DAL
             filtroAdicional = " and p.situacao=" + (int)Glass.Situacao.Ativo;
 
             string criterio = "";
-            string campos = selecionar ? @"p.*, c.id_Cli as idClienteVend, c.nome as nomeClienteVend, 
+            string campos = selecionar ? @"p.*, c.id_Cli as idClienteVend, c.nome as nomeClienteVend,
                 c.revenda as clienteRevendaVend, g.descricao as descrGrupo, s.descricao as descrSubgrupo, '$$$' as criterio, " +
                 tipoValor + " as tipoValorTabela" : "count(*)";
 
@@ -3752,7 +3780,7 @@ namespace Glass.Data.DAL
 
             var dados = objPersistence.LoadData(sql, GetParamsPrecoTab(nomeCliente, codInterno, descrProduto)).ToList();
 
-            // Caso esteja buscando apenas produtos com desconto, busca todos que o 
+            // Caso esteja buscando apenas produtos com desconto, busca todos que o
             // percentual de desconto acréscimo for diferente de 1 (sem desconto e sem acréscimo)
             if (produtoDesconto)
                 dados = dados.Where(f => DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)idCliente, f.IdProd)).ToList();
@@ -3771,7 +3799,7 @@ namespace Glass.Data.DAL
 
             var dados = objPersistence.LoadData(sql, GetParamsPrecoTab(nomeCliente, codInterno, descrProduto)).ToList();
 
-            // Caso esteja buscando apenas produtos com desconto, busca todos que o 
+            // Caso esteja buscando apenas produtos com desconto, busca todos que o
             // percentual de desconto acréscimo for diferente de 1 (sem desconto e sem acréscimo)
             if (produtoDesconto)
                 dados = dados.Where(f => DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)idCliente, f.IdProd)).ToList();
@@ -3797,7 +3825,7 @@ namespace Glass.Data.DAL
 
             var dados = objPersistence.LoadData(sql, GetParamsPrecoTab(nomeCliente, codInterno, descrProduto)).ToList();
 
-            // Caso esteja buscando apenas produtos com desconto, busca todos que o 
+            // Caso esteja buscando apenas produtos com desconto, busca todos que o
             // percentual de desconto acréscimo for diferente de 1 (sem desconto e sem acréscimo)
             if (produtoDesconto)
                 dados = dados.Where(f => DescontoAcrescimoClienteDAO.Instance.ProdutoPossuiDesconto(null, (int)idCliente, f.IdProd)).ToList();
@@ -3936,14 +3964,14 @@ namespace Glass.Data.DAL
 
             if (PCPConfig.ControlarProducao && forProducao)
             {
-                sql += " and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" and sg.produtosEstoque=true 
-                    and (if(" + isTipoCalcM2 + @", pl.m2 + coalesce(pped.totMProduzindo,0), pl.qtdeEstoque + 
+                sql += " and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" and sg.produtosEstoque=true
+                    and (if(" + isTipoCalcM2 + @", pl.m2 + coalesce(pped.totMProduzindo,0), pl.qtdeEstoque +
                     coalesce(pped.qtdeProduzindo,0))) < (Coalesce(pl.estoqueMinimo, 0) + Coalesce(pl.reserva, 0) + Coalesce(pl.liberacao, 0))";
             }
             else
             {
-                sql += string.Format(" and (coalesce(sg.produtosEstoque, false)=false Or sg.tipoSubgrupo In({0},{1})) and (if(" + isTipoCalcM2 + @", coalesce(pl.m2,0) + 
-                    coalesce(pc.totMComprando,0), coalesce(pl.qtdeEstoque,0) + coalesce(pc.qtdeComprando,0))) < 
+                sql += string.Format(" and (coalesce(sg.produtosEstoque, false)=false Or sg.tipoSubgrupo In({0},{1})) and (if(" + isTipoCalcM2 + @", coalesce(pl.m2,0) +
+                    coalesce(pc.totMComprando,0), coalesce(pl.qtdeEstoque,0) + coalesce(pc.qtdeComprando,0))) <
                     (coalesce(pl.estoqueMinimo,0) + coalesce(pl.reserva,0) + coalesce(pl.liberacao,0))",
                     (int)TipoSubgrupoProd.ChapasVidro,
                     (int)TipoSubgrupoProd.ChapasVidroLaminado);
@@ -3973,7 +4001,7 @@ namespace Glass.Data.DAL
                             SUM(coalesce(pl.qtdEstoque, 0) + IF(" + isTipoCalcM2 + @", coalesce(pc.totMComprando, 0), coalesce(pc.qtdeComprando, 0))) as QtdeEstoque
                         FROM produto p
 	                        INNER JOIN produto_loja pl ON (p.IdProd = pl.IdProd)
-	                        INNER JOIN grupo_prod g ON (p.IdGrupoProd = g.IdGrupoProd) 
+	                        INNER JOIN grupo_prod g ON (p.IdGrupoProd = g.IdGrupoProd)
 	                        LEFT JOIN subgrupo_prod sg ON (p.IdSubgrupoProd = sg.IdSubgrupoProd)
                             LEFT JOIN
                             (
@@ -3982,7 +4010,7 @@ namespace Glass.Data.DAL
 			                        INNER JOIN pedido p ON (pp.IdPedido = p.IdPedido)
 			                        INNER JOIN produtos_liberar_pedido plp ON (pp.IdProdPed = plp.IdProdPed)
 			                        INNER JOIN liberarpedido lp ON (plp.IdLiberarPedido = lp.IdLiberarPedido)
-		                        WHERE COALESCE(pp.InvisivelFluxo, 0) = 0 
+		                        WHERE COALESCE(pp.InvisivelFluxo, 0) = 0
 			                        AND p.Situacao = " + (int)Pedido.SituacaoPedido.Confirmado + @"
 			                        AND lp.Situacao = " + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @"
 			                        AND lp.DataLiberacao >= ?dtIni
@@ -3996,7 +4024,7 @@ namespace Glass.Data.DAL
                                 WHERE c.situacao IN (" + (int)Compra.SituacaoEnum.Ativa + @" , " + (int)Compra.SituacaoEnum.Finalizada + @") AND COALESCE(c.estoqueBaixado, 0) = 0
                                 GROUP BY pc.idProd , c.idLoja
                             ) AS pc ON (p.idProd = pc.idProd AND pl.idLoja = pc.idLoja)
-                        WHERE (COALESCE(sg.produtosEstoque, 0) = 0 OR sg.tipoSubgrupo In(" + (int)TipoSubgrupoProd.ChapasVidro + @"," + (int)TipoSubgrupoProd.ChapasVidroLaminado + @")) 
+                        WHERE (COALESCE(sg.produtosEstoque, 0) = 0 OR sg.tipoSubgrupo In(" + (int)TipoSubgrupoProd.ChapasVidro + @"," + (int)TipoSubgrupoProd.ChapasVidroLaminado + @"))
                             {0}
                         GROUP BY p.IdProd
                     ) as tmp
@@ -4217,10 +4245,18 @@ namespace Glass.Data.DAL
             var idGrupoProd = ObtemIdGrupoProd(idProd);
             var idSubgrupoProd = ObtemIdSubgrupoProd(idProd);
 
-            if (idSubgrupoProd > 0)
-                return SubgrupoProdDAO.Instance.ObtemValorCampo<bool>("exibirMensagemEstoque", "idSubgrupoProd=" + idSubgrupoProd.Value);
-            else
-                return GrupoProdDAO.Instance.ObtemValorCampo<bool>("exibirMensagemEstoque", "idGrupoProd=" + idGrupoProd);
+            return ExibirMensagemEstoque(null, idGrupoProd, idSubgrupoProd);
+        }
+
+        /// <summary>
+        /// Verifica se a mensagem de estoque deve ser exibida.
+        /// </summary>
+        /// <returns></returns>
+        public bool ExibirMensagemEstoque(GDASession sessao, int idGrupoProd, int? idSubgrupoProd)
+        {
+            return idSubgrupoProd > 0
+                ? SubgrupoProdDAO.Instance.ObtemValorCampo<bool>(sessao, "exibirMensagemEstoque", "idSubgrupoProd=" + idSubgrupoProd.Value)
+                : GrupoProdDAO.Instance.ObtemValorCampo<bool>(sessao, "exibirMensagemEstoque", "idGrupoProd=" + idGrupoProd);
         }
 
         #endregion
@@ -4606,7 +4642,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de 
+        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de
         /// todos os kits e produtos kits
         /// </summary>
         /// <param name="objUpdate"></param>
@@ -4616,7 +4652,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de 
+        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de
         /// todos os kits e produtos kits
         /// </summary>
         /// <param name="session"></param>
@@ -4627,7 +4663,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de 
+        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de
         /// todos os kits e produtos kits
         /// </summary>
         /// <param name="objUpdate"></param>
@@ -4638,7 +4674,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de 
+        /// Se algum preço do produto tiver sofrido alguma alteração, altera os valores de
         /// todos os kits e produtos kits
         /// </summary>
         /// <param name="session"></param>
@@ -5131,18 +5167,18 @@ namespace Glass.Data.DAL
 
                 produto.InicializarParaCalculo(session, container);
 
-                Func <int, bool, decimal> valorTabelaTipoEntregaERevenda = (tipoEntrega, revenda) =>
-                {
-                    container.TipoEntrega = tipoEntrega;
-                    (container.Cliente as ClienteDTO).Revenda = revenda;
+                Func<int, bool, decimal> valorTabelaTipoEntregaERevenda = (tipoEntrega, revenda) =>
+               {
+                   container.TipoEntrega = tipoEntrega;
+                   (container.Cliente as ClienteDTO).Revenda = revenda;
 
-                    var valor = produto.DadosProduto.ValorTabela();
+                   var valor = produto.DadosProduto.ValorTabela();
 
-                    (container.Cliente as ClienteDTO).Revenda = revendaOriginal;
-                    container.TipoEntrega = tipoEntregaOriginal;
+                   (container.Cliente as ClienteDTO).Revenda = revendaOriginal;
+                   container.TipoEntrega = tipoEntregaOriginal;
 
-                    return valor;
-                };
+                   return valor;
+               };
 
                 valorAtacado = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, true);
                 valorBalcao = valorTabelaTipoEntregaERevenda((int)Pedido.TipoEntregaPedido.Balcao, revendaOriginal);

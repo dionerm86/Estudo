@@ -4,6 +4,21 @@
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
 </asp:Content>
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
+    <script type="text/javascript">
+        function setObra(id, descricao, saldoPedidos) {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, idObra, descricao);
+                    closeWindow();
+                    return;
+                }
+            }
+
+            window.opener.setObra(0, idObra, descricao, saldoPedidos);
+            closeWindow();
+        }
+    </script>
     <table>
         <tr>
             <td align="center">
@@ -76,7 +91,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:ImageButton ID="ImageButton2" runat="server" OnClientClick='<%# "window.opener.setObra(0, " + Eval("IdObra") + ", \"" + Eval("Descricao").ToString().Replace("\r", "").Replace("\n", "").Replace("\"", "") + "\", \"" + (Eval("DescrSaldoPedidos") != null ? Eval("DescrSaldoPedidos").ToString().Replace("\n", "\\n") : "") + "\"); closeWindow(); return false;" %>'
+                                <asp:ImageButton ID="ImageButton2" runat="server" OnClientClick='<%# "setObra(" + Eval("IdObra") + ", \"" + Eval("Descricao").ToString().Replace("\r", "").Replace("\n", "").Replace("\"", "") + "\", \"" + (Eval("DescrSaldoPedidos") != null ? Eval("DescrSaldoPedidos").ToString().Replace("\n", "\\n") : "") + "\"); return false;" %>'
                                     ImageUrl="~/Images/Insert.gif" />
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -98,8 +113,8 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsObra" runat="server" DataObjectTypeName="Glass.Data.Model.Obra"
                     DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectMethod="GetList" SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
-                    TypeName="Glass.Data.DAL.ObraDAO" SelectCountMethod="GetListCount" 
-                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
+                    TypeName="Glass.Data.DAL.ObraDAO" SelectCountMethod="GetListCount"
+                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges"
                     SkinID="" >
                     <SelectParameters>
                         <asp:ControlParameter ControlID="txtNumCli" Name="idCliente" PropertyName="Text"

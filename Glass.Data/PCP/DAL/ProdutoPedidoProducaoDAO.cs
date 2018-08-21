@@ -1034,6 +1034,37 @@ namespace Glass.Data.DAL
             }
         }
 
+        public bool ValidarComposicao(GDASession sessao, string etiqueta, string etiquetasMateriaPrima)
+        {
+            if (string.IsNullOrWhiteSpace(etiquetasMateriaPrima))
+                return false;
+
+            var idProdPedParent = ObtemIdProdPed(sessao, etiqueta);
+            var idProdPedProducaoParent = ObtemIdProdPedProducao(sessao, etiqueta).GetValueOrDefault();
+
+            if (idProdPedProducaoParent == 0)
+                return false;
+
+            var dicComp = EtiquetasVinculoProdComposicao(sessao, idProdPedProducaoParent, etiquetasMateriaPrima.Split(',').ToList());
+
+            bool pertenceComposicao;
+
+            foreach (var etiquetaMateriaPrima in etiquetasMateriaPrima.Split(',').ToList())
+            {
+                pertenceComposicao = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParentByEtiqueta(sessao, etiquetaMateriaPrima) == idProdPedParent;
+                if (!pertenceComposicao)
+                    return false;
+
+                var idProdPedMatPrima = ProdutoImpressaoDAO.Instance.ObtemIdProdPed(sessao, etiquetaMateriaPrima);
+
+                if (idProdPedProducaoParent != ObterIdProdPedProducaoParentByEtiqueta(sessao, etiquetaMateriaPrima) &&
+                    (ObterIdProdPedProducaoRevinculoComposicao(sessao, idProdPedProducaoParent, idProdPedMatPrima, dicComp.Where(f => f.Value).Select(f => f.Key).ToList()).GetValueOrDefault() == 0))
+                    return false;
+            }
+
+            return true;
+        }
+
         public IList<ProdutoPedidoProducao> GetListConsulta(int idCarregamento, string idLiberarPedido, uint idPedido,
             string idPedidoImportado, uint idImpressao, string codPedCli, string codRota, uint idCliente, string nomeCliente,
             string numEtiqueta, string dataIni, string dataFim, string dataIniEnt, string dataFimEnt, string dataIniFabr,
@@ -4245,7 +4276,7 @@ namespace Glass.Data.DAL
                             if (idProdPedProducaoParent.Value != idProdPedProducao)
                             {
                                 var dicComp = EtiquetasVinculoProdComposicao(sessao, idProdPedProducao, etiquetasMateriaPrima);
-                                var idRevinculuar = ObterIdProdPedProducaoReveinculoComposicao(sessao, idProdPedProducao, idProdPedMatPrima, dicComp.Where(f => f.Value).Select(f => f.Key).ToList());
+                                var idRevinculuar = ObterIdProdPedProducaoRevinculoComposicao(sessao, idProdPedProducao, idProdPedMatPrima, dicComp.Where(f => f.Value).Select(f => f.Key).ToList());
 
                                 if (idRevinculuar.GetValueOrDefault(0) == 0)
                                     throw new Exception(string.Format("Etiqueta {0} não esta vinculada a composição da etiqueta {1}.", etiqueta, codEtiqueta));
@@ -8013,7 +8044,7 @@ namespace Glass.Data.DAL
         /// <param name="idProdPed"></param>
         /// <param name="idsProdPedProducao"></param>
         /// <returns></returns>
-        public uint? ObterIdProdPedProducaoReveinculoComposicao(GDASession sessao, uint idProdPedProducaoParent, uint idProdPed, List<uint> idsProdPedProducao)
+        public uint? ObterIdProdPedProducaoRevinculoComposicao(GDASession sessao, uint idProdPedProducaoParent, uint idProdPed, List<uint> idsProdPedProducao)
         {
             var sql = @"
                 SELECT IdProdPedProducao 

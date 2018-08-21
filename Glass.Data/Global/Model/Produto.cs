@@ -758,6 +758,19 @@ namespace Glass.Data.Model
 
         #region Propriedades para a busca de alíquota de ICMS interna
 
+        private int? _idNfIcms;
+
+        internal int? IdNfIcms
+        {
+            get { return _idNfIcms; }
+            set
+            {
+                _idNfIcms = value;
+                _aliqIcmsInterna = null;
+                _aliqIcmsInternaComIpiNoCalculo = null;
+            }
+        }
+
         private uint _idLojaIcms;
 
         internal uint IdLojaIcms
@@ -851,7 +864,7 @@ namespace Glass.Data.Model
                         calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
                     }
 
-                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, IdNfIcms, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
                 }
 
@@ -885,7 +898,7 @@ namespace Glass.Data.Model
                         calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
                     }
 
-                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, IdNfIcms, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
                 }
 

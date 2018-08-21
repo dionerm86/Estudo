@@ -55,7 +55,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("CRITERIO", DirectionParameter.InputOptional)]
         public string Criterio { get; set; }
 
-        [PersistenceProperty("Qtde", DirectionParameter.InputOptional)]
+        [PersistenceProperty("QTDESOMADA", DirectionParameter.InputOptional)]
         public double QtdeSomada { get; set; }
 
         [PersistenceProperty("TotM2", DirectionParameter.InputOptional)]

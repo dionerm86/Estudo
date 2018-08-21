@@ -1,11 +1,12 @@
 ﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Model;
+using Glass.Pool;
 using System;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class CalculoM2 : BaseCalculo<CalculoM2>
+    sealed class CalculoM2 : Singleton<CalculoM2>
     {
         private CalculoM2() { }
 
@@ -14,14 +15,14 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public float Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto, bool calcularMultiploDe5)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
+            produto.InicializarParaCalculo(sessao, container);
             return Calcular(produto, calcularMultiploDe5, (int)produto.Altura, produto.Largura, produto.Qtde);
         }
 
         public float CalcularM2Calculo(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto, bool usarChapa,
             bool calcularMultiploDe5, int numeroBeneficiamentos, int qtdeAmbiente = 1, int? larguraUsar = null)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
+            produto.InicializarParaCalculo(sessao, container);
 
             bool possuiChapaVidro = usarChapa
                 && produto.IdProduto > 0
@@ -49,7 +50,7 @@ namespace Glass.Data.Helper.Calculos
                 ? altura
                 : 1000;
 
-            // Se a largura estiver zerada, deve considerar a altura no cálculo e não 1000 como estava, 
+            // Se a largura estiver zerada, deve considerar a altura no cálculo e não 1000 como estava,
             // para não calcular errado, chamado 7564
             largura = adicionarValorRedondo + (
                 largura == 0
@@ -90,7 +91,7 @@ namespace Glass.Data.Helper.Calculos
         {
             if (!possuiChapaVidro)
                 return;
-            
+
             int alturaReal = altura;
 
             int alturaMinimaChapa = produto.DadosProduto.DadosChapaVidro.AlturaMinimaChapaVidro();

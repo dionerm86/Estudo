@@ -1,0 +1,8 @@
+﻿<span style="display: inline-block; width: 150px">
+    <campo-busca v-bind:item-selecionado.sync="itemSelecionadoAtual" v-bind:id.sync="idAtual" v-bind:nome.sync="nomeAtual"
+        v-bind:campo-id="campoId" v-bind:campo-nome="campoNome" v-bind:funcao-buscar-itens="funcaoBuscarItens"
+        v-bind:pre-carregar-itens="preCarregarItens" v-bind="$attrs"
+        v-bind:style="urlPopup ? 'width: calc(100% - 20px)' : 'width: 100%'"></campo-busca>
+    <button class="botaoPesquisar" title="Buscar..." v-on:click.prevent="abrirPopup" v-if="urlPopup"
+        style="position: relative; top: 3px"></button>
+</span>

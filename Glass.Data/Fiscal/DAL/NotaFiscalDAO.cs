@@ -744,7 +744,7 @@ namespace Glass.Data.DAL
 
                             uint idProd = idProdParaNf.GetValueOrDefault(pp.IdProd);
 
-                            Produto prod = ProdutoDAO.Instance.GetElement(transaction, idProd, idLoja, idCliente, null, true);
+                            var prod = ProdutoDAO.Instance.GetElement(transaction, idProd, (int)idNf, idLoja, idCliente, null, true);
 
                             if (prod == null)
                                 throw new Exception(string.Format("Um dos produtos dos pedidos não existe. IdProd: {0}", idProd));
@@ -1717,7 +1717,7 @@ namespace Glass.Data.DAL
 
             foreach (ProdutosCompra pc in produtosCompra)
             {
-                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, idLoja, null, idFornec, false);
+                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, (int)idNf, idLoja, null, idFornec, false);
                 int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
 
                 // Recalcula as medidas dos alumínios para que o tamanho cobrado seja exato e o valor na nota fique correto
@@ -4787,7 +4787,60 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand("Update nota_fiscal set motivoInut=?motivo Where idNf=" + idNf,
                 new GDAParameter("?motivo", justificativa));
 
+            try
+            {
+                string fileName = Utils.GetNfeXmlPath + idNf + "-Inut.xml";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                xmlInut.Save(fileName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Falha ao salvar arquivo xml da Inutilização. " + ex.Message);
+            }
+
             return xmlInut;
+        }
+
+        /// <summary>
+        /// Salva o xml e o retorno da inutilização da nota
+        /// </summary>
+        public void SalvarRetornoXmlInutilizacao(uint idNf, XmlNode inutilizacao, XmlNode retorno)
+        {
+            XmlDocument xmlInut = new XmlDocument();
+            XmlNode declarationNode = xmlInut.CreateXmlDeclaration("1.0", "UTF-8", null);
+            xmlInut.AppendChild(declarationNode);
+
+            XmlElement procInutNFE = xmlInut.CreateElement("ProcInutNFE");
+            procInutNFE.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
+            procInutNFE.SetAttribute("versao", ConfigNFe.VersaoInutilizacao);
+            xmlInut.AppendChild(procInutNFE);
+            var inut = xmlInut.ImportNode(inutilizacao, true);
+            procInutNFE.AppendChild(inut);
+            
+            XmlElement retInutNFE = xmlInut.CreateElement("retInutNFE");
+            retInutNFE.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
+            retInutNFE.SetAttribute("versao", ConfigNFe.VersaoInutilizacao);
+            procInutNFE.AppendChild(retInutNFE);
+
+            var ret = xmlInut.ImportNode(retorno, true);
+            retInutNFE.AppendChild(ret);
+
+            try
+            {
+                string fileName = Utils.GetNfeXmlPath + idNf + "-Inut.xml";
+
+                if (File.Exists(fileName))
+                    File.Delete(fileName);
+
+                xmlInut.Save(fileName);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Falha ao salvar arquivo xml da Inutilização. " + ex.Message);
+            }
         }
 
         #endregion
@@ -4829,6 +4882,29 @@ namespace Glass.Data.DAL
 
             // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
             conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("<Signature"), xmlProt.InnerXml);
+            using (FileStream arquivoNFe = File.OpenWrite(path))
+            using (StreamWriter salvaArquivoNFe = new StreamWriter(arquivoNFe))
+            {
+                salvaArquivoNFe.Write(conteudoArquivoNFe);
+                salvaArquivoNFe.Flush();
+            }
+        }
+
+        /// <summary>
+        /// Inclui o protocolo de denegação recebimento na NF-e.
+        /// </summary>
+        public void IncluirProtocoloNotaDenegada(string path, XmlNode xmlProt)
+        {
+            if (!File.Exists(path))
+                throw new Exception("Não foi possível anexar o protocolo de retorno, xml da nota não encontrado.");
+
+            string conteudoArquivoNFe = "";
+            using (FileStream arquivoNFe = File.OpenRead(path))
+            using (StreamReader textoArquivoNFe = new StreamReader(arquivoNFe))
+                conteudoArquivoNFe = textoArquivoNFe.ReadToEnd();
+
+            // Salva o texto do arquivo XML junto com o texto da autorização da NF-e
+            conteudoArquivoNFe = conteudoArquivoNFe.Insert(conteudoArquivoNFe.IndexOf("</NFe>"), xmlProt.InnerXml);
             using (FileStream arquivoNFe = File.OpenWrite(path))
             using (StreamWriter salvaArquivoNFe = new StreamWriter(arquivoNFe))
             {
@@ -5034,11 +5110,11 @@ namespace Glass.Data.DAL
                     // Gera log do ocorrido
                     LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", cStat.StrParaInt(), ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlProt?["infProt"]?["xMotivo"]?.InnerXml));
 
+                    var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
+                    
                     // Atualiza número do protocolo de uso da NFe
                     if (cStat == "100" || cStat == "150")
                     {
-                        var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
-
                         IncluiProtocoloXML(path, xmlProt);
                         AutorizaNotaFiscal(nf, xmlProt);
                     }
@@ -5052,6 +5128,7 @@ namespace Glass.Data.DAL
                                 new GDAParameter[] { new GDAParameter("?numProt", xmlProt?["infProt"]?["nProt"]?.InnerXml) });
                         }
 
+                        IncluirProtocoloNotaDenegada(path, xmlProt);
                         // Altera situação da NFe para denegada
                         AlteraSituacao(nf.IdNf, NotaFiscal.SituacaoEnum.Denegada);
                     }

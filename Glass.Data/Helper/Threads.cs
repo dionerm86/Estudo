@@ -217,7 +217,11 @@ namespace Glass.Data.Helper
                             if (System.Configuration.ConfigurationManager.AppSettings["EnvioNovoSMS"] == "true")
                             {
                                 var resposta = ZenviaSMS.EnviaSMS(sms.CodMensagem, sms.NomeLoja, sms.CelCliente, sms.Mensagem);
-                                FilaSmsDAO.Instance.IndicaEnvio(resposta.Response.StatusCode == 0, sms.IdSms, resposta.Response.StatusCode, resposta.Response.DetailDescription);
+
+                                if (resposta.Response.StatusCode == 0)
+                                    FilaSmsDAO.Instance.IndicaEnvio(true, sms.IdSms, resposta.Response.StatusCode, resposta.Response.DetailDescription);
+                                else
+                                    FilaSmsDAO.Instance.SetLast(sms.IdSms);
                             }
                             else
                             {

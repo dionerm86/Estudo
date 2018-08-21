@@ -9,6 +9,16 @@
 
         function setRota(codInterno)
         {
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
+                    closeWindow();
+                    return;
+                }
+            }
+
             window.opener.setRota(codInterno);
             closeWindow();
         }

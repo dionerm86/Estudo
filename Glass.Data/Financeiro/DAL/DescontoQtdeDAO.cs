@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using Glass.Data.Model;
+﻿using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Model;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -22,33 +23,54 @@ namespace Glass.Data.DAL
 
         public IList<DescontoQtde> GetByProd(uint idProd)
         {
-            if (GetCountByProd(idProd) == 0)
+            return this.GetByProd(null, idProd);
+        }
+
+        public IList<DescontoQtde> GetByProd(GDASession sessao, uint idProd)
+        {
+            if (this.GetCountByProd(sessao, idProd) == 0)
             {
                 var temp = new DescontoQtde[1];
                 temp[0] = new DescontoQtde();
                 temp[0].IdProd = idProd;
-                
+
                 return temp;
             }
 
-            return objPersistence.LoadData(Sql(idProd, true)).ToList();
+            return this.objPersistence.LoadData(sessao, this.Sql(idProd, true)).ToList();
         }
 
         public int GetCountByProd(uint idProd)
         {
-            return objPersistence.ExecuteSqlQueryCount(Sql(idProd, false));
+            return this.GetCountByProd(null, idProd);
+        }
+
+        public int GetCountByProd(GDASession sessao, uint idProd)
+        {
+            return this.objPersistence.ExecuteSqlQueryCount(sessao, Sql(idProd, false));
         }
 
         public float GetPercDescontoByProd(uint idProd, int qtde)
         {
-            if (UserInfo.GetUserInfo.TipoUsuario == (uint)Utils.TipoFuncionario.Administrador)
-                return 100;
+            return this.GetPercDescontoByProd(null, idProd, qtde);
+        }
 
-            var desc = GetByProd(idProd);
+        public float GetPercDescontoByProd(GDASession sessao, uint idProd, int qtde)
+        {
+            if (UserInfo.GetUserInfo.TipoUsuario == (uint)Utils.TipoFuncionario.Administrador)
+            {
+                return 100;
+            }
+
+            var desc = this.GetByProd(sessao, idProd);
 
             foreach (DescontoQtde d in desc)
+            {
                 if (qtde >= d.Qtde)
+                {
                     return d.PercDescontoMax;
+                }
+            }
 
             return 0;
         }
