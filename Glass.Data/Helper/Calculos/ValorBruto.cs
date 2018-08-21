@@ -1,18 +1,16 @@
 ﻿using GDA;
 using Glass.Data.Model;
+using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class ValorBruto : BaseCalculo<ValorBruto>
+    sealed class ValorBruto : Singleton<ValorBruto>
     {
         private ValorBruto() { }
 
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
-
-            if (!DeveExecutar(produto))
-                return;
+            produto.InicializarParaCalculo(sessao, container);
 
             produto.TotalBruto = produto.Total
                 - produto.ValorAcrescimo
@@ -25,8 +23,6 @@ namespace Glass.Data.Helper.Calculos
                 + produto.ValorDescontoProd;
 
             CalcularValorUnitarioBruto(sessao, produto);
-
-            AtualizarDadosCache(produto);
         }
 
         private void CalcularValorUnitarioBruto(GDASession sessao, IProdutoCalculo produto)

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using GDA;
-using System.Web;
-using System.Linq;
+﻿using GDA;
 using Glass.Configuracoes;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
 
 namespace Glass.Data.DAL
 {
@@ -22,7 +22,7 @@ namespace Glass.Data.DAL
         /// <param name="senha"></param>
         /// <returns></returns>
         public LoginUsuario Autenticacao(string login, string senha)
-        {               
+        {
             string sql = "Select IDFUNC From funcionario Where Login=?login And Senha=?senha And situacao=" + (int)Situacao.Ativo;
 
             object idFunc;
@@ -78,7 +78,7 @@ namespace Glass.Data.DAL
                     throw new Exception("Não é permitido logar no sistema neste horário.");
                 }
             }
-                        
+
             return GetLogin(idFunc.ToString().StrParaInt());
         }
 
@@ -102,7 +102,7 @@ namespace Glass.Data.DAL
 
             object nome = objPersistence.ExecuteScalar(sessao, sql);
 
-            return nome != null ? nome.ToString().Replace("'","") : String.Empty;
+            return nome != null ? nome.ToString().Replace("'", "") : String.Empty;
         }
 
         #endregion
@@ -128,10 +128,10 @@ namespace Glass.Data.DAL
         public LoginUsuario GetLogin(GDASession sessao, int idFuncionario)
         {
             string sql = @"
-                Select f.*, tf.Descricao as descrTipoFunc, l.NomeFantasia as NomeLoja 
-                From funcionario f 
-                    Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc) 
-                    Left Join loja l On (f.idLoja=l.idLoja) 
+                Select f.*, tf.Descricao as descrTipoFunc, l.NomeFantasia as NomeLoja
+                From funcionario f
+                    Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc)
+                    Left Join loja l On (f.idLoja=l.idLoja)
                 Where f.idFunc=" + idFuncionario;
 
             try
@@ -162,7 +162,7 @@ namespace Glass.Data.DAL
 
                 ErroDAO.Instance.InserirFromException("Falha ao recuperar login.", ex);
             }
-            
+
             return null;
         }
 
@@ -177,8 +177,8 @@ namespace Glass.Data.DAL
 
             string criterio = String.Empty;
 
-            string sql = "Select " + campos + @" From funcionario f 
-                Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc) 
+            string sql = "Select " + campos + @" From funcionario f
+                Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc)
                 Left Join loja l On (f.idLoja=l.idLoja)
                 Where 1";
 
@@ -256,7 +256,7 @@ namespace Glass.Data.DAL
         {
             string sort = String.IsNullOrEmpty(sortExpression) ? "Nome" : sortExpression;
             var itens = objPersistence.LoadDataWithSortExpression(Sql(0, idLoja, nomeFunc, situacao, apenasRegistrados, idTipoFunc, idSetor,
-                dtNascIni, dtNascFim, true), new InfoSortExpression(sort), 
+                dtNascIni, dtNascFim, true), new InfoSortExpression(sort),
                 new InfoPaging(startRow, pageSize), GetParam(nomeFunc, dtNascIni, dtNascFim)).ToList();
 
             CarregaSetoresFunc(ref itens);
@@ -341,7 +341,7 @@ namespace Glass.Data.DAL
 
         #region Retorna funcionários logados no momento
 
-        public  LoginUsuario[] GetLogados()
+        public LoginUsuario[] GetLogados()
         {
             List<LoginUsuario> lstLogados = UserInfo._usuario;
             List<LoginUsuario> lstLogadosRetorno = new List<LoginUsuario>();
@@ -359,7 +359,7 @@ namespace Glass.Data.DAL
 
         public IList<Funcionario> GetFuncFin()
         {
-            var sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) As nomeLoja, tf.descricao As descrTipoFunc 
+            var sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) As nomeLoja, tf.descricao As descrTipoFunc
                 From funcionario f
 					Left Join pedido p ON (p.usuFin=f.idFunc)
                     Left Join loja l ON (f.idLoja=l.idLoja)
@@ -377,12 +377,12 @@ namespace Glass.Data.DAL
         public IList<Funcionario> GetVendedoresDropAssociaCliente()
         {
             var itens = new List<Funcionario>();
-            
+
             itens.Add(new Funcionario
-                {
-                    IdFunc = int.MaxValue,
-                    Nome = "Sem Vendedor Associado"
-                });
+            {
+                IdFunc = int.MaxValue,
+                Nome = "Sem Vendedor Associado"
+            });
 
             itens.AddRange(GetVendedores(null));
             return itens;
@@ -395,7 +395,7 @@ namespace Glass.Data.DAL
 
         public IList<Funcionario> GetVendedores(string nome)
         {
-            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc 
+            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc
                 From funcionario f
                     Left Join loja l On (f.idLoja=l.idLoja)
                     Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc)
@@ -403,7 +403,7 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(nome))
                 sql += " And f.Nome like ?nome";
-                
+
             sql += " and (f.idFunc in (select idFunc from config_funcao_func where idFuncaoMenu=" +
                 Config.ObterIdFuncaoMenu(Config.FuncaoMenuPedido.EmitirPedido) + ")" +
                 " Or f.idFunc=" + UserInfo.GetUserInfo.CodUser +
@@ -416,13 +416,13 @@ namespace Glass.Data.DAL
         //Busca os funcionários que tiram pedidos e também os que são Aux. Escritório e Medição
         public IList<Funcionario> GetVendedoresEMedicao()
         {
-            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc 
+            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc
                 From funcionario f
                     Left Join loja l On (f.idLoja=l.idLoja)
                     Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc)
                 Where f.situacao=" + (int)Situacao.Ativo;
 
-            sql += " and (f.idFunc in (select idFunc from config_funcao_func where idFuncaoMenu In (" + 
+            sql += " and (f.idFunc in (select idFunc from config_funcao_func where idFuncaoMenu In (" +
                 Config.ObterIdFuncaoMenu(Config.FuncaoMenuPedido.EmitirPedido) + "," + Config.ObterIdFuncaoMenu(Config.FuncaoMenuMedicao.EfetuarMedicao) + "))" +
                 " Or f.idFunc=" + UserInfo.GetUserInfo.CodUser + ") Order By f.Nome";
 
@@ -433,7 +433,7 @@ namespace Glass.Data.DAL
 
         public IList<Funcionario> GetMotoristas(string nome)
         {
-            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc 
+            string sql = @"Select f.*, coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja, tf.descricao as descrTipoFunc
                 From funcionario f
                     Left Join loja l On (f.idLoja=l.idLoja)
                     Left Join tipo_func tf On (f.idTipoFunc=tf.idTipoFunc)
@@ -499,7 +499,7 @@ namespace Glass.Data.DAL
             sql += " Order By Nome";
 
             List<Funcionario> lst = objPersistence.LoadData(sql).ToList();
-            
+
             Funcionario func = new Funcionario();
             func.IdFunc = 0;
             func.Nome = "TODOS";
@@ -561,9 +561,9 @@ namespace Glass.Data.DAL
             if (idLoja > 0) // Se não for Todas
                 sql += " And f.idLoja=" + idLoja;
 
-            sql += " And p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado + " And p.TipoVenda<>" + 
+            sql += " And p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado + " And p.TipoVenda<>" +
                 (int)Pedido.TipoVendaPedido.Garantia + " And p.TipoVenda<>" + (int)Pedido.TipoVendaPedido.Reposição;
-            
+
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
             if (!String.IsNullOrEmpty(dataIni))
@@ -608,6 +608,19 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql).ToList();
         }
 
+        public IList<Funcionario> GetVendedoresOrcamento(GDASession sessao, int? idVendedor)
+        {
+            string sql = "Select * From funcionario Where (idFunc in (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuOrcamento.EmitirOrcamento) + ")" +
+                ") And situacao=" + (int)Situacao.Ativo;
+
+            if (idVendedor > 0)
+                sql += " Or idFunc=" + idVendedor;
+
+            sql += " Order By Nome";
+
+            return objPersistence.LoadData(sessao, sql).ToList();
+        }
+
         #endregion
 
         #region Busca funcionários que fazem Liberações
@@ -618,7 +631,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Funcionario> GetFuncLiberacao()
         {
-            string sql = "Select * From funcionario Where situacao=" + (int)Situacao.Ativo + 
+            string sql = "Select * From funcionario Where situacao=" + (int)Situacao.Ativo +
                 " and idFunc In (Select distinct idFunc From liberarpedido) Order By Nome";
 
             return objPersistence.LoadData(sql).ToList();
@@ -634,7 +647,7 @@ namespace Glass.Data.DAL
                 " Or idFunc In (select idFunc from config_funcao_func where idFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuMedicao.Medidor) + "))" +
                 " Order By Nome asc";
 
-            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, null); 
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, null);
         }
 
         public IList<Funcionario> GetMedidores()
@@ -682,7 +695,7 @@ namespace Glass.Data.DAL
             var tempFinanc = GetFinanceiros().ToArray();
 
             string sql = @"
-                Select * From funcionario 
+                Select * From funcionario
                 Where situacao=" + (int)Situacao.Ativo + @"
                     And (idFunc In (Select IdFunc from config_funcao_func Where IdFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) + "))";
 
@@ -710,7 +723,7 @@ namespace Glass.Data.DAL
                     INNER JOIN config_funcao_func cff ON (f.IdFunc = cff.IdFunc)
                     INNER JOIN funcao_menu fm ON (cff.IdFuncaoMenu = fm.IdFuncaoMenu)
                     INNER JOIN config_menu_func cmf ON (cff.IdFunc = cmf.IdFunc AND fm.IdMenu = cmf.IdMenu)
-                WHERE Situacao = {0} 
+                WHERE Situacao = {0}
                     AND fm.IdFuncaoMenu IN ({1})
                 GROUP BY f.IdFunc";
 
@@ -746,14 +759,14 @@ namespace Glass.Data.DAL
 
             var sql = @"
                 Select " + campos + @"
-                From funcionario f 
+                From funcionario f
                     Left Join tipo_func t On (f.IdTipoFunc=t.IdTipoFunc)
                 Where f.situacao=" + (int)Situacao.Ativo + @"
                     And (
                         f.idFunc In (select idFunc from config_funcao_func where idFuncaoMenu In (" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoComum) + "," + Config.ObterIdFuncaoMenu(Config.FuncaoMenuInstalacao.ControleInstalacaoTemperado) + @"))
                         Or f.idtipofunc=" + (int)Utils.TipoFuncionario.MotoristaInstalador + @"
                         Or f.idtipofunc=" + (int)Utils.TipoFuncionario.InstaladorComum + @"
-                        Or f.idTipoFunc=" + (int)Utils.TipoFuncionario.InstaladorTemperado + 
+                        Or f.idTipoFunc=" + (int)Utils.TipoFuncionario.InstaladorTemperado +
                     ")";
 
             return sql;
@@ -782,7 +795,7 @@ namespace Glass.Data.DAL
         {
             if (tipo == Pedido.TipoComissao.Instalador)
                 return GetColocadores();
-            
+
             string sql, ids = PedidoDAO.Instance.GetPedidosIdForComissao(tipo, 0, dataIni, dataFim);
 
             if (Configuracoes.ComissaoConfig.UsarPercComissaoCliente)
@@ -828,7 +841,7 @@ namespace Glass.Data.DAL
         private IList<Funcionario> GetByComissao(Pedido.TipoComissao tipo)
         {
             var campo = tipo == Pedido.TipoComissao.Funcionario ? "idFunc" : "idInstalador";
-            var sql = "select * from funcionario where situacao=" + (int)Situacao.Ativo + " and idFunc in (select distinct " + 
+            var sql = "select * from funcionario where situacao=" + (int)Situacao.Ativo + " and idFunc in (select distinct " +
                 campo + " from comissao where " + campo + " is not null) order by Nome";
 
             return objPersistence.LoadData(sql).ToList();
@@ -895,7 +908,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Funcionario> GetProducao(bool apenasFuncPerda)
         {
-            string filtro = "select distinct idFunc from " + (!apenasFuncPerda ? "funcionario_setor" : 
+            string filtro = "select distinct idFunc from " + (!apenasFuncPerda ? "funcionario_setor" :
                 "config_funcao_func where IdFuncaoMenu=" + Config.ObterIdFuncaoMenu(Config.FuncaoMenuPedido.ReposicaoDePeca));
 
             string sql = "select * from funcionario where idFunc in (" + filtro + ") order by nome";
@@ -962,7 +975,7 @@ namespace Glass.Data.DAL
         {
             string sql = "select " + (selecionar ? "idFunc" : "count(*)") + " from funcionario where adminSync=true and " +
                 "idTipoFunc=" + (int)Utils.TipoFuncionario.Administrador;
-            
+
             if (!String.IsNullOrEmpty(idFunc))
                 sql += " and idFunc=" + idFunc;
 
@@ -980,9 +993,9 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         #region Verifica se o usuário é um vendedor
- 
+
         /// <summary>
         /// Verifica se o usuário é vendedor.
         /// </summary>
@@ -1019,7 +1032,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Funcionario> GetNotInDepartamento(uint idDepartamento)
         {
-            string sql = "select * from funcionario where idFunc not in (select idFunc from func_departamento where idDepartamento=" + 
+            string sql = "select * from funcionario where idFunc not in (select idFunc from func_departamento where idDepartamento=" +
                 idDepartamento + ") order by nome asc";
 
             return objPersistence.LoadData(sql).ToList();
@@ -1082,7 +1095,7 @@ namespace Glass.Data.DAL
 
             int num = 0;
             DateTime retorno = DateTime.Now;
-            
+
             while (num++ < diasAtraso)
             {
                 retorno = retorno.AddDays(-1);
@@ -1227,7 +1240,7 @@ namespace Glass.Data.DAL
         #endregion
 
         /// <summary>
-        /// Altera a senha do funcionário 
+        /// Altera a senha do funcionário
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="senha"></param>
@@ -1289,7 +1302,7 @@ namespace Glass.Data.DAL
                 objUpdate.EstCivil = objUpdate.EstCivil.Substring(0, 1).ToUpper() + estadoCivil.ToLower();
             }
 
-            if (UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador && 
+            if (UserInfo.GetUserInfo.TipoUsuario != (uint)Utils.TipoFuncionario.Administrador &&
                 UserInfo.GetUserInfo.IsAdminSync)
             {
                 // Se qualquer um que não seja Administrador tentar alterar qualquer funcionário para administrador, impede
@@ -1320,7 +1333,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Não é possível alterar o tipo de um funcionário instalador que pertence a uma equipe de instalação. " +
                     "Para alterar seu tipo para um tipo que não seja instalador remova o funcionário da equipe antes.");
             }
- 
+
             // Caso o funcionário tenha permissão de emitir pedidos/orçamento é necessário verificar se o tipo de funcionário esteja sendo alterado
             // para um tipo de funcionario que dê permissão de emitir pedidos/orçamentos, é necessário verificar também se a situação está sendo alterada.
             if (IsVendedor((uint)objUpdate.IdFunc, (uint)tipoFunc) && !IsVendedor((uint)objUpdate.IdFunc, (uint)objUpdate.IdTipoFunc))
@@ -1343,7 +1356,7 @@ namespace Glass.Data.DAL
             objUpdate.SetoresFunc = FuncionarioSetorDAO.Instance.GetDescricaoSetores((uint)objUpdate.IdFunc);
             LogAlteracaoDAO.Instance.LogFuncionario(objUpdate, LogAlteracaoDAO.SequenciaObjeto.Novo);
 
-            // Recupera a senha direto do BD, pois caso o usuário tenha alterado a senha dentro do cadastro de funcionário 
+            // Recupera a senha direto do BD, pois caso o usuário tenha alterado a senha dentro do cadastro de funcionário
             // (no botão "Alterar Senha"), ao atualizar o cadastro do funcionário a senha alterada é mantida e não a que está no viewstate
             objUpdate.Senha = ObtemValorCampo<string>("Senha", "idFunc=" + objUpdate.IdFunc);
 
@@ -1372,7 +1385,7 @@ namespace Glass.Data.DAL
             // Verifica se o funcionário possui medições relacionados à seu id
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select count(*) From medicao Where idFunc=" + Key + " Or idFuncConf=" + Key + " Or idFuncMed=" + Key).ToString()) > 0)
                 throw new Exception("Este funcionário não pode ser excluído por possuir medições relacionadas ao mesmo. Para impedir seu login no sistema, inative-o.");
-            
+
             // Verifica se o funcionário possuir instalações relacionadas à seu id
             if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("Select count(*) From func_equipe Where idFunc=" + Key).ToString()) > 0)
                 throw new Exception("Este funcionário não pode ser excluído por fazer parte de uma equipe de instalação. Para impedir seu login no sistema, inative-o.");

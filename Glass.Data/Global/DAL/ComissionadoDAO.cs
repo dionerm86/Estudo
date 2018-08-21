@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
     public sealed class ComissionadoDAO : BaseCadastroDAO<Comissionado, ComissionadoDAO>
-	{
+    {
         //private ComissionadoDAO() { }
 
         #region Retorna Comissionados
@@ -67,6 +67,25 @@ namespace Glass.Data.DAL
             string sql = "select * from comissionado order by nome";
 
             return objPersistence.LoadData(sql).ToList();
+        }
+
+        public IList<Comissionado> ObterAtivos(GDASession sessao, int idComissionado, string nome)
+        {
+            string sql = $"select * from comissionado where situacao={(int)Situacao.Ativo}";
+            var parametros = new List<GDAParameter>();
+
+            if (idComissionado > 0)
+            {
+                sql += $" AND idComissionado={idComissionado}";
+            }
+
+            if (!string.IsNullOrEmpty(nome))
+            {
+                sql += $" AND Nome Like=?nome";
+                parametros.Add(new GDAParameter("?nome", $"%{nome}%"));
+            }
+
+            return objPersistence.LoadData(sessao, sql + " order by nome", parametros.ToArray()).ToList();
         }
 
         #endregion

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
+﻿using GDA;
+using Glass.Configuracoes;
 using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Glass.Configuracoes;
 using System.Linq;
-using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.DAL
 {
@@ -17,10 +16,10 @@ namespace Glass.Data.DAL
 
         private string Sql(uint? idOrca, uint? idAmbiente, bool showChildren, uint? idProd, uint? idProdParent, string idsProdutos, bool temOrdenacao, bool selecionar)
         {
-            string sqlProdutoTabela = "if(o.TipoEntrega in (" + (int)Orcamento.TipoEntregaOrcamento.Balcao + ", " + 
+            string sqlProdutoTabela = "if(o.TipoEntrega in (" + (int)Orcamento.TipoEntregaOrcamento.Balcao + ", " +
                 (int)Orcamento.TipoEntregaOrcamento.Entrega + "), p.ValorBalcao, p.ValorObra)";
 
-            string campos = selecionar ? @"po.*, (select Count(*) from produtos_orcamento where idProdParent=po.idProd) as NumChild, 
+            string campos = selecionar ? @"po.*, (select Count(*) from produtos_orcamento where idProdParent=po.idProd) as NumChild,
                 p.CodInterno as CodInterno, p.Descricao as DescrProduto, p.IdGrupoProd, p.IdSubgrupoProd, " + sqlProdutoTabela + @" as ValorProdutoTabela,
                 um.codigo as unidade, ip.obs as obsProj, o.idCliente, c.Nome as NomeCliente, ep.codInterno as codProcesso, ea.codInterno as codAplicacao" : "Count(*)";
 
@@ -31,12 +30,12 @@ namespace Glass.Data.DAL
             string child = !showChildren ? " and po.idProdParent is null" : "";
             string listaProdutos = !String.IsNullOrEmpty(idsProdutos) ? " and po.idProd in (" + idsProdutos + ")" : "";
 
-            return "Select " + campos + @" From produtos_orcamento po 
-                Left Join orcamento o on (po.idOrcamento=o.idOrcamento) 
-                Left Join produto p on (po.idProduto=p.idProd) 
-                Left Join unidade_medida um on (p.idUnidadeMedida=um.idUnidadeMedida) 
-                Left Join item_projeto ip On (po.iditemProjeto=ip.idItemProjeto) 
-                Left Join cliente c on(c.Id_Cli=o.idCliente) 
+            return "Select " + campos + @" From produtos_orcamento po
+                Left Join orcamento o on (po.idOrcamento=o.idOrcamento)
+                Left Join produto p on (po.idProduto=p.idProd)
+                Left Join unidade_medida um on (p.idUnidadeMedida=um.idUnidadeMedida)
+                Left Join item_projeto ip On (po.iditemProjeto=ip.idItemProjeto)
+                Left Join cliente c on(c.Id_Cli=o.idCliente)
                 Left Join etiqueta_processo ep on (po.idProcesso=ep.idProcesso)
                 Left Join etiqueta_aplicacao ea on (po.idAplicacao=ea.idAplicacao)
                 Where 1 " + orcamento + ambiente + produto + produtoParent + child + listaProdutos +
@@ -246,7 +245,7 @@ namespace Glass.Data.DAL
                         }
                     }
             }
-            
+
             if (showChildren)
                 for (int i = lstProd.Count - 1; i >= 0; i--)
                     if (lstProd[i].NumChild > 0 || (addMateriaisProjeto && lstProd[i].IdItemProjeto > 0))
@@ -260,7 +259,7 @@ namespace Glass.Data.DAL
 
                 try
                 {
-                    if (OrcamentoConfig.UploadImagensOrcamento && 
+                    if (OrcamentoConfig.UploadImagensOrcamento &&
                         File.Exists(Utils.GetProdutosOrcamentoPath + p.NomeImagem))
                         p.ImagemProjModPath = "file:///" + Utils.GetProdutosOrcamentoPath.Replace("\\", "/") + p.NomeImagem;
 
@@ -268,7 +267,7 @@ namespace Glass.Data.DAL
                     else if (p.IdItemProjeto > 0)
                     {
                         string nomeFigura = ProjetoModeloDAO.Instance.GetNomeFiguraByItemProjeto(null, p.IdItemProjeto.Value);
-                        
+
                         if (!String.IsNullOrEmpty(nomeFigura))
                             p.ImagemProjModPath = "file:///" + Utils.GetModelosProjetoPath.Replace("\\", "/") + nomeFigura;
                     }
@@ -327,15 +326,15 @@ namespace Glass.Data.DAL
         public IList<ProdutosOrcamento> GetList(uint idOrca, uint? idAmbiente, bool showChildren, string sortExpression, int startRow, int pageSize)
         {
             if (GetCountReal(idOrca, idAmbiente, showChildren) == 0 && Glass.Configuracoes.Geral.NaoVendeVidro())
-                return new [] { new ProdutosOrcamento() };
+                return new[] { new ProdutosOrcamento() };
 
             // Se a lista de produtos tiver sido ordenada pelo ambiente, salva numSeq de acordo com esta sequência
             if (sortExpression != null && sortExpression.ToLower().Contains("ambiente") && idOrca > 0)
             {
                 string sql = "";
                 List<ProdutosOrcamento> lstProdOrca = objPersistence.LoadData("Select * From produtos_orcamento Where idProdParent is null And idOrcamento=" + idOrca + " Order By " + sortExpression);
-                for (int i=0; i<lstProdOrca.Count; i++)
-                    sql += "Update produtos_orcamento Set numSeq=" + (i+1) + " Where idProd=" + lstProdOrca[i].IdProd + " Or idProdParent=" + lstProdOrca[i].IdProd + ";";
+                for (int i = 0; i < lstProdOrca.Count; i++)
+                    sql += "Update produtos_orcamento Set numSeq=" + (i + 1) + " Where idProd=" + lstProdOrca[i].IdProd + " Or idProdParent=" + lstProdOrca[i].IdProd + ";";
 
                 // Atualiza o número de sequência dos produtos sem idParent
                 objPersistence.ExecuteCommand(sql);
@@ -423,7 +422,7 @@ namespace Glass.Data.DAL
         {
             try
             {
-                object obj = objPersistence.ExecuteScalar(sessao, "Select numSeq From produtos_orcamento Where idItemProjeto=" + 
+                object obj = objPersistence.ExecuteScalar(sessao, "Select numSeq From produtos_orcamento Where idItemProjeto=" +
                     itemProj.IdItemProjeto + " limit 1");
 
                 // Salva descrição antiga do ambiene, caso esteja utilizando o projeto OTR01
@@ -462,7 +461,7 @@ namespace Glass.Data.DAL
                 prodOrca.IdAmbienteOrca = idAmbienteOrca;
                 prodOrca.IdItemProjeto = itemProj.IdItemProjeto;
                 prodOrca.Ambiente = itemProj.Ambiente;
-                
+
                 string descricao = UtilsProjeto.FormataTextoOrcamento(sessao, itemProj);
                 if (!String.IsNullOrEmpty(descricao)) prodOrca.Descricao = descricao;
                 if (String.IsNullOrEmpty(prodOrca.Descricao)) prodOrca.Descricao = descricaoAnterior;
@@ -481,9 +480,9 @@ namespace Glass.Data.DAL
 
                 // Aplica comissão
                 ProdutosOrcamento[] prod = { GetElementByPrimaryKey(sessao, prodOrca.IdProd) };
-                
+
                 if (PedidoConfig.Comissao.ComissaoAlteraValor)
-                {   
+                {
                     DescontoAcrescimo.Instance.AplicarComissao(sessao, orcamento, percComissao, prod);
                 }
 
@@ -535,7 +534,7 @@ namespace Glass.Data.DAL
         public void DeleteFromProjeto(GDASession session, uint idOrcamento)
         {
             string sql =
-                @"Delete from produto_orcamento_benef Where idProd In 
+                @"Delete from produto_orcamento_benef Where idProd In
                 (Select idProd from produtos_orcamento Where idItemProjeto is not null and idOrcamento=" + idOrcamento + @");
 
                 Delete From produtos_orcamento Where idItemProjeto is not null and idOrcamento=" + idOrcamento + @";
@@ -590,7 +589,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(sessao, sql);
 
             ProdutosOrcamento prod = GetElementByPrimaryKey(sessao, idProdOrcamento);
-            
+
             if (prod.IdProdParent != null)
                 if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From produtos_orcamento Where idProdParent=" + prod.IdProdParent.Value) > 0)
                     UpdateTotaisProdutoOrcamento(sessao, prod.IdProdParent.Value);
@@ -729,7 +728,7 @@ namespace Glass.Data.DAL
                 }
 
                 sql = "update produtos_orcamento set custo=?custo, valorProd=?total / Coalesce(qtde, 1), total=?total where idProd=" + prodOrca.IdProd;
-                objPersistence.ExecuteCommand(sessao, sql,  new GDAParameter("?custo", custo), new GDAParameter("?total", total));
+                objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?custo", custo), new GDAParameter("?total", total));
             }
             else if (prodOrca.IdItemProjeto != null)
             {
@@ -747,12 +746,12 @@ namespace Glass.Data.DAL
                     }
 
                     prodOrca.ValorUnitarioBruto = prodOrca.Total.Value / (prodOrca.Qtde > 0 ? (decimal)prodOrca.Qtde.Value : 1);
-                    
+
                     objPersistence.ExecuteCommand(sessao, @"Update produtos_orcamento Set totalBruto=?total, total=?total, valorUnitBruto=?valorUnit
-                        Where idProd=" + prodOrca.IdProd, new GDAParameter("?total", prodOrca.Total.Value), 
+                        Where idProd=" + prodOrca.IdProd, new GDAParameter("?total", prodOrca.Total.Value),
                         new GDAParameter("?valorUnit", prodOrca.ValorUnitarioBruto));
                 }
-                
+
                 sql = @"update produtos_orcamento po set total=total-valorDesconto+valorAcrescimo-valorDescontoProd+valorAcrescimoProd+valorComissao,
                     valorProd=total/Coalesce(qtde,1) where idProd=" + prodOrca.IdProd;
 
@@ -791,7 +790,7 @@ namespace Glass.Data.DAL
         internal bool AplicarAcrescimo(GDASession session, ProdutosOrcamento produto, Orcamento orcamento,
             IEnumerable<ProdutosOrcamento> produtosOrcamento)
         {
-            // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo, 
+            // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo,
             // o total bruto ficaria errado, causando erros ao reaplicar desconto/acréscimo
             var tabela = produto.IdItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
             var where = produto.IdItemProjeto > 0 ? "idItemProjeto=" + produto.IdItemProjeto : "idProdParent=" + produto.IdProd;
@@ -843,7 +842,7 @@ namespace Glass.Data.DAL
         internal bool AplicarDesconto(GDASession session, ProdutosOrcamento produto, Orcamento orcamento,
             IEnumerable<ProdutosOrcamento> produtosOrcamento)
         {
-            // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo, 
+            // Deve-se recalcular o total bruto sempre, pois caso tenha sido adicionado mais algum produto após o desconto/acréscimo,
             // o total bruto ficaria errado, causando erros ao reaplicar desconto/acréscimo
             var tabela = produto.IdItemProjeto > 0 ? "material_item_projeto" : "produtos_orcamento";
             var where = produto.IdItemProjeto > 0 ? "idItemProjeto=" + produto.IdItemProjeto : "idProdParent=" + produto.IdProd;
@@ -965,7 +964,7 @@ namespace Glass.Data.DAL
                 {
                     prod.ValorTabela = (prod as IProdutoCalculo).DadosProduto.ValorTabela();
 
-                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, orcamento, prod, !somarAcrescimoDesconto, true);
+                    var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, orcamento, prod, !somarAcrescimoDesconto);
                     prod.ValorProd = valorUnitario ?? Math.Max(prod.ValorTabela, prod.ValorProd.GetValueOrDefault());
 
                     ValorTotal.Instance.Calcular(
@@ -1065,7 +1064,7 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var retorno = Insert(transaction, objInsert);
-                    
+
                     transaction.Commit();
                     transaction.Close();
 
@@ -1266,7 +1265,7 @@ namespace Glass.Data.DAL
                 if (Glass.Configuracoes.Geral.NaoVendeVidro())
                 {
                     prodOrca.IdProduto = objUpdate.IdProduto;
-                    
+
                     if (objUpdate.IdProduto > 0)
                     {
                         ValorTotal.Instance.Calcular(
@@ -1366,7 +1365,7 @@ namespace Glass.Data.DAL
                 prodOrca.AlturaCalc = objUpdate.AlturaCalc;
                 prodOrca.TotMCalc = objUpdate.TotMCalc;
                 prodOrca.Custo = objUpdate.Custo;
-                
+
                 if (objUpdate.Total > 0)
                     prodOrca.Total = objUpdate.Total;
                 else if (objUpdate.ValorProd != null && objUpdate.Qtde != null)
@@ -1554,7 +1553,7 @@ namespace Glass.Data.DAL
 
             if (orcamento.Acrescimo > 0)
                 OrcamentoDAO.Instance.RemoverAcrescimo(session, orcamento, produtosOrcamento);
-            
+
             if (orcamento.Desconto > 0)
                 OrcamentoDAO.Instance.RemoverDesconto(session, orcamento, produtosOrcamento);
 
@@ -1640,7 +1639,7 @@ namespace Glass.Data.DAL
                     (pot.IdPecaOtimizada IS NOT NULL) AS PecaOtimizada, po.IdProduto, mip.GrauCorte, gm.Esquadria AS ProjetoEsquadria
                 FROM produtos_orcamento po
 	                INNER JOIN produto p ON (po.IdProduto = p.IdProd)
-                    LEFT JOIN item_projeto ip ON (po.IdItemProjeto = ip.IdItemProjeto) 
+                    LEFT JOIN item_projeto ip ON (po.IdItemProjeto = ip.IdItemProjeto)
                     LEFT JOIN material_item_projeto mip ON (ip.IdItemProjeto = mip.IdItemProjeto)
                     LEFT JOIN material_projeto_modelo mpm ON (mip.IdMaterProjMod = mpm.IdMaterProjMod)
                     LEFT JOIN projeto_modelo pm ON (mpm.IdProjetoModelo = pm.IdProjetoModelo)

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using GDA;
 using Glass.Data.DAL;
-using Glass.Data.Model;
-using GDA;
-using Glass.Data.Model.Calculos;
 using Glass.Data.Helper.Calculos;
+using Glass.Data.Model;
+using Glass.Data.Model.Calculos;
+using System;
 
 namespace Glass.Global
 {
@@ -39,7 +39,7 @@ namespace Glass.Global
         /// <summary>
         /// Cálculo de arredondamento de m2 utilizando 2 casas decimais
         /// </summary>
-        /// <param name="largura"></param>        
+        /// <param name="largura"></param>
         /// <param name="altura"></param>
         /// <param name="qtd"></param>
         /// <returns></returns>
@@ -116,7 +116,7 @@ namespace Glass.Global
         {
             return (int)Math.Round(((float)largAlt / 50) + 0.49, 2) * 50;
         }
-        
+
         /// <summary>
         /// Cálculo de M2.
         /// </summary>
@@ -248,7 +248,7 @@ namespace Glass.Global
                 // Faz o cálculo normalmente do múltiplo de 6 metros
                 if (alturaCalc == 6)
                     total = valorUnit * (decimal)qtde;
-                else if (alturaCalc < 6) // Calcula o restante da barra adicionando 
+                else if (alturaCalc < 6) // Calcula o restante da barra adicionando
                     total = (valorUnit * (decimal)((alturaCalc % 6) / 6)) * (decimal)qtde;
                 else
                     total = (valorUnit / 6) * (decimal)(alturaCalc * qtde);
@@ -389,7 +389,7 @@ namespace Glass.Global
         /// <param name="larguraBenef">Largura do beneficiamento.</param>
         /// <returns></returns>
         public static decimal CalcularValorCusto(
-            GDASession sessao, int tipoCalc, float altura, int largura, float qtde, 
+            GDASession sessao, int tipoCalc, float altura, int largura, float qtde,
             float totM2, decimal valorUnit, int alturaBenef, int larguraBenef)
         {
             decimal retorno = 0;
@@ -426,5 +426,39 @@ namespace Glass.Global
         }
 
         #endregion
+
+        public static decimal CalcularTotal(GDASession sessao, int idCliente, int idProduto, double altura,
+            int largura, double quantidade, int? quantidadeAmbiente, double areaM2, double areaCalculadaM2,
+            decimal valorUnitario, double percentualDescontoPorQuantidade, bool calcularMultiploDe5,
+            int numeroBeneficiamentos)
+        {
+            var container = new ContainerCalculoDTO
+            {
+                Cliente = new ClienteDTO(() => (uint)idCliente),
+            };
+
+            var produto = new ProdutoCalculoDTO
+            {
+                Altura = (float)altura,
+                Largura = largura,
+                Qtde = (float)quantidade,
+                QtdeAmbiente = quantidadeAmbiente ?? 0,
+                IdProduto = (uint)idProduto,
+                TotM = (float)areaM2,
+                TotM2Calc = (float)areaCalculadaM2,
+                ValorUnit = valorUnitario,
+                PercDescontoQtde = (float)percentualDescontoPorQuantidade,
+            };
+
+            ValorTotal.Instance.Calcular(
+                sessao,
+                container,
+                produto,
+                Data.Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                calcularMultiploDe5,
+                numeroBeneficiamentos);
+
+            return produto.Total;
+        }
     }
 }

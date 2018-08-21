@@ -2,19 +2,29 @@
 using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
+using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class ValorTotal : BaseCalculo<ValorTotal>
+    sealed class ValorTotal : Singleton<ValorTotal>
     {
         private ValorTotal() { }
 
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
-          ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
-          bool usarChapaVidro = true, bool valorBruto = false)
+            ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
+            bool usarChapaVidro = true, bool valorBruto = false)
         {
-            Calcular(sessao, container, produto, arredondarAluminio, calcularMultiploDe5, false, false, numeroBeneficiamentos,
-             usarChapaVidro, valorBruto);
+            Calcular(
+                sessao,
+                container,
+                produto,
+                arredondarAluminio,
+                calcularMultiploDe5,
+                false,
+                false,
+                numeroBeneficiamentos,
+                usarChapaVidro,
+                valorBruto);
         }
 
         /// <summary>
@@ -24,10 +34,7 @@ namespace Glass.Data.Helper.Calculos
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, bool compra, int numeroBeneficiamentos,
             bool usarChapaVidro = true, bool valorBruto = false)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
-
-            if (!DeveExecutar(produto))
-                return;
+            produto.InicializarParaCalculo(sessao, container);
 
             var alturaBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.AlturaBenef, container, produto.TipoCalc);
             var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
@@ -48,7 +55,7 @@ namespace Glass.Data.Helper.Calculos
                 valorBruto
             );
 
-            AtualizarDadosCache(produto);
+            this.IncluirDescontoPorQuantidade(produto);
         }
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
@@ -57,6 +64,18 @@ namespace Glass.Data.Helper.Calculos
                 return valor.Value;
 
             return 2;
+        }
+
+        private void IncluirDescontoPorQuantidade(IProdutoCalculo produto)
+        {
+            if (produto.PercDescontoQtde > 0)
+            {
+                var fatorMultiplicacao = produto.PercDescontoQtde < 100
+                    ? 1 - (produto.PercDescontoQtde / 100)
+                    : 0;
+
+                produto.Total *= (decimal)fatorMultiplicacao;
+            }
         }
     }
 }

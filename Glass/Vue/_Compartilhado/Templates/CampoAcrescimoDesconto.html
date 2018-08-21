@@ -1,0 +1,7 @@
+﻿<span style="white-space: nowrap">
+    <select v-model="tipoAtual">
+        <option value="2">{{ unidadeMonetaria }}</option>
+        <option value="1">%</option>
+    </select>
+    <input type="number" step="0.01" style="width: 50px" v-model.number="valorAtual" min="0">
+</span>
