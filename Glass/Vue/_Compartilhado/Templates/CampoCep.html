@@ -1,0 +1,6 @@
+﻿<span style="white-space: nowrap">
+    <campo-com-mascara v-bind:valor.sync="cep" v-bind:mascara="[/\d/, /\d/, /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/]"
+        pattern="\d{5}-\d{3}" v-bind="$attrs" style="width: 80px"></campo-com-mascara>
+    <button class="botaoPesquisar" v-on:click.prevent="buscarCep" title="Buscar endereço pelo CEP"
+        style="position: relative; top: 3px"></button>
+</span>

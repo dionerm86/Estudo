@@ -72,7 +72,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <AdditionalFiles Include="..\..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -94,11 +106,20 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingProject)' == 'True'">
+    <!--
+      Disable analyzers when building a project inside Visual Studio. Note that analyzer behavior for IntelliSense
+      purposes is not altered by this.
+    -->
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
 </Project>

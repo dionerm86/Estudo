@@ -1,12 +1,14 @@
+using Glass.Configuracoes;
+using Glass.Data.DAL;
+using Glass.Data.Helper;
+using Glass.Seguranca;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Glass.Data.Helper;
-using System.Collections.Generic;
-using Glass.Data.DAL;
-using Glass.Configuracoes;
 
 
 namespace Glass.UI.Web
@@ -14,51 +16,51 @@ namespace Glass.UI.Web
     public partial class Layout : System.Web.UI.MasterPage
     {
         private const string TITULO_INICIO = "WebGlass :: ";
-    
+
         public bool ExibeMenu
         {
             get { return linhaMenu.Visible; }
             set
             {
                 linhaMenu.Visible = value;
-    
+
                 if (value)
                     titulo.Style.Remove("border-top");
                 else
                     titulo.Style.Add("border-top", "1px solid #E2E2E4");
             }
         }
-    
+
         public bool ExibeBotoesSistema
         {
             get { return botoesSistema.Visible; }
             set { botoesSistema.Visible = value; }
         }
-    
+
         public bool ExibirConfiguracoes
         {
             get { return lnkConfiguracao.Visible; }
             set { lnkConfiguracao.Visible = value; }
         }
-    
+
         private Func<bool> _verificarMensagensNaoLidas = () => false;
-    
+
         public Func<bool> VerificarMensagensNaoLidas
         {
             get { return _verificarMensagensNaoLidas; }
             set { _verificarMensagensNaoLidas = value; }
         }
-    
+
         private string _paginaPrincipal = "~/WebGlass/Main.aspx";
-    
+
         public string PaginaPrincipal
         {
             get { return _paginaPrincipal; }
             set { _paginaPrincipal = value; }
         }
-    
+
         private string _paginaLogin = "~/WebGlass/Default.aspx";
-    
+
         public string PaginaLogin
         {
             get { return _paginaLogin; }
@@ -66,13 +68,13 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Define a observaÁ„o que aparecer· no menu
+        /// Define a observa√ß√£o que aparecer√° no menu
         /// </summary>
         public string ObsMenu
         {
             set
             {
-                imgObsMenu.Visible = !string.IsNullOrEmpty(value);                
+                imgObsMenu.Visible = !string.IsNullOrEmpty(value);
                 imgObsMenu.ToolTip = value;
             }
         }
@@ -81,20 +83,20 @@ namespace Glass.UI.Web
         {
             if (FuncoesGerais.IsChrome(Page))
                 this.Page.ClientTarget = "uplevel";
-            
+
             base.AddedControl(control, index);
         }
-    
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.UserAgent != null && (Request.UserAgent.IndexOf("AppleWebKit") > 0 || Request.UserAgent.IndexOf("Unknown") > 0 || Request.UserAgent.IndexOf("Chrome") > 0))
                 Request.Browser.Adapters.Clear();
 
-            //Esconde a opÁ„o de controle de usuario caso for Parceiro
+            //Esconde a op√ß√£o de controle de usuario caso for Parceiro
             if (UserInfo.GetUserInfo == null || UserInfo.GetUserInfo.CodUser == 0)
                 lnkControleUsuario.Visible = false;
 
-            // Altera o tÌtulo da p·gina
+            // Altera o t√≠tulo da p√°gina
             if (!Page.Title.Contains(TITULO_INICIO))
             {
                 lblTitulo.Text = Page.Title;
@@ -113,47 +115,47 @@ namespace Glass.UI.Web
                         " (AMBIENTE TESTE)" :
                         string.Empty);
 
-            // Inicia as threads de controle do sistema, se necess·rio
+            // Inicia as threads de controle do sistema, se necess√°rio
             if (!IsPostBack && Page.User.Identity.IsAuthenticated)
                 Threads.Instance.IniciarThreads(HttpContext.Current);
-    
+
             // Esconde os itens da tela em caso de popup
             if (IsPopup())
                 Page.ClientScript.RegisterStartupScript(GetType(), "popup", "hidePopup();", true);
-            
+
             #region Atualiza acesso e valida login
-    
+
             try
             {
-                // Salva numa vari·vel Application o usu·rio logado, ou atualiza seu ˙ltimo acesso
+                // Salva numa vari√°vel Application o usu√°rio logado, ou atualiza seu √∫ltimo acesso
                 UserInfo.SetActivity();
             }
             catch { }
-    
+
             LoginUsuario login = null;
-    
+
             try
             {
                 login = UserInfo.GetUserInfo;
             }
             catch { }
-    
+
             if (login == null || (login.CodUser == 0 && login.IdCliente == 0))
             {
                 Response.Redirect(PaginaLogin);
                 return;
             }
-    
+
             imgCliente.ImageUrl = Logotipo.GetLogoVirtualPath();
-    
+
             if (IsPopup())
                 return;
-    
+
             lblUsuario.Text =
                 ControleSistema.AmbienteTeste ?
                     "AMBIENTE TESTE" :
                     string.Format("Bem vindo(a), {0}", login.Nome);
-    
+
             if (LojaDAO.Instance.GetCount() > 1)
                 lblUsuario.Text += "<br/>" + LojaDAO.Instance.GetNome(login.IdLoja);
 
@@ -165,11 +167,11 @@ namespace Glass.UI.Web
             }
             else if (!login.IsAdministrador)
                 lblCoord.Visible = false;
-    
+
             DateTime dataTrabalho = FuncionarioDAO.Instance.ObtemDataAtraso(login.CodUser);
             lblDataTrabalho.Text = dataTrabalho != DateTime.Now ? " (data de trabalho: " + dataTrabalho.ToString("dd/MM/yyyy") + ")" : "";
-    
-            // Verifica se h· novas mensagens e quantas s„o
+
+            // Verifica se h√° novas mensagens e quantas s√£o
             bool msgNova = VerificarMensagensNaoLidas();
             lnkMensagens.Visible = !msgNova;
             lnkMensagensNaoLidas.Visible = msgNova;
@@ -177,7 +179,7 @@ namespace Glass.UI.Web
             try
             {
                 // Chamado 13112.
-                // … necess·rio informar ao funcion·rio, financeiro recebimento, quantos pedidos est„o aguardando sua confirmaÁ„o/finalizaÁ„o.
+                // √â necess√°rio informar ao funcion√°rio, financeiro recebimento, quantos pedidos est√£o aguardando sua confirma√ß√£o/finaliza√ß√£o.
                 VerificarPedidosAguardandoFinanceiro();
 
                 VerificarEstoqueMinimo();
@@ -220,12 +222,12 @@ namespace Glass.UI.Web
             FormsAuthentication.SignOut();
             Response.Redirect(PaginaLogin);
         }
-    
+
         protected void lnkMensagens_Click(object sender, EventArgs e)
         {
             Response.Redirect(PaginaPrincipal);
         }
-    
+
         protected void lnkConfiguracao_Load(object sender, EventArgs e)
         {
             if (UserInfo.GetUserInfo != null)
@@ -233,17 +235,17 @@ namespace Glass.UI.Web
             else
                 lnkConfiguracao.Visible = false;
         }
-    
+
         protected string GetVersion()
         {
             return "v" + Geral.ObtemVersao();
         }
-    
+
         public bool IsPopup()
         {
             return Request["popup"] == "true";
         }
-    
+
         public bool IsPopupControle()
         {
             return IsPopup() && Request["controlePopup"] == "true";
@@ -252,10 +254,10 @@ namespace Glass.UI.Web
         protected void btnAtualizarPagina_Click(object sender, EventArgs e)
         {
             Queue<Control> controles = new Queue<Control>();
-    
+
             foreach (Control c in Pagina.Controls)
                 controles.Enqueue(c);
-    
+
             while (controles.Count > 0)
             {
                 var c = controles.Dequeue();
@@ -285,7 +287,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Chamado 13112. Informa aos funcion·rios de financeiro recebimento quantos pedidos est„o aguardando a finalizaÁ„o/confirmaÁ„o.
+        /// Chamado 13112. Informa aos funcion√°rios de financeiro recebimento quantos pedidos est√£o aguardando a finaliza√ß√£o/confirma√ß√£o.
         /// </summary>
         public void VerificarPedidosAguardandoFinanceiro()
         {
@@ -298,13 +300,13 @@ namespace Glass.UI.Web
                 var exibirAguardandoFinanc = usuario.IsFinanceiroReceb && qtdPedidosAguardandoFinanceiro > 0;
 
                 lblPedidosAguardandoFinanceiro.Visible = exibirAguardandoFinanc;
-                lblPedidosAguardandoFinanceiro.Text = "Existem " + qtdPedidosAguardandoFinanceiro + " pedido(s) aguardando a confirmaÁ„o/" +
-                    "finalizaÁ„o pelo financeiro";
+                lblPedidosAguardandoFinanceiro.Text = "Existem " + qtdPedidosAguardandoFinanceiro + " pedido(s) aguardando a confirma√ß√£o/" +
+                    "finaliza√ß√£o pelo financeiro";
             }
         }
 
         /// <summary>
-        /// Informa ao usu·rio caso tenha avaliaÁ„o pendente
+        /// Informa ao usu√°rio caso tenha avalia√ß√£o pendente
         /// </summary>
         public void VerificarAvaliacaoPendente()
         {
@@ -319,7 +321,7 @@ namespace Glass.UI.Web
         }
 
         /// <summary>
-        /// Informa a quantidade de produtos que est„o abaixo do ou no estoque mÌnimo.
+        /// Informa a quantidade de produtos que est√£o abaixo do ou no estoque m√≠nimo.
         /// </summary>
         public void VerificarEstoqueMinimo()
         {
@@ -336,7 +338,7 @@ namespace Glass.UI.Web
                 {
                     lblQuantidadeProdutosEstoqueMinimo.Visible = true;
                     lblQuantidadeProdutosEstoqueMinimo.Text =
-                        string.Format("Existe(m) {0} produto(s) abaixo do/no estoque mÌnimo", quantidadeProdutosEstoqueMinimo);
+                        string.Format("Existe(m) {0} produto(s) abaixo do/no estoque m√≠nimo", quantidadeProdutosEstoqueMinimo);
                 }
                 else
                     lblQuantidadeProdutosEstoqueMinimo.Visible = false;
@@ -359,6 +361,20 @@ namespace Glass.UI.Web
         public string ObterEmailUsuario()
         {
             return FuncionarioDAO.Instance.GetEmail(UserInfo.GetUserInfo.CodUser);
+        }
+
+        protected string ObterCookieAuth()
+        {
+            FormsIdentity identity = (FormsIdentity)HttpContext.Current.User.Identity;
+
+            var loginExpiracao = new LoginUsuarioExpiracao
+            {
+                Login = UserInfo.GetUserInfo,
+                DataExpiracao = identity.Ticket.Expiration
+            };
+
+            var login = JsonConvert.SerializeObject(loginExpiracao);
+            return new Crypto().Encrypt(login);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ctrlProdComposicao.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlProdComposicao" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ctrlProdComposicao.ascx.cs" Inherits="Glass.UI.Web.Controls.ctrlProdComposicao" %>
 
 <%@ Register Src="ctrlBenef.ascx" TagName="ctrlBenef" TagPrefix="uc4" %>
 <%@ Register Src="../Controls/ctrlDescontoQtde.ascx" TagName="ctrlDescontoQtde" TagPrefix="uc5" %>

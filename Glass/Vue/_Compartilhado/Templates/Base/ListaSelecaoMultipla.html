@@ -1,0 +1,22 @@
+﻿<span style="cursor: default; display: inline-grid; min-width: 110px">
+    <span style="-appearance: searchfield; overflow: hidden; padding: 1px 0 0 2px" v-on:click="alternarOpcoes">
+        <span style="min-width: 110px;">
+            <div style="float: right; -appearance: menulist-button; width: 16px; height: 18px"></div>
+            <span style="display: inline-block; text-align: left; white-space: nowrap; width: calc(100% - 26px); margin: 0px; padding: 1px 5px 1px 3px" class="ui-dropdownchecklist-text">
+                {{ itensSelecionados || textoSelecionar }}
+            </span>
+        </span>
+    </span>
+    <div style="display: none; position: absolute; margin-top: 18px; background-color: white; z-index: 1">
+        <div style="-appearance: searchfield; padding: 1px 1px 0 0">
+            <div style="overflow-x: hidden; overflow-y: auto; max-height: 170px; padding: 2px 0; text-align: left">
+                <div v-for="item in itens" style="padding: 0 5px">
+                    <input v-bind:id="idUnico(item)" type="checkbox" v-model="idsAtuais" v-bind:value="item[campoId]" v-on:click="selecionarItem">
+                    <label v-bind:for="idUnico(item)" v-on:click="selecionarItem">
+                        {{ item[campoNome] }}
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</span>

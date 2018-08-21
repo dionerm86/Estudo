@@ -1,0 +1,32 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Sync Softwares",
+      "documentationCulture": "pt-BR",
+      "copyrightText":  "Copyright (c) {companyName}. Todos os direitos reservados."
+    },
+    "indentation": {
+      "indentationSize": 4,
+      "useTabs": false
+    },
+    "maintainabilityRules": {
+      "topLevelTypes": [
+        "class",
+        "enum",
+        "interface",
+        "struct"
+      ]
+    },
+    "orderingRules": {
+      "elementOrder": [
+        "kind",
+        "constant",
+        "static",
+        "readonly"
+      ],
+      "usingDirectivesPlacement": "preserve",
+      "systemUsingDirectivesFirst": false
+    }
+  }
+}

@@ -1,0 +1,26 @@
+﻿<span style="white-space: nowrap">
+    <span class="form-group">
+        <label>
+            CEP
+        </label>
+        <campo-cep v-bind:endereco.sync="enderecoAtual" v-bind="$attrs"></campo-cep>
+    </span>
+    <span class="form-group">
+        <label>
+            Endereço
+        </label>
+        <input type="text" v-model="enderecoAtual.logradouro" style="width: 200px" v-bind="$attrs">
+    </span>
+    <span class="form-group">
+        <label>
+            Bairro
+        </label>
+        <input type="text" v-model="enderecoAtual.bairro" style="width: 130px" v-bind="$attrs">
+    </span>
+    <span class="form-group">
+        <label>
+            Cidade
+        </label>
+        <input type="text" v-model="enderecoAtual.cidade.nome" style="width: 130px" v-bind="$attrs" v-if="enderecoAtual.cidade">
+    </span>
+</span>

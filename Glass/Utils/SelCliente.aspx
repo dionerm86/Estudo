@@ -34,6 +34,15 @@
                 return false;
             }
 
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, idCli, nome);
+                    closeWindow();
+                    return;
+                }
+            }
+
             if (FindControl("hdfCustom", "input").value == 1)
                 window.opener.setClienteCustom(idCli, nome);
             else if (FindControl("hdfNfe", "input").value == 1) // Se for busca de cliente para NF-e
@@ -51,14 +60,14 @@
             else if (FindControl("hdfDadosCliente", "input").value == 1)
             {
                 var dadosCli = "";
-                
+
                 if (FindControl("hdfMedicao", "input").value != 1) {
                     dadosCli = MetodosAjax.GetDadosCli(idCli).value;
                 }
                 else {
                     dadosCli = SelCliente.GetCliMedicao(idCli).value;
                 }
-            
+
                 try
                 {
                     dadosCli = dadosCli.split('|');
@@ -133,7 +142,7 @@
                                     <asp:TextBox ID="txtCpf" runat="server" Width="150px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
                                 </td>
                                 <td align="left">
-                                    <asp:LinkButton ID="LnkCliente" runat="server" OnClick="LnkCliente_Click"><img 
+                                    <asp:LinkButton ID="LnkCliente" runat="server" OnClick="LnkCliente_Click"><img
                             border="0" src="../Images/Insert.gif" /></asp:LinkButton>
                                 </td>
                             </tr>

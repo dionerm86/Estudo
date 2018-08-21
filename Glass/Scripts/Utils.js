@@ -14,11 +14,11 @@ function FindControl(id, tipo, parent)
 {
     parent = typeof parent == "object" ? parent : document;
     var listaControles = parent.getElementsByTagName(tipo);
-    
+
     for (var i = 0; i < listaControles.length; i++)
         if (listaControles[i].id.indexOf(id) != -1)
             return listaControles[i];
-    
+
     return null;
 }
 
@@ -39,7 +39,7 @@ function soSistema(e, apagar)
 
     if ((e.ctrlKey && key != "v".charCodeAt(0) && key != "V".charCodeAt(0)) || e.altKey)
         return true;
-    
+
     var backSpace = "\b".charCodeAt(0);
     var arrowLeft = 37;
     var arrowRight = 39;
@@ -55,7 +55,7 @@ function soSistema(e, apagar)
     var pageDown = 34;
     var pageUp = 33;
     var del = 46
-    
+
     var ignore = [arrowLeft, arrowRight, arrowTop, arrowDown, esc, tab, shift, alt, ctrl, home, end, pageDown, pageUp];
     if (apagar)
     {
@@ -64,7 +64,7 @@ function soSistema(e, apagar)
     }
 
     var targ = null;
-    
+
     if (e.target)
         targ = e.target;
     else if (e.srcElement)
@@ -73,7 +73,7 @@ function soSistema(e, apagar)
     for (var i = 0; i < ignore.length; i++)
         if (key == ignore[i])
             return true;
-    
+
     return false;
 }
 
@@ -92,12 +92,12 @@ function soSistema(e, apagar)
 function soNumeros(e, inteiro, naoNegativo)
 {
     var key = (e.which) ? e.which : e.keyCode;
-    
+
     var zero = "0".charCodeAt(0);
     var nove = "9".charCodeAt(0);
-    
+
     var targ = null;
-    
+
     if (e.target)
         targ = e.target;
     else if (e.srcElement)
@@ -107,13 +107,13 @@ function soNumeros(e, inteiro, naoNegativo)
         return false;
 
     var retorno = (key >= zero && key <= nove) || soSistema(e);
-    
+
     if (!inteiro)
         retorno = retorno || (key == ",".charCodeAt(0));
-    
+
     if (!naoNegativo)
         retorno = retorno || (key == "-".charCodeAt(0));
-    
+
     return retorno;
 }
 
@@ -137,7 +137,7 @@ function soCodigoInterno(e)
     var Z = "Z".charCodeAt(0);
     var traco = "-".charCodeAt(0);
     var barra = "/".charCodeAt(0);
-    
+
     return (key >= a && key <= z) || (key >= A && key <= Z) ||
         key == traco || key == barra || soNumeros(e, true, true);
 }
@@ -200,10 +200,10 @@ function soTelefone(e)
     var abreParenteses = "(".charCodeAt(0);
     var fechaParenteses = ")".charCodeAt(0);
     var traco = "-".charCodeAt(0);
-    
+
     var retorno = ((key == espaco) || (key == abreParenteses) || (key == fechaParenteses) || (key == traco));
     retorno = retorno || (soNumeros(e, true, true));
-    
+
     return retorno;
 }
 
@@ -223,10 +223,10 @@ function soCep(e)
 
     var traco = "-".charCodeAt(0);
     var ponto = ".".charCodeAt(0);
-    
+
     var retorno = ((key == traco) || (key == ponto));
     retorno = retorno || (soNumeros(e, true, true));
-    
+
     return retorno;
 }
 
@@ -246,16 +246,16 @@ function soCpfCnpj(e, cpf)
     var key = (e.which) ? e.which : e.keyCode;
 
     var ponto = ".".charCodeAt(0);
-    
+
     var retorno = (key == ponto);
     if (!cpf)
     {
         var traco = "-".charCodeAt(0);
         retorno = retorno || (key == traco);
     }
-    
+
     retorno = retorno || (soNumeros(e, true, true));
-    
+
     return retorno;
 }
 
@@ -272,7 +272,7 @@ function soCpfCnpj(e, cpf)
 //------------------------------------------------------------------------
 function validarChaveAcesso(val, args) {
     var chave = args.Value;
-    
+
     if (chave == "00000000000000000000000000000000000000000000") {
         args.IsValid = false;
         return;
@@ -298,7 +298,7 @@ function validarChaveAcesso(val, args) {
     else{
         digitoVerificador = 11 - total;
     }
-    
+
     if (digitoVerificador == chave.substring(43)) {
         args.IsValid = true;
     }
@@ -441,7 +441,7 @@ function validarCpfCnpj(val, args) {
     var cpfCnpj = args.Value.replace('.', '').replace('.', '').replace('.', '').replace('-', '').replace('/', '');
 
     var cpf = (cpfCnpj.length == 11);
-    
+
     if (cpf)
     {
         val.errormessage = "CPF inválido.";
@@ -536,9 +536,9 @@ function maskTelefone(e, txt) {
     var strTelefone = '';
     var prefixo = '';
     var incluirNonoDigito = false;
-    
+
     strTelefone = strTelefone + txt.value;
-    
+
     // Máscara para 0800
     if (strTelefone.length >= 1 && strTelefone[0] == "0") {
         if (strTelefone.length == 4 || strTelefone.length == 8) {
@@ -632,7 +632,7 @@ function maskTelefone(e, txt) {
                 prefixo == "98" ||
                 prefixo == "99";
     }
-    
+
     if (strTelefone.length == 9) {
             if (!incluirNonoDigito || strTelefone.substring(5, 6) != "9") {
                 strTelefone = strTelefone + '-';
@@ -715,7 +715,7 @@ function maskCNPJ(e, txt) {
     // Se o backspace tiver sido pressionado, não faz nada
     if (soSistema(e, true))
         return;
-    
+
     var mycnpj = '';
     mycnpj = mycnpj + txt.value;
     if (mycnpj.length == 2) {
@@ -753,7 +753,7 @@ function SelecionaData(nomeCampo, botao)
         alert(err);
         return false;
     }
-    
+
     return false;
 }
 
@@ -779,7 +779,7 @@ function mascara_mesAno(e, data)
     var key = (e.which) ? e.which : e.keyCode;
     if (key == 6)
         return true;
-    
+
     var mydata = '';
     mydata = mydata + data.value;
     if (mydata.length == 2) {
@@ -793,7 +793,7 @@ function mascara_data(e, data)
     var key = (e.which) ? e.which : e.keyCode;
     if (key == 8)
         return true;
-    
+
     var mydata = '';
     mydata = mydata + data.value;
     if (mydata.length == 2) {
@@ -812,7 +812,7 @@ function mascara_hora(e, hora)
     var key = (e.which) ? e.which : e.keyCode;
     if (key == 8)
         return true;
-        
+
     var myhora = '';
     myhora = myhora + hora.value;
 
@@ -832,15 +832,15 @@ function verifica_data(data) {
     mes = (data.substring(3, 5));
     ano = (data.substring(6, 10));
 
-    // verifica o dia valido para cada mes 
+    // verifica o dia valido para cada mes
     if ((dia < 01) || (dia < 01 || dia > 30) && (mes == 04 || mes == 06 || mes == 09 || mes == 11) || dia > 31)
         situacao = "falsa";
 
-    // verifica se o mes e valido 
+    // verifica se o mes e valido
     if (mes < 01 || mes > 12)
         situacao = "falsa";
 
-    // verifica se e ano bissexto 
+    // verifica se e ano bissexto
     if (mes == 2 && (dia < 01 || dia > 29 || (dia > 28 && (parseInt(ano / 4) != ano / 4))))
         situacao = "falsa";
 
@@ -865,7 +865,7 @@ function verifica_hora(hora) {
     hrs = (hora.substring(0, 2));
     min = (hora.substring(3, 5));
 
-    // verifica data e hora 
+    // verifica data e hora
     if ((hrs < 00) || (hrs > 23) || (min < 00) || (min > 59))
         situacao = "falsa";
 
@@ -874,14 +874,14 @@ function verifica_hora(hora) {
 
     if (situacao == "falsa") {
         alert("Hora inválida!");
-        //hora.focus(); 
+        //hora.focus();
         return false;
     }
     else
         return true;
-} 
+}
 
-// Utilizado para preencher dados do cliente selecionado após 
+// Utilizado para preencher dados do cliente selecionado após
 // escolher o mesmo no popup
 function setCliente(idCliente, nomeCliente) {
     var numCli = FindControl("txtNumCli", "input");
@@ -893,17 +893,17 @@ function setCliente(idCliente, nomeCliente) {
 
     if (nomeCli)
         nomeCli.value = nomeCliente;
-    
+
     if (hdfCli)
         hdfCli.value = idCliente;
 }
 
-// Utilizado para preencher dados do fornecedor selecionado após 
+// Utilizado para preencher dados do fornecedor selecionado após
 // escolher o mesmo no popup
 function setFornec(idFornec, nomeFantasia, idConta)
 {
     FindControl("txtNomeFornec", "input").value = nomeFantasia;
-    
+
     var hdfFornec = FindControl("hdfFornec", "input");
     if (hdfFornec != null)
         hdfFornec.value = idFornec;
@@ -911,20 +911,20 @@ function setFornec(idFornec, nomeFantasia, idConta)
     var txtNumFornec = FindControl("txtNumFornec", "input")
     if (txtNumFornec != null)
         txtNumFornec.value = idFornec;
-    
+
     var ddlPlanoConta = FindControl("ddlPlanoConta", "select");
     if (ddlPlanoConta != null && idConta != null)
         ddlPlanoConta.value = idConta;
 }
 
-// Subtrai os dois valores passados por parâmetro, substituindo caracteres 
+// Subtrai os dois valores passados por parâmetro, substituindo caracteres
 // "R$", "." e convertendo para Number
 function subtract(value1, value2)
 {
     var num1 = value1 == '' ? 0 : new Number(value1.toString().replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
     var num2 = value2 == '' ? 0 : new Number(value2.toString().replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
     var result = num1 - num2;
-    
+
     return result;
 }
 
@@ -1005,7 +1005,7 @@ function openWindow(altura, largura, url, opener, exibirBotaoFechar, abrirNovaJa
         // Inclui na pilha
         controlePopup.push(p);
     }
-        
+
     return false;
 }
 
@@ -1018,7 +1018,7 @@ function openWindowRet(altura, largura, url) {
 
     return window.open(url, "popup_" + new Date().getMilliseconds(), 'scrollbars=1, width=' + largura + ', ' +
         'height=' + altura + ', left=' + scrX + ', top=' + scrY);
-    
+
     return false;
 }
 
@@ -1053,7 +1053,7 @@ function redirectUrl(url)
         for (var i = 0; i < window.opener.controlePopup.length; i++)
             triggerEvent(window.opener.controlePopup[i].Pagina(0, true).document.forms[0], "submit");
     }
-    
+
     window.location.href = url;
 }
 
@@ -1065,7 +1065,7 @@ function redirectUrl(url)
 //     False -> date < today
 function dateGreaterThenNow(date) {
     date = date.split("/");
-    
+
     var today = new Date();
     var day = today.getDate().toString();
     var month = (today.getMonth() + 1).toString();
@@ -1099,7 +1099,7 @@ function firstGreaterThenSec(date1, date2) {
     if (data2[1].length == 1)
         data2[1] = "0" + data2[1];
 
-    return parseInt(data1[2].toString() + data1[1].toString() + data1[0].toString()) > 
+    return parseInt(data1[2].toString() + data1[1].toString() + data1[0].toString()) >
         parseInt(data2[2].toString() + data2[1].toString() + data2[0].toString());
 }
 
@@ -1121,7 +1121,7 @@ function firstEqualOrGreaterThenSec(date1, date2) {
     if (data2[1].length == 1)
         data2[1] = "0" + data2[1];
 
-    return parseInt(data1[2].toString() + data1[1].toString() + data1[0].toString()) >= 
+    return parseInt(data1[2].toString() + data1[1].toString() + data1[0].toString()) >=
         parseInt(data2[2].toString() + data2[1].toString() + data2[0].toString());
 }
 
@@ -1198,13 +1198,13 @@ function pesquisarCep(cep, cTipoLogradouro, cLogradouro, cBairro, cCidade, cUf, 
 {
     var resposta = MetodosAjax.PesquisarCep(cep).value;
     var dadosResposta = resposta.split('|');
-    
+
     if (dadosResposta[0] == "Erro")
     {
         alert(dadosResposta[1]);
         return;
     }
-    
+
     if (cTipoLogradouro != null) cTipoLogradouro.value = dadosResposta[2];
     if (cLogradouro != null) cLogradouro.value = (cTipoLogradouro == null ? dadosResposta[2] + " " : "") + dadosResposta[3];
     if (cBairro != null) cBairro.value = dadosResposta[4];
@@ -1281,13 +1281,13 @@ function validate(validationGroup)
                         temp.push(Page_ValidationSummaries[i]);
 
                 Page_ValidationSummaries = temp;
-            }   
+            }
         }
-    
+
         if (!Page_ClientValidate(validationGroup))
             return false;
     }
-    
+
     return true;
 }
 
@@ -1299,11 +1299,11 @@ function toDate(string)
     var data = string.split(' ');
     var partesData = data[0].split('/');
     var partesHora = data.length > 1 ? data[1].split(':') : null;
-    
+
     var dia = partesData[0];
     var mes = parseInt(partesData[1], 10) - 1;
     var ano = partesData[2];
-    
+
     var horas = partesHora != null ? partesHora[0] : 0;
     var minutos = partesHora != null ? partesHora[1] : 0;
     var seguntos = partesHora != null && partesHora.length > 2 ? partesHora[2] : 0;
@@ -1314,7 +1314,7 @@ function toDate(string)
     // 20/10, ao converter a data ficava 19/10
     if (dia == 20 && retorno.getDate() == 19)
         retorno.setDate(20);
-    
+
     return retorno;
 }
 
@@ -1335,7 +1335,7 @@ function isDataValida(string)
             for (i = 0; i < horasTemp.length; i++)
                 temp.push(horasTemp[i]);
         }
-        
+
         for (i = 0; i < temp.length; i++)
             if (!isNaN(temp[i]) && parseInt(temp[i], 10) < 10)
                 temp[i] = "0" + parseInt(temp[i], 10);
@@ -1347,18 +1347,18 @@ function isDataValida(string)
             if (temp.length > 5)
                 string += ":" + temp[5];
         }
-        
+
         var teste = toDate(string);
-        
+
         if (Object.prototype.toString.call(teste) !== "[object Date]" )
             return false;
 
         var resultado = (teste.getDate() < 10 ? "0" : "") + teste.getDate() + "/" +
             ((teste.getMonth() + 1) < 10 ? "0" : "") + (teste.getMonth() + 1) + "/" +
             teste.getFullYear();
-            
+
         if (temHoras)
-            resultado += " " + (teste.getHours() < 10 ? "0" : "") + teste.getHours() + ":" + 
+            resultado += " " + (teste.getHours() < 10 ? "0" : "") + teste.getHours() + ":" +
                 (teste.getMinutes() < 10 ? "0" : "") + teste.getMinutes() + (temp.length > 5 ?
                 ":" + (teste.getSeconds() < 10 ? "0" : "") + teste.getSeconds() : "");
 
@@ -1369,7 +1369,7 @@ function isDataValida(string)
 
         if (string.toString().indexOf('19') == 0 && resultado.toString().indexOf('18') == 0)
             resultado = resultado.toString().replace('18', '19');
-        
+
         return !isNaN(teste.getTime()) && string == resultado;
     }
     catch (err)
@@ -1384,10 +1384,10 @@ function isDataValida(string)
 function isHoraValida(string)
 {
     var data = new Date();
-    data = (data.getDate() < 10 ? "0" : "") + data.getDate() + "/" + 
-        ((data.getMonth() + 1) < 10 ? "0" : "") + (data.getMonth() + 1) + "/" + 
+    data = (data.getDate() < 10 ? "0" : "") + data.getDate() + "/" +
+        ((data.getMonth() + 1) < 10 ? "0" : "") + (data.getMonth() + 1) + "/" +
         data.getFullYear() + " " + string;
-    
+
     return isDataValida(data);
 }
 
@@ -1469,28 +1469,34 @@ function mascara_periodo(e, text) {
                 text.value = "";
                 return false;
             }
-                
+
         }
     }
     else if (!(key >= 48 && key <= 57 || key >= 96 && key <= 105) && key != 8 && key != 46 && key != 37 && key != 39) {
         return false;
     }
-           
+
     if (mydata.length >= 7) {
         text.value = mydata.substring(0, 7);
         return false;
     }
 }
 
-function GetQueryString(sParam) {
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++) {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) {
-            return sParameterName[1];
-        }
-    }
+function GetQueryString(name, url) {
+  if (!url) {
+    url = window.location.href
+  }
+
+  name = name.replace(/[\[\]]/g, "\\$&")
+
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)", "gi")
+  var results = regex.exec(url)
+
+  if (!results || !results[2]) {
+    return ''
+  }
+
+  return decodeURIComponent(results[2].replace(/\+/gi, " "))
 }
 
 // -----------------------------------------------------------------------

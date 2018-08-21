@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using GDA;
+﻿using GDA;
 using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.DAL
@@ -24,21 +24,21 @@ namespace Glass.Data.DAL
             SoNaoPadrao
         }
 
-        private string Sql(uint idBenefConfig, int? idSubgrupoProd, int? idCorVidro, float? espessura, string descricao, 
+        private string Sql(uint idBenefConfig, int? idSubgrupoProd, int? idCorVidro, float? espessura, string descricao,
             TipoCompararEspesura tipoCompararEspessura, TipoPadrao tipoPadrao, bool apenasAtivos, bool selecionar)
         {
             string sql = @"
-                Select bcp.*, concat(if(length(bc1.Descricao)>0, concat(bc1.Descricao, ' '), ''), bc.Descricao, 
-                    if(bcp.espessura is not null, concat(' ', if(bcp.espessura<10, '0', ''), cast(bcp.espessura as char), 'mm'), '')) 
-                    as Descricao, s.Descricao as DescrSubgrupoProd, cv.Descricao as DescrCorVidro, 
-                    bc.TipoCalculo 
-                From benef_config_preco bcp 
-                    left join benef_config bc on (bcp.idBenefConfig=bc.idBenefConfig) 
-                    left join benef_config bc1 on (bc.idParent=bc1.idBenefConfig) 
-                    left join subgrupo_prod s on (bcp.idSubgrupoProd=s.idSubgrupoProd) 
-                    left join cor_vidro cv on (bcp.idCorVidro=cv.idCorVidro) 
+                Select bcp.*, concat(if(length(bc1.Descricao)>0, concat(bc1.Descricao, ' '), ''), bc.Descricao,
+                    if(bcp.espessura is not null, concat(' ', if(bcp.espessura<10, '0', ''), cast(bcp.espessura as char), 'mm'), ''))
+                    as Descricao, s.Descricao as DescrSubgrupoProd, cv.Descricao as DescrCorVidro,
+                    bc.TipoCalculo
+                From benef_config_preco bcp
+                    left join benef_config bc on (bcp.idBenefConfig=bc.idBenefConfig)
+                    left join benef_config bc1 on (bc.idParent=bc1.idBenefConfig)
+                    left join subgrupo_prod s on (bcp.idSubgrupoProd=s.idSubgrupoProd)
+                    left join cor_vidro cv on (bcp.idCorVidro=cv.idCorVidro)
                 Where 1";
-                
+
             if (apenasAtivos)
                 sql += " And coalesce(bc1.situacao, bc.situacao)=" + (int)Situacao.Ativo;
 
@@ -52,7 +52,7 @@ namespace Glass.Data.DAL
                     sql += " and bcp.idSubgrupoProd is null and bcp.idCorVidro is null";
                     break;
             }
-            
+
             if (idBenefConfig > 0)
                 sql += " and bcp.idBenefConfig=" + idBenefConfig;
 
@@ -110,7 +110,12 @@ namespace Glass.Data.DAL
 
         public IList<BenefConfigPreco> GetByIdBenefConfig(uint idBenefConfig)
         {
-            return objPersistence.LoadData(Sql(idBenefConfig, null, null, null, null, TipoCompararEspesura.MaiorIgual, TipoPadrao.Nenhum, false, true)).ToList();
+            return this.GetByIdBenefConfig(null, idBenefConfig);
+        }
+
+        public IList<BenefConfigPreco> GetByIdBenefConfig(GDASession sessao, uint idBenefConfig)
+        {
+            return objPersistence.LoadData(sessao, Sql(idBenefConfig, null, null, null, null, TipoCompararEspesura.MaiorIgual, TipoPadrao.Nenhum, false, true)).ToList();
         }
 
         public BenefConfigPreco GetByIdBenefConfig(GDASession session, uint idBenefConfig, uint idProd)
@@ -129,7 +134,7 @@ namespace Glass.Data.DAL
 
         public BenefConfigPreco GetByIdBenefConfig(GDASession session, uint idBenefConfig, int? idSubgrupoProd, int? idCorVidro, float? espessura)
         {
-            List<BenefConfigPreco> lstBenefPreco = objPersistence.LoadData(session, Sql(idBenefConfig, idSubgrupoProd, idCorVidro, espessura, null, 
+            List<BenefConfigPreco> lstBenefPreco = objPersistence.LoadData(session, Sql(idBenefConfig, idSubgrupoProd, idCorVidro, espessura, null,
                 TipoCompararEspesura.MaiorIgual, TipoPadrao.Nenhum, false, true), GetParam(null, espessura));
 
             return lstBenefPreco.Count > 0 ? lstBenefPreco[0] : new BenefConfigPreco();
@@ -149,7 +154,7 @@ namespace Glass.Data.DAL
 
         private uint? GetIdBenefConfigPreco(BenefConfigPreco obj)
         {
-            string sql = "select idBenefConfigPreco from benef_config_preco Where idBenefConfig=" + obj.IdBenefConfig + 
+            string sql = "select idBenefConfigPreco from benef_config_preco Where idBenefConfig=" + obj.IdBenefConfig +
                 " and idSubgrupoProd" + (obj.IdSubgrupoProd != null ? "=" + obj.IdSubgrupoProd.Value : " is null") +
                 " and idCorVidro" + (obj.IdCorVidro != null ? "=" + obj.IdCorVidro.Value : " is null") +
                 " and espessura" + (obj.Espessura != null ? "=?esp" : " is null");
@@ -160,14 +165,14 @@ namespace Glass.Data.DAL
         public int UpdateValor(BenefConfigPreco objUpdate)
         {
             objUpdate.IdBenefConfigPreco = (int)GetIdBenefConfigPreco(objUpdate).GetValueOrDefault();
-            
+
             if (objUpdate.IdBenefConfigPreco > 0)
                 LogAlteracaoDAO.Instance.LogBenefConfigPreco(objUpdate);
 
             string sql = "Update benef_config_preco Set valorAtacado=" + objUpdate.ValorAtacado.ToString().Replace(',', '.') +
                 ", valorBalcao=" + objUpdate.ValorBalcao.ToString().Replace(',', '.') + ", valorObra=" +
                 objUpdate.ValorObra.ToString().Replace(',', '.') + ", custo=" + objUpdate.Custo.ToString().Replace(',', '.') +
-                " Where idBenefConfig=" + objUpdate.IdBenefConfig + " and idSubgrupoProd" + 
+                " Where idBenefConfig=" + objUpdate.IdBenefConfig + " and idSubgrupoProd" +
                 (objUpdate.IdSubgrupoProd != null ? "=" + objUpdate.IdSubgrupoProd.Value : " is null") +
                 " and idCorVidro" + (objUpdate.IdCorVidro != null ? "=" + objUpdate.IdCorVidro.Value : " is null") +
                 " and espessura" + (objUpdate.Espessura != null ? "=?esp" : " is null");
@@ -177,7 +182,7 @@ namespace Glass.Data.DAL
 
         public void DeleteByIdBenefConfig(uint idBenefConfig)
         {
-            List<uint> ids = objPersistence.LoadResult(@"select idBenefConfigPreco from benef_config_preco 
+            List<uint> ids = objPersistence.LoadResult(@"select idBenefConfigPreco from benef_config_preco
                 where idBenefConfig in (select idBenefConfig from benef_config where idBenefConfig=" +
                 idBenefConfig + " or idParent=" + idBenefConfig + ")", null).Select(f => f.GetUInt32(0))
                        .ToList(); ;
@@ -200,7 +205,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal ObtemCustoBenef(GDASession session, uint idBenefConfig, float espessura)
         {
-            return ObtemValorCampo<decimal>(session, "Custo", "IdBenefConfig=" + idBenefConfig + 
+            return ObtemValorCampo<decimal>(session, "Custo", "IdBenefConfig=" + idBenefConfig +
                 (espessura > 0 ? " And (espessura is null Or espessura=" + espessura.ToString().Replace(",", ".") + ")" : String.Empty));
         }
 
@@ -227,7 +232,7 @@ namespace Glass.Data.DAL
 
             // Define o campo que contém o preço base
             string campoBase = "Custo";
-      
+
             // Cria o filtro que será usado pelo SQL
             string filtroSubgrupo = "IdBenefConfig in (select idBenefConfig from benef_config where idParent=" + objUpdate.IdSubgrupoProd + " or idBenefConfig=" + objUpdate.IdSubgrupoProd + ")";
 
@@ -243,7 +248,7 @@ namespace Glass.Data.DAL
             {
                 filtro += !String.IsNullOrEmpty(filtroSubgrupo) ? " and " + filtroSubgrupo : String.Empty;
 
-                filtroCampos +=  " or coalesce(Custo ,0) <> 0" ;
+                filtroCampos += " or coalesce(Custo ,0) <> 0";
 
                 if (!String.IsNullOrEmpty(filtroCampos))
                     filtroCampos = " and (" + filtroCampos.Substring(4) + ")";
@@ -262,7 +267,7 @@ namespace Glass.Data.DAL
             mudar += !String.IsNullOrEmpty(mudarObra) ? mudarObra : String.Empty;
 
             sql = "update " + nomeTabela + " set " + mudar + filtro + " and coalesce(" + campoBase + ",0)<>0";
-            
+
             objPersistence.ExecuteCommand(sql);
 
             LogProduto log = new LogProduto();

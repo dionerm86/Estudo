@@ -1,0 +1,7 @@
+<span>
+    <input type="number" v-bind:step="incremento" v-bind:min="incremento" v-model.number="larguraAtual"
+        style="width: 50px" required v-if="permiteEditar" v-bind="$attrs">
+    <span v-else v-bind="$attrs">
+        {{ larguraAtual }}
+    </span>
+</span>
