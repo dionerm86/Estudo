@@ -109,7 +109,7 @@
       <HintPath>..\..\..\packages\Colosoft.Web.1.0.0\lib\net40\Colosoft.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.20426, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26648, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
