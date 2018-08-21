@@ -445,6 +445,105 @@ namespace Glass.Data.Model
         [PersistenceProperty("CodigoCest", DirectionParameter.InputOptional)]
         public string CodigoCest { get; set; }
 
+        /// <summary>
+        /// Obtém ou define a distância da margem inferior da chapa.
+        /// </summary>
+        [Log("Recorte X1")]
+        [PersistenceProperty("RecorteX1")]
+        public double RecorteX1 { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem esquerda da chapa.
+        /// </summary>
+        [Log("Recorte Y1")]
+        [PersistenceProperty("RecorteY1")]
+        public double RecorteY1 { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem superior da chapa.
+        /// </summary>
+        [Log("Recorte X2")]
+        [PersistenceProperty("RecorteX2")]
+        public double RecorteX2 { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a distância da margem direita da chapa.
+        /// </summary>
+        [Log("Recorte Y2")]
+        [PersistenceProperty("RecorteY2")]
+        public double RecorteY2 { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a distância máxima de lado X da chapa
+        /// da qual deve ser criada uma transversal.
+        /// </summary>
+        [Log("Transversal Máxima X")]
+        [PersistenceProperty("TransversalMaxX")]
+        public double TransversalMaxX { get; set; } = 9999.0;
+
+        /// <summary>
+        /// Obtém ou define a distância máxima de lado Y da chapa
+        /// da qual deve ser criada uma transversal.
+        /// </summary>
+        [Log("Transversal Máxima Y")]
+        [PersistenceProperty("TransversalMaxY")]
+        public double TransversalMaxY { get; set; } = 9999.0;
+
+        /// <summary>
+        /// Obtém ou define a dimensão mínima em X da superfície de desperdício
+        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
+        /// de novo no estoque para otimizações posteriores
+        /// </summary>
+        [Log("Desperdício Mínimo X")]
+        [PersistenceProperty("DesperdicioMinX")]
+        public double DesperdicioMinX { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a dimensão mínima em Y da superfície de desperdício
+        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
+        /// de novo no estoque para otimizações posteriores
+        /// </summary>
+        [Log("Desperdício Mínimo Y")]
+        [PersistenceProperty("DesperdicioMinY")]
+        public double DesperdicioMinY { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a distância minima aceitavel durante a otimização 
+        /// entre dois cortes paralelos, com o intuito de facilitar ou tornar 
+        /// possível a abertura dos cortes.
+        /// </summary>
+        /// <example>
+        /// Ao configurar o valor em 20mm, será impossível encontrar no interior
+        /// de um plano de corte duas peças ou dois cortes próximos um do outro,
+        /// de distância inferior à anteriormente introduzida (20mm).
+        /// </example>
+        /// <remarks>
+        /// Evidentemente, esta distância não é tida em conta nos casos em que 
+        /// 2 peças compartilham o mesmo corte.
+        /// </remarks>
+        [Log("Distância Mínima")]
+        [PersistenceProperty("DistanciaMin")]
+        public double DistanciaMin { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a configuração do valor de recorte que deve
+        /// introduzir-se nas formas no caso de esta conter ângulos 
+        /// inferiores ao configurado no campo "AnguloRecorteAutomatico"
+        /// </summary>
+        [Log("Recorte Automático da Forma")]
+        [PersistenceProperty("RecorteAutomaticoForma")]
+        public double RecorteAutomaticoForma { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o valor do ângulo ao qual o recorte deve
+        /// ser introduzido de forma automática.
+        /// </summary>
+        [Log("Ângulo de Recorte Automático")]
+        [PersistenceProperty("AnguloRecorteAutomatico")]
+        public double AnguloRecorteAutomatico { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -659,6 +758,19 @@ namespace Glass.Data.Model
 
         #region Propriedades para a busca de alíquota de ICMS interna
 
+        private int? _idNfIcms;
+
+        internal int? IdNfIcms
+        {
+            get { return _idNfIcms; }
+            set
+            {
+                _idNfIcms = value;
+                _aliqIcmsInterna = null;
+                _aliqIcmsInternaComIpiNoCalculo = null;
+            }
+        }
+
         private uint _idLojaIcms;
 
         internal uint IdLojaIcms
@@ -752,7 +864,7 @@ namespace Glass.Data.Model
                         calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
                     }
 
-                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                    _aliqIcmsInterna = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, IdNfIcms, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
                 }
 
@@ -786,7 +898,7 @@ namespace Glass.Data.Model
                         calcularIpi = lojaCalculaIpi && clienteCalculaIpi && AliqIPI > 0;
                     }
 
-                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, null, calcularIpi)
+                    _aliqIcmsInternaComIpiNoCalculo = (decimal)CalculoIcmsStFactory.ObtemInstancia(null, (int)IdLojaIcms, (int?)IdClienteIcms, (int?)IdFornecIcms, IdCfop, ProdutoNfCst, IdNfIcms, calcularIpi)
                         .ObtemAliquotaInternaIcmsSt(this, SaidaIcms);
                 }
 

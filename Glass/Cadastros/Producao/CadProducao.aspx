@@ -305,7 +305,7 @@
 
                     if(isProdLamComposicao.toUpperCase() == "TRUE" || isFilhoProdLamComposicao.toUpperCase() == "TRUE"){
 
-                        var retPodeImprimir = CadProducao.PodeImprimir(FindControl("txtCodEtiqueta","input").value);
+                        var retPodeImprimir = CadProducao.PodeImprimir(FindControl("txtCodEtiqueta","input").value, etiquetasMateriaPrima);
 
                         if(retPodeImprimir.error != null){
                             alertaPadrao("Etiqueta", retPodeImprimir.error.description, 'erro', 280, 600);
@@ -338,10 +338,15 @@
 
                 if (FindControl("lnkImprimir", "input").style.display != "none")
                 {
-                    var retPodeImprimir = CadProducao.PodeImprimir(FindControl("txtCodEtiqueta","input").value);
+                    var retPodeImprimir = CadProducao.PodeImprimir(FindControl("txtCodEtiqueta","input").value, etiquetasMateriaPrima);
 
                     if(retPodeImprimir.error != null){
                         alertaPadrao("Etiqueta", retPodeImprimir.error.description, 'erro', 280, 600);
+                        return false;
+                    }
+
+                    if (retPodeImprimir.value.split('|')[0] == "Erro" && retPodeImprimir.value.split('|')[1] != ""){
+                        alertaPadrao("Etiqueta",retPodeImprimir.value.split('|')[1],'erro',280,600);
                         return false;
                     }
 

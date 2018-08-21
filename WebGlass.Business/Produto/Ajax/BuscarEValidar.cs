@@ -295,7 +295,7 @@ namespace WebGlass.Business.Produto.Ajax
             uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
             uint idNatOp = RegraNaturezaOperacao.Fluxo.BuscarEValidar.Instance.BuscaCodigoNaturezaOperacaoPorRegra(idNf, tipoDocumento, idLoja, idCli, Glass.Conversoes.StrParaInt(idProd)) ??
                 NotaFiscalDAO.Instance.GetIdNaturezaOperacao(null, idNf);
-            var prod = ProdutoDAO.Instance.GetElement(null, Glass.Conversoes.StrParaUint(idProd), idLoja, Glass.Conversoes.StrParaUintNullable(idCliente), 
+            var prod = ProdutoDAO.Instance.GetElement(null, Glass.Conversoes.StrParaUint(idProd), idNfStr.StrParaIntNullable(), idLoja, Glass.Conversoes.StrParaUintNullable(idCliente), 
                 Glass.Conversoes.StrParaUintNullable(idFornecedor),
                 (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
                 /* Chamado 32984. */
@@ -382,7 +382,7 @@ namespace WebGlass.Business.Produto.Ajax
         {
             try
             {
-                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";
@@ -455,7 +455,7 @@ namespace WebGlass.Business.Produto.Ajax
                 bool isPedidoProducao = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao;
                 int tipoVenda = Glass.Conversoes.StrParaInt(tipoVendaStr);               
 
-                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
                 if (prod == null)
                     return "Erro;Não existe produto com o código informado.";
@@ -655,7 +655,7 @@ namespace WebGlass.Business.Produto.Ajax
                 bool isPedidoMaoObra = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra;
                 bool isPedidoProducao = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao;
 
-                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
+                var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
                 var subGrupo = SubgrupoProdDAO.Instance.GetElementByPrimaryKey(prod.IdSubgrupoProd.GetValueOrDefault()) ?? new Glass.Data.Model.SubgrupoProd();
 
                 if (prod == null || prod.Situacao == Glass.Situacao.Inativo)

@@ -334,6 +334,7 @@ namespace Glass.Data.Helper
             AlturaELarguraMinimaParaPecasComBisote = 372,
             AlturaELarguraMinimaParaPecasComLapidacao = 373,
             DiasReduzirDataFabricaComposicaoDuploLaminado = 374,
+            TipoEstoqueChapasOtimizacao = 375,
 
             #region Configs Suporte (Antiga config interna)
 

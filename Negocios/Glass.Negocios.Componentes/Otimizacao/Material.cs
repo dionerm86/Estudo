@@ -50,7 +50,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Distancia mínima.
         /// </summary>
-        public double DistanciaMinima { get; set; }
+        public double DistanciaMin { get; set; }
 
         /// <summary>
         /// Recorte X1.
@@ -75,22 +75,22 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Corte transversal em X.
         /// </summary>
-        public double CorteTransversalX { get; set; }
+        public double TransversalMaxX { get; set; }
 
         /// <summary>
         /// Corte transversal em Y.
         /// </summary>
-        public double CorteTransversalY { get; set; }
+        public double TransversalMaxY { get; set; }
 
         /// <summary>
         /// Valor mínimo em X para gerar um retalho.
         /// </summary>
-        public double RetalhoMinX { get; set; }
+        public double DesperdicioMinX { get; set; }
 
         /// <summary>
         /// Valor mínimo em Y para gerar um retalho.
         /// </summary>
-        public double RetalhoMinY { get; set; }
+        public double DesperdicioMinY { get; set; }
 
         /// <summary>
         /// Configura o valor de recorte que deve introduzir-se nas
@@ -103,7 +103,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// Valor de ângulo ao qual o recorte deve ser introduzido de
         /// forma automática.
         /// </summary>
-        public double AnguloRecorteAutomaticoForma { get; set; }
+        public double AnguloRecorteAutomatico { get; set; }
 
         #endregion
     }

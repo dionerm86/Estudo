@@ -199,6 +199,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 retalho.Posicao = etiqueta.Posicao;
                 retalho.Largura = etiqueta.Largura;
                 retalho.Altura = etiqueta.Altura;
+                retalho.Reaproveitavel = etiqueta.Reaproveitavel;
 
                 processados.Add(retalho);
             }

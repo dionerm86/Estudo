@@ -82,9 +82,9 @@
             return false;
         }
     
-        function salvarNota(idNf)
+        function salvarNota(idNf, tipo)
         {
-            redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXml.ashx") %>?idNf=' + idNf);
+            redirectUrl('<%= this.ResolveClientUrl("../Handlers/NotaXml.ashx") %>?idNf=' + idNf + "&tipo=" + tipo);
         }
     
         function openReport(produtos, exportarExcel)
@@ -139,7 +139,7 @@
                 "&valorFinal=" + valorFinal + "&lote=" + lote);
         }
     
-        function openLoteNotas()
+        function openLoteNotas(tipo)
         {
             var numeroNfe = FindControl("txtNumNf", "input").value;
             var idPedido = FindControl("txtNumPedido", "input").value;
@@ -202,9 +202,10 @@
                 + "&agrupar=" + agrupar 
                 + "&tiposCfop=" + tiposCfop
                 + "&codInternoProd=" + codInternoProd
-                + "&descrProd=" + descrProd,
-                + "&valorInicial=" + valorInicial,
-                + "&valorFinal=" + valorFinal);
+                + "&descrProd=" + descrProd
+                + "&valorInicial=" + valorInicial
+                + "&valorFinal=" + valorFinal
+                + "&tipo=" + tipo);
         }
     
         function openRota() {
@@ -692,6 +693,9 @@
                                 <asp:LinkButton ID="lnkSalvarXmlNota" runat="server" Visible='<%# Eval("BaixarXmlVisible") %>'
                                     OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo da nota fiscal" /></asp:LinkButton>
+                                <asp:LinkButton ID="lnkSalvarXmlNotaInut" runat="server" Visible='<%# Eval("ExibirSalvarInutilizacao") %>'
+                                    OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\", \"inut\"); return false;" %>'><img border="0" 
+                                    src="../Images/disk.gif" title="Salvar arquivo de inutilização da nota fiscal" /></asp:LinkButton>
                                 <asp:LinkButton ID="lnkAnexarXMLTer" runat="server" Visible='<%# Eval("AnexarXMLTercVisible") %>'
                                     OnClientClick='<%# "anexarXMLTer(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/page_attach.gif" title="Anexar XML Entrada Terceiros" /></asp:LinkButton>
@@ -850,6 +854,9 @@
                                 <asp:LinkButton ID="lnkSalvarXmlNota0" runat="server" Visible='<%# Eval("PrintDanfeVisible") %>'
                                     OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo da nota fiscal" /></asp:LinkButton>
+                                <asp:LinkButton ID="lnkSalvarXmlNotaInut" runat="server" Visible='<%# Eval("ExibirSalvarInutilizacao") %>'
+                                    OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\", \"inut\"); return false;" %>'><img border="0" 
+                                    src="../Images/disk.gif" title="Salvar arquivo de inutilização da nota fiscal" /></asp:LinkButton>
                                 <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/clipe.gif" Visible='<%# Eval("ExibirDocRef") %>'
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/DocRefNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
                                     ToolTip="Processos/Documentos Referenciados" />
@@ -998,6 +1005,8 @@
         <tr>
             <td align="center">
                 <asp:LinkButton ID="lkbLoteXml" runat="server" OnClientClick="openLoteNotas(); return false;"> <img border="0" src="../Images/disk.gif" /> Baixar XMLs em Lote</asp:LinkButton>
+                <br />
+                <asp:LinkButton ID="lkbLoteXmlInut" runat="server" OnClientClick="openLoteNotas('inut'); return false;"> <img border="0" src="../Images/disk.gif" /> Baixar XMLs de Inutilização em Lote</asp:LinkButton>
             </td>
         </tr>
         <tr>

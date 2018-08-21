@@ -1187,6 +1187,13 @@ namespace Glass.Data.Model
             }
         }
 
+        public bool ExibirSalvarInutilizacao
+        {
+            get { return Situacao == (int)SituacaoEnum.Inutilizada || 
+                         Situacao == (int)SituacaoEnum.ProcessoInutilizacao || 
+                         Situacao == (int)SituacaoEnum.FalhaInutilizar; }
+        }
+
         /// <summary>
         /// Valor do sinal dos pedidos da nota fiscal
         /// </summary>
@@ -1203,9 +1210,13 @@ namespace Glass.Data.Model
             get
             {
                 var retorno = string.Empty;
-                for (int i = 0; i < NumParc; i++)
-                    retorno += string.Format("Num.: {0} Venc.: {1} Valor.: {2} / ", i, DatasParcelas[i], ValoresParcelas[i]);
-                retorno = retorno.TrimEnd(' ').TrimEnd('/');
+
+                if (DatasParcelas.Any() && ValoresParcelas.Any())
+                {
+                    for (int i = 0; i < NumParc; i++)
+                        retorno += string.Format("Num.: {0} Venc.: {1} Valor.: {2} / ", i + 1, DatasParcelas[i], ValoresParcelas[i]);
+                }
+
                 return retorno;
             }
         }

@@ -31,6 +31,12 @@ namespace Glass.Otimizacao.eCutter
         [XmlAttribute("yDimension")]
         public double Altura { get; set; }
 
+        /// <summary>
+        /// Obtém ou define se o retalho é reaproveitável.
+        /// </summary>
+        [XmlAttribute("isReusable")]
+        public bool Reaproveitavel { get; set; }
+
         #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Glass.Data.DAL;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,9 +32,22 @@ namespace Glass.Data.Helper
                 wc.Headers.Add(HttpRequestHeader.ContentType, "application/json");
                 wc.Headers.Add(HttpRequestHeader.Accept, "application/json");
 
-                var response = wc.UploadString("https://api-rest.zenvia.com/services/send-sms", (JsonConvert.SerializeObject(payload)));
+                var json = JsonConvert.SerializeObject(payload);
 
-                return JsonConvert.DeserializeObject<ZenviaResponsePayload>(response);
+                try
+                {
+                    byte[] bytes = Encoding.GetEncoding("iso-8859-9").GetBytes(json);
+                    json = Encoding.UTF8.GetString(bytes);
+
+                    var response = wc.UploadString("https://api-rest.zenvia.com/services/send-sms", json);
+
+                    return JsonConvert.DeserializeObject<ZenviaResponsePayload>(response);
+                }
+                catch (Exception ex)
+                {
+                    ErroDAO.Instance.InserirFromException("EnviarSMS", ex);
+                    throw;
+                }               
             }
         }
 

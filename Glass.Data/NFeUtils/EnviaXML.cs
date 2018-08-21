@@ -816,6 +816,7 @@ namespace Glass.Data.NFeUtils
 
                 if (codStatus == "102")
                 {
+                    NotaFiscalDAO.Instance.SalvarRetornoXmlInutilizacao(idNf, xmlInut.ChildNodes[1], xmlRetorno.ChildNodes[0]);
                     return "Inutilização efetuada.";
                 }
                 else
@@ -841,6 +842,8 @@ namespace Glass.Data.NFeUtils
                 FilaOperacoes.NotaFiscalInutilizar.ProximoFila();
             }
         }
+
+
 
         #endregion
 
