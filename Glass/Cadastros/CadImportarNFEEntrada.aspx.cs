@@ -25,6 +25,10 @@ namespace Glass.UI.Web.Cadastros
             plcInformacao.Controls.Clear();
             plcProdutos.Controls.Clear();
             plcValores.Controls.Clear();
+            plcParcelas.Controls.Clear();
+            ctrlParcelas1.Visible = false;
+            txtNumParc.Visible = false;
+            lblNumParc.Visible = false;
 
             lblInfoNFE.Text = "";
     
@@ -56,7 +60,8 @@ namespace Glass.UI.Web.Cadastros
                 plcInformacao.Controls.Clear();
                 plcProdutos.Controls.Clear();
                 plcValores.Controls.Clear();
-                
+                plcParcelas.Controls.Clear();
+
                 XmlDocument nfeFile = new XmlDocument();
 
                 try
@@ -467,7 +472,7 @@ namespace Glass.UI.Web.Cadastros
     
             #endregion
     
-            #region Total, Transporte e Informações Adicionais
+            #region Total, Transporte, Informações Adicionais e Parcelas
     
             Table tblValores = new Table();
             tblValores.Width = Unit.Parse("560px");
@@ -572,9 +577,69 @@ namespace Glass.UI.Web.Cadastros
                 tblValores.Rows.Add(tblValoresRow03);
                 tblValores.Rows.Add(tblValoresRow3);
             }
-    
+
             #endregion
-    
+
+            #region TAG 'cobr'
+
+            //se tiver a tag cobrança adiciona na tela as informações referentes a mesma
+            if (nfeFile.GetElementsByTagName("cobr").Count == 1)
+            {
+                Table tblParcelas = new Table();
+                tblParcelas.ID = "tblParcelas";
+                tblParcelas.Width = Unit.Parse("560px");
+
+                TableRow tblParcelasHeaderRow = new TableRow();
+                tblParcelasHeaderRow.BackColor = Color.LightGray;
+                TableCell tblParcelasHeaderRowCell = new TableCell();
+                Label lblParcelassHeader = new Label();
+                lblParcelassHeader.Text = "<b>Parcelas</b>";
+                tblParcelasHeaderRowCell.Controls.Add(lblParcelassHeader);
+                tblParcelasHeaderRow.Cells.Add(tblParcelasHeaderRowCell);
+                tblParcelas.Rows.Add(tblParcelasHeaderRow);
+
+                plcParcelas.Controls.Add(tblParcelas);
+
+                TableRow tblParcelasRow = new TableRow();
+                TableCell tblParcelasRowCell = new TableCell();
+
+                nfeIde = nfeRoot["infNFe"]["cobr"];
+
+                ctrlParcelas1.Visible = true;
+                hdfExibirParcelas.Value = "true";
+                hdfTotal.Value = nfeIde["fat"]["vLiq"].InnerText;
+                txtNumParc.Text = nfeIde.GetElementsByTagName("dup").Count > 0 ? nfeIde.GetElementsByTagName("dup").Count.ToString() : "1";
+                hdfNumParc.Value = txtNumParc.Text;
+                txtNumParc.Visible = true;
+                lblNumParc.Visible = true;
+
+                var valores = new List<decimal>();
+                var datas = new List<DateTime>();
+                var numDup = new List<string>();
+
+                //Busca as infomações das cobranças da nota fiscal
+                XmlNodeList xlistParc = nfeFile.GetElementsByTagName("dup");
+                for (int count = 0; count < nfeFile.GetElementsByTagName("dup").Count; count++)
+                {
+                    XmlElement xelParc = (XmlElement)xlistParc[count];
+
+                    valores.Add(xelParc["vDup"].InnerText.StrParaDecimal());
+                    datas.Add(xelParc["dVenc"].InnerText.StrParaDate().Value);
+                    numDup.Add(xelParc["nDup"].InnerText);
+                }
+
+                //Preenche os valores, datas e numero do boleto(duplicata)
+                //de acordo com o que foi buscado na nota
+                ctrlParcelas1.Valores = valores.ToArray();
+                ctrlParcelas1.Datas = datas.ToArray();
+                ctrlParcelas1.Adicionais = numDup.ToArray();
+
+                tblParcelasRow.Cells.Add(tblParcelasRowCell);
+                tblParcelas.Rows.Add(tblParcelasRow);
+            }
+
+            #endregion
+
             #endregion
         }
     
@@ -598,7 +663,10 @@ namespace Glass.UI.Web.Cadastros
                         naturezaOperacaoProd.Add(key, Session[key]);
 
                 var pagtoImportar = new List<WebGlass.Business.NotaFiscal.Entidade.PagtoNotaFiscal>();
+                var parcelasImportar = new List<WebGlass.Business.NotaFiscal.Entidade.ParcelaNf>();
                 var pagamentos = ctrlFormaPagtoNotaFiscal.PagtoNotaFiscal;
+                var numParc = hdfNumParc.Value.StrParaInt();
+                
                 foreach (var pagto in pagamentos)
                 {
                     pagtoImportar.Add(new WebGlass.Business.NotaFiscal.Entidade.PagtoNotaFiscal
@@ -608,6 +676,17 @@ namespace Glass.UI.Web.Cadastros
                     });
                 }
 
+                for (int i = 0; i < numParc; i++)
+                {
+                    parcelasImportar.Add(new WebGlass.Business.NotaFiscal.Entidade.ParcelaNf
+                    {
+                        Valor = ctrlParcelas1.Valores[i],
+                        DataVenc = ctrlParcelas1.Datas[i],
+                        NumBoleto = ctrlParcelas1.Adicionais[i]
+                    });
+                }
+                
+
                 var dadosImportar = new WebGlass.Business.NotaFiscal.Entidade.DadosImportarNFe()
                 {
                     NaturezaOperacaoProd = naturezaOperacaoProd,
@@ -615,7 +694,9 @@ namespace Glass.UI.Web.Cadastros
                     Pagamentos = pagtoImportar,
                     IdPlanoConta = Glass.Conversoes.StrParaUint(drpPlanoConta.SelectedValue),
                     IdNaturezaOperacao = ctrlNaturezaOperacao.CodigoNaturezaOperacao.Value,
-                    IdCompra = Glass.Conversoes.StrParaUintNullable(this.txtNumCompra.Text)
+                    IdCompra = Glass.Conversoes.StrParaUintNullable(this.txtNumCompra.Text),
+                    Parcelas = parcelasImportar
+                    
                 };
     
                 WebGlass.Business.NotaFiscal.Fluxo.Importar.Instance.ImportarNFe(loadedNFE, dadosImportar);
@@ -693,6 +774,17 @@ namespace Glass.UI.Web.Cadastros
                     }
                     catch { }
             }
+        }
+
+        protected void ctrlParcelas1_Load(object sender, EventArgs e)
+        {
+            Glass.UI.Web.Controls.ctrlParcelas ctrlParcelas = (Glass.UI.Web.Controls.ctrlParcelas)sender;
+            ctrlParcelas.CampoCalcularParcelas = hdfCalcularParcelas;
+            ctrlParcelas.CampoExibirParcelas = hdfExibirParcelas;
+            ctrlParcelas.CampoParcelasVisiveis = hdfNumParc;
+            ctrlParcelas.CampoValorTotal = hdfTotal;
+            ctrlParcelas.NumParcelas = Glass.Configuracoes.FiscalConfig.NotaFiscalConfig.NumeroParcelasNFe;
+            ctrlParcelas.DiasSomarDataVazia = 30;
         }
     }
 }

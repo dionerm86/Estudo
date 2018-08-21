@@ -4,6 +4,7 @@
 
 <%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlFormaPagtoNotaFiscal.ascx" TagName="ctrlFormaPagtoNotaFiscal" TagPrefix="uc2" %>
+<%@ Register Src="../Controls/ctrlParcelas.ascx" TagName="ctrlParcelas" TagPrefix="uc3" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
@@ -98,6 +99,11 @@
 
             return true;
         }
+
+        function exibeParcelas() {
+            FindControl("hdfNumParc", "input").value = FindControl("txtNumParc", "input").value;
+            Parc_visibilidadeParcelas("ctl00_ctl00_Pagina_Conteudo_ctrlParcelas1");
+        }
         
     </script>
 
@@ -124,6 +130,23 @@
                 <asp:PlaceHolder ID="plcValores" runat="server"></asp:PlaceHolder>
                 <br />
                 <br />
+                <asp:PlaceHolder ID="plcParcelas" runat="server"></asp:PlaceHolder>
+                <br />
+                <br />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <asp:Label ID="lblNumParc" runat="server" Text="Parc." Visible="false"></asp:Label>
+                <asp:TextBox ID="txtNumParc" runat="server" Width="40px" Visible="false"
+                    onkeypress="exibeParcelas(); return soNumeros(event, true, true);" onblur="exibeParcelas();"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <td runat="server" id="parc2">
+                <uc3:ctrlParcelas ID="ctrlParcelas1" runat="server" ExibirCampoAdicional="True" NumParcelas="10"
+                    NumParcelasLinha="5" TituloCampoAdicional="Boleto:" OnLoad="ctrlParcelas1_Load" />
+                <asp:HiddenField runat="server" ID="hdfTotalParcelas" />
             </td>
         </tr>
         <tr>
@@ -183,6 +206,10 @@
                 </colo:VirtualObjectDataSource>
                 <asp:HiddenField ID="hdfNumProdutos" runat="server" />
                 <asp:HiddenField ID="hdfChaveAcesso" runat="server" />
+                <asp:HiddenField ID="hdfExibirParcelas" runat="server" Value="true" />
+                <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value="false" />
+                <asp:HiddenField ID="hdfNumParc" runat="server"/>
+                <asp:HiddenField ID="hdfTotal" runat="server" />
                 <asp:ValidationSummary runat="server" ID="vsNatOp"  ShowMessageBox="true" ShowSummary="false"/>
             </td>
         </tr>
