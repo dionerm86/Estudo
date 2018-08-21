@@ -980,8 +980,10 @@ namespace Glass.UI.Web.Cadastros.Producao
         /// <param name="etiqueta"></param>
         /// <returns></returns>
         [Ajax.AjaxMethod]
-        public string PodeImprimir(string etiqueta)
+        public string PodeImprimir(string etiqueta, string etiquetasMateriaPrima)
         {
+            etiquetasMateriaPrima = etiquetasMateriaPrima.TrimEnd(',');
+
             var idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(null, etiqueta);
             var idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(null, etiqueta);
             var idProd = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProd(idProdPed);
@@ -1001,7 +1003,10 @@ namespace Glass.UI.Web.Cadastros.Producao
              * verifica se a etiqueta informada possui filho pendente, para imprimir a etiqueta todos os filhos devem estar prontos. */
             if (ProdutosPedidoEspelhoDAO.Instance.ObterQtdePecasParaImpressaoComposicao((int)idProdPed) - ProdutosPedidoEspelhoDAO.Instance.ObterQtdeImpresso(idProdPed) <= 0)
                 return "Erro|Uma ou mais peças da composição não estão prontas, verifique a produção dos produtos filhos da etiqueta informada.";
-            
+
+            if (!string.IsNullOrWhiteSpace(etiquetasMateriaPrima.TrimEnd(',')) && !ProdutoPedidoProducaoDAO.Instance.ValidaComposicao(null, etiqueta, etiquetasMateriaPrima))
+                return $"Erro|A combinação das etiquetas, {etiquetasMateriaPrima} não compõe a estrutura do pai {etiqueta}.";
+
             return "Ok";
         }
 

@@ -114,7 +114,7 @@
       <HintPath>..\packages\Colosoft.Validation.1.0.0\lib\net40\Colosoft.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Colosoft.WebControls, Version=1.0.7.20426, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Colosoft.WebControls, Version=1.0.7.26648, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Colosoft.WebControls.1.0.7.3\lib\net40\Colosoft.WebControls.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -814,7 +814,6 @@
     <Compile Include="Global\DAL\PaisDAO.cs" />
     <Compile Include="Fiscal\DAL\ParcelaNaoFiscalOriginalDAO.cs" />
     <Compile Include="Fiscal\DAL\ParcelaNfDAO.cs" />
-    <Compile Include="Fiscal\DAL\PedidosCupomFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\PedidosNotaFiscalDAO.cs" />
     <Compile Include="Global\DAL\PlanoContasDAO.cs" />
     <Compile Include="PCP\DAL\RoteiroProducaoSetorDAO.cs" />
@@ -1174,7 +1173,6 @@
     <Compile Include="Financeiro\Model\SinalCompra.cs" />
     <Compile Include="Pedido\Model\TextoImprPedido.cs" />
     <Compile Include="Pedido\Model\TextoPedido.cs" />
-    <Compile Include="Fiscal\Model\PedidosCupomFiscal.cs" />
     <Compile Include="Financeiro\Model\PagtoObra.cs" />
     <Compile Include="Fiscal\Model\AjusteBeneficioIncentivo.cs" />
     <Compile Include="Fiscal\Model\AjusteContribuicao.cs" />

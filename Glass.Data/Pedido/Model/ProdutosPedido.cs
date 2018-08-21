@@ -768,9 +768,15 @@ namespace Glass.Data.Model
         {
             get
             {
-                IdGrupoProd = IdGrupoProd > 0 ? IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd);
-                IdSubgrupoProd = IdSubgrupoProd > 0 ? IdSubgrupoProd : (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd);
-                return GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd);
+                if (IdProd > 0)
+                {
+                    IdGrupoProd = IdGrupoProd > 0 ? IdGrupoProd : (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)IdProd);
+                    IdSubgrupoProd = IdSubgrupoProd > 0 ? IdSubgrupoProd : ((uint?)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)IdProd)).GetValueOrDefault();
+
+                    return GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int)IdSubgrupoProd);
+                }
+
+                return (int)TipoCalculoGrupoProd.Qtd;
             }
         }
 

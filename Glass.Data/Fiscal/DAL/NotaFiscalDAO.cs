@@ -744,7 +744,7 @@ namespace Glass.Data.DAL
 
                             uint idProd = idProdParaNf.GetValueOrDefault(pp.IdProd);
 
-                            Produto prod = ProdutoDAO.Instance.GetElement(transaction, idProd, idLoja, idCliente, null, true);
+                            var prod = ProdutoDAO.Instance.GetElement(transaction, idProd, (int)idNf, idLoja, idCliente, null, true);
 
                             if (prod == null)
                                 throw new Exception(string.Format("Um dos produtos dos pedidos não existe. IdProd: {0}", idProd));
@@ -1717,7 +1717,7 @@ namespace Glass.Data.DAL
 
             foreach (ProdutosCompra pc in produtosCompra)
             {
-                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, idLoja, null, idFornec, false);
+                Produto prod = ProdutoDAO.Instance.GetElement(sessao, pc.IdProd, (int)idNf, idLoja, null, idFornec, false);
                 int tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, prod.IdGrupoProd, prod.IdSubgrupoProd, true);
 
                 // Recalcula as medidas dos alumínios para que o tamanho cobrado seja exato e o valor na nota fique correto
