@@ -1004,7 +1004,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             if (ProdutosPedidoEspelhoDAO.Instance.ObterQtdePecasParaImpressaoComposicao((int)idProdPed) - ProdutosPedidoEspelhoDAO.Instance.ObterQtdeImpresso(idProdPed) <= 0)
                 return "Erro|Uma ou mais peças da composição não estão prontas, verifique a produção dos produtos filhos da etiqueta informada.";
 
-            if (!string.IsNullOrWhiteSpace(etiquetasMateriaPrima.TrimEnd(',')) && !ProdutoPedidoProducaoDAO.Instance.ValidaComposicao(null, etiqueta, etiquetasMateriaPrima))
+            if (!string.IsNullOrWhiteSpace(etiquetasMateriaPrima.TrimEnd(',')) && !ProdutoPedidoProducaoDAO.Instance.ValidarComposicao(null, etiqueta, etiquetasMateriaPrima))
                 return $"Erro|A combinação das etiquetas, {etiquetasMateriaPrima} não compõe a estrutura do pai {etiqueta}.";
 
             return "Ok";
