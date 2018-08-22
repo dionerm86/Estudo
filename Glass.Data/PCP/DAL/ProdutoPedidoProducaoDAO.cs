@@ -6322,7 +6322,7 @@ namespace Glass.Data.DAL
                     var idPedido = ObtemIdPedido(sessao, idProdPedProducao);
                     var idLojaConsiderar = Geral.ConsiderarLojaClientePedidoFluxoSistema && idPedido > 0 ?
                     PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido) : UserInfo.GetUserInfo.IdLoja;
-                    MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, r.IdProd, idLojaConsiderar,
+                    MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, (uint)r.IdProd, idLojaConsiderar,
                         r.IdProdPedProducaoOrig.GetValueOrDefault(), 1, 0, false, false, true);
                 }
             }

@@ -137,7 +137,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         private string ObterCodInternoProduto(Entidades.RetalhoPlanoCorte retalho)
         {
             var planoOtimizacao = retalho.GetOwner<Entidades.PlanoOtimizacao>();
-            return $"{planoOtimizacao.Produto.CodInterno}-{retalho.Altura}x{retalho.Largura}-R";
+            return $"{planoOtimizacao.Produto.CodInterno}-{retalho.Altura}X{retalho.Largura}-R";
         }
 
         /// <summary>
@@ -148,19 +148,19 @@ namespace Glass.Otimizacao.Negocios.Componentes
         private Global.Negocios.Entidades.Produto ObterProduto(Entidades.RetalhoPlanoCorte retalho)
         {
             var codInterno = ObterCodInternoProduto(retalho);
-            var produto =
-                _produtosRetalhos.FirstOrDefault(f => f.CodInterno == codInterno);
+            var produto = _produtosRetalhos.FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(f.CodInterno, codInterno));
 
             var produtoJaCarregado = produto != null;
              
-            produto = produto ?? SourceContext.Instance.CreateQuery()
-                    .From<Data.Model.Produto>()
-                    .Where("CodInterno=?codInterno AND IdGrupoProd=?idGrupoProd AND IdSubgrupoProd=?idSubgrupoProd")
-                    .Add("?codInterno", codInterno)
-                    .Add("?idGrupoProd", Data.Model.NomeGrupoProd.Vidro)
-                    .Add("?idSubgrupoProd", Data.Helper.Utils.SubgrupoProduto.RetalhosProducao)
-                    .ProcessResult<Global.Negocios.Entidades.Produto>()
-                    .FirstOrDefault();
+            if (produto == null)
+                produto = SourceContext.Instance.CreateQuery()
+                        .From<Data.Model.Produto>()
+                        .Where("CodInterno=?codInterno AND IdGrupoProd=?idGrupoProd AND IdSubgrupoProd=?idSubgrupoProd")
+                        .Add("?codInterno", codInterno)
+                        .Add("?idGrupoProd", Data.Model.NomeGrupoProd.Vidro)
+                        .Add("?idSubgrupoProd", Data.Helper.Utils.SubgrupoProduto.RetalhosProducao)
+                        .ProcessResult<Global.Negocios.Entidades.Produto>()
+                        .FirstOrDefault();
 
             var planoOtimizacao = retalho.GetOwner<Entidades.PlanoOtimizacao>();
 
@@ -176,6 +176,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 produto.IdProdOrig = planoOtimizacao.Produto.IdProd;
                 produto.Situacao = Situacao.Ativo;
                 produto.Obs = "";
+                produto.DataCadastro = DateTime.Now;
 
                 if (Data.Helper.UserInfo.GetUserInfo != null)
                     produto.IdUsuarioCadastro = (int)Data.Helper.UserInfo.GetUserInfo.CodUser;
@@ -296,7 +297,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         {
             var processados = new List<Entidades.RetalhoPlanoCorte>();
 
-            foreach (var etiqueta in etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaRetalho>())
+            foreach (var etiqueta in etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaRetalho>().Where(f => f.Reaproveitavel))
             {
                 var retalho = planoCorte.Retalhos.FirstOrDefault(f => f.Posicao == etiqueta.Posicao);
                 if (retalho == null)
@@ -317,7 +318,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 {
                     IdRetalhoProducao = retalho.TypeManager.GenerateInstanceUid(typeof(Data.Model.RetalhoProducao)),
                     DataCad = DateTime.Now,
-                    IdProd = (uint)produto.IdProd,
+                    IdProd = produto.IdProd,
                     Situacao = Data.Model.SituacaoRetalhoProducao.Indisponivel,
                     UsuCad = Data.Helper.UserInfo.GetUserInfo?.CodUser ?? 0
                 };

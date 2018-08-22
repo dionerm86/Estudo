@@ -1280,7 +1280,7 @@ namespace Glass.Data.DAL
                     INNER JOIN retalho_plano_corte rpc ON(pi.IdRetalhoProducao = rpc.IdRetalhoProducao)
                     INNER JOIN plano_corte pc ON(rpc.IdPlanoCorte = pc.IdPlanoCorte)
                     INNER JOIN plano_otimizacao po ON(pc.IdPlanoOtimizacao = po.IdPlanoOtimizacao)
-                    SET IdImpressao = ?idImpressao 
+                    SET pi.IdImpressao = ?idImpressao 
                     WHERE po.IdSolucaoOtimizacao=?idSolucaoOtimizacao";
 
             objPersistence.ExecuteCommand(sessao, sql,
