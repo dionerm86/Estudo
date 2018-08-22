@@ -1111,7 +1111,7 @@ namespace Glass.Data.DAL
             
             var campos = string.Empty;
 
-            campos = selecionar ? @"c.idContaR, c.idCliente, c.idFormaPagto, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, 
+            campos = selecionar ? @"c.idContaR, c.idCliente, c.idFormaPagto, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.DestinoRec, 
                 c.valorVec, c.dataRec, c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc, 
                 c.idFuncDescAcresc, c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, 
                 c.idObra, c.dataPrimNeg, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, f.Nome as NomeFunc, '$$$' as Criterio, 
@@ -1708,8 +1708,6 @@ namespace Glass.Data.DAL
 
             var lst = ((List<ContasReceber>)LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
                 GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs))).ToArray();
-            
-            PreencheLocalizacao(ref lst);
 
             return lst;
         }
@@ -1736,11 +1734,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Preenche a localização de cada conta recebida da lista
         /// </summary>
-        /// <param name="lst"></param>
-        public void PreencheLocalizacao(ref ContasReceber[] lst)
+        public void PreencheLocalizacao(GDASession session, ref ContasReceber contaReceber)
         {
-            var liberacao = PedidoConfig.LiberarPedido;
-
             var sqlContaRec = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
                 FROM contas_receber c
                     LEFT JOIN caixa_geral cx ON (c.IdContaR=cx.IdContaR)
@@ -1817,140 +1812,138 @@ namespace Glass.Data.DAL
                 WHERE c.IdAntecipContaRec=?id
                 ORDER BY COALESCE(mb.IdMovBanco, 0) DESC LIMIT 1";
 
-            foreach (var cr in lst)
+            object obj = null;
+
+            #region Conta a receber
+
+            /* Chamado 52415. */
+            /* Chamado 19832: Deve vir antes do acerto parcial*/
+            if (contaReceber.IdContaR > 0)
             {
-                object obj = null;
+                obj = objPersistence.ExecuteScalar(session, sqlContaRec.Replace("?id", contaReceber.IdContaR.ToString()));
 
-                #region Conta a receber
-
-                /* Chamado 52415. */
-                /* Chamado 19832: Deve vir antes do acerto parcial*/
-                if (cr.IdContaR > 0)
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
                 {
-                    obj = objPersistence.ExecuteScalar(sqlContaRec.Replace("?id", cr.IdContaR.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
                 }
-
-                #endregion
-
-                #region Acerto
-
-                if (cr.IdAcerto > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlAcerto.Replace("?id", cr.IdAcerto.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Conta antecipada
-
-                if (cr.IdAntecipContaRec > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlAntecip.Replace("?id", cr.IdAntecipContaRec.ToString()));
-
-                    if (!String.IsNullOrEmpty(obj.ToString()) && !String.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Liberação
-
-                if (cr.IdLiberarPedido > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlLiberacao.Replace("?id", cr.IdLiberarPedido.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Pedido à vista
-
-                if (cr.IdPedido > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlPedido.Replace("?id", cr.IdPedido.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Sinal
-
-                if (cr.IdSinal > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlSinal.Replace("?id", cr.IdSinal.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Obra
-
-                if (cr.IdObra > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()).Replace("?fp", cr.IdFormaPagto.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Acerto parcial
-
-                /* Chamado 16739. */
-                if (cr.IdAcertoParcial > 0)
-                {
-                    obj = objPersistence.ExecuteScalar(sqlAcertoParcial.Replace("?id", cr.IdAcertoParcial.ToString()));
-
-                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
-                    {
-                        cr.DestinoRec = obj.ToString();
-                        continue;
-                    }
-                }
-
-                #endregion
-
-                #region Conta renegociada
-
-                if (cr.Renegociada)
-                    cr.DestinoRec = "Renegociada";
-
-                #endregion
             }
+
+            #endregion
+
+            #region Acerto
+
+            if (contaReceber.IdAcerto > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlAcerto.Replace("?id", contaReceber.IdAcerto.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Conta antecipada
+
+            if (contaReceber.IdAntecipContaRec > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlAntecip.Replace("?id", contaReceber.IdAntecipContaRec.ToString()));
+
+                if (!String.IsNullOrEmpty(obj.ToString()) && !String.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Liberação
+
+            if (contaReceber.IdLiberarPedido > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlLiberacao.Replace("?id", contaReceber.IdLiberarPedido.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Pedido à vista
+
+            if (contaReceber.IdPedido > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlPedido.Replace("?id", contaReceber.IdPedido.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Sinal
+
+            if (contaReceber.IdSinal > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlSinal.Replace("?id", contaReceber.IdSinal.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Obra
+
+            if (contaReceber.IdObra > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlObra.Replace("?id", contaReceber.IdObra.ToString()).Replace("?fp", contaReceber.IdFormaPagto.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Acerto parcial
+
+            /* Chamado 16739. */
+            if (contaReceber.IdAcertoParcial > 0)
+            {
+                obj = objPersistence.ExecuteScalar(session, sqlAcertoParcial.Replace("?id", contaReceber.IdAcertoParcial.ToString()));
+
+                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                {
+                    contaReceber.DestinoRec = obj.ToString();
+                    return;
+                }
+            }
+
+            #endregion
+
+            #region Conta renegociada
+
+            if (contaReceber.Renegociada)
+                contaReceber.DestinoRec = "Renegociada";
+
+            #endregion
+            
         }
 
         #endregion
@@ -4813,7 +4806,7 @@ namespace Glass.Data.DAL
             string totalComAtraso = GetHistValor(3, idCliente, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad,
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscarChequeDevolvido).ToString().Replace(',', '.') + " + 0.001";
 
-            string campos = selecionar ? @"c.idContaR, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.valorVec, c.dataRec, 
+            string campos = selecionar ? @"c.idContaR, c.idPedido, c.idAntecipContaRec, c.idConta, c.dataVec, c.valorVec, c.dataRec, c.DestinoRec,
                 c.valorRec, c.juros, c.recebida, c.usuRec, c.idAcerto, c.numParc, c.desconto, c.motivoDescontoAcresc, c.idFuncDescAcresc, 
                 c.numAutConstrucard, c.dataDescAcresc, c.idLiberarPedido, c.idContaBanco, c.idAcertoParcial, c.obs, c.idObra, c.dataPrimNeg, 
                 c.idCliente, cli.Nome as NomeCli, pl.Descricao as DescrPlanoConta, c.idFormaPagto, f.Nome as NomeFunc, cast(" +
@@ -5266,8 +5259,6 @@ namespace Glass.Data.DAL
             var lst = ((List<ContasReceber>)LoadDataWithSortExpression(SqlHist(idCliente, idPedido, dataIniVenc, dataFimVenc, dataIniRec, dataFimRec,  dataIniCad, dataFimCad,
                 vIniVenc, vFinVenc, vIniRec, vFinRec, emAberto, recEmDia, recComAtraso, buscarParcCartao, contasRenegociadas, buscaPedRepoGarantia, buscarChequeDevolvido,
                 sort, true, out temFiltro), sortExpression, startRow, pageSize, temFiltro, GetParamHist(dataIniVenc, dataFimVenc, dataIniRec, dataFimRec, dataIniCad, dataFimCad))).ToArray();
-
-            PreencheLocalizacao(ref lst);
 
             return lst;
         }
@@ -9133,5 +9124,29 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-    }
+
+        #region CRUD
+
+
+        public override int Update(ContasReceber objUpdate)
+        {
+            return Update(null, objUpdate);
+        }
+
+        public override int Update(GDASession session, ContasReceber objUpdate)
+        {
+            var old = GetElementByPrimaryKey(session, objUpdate.IdContaR);
+
+            if (!old.Recebida && objUpdate.Recebida)
+                PreencheLocalizacao(session, ref objUpdate);
+
+            if (old.Recebida && !objUpdate.Recebida)
+                objUpdate.DestinoRec = null;
+
+            return base.Update(session, objUpdate);
+        }
+        
+        #endregion
+
+        }
 }

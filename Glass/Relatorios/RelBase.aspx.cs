@@ -473,9 +473,7 @@ namespace Glass.UI.Web.Relatorios
 
                         var pagtos = PagtoContasReceberDAO.Instance.ObtemPagtos(string.Join(",", idsContas.Select(f => f.ToString()).ToArray()));
 
-                        if (report.ReportPath.Contains("rptContasRecebidasLocal"))
-                            ContasReceberDAO.Instance.PreencheLocalizacao(ref contasRecebidas);
-                        else
+                        if (!report.ReportPath.Contains("rptContasRecebidasLocal"))
                         {
                             lstParam.Add(new ReportParameter("ExibirComissao", (FinanceiroConfig.RelatorioContasRecebidas.ExibirComissao).ToString()));
                             lstParam.Add(new ReportParameter("ExibirPedidos", (FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos).ToString()));

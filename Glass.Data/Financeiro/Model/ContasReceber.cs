@@ -265,6 +265,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("RECEBIMENTOGERARCREDITO")]
         public bool? RecebimentoGerarCredito { get; set; }
 
+        [PersistenceProperty("DESTINOREC")]
+        public string DestinoRec { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -337,9 +340,6 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("DATAANTECIP", DirectionParameter.InputOptional)]
         public DateTime DataAntecip { get; set; }
-
-        [PersistenceProperty("DESTINOREC", DirectionParameter.InputOptional)]
-        public string DestinoRec { get; set; }
 
         /// <summary>
         /// Busca valor recebido desde que não tenha recebido por crédito, usado na tela de histórico de cliente
