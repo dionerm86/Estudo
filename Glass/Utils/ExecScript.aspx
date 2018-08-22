@@ -1008,6 +1008,14 @@
                 </td>
             </tr>
         </table>
+        <table cellspacing="5" cellpadding="5">
+            <tr>
+                <td class="style1">
+                    <asp:Button ID="btnLocalizacaoContasReceber" runat="server" 
+                        Text="Ajustar Localização das contas recebidas" OnClick="btnLocalizacaoContasReceber_Click" />
+                </td>
+            </tr>
+        </table>
     </div>
     </form>
 </body>
