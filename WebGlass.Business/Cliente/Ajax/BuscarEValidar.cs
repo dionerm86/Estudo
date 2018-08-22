@@ -46,7 +46,7 @@ namespace WebGlass.Business.Cliente.Ajax
                     string empresaEntregaRota = (Glass.Configuracoes.PedidoConfig.TelaCadastro.MarcarPedidosRotaComoEntrega &&
                         RotaClienteDAO.Instance.IsClienteAssociado((uint)cli.IdCli)).ToString().ToLower();
 
-                    DateTime? dataRota = RotaDAO.Instance.GetDataRota((uint)cli.IdCli, DateTime.Now);
+                    DateTime? dataRota = RotaDAO.Instance.GetDataRota((uint)cli.IdCli, DateTime.Now, null);
                     string dataRotaStr = dataRota != null ? dataRota.Value.ToString("dd/MM/yyyy") : "";
 
                     string dadosComissionado = cli.IdComissionado > 0 ? ";" + cli.IdComissionado.Value + ";" +
