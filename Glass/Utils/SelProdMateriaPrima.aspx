@@ -68,6 +68,17 @@
         // Função chamada pelo popup de escolha do Processo do produto
         function setProc(idProcesso, codInterno, codAplicacao, idControle) {
 
+            var codInternoProd = FindControl("ctrlSelProd", "input").value;
+            var idSubgrupo = SelProdMateriaPrima.GetSubGrupoProd(codInternoProd).value;
+
+            var retornoValidacao = MetodosAjax.ValidarProcesso(idSubgrupo, idProcesso);
+
+            if (idSubgrupo.value != "" && retornoValidacao.value == "False" && (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value != "")) {
+                FindControl("txtProcIns", "input").value = "";
+                alert("Este processo não pode ser selecionado para este produto.")
+                return false;
+            }
+
             if (idControle != undefined && idControle != "") {
                 ctrlProdutoBaixaEst.setProc(idProcesso, codInterno, codAplicacao, idControle);
                 return;
@@ -141,6 +152,13 @@
             var benef = eval(nomeControleBenef).Servicos().Info;
 
             hdfBenef.value = benef;
+        }
+
+        function buscarProcessos() {
+            var codInternoProd = FindControl("ctrlSelProd", "input").value;
+            var idSubgrupo = SelProdMateriaPrima.GetSubGrupoProd(codInternoProd).value;
+
+            openWindow(450, 700, "../Utils/SelEtiquetaProcesso.aspx?idSubgrupo=" + idSubgrupo);
         }
 
     </script>
@@ -240,7 +258,7 @@
                                                 Text='<%# Eval("CodProcesso")%>'></asp:TextBox>
                                         </td>
                                         <td>
-                                            <a href="#" onclick='procAmbiente=false; openWindow(450, 700, &#039;../Utils/SelEtiquetaProcesso.aspx&#039;); return false;'>
+                                            <a href="#" onclick='procAmbiente=false; buscarProcessos(); return false;'>
                                                 <img border="0" src="../Images/Pesquisar.gif" alt="Pesquisar" /></a>
                                         </td>
                                     </tr>
@@ -257,7 +275,7 @@
                                                 onkeypress="return !(isEnter(event));" Width="30px"></asp:TextBox>
                                         </td>
                                         <td>
-                                            <a href="#" onclick='openWindow(450, 700, &#039;../Utils/SelEtiquetaProcesso.aspx&#039;); return false;'>
+                                            <a href="#" onclick='buscarProcessos(); return false;'>
                                                 <img border="0" src="../Images/Pesquisar.gif" alt="Pesquisar" /></a>
                                         </td>
                                     </tr>

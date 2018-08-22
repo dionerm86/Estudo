@@ -25,6 +25,7 @@ namespace Glass.UI.Web.Utils
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            Ajax.Utility.RegisterTypeForAjax(typeof(SelProdMateriaPrima));
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
         }
 
@@ -209,6 +210,19 @@ namespace Glass.UI.Web.Utils
             grdProdMateriaPrima.DataBind();
             grdProdMateriaPrima.EditIndex = -1;
             grdProdMateriaPrima.ShowFooter = true;
+        }
+
+        [Ajax.AjaxMethod()]
+        public string GetSubGrupoProd(string codInterno)
+        {
+            var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
+
+            if (idProd == null)
+                return "";
+
+            var idSubgrupo = ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd);
+
+            return idSubgrupo != null ? idSubgrupo.ToString() : "";
         }
     }
 }
