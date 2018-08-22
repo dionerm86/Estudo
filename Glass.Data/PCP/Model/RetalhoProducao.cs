@@ -159,6 +159,7 @@ namespace Glass.Data.Model
                     case SituacaoRetalhoProducao.EmEstoque: return "Em estoque";
                     case SituacaoRetalhoProducao.Vendido: return "Vendido";
                     case SituacaoRetalhoProducao.Perda: return "Perda";
+                    case SituacaoRetalhoProducao.Indisponivel: return "Indisponível";
                 }
 
                 return "";
