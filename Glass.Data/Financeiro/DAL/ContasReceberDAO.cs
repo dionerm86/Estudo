@@ -1909,7 +1909,7 @@ namespace Glass.Data.DAL
 
                 if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdObra > 0)
                 {
-                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()).Replace("?fp", cr.IdFormaPagto.ToString()));
+                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()).Replace("?fp", cr.IdFormaPagto.GetValueOrDefault((uint)Pagto.FormaPagto.Prazo).ToString()));
 
                     if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
                     {

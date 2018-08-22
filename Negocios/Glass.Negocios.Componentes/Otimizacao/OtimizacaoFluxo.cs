@@ -19,6 +19,11 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// </summary>
         protected IRepositorioSolucaoOtimizacao Repositorio { get; }
 
+        /// <summary>
+        /// Obtém o provedor do plano de corte.
+        /// </summary>
+        protected Entidades.IProvedorPlanoCorte ProvedorPlanoCorte { get; }
+
         #endregion
 
         #region Construtores
@@ -27,9 +32,13 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// Construtor padrão.
         /// </summary>
         /// <param name="repositorioSolucaoOtimizacao"></param>
-        public OtimizacaoFluxo(IRepositorioSolucaoOtimizacao repositorioSolucaoOtimizacao)
+        /// <param name="provedorPlanoCorte"></param>
+        public OtimizacaoFluxo(
+            IRepositorioSolucaoOtimizacao repositorioSolucaoOtimizacao,
+            Entidades.IProvedorPlanoCorte provedorPlanoCorte)
         {
             Repositorio = repositorioSolucaoOtimizacao;
+            ProvedorPlanoCorte = provedorPlanoCorte;
         }
 
         #endregion
@@ -330,7 +339,11 @@ namespace Glass.Otimizacao.Negocios.Componentes
             var conversor = new ConversorSolucaoOtimizacao(solucaoOtimizacao);
             conversor.Executar(documentoEtiquetas);
 
-            SourceContext.Instance.ExecuteSave(solucaoOtimizacao).ThrowInvalid();
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                conversor.Salvar(session).ThrowInvalid();
+                session.Execute(true);
+            }
 
             //if (importacaoNova)
             //{
@@ -359,7 +372,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <returns></returns>
         public IEnumerable<ItemOtimizacao> ObterItensPelaSolucao(int idSolucaoOtimizacao)
         {
-            var etiquetas = SourceContext.Instance.CreateQuery()
+            var etiquetasPeca = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.SolucaoOtimizacao>("so")
                 .InnerJoin<Data.Model.PlanoOtimizacao>("so.IdSolucaoOtimizacao=po.IdSolucaoOtimizacao", "po")
                 .InnerJoin<Data.Model.PlanoCorte>("po.IdPlanoOtimizacao=pc.IdPlanoOtimizacao", "pc")
@@ -370,13 +383,14 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .InnerJoin<Data.Model.CorVidro>("p.IdCorVidro=cv.IdCorVidro", "cv")
                 .InnerJoin<Data.Model.EtiquetaProcesso>("ep.IdProcesso=ppe.IdProcesso", "ep")
                 .InnerJoin<Data.Model.EtiquetaAplicacao>("ea.IdAplicacao=ppe.IdAplicacao", "ea")
-                .LeftJoin<Data.Model.ProdutoImpressao>("pi.IdProdPed=ppe.IdProdPed AND  pi.NumEtiqueta=ppp.NumEtiqueta AND (pi.Cancelado IS NULL OR pi.Cancelado=0)", "pi")
                 .Where("so.IdSolucaoOtimizacao=?id")
                 .Add("?id", idSolucaoOtimizacao)
                 .Select(@"ppe.IdProdPed, ppe.IdPedido, p.Descricao AS DescricaoProduto, 
                          ppp.PecaReposta, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao,
                          ppe.Qtde, ppe.QtdImpresso, ppe.AlturaReal, ppe.Altura, ppe.LarguraReal, ppe.Largura,
-                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, ppp.NumEtiqueta, pi.PlanoCorte, cv.Sigla AS Cor,
+                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, ppp.NumEtiqueta, 
+                         po.IdPlanoOtimizacao, pc.IdPlanoCorte, po.Nome AS PlanoOtimizacao, pc.Posicao AS PosicaoPlanoCorte, 
+                         cv.Sigla AS Cor,
                          ppe.Espessura")
                 .Execute()
                 .Select(f => new
@@ -397,14 +411,39 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     TotM = f.GetFloat("TotM"),
                     TotM2Calc = f.GetFloat("TotM2Calc"),
                     NumEtiqueta = f.GetString("NumEtiqueta"),
-                    PlanoCorte = f.GetString("PlanoCorte"),
+                    IdPlanoOtimizacao = f.GetInt32("IdPlanoOtimizacao"),
+                    IdPlanoCorte = f.GetInt32("IdPlanoCorte"),
+                    PlanoOtimizacao = f.GetString("PlanoOtimizacao"),
+                    PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte"),
                     Cor = f.GetString("Cor"),
-                    Espessura = f.GetFloat("Espessura")
+                }).ToList();
+            
+            var planosOtimizacao = new Dictionary<int, int>();
+
+            // Obtém a relação da quantidade de planos de corte por planos de otimização
+            foreach (var i in     
+               etiquetasPeca
+                .GroupBy(f => f.IdPlanoOtimizacao)
+                .Select(f => new
+                {
+                    IdPlanoOtimizacao = f.Key,
+                    QuantidePlanosCorte = f.GroupBy(x => x.IdPlanoCorte).Count()
+                }))
+            {
+                planosOtimizacao.Add(i.IdPlanoOtimizacao, i.QuantidePlanosCorte);
+            }
+
+            var planosCorte = etiquetasPeca
+                .GroupBy(f => $"{f.IdPlanoOtimizacao}|{f.IdPlanoCorte}")
+                .Select(f => f.First())
+                .Select(f => new
+                {
+                    IdPlanoCorte = f.IdPlanoCorte,
+                    PlanoCorte = ProvedorPlanoCorte.ObterNumeroEtiqueta(f.PlanoOtimizacao, f.PosicaoPlanoCorte, planosOtimizacao[f.IdPlanoOtimizacao])
                 }).ToList();
 
-            var itens = etiquetas
-                //.OrderBy(f => $"{f.Cor}|{f.Espessura}")
-                .GroupBy(f => $"{f.IdProdPed}|{f.PlanoCorte}|{f.PecaReposta}")
+            var pecas = etiquetasPeca
+                .GroupBy(f => $"{f.IdProdPed}|{f.PlanoOtimizacao}|{f.PosicaoPlanoCorte}|{f.PecaReposta}")
                 .Select(grupoProdPed =>
                 {
                     var item = grupoProdPed.First();
@@ -417,6 +456,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
                     return new ItemOtimizacao
                     {
+                        Tipo = TipoItemOtimizacao.Peca,
                         IdProdPed = item.IdProdPed,
                         IdPedido = item.IdPedido,
                         DescricaoProduto = item.DescricaoProduto,
@@ -431,109 +471,59 @@ namespace Glass.Otimizacao.Negocios.Componentes
                         Obs = item.Obs,
                         TotM2 = (float)Math.Round(totM2, 3),
                         TotM2Calc = (float)Math.Round(totM2Calc, 3),
-                        PlanoCorteEtiqueta = item.PlanoCorte,
-                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta)
+                        PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == item.IdPlanoCorte).PlanoCorte,
+                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta).ToList()
                     };
-                }).ToList();
+                });
 
-            return itens;
-        }
-
-        /// <summary>
-        /// Recupera os itens da otimização.
-        /// </summary>
-        /// <param name="idArquivoOtimizacao">Identificador do arquivo da otimização no qual os itens estão associados.</param>
-        /// <returns></returns>
-        public IEnumerable<ItemOtimizacao> ObterItens(int idArquivoOtimizacao)
-        {
-            var etiquetas = SourceContext.Instance.CreateQuery()
-                .From<Data.Model.ArquivoOtimizacao>("ao")
-                .InnerJoin<Data.Model.EtiquetaArquivoOtimizacao>("ao.IdArquivoOtimizacao=eao.IdArquivoOtimiz", "eao")
-                .InnerJoin<Data.Model.ProdutoPedidoProducao>("ppp.NumEtiqueta=eao.NumEtiqueta", "ppp")
-                .InnerJoin<Data.Model.ProdutosPedidoEspelho>("ppe.IdPedido=eao.IdPedido AND ppe.IdProdPed=ppp.IdProdPed", "ppe")
-                .InnerJoin<Data.Model.Produto>("p.IdProd=ppe.IdProd", "p")
-                .InnerJoin<Data.Model.CorVidro>("p.IdCorVidro=cv.IdCorVidro", "cv")
-                .InnerJoin<Data.Model.EtiquetaProcesso>("ep.IdProcesso=ppe.IdProcesso", "ep")
-                .InnerJoin<Data.Model.EtiquetaAplicacao>("ea.IdAplicacao=ppe.IdAplicacao", "ea")
-                .LeftJoin<Data.Model.ProdutoImpressao>("pi.IdProdPed=ppe.IdProdPed AND  pi.NumEtiqueta=eao.NumEtiqueta AND (pi.Cancelado IS NULL OR pi.Cancelado=0)", "pi")
-                .Where("ao.IdArquivoOtimizacao=?id")
-                .Add("?id", idArquivoOtimizacao)
-                .Select(@"ppe.IdProdPed, ppe.IdPedido, p.Descricao AS DescricaoProduto, 
-                         ppp.PecaReposta, ep.CodInterno AS CodProcesso, ea.CodInterno AS CodAplicacao,
-                         ppe.Qtde, ppe.QtdImpresso, ppe.AlturaReal, ppe.Altura, ppe.LarguraReal, ppe.Largura,
-                         ppe.Obs, ppe.TotM, ppe.TotM2Calc, eao.NumEtiqueta, pi.PlanoCorte, cv.Sigla AS Cor,
-                         ppe.Espessura")
+            var etiquetasRetalho = SourceContext.Instance.CreateQuery()
+                .From<Data.Model.SolucaoOtimizacao>("so")
+                .InnerJoin<Data.Model.PlanoOtimizacao>("so.IdSolucaoOtimizacao=po.IdSolucaoOtimizacao", "po")
+                .InnerJoin<Data.Model.PlanoCorte>("po.IdPlanoOtimizacao=pc.IdPlanoOtimizacao", "pc")
+                .InnerJoin<Data.Model.RetalhoPlanoCorte>("pc.IdPlanoCorte=rpc.IdPlanoCorte", "rpc")
+                .InnerJoin<Data.Model.RetalhoProducao>("rpc.IdRetalhoProducao=rp.IdRetalhoProducao", "rp")
+                .InnerJoin<Data.Model.ProdutoImpressao>("rpc.IdRetalhoProducao=pi.IdRetalhoProducao", "pi")
+                .InnerJoin<Data.Model.Produto>("p.IdProd=rp.IdProd", "p")
+                .Where("so.IdSolucaoOtimizacao=?id")
+                .Add("?id", idSolucaoOtimizacao)
+                .Select(@"p.Descricao AS DescricaoProduto, 
+                         rpc.Altura, rpc.Largura, pi.NumEtiqueta, 
+                         po.IdPlanoOtimizacao, pc.IdPlanoCorte, po.Nome AS PlanoOtimizacao, pc.Posicao AS PosicaoPlanoCorte")
                 .Execute()
                 .Select(f => new
                 {
-                    IdProdPed = f.GetInt32("IdProdPed"),
-                    IdPedido = f.GetInt32("IdPedido"),
                     DescricaoProduto = f.GetString("DescricaoProduto"),
-                    PecaReposta = f.GetBoolean("PecaReposta"),
-                    CodProcesso = f.GetString("CodProcesso"),
-                    CodAplicacao = f.GetString("CodAplicacao"),
-                    Qtde = f.GetInt32("Qtde"),
-                    QtdImpresso = f.GetInt32("QtdImpresso"),
-                    AlturaReal = f.GetFloat("AlturaReal"),
                     Altura = f.GetFloat("Altura"),
-                    LarguraReal = f.GetInt32("LarguraReal"),
                     Largura = f.GetInt32("Largura"),
-                    Obs = f.GetString("Obs"),
-                    TotM = f.GetFloat("TotM"),
-                    TotM2Calc = f.GetFloat("TotM2Calc"),
                     NumEtiqueta = f.GetString("NumEtiqueta"),
-                    PlanoCorte = f.GetString("PlanoCorte"),
-                    Cor = f.GetString("Cor"),
-                    Espessura = f.GetFloat("Espessura")
-                }).ToList();
+                    IdPlanoOtimizacao = f.GetInt32("IdPlanoOtimizacao"),
+                    IdPlanoCorte = f.GetInt32("IdPlanoCorte"),
+                    PlanoOtimizacao = f.GetString("PlanoOtimizacao"),
+                    PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte")
+                });
 
 
-            // Recupera a relação de etiquetas impressas
-            var etiquetasImpressas = SourceContext.Instance.CreateQuery()
-                .From<Data.Model.EtiquetaArquivoOtimizacao>("eao")
-                .InnerJoin<Data.Model.ProdutoImpressao>("eao.NumEtiqueta=pi.NumEtiqueta", "pi")
-                .Select("eao.NumEtiqueta")
-                .Where("pi.IdImpressao IS NOT NULL AND (pi.Cancelado IS NULL OR pi.Cancelado=0) AND eao.IdArquivoOtimiz=?id")
-                .Add("?id", idArquivoOtimizacao)
-                .Execute()
-                .Select(f => f.GetString("NumEtiqueta"))
-                .ToList();
-
-            var itens = etiquetas
-                //.OrderBy(f => $"{f.Cor}|{f.Espessura}")
-                .GroupBy(f => $"{f.IdProdPed}|{f.PlanoCorte}|{f.PecaReposta}")
-                .Select(grupoProdPed =>
+            var retalhos = etiquetasRetalho
+                .GroupBy(f => $"{f.PlanoOtimizacao}|{f.PosicaoPlanoCorte}|{f.Largura}X{f.Altura}")
+                .Select(grupo =>
                 {
-                    var item = grupoProdPed.First();
-
-                    // Calcula a quantidade a imprimir
-                    var qtdAImprimir = !item.PecaReposta ? grupoProdPed.Count() : 0;
-
-                    float totM2 = item.PecaReposta ? (item.TotM / item.Qtde) : (item.TotM / item.Qtde) * qtdAImprimir;
-                    float totM2Calc = item.PecaReposta ? (item.TotM2Calc / item.Qtde) : (item.TotM2Calc / item.Qtde) * qtdAImprimir;
+                    var etiqueta = grupo.First();
 
                     return new ItemOtimizacao
                     {
-                        IdProdPed = item.IdProdPed,
-                        IdPedido = item.IdPedido,
-                        DescricaoProduto = item.DescricaoProduto,
-                        PecaReposta = item.PecaReposta,
-                        CodProcesso = item.CodProcesso,
-                        CodAplicacao = item.CodAplicacao,
-                        Qtde = item.Qtde,
-                        QtdImpresso = item.QtdImpresso,
-                        QtdAImprimir = qtdAImprimir,
-                        AlturaProducao = item.AlturaReal > 0f ? item.AlturaReal : item.Altura,
-                        LarguraProducao = item.LarguraReal > 0 ? item.LarguraReal : item.Largura,
-                        Obs = item.Obs,
-                        TotM2 = (float)Math.Round(totM2, 3),
-                        TotM2Calc = (float)Math.Round(totM2Calc, 3),
-                        PlanoCorteEtiqueta = item.PlanoCorte,
-                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta)
+                        Tipo = TipoItemOtimizacao.Retalho,
+                        DescricaoProduto = etiqueta.DescricaoProduto,
+                        Qtde = grupo.Count(),
+                        QtdImpresso = 0,
+                        QtdAImprimir = grupo.Count(),
+                        AlturaProducao = etiqueta.Altura,
+                        LarguraProducao = etiqueta.Largura,
+                        PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == f.IdPlanoCorte).PlanoCorte,
+                        Etiquetas = grupo.Select(f => f.NumEtiqueta).ToList()
                     };
-                }).ToList();
+                });
 
-            return itens;
+            return pecas.Concat(retalhos).ToList();
         }
 
         #endregion

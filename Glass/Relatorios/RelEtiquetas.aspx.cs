@@ -23,7 +23,8 @@ namespace Glass.UI.Web.Relatorios
                     hdfOpener.Value,
                     hdfRetalhos.Value,
                     hdfSomenteRetalhos.Value,
-                    hdfRetalhosProdutos.Value
+                    hdfRetalhosProdutos.Value,
+                    hdfIdSolucaoOtimizacao.Value
                 };
             }
         }
@@ -130,6 +131,7 @@ namespace Glass.UI.Web.Relatorios
             idProdNf = Glass.Conversoes.StrParaUint(Request["idProdNf"]);
             idAmbientePedido = Glass.Conversoes.StrParaUint(Request["idAmbientePedido"]);
             idRetalhoProducao = Glass.Conversoes.StrParaUint(Request["idRetalhoProducao"]);
+            
             ProdutoImpressaoDAO.TipoEtiqueta? tipoEtiqueta = null;
 
             // Se for impressão individual, salva o idProdPed com qtd 1 no hiddenfield
@@ -240,9 +242,15 @@ namespace Glass.UI.Web.Relatorios
     
                             outrosParametros[0] = String.Join("|", usar.ToArray());
                         }
+
+                        int? idSolucaoOtimizacao = null;
+                        int id2 = 0;
+
+                        if (int.TryParse(outrosParametros[6]?.ToString(), out id2))
+                            idSolucaoOtimizacao = id2;
     
                         lstEtiq = EtiquetaDAO.Instance.GetListPedidoComTransacao(login.CodUser, idImpressao, idProdPed, idAmbientePedido, outrosParametros[0].ToString(), false,
-                            reImprimir, Request["numEtiqueta"], Request["apenasPlano"] == "true", dadosRetalhos);
+                            reImprimir, Request["numEtiqueta"], Request["apenasPlano"] == "true", dadosRetalhos, idSolucaoOtimizacao);
     
                         break;
     

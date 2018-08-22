@@ -1,0 +1,9 @@
+﻿<lista-selecao v-bind:item-selecionado.sync="itemSelecionadoAtual" v-bind:texto-selecionar="textoSelecionar"
+    v-bind:funcao-recuperar-itens="funcaoRecuperarItens" v-bind:filtro-recuperar-itens="filtroRecuperarItens"
+    v-bind:ordenar="ordenar" v-bind:campo-id="campoId">
+    <template slot-scope="{ item }">
+        <option v-bind:value="item[campoId]">
+            {{ item[campoValor] }}
+        </option>
+    </template>
+</lista-selecao>

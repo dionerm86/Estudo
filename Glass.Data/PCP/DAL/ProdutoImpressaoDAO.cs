@@ -1062,7 +1062,7 @@ namespace Glass.Data.DAL
             {
                 if (dados.IdProdImpressao == 0)
                     ErroDAO.Instance.InserirFromException("Importar arquivo otimização", new Exception("Id do produto impressão não encontrado."));
-                else if(string.IsNullOrEmpty(ObtemPlanoCorte(sessao, dados.IdProdImpressao)))
+                else if(string.IsNullOrEmpty(ObtemPlanoCorte(sessao, (uint)dados.IdProdImpressao)))
                     objPersistence.ExecuteCommand(sessao, @"update produto_impressao set planoCorte=?pc
                         where IdProdImpressao=" + dados.IdProdImpressao, new GDAParameter("?pc", planoCorte));
             }
@@ -1143,7 +1143,7 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(session, "update " + objPersistence.TableNameInfo.Name + " set " +
                         objPersistence.Keys[0].Name + "=" + key + " where " + objPersistence.Keys[0].Name + "=" + id);
 
-                    objUpdate.IdProdImpressao = id;
+                    objUpdate.IdProdImpressao = (int)id;
                 }
             }
         }
@@ -1262,6 +1262,30 @@ namespace Glass.Data.DAL
         public void AtualizaPedidoExpedicao(uint? idPedidoExp, uint idProdImpressao)
         {
             AtualizaPedidoExpedicao(null, idPedidoExp, idProdImpressao);
+        }
+
+        #endregion
+
+        #region Otimização
+        
+        /// <summary>
+        /// Atualiza a impressão dos retalhos da solução de otimização.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idSolucaoOtimizacao"></param>
+        /// <param name="idImpressao"></param>
+        public void AtualizarImpressaoRetalhosSolucaoOtimizacao(GDASession sessao, int idSolucaoOtimizacao, int idImpressao)
+        {
+            var sql = @"UPDATE produto_impressao pi
+                    INNER JOIN retalho_plano_corte rpc ON(pi.IdRetalhoProducao = rpc.IdRetalhoProducao)
+                    INNER JOIN plano_corte pc ON(rpc.IdPlanoCorte = pc.IdPlanoCorte)
+                    INNER JOIN plano_otimizacao po ON(pc.IdPlanoOtimizacao = po.IdPlanoOtimizacao)
+                    SET pi.IdImpressao = ?idImpressao 
+                    WHERE po.IdSolucaoOtimizacao=?idSolucaoOtimizacao";
+
+            objPersistence.ExecuteCommand(sessao, sql,
+                new GDAParameter("?idImpressao", idImpressao),
+                new GDAParameter("?idSolucaoOtimizacao", idSolucaoOtimizacao));
         }
 
         #endregion

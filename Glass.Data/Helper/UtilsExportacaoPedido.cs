@@ -1,13 +1,13 @@
-﻿using System;
+﻿using GDA;
+using Glass.Data.DAL;
+using Glass.Data.Exceptions;
+using Glass.Data.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Glass.Data.Model;
-using Glass.Data.DAL;
-using System.Xml.Serialization;
-using System.Web;
-using GDA;
-using Glass.Data.Exceptions;
 using System.Linq;
+using System.Web;
+using System.Xml.Serialization;
 
 namespace Glass.Data.Helper
 {
@@ -178,18 +178,18 @@ namespace Glass.Data.Helper
                                                 if (pecaProjMod.TipoArquivo.HasValue)
                                                     tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, pecaProjMod.TipoArquivo.Value));
 
-                                                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int) pecaProjMod.IdPecaProjMod, true);
+                                                var flags = FlagArqMesaDAO.Instance.ObtemPorPecaProjMod((int)pecaProjMod.IdPecaProjMod, true);
 
                                                 if (flags != null)
                                                 {
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any( f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
+                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.DXF.ToString()))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.DXF));
 
                                                     if (Configuracoes.PCPConfig.EmpresaGeraArquivoSGlass && !tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF)) &&
                                                         flags.Any(f => f.Descricao.ToLower() == "sglass"))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(true, TipoArquivoMesaCorte.DXF));
 
-                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any( f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
+                                                    if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.FML.ToString()))
                                                         tiposArquivo.Add(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.FML));
 
                                                     if (!tiposArquivo.Contains(new KeyValuePair<bool, TipoArquivoMesaCorte>(false, TipoArquivoMesaCorte.SAG)) && flags.Any(f => f.Descricao == TipoArquivoMesaCorte.SAG.ToString()))
@@ -360,7 +360,7 @@ namespace Glass.Data.Helper
             #endregion
 
             #region Métodos de suporte
- 
+
             #region Etiqueta exportação
 
             private static KeyValuePairSerializable<int, List<string>> RecuperarEtiquetasProdutoPedido(ProdutosPedido produtoPedido, ProdutosPedidoEspelho produtoPedidoEspelho)
@@ -724,15 +724,15 @@ namespace Glass.Data.Helper
                         itens[i].Pedido.DataEntrega = DateTime.Now.AddDays(1);
                         itens[i].Pedido.SituacaoProducao = (int)Pedido.SituacaoProducaoEnum.NaoEntregue;
 
-                    if (!Glass.Configuracoes.PedidoConfig.ExportacaoPedido.ManterTipoEntregaPedido)
-                    {
-                        if (rota != null && rota.EntregaBalcao)
-                            itens[i].Pedido.TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao;
-                        else
-                            itens[i].Pedido.TipoEntrega = (int?)Configuracoes.PedidoConfig.TipoEntregaPadraoPedido;
-                    }
+                        if (!Glass.Configuracoes.PedidoConfig.ExportacaoPedido.ManterTipoEntregaPedido)
+                        {
+                            if (rota != null && rota.EntregaBalcao)
+                                itens[i].Pedido.TipoEntrega = (int)Pedido.TipoEntregaPedido.Balcao;
+                            else
+                                itens[i].Pedido.TipoEntrega = (int?)Configuracoes.PedidoConfig.TipoEntregaPadraoPedido;
+                        }
 
-                    // Limpa campos do pedido
+                        // Limpa campos do pedido
                         itens[i].Pedido.IdSinal = null;
                         itens[i].Pedido.IdLiberarPedido = null;
                         itens[i].Pedido.IdComissionado = (uint?)cliente.IdComissionado;
@@ -1008,8 +1008,7 @@ namespace Glass.Data.Helper
                             {
                                 #region Gera o espelho, se necessário
 
-                                var emConferencia = false;
-                                PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, ref emConferencia, false);
+                                PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, false);
 
                                 string idsPedidos = dados[i].idPedido.ToString(), idsPedidosErro;
                                 PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, idsPedidos, out idsPedidos, out idsPedidosErro, false);
@@ -1027,7 +1026,7 @@ namespace Glass.Data.Helper
                                                 {
                                                     uint? idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
                                                     if (idProdPedEsp > 0)
-                                                        ProdutosPedidoEspelhoDAO.Instance.ExecuteScalar<int>(transaction, @"update produtos_pedido_espelho set 
+                                                        ProdutosPedidoEspelhoDAO.Instance.ExecuteScalar<int>(transaction, @"update produtos_pedido_espelho set
                                                             obs=Concat(Coalesce(obs, ''), ' ', ?obs) where idProdPed=" + idProdPedEsp, new GDAParameter("?obs", pp.ObsProjeto));
                                                 }
                                             }
@@ -1041,7 +1040,7 @@ namespace Glass.Data.Helper
                                             {
                                                 var idProdPedEsp = ProdutosPedidoDAO.Instance.ObterIdProdPedEsp(transaction, id);
                                                 if (idProdPedEsp > 0)
-                                                    ProdutosPedidoEspelhoDAO.Instance.ExecuteScalar<int>(transaction, @"update produtos_pedido_espelho set 
+                                                    ProdutosPedidoEspelhoDAO.Instance.ExecuteScalar<int>(transaction, @"update produtos_pedido_espelho set
                                                         obs=Concat(Coalesce(obs, ''), ' ', ?obs) where idProdPed=" + idProdPedEsp, new GDAParameter("?obs", pp.ObsProjeto));
                                             }
                                         }
@@ -1140,8 +1139,7 @@ namespace Glass.Data.Helper
                             }
                             else
                             {
-                                var emConferencia = false;
-                                PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, ref emConferencia, false);
+                                PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, false);
                             }
                         }
 

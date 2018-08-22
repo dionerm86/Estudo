@@ -94,7 +94,7 @@ namespace Glass.Data.Helper
 
             foreach (DadosRetalho d in dadosRetalho)
             {
-                var retDisp = retalhos.Where(f => d.IdsRetalhosPossiveis.Split(',').Select(x => x.StrParaUint()).Contains(f.IdRetalhoProducao)).ToList();
+                var retDisp = retalhos.Where(f => d.IdsRetalhosPossiveis.Split(',').Select(x => x.StrParaUint()).Contains((uint)f.IdRetalhoProducao)).ToList();
 
                 var ppe = ProdutosPedidoEspelhoDAO.Instance.
                     GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(d.IdProdPed.TrimStart('R')));
@@ -105,14 +105,14 @@ namespace Glass.Data.Helper
                     continue;
 
                 float dif = retDisp[0].TotM - (ppe.TotM / ppe.Qtde);
-                d.IdRetalhoProducao = retDisp[0].IdRetalhoProducao;
+                d.IdRetalhoProducao = (uint)retDisp[0].IdRetalhoProducao;
 
                 for (int i = 1; i < retDisp.Count; i++)
                 {
                     if (retDisp[i].TotM - (ppe.TotM / ppe.Qtde) < dif)
                     {
                         dif = retDisp[i].TotM - (ppe.TotM / ppe.Qtde);
-                        d.IdRetalhoProducao = retDisp[i].IdRetalhoProducao;
+                        d.IdRetalhoProducao = (uint)retDisp[i].IdRetalhoProducao;
                     }
                 }
 

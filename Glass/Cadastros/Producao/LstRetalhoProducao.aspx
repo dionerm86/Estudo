@@ -311,9 +311,9 @@
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <uc3:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="RetalhoProducao"
-                                    IdRegistro='<%# Eval("IdRetalhoProducao") %>' />
+                                    IdRegistro='<%# (uint)(int)Eval("IdRetalhoProducao") %>' />
                                 <uc2:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server"
-                                    IdRegistro='<%# Eval("IdRetalhoProducao") %>' Tabela="RetalhoProducao" />
+                                    IdRegistro='<%# (uint)(int)Eval("IdRetalhoProducao") %>' Tabela="RetalhoProducao" />
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>

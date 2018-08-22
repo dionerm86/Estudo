@@ -13,7 +13,7 @@ namespace Glass.Data.Model
         #region Propriedades
 
         [PersistenceProperty("IDPRODIMPRESSAO", PersistenceParameterType.IdentityKey)]
-        public uint IdProdImpressao { get; set; }
+        public int IdProdImpressao { get; set; }
 
         [Log(TipoLog.Cancelamento, "Impressão")]
         [PersistenceProperty("IDIMPRESSAO")]
@@ -72,7 +72,8 @@ namespace Glass.Data.Model
 
         [Log(TipoLog.Cancelamento, "Retalho Produção", "NumeroEtiqueta", typeof(RetalhoProducaoDAO), "IdRetalhoProducao", "Obter", true)]
         [PersistenceProperty("IDRETALHOPRODUCAO")]
-        public uint? IdRetalhoProducao { get; set; }
+        [PersistenceForeignKey(typeof(RetalhoProducao), nameof(RetalhoProducao.IdRetalhoProducao))]
+        public int? IdRetalhoProducao { get; set; }
 
         [PersistenceProperty("IDPEDIDOEXPEDICAO")]
         public uint? IdPedidoExpedicao { get; set; }
@@ -193,7 +194,7 @@ namespace Glass.Data.Model
             get
             {
                 var idFuncImpressao = ImpressaoEtiquetaDAO.Instance.ObterIdFunc(null, (int)IdImpressao);
-                var chapaPossuiLeitura = ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(IdProdImpressao);
+                var chapaPossuiLeitura = ChapaCortePecaDAO.Instance.ChapaPossuiLeitura((uint)IdProdImpressao);
                 var possuiPerda = false;
 
                 if (!NumEtiqueta.Contains("R"))

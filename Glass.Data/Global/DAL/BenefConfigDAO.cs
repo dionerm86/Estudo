@@ -1,10 +1,10 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
 using System.Linq;
-using Glass.Configuracoes;
 
 namespace Glass.Data.DAL
 {
@@ -15,13 +15,13 @@ namespace Glass.Data.DAL
         private string Sql(uint idBenefConfig, uint idParent, int espessuraExcluir, bool soPais, bool ordenar, bool soCalculaveis,
             bool apenasAtivos, int tipoBenef, bool selecionar)
         {
-            var campos = selecionar ? @"b.*, coalesce(n.numChild, 0) as NumChild, ea.codInterno as codAplicacao, 
-                ep.codInterno as codProcesso, p.descricao as descrParent, p.tipoControle as tipoControleParent, 
+            var campos = selecionar ? @"b.*, coalesce(n.numChild, 0) as NumChild, ea.codInterno as codAplicacao,
+                ep.codInterno as codProcesso, p.descricao as descrParent, p.tipoControle as tipoControleParent,
                 p.tipoCalculo as tipoCalculoParent" : "Count(*)";
 
             var sql = "Select " + campos + @" From benef_config b
                 Left Join (select Max(numSeq) as numSeqMax, Min(numSeq) as numSeqMin From benef_config) as ns On (1)
-                Left Join (select idParent, count(*) as numChild from benef_config group by idParent) as n On (b.IdBenefConfig=n.IdParent) 
+                Left Join (select idParent, count(*) as numChild from benef_config group by idParent) as n On (b.IdBenefConfig=n.IdParent)
                 Left Join benef_config p On (b.idParent=p.idBenefConfig)
                 Left Join etiqueta_aplicacao ea On (b.idAplicacao=ea.idAplicacao)
                 Left Join etiqueta_processo ep On (b.idProcesso=ep.idProcesso)
@@ -79,8 +79,8 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public uint? GetIdByDescricao(string descricao, string descricaoParent)
         {
-            var sql = @"select bc.* from benef_config bc 
-                left join benef_config pai on (bc.idParent=pai.idBenefConfig) 
+            var sql = @"select bc.* from benef_config bc
+                left join benef_config pai on (bc.idParent=pai.idBenefConfig)
                 where replace(bc.descricao, ';', '')=?descr";
 
             if (!String.IsNullOrEmpty(descricaoParent))
@@ -184,6 +184,18 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(Sql(0, 0, 0, true, true, false, true, (int)tipoBenef, true)).ToList();
         }
 
+        /// <summary>
+        /// Retorna os beneficiamentos que serão exibidos no controle.
+        /// </summary>
+        /// <param name="sessao">A transação com o banco de dados.</param>
+        /// <param name="tipoBenef">O tipo de beneficiamentos que devem ser retornados.</param>
+        /// <param name="soPais">Indica se apenas os itens que não possuem pais (ou seja, itens principais) devem ser retornados.</param>
+        /// <returns>Uma lista com os beneficiamentos solicitados.</returns>
+        public IList<BenefConfig> GetForControl(GDASession sessao, TipoBenef tipoBenef, bool soPais)
+        {
+            return objPersistence.LoadData(sessao, Sql(0, 0, 0, soPais, true, false, true, (int)tipoBenef, true)).ToList();
+        }
+
         public IList<BenefConfig> GetForControl()
         {
             return objPersistence.LoadData(Sql(0, 0, 0, true, true, false, true, 0, true)).ToList();
@@ -191,7 +203,7 @@ namespace Glass.Data.DAL
 
         private BenefConfig GetParent(List<BenefConfig> lista, BenefConfig item)
         {
-            return lista.Find(new Predicate<BenefConfig>(delegate(BenefConfig b)
+            return lista.Find(new Predicate<BenefConfig>(delegate (BenefConfig b)
             {
                 return b.IdBenefConfig == item.IdParent;
 
@@ -480,7 +492,7 @@ namespace Glass.Data.DAL
         public bool NaoExibirDescrImpEtiqueta(GDASession session, uint idBenefConfig)
         {
             // Verifica se este idBenefConfig possui um pai, se tiver deve verificar se ele está ou não com esta opção marcada
-            // uma vez que não é possível marcar se os filhos do beneficiamento serão exibidos ou não   
+            // uma vez que não é possível marcar se os filhos do beneficiamento serão exibidos ou não
             uint? idParent = ObtemValorCampo<uint?>(session, "idParent", "idBenefConfig=" + idBenefConfig);
 
             return ObtemValorCampo<bool>(session, "naoExibirEtiqueta", "idBenefConfig=" + (idParent > 0 ? idParent : idBenefConfig));
@@ -498,10 +510,10 @@ namespace Glass.Data.DAL
 
             var sql = @"
                 Select " + campos + @"
-                From benef_config b 
-                    Left join produto_pedido_benef ppb on (b.idBenefConfig=ppb.idBenefConfig) 
-                    Left join produtos_pedido pp on (ppb.idProdPed=pp.idProdPed) 
-                    Left join pedido p on (pp.idPedido=p.idPedido) 
+                From benef_config b
+                    Left join produto_pedido_benef ppb on (b.idBenefConfig=ppb.idBenefConfig)
+                    Left join produtos_pedido pp on (ppb.idProdPed=pp.idProdPed)
+                    Left join pedido p on (pp.idPedido=p.idPedido)
                 Where p.IdLoja=" + idLoja;
 
             var dateFormat = "str_to_date('{0} {1}', '%d/%m/%Y %H:%i')";
@@ -521,14 +533,14 @@ namespace Glass.Data.DAL
             {
                 if (!String.IsNullOrEmpty(dtIni))
                     sql += @" and p.idPedido in (select * from (
-                        select plp.idPedido from produtos_liberar_pedido plp 
+                        select plp.idPedido from produtos_liberar_pedido plp
                         left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                         where lp.dataLiberacao >= " + String.Format(dateFormat, dtIni, "00:00") + @"
                         " + (!String.IsNullOrEmpty(dtFim) ? " and lp.dataLiberacao <= " + String.Format(dateFormat, dtFim, "23:59") : "") + ") as temp)";
 
                 else if (!String.IsNullOrEmpty(dtFim))
                     sql += @" and p.idPedido in (select * from (
-                        select plp.idPedido from produtos_liberar_pedido plp 
+                        select plp.idPedido from produtos_liberar_pedido plp
                         left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                         where lp.dataLiberacao <= " + String.Format(dateFormat, dtFim, "23:59") + ") as temp)";
             }
@@ -792,7 +804,7 @@ namespace Glass.Data.DAL
         public override uint Insert(BenefConfig objInsert)
         {
             // Não permite que sejam inseridos beneficiamentos com o mesmo nome
-            if (objPersistence.ExecuteSqlQueryCount(@"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao) 
+            if (objPersistence.ExecuteSqlQueryCount(@"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao)
                 and situacao=" + (int)Situacao.Ativo + " And idParent is null",
                 new GDAParameter("?nome", objInsert.Nome), new GDAParameter("?descricao", objInsert.Descricao)) > 0)
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
@@ -802,7 +814,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.");
 
             // Insere o beneficiamento
-            objInsert.TipoEspessura = objInsert.CobrarPorEspessura ? ((objInsert.TipoControle !=  TipoControleBenef.SelecaoSimples && objInsert.TipoControle != TipoControleBenef.Quantidade) ? TipoEspessuraBenef.ItemNaoPossui : TipoEspessuraBenef.ItemPossui) : TipoEspessuraBenef.ItemNaoPossui;
+            objInsert.TipoEspessura = objInsert.CobrarPorEspessura ? ((objInsert.TipoControle != TipoControleBenef.SelecaoSimples && objInsert.TipoControle != TipoControleBenef.Quantidade) ? TipoEspessuraBenef.ItemNaoPossui : TipoEspessuraBenef.ItemPossui) : TipoEspessuraBenef.ItemNaoPossui;
             objInsert.Situacao = Glass.Situacao.Ativo;
             objInsert.NumSeq = GetNumSeq();
             var idBenefConfig = base.Insert(objInsert);
@@ -834,8 +846,8 @@ namespace Glass.Data.DAL
         {
             // Não permite que sejam inseridos beneficiamentos com o mesmo nome
             if (objPersistence.ExecuteSqlQueryCount(
-                @"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao) And idParent is null 
-                and situacao=" + (int)Situacao.Ativo + " And idBenefConfig<>" + objUpdate.IdBenefConfig, 
+                @"Select Count(*) From benef_config Where (nome=?nome Or descricao=?descricao) And idParent is null
+                and situacao=" + (int)Situacao.Ativo + " And idBenefConfig<>" + objUpdate.IdBenefConfig,
                 new GDAParameter("?nome", objUpdate.Nome), new GDAParameter("?descricao", objUpdate.Descricao)) > 0)
                 throw new Exception("Já foi inserido um beneficiamento com este nome/descrição.");
 
@@ -886,7 +898,7 @@ namespace Glass.Data.DAL
             if (!opcoesAlteradas)
             {
                 var idsOriginais = new List<uint>(Array.ConvertAll<BenefConfig, uint>(originais, new Converter<BenefConfig, uint>(
-                    delegate(BenefConfig x)
+                    delegate (BenefConfig x)
                     {
                         return (uint)x.IdBenefConfig;
                     }
@@ -912,7 +924,7 @@ namespace Glass.Data.DAL
         public override int Delete(BenefConfig objDelete)
         {
             throw new NotSupportedException();
-            /*// Verifica se este beneficiamento ou seus filhos estão sendo usados em alguma tabela, 
+            /*// Verifica se este beneficiamento ou seus filhos estão sendo usados em alguma tabela,
             // se estiverem, não permite que este beneficiamento seja excluído
             if (BenefConfigUsado((uint)objDelete.IdBenefConfig))
                 objPersistence.ExecuteCommand("Update benef_config Set situacao=" + (int)Situacao.Inativo +

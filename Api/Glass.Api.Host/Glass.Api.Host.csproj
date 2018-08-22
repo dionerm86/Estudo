@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Glass.Api.Host</RootNamespace>
     <AssemblyName>Glass.Api.Host</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort>44313</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,7 +53,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Drawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=480c19f8f9d8709d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Drawing.1.0.0\lib\net35\CalcEngine.Drawing.dll</HintPath>
+      <HintPath>..\..\packages\CalcEngine.Drawing.1.0.0.201\lib\net35\CalcEngine.Drawing.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Dxf, Version=1.9.81.0, Culture=neutral, PublicKeyToken=e50c636cf6466c78, processorArchitecture=MSIL">
@@ -72,7 +73,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="CalcEngine.Text, Version=1.5.0.0, Culture=neutral, PublicKeyToken=34659d78168384a4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CalcEngine.Text.1.5.0\lib\net35\CalcEngine.Text.dll</HintPath>
+      <HintPath>..\..\packages\CalcEngine.Text.1.5.0.208\lib\net35\CalcEngine.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Colosoft.Business, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cbafe03430999d4, processorArchitecture=MSIL">
@@ -240,8 +241,8 @@
       <HintPath>..\..\packages\MySql.Data.6.9.11\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -251,6 +252,7 @@
     <Reference Include="System.ComponentModel.Composition">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Abstractions, Version=1.4.0.86, Culture=neutral, PublicKeyToken=d480b5b72fb413da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\CalcEngine.Biesse.1.9.81\lib\net40\System.IO.Abstractions.dll</HintPath>
       <Private>True</Private>
@@ -260,6 +262,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Security" />
@@ -285,13 +291,15 @@
     <Reference Include="System.Data">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Core">
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Drawing">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
+    <Reference Include="System.Web">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Web.Extensions">
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Http.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -302,13 +310,8 @@
       <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web">
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml">
@@ -320,17 +323,7 @@
     <Reference Include="System.Web.Services">
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Net.Http.Formatting">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -369,12 +362,18 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
     <Content Include="Mef.config" />
     <Content Include="GDA.config" />
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
+    <AdditionalFiles Include="..\..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </AdditionalFiles>
+    <AdditionalFiles Include="..\..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\api.pubxml" />
     <None Include="Properties\PublishProfiles\Local.pubxml" />
     <None Include="Properties\PublishProfiles\pub.pubxml" />
@@ -428,6 +427,10 @@
       <Name>Glass.Api</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -444,18 +447,27 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="DisableAnalyzersForVisualStudioBuild" BeforeTargets="CoreCompile" Condition="'$(BuildingProject)' == 'True'">
+    <!--
+      Disable analyzers when building a project inside Visual Studio. Note that analyzer behavior for IntelliSense
+      purposes is not altered by this.
+    -->
+    <ItemGroup>
+      <Analyzer Remove="@(Analyzer)" />
+    </ItemGroup>
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
 </Project>

@@ -1,37 +1,35 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.Model;
+using Glass.Data.NFeUtils;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Model;
-using Glass.Data.Helper;
-using Glass.Data.NFeUtils;
-using Glass.Data.RelDAL;
-using Glass.Configuracoes;
 using System.Linq;
 
 namespace Glass.Data.DAL
 {
     public sealed class ProdutoLojaDAO : BaseDAO<ProdutoLoja, ProdutoLojaDAO>
-	{
+    {
         //private ProdutoLojaDAO() { }
 
         #region Busca padrão
 
         private string Sql(uint idLoja, uint idProd, bool forEFD, bool selecionar)
         {
-            string campos = selecionar ? @"pl.*, p.Descricao as DescrProduto, p.IdGrupoProd, p.IdSubgrupoProd, 
+            string campos = selecionar ? @"pl.*, p.Descricao as DescrProduto, p.IdGrupoProd, p.IdSubgrupoProd,
                 g.Descricao as DescrGrupoProd, u.codigo as unidadeProd, pcc.codInterno as codInternoContaContabil,
-                p.idContaContabil, c.nome as nomeCliente, f.nomeFantasia as nomeFornec, t.nome as nomeTransportador, 
+                p.idContaContabil, c.nome as nomeCliente, f.nomeFantasia as nomeFornec, t.nome as nomeTransportador,
                 l.nomeFantasia as nomeLoja, a.nome as nomeAdminCartao" : "Count(*)";
 
             if (selecionar && !forEFD)
                 campos += ", pc.totMComprando, pc.qtdeComprando, pped.totMProduzindo, pped.qtdeProduzindo";
 
             bool agruparEstoqueLoja = idLoja > 0;
-            string sql = "Select " + campos + @" From produto_loja pl 
-                Left Join produto p On (pl.idProd=p.idProd) 
+            string sql = "Select " + campos + @" From produto_loja pl
+                Left Join produto p On (pl.idProd=p.idProd)
                 Left Join plano_conta_contabil pcc On (p.idContaContabil=pcc.idContaContabil)
-                Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
-                Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd) 
+                Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
+                Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd)
                 Left join unidade_medida u On (p.idUnidadeMedida=u.idUnidadeMedida)
                 Left join cliente c on (pl.id_Cli=c.id_Cli)
                 Left join fornecedor f on (pl.idFornec=f.idFornec)
@@ -41,7 +39,7 @@ namespace Glass.Data.DAL
                 " + (!forEFD ? ProdutoDAO.Instance.SqlPendenteCompra("p", agruparEstoqueLoja ? "pl" : null) : "") + @"
                 " + (!forEFD ? ProdutoDAO.Instance.SqlPendenteProducao("p", agruparEstoqueLoja ? "pl" : null, null) : "") + @"
                 Where 1";
-            
+
             if (idLoja > 0)
                 sql += " and pl.idLoja=" + idLoja;
 
@@ -129,38 +127,38 @@ namespace Glass.Data.DAL
             bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro,
             uint? idCorFerragem, uint? idCorAluminio, int situacao, bool estoqueFiscal, bool aguardandoSaidaEstoque, bool selecionar)
         {
-            string tipoCalculo = String.Format("coalesce({0}sg.tipoCalculo, g.tipoCalculo)", 
+            string tipoCalculo = String.Format("coalesce({0}sg.tipoCalculo, g.tipoCalculo)",
                 estoqueFiscal ? "sg.tipoCalculoNf, g.tipoCalculoNf, " : "");
 
             string tipoCalcMLAL = (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL0 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL05 + "," +
                 (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL1 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.MLAL6;
 
-            string campos = selecionar ? "p.IdProd as IdProd, " + idLoja + @" as IdLoja, coalesce(sum(pl.QtdEstoque), 0) as QtdEstoque, 
-                coalesce(sum(pl.EstMinimo), 0) as EstMinimo, coalesce(sum(pl.Liberacao), 0) as Liberacao, coalesce(sum(pl.Reserva), 0) as Reserva, 
-                coalesce(sum(pl.M2), 0) as M2, coalesce(sum(pl.EstoqueFiscal), 0) as EstoqueFiscal, p.IdGrupoProd, p.IdSubgrupoProd, 
-                p.Descricao as DescrProduto, p.CodInterno as CodInternoProd, g.Descricao as DescrGrupoProd, 
-                sg.Descricao as DescrSubgrupoProd, p.Ncm as NcmProd, p.situacao as Situacao, um.codigo as UnidadeProd, '$$$' as Criterio, 
-                " + tipoCalculo + @" as tipoCalc, (mef.valorUnit/if(" + tipoCalculo + " in (" + tipoCalcMLAL + @"), 6, 1)) as ValorUnitProd, 
-                (p.custoCompra/if(" + tipoCalculo + " in (" + tipoCalcMLAL + @"), 6, 1)) as CustoUnitProd, coalesce(sum(pl.defeito),0) as defeito, 
+            string campos = selecionar ? "p.IdProd as IdProd, " + idLoja + @" as IdLoja, coalesce(sum(pl.QtdEstoque), 0) as QtdEstoque,
+                coalesce(sum(pl.EstMinimo), 0) as EstMinimo, coalesce(sum(pl.Liberacao), 0) as Liberacao, coalesce(sum(pl.Reserva), 0) as Reserva,
+                coalesce(sum(pl.M2), 0) as M2, coalesce(sum(pl.EstoqueFiscal), 0) as EstoqueFiscal, p.IdGrupoProd, p.IdSubgrupoProd,
+                p.Descricao as DescrProduto, p.CodInterno as CodInternoProd, g.Descricao as DescrGrupoProd,
+                sg.Descricao as DescrSubgrupoProd, p.Ncm as NcmProd, p.situacao as Situacao, um.codigo as UnidadeProd, '$$$' as Criterio,
+                " + tipoCalculo + @" as tipoCalc, (mef.valorUnit/if(" + tipoCalculo + " in (" + tipoCalcMLAL + @"), 6, 1)) as ValorUnitProd,
+                (p.custoCompra/if(" + tipoCalculo + " in (" + tipoCalcMLAL + @"), 6, 1)) as CustoUnitProd, coalesce(sum(pl.defeito),0) as defeito,
                 sum(pl.qtdePosseTerceiros) as qtdePosseTerceiros, pl.id_Cli, pl.idFornec, pl.idLojaTerc, pl.idTransportador,
-                pl.idAdminCartao, c.nome as nomeCliente, f.nomeFantasia as nomeFornec, t.nome as nomeTransportador, 
+                pl.idAdminCartao, c.nome as nomeCliente, f.nomeFantasia as nomeFornec, t.nome as nomeTransportador,
                 l.nomeFantasia as nomeLoja, a.nome as nomeAdminCartao, p.CustoFabBase as CustoProd, p.ValorAtacado as ValorProd" : "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From produto p 
+                Select " + campos + @" From produto p
                     Left join unidade_medida um On (p.idUnidadeMedida=um.idUnidadeMedida)
                     Left join produto_loja pl on (p.IdProd=pl.idProd)
                     Left Join (
-                        select idProd, idLoja, if(saldoQtdeMov>0 and saldoValorMov>0, saldoValorMov/saldoQtdeMov, 
+                        select idProd, idLoja, if(saldoQtdeMov>0 and saldoValorMov>0, saldoValorMov/saldoQtdeMov,
                             if(qtdeMov>0, valorMov/qtdeMov, 0)) as valorUnit
                         from (
                             select * from mov_estoque_fiscal
                             order by dataMov desc, idMovEstoqueFiscal desc
                         ) as temp
                         group by idProd, idLoja
-                    ) mef On (pl.idProd=mef.idProd and pl.idLoja=mef.idLoja) 
-                    Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
-                    Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd) 
+                    ) mef On (pl.idProd=mef.idProd and pl.idLoja=mef.idLoja)
+                    Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
+                    Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd)
                     Left join cliente c on (pl.id_Cli=c.id_Cli)
                     Left join fornecedor f on (pl.idFornec=f.idFornec)
                     Left join transportador t on (pl.idTransportador=t.idTransportador)
@@ -266,7 +264,7 @@ namespace Glass.Data.DAL
 
         public IList<ProdutoLoja> GetForEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd,
             uint idSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro, uint? idCorFerragem,
-            uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao, string sortExpression, int startRow, 
+            uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao, string sortExpression, int startRow,
             int pageSize)
         {
             string order = String.Empty;
@@ -282,7 +280,7 @@ namespace Glass.Data.DAL
             }
 
             sortExpression = String.IsNullOrEmpty(sortExpression) ? order : sortExpression;
-            return LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd, 
+            return LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao,
                 estoqueFiscal == 1, aguardandoSaidaEstoque, true), sortExpression, startRow, pageSize, EstoqueParam(codInternoProd, descricao, null));
         }
@@ -291,14 +289,14 @@ namespace Glass.Data.DAL
             bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro,
             uint? idCorFerragem, uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao)
         {
-            int i = objPersistence.ExecuteSqlQueryCount(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd, 
+            int i = objPersistence.ExecuteSqlQueryCount(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio,
                 situacao, estoqueFiscal == 1, aguardandoSaidaEstoque, false), EstoqueParam(codInternoProd, descricao, null));
 
             return i;
         }
 
-        public ProdutoLoja[] GetForRptEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, 
+        public ProdutoLoja[] GetForRptEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd,
             uint idSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto,
             uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao)
         {
@@ -314,8 +312,8 @@ namespace Glass.Data.DAL
                     order = estoqueFiscal == 1 ? " Order by coalesce(sum(pl.EstoqueFiscal), 0) desc" : " Order by coalesce(sum(pl.QtdEstoque), 0) desc"; break;
             }
 
-            return objPersistence.LoadData(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd, 
-                exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao, estoqueFiscal == 1, 
+            return objPersistence.LoadData(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
+                exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao, estoqueFiscal == 1,
                 aguardandoSaidaEstoque, true) + order, EstoqueParam(codInternoProd, descricao, null)).ToList().ToArray();
         }
 
@@ -323,30 +321,30 @@ namespace Glass.Data.DAL
 
         #region Busca para Estoque mínimo
 
-        private string SqlEstoqueMin(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd, 
+        private string SqlEstoqueMin(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd,
             bool abaixoEstMin, uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, string tipoBox, bool selecionar)
         {
-            string campos = selecionar ? "p.IdProd as IdProd, " + idLoja + @" as IdLoja, coalesce(pl.QtdEstoque, 0) as QtdEstoque, 
-                coalesce(pl.EstMinimo, 0) as EstMinimo, coalesce(pl.Reserva, 0) as Reserva, coalesce(pl.M2, 0) as M2, 
-                coalesce(pl.EstoqueFiscal, 0) as EstoqueFiscal, p.IdGrupoProd, p.IdSubgrupoProd, 
-                p.Descricao as DescrProduto, p.CodInterno as CodInternoProd, g.Descricao as DescrGrupoProd, 
+            string campos = selecionar ? "p.IdProd as IdProd, " + idLoja + @" as IdLoja, coalesce(pl.QtdEstoque, 0) as QtdEstoque,
+                coalesce(pl.EstMinimo, 0) as EstMinimo, coalesce(pl.Reserva, 0) as Reserva, coalesce(pl.M2, 0) as M2,
+                coalesce(pl.EstoqueFiscal, 0) as EstoqueFiscal, p.IdGrupoProd, p.IdSubgrupoProd,
+                p.Descricao as DescrProduto, p.CodInterno as CodInternoProd, g.Descricao as DescrGrupoProd,
                 sg.Descricao as DescrSubgrupoProd, coalesce(pl.Liberacao, 0) as Liberacao, coalesce(pl.defeito,0) as defeito,
-                null as QTDEPOSSETERCEIROS, null as id_Cli, null as idFornec, null as idTransportador, null as idLojaTerc, 
+                null as QTDEPOSSETERCEIROS, null as id_Cli, null as idFornec, null as idTransportador, null as idLojaTerc,
                 null as idAdminCartao, pc.totMComprando, pc.qtdeComprando, pped.totMProduzindo, pped.qtdeProduzindo" : "Count(*)";
 
             bool agruparEstoqueLoja = idLoja > 0;
             string sql = @"
-                Select " + campos + @" From produto p 
-                    Left join (select * from produto_loja Where idLoja=" + idLoja + @") pl on (p.IdProd=pl.idProd) 
-                    Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
-                    Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd) 
+                Select " + campos + @" From produto p
+                    Left join (select * from produto_loja Where idLoja=" + idLoja + @") pl on (p.IdProd=pl.idProd)
+                    Left join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
+                    Left join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd)
                     " + ProdutoDAO.Instance.SqlPendenteCompra("p", agruparEstoqueLoja ? "pl" : null) + @"
                     " + ProdutoDAO.Instance.SqlPendenteProducao("p", agruparEstoqueLoja ? "pl" : null, null) + @"
                 Where p.situacao=" + (int)Situacao.Ativo + " And Coalesce(pl.EstMinimo, 0)>0 ";
 
             if (abaixoEstMin)
                 sql += @" And (pl.estMinimo=0 Or if(coalesce(sg.tipoCalculo, g.tipoCalculo)
-                    in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"), 
+                    in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + ", " + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"),
                     pl.m2 + coalesce(pped.qtdeProduzindo,0) < pl.estMinimo, pl.qtdEstoque + coalesce(pped.qtdeProduzindo,0) < pl.estMinimo))";
 
             if (!String.IsNullOrEmpty(codInternoProd))
@@ -391,11 +389,11 @@ namespace Glass.Data.DAL
         }
 
         public IList<ProdutoLoja> GetForEstoqueMin(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd,
-            uint idSubgrupoProd, bool abaixoEstMin, uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, string tipoBox, 
+            uint idSubgrupoProd, bool abaixoEstMin, uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, string tipoBox,
             string sortExpression, int startRow, int pageSize)
         {
             sortExpression = String.IsNullOrEmpty(sortExpression) ? "p.Descricao asc" : sortExpression;
-            return LoadDataWithSortExpression(SqlEstoqueMin(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd, abaixoEstMin, 
+            return LoadDataWithSortExpression(SqlEstoqueMin(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd, abaixoEstMin,
                 idCorVidro, idCorFerragem, idCorAluminio, tipoBox, true), sortExpression, startRow, pageSize, EstoqueParam(codInternoProd, descricao, tipoBox));
         }
 
@@ -423,7 +421,12 @@ namespace Glass.Data.DAL
         /// </summary>
         public float GetEstoque(uint idLoja, uint idProd, bool isPedidoProducao)
         {
-            return GetEstoque(null, idLoja, idProd, null, isPedidoProducao, false, true);
+            return GetEstoque(null, idLoja, idProd, isPedidoProducao);
+        }
+
+        public float GetEstoque(GDASession sessao, uint idLoja, uint idProd, bool isPedidoProducao)
+        {
+            return GetEstoque(sessao, idLoja, idProd, null, isPedidoProducao, false, true);
         }
 
         /// <summary>
@@ -435,17 +438,17 @@ namespace Glass.Data.DAL
                 return 0f;
 
             string tipoCalcM2 = "(select coalesce(s.tipoCalculo, g.tipoCalculo, " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @")
-                from produto p inner join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
+                from produto p inner join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                 left join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd) where p.idProd={0}.idProd)
                 in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + ")";
 
             string sqlPedidoIgnorar = idPedidoIgnorar == null || idPedidoIgnorar == 0 ? "" :
-                "+coalesce((select sum(if(" + String.Format(tipoCalcM2, "pp") + @", totM, qtde)) from produtos_pedido pp 
+                "+coalesce((select sum(if(" + String.Format(tipoCalcM2, "pp") + @", totM, qtde)) from produtos_pedido pp
                 where idProd=pl.idProd and coalesce(invisivelPedido,false)=false and idPedido=" + idPedidoIgnorar + "), 0)";
 
             string sql = "Select round(Coalesce(QtdEstoque, 0) " +
                 (!estoqueReal ? "- Coalesce(Reserva, 0)" + (PedidoConfig.LiberarPedido ? " - Coalesce(Liberacao, 0)" : "") + sqlPedidoIgnorar : String.Empty) +
-                ", 2) From produto_loja pl Where 1"; 
+                ", 2), idProd From produto_loja pl Where 1";
 
             if (idLoja > 0)
                 sql += " and idLoja=" + idLoja;
@@ -455,12 +458,27 @@ namespace Glass.Data.DAL
             if (considerarProdBaixa && idProd > 0 && ProdutoBaixaEstoqueDAO.Instance.TemProdutoBaixa(sessao, idProd) &&
                 ((isPedidoProducao && SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)idProd)) || (!isPedidoProducao && !SubgrupoProdDAO.Instance.IsSubgrupoProducao((int)idProd))))
             {
-                List<float> estoque = new List<float>();
-                foreach (ProdutoBaixaEstoque pbe in ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, idProd))
-                    estoque.Add((float)Math.Round(ExecuteScalar<float>(sessao, sql + " and idProd=" + pbe.IdProdBaixa) / pbe.Qtde, 2));
+                var produtosBaixa = ProdutoBaixaEstoqueDAO.Instance.GetByProd(sessao, idProd);
+                sql += $" and idProd in ({string.Join(",", produtosBaixa.Select(pbe => pbe.IdProdBaixa))})";
 
-                estoque.Sort((x, y) => x.CompareTo(y));
-                return estoque[0];
+                var estoque = this.objPersistence.LoadResult(sessao, sql)
+                    .Select(resultado => new
+                    {
+                        Estoque = resultado.GetFloat(0),
+                        IdProd = resultado.GetInt32(1),
+                    })
+                    .Select(item =>
+                    {
+                        var produtoBaixa = produtosBaixa.FirstOrDefault(pbe => pbe.IdProdBaixa == item.IdProd)
+                            ?? new ProdutoBaixaEstoque();
+
+                        return produtoBaixa.Qtde > 0
+                            ? (float)Math.Round(item.Estoque / produtoBaixa.Qtde, 2)
+                            : 0;
+                    })
+                    .ToList();
+
+                return estoque.Min();
             }
             else
             {
@@ -501,7 +519,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Atualiza reserva/liberação
-        
+
         #region Credita estoque reserva
 
         /// <summary>
@@ -527,9 +545,9 @@ namespace Glass.Data.DAL
             AtualizaReservaLiberacao(sessao, idLoja, idsProdQtde, idSaidaEstoque, idLiberarPedido, idPedidoEspelho, idProdPedProducao,
                 idPedido, idsPedido, idProdPed, classeMetodo, false, false);
         }
-        
+
         #endregion
-        
+
         #region Credita estoque liberação
 
         /// <summary>
@@ -557,7 +575,7 @@ namespace Glass.Data.DAL
         }
 
         #endregion
-        
+
         static volatile object _atualizarReservaLiberacaoLock = new object();
 
         /// <summary>
@@ -567,7 +585,7 @@ namespace Glass.Data.DAL
             int? idLiberarPedido, int? idPedidoEspelho, int? idProdPedProducao, int? idPedidoParam, string idsPedido, int? idProdPedParam,
             string classeMetodo, bool atualizarLiberacao, bool creditar)
         {
-            lock(_atualizarReservaLiberacaoLock)
+            lock (_atualizarReservaLiberacaoLock)
             {
                 var lstTipoCalculo = new List<int> {
                     (int)TipoCalculoGrupoProd.Qtd,
@@ -595,7 +613,7 @@ namespace Glass.Data.DAL
 
                     var reserva = objPersistence.ExecuteScalar(sessao,
                         $@"SELECT COALESCE(SUM(Qtde-Qtdsaida), 0)
-	                    FROM produtos_pedido pp 
+	                    FROM produtos_pedido pp
 		                    LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
 	                    WHERE pp.Qtde<>pp.QtdSaida
                             AND (pp.{ invisivelFluxoPedido } IS NULL OR pp.{ invisivelFluxoPedido }=0)
@@ -606,7 +624,7 @@ namespace Glass.Data.DAL
 
                     // Atualiza a coluna RESERVA
                     objPersistence.ExecuteCommand(sessao, string.Format(
-                        $@"UPDATE produto_loja SET 
+                        $@"UPDATE produto_loja SET
                             Reserva=?reserva
                         WHERE IdProd={ idProd }
                             { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) };"),
@@ -617,9 +635,9 @@ namespace Glass.Data.DAL
                     {
                         var liberacao = objPersistence.ExecuteScalar(sessao,
                             $@"SELECT COALESCE(SUM(Qtde-Qtdsaida), 0)
-	                        FROM produtos_pedido pp 
+	                        FROM produtos_pedido pp
 		                        LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
-	                        WHERE pp.Qtde<>pp.QtdSaida 
+	                        WHERE pp.Qtde<>pp.QtdSaida
                                 AND (pp.{ invisivelFluxoPedido } IS NULL OR pp.{ invisivelFluxoPedido }=0)
 		                        AND p.Situacao IN ({ (int)Pedido.SituacaoPedido.Confirmado }, { (int)Pedido.SituacaoPedido.LiberadoParcialmente })
                                 AND p.SituacaoProducao<>{ (int)Pedido.SituacaoProducaoEnum.Entregue }
@@ -874,7 +892,7 @@ namespace Glass.Data.DAL
 
             var sql = "select pl.* from produto_loja pl left join produto p on (pl.idProd=p.idProd) where " + where;
             var prod = objPersistence.LoadData(sql).ToList().ToArray();
-            
+
             // Limpa o estoque
             sql = "update produto_loja pl left join produto p on (pl.idProd=p.idProd) set qtdEstoque=0, m2=0 where " + where;
             var retorno = objPersistence.ExecuteCommand(sql);
@@ -942,7 +960,7 @@ namespace Glass.Data.DAL
                         LEFT JOIN grupo_prod g ON (p.IdGrupoProd=g.IdGrupoProd)
                         LEFT JOIN subgrupo_prod sg ON (p.IdSubgrupoProd=sg.IdSubgrupoProd)
                         {1}
-                    WHERE pl.IdLoja={0} AND p.Situacao={2} AND COALESCE(pl.EstMinimo, 0)>0 AND (pl.EstMinimo=0 OR IF(COALESCE(sg.TipoCalculo, g.TipoCalculo) IN ({3},{4}), 
+                    WHERE pl.IdLoja={0} AND p.Situacao={2} AND COALESCE(pl.EstMinimo, 0)>0 AND (pl.EstMinimo=0 OR IF(COALESCE(sg.TipoCalculo, g.TipoCalculo) IN ({3},{4}),
                         pl.M2 + COALESCE(pped.QtdeProduzindo,0) < pl.EstMinimo, pl.QtdEstoque + COALESCE(pped.QtdeProduzindo,0) < pl.EstMinimo))",
                     idLoja, ProdutoDAO.Instance.SqlPendenteProducao("p", "pl", null), (int)Situacao.Ativo,
                     (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto));

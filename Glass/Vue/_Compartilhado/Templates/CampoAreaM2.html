@@ -1,0 +1,12 @@
+﻿<span v-if="areaM2 > 0">
+    {{ areaM2 | decimal }}
+    <div style="display: none" v-if="tamanhoMaximoProduto > 0">
+        <input type="number" v-model.number="areaM2" v-bind:max="tamanhoMaximoProduto" step="0.01">
+    </div>
+    <div style="color: red" v-if="exibirValidacao">
+        Área máxima permitida:
+        <span style="white-space: nowrap">
+            {{ tamanhoMaximoProduto }} m²
+        </span>
+    </div>
+</span>

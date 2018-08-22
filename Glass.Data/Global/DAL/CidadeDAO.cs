@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.DAL
 {
     public sealed class CidadeDAO : BaseDAO<Cidade, CidadeDAO>
-	{
+    {
         //private CidadeDAO() { }
 
         private string SqlList(string uf, string cidade, bool selecionar)
@@ -27,7 +27,12 @@ namespace Glass.Data.DAL
 
         public IList<Cidade> GetList(string uf, string cidade, string sortExpression, int startRow, int pageSize)
         {
-            string filtro = String.IsNullOrEmpty(sortExpression) ? "case c.NomeCidade when 'Belo Horizonte' then 1 " + 
+            return GetList(null, uf, cidade, sortExpression, startRow, pageSize);
+        }
+
+        public IList<Cidade> GetList(GDASession sessao, string uf, string cidade, string sortExpression, int startRow, int pageSize)
+        {
+            string filtro = String.IsNullOrEmpty(sortExpression) ? "case c.NomeCidade when 'Belo Horizonte' then 1 " +
                 "when 'Contagem' then 2 when 'Betim' then 3 else 9999 end, NomeUf, NomeCidade" : sortExpression;
 
             return LoadDataWithSortExpression(SqlList(uf, cidade, true), filtro, startRow, pageSize, GetParam(uf, cidade));
@@ -117,7 +122,7 @@ namespace Glass.Data.DAL
             string sql = "select idcidade from cidade where codibgecidade ='" + codCidade + "' and codibgeuf = '" + codUF + "'";
             object retorno = objPersistence.ExecuteScalar(sql);
 
-            return retorno != null && retorno != DBNull.Value ? retorno.ToString() : null ;
+            return retorno != null && retorno != DBNull.Value ? retorno.ToString() : null;
         }
 
         private static volatile IList<string> _uf;
@@ -131,7 +136,7 @@ namespace Glass.Data.DAL
         {
             if (_uf == null)
             {
-                _uf = ExecuteMultipleScalar<string>(session, @"select distinct nomeUf from cidade 
+                _uf = ExecuteMultipleScalar<string>(session, @"select distinct nomeUf from cidade
                     order by case nomeUf when 'MG' then '' else nomeUf end");
             }
 
@@ -140,7 +145,7 @@ namespace Glass.Data.DAL
 
         public KeyValuePair<string, string>[] GetUfLojas()
         {
-            var uf = ExecuteMultipleScalar<string>(@"select distinct nomeUf from cidade 
+            var uf = ExecuteMultipleScalar<string>(@"select distinct nomeUf from cidade
                 where idCidade in (select * from (select idCidade from loja) as temp)");
 
             return uf.Select(x => new KeyValuePair<string, string>(x, x)).ToArray();

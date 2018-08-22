@@ -15,6 +15,15 @@
                 return false;
             }
 
+            if (GetQueryString("buscaComPopup") === "true") {
+                var idControle = GetQueryString("id-controle");
+                if (idControle) {
+                    window.opener.Busca.Popup.atualizar(idControle, idComissionado, nome);
+                    closeWindow();
+                    return;
+                }
+            }
+
             window.opener.setComissionado(idComissionado, nome, percentual, "1");
 
             closeWindow();

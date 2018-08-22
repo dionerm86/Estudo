@@ -972,6 +972,9 @@
             <td align="center">
                 <table id="lstProd" align="left" cellpadding="4" cellspacing="0" width="100%">
                 </table>
+                <h1 id="h1Retalhos" class="subtitle" style="display: none;">Retalhos</h1>
+                <table id="lstRetalhos" cellpadding="4" cellspacing="0" >
+                </table>
                 <table style="padding-top: 10px">
                     <tr>
                         <td style="font-weight: bold; font-size: 130%">
@@ -1058,6 +1061,7 @@
                 <asp:HiddenField ID="hdfIdProdPedNf" runat="server" />
                 <asp:HiddenField ID="hdfIdsPedidoNFe" runat="server" Value="" />
                 <asp:HiddenField ID="hdfSomenteRetalhos" runat="server" />
+                <asp:HiddenField ID="hdfIdSolucaoOtimizacao" runat="server" />
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsProcesso" runat="server" SelectMethod="GetAll"
                     TypeName="Glass.Data.DAL.EtiquetaProcessoDAO">
                 </colo:VirtualObjectDataSource>
@@ -1095,14 +1099,30 @@
             { %>
             var itensOtimizacao = <%= Newtonsoft.Json.JsonConvert.SerializeObject(ItensOtimizacao) %>;
 
+            var exibirRetalhos = false;
             for(var i=0; i<itensOtimizacao.length; i++) {
                 var item = itensOtimizacao[i];
-                setProdEtiqueta(
-                    item.IdProdPed, item.IdAmbiente, item.IdPedido, item.IdProdNf, item.IdNf, 
-                    item.DescricaoProduto, item.CodProcesso, item.CodAplicacao, item.Qtd,
-                    item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura, 
-                    item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado, 
-                    item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote);
+
+                if (item.Tipo == "Peca") {
+                    setProdEtiqueta(
+                        item.IdProdPed, item.IdAmbiente, item.IdPedido, item.IdProdNf, item.IdNf, 
+                        item.DescricaoProduto, item.CodProcesso, item.CodAplicacao, item.Qtd,
+                        item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura, 
+                        item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado, 
+                        item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote);
+                } else {
+
+                    if (!exibirRetalhos) {
+
+                        $('#h1Retalhos').show();
+                        exibirRetalhos = true;
+                    }
+
+                    // Adiciona retalho à tabela
+                    addItem(new Array(item.DescricaoProduto, item.Largura + " x " + item.Altura, item.Qtd, item.PlanoCorte),
+                        new Array('Produto', 'Largura x Altura', 'Qtd.', 'Plano Corte'),
+                        'lstRetalhos', null, null, null, null, null, true, false);
+                }
             }
 
             <%}

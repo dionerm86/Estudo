@@ -1,15 +1,15 @@
+using Glass.Configuracoes;
+using Glass.Data.DAL;
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Glass.Data.DAL;
-using Glass.Configuracoes;
 
 namespace Glass.UI.Web.Controls
 {
     public partial class ctrlDescontoQtde : BaseUserControl
     {
         #region Campos privados
-    
+
         private Control _campoIdProd;
         private Control _campoQtde;
         private Control _campoIdCliente;
@@ -18,7 +18,7 @@ namespace Glass.UI.Web.Controls
         private Control _campoReposicao;
         private Control _campoValorUnit;
         private Control _campoTotal;
-    
+
         private string _callback;
         private string _callbackValorUnit;
         private bool _executarOnChangeValorUnitario = false;
@@ -34,94 +34,94 @@ namespace Glass.UI.Web.Controls
             get { return _campoIdProd; }
             set { _campoIdProd = value; }
         }
-    
+
         public Control CampoQtde
         {
             get { return _campoQtde; }
             set { _campoQtde = value; }
         }
-    
+
         public Control CampoClienteID
         {
             get { return _campoIdCliente; }
             set { _campoIdCliente = value; }
         }
-    
+
         public Control CampoTipoEntrega
         {
             get { return _campoTipoEntrega; }
             set { _campoTipoEntrega = value; }
         }
-    
+
         public Control CampoRevenda
         {
             get { return _campoRevenda; }
             set { _campoRevenda = value; }
         }
-    
+
         public Control CampoReposicao
         {
             get { return _campoReposicao; }
             set { _campoReposicao = value; }
         }
-    
+
         public Control CampoValorUnit
         {
             get { return _campoValorUnit; }
             set { _campoValorUnit = value; }
         }
-    
+
         public Control CampoTotal
         {
             get { return _campoTotal; }
             set { _campoTotal = value; }
         }
-    
+
         public float PercDescontoQtde
         {
-            get 
-            { 
+            get
+            {
                 string percDescontoMax = _campoIdProd == null || _campoQtde == null ? "0" :
                     GetPercDescontoQtde(GetControlValue(_campoIdProd), GetControlValue(_campoQtde)).Split(';')[1];
-    
+
                 if (percDescontoMax != null && percDescontoMax.ToLower().Contains("erro"))
                     return 0;
-    
+
                 return Glass.Conversoes.StrParaFloat(percDescontoMax) > 0 ? Glass.Conversoes.StrParaFloat(txtPercDescQtde.Text) : 0;
             }
             set { txtPercDescQtde.Text = value.ToString(); }
         }
-    
+
         public decimal ValorDescontoQtde
         {
             get { return Glass.Conversoes.StrParaDecimal(hdfValorDescontoQtde.Value); }
             set { hdfValorDescontoQtde.Value = value.ToString(); }
         }
-    
+
         public string Callback
         {
             get { return !String.IsNullOrEmpty(_callback) ? "'" + _callback + "'" : "''"; }
             set { _callback = value; }
         }
-    
+
         public string CallbackValorUnit
         {
             get { return !String.IsNullOrEmpty(_callbackValorUnit) ? "'" + _callbackValorUnit + "'" : "''"; }
             set { _callbackValorUnit = value; }
         }
-    
+
         public string ValidationGroup
         {
             get { return ctvPercDesconto.ValidationGroup; }
             set { ctvPercDesconto.ValidationGroup = value; }
         }
-    
+
         public bool ExecutarOnChangeValorUnitario
         {
             get { return _executarOnChangeValorUnitario; }
             set { _executarOnChangeValorUnitario = value; }
         }
-    
+
         public bool ForcarEsconderControle
         {
             get { return _forcarEsconderControle; }
@@ -133,21 +133,21 @@ namespace Glass.UI.Web.Controls
             get { return _bloquearAlteracaoDesconto; }
             set { _bloquearAlteracaoDesconto = value; }
         }
-    
+
         #endregion
-    
+
         #region Métodos de suporte
-    
+
         /// <summary>
         /// Retorna a função de cálculo do controle.
         /// </summary>
         /// <returns></returns>
         private string GetFuncaoCalculo()
         {
-            return "descQtde_getDescontoQtde('" + this.ClientID + "', " + PedidoConfig.Desconto.DescontoPorProduto.ToString().ToLower() + ", false, " + 
+            return "descQtde_getDescontoQtde('" + this.ClientID + "', " + PedidoConfig.Desconto.DescontoPorProduto.ToString().ToLower() + ", false, " +
                 ForcarEsconderControle.ToString().ToLower() + ", " + Callback + ", " + CallbackValorUnit + ")";
         }
-    
+
         /// <summary>
         /// Formata um controle da página.
         /// </summary>
@@ -157,7 +157,7 @@ namespace Glass.UI.Web.Controls
             // Garante que o campo seja válido
             if (campo == null || !(campo is WebControl))
                 return;
-    
+
             // String com o atributo que será alterado
             string atributo;
             if (campo is DropDownList)
@@ -166,36 +166,36 @@ namespace Glass.UI.Web.Controls
                 atributo = "OnClick";
             else
                 atributo = "OnBlur";
-    
+
             // String com a função que será executada
             string funcao = "";
-    
+
             // Verifica se o controle já possui uma função atribuída ao evento OnBlur
             if (!String.IsNullOrEmpty(((WebControl)campo).Attributes[atributo]))
             {
                 // Recupera a função do controle
                 funcao = ((WebControl)campo).Attributes[atributo];
-    
+
                 // Verifica se a função desejada já está no controle
                 if (funcao.IndexOf(GetFuncaoCalculo()) > -1)
                     return;
-    
+
                 // Coloca a função de cálculo junto à função original
                 if (funcao.IndexOf("return") > -1)
                     funcao = funcao.Replace("return", GetFuncaoCalculo() + "; return");
                 else
                     funcao += "; " + GetFuncaoCalculo();
             }
-    
+
             // Indica que apenas essa função será executada
             else
                 funcao = GetFuncaoCalculo();
-    
+
             // Atribui a função ao controle
             if (((WebControl)campo).Attributes[atributo] == null || !((WebControl)campo).Attributes[atributo].Contains(funcao))
                 ((WebControl)campo).Attributes[atributo] = funcao;
         }
-    
+
         /// <summary>
         /// Retorna o ClientID de um controle da página.
         /// </summary>
@@ -206,11 +206,11 @@ namespace Glass.UI.Web.Controls
             // Garante que o campo seja válido
             if (campo == null)
                 return "";
-    
+
             // Retorna o identificador do campo na página cliente
             return campo.ClientID;
         }
-    
+
         /// <summary>
         /// Retorna o valor do campo.
         /// </summary>
@@ -220,7 +220,7 @@ namespace Glass.UI.Web.Controls
         {
             if (campo == null)
                 return "";
-    
+
             if (campo is TextBox)
                 return ((TextBox)campo).Text;
             else if (campo is HiddenField)
@@ -229,16 +229,16 @@ namespace Glass.UI.Web.Controls
                 return ((DropDownList)campo).SelectedValue;
             else if (campo is Label)
                 return ((Label)campo).Text;
-    
+
             return "";
         }
-    
+
         #endregion
-    
+
         #region Métodos Ajax
-    
+
         [Ajax.AjaxMethod]
-        public static string GetValorTabela(string idProdStr, string tipoEntregaStr, string idClienteStr, string revendaStr, 
+        public static string GetValorTabela(string idProdStr, string tipoEntregaStr, string idClienteStr, string revendaStr,
             string reposicaoStr, string percDescontoQtdeStr)
         {
             int idProd = !String.IsNullOrEmpty(idProdStr) ? Glass.Conversoes.StrParaInt(idProdStr) : 0;
@@ -247,25 +247,25 @@ namespace Glass.UI.Web.Controls
             bool revenda = !String.IsNullOrEmpty(revendaStr) ? bool.Parse(revendaStr) : false;
             bool reposicao = !String.IsNullOrEmpty(reposicaoStr) ? bool.Parse(reposicaoStr) : false;
             float percDescontoQtde = Glass.Conversoes.StrParaFloat(percDescontoQtdeStr);
-    
+
             return ProdutoDAO.Instance.GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, null, null, null).ToString("0.00");
         }
-    
+
         [Ajax.AjaxMethod]
         public static string GetDescontoTabela(string idProdStr, string idClienteStr)
         {
             int idProd = !String.IsNullOrEmpty(idProdStr) ? Glass.Conversoes.StrParaInt(idProdStr) : 0;
-            uint? idCliente = !String.IsNullOrEmpty(idClienteStr) ? (uint?)Glass.Conversoes.StrParaUint(idClienteStr) : null;
-    
+            uint idCliente = !String.IsNullOrEmpty(idClienteStr) ? Glass.Conversoes.StrParaUint(idClienteStr) : 0;
+
             var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(idProd);
             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd(idProd);
-    
+
             Glass.Data.Model.DescontoAcrescimoCliente desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(
-                idCliente > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, null, null);
-    
+                idCliente, idGrupoProd, idSubgrupoProd, idProd, null, null);
+
             return desc.Desconto.ToString();
         }
-    
+
         [Ajax.AjaxMethod]
         public static string GetPercDescontoQtde(string idProdStr, string qtdeStr)
         {
@@ -273,11 +273,11 @@ namespace Glass.UI.Web.Controls
             {
                 uint idProd = !String.IsNullOrEmpty(idProdStr) ? Glass.Conversoes.StrParaUint(idProdStr) : 0;
                 int qtde = !String.IsNullOrEmpty(qtdeStr) ? Glass.Conversoes.StrParaInt(qtdeStr) : 0;
-    
+
                 float percDesconto = 0;
                 if (PedidoConfig.Desconto.DescontoPorProduto)
                     percDesconto = DescontoQtdeDAO.Instance.GetPercDescontoByProd(idProd, qtde);
-    
+
                 return "Ok;" + percDesconto.ToString();
             }
             catch (Exception ex)
@@ -285,15 +285,15 @@ namespace Glass.UI.Web.Controls
                 return "Erro;" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao buscar desconto por quantidade de produtos.", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public static string ImpedirDescontoSomativo()
         {
             return PedidoConfig.Desconto.ImpedirDescontoSomativo.ToString().ToLower();
         }
-    
+
         #endregion
-    
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.ClientScript.IsClientScriptIncludeRegistered("ctrlDescontoQtde"))
@@ -301,10 +301,10 @@ namespace Glass.UI.Web.Controls
                 Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlDescontoQtde));
                 Page.ClientScript.RegisterClientScriptInclude("ctrlDescontoQtde", this.ResolveClientUrl("~/Scripts/ctrlDescontoQtde.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)));
             }
-    
+
             Page.PreRender += new EventHandler(Page_PreRender);
         }
-    
+
         private void Page_PreRender(object sender, EventArgs e)
         {
             // Coloca o callback no campo de percentual de desconto
@@ -330,14 +330,14 @@ namespace Glass.UI.Web.Controls
                 "Total: '{12}', " +
                 "ExecutarOnChangeValorUnitario: {13}, " +
                 "Reposicao: '{14}'";
-    
+
             FormatControl(_campoIdProd);
             FormatControl(_campoQtde);
             FormatControl(_campoIdCliente);
             FormatControl(_campoTipoEntrega);
             FormatControl(_campoRevenda);
             FormatControl(_campoReposicao);
-    
+
             object[] dadosFormato = new object[15];
             dadosFormato[0] = GetControlID(_campoIdProd);
             dadosFormato[1] = GetControlID(_campoQtde);
@@ -354,11 +354,11 @@ namespace Glass.UI.Web.Controls
             dadosFormato[12] = GetControlID(_campoTotal);
             dadosFormato[13] = _executarOnChangeValorUnitario.ToString().ToLower();
             dadosFormato[14] = GetControlID(_campoReposicao);
-    
+
             string script = "var " + this.ClientID + " = { " + String.Format(formato, dadosFormato) + " };\n";
             //script += "controlesDescontoQtde.push('" + this.ClientID + "');\n";
             Page.ClientScript.RegisterClientScriptBlock(GetType(), this.ClientID, script, true);
-    
+
             Page.ClientScript.RegisterStartupScript(GetType(), "init_" + this.ClientID, GetFuncaoCalculo() + ";\n", true);
             //Page.ClientScript.RegisterOnSubmitStatement(GetType(), "submitDescontoQtde", "atualizaTotalDescontoQtde();\n");
         }

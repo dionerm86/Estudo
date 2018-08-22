@@ -41,7 +41,12 @@ namespace Glass.Data.Model
         /// Vendido
         /// </summary>
         [Description("Perda")]
-        Perda
+        Perda,
+        /// <summary>
+        /// Indisponível.
+        /// </summary>
+        [Description("Indisponível")]
+        Indisponivel
     }
 
     [PersistenceBaseDAO(typeof(RetalhoProducaoDAO))]
@@ -57,7 +62,7 @@ namespace Glass.Data.Model
         #region Propriedades
 
         [PersistenceProperty("IdRetalhoProducao", PersistenceParameterType.IdentityKey)]
-        public uint IdRetalhoProducao { get; set; }
+        public int IdRetalhoProducao { get; set; }
 
         [PersistenceProperty("IdProdPedProducaoOrig")]
         public uint? IdProdPedProducaoOrig { get; set; }
@@ -69,7 +74,8 @@ namespace Glass.Data.Model
         public uint? IdProdNf { get; set; }
 
         [PersistenceProperty("IdProd")]
-        public uint IdProd { get; set; }
+        [PersistenceForeignKey(typeof(Produto), nameof(Produto.IdProd))]
+        public int IdProd { get; set; }
 
         [PersistenceProperty("Situacao")]
         public SituacaoRetalhoProducao Situacao { get; set; }
@@ -173,7 +179,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_numEtiqueta == null)
-                    _numEtiqueta = RetalhoProducaoDAO.Instance.ObtemNumeroEtiqueta(IdRetalhoProducao);
+                    _numEtiqueta = RetalhoProducaoDAO.Instance.ObtemNumeroEtiqueta((uint)IdRetalhoProducao);
 
                 return _numEtiqueta;
             }
@@ -195,7 +201,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_totM == null)
-                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(Largura, Altura, 1, (int)IdProd, false, 0, false);
+                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(Largura, Altura, 1, IdProd, false, 0, false);
 
                 return _totM.GetValueOrDefault();
             }
@@ -210,7 +216,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_cancelarVisible == null)
-                    _cancelarVisible = RetalhoProducaoDAO.Instance.PodeCancelar(null, IdRetalhoProducao);
+                    _cancelarVisible = RetalhoProducaoDAO.Instance.PodeCancelar(null, (uint)IdRetalhoProducao);
 
                 return _cancelarVisible.GetValueOrDefault();
             }

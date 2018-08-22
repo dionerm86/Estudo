@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Colosoft.Business;
+using Colosoft.Data;
 
 namespace Glass.Otimizacao.Negocios.Entidades
 {
@@ -28,6 +30,12 @@ namespace Glass.Otimizacao.Negocios.Entidades
         #endregion
 
         #region Propriedades
+
+        /// <summary>
+        /// Obtém os itens.
+        /// </summary>
+        public IEnumerable<IItemPlanoCorte> Itens => 
+            Pecas.OfType<IItemPlanoCorte>().Concat(Retalhos.OfType<IItemPlanoCorte>()).OrderBy(f => f.Posicao);
 
         /// <summary>
         /// Obtém as peças.
@@ -141,6 +149,25 @@ namespace Glass.Otimizacao.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Obtém o número da etiqueta do plano de corte.
+        /// </summary>
+        public string NumeroEtiqueta
+        {
+            get
+            {
+                var planoOtimizacao = Owner as PlanoOtimizacao;
+                if (planoOtimizacao != null)
+                {
+                    return Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<IProvedorPlanoCorte>()
+                        .ObterNumeroEtiqueta(planoOtimizacao.Nome, Posicao, planoOtimizacao.PlanosCorte.Count);
+                }
+
+                return null;
+            }
+        }
+
         #endregion
 
         #region Construtores
@@ -176,6 +203,62 @@ namespace Glass.Otimizacao.Negocios.Entidades
         {
             Pecas = CreateChild<Colosoft.Business.IEntityChildrenList<PecaPlanoCorte>>("Pecas");
             Retalhos = CreateChild<Colosoft.Business.IEntityChildrenList<RetalhoPlanoCorte>>("Retalhos");
+        }
+
+        #endregion
+
+        #region Métodos Públicos
+
+        /// <summary>
+        /// Salva os dados do plano de corte.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public override SaveResult Save(IPersistenceSession session)
+        {
+            var resultado = base.Save(session);
+
+            if (resultado)
+            {
+                var provedor = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<IProvedorPlanoCorte>();
+
+                var produtosImpressao = provedor.ObterProdutosImpressao(this);
+
+                foreach (var produtoImpressao in produtosImpressao)
+                {
+                    if (produtoImpressao.IdProdImpressao > 0)
+                        session.Update(produtoImpressao);
+                    else
+                        session.Insert(produtoImpressao);
+                }
+
+                foreach (var retalho in Retalhos)
+                {
+                    if (retalho.IdRetalhoProducao.HasValue && retalho.IdRetalhoProducao.Value < 0)
+                    {
+                        // Realiza a atualização dos produtos de impressão para colocar 
+                        // o número correto da etiqueta do retalho
+                        session.Update<Data.Model.ProdutoImpressao>(
+                            new PersistenceParameterCollection()
+                                .Add(nameof(Data.Model.ProdutoImpressao.NumEtiqueta), new PersistenceActionParameterProcessor(e =>
+                                {
+                                    var id = 0;
+                                    e.TryGetPrimaryKey(retalho.IdRetalhoProducao.Value, out id);
+                                    return "R" + id + "-1/1";
+                                })),
+                            Colosoft.Query.ConditionalContainer
+                                .Parse("IdRetalhoProducao=?id",
+                                    new Colosoft.Query.QueryParameter("?id", new NewUidReference(retalho.IdRetalhoProducao.Value))),
+                            (action, result) =>
+                            {
+
+                            });
+                    }
+                }
+            }
+
+            return resultado;
         }
 
         #endregion

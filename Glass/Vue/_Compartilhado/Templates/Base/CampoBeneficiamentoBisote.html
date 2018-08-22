@@ -1,0 +1,10 @@
+<span style="white-space: nowrap">
+    <campo-beneficiamento-lapidacao v-bind:beneficiamento="beneficiamento"
+        v-bind:itens-selecionados.sync="itensSelecionadosAtuais" v-on:validation-state-change="validar"
+        v-bind="$attrs"></campo-beneficiamento-lapidacao>
+    <label>
+        Esp.
+    </label>
+    <input type="number" step="0.01" min="0" v-model.number="espessura" style="width: 50px"
+        v-on:change="validar" v-bind="$attrs">
+</span>

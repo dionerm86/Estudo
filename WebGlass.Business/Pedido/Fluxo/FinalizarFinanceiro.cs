@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Glass.Data.DAL;
+﻿using Glass.Data.DAL;
 using Glass.Data.Helper;
+using System;
+using System.Linq;
 
 namespace WebGlass.Business.Pedido.Fluxo
 {
@@ -9,13 +9,13 @@ namespace WebGlass.Business.Pedido.Fluxo
     {
         private FinalizarFinanceiro() { }
 
-        public Entidade.PedidoFinalizarFinanceiro[] ObtemItensFinalizarFinanceiro(uint idPedido, string codCliente, 
-            uint idCliente, string nomeCliente, uint idOrcamento, string endereco, string bairro, string dataPedidoIni, 
-            string dataPedidoFim, uint idLoja, int situacao, float alturaProd, int larguraProd, string sortExpression, 
+        public Entidade.PedidoFinalizarFinanceiro[] ObtemItensFinalizarFinanceiro(uint idPedido, string codCliente,
+            uint idCliente, string nomeCliente, uint idOrcamento, string endereco, string bairro, string dataPedidoIni,
+            string dataPedidoFim, uint idLoja, int situacao, float alturaProd, int larguraProd, string sortExpression,
             int startRow, int pageSize)
         {
             var itens = PedidoDAO.Instance.ObtemItensFinalizarFinanceiro(idPedido, codCliente, idCliente, nomeCliente,
-                idOrcamento, endereco, bairro, dataPedidoIni, dataPedidoFim, idLoja, situacao, alturaProd, larguraProd, 
+                idOrcamento, endereco, bairro, dataPedidoIni, dataPedidoFim, idLoja, situacao, alturaProd, larguraProd,
                 sortExpression, startRow, pageSize).ToArray();
 
             return Array.ConvertAll(itens, x => new Entidade.PedidoFinalizarFinanceiro(x));
@@ -37,7 +37,7 @@ namespace WebGlass.Business.Pedido.Fluxo
             {
                 case "finalizar":
                     return situacaoPedido == Glass.Data.Model.Pedido.SituacaoPedido.AguardandoFinalizacaoFinanceiro;
-                   
+
                 case "confirmar":
                     return situacaoPedido == Glass.Data.Model.Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro;
 
@@ -70,8 +70,7 @@ namespace WebGlass.Business.Pedido.Fluxo
         {
             if (!negado)
             {
-                bool emConferencia = false;
-                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, ref emConferencia, true);
+                PedidoDAO.Instance.FinalizarPedidoComTransacao(idPedido, true);
             }
             else
             {

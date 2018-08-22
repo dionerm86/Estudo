@@ -616,8 +616,8 @@ namespace Glass.Data.DAL
         /// <param name="manual"></param>
         public void LogProdutoImpressao(GDASession session, ProdutoImpressao produtoImpressao, string motivo, bool manual)
         {
-            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ProdutoImpressao, 
-                produtoImpressao.IdProdImpressao, produtoImpressao, motivo, manual);
+            InserirLog(session, UserInfo.GetUserInfo.CodUser, LogCancelamento.TabelaCancelamento.ProdutoImpressao,
+                 (uint)produtoImpressao.IdProdImpressao, produtoImpressao, motivo, manual);
         }
 
         public void LogRetalhoProducao(uint idFunc, RetalhoProducao retalho, string motivo, bool manual)
@@ -634,7 +634,7 @@ namespace Glass.Data.DAL
         public void LogRetalhoProducao(GDASession session, uint idFunc, RetalhoProducao retalho, string motivo, bool manual)
         {
             InserirLog(session, idFunc, LogCancelamento.TabelaCancelamento.RetalhoProducao, 
-                retalho.IdRetalhoProducao, retalho, motivo, manual);
+                (uint)retalho.IdRetalhoProducao, retalho, motivo, manual);
         }
 
         /// <summary>

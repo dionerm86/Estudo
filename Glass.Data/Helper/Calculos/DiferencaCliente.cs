@@ -1,25 +1,23 @@
 ﻿using GDA;
 using Glass.Data.Model;
 using Glass.Global;
+using Glass.Pool;
 
 namespace Glass.Data.Helper.Calculos
 {
-    sealed class DiferencaCliente : BaseCalculo<DiferencaCliente>
+    sealed class DiferencaCliente : Singleton<DiferencaCliente>
     {
         private DiferencaCliente() { }
 
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto)
         {
-            AtualizaDadosProdutosCalculo(produto, sessao, container);
+            produto.InicializarParaCalculo(sessao, container);
 
-            if (!DeveExecutar(produto))
-                return;
-            
             decimal valorTabela = produto.DadosProduto.ValorTabela(false);
             decimal valorCliente = produto.DadosProduto.ValorTabela(true);
 
             int tipoCalculoProduto = (int)produto.DadosProduto.DadosGrupoSubgrupo.TipoCalculo();
-            
+
             if (valorTabela < valorCliente)
             {
                 produto.ValorDescontoCliente = 0;
@@ -37,8 +35,6 @@ namespace Glass.Data.Helper.Calculos
                 produto.ValorAcrescimoCliente = 0;
                 produto.ValorDescontoCliente = 0;
             }
-
-            AtualizarDadosCache(produto);
         }
 
         private decimal CalculaValorTotal(GDASession sessao, IProdutoCalculo produto, int tipoCalculo, decimal baseCalculo)

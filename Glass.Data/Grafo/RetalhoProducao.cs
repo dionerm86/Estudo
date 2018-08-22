@@ -14,7 +14,7 @@
         /// </summary>
         public uint IdRetalhoProducao
         {
-            get { return retalho.IdRetalhoProducao; }
+            get { return (uint)retalho.IdRetalhoProducao; }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@
         /// </summary>
         public uint IdProd
         {
-            get { return retalho.IdProd; }
+            get { return (uint)retalho.IdProd; }
         }
 
         /// <summary>

@@ -10,5 +10,7 @@ namespace WebGlass.Business.NotaFiscal.Entidade
         public uint IdPlanoConta { get; set; }
         public uint IdNaturezaOperacao { get; set; }
         public uint? IdCompra { get; set; }
+
+        public List<ParcelaNf> Parcelas { get; set; }
     }
 }

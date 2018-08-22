@@ -42,6 +42,10 @@
 
             openWindow(350, 600, "../Utils/SetMotivoCancEtiqueta.aspx?idImpressao=" + idImpressao + "&tipo=" + tipoImpressao);
         }
+
+        function ecutter(id) {
+            redirectUrl('<%= MontarEnderecoECutter() %>' + id);
+        }
     
     </script>
 
@@ -174,6 +178,10 @@
                                     <a href="#" onclick='location.href=&quot;../Handlers/ArquivoOtimizacao.ashx?idImpressao=<%# Eval("IdImpressao") %>&quot;'>
                                         <img src="../Images/blocodenotas.png" title="Arquivo de Otimização" border="0" /></a>
                                 </span>
+                                <asp:ImageButton ID="imbArquivoOtimizacao" runat="server" ImageUrl="~/Images/puzzle_arrow.png"
+                                    Visible='<%# Glass.Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta == Glass.Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter && Eval("IdArquivoOtimizacao") != null %>'
+                                    OnClientClick='<%# "ecutter(\"" + Eval("IdArquivoOtimizacao") + "\"); return false" %>'
+                                    ToolTip="Abrir otimização" />
                                 <asp:PlaceHolder ID="pchSituacao" runat="server" Visible='<%# ((int)Eval("Situacao") <= 1) && PermitirCancelar(Eval("IdFunc")) %>'>
                                     <a href="#" onclick='cancelarImpressao(<%# Eval("IdImpressao") %>, <%# (long)Eval("TipoImpressao") %>); return false'>
                                         <img src="../Images/ExcluirGrid.gif" border="0" title="Cancelar Impressão" /></a>

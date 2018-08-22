@@ -40,15 +40,9 @@ namespace Glass.UI.Web.Listas
                 lnkArqOtimizacaoSemExportadas.Visible = PCPConfig.ExibirOpcaoExportarApenasNaoExportadasOptyway;
 
                 int id = 0;
-                if (int.TryParse(Request["idArquivoOtimizacao"], out id))
+                if (int.TryParse(Request["idSolucaoOtimizacao"], out id))
                 {
-                    var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
-                        .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
-
-                    ItensOtimizacao = otimizacaoFluxo.ObterItens(id).Select(f => new EtiquetaProducao(f));
-                }
-                else if (int.TryParse(Request["idSolucaoOtimizacao"], out id))
-                {
+                    hdfIdSolucaoOtimizacao.Value = id.ToString();
                     var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                         .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
 
@@ -580,11 +574,13 @@ namespace Glass.UI.Web.Listas
 
             #region Propriedades
 
-            public int IdProdPed => _item.IdProdPed;
+            public string Tipo => _item.Tipo.ToString();
+
+            public int? IdProdPed => _item.IdProdPed;
 
             public int? IdAmbiente => null;
 
-            public int IdPedido => _item.IdPedido;
+            public int? IdPedido => _item.IdPedido;
 
             public int? IdProdNf => null;
 

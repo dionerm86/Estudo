@@ -603,6 +603,37 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
 
             #endregion
 
+            #region Inserção na tabela parcela_nf
+
+            // Informações de Pagamento
+            try
+            {
+                var count = 1;
+                foreach (var parc in dadosImportar.Parcelas)
+                {
+                    var parcelaNotaFiscal = new Glass.Data.Model.ParcelaNf();
+
+                    parcelaNotaFiscal.IdNf = idNotaFiscalInserida;
+                    parcelaNotaFiscal.Data = parc.DataVenc;
+                    parcelaNotaFiscal.Valor = parc.Valor;
+                    parcelaNotaFiscal.NumBoleto = parc.NumBoleto;
+
+                    try
+                    {
+                        ParcelaNfDAO.Instance.Insert(parcelaNotaFiscal);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Erro ao inserir as parcelas da NFe.<br />Erro na parcela de número " + (count), ex));
+                    }
+
+                    count++;
+                }
+            }
+            catch (Exception ex) { throw ex; }
+
+            #endregion
+
             #region Inserção na tabela produtos_nf
 
             try

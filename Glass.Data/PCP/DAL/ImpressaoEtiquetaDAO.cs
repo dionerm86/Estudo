@@ -67,10 +67,11 @@ namespace Glass.Data.DAL
                 SqlTipoImpressao("i.idImpressao", "idPedido") + "), " + (int)ProdutoImpressaoDAO.TipoEtiqueta.Pedido +
                 ", if((" + SqlTipoImpressao("i.idImpressao", "idNf") + "), " + (int)ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal +
                 ", if((" + SqlTipoImpressao("i.idImpressao", "IdRetalhoProducao") + "), " + (int)ProdutoImpressaoDAO.TipoEtiqueta.Retalho +
-                ", " + (int)ProdutoImpressaoDAO.TipoEtiqueta.Box + "))) as tipoImpressao" : "Count(*)";
+                ", " + (int)ProdutoImpressaoDAO.TipoEtiqueta.Box + "))) as tipoImpressao, so.IdArquivoOtimiz AS IdArquivoOtimizacao" : "Count(*)";
 
             var sql = "Select " + campos + @" From impressao_etiqueta i 
                 Left Join loja l On (i.idLoja=l.idLoja) 
+                Left Join solucao_otimizacao so ON (i.IdSolucaoOtimizacao=so.IdSolucaoOtimizacao)
                 Left Join funcionario f On (i.idFunc=f.idFunc) Where 1 " + FILTRO_ADICIONAL;
 
             if (idPedido > 0)
@@ -97,7 +98,7 @@ namespace Glass.Data.DAL
                 filtroAdicional += " And i.idImpressao=" + idImpressao;
 
             if (!string.IsNullOrEmpty(planoCorte))
-                filtroAdicional += " And i.idImpressao In (Select idImpressao From produto_impressao Where planoCorte=?planoCorte)";
+                filtroAdicional += " And i.idImpressao In (Select idImpressao From produto_impressao Where planoCorte LIKE ?planoCorte)";
 
             if (!string.IsNullOrEmpty(lote))
                 filtroAdicional += " AND i.IdImpressao IN (SELECT IdImpressao FROM produto_impressao WHERE Lote=?lote)";
@@ -161,7 +162,7 @@ namespace Glass.Data.DAL
             var lstParam = new List<GDAParameter>();
 
             if (!string.IsNullOrEmpty(planoCorte))
-                lstParam.Add(new GDAParameter("?planoCorte", planoCorte));
+                lstParam.Add(new GDAParameter("?planoCorte", $"%{planoCorte}%"));
 
             if (!string.IsNullOrEmpty(lote))
                 lstParam.Add(new GDAParameter("?lote", lote));
@@ -199,7 +200,7 @@ namespace Glass.Data.DAL
             // Se o idImpressão tiver sido passado, apenas recupera lista de produtosImpresao
             if (idImpressao > 0)
                 lstEtiqueta = new List<Glass.Data.RelModel.Etiqueta>(Glass.Data.RelDAL.EtiquetaDAO.Instance.GetListPedidoComTransacao(
-                    idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null));
+                    idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null, null));
             else
             {
                 string[] lista = etiquetas.TrimEnd('|').Split('|');
@@ -628,7 +629,7 @@ namespace Glass.Data.DAL
                     // Se o idImpressão tiver sido passado, apenas recupera lista de produtosImpresao
                     if (idImpressao > 0)
                         lstEtiqueta = new List<Etiqueta>(EtiquetaDAO.Instance.GetListPedido(transaction,
-                            idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null));
+                            idFunc, idImpressao.ToString(), 0, 0, null, true, true, null, false, null, null));
                     else
                     {
                         List<uint> idProdutoPedidoApagar = new List<uint>();
@@ -1989,7 +1990,7 @@ namespace Glass.Data.DAL
         public uint NovaImpressaoPedido(GDASession session, uint idFunc, uint[] vetIdProdPed, uint[] vetIdAmbPed, int[] vetQtdJaImpressa, int[] vetQtdImpressao, int[] vetQtdImpressaoAmb,
             string[] vetEtiqueta, string idImpressaoParam, List<uint> lstPedImpresso, List<uint> lstIdProdPed, List<int> lstQtdImpresso,
             ref List<uint> idsProdPedAlterados, List<string> lstObs, List<uint> lstIdAmbPed, List<int> lstQtdImpressoAmb, List<string> lstObsAmb,
-            ref List<uint> idsAmbPedAlterados)
+            ref List<uint> idsAmbPedAlterados, int? idSolucaoOtimizacao)
         {
             try
             {
@@ -2103,6 +2104,7 @@ namespace Glass.Data.DAL
                 impressao.IdFunc = UserInfo.GetByIdFunc(idFunc).CodUser;
                 impressao.Data = DateTime.Now;
                 impressao.Situacao = (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando;
+                impressao.IdSolucaoOtimizacao = idSolucaoOtimizacao;
                 
                 uint idImpressao = 0;
 
@@ -2255,6 +2257,9 @@ namespace Glass.Data.DAL
                     if (!idsAmbPedAlterados.Contains(lstIdAmbPed[i]))
                         idsAmbPedAlterados.Add(lstIdAmbPed[i]);
                 }
+
+                if (idSolucaoOtimizacao.HasValue)
+                    ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
 
                 return idImpressao;
             }

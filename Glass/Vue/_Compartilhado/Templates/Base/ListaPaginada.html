@@ -1,0 +1,53 @@
+﻿<span>
+    <div v-if="bloqueio">
+        <span v-bind:style="processamento">
+            <img src="../Images/Load.gif" height="16px" />
+            Aguarde...
+        </span>
+    </div>
+    <table class="gridStyle" v-else>
+        <thead v-if="itens.length > 0 || exibirInclusao">
+            <tr>
+                <slot name="cabecalho"></slot>
+            </tr>
+        </thead>
+        <tbody>
+            <template v-for="(item, index) in itens">
+                <tr v-bind:class="estiloLinhaAlternada(index)">
+                    <slot name="itemEditando" v-if="index === linhaEditando">
+                        {{ item }}
+                    </slot>
+                    <slot name="item" v-bind:item="item" v-bind:index="index" v-else>
+                        {{ item }}
+                    </slot>
+                </tr>
+                <slot name="novaLinhaItem" v-bind:item="item" v-bind:index="index"
+                    v-bind:classe="estiloLinhaAlternada(index)" v-if="index !== linhaEditando"></slot>
+            </template>
+            <tr v-if="exibirInclusao && linhaEditando === -1" v-bind:class="estiloLinhaAlternada(itens.length)">
+                <slot name="itemIncluir"></slot>
+            </tr>
+            <tr v-else-if="itens.length === 0">
+                <td style="padding: 5px 8px">
+                    {{ this.mensagemListaVazia }}
+                </td>
+            </tr>
+        </tbody>
+        <tfoot class="pgr" v-if="itens.length > 0 && paginas.length > 1 && linhaEditando === -1">
+            <tr>
+                <td v-bind:colspan="numeroColunas()">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td v-for="pagina in paginas">
+                                    <span v-if="pagina.numero === paginaAtual || !pagina.link">{{ pagina.numero }}</span>
+                                    <a v-else href="#" v-on:click.prevent="paginar(pagina.numero)">{{ pagina.numero }}</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</span>

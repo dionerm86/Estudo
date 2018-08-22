@@ -53,7 +53,7 @@ namespace Glass.Data.RelDAL
         /// altera situação do pedido_espelho para impresso e marca a quantidade dos itens que foram impressos
         /// </summary>
         public Etiqueta[] GetListPedidoComTransacao(uint idFunc, string idImpressao, uint idProdPed, uint idAmbientePedido, string idsProdPed, bool arqOtimizacao, bool reImpressao,
-            string numEtiqueta, bool apenasPlano, string[] listaRetalhos)
+            string numEtiqueta, bool apenasPlano, string[] listaRetalhos, int? idSolucaoOtimizacao)
         {
             using (var transaction = new GDATransaction())
             {
@@ -62,7 +62,7 @@ namespace Glass.Data.RelDAL
                     transaction.BeginTransaction();
 
                     var retorno = GetListPedido(transaction, idFunc, idImpressao, idProdPed, idAmbientePedido, idsProdPed, arqOtimizacao, reImpressao,
-                        numEtiqueta, apenasPlano, listaRetalhos);
+                        numEtiqueta, apenasPlano, listaRetalhos, idSolucaoOtimizacao);
 
                     transaction.Commit();
                     transaction.Close();
@@ -85,7 +85,7 @@ namespace Glass.Data.RelDAL
         /// altera situação do pedido_espelho para impresso e marca a quantidade dos itens que foram impressos
         /// </summary>
         public Etiqueta[] GetListPedido(GDASession session, uint idFunc, string idImpressao, uint idProdPed, uint idAmbientePedido, string idsProdPed, bool arqOtimizacao, bool reImpressao,
-            string numEtiqueta, bool apenasPlano, string[] listaRetalhos)
+            string numEtiqueta, bool apenasPlano, string[] listaRetalhos, int? idSolucaoOtimizacao)
         {
             var lstEtiq = new List<Etiqueta>();
             Etiqueta etiqueta;
@@ -303,7 +303,7 @@ namespace Glass.Data.RelDAL
                     idImpressao = ImpressaoEtiquetaDAO.Instance.NovaImpressaoPedido(session, idFunc, lstIdProdPed.ToArray(), lstIdAmbPed.ToArray(),
                         lstQtdJaImpressa.ToArray(), lstQtdImpresso.ToArray(), lstQtdImpressoAmb.ToArray(), lstEtiqueta.ToArray(),
                         idImpressao, lstPedImpresso, lstIdProdPed, lstQtdImpresso, ref idsProdPedAlterados, lstObs, lstIdAmbPed,
-                        lstQtdImpressoAmb, lstObsAmb, ref idsAmbPedAlterados).ToString();
+                        lstQtdImpressoAmb, lstObsAmb, ref idsAmbPedAlterados, idSolucaoOtimizacao).ToString();
                 }
                 else
                 {
@@ -417,24 +417,27 @@ namespace Glass.Data.RelDAL
             {
                 var descrBenef = "";
 
-                // Busca produtoPedidoEspelho
-                if (prodImp.IdAmbientePedido == null)
+                if (prodImp.IdPedido.HasValue)
                 {
-                    // Busca a descrição do beneficiamento
-                    descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(session, null, prodImp.IdProdPed.Value, true);
-                }
-                else
-                {
-                    // Busca a mão de obra feita no pedido
-                    var itens = ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(session, 0, prodImp.IdAmbientePedido.Value);
-
-                    for (var i = 0; i < itens.Length; i++)
+                    // Busca produtoPedidoEspelho
+                    if (prodImp.IdAmbientePedido == null)
                     {
-                        var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd) == (int)TipoCalculoGrupoProd.Qtd ?
-                            itens[i].Qtde + " " : "";
+                        // Busca a descrição do beneficiamento
+                        descrBenef = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(session, null, prodImp.IdProdPed.Value, true);
+                    }
+                    else
+                    {
+                        // Busca a mão de obra feita no pedido
+                        var itens = ProdutosPedidoEspelhoDAO.Instance.GetByAmbienteFast(session, 0, prodImp.IdAmbientePedido.Value);
 
-                        itens[i].BenefEtiqueta = true;
-                        descrBenef += qtde + itens[i].DescricaoProdutoComBenef + "; ";
+                        for (var i = 0; i < itens.Length; i++)
+                        {
+                            var qtde = GrupoProdDAO.Instance.TipoCalculo(session, (int)itens[i].IdProd) == (int)TipoCalculoGrupoProd.Qtd ?
+                                itens[i].Qtde + " " : "";
+
+                            itens[i].BenefEtiqueta = true;
+                            descrBenef += qtde + itens[i].DescricaoProdutoComBenef + "; ";
+                        }
                     }
                 }
 
@@ -443,7 +446,8 @@ namespace Glass.Data.RelDAL
                 // Imprime a etiqueta diretamente, uma vez que as impressões estão corretas
                 // com todas as etiquetas relacionadas à impressão correta, e não há mais
                 // necessidade de controle de impressão de etiquetas
-                var etiq = MontaEtiqueta(session, idFunc, prodImp, descrBenef, PedidoEspelhoDAO.Instance.ObtemDataFabrica(session, prodImp.IdPedido.Value),
+                var etiq = MontaEtiqueta(session, idFunc, prodImp, descrBenef, 
+                    prodImp.IdPedido.HasValue ? PedidoEspelhoDAO.Instance.ObtemDataFabrica(session, prodImp.IdPedido.Value) : null,
                     IsPecaReposta(session, prodImp.NumEtiqueta, ref dicEtiquetaReposta), ref planosCorte, ref dicPedidos, ref dicProd, false);
 
                 if (lstEtiq.All(f => f.BarCodeData != etiq.BarCodeData))
@@ -487,6 +491,10 @@ namespace Glass.Data.RelDAL
                 // Põe peças em produção
                 foreach (var etiq in lstEtiq)
                 {
+                    // Ignora retalhos
+                    if (etiq.NumEtiqueta?.StartsWith("R") ?? false)
+                        continue;
+
                     acao = "Põe etiqueta " + etiq.BarCode + " em produção";
 
                     ProdutoPedidoProducaoDAO.Instance.InserePeca(session, idImpr, etiq.BarCodeData, etiq.PlanoCorte,
@@ -635,12 +643,12 @@ namespace Glass.Data.RelDAL
                         {
                             var ret = RetalhoProducaoDAO.Instance.Obter(session, retalhos[i].StrParaUint());
 
-                            if (!UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(session, ret.IdRetalhoProducao, idProdPedProducao.GetValueOrDefault()))
+                            if (!UsoRetalhoProducaoDAO.Instance.PossuiAssociacao(session, (uint)ret.IdRetalhoProducao, idProdPedProducao.GetValueOrDefault()))
                             {
                                 validacaoRetalho = ValidaRetalho(session, etiq.IdProdPedEsp, ret);
 
                                 if (string.IsNullOrEmpty(validacaoRetalho))
-                                    RetalhoProducaoDAO.Instance.AssociarProducao(session, ret.IdRetalhoProducao, idProdPedProducao.GetValueOrDefault(), idFunc);
+                                    RetalhoProducaoDAO.Instance.AssociarProducao(session, (uint)ret.IdRetalhoProducao, idProdPedProducao.GetValueOrDefault(), idFunc);
                                 else if (i < retalhos.Length)
                                     continue;
                                 else throw new Exception(validacaoRetalho);
@@ -1235,7 +1243,7 @@ namespace Glass.Data.RelDAL
             etiqueta.NumSeq = prodImp.NumSeq;
             etiqueta.BarCodeData = prodImp.NumEtiqueta;
             etiqueta.NumEtiqueta = prodImp.NumEtiqueta;
-            etiqueta.IdRetalhoProducao = prodImp.IdRetalhoProducao;
+            etiqueta.IdRetalhoProducao = (uint?)prodImp.IdRetalhoProducao;
             etiqueta.IdCorVidro = (uint?)prodImp.Cor;
             etiqueta.Espessura = (int)prodImp.Espessura;
             /* Chamado 40219. */
