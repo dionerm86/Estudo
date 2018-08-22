@@ -6777,6 +6777,35 @@ namespace Glass.UI.Web.Utils
             MensagemAlerta.ShowMsg("Feito conforme solicitado.", this);
         }
 
+        protected void btnLocalizacaoContasReceber_Click(object sender, EventArgs e)
+        {
+            var contasRecebidas = ContasReceberDAO.Instance.GetForRpt(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, null,
+                null, null, null, null, null, null, null, null, null, 0, 0, 0, 0, null,
+                true, 0, 0, null, null, 0, false, 0, 0, 0, 0, 0, 0, false, false, null, null);
+
+            using (var transaction = new GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    ContasReceberDAO.Instance.PreencheLocalizacao(transaction, ref contasRecebidas);
+
+                    transaction.Commit();
+                    transaction.Close();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao receber contas.", ex));
+                }
+            }
+
+            MensagemAlerta.ShowMsg("Feito conforme solicitado.", this);
+        }
+
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)
         //{
         //    using (var transaction = new GDATransaction())

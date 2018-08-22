@@ -1734,7 +1734,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Preenche a localização de cada conta recebida da lista
         /// </summary>
-        public void PreencheLocalizacao(GDASession session, ref ContasReceber contaReceber)
+        public void PreencheLocalizacao(GDASession session, ref ContasReceber[] lst)
         {
             var sqlContaRec = @"SELECT COALESCE(if(mb.IdMovBanco>0, Concat('Banco: ', COALESCE(cb.Nome, ''), ' Conta: ', COALESCE(cb.Conta, '')), if(cx.IdCaixaGeral>0, ' Cx. Geral', if(cd.IdCaixaDiario>0, ' Cx. Diário', ' '))), ' ') 
                 FROM contas_receber c
@@ -1814,136 +1814,136 @@ namespace Glass.Data.DAL
 
             object obj = null;
 
-            #region Conta a receber
-
-            /* Chamado 52415. */
-            /* Chamado 19832: Deve vir antes do acerto parcial*/
-            if (contaReceber.IdContaR > 0)
+            foreach (var cr in lst)
             {
-                obj = objPersistence.ExecuteScalar(session, sqlContaRec.Replace("?id", contaReceber.IdContaR.ToString()));
+                if (!string.IsNullOrWhiteSpace(cr.DestinoRec))
+                    continue;
 
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                #region Conta a receber
+
+                /* Chamado 52415. */
+                /* Chamado 19832: Deve vir antes do acerto parcial*/
+                if (cr.IdContaR > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlContaRec.Replace("?id", cr.IdContaR.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Acerto
+                #region Acerto
 
-            if (contaReceber.IdAcerto > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlAcerto.Replace("?id", contaReceber.IdAcerto.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdAcerto > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlAcerto.Replace("?id", cr.IdAcerto.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Conta antecipada
+                #region Conta antecipada
 
-            if (contaReceber.IdAntecipContaRec > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlAntecip.Replace("?id", contaReceber.IdAntecipContaRec.ToString()));
-
-                if (!String.IsNullOrEmpty(obj.ToString()) && !String.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdAntecipContaRec > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlAntecip.Replace("?id", cr.IdAntecipContaRec.ToString()));
+
+                    if (!String.IsNullOrEmpty(obj.ToString()) && !String.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Liberação
+                #region Liberação
 
-            if (contaReceber.IdLiberarPedido > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlLiberacao.Replace("?id", contaReceber.IdLiberarPedido.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdLiberarPedido > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlLiberacao.Replace("?id", cr.IdLiberarPedido.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Pedido à vista
+                #region Pedido à vista
 
-            if (contaReceber.IdPedido > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlPedido.Replace("?id", contaReceber.IdPedido.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdPedido > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlPedido.Replace("?id", cr.IdPedido.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Sinal
+                #region Sinal
 
-            if (contaReceber.IdSinal > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlSinal.Replace("?id", contaReceber.IdSinal.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdSinal > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlSinal.Replace("?id", cr.IdSinal.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Obra
+                #region Obra
 
-            if (contaReceber.IdObra > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlObra.Replace("?id", contaReceber.IdObra.ToString()).Replace("?fp", contaReceber.IdFormaPagto.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdObra > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlObra.Replace("?id", cr.IdObra.ToString()).Replace("?fp", cr.IdFormaPagto.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
-            }
 
-            #endregion
+                #endregion
 
-            #region Acerto parcial
+                #region Acerto parcial
 
-            /* Chamado 16739. */
-            if (contaReceber.IdAcertoParcial > 0)
-            {
-                obj = objPersistence.ExecuteScalar(session, sqlAcertoParcial.Replace("?id", contaReceber.IdAcertoParcial.ToString()));
-
-                if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                /* Chamado 16739. */
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.IdAcertoParcial > 0)
                 {
-                    contaReceber.DestinoRec = obj.ToString();
-                    return;
+                    obj = objPersistence.ExecuteScalar(sqlAcertoParcial.Replace("?id", cr.IdAcertoParcial.ToString()));
+
+                    if (obj != null && !string.IsNullOrWhiteSpace(obj.ToString()))
+                    {
+                        cr.DestinoRec = obj.ToString();
+                    }
                 }
+
+                #endregion
+
+                #region Conta renegociada
+
+                if (string.IsNullOrWhiteSpace(cr.DestinoRec) && cr.Renegociada)
+                    cr.DestinoRec = "Renegociada";
+
+                #endregion               
+
+                objPersistence.ExecuteCommand(session, "update contas_receber set DestinoRec=?obj where idContar=" + cr.IdContaR,
+                        new GDAParameter("?obj", cr.DestinoRec));
             }
-
-            #endregion
-
-            #region Conta renegociada
-
-            if (contaReceber.Renegociada)
-                contaReceber.DestinoRec = "Renegociada";
-
-            #endregion
-            
         }
 
         #endregion
@@ -2540,6 +2540,9 @@ namespace Glass.Data.DAL
             }
 
             #endregion
+
+            var contasReceber = new[] { contaReceber };          
+            PreencheLocalizacao(session, ref contasReceber);
 
             return mensagemRetorno;
         }
@@ -9136,9 +9139,6 @@ namespace Glass.Data.DAL
         public override int Update(GDASession session, ContasReceber objUpdate)
         {
             var old = GetElementByPrimaryKey(session, objUpdate.IdContaR);
-
-            if (!old.Recebida && objUpdate.Recebida)
-                PreencheLocalizacao(session, ref objUpdate);
 
             if (old.Recebida && !objUpdate.Recebida)
                 objUpdate.DestinoRec = null;
