@@ -45,6 +45,13 @@ namespace Glass.Data.Model
         [PersistenceProperty("SITUACAO")]
         public int Situacao { get; set; }
 
+        /// <summary>
+        /// Obtém ou define o identificador da solução de otimização associada.
+        /// </summary>
+        [PersistenceProperty("IdSolucaoOtimizacao")]
+        [PersistenceForeignKey(typeof(SolucaoOtimizacao), nameof(SolucaoOtimizacao.IdSolucaoOtimizacao))]
+        public int? IdSolucaoOtimizacao { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -57,6 +64,12 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("TIPOIMPRESSAO", DirectionParameter.InputOptional)]
         public ProdutoImpressaoDAO.TipoEtiqueta TipoImpressao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do arquivo de otimização associado.
+        /// </summary>
+        [PersistenceProperty("IdArquivoOtimizacao", DirectionParameter.InputOptional)]
+        public int? IdArquivoOtimizacao { get; set; }
 
         #endregion
 

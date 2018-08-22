@@ -49,12 +49,12 @@ namespace Glass.Otimizacao.eCutter
         /// <summary>
         /// Uri que será usada para salva os dados da solução.
         /// </summary>
-        public string SaveOptimizationUri => $"{_enderecoServico}";
+        public string SaveOptimizationUri => !IsReadOnly ? $"{_enderecoServico}" : null;
 
         /// <summary>
         /// Uri que será usada para cancelar a otimização.
         /// </summary>
-        public string CancelOptimizationUri => $"{_enderecoServico}&cancel=true";
+        public string CancelOptimizationUri => !IsReadOnly ? $"{_enderecoServico}&cancel=true" : null;
 
         /// <summary>
         /// Opções da operação de salvar a otimização.
@@ -76,6 +76,11 @@ namespace Glass.Otimizacao.eCutter
         /// Identifica se o otimizador deve ser fechado quando a otimização for salva.
         /// </summary>
         public bool CloseOnSave => true;
+
+        /// <summary>
+        /// Obtém ou define se a configuração é para somente leitura.
+        /// </summary>
+        public bool IsReadOnly { get; set; }
 
         /// <summary>
         /// Obtém ou define se é para mesclar o estoque de chapas.

@@ -624,7 +624,7 @@ namespace Glass.Data.DAL
 
         public void LogProdutoImpressao(ProdutoImpressao prodImprAtual, ProdutoImpressao prodImprNovo)
         {
-            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.ProdutoImpressao, prodImprAtual.IdProdImpressao, prodImprAtual, prodImprNovo);
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.ProdutoImpressao, (uint)prodImprAtual.IdProdImpressao, prodImprAtual, prodImprNovo);
         }
 
         /// <summary>
@@ -1224,7 +1224,7 @@ namespace Glass.Data.DAL
         public void LogRetalhoProducao(GDASession sessao, RetalhoProducao retalhoProducao, uint idFunc)
         {
             RetalhoProducao novo = RetalhoProducaoDAO.Instance.GetElementByPrimaryKey(sessao, retalhoProducao.IdRetalhoProducao);
-            InserirLog(sessao, idFunc, LogAlteracao.TabelaAlteracao.RetalhoProducao, retalhoProducao.IdRetalhoProducao, retalhoProducao, novo);
+            InserirLog(sessao, idFunc, LogAlteracao.TabelaAlteracao.RetalhoProducao, (uint)retalhoProducao.IdRetalhoProducao, retalhoProducao, novo);
         }
 
         /// <summary>

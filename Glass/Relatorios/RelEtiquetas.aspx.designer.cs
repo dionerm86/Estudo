@@ -85,6 +85,15 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.HiddenField hdfRetalhosProdutos;
         
         /// <summary>
+        /// hdfIdSolucaoOtimizacao control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdSolucaoOtimizacao;
+        
+        /// <summary>
         /// pchTabela control.
         /// </summary>
         /// <remarks>

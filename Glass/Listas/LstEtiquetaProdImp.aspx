@@ -122,7 +122,7 @@
                                         <EditItemTemplate>
                                             <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="addObs" Height="16px"
                                                 ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" CausesValidation="false" 
-                                                CommandArgument='<%# Eval("IdProdImpressao") %>' />
+                                                CommandArgument='<%# (uint)(int)Eval("IdProdImpressao") %>' />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
@@ -203,9 +203,9 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <uc1:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdProdImpressao") %>'
+                                            <uc1:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# (uint)(int)Eval("IdProdImpressao") %>'
                                                 Tabela="ProdutoImpressao" />
-                                            <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" IdRegistro='<%# Eval("IdProdImpressao") %>'
+                                            <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" IdRegistro='<%# (uint)(int)Eval("IdProdImpressao") %>'
                                                 Tabela="ProdutoImpressao" />
                                         </ItemTemplate>
                                     </asp:TemplateField>

@@ -91,7 +91,7 @@ namespace Glass.UI.Web.Controls
                         retalhos = RetalhoProducaoDAO.Instance.ObterRetalhosTelaImpressaoEtiqueta(d.IdProdPed);
     
                         if (!possuiRetorno && ((retalhos.Count == 0 && retalhosDisponiveis.Count == 0) ||
-                            (!retalhos.Exists(x => !retalhosDisponiveis.Contains(x.IdRetalhoProducao)) && retalhosDisponiveis.Count <= retalhos.Count)))
+                            (!retalhos.Exists(x => !retalhosDisponiveis.Contains((uint)x.IdRetalhoProducao)) && retalhosDisponiveis.Count <= retalhos.Count)))
                         {
                             if (fila.Count > 0 && !possuiRetorno)
                             {
@@ -112,7 +112,7 @@ namespace Glass.UI.Web.Controls
                             retalhosFolga += r.DentroFolga ? 1 : 0;
                             retornoInt.AppendFormat(@"<tr><td><input type='checkbox' value='{0}' id='chk_{3}_{0}' onclick='{4}.SelecionarRetalho(this)' {2}>
                                 <label for='chk_{3}_{0}'>{1}</label></td></tr>", r.IdRetalhoProducao, r.DescricaoRetalhoComEtiqueta,
-                                retalhosAssociados.Contains(r.IdRetalhoProducao) ? "checked='checked'" : "", d.IdProdPed, d.NomeControle);
+                                retalhosAssociados.Contains((uint)r.IdRetalhoProducao) ? "checked='checked'" : "", d.IdProdPed, d.NomeControle);
     
                             ids.AppendFormat("{0},", r.IdRetalhoProducao);
                         }

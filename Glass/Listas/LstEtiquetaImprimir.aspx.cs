@@ -49,6 +49,7 @@ namespace Glass.UI.Web.Listas
                 }
                 else if (int.TryParse(Request["idSolucaoOtimizacao"], out id))
                 {
+                    hdfIdSolucaoOtimizacao.Value = id.ToString();
                     var otimizacaoFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                         .GetInstance<Glass.Otimizacao.Negocios.IOtimizacaoFluxo>();
 

@@ -694,10 +694,10 @@ namespace Glass.PCP.Negocios.Componentes
                 throw new Exception("A etiqueta informada já deu saída na expedição.");
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, prodImpressao.IdProdImpressao) && !chapaTrocadaDisponivel)
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, (uint)prodImpressao.IdProdImpressao) && !chapaTrocadaDisponivel)
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
-            if (Glass.Data.DAL.ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, prodImpressao.IdProdImpressao))
+            if (Glass.Data.DAL.ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, (uint)prodImpressao.IdProdImpressao))
                 throw new Exception("Esta etiqueta já foi utilizada no setor de corte.");
 
             bool encontrado = false;

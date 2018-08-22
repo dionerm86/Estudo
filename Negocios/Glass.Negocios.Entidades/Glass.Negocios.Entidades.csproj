@@ -282,6 +282,8 @@
     <Compile Include="Instalacao\FixacaoVidro.cs" />
     <Compile Include="IObtemDescritor.cs" />
     <Compile Include="Orcamento\ProdutosOrcamento.cs" />
+    <Compile Include="Otimizacao\IItemPlanoCorte.cs" />
+    <Compile Include="Otimizacao\IProvedorPlanoCorte.cs" />
     <Compile Include="Otimizacao\Material.cs" />
     <Compile Include="Otimizacao\PecaPlanoCorte.cs" />
     <Compile Include="Otimizacao\PlanoCorte.cs" />
@@ -297,7 +299,7 @@
     <Compile Include="PCP\Expedicao\ExpBalcao.cs" />
     <Compile Include="PCP\Expedicao\ItemExpBalcao.cs" />
     <Compile Include="PCP\LayoutPecaOtmizada.cs" />
-    <Compile Include="PCP\Otimzacao.cs" />
+    <Compile Include="PCP\Otimizacao.cs" />
     <Compile Include="PCP\PecaOtimizada.cs" />
     <Compile Include="PCP\RoteiroProducao.cs" />
     <Compile Include="PCP\RoteiroProducaoSetor.cs" />

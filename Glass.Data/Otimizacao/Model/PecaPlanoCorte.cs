@@ -43,5 +43,11 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("Rotacionada")]
         public bool Rotacionada { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a forma da peça.
+        /// </summary>
+        [PersistenceProperty("Forma")]
+        public string Forma { get; set; }
     }
 }

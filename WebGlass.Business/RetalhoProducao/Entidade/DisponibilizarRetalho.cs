@@ -20,7 +20,7 @@
 
         public uint CodigoRetalho
         {
-            get { return _retalho.IdRetalhoProducao; }
+            get { return (uint)_retalho.IdRetalhoProducao; }
         }
 
         public string CodigoProduto

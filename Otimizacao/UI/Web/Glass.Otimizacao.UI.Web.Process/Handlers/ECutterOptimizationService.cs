@@ -131,16 +131,23 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     });
                 }
 
+                var redirectUrl = "";
                 var url = context.Request.Url.AbsoluteUri;
-                url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase));
+                //url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase));
+
                 if (importacao.Solucao != null)
-                    url += "Listas/LstEtiquetaImprimir.aspx?idsolucaootimizacao=" + importacao.Solucao.IdSolucaoOtimizacao;
+                    redirectUrl = "../Listas/LstEtiquetaImprimir.aspx?idsolucaootimizacao=" + importacao.Solucao.IdSolucaoOtimizacao;
                 
                 else
-                    url += "Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
+                    redirectUrl = "../Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
 
-                // Adiciona no resultado o token correto
-                url = url.Replace($"token={context.Request.QueryString["Token"]}", $"token={token}");
+                if (!string.IsNullOrEmpty(context.Request.QueryString["token"]))
+                    // Adiciona no resultado o token correto
+                    url = url.Replace($"token={context.Request.QueryString["Token"]}", $"token={token}");
+                else
+                    url += $"token={token}";
+
+                url += $"&confirm=true&redirect={HttpUtility.UrlEncode(redirectUrl)}";
 
                 return new eCutter.ResultadoSalvarTransacao(true, new Uri(url), new[]
                 {
@@ -274,6 +281,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             var requestType = context.Request.RequestType?.ToLower();
 
             var id = context.Request["id"];
+            var tipoId = context.Request["idtype"];
 
             // Verifica foi informado o identificador do plano de otimização
             if (string.IsNullOrEmpty(id))
@@ -403,6 +411,11 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     }
                 }
             }
+            else if (!string.IsNullOrEmpty(context.Request["confirm"]))
+            {
+                var redirect = context.Request["redirect"];
+                context.Response.Redirect(redirect);
+            }
             else
             {
                 var possuiSolucaoOtimizacao = OtimizacaoFluxo.PossuiSolucaoOtimizacao(int.Parse(id));
@@ -422,13 +435,17 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                             break;
                     }
 
+                var mergeSheetStock = 
+                    Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Externo &&
+                    !possuiSolucaoOtimizacao;
+
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(eCutter.ProtocolConfiguration));
                 serializer.Serialize(context.Response.OutputStream, 
                     new eCutter.ProtocolConfiguration(context.Request.Url, id, formato)
                     {
-                        MergeSheetStock = 
-                            Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Externo && 
-                            !possuiSolucaoOtimizacao
+                        IsReadOnly = possuiSolucaoOtimizacao,
+                        MergeSheetStock = mergeSheetStock,
+                        ConsolidateSheetStock = mergeSheetStock
                     });
 
                 context.Response.Flush();

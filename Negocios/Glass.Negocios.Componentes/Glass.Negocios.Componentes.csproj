@@ -298,6 +298,7 @@
     <Compile Include="Otimizacao\EstoqueChapa.cs" />
     <Compile Include="Otimizacao\Material.cs" />
     <Compile Include="Otimizacao\OtimizacaoFluxo.cs" />
+    <Compile Include="Otimizacao\ProvedorPlanoCorte.cs" />
     <Compile Include="Otimizacao\SessaoOtimizacao.cs" />
     <Compile Include="Fiscal\Calculadoras\CalculadoraImpostoPedidoEspelho.cs" />
     <Compile Include="PCP\CalculadoraRentabilidadePedidoEspelho.cs" />
