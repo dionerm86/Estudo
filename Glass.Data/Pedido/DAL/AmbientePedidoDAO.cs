@@ -16,7 +16,7 @@ namespace Glass.Data.DAL
         private string Sql(uint idAmbientePedido, uint idPedido, bool isRelatorioPcp, bool apenasAmbientesComProdutos, bool selecionar)
         {
             string campos = selecionar ? @"a.*, p.codInterno, ip.obs as obsProj, pp.totalProdutos, pp.valorAcrescimo,
-                pp.valorDesconto, pp.totM, ea.codInterno as codAplicacao, ep.codInterno as codProcesso" : "count(*)";
+                pp.valorDesconto, pp.totM, ea.codInterno as codAplicacao, ep.codInterno as codProcesso, pp.totalProdutos" : "count(*)";
 
             string sql = "Select " + campos + " From ambiente_pedido" + (isRelatorioPcp ? "_espelho" : String.Empty) + @" a
                 " + (selecionar ? (isRelatorioPcp ? @"Left Join ambiente_pedido a1 On (a.idAmbientePedidoOrig=a1.idAmbientePedido)" : String.Empty) + @"
