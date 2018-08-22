@@ -2984,6 +2984,14 @@ namespace Glass.Data.Model
             }
         }
 
+        public bool TemProdutoTemperado
+        {
+            get
+            {
+                return ProdutosPedidoDAO.Instance.TemProdutoTemperado(IdPedido);
+            }
+        }
+
         public decimal ValorComissaoGerentePagar { get; set; }
 
         public decimal ValorComissaoGerentePago { get; set; }
@@ -2992,7 +3000,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return TemProdutoLamComposicao || TemEspelho;
+                return TemProdutoLamComposicao || TemEspelho || TemProdutoTemperado;
             }
         }
 

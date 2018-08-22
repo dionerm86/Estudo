@@ -3828,6 +3828,43 @@ namespace Glass.Data.DAL
                     return retornoPlanoCorte.Substring(separador.Length);
                 }
 
+                // Para retalhos lidos a partir de uma materia-prima
+                if (setor.Corte && codEtiqueta.StartsWith("R") && !string.IsNullOrEmpty(codMateriaPrima) && codMateriaPrima != "N0-0.0/0")
+                {
+                    codMateriaPrima = codMateriaPrima != null ? codMateriaPrima.Trim() : string.Empty;
+
+                    if (String.IsNullOrEmpty(codMateriaPrima))
+                        throw new Exception("Informe a matéria-prima usada para o corte.");
+
+                    var tipoEtiquetaMateriaPrima = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(codMateriaPrima);
+
+                    // Só verifica se a chapa foi perdida se a etiqueta de matéria-prima
+                    // for uma etiquta de nota fiscal (chapa de vidro)
+                    if (tipoEtiquetaMateriaPrima == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal &&
+                        PerdaChapaVidroDAO.Instance.IsPerda(sessao, codMateriaPrima))
+                        throw new Exception("A etiqueta da matéria-prima esta marcada como perdida.");
+
+                    var produtoImpressaoChapa = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(sessao, codMateriaPrima, tipoEtiquetaMateriaPrima);
+
+                    if (produtoImpressaoChapa == null)
+                        throw new Exception("Etiqueta da matéria-prima não encontrada.");
+
+                    var produtoNotaFiscal = ProdutosNfDAO.Instance.GetElement(sessao, produtoImpressaoChapa.IdProdNf.GetValueOrDefault());
+                    var retalhoProducao = RetalhoProducaoDAO.Instance.Obter(sessao, uint.Parse(codEtiqueta.Substring(1, codEtiqueta.IndexOf("-") - 1)));
+
+                    var produtoImpressao = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(sessao, codEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
+                    produtoImpressao.Lote = produtoNotaFiscal.Lote;
+
+                    ProdutoImpressaoDAO.Instance.Update(produtoImpressao);
+
+                    retalhoProducao.Situacao = SituacaoRetalhoProducao.Disponivel;
+                    retalhoProducao.IdProdNf = produtoNotaFiscal.IdProdNf;
+
+                    RetalhoProducaoDAO.Instance.Update(retalhoProducao);
+
+                    return retalhoProducao.Descricao + " " + retalhoProducao.Largura + "x" + retalhoProducao.Altura + " (" + codEtiqueta + ")";
+                }
+
                 if (PecaEstaCancelada(sessao, codEtiqueta))
                     throw new Exception("Esta peça teve sua impressão cancelada pelo PCP.");
 
