@@ -361,6 +361,8 @@ namespace Glass.Data.Helper
             {
                 itens.Add(Config.ConfigEnum.NumDiasAnteriorVencContaRecEnviarEmailCli);
                 itens.Add(Config.ConfigEnum.NumDiasAposVencContaRecEnviarEmailCli);
+                itens.Add(Config.ConfigEnum.EnviarEmailCobrancaApenasContasComPlanoContasBoleto);
+                itens.Add(Config.ConfigEnum.MaximoDiasEnviarEmailCobrancaAposVencimento);
             }
 
             if (!PedidoConfig.LiberarPedido)

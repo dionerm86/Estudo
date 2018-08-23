@@ -533,5 +533,21 @@ namespace Glass.Configuracoes
                 return null;
             }
         }
+
+        /// <summary>
+        /// Define se serão enviados e-mails de cobrança apenas para contas do plano de contas de boleto
+        /// </summary>
+        public static bool EnviarEmailCobrancaApenasContasComPlanoContasBoleto
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.EnviarEmailCobrancaApenasContasComPlanoContasBoleto); }
+        }
+
+        /// <summary>
+        /// Define até quantos dias após o vencimento do título o sistema continuará enviando o e-mail de cobrança.
+        /// </summary>
+        public static int? MaximoDiasEnviarEmailCobrancaAposVencimento
+        {
+            get { return Config.GetConfigItem<int?>(Config.ConfigEnum.MaximoDiasEnviarEmailCobrancaAposVencimento); }
+        }
     }
 }
