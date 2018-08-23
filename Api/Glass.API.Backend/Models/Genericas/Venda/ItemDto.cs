@@ -133,13 +133,6 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         public ComposicaoDto Composicao { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se os beneficiamentos serão aplicados na composição.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("aplicarBenefComposicao")]
-        public bool AplicarBenefComposicao { get; set; }
-
-        /// <summary>
         /// Recupera um objeto IdCodigoDto de acordo com os valores informados.
         /// </summary>
         /// <param name="id">O identificador do item.</param>

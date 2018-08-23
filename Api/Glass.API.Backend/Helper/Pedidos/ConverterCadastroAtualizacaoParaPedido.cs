@@ -75,7 +75,7 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             if (this.cadastro.Entrega != null)
             {
-                destino.TipoEntrega = this.cadastro.Entrega.Tipo ?? destino.TipoEntrega;
+                destino.TipoEntrega = this.cadastro.Entrega.Tipo?.Id ?? destino.TipoEntrega;
                 destino.DataEntrega = this.cadastro.Entrega.Data ?? destino.DataEntrega;
                 destino.ValorEntrega = this.cadastro.Entrega.Valor ?? destino.ValorEntrega;
             }
@@ -96,10 +96,12 @@ namespace Glass.API.Backend.Helper.Pedidos
                     if (this.cadastro.FormaPagamento.Parcelas.Detalhes != null)
                     {
                         destino.DatasParcelas = this.cadastro.FormaPagamento.Parcelas.Detalhes
+                            .OrderBy(d => d.Data)
                             .Select(d => d.Data)
                             .ToArray();
 
                         destino.ValoresParcelas = this.cadastro.FormaPagamento.Parcelas.Detalhes
+                            .OrderBy(d => d.Data)
                             .Select(d => d.Valor)
                             .ToArray();
                     }

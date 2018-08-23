@@ -26,6 +26,7 @@ namespace Glass.API.Backend.Atributos
             }
 
             actionExecutedContext.Response.Headers.CacheControl.NoCache = true;
+            actionExecutedContext.Response.Headers.CacheControl.NoStore = true;
         }
     }
 }
