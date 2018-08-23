@@ -114,14 +114,37 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var vendedores = FuncionarioDAO.Instance.GetMedidores()
+                var medidores = FuncionarioDAO.Instance.GetMedidores()
                     .Select(f => new IdNomeDto
                     {
                         Id = f.IdFunc,
                         Nome = f.Nome,
                     });
 
-                return this.Lista(vendedores);
+                return this.Lista(medidores);
+            }
+        }
+
+        /// <summary>
+        /// Obtém uma lista de liberadores de pedido.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos liberadores de pedido.</returns>
+        [HttpGet]
+        [Route("liberadores")]
+        [SwaggerResponse(200, "Liberadores de pedido encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Liberadores de pedido não encontrados.")]
+        public IHttpActionResult ObterLiberadoresDePedido()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var liberadores = FuncionarioDAO.Instance.GetFuncLiberacao()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(liberadores);
             }
         }
 

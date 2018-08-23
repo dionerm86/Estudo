@@ -8,6 +8,10 @@ namespace Glass.UI.Web.Controls
 {
     public partial class ctrlBoleto : BaseUserControl
     {
+        /*
+         * ATENÇÃO!!! CONTROLE JÁ MIGRADO PARA O VUE, PROCURAR POR "ControleBoleto.html" e "ControleBoleto.js".
+         */
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -30,12 +34,12 @@ namespace Glass.UI.Web.Controls
 
             foreach (var idPedNf in idsPedidosNf)
             {
-                var idLiberarPedido = LiberarPedidoDAO.Instance.ObterIdLiberarPedidoParaImpressaoBoletoNFe((int)idPedNf, codigoNotaFiscal.StrParaInt()).GetValueOrDefault();
+                var idLiberarPedido = LiberarPedidoDAO.Instance.ObterIdLiberarPedidoParaImpressaoBoletoNFe(null, (int)idPedNf, codigoNotaFiscal.StrParaInt()).GetValueOrDefault();
 
                 if(idLiberarPedido == 0)
                     throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} não possui uma liberação vinculada.", idPedNf));
 
-                if(PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido((uint)idLiberarPedido).Length == 0)
+                if(PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(null, (uint)idLiberarPedido).Length == 0)
                     throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois a liberação: {0} não esta vinculada a mesma.", idLiberarPedido));
 
                 foreach (var idPedLib in ProdutosLiberarPedidoDAO.Instance.GetIdsPedidoByLiberacao(null, (uint)idLiberarPedido))
