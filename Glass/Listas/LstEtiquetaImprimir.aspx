@@ -23,7 +23,7 @@
         }
     </style>
 
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=1" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jquery-1.9.0.min.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/Scripts/jquery/jlinq/jlinq.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"></script>
@@ -243,7 +243,7 @@
             - Utils/SelPedidoEspelhoImpressaoEtiqueta, na funçao ASP lnkAddAll_Click
         */
         function setProdEtiqueta(idProdPed, idAmbiente, idPedido, idProdNf, idNf, descrProd, codProc, codApl, qtd, qtdImpresso, 
-            qtdImprimir, altura, largura, obs, totM, planoCorte, selInstWin, arquivoOtimizado, etiquetas, atualizarTotais, totMCalc, lote) {
+            qtdImprimir, altura, largura, obs, totM, planoCorte, selInstWin, arquivoOtimizado, etiquetas, atualizarTotais, totMCalc, lote, podeExcluir) {
             
             document.getElementById("tabelaAlteraDataFab").style.display = "";
             
@@ -330,13 +330,13 @@
                 // Adiciona item à tabela com o plano de corte
                 addItem(new Array(idUsar, descrProd, largura + " x " + altura, totM, isPedido ? totMCalc : null, codProc, codApl, qtd, qtdImpresso, inputQtdImp, planoCorte, inputObs, '', linkRetalhos),
                     new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M²', isPedido ? 'Tot. M² Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. já impresso', 'Qtd. a imprimir', 'Plano Corte', 'Obs', '', ''),
-                    'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true);
+                    'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true, podeExcluir);
             }
             else {
                 // Adiciona item à tabela
                 addItem(new Array(idUsar, descrProd, largura + " x " + altura, totM, isPedido ? totMCalc : null, codProc, codApl, qtd, qtdImpresso, inputQtdImp, inputObs, isPedido ? null : lote, '', linkRetalhos),
                     new Array(textoEtiqueta, 'Produto', 'Largura x Altura', 'Tot. M²', isPedido ? 'Tot. M² Calc.' : null, 'Proc.', 'Apl.', 'Qtd.', 'Qtd. já impresso', 'Qtd. a imprimir', 'Obs', isPedido ? null : 'Lote', '', ''),
-                    'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true);
+                    'lstProd', etiqRepos + id, "hdfIdProdPedNf", null, null, "callbackRemover", true, podeExcluir);
             }
             
             // Verifica as etiquetas exportadas
@@ -1109,7 +1109,7 @@
                         item.DescricaoProduto, item.CodProcesso, item.CodAplicacao, item.Qtd,
                         item.QtdImpresso, item.QtdImprimir, item.Altura, item.Largura, 
                         item.Obs, item.TotM2, item.PlanoCorte, null, item.ArquivoOtimizado, 
-                        item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote);
+                        item.Etiquetas, item.AtualizarTotais, item.TotMCalc, item.Lote, false);
                 } else {
 
                     if (!exibirRetalhos) {
