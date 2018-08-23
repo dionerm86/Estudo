@@ -12728,14 +12728,15 @@ namespace Glass.Data.DAL
                 if (dataBase == null || dataBase.Value.Ticks == 0)
                     dataBase = DateTime.Now;
 
-                DateTime? dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataBase.Value.Date);
+                tipoPedido = tipoPedido != null ? tipoPedido : idPedido > 0 ? (int?)GetTipoPedido(session, idPedido.Value) : null;
+
+                DateTime? dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataBase.Value.Date, (Pedido.TipoPedidoEnum)tipoPedido);
 
                 dataEntregaMinima = dataBase.Value.Date;
                 dataFastDelivery = dataBase.Value.Date;
                 desabilitarCampo = PedidoConfig.DataEntrega.BloquearDataEntregaPedidoVendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega)
                     && !UserInfo.GetUserInfo.IsAdministrador;
-
-                tipoPedido = tipoPedido != null ? tipoPedido : idPedido > 0 ? (int?)GetTipoPedido(session, idPedido.Value) : null;
+                
                 int numeroDiasUteisMinimoConfig = tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda :
                     tipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoMaoDeObra :
                     PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido;
@@ -12874,7 +12875,7 @@ namespace Glass.Data.DAL
                         (idPedido > 0 && (tipoEntrega ?? ObtemTipoEntrega(session, idPedido.Value)) != (int)Pedido.TipoEntregaPedido.Balcao)))
                     {
                         if (dataRota < dataEntregaMinima)
-                            dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataEntregaMinima, !considerouDiasUteisSubgrupo);
+                            dataRota = RotaDAO.Instance.GetDataRota(session, idCli, dataEntregaMinima, !considerouDiasUteisSubgrupo, (Pedido.TipoPedidoEnum)tipoPedido);
 
                         valido = dataRota.Value.Date == dataEntregaMinima.Date;
 
@@ -15753,7 +15754,8 @@ namespace Glass.Data.DAL
                     PrazoEntrega = orcamento.PrazoEntrega,
                     DataEntrega = (GetDataEntregaMinima(sessao, orcamento.IdCliente.Value, null, orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda), orcamento.TipoEntrega,
                         out dataEntrega, out dataFastDelivery) ?
-                        dataEntrega : RotaDAO.Instance.GetDataRota(sessao, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now)) ?? orcamento.DataEntrega,
+                        dataEntrega : RotaDAO.Instance.GetDataRota(sessao, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now,
+                        (Pedido.TipoPedidoEnum)orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda))) ?? orcamento.DataEntrega,
                     IdMedidor = idMedicaoMaisRecente > 0 ? MedicaoDAO.Instance.GetMedidor(sessao, (uint)idMedicaoMaisRecente) : null,
                     PercentualComissao = PedidoConfig.Comissao.PerComissaoPedido ? ClienteDAO.Instance.ObtemPercentualComissao(sessao, orcamento.IdCliente.Value) : 0,
 

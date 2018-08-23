@@ -97,13 +97,6 @@ namespace Glass.Otimizacao.Negocios
         /// <returns></returns>
         IEnumerable<ItemOtimizacao> ObterItensPelaSolucao(int idSolucaoOtimizacao);
 
-        /// <summary>
-        /// Recupera os itens da otimização.
-        /// </summary>
-        /// <param name="idArquivoOtimizacao">Identificador do arquivo da otimização no qual os itens estão associados.</param>
-        /// <returns></returns>
-        IEnumerable<ItemOtimizacao> ObterItens(int idArquivoOtimizacao);
-        
         #endregion
     }
 }

@@ -2111,9 +2111,6 @@ namespace Glass.Data.DAL
                 // Gera uma nova impressão
                 idImpressao = Insert(session, impressao);
 
-                if (idSolucaoOtimizacao.HasValue)
-                    ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
-
                 ProdutoImpressao prodImp;
 
                 // Salva quais produtos e com qual qtde foram impressos
@@ -2260,6 +2257,9 @@ namespace Glass.Data.DAL
                     if (!idsAmbPedAlterados.Contains(lstIdAmbPed[i]))
                         idsAmbPedAlterados.Add(lstIdAmbPed[i]);
                 }
+
+                if (idSolucaoOtimizacao.HasValue)
+                    ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
 
                 return idImpressao;
             }

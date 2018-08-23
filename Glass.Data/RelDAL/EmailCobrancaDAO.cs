@@ -15,9 +15,20 @@ namespace Glass.Data.RelDAL
 
         #region SQL para recuperar contas a receber
 
-        private string SqlVencidas(string data)
+        private string SqlVencidas(string data, string dataMax)
         {
-            return @"
+            ///Verifica se é para buscar apenas contas de boletos
+            var apenasContasBoletos = FinanceiroConfig.EnviarEmailCobrancaApenasContasComPlanoContasBoleto;
+
+            ///Busca todos os plano de contas de boleto
+            var planosContasBoletos = UtilsPlanoConta.ContasTodosTiposBoleto();
+            
+            var where = apenasContasBoletos ? $"AND cr.IdConta IN ({planosContasBoletos}) " : string.Empty;
+
+            if (!string.IsNullOrWhiteSpace(dataMax))
+                where += $" AND DATE(cr.dataVec) >= {dataMax}";
+
+            return $@"
                 SELECT COUNT(*) as NumContasVec, SUM(cr.valorVec) as ValorContasVec,
                     0 as NumContasVecHoje, 0 as ValorContasVecHoje,
                     0 as NumContasAVec, 0 as ValorContasAVec,
@@ -28,7 +39,7 @@ namespace Glass.Data.RelDAL
                     AND cr.ValorVec>0
                     AND coalesce(isParcelaCartao,false)=false
                     AND !coalesce(cli.NaoReceberEmailCobrancaVencida, false) 
-                    AND DATE(cr.dataVec) <= '" + data + @"'
+                    AND DATE(cr.dataVec) <= '" + data + where + $@"'
                 GROUP BY cli.id_Cli";
         }
 
@@ -70,11 +81,13 @@ namespace Glass.Data.RelDAL
         {
             uint? numDiasAntVenc = FinanceiroConfig.NumDiasAnteriorVencContaRecEnviarEmailCli;
             uint? numDiasAposVenc = FinanceiroConfig.FormaPagamento.NumDiasAposVencContaRecEnviarEmailCli;
+            int? numDiasMaxAposVenc = FinanceiroConfig.MaximoDiasEnviarEmailCobrancaAposVencimento;
 
             DateTime dtHoje = DateTime.Now;
 
             string dtAVec = numDiasAntVenc.HasValue && numDiasAntVenc.Value > 0 ? dtHoje.AddDays(numDiasAntVenc.Value).ToString("yyyy-MM-dd") : "";
             string dtVencida = numDiasAposVenc.HasValue && numDiasAposVenc > 0 ? dtHoje.AddDays(-numDiasAposVenc.Value).ToString("yyyy-MM-dd") : "";
+            string dataMaxVenc = numDiasMaxAposVenc.HasValue && numDiasMaxAposVenc > 0 ? dtHoje.AddDays(-numDiasMaxAposVenc.Value).ToString("yyyy-MM-dd") : string.Empty;
 
             return @"
                 SELECT NomeCli, idCliente, emailCobranca,
@@ -83,7 +96,7 @@ namespace Glass.Data.RelDAL
                     SUM(NumContasAVec) as NumContasAVec, SUM(ValorContasAVec) as ValorContasAVec
                 FROM (
                     " + SqlVecHoje(dtHoje.ToString("yyyy-MM-dd"))
-                      + (!string.IsNullOrEmpty(dtVencida) ? " UNION ALL " + SqlVencidas(dtVencida) : "")
+                      + (!string.IsNullOrEmpty(dtVencida) ? " UNION ALL " + SqlVencidas(dtVencida, dataMaxVenc) : "")
                       + (!string.IsNullOrEmpty(dtAVec) ? " UNION ALL " + SqlAVec(dtAVec) : "") + @"
                 ) as tmp
                 GROUP BY idCliente";

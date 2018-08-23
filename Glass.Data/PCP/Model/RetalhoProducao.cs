@@ -74,7 +74,8 @@ namespace Glass.Data.Model
         public uint? IdProdNf { get; set; }
 
         [PersistenceProperty("IdProd")]
-        public uint IdProd { get; set; }
+        [PersistenceForeignKey(typeof(Produto), nameof(Produto.IdProd))]
+        public int IdProd { get; set; }
 
         [PersistenceProperty("Situacao")]
         public SituacaoRetalhoProducao Situacao { get; set; }
@@ -158,6 +159,7 @@ namespace Glass.Data.Model
                     case SituacaoRetalhoProducao.EmEstoque: return "Em estoque";
                     case SituacaoRetalhoProducao.Vendido: return "Vendido";
                     case SituacaoRetalhoProducao.Perda: return "Perda";
+                    case SituacaoRetalhoProducao.Indisponivel: return "Indisponível";
                 }
 
                 return "";
@@ -200,7 +202,7 @@ namespace Glass.Data.Model
             get
             {
                 if (_totM == null)
-                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(Largura, Altura, 1, (int)IdProd, false, 0, false);
+                    _totM = Glass.Global.CalculosFluxo.ArredondaM2(Largura, Altura, 1, IdProd, false, 0, false);
 
                 return _totM.GetValueOrDefault();
             }

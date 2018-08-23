@@ -30,7 +30,7 @@
         /// </summary>
         public uint IdProd
         {
-            get { return retalho.IdProd; }
+            get { return (uint)retalho.IdProd; }
         }
 
         /// <summary>

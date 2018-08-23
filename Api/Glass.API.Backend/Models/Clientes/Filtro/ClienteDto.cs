@@ -38,7 +38,7 @@ namespace Glass.API.Backend.Models.Clientes.Filtro
 
             this.Rota = new RotaDto
             {
-                Data = RotaDAO.Instance.GetDataRota((uint)cliente.IdCli, DateTime.Now),
+                Data = RotaDAO.Instance.GetDataRota((uint)cliente.IdCli, DateTime.Now, null),
                 EntregaBalcao = cliente.IdRota > 0 ? (bool?)RotaDAO.Instance.ObterEntregaBalcao(cliente.IdRota.Value) : null,
                 Entrega = PedidoConfig.TelaCadastro.MarcarPedidosRotaComoEntrega
                     && RotaClienteDAO.Instance.IsClienteAssociado((uint)cliente.IdCli),

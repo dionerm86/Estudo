@@ -498,13 +498,13 @@ namespace Glass.Data.DAL
             }
 
             var sql = $@"
-                select count(pp.*)
+                select count(*)
                 from produtos_pedido pp
                     join produto p on (pp.idProd = p.idProd)
                 where pp.idPedido={idPedido}
                     and (
-                        pp.idProdParent is null
-                        or pp.idProdParent = 0
+                        pp.IDPRODPEDPARENT is null
+                        or pp.IDPRODPEDPARENT = 0
                     )
                     and p.idGrupoProd={(int)NomeGrupoProd.Vidro}
                     and (
@@ -512,7 +512,7 @@ namespace Glass.Data.DAL
                         or p.espessura <> {espessura}
                     )";
 
-            return this.ExecuteScalar<int>(sessao, sql) > 0;
+            return ExecuteScalar<int>(sessao, sql) == 0;
         }
 
         #endregion
@@ -5010,6 +5010,27 @@ namespace Glass.Data.DAL
                     INNER JOIN produto p ON (pp.IdProd = p.IdProd)
                     INNER JOIN subgrupo_prod sgp ON (p.IdSubgrupoProd = sgp.IdSubgrupoProd)
                 WHERE sgp.TipoSubGrupo IN (" + (int)TipoSubgrupoProd.VidroDuplo + "," + (int)TipoSubgrupoProd.VidroLaminado + @")
+                    AND pp.IdPedido = " + idPedido;
+
+            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+        }
+
+        public bool TemProdutoTemperado(uint idPedido)
+        {
+            return TemProdutoTemperado(null, idPedido);
+        }
+
+        /// <summary>
+        /// Verifica se o pedido possui algum produto que seja "Temperado"
+        /// </summary>
+        public bool TemProdutoTemperado(GDASession session, uint idPedido)
+        {
+            var sql = @"
+                SELECT COUNT(*)
+                FROM produtos_pedido pp
+                    INNER JOIN produto p ON (pp.IdProd = p.IdProd)
+                    INNER JOIN subgrupo_prod sgp ON (p.IdSubgrupoProd = sgp.IdSubgrupoProd)
+                WHERE sgp.IsVidroTemperado
                     AND pp.IdPedido = " + idPedido;
 
             return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;

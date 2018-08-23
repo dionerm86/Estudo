@@ -1,7 +1,7 @@
 ﻿var countItem = new Object();
 
 // Inclui item na tabela dinamicamente
-function addItem(items, itemsName, nomeTabela, objId, hdfObjIdName, valor, lblValor, callbackExcluir, inserirTopo) {
+function addItem(items, itemsName, nomeTabela, objId, hdfObjIdName, valor, lblValor, callbackExcluir, inserirTopo, podeExcluir) {
 
     // Monta tabela dinamicamente
     var tabela = document.getElementById(nomeTabela);
@@ -68,8 +68,11 @@ function addItem(items, itemsName, nomeTabela, objId, hdfObjIdName, valor, lblVa
     // Adiciona botão excluir na coluna 1 da linha que está sendo inserida
     cell = row.insertCell(0);
     callbackExcluir = typeof callbackExcluir != 'undefined' && callbackExcluir != null && callbackExcluir != "" ? callbackExcluir : "";
-    cell.innerHTML = "<a href=\"#\" onclick=\"return removeItem(" + countItem[nomeTabela] + ",'" + nomeTabela + "', '" + callbackExcluir + "');\">" +
-        "<img src=\"../Images/ExcluirGrid.gif\" border=\"0\" title=\"Excluir\"/></a>";
+
+    if (typeof podeExcluir == 'undefined' || podeExcluir) {
+        cell.innerHTML = "<a href=\"#\" onclick=\"return removeItem(" + countItem[nomeTabela] + ",'" + nomeTabela + "', '" + callbackExcluir + "');\">" +
+            "<img src=\"../Images/ExcluirGrid.gif\" border=\"0\" title=\"Excluir\"/></a>";
+    }
 
     // Adiciona o item passado na tabela
     for (i = 0; i < items.length; i++) {

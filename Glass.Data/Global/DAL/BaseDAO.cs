@@ -849,7 +849,14 @@ namespace Glass.Data.DAL
                         continue;
 
                     if (a[0].Name == objPersistence.Keys[0].Name)
-                        return (uint)p.GetValue(obj, null);
+                    {
+                        var value = p.GetValue(obj, null);
+
+                        if (value is int)
+                            return (uint)(int)value;
+                        else
+                            return (uint)value;
+                    }
                 }
             }
             catch { }

@@ -292,11 +292,13 @@ namespace Glass.UI.Web.Cadastros.Producao
                         ClientScript.RegisterStartupScript(typeof(string), "anexo", "document.getElementById(\"lnkAnexo\").onclick();", true);
     
                     lblTitleCliente.Text = "Cliente: ";
+                    lblTitleVendedor.Text = "Vendedor: ";
                     lblTitlePeca.Text = "Peça: ";
                     lblTitleApl.Text = "Aplicação: ";
                     lblTitleProc.Text = "Processo: ";
     
                     lblCliente.Text = ClienteDAO.Instance.GetByPedido(prodPed.IdPedido).Nome;
+                    lblVendedor.Text = PedidoDAO.Instance.ObtemNomeFuncResp(null, prodPed.IdPedido);
                     lblPeca.Text = prodPed.DescrProduto + " " + prodPed.LarguraProducao + "x" + prodPed.AlturaProducao;
                     lblApl.Text = prodPed.CodAplicacao;
                     lblProc.Text = prodPed.CodProcesso;
@@ -338,11 +340,13 @@ namespace Glass.UI.Web.Cadastros.Producao
             txtCodPeca.Text = String.Empty;
     
             lblTitleCliente.Text = String.Empty;
+            lblTitleVendedor.Text = string.Empty;
             lblTitlePeca.Text = String.Empty;
             lblTitleApl.Text = String.Empty;
             lblTitleProc.Text = String.Empty;
     
             lblCliente.Text = String.Empty;
+            lblVendedor.Text = String.Empty;
             lblPeca.Text = String.Empty;
             lblApl.Text = String.Empty;
             lblProc.Text = String.Empty;

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Gerar Arquivo de Remessa" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="GerarArquivoRemessa.aspx.cs" Inherits="Glass.UI.Web.Utils.GerarArquivoRemessa" %>
+<%@ Page Title="Gerar Arquivo de Remessa" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="GerarArquivoRemessa.aspx.cs" Inherits="Glass.UI.Web.Utils.GerarArquivoRemessa" %>
 
 <%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc2" %>
@@ -26,9 +26,6 @@
             var idContaBancoCliente = FindControl("drpContaCliente", "select").value;
             var incluirContasAcertoParcial = FindControl("chkIncluirContasAcertoParcial", "input").checked;
             var incluirContasAntecipacaoBoleto = FindControl("chkIncluirContasAntecipacaoBoleto", "input").checked;
-
-            //Apaga os dados de hdfIdsContas para que caso eu filtre dados novamente na tela não considere contas antigas apenas as filtradas no momento.
-            FindControl("hdfIdsContas", "input").value = "";
 
             var contas = GerarArquivoRemessa.GetContas(tipoPeriodo, dataIni, dataFim, tiposConta, tipoContaSemSeparacao, formasPagto,
                 idCliente, nomeCliente, loja, idContaBancoCliente, "", incluirContasAcertoParcial, incluirContasAntecipacaoBoleto).value.split("\n");
