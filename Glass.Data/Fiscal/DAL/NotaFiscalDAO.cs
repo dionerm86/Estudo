@@ -2847,7 +2847,7 @@ namespace Glass.Data.DAL
                         ManipulacaoXml.SetNode(doc, dest, "idEstrangeiro", fornec.PassaporteDoc);
                     }
                     else
-                        ManipulacaoXml.SetNode(doc, dest, pj ? "CNPJ" : "CPF", Formatacoes.TrataStringDocFiscal(cpfCnpj));
+                        ManipulacaoXml.SetNode(doc, dest, pj ? "CNPJ" : "CPF", nf.TipoAmbiente == 2 ? "99.999.999/0001-91" : Formatacoes.TrataStringDocFiscal(cpfCnpj));
                     ManipulacaoXml.SetNode(doc, dest, "xNome",
                     nf.TipoAmbiente == 2 ? "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL" : Formatacoes.TrataStringDocFiscal(nome));
                     XmlElement enderDest = doc.CreateElement("enderDest");

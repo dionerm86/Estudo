@@ -132,7 +132,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Obtém o código interno do produto associado com o retalho.
         /// </summary>
-        /// <param name="retalho"></param>
+        /// <param name="retalho">Retalho base que será usado para recuperar o código interno do produto.</param>
         /// <returns></returns>
         private string ObterCodInternoProduto(Entidades.RetalhoPlanoCorte retalho)
         {
@@ -167,6 +167,14 @@ namespace Glass.Otimizacao.Negocios.Componentes
             if (produto == null)
             {
                 produto = (Global.Negocios.Entidades.Produto)planoOtimizacao.Produto.Clone();
+                produto.ProdutoBeneficiamentos.Clear();
+                produto.BaixasEstoque.Clear();
+                produto.BaixasEstoqueFiscal.Clear();
+                produto.Mva.Clear();
+                produto.AliquotasIcms.Clear();
+                produto.NCMs.Clear();
+                produto.FlagArqMesaProduto.Clear();
+
                 produto.ResetAllUids();
                 produto.Altura = (int)retalho.Altura;
                 produto.Largura = (int)retalho.Largura;
