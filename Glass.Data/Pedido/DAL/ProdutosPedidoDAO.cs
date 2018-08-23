@@ -4824,15 +4824,30 @@ namespace Glass.Data.DAL
                 }
 
                 if (SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)objUpdate.IdProd) == TipoSubgrupoProd.VidroLaminado)
+                {
                     foreach (var pp in ObterFilhosComposicao(sessao, (int)objUpdate.IdProdPed))
                     {
+                        var composicaoAlterada = false;
+
                         if (pp.Altura != objUpdate.Altura || pp.Largura != objUpdate.Largura)
                         {
                             pp.Altura = objUpdate.Altura;
                             pp.Largura = objUpdate.Largura;
+                            composicaoAlterada = true;
+                        }
+
+                        if (objUpdate.AplicarBenefComposicao)
+                        {
+                            pp.Beneficiamentos = objUpdate.Beneficiamentos;
+                            composicaoAlterada = true;
+                        }
+
+                        if (composicaoAlterada)
+                        {
                             Update(sessao, pp);
                         }
                     }
+                }
 
                 /* Chamado 25620. */
                 if (atualizarAmbienteBeneficiamento)

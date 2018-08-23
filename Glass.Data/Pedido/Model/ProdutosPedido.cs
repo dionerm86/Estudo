@@ -1306,6 +1306,9 @@ namespace Glass.Data.Model
             get { return Peso; }
         }
 
+        [XmlIgnore]
+        public bool AplicarBenefComposicao { get; set; }
+
         #endregion
 
         #region Propriedades do Beneficiamento
