@@ -1,4 +1,4 @@
-﻿// <copyright file="DetalheDto.cs" company="Sync Softwares">
+// <copyright file="DetalheDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -64,6 +64,7 @@ namespace Glass.API.Backend.Models.Pedidos.Configuracoes
             this.TipoEntregaPadrao = PedidoConfig.TipoEntregaPadraoPedido;
             this.PerguntarVendedorFinalizacaoFinanceiro = FinanceiroConfig.PerguntarVendedorFinalizacaoFinanceiro;
             this.IdClienteProducao = (int)ClienteDAO.Instance.GetClienteProducao();
+            this.ObrigarInformarPedidoCliente = PedidoConfig.DadosPedido.ObrigarInformarPedidoCliente;
 
             this.TipoEntregaBalcao = Data.Model.Pedido.TipoEntregaPedido.Balcao;
             this.TipoPedidoVenda = Data.Model.Pedido.TipoPedidoEnum.Venda;
@@ -438,6 +439,13 @@ namespace Glass.API.Backend.Models.Pedidos.Configuracoes
         [DataMember]
         [JsonProperty("acrescimoDescontoItens")]
         public bool AcrescimoDescontoItens { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o código do Ped. Cli. deve ser informado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("obrigarInformarPedidoCliente")]
+        public bool ObrigarInformarPedidoCliente { get; set; }
 
         private string ObterCorParaHtml(Color cor)
         {
