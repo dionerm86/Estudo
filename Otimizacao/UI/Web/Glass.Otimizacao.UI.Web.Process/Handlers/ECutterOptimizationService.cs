@@ -363,9 +363,12 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             // Verifica se foi informado o arquivo para download
             else if (!string.IsNullOrEmpty(context.Request["optimizationplan"]))
             {
-                var solucaoOtimizacao = OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(int.Parse(id));
-                var nomeSolucaoOtimizacao = string.Format("W{0}",
-                    id.Length > 3 ? id.Substring(id.Length - 3) : id);
+                var idArquivoOtimizacao = int.Parse(id);
+                var solucaoOtimizacao = OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(idArquivoOtimizacao);
+                
+                // O nome da solução será gerado com base no identificador do arquivo de otimização
+                // codificado sobre a base 32.
+                var nomeSolucaoOtimizacao = Data.Helper.Utils.BytesToBase32(System.BitConverter.GetBytes(idArquivoOtimizacao).Take(3).ToArray());
 
                 if (solucaoOtimizacao != null)
                 {

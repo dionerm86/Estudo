@@ -1130,6 +1130,12 @@
                                                                         </tr>
                                                                         <tr>
                                                                             <td align="left">
+                                                                                <asp:Label ID="lblTitleVendedor" runat="server" Font-Bold="True"></asp:Label>
+                                                                                <asp:Label ID="lblVendedor" runat="server"></asp:Label>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td align="left">
                                                                                 <asp:Label ID="lblTitlePeca" runat="server" Font-Bold="True"></asp:Label>
                                                                                 <asp:Label ID="lblPeca" runat="server"></asp:Label>
                                                                             </td>

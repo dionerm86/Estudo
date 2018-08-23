@@ -518,7 +518,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                         QtdAImprimir = grupo.Count(),
                         AlturaProducao = etiqueta.Altura,
                         LarguraProducao = etiqueta.Largura,
-                        PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == f.IdPlanoCorte).PlanoCorte,
+                        PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == etiqueta.IdPlanoCorte).PlanoCorte,
                         Etiquetas = grupo.Select(f => f.NumEtiqueta).ToList()
                     };
                 });

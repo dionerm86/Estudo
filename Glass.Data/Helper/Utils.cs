@@ -1696,7 +1696,54 @@ namespace Glass.Data.Helper
             // Verifica se é um arquivo .zip
             return buffer?.Length > 3 &&
                 buffer[0] == 0x50 && buffer[1] == 0x4B && buffer[2] == 0x03 && buffer[3] == 0x04;
-        }     
+        }
 
+        /// <summary>
+        /// Codifica o vetor de bytes na base 32.
+        /// </summary>
+        /// <param name="bytes">Bytes que serão usados na codificação.</param>
+        /// <returns></returns>
+        public static string BytesToBase32(byte[] bytes)
+        {
+            if (bytes == null) return null;
+
+            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            string output = "";
+            for (int bitIndex = 0; bitIndex < bytes.Length * 8; bitIndex += 5)
+            {
+                int dualbyte = bytes[bitIndex / 8] << 8;
+                if (bitIndex / 8 + 1 < bytes.Length)
+                    dualbyte |= bytes[bitIndex / 8 + 1];
+                dualbyte = 0x1f & (dualbyte >> (16 - bitIndex % 8 - 5));
+                output += alphabet[dualbyte];
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Decodifica o texto informado em um vetor de bytes considerando a base 32.
+        /// </summary>
+        /// <param name="base32"></param>
+        /// <returns></returns>
+        public static byte[] Base32ToBytes(string base32)
+        {
+            if (base32 == null) return null;
+            const string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+            List<byte> output = new List<byte>();
+            char[] bytes = base32.ToCharArray();
+            for (int bitIndex = 0; bitIndex < base32.Length * 5; bitIndex += 8)
+            {
+                int dualbyte = alphabet.IndexOf(bytes[bitIndex / 5]) << 10;
+                if (bitIndex / 5 + 1 < bytes.Length)
+                    dualbyte |= alphabet.IndexOf(bytes[bitIndex / 5 + 1]) << 5;
+                if (bitIndex / 5 + 2 < bytes.Length)
+                    dualbyte |= alphabet.IndexOf(bytes[bitIndex / 5 + 2]);
+
+                dualbyte = 0xff & (dualbyte >> (15 - bitIndex % 5 - 8));
+                output.Add((byte)(dualbyte));
+            }
+            return output.ToArray();
+        }
     }
 }
