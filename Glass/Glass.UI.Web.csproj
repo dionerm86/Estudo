@@ -9090,6 +9090,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Relatorios\rptMolde.rdlc" />
     <EmbeddedResource Include="Relatorios\rptMotivoFinalizacaoFinanceiro.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptMovFuncTotais.rdlc" />
     <EmbeddedResource Include="Relatorios\rptObraGerarCredito.rdlc" />
     <EmbeddedResource Include="Relatorios\rptParcCartaoQuitadas.rdlc" />
     <EmbeddedResource Include="Relatorios\rptParcelas.rdlc">

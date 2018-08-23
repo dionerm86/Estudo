@@ -2573,6 +2573,20 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "MovFuncTotais":
+                    {
+                        report.ReportPath = "Relatorios/rptMovFuncTotais.rdlc";
+                        var idFunc = Glass.Conversoes.StrParaUint(Request["idFunc"]);
+                        var idPedido = !String.IsNullOrEmpty(Request["idPedido"]) ? Glass.Conversoes.StrParaUint(Request["idPedido"]) : 0;
+                        var idLiberarPedido = !String.IsNullOrEmpty(Request["idLiberarPedido"]) ? Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]) : 0;
+
+                        lstParam.Add(new ReportParameter("LiberacaoPedido", PedidoConfig.LiberarPedido.ToString()));
+                        lstParam.Add(new ReportParameter("SomaSaldos", MovFuncDAO.Instance.GetSomaSaldos(idFunc, idPedido, idLiberarPedido, Request["dataIni"], Request["dataFim"], Request["tipo"].StrParaInt()).ToString()));
+
+                        report.DataSources.Add(new ReportDataSource("MovFunc", MovFuncDAO.Instance.GetForRpt(idFunc, idPedido, idLiberarPedido, Request["dataIni"], Request["dataFim"], Request["tipo"].StrParaInt()).ToArray()));
+
+                        break;
+                    }
                 case "ListaDevolucaoPagto":
                     {
                         report.ReportPath = "Relatorios/rptListaDevolucaoPagto.rdlc";
