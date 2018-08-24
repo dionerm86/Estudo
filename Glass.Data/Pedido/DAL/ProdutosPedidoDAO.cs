@@ -703,7 +703,7 @@ namespace Glass.Data.DAL
             {
                 sql = $@"
                     SELECT pp.*, p.Descricao AS DescrProduto, p.CodInterno, (IFNULL({(!FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? "pp.TotM" :
-                                        "pp.TotM2Calc")},0.00) / (pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)} * {qtdMaoDeObra} AS TotM2Nf,
+                        "pp.TotM2Calc")},0.00) / (pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)} * (IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra},ap.Qtde,1)) AS TotM2Nf,
                         CAST(((pp.Total / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)}) AS DECIMAL (12,2)) AS TotalNf,
                         {string.Format(sqlLiberacaoParcial, "(pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))")} AS QtdNf,
                         CAST((pp.ValorBenef / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)} AS DECIMAL (12,2)) AS ValorBenefNf,
@@ -763,6 +763,13 @@ namespace Glass.Data.DAL
                 pp.TotM2Calc = FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? (float)pp.TotM2Nf : pp.TotM;
                 pp.Total = (decimal)pp.TotalNf;
                 pp.ValorBenef = (decimal)pp.ValorBenefNf;
+
+                //Chamado 79146- Foi alterado para está forma pois em determinados momentos o idgrupo e idsubgrupo estava sendo recuperado zerado.
+                if (pp.IdGrupoProd == 0)
+                    pp.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)pp.IdProd);
+
+                if (pp.IdSubgrupoProd == 0)
+                    pp.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)pp.IdProd).GetValueOrDefault();
 
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
 
