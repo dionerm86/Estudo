@@ -1126,12 +1126,15 @@ namespace Glass.Data.DAL
         /// <param name="idProdPed"></param>
         public void DeleteByIdProdPed(GDASession sessao, uint idProdPed)
         {
-            var sql = string.Format(@"
+            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(sessao, idProdPed);
+            var idUltimaOC = PedidoOrdemCargaDAO.Instance.GetIdsOCsByPedidos(sessao, idPedido.ToString()).Split(',').ToList().Max();
+
+            var sql = $@"
                 SELECT ic.IdItemCarregamento
                 FROM item_carregamento ic
 	                INNER JOIN ordem_carga oc ON (ic.IdOrdemCarga = oc.IdOrdemCarga)
 	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND (ic.IdProdPed = {0} OR vpp.IdProdPed = {0}) AND oc.Situacao={1}", idProdPed, (int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente);
+                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND (ic.IdProdPed = {idProdPed} OR vpp.IdProdPed = {idProdPed}) AND (oc.IdOrdemCarga = {idUltimaOC} AND oc.Situacao={(int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente})";
 
             var ids = ExecuteMultipleScalar<uint>(sessao, sql);
 
@@ -1172,11 +1175,18 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public float ObterQtdeLiberarParcial(GDASession sessao, uint idProdPed)
         {
-            var sql = @"
-                SELECT COALESCE(SUM(vpp.Qtde), count(ic.IdItemCarregamento), 0) - COALESCE((SELECT SUM(coalesce(QtdeCalc, 0)) FROM produtos_liberar_pedido WHERE IdProdPed = ?id), 0)
+            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(sessao, idProdPed);
+            var idUltimaOC = PedidoOrdemCargaDAO.Instance.GetIdsOCsByPedidos(sessao, idPedido.ToString()).Split(',').ToList().Max();
+
+
+            var sql = $@"
+                SELECT COALESCE(SUM(vpp.Qtde), COUNT(ic.IdItemCarregamento), 0) - COALESCE((
+                            SELECT SUM(IFNULL(plp.QtdeCalc, 0)) 
+                                FROM produtos_liberar_pedido plp INNER JOIN liberarpedido lp ON lp.IdLiberarPedido = plp.IdLiberarPedido
+                            WHERE lp.Situacao = { (int)LiberarPedido.SituacaoLiberarPedido.Liberado } And plp.IdProdPed = ?id), 0)
                 FROM item_carregamento ic
 	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE ic.Carregado AND (ic.IdProdPed = ?id OR vpp.IdProdPed = ?id)";
+                WHERE (ic.Carregado Or ic.IdOrdemCarga <> { idUltimaOC }) AND (ic.IdProdPed = ?id OR vpp.IdProdPed = ?id)";
 
             var qtde = ExecuteScalar<float>(sessao, sql, new GDAParameter("?id", idProdPed));
 
