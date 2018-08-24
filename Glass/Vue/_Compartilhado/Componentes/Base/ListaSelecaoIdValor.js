@@ -42,7 +42,7 @@
     textoSelecionar: {
       required: false,
       twoWay: false,
-      default: 'Selecione...',
+      default: '',
       validator: Mixins.Validacao.validarStringOuVazio
     },
 

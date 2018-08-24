@@ -43,7 +43,7 @@ Vue.component('lista-selecao', {
     textoSelecionar: {
       required: false,
       twoWay: false,
-      default: 'Selecione...',
+      default: '',
       validator: Mixins.Validacao.validarStringOuVazio
     },
 

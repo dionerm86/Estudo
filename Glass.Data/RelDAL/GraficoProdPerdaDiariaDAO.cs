@@ -54,7 +54,7 @@ namespace Glass.Data.RelDAL
                             ppe.TotM2Calc,
                             ppe.Qtde
 		                FROM produtos_pedido_espelho ppe
-                        WHERE ppe.IdProdPed IN ({ string.Join(",", idsProdPed) })) pp ON (ped.IdPedido = pp.IdPedido)
+                        WHERE ppe.IdProdPed IN ({ (idsProdPed.Any(f => f > 0) ? string.Join(",", idsProdPed) : "0") })) pp ON (ped.IdPedido = pp.IdPedido)
 	                INNER JOIN
 		                (SELECT ppp.IdProdPedProducao,
                             ppp.IdProdPed,
@@ -65,7 +65,7 @@ namespace Glass.Data.RelDAL
 		                FROM produto_pedido_producao ppp
 			                INNER JOIN ({ sqlLeituraProducao }) lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
 			                INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
-                        WHERE ppp.IdProdPed IN ({ string.Join(",", idsProdPed) })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
+                        WHERE ppp.IdProdPed IN ({ (idsProdPed.Any(f => f > 0) ? string.Join(",", idsProdPed) : "0") })) ppp ON (pp.IdProdPed = ppp.IdProdPed)
                         LEFT JOIN
 			                (SELECT ape.IdAmbientePedido,
 				                ape.Altura,

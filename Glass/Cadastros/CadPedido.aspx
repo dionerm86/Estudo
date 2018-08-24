@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadPedido" Title="Cadastrar Pedido" EnableEventValidation="false"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -57,7 +57,8 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" :disabled="!configuracoes.usarControleOrdemCarga && !configuracoes.alterarLojaPedido && !clientePermiteAlterarLoja" class="colspan2"></lista-selecao-lojas>
+                    <lista-selecao-lojas :loja.sync="lojaAtual" :ativas="true" :exibir-todas="false" required
+                        :disabled="!configuracoes.usarControleOrdemCarga && !configuracoes.alterarLojaPedido && !clientePermiteAlterarLoja" class="colspan2"></lista-selecao-lojas>
                     <span v-if="configuracoes.exibirDeveTransferir">
                         <input id="deveTransferir" type="checkbox" v-model="pedido.deveTransferir" :disabled="!clientePermiteAlterarLoja" />
                         <label for="deveTransferir">
@@ -72,12 +73,12 @@
                 </span>
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="tipoPedidoAtual" :funcao-recuperar-itens="obterTiposPedido" :disabled="(editando && configuracoes.bloquearItensTipoPedido) || pedidoMaoDeObra || pedidoProducao" required></lista-selecao-id-valor>
-                </span>
-                <span v-if="configuracoes.gerarPedidoProducaoCorte && pedido.tipo == configuracoes.tipoPedidoRevenda">
-                    <input type="checkbox" id="gerarPedidoProducaoCorte" v-model="pedido.gerarPedidoCorte" />
-                    <label for="gerarPedidoProducaoCorte">
-                        Gerar pedido de produção para corte
-                    </label>
+                    <span v-if="configuracoes.gerarPedidoProducaoCorte && pedido.tipo == configuracoes.tipoPedidoRevenda">
+                        <input type="checkbox" id="gerarPedidoProducaoCorte" v-model="pedido.gerarPedidoCorte" />
+                        <label for="gerarPedidoProducaoCorte">
+                            Gerar pedido de produção para corte
+                        </label>
+                    </span>
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -168,7 +169,9 @@
                         Desconto
                     </label>
                 </span>
-                <campo-acrescimo-desconto :tipo.sync="pedido.desconto.tipo" :valor.sync="pedido.desconto.valor" :disabled="disabledCampoDesconto" v-if="vIfCampoDesconto"></campo-acrescimo-desconto>
+                <span v-if="vIfCampoDesconto">
+                    <campo-acrescimo-desconto :tipo.sync="pedido.desconto.tipo" :valor.sync="pedido.desconto.valor" :disabled="disabledCampoDesconto"></campo-acrescimo-desconto>
+                </span>
                 <span style="color: blue" v-else>
                     Desconto só pode ser dado em pedidos à vista
                 </span>
@@ -185,7 +188,9 @@
                         Acréscimo
                     </label>
                 </span>
-                <campo-acrescimo-desconto :tipo.sync="pedido.acrescimo.tipo" :valor.sync="pedido.acrescimo.valor"></campo-acrescimo-desconto>
+                <span>
+                    <campo-acrescimo-desconto :tipo.sync="pedido.acrescimo.tipo" :valor.sync="pedido.acrescimo.valor"></campo-acrescimo-desconto>
+                </span>
                 <span class="cabecalho">
                     <label>
                         Funcionário
@@ -194,7 +199,7 @@
                 <span>
                     <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
-                <span v-if="(vIfFormaPagamento && vIfValorEntrada) || vIfTipoVendaObra" class="colspan2">
+                <span v-if="vIfAjusteLayoutTransportador" class="colspan2">
                 </span>
                 <span class="cabecalho">
                     <label>
@@ -204,7 +209,7 @@
                 <span class="colspan3">
                     <lista-selecao-id-valor :item-selecionado.sync="transportadorAtual" :funcao-recuperar-itens="obterTransportadores"></lista-selecao-id-valor>
                 </span>
-                <template v-if="pedido && pedido.entrega.tipo != configuracoes.tipoEntregaBalcao">
+                <template v-if="pedido && pedido.entrega.tipo && pedido.entrega.tipo.id != configuracoes.tipoEntregaBalcao">
                     <span class="cabecalho">
                         <label>
                             Local da Obra
@@ -220,13 +225,13 @@
                 <span class="colspan4" style="padding: 8px 0" v-if="vIfControleParcelas">
                     <controle-parcelas :parcelas.sync="parcelaAtual" :data-minima="pedido.dataPedido" :total="totalParaCalculoParcelas"></controle-parcelas>
                 </span>
-                <template v-if="configuracoes.usarComissaoNoPedido">
+                <template v-if="configuracoes.usarComissaoNoPedido && !configuracoes.usarComissionadoDoCliente">
                     <span class="cabecalho">
                         <label>
                             Comissionado:
                         </label>
                     </span>
-                    <span v-if="!configuracoes.usarComissionadoDoCliente">
+                    <span class="colspan3">
                         <campo-busca-com-popup :id.sync="pedido.comissionado.id" campo-nome="descricao" :item-selecionado.sync="comissionadoAtual" :funcao-buscar-itens="obterComissionados"
                             :url-popup="'/Utils/SelComissionado.aspx'" :largura-popup="760" :altura-popup="590" style="width: 90px" required></campo-busca-com-popup>
                         <label>
@@ -494,6 +499,7 @@
                         {{ pedido.transportador.nome }}
                     </span>
                 </template>
+                <span v-if="pedido && (!configuracoes.exibirDeveTransferir || !pedido.funcionarioComprador || !pedido.transportador)" class="colspan2"></span>
                 <label>
                     Observação
                 </label>

@@ -503,8 +503,8 @@ namespace Glass.Data.DAL
                     join produto p on (pp.idProd = p.idProd)
                 where pp.idPedido={idPedido}
                     and (
-                        pp.IDPRODPEDPARENT is null
-                        or pp.IDPRODPEDPARENT = 0
+                        pp.idProdPedParent is null
+                        or pp.idProdPedParent = 0
                     )
                     and p.idGrupoProd={(int)NomeGrupoProd.Vidro}
                     and (
@@ -512,7 +512,7 @@ namespace Glass.Data.DAL
                         or p.espessura <> {espessura}
                     )";
 
-            return ExecuteScalar<int>(sessao, sql) == 0;
+            return this.ExecuteScalar<int>(sessao, sql) == 0;
         }
 
         #endregion
@@ -679,7 +679,7 @@ namespace Glass.Data.DAL
                         "pp.TotM2Calc")},0.00) / (pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))) * {string.Format(sqlLiberacaoParcial, "(pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))")}) AS TotM2Nf,
                         CAST(SUM((pp.Total / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)}) AS DECIMAL(12,2)) AS TotalNf,
                         SUM({string.Format(sqlLiberacaoParcial, "(pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))")}) AS QtdNf,
-                        CAST(SUM((pp.ValorBenef / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)}) AS DECIMAL(12,2)) AS ValorBenefNf, 
+                        CAST(SUM((pp.ValorBenef / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)}) AS DECIMAL(12,2)) AS ValorBenefNf,
                         p.IdGrupoProd, p.IdSubgrupoProd, SUM(pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0)) AS QtdeOriginal {sqlAgruparProjetosAoAgruparProdutos}
                     FROM produtos_pedido pp
                         LEFT JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -689,8 +689,8 @@ namespace Glass.Data.DAL
                             SELECT * FROM produtos_liberar_pedido
                             WHERE QtdeCalc>0 {sqlIdsLiberarpedido}
                             GROUP BY IdProdPed {(!string.IsNullOrEmpty(idsLiberarPedido) ? ", IdLiberarPedido" : string.Empty)}
-                        ) plp ON (plp.IdProdPed=pp.IdProdPed) 
-                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                        ) plp ON (plp.IdProdPed=pp.IdProdPed)
+                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
                         LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
                         LEFT JOIN
                             ({sqlProdutoTrocado}) pt ON (pp.IdProdPed=pt.IdProdPed)
@@ -722,7 +722,7 @@ namespace Glass.Data.DAL
                         AND (pp.Invisivel{ fluxo } IS NULL OR pp.Invisivel{ fluxo } = 0)
                         AND IF({liberacaoParcial.ToString()}, lp.Situacao<>{(int)LiberarPedido.SituacaoLiberarPedido.Cancelado} OR lp.Situacao IS NULL, 1)";
 
-                sql += $@" GROUP BY pp.IdProdPed{(idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty)} 
+                sql += $@" GROUP BY pp.IdProdPed{(idsLiberarPedido.Length > 0 ? ", plp.IdLiberarPedido" : string.Empty)}
                                                 HAVING IF(idLiberarPedido>0,QtdeOriginal,pp.Qtde)> 0";
             }
 
@@ -2135,7 +2135,7 @@ namespace Glass.Data.DAL
                             retorno.RemoveAt(i);
                             continue;
                         }
-                    }                    
+                    }
                 }
 
                 if (retorno[i].QtdeDisponivelLiberacao <= 0)
@@ -2883,12 +2883,12 @@ namespace Glass.Data.DAL
         public float TotalMedidasObra(GDASession sessao, uint idObra, string codInterno, uint? idPedidoPcp)
         {
             string sql = $@"Select Coalesce(Sum(pp.totM2Calc),0) From produtos_pedido pp
-                Inner Join produto p On (pp.idProd=p.idProd) Where p.codInterno=?codInterno And 
+                Inner Join produto p On (pp.idProd=p.idProd) Where p.codInterno=?codInterno And
                 pp.idPedido In (Select * From (Select idPedido From pedido Where idObra={ idObra } And situacao<>{ (int)Pedido.SituacaoPedido.Cancelado }) As temp) And ";
 
             if (idPedidoPcp > 0)
-                sql += $@"((pp.idPedido<>{ idPedidoPcp } And If((Select Count(*) From pedido_espelho Where idPedido=pp.idPedido)>0, 
-                    pp.invisivelFluxo Is Null Or pp.invisivelFluxo=False, pp.invisivelPedido Is Null Or pp.invisivelPedido=False)) 
+                sql += $@"((pp.idPedido<>{ idPedidoPcp } And If((Select Count(*) From pedido_espelho Where idPedido=pp.idPedido)>0,
+                    pp.invisivelFluxo Is Null Or pp.invisivelFluxo=False, pp.invisivelPedido Is Null Or pp.invisivelPedido=False))
                     Or (pp.invisivelFluxo Is Null Or pp.invisivelFluxo=false)) And COALESCE(pp.IdProdPedParent,0) = 0";
             else
                 sql += "(pp.invisivelPedido Is Null Or pp.invisivelPedido=False) And COALESCE(pp.IdProdPedParent,0) = 0";
@@ -3874,7 +3874,7 @@ namespace Glass.Data.DAL
 
             ProdutoDAO.Instance.CalcTotaisItemProd(null, idCliente, (int)prodPed.IdProd,
                 prodPed.Largura, qtde, qtdeAmbiente, prodPed.ValorVendido, prodPed.Espessura,
-                redondo, 0, false, prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte, 
+                redondo, 0, false, prodPed.TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte,
                 ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total,
                 alturaBenef, larguraBenef, false, prodPed.Beneficiamentos.CountAreaMinimaSession(sessao), true);
 
@@ -4281,7 +4281,7 @@ namespace Glass.Data.DAL
                 PedidoDAO.Instance.UpdateTotalPedido(session, pedido, false, true, false, true);
             }
             else
-            { 
+            {
                 PedidoDAO.Instance.AtualizaPeso(session, objInsert.IdPedido);
             }
 
@@ -4667,7 +4667,7 @@ namespace Glass.Data.DAL
                 if (objUpdate.IdAplicacao > 0)
                 {
                     var aplicacao = EtiquetaAplicacaoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdAplicacao.Value);
-                        
+
                     if (aplicacao != null && aplicacao.NaoPermitirFastDelivery)
                         throw new Exception(string.Format("Erro|O produto {0} tem a aplicacao {1} e esta aplicacao não permite fast delivery", objUpdate.DescrProduto, aplicacao.CodInterno));
                 }
@@ -4722,7 +4722,7 @@ namespace Glass.Data.DAL
                 if (SubgrupoProdDAO.Instance.GetElementByPrimaryKey(sessao, (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)objUpdate.IdProd)).IsVidroTemperado &&
                         objUpdate.Altura < tamanhoMinimoTemperado && objUpdate.Largura < tamanhoMinimoTemperado)
                     retorno += $"O altura ou largura minima para peças com têmpera é de {tamanhoMinimoTemperado}.";
-                
+
                 if (!string.IsNullOrWhiteSpace(retorno))
                     throw new Exception(retorno);
 

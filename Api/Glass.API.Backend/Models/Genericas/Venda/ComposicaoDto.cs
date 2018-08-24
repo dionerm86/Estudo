@@ -26,5 +26,12 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         [DataMember]
         [JsonProperty("permitirInserirFilhos")]
         public bool PermitirInserirFilhos { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se os beneficiamentos serão aplicados na composição.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("aplicarBeneficiamentosProdutosFilhos")]
+        public bool AplicarBeneficiamentosProdutosFilhos { get; set; }
     }
 }
