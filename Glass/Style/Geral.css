@@ -32,9 +32,9 @@ input[type="time"], input[type="email"], input[type="password"], textarea, selec
   padding: 1px 4px;
 }
 
-  input[type="date"], input[type="time"] {
-    line-height: 16px;
-  }
+input[type="date"], input[type="time"] {
+  line-height: 16px;
+}
 
 select {
   padding: 2px 0;
@@ -359,15 +359,27 @@ section {
       left: 0px;
       right: 0px;
       position: initial;
+      margin: 0 3px;
+      padding: 0;
     }
 
     div.filtros .botaoPesquisar, section.filtros .botaoPesquisar {
       position: relative;
       top: 2px;
+      margin: 0 4px 0 2px;
     }
 
     div.filtros span, section.filtros span {
       padding-left: initial;
+    }
+
+    div.filtros input[type="text"], div.filtros input[type="number"], div.filtros input[type="search"],
+    div.filtros input[type="date"], div.filtros input[type="time"], div.filtros input[type="email"],
+    div.filtros input[type="password"], div.filtros textarea, div.filtros select,
+    section.filtros input[type="text"], section.filtros input[type="number"], section.filtros input[type="search"],
+    section.filtros input[type="date"], section.filtros input[type="time"], section.filtros input[type="email"],
+    section.filtros input[type="password"], section.filtros textarea, section.filtros select {
+      margin: 2px 1px;
     }
 
   div.detalhes, section.detalhes {
