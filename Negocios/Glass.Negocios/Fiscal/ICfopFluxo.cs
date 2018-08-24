@@ -166,7 +166,7 @@ namespace Glass.Fiscal.Negocios
         IList<Entidades.RegraNaturezaOperacaoPesquisa> PesquisarRegrasNaturezaOperacao
             (int idLoja, int idTipoCliente, int idGrupoProd, int idSubgrupoProd,
              int idCorVidro, int idCorFerragem, int idCorAluminio, float espessura,
-             int idNaturezaOperacao);
+             int idNaturezaOperacao, string ufsDestino);
 
         /// <summary>
         /// Recupera os dados da regra.
