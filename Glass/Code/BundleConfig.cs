@@ -136,7 +136,7 @@ namespace Glass.UI.Web
 #if DEBUG
             BundleTable.EnableOptimizations = false;
 #else
-            BundleTable.EnableOptimizations = false;
+            BundleTable.EnableOptimizations = true;
 #endif
         }
     }

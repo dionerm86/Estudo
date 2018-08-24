@@ -76,7 +76,7 @@ namespace Glass.Data.Handlers
 
                 for (int i = 0; i < lstArqMesa.Count; i++)
                 {
-                    var fileName = Path.GetFileNameWithoutExtension(lstCodArq[i]);
+                    var fileName = Path.GetFileNameWithoutExtension(lstCodArq[i].Replace('ç', Convert.ToChar(135)));
                     var zipPath = Path.Combine(tempPath, fileName);
                 
                     using(var zip = ZipFile.Read(lstArqMesa[i]))

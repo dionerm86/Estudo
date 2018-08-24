@@ -314,6 +314,23 @@
             }
         }
 
+        /// <summary>
+        /// UfDest
+        /// </summary>
+        public string UfDest
+        {
+            get { return DataModel.UfDest; }
+            set
+            {
+                if (DataModel.UfDest != value &&
+                    RaisePropertyChanging("UfDest", value))
+                {
+                    DataModel.UfDest = value;
+                    RaisePropertyChanged("UfDest");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

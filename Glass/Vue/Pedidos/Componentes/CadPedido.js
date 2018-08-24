@@ -402,7 +402,8 @@
       var vm = this;
 
       Servicos.Pedidos.atualizar(this.pedido.id, pedidoAtualizar)
-        .then(function(resposta) {
+        .then(function (resposta) {
+          vm.atualizarPedidoEAmbientes();
           vm.cancelar();
         })
         .catch(function(erro) {
@@ -974,7 +975,7 @@
     },
 
     /**
-     * Propriedade computada que retorna se o ajuste de layout será exibido.
+     * Propriedade computada que retorna se o ajuste de layout para o transportador será exibido.
      */
     vIfAjusteLayoutTransportador: function () {
       var exibir = (this.vIfFormaPagamento && this.vIfValorEntrada)
@@ -985,6 +986,19 @@
       }
 
       return exibir;
+    },
+
+    /**
+     * Propriedade computada que retorna se o ajuste de layout para a observação será exibido.
+     */
+    vIfAjusteLayoutObservacao: function () {
+      if (!this.pedido) {
+        return false;
+      }
+
+      return !this.configuracoes.exibirDeveTransferir
+        && !this.pedido.funcionarioComprador
+        && !this.pedido.transportador;
     }
   },
 

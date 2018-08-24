@@ -25,7 +25,9 @@ namespace Glass.UI.Web.Bundles
         {
             var formatado = html;
             formatado = this.RemoverQuebrasDeLinha(formatado);
-            formatado = this.RemoverEspacos(formatado);
+            formatado = this.RemoverComentarios(formatado);
+            formatado = this.RemoverEspacosAdicionais(formatado);
+            formatado = this.RemoverEspacosDesnecessarios(formatado);
 
             return formatado;
         }
@@ -37,24 +39,20 @@ namespace Glass.UI.Web.Bundles
                 .Replace("\n", string.Empty);
         }
 
-        private string RemoverEspacos(string html)
+        private string RemoverComentarios(string html)
         {
-            var formatado = html;
-            var regex = new Regex("> *<");
+            return Regex.Replace(html, "<!--.*-->", string.Empty);
+        }
 
-            while (true)
-            {
-                var match = regex.Match(formatado);
+        private string RemoverEspacosAdicionais(string html)
+        {
+            return Regex.Replace(html, " {2,}", " ");
+        }
 
-                if (match == null)
-                {
-                    break;
-                }
-
-                formatado = formatado.Replace(match.Value, "><");
-            }
-
-            return formatado;
+        private string RemoverEspacosDesnecessarios(string html)
+        {
+            return html.Replace("> ", ">")
+                .Replace(" <", "<");
         }
     }
 }

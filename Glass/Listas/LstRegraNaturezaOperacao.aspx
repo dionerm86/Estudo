@@ -58,6 +58,15 @@
                 <asp:Label ID="Label8" runat="server" Text="Natureza de Operação" AssociatedControlID="selNaturezaOperacao"></asp:Label>
                 <uc4:ctrlNaturezaOperacao ID="selNaturezaOperacao" runat="server" FazerPostBackBotaoPesquisar="true" />
             </span>
+            <span>
+                <asp:Label ID="Label14" runat="server" Text="Uf Destino" ForeColor="#0066FF"></asp:Label>
+            </span>
+            <span>
+                <sync:CheckBoxListDropDown ID="cblUfDestino" runat="server" CheckAll="False" DataSourceID="odsUf"
+                    DataTextField="Name" DataValueField="Id" ImageURL="~/Images/DropDown.png" OpenOnStart="False" Width="160px">
+                    <asp:ListItem></asp:ListItem>
+                </sync:CheckBoxListDropDown>
+            </span>
         </div>
     </div>
     <div class="inserir">
@@ -87,6 +96,13 @@
                 <ItemTemplate>
                     <asp:Label ID="Label2" runat="server" 
                         Text='<%# ObtemCorEspessura(Eval("DescricaoCorVidro"), Eval("DescricaoCorAluminio"), Eval("DescricaoCorFerragem"), Eval("Espessura")) %>'></asp:Label>
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="Ufs Destino"
+                SortExpression="UfDest">
+                <ItemTemplate>
+                    <asp:Label ID="lblUfDestino" runat="server"
+                        Text='<%#Eval("UfDest") %>'></asp:Label>
                 </ItemTemplate>
             </asp:TemplateField>
             <asp:BoundField DataField="DescricaoNaturezaOperacaoProducaoIntra" HeaderText="Nat. Oper. Produção Intra."
@@ -145,6 +161,7 @@
                 PropertyName="Text" Type="Single" />
             <asp:ControlParameter ControlID="selNaturezaOperacao" Name="idNaturezaOperacao" 
                 PropertyName="CodigoNaturezaOperacao" Type="Int32" />
+            <asp:ControlParameter ControlID="cblUfDestino" Name="ufsDestino" PropertyName="SelectedItem"/>
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server"
@@ -156,5 +173,8 @@
         SelectMethod="ObtemDescritoresTipoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo" 
         CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
         MaximumRowsParameterName="" SkinID="" StartRowIndexParameterName="">
+    </colo:VirtualObjectDataSource>
+        <colo:VirtualObjectDataSource ID="odsUf" runat="server" Culture="pt-BR"
+        SelectMethod="ObtemUfs" TypeName="Glass.Global.Negocios.ILocalizacaoFluxo">
     </colo:VirtualObjectDataSource>
 </asp:Content>

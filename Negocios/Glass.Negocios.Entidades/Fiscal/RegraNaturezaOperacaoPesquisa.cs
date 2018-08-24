@@ -70,6 +70,8 @@
         /// </summary>
         public float? Espessura { get; set; }
 
+        public string UfDest { get; set; }
+
         /// <summary>
         /// Descrição da natureza de operaçao producao intraestadual.
         /// </summary>

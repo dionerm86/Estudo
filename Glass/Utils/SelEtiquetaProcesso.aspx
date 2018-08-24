@@ -12,7 +12,7 @@
             if (GetQueryString("buscaComPopup") === "true") {
                 var idControle = GetQueryString("id-controle");
                 if (idControle) {
-                    window.opener.Busca.Popup.atualizar(idControle, idProcesso, codInterno);
+                    window.opener.Busca.Popup.atualizar(idControle, null, codInterno);
                     closeWindow();
                     return;
                 }
