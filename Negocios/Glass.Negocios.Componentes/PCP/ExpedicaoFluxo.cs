@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Model;
@@ -690,21 +690,15 @@ namespace Glass.PCP.Negocios.Componentes
             if (!Glass.Data.DAL.LiberarPedidoDAO.Instance.VerificaPedidoLiberacao(session, idLiberarPedido, idPedidoExp.Value))
                 throw new Exception("O pedido informado não faz parte desta liberação.");
 
-            var podeLerTrocadaDevolvida =
-                (numEtiqueta.Contains('N') && Glass.Data.DAL.ChapaTrocadaDevolvidaDAO.Instance.VerificarChapaDisponivel(session, numEtiqueta));
+            if(Glass.Data.DAL.ExpedicaoChapaDAO.Instance.VerificaLeitura(session, numEtiqueta) && !chapaTrocadaDisponivel)
+                throw new Exception("A etiqueta informada já deu saída na expedição.");
 
-            if (!podeLerTrocadaDevolvida)
-            {
-                if (Glass.Data.DAL.ExpedicaoChapaDAO.Instance.VerificaLeitura(session, numEtiqueta) && !chapaTrocadaDisponivel)
-                    throw new Exception("A etiqueta informada já deu saída na expedição.");
+            //Verifica se a etiqueta ja foi expedida
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, (uint)prodImpressao.IdProdImpressao) && !chapaTrocadaDisponivel)
+                throw new Exception("Esta etiqueta ja foi expedida no sistema.");
 
-                //Verifica se a etiqueta ja foi expedida
-                if (ProdutoImpressaoDAO.Instance.EstaExpedida(session, (uint)prodImpressao.IdProdImpressao) && !chapaTrocadaDisponivel)
-                    throw new Exception("Esta etiqueta ja foi expedida no sistema.");
-
-                if (Glass.Data.DAL.ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, (uint)prodImpressao.IdProdImpressao))
-                    throw new Exception("Esta etiqueta já foi utilizada no setor de corte."); 
-            }
+            if (Glass.Data.DAL.ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(session, (uint)prodImpressao.IdProdImpressao))
+                throw new Exception("Esta etiqueta já foi utilizada no setor de corte.");
 
             bool encontrado = false;
 
