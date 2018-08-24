@@ -401,7 +401,7 @@ namespace Glass.PCP.Negocios.Componentes
                 {
                     try
                     {
-                        EfetuaLeitura(idFunc, idLiberarPedido, e, idPedidoExp);
+                        this.EfetuaLeitura(idFunc, idLiberarPedido, e, idPedidoExp);
                     }
                     catch 
                     {
@@ -421,7 +421,70 @@ namespace Glass.PCP.Negocios.Componentes
             }
 
             #endregion
-            
+
+            if (numEtiqueta.Contains('='))
+            {
+                var posicao = numEtiqueta.Split('-')[1].Split('/')[0].Split('.')[0].StrParaInt();
+
+                var intervaloEtiquetas = numEtiqueta.Split('/')[1].Split('=');
+                var inicioIntervalo = intervaloEtiquetas[0].StrParaInt();
+                var fimIntervalo = intervaloEtiquetas[1].StrParaInt();
+
+                var produtosImpressao = ProdutoImpressaoDAO.Instance.GetByIdPedido(null, posicao, numEtiqueta.Split('-')[0].StrParaInt()).OrderBy(f => f.ItemEtiqueta);
+                var etiquetas = new List<string>();
+
+                if (inicioIntervalo > fimIntervalo)
+                {
+                    throw new Exception("item inicial maior que item final.");
+                }
+
+                if (fimIntervalo > produtosImpressao.Count())
+                {
+                    throw new Exception("Número de itens deve maior que a quantidade existente na posição.");
+                }
+
+                foreach (var item in produtosImpressao)
+                {
+                    if (item.ItemEtiqueta >= inicioIntervalo && item.ItemEtiqueta <= fimIntervalo)
+                    {
+                        etiquetas.Add(item.IdPedido.ToString() + "-" + posicao + "." + item.ItemEtiqueta + "/" + item.QtdeProd);
+                    }
+                }
+
+                #region Salva na tabela de controle
+
+                LeituraEtiquetaPedidoPlanoCorteDAO.Instance.Insert(null, new LeituraEtiquetaPedidoPlanoCorte()
+                {
+                    NumEtiquetaLida = numEtiqueta
+                });
+
+                #endregion
+
+                var erroEtq = new List<string>();
+
+                foreach (string e in etiquetas)
+                {
+                    try
+                    {
+                        this.EfetuaLeitura(idFunc, idLiberarPedido, e, idPedidoExp);
+                    }
+                    catch
+                    {
+                        erroEtq.Add(e);
+                    }
+                }
+
+                if (erroEtq.Count > 0)
+                {
+                    var erros = string.Join(",", erroEtq.ToArray());
+
+                    ErroDAO.Instance.InserirFromException("Leitura com (=)", new Exception("Etiqueta: " + numEtiqueta + " Leituras: " + erros));
+                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
+                }
+
+                return;
+            }
+
             using (var transaction = new GDATransaction())
             {
                 try

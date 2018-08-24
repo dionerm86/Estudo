@@ -83,6 +83,9 @@
                                 <td>
                                     <asp:TextBox ID="txtCodEtiqueta" runat="server" Font-Size="x-Large" Width="190px"
                                         onkeypress="if (isEnter(event)) return efetuaLeitura();"></asp:TextBox>
+                                    <img runat="server" src="~/Images/Help.gif" title="Para leituras de faixas de etiquteta utilizar após a barra da etiqueta (número inicial da faixa = número final da faixa).
+Exemplo: Etiquetas do intervalo 1111-1.1/10 até 1111-1.10/10 podem ser lidas em faixas, digitando no campo da etiqueta 1111-1.1/2=6
+as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizando 1111-1.1/7=9 serão lidas dos itens 7 até 9." />
                                 </td>
                             </tr>
                         </table>
