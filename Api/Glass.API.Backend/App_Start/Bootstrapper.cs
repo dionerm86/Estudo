@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Web;
 
@@ -243,6 +244,21 @@ namespace Glass.API.Backend
             System.Diagnostics.Debug.WriteLine(message);
         }
 
+        private string ObterDiretorioSistema()
+        {
+            var configuracaoAmbienteTeste = ConfigurationManager.AppSettings["ambienteTeste"];
+
+            var diretorioAtual = HttpContext.Current.Server.MapPath("~");
+            var diretorioSistema = Path.Combine(diretorioAtual, "..");
+
+            if (bool.Parse(configuracaoAmbienteTeste))
+            {
+                diretorioSistema = Path.Combine(diretorioSistema, "..");
+            }
+
+            return diretorioSistema;
+        }
+
         #endregion
 
         #region Métodos Públicos
@@ -254,8 +270,7 @@ namespace Glass.API.Backend
         {
             base.Run();
 
-            var diretorioSistema = ConfigurationManager.AppSettings["diretorioSistema"];
-            Glass.Armazenamento.ArmazenamentoIsolado.Configure(diretorioSistema);
+            Glass.Armazenamento.ArmazenamentoIsolado.Configure(this.ObterDiretorioSistema());
 
             // Marca que é para ignorar a execução da sessões vazias
             Colosoft.Data.PersistenceSession.IgnoreAllEmptyActions = true;

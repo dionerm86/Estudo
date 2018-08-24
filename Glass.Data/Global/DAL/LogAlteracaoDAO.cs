@@ -1453,19 +1453,19 @@ namespace Glass.Data.DAL
             InserirLog(session, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Carregamento, atual.IdCarregamento, atual, novo);
         }
 
-        public void LogReenvioEmailLiberacao(uint idLiberacao)
+        public void LogReenvioEmailLiberacao(GDASession sessao, uint idLiberacao)
         {
             // Cria o Log
             LogAlteracao log = new LogAlteracao();
             log.Tabela = (int)LogAlteracao.TabelaAlteracao.LiberacaoReenvioEmail;
             log.IdRegistroAlt = (int)idLiberacao;
-            log.NumEvento = GetNumEvento(LogAlteracao.TabelaAlteracao.LiberacaoReenvioEmail, (int)idLiberacao);
+            log.NumEvento = GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.LiberacaoReenvioEmail, (int)idLiberacao);
             log.Campo = "Reenvio de E-mail";
             log.DataAlt = DateTime.Now;
             log.IdFuncAlt = UserInfo.GetUserInfo.CodUser;
             log.Referencia = idLiberacao.ToString();
 
-            Insert(log);
+            Insert(sessao, log);
         }
 
         public void LogEnvioEmailOrcamento(uint idOrcamento)

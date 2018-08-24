@@ -41,7 +41,8 @@
         Vue.prototype.$http = axios.create({
             baseURL: '<%= ConfigurationManager.AppSettings["backendUrl"] %>',
             headers: {
-                'Authorization': 'Bearer <%= ObterCookieAuth() %>'
+                'Authorization': 'Bearer <%= ObterCookieAuth() %>',
+                'Cache-Control': 'no-store, no-cache'
             }
         });
 

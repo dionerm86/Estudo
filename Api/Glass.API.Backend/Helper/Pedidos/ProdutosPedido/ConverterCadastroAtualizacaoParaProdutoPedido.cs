@@ -43,6 +43,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
 
         private void ConverterDtoParaModelo(Data.Model.ProdutosPedido destino)
         {
+            destino.IdAmbientePedido = (uint?)this.cadastro.IdAmbiente ?? destino.IdAmbientePedido;
             destino.IdProd = (uint?)this.cadastro.Produto?.Id ?? destino.IdProd;
             destino.Espessura = (float?)this.cadastro.Produto?.Espessura ?? destino.Espessura;
             destino.Qtde = (float?)this.cadastro.Quantidade ?? destino.Qtde;
@@ -65,7 +66,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
             destino.CodPedCliente = this.cadastro.CodigoPedidoCliente ?? destino.CodPedCliente;
             destino.Total = this.cadastro.Total ?? destino.Total;
             destino.Obs = this.cadastro.Observacao ?? destino.Obs;
-            destino.AplicarBenefComposicao = this.cadastro.AplicarBenefComposicao ?? destino.AplicarBenefComposicao;
+            destino.AplicarBenefComposicao = this.cadastro.Composicao?.AplicarBeneficiamentosProdutosFilhos ?? destino.AplicarBenefComposicao;
 
             this.ConverterBeneficiamentos(destino);
         }

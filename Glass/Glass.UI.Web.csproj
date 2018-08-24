@@ -1616,6 +1616,9 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.Filtro.js" />
+    <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.js" />
+    <Content Include="Vue\Liberacoes\Templates\LstLiberacoes.Filtro.html" />
     <Content Include="Vue\Orcamentos\Componentes\LstOrcamentos.Filtro.js" />
     <Content Include="Vue\Orcamentos\Componentes\LstOrcamentos.js" />
     <Content Include="Vue\Orcamentos\Templates\LstOrcamentos.Filtro.html" />
@@ -1660,6 +1663,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
@@ -1687,6 +1691,8 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
@@ -1743,6 +1749,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />

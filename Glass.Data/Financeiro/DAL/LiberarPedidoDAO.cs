@@ -3852,12 +3852,12 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o ID de uma liberação para a impressão de boletos.
         /// </summary>
-        public int? ObterIdLiberarPedidoParaImpressaoBoletoNFe(int idPedido, int idNf)
+        public int? ObterIdLiberarPedidoParaImpressaoBoletoNFe(GDASession sessao, int idPedido, int idNf)
         {
             if (idPedido == 0 || idNf == 0)
                 return null;
 
-            object retorno = objPersistence.ExecuteScalar(string.Format(@"SELECT plp.IdLiberarPedido FROM produtos_liberar_pedido plp
+            object retorno = objPersistence.ExecuteScalar(sessao, string.Format(@"SELECT plp.IdLiberarPedido FROM produtos_liberar_pedido plp
                     INNER JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
                     INNER JOIN pedidos_nota_fiscal pnf ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
                 WHERE lp.Situacao={0} AND plp.IdPedido={1} AND pnf.IdNf={2}", (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idPedido, idNf));
