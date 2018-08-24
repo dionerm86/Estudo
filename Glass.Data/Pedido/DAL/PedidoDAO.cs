@@ -5426,6 +5426,7 @@ namespace Glass.Data.DAL
                     INNER JOIN produtos_pedido_espelho pp On (p.IdPedido = pp.IdPedido)
                     INNER JOIN produto_pedido_producao ppp On (ppp.IdProdPed = pp.IdProdPed)
 				WHERE ppp.situacao in (" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + "," + (int)ProdutoPedidoProducao.SituacaoEnum.Perda + @")
+                    AND ppp.SituacaoProducao in (" + (int)SituacaoProdutoProducao.Pronto + "," + (int)SituacaoProdutoProducao.Pendente + @")
                                     AND EXISTS
                                     (
                                         SELECT ppp1.*
