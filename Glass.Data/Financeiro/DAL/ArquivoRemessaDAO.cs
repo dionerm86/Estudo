@@ -877,6 +877,8 @@ namespace Glass.Data.DAL
 
                     if (!somenteValidacao)
                     {
+                        ContasReceberDAO.Instance.ValidarPagaByCnab(transaction, numDocCnab, idContaR, detalhe.SegmentoU.DataCredito, detalhe.SegmentoU.ValorPagoPeloSacado, detalhe.SegmentoU.JurosMultaEncargos);
+
                         if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
                             ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, detalhe.SegmentoU.DataCredito.ToShortDateString());
                         else
@@ -1029,12 +1031,46 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #endregion
+                    #region Itau
+
+                    else if (banco.Codigo == (int)CodigoBanco.Itau && detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoNormal &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoCartorio &&
+                        detalhe.CodigoOcorrencia != (int)CodOcorrenciaBradesco.LiquidacaoAposBaixa)
+                    {
+                        if (!somenteValidacao)
+                        {
+                            RegistroArquivoRemessaDAO.Instance.InsertRegistroRetornoCnab(transaction, arquivoRemessa.IdArquivoRemessa, idContaR, idContaBanco,
+                                detalhe.DataCredito, detalhe.CodigoOcorrencia, detalhe.NossoNumero + "-" + detalhe.DACNossoNumero, detalhe.UsoEmpresa,
+                                detalhe.ValorPago, detalhe.Juros, detalhe.JurosMora, detalhe.NumeroDocumento, banco.Codigo);
+
+                            transaction.Commit();
+                            transaction.Close();
+
+                            if (detalhe.CodigoOcorrencia == (int)CodOcorrenciaBradesco.EntradaConfirmada)
+                                return false;
+
+                            throw new Exception(string.Format("A conta {0} não foi recebida. Ocorrência: {1} - Motivo: {2}.", idContaR,
+                                detalhe.DescricaoOcorrencia, detalhe.MotivosRejeicao.IndexOf("71") >= 0 && detalhe.MotivosRejeicao.IndexOf("71") % 2 == 0 ?
+                                    "71 - Débito não agendado - Cedente não participa da modalidade de débito automático" :
+                                    "Não implementado"));
+                        }
+                        else
+                        {
+                            transaction.Rollback();
+                            transaction.Close();
+
+                            return false;
+                        }
+                    }
 
                     //Em alguns casos o itau já desconta a tarifa de uso do boleto, sendo assim é necessario somar essa tarifa
                     //ao valor pago para chegar ao valor a conta a receber
                     if (banco.Codigo == (int)CodigoBanco.Itau)
                         detalhe.ValorPago = detalhe.ValorPago + detalhe.TarifaCobranca;
+
+                    #endregion
+
+                    #endregion
 
                     var jurosMulta = detalhe.Juros + detalhe.JurosMora;
 
@@ -1049,10 +1085,7 @@ namespace Glass.Data.DAL
 
                     if (!somenteValidacao)
                     {
-                        if (detalhe.DataCredito == null || detalhe.DataCredito == DateTime.MinValue)
-                        {
-                            detalhe.DataCredito = detalhe.DataOcorrencia;
-                        }
+                        ContasReceberDAO.Instance.ValidarPagaByCnab(transaction, numDocCnab, idContaR, detalhe.DataCredito, detalhe.ValorPago, jurosMulta);
 
                         if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
                             ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, detalhe.DataCredito.ToShortDateString());
