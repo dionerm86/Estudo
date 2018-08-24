@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
+<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadPedido" Title="Cadastrar Pedido" EnableEventValidation="false"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -41,7 +41,7 @@
                     </label>
                 </span>
                 <span>
-                    <input type="text" v-model="pedido.codigoPedidoCliente" :disabled="pedido && pedido.importado" />
+                    <input type="text" v-model="pedido.codigoPedidoCliente" :disabled="pedido && pedido.importado" :required="configuracoes.obrigarInformarPedidoCliente" />
                 </span>
                 <span class="cabecalho">
                     <label>

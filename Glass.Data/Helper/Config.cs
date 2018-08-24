@@ -335,6 +335,8 @@ namespace Glass.Data.Helper
             AlturaELarguraMinimaParaPecasComLapidacao = 373,
             DiasReduzirDataFabricaComposicaoDuploLaminado = 374,
             TipoEstoqueChapasOtimizacao = 375,
+            EnviarEmailCobrancaApenasContasComPlanoContasBoleto = 376,
+            MaximoDiasEnviarEmailCobrancaAposVencimento = 377,
 
             #region Configs Suporte (Antiga config interna)
 

@@ -104,5 +104,12 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao
         [DataMember]
         [JsonProperty("beneficiamentos")]
         public BeneficiamentosDto Beneficiamentos { get; set; }
+
+        /// <summary>
+        /// Obtém ou define os beneficiamentos do produto serão aplicados na composição.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("aplicarBenefComposicao")]
+        public bool? AplicarBenefComposicao { get; set; }
     }
 }

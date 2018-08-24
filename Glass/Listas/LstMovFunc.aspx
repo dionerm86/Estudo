@@ -6,7 +6,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
-        function openRpt()
+        function openRpt(totais)
         {
             var idFunc = FindControl("drpFuncionario", "select").value;
             var idPedido = FindControl("txtIdPedido", "input").value;
@@ -15,7 +15,9 @@
             var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
             var tipo = FindControl("drpTipo", "select").value;
 
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MovFunc&idFunc=" + idFunc + "&idPedido=" + idPedido +
+            var report = totais ? "MovFuncTotais" : "MovFunc";
+
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=" + report + "&idFunc=" + idFunc + "&idPedido=" + idPedido +
                 "&idLiberarPedido=" + idLiberarPedido + "&dataIni=" + dataIni + "&dataFim=" + dataFim + "&tipo=" + tipo);
         }
     </script>
@@ -143,8 +145,10 @@
         </tr>
         <tr>
             <td align="center">
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(); return false;">
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false); return false;">
                     <img src="../Images/Printer.png" border="0" /> Imprimir</asp:LinkButton>
+                <asp:LinkButton ID="lnkImprimirTotal" runat="server" OnClientClick="openRpt(true); return false;">
+                    <img src="../Images/Printer.png" border="0" /> Imprimir Totais</asp:LinkButton>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMovFunc" runat="server" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectCountMethod="GetCount" SelectMethod="GetMovimentacoes" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.MovFuncDAO">

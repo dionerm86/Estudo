@@ -419,6 +419,7 @@ Vue.component('lista-itens-venda', {
 
       this.itemVendaOriginal = {
         id: item ? item.id : null,
+        aplicarBenefComposicao: item ? item.aplicarBenefComposicao : null,
         produto: {
           id: item && item.produto ? item.produto.id : null,
           espessura: item && item.produto ? item.produto.espessura : null,

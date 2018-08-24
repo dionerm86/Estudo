@@ -235,28 +235,31 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera a data da rota por cliente.
         /// </summary>
-        public DateTime? GetDataRota(uint idCli, DateTime dataInicial)
+        public DateTime? GetDataRota(uint idCli, DateTime dataInicial, Pedido.TipoPedidoEnum? tipoPedido)
         {
-            return GetDataRota(null, idCli, dataInicial);
+            return GetDataRota(null, idCli, dataInicial, tipoPedido);
         }
 
         /// <summary>
         /// Recupera a data da rota por cliente.
         /// </summary>
-        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial)
+        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, Pedido.TipoPedidoEnum? tipoPedido)
         {
-            return GetDataRota(session, idCli, dataInicial, true);
+            return GetDataRota(session, idCli, dataInicial, true, tipoPedido);
         }
 
         /// <summary>
         /// Recupera a data da rota por cliente.
         /// </summary>
-        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota)
+        public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota, Pedido.TipoPedidoEnum? tipoPedido)
         {
             Rota rota = GetByCliente(session, idCli);
 
             if (rota == null || (rota.DiasSemana == Model.DiasSemana.Nenhum && rota.NumeroMinimoDiasEntrega == 0))
                 return null;
+
+            if (tipoPedido == Pedido.TipoPedidoEnum.Revenda)
+                return dataInicial.AddDays(PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda);
 
             int numeroDias = (dataInicial - DateTime.Now).Days;
 
