@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
@@ -777,29 +777,6 @@ namespace Glass.Data.DAL
                             var produtos = ProdutoTrocadoDAO.Instance.GetByTrocaDevolucao(transaction, idTrocaDevolucao);
                             AtualizaEtiquetasBox(transaction, troca, produtos);
 
-                            foreach (var p in produtos.Where(f => !string.IsNullOrEmpty(f.Etiquetas)))
-                            {
-                                foreach (var etq in p.Etiquetas.Split('|'))
-                                {
-                                    if (etq.ToUpper().Substring(0, 1).Equals("N"))
-                                    {
-                                        var chapaTrocadaDevolvida = new ChapaTrocadaDevolvida();
-
-                                        chapaTrocadaDevolvida.IdPedido = ProdutoImpressaoDAO.Instance.ObterIdPedidoExpedicaoPelaEtiqueta(transaction, etq) ?? 0;
-                                        chapaTrocadaDevolvida.IdProdImpressaoChapa = (int)ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(etq, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
-                                        chapaTrocadaDevolvida.IdTrocaDevolucao = (int)idTrocaDevolucao;
-                                        chapaTrocadaDevolvida.NumEtiqueta = etq;
-                                        chapaTrocadaDevolvida.Situacao = SituacaoChapaTrocadaDevolvida.Disponivel;
-
-                                        ChapaTrocadaDevolvidaDAO.Instance.InsertComTransacao(chapaTrocadaDevolvida);
-                                    }
-                                    else
-                                    {
-                                        var idProdPedProducao = etq.Split(';')[1].StrParaUint();
-                                        objPersistence.ExecuteCommand(transaction, "UPDATE produto_pedido_producao SET TrocadoDevolvido=1 WHERE IdProdPedProducao=" + idProdPedProducao);
-                                    }
-                                }
-                            }
                         }
                         catch (Exception ex)
                         {
