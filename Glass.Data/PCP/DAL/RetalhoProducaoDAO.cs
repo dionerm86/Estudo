@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
-using Glass.Data.Helper;
+﻿using Colosoft;
 using GDA;
 using Glass.Configuracoes;
-using Colosoft;
+using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.DAL
@@ -22,18 +22,18 @@ namespace Glass.Data.DAL
                 r.*, p.Descricao, p.CodInterno, p.Altura, p.Largura, ur.TotM AS TotMUsando, ur.Etiquetas As EtiquetaUsando,
                 uso.dataLeitura as DataUso, pnf.Lote, nf.NumeroNFe, f.Nome as NomeFunc, p.Obs," +
                 (PCPConfig.ExibirTotalM2RetalhoCorEspessura ? " p.Espessura, cv.Descricao as CorVidro, " : "") + "'$$$' AS Criterio" : "r.IdRetalhoProducao";
-            
-            string calculoTotM = 
+
+            string calculoTotM =
                 string.Format(@"SUM(IF(ped.TipoPedido<>{0}, (ppe.Altura * ppe.Largura) / 1000000,
                     (ape.Altura * ape.Largura) / 1000000))", (int)Pedido.TipoPedidoEnum.MaoDeObra);
 
             var sql =
                 string.Format(@"
                     SELECT {0}
-                    FROM retalho_producao r 
+                    FROM retalho_producao r
                         INNER JOIN produto p ON (r.IdProd=p.IdProd)
                         LEFT JOIN produto_pedido_producao ppp on(r.IdProdPedProducaoOrig = ppp.IdProdPedProducao)
-	                    LEFT JOIN produto_baixa_estoque pbe ON (p.IdProdOrig = pbe.IdProd)	                
+	                    LEFT JOIN produto_baixa_estoque pbe ON (p.IdProdOrig = pbe.IdProd)
                         LEFT JOIN produtos_nf pnf ON (pnf.IdProdNf=r.IdProdNf)
                         LEFT JOIN nota_fiscal nf ON (nf.IdNf=pnf.IdNf)
                         LEFT JOIN funcionario f ON (r.UsuCad = f.IdFunc)
@@ -128,7 +128,7 @@ namespace Glass.Data.DAL
                 criterio += "Situação: " + situacao.Translate().Format() + "    ";
             }
 
-            if(!string.IsNullOrEmpty(idsCores))
+            if (!string.IsNullOrEmpty(idsCores))
             {
                 sql += " And p.IdCorVidro in(" + idsCores + ")";
                 criterio += "Cores: " + idsCores + "    ";
@@ -139,7 +139,7 @@ namespace Glass.Data.DAL
                 sql += " And p.Espessura =" + espessura;
                 criterio += "Espessura Inicio: " + espessura + "    ";
             }
-            
+
             if (alturaInicio > 0)
             {
                 sql += " And p.Altura >=" + alturaInicio;
@@ -179,7 +179,7 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(filtroAdicional))
                 sql += filtroAdicional;
 
-          
+
             sql += " GROUP BY r.IdRetalhoProducao";
 
             if (!selecionar)
@@ -227,7 +227,7 @@ namespace Glass.Data.DAL
 
             return lst.ToArray();
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>
@@ -267,9 +267,9 @@ namespace Glass.Data.DAL
             string dataUsoIni, string dataUsoFim, SituacaoRetalhoProducao? situacao, string idsCores, double espessura, double alturaInicio,
             double alturaFim, double larguraInicio, double larguraFim, string numEtiqueta, string observacao)
         {
-            int count = objPersistence.ExecuteSqlQueryCount(Sql(0, null, 0, 0, codInterno, descrProduto, dataIni, dataFim,
+            int count = GetCountWithInfoPaging(Sql(0, null, 0, 0, codInterno, descrProduto, dataIni, dataFim,
                 dataUsoIni, dataUsoFim, situacao, idsCores, espessura, alturaInicio, alturaFim, larguraInicio, larguraFim,
-                numEtiqueta, observacao, false, null), GetParam(dataIni, dataFim, dataUsoIni, dataUsoFim, numEtiqueta, observacao));
+                numEtiqueta, observacao, true, null), GetParam(dataIni, dataFim, dataUsoIni, dataUsoFim, numEtiqueta, observacao));
 
             return count == 0 ? 1 : count;
         }
@@ -283,7 +283,7 @@ namespace Glass.Data.DAL
         {
             return objPersistence.LoadData(sessao, Sql(0, null, 0, idProdPedProducao, null, null, null, null, null, null, null, null, 0, 0, 0, 0, 0, null, null, true, null)).ToList();
         }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// </summary>
@@ -303,7 +303,7 @@ namespace Glass.Data.DAL
             var filtroAdicional = " And (pbe.idProdBaixa in (" + idsProdOrig.Trim(',') + @") Or p.idProdOrig in (" + idsProdOrig.Trim(',') + @")
                 Or p.idProdBase in (" + idsProdOrig.Trim(',') + @"))";
 
-            var sql = Sql(0, null, 0, 0, null, null, null, null, null, null, SituacaoRetalhoProducao.Disponivel, null, 0, 0, 0, 0, 0, null, null, true, filtroAdicional) + 
+            var sql = Sql(0, null, 0, 0, null, null, null, null, null, null, SituacaoRetalhoProducao.Disponivel, null, 0, 0, 0, 0, 0, null, null, true, filtroAdicional) +
                 "  HAVING COUNT(ur.IdUsoRetalhoProducao) = 0 ";
 
             return objPersistence.LoadData(sessao, sql);
@@ -345,7 +345,7 @@ namespace Glass.Data.DAL
                 alturaProducao = dao.ObtemAlturaProducao(idProdPed);
                 larguraProducao = dao.ObtemLarguraProducao(idProdPed);
             }
-            
+
             string calculoTotM =
                 string.Format(@"SUM(IF(ped.TipoPedido<>{0}, (ppe.Altura * ppe.Largura) / 1000000,
                     (ape.Altura * ape.Largura) / 1000000))", (int)Pedido.TipoPedidoEnum.MaoDeObra);
@@ -353,7 +353,7 @@ namespace Glass.Data.DAL
             var listaRetalhos = objPersistence.LoadData(
                 string.Format(@"
                     SELECT r.*, p.Descricao, p.CodInterno, p.Altura, p.Largura, f.Nome as NomeFunc, p.Obs
-                    FROM retalho_producao r 
+                    FROM retalho_producao r
                         INNER JOIN produto p ON (r.IdProd=p.IdProd)
                         LEFT JOIN produto_pedido_producao ppp on(r.IdProdPedProducaoOrig = ppp.IdProdPedProducao)
 	                    LEFT JOIN produto_baixa_estoque pbe ON (p.IdProdOrig = pbe.IdProd)
@@ -363,9 +363,9 @@ namespace Glass.Data.DAL
                             FROM uso_retalho_producao ur1
                             GROUP BY ur1.IdRetalhoProducao)
                         ur ON (r.IdRetalhoProducao = ur.IdRetalhoProducao)
-                    WHERE r.Situacao={0} 
+                    WHERE r.Situacao={0}
                          And (pbe.idProdBaixa in ({1}) Or p.idProdOrig in ({1}) Or p.idProdBase in ({1}))
-                    GROUP BY r.IdRetalhoProducao 
+                    GROUP BY r.IdRetalhoProducao
                     HAVING COUNT(ur.IdUsoRetalhoProducao) = 0",
 
                     (int)SituacaoRetalhoProducao.Disponivel,
@@ -439,7 +439,7 @@ namespace Glass.Data.DAL
             return output;
         }
 
-        public int AlteraSituacao(GDASession sessao,  uint id, SituacaoRetalhoProducao situacao)
+        public int AlteraSituacao(GDASession sessao, uint id, SituacaoRetalhoProducao situacao)
         {
             var retalho = GetElementByPrimaryKey(sessao, id);
 
@@ -618,7 +618,7 @@ namespace Glass.Data.DAL
         public List<uint> CriarRetalho(string altura, string largura, string quantidade, string observacao, string numEtiqueta,
             LoginUsuario usuario)
         {
-            lock(_criarRetalhoLock)
+            lock (_criarRetalhoLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -746,7 +746,7 @@ namespace Glass.Data.DAL
 
         public List<uint> CriarRetalho(List<RetalhoProducaoAuxiliar> dadosRetalho, uint idProd, uint idProdNf, LoginUsuario usuario)
         {
-            lock(_criarRetalhoLock)
+            lock (_criarRetalhoLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -762,7 +762,7 @@ namespace Glass.Data.DAL
                         // Valida os retalhos
                         if (!ValidaRetalhos(transaction, dadosRetalho, idProd, idProdNf))
                             throw new Exception("Erro de validação de retalhos. Verifique se a altura e largura do retalho são menores que a chapa assim como a metragem total.");
-                        
+
                         List<uint> idsRetalho = new List<uint>();
 
                         //Separa os valores dos retalhos
@@ -897,7 +897,7 @@ namespace Glass.Data.DAL
             uint id = base.Insert(session, objInsert);
             var idLoja = objInsert.Usuario != null ? objInsert.Usuario.IdLoja : UserInfo.GetUserInfo.IdLoja;
             MovEstoqueDAO.Instance.CreditaEstoqueRetalho(session, (uint)objInsert.IdProd, idLoja, id, 1, objInsert.Usuario);
-            
+
             return id;
         }
 
@@ -916,7 +916,7 @@ namespace Glass.Data.DAL
 
         public void CancelarComTransacao(uint idFunc, uint idRetalhoProducao, string motivo, bool cancelarProdutoImpresso, bool manual, bool validar)
         {
-            lock(_cancelarRetalhoLock)
+            lock (_cancelarRetalhoLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -997,7 +997,7 @@ namespace Glass.Data.DAL
 
         public void MarcarPerda(uint idFunc, uint idRetalhoProducao, uint idTipoPerda, uint? idSubtipoPerda, string motivo)
         {
-            lock(_marcarPerdaLock)
+            lock (_marcarPerdaLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -1012,7 +1012,7 @@ namespace Glass.Data.DAL
 
                         if (retalho.Situacao == SituacaoRetalhoProducao.Cancelado || retalho.Situacao == SituacaoRetalhoProducao.Vendido || retalho.Situacao == SituacaoRetalhoProducao.Perda)
                             throw new Exception("Apenas retalhos com as situçãoes Disponível, Em Uso ou Em Estoque podem ser marcados como perda");
-                        
+
                         if (!string.IsNullOrEmpty(retalho.NumeroEtiqueta))
                         {
                             uint idProdImpressao = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(transaction, retalho.NumeroEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Retalho);
@@ -1032,7 +1032,7 @@ namespace Glass.Data.DAL
                             MovEstoqueDAO.Instance.BaixaEstoqueRetalho(transaction, (uint)retalho.IdProd, UserInfo.GetUserInfo.IdLoja, idRetalhoProducao, 1);
 
                         LogCancelamentoDAO.Instance.LogRetalhoProducao(transaction, idFunc, retalho, "Perda do retalho " + retalho.NumeroEtiqueta + " - " + motivo, true);
-                        
+
                         transaction.Commit();
                         transaction.Close();
                     }

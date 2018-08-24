@@ -392,6 +392,13 @@
       }
 
       var pedidoAtualizar = this.patch(this.pedido, this.pedidoOriginal);
+
+      if (this.tipoVendaAtual && this.tipoVendaAtual.id === this.configuracoes.tipoVendaAPrazo) {
+        pedidoAtualizar.formaPagamento = pedidoAtualizar.formaPagamento || {};
+        pedidoAtualizar.formaPagamento.parcelas = pedidoAtualizar.formaPagamento.parcelas || {};
+        pedidoAtualizar.formaPagamento.parcelas.detalhes = this.pedido.formaPagamento.parcelas.detalhes;
+      }
+
       var vm = this;
 
       Servicos.Pedidos.atualizar(this.pedido.id, pedidoAtualizar)
@@ -649,9 +656,7 @@
         id: item && item.funcionarioComprador ? item.funcionarioComprador.id : null
       };
 
-      this.tipoEntregaAtual = {
-        id: item && item.entrega ? item.entrega.tipo : null
-      };
+      this.tipoEntregaAtual = item && item.entrega ? item.entrega.tipo : null;
 
       this.formaPagamentoAtual = {
         id: item && item.formaPagamento ? item.formaPagamento.id : null
@@ -915,7 +920,7 @@
       return this.pedido.tipoVenda === this.configuracoes.tipoVendaAPrazo
         || this.pedido.tipoVenda === this.configuracoes.tipoVendaReposicao
         || this.pedido.tipoVenda === this.configuracoes.tipoVendaGarantia
-        || (this.configuracoes.UsarControleDescontoFormaPagamentoDadosProduto
+        || (this.configuracoes.usarControleDescontoFormaPagamentoDadosProduto
           && this.pedido.tipoVenda === this.configuracoes.tipoVendaAVista);
     },
 
@@ -966,6 +971,20 @@
           || this.pedido.tipoVenda === this.configuracoes.tipoPedidoVenda
           || this.pedido.formaPagamento.parcelas.parcelaAVista
       );
+    },
+
+    /**
+     * Propriedade computada que retorna se o ajuste de layout será exibido.
+     */
+    vIfAjusteLayoutTransportador: function () {
+      var exibir = (this.vIfFormaPagamento && this.vIfValorEntrada)
+        || this.vIfTipoVendaObra;
+
+      if (this.configuracoes.exibirValorFretePedido) {
+        exibir = !exibir;
+      }
+
+      return exibir;
     }
   },
 
@@ -1144,10 +1163,7 @@
      */
     parcelaAtual: {
       handler: function(atual) {
-        this.pedido.formaPagamento.parcelas.id = atual ? atual.id : null;
-        this.pedido.formaPagamento.parcelas.dias = atual ? atual.dias : null;
-        this.pedido.formaPagamento.parcelas.numeroParcelas = atual ? atual.numeroParcelas : null;
-
+        this.pedido.formaPagamento.parcelas = atual;
         this.validarDesconto();
       },
       deep: true
@@ -1170,7 +1186,7 @@
      */
     tipoEntregaAtual: {
       handler: function(atual) {
-        this.pedido.entrega.tipo = atual ? atual.id : null;
+        this.pedido.entrega.tipo = atual;
       },
       deep: true
     },

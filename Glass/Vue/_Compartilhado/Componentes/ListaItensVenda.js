@@ -102,6 +102,16 @@ Vue.component('lista-itens-venda', {
     },
 
     /**
+     * Identificador do ambiente (se necessário).
+     * @type {number}
+     */
+    idAmbiente: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Quantidade de itens no ambiente (para vendas mão-de-obra).
      * @type {number}
      */
@@ -341,6 +351,7 @@ Vue.component('lista-itens-venda', {
       }
 
       if (this.inserir) {
+        this.itemVenda.idAmbiente = this.idAmbiente;
         var vm = this;
 
         this.inserir(this.itemVenda)
@@ -419,6 +430,7 @@ Vue.component('lista-itens-venda', {
 
       this.itemVendaOriginal = {
         id: item ? item.id : null,
+        idAmbiente: item ? item.idAmbiente : null,
         produto: {
           id: item && item.produto ? item.produto.id : null,
           espessura: item && item.produto ? item.produto.espessura : null,
@@ -456,6 +468,10 @@ Vue.component('lista-itens-venda', {
           largura: item && item.beneficiamentos ? item.beneficiamentos.largura : null,
           redondo: item && item.beneficiamentos ? item.beneficiamentos.redondo : null,
           itens: item && item.beneficiamentos && item.beneficiamentos.itens ? item.beneficiamentos.itens.slice() : []
+        },
+        composicao: {
+          possuiFilhos: item && item.composicao ? item.composicao.possuiFilhos : null,
+          aplicarBeneficiamentosProdutosFilhos: item && item.composicao ? item.composicao.aplicarBeneficiamentosProdutosFilhos : null
         }
       };
 

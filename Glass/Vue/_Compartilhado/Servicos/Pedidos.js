@@ -3,7 +3,7 @@ var Servicos = Servicos || {};
 /**
  * Objeto com os serviços para a API de pedidos.
  */
-Servicos.Pedidos = (function(http) {
+Servicos.Pedidos = (function (http) {
   const API = '/api/v1/pedidos/';
 
   return {
@@ -19,7 +19,7 @@ Servicos.Pedidos = (function(http) {
        * @param {string} ordenacao A ordenação para o resultado.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      obter: function(idPedido, pagina, numeroRegistros, ordenacao) {
+      obter: function (idPedido, pagina, numeroRegistros, ordenacao) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -41,7 +41,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!number} idAmbiente O identificador do ambiente que será excluído.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      excluir: function(idPedido, idAmbiente) {
+      excluir: function (idPedido, idAmbiente) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -59,7 +59,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!Object} ambiente O objeto com os dados do ambiente a ser inserido.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      inserir: function(idPedido, ambiente) {
+      inserir: function (idPedido, ambiente) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -74,7 +74,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!Object} ambiente O objeto com os dados do ambiente a serem alterados.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      atualizar: function(idPedido, idAmbiente, ambiente) {
+      atualizar: function (idPedido, idAmbiente, ambiente) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -105,7 +105,7 @@ Servicos.Pedidos = (function(http) {
        * @param {string} ordenacao A ordenação para o resultado.
        * @returns {Promise} Uma promise com o resultado da busca.
        */
-      obter: function(idPedido, idAmbiente, idProdutoPai, pagina, numeroRegistros, ordenacao) {
+      obter: function (idPedido, idAmbiente, idProdutoPai, pagina, numeroRegistros, ordenacao) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -129,7 +129,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!number} idProduto O identificador do produto que será excluído.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      excluir: function(idPedido, idProduto) {
+      excluir: function (idPedido, idProduto) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -147,7 +147,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!Object} produto O objeto com os dados do ambiente a ser inserido.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      inserir: function(idPedido, produto) {
+      inserir: function (idPedido, produto) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -162,7 +162,7 @@ Servicos.Pedidos = (function(http) {
        * @param {!Object} produto O objeto com os dados do produto a serem alterados.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      atualizar: function(idPedido, idProduto, produto) {
+      atualizar: function (idPedido, idProduto, produto) {
         if (!idPedido) {
           throw new Error('Pedido é obrigatório.');
         }
@@ -208,7 +208,7 @@ Servicos.Pedidos = (function(http) {
      * @param {string} ordenacao A ordenação para o resultado.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
       filtro = filtro || {};
       filtro.pagina = pagina;
       filtro.numeroRegistros = numeroRegistros;
@@ -224,7 +224,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!number} idPedido O identificador do pedido que será retornado.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterDetalhe(idPedido) {
+    obterDetalhe: function (idPedido) {
       if (!idPedido) {
         throw new Error('Pedido é obrigatório.');
       }
@@ -237,7 +237,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!number} idPedido O identificador do pedido que será excluído.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    excluir: function(idPedido) {
+    excluir: function (idPedido) {
       if (!idPedido) {
         throw new Error('Pedido é obrigatório.');
       }
@@ -250,7 +250,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!number} pedido Os dados do pedido que será inserido.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    inserir: function(pedido) {
+    inserir: function (pedido) {
       return http().post(API.substr(0, API.length - 1), pedido);
     },
 
@@ -260,7 +260,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!Object} pedido O objeto com os dados do pedido a serem alterados.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    atualizar: function(idPedido, pedido) {
+    atualizar: function (idPedido, pedido) {
       if (!idPedido) {
         throw new Error('Pedido é obrigatório.');
       }
@@ -277,7 +277,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!number} idPedido O identificador do pedido que será reaberto.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    reabrir: function(idPedido) {
+    reabrir: function (idPedido) {
       if (!idPedido) {
         throw new Error('Pedido é obrigatório.');
       }
@@ -336,7 +336,7 @@ Servicos.Pedidos = (function(http) {
      * @param {boolean} liberar Indica se o pedido será liberado.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    alterarLiberacaoFinanceira: function(idPedido, liberar) {
+    alterarLiberacaoFinanceira: function (idPedido, liberar) {
       if (!idPedido) {
         throw new Error('Pedido é obrigatório.');
       }
@@ -354,14 +354,14 @@ Servicos.Pedidos = (function(http) {
      * @param {string} ordenacao A ordenação para o resultado.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterListaObservacoesFinanceiro: function(idPedido, pagina, numeroRegistros, ordenacao) {
+    obterListaObservacoesFinanceiro: function (idPedido, pagina, numeroRegistros, ordenacao) {
       var filtro = {
         pagina,
         numeroRegistros,
         ordenacao
       };
 
-      return http().get(API + idPedido + '/observacoesFinanceiro', {
+      return http().get(API +idPedido + '/observacoesFinanceiro', {
         params: filtro
       });
     },
@@ -371,7 +371,7 @@ Servicos.Pedidos = (function(http) {
      * @param {boolean} exibirFinanceiro Indica se os dados de financeiro devem ser exibidos na listagem.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterConfiguracoesLista: function(exibirFinanceiro) {
+    obterConfiguracoesLista: function (exibirFinanceiro) {
       return http().get(API + 'configuracoes', {
         params: {
           exibirFinanceiro: exibirFinanceiro || false
@@ -396,7 +396,7 @@ Servicos.Pedidos = (function(http) {
      * @param {number} idPedido O identificador do pedido que está sendo editado (se houver).
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterConfiguracoesDetalhe: function(idPedido) {
+    obterConfiguracoesDetalhe: function (idPedido) {
       return http().get(API + (idPedido || 0) + '/configuracoes');
     },
 
@@ -404,7 +404,7 @@ Servicos.Pedidos = (function(http) {
      * Retorna os itens para o controle de situações de pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterSituacoes: function() {
+    obterSituacoes: function () {
       return http().get(API + 'situacoes');
     },
 
@@ -412,7 +412,7 @@ Servicos.Pedidos = (function(http) {
      * Retorna os itens para o controle de tipos de pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTiposPedido: function() {
+    obterTiposPedido: function () {
       return http().get(API + 'tipos');
     },
 
@@ -420,7 +420,7 @@ Servicos.Pedidos = (function(http) {
      * Retorna os itens para o controle do filtro de tipos de venda.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTiposVenda: function() {
+    obterTiposVenda: function () {
       return http().get(API + 'tiposVenda');
     },
 
@@ -430,7 +430,7 @@ Servicos.Pedidos = (function(http) {
      * @param {boolean} pedidoProducao Indica se o pedido é de produção.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTiposPedidoPorFuncionario: function(pedidoMaoDeObra, pedidoProducao) {
+    obterTiposPedidoPorFuncionario: function (pedidoMaoDeObra, pedidoProducao) {
       return http().get(API + 'tiposPorFuncionario', {
         params: {
           maoDeObra: pedidoMaoDeObra || false,
@@ -444,7 +444,7 @@ Servicos.Pedidos = (function(http) {
      * @param {Object} filtro Os dados para o filtro da pesquisa.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTiposVendaCliente: function(filtro) {
+    obterTiposVendaCliente: function (filtro) {
       return http().get(API + 'tiposVendaCliente', {
         params: filtro
       });
@@ -455,7 +455,7 @@ Servicos.Pedidos = (function(http) {
      * @param {Object} filtro Os dados para o filtro da pesquisa.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterFormasPagamento: function(filtro) {
+    obterFormasPagamento: function (filtro) {
       return http().get(API + 'formasPagamento', {
         params: filtro
       });
@@ -465,7 +465,7 @@ Servicos.Pedidos = (function(http) {
      * Recupera os tipos de entrega de pedido para exibição no cadastro ou edição do pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterTiposEntrega: function() {
+    obterTiposEntrega: function () {
       return http().get(API + 'tiposEntrega');
     },
 
@@ -478,7 +478,7 @@ Servicos.Pedidos = (function(http) {
      * @param {!Date} dataBase A data base para cálculo da data de entrega.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    obterDatasEntrega: function(idPedido, idCliente, tipoPedido, tipoEntrega, dataBase) {
+    obterDatasEntrega: function (idPedido, idCliente, tipoPedido, tipoEntrega, dataBase) {
       return http().get(API + (idPedido || 0) + '/dataEntregaMinima', {
         params: {
           idCliente,
@@ -494,7 +494,7 @@ Servicos.Pedidos = (function(http) {
      * @param {number} idPedido O identificador do pedido que será verificado.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    verificarFastDelivery: function(idPedido) {
+    verificarFastDelivery: function (idPedido) {
       if (!idPedido) {
         return Promise.resolve();
       }
@@ -513,7 +513,7 @@ Servicos.Pedidos = (function(http) {
      * @param {number} idParcela O identificador da parcela do pedido.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    validarDesconto: function(
+    validarDesconto: function (
       idPedido,
       descontoTela,
       tipoDescontoTela,
@@ -547,6 +547,6 @@ Servicos.Pedidos = (function(http) {
       return http().post(API + idPedido + '/colocarEmConferencia');
     }
   };
-})(function() {
+})(function () {
   return Vue.prototype.$http;
 });

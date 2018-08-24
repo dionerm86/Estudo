@@ -1,4 +1,4 @@
-<form>
+﻿<form>
     <lista-paginada ref="lista" v-bind:exibir-inclusao="permitirInserir" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
         v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
         <template slot="cabecalho">
@@ -159,7 +159,7 @@
                 <td v-bind:colspan="numeroColunasLista() - 1">
                     <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
                         v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
-                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno"
+                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno" v-bind:id-ambiente="idAmbiente"
                         v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
                         v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:permitir-inserir="item.composicao.permitirInserirFilhos"
                         v-bind:exibir-colunas-processo-e-aplicacao="exibirColunasProcessoEAplicacao" v-bind:empresa-vende-vidro="empresaVendeVidro" v-on:lista-atualizada="listaAtualizada">
@@ -306,6 +306,10 @@
                             <input type="number" v-model.number="itemVenda.produto.espessura" style="width: 40px"
                                 v-bind:disabled="itemVenda.produto.espessura > 0" step="0.01" min="0.01"
                                 v-if="itemVenda && itemVenda.produto">
+                        </div>
+                        <div style="text-align: center" v-if="itemVenda && itemVenda.composicao && itemVenda.composicao.possuiFilhos">
+                            Aplicar Beneficiamentos Composição
+                            <input type="checkbox" v-model="itemVenda.composicao.aplicarBeneficiamentosProdutosFilhos" />
                         </div>
                         <div style="padding-top: 8px">
                             <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"

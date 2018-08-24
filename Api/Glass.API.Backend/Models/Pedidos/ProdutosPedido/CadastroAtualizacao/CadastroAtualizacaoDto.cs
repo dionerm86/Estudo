@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.Venda;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -14,6 +15,13 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao
     [DataContract(Name = "CadastroAtualizacao")]
     public class CadastroAtualizacaoDto
     {
+        /// <summary>
+        /// Obtém ou define o identificador do ambiente de pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idAmbiente")]
+        public int? IdAmbiente { get; set; }
+
         /// <summary>
         /// Obtém ou define os dados básicos do produto.
         /// </summary>
@@ -104,5 +112,12 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao
         [DataMember]
         [JsonProperty("beneficiamentos")]
         public BeneficiamentosDto Beneficiamentos { get; set; }
+
+        /// <summary>
+        /// Obtém ou define os dados de composição do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("composicao")]
+        public ComposicaoDto Composicao { get; set; }
     }
 }

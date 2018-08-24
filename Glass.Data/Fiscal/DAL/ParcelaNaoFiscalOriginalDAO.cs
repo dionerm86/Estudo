@@ -48,7 +48,7 @@ namespace Glass.Data.DAL
             {
                 /* Chamado 25258. */
                 if (c.IdLiberarPedido.GetValueOrDefault() > 0 &&
-                    PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(c.IdLiberarPedido.Value)
+                    PedidosNotaFiscalDAO.Instance.GetByLiberacaoPedido(sessao, c.IdLiberarPedido.Value)
                         .Count(f => f.IdNf == idNf) == 0)
                     throw new Exception(
                         string.Format(@"A liberação {0} não está associada à nota fiscal de ID {1},

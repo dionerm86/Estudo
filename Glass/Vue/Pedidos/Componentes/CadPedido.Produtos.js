@@ -131,7 +131,7 @@ Vue.component('pedido-produtos', {
      * Insere um produto, se possível.
      * @param {Object} item O produto de pedido que será inserido.
      */
-    inserir: function(item) {
+    inserir: function (item) {
       return Servicos.Pedidos.Produtos.inserir(this.pedido.id, item);
     },
 
@@ -139,7 +139,7 @@ Vue.component('pedido-produtos', {
      * Atualiza um produto, se possível.
      * @param {Object} item O produto de pedido que será atualizado.
      */
-    atualizar: function(item) {
+    atualizar: function (item) {
       return Servicos.Pedidos.Produtos.atualizar(this.pedido.id, item.id, item)
         .catch(function(erro) {
           const mensagemAmbienteObrigatorio = 'O ambiente de pedido é obrigatório.';

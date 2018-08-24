@@ -1049,6 +1049,11 @@ namespace Glass.Data.DAL
 
                     if (!somenteValidacao)
                     {
+                        if (detalhe.DataCredito == null || detalhe.DataCredito == DateTime.MinValue)
+                        {
+                            detalhe.DataCredito = detalhe.DataOcorrencia;
+                        }
+
                         if (ContasReceberDAO.Instance.ContaAntecipada(transaction, idContaR))
                             ContasReceberDAO.Instance.ReceberContaAntecipada(transaction, idContaR, detalhe.DataCredito.ToShortDateString());
                         else

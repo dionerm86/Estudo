@@ -67,9 +67,9 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData("Select * From pedidos_nota_fiscal Where idCarregamento=" + idCarregamento).ToArray();
         }
 
-        public PedidosNotaFiscal[] GetByLiberacaoPedido(uint idLiberarPedido)
+        public PedidosNotaFiscal[] GetByLiberacaoPedido(GDASession sessao, uint idLiberarPedido)
         {
-            return objPersistence.LoadData("select * from pedidos_nota_fiscal where idLiberarPedido=" + idLiberarPedido).ToArray();
+            return objPersistence.LoadData(sessao, "select * from pedidos_nota_fiscal where idLiberarPedido=" + idLiberarPedido).ToArray();
         }
 
         public List<int> ObterIdsNf(GDASession session, List<int> idsLiberarPedido, List<int> idsPedido, NotaFiscal.SituacaoEnum? situacaoNotaFiscal)
