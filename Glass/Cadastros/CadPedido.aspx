@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadPedido" Title="Cadastrar Pedido" EnableEventValidation="false"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -499,7 +499,8 @@
                         {{ pedido.transportador.nome }}
                     </span>
                 </template>
-                <span v-if="pedido && (!configuracoes.exibirDeveTransferir || !pedido.funcionarioComprador || !pedido.transportador)" class="colspan2"></span>
+                <span v-if="vIfAjusteLayoutObservacao" class="colspan2">
+                </span>
                 <label>
                     Observação
                 </label>
