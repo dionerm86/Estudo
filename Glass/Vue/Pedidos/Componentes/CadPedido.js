@@ -402,7 +402,8 @@
       var vm = this;
 
       Servicos.Pedidos.atualizar(this.pedido.id, pedidoAtualizar)
-        .then(function(resposta) {
+        .then(function (resposta) {
+          vm.atualizarPedidoEAmbientes();
           vm.cancelar();
         })
         .catch(function(erro) {

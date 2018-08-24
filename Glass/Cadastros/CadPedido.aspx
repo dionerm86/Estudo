@@ -197,7 +197,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="!configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
                 <span v-if="vIfAjusteLayoutTransportador" class="colspan2">
                 </span>
