@@ -246,7 +246,70 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             }
 
             #endregion
-            
+
+            if (etiqueta.Contains('='))
+            {
+                var posicao = etiqueta.Split('-')[1].Split('/')[0].Split('.')[0].StrParaInt();
+
+                var intervaloEtiquetas = etiqueta.Split('/')[1].Split('=');
+                var inicioIntervalo = intervaloEtiquetas[0].StrParaInt();
+                var fimIntervalo = intervaloEtiquetas[1].StrParaInt();
+
+                var produtosImpressao = ProdutoImpressaoDAO.Instance.GetByIdPedido(null, posicao, etiqueta.Split('-')[0].StrParaInt()).OrderBy(f => f.ItemEtiqueta);
+                var etiquetas = new List<string>();
+
+                if (inicioIntervalo > fimIntervalo)
+                {
+                    throw new Exception("item inicial maior que item final.");
+                }
+
+                if (fimIntervalo > produtosImpressao.Count())
+                {
+                    throw new Exception("Número de itens deve maior que a quantidade existente na posição.");
+                }
+
+                foreach (var item in produtosImpressao)
+                {
+                    if (item.ItemEtiqueta >= inicioIntervalo && item.ItemEtiqueta <= fimIntervalo)
+                    {
+                        etiquetas.Add(item.IdPedido.ToString() + "-" + posicao + "." + item.ItemEtiqueta + "/" + item.QtdeProd);
+                    }
+                }
+
+                #region Salva na tabela de controle
+
+                LeituraEtiquetaPedidoPlanoCorteDAO.Instance.Insert(null, new LeituraEtiquetaPedidoPlanoCorte()
+                {
+                    NumEtiquetaLida = etiqueta
+                });
+
+                #endregion
+
+                var erroEtq = new List<string>();
+
+                foreach (string e in etiquetas)
+                {
+                    try
+                    {
+                        EfetuaLeitura(idFunc, idCarregamento, e, null, idCliente, nomeCli, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idPedidoExterno, nomeClienteExterno, idPedidoExterno);
+                    }
+                    catch
+                    {
+                        erroEtq.Add(e);
+                    }
+                }
+
+                if (erroEtq.Count > 0)
+                {
+                    var erros = string.Join(",", erroEtq.ToArray());
+
+                    ErroDAO.Instance.InserirFromException("Leitura com (=)", new Exception("Etiqueta: " + etiqueta + " Leituras: " + erros));
+                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
+                }
+
+                return;
+            }
+
             using (var trans = new GDATransaction())
             {
                 try
