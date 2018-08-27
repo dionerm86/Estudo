@@ -96,12 +96,6 @@ namespace Glass.Data.Model
             get { return string.Format("({0}% | {1}% | {2}%)", PercAcrescimoTotM21, PercAcrescimoTotM22, PercAcrescimoTotM23); }
         }
 
-        public string DescricaoSituacao
-        {
-            get { return ((Glass.Situacao)this.Situacao).ToString(); }
-        }
-
-
         #endregion
     }
 }

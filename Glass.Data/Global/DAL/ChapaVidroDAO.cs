@@ -169,7 +169,7 @@ namespace Glass.Data.DAL
         public List<ChapaVidro> ObterListaOtimizacao(string ids)
         {
             string sql = @"select c.*, p.Descricao as DescrProd, p.CodInterno as CodInternoProd from chapa_vidro c 
-                left join produto p on (c.idProd=p.idProd) where c.IdChapaVidro IN(" + ids + ") AND c.Situacao=" + Glass.Situacao.Ativo;
+                left join produto p on (c.idProd=p.idProd) where c.IdChapaVidro IN(" + ids + ") AND c.Situacao=" + (int)Glass.Situacao.Ativo;
 
             return objPersistence.LoadData(sql);
         }

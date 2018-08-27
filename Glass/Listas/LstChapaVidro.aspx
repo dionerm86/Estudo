@@ -267,7 +267,7 @@
                                     <asp:TemplateField HeaderText="Situação">
                                         <ItemTemplate>
                                             <asp:Label ID="lblSituacao" runat="server" 
-                                                Text='<%# Eval("DescricaoSituacao") %>'></asp:Label>
+                                                Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
