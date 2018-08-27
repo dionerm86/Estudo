@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
+﻿<%@ Page Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" CodeBehind="CadPedido.aspx.cs"
     Inherits="Glass.UI.Web.Cadastros.CadPedido" Title="Cadastrar Pedido" EnableEventValidation="false"
     EnableViewState="false" EnableViewStateMac="false" %>
 
@@ -197,7 +197,7 @@
                     </label>
                 </span>
                 <span>
-                    <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
+                    <lista-selecao-id-valor :item-selecionado.sync="vendedorAtual" :funcao-recuperar-itens="obterVendedores" :disabled="!configuracoes.alterarVendedor" @change.prevent="alterarVendedor"></lista-selecao-id-valor>
                 </span>
                 <span v-if="vIfAjusteLayoutTransportador" class="colspan2">
                 </span>
@@ -499,7 +499,8 @@
                         {{ pedido.transportador.nome }}
                     </span>
                 </template>
-                <span v-if="pedido && (!configuracoes.exibirDeveTransferir || !pedido.funcionarioComprador || !pedido.transportador)" class="colspan2"></span>
+                <span v-if="vIfAjusteLayoutObservacao" class="colspan2">
+                </span>
                 <label>
                     Observação
                 </label>

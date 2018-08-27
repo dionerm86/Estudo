@@ -526,7 +526,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         public IList<Entidades.RegraNaturezaOperacaoPesquisa> PesquisarRegrasNaturezaOperacao
             (int idLoja, int idTipoCliente, int idGrupoProd, int idSubgrupoProd,
              int idCorVidro, int idCorFerragem, int idCorAluminio, float espessura,
-             int idNaturezaOperacao)
+             int idNaturezaOperacao, string ufsDestino)
         {
             var consulta = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.RegraNaturezaOperacao>("rno")
@@ -557,7 +557,7 @@ namespace Glass.Fiscal.Negocios.Componentes
                 .Select(
                     @"rno.IdRegraNaturezaOperacao, rno.IdLoja, rno.IdTipoCliente, rno.Espessura,
                       l.NomeFantasia AS NomeFantasiaLoja, l.RazaoSocial AS RazaoSocialLoja, tc.Descricao AS DescricaoTipoCliente,
-                      gp.Descricao AS DescricaoGrupoProduto, sgp.Descricao AS DescricaoSubgrupoProduto,
+                      gp.Descricao AS DescricaoGrupoProduto, sgp.Descricao AS DescricaoSubgrupoProduto, rno.UfDest,
                       cv.Descricao AS DescricaoCorVidro, cf.Descricao AS DescricaoCorFerragem,
                       ca.Descricao AS DescricaoCorAluminio,
                       ISNULL(nopi.CodInterno, cfpi.CodInterno) AS DescricaoNaturezaOperacaoProducaoIntra,
@@ -606,6 +606,30 @@ namespace Glass.Fiscal.Negocios.Componentes
                                 rno.IdNaturezaOperacaoProdIntra=?idNaturezaOperacao)")
                         .Add("?idNaturezaOperacao", idNaturezaOperacao);
 
+            if (!ufsDestino.IsNullOrEmpty())
+            {
+                var filtro = string.Empty;
+
+                var ufs = ufsDestino.Split(',');
+
+                for (int i = 0; i < ufs.Length; i++)
+                {
+                    if (filtro.IsNullOrEmpty())
+                    {
+                        filtro += "rno.UfDest LIKE ?uf";
+
+                        clausula.Add("?uf", $"%{ufs[i]}%");
+                    }
+                    else
+                    {
+                        filtro += $" OR rno.UfDest LIKE ?uf{i}";
+                        clausula.Add($"?uf{i}", $"%{ufs[i]}%");
+                    }
+                }
+
+                clausula.And(filtro);
+            }
+
             var retorno = consulta.ToVirtualResult<Entidades.RegraNaturezaOperacaoPesquisa>();
 
             return retorno;
@@ -618,12 +642,14 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <returns></returns>
         public Entidades.RegraNaturezaOperacao ObtemRegraNaturezaOperacao(int idRegraNaturezaOperacao)
         {
-            return SourceContext.Instance.CreateQuery()
+            var treste = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.RegraNaturezaOperacao>()
                 .Where("IdRegraNaturezaOperacao=?id")
                 .Add("?id", idRegraNaturezaOperacao)
                 .ProcessLazyResult<Entidades.RegraNaturezaOperacao>()
                 .FirstOrDefault();
+
+            return treste;
         }
 
         /// <summary>

@@ -3512,7 +3512,7 @@ namespace Glass.Data.DAL
                 INNER JOIN produtos_nf pnf ON (piChapa.IdProdNf=pnf.IdProdNf)
                 INNER JOIN produtos_pedido pp ON (piPeca.IdProdPed=pp.IdProdPedEsp)
                 INNER JOIN produto p ON (pnf.IdProd=p.IdProd)
-                WHERE piPeca.IdPedido={ids} AND piPeca.Cancelado=0
+                WHERE piPeca.IdPedido IN ({ids}) AND piPeca.Cancelado=0
                 GROUP BY IdPedido, IdProdPedEsp, IdProdNf")
                 .Select(f => new
                 {

@@ -166,6 +166,24 @@ namespace Glass.UI.Web.Listas {
         protected global::Glass.UI.Web.Controls.ctrlNaturezaOperacao selNaturezaOperacao;
         
         /// <summary>
+        /// Label14 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label14;
+        
+        /// <summary>
+        /// cblUfDestino control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Sync.Controls.CheckBoxListDropDown cblUfDestino;
+        
+        /// <summary>
         /// lnkInserir control.
         /// </summary>
         /// <remarks>
@@ -209,5 +227,14 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoCliente;
+        
+        /// <summary>
+        /// odsUf control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsUf;
     }
 }

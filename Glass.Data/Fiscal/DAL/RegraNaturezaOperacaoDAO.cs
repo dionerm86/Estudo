@@ -143,7 +143,7 @@ namespace Glass.Data.DAL
         #region Busca a regra de natureza de operação
 
         private RegraNaturezaOperacao BuscaRegra(GDA.GDASession session, uint? idNf, NotaFiscal.TipoDoc? tipoDocumentoNotaFiscal, uint? idLoja, uint? idTipoCliente,
-            uint? idGrupoProd, uint? idSubgrupoProd, uint? idCorVidro, uint? idCorAluminio, uint? idCorFerragem, float? espessura, bool gerandoNfSaida)
+            uint? idGrupoProd, uint? idSubgrupoProd, uint? idCorVidro, uint? idCorAluminio, uint? idCorFerragem, float? espessura, bool gerandoNfSaida, string UfDestino)
         {
             // Só busca a regra de natureza de operação para notas fiscais de saída
             if (!gerandoNfSaida &&
@@ -156,14 +156,14 @@ namespace Glass.Data.DAL
             // nos campos ser retornado (no lugar de um item mais geral - com menos campos preenchidos)
             StringBuilder sql = new StringBuilder(@"
                 select * from regra_natureza_operacao
-                where 1 {0}
+                where (UfDest LIKE '%" + UfDestino + @"%' OR UfDest IS NULL) {0}
                 order by espessura desc, idCorFerragem desc, idCorAluminio desc, idCorVidro desc, 
                     idSubgrupoProd desc, idGrupoProd desc, idTipoCliente desc, idLoja desc
                 limit 1");
 
             // Considera os filtros para busca
             StringBuilder where = new StringBuilder();
-            
+
             if (idLoja > 0)
                 where.AppendFormat(" and coalesce(idLoja, {0})={0}", idLoja);
 
@@ -316,15 +316,16 @@ namespace Glass.Data.DAL
                 ProdutoDAO.Instance.ObtemEspessura(session, idProd.Value) :
                 (float?)null;
 
+            var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(session, idLoja.Value, null, idCliente, true);
+
             // Busca a regra de natureza de operação que será aplicada
             var regra = BuscaRegra(session, idNf, tipoDocumentoNotaFiscal, idLoja, idTipoCliente, idGrupoProd, idSubgrupoProd, idCorVidro,
-                idCorAluminio, idCorFerragem, espessura, gerandoNfSaida);
+                idCorAluminio, idCorFerragem, espessura, gerandoNfSaida, dados.UfDestino);
 
             // Indica que a regra não foi encontrada
             if (regra == null)
                 return null;
-
-            var dados = MvaProdutoUfDAO.Instance.ObterDadosParaBuscar(session, idLoja.Value, null, idCliente, true);
+            
             bool prodRevenda = !ProdutoDAO.Instance.IsProdutoVenda(session, idProd.Value);
             var mva = idProd > 0 ? MvaProdutoUfDAO.Instance.ObterMvaPorProduto(session, idProd.Value, idLoja.Value, dados.UfOrigem, 
                 dados.UfDestino, dados.Simples, dados.TipoCliente, true) : 0;

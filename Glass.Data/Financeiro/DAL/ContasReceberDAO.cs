@@ -8041,8 +8041,6 @@ namespace Glass.Data.DAL
             {
                 FilaOperacoes.RecebimentosGerais.AguardarVez();
 
-                ValidarPagaByCnab(sessao, numeroDocumentoCnab, idContaR, dataRec, valorRec, jurosMulta);
-
                 var valorReceber = ObtemValorCampo<decimal>(sessao, "ValorVec", string.Format("IdContaR={0}", idContaR));
                 /* Chamado 28317. */
                 var juros = ObtemValorCampo<decimal>(sessao, "Juros", string.Format("IdContaR={0}", idContaR));

@@ -11,7 +11,7 @@
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" Runat="Server">
 
-    <asp:DetailsView ID="dtvRegraNaturezaOperacao" runat="server" 
+    <asp:DetailsView ID="dtvRegraNaturezaOperacao" runat="server" OnDataBound="dtvRegraNaturezaOperacao_DataBound"
         AutoGenerateRows="False" CssClass="gridStyle detailsViewStyle" 
         DataKeyNames="IdRegraNaturezaOperacao" DataSourceID="odsRegraNaturezaOperacao" 
         DefaultMode="Insert" GridLines="None">
@@ -58,6 +58,24 @@
                         Width="70px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
                     mm
                 </EditItemTemplate>
+                <ItemStyle HorizontalAlign="Left" />
+            </asp:TemplateField>
+            <asp:TemplateField HeaderText="UF Destino" SortExpression="UfDest">
+                <ItemTemplate>
+                    <asp:Label ID="Label23" runat="server" Text='<%# Eval("UfDest") %>'></asp:Label>
+                </ItemTemplate>
+                <EditItemTemplate>
+                    <sync:CheckBoxListDropDown ID="drpUfDestino" runat="server" DataSourceID="odsUf"  AppendDataBoundItems="true"
+                        DataTextField="Name" DataValueField="Id" SelectedItem='<%# Bind("UfDest") %>'>
+                        <asp:ListItem></asp:ListItem>
+                    </sync:CheckBoxListDropDown>
+                </EditItemTemplate>
+                <InsertItemTemplate>
+                    <sync:CheckBoxListDropDown ID="drpUfDestino" runat="server" DataSourceID="odsUf" AppendDataBoundItems="true"
+                        DataTextField="Name" DataValueField="Id" SelectedItem='<%# Bind("UfDest") %>'>
+                        <asp:ListItem></asp:ListItem>
+                    </sync:CheckBoxListDropDown>
+                </InsertItemTemplate>
                 <ItemStyle HorizontalAlign="Left" />
             </asp:TemplateField>
             <asp:TemplateField HeaderText="Natureza Operação Produção Intraestadual" 
@@ -169,6 +187,10 @@
     <colo:VirtualObjectDataSource ID="odsTipoCliente" runat="server" 
         SelectMethod="ObtemDescritoresTipoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo" 
         Culture="pt-BR">
+    </colo:VirtualObjectDataSource>
+
+    <colo:VirtualObjectDataSource ID="odsUf" runat="server" Culture="pt-BR"
+        SelectMethod="ObtemUfs" TypeName="Glass.Global.Negocios.ILocalizacaoFluxo">
     </colo:VirtualObjectDataSource>
 </asp:Content>
 

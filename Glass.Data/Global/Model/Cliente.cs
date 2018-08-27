@@ -670,6 +670,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("UsoLimite")]
         public decimal UsoLimite { get; set; }
 
+        [PersistenceProperty("DATAATUALIZACAOUSOLIMITE")]
+        public DateTime? DataAtualizacaoUsoLimite { get; set; }
+
         [PersistenceProperty("Importacao")]
         public bool Importacao { get; set; }
 
