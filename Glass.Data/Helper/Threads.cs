@@ -221,7 +221,7 @@ namespace Glass.Data.Helper
                                 if (resposta.Response.StatusCode == 0)
                                     FilaSmsDAO.Instance.IndicaEnvio(true, sms.IdSms, resposta.Response.StatusCode, resposta.Response.DetailDescription);
                                 else
-                                    FilaSmsDAO.Instance.SetLast(sms.IdSms);
+                                    FilaSmsDAO.Instance.SetLast(sms.IdSms, resposta.Response.DetailDescription);
                             }
                             else
                             {
@@ -231,7 +231,7 @@ namespace Glass.Data.Helper
                         }
                         catch (Exception ex)
                         {
-                            FilaSmsDAO.Instance.SetLast(sms.IdSms);
+                            FilaSmsDAO.Instance.SetLast(sms.IdSms, string.Empty);
                             ErroDAO.Instance.InserirFromException("EnviarSMS", ex);
                             throw;
                         }
