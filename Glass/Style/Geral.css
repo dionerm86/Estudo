@@ -1,4 +1,27 @@
-﻿.adjustedZIndex {
+﻿#ctl00_ctl00_Menu_mnuGeral {
+  text-align: center;
+  float: none !important;
+}
+
+  #ctl00_ctl00_Menu_mnuGeral ul.static {
+    float: none !important;
+    display: inline-block;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral a.dynamic, #ctl00_ctl00_Menu_mnuGeral a.highlighted {
+    text-align: left;
+    height: auto !important;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral a.dynamic {
+    padding: 4px !important;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral li.dynamic.has-popup a.dynamic {
+    padding-right: 16px !important;
+  }
+
+.adjustedZIndex {
   z-index: 1;
 }
 
@@ -359,27 +382,18 @@ section {
       left: 0px;
       right: 0px;
       position: initial;
-      margin: 0 3px;
+      margin: 0;
       padding: 0;
     }
 
     div.filtros .botaoPesquisar, section.filtros .botaoPesquisar {
       position: relative;
       top: 2px;
-      margin: 0 4px 0 2px;
+      margin: 0 4px 0 0px;
     }
 
     div.filtros span, section.filtros span {
       padding-left: initial;
-    }
-
-    div.filtros input[type="text"], div.filtros input[type="number"], div.filtros input[type="search"],
-    div.filtros input[type="date"], div.filtros input[type="time"], div.filtros input[type="email"],
-    div.filtros input[type="password"], div.filtros textarea, div.filtros select,
-    section.filtros input[type="text"], section.filtros input[type="number"], section.filtros input[type="search"],
-    section.filtros input[type="date"], section.filtros input[type="time"], section.filtros input[type="email"],
-    section.filtros input[type="password"], section.filtros textarea, section.filtros select {
-      margin: 2px 1px;
     }
 
   div.detalhes, section.detalhes {

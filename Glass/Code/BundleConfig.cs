@@ -69,11 +69,11 @@ namespace Glass.UI.Web
 
                 if (bundle is TemplateBundle)
                 {
-                    item = new TemplateItem(bundle.Path);
+                    item = new TemplateItem(bundle);
                 }
                 else
                 {
-                    item = new ScriptItem(bundle.Path);
+                    item = new ScriptItem(bundle);
                 }
 
                 scripts.Add(item);
@@ -84,6 +84,7 @@ namespace Glass.UI.Web
         {
             return new ScriptBundle("~/Scripts/app")
                 .Include("~/Scripts/jquery/jquery-2.0.0.js")
+                .Include("~/Scripts/jquery/jquery-ajuste.js")
                 .Include("~/Scripts/jquery/jlinq/jlinq.js")
                 .Include("~/Scripts/jquery/jquery.utils.js")
                 .Include("~/Scripts/Utils.js")

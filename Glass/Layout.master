@@ -6,10 +6,10 @@
 <head runat="server">
     <title>WebGlass</title>
     <link runat="server" rel="shortcut icon" href="~/Images/favicon.ico" type="image/x-icon"/>
-    <script type="text/javascript" src="<%= ConfigurationManager.AppSettings["VueJsPath"] %>"></script>
-    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue-text-mask@6.1.1/dist/vueTextMask.min.js"></script>
     <asp:PlaceHolder runat="server">
+        <script type="text/javascript" src="<%= ConfigurationManager.AppSettings["VueJsPath"] %>"></script>
+        <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue-text-mask@6.1.1/dist/vueTextMask.min.js"></script>
         <%
             foreach (var estilo in Glass.UI.Web.BundleConfig.Estilos())
             {
