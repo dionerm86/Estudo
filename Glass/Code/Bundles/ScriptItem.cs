@@ -2,6 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using System.Web.Optimization;
+
 namespace Glass.UI.Web.Bundles
 {
     /// <summary>
@@ -9,13 +11,16 @@ namespace Glass.UI.Web.Bundles
     /// </summary>
     public class ScriptItem
     {
+        protected readonly Bundle bundle;
+
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ScriptItem"/>.
         /// </summary>
-        /// <param name="path">O caminho do script no bundle.</param>
-        public ScriptItem(string path)
+        /// <param name="bundle">O bundle.</param>
+        public ScriptItem(Bundle bundle)
         {
-            this.Path = path;
+            this.bundle = bundle;
+            this.Path = bundle.Path;
         }
 
         /// <summary>
