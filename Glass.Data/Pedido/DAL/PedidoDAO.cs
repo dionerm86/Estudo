@@ -12837,7 +12837,7 @@ namespace Glass.Data.DAL
                 {
                     // Se a metragem do pedido for maior que o total diário do fast delivery e se o pedido for importado, apenas não calcula a data do fast delivery
                     // chamado (67439)
-                    if (m2Pedido > PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery && !IsPedidoImportado(session, idPedido.Value))
+                    if (m2Pedido < PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery && !IsPedidoImportado(session, idPedido.Value))
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
                 }
 
