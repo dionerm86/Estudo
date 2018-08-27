@@ -106,6 +106,7 @@ namespace Glass.Data.Helper
             Diviglass,
             Divipam,
             Divine,
+            DNAVidros,
             DuboxVidrosBH,
 
             #endregion
