@@ -84,8 +84,8 @@ namespace Glass.UI.Web.Listas
             {
                 if (e.CommandName == "Inativar")
                 {
-                    uint idCli = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
-                    ChapaVidroDAO.Instance.AlteraSituacao(idCli);
+                    uint idChapa = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    ChapaVidroDAO.Instance.AlteraSituacao(idChapa);
                     grdChapaVidro.DataBind();
                 }
             }

@@ -264,7 +264,7 @@
                                                 Text='<%# Eval("PercAcrescimoTotM23") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Situação">
                                         <ItemTemplate>
                                             <asp:Label ID="lblSituacao" runat="server" 
                                                 Text='<%# Eval("DescricaoSituacao") %>'></asp:Label>
@@ -284,7 +284,7 @@
                                 <AlternatingRowStyle />
                             </asp:GridView>
                             <colo:VirtualObjectDataSource culture="pt-BR" ID="odsChapaVidro" runat="server" DataObjectTypeName="Glass.Data.Model.ChapaVidro"
-                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
+                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize" 
                                 SelectCountMethod="GetListCount" SelectMethod="GetList" SortParameterName="sortExpression"
                                 StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ChapaVidroDAO"
                                 UpdateMethod="Update" OnDeleted="odsChapaVidro_Deleted" OnUpdated="odsChapaVidro_Updated">

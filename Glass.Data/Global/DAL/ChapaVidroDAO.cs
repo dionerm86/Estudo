@@ -51,7 +51,7 @@ namespace Glass.Data.DAL
             }
 
             if (ativas)
-                sql += " and c.Situacao=" + Situacao.Ativo;
+                sql += " and c.Situacao=" + (int)Situacao.Ativo;
 
             return sql.Replace("$$$", criterio);
         }
@@ -59,20 +59,20 @@ namespace Glass.Data.DAL
         public IList<ChapaVidro> GetForRpt(string codInterno, string produto, uint idSubgrupo)
         {
             bool temFiltro;
-            return objPersistence.LoadData(Sql(0, codInterno, produto, idSubgrupo, true, true, out temFiltro), GetParam(codInterno, produto)).ToList();
+            return objPersistence.LoadData(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro), GetParam(codInterno, produto)).ToList();
         }
 
         public IList<ChapaVidro> GetList(string codInterno, string produto, uint idSubgrupo, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, true, true, out temFiltro), 
+            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro), 
                 sortExpression, startRow, pageSize, temFiltro, GetParam(codInterno, produto));
         }
 
         public int GetListCount(string codInterno, string produto, uint idSubgrupo)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(Sql(0, codInterno, produto, idSubgrupo, true, true, out temFiltro),
+            return GetCountWithInfoPaging(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro),
                 temFiltro, null, GetParam(codInterno, produto));
         }
 
@@ -178,9 +178,9 @@ namespace Glass.Data.DAL
         /// Altera a situação de um cliente, ativando ou inativando o cliente.
         /// </summary>
         /// <param name="idCliente"></param>
-        public void AlteraSituacao(uint idCliente)
+        public void AlteraSituacao(uint idChapa)
         {
-            var chapaVidro = GetElementByPrimaryKey(idCliente);
+            var chapaVidro = GetElementByPrimaryKey(idChapa);
             chapaVidro.Situacao = chapaVidro.Situacao == 1 ? 2 : 1;
             Update(chapaVidro);
         }
