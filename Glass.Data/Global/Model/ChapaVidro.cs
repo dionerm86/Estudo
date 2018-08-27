@@ -61,6 +61,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("QTDE")]
         public int Quantidade { get; set; }
 
+        /// <summary>
+        /// 1-Ativo
+        /// 2-Inativo
+        /// </summary>
+        [Log("Situação")]
+        [PersistenceProperty("SITUACAO")]
+        public int Situacao { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -86,6 +94,11 @@ namespace Glass.Data.Model
         public string PercAcrescimoTotM2String
         {
             get { return string.Format("({0}% | {1}% | {2}%)", PercAcrescimoTotM21, PercAcrescimoTotM22, PercAcrescimoTotM23); }
+        }
+
+        public string DescricaoSituacao
+        {
+            get { return ((Glass.Situacao)this.Situacao).ToString(); }
         }
 
 

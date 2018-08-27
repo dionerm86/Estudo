@@ -77,5 +77,22 @@ namespace Glass.UI.Web.Listas
                 e.ExceptionHandled = true;
             }
         }
+
+        protected void grdChapaVidro_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        {
+            try
+            {
+                if (e.CommandName == "Inativar")
+                {
+                    uint idCli = Glass.Conversoes.StrParaUint(e.CommandArgument.ToString());
+                    ChapaVidroDAO.Instance.AlteraSituacao(idCli);
+                    grdChapaVidro.DataBind();
+                }
+            }
+            catch (Exception ex)
+            {
+                Glass.MensagemAlerta.ErrorMsg("", ex, Page);
+            }
+        }
     }
 }
