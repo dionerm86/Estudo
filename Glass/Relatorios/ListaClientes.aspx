@@ -281,8 +281,12 @@
                             SortExpression="TotalComprado" />
                         <asp:BoundField DataField="Limite" DataFormatString="{0:C}" HeaderText="Limite"
                             SortExpression="Limite" />
-                        <asp:BoundField DataField="UsoLimite" DataFormatString="{0:C}" HeaderText="Limite Utilizado"
-                            SortExpression="UsoLimite" />
+                        <asp:TemplateField HeaderText="Limite Utilizado">
+                            <ItemTemplate>
+                                <asp:Label runat="server" Text='<%# Eval("UsoLimite", "{0:C}") %>'></asp:Label>
+                                At.: <asp:Label runat="server" Text='<%# Eval("DataAtualizacaoUsoLimite", "{0:d}") %>'></asp:Label>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                     </Columns>
                     <PagerStyle />
                     <EditRowStyle />

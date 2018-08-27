@@ -3071,7 +3071,7 @@ namespace Glass.Data.DAL
 
                 var usoLimite = totalCheques + totalContasRec + totalPedidos;
 
-                objPersistence.ExecuteCommand("UPDATE cliente SET usoLimite = ?uso WHERE id_cli = " + id, new GDAParameter("?uso", usoLimite));
+                objPersistence.ExecuteCommand("UPDATE cliente SET usoLimite=?uso, dataAtualizacaoUsoLimite=now() WHERE id_cli=" + id, new GDAParameter("?uso", usoLimite));
             }
         }
 
