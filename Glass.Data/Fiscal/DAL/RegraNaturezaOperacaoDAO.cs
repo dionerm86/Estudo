@@ -144,7 +144,7 @@ namespace Glass.Data.DAL
         #region Busca a regra de natureza de operação
 
         private RegraNaturezaOperacao BuscaRegra(GDA.GDASession session, uint? idNf, NotaFiscal.TipoDoc? tipoDocumentoNotaFiscal, uint? idLoja, uint? idTipoCliente,
-            uint? idGrupoProd, uint? idSubgrupoProd, uint? idCorVidro, uint? idCorAluminio, uint? idCorFerragem, float? espessura, bool gerandoNfSaida, string UfDestino)
+            uint? idGrupoProd, uint? idSubgrupoProd, uint? idCorVidro, uint? idCorAluminio, uint? idCorFerragem, float? espessura, bool gerandoNfSaida, string ufDestino)
         {
             // Só busca a regra de natureza de operação para notas fiscais de saída
             if (!gerandoNfSaida &&
@@ -196,7 +196,7 @@ namespace Glass.Data.DAL
                 where.AppendFormat(" and coalesce(espessura, {0})={0}", espessura.ToString().Replace(",", "."));
 
             // Retorna apenas o primeiro item do retorno da consulta, se houver
-            var itens = objPersistence.LoadData(session, string.Format(sql.ToString(), where.ToString()), new GDAParameter("?ufDestino", "%" + UfDestino + "%")).ToList();
+            var itens = objPersistence.LoadData(session, string.Format(sql.ToString(), where.ToString()), new GDAParameter("?ufDestino", "%" + ufDestino + "%")).ToList();
             return itens.Count > 0 ? itens[0] : null;
         }
 
