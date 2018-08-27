@@ -83,7 +83,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDNATUREZAOPERACAOREVSTINTER")]
         public int? IdNaturezaOperacaoRevStInter { get; set; }
 
-        [PersistenceProperty("UfDest")]
+        [Log("Uf Destino")]
+        [PersistenceProperty("UFDEST")]
         public string UfDest { get; set; }
 
         #endregion

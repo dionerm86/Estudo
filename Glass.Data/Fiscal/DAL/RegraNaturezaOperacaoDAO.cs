@@ -5,6 +5,7 @@ using System.Text;
 using Glass.Data.Model;
 using Glass.Data.DAL.CTe;
 using Glass.Data.Model.Cte;
+using GDA;
 
 namespace Glass.Data.DAL
 {
@@ -156,7 +157,7 @@ namespace Glass.Data.DAL
             // nos campos ser retornado (no lugar de um item mais geral - com menos campos preenchidos)
             StringBuilder sql = new StringBuilder(@"
                 select * from regra_natureza_operacao
-                where (UfDest LIKE '%" + UfDestino + @"%' OR UfDest IS NULL) {0}
+                where (UfDest LIKE ?ufDestino OR UfDest IS NULL) {0}
                 order by espessura desc, idCorFerragem desc, idCorAluminio desc, idCorVidro desc, 
                     idSubgrupoProd desc, idGrupoProd desc, idTipoCliente desc, idLoja desc
                 limit 1");
@@ -195,7 +196,7 @@ namespace Glass.Data.DAL
                 where.AppendFormat(" and coalesce(espessura, {0})={0}", espessura.ToString().Replace(",", "."));
 
             // Retorna apenas o primeiro item do retorno da consulta, se houver
-            var itens = objPersistence.LoadData(session, string.Format(sql.ToString(), where.ToString())).ToList();
+            var itens = objPersistence.LoadData(session, string.Format(sql.ToString(), where.ToString()), new GDAParameter("?ufDestino", "%" + UfDestino + "%")).ToList();
             return itens.Count > 0 ? itens[0] : null;
         }
 
