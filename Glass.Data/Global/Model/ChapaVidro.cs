@@ -67,7 +67,7 @@ namespace Glass.Data.Model
         /// </summary>
         [Log("Situação")]
         [PersistenceProperty("SITUACAO")]
-        public int Situacao { get; set; }
+        public Glass.Situacao Situacao { get; set; }
 
         #endregion
 
