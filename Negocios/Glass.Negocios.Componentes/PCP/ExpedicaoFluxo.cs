@@ -453,10 +453,19 @@ namespace Glass.PCP.Negocios.Componentes
 
                 #region Salva na tabela de controle
 
-                LeituraEtiquetaPedidoPlanoCorteDAO.Instance.Insert(null, new LeituraEtiquetaPedidoPlanoCorte()
+                var idLeitura = LeituraEtiquetaPedidoPlanoCorteDAO.Instance.Insert(null, new LeituraEtiquetaPedidoPlanoCorte()
                 {
                     NumEtiquetaLida = numEtiqueta
                 });
+
+                foreach (var e in etiquetas)
+                {
+                    EtiquetaLidaPedidoPlanoCorteDAO.Instance.Insert(new EtiquetaLidaPedidoPlanoCorte()
+                    {
+                        IdLeituraEtiquetaPedPlanoCorte = idLeitura,
+                        NumEtiquetaReal = e
+                    });
+                }
 
                 #endregion
 

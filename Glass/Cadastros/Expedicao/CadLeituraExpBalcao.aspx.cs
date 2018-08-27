@@ -250,13 +250,5 @@ namespace Glass.UI.Web.Cadastros.Expedicao
         }
 
         #endregion
-
-        protected string OpcoesDeLeitura()
-        {
-            var retorno = new StringBuilder();
-
-            retorno.AppendLine("Para leitura de faixas de etiqueta usar a seguinte sintaxe 1111-1.1/1=4\n(As etiquetas no exemplo serão lidas do item 1 até o item 4 nas etiquetas referentes à posição 1)");
-            return retorno.ToString();
-        }
     }
 }
