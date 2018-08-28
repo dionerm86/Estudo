@@ -469,7 +469,7 @@ namespace Glass.PCP.Negocios.Componentes
 
                 #endregion
 
-                var erroEtq = new List<string>();
+                string msg = string.Empty;
 
                 foreach (string e in etiquetas)
                 {
@@ -477,19 +477,15 @@ namespace Glass.PCP.Negocios.Componentes
                     {
                         this.EfetuaLeitura(idFunc, idLiberarPedido, e, idPedidoExp);
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        erroEtq.Add(e);
+                        msg = Glass.MensagemAlerta.FormatErrorMsg($"Falha ao marcar peça {e}.", ex);
+                        break;
                     }
                 }
 
-                if (erroEtq.Count > 0)
-                {
-                    var erros = string.Join(",", erroEtq.ToArray());
-
-                    ErroDAO.Instance.InserirFromException("Leitura com (=)", new Exception("Etiqueta: " + numEtiqueta + " Leituras: " + erros));
-                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
-                }
+                if (!string.IsNullOrEmpty(msg))
+                    throw new Exception(msg);
 
                 return;
             }
