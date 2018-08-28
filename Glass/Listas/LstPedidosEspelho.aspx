@@ -59,6 +59,7 @@
             var idsRotas = FindControl("cblRota", "select").itens();
             var origemPedido = FindControl("drpOrigemPedido", "select").value;
             var pedidosConferidos = FindControl("drpPedConferido", "select") != null ? FindControl("drpPedConferido", "select").value : "0";
+            var tipoVenda = FindControl("drpTipoVenda", "select").value;
 
             idPedido = idPedido == "" ? 0 : idPedido;
             idCliente = idCliente == "" ? 0 : idCliente;
@@ -69,7 +70,7 @@
                 "&dataFimFab=" + dataFimFab + "&dataIniFin=" + dataIniFin + "&dataFimFin=" + dataFimFin + "&pedidosSemAnexos=" + pedidosSemAnexos + "&dataIniConf=" + dataIniConf +
                 "&dataFimConf=" + dataFimConf + "&dataIniEmis=" + dataIniEmis + "&dataFimEmis=" + dataFimEmis + "&pedidosAComprar=" + pedidosAComprar + "&situacaoCnc=" + situacaoCnc +
                 "&dataIniSituacaoCnc=" + dataIniSituacaoCnc + "&dataFimSituacaoCnc=" + dataFimSituacaoCnc + "&tipoPedido=" + tipoPedido+
-                "&idsRotas=" + idsRotas + "&origemPedido=" + origemPedido + "&pedidosConferidos=" + pedidosConferidos;
+                "&idsRotas=" + idsRotas + "&origemPedido=" + origemPedido + "&pedidosConferidos=" + pedidosConferidos + "&tipoVenda=" + tipoVenda;
         }
 
         function openRptLista()
@@ -147,12 +148,13 @@
             var tipoPedido = FindControl("cbdTipoPedido", "select").itens();
             var idsRotas = FindControl("cblRota", "select").itens();
             var pedConf = FindControl("drpPedConferido", "select") != null ? FindControl("drpPedConferido", "select").value : "0";
+            var tipoVenda = FindControl("drpTipoVenda", "select").value;
 
             if (idPedido == "" && idCliente == "" && nomeCli == "" && situacao == 0 && situacaoPedOri == 0 && idsProcesso == 0 &&
                 (idFunc == "0" || idFunc == "") && (idFuncionarioConferente == "0" || idFuncionarioConferente == "") && dataIniEnt == "" &&
                 dataFimEnt == "" && dataIniFab == "" && dataFimFab == "" && dataIniFin == "" &&
                 dataFimFin == "" && dataIniConf == "" && dataFimConf == "" && dataIniEmis == "" && dataFimEmis == "" && !pedidosSemAnexos &&
-                !pedidosAComprar && situacaoCnc == "" && dataIniSituacaoCnc == "" && dataFimSituacaoCnc == "" && tipoPedido == "" && idsRotas == "" && pedConf == 0) {
+                !pedidosAComprar && situacaoCnc == "" && dataIniSituacaoCnc == "" && dataFimSituacaoCnc == "" && tipoPedido == "" && idsRotas == "" && pedConf == 0 && tipoVenda == 0) {
                 if (!confirm("É recomendável aplicar um filtro! Deseja realmente prosseguir?")) return false;
                 else return true;
             }
@@ -444,6 +446,14 @@
                             <asp:DropDownList ID="drpConferente" runat="server" DataSourceID="odsConferente" DataTextField="Nome"
                                 DataValueField="IdFunc" AppendDataBoundItems="True">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td>
+                            <asp:Label ID="lblTipoVenda" runat="server" ForeColor="#0066FF" Text="Tipo Venda"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:DropDownList ID="drpTipoVenda" runat="server"
+                                 DataSourceID="odsTipoVenda" DataTextField="Descr" DataValueField="Id">
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -754,6 +764,8 @@
                             Type="Int32" />
                         <asp:ControlParameter ControlID="drpPedConferido" Name="pedidosConferidos" PropertyName="SelectedValue"
                             Type="Int32" />
+                        <asp:ControlParameter ControlID="drpTipoVenda" Name="tipoVenda" PropertyName="SelectedValue"
+                            Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll"
@@ -774,6 +786,10 @@
                     SkinID="" StartRowIndexParameterName="">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
+                    TypeName="Glass.Data.Helper.DataSources">
+                </colo:VirtualObjectDataSource>
+
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoVenda" runat="server" SelectMethod="GetTipoVenda"
                     TypeName="Glass.Data.Helper.DataSources">
                 </colo:VirtualObjectDataSource>
             </td>

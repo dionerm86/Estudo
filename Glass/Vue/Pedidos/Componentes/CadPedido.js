@@ -221,7 +221,7 @@
             vm.criarProducaoRevenda();
           } else {
             vm.abrirImpressaoPedido();
-            vm.cancelar();
+            vm.redirecionarParaListagem();
           }
         })
         .catch(function (erro) {

@@ -12,7 +12,7 @@ namespace Glass.Data.DAL
 
         #region Listagem de chapas
 
-        private string Sql(uint idProd, string codInterno, string produto, uint idSubgrupo, bool selecionar,
+        private string Sql(uint idProd, string codInterno, string produto, uint idSubgrupo, bool ativas, bool selecionar,
             out bool temFiltro)
         {
             temFiltro = false;
@@ -50,26 +50,29 @@ namespace Glass.Data.DAL
                 temFiltro = true;
             }
 
+            if (ativas)
+                sql += " and c.Situacao=" + (int)Situacao.Ativo;
+
             return sql.Replace("$$$", criterio);
         }
 
         public IList<ChapaVidro> GetForRpt(string codInterno, string produto, uint idSubgrupo)
         {
             bool temFiltro;
-            return objPersistence.LoadData(Sql(0, codInterno, produto, idSubgrupo, true, out temFiltro), GetParam(codInterno, produto)).ToList();
+            return objPersistence.LoadData(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro), GetParam(codInterno, produto)).ToList();
         }
 
         public IList<ChapaVidro> GetList(string codInterno, string produto, uint idSubgrupo, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, true, out temFiltro), 
+            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro), 
                 sortExpression, startRow, pageSize, temFiltro, GetParam(codInterno, produto));
         }
 
         public int GetListCount(string codInterno, string produto, uint idSubgrupo)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(Sql(0, codInterno, produto, idSubgrupo, true, out temFiltro),
+            return GetCountWithInfoPaging(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro),
                 temFiltro, null, GetParam(codInterno, produto));
         }
 
@@ -121,7 +124,7 @@ namespace Glass.Data.DAL
         public ChapaVidro GetElement(GDASession sessao, uint idProd)
         {
             bool temFiltro;
-            var chapa = objPersistence.LoadData(sessao, Sql(idProd, null, null, 0, true, out temFiltro)).ToList();
+            var chapa = objPersistence.LoadData(sessao, Sql(idProd, null, null, 0, true, true, out temFiltro)).ToList();
             return chapa.Count > 0 ? chapa[0] : null;
         }
 
@@ -130,14 +133,14 @@ namespace Glass.Data.DAL
             bool temFiltro;
 
             // Busca as chapas de vidro pelo produto do Pedido
-            string sql = Sql(0, null, null, 0, true, out temFiltro);
+            string sql = Sql(0, null, null, 0, true, true, out temFiltro);
             sql += @" and c.IdProd in(select coalesce(pbe.IdProdBaixa, pp.idProd) from produtos_pedido pp
                     left join produto_baixa_estoque pbe on(pp.IDPROD=pbe.IDPROD)
                      where pp.idPedido in(" + (!string.IsNullOrEmpty(idsPedido) ? idsPedido : "0") + "))";
 
             // Busca as chapas de vidro pelo produto do Orcamento
             sql += " union ";
-            sql += Sql(0, null, null, 0, true, out temFiltro);
+            sql += Sql(0, null, null, 0, true, true,  out temFiltro);
             sql += @" and c.IdProd in(SELECT coalesce(pbe.IdProdBaixa, po.idProduto) from produtos_orcamento po
                      LEFT JOIN produto_baixa_estoque pbe ON(po.idProduto=pbe.IDPROD)
                      where po.idOrcamento in(" + (!string.IsNullOrEmpty(idsOrcamento) ? idsOrcamento : "0") +
@@ -145,7 +148,7 @@ namespace Glass.Data.DAL
 
             // Busca as chapas de vidro pelo produto do Projeto
             sql += " UNION ";
-            sql += Sql(0, null, null, 0, true, out temFiltro);
+            sql += Sql(0, null, null, 0, true, true, out temFiltro);
             sql += @" AND c.IdProd IN (SELECT coalesce(pbe.IdProdBaixa, mip.IdProd) FROM material_item_projeto mip
 					    LEFT JOIN item_projeto ip ON (ip.IdItemProjeto=mip.IdItemProjeto)
 					    LEFT JOIN produto_baixa_estoque pbe ON(mip.IdProd=pbe.IDPROD)
@@ -166,9 +169,20 @@ namespace Glass.Data.DAL
         public List<ChapaVidro> ObterListaOtimizacao(string ids)
         {
             string sql = @"select c.*, p.Descricao as DescrProd, p.CodInterno as CodInternoProd from chapa_vidro c 
-                left join produto p on (c.idProd=p.idProd) where c.IdChapaVidro IN(" + ids + ")";
+                left join produto p on (c.idProd=p.idProd) where c.IdChapaVidro IN(" + ids + ") AND c.Situacao=" + (int)Glass.Situacao.Ativo;
 
             return objPersistence.LoadData(sql);
+        }
+
+        /// <summary>
+        /// Altera a situação de um cliente, ativando ou inativando o cliente.
+        /// </summary>
+        /// <param name="idCliente"></param>
+        public void AlteraSituacao(uint idChapa)
+        {
+            var chapaVidro = GetElementByPrimaryKey(idChapa);
+            chapaVidro.Situacao = chapaVidro.Situacao == Situacao.Ativo ? Situacao.Inativo : Situacao.Ativo;
+            Update(chapaVidro);
         }
 
         #region Métodos sobescritos

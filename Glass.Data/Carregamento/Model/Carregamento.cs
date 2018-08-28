@@ -14,6 +14,11 @@ namespace Glass.Data.Model
         public int QtdeClientes { get; set; }
 
         public string NomeCidade { get; set; }
+
+        /// <summary>
+        /// Peso da carga por cidade
+        /// </summary>
+        public double PesoPorCidade { get; set; }
     }
 
     #endregion

@@ -4126,7 +4126,8 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <returns></returns>
         public Pedido[] GetForConfirmation(uint idPedido, uint idCli, string nomeCli, uint idFunc, string codCliente,
-            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido, string sortExpression)
+            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido,
+            bool apenasFastDelivery, string sortExpression)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -4141,7 +4142,7 @@ namespace Glass.Data.DAL
 
             var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, null, null, null, situacaoPedido.ToString(),
                 String.Empty, String.Empty, null, dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
-                tipoPedidoStr, 0, 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
+                tipoPedidoStr, 0, apenasFastDelivery ? 1 : 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sortExpression = !sortExpression.IsNullOrEmpty() ? sortExpression : "IdPedido";
 
@@ -12837,7 +12838,7 @@ namespace Glass.Data.DAL
                 {
                     // Se a metragem do pedido for maior que o total diário do fast delivery e se o pedido for importado, apenas não calcula a data do fast delivery
                     // chamado (67439)
-                    if (m2Pedido > PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery && !IsPedidoImportado(session, idPedido.Value))
+                    if (m2Pedido < PedidoConfig.Pedido_FastDelivery.M2MaximoFastDelivery && !IsPedidoImportado(session, idPedido.Value))
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
                 }
 

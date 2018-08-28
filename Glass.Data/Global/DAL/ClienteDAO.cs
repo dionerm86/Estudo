@@ -1391,6 +1391,8 @@ namespace Glass.Data.DAL
             string sql = SqlListCredito(codCliente, nome, bairro, telefone, cpfCnpj, true, out filtroAdicional).
                 Replace("?filtroAdicional?", filtroAdicional);
 
+            sql += " order by c.Nome ASC ";
+
             return objPersistence.LoadData(sql, GetParamFilter(codCliente, nome, null, null, bairro, telefone, cpfCnpj, null, null, null, null, null, null, 0)).ToArray();
         }
 
@@ -3071,7 +3073,7 @@ namespace Glass.Data.DAL
 
                 var usoLimite = totalCheques + totalContasRec + totalPedidos;
 
-                objPersistence.ExecuteCommand("UPDATE cliente SET usoLimite = ?uso WHERE id_cli = " + id, new GDAParameter("?uso", usoLimite));
+                objPersistence.ExecuteCommand("UPDATE cliente SET usoLimite=?uso, dataAtualizacaoUsoLimite=now() WHERE id_cli=" + id, new GDAParameter("?uso", usoLimite));
             }
         }
 

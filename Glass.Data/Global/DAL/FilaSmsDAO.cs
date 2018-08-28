@@ -101,7 +101,7 @@ namespace Glass.Data.DAL
         /// Utilizado em caso de erro na fila de SMS.
         /// </summary>
         /// <param name="idSms"></param>
-        public void SetLast(uint idSms)
+        public void SetLast(uint idSms, string resultDescr)
         {
             // Incrementa o número de tentativas
             objPersistence.ExecuteCommand("update fila_sms set numTentativas=coalesce(numTentativas,0)+1 where idSms=" + idSms);
@@ -112,10 +112,12 @@ namespace Glass.Data.DAL
             if (id == (idSms + 1))
                 return;
 
-            string sql = @"update fila_sms set idSms={0} where idSms=" + idSms + @"; 
+            string sql = @"update fila_sms set idSms={0} {1} where idSms=" + idSms + @"; 
                 alter table fila_sms auto_increment={0}";
 
-            objPersistence.ExecuteCommand(String.Format(sql, id));
+            sql = string.Format(sql, id, resultDescr != string.Empty ? ", descricaoResultado = '" + resultDescr + "'" : string.Empty);
+
+            objPersistence.ExecuteCommand(sql);
         }
 
         /// <summary>

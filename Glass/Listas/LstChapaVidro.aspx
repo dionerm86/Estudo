@@ -115,7 +115,7 @@
                     <tr>
                         <td align="center">
                             <asp:GridView GridLines="None" ID="grdChapaVidro" runat="server" AllowPaging="True" AllowSorting="True"
-                                AutoGenerateColumns="False" DataKeyNames="IdChapaVidro" 
+                                AutoGenerateColumns="False" DataKeyNames="IdChapaVidro" OnRowCommand="grdChapaVidro_RowCommand"
                                 DataSourceID="odsChapaVidro" CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
                                 EditRowStyle-CssClass="edit" 
                                 EmptyDataText="Não há chapa de vidro cadastrada.">
@@ -129,8 +129,9 @@
                                         <ItemTemplate>
                                             <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Edit" ImageUrl="~/Images/EditarGrid.gif"
                                                 ToolTip="Editar" />
-                                            <asp:ImageButton ID="ImageButton2" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                                OnClientClick="return confirm(&quot;Tem certeza que deseja excluir esta chapa de vidro?&quot;)" />
+                                            <asp:ImageButton ID="imbInativar" runat="server" CommandArgument='<%# Eval("IdChapaVidro") %>'
+                                                CommandName="Inativar" ImageUrl="~/Images/Inativar.gif" OnClientClick="if (!confirm(&quot;Deseja alterar a situação dessa chapa de vidro?&quot;)) return false"
+                                                ToolTip="Alterar situação"  />
                                         </ItemTemplate>
                                         <ItemStyle Wrap="False" />
                                     </asp:TemplateField>
@@ -263,6 +264,17 @@
                                                 Text='<%# Eval("PercAcrescimoTotM23") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Situação">
+                                        <ItemTemplate>
+                                            <asp:Label ID="lblSituacao" runat="server" 
+                                                Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:Label ID="lblSituacao" runat="server" 
+                                                Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                                            <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>
                                             <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" 
@@ -277,7 +289,7 @@
                                 <AlternatingRowStyle />
                             </asp:GridView>
                             <colo:VirtualObjectDataSource culture="pt-BR" ID="odsChapaVidro" runat="server" DataObjectTypeName="Glass.Data.Model.ChapaVidro"
-                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
+                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize" 
                                 SelectCountMethod="GetListCount" SelectMethod="GetList" SortParameterName="sortExpression"
                                 StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ChapaVidroDAO"
                                 UpdateMethod="Update" OnDeleted="odsChapaVidro_Deleted" OnUpdated="odsChapaVidro_Updated">

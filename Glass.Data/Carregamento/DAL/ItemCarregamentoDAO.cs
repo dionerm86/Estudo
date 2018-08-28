@@ -604,7 +604,7 @@ namespace Glass.Data.DAL
                 agruparProdutos, dtSaidaIni, dtSaidaFim, rotas, ignorarPedidosVendaTransferencia, idCliExterno, nomeCliExterno, idsRotasExternas);
 
             sql = @"
-                    SELECT CONCAT(IdCarregamento, ';', IdCliente, ';', NomeCliente, ';', COALESCE(IdClienteExterno, 0), ';', COALESCE(ClienteExterno, ''), ';', SUM(Peso))
+                    SELECT CONCAT(IdCarregamento, ';', IdCliente, ';', NomeCliente, ';', COALESCE(IdClienteExterno, 0), ';', COALESCE(ClienteExterno, ''), ';', SUM(IFNULL(Peso,0)))
                     FROM (" + sql + @") as tmp
                     GROUP BY IdCarregamento, IdCliente, IdClienteExterno, ClienteExterno
                     ORDER BY NomeCliente";

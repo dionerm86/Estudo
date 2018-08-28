@@ -33,7 +33,7 @@ namespace Glass.UI.Web
             {
                 BundleTable.Bundles.Add(bundle);
 
-                var template = new TemplateItem(bundle.Path);
+                var template = new TemplateItem(bundle);
                 return template.ToString();
             }
             finally

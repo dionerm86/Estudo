@@ -1,15 +1,15 @@
-﻿using System;
-using System.Text;
-using Glass.Data.RelModel;
-using System.Xml;
-using Glass.Data.Helper;
-using System.IO;
+﻿using Glass.Data.Helper;
 using Glass.Data.NFeUtils;
+using Glass.Data.RelModel;
+using System;
+using System.IO;
+using System.Text;
 using System.Web;
+using System.Xml;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class NFeDAO : Glass.Pool.PoolableObject<NFeDAO>
+    public sealed class NFeDAO : Glass.Pool.Singleton<NFeDAO>
     {
         private NFeDAO() { }
 
@@ -161,7 +161,7 @@ namespace Glass.Data.RelDAL
             string modFrete = GetNodeValue(xmlInfNFe, "transp", "modFrete");
             nfe.RazaoSocialTransp = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfNFe, "transp/transporta", "xNome"));
             nfe.CpfCnpjTransp = Formatacoes.MascaraCpfCnpj(GetNodeValue(xmlInfNFe, "transp/transporta", "CNPJ") + GetNodeValue(xmlInfNFe, "transp/transporta", "CPF"));
-            
+
             switch ((Model.ModalidadeFrete)(modFrete.StrParaInt()))
             {
                 case Model.ModalidadeFrete.ContaDoRemetente: nfe.FretePorConta = "0 - Rem (CIF)"; break;
@@ -277,7 +277,7 @@ namespace Glass.Data.RelDAL
 
             string[] parentsNodes = parentsNodeName.Split('/');
 
-            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML, 
+            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML,
             // deixando de lado níveis acima que não interessam
             foreach (string pNode in parentsNodes)
             {
@@ -289,7 +289,7 @@ namespace Glass.Data.RelDAL
 
             if (xmlInfNfe[nodeName] != null)
                 return xmlInfNfe[nodeName].InnerXml;
-            else 
+            else
                 return String.Empty;
         }
 

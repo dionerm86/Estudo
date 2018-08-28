@@ -343,7 +343,7 @@ function utilizaCredito(nomeFornec, idFornec) {
         else
         {
             // Mostra o nome do fornecedor
-            FindControl("lblFornec", "span").innerHTML = nomeFornec;
+            FindControl("lblFornec", "span").innerHTML = idFornec + " - " + nomeFornec;
 
             // Busca o crédito que este fornecedor possui
             var creditoFornec = MetodosAjax.GetFornecedorCredito(idFornec).value;

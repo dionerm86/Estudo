@@ -224,6 +224,9 @@
                             <asp:ImageButton ID="ImageButton2" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
+                        <td>
+                            <asp:CheckBox ID="chkFastDelivery" runat="server" Text="Apenas Fast Delivery" />
+                        </td>
                     </tr>
                 </table>
             </td>
@@ -309,6 +312,7 @@
                          <asp:ControlParameter ControlID="drpOrigemPedido" PropertyName="SelectedValue" Name="origemPedido"
                             Type="Int32" />
                         <asp:ControlParameter ControlID="drpTipoPedido" PropertyName="SelectedValue" Name="tipoPedido"/>
+                        <asp:ControlParameter ControlID="chkFastDelivery" Name="apenasFastDelivery" PropertyName="Checked" Type="Boolean" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFuncionario" runat="server"

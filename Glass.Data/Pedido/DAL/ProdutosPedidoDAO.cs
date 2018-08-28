@@ -707,7 +707,7 @@ namespace Glass.Data.DAL
                         CAST(((pp.Total / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)}) AS DECIMAL (12,2)) AS TotalNf,
                         {string.Format(sqlLiberacaoParcial, "(pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0))")} AS QtdNf,
                         CAST((pp.ValorBenef / {qtdMaoDeObra}) * {string.Format(sqlLiberacaoParcial, qtdMaoDeObra)} AS DECIMAL (12,2)) AS ValorBenefNf,
-                        pt.QtdeTrocaDevolucao,
+                        p.IdGrupoProd, p.IdSubgrupoProd, pt.QtdeTrocaDevolucao,
                         (pp.Qtde - IFNULL(pt.QtdeTrocaDevolucao, 0)) AS QtdeOriginal, CAST(pp.IdProd AS UNSIGNED INTEGER) AS IdProdUsar,
                         pp.ValorAcrescimo AS ValorAcrescimoNf, Cast(pp.ValorDescontoQtde AS DECIMAL(12,2)) AS ValorDescontoQtdeNf, pp.ValorIpi AS ValorIpiNf, plp.IdLiberarPedido
                     FROM produtos_pedido pp
@@ -763,14 +763,7 @@ namespace Glass.Data.DAL
                 pp.TotM2Calc = FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? (float)pp.TotM2Nf : pp.TotM;
                 pp.Total = (decimal)pp.TotalNf;
                 pp.ValorBenef = (decimal)pp.ValorBenefNf;
-
-                //Chamado 79146- Foi alterado para está forma pois em determinados momentos o idgrupo e idsubgrupo estava sendo recuperado zerado.
-                if (pp.IdGrupoProd == 0)
-                    pp.IdGrupoProd = (uint)ProdutoDAO.Instance.ObtemIdGrupoProd((int)pp.IdProd);
-
-                if (pp.IdSubgrupoProd == 0)
-                    pp.IdSubgrupoProd = (uint)ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)pp.IdProd).GetValueOrDefault();
-
+               
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
 
                 if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)

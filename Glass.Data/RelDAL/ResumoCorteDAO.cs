@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.RelModel;
-using Glass.Data.Model;
+﻿using Glass.Configuracoes;
 using Glass.Data.DAL;
-using Glass.Configuracoes;
+using Glass.Data.Model;
+using Glass.Data.RelModel;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class ResumoCorteDAO : Glass.Pool.PoolableObject<ResumoCorteDAO>
+    public sealed class ResumoCorteDAO : Glass.Pool.Singleton<ResumoCorteDAO>
     {
         private ResumoCorteDAO() { }
 
@@ -41,7 +41,7 @@ namespace Glass.Data.RelDAL
 
             public override int GetHashCode()
             {
-                string hashCode = (IdPedido.ToString().Length > 3 ? IdPedido.ToString().Remove(0, IdPedido.ToString().Length - 3) : IdPedido.ToString()) + 
+                string hashCode = (IdPedido.ToString().Length > 3 ? IdPedido.ToString().Remove(0, IdPedido.ToString().Length - 3) : IdPedido.ToString()) +
                     IdProd.ToString() + (IsVidro ? 1 : 0);
 
                 return Glass.Conversoes.StrParaInt(hashCode);
@@ -72,7 +72,7 @@ namespace Glass.Data.RelDAL
             }
 
             // Agrupa os produtos somando seus totais
-            var retorno =  
+            var retorno =
                 dicResumoCorte.Select(f => new ResumoCorte()
                 {
                     // Recupera dados comuns aos produtos
@@ -189,34 +189,34 @@ namespace Glass.Data.RelDAL
 
                     // Define se irá buscar qualquer produto do grupo vidro ou apenas produtos de produção
                     buscarTodosGrupoVidro ?
-                        f.IdGrupoProd == (int)NomeGrupoProd.Vidro : 
+                        f.IdGrupoProd == (int)NomeGrupoProd.Vidro :
                         exibirRevenda ?
-                         f.IdProdLiberarPedido > 0 
+                         f.IdProdLiberarPedido > 0
                          : !dicSubgrupoRevenda[new Tuple<uint, uint?>(f.IdGrupoProd, f.IdSubgrupoProd)]
                 )
                 .GroupBy(f => f.IdProd)
                 .Select(f => new ResumoCorte()
-                    {
-                        // Recupera dados comuns aos produtos
-                        IdPedido = f.First().IdPedido,
-                        IdProd = f.First().IdProd,
-                        IsVidro = f.First().IsVidro,
-                        IdGrupoProd = f.First().IdGrupoProd,
-                        Espessura = f.First().Espessura,
-                        CodAplicacao = f.First().CodAplicacao,
-                        CodProcesso = f.First().CodProcesso,
-                        CodInterno = f.First().CodInterno,
-                        DescrProd = f.First().DescrProduto,
-                        DescrGrupoProd = GrupoProdDAO.Instance.GetDescricao((int)f.First().IdGrupoProd),
+                {
+                    // Recupera dados comuns aos produtos
+                    IdPedido = f.First().IdPedido,
+                    IdProd = f.First().IdProd,
+                    IsVidro = f.First().IsVidro,
+                    IdGrupoProd = f.First().IdGrupoProd,
+                    Espessura = f.First().Espessura,
+                    CodAplicacao = f.First().CodAplicacao,
+                    CodProcesso = f.First().CodProcesso,
+                    CodInterno = f.First().CodInterno,
+                    DescrProd = f.First().DescrProduto,
+                    DescrGrupoProd = GrupoProdDAO.Instance.GetDescricao((int)f.First().IdGrupoProd),
 
-                        // Soma os totais dos produtos agrupados
-                        Qtde = (float)f.Sum(x => x.QtdeTotal),
-                        Total = f.Sum(x => x.Total),
-                        Altura = f.Sum(x => x.Altura),
-                        Largura = f.Sum(x => x.Largura),
-                        TotM2 = Math.Round(f.Sum(x => x.TotM), Geral.NumeroCasasDecimaisTotM),
-                        TotM2Calc = Math.Round(f.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM),
-                        Peso = f.Sum(x => x.Peso)
+                    // Soma os totais dos produtos agrupados
+                    Qtde = (float)f.Sum(x => x.QtdeTotal),
+                    Total = f.Sum(x => x.Total),
+                    Altura = f.Sum(x => x.Altura),
+                    Largura = f.Sum(x => x.Largura),
+                    TotM2 = Math.Round(f.Sum(x => x.TotM), Geral.NumeroCasasDecimaisTotM),
+                    TotM2Calc = Math.Round(f.Sum(x => x.TotM2Calc), Geral.NumeroCasasDecimaisTotM),
+                    Peso = f.Sum(x => x.Peso)
                 }
                 ).ToList();
 

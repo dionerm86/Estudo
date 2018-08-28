@@ -4,9 +4,9 @@
     /// Classe base para as classes de fluxo do sistema.
     /// </summary>
     /// <typeparam name="Fluxo">O tipo da classe de fluxo que está sendo herdada.</typeparam>
-    public abstract class BaseFluxo<Fluxo> : Glass.Pool.PoolableObject<Fluxo>
+    public abstract class BaseFluxo<Fluxo> : Glass.Pool.Singleton<Fluxo>
         where Fluxo : BaseFluxo<Fluxo>
     {
-        
+
     }
 }

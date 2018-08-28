@@ -102,7 +102,7 @@ namespace Glass.Api.Graficos.Administrativos.Implementacao
         {
 
             var lstProdPedEsp = Data.DAL.ProdutosPedidoEspelhoDAO.Instance.GetForRpt(0, 0,null, 0, 0, 0, 2, "7",
-                null, null, null, null, null, null, null, null, null, false, false, false, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, false, false, false, null, null, null, null, null, null, null);
 
             var lst = Data.RelDAL.ProdutosPedidoEspelhoRptDAO.Instance.CopiaLista(lstProdPedEsp.ToArray(),
                              Data.RelModel.ProdutosPedidoEspelhoRpt.TipoConstrutor.ListaPedidoEspelho);

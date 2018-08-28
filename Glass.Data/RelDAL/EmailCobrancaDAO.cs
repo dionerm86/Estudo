@@ -22,11 +22,11 @@ namespace Glass.Data.RelDAL
 
             ///Busca todos os plano de contas de boleto
             var planosContasBoletos = UtilsPlanoConta.ContasTodosTiposBoleto();
-            
+
             var where = apenasContasBoletos ? $"AND cr.IdConta IN ({planosContasBoletos}) " : string.Empty;
 
             if (!string.IsNullOrWhiteSpace(dataMax))
-                where += $" AND DATE(cr.dataVec) >= {dataMax}";
+                where += $" AND DATE(cr.dataVec) >= {"'" + dataMax + "'"}";
 
             return $@"
                 SELECT COUNT(*) as NumContasVec, SUM(cr.valorVec) as ValorContasVec,
@@ -39,8 +39,7 @@ namespace Glass.Data.RelDAL
                     AND cr.ValorVec>0
                     AND coalesce(isParcelaCartao,false)=false
                     AND !coalesce(cli.NaoReceberEmailCobrancaVencida, false) 
-                    AND DATE(cr.dataVec) <= '" + data + where + $@"'
-                GROUP BY cli.id_Cli";
+                    AND DATE(cr.dataVec) <= '" + data + "'" + where + " GROUP BY cli.id_Cli";
         }
 
         private string SqlVecHoje(string data)
