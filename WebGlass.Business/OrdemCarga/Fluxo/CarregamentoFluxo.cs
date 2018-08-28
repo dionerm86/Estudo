@@ -294,7 +294,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                 #endregion
 
-                var erroEtq = new List<string>();
+                string msg = string.Empty;
 
                 foreach (string e in etiquetas)
                 {
@@ -302,19 +302,15 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     {
                         EfetuaLeitura(idFunc, idCarregamento, e, null, idCliente, nomeCli, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idPedidoExterno, nomeClienteExterno, idPedidoExterno);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        erroEtq.Add(e);
+                        msg = Glass.MensagemAlerta.FormatErrorMsg($"Falha ao marcar peça {e}.", ex);
+                        break;
                     }
                 }
 
-                if (erroEtq.Count > 0)
-                {
-                    var erros = string.Join(",", erroEtq.ToArray());
-
-                    ErroDAO.Instance.InserirFromException("Leitura com (=)", new Exception("Etiqueta: " + etiqueta + " Leituras: " + erros));
-                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
-                }
+                if (!string.IsNullOrEmpty(msg))
+                    throw new Exception(msg);
 
                 return;
             }

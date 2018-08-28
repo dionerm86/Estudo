@@ -18,17 +18,17 @@ namespace Glass.Data.RelModel
             {
                 var data = new DateTime();
 
-                var idTipoCartao = IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)IdConta) : null;
-                data = idTipoCartao == null ? _data.AddDays(1) : _data;
+                var idTipoCartao = this.IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)this.IdConta) : null;
+                data = idTipoCartao == null ? this._data.AddDays(1) : this._data;
 
-                if ((int)_data.DayOfWeek == 0)
-                    data = _data.AddDays(1);
-                else if ((int)_data.DayOfWeek == 6)
-                    data = _data.AddDays(2);
+                while (!Glass.FuncoesData.DiaUtil(data))
+                {
+                    data = data.AddDays(1);
+                }
 
                 return data.Date;
             }
-            set { _data = value; }
+            set { this._data = value; }
         }
 
         [PersistenceProperty("IDCONTA")]
