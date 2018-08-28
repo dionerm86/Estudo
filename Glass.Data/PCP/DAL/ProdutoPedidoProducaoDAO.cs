@@ -7154,7 +7154,7 @@ namespace Glass.Data.DAL
                 s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, '$$$' as Criterio" : "count(*)";
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos2 = selecionar ? @"
                 ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao, 
@@ -7172,7 +7172,7 @@ namespace Glass.Data.DAL
                 s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, '$$$' as Criterio" : "count(*)";
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos3 = selecionar ? @"
                 null, null, pt.idProdPed, null, td.idFunc, null, 
@@ -7191,7 +7191,7 @@ namespace Glass.Data.DAL
                 if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetorRepos, pt.CustoProd AS ValorCustoUnitario, pt.ValorVendido as ValorUnit, 
                 ped.CodCliente, pt.TotM as TotM2, (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, ped.tipoPedido=" +
                 (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
-                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, '$$$' as Criterio" : "count(*)";
+                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos4 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null, 
@@ -7202,7 +7202,7 @@ namespace Glass.Data.DAL
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao, 
                 null as CodProcesso, null as IdPedidoExibir, 'Chapa de Vidro' as descrSetor, 'Chapa de Vidro' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit, 
                 null, round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra, 
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, '$$$' as Criterio" : "count(*)";
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos5 = selecionar ? @"
                 null, nf.numeroNFe, null, null, pcv.idFuncPerda, null, 
@@ -7213,7 +7213,7 @@ namespace Glass.Data.DAL
                 null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao, 
                 null as CodProcesso, null as IdPedidoExibir, 'Retalho de Produção' as descrSetor, 'Retalho de Producao' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit, 
                 null, round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra, 
-                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, '$$$' as Criterio" : "count(*)";
+                f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string sql =
                 "(select " + campos1 + @"
@@ -7226,6 +7226,7 @@ namespace Glass.Data.DAL
                     Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
                     Inner Join cliente cli On (ped.idCli=cli.id_Cli) 
                     Inner Join produto p On (pp.idProd=p.idProd)
+                    Inner Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                     Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao) 
                     Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
@@ -7243,6 +7244,7 @@ namespace Glass.Data.DAL
                     Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
                     Inner Join cliente cli On (ped.idCli=cli.id_Cli) 
                     Inner Join produto p On (pp.idProd=p.idProd)
+                    Inner Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                     Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao) 
                     Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
@@ -7258,6 +7260,7 @@ namespace Glass.Data.DAL
                     left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
                     left Join cliente cli On (ped.idCli=cli.id_Cli) 
                     left Join produto p On (pt.idProd=p.idProd)
+                    left Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                     left Join etiqueta_aplicacao apl On (pt.idAplicacao=apl.idAplicacao) 
                     left Join etiqueta_processo prc On (pt.idProcesso=prc.idProcesso) 
@@ -7270,6 +7273,7 @@ namespace Glass.Data.DAL
                     inner join produtos_nf pnf on (pi.idProdNf=pnf.idProdNf)
                     inner join nota_fiscal nf on (pnf.idNf=nf.idNf)
                     left Join produto p On (pnf.idProd=p.idProd)
+                    left Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     left Join funcionario f on (pcv.idFuncPerda=f.idFunc)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                 where !pcv.Cancelado {3})"
@@ -7281,6 +7285,7 @@ namespace Glass.Data.DAL
                     inner join produtos_nf pnf on (rp.idProdNf=pnf.idProdNf)
                     inner join nota_fiscal nf on (pnf.idNf=nf.idNf)
                     left Join produto p On (rp.idProd=p.idProd)
+                    left Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     left Join funcionario f on (pcv.idFuncPerda=f.idFunc)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
                 where !pcv.Cancelado {3})";
