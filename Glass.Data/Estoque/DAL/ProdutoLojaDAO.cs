@@ -617,7 +617,7 @@ namespace Glass.Data.DAL
 		                    LEFT JOIN pedido p ON (pp.IdPedido=p.IdPedido)
 	                    WHERE pp.Qtde<>pp.QtdSaida
                             AND (pp.{ invisivelFluxoPedido } IS NULL OR pp.{ invisivelFluxoPedido }=0)
-                            AND p.Situacao={ (PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado) }
+                            AND p.Situacao IN ({(PedidoConfig.LiberarPedido ? $"{(int)Pedido.SituacaoPedido.ConfirmadoLiberacao},{(int)Pedido.SituacaoPedido.LiberadoParcialmente}" : ((int)Pedido.SituacaoPedido.Confirmado).ToString())})
                             AND p.TipoPedido<>{ (int)Pedido.TipoPedidoEnum.Producao }
 		                    AND pp.IdProd={ idProd }
                             { (idLoja > 0 ? string.Format("AND IdLoja={0}", idLoja) : string.Empty) };");
