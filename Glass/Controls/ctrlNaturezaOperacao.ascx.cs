@@ -23,21 +23,20 @@ namespace Glass.UI.Web.Controls
             get { return Glass.Conversoes.StrParaUintNullable(selNaturezaOperacao.Valor); }
             set
             {
-                using (var inst = WebGlass.Business.NaturezaOperacao.Fluxo.BuscarEValidar.Instance)
-                {
-                    if (value != null && inst.Existe(value.Value))
-                    {
-                        selNaturezaOperacao.Valor = value.ToString();
-                        selNaturezaOperacao.Descricao = inst.ObtemCodigoCompleto(value.Value);
+                var inst = WebGlass.Business.NaturezaOperacao.Fluxo.BuscarEValidar.Instance;
 
-                        Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_valor",
-                            "FindControl('" + selNaturezaOperacao.FindControl("txtDescr").ClientID + "', 'input').onblur();\n", true);
-                    }
-                    else
-                    {
-                        selNaturezaOperacao.Valor = null;
-                        selNaturezaOperacao.Descricao = null;
-                    }
+                if (value != null && inst.Existe(value.Value))
+                {
+                    selNaturezaOperacao.Valor = value.ToString();
+                    selNaturezaOperacao.Descricao = inst.ObtemCodigoCompleto(value.Value);
+
+                    Page.ClientScript.RegisterStartupScript(GetType(), this.ClientID + "_valor",
+                        "FindControl('" + selNaturezaOperacao.FindControl("txtDescr").ClientID + "', 'input').onblur();\n", true);
+                }
+                else
+                {
+                    selNaturezaOperacao.Valor = null;
+                    selNaturezaOperacao.Descricao = null;
                 }
             }
         }

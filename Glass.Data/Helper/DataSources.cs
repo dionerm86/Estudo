@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.Model;
+﻿using Colosoft;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.EFD;
-using System.Collections;
+using Glass.Data.Model;
 using Sync.Utils.Boleto;
 using Sync.Utils.Boleto.Instrucoes;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using Glass.Configuracoes;
-using Colosoft;
 
 namespace Glass.Data.Helper
 {
-    public sealed class DataSources : Glass.Pool.PoolableObject<DataSources>
+    public sealed class DataSources : Glass.Pool.Singleton<DataSources>
     {
         private DataSources() { }
 
@@ -92,7 +92,7 @@ namespace Glass.Data.Helper
             lstRetorno.Add(new GenericModel((uint)Glass.Data.Model.TipoCalculoGrupoProd.M2, Glass.Global.CalculosFluxo.GetDescrTipoCalculo(Glass.Data.Model.TipoCalculoGrupoProd.M2, unidade)));
             lstRetorno.Add(new GenericModel((uint)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto, Glass.Global.CalculosFluxo.GetDescrTipoCalculo(Glass.Data.Model.TipoCalculoGrupoProd.M2Direto, unidade)));
             lstRetorno.Add(new GenericModel((uint)Glass.Data.Model.TipoCalculoGrupoProd.Perimetro, Glass.Global.CalculosFluxo.GetDescrTipoCalculo(Glass.Data.Model.TipoCalculoGrupoProd.Perimetro, unidade)));
-            
+
             if (exibirDecimal)
                 lstRetorno.Add(new GenericModel((uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdDecimal, Glass.Global.CalculosFluxo.GetDescrTipoCalculo(Glass.Data.Model.TipoCalculoGrupoProd.QtdDecimal, unidade)));
 
@@ -565,7 +565,7 @@ namespace Glass.Data.Helper
         /// 1 - Estrangeira - Importação direta, exceto a indicada no código 6;
         /// 2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7;
         /// 3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40%;
-        /// 4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos 
+        /// 4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos
         /// de que tratam as legislações citadas nos Ajustes;
         /// 5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%;
         /// 6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX;
@@ -594,7 +594,7 @@ namespace Glass.Data.Helper
         public GenericModel[] GetConfiguracoes()
         {
             List<GenericModel> lst = new List<GenericModel>();
-            
+
             foreach (Configuracao item in ConfiguracaoDAO.Instance.GetAll())
                 lst.Add(new GenericModel((uint?)item.IdConfig, item.Descricao));
 
@@ -620,7 +620,7 @@ namespace Glass.Data.Helper
         {
             List<GenericModel> lst = new List<GenericModel>();
 
-            lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.NaoEntregue, 
+            lst.Add(new GenericModel((uint)Pedido.SituacaoProducaoEnum.NaoEntregue,
                 Pedido.GetDescrSituacaoProducao(0, (int)Pedido.SituacaoProducaoEnum.NaoEntregue, 0, login)));
 
             if (PCPConfig.ControlarProducao)
@@ -674,7 +674,7 @@ namespace Glass.Data.Helper
             if (!EstoqueConfig.ControlarEstoqueVidrosClientes)
                 dados = dados.Where(f => f.Id != (int)Pedido.TipoPedidoEnum.MaoDeObraEspecial).ToArray();
 
-                return dados;
+            return dados;
         }
 
         public GenericModel[] GetTipoPedidoTrocaDev()
@@ -1064,7 +1064,7 @@ namespace Glass.Data.Helper
             switch (tipoContingencia)
             {
                 case (int)TipoContingenciaCTe.NaoUtilizar: return "Não Utilizar";
-                case (int)TipoContingenciaCTe.SVC: return "SVC";                
+                case (int)TipoContingenciaCTe.SVC: return "SVC";
                 default: return "";
             }
         }
@@ -1162,7 +1162,7 @@ namespace Glass.Data.Helper
             lstRetorno.Add(new GenericModel(38, "CEDENTE NÃO CONCORDA COM A ALEGAÇÃO DO SACADO"));
             lstRetorno.Add(new GenericModel(31, "ALTERAÇÃO DE OUTROS DADOS"));
             lstRetorno.Add(new GenericModel(41, "EXCLUSÃO DE SACADOR AVALISTA"));
-            
+
             return lstRetorno.ToArray();
         }
 
@@ -1217,7 +1217,7 @@ namespace Glass.Data.Helper
             lstRetorno.Add(new GenericModel(202, "S/202 - SEM REGISTRO SEM EMISSAO COM IOF 2,38%"));
 
             lstRetorno.Sort(
-                delegate(GenericModel x1, GenericModel x2)
+                delegate (GenericModel x1, GenericModel x2)
                 {
                     return x1.Id.GetValueOrDefault().CompareTo(x2.Id.GetValueOrDefault());
                 }

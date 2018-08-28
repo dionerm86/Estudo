@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using Glass.Data.RelModel;
-using Glass.Data.Model;
+﻿using Glass.Configuracoes;
 using Glass.Data.DAL;
-using Glass.Configuracoes;
 using Glass.Data.Helper.Calculos;
-using Glass.Data.Model.Calculos;
+using Glass.Data.Model;
+using Glass.Data.RelModel;
+using System.Collections.Generic;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class MemoriaCalculoDAO : Glass.Pool.PoolableObject<MemoriaCalculoDAO>
+    public sealed class MemoriaCalculoDAO : Glass.Pool.Singleton<MemoriaCalculoDAO>
     {
         private MemoriaCalculoDAO() { }
 
@@ -45,12 +44,12 @@ namespace Glass.Data.RelDAL
         public DadosMemoriaCalculo[] GetDadosMemoriaCalculo(Orcamento orca)
         {
             List<DadosMemoriaCalculo> retorno = new List<DadosMemoriaCalculo>();
-            
+
             decimal totalAcrescimo = 0;
             decimal totalDesconto = 0;
 
             var lstAluminio = new Dictionary<uint, KeyValuePair<KeyValuePair<string, string>, MaterialItemProjeto>>();
-            
+
             var produtos = ProdutosOrcamentoDAO.Instance.GetForMemoriaCalculo(orca.IdOrcamento);
             List<MaterialItemProjeto> itensProjeto = new List<MaterialItemProjeto>();
 
@@ -74,7 +73,7 @@ namespace Glass.Data.RelDAL
                     totalDesconto += PedidoConfig.RatearDescontoProdutos ? po.ValorDesconto : 0;
 
                     var itens = MaterialItemProjetoDAO.Instance.GetByItemProjeto(po.IdItemProjeto.Value);
-                    
+
                     DescontoAcrescimo.Instance.AplicarAcrescimoAmbiente(null, orca, po.TipoAcrescimo, po.Acrescimo, itens);
                     DescontoAcrescimo.Instance.AplicarDescontoAmbiente(null, orca, po.TipoDesconto, po.Desconto, itens);
 
@@ -110,7 +109,7 @@ namespace Glass.Data.RelDAL
             var materiaisItemProjeto = itensProjeto.ToArray();
             if (PedidoConfig.Comissao.ComissaoAlteraValor)
                 DescontoAcrescimo.Instance.AplicarComissao(null, orca, orca.PercComissao, materiaisItemProjeto);
-            
+
             DescontoAcrescimo.Instance.AplicarAcrescimo(null, orca, 2, totalAcrescimo, materiaisItemProjeto);
             DescontoAcrescimo.Instance.AplicarDesconto(null, orca, 2, totalDesconto, materiaisItemProjeto);
 

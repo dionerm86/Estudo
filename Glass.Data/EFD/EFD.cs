@@ -1,9 +1,9 @@
-﻿using System;
-using Glass.Data.Helper;
+﻿using Glass.Data.Helper;
+using System;
 
 namespace Glass.Data.EFD
 {
-    public sealed class EFD : Glass.Pool.PoolableObject<EFD>
+    public sealed class EFD : Glass.Pool.Singleton<EFD>
     {
         private EFD() { }
 

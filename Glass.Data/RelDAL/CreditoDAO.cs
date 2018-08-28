@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.DAL;
+﻿using Glass.Data.DAL;
 using Glass.Data.Helper;
-using Glass.Data.RelModel;
 using Glass.Data.Model;
+using Glass.Data.RelModel;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class CreditoDAO : Glass.Pool.PoolableObject<CreditoDAO>
+    public sealed class CreditoDAO : Glass.Pool.Singleton<CreditoDAO>
     {
         private CreditoDAO() { }
 
@@ -160,7 +160,7 @@ namespace Glass.Data.RelDAL
 
                 sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "Data DESC";
 
-                retorno.Sort(new Comparison<Credito>(delegate(Credito x, Credito y)
+                retorno.Sort(new Comparison<Credito>(delegate (Credito x, Credito y)
                 {
                     int retornoSort = 0;
                     string sort = sortExpression.IndexOf(" ") == -1 ? sortExpression : sortExpression.Substring(0, sortExpression.IndexOf(" "));
@@ -370,7 +370,7 @@ namespace Glass.Data.RelDAL
 
                 sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "Data DESC";
 
-                retorno.Sort(new Comparison<Credito>(delegate(Credito x, Credito y)
+                retorno.Sort(new Comparison<Credito>(delegate (Credito x, Credito y)
                 {
                     int retornoSort = 0;
                     string sort = sortExpression.IndexOf(" ") == -1 ? sortExpression : sortExpression.Substring(0,
@@ -498,13 +498,13 @@ namespace Glass.Data.RelDAL
         {
             return GetTotaisCredito(GetCreditoListFornecedor(idFornecedor, inicio, fim, tipoMovimentacao));
         }
-        
+
         #endregion
 
         #region Atualiza saldo
 
         /// <summary>
-        /// Atualiza saldo, método corrigido para funcionar na atualização de saldo do cliente, se necessário criar outro método para 
+        /// Atualiza saldo, método corrigido para funcionar na atualização de saldo do cliente, se necessário criar outro método para
         /// atualizar o saldo do fornecedor
         /// </summary>
         /// <param name="saldoInicial"></param>

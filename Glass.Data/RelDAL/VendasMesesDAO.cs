@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using Glass.Data.RelModel;
+﻿using Glass.Data.RelModel;
+using System.Collections.Generic;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class VendasMesesDAO : Glass.Pool.PoolableObject<VendasMesesDAO>
+    public sealed class VendasMesesDAO : Glass.Pool.Singleton<VendasMesesDAO>
     {
         //private VendasMesesDAO() { }
 
@@ -11,8 +11,8 @@ namespace Glass.Data.RelDAL
             int anoInicio, int mesFim, int anoFim, string tipoMedia, int ordenar, int tipoVendas, string idsFunc, string NomeFunc, string idsFuncAssociaCliente, decimal valorMinimo,
             decimal valorMaximo, uint idLoja, bool lojaCliente, string tipoCliente, int idTabelaDescontoAcrescimo, int situacaoCliente, bool incluirDadosTotalM2eTotalItens, string tipoPedido)
         {
-            var vendas = VendasDAO.Instance.GetList(idCliente, nomeCliente, idsRota, revenda, idComissionado, nomeComissionado, 
-                mesInicio, anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFunc, NomeFunc, 
+            var vendas = VendasDAO.Instance.GetList(idCliente, nomeCliente, idsRota, revenda, idComissionado, nomeComissionado,
+                mesInicio, anoInicio, mesFim, anoFim, ordenar, tipoMedia, tipoVendas, idsFunc, NomeFunc,
                 idsFuncAssociaCliente, valorMinimo, valorMaximo, situacaoCliente, 0, idLoja, lojaCliente, tipoCliente, idTabelaDescontoAcrescimo, tipoPedido);
 
             var meses = VendasDAO.Instance.GetMesesVenda(idCliente, nomeCliente, idsRota, revenda, idComissionado, nomeComissionado, mesInicio, anoInicio, mesFim, anoFim,

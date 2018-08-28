@@ -1,18 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text;
-using Glass.Data.Model;
-using Glass.Data.DAL;
-using Glass.Data.RelModel;
-using Glass.Data.RelDAL;
-using System.Collections;
-using Glass.Data.Model.Cte;
+﻿using Glass.Data.DAL;
 using Glass.Data.DAL.CTe;
+using Glass.Data.Model;
+using Glass.Data.Model.Cte;
+using Glass.Data.RelDAL;
+using Glass.Data.RelModel;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Glass.Data.SIntegra
 {
-    public sealed class SIntegra : Glass.Pool.PoolableObject<SIntegra>
+    public sealed class SIntegra : Glass.Pool.Singleton<SIntegra>
     {
         private SIntegra() { }
 
@@ -39,7 +39,7 @@ namespace Glass.Data.SIntegra
         private Registro50[] RecuperaRegistros50(IEnumerable<NotaFiscal> notasFiscais)
         {
             List<Registro50> retorno = new List<Registro50>();
-                        
+
             foreach (NotaFiscal n in notasFiscais)
                 if (n.Situacao == (int)NotaFiscal.SituacaoEnum.Cancelada)
                     retorno.Add(new Registro50(n, n.IdCfop.Value));
@@ -201,7 +201,7 @@ namespace Glass.Data.SIntegra
 
         #region Registro 70
 
-        private Registro70[] RecuperaRegistros70(IEnumerable<NotaFiscal> notasFiscais, 
+        private Registro70[] RecuperaRegistros70(IEnumerable<NotaFiscal> notasFiscais,
             IEnumerable<ConhecimentoTransporte> conhecimentosTransporte)
         {
             List<Registro70> retorno = new List<Registro70>();
@@ -308,28 +308,28 @@ namespace Glass.Data.SIntegra
 
                 #region Valida dados Emitente
 
-                    if (loja.RazaoSocial.Length > 35)
-                        throw new Exception("O nome do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 35 caracteres");
+                if (loja.RazaoSocial.Length > 35)
+                    throw new Exception("O nome do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 35 caracteres");
 
-                    if (loja.Bairro.Length > 15)
-                        throw new Exception("O bairro do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 15 caracteres");
+                if (loja.Bairro.Length > 15)
+                    throw new Exception("O bairro do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 15 caracteres");
 
-                    if (loja.Compl != null && loja.Compl.Length > 22)
-                        throw new Exception("O complemento do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 22 caracteres");
+                if (loja.Compl != null && loja.Compl.Length > 22)
+                    throw new Exception("O complemento do emitente " + loja.RazaoSocial + " da nota " + nota.NumeroNFe + " deve possuir até 22 caracteres");
 
-                    if (loja.Endereco.Length > 34)
-                        throw new Exception("O endereço do emitente " + nota.NomeEmitente + " da nota " + nota.NumeroNFe + " deve possuir até 34 caracteres");
+                if (loja.Endereco.Length > 34)
+                    throw new Exception("O endereço do emitente " + nota.NomeEmitente + " da nota " + nota.NumeroNFe + " deve possuir até 34 caracteres");
 
-                    #endregion
+                #endregion
 
                 #region Valida CFOP
 
                 //Cfop cfop = CfopDAO.Instance.GetCfop(nota.CodCfop);
 
-                ////Se o cfop calcula ICMS 
+                ////Se o cfop calcula ICMS
                 //if (cfop.CalcIcms && (nota.BcIcms == 0 || nota.Valoricms == 0 || (nota.AliqIcms != null && nota.AliqIcms.Value == 0)))
                 //    throw new Exception("O CFOP da nota calcula ICMS, porém um ou mais valores referentes à esse imposto não está preenchido. Nota Fiscal: " + nota.NumeroNFe);
-                
+
                 //if (cfop.CalcIcmsSt && (nota.BcIcmsSt == 0 || nota.ValorIcmsSt == 0))
                 //    throw new Exception("O CFOP da nota calcula ICMS-ST, porém um ou mais valores referentes à esse imposto não está preenchido. Nota Fiscal: " + nota.NumeroNFe);
 
@@ -337,7 +337,7 @@ namespace Glass.Data.SIntegra
                 //    throw new Exception("O CFOP da nota calcula IPI, porém um ou mais valores referentes à esse imposto não está preenchido. Nota Fiscal: " + nota.NumeroNFe);
 
                 ////se não calcula
-                ////Se o cfop calcula ICMS 
+                ////Se o cfop calcula ICMS
                 //if (!cfop.CalcIcms && (nota.BcIcms > 0 || nota.Valoricms > 0 || (nota.AliqIcms != null && nota.AliqIcms.Value < 1)))
                 //    throw new Exception("O CFOP da nota não calcula ICMS, porém um ou mais valores referentes à esse imposto está preenchido. Nota Fiscal: " + nota.NumeroNFe);
 
@@ -397,7 +397,7 @@ namespace Glass.Data.SIntegra
 
                         if (nota.IdTransportador == null)
                             throw new Exception("O transportador da nota " + nota.NumeroNFe + " não foi informado");
-                        
+
                         Transportador transportador = TransportadorDAO.Instance.GetElement(nota.IdTransportador.Value);
 
                         if (!Glass.Validacoes.ValidaIE(transportador.Uf, transportador.InscEst))
@@ -421,9 +421,9 @@ namespace Glass.Data.SIntegra
                 #region Verifica unidade de medida de produto
 
                 ProdutosNf[] produtos = ProdutosNfDAO.Instance.GetByNf(nota.IdNf);
-                 foreach (ProdutosNf p in produtos )
+                foreach (ProdutosNf p in produtos)
                 {
-                    if(string.IsNullOrEmpty(p.Unidade))
+                    if (string.IsNullOrEmpty(p.Unidade))
                         throw new Exception("A unidade de medida do produto " + p.CodInterno + " - " + p.DescrProduto + " da nota " + nota.NumeroNFe + " não possui unidade de medida");
                 }
 
@@ -441,10 +441,10 @@ namespace Glass.Data.SIntegra
 
                 #region Aliquota de impostos
 
-                 if (nota.AliqIcms < 1 && nota.AliqIcms > 0)
-                     throw new Exception("Alíquota de ICMS não pode ser menor que 1. Nota " + nota.NumeroNFe);
+                if (nota.AliqIcms < 1 && nota.AliqIcms > 0)
+                    throw new Exception("Alíquota de ICMS não pode ser menor que 1. Nota " + nota.NumeroNFe);
 
-                 #endregion
+                #endregion
             }
 
             Registro10 registro10 = RecuperaRegistro10(lojas[idLoja], inicio, fim, Registro10.TipoNaturezaOperacoes.TodasAsOperacoes, Registro10.TipoFinalidade.Normal);

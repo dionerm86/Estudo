@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Glass.Data.Helper;
 using Glass.Data.RelModel;
-using System.Xml;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Glass.Data.Helper;
 using System.Web;
+using System.Xml;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class ProdutosNFeDAO : Glass.Pool.PoolableObject<ProdutosNFeDAO>
+    public sealed class ProdutosNFeDAO : Glass.Pool.Singleton<ProdutosNFeDAO>
     {
         private ProdutosNFeDAO() { }
 
@@ -30,7 +30,7 @@ namespace Glass.Data.RelDAL
         internal ProdutosNFe[] GetForDanfe(HttpContext context, string chaveAcesso)
         {
             List<ProdutosNFe> lstProdNFe = new List<ProdutosNFe>();
-            
+
             // Verifica se NFe existe
             if (!File.Exists(Utils.GetNfeXmlPathInternal(context) + chaveAcesso + "-nfe.xml"))
                 throw new Exception("Arquivo da NF-e não encontrado.");
@@ -97,7 +97,7 @@ namespace Glass.Data.RelDAL
 
             string[] parentsNodes = parentsNodeName.Split('/');
 
-            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML, 
+            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML,
             // deixando de lado níveis acima que não interessam
             foreach (string pNode in parentsNodes)
             {
@@ -129,7 +129,7 @@ namespace Glass.Data.RelDAL
 
             string[] parentsNodes = parentsNodeName.Split('/');
 
-            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML, 
+            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML,
             // deixando de lado níveis acima que não interessam
             foreach (string pNode in parentsNodes)
             {
