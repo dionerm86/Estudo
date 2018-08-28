@@ -277,28 +277,45 @@ namespace Glass.Data.DAL
             {
                 var cidadesExternas = oc.Pedidos.Where(f => !string.IsNullOrEmpty(f.CidadeClienteExterno) && !string.IsNullOrEmpty(f.UfClienteExterno))
                     .GroupBy(f => (f.CidadeClienteExterno + " - " + f.UfClienteExterno))
-                    .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
+                    .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count(), PesoPorCidade = f.Sum(p=> p.PesoOC) });
 
                 foreach (var c in cidadesExternas)
                 {
                     if (cidadesCarregamento.Where(x => x.NomeCidade == c.NomeCidade).Count() == 0)
-                        cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes });
+                        cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes, PesoPorCidade = c.PesoPorCidade });
                     else
-                        cidadesCarregamento.ForEach(x => x.QtdeClientes += (x.NomeCidade == c.NomeCidade ? c.QtdeClientes : 0));
+                    {
+                        foreach (var cidade in cidadesCarregamento)
+                        {
+                            if (cidade.NomeCidade == c.NomeCidade)
+                            {
+                                cidade.QtdeClientes += c.QtdeClientes;
+                                cidade.PesoPorCidade += c.PesoPorCidade;
+                            }
+                        }
+                    }
                 }
             }
 
             var cidades = ocs.Where(f => !ClienteDAO.Instance.ClienteImportacao(f.IdCliente))
                 .GroupBy(f => f.CidadeCliente)
-                .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
+                .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count(), PesoPorCidade = f.Sum(p => p.Peso) });
 
             foreach (var c in cidades)
             {
                 if (cidadesCarregamento.Where(x => x.NomeCidade == c.NomeCidade).Count() == 0)
-                    cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes });
+                    cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes, PesoPorCidade = c.PesoPorCidade });
                 else
-
-                    cidadesCarregamento.ForEach(x => x.QtdeClientes += (x.NomeCidade == c.NomeCidade ? c.QtdeClientes : 0));
+                {
+                    foreach (var cidade in cidadesCarregamento)
+                    {
+                        if (cidade.NomeCidade == c.NomeCidade)
+                        {
+                            cidade.QtdeClientes += c.QtdeClientes;
+                            cidade.PesoPorCidade += c.PesoPorCidade;
+                        }
+                    }
+                }
             }
 
             return cidadesCarregamento.OrderBy(f => f.NomeCidade).ToList();

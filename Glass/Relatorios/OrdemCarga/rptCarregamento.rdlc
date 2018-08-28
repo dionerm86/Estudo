@@ -1835,6 +1835,9 @@
             <TablixColumn>
               <Width>2.9cm</Width>
             </TablixColumn>
+            <TablixColumn>
+              <Width>2.5cm</Width>
+            </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
@@ -1861,6 +1864,40 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>textbox47</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                  <DataElementOutput>Output</DataElementOutput>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="PesoPorCidade">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!PesoPorCidade.Value</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Left</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>PesoPorCidade</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1918,6 +1955,42 @@
               <DataElementOutput>Output</DataElementOutput>
               <KeepTogether>true</KeepTogether>
             </TablixMember>
+            <TablixMember>
+              <TablixHeader>
+                <Size>0.63492cm</Size>
+                <CellContents>
+                  <Textbox Name="Textbox44">
+                    <CanGrow>true</CanGrow>
+                    <KeepTogether>true</KeepTogether>
+                    <Paragraphs>
+                      <Paragraph>
+                        <TextRuns>
+                          <TextRun>
+                            <Value>Peso da carga</Value>
+                            <Style>
+                              <FontSize>8pt</FontSize>
+                              <FontWeight>Bold</FontWeight>
+                            </Style>
+                          </TextRun>
+                        </TextRuns>
+                        <Style />
+                      </Paragraph>
+                    </Paragraphs>
+                    <rd:DefaultName>Textbox44</rd:DefaultName>
+                    <Style>
+                      <Border>
+                        <Style>Solid</Style>
+                      </Border>
+                      <VerticalAlign>Middle</VerticalAlign>
+                      <PaddingLeft>2pt</PaddingLeft>
+                      <PaddingRight>2pt</PaddingRight>
+                      <PaddingTop>2pt</PaddingTop>
+                      <PaddingBottom>2pt</PaddingBottom>
+                    </Style>
+                  </Textbox>
+                </CellContents>
+              </TablixHeader>
+            </TablixMember>
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -1968,7 +2041,7 @@
         <DataSetName>CidadesCarregamento</DataSetName>
         <Top>8.70325cm</Top>
         <Height>1.26984cm</Height>
-        <Width>7.3cm</Width>
+        <Width>9.8cm</Width>
         <ZIndex>3</ZIndex>
         <Style>
           <FontSize>8pt</FontSize>
@@ -2044,6 +2117,7 @@
           </Style>
         </Textbox>
         <Line Name="line3">
+          <Top>0cm</Top>
           <Height>0cm</Height>
           <Width>28.7cm</Width>
           <ZIndex>2</ZIndex>
@@ -2309,6 +2383,10 @@
         <Field Name="NomeCidade">
           <DataField>NomeCidade</DataField>
           <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PesoPorCidade">
+          <DataField>PesoPorCidade</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>
