@@ -1786,7 +1786,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -1947,7 +1947,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -2440,7 +2440,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -2598,7 +2598,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -3086,7 +3086,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -3243,7 +3243,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -3728,7 +3728,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                     <Format>C</Format>
@@ -3885,7 +3885,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Sum(Fields!TotM2.Value*Fields!ValorUnit.Value)</Value>
+                                  <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                                   <Style>
                                     <FontStyle>Italic</FontStyle>
                                     <FontSize>9pt</FontSize>
@@ -4128,7 +4128,6 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
-                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                   <DataElementOutput>Output</DataElementOutput>
@@ -4682,6 +4681,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                               <Value>=Sum(Fields!TotM2.Value)</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
+                                <Format>0.00</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -4695,26 +4695,6 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
@@ -4787,9 +4767,10 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=FormatCurrency(Sum(Fields!TotM2.Value*Fields!ValorUnit.Value), 2)</Value>
+                              <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontSize>9pt</FontSize>
+                                <Format>'R$'0.00;('R$'0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -4803,31 +4784,12 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>pt-BR</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -4965,6 +4927,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>0.00</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -4978,26 +4941,6 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <BackgroundColor>Gainsboro</BackgroundColor>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
@@ -5074,11 +5017,12 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=FormatCurrency(Sum(Fields!TotM2.Value*Fields!ValorUnit.Value), 2)</Value>
+                              <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>'R$'0.00;('R$'0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -5092,32 +5036,13 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <BackgroundColor>Gainsboro</BackgroundColor>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>pt-BR</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -5321,6 +5246,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>0.00</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -5334,26 +5260,6 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <BackgroundColor>Silver</BackgroundColor>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
@@ -5362,6 +5268,7 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -5430,11 +5337,12 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=FormatCurrency(Sum(Fields!TotM2.Value*Fields!ValorUnit.Value), 2)</Value>
+                              <Value>=Sum(IIF(Fields!TipoCalculo.Value&lt;&gt;1, Fields!TotM2.Value*Fields!ValorUnit.Value, Fields!ValorUnit.Value))</Value>
                               <Style>
                                 <FontStyle>Italic</FontStyle>
                                 <FontSize>9pt</FontSize>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>'R$'0.00;('R$'0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -5448,32 +5356,13 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
                         <Border>
                           <Style>Solid</Style>
                         </Border>
-                        <TopBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </TopBorder>
-                        <BottomBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </BottomBorder>
-                        <LeftBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </LeftBorder>
-                        <RightBorder>
-                          <Color>Black</Color>
-                          <Style>Solid</Style>
-                          <Width>1pt</Width>
-                        </RightBorder>
                         <BackgroundColor>Silver</BackgroundColor>
                         <VerticalAlign>Middle</VerticalAlign>
                         <PaddingLeft>2pt</PaddingLeft>
                         <PaddingRight>2pt</PaddingRight>
                         <PaddingTop>2pt</PaddingTop>
                         <PaddingBottom>2pt</PaddingBottom>
+                        <rd:FormatSymbolCulture>pt-BR</rd:FormatSymbolCulture>
                       </Style>
                     </Textbox>
                   </CellContents>
@@ -6204,6 +6093,10 @@ SUM(Fields!Qtde.Value).ToString() + " peça(s)"</Value>
         <Field Name="ValorUnit">
           <DataField>ValorUnit</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="TipoCalculo">
+          <DataField>TipoCalculo</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="PedidoCancelado">
           <DataField>PedidoCancelado</DataField>

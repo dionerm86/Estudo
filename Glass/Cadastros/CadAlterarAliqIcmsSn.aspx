@@ -11,7 +11,7 @@
 <br />
 <div align="center">
     <asp:label id="Label3" runat="server" text="Alíquota ICMS SN: "></asp:label>
-    <asp:textbox id="txtAliquotaIcmsSn" maxlength="5" width="40px" runat="server" onkeypress="return soNumeros(event, false, true)"></asp:textbox>
+    <asp:textbox id="txtAliquotaIcmsSn" maxlength="7" width="40px" runat="server" onkeypress="return soNumeros(event, false, true)"></asp:textbox>
 </div>
 <div align="center">
     <asp:button id="btnSalvar" runat="server" text="Salvar" onclick="btnSalvar_Click"></asp:button>

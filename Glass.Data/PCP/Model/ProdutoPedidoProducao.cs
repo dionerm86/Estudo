@@ -320,6 +320,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("TIPOSETOR", DirectionParameter.InputOptional)]
         public int TipoSetor { get; set; }
 
+        [PersistenceProperty("TIPOCALCULO", DirectionParameter.InputOptional)]
+        public int TipoCalculo { get; set; }
+
         [PersistenceProperty("COR", DirectionParameter.InputOptional)]
         public string Cor { get; set; }
 
