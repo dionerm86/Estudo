@@ -1,11 +1,11 @@
-using System;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using Glass.Data.Model;
+using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Glass.Data.Model;
+using System;
 using System.Drawing;
-using Glass.Configuracoes;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -50,14 +50,14 @@ namespace Glass.UI.Web.Cadastros
             {
                 grdConta.Columns[12].Visible = false;
             }
-            
+
             grdConta.Columns[13].Visible = drpArquivoRemessa.SelectedValue != "1" &&
                                            FinanceiroConfig.FinanceiroRec.ExibirCnab;
 
             hdfCxDiario.Value = Request["cxDiario"];
 
-            Ajax.Utility.RegisterTypeForAjax(typeof (MetodosAjax));
-            Ajax.Utility.RegisterTypeForAjax(typeof (CadContaReceber));
+            Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
+            Ajax.Utility.RegisterTypeForAjax(typeof(CadContaReceber));
         }
 
         [Ajax.AjaxMethod()]
@@ -173,14 +173,6 @@ namespace Glass.UI.Web.Cadastros
                 lblRota.Style.Add("display", "none");
                 imgPesqRota.Style.Add("display", "none");
             }
-        }
-
-        protected void drpFiltroContasAntecipadas_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (drpFiltroContasAntecipadas.SelectedValue != "0")
-                divReceber.Visible = false;
-            else
-                divReceber.Visible = true;
         }
 
         protected void drpArquivoRemessa_Load(object sender, EventArgs e)
