@@ -14,7 +14,7 @@ namespace Glass.Data.DAL
     {
         //private LiberarPedidoDAO() { }
         
-        #region Listagem de LiberaÁıes
+        #region Listagem de Libera√ß√µes
 
         private string Sql(uint idLiberarPedido, uint idPedido, int? numeroNfe, uint idFunc, uint idCli, string nomeCli,
             int liberacaoNf, string dataIni, string dataFim, int situacao, uint idLoja, string dataIniCanc, string dataFimCanc,bool selecionar, out bool temFiltro)
@@ -32,7 +32,7 @@ namespace Glass.Data.DAL
             var campos = selecionar ? "lp.*, " + nomeCliente + @" as NomeCliente, c.NomeFantasia as NomeClienteFantasia, f.Nome as NomeFunc, " +
                 (Liberacao.Impostos.CalcularIcmsLiberacao ? "(" + SqlIcms("lp.idLiberarPedido") + ") as ValorIcms, " : "") + "(select cast(group_concat(distinct if(plp1.idFormaPagto=" +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.Obra + ", 'Obra', if(plp1.idFormaPagto=" + (uint)Glass.Data.Model.Pagto.FormaPagto.Credito + 
-                ", 'CrÈdito', fp.descricao)) SEPARATOR ', ') as char) as DescrFormaPagto from pagto_liberar_pedido plp1 " +
+                ", 'Cr√©dito', fp.descricao)) SEPARATOR ', ') as char) as DescrFormaPagto from pagto_liberar_pedido plp1 " +
                 @"Left Join formapagto fp on (plp1.idFormaPagto=fp.idFormaPagto) where plp1.idLiberarPedido=lp.idLiberarPedido) as DescrFormaPagto, 
                 (select count(*) from rota_cliente where idCliente=c.id_Cli)>0 as isClienteRota, c.Endereco, c.Numero, c.Bairro, c.IdCidade, c.Cep, c.Compl,
                 c.Tel_Cont as Telefone, '$$$' as criterio" : "Count(*)";
@@ -47,7 +47,7 @@ namespace Glass.Data.DAL
             if (idLiberarPedido > 0)
             {
                 sql += " And lp.IdLiberarPedido=" + idLiberarPedido;
-                criterio += "LiberaÁ„o: " + idLiberarPedido + "    ";
+                criterio += "Libera√ß√£o: " + idLiberarPedido + "    ";
                 temFiltro = true;
             }
             
@@ -90,7 +90,7 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(dataIni))
             {
                 sql += " And lp.dataLiberacao>=?dataIni";
-                criterio += "Data InÌcio: " + dataIni + "    ";
+                criterio += "Data In√≠cio: " + dataIni + "    ";
                 temFiltro = true;
             }
 
@@ -105,7 +105,7 @@ namespace Glass.Data.DAL
             {
                 sql += " and lp.situacao=" + situacao;
                 var temp = new LiberarPedido {Situacao = situacao};
-                criterio += "SituaÁ„o: " + temp.DescrSituacao + "    ";
+                criterio += "Situa√ß√£o: " + temp.DescrSituacao + "    ";
                 temFiltro = true;
             }
 
@@ -120,14 +120,14 @@ namespace Glass.Data.DAL
             {
                 sql += " AND lp.idLiberarPedido " + (liberacaoNf == 1 ? "" : "NOT") +
                     " IN (SELECT idLiberarPedido FROM pedidos_nota_fiscal WHERE idLiberarPedido IS NOT NULL)";
-                criterio += "Apenas liberaÁıes " + (liberacaoNf == 1 ? "com" : "sem") + " nota fiscal    ";
+                criterio += "Apenas libera√ß√µes " + (liberacaoNf == 1 ? "com" : "sem") + " nota fiscal    ";
                 temFiltro = true;
             }
 
             if (!String.IsNullOrEmpty(dataIniCanc))
             {
                 sql += " And lp.DataCanc>=?dataIniCanc";
-                criterio += "Data InÌcio do Cancelamento: " + dataIniCanc + "    ";
+                criterio += "Data In√≠cio do Cancelamento: " + dataIniCanc + "    ";
                 temFiltro = true;
             }
 
@@ -201,7 +201,7 @@ namespace Glass.Data.DAL
 
                 var parcelas = ContasReceberDAO.Instance.GetByLiberacaoPedido(session, idLiberarPedido, true).ToArray();
 
-                if (!exibirDescrParc && parcelas.Length > 0) // Se for pagamento ‡ prazo cheque, n„o tem parcelas geradas
+                if (!exibirDescrParc && parcelas.Length > 0) // Se for pagamento √† prazo cheque, n√£o tem parcelas geradas
                     descrFormasPagto = "  " + parcelas.Length + " parcela(s): ";
                 else if (liberar.IdParcela != null)
                     descrFormasPagto = "  " + ParcelasDAO.Instance.ObtemValorCampo<string>(session, "descricao", "idParcela=" + liberar.IdParcela);
@@ -209,7 +209,7 @@ namespace Glass.Data.DAL
                 var descrParcelas = "";
                 if (!exibirDescrParc)
                     for (int i = 0; i < parcelas.Length; i++)
-                        descrParcelas += ", " + (i + 1) + "™ " + parcelas[i].ValorVec.ToString("C") + " / " + parcelas[i].DataVec.ToString("dd/MM/yyyy");
+                        descrParcelas += ", " + (i + 1) + "¬™ " + parcelas[i].ValorVec.ToString("C") + " / " + parcelas[i].DataVec.ToString("dd/MM/yyyy");
 
                 descrFormasPagto += descrParcelas != "" ? descrParcelas.Substring(1) : "";
 
@@ -226,15 +226,15 @@ namespace Glass.Data.DAL
                 decimal credito = liberar.ValorCreditoEntrada;
                 //if (credito > 0)
                 /* Chamado 47929. */
-                if (credito > 0 && !entrada.Contains("CrÈdito"))
-                    entrada += (entrada == "" ? "Entrada: " : "") + "CrÈdito " + credito.ToString("C") + ", ";
+                if (credito > 0 && !entrada.Contains("Cr√©dito"))
+                    entrada += (entrada == "" ? "Entrada: " : "") + "Cr√©dito " + credito.ToString("C") + ", ";
             }
 
             liberar.DescricaoPagto = entrada + liberar.DescrTipoPagto +
                 (!formaPagtoParc && !String.IsNullOrEmpty(liberar.DescrFormaPagto) && (liberar.DescrTipoPagto.IndexOf(liberar.DescrFormaPagto, StringComparison.Ordinal) == -1 || liberar.DescrFormaPagto == null) ? " - " + liberar.DescrFormaPagto : "") + 
                 (descrFormasPagto != "" ? " - " + descrFormasPagto.Substring(2) : "");
 
-            // Se na descriÁ„o da parcela possuir a descriÁ„o "na entrega", exibe sÛ esta informaÁ„o no campo de parcelas
+            // Se na descri√ß√£o da parcela possuir a descri√ß√£o "na entrega", exibe s√≥ esta informa√ß√£o no campo de parcelas
             if (descrFormasPagto.ToLower().Contains("na entrega"))
                 liberar.DescricaoPagto = descrFormasPagto.Trim();
 
@@ -281,10 +281,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region LiberaÁ„o de pedido ‡ vista
+        #region Libera√ß√£o de pedido √† vista
 
         /// <summary>
-        /// Cria a liberaÁ„o ‡ vista, de um ou mais pedidos.
+        /// Cria a libera√ß√£o √† vista, de um ou mais pedidos.
         /// </summary>
         public int CriarLiberacaoAVista(decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao, decimal desconto,
             bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
@@ -300,13 +300,13 @@ namespace Glass.Data.DAL
 
                     PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
 
-                    // Cria a liberaÁ„o de pedidos ‡ vista.
+                    // Cria a libera√ß√£o de pedidos √† vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
                         numerosAutorizacaoCartao, numeroAutorizacaoConstrucard, quantidadesLiberar, quantidadesParcelaCartao, tipoAcrescimo, tipoDesconto, totalPagar, utilizarCredito, valoresPagos,
                         valorUtilizadoObra);
 
-                    // Finaliza a liberaÁ„o criada acima, gerando movimentaÁ„o no caixa, conta banc·ria, estoque etc.
+                    // Finaliza a libera√ß√£o criada acima, gerando movimenta√ß√£o no caixa, conta banc√°ria, estoque etc.
                     FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
 
                     PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), false);
@@ -322,13 +322,13 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException(string.Format("CriarLiberacaoAVista - IDs pedido: {0}.", idsPedido), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar liberaÁ„o do(s) pedido(s).", ex));
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar libera√ß√£o do(s) pedido(s).", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Cria a prÈ liberaÁ„o de pedido ‡ vista, efetuando todas as validaÁıes necess·rias.
+        /// Cria a pr√© libera√ß√£o de pedido √† vista, efetuando todas as valida√ß√µes necess√°rias.
         /// </summary>
         public int CriarPreLiberacaoAVistaComTransacao(decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao, decimal desconto,
             bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado, IEnumerable<int> idsFormaPagamento,
@@ -344,7 +344,7 @@ namespace Glass.Data.DAL
 
                     PedidoDAO.Instance.ForcarTransacaoPedido(transaction, (uint)idsPedido.FirstOrDefault(), true);
 
-                    // Cria a liberaÁ„o de pedidos ‡ vista.
+                    // Cria a libera√ß√£o de pedidos √† vista.
                     var idLiberarPedido = CriarPreLiberacaoAVista(transaction, acrescimo, caixaDiario, creditoUtilizado, dadosChequesRecebimento, descontarComissao, desconto, gerarCredito, idCliente,
                         idsCartaoNaoIdentificado, idsContaBanco, idsDepositoNaoIdentificado, idsFormaPagamento, idsPedido, idsProdutoPedido, idsProdutoPedidoProducao, idsTipoCartao,
                         numerosAutorizacaoCartao, numeroAutorizacaoConstrucard, quantidadesLiberar, quantidadesParcelaCartao, tipoAcrescimo, tipoDesconto, totalPagar, utilizarCredito, valoresPagos,
@@ -369,13 +369,13 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException(string.Format("CriarPreLiberacaoAVista - IDs pedido: {0}.", idsPedido), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar prÈ liberaÁ„o do(s) pedido(s).", ex));
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar pr√© libera√ß√£o do(s) pedido(s).", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Cria a prÈ liberaÁ„o de pedido ‡ vista, efetuando todas as validaÁıes necess·rias.
+        /// Cria a pr√© libera√ß√£o de pedido √† vista, efetuando todas as valida√ß√µes necess√°rias.
         /// </summary>
         private int CriarPreLiberacaoAVista(GDASession session, decimal acrescimo, bool caixaDiario, decimal creditoUtilizado, IEnumerable<string> dadosChequesRecebimento, bool descontarComissao,
             decimal desconto, bool gerarCredito, int idCliente, IEnumerable<int> idsCartaoNaoIdentificado, IEnumerable<int> idsContaBanco, IEnumerable<int> idsDepositoNaoIdentificado,
@@ -383,7 +383,7 @@ namespace Glass.Data.DAL
             IEnumerable<string> numerosAutorizacaoCartao, string numeroAutorizacaoConstrucard, IEnumerable<float> quantidadesLiberar, IEnumerable<int> quantidadesParcelaCartao, int tipoAcrescimo,
             int tipoDesconto, decimal totalPagar, bool utilizarCredito, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var usuarioLogado = UserInfo.GetUserInfo;
             var idLoja = 0;
@@ -395,17 +395,17 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region RecuperaÁ„o da loja
+            #region Recupera√ß√£o da loja
 
             // Recupera a loja do primeiro pedido liberado.
-            // Caso a empresa trabalhe com comiss„o de contas recebidas ou a loja do cliente tenha que ser considerada no fluxo do sistema, considera a loja do pedido,
-            // sen„o, considera a loja do funcion·rio que est· liberando os pedidos.
+            // Caso a empresa trabalhe com comiss√£o de contas recebidas ou a loja do cliente tenha que ser considerada no fluxo do sistema, considera a loja do pedido,
+            // sen√£o, considera a loja do funcion√°rio que est√° liberando os pedidos.
             idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ?
                 ((int)PedidoDAO.Instance.ObtemIdLoja(session, idsPedido != null && idsPedido.Count() > 0 ? (uint)idsPedido.ElementAt(0) : 0)) : (int)usuarioLogado.IdLoja;
 
             #endregion
 
-            #region C·lculo dos totais da liberaÁ„o
+            #region C√°lculo dos totais da libera√ß√£o
 
             if (totalPagar != 0)
             {
@@ -415,8 +415,8 @@ namespace Glass.Data.DAL
             }
             else
             {
-                // Se o total a ser pago for 0 (por ter pago antecipado por exemplo), ir· somar o acrÈscimo e subtrair o desconto direto no
-                // total a pagar desde que ambos sejam calculados por R$ e n„o por %, neste ˙ltimo caso, nada ser· calculado.
+                // Se o total a ser pago for 0 (por ter pago antecipado por exemplo), ir√° somar o acr√©scimo e subtrair o desconto direto no
+                // total a pagar desde que ambos sejam calculados por R$ e n√£o por %, neste √∫ltimo caso, nada ser√° calculado.
                 descontoAplicar = tipoDesconto == 1 ? 0 : desconto;
                 acrescimoAplicar = tipoAcrescimo == 1 ? 0 : acrescimo;
                 totalPagar = acrescimoAplicar - descontoAplicar;
@@ -425,7 +425,7 @@ namespace Glass.Data.DAL
             totalPago = valoresPagos.Sum(f => f);
             totalPagar -= valorUtilizadoObra;
 
-            // Se for pago com crÈdito, soma o mesmo ao totalPago.
+            // Se for pago com cr√©dito, soma o mesmo ao totalPago.
             if (creditoUtilizado > 0)
             {
                 totalPago += creditoUtilizado;
@@ -436,7 +436,7 @@ namespace Glass.Data.DAL
                 totalPago += UtilsFinanceiro.GetValorComissao(session, string.Join(",", idsPedido), "Pedido");
             }
 
-            // Se o total a ser pago for menor que 0, gera crÈdito sobre esse valor.
+            // Se o total a ser pago for menor que 0, gera cr√©dito sobre esse valor.
             if (totalPagar < 0)
             {
                 totalPago -= totalPagar;
@@ -444,13 +444,13 @@ namespace Glass.Data.DAL
                 gerarCredito = true;
             }
 
-            // Ignora os juros dos cartıes ao calcular o valor pago/a pagar.
+            // Ignora os juros dos cart√µes ao calcular o valor pago/a pagar.
             totalPago -= UtilsFinanceiro.GetJurosCartoes(session, (uint)idLoja, valoresPagos.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
                 idsTipoCartao.Select(f => (uint)f).ToArray(), quantidadesParcelaCartao.Select(f => (uint)f).ToArray());
 
             #endregion
 
-            #region RecuperaÁ„o do comissionado
+            #region Recupera√ß√£o do comissionado
 
             if (descontarComissao)
             {
@@ -460,20 +460,20 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region ValidaÁ„o da liberaÁ„o
+            #region Valida√ß√£o da libera√ß√£o
 
-            // Verifica se a liberaÁ„o de pedidos pode ser efetuada.
+            // Verifica se a libera√ß√£o de pedidos pode ser efetuada.
             ValidarLiberarPedidoAVista(session, caixaDiario, gerarCredito, idCliente, idComissionado, idLoja, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, idsPedido, idsProdutoPedido,
                 quantidadesLiberar, totalPagar, totalPago, valoresPagos, valorUtilizadoObra);
 
             #endregion
 
-            #region CriaÁ„o da liberaÁ„o
+            #region Cria√ß√£o da libera√ß√£o
 
-            // Cadastra a liberaÁ„o antes da sess„o e na situaÁ„o cancelada para resolver a seguinte situaÁ„o:
-            // Durante o processamento desta liberaÁ„o a pessoa pode imprimir a mesma por outra tela, o problema È que 
-            // caso ocorra algum problema, a transaÁ„o vai desfazer tudo, quando for feita uma nova liberaÁ„o, 
-            // ela vai pegar o n˙mero dessa, fazendo com que pareÁa existir duas liberaÁıes diferentes com o mesmo n˙mero
+            // Cadastra a libera√ß√£o antes da sess√£o e na situa√ß√£o cancelada para resolver a seguinte situa√ß√£o:
+            // Durante o processamento desta libera√ß√£o a pessoa pode imprimir a mesma por outra tela, o problema √© que 
+            // caso ocorra algum problema, a transa√ß√£o vai desfazer tudo, quando for feita uma nova libera√ß√£o, 
+            // ela vai pegar o n√∫mero dessa, fazendo com que pare√ßa existir duas libera√ß√µes diferentes com o mesmo n√∫mero
             var liberarPedido = new LiberarPedido
             {
                 IdCliente = (uint)idCliente,
@@ -501,9 +501,9 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region GeraÁ„o dos produtos da liberaÁ„o de pedidos
+            #region Gera√ß√£o dos produtos da libera√ß√£o de pedidos
 
-            // Deve ser feito antes de chamar o mÈtodo de recebimento, pois este vÌnculo È usado l·
+            // Deve ser feito antes de chamar o m√©todo de recebimento, pois este v√≠nculo √© usado l√°
             for (var i = 0; i < idsProdutoPedido.Count(); i++)
             {
                 var idProdPedProducao = idsProdutoPedidoProducao.ElementAtOrDefault(i) > 0 ? (uint)idsProdutoPedidoProducao.ElementAt(i) : (uint?)null;
@@ -529,9 +529,9 @@ namespace Glass.Data.DAL
 
             #region Cadastro das formas de pagamento
 
-            // Cadastro dos cheques utilizados no pagamento da liberaÁ„o.
+            // Cadastro dos cheques utilizados no pagamento da libera√ß√£o.
             ChequesLiberarPedidoDAO.Instance.InserirPelaString(session, liberarPedido, dadosChequesRecebimento);
-            // Garante que n„o haver· chaves duplicadas para esta liberaÁ„o.
+            // Garante que n√£o haver√° chaves duplicadas para esta libera√ß√£o.
             PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(session, liberarPedido.IdLiberarPedido);
 
             for (var i = 0; i < idsFormaPagamento.Count(); i++)
@@ -597,7 +597,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Recebimento com crÈdito
+            #region Recebimento com cr√©dito
 
             if (creditoUtilizado > 0)
             {
@@ -617,7 +617,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o da formas de pagamento dos pedidos
+            #region Atualiza√ß√£o da formas de pagamento dos pedidos
 
             // Atualiza as formas de pagamento dos pedidos somente se pelo menos uma forma de pagamento tiver sido informada.
             if (idsFormaPagamento.Any(f => f > 0))
@@ -625,7 +625,7 @@ namespace Glass.Data.DAL
                 string sqlFormaPagto;
 
                 // Atualiza forma de pagamento de acordo com aquela que foi escolhida pelo caixa, a menos que seja dinheiro, pois neste caso
-                // pedidos ‡ vista n„o possuem forma de pagamento e pedidos ‡ prazo n„o podem ter a forma pagto dinheiro.
+                // pedidos √† vista n√£o possuem forma de pagamento e pedidos √† prazo n√£o podem ter a forma pagto dinheiro.
                 if (idsFormaPagamento.ElementAtOrDefault(0) != (int)Pagto.FormaPagto.Dinheiro)
                 {
                     sqlFormaPagto = string.Format("UPDATE pedido SET IdFormaPagto={0}", idsFormaPagamento.ElementAt(0));
@@ -638,7 +638,7 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2})", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, string.Join(",", idsPedido)));
                 }
 
-                // Atualiza tipo de cart„o de acordo com aquele que foi escolhido pelo caixa.
+                // Atualiza tipo de cart√£o de acordo com aquele que foi escolhido pelo caixa.
                 if ((uint)Pagto.FormaPagto.Cartao == idsFormaPagamento.ElementAt(0))
                 {
                     objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", idsTipoCartao.ElementAt(0), string.Join(",", idsPedido)));
@@ -652,11 +652,11 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o dos dados do pedido
+            #region Atualiza√ß√£o dos dados do pedido
 
             foreach (var idPedido in idsPedido)
             {
-                #region DeclaraÁ„o de vari·veis
+                #region Declara√ß√£o de vari√°veis
 
                 var entrada = PedidoDAO.Instance.ObtemValorEntrada(session, (uint)idPedido);
                 var idSinal = (int)PedidoDAO.Instance.ObtemIdSinal(session, (uint)idPedido).GetValueOrDefault();
@@ -669,7 +669,7 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region AtualizaÁ„o dos dados do pedido
+                #region Atualiza√ß√£o dos dados do pedido
 
                 if (pedidoTemSinalNaoPago)
                 {
@@ -680,14 +680,14 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region InserÁ„o do log de alteraÁ„o do pedido
+                #region Inser√ß√£o do log de altera√ß√£o do pedido
 
-                // Salva um loga da alteraÁ„o da situaÁ„o do pedido.
+                // Salva um loga da altera√ß√£o da situa√ß√£o do pedido.
                 var logData = new LogAlteracao();
                 logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                 logData.IdRegistroAlt = idPedido;
                 logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, idPedido);
-                logData.Campo = "Situac„o";
+                logData.Campo = "Situac√£o";
                 logData.DataAlt = DateTime.Now;
                 logData.IdFuncAlt = usuarioLogado.CodUser;
                 logData.ValorAnterior = "Confirmado PCP";
@@ -698,31 +698,31 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region GeraÁ„o da instalaÁ„o do pedido
+                #region Gera√ß√£o da instala√ß√£o do pedido
 
-                // Gera instalaÁ„o para o pedido.
+                // Gera instala√ß√£o para o pedido.
                 PedidoDAO.Instance.GerarInstalacao(session, (uint)idPedido, dataEntregaPedido);
 
                 #endregion
             }
 
-            #region AtualizaÁ„o de estoque
+            #region Atualiza√ß√£o de estoque
 
-            // Atualiza o estoque dos produtos antes da finalizaÁ„o da prÈ liberaÁ„o, para evitar que outra liberaÁ„o seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as liberaÁıes.
+            // Atualiza o estoque dos produtos antes da finaliza√ß√£o da pr√© libera√ß√£o, para evitar que outra libera√ß√£o seja feita com os mesmos produtos e ocorra bloqueio de estoque ao finalizar as libera√ß√µes.
             AtualizaEstoque(session, liberarPedido.IdLiberarPedido, (uint)idCliente, string.Join(",", idsPedido), idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), tipoAcrescimo);
 
             #endregion
 
-            // Atualiza a data da ˙ltima compra do cliente.
+            // Atualiza a data da √∫ltima compra do cliente.
             ClienteDAO.Instance.AtualizaUltimaCompra(session, (uint)idCliente);
 
-            // Atualiza a data da ˙ltima liberaÁ„o dos pedidos desta liberaÁ„o, para exibir corretamente no pedido
+            // Atualiza a data da √∫ltima libera√ß√£o dos pedidos desta libera√ß√£o, para exibir corretamente no pedido
             objPersistence.ExecuteCommand(session, string.Format("UPDATE PEDIDO SET IdLiberarPedido={0}, NumAutConstrucard=?numAutConst WHERE IdPedido IN ({1})",
                 liberarPedido.IdLiberarPedido, string.Join(",", idsPedido)), new GDAParameter("?numAutConst", numeroAutorizacaoConstrucard));
 
             #endregion
 
-            #region AlteraÁ„o da situaÁ„o, dos pedidos de revenda, para entregue
+            #region Altera√ß√£o da situa√ß√£o, dos pedidos de revenda, para entregue
 
             if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
             {
@@ -744,17 +744,17 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Valida a criaÁ„o da liberaÁ„o do(s) pedido(s).
+        /// Valida a cria√ß√£o da libera√ß√£o do(s) pedido(s).
         /// </summary>
         private void ValidarLiberarPedidoAVista(GDASession session, bool caixaDiario, bool gerarCredito, int idCliente, int idComissionado, int idLoja, IEnumerable<int> idsCartaoNaoIdentificado,
             IEnumerable<int> idsContaBanco, IEnumerable<int> idsFormaPagamento, IEnumerable<int> idsPedido, IEnumerable<int> idsProdutoPedido, IEnumerable<float> quantidadesLiberar,
             decimal totalPagar, decimal totalPago, IEnumerable<decimal> valoresPagos, decimal valorUtilizadoObra)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
-            // Vari·vel criada para retornar a mensagem de validaÁ„o de sinal e pagamento antecipado dos pedidos.
+            // Vari√°vel criada para retornar a mensagem de valida√ß√£o de sinal e pagamento antecipado dos pedidos.
             var mensagemSinalPagamentoAntecipado = string.Empty;
-            // Vari·vel criada para retornar a mensagem de validaÁ„o de estoque dos pedidos.
+            // Vari√°vel criada para retornar a mensagem de valida√ß√£o de estoque dos pedidos.
             var mensagemEstoque = string.Empty;
             var pedidosPossuemSinalPagamentoAntecipadoAReceber = !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, string.Join(",", idsPedido), out mensagemSinalPagamentoAntecipado);
             var pedidosPossuemEstoque = PedidoPossuiEstoque(session, idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), out mensagemEstoque);
@@ -770,24 +770,24 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region VerificaÁ„o das permissıes do funcion·rio
+            #region Verifica√ß√£o das permiss√µes do funcion√°rio
 
-            // Verifica se o funcion·rio possui permiss„o para liberar pedidos.
+            // Verifica se o funcion√°rio possui permiss√£o para liberar pedidos.
             if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
             {
-                throw new Exception("VocÍ n„o tem permiss„o para liberar pedidos.");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para liberar pedidos.");
             }
 
             #endregion
 
-            #region ValidaÁıes do recebimento
+            #region Valida√ß√µes do recebimento
 
             UtilsFinanceiro.ValidarRecebimento(session, caixaDiario, idCliente, idLoja, idsCartaoNaoIdentificado, idsContaBanco, idsFormaPagamento, gerarCredito, 0, false,
                 UtilsFinanceiro.TipoReceb.LiberacaoAVista, totalPago, totalPagar);
 
             #endregion
 
-            #region VerificaÁıes dos dados dos pedidos
+            #region Verifica√ß√µes dos dados dos pedidos
 
             // Verifica se foram informados pedidos que devem ser liberados.
             if (idsPedido == null || !idsPedido.Any(f => f > 0))
@@ -798,33 +798,33 @@ namespace Glass.Data.DAL
             // Verifica se a loja foi recuperada corretamente.
             if (idLoja == 0)
             {
-                throw new Exception("N„o foi possÌvel recuperar a loja do(s) pedido(s) liberado(s).");
+                throw new Exception("N√£o foi poss√≠vel recuperar a loja do(s) pedido(s) liberado(s).");
             }
 
-            // Verifica se h· estoque disponÌvel para os produtos sendo liberados.
+            // Verifica se h√° estoque dispon√≠vel para os produtos sendo liberados.
             if (!pedidosPossuemEstoque)
             {
                 throw new Exception(mensagemEstoque);
             }
 
-            // Verifica se todos os pedidos est„o na situaÁ„o ConfirmadoLiberacao ou Liberado Parcialmente.
+            // Verifica se todos os pedidos est√£o na situa√ß√£o ConfirmadoLiberacao ou Liberado Parcialmente.
             if (idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente != null && idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente.Count() > 0)
             {
-                throw new Exception(string.Format("Os pedidos {0} precisam estar na situaÁ„o Confirmado PCP para que sejam liberados.",
+                throw new Exception(string.Format("Os pedidos {0} precisam estar na situa√ß√£o Confirmado PCP para que sejam liberados.",
                     string.Join(", ", idsPedidoNaoConfirmadosLiberacaoOuLiberadosParcialmente)));
             }
 
-            // Verifica se existem pedidos de revenda que n„o possuem pedido de produÁ„o confirmado ou liberado.
+            // Verifica se existem pedidos de revenda que n√£o possuem pedido de produ√ß√£o confirmado ou liberado.
             if (idsPedidoRevendaSemProducaoConfirmadaLiberada != null && idsPedidoRevendaSemProducaoConfirmadaLiberada.Count() > 0)
             {
-                throw new Exception(string.Format("Os pedidos {0} est„o vinculados a um pedido de produÁ„o que ainda n„o foram confirmados.",
+                throw new Exception(string.Format("Os pedidos {0} est√£o vinculados a um pedido de produ√ß√£o que ainda n√£o foram confirmados.",
                     string.Join(", ", idsPedidoRevendaSemProducaoConfirmadaLiberada)));
             }
 
             // Verifica se os pedidos podem ser liberados.
             foreach (var idPedido in idsPedido)
             {
-                #region DeclaraÁ„o de vari·veis
+                #region Declara√ß√£o de vari√°veis
 
                 Pedido.TipoEntregaPedido tipoEntregaPedidoComparar = 0;
                 var tipoPedido = PedidoDAO.Instance.GetTipoPedido(session, (uint)idPedido);
@@ -837,23 +837,23 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                #region VerificaÁıes de produÁ„o
+                #region Verifica√ß√µes de produ√ß√£o
 
-                // Garante que apenas pedidos finalizados sejam liberados se a empresa n„o controlar produÁ„o
+                // Garante que apenas pedidos finalizados sejam liberados se a empresa n√£o controlar produ√ß√£o
                 if (!PCPConfig.ControlarProducao)
                 {
-                    // Vari·vel criada para salvar se o pedido possui ou n„o espelho (PCP).
+                    // Vari√°vel criada para salvar se o pedido possui ou n√£o espelho (PCP).
                     var pedidoPossuiEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(session, (uint)idPedido);
-                    // Vari·vel criada para salvar a situaÁ„o do pedido.
+                    // Vari√°vel criada para salvar a situa√ß√£o do pedido.
                     var situacaoPedido = PedidoEspelhoDAO.Instance.ObtemSituacao(session, (uint)idPedido);
 
-                    // Verifica se o pedido possui espelho e se ele n„o est· finalizado.
+                    // Verifica se o pedido possui espelho e se ele n√£o est√° finalizado.
                     if (pedidoPossuiEspelho && situacaoPedido != PedidoEspelho.SituacaoPedido.Finalizado)
                     {
                         throw new Exception(string.Format("O pedido {0} deve estar finalizado no PCP para ser liberado.", idPedido));
                     }
                 }
-                // Caso o controle novo de expediÁ„o balc„o esteja ativo, n„o permite liberar pedidos com tipos de entraga diferentes.
+                // Caso o controle novo de expedi√ß√£o balc√£o esteja ativo, n√£o permite liberar pedidos com tipos de entraga diferentes.
                 else if (PCPConfig.UsarNovoControleExpBalcao)
                 {
                     var tipoEntregaPedidoAtual = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, (uint)idPedido);
@@ -863,26 +863,26 @@ namespace Glass.Data.DAL
                     {
                         tipoEntregaPedidoComparar = tipoEntregaPedidoAtual;
                     }
-                    // Caso o tipo de entrega, recuperado, seja diferente do tipo de entrega do pedido atual, bloqueia a liberaÁ„o do pedido.
+                    // Caso o tipo de entrega, recuperado, seja diferente do tipo de entrega do pedido atual, bloqueia a libera√ß√£o do pedido.
                     else if (tipoEntregaPedidoComparar != tipoEntregaPedidoAtual)
                     {
-                        throw new Exception("A liberaÁ„o n„o pode conter pedidos com tipos de entrega diferentes.");
+                        throw new Exception("A libera√ß√£o n√£o pode conter pedidos com tipos de entrega diferentes.");
                     }
                 }
 
                 #endregion
 
-                #region VerificaÁıes de pagamento
+                #region Verifica√ß√µes de pagamento
 
-                // Verifica se o pedido est· para receber sinal e n„o recebeu, e essa situaÁ„o est· bloqueada por configuraÁ„o.
+                // Verifica se o pedido est√° para receber sinal e n√£o recebeu, e essa situa√ß√£o est√° bloqueada por configura√ß√£o.
                 if (!PedidoConfig.NaoObrigarPagamentoAntesProducaoParaPedidoRevenda(tipoPedido) && pedidoTemSinalNaoPago)
                 {
                     throw new Exception(string.Format("O pedido {0} tem um sinal de {1} a receber.", idPedido, valorEntradaPedido));
                 }
 
                 /* Chamado 65135.
-                 * Caso a configuraÁ„o UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
-                 * impede que o pedido seja liberado com formas de pagamento que n„o foram selecionadas no pedido. */
+                 * Caso a configura√ß√£o UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
+                 * impede que o pedido seja liberado com formas de pagamento que n√£o foram selecionadas no pedido. */
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
                     var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, (uint)idPedido);
@@ -890,18 +890,18 @@ namespace Glass.Data.DAL
 
                     if (tipoVenda != (int)Data.Model.Pedido.TipoVendaPedido.AVista || !idsFormaPagamento.Any(f => f > 0) || idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
                     {
-                        throw new Exception("N„o È permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
+                        throw new Exception("N√£o √© permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
                     }
                 }
 
                 #endregion
 
-                #region VerificaÁıes do cliente
+                #region Verifica√ß√µes do cliente
 
-                // O cliente do pedido deve ser o mesmo cliente da liberaÁ„o.
+                // O cliente do pedido deve ser o mesmo cliente da libera√ß√£o.
                 if (idCliente != idClientePedido)
                 {
-                    throw new Exception(string.Format("O cliente do pedido {0} È diferente do cliente da liberaÁ„o.", idPedido));
+                    throw new Exception(string.Format("O cliente do pedido {0} √© diferente do cliente da libera√ß√£o.", idPedido));
                 }
 
                 #endregion
@@ -923,13 +923,13 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region VerificaÁ„o da situaÁ„o das peÁas
+            #region Verifica√ß√£o da situa√ß√£o das pe√ßas
 
-            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peÁas que est„o sendo liberadas j· foram 
-            // liberadas anteriormente e se o valor da liberaÁ„o È o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberaÁ„o
-            // porque uma das peÁas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peÁas j· haviam sido liberadas,
-            // para resolver incluÌmos um filtro pela data da liberaÁ„o, caso a liberaÁ„o tenha sido feita h· mais de 5 minutos ent„o a peÁa pode ser liberada,
-            // pois esse tratamento foi feito para evitar que a liberaÁ„o seja feita mais de uma vez ao clicar no bot„o de liberar o pedido.
+            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as pe√ßas que est√£o sendo liberadas j√° foram 
+            // liberadas anteriormente e se o valor da libera√ß√£o √© o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a libera√ß√£o
+            // porque uma das pe√ßas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as pe√ßas j√° haviam sido liberadas,
+            // para resolver inclu√≠mos um filtro pela data da libera√ß√£o, caso a libera√ß√£o tenha sido feita h√° mais de 5 minutos ent√£o a pe√ßa pode ser liberada,
+            // pois esse tratamento foi feito para evitar que a libera√ß√£o seja feita mais de uma vez ao clicar no bot√£o de liberar o pedido.
             if (idsPedidoLiberadosParcialmente != null && idsPedidoLiberadosParcialmente.Count() > 0)
             {
                 var sqlPecasLiberadas = string.Format(@"SELECT COUNT(*) > 0
@@ -953,13 +953,13 @@ namespace Glass.Data.DAL
 
                 if (!naoLiberado)
                 {
-                    throw new Exception("As peÁas destes pedidos j· foram liberadas.");
+                    throw new Exception("As pe√ßas destes pedidos j√° foram liberadas.");
                 }
             }
 
             #endregion
 
-            #region VerificaÁ„o das informaÁıes de pagamento
+            #region Verifica√ß√£o das informa√ß√µes de pagamento
 
             // Verifica se o pedido possui sinal ou pagamento antecipado a receber.
             if (!PCPConfig.TelaPedidoPcp.PermitirFinalizarComDiferencaEPagtoAntecip && pedidosPossuemSinalPagamentoAntecipadoAReceber)
@@ -967,38 +967,38 @@ namespace Glass.Data.DAL
                 throw new Exception(string.Format("Falha ao liberar pedidos. Erro: {0}", mensagemSinalPagamentoAntecipado));
             }
 
-            // Verifica se foram informados cheques na liberaÁ„o do pedido e se eles foram recuperados no par‚metro valoresPagos.
+            // Verifica se foram informados cheques na libera√ß√£o do pedido e se eles foram recuperados no par√¢metro valoresPagos.
             if (indiceCheques > -1 && valoresPagos.ElementAtOrDefault(indiceCheques) == 0)
             {
                 throw new Exception("Cadastre o(s) cheque(s).");
             }
 
-            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lanÁa exceÁ„o.
+            // Se o valor for inferior ao que deve ser pago, e o restante do pagto for gerarCredito, lan√ßa exce√ß√£o.
             if (gerarCredito && Math.Round(totalPago, 2) < Math.Round(totalPagar, 2))
             {
-                throw new Exception(string.Format("Total a ser pago n„o confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
+                throw new Exception(string.Format("Total a ser pago n√£o confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
             }
-            // Se o total a ser pago for diferente do valor pago, considerando que n„o È para gerar crÈdito.
+            // Se o total a ser pago for diferente do valor pago, considerando que n√£o √© para gerar cr√©dito.
             else if (!gerarCredito && Math.Round(totalPagar, 2) != Math.Round(totalPago, 2))
             {
-                throw new Exception(string.Format("Total a ser pago n„o confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
+                throw new Exception(string.Format("Total a ser pago n√£o confere com valor pago. Total a ser pago: {0} Valor pago: {1}.", totalPagar.ToString("C"), totalPago.ToString("C")));
             }
 
             #endregion
 
-            #region VerificaÁ„o de comiss„o
+            #region Verifica√ß√£o de comiss√£o
 
-            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comissıes.
+            // Apenas administrador, financeiro geral e financeiro pagto podem gerar comiss√µes.
             if (idComissionado > 0 && !Config.PossuiPermissao(Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento))
             {
-                throw new Exception("VocÍ n„o tem permiss„o para gerar comissıes");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para gerar comiss√µes");
             }
 
             #endregion
         }
 
         /// <summary>
-        /// Finaliza a prÈ liberaÁ„o de pedidos ‡ vista.
+        /// Finaliza a pr√© libera√ß√£o de pedidos √† vista.
         /// </summary>
         public void FinalizarPreLiberacaoAVistaComTransacao(int idLiberarPedido)
         {
@@ -1008,7 +1008,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    // Finaliza a liberaÁ„o criada acima, gerando movimentaÁ„o no caixa, conta banc·ria, estoque etc.
+                    // Finaliza a libera√ß√£o criada acima, gerando movimenta√ß√£o no caixa, conta banc√°ria, estoque etc.
                     FinalizarPreLiberacaoAVista(transaction, idLiberarPedido);
 
                     transaction.Commit();
@@ -1019,25 +1019,25 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
 
-                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreLiberacaoAVista - ID liberaÁ„o: {0}.", idLiberarPedido), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar prÈ liberaÁ„o do(s) pedido(s).", ex));
+                    ErroDAO.Instance.InserirFromException(string.Format("FinalizarPreLiberacaoAVista - ID libera√ß√£o: {0}.", idLiberarPedido), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao finalizar pr√© libera√ß√£o do(s) pedido(s).", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Finaliza a prÈ liberaÁ„o de pedidos ‡ vista.
+        /// Finaliza a pr√© libera√ß√£o de pedidos √† vista.
         /// </summary>
         public void FinalizarPreLiberacaoAVista(GDASession session, int idLiberarPedido)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var liberarPedido = GetElementByPrimaryKey(session, (uint)idLiberarPedido);
-            // Vari·vel criada para salvar o retorno do recebimento da liberaÁ„o.
+            // Vari√°vel criada para salvar o retorno do recebimento da libera√ß√£o.
             UtilsFinanceiro.DadosRecebimento retorno = null;
             decimal saldoDevedor = 0;
             decimal saldoCredito = 0;
-            // Vari·vel criada para salvar os IDs dos pedidos da liberaÁ„o.
+            // Vari√°vel criada para salvar os IDs dos pedidos da libera√ß√£o.
             var idsPedido = IdsPedidos(session, idLiberarPedido.ToString()).Split(',').Select(f => f.StrParaInt());
             var produtosLiberarPedido = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, (uint)idLiberarPedido, false);
             var idComissionado = 0;
@@ -1051,10 +1051,10 @@ namespace Glass.Data.DAL
             var descontarComissao = liberarPedido.DescontarComissao.GetValueOrDefault();
             var recebimentoGerarCredito = liberarPedido.RecebimentoGerarCredito.GetValueOrDefault();
             var recebimentoCaixaDiario = liberarPedido.RecebimentoCaixaDiario.GetValueOrDefault();
-            // Recupera os cheques que foram selecionados no momento do recebimento da liberaÁ„o.
+            // Recupera os cheques que foram selecionados no momento do recebimento da libera√ß√£o.
             var chequesRecebimento = ChequesLiberarPedidoDAO.Instance.ObterStringChequesPelaLiberacao(session, idLiberarPedido);
             var pagamentosLiberarPedido = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(session, (uint)idLiberarPedido);
-            // Vari·veis criadas para recuperar os dados do pagamento da liberaÁ„o.
+            // Vari√°veis criadas para recuperar os dados do pagamento da libera√ß√£o.
             var idsCartaoNaoIdentificado = new List<int?>();
             var idsContaBanco = new List<int?>();
             var idsDepositoNaoIdentificado = new List<int?>();
@@ -1067,7 +1067,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region RecuperaÁ„o dos dados de recebimento da liberaÁ„o
+            #region Recupera√ß√£o dos dados de recebimento da libera√ß√£o
 
             if (pagamentosLiberarPedido.Any(f => f.IdFormaPagto != (uint)Pagto.FormaPagto.Credito && f.IdFormaPagto != (uint)Pagto.FormaPagto.Obra))
             {
@@ -1087,10 +1087,10 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Recebimento da liberaÁ„o
+            #region Recebimento da libera√ß√£o
 
-            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste mÈtodo, pois caso o totalPago tenha valor, 
-            // ter· que ser gerado crÈdito para o cliente (caso tenha pago um sinal maior que o valor do pedido por exemplo).
+            // Mesmo que o totalPagar seja 0 (zero), deve entrar neste m√©todo, pois caso o totalPago tenha valor, 
+            // ter√° que ser gerado cr√©dito para o cliente (caso tenha pago um sinal maior que o valor do pedido por exemplo).
             retorno = UtilsFinanceiro.Receber(session, idLojaRecebimento, null, null, liberarPedido, null, null, null, null, null, null, null, string.Join(",", idsPedido), liberarPedido.IdCliente, 0,
                 null, DateTime.Now.ToString("dd/MM/yyyy"), totalPagar > 0 ? totalPagar : 0, totalPago, valoresRecebimento.ToArray(), idsFormaPagamento.Select(f => (uint)f).ToArray(),
                 idsContaBanco.Select(f => (uint)f).ToArray(), idsDepositoNaoIdentificado.Select(f => (uint)f).ToArray(), idsCartaoNaoIdentificado.Select(f => (uint)f).ToArray(),
@@ -1104,9 +1104,9 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o dos dados da liberaÁ„o
+            #region Atualiza√ß√£o dos dados da libera√ß√£o
 
-            // Atualiza o crÈdito gerado da liberaÁ„o.
+            // Atualiza o cr√©dito gerado da libera√ß√£o.
             objPersistence.ExecuteCommand(session, string.Format("UPDATE liberarpedido SET CreditoGerado=?creditoGerado WHERE IdLiberarPedido={0}", idLiberarPedido),
                 new GDAParameter("?creditoGerado", retorno.creditoGerado));
 
@@ -1114,10 +1114,10 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region GeraÁ„o das contas recebidas
+            #region Gera√ß√£o das contas recebidas
 
             //Gera uma conta recebida para cada tipo de pagamento
-            // Se for pago com crÈdito, gera a conta recebida do credito
+            // Se for pago com cr√©dito, gera a conta recebida do credito
             if (liberarPedido.CreditoUtilizado > 0)
             {
                 var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
@@ -1228,7 +1228,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region GeraÁ„o da comiss„o dos pedidos
+            #region Gera√ß√£o da comiss√£o dos pedidos
 
             if (descontarComissao)
             {
@@ -1266,7 +1266,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AlteraÁ„o da situaÁ„o dos pedidos de revenda
+            #region Altera√ß√£o da situa√ß√£o dos pedidos de revenda
 
             if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
             {
@@ -1284,7 +1284,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o do carregamento
+            #region Atualiza√ß√£o do carregamento
 
             idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(session, (uint)idLiberarPedido)?.Select(f => (int)f).ToList() ?? new List<int>();
 
@@ -1294,18 +1294,18 @@ namespace Glass.Data.DAL
             }
 
             // Atualiza o carregamento e as ocs parciais se houver.
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, string.Join(",",idsPedido));
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, string.Join(",",idsPedido), string.Empty, (uint)idLiberarPedido);
 
             #endregion
 
-            #region AtualizaÁ„o de saldo do cliente e da liberaÁ„o
+            #region Atualiza√ß√£o de saldo do cliente e da libera√ß√£o
 
             // Atualiza o total comprado pelo cliente.
             ClienteDAO.Instance.AtualizaTotalComprado(session, liberarPedido.IdCliente);
 
             ClienteDAO.Instance.ObterSaldoDevedor(session, liberarPedido.IdCliente, out saldoDevedor, out saldoCredito);
 
-            // Atualiza a situaÁ„o, saldo devedor e saldo de crÈdito do cliente, na liberaÁ„o.
+            // Atualiza a situa√ß√£o, saldo devedor e saldo de cr√©dito do cliente, na libera√ß√£o.
             sqlAtualizarLiberarPedido = @" UPDATE liberarpedido
                     SET Situacao = {0}, SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito
                 WHERE IdLiberarPedido = {1}";
@@ -1320,7 +1320,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a prÈ liberaÁ„o ‡ vista.
+        /// Cancela a pr√© libera√ß√£o √† vista.
         /// </summary>
         public void CancelarPreLiberacaoAVistaComTransacao(bool cancelamentoErroCapptaTef, DateTime dataEstornoBanco, int idLiberarPedido, string observacao)
         {
@@ -1340,18 +1340,18 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
 
-                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreLiberacaoAVista - ID liberaÁ„o: {0}.", idLiberarPedido), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar prÈ liberaÁ„o do(s) pedido(s).", ex));
+                    ErroDAO.Instance.InserirFromException(string.Format("CancelarPreLiberacaoAVista - ID libera√ß√£o: {0}.", idLiberarPedido), ex);
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar pr√© libera√ß√£o do(s) pedido(s).", ex));
                 }
             }
         }
 
         /// <summary>
-        /// Cancela a prÈ liberaÁ„o ‡ vista.
+        /// Cancela a pr√© libera√ß√£o √† vista.
         /// </summary>
         public void CancelarPreLiberacaoAVista(GDASession session, DateTime dataEstornoBanco, int idLiberarPedido, string observacao)
         {
-            #region DeclaraÁ„o de vari·veis
+            #region Declara√ß√£o de vari√°veis
 
             var usuarioLogado = UserInfo.GetUserInfo;
             var idsPedidoLiberacao = new List<int>();
@@ -1383,72 +1383,72 @@ namespace Glass.Data.DAL
                         INNER JOIN produtos_liberar_pedido plp ON (pp.IdProdPed=plp.IdProdPed)
                     WHERE ppp.Situacao={1} AND ppp.SituacaoProducao={2} AND plp.IdLiberarPedido={0}",
                     idLiberarPedido, (int)ProdutoPedidoProducao.SituacaoEnum.Producao, (int)SituacaoProdutoProducao.Entregue)) > 0;
-            // Recupera os dados da saÌda de estoque da liberaÁ„o e seus produtos
+            // Recupera os dados da sa√≠da de estoque da libera√ß√£o e seus produtos
             var saidaEstoque = SaidaEstoqueDAO.Instance.GetByLiberacao(session, (uint)idLiberarPedido);
             var produtosSaidaEstoque = saidaEstoque != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(session, saidaEstoque.IdSaidaEstoque).ToArray() : null;
-            // Recupera os produtos da liberaÁ„o
+            // Recupera os produtos da libera√ß√£o
             var produtosLiberarPedido = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, (uint)idLiberarPedido, false);
             var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
             var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
 
             #endregion
 
-            #region ValidaÁıes dos dados da liberaÁ„o
+            #region Valida√ß√µes dos dados da libera√ß√£o
 
             /* Chamado 39231. */
             if (liberacaoPedido == null || idLiberarPedido == 0)
             {
-                throw new Exception("N„o foi possÌvel recuperar a liberaÁ„o para efetuar o cancelamento. Tente novamente.");
+                throw new Exception("N√£o foi poss√≠vel recuperar a libera√ß√£o para efetuar o cancelamento. Tente novamente.");
             }
 
-            // Verifica se a liberaÁ„o do pedido j· foi cancelada
+            // Verifica se a libera√ß√£o do pedido j√° foi cancelada
             if (liberacaoPedido.Situacao == (int)LiberarPedido.SituacaoLiberarPedido.Cancelado)
             {
-                throw new Exception("LiberaÁ„o j· cancelada.");
+                throw new Exception("Libera√ß√£o j√° cancelada.");
             }
 
-            // Verifica se h· separaÁ„o de valores e se h· notas fiscais ativas para a liberaÁ„o.
+            // Verifica se h√° separa√ß√£o de valores e se h√° notas fiscais ativas para a libera√ß√£o.
             if (liberacaoPossuiNotaFiscalAtiva && FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
-                throw new Exception("Esta liberaÁ„o possui uma ou mais notas fiscais n„o canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a liberaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui uma ou mais notas fiscais n√£o canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a libera√ß√£o.");
             }
 
-            // Verifica se esta liberaÁ„o j· foi expedida na produÁ„o.
+            // Verifica se esta libera√ß√£o j√° foi expedida na produ√ß√£o.
             if (liberacaoPossuiPecasExpedidas)
             {
-                throw new Exception("Esta liberaÁ„o possui peÁas que j· foram marcadas como entregue. Verifique na produÁ„o a possibilidade de retir·-las desta situaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui pe√ßas que j√° foram marcadas como entregue. Verifique na produ√ß√£o a possibilidade de retir√°-las desta situa√ß√£o.");
             }
 
-            // Verifica se algum pedido desta liberaÁ„o possui troca/devoluÁ„o n„o canceladas
+            // Verifica se algum pedido desta libera√ß√£o possui troca/devolu√ß√£o n√£o canceladas
             if (liberacaoPossuiTrocaDevolucaoAtiva)
             {
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem troca/devoluÁ„o, cancele-as antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem troca/devolu√ß√£o, cancele-as antes de cancelar esta libera√ß√£o.");
             }
 
-            //verifica se existe algum volume dos pedidos dessa liberaÁ„o que j· tenha sido expedido
+            //verifica se existe algum volume dos pedidos dessa libera√ß√£o que j√° tenha sido expedido
             if (liberacaoPossuiVolumeExpedido && ProducaoConfig.ExpedirSomentePedidosLiberadosNoCarregamento)
             {
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem volume(s) expedidos, estorne o(s) itens antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem volume(s) expedidos, estorne o(s) itens antes de cancelar esta libera√ß√£o.");
             }
 
             /* Chamado 53132.
-                * Impede que a liberaÁ„o seja cancelada caso existam instalaÁıes n„o canceladas para um ou mais pedidos dela. */
+                * Impede que a libera√ß√£o seja cancelada caso existam instala√ß√µes n√£o canceladas para um ou mais pedidos dela. */
             if (liberacaoPossuiInstalacaoAtiva)
             {
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem instalaÁıes geradas, cancele as instalaÁıes antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem instala√ß√µes geradas, cancele as instala√ß√µes antes de cancelar esta libera√ß√£o.");
             }
 
             #endregion
 
-            #region AtualizaÁ„o dos produtos da liberaÁ„o
+            #region Atualiza√ß√£o dos produtos da libera√ß√£o
 
             objPersistence.ExecuteCommand(session, string.Format("UPDATE produtos_liberar_pedido SET QtdeCalc=0 WHERE IdLiberarPedido={0}", idLiberarPedido));
 
             #endregion
 
-            #region AtualizaÁ„o da situaÁ„o da liberaÁ„o
+            #region Atualiza√ß√£o da situa√ß√£o da libera√ß√£o
 
-            // Marca a liberaÁ„o como cancelada
+            // Marca a libera√ß√£o como cancelada
             liberacaoPedido.Situacao = (int)LiberarPedido.SituacaoLiberarPedido.Cancelado;
             liberacaoPedido.IdFuncCanc = usuarioLogado.CodUser;
             liberacaoPedido.ObsCanc = observacao;
@@ -1457,7 +1457,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o do status dos pedidos da liberaÁ„o
+            #region Atualiza√ß√£o do status dos pedidos da libera√ß√£o
 
             idsPedidoLiberacao.AddRange(ExecuteMultipleScalar<int>(session, string.Format("SELECT DISTINCT CAST(IdPedido AS CHAR) FROM produtos_liberar_pedido WHERE IdLiberarPedido={0}",
                 idLiberarPedido))?.Where(f => f > 0).ToList() ?? new List<int>());
@@ -1474,14 +1474,14 @@ namespace Glass.Data.DAL
 
                 objPersistence.ExecuteCommand(session, sqlAtualizarDadosPedido);
 
-                //Percorre os pedidos da liberaÁ„o e salva log da mudanÁa da situaÁ„o
+                //Percorre os pedidos da libera√ß√£o e salva log da mudan√ßa da situa√ß√£o
                 foreach (var idPedidoLiberacao in idsPedidoLiberacao)
                 {
                     var logAlteracao = new LogAlteracao();
                     logAlteracao.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                     logAlteracao.IdRegistroAlt = idPedidoLiberacao;
                     logAlteracao.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, idPedidoLiberacao);
-                    logAlteracao.Campo = "Situac„o";
+                    logAlteracao.Campo = "Situac√£o";
                     logAlteracao.DataAlt = DateTime.Now;
                     logAlteracao.IdFuncAlt = usuarioLogado.CodUser;
                     logAlteracao.ValorAnterior = "Liberado";
@@ -1494,22 +1494,22 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o da reserva/liberaÁ„o dos produtos liberados
+            #region Atualiza√ß√£o da reserva/libera√ß√£o dos produtos liberados
 
-            #region C·lculo da reserva/liberaÁ„o de cada produto
+            #region C√°lculo da reserva/libera√ß√£o de cada produto
 
             foreach (var produtoLiberarPedido in produtosLiberarPedido)
             {
-                #region DeclaraÁ„o de vari·veis
+                #region Declara√ß√£o de vari√°veis
 
                 var idLojaEstoque = (int)PedidoDAO.Instance.ObtemIdLoja(session, produtoLiberarPedido.IdPedido);
-                // Tenta achar o produto da saÌda de estoque referente ao produto da liberaÁ„o.
+                // Tenta achar o produto da sa√≠da de estoque referente ao produto da libera√ß√£o.
                 var produtoSaidaEstoque = saidaEstoque == null || produtosSaidaEstoque == null || produtosSaidaEstoque.Length == 0 ? null :
                     Array.Find(produtosSaidaEstoque, find => find.IdProdPed == produtoLiberarPedido.IdProdPed);
                 var quantidadeEstorno = produtoSaidaEstoque != null ? (int)produtoSaidaEstoque.QtdeSaida : produtoLiberarPedido.Qtde;
-                // Verifica o tipo de c·lculo do produto.
+                // Verifica o tipo de c√°lculo do produto.
                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)produtoLiberarPedido.IdProd);
-                // Verifica o tipo de c·lculo do produto.
+                // Verifica o tipo de c√°lculo do produto.
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(session, produtoLiberarPedido.LarguraProd, (int)produtoLiberarPedido.AlturaProd, quantidadeEstorno, 0, produtoLiberarPedido.Redondo, 0,
                     tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
                 var m2 = tipoCalculo == (int)TipoCalculoGrupoProd.M2 || tipoCalculo == (int)TipoCalculoGrupoProd.M2Direto;
@@ -1533,7 +1533,7 @@ namespace Glass.Data.DAL
                 }
 
                 /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberaÁ„o n„o podem ser alterados, pois, a baixa j· ocorreu na expediÁ„o dele. */
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/libera√ß√£o n√£o podem ser alterados, pois, a baixa j√° ocorreu na expedi√ß√£o dele. */
                 foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)produtoLiberarPedido.IdPedido))
                 {
                     if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
@@ -1549,7 +1549,7 @@ namespace Glass.Data.DAL
                         (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)produtoLiberarPedido.IdGrupoProd) &&
                         SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)produtoLiberarPedido.IdGrupoProd, (int?)produtoLiberarPedido.IdSubgrupoProd))) && naoVolume) || transferencia)
                     {
-                        // Estorna a saÌda dada neste produto, se o pedido n„o tiver que transferir
+                        // Estorna a sa√≠da dada neste produto, se o pedido n√£o tiver que transferir
                         if (!transferencia)
                         {
                             ProdutosPedidoDAO.Instance.MarcarSaida(session, produtoLiberarPedido.IdProdPed, quantidadeEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
@@ -1602,7 +1602,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o dos totais de reserva/liberaÁ„o dos produtos
+            #region Atualiza√ß√£o dos totais de reserva/libera√ß√£o dos produtos
 
             if (produtosLiberarPedido != null && produtosLiberarPedido.Length > 0)
             {
@@ -1631,7 +1631,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o do saldo das obras
+            #region Atualiza√ß√£o do saldo das obras
 
             foreach (var id in IdsPedidos(session, idLiberarPedido.ToString()).Split(','))
             {
@@ -1650,7 +1650,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region AtualizaÁ„o da situaÁ„o dos pedidos de revenda
+            #region Atualiza√ß√£o da situa√ß√£o dos pedidos de revenda
 
             if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar && Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
             {
@@ -1667,17 +1667,17 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Liberar Pedido ‡ Prazo
+        #region Liberar Pedido √† Prazo
 
         /// <summary>
-        /// Cancela a liberaÁ„o de um pedido.
+        /// Cancela a libera√ß√£o de um pedido.
         /// </summary>
         public uint CriarLiberacaoAPrazo(uint idCliente, string idsPedido, uint[] idsProdutosPedido, uint?[] idsProdutoPedidoProducao,
             float[] qtdeLiberar, decimal totalASerPago, int numParcelas, int[] diasParcelas, decimal[] valoresParcelas, uint? idParcela,
             bool receberEntrada, uint[] formasPagto, uint[] tiposCartao, decimal[] valoresPagos, uint[] idContasBanco,
             uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool utilizarCredito, decimal creditoUtilizado, string numAutConstrucard, bool cxDiario,
             bool descontarComissao, uint[] parcelasCartao, int tipoDesconto, decimal desconto, int tipoAcrescimo, decimal acrescimo,
-            uint formaPagtoPrazo, decimal valorUtilizadoObra, string chequesPagto, string[] numAutCartao)
+            uint formaPagtoPrazo, decimal valorUtilizadoObra, string chequesPagto, string[] numAutCartao, string idsOc)
         {
             FilaOperacoes.LiberarPedido.AguardarVez();
 
@@ -1694,7 +1694,7 @@ namespace Glass.Data.DAL
                         receberEntrada, formasPagto, tiposCartao, valoresPagos, idContasBanco, depositoNaoIdentificado, cartaoNaoIdentificado,
                         utilizarCredito, creditoUtilizado, numAutConstrucard, cxDiario, descontarComissao, parcelasCartao,
                         tipoDesconto, desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto,
-                        numAutCartao);
+                        numAutCartao, idsOc);
 
                     PedidoDAO.Instance.ForcarTransacaoPedido(transaction, idsPedido.Split(',').FirstOrDefault().StrParaUint(), false);
 
@@ -1710,7 +1710,7 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
 
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar liberaÁ„o do(s) pedido(s).", ex));
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao criar libera√ß√£o do(s) pedido(s).", ex));
                 }
                 finally
                 {
@@ -1720,7 +1720,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Realiza liberaÁ„o de pedidos ‡ prazo
+        /// Realiza libera√ß√£o de pedidos √† prazo
         /// </summary>
         public uint CriarLiberacaoAPrazo(GDASession session, uint idCliente, string idsPedido, uint[] idsProdutosPedido,
             uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar, decimal totalASerPago, int numParcelas, int[] diasParcelas,
@@ -1728,11 +1728,11 @@ namespace Glass.Data.DAL
             decimal[] valoresPagos, uint[] idContasBanco, uint[] depositoNaoIdentificado, uint[] cartaoNaoIdentificado, bool utilizarCredito, decimal creditoUtilizado,
             string numAutConstrucard, bool cxDiario, bool descontarComissao, uint[] parcelasCartao, int tipoDesconto, decimal desconto,
             int tipoAcrescimo, decimal acrescimo, uint formaPagtoPrazo, decimal valorUtilizadoObra, string chequesPagto,
-            string[] numAutCartao)
+            string[] numAutCartao, string idsOc)
         {
             uint idLiberarPedido = 0;
 
-            // #69907 - Altera a OBS do pedido para bloquear qualquer outra alteraÁ„o na tabela fora dessa transaÁ„o
+            // #69907 - Altera a OBS do pedido para bloquear qualquer outra altera√ß√£o na tabela fora dessa transa√ß√£o
             var idPedidoTemp = Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint())[0];
             var obsPedido = PedidoDAO.Instance.ObtemObs(session, idPedidoTemp);
             objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs='Liberando Pedido' WHERE IdPedido={0}", idPedidoTemp));
@@ -1741,29 +1741,29 @@ namespace Glass.Data.DAL
             var tipoFunc = login.TipoUsuario;
             if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
                 !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                throw new Exception("VocÍ n„o tem permiss„o para liberar pedidos.");
+                throw new Exception("Voc√™ n√£o tem permiss√£o para liberar pedidos.");
 
-            // Garante que apenas pedidos finalizados sejam liberados se a empresa n„o controlar produÁ„o
+            // Garante que apenas pedidos finalizados sejam liberados se a empresa n√£o controlar produ√ß√£o
             if (!PCPConfig.ControlarProducao)
                 foreach (var idPedido in Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint()))
                     if (PedidoEspelhoDAO.Instance.ExisteEspelho(session, idPedido) && PedidoEspelhoDAO.Instance.ObtemSituacao(session, idPedido) != PedidoEspelho.SituacaoPedido.Finalizado)
                         throw new Exception("O pedido " + idPedido + " deve estar finalizado no PCP para ser liberado.");
 
-            // Verifica se todos os pedidos est„o na situaÁ„o ConfirmadoLiberacao
+            // Verifica se todos os pedidos est√£o na situa√ß√£o ConfirmadoLiberacao
             if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From pedido Where idPedido In (" + idsPedido + ") " +
                 "And situacao not in (" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
-                throw new Exception("Alguns pedidos selecionados j· foram liberados.");
+                throw new Exception("Alguns pedidos selecionados j√° foram liberados.");
 
             //Chamado 46600
             var idsPedidoSemProducao = PedidoDAO.Instance.ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(session, idsPedido);
             if (!string.IsNullOrEmpty(idsPedidoSemProducao))
-                throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est„o vinculados a um pedido de produÁ„o que ainda n„o foram confirmados.");
+                throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est√£o vinculados a um pedido de produ√ß√£o que ainda n√£o foram confirmados.");
 
-            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peÁas que est„o sendo liberadas j· foram 
-            // liberadas anteriormente e se o valor da liberaÁ„o È o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberaÁ„o
-            // porque uma das peÁas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peÁas j· haviam sido liberadas,
-            // para resolver incluÌmos um filtro pela data da liberaÁ„o, caso a liberaÁ„o tenha sido feita h· mais de 5 minutos ent„o a peÁa pode ser liberada,
-            // pois esse tratamento foi feito para evitar que a liberaÁ„o seja feita mais de uma vez ao clicar no bot„o de liberar o pedido.
+            // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as pe√ßas que est√£o sendo liberadas j√° foram 
+            // liberadas anteriormente e se o valor da libera√ß√£o √© o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a libera√ß√£o
+            // porque uma das pe√ßas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as pe√ßas j√° haviam sido liberadas,
+            // para resolver inclu√≠mos um filtro pela data da libera√ß√£o, caso a libera√ß√£o tenha sido feita h√° mais de 5 minutos ent√£o a pe√ßa pode ser liberada,
+            // pois esse tratamento foi feito para evitar que a libera√ß√£o seja feita mais de uma vez ao clicar no bot√£o de liberar o pedido.
             if (objPersistence.ExecuteSqlQueryCount(session, "Select Count(*) From pedido Where idPedido In (" + idsPedido + ") " +
                 "And situacao in (" + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
             {
@@ -1785,19 +1785,19 @@ namespace Glass.Data.DAL
                     }
 
                 if (!naoLiberado)
-                    throw new Exception("As peÁas destes pedidos j· foram liberadas.");
+                    throw new Exception("As pe√ßas destes pedidos j√° foram liberadas.");
             }
 
             string mensagem;
             if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido, out mensagem))
                 throw new Exception("Falha ao liberar pedidos. Erro: " + mensagem);
 
-            // Verifica se cliente possui limite disponÌvel para liberar os pedidos, desde que os mesmos j· n„o estejam debitando do limite
+            // Verifica se cliente possui limite dispon√≠vel para liberar os pedidos, desde que os mesmos j√° n√£o estejam debitando do limite
             var debitosCliente = ContasReceberDAO.Instance.GetDebitos(session, idCliente, idsPedido);
             var limiteCliente = ClienteDAO.Instance.ObtemValorCampo<decimal>(session, "limite", "id_Cli=" + idCliente);
             if (!FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite && totalASerPago > 0 && limiteCliente > 0 && ((debitosCliente + totalASerPago) - creditoUtilizado) > limiteCliente)
-                throw new Exception("O cliente n„o possui limite disponÌvel para realizar esta compra. Limite disponÌvel: " +
-                    (limiteCliente - debitosCliente).ToString("C") + " Limite necess·rio: " + totalASerPago.ToString("C"));
+                throw new Exception("O cliente n√£o possui limite dispon√≠vel para realizar esta compra. Limite dispon√≠vel: " +
+                    (limiteCliente - debitosCliente).ToString("C") + " Limite necess√°rio: " + totalASerPago.ToString("C"));
 
             // Verifica se foi informado no cadastro de clientes quantas parcelas o mesmo divide suas compras
             if (ParcelasDAO.Instance.GetCountByCliente(session, idCliente, ParcelasDAO.TipoConsulta.Prazo) == 0 && totalASerPago > 0)
@@ -1816,7 +1816,7 @@ namespace Glass.Data.DAL
                 if (indexCheques > -1 && valoresPagos[indexCheques] == 0)
                     throw new Exception("Cadastre o(s) cheque(s).");
 
-                // Se for pago com crÈdito, soma o mesmo ao totalPago
+                // Se for pago com cr√©dito, soma o mesmo ao totalPago
                 if (creditoUtilizado > 0)
                     totalPago += creditoUtilizado;
             }
@@ -1826,7 +1826,7 @@ namespace Glass.Data.DAL
             decimal valorPagar = totalASerPago * ((100 - descontoAplicar + acrescimoAplicar) / 100);
 
             if (PedidoConfig.Desconto.DescontoMaximoLiberacao < descontoAplicar)
-                throw new Exception("O desconto dado n„o È permitido, desconto aplicado: " + descontoAplicar + "% desconto m·ximo permitido: " + PedidoConfig.Desconto.DescontoMaximoLiberacao + "%");
+                throw new Exception("O desconto dado n√£o √© permitido, desconto aplicado: " + descontoAplicar + "% desconto m√°ximo permitido: " + PedidoConfig.Desconto.DescontoMaximoLiberacao + "%");
 
             decimal totalPagarPrazo = 0;
             foreach (decimal vp in valoresParcelas)
@@ -1834,7 +1834,7 @@ namespace Glass.Data.DAL
 
             if (valorPagar > 0 && totalPagarPrazo == 0 && !receberEntrada &&
                 /* Chamado 15029.
-                    * Caso todos os pedidos tenham sido cadastrados com o tipo de venda Obra, ent„o a forma de pagamento n„o deve ser
+                    * Caso todos os pedidos tenham sido cadastrados com o tipo de venda Obra, ent√£o a forma de pagamento n√£o deve ser
                     * solicitada, pois, o valor do pedido foi descontado no valor da obra. */
                 objPersistence.ExecuteSqlQueryCount(session, @"
                 SELECT COUNT(*) FROM pedido p
@@ -1843,23 +1843,23 @@ namespace Glass.Data.DAL
                 throw new Exception("Defina as parcelas.");
 
             if (totalPagarPrazo < 0)
-                throw new Exception("N„o È possÌvel liberar ‡ prazo valores negativos.");
+                throw new Exception("N√£o √© poss√≠vel liberar √† prazo valores negativos.");
 
             /* Chamado 26155. */
             if (receberEntrada &&
                 valorPagar > totalPago + totalPagarPrazo)
                 throw new Exception(
                     string.Format(
-                        "Valor pago È inferior ao total a ser pago. Total pago: {0} Total a ser pago: {1}",
+                        "Valor pago √© inferior ao total a ser pago. Total pago: {0} Total a ser pago: {1}",
                         totalPago.ToString("C"), valorPagar.ToString("C")));
 
-            // Verifica se h· estoque disponÌvel para os produtos sendo liberados
+            // Verifica se h√° estoque dispon√≠vel para os produtos sendo liberados
             if (!PedidoPossuiEstoque(session, idsProdutosPedido, qtdeLiberar, out mensagem))
                 throw new Exception(mensagem);
 
             uint idLoja = 0;
 
-            // Caso o controle novo de expediÁ„o balc„o esteja ativo, n„o permite liberar pedidos com tipos de entraga diferentes.
+            // Caso o controle novo de expedi√ß√£o balc√£o esteja ativo, n√£o permite liberar pedidos com tipos de entraga diferentes.
             if (PCPConfig.UsarNovoControleExpBalcao)
             {
                 Pedido.TipoEntregaPedido tipoEntregaPedido = 0;
@@ -1874,7 +1874,7 @@ namespace Glass.Data.DAL
                     if (tipoEntregaPedido == 0)
                         tipoEntregaPedido = (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint());
                     else if (tipoEntregaPedido != (Pedido.TipoEntregaPedido)PedidoDAO.Instance.ObtemTipoEntrega(session, id.StrParaUint()))
-                        throw new Exception("A liberaÁ„o n„o pode conter pedidos com tipos de entrega diferentes.");
+                        throw new Exception("A libera√ß√£o n√£o pode conter pedidos com tipos de entrega diferentes.");
                 }
             }
             /* Chamado 52405. */
@@ -1892,13 +1892,13 @@ namespace Glass.Data.DAL
             idLoja = Configuracoes.ComissaoConfig.ComissaoPorContasRecebidas || Geral.ConsiderarLojaClientePedidoFluxoSistema ? idLoja : UserInfo.GetUserInfo.IdLoja;
 
             if (idLoja == 0)
-                throw new Exception("N„o foi possÌvel recuperar a loja do(s) pedido(s) liberado(s).");
+                throw new Exception("N√£o foi poss√≠vel recuperar a loja do(s) pedido(s) liberado(s).");
 
             var sinalReceber = "";
 
             foreach (var id in idsPedido.TrimEnd(' ').TrimStart(' ').TrimStart(',').TrimEnd(',').Split(','))
             {
-                //Verifica se o pedido est· para receber sinal e n„o recebeu
+                //Verifica se o pedido est√° para receber sinal e n√£o recebeu
                 var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, id.StrParaUint());
                 var entrada = PedidoDAO.Instance.ObtemValorEntrada(null, id.StrParaUint());
                 var idSinal = PedidoDAO.Instance.ObtemIdSinal(null, id.StrParaUint());
@@ -1910,7 +1910,7 @@ namespace Glass.Data.DAL
                 
                 /* Chamado 56137. */
                 if (idCliente != idClientePedido)
-                    throw new Exception(string.Format("O cliente do pedido {0} È diferente do cliente da liberaÁ„o.", id));
+                    throw new Exception(string.Format("O cliente do pedido {0} √© diferente do cliente da libera√ß√£o.", id));
             }
 
             if (!string.IsNullOrEmpty(sinalReceber))
@@ -1919,21 +1919,21 @@ namespace Glass.Data.DAL
             // Verifica se o cliente possui a parcela passada
             var parcelas = ParcelasDAO.Instance.GetByCliente(session, idCliente, ParcelasDAO.TipoConsulta.Todos);
             if (idParcela != null && parcelas.All(f => f.IdParcela != idParcela))
-                throw new Exception(string.Format("O cliente n„o possui a parcela escolhida. Cliente: {0} | Parcela: {1}",
+                throw new Exception(string.Format("O cliente n√£o possui a parcela escolhida. Cliente: {0} | Parcela: {1}",
                     ClienteDAO.Instance.GetNome(session, idCliente), ParcelasDAO.Instance.ObtemDescricao(session, idParcela.Value)));
 
             // Verifica se o cliente possui a forma de pagto passada
             var formasPagtoCliente = FormaPagtoDAO.Instance.GetByCliente(session, idCliente);
             if (formaPagtoPrazo > 0 && formasPagtoCliente.All(f => f.IdFormaPagto != formaPagtoPrazo))
-                throw new Exception(string.Format("O cliente n„o possui a forma de pagamento escolhida. Cliente: {0} | Forma Pagto: {1}",
+                throw new Exception(string.Format("O cliente n√£o possui a forma de pagamento escolhida. Cliente: {0} | Forma Pagto: {1}",
                     ClienteDAO.Instance.GetNome(session, idCliente), FormaPagtoDAO.Instance.GetDescricao(session, formaPagtoPrazo)));
 
             UtilsFinanceiro.DadosRecebimento retorno = null;
 
-            // Cadastra a liberaÁ„o antes da sess„o e na situaÁ„o cancelada para resolver a seguinte situaÁ„o:
-            // Durante o processamento desta liberaÁ„o a pessoa pode imprimir a mesma por outra tela, o problema È que 
-            // caso ocorra algum problema, a transaÁ„o vai desfazer tudo, quando for feita uma nova liberaÁ„o, 
-            // ela vai pegar o n˙mero dessa, fazendo com que pareÁa existir duas liberaÁıes diferentes com o mesmo n˙mero
+            // Cadastra a libera√ß√£o antes da sess√£o e na situa√ß√£o cancelada para resolver a seguinte situa√ß√£o:
+            // Durante o processamento desta libera√ß√£o a pessoa pode imprimir a mesma por outra tela, o problema √© que 
+            // caso ocorra algum problema, a transa√ß√£o vai desfazer tudo, quando for feita uma nova libera√ß√£o, 
+            // ela vai pegar o n√∫mero dessa, fazendo com que pare√ßa existir duas libera√ß√µes diferentes com o mesmo n√∫mero
             LiberarPedido liberaPed = new LiberarPedido
             {
                 IdCliente = idCliente,
@@ -1945,7 +1945,7 @@ namespace Glass.Data.DAL
             idLiberarPedido = liberaPed.IdLiberarPedido;
             liberaPed.ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(session, idCliente);
 
-            // Garante que n„o haver· chaves duplicadas para esta liberaÁ„o
+            // Garante que n√£o haver√° chaves duplicadas para esta libera√ß√£o
             PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(session, idLiberarPedido);
 
             #region Cadastra as formas de pagamento
@@ -1985,7 +1985,7 @@ namespace Glass.Data.DAL
 
             if (receberEntrada && totalPago > 0)
             {
-                // Ignora os juros dos cartıes ao calcular o valor pago/a pagar
+                // Ignora os juros dos cart√µes ao calcular o valor pago/a pagar
                 totalPago -= UtilsFinanceiro.GetJurosCartoes(session, UserInfo.GetUserInfo.IdLoja, valoresPagos, formasPagto, tiposCartao, parcelasCartao);
 
                 retorno = UtilsFinanceiro.Receber(session, UserInfo.GetUserInfo.IdLoja, null, null, liberaPed, null, null, null, null, null, null, null,
@@ -2032,7 +2032,7 @@ namespace Glass.Data.DAL
                             objPersistence.ExecuteCommand(session, string.Format("{0} WHERE TipoVenda={1} AND IdPedido IN ({2});", sqlFormaPagto, (int)Pedido.TipoVendaPedido.APrazo, idsPedido));
                         }
 
-                        // Atualiza tipo de cart„o de acordo com aquele que foi escolhido pelo caixa
+                        // Atualiza tipo de cart√£o de acordo com aquele que foi escolhido pelo caixa
                         if ((uint)Pagto.FormaPagto.Cartao == formasPagto[0])
                             objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTipoCartao={0} WHERE IdPedido IN ({1});", tiposCartao[0], idsPedido));
 
@@ -2080,7 +2080,7 @@ namespace Glass.Data.DAL
                 #region Gera contas recebidas
 
                 //Gera uma conta recebida para cada tipo de pagamento
-                // Se for pago com crÈdito, gera a conta recebida do credito
+                // Se for pago com cr√©dito, gera a conta recebida do credito
                 if (creditoUtilizado > 0)
                 {
                     var idContaR = ContasReceberDAO.Instance.Insert(session, new ContasReceber()
@@ -2195,9 +2195,9 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Gera contas a receber para esta liberaÁ„o
+            #region Gera contas a receber para esta libera√ß√£o
 
-            // Exclui todas as contas a receber do pedido antes de gerar as que ser„o geradas abaixo
+            // Exclui todas as contas a receber do pedido antes de gerar as que ser√£o geradas abaixo
             ContasReceberDAO.Instance.DeleteByLiberarPedido(session, idLiberarPedido, false);
             DateTime dataVenc = DateTime.Now;
 
@@ -2233,12 +2233,12 @@ namespace Glass.Data.DAL
                     conta.TipoConta = (byte)((ContasReceber.TipoContaEnum)conta.TipoConta | ContasReceber.TipoContaEnum.Reposicao);
 
                 if (ContasReceberDAO.Instance.Insert(session, conta) == 0)
-                    throw new Exception("Conta a Receber n„o foi inserida.");
+                    throw new Exception("Conta a Receber n√£o foi inserida.");
             }
 
             #endregion
 
-            #region Altera situaÁ„o dos pedidos para Liberado (Confirmado) e Gera instalaÁıes
+            #region Altera situa√ß√£o dos pedidos para Liberado (Confirmado) e Gera instala√ß√µes
 
             foreach (string p in idsPedido.TrimEnd(',').Split(','))
             {
@@ -2247,26 +2247,26 @@ namespace Glass.Data.DAL
                     Pedido.SituacaoPedido.Confirmado : Pedido.SituacaoPedido.LiberadoParcialmente;
                 
                 /* Chamado 65135.
-                 * Caso a configuraÁ„o UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
-                 * impede que o pedido seja liberado com formas de pagamento que n„o foram selecionadas no pedido.
-                 * Nesse caso, impede o recebimento da entrada no ato da liberaÁ„o do pedido. */
+                 * Caso a configura√ß√£o UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada,
+                 * impede que o pedido seja liberado com formas de pagamento que n√£o foram selecionadas no pedido.
+                 * Nesse caso, impede o recebimento da entrada no ato da libera√ß√£o do pedido. */
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
                     var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, idPedido);
                     var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, idPedido);
 
                     if (tipoVenda != (int)Data.Model.Pedido.TipoVendaPedido.APrazo || formaPagtoPrazo != idFormaPagtoPedido)
-                        throw new Exception("N„o È permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
+                        throw new Exception("N√£o √© permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
                 }
 
                 PedidoDAO.Instance.AlteraSituacao(session, idPedido, situacao);
 
-                ///Salva log da alteraÁ„o da situaÁ„o do pedido
+                ///Salva log da altera√ß√£o da situa√ß√£o do pedido
                 var logData = new LogAlteracao();
                 logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                 logData.IdRegistroAlt = (int)idPedido;
                 logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, (int)idPedido);
-                logData.Campo = "Situac„o";
+                logData.Campo = "Situac√£o";
                 logData.DataAlt = DateTime.Now;
                 logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
                 logData.ValorAnterior = "Confirmado PCP";
@@ -2275,20 +2275,20 @@ namespace Glass.Data.DAL
 
                 LogAlteracaoDAO.Instance.Insert(session, logData);
 
-                // Gera instalaÁ„o para o pedido
+                // Gera instala√ß√£o para o pedido
                 PedidoDAO.Instance.GerarInstalacao(session, idPedido, PedidoDAO.Instance.ObtemDataEntrega(session, idPedido));
             }
 
-            // Atualiza a data da ˙ltima compra do cliente.
+            // Atualiza a data da √∫ltima compra do cliente.
             ClienteDAO.Instance.AtualizaUltimaCompra(session, idCliente);
 
-            // Atualiza a data da ˙ltima liberaÁ„o dos pedidos desta liberaÁ„o, para exibir corretamente no pedido
+            // Atualiza a data da √∫ltima libera√ß√£o dos pedidos desta libera√ß√£o, para exibir corretamente no pedido
             objPersistence.ExecuteCommand(session, "update pedido set idLiberarPedido=" + idLiberarPedido +
                 ", numAutConstrucard=?numAutConst where idPedido in (" + idsPedido + ")", new GDAParameter("?numAutConst", numAutConstrucard));
 
             #endregion
 
-            #region Atualiza a liberaÁ„o de pedido
+            #region Atualiza a libera√ß√£o de pedido
 
             liberaPed.IdCliente = idCliente;
             liberaPed.IdFunc = login.CodUser;
@@ -2305,7 +2305,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Gera a comiss„o dos pedidos
+            #region Gera a comiss√£o dos pedidos
 
             if (descontarComissao)
             {
@@ -2357,7 +2357,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Altera a situaÁ„o para entregue de pedidos de revenda
+            #region Altera a situa√ß√£o para entregue de pedidos de revenda
 
             if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
                 Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -2378,7 +2378,7 @@ namespace Glass.Data.DAL
             #region Carregamento parcial
 
             //Atualiza o carregamento e as ocs parciais se houver
-            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido);
+            CarregamentoDAO.Instance.AtualizaCarregamentoParcial(session, idsPedido, idsOc, idLiberarPedido);
 
             #endregion
 
@@ -2409,7 +2409,7 @@ namespace Glass.Data.DAL
             objPersistence.ExecuteCommand(session, string.Format(sqlUpdate, (int)LiberarPedido.SituacaoLiberarPedido.Liberado, idLiberarPedido),
                 new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
 
-            // #69907 - Ao final da transaÁ„o volta a situaÁ„o original do pedido
+            // #69907 - Ao final da transa√ß√£o volta a situa√ß√£o original do pedido
             objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET obs=?obs WHERE IdPedido={0}", idPedidoTemp), new GDAParameter("?obs", obsPedido));
 
             return idLiberarPedido;
@@ -2417,10 +2417,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Liberar Pedido Garantia/ReposiÁ„o
+        #region Liberar Pedido Garantia/Reposi√ß√£o
 
         /// <summary>
-        /// LiberaÁ„o de pedido de Garantia/ReposiÁ„o
+        /// Libera√ß√£o de pedido de Garantia/Reposi√ß√£o
         /// </summary>
         public uint CriarLiberacaoGarantiaReposicao(uint idCliente, string idsPedido, uint[] idsProdutosPedido,
             uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar)
@@ -2441,29 +2441,29 @@ namespace Glass.Data.DAL
                     var tipoFunc = login.TipoUsuario;
                     if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
                         !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                        throw new Exception("VocÍ n„o tem permiss„o para liberar pedidos.");
+                        throw new Exception("Voc√™ n√£o tem permiss√£o para liberar pedidos.");
 
-                    // Garante que apenas pedidos finalizados sejam liberados se a empresa n„o controlar produÁ„o
+                    // Garante que apenas pedidos finalizados sejam liberados se a empresa n√£o controlar produ√ß√£o
                     if (!PCPConfig.ControlarProducao)
                         foreach (uint idPedido in Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint()))
                             if (PedidoEspelhoDAO.Instance.ExisteEspelho(transaction, idPedido) && PedidoEspelhoDAO.Instance.ObtemSituacao(transaction, idPedido) != PedidoEspelho.SituacaoPedido.Finalizado)
                                 throw new Exception("O pedido " + idPedido + " deve estar finalizado no PCP para ser liberado.");
 
-                    // Verifica se todos os pedidos est„o na situaÁ„o ConfirmadoLiberacao
+                    // Verifica se todos os pedidos est√£o na situa√ß√£o ConfirmadoLiberacao
                     if (objPersistence.ExecuteSqlQueryCount(transaction, "Select Count(*) From pedido Where idPedido In (" + idsPedido.Trim(',') + ") " +
                         "And situacao not in (" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
-                        throw new Exception("Alguns pedidos selecionados j· foram liberados.");
+                        throw new Exception("Alguns pedidos selecionados j√° foram liberados.");
 
                     //Chamado 46600
                     var idsPedidoSemProducao = PedidoDAO.Instance.ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(transaction, idsPedido);
                     if (!string.IsNullOrEmpty(idsPedidoSemProducao))
-                        throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est„o vinculados a um pedido de produÁ„o que ainda n„o foram confirmados.");
+                        throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est√£o vinculados a um pedido de produ√ß√£o que ainda n√£o foram confirmados.");
 
-                    // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as peÁas que est„o sendo liberadas j· foram 
-                    // liberadas anteriormente e se o valor da liberaÁ„o È o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a liberaÁ„o
-                    // porque uma das peÁas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as peÁas j· haviam sido liberadas,
-                    // para resolver incluÌmos um filtro pela data da liberaÁ„o, caso a liberaÁ„o tenha sido feita h· mais de 5 minutos ent„o a peÁa pode ser liberada,
-                    // pois esse tratamento foi feito para evitar que a liberaÁ„o seja feita mais de uma vez ao clicar no bot„o de liberar o pedido.
+                    // Caso tenha algum pedido liberado parcialmente sendo liberado, verifica se as pe√ßas que est√£o sendo liberadas j√° foram 
+                    // liberadas anteriormente e se o valor da libera√ß√£o √© o mesmo. No chamado 6823 um idProdPed de qtd 2 estava bloqueando a libera√ß√£o
+                    // porque uma das pe√ßas foi liberada parcialmente e ao liberar a outra o sistema bloqueava dizendo que as pe√ßas j√° haviam sido liberadas,
+                    // para resolver inclu√≠mos um filtro pela data da libera√ß√£o, caso a libera√ß√£o tenha sido feita h√° mais de 5 minutos ent√£o a pe√ßa pode ser liberada,
+                    // pois esse tratamento foi feito para evitar que a libera√ß√£o seja feita mais de uma vez ao clicar no bot√£o de liberar o pedido.
                     if (objPersistence.ExecuteSqlQueryCount(transaction, "Select Count(*) From pedido Where idPedido In (" + idsPedido + ") " +
                         "And situacao in (" + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
                     {
@@ -2485,10 +2485,10 @@ namespace Glass.Data.DAL
                             }
 
                         if (!naoLiberado)
-                            throw new Exception("As peÁas destes pedidos j· foram liberadas.");
+                            throw new Exception("As pe√ßas destes pedidos j√° foram liberadas.");
                     }
 
-                    // Verifica se h· estoque disponÌvel para os produtos sendo liberados
+                    // Verifica se h√° estoque dispon√≠vel para os produtos sendo liberados
                     string mensagem;
                     if (!PedidoPossuiEstoque(transaction, idsProdutosPedido, qtdeLiberar, out mensagem))
                         throw new Exception(mensagem);
@@ -2505,7 +2505,7 @@ namespace Glass.Data.DAL
 
                     liberaPed.ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(transaction, idCliente);
 
-                    // Garante que n„o haver· chaves duplicadas para esta liberaÁ„o
+                    // Garante que n√£o haver√° chaves duplicadas para esta libera√ß√£o
                     PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(transaction, idLiberarPedido);
 
                     #region Salva na tabela os produtos liberados
@@ -2533,7 +2533,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Altera situaÁ„o dos pedidos para Liberado (Confirmado)
+                    #region Altera situa√ß√£o dos pedidos para Liberado (Confirmado)
 
                     foreach (var p in idsPedido.TrimEnd(',').Split(','))
                     {
@@ -2542,7 +2542,7 @@ namespace Glass.Data.DAL
 
                         /* Chamado 56137. */
                         if (idCliente != idClientePedido)
-                            throw new Exception(string.Format("O cliente do pedido {0} È diferente do cliente da liberaÁ„o.", idPedido));
+                            throw new Exception(string.Format("O cliente do pedido {0} √© diferente do cliente da libera√ß√£o.", idPedido));
 
                         Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
                             !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
@@ -2550,17 +2550,17 @@ namespace Glass.Data.DAL
 
                         PedidoDAO.Instance.AlteraSituacao(transaction, idPedido, situacao);
 
-                        // Gera instalaÁ„o para o pedido
+                        // Gera instala√ß√£o para o pedido
                         PedidoDAO.Instance.GerarInstalacao(transaction, idPedido, PedidoDAO.Instance.ObtemDataEntrega(transaction, idPedido));
                     }
 
-                    // Atualiza a data da ˙ltima liberaÁ„o dos pedidos desta liberaÁ„o, para exibir corretamente no pedido
+                    // Atualiza a data da √∫ltima libera√ß√£o dos pedidos desta libera√ß√£o, para exibir corretamente no pedido
                     objPersistence.ExecuteCommand(transaction, "update pedido set idLiberarPedido=" + idLiberarPedido +
                         " where idPedido in (" + idsPedido + ")", null);
 
                     #endregion
 
-                    #region Atualiza a liberaÁ„o de pedido
+                    #region Atualiza a libera√ß√£o de pedido
 
                     liberaPed.IdFunc = login.CodUser;
                     liberaPed.IdCliente = idCliente;
@@ -2583,7 +2583,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Altera a situaÁ„o para entregue de pedidos de revenda
+                    #region Altera a situa√ß√£o para entregue de pedidos de revenda
 
                     if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
                         Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -2604,7 +2604,7 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido, string.Empty, idLiberarPedido);
 
                     #endregion
 
@@ -2656,10 +2656,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Liberar Pedido Funcion·rio
+        #region Liberar Pedido Funcion√°rio
 
         /// <summary>
-        /// LiberaÁ„o de pedido de Funcion·rio
+        /// Libera√ß√£o de pedido de Funcion√°rio
         /// </summary>
         public uint CriarLiberacaoPedidoFuncionario(uint idCliente, string idsPedido, uint[] idsProdutosPedido,
             uint?[] idsProdutoPedidoProducao, float[] qtdeLiberar)
@@ -2680,29 +2680,29 @@ namespace Glass.Data.DAL
                     var tipoFunc = login.TipoUsuario;
                     if (!Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario) &&
                         !Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                        throw new Exception("VocÍ n„o tem permiss„o para liberar pedidos.");
+                        throw new Exception("Voc√™ n√£o tem permiss√£o para liberar pedidos.");
 
-                    // Garante que apenas pedidos finalizados sejam liberados se a empresa n„o controlar produÁ„o
+                    // Garante que apenas pedidos finalizados sejam liberados se a empresa n√£o controlar produ√ß√£o
                     if (!PCPConfig.ControlarProducao)
                         foreach (var idPedido in Array.ConvertAll(idsPedido.Trim(',').Split(','), x => x.StrParaUint()))
                             if (PedidoEspelhoDAO.Instance.ExisteEspelho(transaction, idPedido) && PedidoEspelhoDAO.Instance.ObtemSituacao(transaction, idPedido) != PedidoEspelho.SituacaoPedido.Finalizado)
                                 throw new Exception("O pedido " + idPedido + " deve estar finalizado no PCP para ser liberado.");
 
-                    // Verifica se todos os pedidos est„o na situaÁ„o ConfirmadoLiberacao
+                    // Verifica se todos os pedidos est√£o na situa√ß√£o ConfirmadoLiberacao
                     if (objPersistence.ExecuteSqlQueryCount(transaction, "Select Count(*) From pedido Where idPedido In (" + idsPedido.Trim(',') + ") " +
                         "And situacao not in (" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + ", " + (int)Pedido.SituacaoPedido.LiberadoParcialmente + ")") > 0)
-                        throw new Exception("Alguns pedidos selecionados j· foram liberados.");
+                        throw new Exception("Alguns pedidos selecionados j√° foram liberados.");
 
                     //Chamado 46600
                     var idsPedidoSemProducao = PedidoDAO.Instance.ObterIdsPedidoRevendaSemProducaoConfirmadaLiberada(transaction, idsPedido);
                     if (!string.IsNullOrEmpty(idsPedidoSemProducao))
-                        throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est„o vinculados a um pedido de produÁ„o que ainda n„o foram confirmados.");
+                        throw new Exception("Os pedidos: " + idsPedidoSemProducao + " est√£o vinculados a um pedido de produ√ß√£o que ainda n√£o foram confirmados.");
 
-                    // Verifica se o funcion·rio foi associado ‡ todos os pedidos
+                    // Verifica se o funcion√°rio foi associado √† todos os pedidos
                     if (ExecuteScalar<bool>(transaction, "Select Count(*)>0 From pedido Where idFuncVenda is null And idPedido in (" + idsPedido.Trim(',') + ")"))
-                        throw new Exception("Um ou mais pedidos est„o sem funcion·rio de venda associado.");
+                        throw new Exception("Um ou mais pedidos est√£o sem funcion√°rio de venda associado.");
 
-                    // Verifica se h· estoque disponÌvel para os produtos sendo liberados
+                    // Verifica se h√° estoque dispon√≠vel para os produtos sendo liberados
                     string mensagem;
                     if (!PedidoPossuiEstoque(transaction, idsProdutosPedido, qtdeLiberar, out mensagem))
                         throw new Exception(mensagem);
@@ -2719,7 +2719,7 @@ namespace Glass.Data.DAL
 
                     //liberaPed.ValorCreditoAoLiberar = ClienteDAO.Instance.GetCredito(idCliente);
 
-                    // Garante que n„o haver· chaves duplicadas para esta liberaÁ„o
+                    // Garante que n√£o haver√° chaves duplicadas para esta libera√ß√£o
                     PagtoLiberarPedidoDAO.Instance.DeleteByLiberacao(transaction, idLiberarPedido);
 
                     #region Salva na tabela os produtos liberados
@@ -2747,7 +2747,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Altera situaÁ„o dos pedidos para Liberado (Confirmado)
+                    #region Altera situa√ß√£o dos pedidos para Liberado (Confirmado)
 
                     foreach (var p in idsPedido.TrimEnd(',').Split(','))
                     {
@@ -2756,7 +2756,7 @@ namespace Glass.Data.DAL
 
                         /* Chamado 56137. */
                         if (idCliente != idClientePedido)
-                            throw new Exception(string.Format("O cliente do pedido {0} È diferente do cliente da liberaÁ„o.", idPedido));
+                            throw new Exception(string.Format("O cliente do pedido {0} √© diferente do cliente da libera√ß√£o.", idPedido));
 
                         Pedido.SituacaoPedido situacao = (!Liberacao.DadosLiberacao.LiberarPedidoProdutos &&
                             !Liberacao.DadosLiberacao.LiberarPedidoAtrasadoParcialmente) ||
@@ -2764,13 +2764,13 @@ namespace Glass.Data.DAL
 
                         PedidoDAO.Instance.AlteraSituacao(transaction, idPedido, situacao);
 
-                        // Gera instalaÁ„o para o pedido
+                        // Gera instala√ß√£o para o pedido
                         PedidoDAO.Instance.GerarInstalacao(transaction, idPedido, PedidoDAO.Instance.ObtemDataEntrega(transaction, idPedido));
                     }
 
                     #endregion
 
-                    #region Atualiza a liberaÁ„o de pedido
+                    #region Atualiza a libera√ß√£o de pedido
 
                     liberaPed.IdFunc = login.CodUser;
                     liberaPed.IdCliente = idCliente;
@@ -2792,7 +2792,7 @@ namespace Glass.Data.DAL
 
                     #endregion
 
-                    #region Altera a situaÁ„o para entregue de pedidos de revenda
+                    #region Altera a situa√ß√£o para entregue de pedidos de revenda
 
                     if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
                         Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -2813,17 +2813,17 @@ namespace Glass.Data.DAL
                     #region Carregamento parcial
 
                     //Atualiza o carregamento e as ocs parciais se houver
-                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido);
+                    CarregamentoDAO.Instance.AtualizaCarregamentoParcial(transaction, idsPedido, string.Empty, idLiberarPedido);
 
                     #endregion
 
-                    // Atualiza o total comprado pelo funcion·rio
+                    // Atualiza o total comprado pelo funcion√°rio
                     // ClienteDAO.Instance.AtualizaTotalComprado(idCliente);
 
                     // Envia o e-mail
                     Email.EnviaEmailLiberacao(transaction, idLiberarPedido);
 
-                    //Faz a movimentaÁ„o do funcion·rio
+                    //Faz a movimenta√ß√£o do funcion√°rio
                     foreach (var idPedido in idsPedido.TrimEnd(',').Split(','))
                     {
                         var idPed = idPedido.StrParaUint();
@@ -2893,7 +2893,7 @@ namespace Glass.Data.DAL
                 var idLoja = idLojaPedido > 0 ? idLojaPedido : UserInfo.GetUserInfo.IdLoja;
                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd);
 
-                // Remove a peÁa da reserva e a coloca na liberaÁ„o
+                // Remove a pe√ßa da reserva e a coloca na libera√ß√£o
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPed.Largura, (int)prodPed.Altura, qtdeLiberar[i], 0, prodPed.Redondo, 0,
                     tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
 
@@ -2928,7 +2928,7 @@ namespace Glass.Data.DAL
                 var pedidoPossuiVolumeExpedido = false;
 
                 /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberaÁ„o n„o podem ser alterados, pois, a baixa j· ocorreu na expediÁ„o dele. */
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/libera√ß√£o n√£o podem ser alterados, pois, a baixa j√° ocorreu na expedi√ß√£o dele. */
                 foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(sessao, (int)prodPed.IdPedido))
                     if (VolumeDAO.Instance.TemExpedicao(sessao, volume.IdVolume))
                     {
@@ -2941,7 +2941,7 @@ namespace Glass.Data.DAL
                 {
                     if (((saidaNaoVidro || saidaBox) && naoVolume) || transferencia)
                     {
-                        // Marca quantos produtos do pedido foi marcado como saÌda, se o pedido n„o tiver que transferir
+                        // Marca quantos produtos do pedido foi marcado como sa√≠da, se o pedido n√£o tiver que transferir
                         if (!transferencia)
                         {
                             var idSaidaEstoque = SaidaEstoqueDAO.Instance.GetNewSaidaEstoque(sessao, idLoja, null, idLiberarPedido, null, false);
@@ -2997,11 +2997,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Cancelar liberaÁ„o
+        #region Cancelar libera√ß√£o
 
         private void ValidarPecaEntregue(GDASession sessao, uint idLiberarPedido)
         {
-            // Verifica se esta liberaÁ„o j· foi expedida na produÁ„o
+            // Verifica se esta libera√ß√£o j√° foi expedida na produ√ß√£o
             if (objPersistence.ExecuteSqlQueryCount(sessao,
                     @"Select Count(*) From produto_pedido_producao ppp 
                         inner join produtos_pedido pp on (ppp.idProdPed=pp.idProdPedEsp)
@@ -3010,8 +3010,8 @@ namespace Glass.Data.DAL
                         and ppp.situacaoProducao=" + (int)SituacaoProdutoProducao.Entregue +
                         @" and plp.idLiberarPedido=" + idLiberarPedido) > 0)
             {
-                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta liberaÁ„o (provavelmente parcial) n„o est„o entregues, 
-                // ao invÈs de barrar se apenas uma peÁa estiver entregue
+                // Se for ordem de carga parcial, verifica se a quantidade de produtos nesta libera√ß√£o (provavelmente parcial) n√£o est√£o entregues, 
+                // ao inv√©s de barrar se apenas uma pe√ßa estiver entregue
                 if (OrdemCargaConfig.UsarOrdemCargaParcial)
                 {
                     foreach (var prodLib in ProdutosLiberarPedidoDAO.Instance.PesquisarPorLiberacao(sessao, idLiberarPedido).ToList())
@@ -3027,17 +3027,17 @@ namespace Glass.Data.DAL
 
                         if (prodLib.QtdeCalc > qtdNaoEntregue)
                         {
-                            throw new Exception("Esta liberaÁ„o possui peÁas que j· foram marcadas como entregue. Verifique na produÁ„o a possibilidade de retir·-las desta situaÁ„o.");
+                            throw new Exception("Esta libera√ß√£o possui pe√ßas que j√° foram marcadas como entregue. Verifique na produ√ß√£o a possibilidade de retir√°-las desta situa√ß√£o.");
                         }
                     }
                 }
                 else
                 {
-                    throw new Exception("Esta liberaÁ„o possui peÁas que j· foram marcadas como entregue. Verifique na produÁ„o a possibilidade de retir·-las desta situaÁ„o.");
+                    throw new Exception("Esta libera√ß√£o possui pe√ßas que j√° foram marcadas como entregue. Verifique na produ√ß√£o a possibilidade de retir√°-las desta situa√ß√£o.");
                 }
             }
 
-            // Verifica se esta liberaÁ„o j· foi expedida na produÁ„o (pedidos de revenda)
+            // Verifica se esta libera√ß√£o j√° foi expedida na produ√ß√£o (pedidos de revenda)
             if (objPersistence.ExecuteSqlQueryCount(sessao,
                     @"Select Count(*) From produto_pedido_producao ppp 
                     Where ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @" 
@@ -3045,21 +3045,21 @@ namespace Glass.Data.DAL
                         @" and ppp.idPedidoExpedicao In 
                             (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
             {
-                throw new Exception("Esta liberaÁ„o possui peÁas que j· foram marcadas como entregue. Verifique na produÁ„o a possibilidade de retir·-las desta situaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui pe√ßas que j√° foram marcadas como entregue. Verifique na produ√ß√£o a possibilidade de retir√°-las desta situa√ß√£o.");
             }
 
-            // Verifica se esta liberaÁ„o j· foi expedida na produÁ„o (pedidos de revenda)
+            // Verifica se esta libera√ß√£o j√° foi expedida na produ√ß√£o (pedidos de revenda)
             if (objPersistence.ExecuteSqlQueryCount(sessao,
                     @"Select Count(*) From produto_impressao pi 
                     Where pi.idPedidoExpedicao In 
                         (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")") > 0)
             {
-                throw new Exception("Esta liberaÁ„o possui peÁas que j· foram marcadas como entregue. Verifique na produÁ„o a possibilidade de retir·-las desta situaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui pe√ßas que j√° foram marcadas como entregue. Verifique na produ√ß√£o a possibilidade de retir√°-las desta situa√ß√£o.");
             }
         }
 
         /// <summary>
-        /// Cancela a liberaÁ„o de um pedido.
+        /// Cancela a libera√ß√£o de um pedido.
         /// </summary>
         public void CancelarLiberacao(uint idLiberarPedido, string obs, DateTime dataEstornoBanco, bool cancelamentoErroCapptaTef, bool gerarCredito)
         {
@@ -3082,7 +3082,7 @@ namespace Glass.Data.DAL
                     transaction.Close();
 
                     ErroDAO.Instance.InserirFromException(string.Format("CancelarLiberacao - ID: {0}", idLiberarPedido), ex);
-                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar liberaÁ„o do pedido.", ex));
+                    throw new Exception(MensagemAlerta.FormatErrorMsg("Falha ao cancelar libera√ß√£o do pedido.", ex));
                 }
                 finally
                 {
@@ -3092,7 +3092,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a liberaÁ„o de um pedido.
+        /// Cancela a libera√ß√£o de um pedido.
         /// </summary>
         public void CancelarLiberacao(GDASession session, uint idLiberarPedido, string obs, DateTime dataEstornoBanco,
             bool cancelamentoErroCapptaTef, bool gerarCredito)
@@ -3104,52 +3104,52 @@ namespace Glass.Data.DAL
 
             /* Chamado 39231. */
             if (liberacaoPedido == null || idLiberarPedido == 0)
-                throw new Exception("N„o foi possÌvel recuperar a liberaÁ„o para efetuar o cancelamento. Tente novamente.");
+                throw new Exception("N√£o foi poss√≠vel recuperar a libera√ß√£o para efetuar o cancelamento. Tente novamente.");
 
-            // Verifica se a liberaÁ„o do pedido j· foi cancelada
+            // Verifica se a libera√ß√£o do pedido j√° foi cancelada
             if (liberacaoPedido.Situacao == (int)LiberarPedido.SituacaoLiberarPedido.Cancelado)
-                throw new Exception("LiberaÁ„o j· cancelada.");
+                throw new Exception("Libera√ß√£o j√° cancelada.");
 
-            // Verifica se esta liberaÁ„o È a prazo e se suas parcelas j· foram pagas
+            // Verifica se esta libera√ß√£o √© a prazo e se suas parcelas j√° foram pagas
             if (liberacaoPedido.TipoPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo &&
                 ContasReceberDAO.Instance.ContaRecebidaLiberacao(session, idLiberarPedido))
-                throw new Exception("Esta liberaÁ„o possui parcelas j· recebidas ou renegociadas, cancele o recebimento/renegociaÁıes antes de cancelar a liberaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui parcelas j√° recebidas ou renegociadas, cancele o recebimento/renegocia√ß√µes antes de cancelar a libera√ß√£o.");
 
-            // Verifica se h· separaÁ„o de valores e se h· notas fiscais ativas para a liberaÁ„o
+            // Verifica se h√° separa√ß√£o de valores e se h√° notas fiscais ativas para a libera√ß√£o
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber && PossuiNotaFiscalAtiva(session, idLiberarPedido))
-                throw new Exception("Esta liberaÁ„o possui uma ou mais notas fiscais n„o canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a liberaÁ„o.");
+                throw new Exception("Esta libera√ß√£o possui uma ou mais notas fiscais n√£o canceladas/inutilizadas, cancele essa(s) nota(s) para cancelar a libera√ß√£o.");
 
             ValidarPecaEntregue(session, idLiberarPedido);
 
-            // Verifica se algum pedido dessa liberaÁ„o j· tem a comiss„o paga
+            // Verifica se algum pedido dessa libera√ß√£o j√° tem a comiss√£o paga
             if (objPersistence.ExecuteSqlQueryCount(session,
                     @"select count(*) from comissao_pedido cp inner join comissao c On (cp.idComissao=c.idComissao) 
                     where cp.idPedido in (select idPedido from produtos_liberar_pedido where idLiberarPedido=" +
                     idLiberarPedido + ") And c.dataCad>?dataLib",
                 new GDAParameter("?dataLib", liberacaoPedido.DataLiberacao)) > 0)
                 throw new Exception(
-                    "Esta liberaÁ„o possui um ou mais pedidos cuja comiss„o j· foi paga. Cancele-as para continuar.");
+                    "Esta libera√ß√£o possui um ou mais pedidos cuja comiss√£o j√° foi paga. Cancele-as para continuar.");
 
-            // Verifica se algum pedido desta liberaÁ„o possui troca/devoluÁ„o n„o canceladas
+            // Verifica se algum pedido desta libera√ß√£o possui troca/devolu√ß√£o n√£o canceladas
             if (TrocaDevolucaoDAO.Instance.ExistsByLiberacao(session, idLiberarPedido))
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem troca/devoluÁ„o, cancele-as antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem troca/devolu√ß√£o, cancele-as antes de cancelar esta libera√ß√£o.");
 
-            //verifica se existe algum volume dos pedidos dessa liberaÁ„o que j· tenha sido expedido
+            //verifica se existe algum volume dos pedidos dessa libera√ß√£o que j√° tenha sido expedido
             if (objPersistence.ExecuteSqlQueryCount(session,
                 @"select count(*) from volume v inner join produtos_liberar_pedido plp on (v.IdPedido = plp.IdPedido)
                                                  left join item_carregamento ic on (v.IdVolume = ic.IdVolume)
                              where (v.datasaidaexpedicao IS NOT NULL OR ic.DataLeitura IS NOT NULL) and plp.idliberarpedido=" + idLiberarPedido + "  and plp.qtdecalc > 0") > 0 && ProducaoConfig.ExpedirSomentePedidosLiberadosNoCarregamento)
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem volume(s) expedidos, estorne o(s) itens antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem volume(s) expedidos, estorne o(s) itens antes de cancelar esta libera√ß√£o.");
 
             /* Chamado 53132.
-             * Apaga as instalaÁıes em aberto geradas pela liberaÁ„o para os pedidos dela. */
+             * Apaga as instala√ß√µes em aberto geradas pela libera√ß√£o para os pedidos dela. */
             objPersistence.ExecuteCommand(session, string.Format(@"DELETE FROM instalacao WHERE (IdOrdemInstalacao IS NULL OR IdOrdemInstalacao=0) AND Situacao={0}
                 AND IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido={1} AND QtdeCalc>0);", (int)Instalacao.SituacaoInst.Aberta, idLiberarPedido));
 
             /* Chamado 53132.
-             * Impede que a liberaÁ„o seja cancelada caso existam instalaÁıes n„o canceladas para um ou mais pedidos dela. */
+             * Impede que a libera√ß√£o seja cancelada caso existam instala√ß√µes n√£o canceladas para um ou mais pedidos dela. */
             if (InstalacaoDAO.Instance.PossuiIntalacoesNaoCanceladas(session, idLiberarPedido))
-                throw new Exception("Um ou mais pedidos desta liberaÁ„o possuem instalaÁıes geradas, cancele as instalaÁıes antes de cancelar esta liberaÁ„o.");
+                throw new Exception("Um ou mais pedidos desta libera√ß√£o possuem instala√ß√µes geradas, cancele as instala√ß√µes antes de cancelar esta libera√ß√£o.");
 
             /* Chamado 70095. */
             var contasReceberLiberacao = ContasReceberDAO.Instance.GetByLiberacaoPedido(session, liberacaoPedido.IdLiberarPedido, false);
@@ -3158,7 +3158,7 @@ namespace Glass.Data.DAL
                 if (liberacaoPedido.TipoPagto != (int)LiberarPedido.TipoPagtoEnum.AVista && contasReceber.Recebida == true)
                 {
                     if (contasReceber.IdFormaPagto > 0 && UtilsPlanoConta.GetPlanoSinal(contasReceber.IdFormaPagto.Value) != contasReceber.IdConta)
-                        throw new Exception("A liberaÁ„o possui contas a receber/recebidas associadas ‡ ela. Cancele os recebimentos antes de efetuar o cancelamento da liberaÁ„o.");
+                        throw new Exception("A libera√ß√£o possui contas a receber/recebidas associadas √† ela. Cancele os recebimentos antes de efetuar o cancelamento da libera√ß√£o.");
                 }
             }
 
@@ -3168,25 +3168,25 @@ namespace Glass.Data.DAL
 
             /* Chamado 64417. */
             //if (ExecuteScalar<bool>(session, string.Format("SELECT COUNT(*)>0 FROM contas_receber WHERE IdLiberarPedido={0}", idLiberarPedido)))
-            //    throw new Exception("A liberaÁ„o possui contas a receber/recebidas associadas ‡ ela. Cancele os recebimentos antes de efetuar o cancelamento da liberaÁ„o.");
+            //    throw new Exception("A libera√ß√£o possui contas a receber/recebidas associadas √† ela. Cancele os recebimentos antes de efetuar o cancelamento da libera√ß√£o.");
 
             lstPedidos = PedidoDAO.Instance.GetByLiberacao(session, idLiberarPedido);            
 
-            #region Remove os produtos da liberaÁ„o
+            #region Remove os produtos da libera√ß√£o
 
             /* Chamado 39231. */
             if (objPersistence.ExecuteSqlQueryCount(session,
                 string.Format("SELECT COUNT(*) FROM produtos_liberar_pedido WHERE QtdeCalc IS NOT NULL AND QtdeCalc>0 AND IdLiberarPedido={0}", idLiberarPedido)) == 0)
-                throw new Exception("N„o foi possÌvel recuperar os produtos da liberaÁ„o. Tente novamente, caso o problema persista entre em contato com o suporte WebGlass.");
+                throw new Exception("N√£o foi poss√≠vel recuperar os produtos da libera√ß√£o. Tente novamente, caso o problema persista entre em contato com o suporte WebGlass.");
 
             objPersistence.ExecuteCommand(session,
                 string.Format("UPDATE produtos_liberar_pedido SET QtdeCalc=0 WHERE IdLiberarPedido={0}", idLiberarPedido));
 
             #endregion
 
-            #region Atualiza a situaÁ„o da liberaÁ„o
+            #region Atualiza a situa√ß√£o da libera√ß√£o
 
-            // Marca a liberaÁ„o como cancelada
+            // Marca a libera√ß√£o como cancelada
             liberacaoPedido.Situacao = (int)LiberarPedido.SituacaoLiberarPedido.Cancelado;
             liberacaoPedido.IdFuncCanc = UserInfo.GetUserInfo.CodUser;
             liberacaoPedido.ObsCanc = obs;
@@ -3195,7 +3195,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Atualiza os status dos pedidos da liberaÁ„o
+            #region Atualiza os status dos pedidos da libera√ß√£o
 
             var idsPedido = string.Join(",", ExecuteMultipleScalar<string>(session,
                 "select distinct cast(idPedido as char) from produtos_liberar_pedido where idLiberarPedido=" +
@@ -3218,14 +3218,14 @@ namespace Glass.Data.DAL
 
                 objPersistence.ExecuteCommand(session, sqlSit);
 
-                //Percorre os pedidos da liberaÁ„o e salva log da mudanÁa da situaÁ„o
+                //Percorre os pedidos da libera√ß√£o e salva log da mudan√ßa da situa√ß√£o
                 foreach (var idPedido in idsPedido.Split(','))
                 {
                     var logData = new LogAlteracao();
                     logData.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
                     logData.IdRegistroAlt = idPedido.StrParaInt();
                     logData.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.Pedido, idPedido.StrParaInt());
-                    logData.Campo = "Situac„o";
+                    logData.Campo = "Situac√£o";
                     logData.DataAlt = DateTime.Now;
                     logData.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
                     logData.ValorAnterior = "Liberado";
@@ -3241,9 +3241,9 @@ namespace Glass.Data.DAL
             #region Atualiza o IdTipoCartao do pedido
 
             /* Chamado 35522.
-             * Caso a liberaÁ„o tenha sido recebida com cart„o de dÈbito, ao cancel·-la deve-se alterar o cart„o para crÈdito no pedido.
-             * Isso porque no pedido s„o exibidos somente cartıes de crÈdito,
-             * e ao receber a liberaÁ„o com cart„o de dÈbito o tipo do cart„o do pedido È atualizado automaticamente. */
+             * Caso a libera√ß√£o tenha sido recebida com cart√£o de d√©bito, ao cancel√°-la deve-se alterar o cart√£o para cr√©dito no pedido.
+             * Isso porque no pedido s√£o exibidos somente cart√µes de cr√©dito,
+             * e ao receber a libera√ß√£o com cart√£o de d√©bito o tipo do cart√£o do pedido √© atualizado automaticamente. */
             if (!string.IsNullOrEmpty(idsPedido))
                 objPersistence.ExecuteCommand(session,
                     string.Format(
@@ -3256,13 +3256,13 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Volta peÁa para a reserva e tira da liberaÁ„o
+            #region Volta pe√ßa para a reserva e tira da libera√ß√£o
 
-            // Recupera os dados da saÌda de estoque da liberaÁ„o e seus produtos
+            // Recupera os dados da sa√≠da de estoque da libera√ß√£o e seus produtos
             var saida = SaidaEstoqueDAO.Instance.GetByLiberacao(session, idLiberarPedido);
             var lstProdSaida = saida != null ? ProdutoSaidaEstoqueDAO.Instance.GetForRpt(session, saida.IdSaidaEstoque).ToArray() : null;
 
-            // Recupera os produtos da liberaÁ„o
+            // Recupera os produtos da libera√ß√£o
             var lstProd = ProdutosLiberarPedidoDAO.Instance.GetByLiberarPedido(session, idLiberarPedido, false);
             var idsProdQtdeReserva = new Dictionary<int, Dictionary<int, float>>();
             var idsProdQtdeLiberacao = new Dictionary<int, Dictionary<int, float>>();
@@ -3271,16 +3271,16 @@ namespace Glass.Data.DAL
             {
                 var idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(session, prod.IdPedido);
 
-                // Tenta achar o produto da saÌda de estoque referente ao produto da liberaÁ„o
+                // Tenta achar o produto da sa√≠da de estoque referente ao produto da libera√ß√£o
                 var pse = saida == null || lstProdSaida == null || lstProdSaida.Length == 0 ? null :
                     Array.Find(lstProdSaida, find => find.IdProdPed == prod.IdProdPed);
 
                 var qtdEstorno = pse != null ? (int)pse.QtdeSaida : prod.Qtde;
 
-                // Verifica o tipo de c·lculo do produto
+                // Verifica o tipo de c√°lculo do produto
                 var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(session, (int)prod.IdProd);
 
-                // Verifica o tipo de c·lculo do produto
+                // Verifica o tipo de c√°lculo do produto
                 var m2Calc = Global.CalculosFluxo.ArredondaM2(session, prod.LarguraProd,
                     (int)prod.AlturaProd, qtdEstorno, 0, prod.Redondo, 0,
                     tipoCalculo != (int)TipoCalculoGrupoProd.M2Direto);
@@ -3313,7 +3313,7 @@ namespace Glass.Data.DAL
                 var pedidoPossuiVolumeExpedido = false;
 
                 /* Chamado 54238.
-                 * Caso o volume tenha sido expedido, o estoque e a reserva/liberaÁ„o n„o podem ser alterados, pois, a baixa j· ocorreu na expediÁ„o dele. */
+                 * Caso o volume tenha sido expedido, o estoque e a reserva/libera√ß√£o n√£o podem ser alterados, pois, a baixa j√° ocorreu na expedi√ß√£o dele. */
                 foreach (var volume in VolumeDAO.Instance.ObterPeloPedido(session, (int)prod.IdPedido))
                     if (VolumeDAO.Instance.TemExpedicao(session, volume.IdVolume))
                     {
@@ -3327,7 +3327,7 @@ namespace Glass.Data.DAL
                         !PCPConfig.ControlarProducao)) || (Liberacao.Estoque.SaidaEstoqueBoxLiberar && GrupoProdDAO.Instance.IsVidro((int)prod.IdGrupoProd) &&
                         SubgrupoProdDAO.Instance.IsSubgrupoProducao(session, (int)prod.IdGrupoProd, (int?)prod.IdSubgrupoProd))) && naoVolume) || transferencia)
                     {
-                        // Estorna a saÌda dada neste produto, se o pedido n„o tiver que transferir
+                        // Estorna a sa√≠da dada neste produto, se o pedido n√£o tiver que transferir
                         if (!transferencia)
                             ProdutosPedidoDAO.Instance.MarcarSaida(session, prod.IdProdPed, qtdEstorno * -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, string.Empty);
 
@@ -3395,7 +3395,7 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            #region Altera a situaÁ„o para n„o entregue de pedidos de revenda
+            #region Altera a situa√ß√£o para n√£o entregue de pedidos de revenda
 
             if (FinanceiroConfig.DadosLiberacao.MarcaPedidoRevendaEntregueAoLiberar &&
                 Liberacao.Estoque.SaidaEstoqueBoxLiberar && PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -3410,17 +3410,17 @@ namespace Glass.Data.DAL
 
             #endregion
 
-            // Verifica se os pedidos est„o entregues
+            // Verifica se os pedidos est√£o entregues
             if (ProducaoConfig.ExpedirSomentePedidosLiberados)
             {
                 var pedidosEntregues = ExecuteMultipleScalar<string>(session, @"Select idPedido From pedido Where situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Entregue + @"
                                         And idPedido In (Select idPedido From produtos_liberar_pedido Where idLiberarPedido=" + idLiberarPedido + ")");
 
                 if (pedidosEntregues.Count() > 0)
-                    throw new Exception("O(s) pedido(s) " + string.Join(",", pedidosEntregues) + " esta(„o) entregue(s).");
+                    throw new Exception("O(s) pedido(s) " + string.Join(",", pedidosEntregues) + " esta(√£o) entregue(s).");
             }
 
-            // Estorna movimentaÁıes do funcion·rio
+            // Estorna movimenta√ß√µes do funcion√°rio
             foreach (var ped in lstPedidos)
                 if (ped.VendidoFuncionario)
                     PedidoDAO.Instance.EstornaMovFunc(session, ped.IdPedido, ped.IdFuncVenda.Value);
@@ -3428,7 +3428,7 @@ namespace Glass.Data.DAL
             /* Chamado 39395. */
             if (objPersistence.ExecuteSqlQueryCount(session,
                 string.Format("SELECT COUNT(*) FROM produtos_liberar_pedido WHERE QtdeCalc IS NOT NULL AND QtdeCalc>0 AND IdLiberarPedido={0}", idLiberarPedido)) > 0)
-                throw new Exception("N„o foi possÌvel cancelar os produtos da liberaÁ„o. Tente novamente, caso o problema persista entre em contato com o suporte WebGlass.");
+                throw new Exception("N√£o foi poss√≠vel cancelar os produtos da libera√ß√£o. Tente novamente, caso o problema persista entre em contato com o suporte WebGlass.");
 
             var idsPedidoLiberado = PedidoDAO.Instance.GetIdsByLiberacao(session, idLiberarPedido);
             if (idsPedidoLiberado.Any())
@@ -3465,7 +3465,7 @@ namespace Glass.Data.DAL
             // Soma a quantidade a ser liberada dos produtos iguais
             for (int i = 0; i < idsProdutosPedido.Length; i++)
             {
-                // Verifica se a loja deste produto_pedido È a mesma do foreach mais acima
+                // Verifica se a loja deste produto_pedido √© a mesma do foreach mais acima
                 uint idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
                 idLoja = (int)PedidoDAO.Instance.ObtemIdLoja(session, idPedido);
 
@@ -3480,8 +3480,8 @@ namespace Glass.Data.DAL
                 var naoVolume = volumeApenasDePedidosEntrega ? entregaBalcao || !subGrupoVolume : !subGrupoVolume;
 
                 /* Chamado 46018.
-                 * Caso o estoque do produto tenha que ser baixado atravÈs de um volume e ele j· tiver sido expedido, n„o verifica o estoque dele.
-                 * A configuraÁ„o UsarControleOrdemCarga È utilizada somente para constatar que n„o ser„o permitidas liberaÁıes parciais. */
+                 * Caso o estoque do produto tenha que ser baixado atrav√©s de um volume e ele j√° tiver sido expedido, n√£o verifica o estoque dele.
+                 * A configura√ß√£o UsarControleOrdemCarga √© utilizada somente para constatar que n√£o ser√£o permitidas libera√ß√µes parciais. */
                 if (OrdemCargaConfig.UsarControleOrdemCarga && !naoVolume && ProdutosPedidoDAO.Instance.ObtemQtdSaida(idsProdutosPedido[i]) == qtdeLiberar[i])
                     continue;
 
@@ -3503,14 +3503,14 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    // Subtrai a quantidade de peÁas j· entregues, observando se o produto j· foi inserido no dicion·rio ou se o pedido
-                    // do mesmo j· foi inserido na listagem
+                    // Subtrai a quantidade de pe√ßas j√° entregues, observando se o produto j√° foi inserido no dicion√°rio ou se o pedido
+                    // do mesmo j√° foi inserido na listagem
                     if (PedidoConfig.LiberarPedido && PedidoDAO.Instance.GetTipoPedido(session, idPedido) == Pedido.TipoPedidoEnum.Revenda &&
                         (!dicProduto.ContainsKey(idProd) || !lstIdPedidos.Contains(idPedido)))
                         qtdALiberar -= ProdutoPedidoProducaoDAO.Instance.ObtemQtdLiberadaRevenda(session, idPedido, idProd);
                 }
 
-                // Salva os pedidos j· inseridos pra fazer o controle de quantidae de peÁas de estoque j· expedidas acima
+                // Salva os pedidos j√° inseridos pra fazer o controle de quantidae de pe√ßas de estoque j√° expedidas acima
                 if (!lstIdPedidos.Contains(idPedido))
                     lstIdPedidos.Add(idPedido);
 
@@ -3520,10 +3520,10 @@ namespace Glass.Data.DAL
                     dicProduto[idProd] += qtdALiberar;
             }
 
-            //armazena os produtos que n„o tem estoque disponÌvel
+            //armazena os produtos que n√£o tem estoque dispon√≠vel
             var produtosSemEstoque = new StringBuilder();
 
-            // Verifica se h· estoque disponÌvel para os produtos sendo liberados
+            // Verifica se h√° estoque dispon√≠vel para os produtos sendo liberados
             foreach (KeyValuePair<uint, float> item in dicProduto)
             {
                 var idGrupoProd = ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)item.Key);
@@ -3547,24 +3547,24 @@ namespace Glass.Data.DAL
                         ProdutoLojaDAO.Instance.GetEstoque((uint)loja.IdLoja, item.Key, produtoVidro && tipoCalculoM2);*/
                     float qtdEstoqueReal = ProdutoLojaDAO.Instance.GetEstoque(session, (uint)idLoja, item.Key, null, false, true, produtoVidro && tipoCalculoM2);
 
-                    // Verifica se o estoque real È suficiente para liberar a peÁa,
-                    // esta situaÁ„o ocorre somente quando o controle de estoque n„o est· bloqueando.
+                    // Verifica se o estoque real √© suficiente para liberar a pe√ßa,
+                    // esta situa√ß√£o ocorre somente quando o controle de estoque n√£o est√° bloqueando.
                     if (qtdEstoqueReal < qtdLiberar)
                     {
                         var codInternoProduto = ProdutoDAO.Instance.GetCodInterno(session, (int)item.Key);
                         var descricaoProduto = ProdutoDAO.Instance.ObtemDescricao(session, (int)item.Key);
 
                         produtosSemEstoque.Append($@"{ codInternoProduto } - { descricaoProduto }
-                            Estoque disponÌvel: { qtdEstoqueReal }
+                            Estoque dispon√≠vel: { qtdEstoqueReal }
                             Quantidade liberada: { qtdLiberar }\n");
                     }
                 }
             }
 
-            //verifica se algum produto n„o tem estoque e caso n„o adiciona na mensagem
+            //verifica se algum produto n√£o tem estoque e caso n√£o adiciona na mensagem
             if (!string.IsNullOrWhiteSpace(produtosSemEstoque.ToString()))
             {
-                mensagem = string.Format("A liberaÁ„o n„o pode ser realizada pois o(s) produto(s) {0} n„o possui(em) estoque disponÌvel.", produtosSemEstoque);
+                mensagem = string.Format("A libera√ß√£o n√£o pode ser realizada pois o(s) produto(s) {0} n√£o possui(em) estoque dispon√≠vel.", produtosSemEstoque);
 
                 return false;
             }
@@ -3574,10 +3574,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a liberaÁ„o existe
+        #region Verifica se a libera√ß√£o existe
 
         /// <summary>
-        /// Verifica se a liberaÁ„o existe
+        /// Verifica se a libera√ß√£o existe
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -3590,10 +3590,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a liberaÁ„o est· aberta
+        #region Verifica se a libera√ß√£o est√° aberta
 
         /// <summary>
-        /// Verifica se a liberaÁ„o est· aberta.
+        /// Verifica se a libera√ß√£o est√° aberta.
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -3605,11 +3605,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a liberaÁ„o È ‡ vista
+        #region Verifica se a libera√ß√£o √© √† vista
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Verifica se a liberaÁ„o È ‡ vista.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Verifica se a libera√ß√£o √© √† vista.
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -3619,7 +3619,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a liberaÁ„o È ‡ vista.
+        /// Verifica se a libera√ß√£o √© √† vista.
         /// </summary>
         public bool IsLiberacaoAVista(GDASession sessao, uint idLiberarPedido)
         {
@@ -3629,14 +3629,14 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se um pedido est· liberado
+        #region Verifica se um pedido est√° liberado
 
         /// <summary>
-        /// Retorna o comando SQL executado para verificar se um pedido est· liberado.
+        /// Retorna o comando SQL executado para verificar se um pedido est√° liberado.
         /// </summary>
         private string SqlPedidoLiberado(uint idPedido, string idLiberarPedido)
         {
-            // Se a quantidade de produtos no pedido for menor ou igual ‡ quantidade de produtos liberados,
+            // Se a quantidade de produtos no pedido for menor ou igual √† quantidade de produtos liberados,
             string sql = @"
                 select coalesce(min(pp.qtde<=plp.qtde),0)
                 from (
@@ -3679,7 +3679,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se um pedido j· foi liberado totalmente.
+        /// Verifica se um pedido j√° foi liberado totalmente.
         /// </summary>
         public bool IsPedidoLiberado(GDASession sessao, uint idPedido)
         {
@@ -3696,11 +3696,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se um produto de um pedido est· liberado
+        #region Verifica se um produto de um pedido est√° liberado
 
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// <summary>
-        /// Verifica se um produto est· liberado (usado para liberaÁıes parciais).
+        /// Verifica se um produto est√° liberado (usado para libera√ß√µes parciais).
         /// </summary>
         public bool IsProdutoPedidoLiberado(uint? idProdPed, uint? idProdPedEsp, uint idProdPedProducao)
         {
@@ -3708,14 +3708,14 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se um produto est· liberado (usado para liberaÁıes parciais).
+        /// Verifica se um produto est√° liberado (usado para libera√ß√µes parciais).
         /// </summary>
         public bool IsProdutoPedidoLiberado(GDASession sessao, uint? idProdPed, uint? idProdPedEsp, uint idProdPedProducao)
         {
             string sql;
 
-            // N„o deve verificar se a peÁa quebrada est· liberada, deve verificar se a peÁa nova foi liberada, pois pode acontecer
-            // de liberar a peÁa nova sem que a mesma tenha sido liberada.
+            // N√£o deve verificar se a pe√ßa quebrada est√° liberada, deve verificar se a pe√ßa nova foi liberada, pois pode acontecer
+            // de liberar a pe√ßa nova sem que a mesma tenha sido liberada.
 
             //idProdPed = PedidoReposicaoDAO.Instance.GetProdPedEspOriginal(idProdPed);
 
@@ -3756,7 +3756,7 @@ namespace Glass.Data.DAL
         #region Verifica se um pedido pode ser cancelado
 
         /// <summary>
-        /// Verifica se h· algum produto liberado para o pedido.
+        /// Verifica se h√° algum produto liberado para o pedido.
         /// </summary>
         /// <param name="idPedido">O id do pedido.</param>
         /// <returns></returns>
@@ -3766,7 +3766,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se h· algum produto liberado para o pedido.
+        /// Verifica se h√° algum produto liberado para o pedido.
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idPedido">O id do pedido.</param>
@@ -3785,7 +3785,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region C·lculo de ICMS de uma liberaÁ„o
+        #region C√°lculo de ICMS de uma libera√ß√£o
 
         private string SqlIcms(string idLiberarPedido)
         {
@@ -3804,7 +3804,7 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// Retorna o valor do ICMS de uma liberaÁ„o.
+        /// Retorna o valor do ICMS de uma libera√ß√£o.
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -3815,10 +3815,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o ID de uma liberaÁ„o para uma lista de pedidos
+        #region Recupera o ID de uma libera√ß√£o para uma lista de pedidos
 
         /// <summary>
-        /// Recupera o ID de uma liberaÁ„o para uma lista de pedidos.
+        /// Recupera o ID de uma libera√ß√£o para uma lista de pedidos.
         /// </summary>
         public uint? GetIdLiberacao(string idsPedidos)
         {
@@ -3826,7 +3826,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o ID de uma liberaÁ„o para uma lista de pedidos.
+        /// Recupera o ID de uma libera√ß√£o para uma lista de pedidos.
         /// </summary>
         public uint? GetIdLiberacao(GDASession session, string idsPedidos)
         {
@@ -3847,10 +3847,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o ID de uma liberaÁ„o para a impress„o de boletos
+        #region Recupera o ID de uma libera√ß√£o para a impress√£o de boletos
 
         /// <summary>
-        /// Recupera o ID de uma liberaÁ„o para a impress„o de boletos.
+        /// Recupera o ID de uma libera√ß√£o para a impress√£o de boletos.
         /// </summary>
         public int? ObterIdLiberarPedidoParaImpressaoBoletoNFe(GDASession sessao, int idPedido, int idNf)
         {
@@ -3867,10 +3867,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera os pedidos de uma lista de liberaÁıes
+        #region Recupera os pedidos de uma lista de libera√ß√µes
 
         /// <summary>
-        /// Recupera os pedidos de uma lista de liberaÁıes.
+        /// Recupera os pedidos de uma lista de libera√ß√µes.
         /// </summary>
         public string IdsPedidos(GDASession sessao, string idsLiberacoes)
         {
@@ -3885,11 +3885,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera uma lista de liberaÁıes que contÈm um pedido
+        #region Recupera uma lista de libera√ß√µes que cont√©m um pedido
 
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
-        /// Recupera uma lista de liberaÁıes que contÈm um pedido.
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
+        /// Recupera uma lista de libera√ß√µes que cont√©m um pedido.
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -3899,7 +3899,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera uma lista de liberaÁıes que contÈm um pedido.
+        /// Recupera uma lista de libera√ß√µes que cont√©m um pedido.
         /// </summary>
         public IList<uint> GetIdsLiberacaoByPedido(GDASession sessao, uint idPedido)
         {
@@ -3909,7 +3909,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera uma lista de liberaÁıes que contÈm um pedido.
+        /// Recupera uma lista de libera√ß√µes que cont√©m um pedido.
         /// </summary>
         public IList<uint> GetIdsLiberacaoAtivaByPedido(GDASession sessao, uint idPedido)
         {
@@ -3921,7 +3921,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera uma lista de liberaÁıes que contÈm um pedido.
+        /// Recupera uma lista de libera√ß√µes que cont√©m um pedido.
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -3933,10 +3933,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se uma liberaÁ„o foi parcial
+        #region Verifica se uma libera√ß√£o foi parcial
 
         /// <summary>
-        /// Verifica se em uma liberaÁ„o houve alguma liberaÁ„o parcial de pedido.
+        /// Verifica se em uma libera√ß√£o houve alguma libera√ß√£o parcial de pedido.
         /// </summary>
         public bool IsLiberacaoParcial(uint idLiberarPedido)
         {
@@ -3944,7 +3944,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se em uma liberaÁ„o houve alguma liberaÁ„o parcial de pedido.
+        /// Verifica se em uma libera√ß√£o houve alguma libera√ß√£o parcial de pedido.
         /// </summary>
         public bool IsLiberacaoParcial(GDASession session, uint idLiberarPedido)
         {
@@ -3956,10 +3956,10 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(idsPedido) || string.IsNullOrWhiteSpace(idsPedido))
                 return false;
 
-            // Antes de executar o sql abaixo, verifica pedido a pedido se foram liberados em mais de uma liberaÁ„o 
-            // e se est„o na situaÁ„o "Liberado", pois se possuirem apenas uma liberaÁ„o e estiverem confirmados,
-            // quer dizer que n„o foram liberados parcialmente, a idÈia È retirar esta verificaÁ„o depois de fazer o pedido
-            // m„o de obra funcionar igual pedido de venda e revenda.
+            // Antes de executar o sql abaixo, verifica pedido a pedido se foram liberados em mais de uma libera√ß√£o 
+            // e se est√£o na situa√ß√£o "Liberado", pois se possuirem apenas uma libera√ß√£o e estiverem confirmados,
+            // quer dizer que n√£o foram liberados parcialmente, a id√©ia √© retirar esta verifica√ß√£o depois de fazer o pedido
+            // m√£o de obra funcionar igual pedido de venda e revenda.
             if (ExecuteScalar<bool>(session, @"
                 Select Count(*)>0 From pedido 
                 Where idPedido In (" + idsPedido + @")
@@ -3979,7 +3979,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se um pedido foi liberado parcialmente em uma liberaÁ„o de pedido.
+        /// Verifica se um pedido foi liberado parcialmente em uma libera√ß√£o de pedido.
         /// </summary>
         /// <param name="idPedido"></param>
         /// <param name="idsLiberarPedidos"></param>
@@ -3991,10 +3991,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm dados da liberaÁ„o
+        #region Obt√©m dados da libera√ß√£o
 
         /// <summary>
-        /// Recupera o ID do cliente de uma liberaÁ„o.
+        /// Recupera o ID do cliente de uma libera√ß√£o.
         /// </summary>
         public uint GetIdCliente(uint idLiberarPedido)
         {
@@ -4002,7 +4002,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o ID do cliente de uma liberaÁ„o.
+        /// Recupera o ID do cliente de uma libera√ß√£o.
         /// </summary>
         public uint GetIdCliente(GDASession session, uint idLiberarPedido)
         {
@@ -4017,7 +4017,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera a data da primeira liberaÁ„o do pedido.
+        /// Recupera a data da primeira libera√ß√£o do pedido.
         /// </summary>
         public DateTime? ObterDataPrimeiraLiberacaoPedido(GDASession session, uint idPedido)
         {
@@ -4056,7 +4056,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm as lojas das liberaÁıes
+        /// Obt√©m as lojas das libera√ß√µes
         /// </summary>
         public string ObtemIdsLojas(string idsLiberarPedidos)
         {
@@ -4082,7 +4082,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna todos os ids das liberaÁıes de pedido do acerto.
+        /// Retorna todos os ids das libera√ß√µes de pedido do acerto.
         /// </summary>
         public string ObterIdsLiberarPedidoPeloAcerto(GDASession session, int idAcerto)
         {
@@ -4097,10 +4097,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera descontos de liberaÁıes
+        #region Recupera descontos de libera√ß√µes
 
         /// <summary>
-        /// Recupera descontos de liberaÁıes
+        /// Recupera descontos de libera√ß√µes
         /// </summary>
         /// <param name="idsLiberacao"></param>
         /// <returns></returns>
@@ -4115,10 +4115,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Exibir nota promissÛria?
+        #region Exibir nota promiss√≥ria?
 
         /// <summary>
-        /// A nota promissÛria deve ser exibida?
+        /// A nota promiss√≥ria deve ser exibida?
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -4142,7 +4142,7 @@ namespace Glass.Data.DAL
 
         #region Tem nota fiscal gerada?
         /// <summary>
-        /// Verifica se a liberaÁ„o possui nota fiscal gerada.
+        /// Verifica se a libera√ß√£o possui nota fiscal gerada.
         /// </summary>
         /// <param name="idLiberarPedido"></param>
         /// <returns></returns>
@@ -4191,7 +4191,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a liberaÁ„o possui pedidos de reposiÁ„o
+        #region Verifica se a libera√ß√£o possui pedidos de reposi√ß√£o
 
         public bool ContemPedidosReposicao(GDASession sessao, uint idLiberarPedido)
         {
@@ -4204,10 +4204,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se h· nota fiscal n„o cancelada/inutilizada para uma liberaÁ„o
+        #region Verifica se h√° nota fiscal n√£o cancelada/inutilizada para uma libera√ß√£o
 
         /// <summary>
-        /// Verifica se h· nota fiscal n„o cancelada/inutilizada para uma liberaÁ„o.
+        /// Verifica se h√° nota fiscal n√£o cancelada/inutilizada para uma libera√ß√£o.
         /// </summary>
         public bool PossuiNotaFiscalAtiva(uint idLiberarPedido)
         {
@@ -4215,11 +4215,11 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se h· nota fiscal n„o cancelada/inutilizada para uma liberaÁ„o.
+        /// Verifica se h√° nota fiscal n√£o cancelada/inutilizada para uma libera√ß√£o.
         /// </summary>
         public bool PossuiNotaFiscalAtiva(GDASession session, uint idLiberarPedido)
         {
-            // Verifica se h· alguma nota fiscal ativa para a liberaÁ„o passada
+            // Verifica se h√° alguma nota fiscal ativa para a libera√ß√£o passada
             string sql = @"select count(*) from nota_fiscal nf
 	            inner join pedidos_nota_fiscal pnf on (nf.idNf=pnf.idNf)
             where pnf.idLiberarPedido=" + idLiberarPedido + " and nf.situacao not in (" +
@@ -4228,7 +4228,7 @@ namespace Glass.Data.DAL
             if (objPersistence.ExecuteSqlQueryCount(session, sql) == 0)
                 return false;
 
-            // Caso n„o tenha uma nota fiscal ativa, verifica se a mesma possui referÍncia de conta a receber
+            // Caso n√£o tenha uma nota fiscal ativa, verifica se a mesma possui refer√™ncia de conta a receber
             return ExecuteScalar<bool>(session, @"
                 Select Count(*)>0 From contas_receber cr
                     inner join pedidos_nota_fiscal pnf on (cr.idNf=pnf.idNf)
@@ -4237,7 +4237,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         public override uint Insert(GDASession session, LiberarPedido objInsert)
         {
@@ -4254,21 +4254,21 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Valida para expediÁ„o
+        #region Valida para expedi√ß√£o
 
         /// <summary>
-        /// Valida se uma liberaÁ„o pode ser expedida.
+        /// Valida se uma libera√ß√£o pode ser expedida.
         /// </summary>
         /// <param name="idLiberacao"></param>
         public void ValidaLiberacaoParaExpedicaoBalcao(uint idLiberacao)
         {
             if (!LiberacaoExists(idLiberacao))
-                throw new Exception("A liberaÁ„o informada n„o foi encontrada.");
+                throw new Exception("A libera√ß√£o informada n√£o foi encontrada.");
 
             if (!IsLiberacaoAberta(idLiberacao))
-                throw new Exception("A liberaÁ„o informada esta cancelada.");
+                throw new Exception("A libera√ß√£o informada esta cancelada.");
 
-            //Verifica se a liberaÁ„o possui apenas pedidos do tipo entrega balc„o
+            //Verifica se a libera√ß√£o possui apenas pedidos do tipo entrega balc√£o
             var sql = @"
                 SELECT count(*)
                 FROM liberarPedido lp
@@ -4278,11 +4278,11 @@ namespace Glass.Data.DAL
 	                AND lp.IdLiberarPedido = " + idLiberacao;
 
             if (objPersistence.ExecuteSqlQueryCount(sql) > 0)
-                throw new Exception("A liberaÁ„o informada n„o possui apenas pedidos do tipo entrega balc„o.");
+                throw new Exception("A libera√ß√£o informada n√£o possui apenas pedidos do tipo entrega balc√£o.");
         }
 
         /// <summary>
-        /// Verifica se o pedido informado faz parte da liberaÁ„o informada.
+        /// Verifica se o pedido informado faz parte da libera√ß√£o informada.
         /// </summary>
         public bool VerificaPedidoLiberacao(GDASession session, int idLiberacao, int idPedido)
         {
@@ -4299,7 +4299,7 @@ namespace Glass.Data.DAL
         #region API
 
         /// <summary>
-        /// Verifica se houve liberaÁ„o de pedido apos a data informada
+        /// Verifica se houve libera√ß√£o de pedido apos a data informada
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="dataInicial"></param>

@@ -1,4 +1,4 @@
-﻿using GDA;
+using GDA;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Glass.Data.RelDAL;
@@ -107,7 +107,7 @@ namespace Glass.Data.RelModel
                 if (NotaFiscalDAO.Instance.ExistsByPedido(null, idPedido))
                     aux.Add("\t** Pedido já tem notas fiscais cadastradas." + Environment.NewLine);
 
-                var retornoValidacao = PedidoDAO.Instance.ValidaPedidoLiberacao(null, idPedido, null, null, false, null).Split('|');
+                var retornoValidacao = PedidoDAO.Instance.ValidaPedidoLiberacao(null, idPedido, null, null, false, null, string.Empty).Split('|');
 
                 if (retornoValidacao[0] != "true")
                     aux.Add("\t** " + retornoValidacao[1]);
