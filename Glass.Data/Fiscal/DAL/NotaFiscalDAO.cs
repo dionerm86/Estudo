@@ -3498,7 +3498,7 @@ namespace Glass.Data.DAL
                                 XmlElement icmsSn101 = doc.CreateElement("ICMSSN101");
                                 ManipulacaoXml.SetNode(doc, icmsSn101, "orig", pnf.CstOrig.ToString()); // Nacional
                                 ManipulacaoXml.SetNode(doc, icmsSn101, "CSOSN", pnf.Csosn);
-                                ManipulacaoXml.SetNode(doc, icmsSn101, "pCredSN", Formatacoes.TrataValorDouble(aliqICMSSN, 2));
+                                ManipulacaoXml.SetNode(doc, icmsSn101, "pCredSN", Formatacoes.TrataValorDouble(aliqICMSSN, 4));
                                 ManipulacaoXml.SetNode(doc, icmsSn101, "vCredICMSSN", Formatacoes.TrataValorDecimal(pnf.Total * ((decimal)aliqICMSSN / 100), 2));
                                 icms.AppendChild(icmsSn101);
                                 break;
@@ -3529,7 +3529,7 @@ namespace Glass.Data.DAL
                                     pnf.InfAdic += string.Format(" Base cálculo FCP ST {0}, Valor FCP ST {1} ({2}%);",
                                         bcFcpSt.ToString("C"), valorFcpSt.ToString("C"), aliqFcpSt);
                                 }
-                                ManipulacaoXml.SetNode(doc, icmsSn201, "pCredSN", Formatacoes.TrataValorDouble(aliqICMSSN, 2));
+                                ManipulacaoXml.SetNode(doc, icmsSn201, "pCredSN", Formatacoes.TrataValorDouble(aliqICMSSN, 4));
                                 ManipulacaoXml.SetNode(doc, icmsSn201, "vCredICMSSN", Formatacoes.TrataValorDecimal(pnf.Total * ((decimal)aliqICMSSN / 100), 2));
                                 icms.AppendChild(icmsSn201);
                                 break;
@@ -3606,7 +3606,7 @@ namespace Glass.Data.DAL
                                 // Calcula alíquota do simples
                                 //ManipulacaoXml.SetNode(doc, icmsSn900, "vBCSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastBcIcmsSt(pnf.IdProdNf), 2));
                                 //ManipulacaoXml.SetNode(doc, icmsSn900, "vICMSSTRet", Formatacoes.TrataValorDecimal(ProdutosNfDAO.Instance.GetLastIcmsSt(pnf.IdProdNf), 2));
-                                ManipulacaoXml.SetNode(doc, icmsSn900, "pCredSN", Formatacoes.TrataValorDouble(calcIcms ? aliqICMSSN : 0, 2));
+                                ManipulacaoXml.SetNode(doc, icmsSn900, "pCredSN", Formatacoes.TrataValorDouble(calcIcms ? aliqICMSSN : 0, 4));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vCredICMSSN", Formatacoes.TrataValorDecimal(calcIcms ? pnf.Total * ((decimal)aliqICMSSN / 100) : 0, 2));
 
                                 icms.AppendChild(icmsSn900);
