@@ -115,9 +115,9 @@ namespace Glass.Data.RelDAL
                 round(if(p.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao + @", 0, 
                     if(" + tipoCalculoM2 + ", coalesce(pp.totM / {0}, 0), coalesce({0}, 0))),2)", entradaEstoqueQtde);
 
-            string sql = string.Format(@"
+            string sql = $@"
                 SELECT p.idPedido, p.idCli as idCliente, p.dataEntrega, pp.idProd, (pp.Qtde-pp.QtdSaida) as QtdeReserva, 
-                    0 as QtdeLiberacao, {0} as QtdeEntradaEstoque, c.Nome as NomeCliente, p.dataConf, 
+                    0 as QtdeLiberacao, {entradaEstoque} as QtdeEntradaEstoque, c.Nome as NomeCliente, p.dataConf, 
                     lp.dataLiberacao as dataLiberacao, '$$$' as Criterio, prod.codInterno, prod.descricao, 
                     p.idProjeto, p.dataPedido, prod.idGrupoProd, prod.idSubgrupoProd, g.descricao as NomeGrupo, s.descricao as NomeSubgrupo,
                     round((Select Sum(QtdEstoque) From produto_loja pl Where pl.idProd=prod.idProd),2) as qtdeEstoque, 
@@ -131,21 +131,13 @@ namespace Glass.Data.RelDAL
                     LEFT JOIN produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
                     LEFT JOIN liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                 WHERE pp.Qtde<>pp.QtdSaida 
-                    AND pp.Invisivel{1}=0
-		            AND p.Situacao={2}
-                    AND p.TipoPedido<>{3}
-		            {4}{5}
+                    AND pp.Invisivel{(PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido")}=0
+		            AND p.Situacao IN ({(PedidoConfig.LiberarPedido ? $"{(int)Pedido.SituacaoPedido.ConfirmadoLiberacao},{(int)Pedido.SituacaoPedido.LiberadoParcialmente}" : ((int)Pedido.SituacaoPedido.Confirmado).ToString())})
+                    AND p.TipoPedido<>{(int)Pedido.TipoPedidoEnum.Producao}
+		            {sqlProd}{where}
                 GROUP BY pp.idProdPed, p.idPedido
-                HAVING {6}{7}",
-
-                entradaEstoque,
-                PCPConfig.UsarConferenciaFluxo ? "Fluxo" : "Pedido",
-                PedidoConfig.LiberarPedido ? (int)Pedido.SituacaoPedido.ConfirmadoLiberacao : (int)Pedido.SituacaoPedido.Confirmado,
-                (int)Pedido.TipoPedidoEnum.Producao,
-                sqlProd,
-                where,
-                (tipoColunas == 1 ? "qtdeReserva>0" : tipoColunas == 2 ? "qtdeLiberacao>0" : "qtdeReserva>0 or qtdeLiberacao>0"),
-                (forRpt && tipoColunas == 0 ? " or qtdeEntradaEstoque>0" : ""));
+                HAVING {(tipoColunas == 1 ? "qtdeReserva>0" : tipoColunas == 2 ? "qtdeLiberacao>0" : "qtdeReserva>0 or qtdeLiberacao>0")}
+                    {(forRpt && tipoColunas == 0 ? " or qtdeEntradaEstoque>0" : "")}";
 
             sql += string.Format(@"
                 UNION ALL
