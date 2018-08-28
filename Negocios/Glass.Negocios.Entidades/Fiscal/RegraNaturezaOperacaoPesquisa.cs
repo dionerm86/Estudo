@@ -70,6 +70,9 @@
         /// </summary>
         public float? Espessura { get; set; }
 
+        /// <summary>
+        /// Unidade Federativa de destino
+        /// </summary>
         public string UfDest { get; set; }
 
         /// <summary>

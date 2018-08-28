@@ -642,14 +642,12 @@ namespace Glass.Fiscal.Negocios.Componentes
         /// <returns></returns>
         public Entidades.RegraNaturezaOperacao ObtemRegraNaturezaOperacao(int idRegraNaturezaOperacao)
         {
-            var treste = SourceContext.Instance.CreateQuery()
+            return SourceContext.Instance.CreateQuery()
                 .From<Data.Model.RegraNaturezaOperacao>()
                 .Where("IdRegraNaturezaOperacao=?id")
                 .Add("?id", idRegraNaturezaOperacao)
                 .ProcessLazyResult<Entidades.RegraNaturezaOperacao>()
                 .FirstOrDefault();
-
-            return treste;
         }
 
         /// <summary>

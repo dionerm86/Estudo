@@ -2,7 +2,7 @@
   jQuery utils - 0.8.5
   http://code.google.com/p/jquery-utils/
 
-  (c) Maxime Haineault <haineault@gmail.com> 
+  (c) Maxime Haineault <haineault@gmail.com>
   http://haineault.com
 
   MIT License (http://www.opensource.org/licenses/mit-license.php
@@ -20,7 +20,7 @@
         parseInt: function(v){ return parseInt(v, 10); }
     };
 
-	$.extend({ 
+	$.extend({
 
         // Returns a range object
         // Author: Matthias Miller
@@ -52,21 +52,21 @@
             return a;
         },
 
-        // Taken from ui.core.js. 
+        // Taken from ui.core.js.
         // Why are you keeping this gem for yourself guys ? :|
         keyCode: {
             BACKSPACE: 8, CAPS_LOCK: 20, COMMA: 188, CONTROL: 17, DELETE: 46, DOWN: 40,
             END: 35, ENTER: 13, ESCAPE: 27, HOME: 36, INSERT:  45, LEFT: 37,
-            NUMPAD_ADD: 107, NUMPAD_DECIMAL: 110, NUMPAD_DIVIDE: 111, NUMPAD_ENTER: 108, 
-            NUMPAD_MULTIPLY: 106, NUMPAD_SUBTRACT: 109, PAGE_DOWN: 34, PAGE_UP: 33, 
+            NUMPAD_ADD: 107, NUMPAD_DECIMAL: 110, NUMPAD_DIVIDE: 111, NUMPAD_ENTER: 108,
+            NUMPAD_MULTIPLY: 106, NUMPAD_SUBTRACT: 109, PAGE_DOWN: 34, PAGE_UP: 33,
             PERIOD: 190, RIGHT: 39, SHIFT: 16, SPACE: 32, TAB: 9, UP: 38
         },
-        
+
         // Takes a keyboard event and return true if the keycode match the specified keycode
         keyIs: function(k, e) {
             return parseInt($.keyCode[k.toUpperCase()], 10) == parseInt((typeof(e) == 'number' )? e: e.keyCode, 10);
         },
-        
+
         // Returns the key of an array
         keys: function(arr) {
             var o = [];
@@ -96,7 +96,7 @@
         // Returns the filename of a path
         filename: function(path) {
             return path.split('/').pop();
-        }, 
+        },
 
         // Returns a formated file size
         filesizeformat: function(bytes, suffixes){
@@ -114,12 +114,12 @@
             var tokens = s.split('.');
             return tokens[tokens.length-1] || false;
         },
-        
+
         // Returns true if an object is a String
         isString: function(o) {
             return typeof(o) == 'string' && true || false;
         },
-        
+
         // Returns true if an object is a RegExp
 		isRegExp: function(o) {
 			return o && o.constructor.toString().indexOf('RegExp()') != -1 || false;
@@ -128,31 +128,31 @@
         isObject: function(o) {
             return (typeof(o) == 'object');
         },
-        
+
         // Convert input to currency (two decimal fixed number)
 		toCurrency: function(i) {
 			i = parseFloat(i, 10).toFixed(2);
 			return (i=='NaN') ? '0.00' : i;
 		},
 
-        /*-------------------------------------------------------------------- 
+        /*--------------------------------------------------------------------
          * javascript method: "pxToEm"
          * by:
-           Scott Jehl (scott@filamentgroup.com) 
+           Scott Jehl (scott@filamentgroup.com)
            Maggie Wachs (maggie@filamentgroup.com)
            http://www.filamentgroup.com
          *
          * Copyright (c) 2008 Filament Group
          * Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL (filamentgroup.com/examples/gpl-license.txt) licenses.
          *
-         * Description: pxToEm converts a pixel value to ems depending on inherited font size.  
+         * Description: pxToEm converts a pixel value to ems depending on inherited font size.
          * Article: http://www.filamentgroup.com/lab/retaining_scalable_interfaces_with_pixel_to_em_conversion/
-         * Demo: http://www.filamentgroup.com/examples/pxToEm/	 	
-         *							
-         * Options:  	 								
+         * Demo: http://www.filamentgroup.com/examples/pxToEm/
+         *
+         * Options:
                 scope: string or jQuery selector for font-size scoping
                 reverse: Boolean, true reverses the conversion to em-px
-         * Dependencies: jQuery library						  
+         * Dependencies: jQuery library
          * Usage Example: myPixelValue.pxToEm(); or myPixelValue.pxToEm({'scope':'#navigation', reverse: true});
          *
          * Version: 2.1, 18.12.2008
@@ -168,33 +168,33 @@
                 scope: 'body',
                 reverse: false
             }, settings);
-            
+
             var pxVal = (i === '') ? 0 : parseFloat(i);
             var scopeVal;
             var getWindowWidth = function(){
                 var de = document.documentElement;
                 return self.innerWidth || (de && de.clientWidth) || document.body.clientWidth;
-            };	
-            
-            /* When a percentage-based font-size is set on the body, IE returns that percent of the window width as the font-size. 
-                For example, if the body font-size is 62.5% and the window width is 1000px, IE will return 625px as the font-size. 	
-                When this happens, we calculate the correct body font-size (%) and multiply it by 16 (the standard browser font size) 
+            };
+
+            /* When a percentage-based font-size is set on the body, IE returns that percent of the window width as the font-size.
+                For example, if the body font-size is 62.5% and the window width is 1000px, IE will return 625px as the font-size.
+                When this happens, we calculate the correct body font-size (%) and multiply it by 16 (the standard browser font size)
                 to get an accurate em value. */
-                        
+
             if (settings.scope == 'body' && $.browser != null && $.browser.msie && (parseFloat($('body').css('font-size')) / getWindowWidth()).toFixed(1) > 0.0) {
-                var calcFontSize = function(){		
+                var calcFontSize = function(){
                     return (parseFloat($('body').css('font-size'))/getWindowWidth()).toFixed(3) * 16;
                 };
                 scopeVal = calcFontSize();
             }
             else { scopeVal = parseFloat(jQuery(settings.scope).css("font-size")); }
-                    
+
             var result = (settings.reverse === true) ? (pxVal * scopeVal).toFixed(2) + 'px' : (pxVal / scopeVal).toFixed(2) + 'em';
             return result;
         }
 	});
 
-	$.extend($.fn, { 
+	$.extend($.fn, {
         type: function() {
             try { return $(this).get(0).nodeName.toLowerCase(); }
             catch(e) { return false; }
@@ -217,18 +217,18 @@
             return $(this);
         },
 
-        /*-------------------------------------------------------------------- 
+        /*--------------------------------------------------------------------
          * JQuery Plugin: "EqualHeights"
          * by:	Scott Jehl, Todd Parker, Maggie Costello Wachs (http://www.filamentgroup.com)
          *
          * Copyright (c) 2008 Filament Group
          * Licensed under GPL (http://www.opensource.org/licenses/gpl-license.php)
          *
-         * Description: Compares the heights or widths of the top-level children of a provided element 
-                and sets their min-height to the tallest height (or width to widest width). Sets in em units 
+         * Description: Compares the heights or widths of the top-level children of a provided element
+                and sets their min-height to the tallest height (or width to widest width). Sets in em units
                 by default if pxToEm() method is available.
-         * Dependencies: jQuery library, pxToEm method	(article: 
-                http://www.filamentgroup.com/lab/retaining_scalable_interfaces_with_pixel_to_em_conversion/)							  
+         * Dependencies: jQuery library, pxToEm method	(article:
+                http://www.filamentgroup.com/lab/retaining_scalable_interfaces_with_pixel_to_em_conversion/)
          * Usage Example: $(element).equalHeights();
                 Optional: to set min-height in px, pass a true argument: $(element).equalHeights(true);
          * Version: 2.1, 18.12.2008
@@ -245,7 +245,7 @@
                 if (!px || !$.pxToEm) { currentTallest = $.pxToEm(currentTallest); } //use ems unless px is specified
                 // for ie6, set height since min-height isn't supported
                 if ($.browser != null && $.browser.msie && $.browser.version == 6.0) { $(this).children().css({ 'height': currentTallest }); }
-                $(this).children().css({'min-height': currentTallest}); 
+                $(this).children().css({'min-height': currentTallest});
             });
             return this;
         },
@@ -255,15 +255,15 @@
         delay: function(time, callback){
             jQuery.fx.step.delay = function(){};
             return this.animate({delay:1}, time, callback);
-        }        
+        }
 	});
 })(jQuery);
 /*
   jQuery strings - 0.3
   http://code.google.com/p/jquery-utils/
-  
+
   (c) Maxime Haineault <haineault@gmail.com>
-  http://haineault.com   
+  http://haineault.com
 
   MIT License (http://www.opensource.org/licenses/mit-license.php)
 
@@ -271,7 +271,7 @@
   http://www.python.org/dev/peps/pep-3101/
 
   Documentation: http://code.google.com/p/jquery-utils/wiki/StringFormat
-  
+
 */
 (function($){
     var strings = {
@@ -281,13 +281,13 @@
                 switch(this.__getType(i)) {
                     case 'array':case 'date':case 'number':
                         return i.toString();
-                    case 'object': 
+                    case 'object':
                         var o = [];
                         for (x=0; x<i.length; i++) { o.push(i+': '+ this.__repr(i[x])); }
                         return o.join(', ');
-                    case 'string': 
+                    case 'string':
                         return i;
-                    default: 
+                    default:
                         return i;
                 }
             },
@@ -323,10 +323,10 @@
                             return obj;
                         }
                         else {
-                            // TODO: try by numerical index                    
+                            // TODO: try by numerical index
                         }
                     break;
-                    case 'array': 
+                    case 'array':
                         key = parseInt(key, 10);
                         if (arg.getFormat().match(/\.\*/) && typeof args[key+1] != 'undefined') { return args[key+1]; }
                         else if (typeof args[key] != 'undefined') { return args[key]; }
@@ -348,11 +348,11 @@
                 else   { return o; }
             },
             // Signed integer decimal.
-            i: function(input, args){ 
+            i: function(input, args){
                 return this.d(input, args);
             },
             // Unsigned octal
-            o: function(input, arg){ 
+            o: function(input, arg){
                 var o = input.toString(8);
                 if (arg.isAlternate()) { o = this.__pad(o, o.length+1, '0', 0); }
                 return this.__pad(o, arg.getPaddingLength(), arg.getPaddingString(), 0);
@@ -396,7 +396,7 @@
             G: function(input, args){
                 return this.g(input, args);
             },
-            // Single character (accepts integer or single character string). 	
+            // Single character (accepts integer or single character string).
             c: function(input, args) {
                 var match = input.match(/\w|\d/);
                 return match && match[0] || '';
@@ -439,16 +439,16 @@
             return eval(format(str, args));
         },
 
-        repeat: function(s, n) { 
-            return new Array(n+1).join(s); 
+        repeat: function(s, n) {
+            return new Array(n+1).join(s);
         },
 
-        UTF8encode: function(s) { 
-            return unescape(encodeURIComponent(s)); 
+        UTF8encode: function(s) {
+            return unescape(encodeURIComponent(s));
         },
 
-        UTF8decode: function(s) { 
-            return decodeURIComponent(escape(s)); 
+        UTF8decode: function(s) {
+            return decodeURIComponent(escape(s));
         },
 
         tpl: function() {
@@ -480,7 +480,7 @@
             }
             // $.tpl('ui.test', {value:blah}, false);
             if (arguments.length == 3 && $.isObject(arguments[1])) {
-                return (arguments[2] == true) 
+                return (arguments[2] == true)
                     ? $.format(this[arguments[0]], arguments[1])
                     : $($.format(this[arguments[0]], arguments[1]));
             }
@@ -554,7 +554,7 @@
   http://code.google.com/p/jquery-utils/
 
   (c) Maxime Haineault <haineault@gmail.com>
-  http://haineault.com   
+  http://haineault.com
 
   MIT License (http://www.opensource.org/licenses/mit-license.php)
 
@@ -576,7 +576,7 @@
             },
 			add: function(regexp, callback, options) {
                 var opt  = $.extend({handleClick: true, preserveHash: true}, options);
-                if (opt.handleClick) { 
+                if (opt.handleClick) {
                     $('a[href*=#]').each(function(i, a){
                         if (a.href.match(regexp)) {
                             $(a).bind('click.anchorHandler', function(){
@@ -584,7 +584,7 @@
                                 return callback.apply(this, [regexp, a.href]);
                                 });
                         }
-                    }); 
+                    });
                 }
 				handlers.push({r: regexp, cb: callback});
                 $($.anchorHandler.apply);
@@ -694,10 +694,10 @@ jQuery.cookie = function(name, value, options) {
   http://code.google.com/p/jquery-utils/
 
   (c) Maxime Haineault <haineault@gmail.com>
-  http://haineault.com   
+  http://haineault.com
 
   MIT License (http://www.opensource.org/licenses/mit-license.php)
-  
+
 */
 
 (function($) {
@@ -726,7 +726,7 @@ jQuery.cookie = function(name, value, options) {
             return o;
         };
 
-        var getWeek = function(date) { 
+        var getWeek = function(date) {
             var onejan = new Date(date.getFullYear(),0,1);
             return Math.ceil((((date - onejan) / 86400000) + onejan.getDay())/7);
         };
@@ -740,8 +740,8 @@ jQuery.cookie = function(name, value, options) {
         }, options);
 
         var tokens = {
-            y: new RegExp ('\\%y(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // years 
-            M: new RegExp ('\\%M(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // months 
+            y: new RegExp ('\\%y(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // years
+            M: new RegExp ('\\%M(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // months
             w: new RegExp ('\\%w(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // weeks
             d: new RegExp ('\\%d(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // days
             h: new RegExp ('\\%h(.+?)\\[(\\w+)\\|(\\w+)\\]', 'g'), // hours
@@ -750,7 +750,7 @@ jQuery.cookie = function(name, value, options) {
         };
 
         var formatToken = function(str, token, val) {
-            return (!tokens[token])? '': str.match(/\[|\]/g) 
+            return (!tokens[token])? '': str.match(/\[|\]/g)
                     && (str.replace(tokens[token], val+'$1'+ ((parseInt(val, 10)<2)?'$2':'$3')) || '')
                     || str.replace('%'+token, val);
         };
@@ -879,7 +879,7 @@ $.fn.cycle = function(options) {
             if (this.cycleTimeout) {
                 clearTimeout(this.cycleTimeout);
                 this.cycleTimeout = 0;
-            }            
+            }
             go(options.elements, options, 1, 1);
             return;
         }
@@ -888,7 +888,7 @@ $.fn.cycle = function(options) {
         if (this.cycleTimeout) clearTimeout(this.cycleTimeout);
         this.cycleTimeout = 0;
         this.cyclePause = 0;
-        
+
         var $cont = $(this);
         var $slides = options.slideExpr ? $(options.slideExpr, this) : $cont.children();
         var els = $slides.get();
@@ -899,7 +899,7 @@ $.fn.cycle = function(options) {
 
         // support metadata plugin (v1.0 and v2.0)
         var opts = $.extend({}, $.fn.cycle.defaults, options || {}, $.metadata ? $cont.metadata() : $.meta ? $cont.data() : {});
-        if (opts.autostop) 
+        if (opts.autostop)
             opts.countdown = opts.autostopCount || els.length;
 
         $cont.data('cycle.opts', opts);
@@ -911,7 +911,7 @@ $.fn.cycle = function(options) {
         opts.after.unshift(function(){ opts.busy=0; });
         if (opts.continuous)
             opts.after.push(function() { go(els,opts,0,!opts.rev); });
-            
+
         // clearType corrections
         if (ie6 && opts.cleartype && !opts.cleartypeNoBg)
             clearTypeFix($slides);
@@ -922,16 +922,16 @@ $.fn.cycle = function(options) {
         opts.height = parseInt((cls.match(/h:(\d+)/)||[])[1]) || opts.height;
         opts.timeout = parseInt((cls.match(/t:(\d+)/)||[])[1]) || opts.timeout;
 
-        if ($cont.css('position') == 'static') 
+        if ($cont.css('position') == 'static')
             $cont.css('position', 'relative');
-        if (opts.width) 
+        if (opts.width)
             $cont.width(opts.width);
-        if (opts.height && opts.height != 'auto') 
+        if (opts.height && opts.height != 'auto')
             $cont.height(opts.height);
 
         if (opts.random) {
             opts.randomMap = [];
-            for (var i = 0; i < els.length; i++) 
+            for (var i = 0; i < els.length; i++)
                 opts.randomMap.push(i);
             opts.randomMap.sort(function(a,b) {return Math.random() - 0.5;});
             opts.randomIndex = 0;
@@ -940,19 +940,19 @@ $.fn.cycle = function(options) {
         else if (opts.startingSlide >= els.length)
             opts.startingSlide = 0; // catch bogus input
         var first = opts.startingSlide || 0;
-        $slides.css({position: 'absolute', top:0, left:0}).hide().each(function(i) { 
+        $slides.css({position: 'absolute', top:0, left:0}).hide().each(function(i) {
             var z = first ? i >= first ? els.length - (i-first) : first-i : els.length-i;
-            $(this).css('z-index', z) 
+            $(this).css('z-index', z)
         });
-        
+
         $(els[first]).css('opacity',1).show(); // opacity bit needed to handle reinit case
         if ($.browser.msie) els[first].style.removeAttribute('filter');
 
-        if (opts.fit && opts.width) 
+        if (opts.fit && opts.width)
             $slides.width(opts.width);
-        if (opts.fit && opts.height && opts.height != 'auto') 
+        if (opts.fit && opts.height && opts.height != 'auto')
             $slides.height(opts.height);
-        if (opts.pause) 
+        if (opts.pause)
             $cont.hover(function(){this.cyclePause=1;},function(){this.cyclePause=0;});
 
         // run transition init fn
@@ -961,7 +961,7 @@ $.fn.cycle = function(options) {
             init($cont, $slides, opts);
         else if (opts.fx != 'custom')
             log('unknown transition: ' + opts.fx);
-        
+
         $slides.each(function() {
             var $el = $(this);
             this.cycleH = (opts.fit && opts.height) ? opts.height : $el.height();
@@ -985,18 +985,18 @@ $.fn.cycle = function(options) {
             while((opts.timeout - opts.speed) < 250)
                 opts.timeout += opts.speed;
         }
-        if (opts.easing) 
+        if (opts.easing)
             opts.easeIn = opts.easeOut = opts.easing;
-        if (!opts.speedIn) 
+        if (!opts.speedIn)
             opts.speedIn = opts.speed;
-        if (!opts.speedOut) 
+        if (!opts.speedOut)
             opts.speedOut = opts.speed;
 
  		opts.slideCount = els.length;
         opts.currSlide = first;
         if (opts.random) {
             opts.nextSlide = opts.currSlide;
-            if (++opts.randomIndex == els.length) 
+            if (++opts.randomIndex == els.length)
                 opts.randomIndex = 0;
             opts.nextSlide = opts.randomMap[opts.randomIndex];
         }
@@ -1009,7 +1009,7 @@ $.fn.cycle = function(options) {
             opts.before[0].apply(e0, [e0, e0, opts, true]);
         if (opts.after.length > 1)
             opts.after[1].apply(e0, [e0, e0, opts, true]);
-        
+
         if (opts.click && !opts.next)
             opts.next = opts.click;
         if (opts.next)
@@ -1025,18 +1025,18 @@ $.fn.cycle = function(options) {
             if (!opts.autostopCount)
                 opts.countdown++;
             els.push(s);
-            if (opts.els) 
+            if (opts.els)
                 opts.els.push(s); // shuffle needs this
             opts.slideCount = els.length;
-            
+
             $s.css('position','absolute').appendTo($cont);
-            
+
             if (ie6 && opts.cleartype && !opts.cleartypeNoBg)
                 clearTypeFix($s);
 
-            if (opts.fit && opts.width) 
+            if (opts.fit && opts.width)
                 $s.width(opts.width);
-            if (opts.fit && opts.height && opts.height != 'auto') 
+            if (opts.fit && opts.height && opts.height != 'auto')
                 $slides.height(opts.height);
             s.cycleH = (opts.fit && opts.height) ? opts.height : $s.height();
             s.cycleW = (opts.fit && opts.width) ? opts.width : $s.width();
@@ -1045,14 +1045,14 @@ $.fn.cycle = function(options) {
 
             if (opts.pager)
                 $.fn.cycle.createPagerAnchor(els.length-1, s, $(opts.pager), els, opts);
-            
+
             if (typeof opts.onAddSlide == 'function')
                 opts.onAddSlide($s);
         };
 
         if (opts.timeout || opts.continuous)
             this.cycleTimeout = setTimeout(
-                function(){go(els,opts,0,!opts.rev)}, 
+                function(){go(els,opts,0,!opts.rev)},
                 opts.continuous ? 10 : opts.timeout + (opts.delay||0));
     });
 };
@@ -1060,10 +1060,10 @@ $.fn.cycle = function(options) {
 function go(els, opts, manual, fwd) {
     if (opts.busy) return;
     var p = opts.container, curr = els[opts.currSlide], next = els[opts.nextSlide];
-    if (p.cycleTimeout === 0 && !manual) 
+    if (p.cycleTimeout === 0 && !manual)
         return;
 
-    if (!manual && !p.cyclePause && 
+    if (!manual && !p.cyclePause &&
         ((opts.autostop && (--opts.countdown <= 0)) ||
         (opts.nowrap && !opts.random && opts.nextSlide < opts.currSlide))) {
         if (opts.end)
@@ -1091,7 +1091,7 @@ function go(els, opts, manual, fwd) {
         }
         if (opts.random) {
             opts.currSlide = opts.nextSlide;
-            if (++opts.randomIndex == els.length) 
+            if (++opts.randomIndex == els.length)
                 opts.randomIndex = 0;
             opts.nextSlide = opts.randomMap[opts.randomIndex];
         }
@@ -1105,7 +1105,7 @@ function go(els, opts, manual, fwd) {
     }
     if (opts.timeout && !opts.continuous)
         p.cycleTimeout = setTimeout(function() { go(els,opts,0,!opts.rev) }, opts.timeout);
-    else if (opts.continuous && p.cyclePause) 
+    else if (opts.continuous && p.cyclePause)
         p.cycleTimeout = setTimeout(function() { go(els,opts,0,!opts.rev) }, 10);
 };
 
@@ -1130,7 +1130,7 @@ function advance(els, opts, val) {
         opts.nextSlide = opts.randomMap[opts.randomIndex];
     }
     else if (opts.random) {
-        if (++opts.randomIndex == els.length) 
+        if (++opts.randomIndex == els.length)
             opts.randomIndex = 0;
         opts.nextSlide = opts.randomMap[opts.randomIndex];
     }
@@ -1145,8 +1145,8 @@ function advance(els, opts, val) {
             opts.nextSlide = 0;
         }
     }
-    
-log('nextSlide: ' + opts.nextSlide + '; randomIndex: ' + opts.randomIndex);    
+
+log('nextSlide: ' + opts.nextSlide + '; randomIndex: ' + opts.randomIndex);
     if (opts.prevNextClick && typeof opts.prevNextClick == 'function')
         opts.prevNextClick(val > 0, opts.nextSlide, els[opts.nextSlide]);
     go(els, opts, 1, val>=0);
@@ -1165,18 +1165,18 @@ $.fn.cycle.createPagerAnchor = function(i, el, $p, els, opts) {
     var $a = (typeof opts.pagerAnchorBuilder == 'function')
         ? $(opts.pagerAnchorBuilder(i,el))
         : $('<a href="#">'+(i+1)+'</a>');
-    
+
     // don't reparent if anchor is in the dom
     if ($a.parents('body').length == 0)
         $a.appendTo($p);
-        
+
     $a.bind(opts.pagerEvent, function() {
         opts.nextSlide = i;
         var p = opts.container, timeout = p.cycleTimeout;
         if (timeout) {
             clearTimeout(timeout);
             p.cycleTimeout = 0;
-        }            
+        }
         if (typeof opts.pagerClick == 'function')
             opts.pagerClick(opts.nextSlide, els[opts.nextSlide]);
         go(els,opts,1,opts.currSlide < i);
@@ -1194,8 +1194,8 @@ function clearTypeFix($slides) {
     function getBg(e) {
         for ( ; e && e.nodeName.toLowerCase() != 'html'; e = e.parentNode) {
             var v = $.css(e,'background-color');
-            if (v.indexOf('rgb') >= 0 ) { 
-                var rgb = v.match(/\d+/g); 
+            if (v.indexOf('rgb') >= 0 ) {
+                var rgb = v.match(/\d+/g);
                 return '#'+ hex(rgb[0]) + hex(rgb[1]) + hex(rgb[2]);
             }
             if (v && v != 'transparent')
@@ -1289,7 +1289,7 @@ $.fn.cycle.defaults = {
 
 //
 // These functions define one-time slide initialization for the named
-// transitions. To save file size feel free to remove any of these that you 
+// transitions. To save file size feel free to remove any of these that you
 // don't need.
 //
 
@@ -1369,7 +1369,7 @@ $.fn.cycle.transitions.scrollVert = function($cont, $slides, opts) {
 $.fn.cycle.transitions.slideX = function($cont, $slides, opts) {
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     opts.cssBefore = { zIndex: 2 };
     opts.animIn  = { width: 'show' };
@@ -1378,7 +1378,7 @@ $.fn.cycle.transitions.slideX = function($cont, $slides, opts) {
 $.fn.cycle.transitions.slideY = function($cont, $slides, opts) {
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     opts.cssBefore = { zIndex: 2 };
     opts.animIn  = { height: 'show' };
@@ -1390,7 +1390,7 @@ $.fn.cycle.transitions.shuffle = function($cont, $slides, opts) {
     var w = $cont.css('overflow', 'visible').width();
     $slides.css({left: 0, top: 0});
     opts.before.push(function() { $(this).show() });
-    opts.speed = opts.speed / 2; // shuffle has 2 transitions        
+    opts.speed = opts.speed / 2; // shuffle has 2 transitions
     opts.random = 0;
     opts.shuffle = opts.shuffle || {left:-w, top:15};
     opts.els = [];
@@ -1405,7 +1405,7 @@ $.fn.cycle.transitions.shuffle = function($cont, $slides, opts) {
         var $el = fwd ? $(curr) : $(next);
         $el.animate(opts.shuffle, opts.speedIn, opts.easeIn, function() {
             fwd ? opts.els.push(opts.els.shift()) : opts.els.unshift(opts.els.pop());
-            if (fwd) 
+            if (fwd)
                 for (var i=0, len=opts.els.length; i < len; i++)
                     $(opts.els[i]).css('z-index', len-i);
             else {
@@ -1474,9 +1474,9 @@ $.fn.cycle.transitions.turnRight = function($cont, $slides, opts) {
 
 // zoom
 $.fn.cycle.transitions.zoom = function($cont, $slides, opts) {
-    opts.cssFirst = { top:0, left: 0 }; 
+    opts.cssFirst = { top:0, left: 0 };
     opts.cssAfter = { display: 'none' };
-    
+
     opts.before.push(function(curr, next, opts) {
         $(this).show();
         opts.cssBefore = { width: 0, height: 0, top: next.cycleH/2, left: next.cycleW/2 };
@@ -1485,7 +1485,7 @@ $.fn.cycle.transitions.zoom = function($cont, $slides, opts) {
         opts.animOut   = { width: 0, height: 0, top: curr.cycleH/2, left: curr.cycleW/2 };
         $(curr).css('zIndex',2);
         $(next).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
 };
 
@@ -1494,7 +1494,7 @@ $.fn.cycle.transitions.fadeZoom = function($cont, $slides, opts) {
     opts.before.push(function(curr, next, opts) {
         opts.cssBefore = { width: 0, height: 0, opacity: 1, left: next.cycleW/2, top: next.cycleH/2, zIndex: 1 };
         opts.animIn    = { top: 0, left: 0, width: next.cycleW, height: next.cycleH };
-    });    
+    });
     opts.animOut  = { opacity: 0 };
     opts.cssAfter = { zIndex: 0 };
 };
@@ -1505,7 +1505,7 @@ $.fn.cycle.transitions.blindX = function($cont, $slides, opts) {
     $slides.show();
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.cssBefore = { left: w, zIndex: 2 };
     opts.cssAfter = { zIndex: 1 };
     opts.animIn = { left: 0 };
@@ -1517,7 +1517,7 @@ $.fn.cycle.transitions.blindY = function($cont, $slides, opts) {
     $slides.show();
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.cssBefore = { top: h, zIndex: 2 };
     opts.cssAfter = { zIndex: 1 };
     opts.animIn = { top: 0 };
@@ -1530,7 +1530,7 @@ $.fn.cycle.transitions.blindZ = function($cont, $slides, opts) {
     $slides.show();
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.cssBefore = { top: h, left: w, zIndex: 2 };
     opts.cssAfter = { zIndex: 1 };
     opts.animIn = { top: 0, left: 0 };
@@ -1544,7 +1544,7 @@ $.fn.cycle.transitions.growX = function($cont, $slides, opts) {
         opts.animIn = { left: 0, width: this.cycleW };
         opts.animOut = { left: 0 };
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide().css('zIndex',1); };
 };
 // growY - grow vertically from centered 0 height
@@ -1554,7 +1554,7 @@ $.fn.cycle.transitions.growY = function($cont, $slides, opts) {
         opts.animIn = { top: 0, height: this.cycleH };
         opts.animOut = { top: 0 };
         $(curr).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide().css('zIndex',1); };
 };
 
@@ -1565,7 +1565,7 @@ $.fn.cycle.transitions.curtainX = function($cont, $slides, opts) {
         opts.animIn = { left: 0, width: this.cycleW };
         opts.animOut = { left: curr.cycleW/2, width: 0 };
         $(curr).css('zIndex',2);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     opts.cssAfter = { zIndex: 1, display: 'none' };
 };
@@ -1576,7 +1576,7 @@ $.fn.cycle.transitions.curtainY = function($cont, $slides, opts) {
         opts.animIn = { top: 0, height: this.cycleH };
         opts.animOut = { top: curr.cycleH/2, height: 0 };
         $(curr).css('zIndex',2);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     opts.cssAfter = { zIndex: 1, display: 'none' };
 };
@@ -1590,17 +1590,17 @@ $.fn.cycle.transitions.cover = function($cont, $slides, opts) {
         opts.cssBefore = opts.cssBefore || {};
         opts.cssBefore.zIndex = 2;
         opts.cssBefore.display = 'block';
-        
-        if (d == 'right') 
+
+        if (d == 'right')
             opts.cssBefore.left = -w;
-        else if (d == 'up')    
+        else if (d == 'up')
             opts.cssBefore.top = h;
-        else if (d == 'down')  
+        else if (d == 'down')
             opts.cssBefore.top = -h;
         else
             opts.cssBefore.left = w;
         $(curr).css('zIndex',1);
-    });    
+    });
     if (!opts.animIn)  opts.animIn = { left: 0, top: 0 };
     if (!opts.animOut) opts.animOut = { left: 0, top: 0 };
     opts.cssAfter = opts.cssAfter || {};
@@ -1615,23 +1615,23 @@ $.fn.cycle.transitions.uncover = function($cont, $slides, opts) {
     var h = $cont.height();
     opts.before.push(function(curr, next, opts) {
         opts.cssBefore.display = 'block';
-        if (d == 'right') 
+        if (d == 'right')
             opts.animOut.left = w;
-        else if (d == 'up')    
+        else if (d == 'up')
             opts.animOut.top = -h;
-        else if (d == 'down')  
+        else if (d == 'down')
             opts.animOut.top = h;
         else
             opts.animOut.left = -w;
         $(curr).css('zIndex',2);
         $(next).css('zIndex',1);
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     if (!opts.animIn)  opts.animIn = { left: 0, top: 0 };
     opts.cssBefore = opts.cssBefore || {};
     opts.cssBefore.top = 0;
     opts.cssBefore.left = 0;
-    
+
     opts.cssAfter = opts.cssAfter || {};
     opts.cssAfter.zIndex = 1;
     opts.cssAfter.display = 'none';
@@ -1643,13 +1643,13 @@ $.fn.cycle.transitions.toss = function($cont, $slides, opts) {
     var h = $cont.height();
     opts.before.push(function(curr, next, opts) {
         $(curr).css('zIndex',2);
-        opts.cssBefore.display = 'block'; 
+        opts.cssBefore.display = 'block';
         // provide default toss settings if animOut not provided
         if (!opts.animOut.left && !opts.animOut.top)
             opts.animOut = { left: w*2, top: -h/2, opacity: 0 };
         else
             opts.animOut.opacity = 0;
-    });    
+    });
     opts.onAddSlide = function($s) { $s.hide(); };
     opts.cssBefore = { left: 0, top: 0, zIndex: 1, opacity: 1 };
     opts.animIn = { left: 0 };
@@ -1677,12 +1677,12 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
             clip = 'rect('+t+'px '+l+'px '+t+'px '+l+'px)';
         }
     }
-    
+
     opts.cssBefore.clip = opts.cssBefore.clip || clip || 'rect(0px 0px 0px 0px)';
-    
+
     var d = opts.cssBefore.clip.match(/(\d+)/g);
     var t = parseInt(d[0]), r = parseInt(d[1]), b = parseInt(d[2]), l = parseInt(d[3]);
-    
+
     opts.before.push(function(curr, next, opts) {
         if (curr == next) return;
         var $curr = $(curr).css('zIndex',2);
@@ -1690,7 +1690,7 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
             zIndex:  3,
             display: 'block'
         });
-        
+
         var step = 1, count = parseInt((opts.speedIn / 13)) - 1;
         function f() {
             var tt = t ? t - parseInt(step * (t/count)) : 0;
@@ -1701,7 +1701,7 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
             (step++ <= count) ? setTimeout(f, 13) : $curr.css('display', 'none');
         }
         f();
-    });    
+    });
     opts.cssAfter  = { };
     opts.animIn    = { left: 0 };
     opts.animOut   = { left: 0 };
@@ -1714,9 +1714,9 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
 
  (c) Maxime Haineault <haineault@gmail.com>
  http://haineault.com
- 
+
  MIT License (http://www.opensource.org/licenses/mit-license.php)
- 
+
 */
 
 (function($){
@@ -1746,7 +1746,7 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
 /**
  * Flash (http://jquery.lukelutman.com/plugins/flash)
  * A jQuery plugin for embedding Flash movies.
- * 
+ *
  * Version 1.0
  * November 9th, 2006
  *
@@ -1754,24 +1754,24 @@ $.fn.cycle.transitions.wipe = function($cont, $slides, opts) {
  * Dual licensed under the MIT and GPL licenses.
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.opensource.org/licenses/gpl-license.php
- * 
+ *
  * Inspired by:
  * SWFObject (http://blog.deconcept.com/swfobject/)
  * UFO (http://www.bobbyvandersluis.com/ufo/)
  * sIFR (http://www.mikeindustries.com/sifr/)
- * 
- * IMPORTANT: 
+ *
+ * IMPORTANT:
  * The packed version of jQuery breaks ActiveX control
  * activation in Internet Explorer. Use JSMin to minifiy
  * jQuery (see: http://jquery.lukelutman.com/plugins/flash#activex).
  *
- **/ 
+ **/
 ;(function(){
-	
+
 var $$;
 
 /**
- * 
+ *
  * @desc Replace matching elements with a flash movie.
  * @author Luke Lutman
  * @version 1.0.1
@@ -1784,7 +1784,7 @@ var $$;
  * @type jQuery
  *
  * @cat plugins/flash
- * 
+ *
  * @example $('#hello').flash({ src: 'hello.swf' });
  * @desc Embed a Flash movie.
  *
@@ -1799,24 +1799,24 @@ var $$;
  *
 **/
 $$ = jQuery.fn.flash = function(htmlOptions, pluginOptions, replace, update) {
-	
+
 	// Set the default block.
 	var block = replace || $$.replace;
-	
+
 	// Merge the default and passed plugin options.
 	pluginOptions = $$.copy($$.pluginOptions, pluginOptions);
-	
+
 	// Detect Flash.
 	if(!$$.hasFlash(pluginOptions.version)) {
 		// Use Express Install (if specified and Flash plugin 6,0,65 or higher is installed).
 		if(pluginOptions.expressInstall && $$.hasFlash(6,0,65)) {
 			// Add the necessary flashvars (merged later).
 			var expressInstallOptions = {
-				flashvars: {  	
+				flashvars: {
 					MMredirectURL: location,
 					MMplayerType: 'PlugIn',
-					MMdoctitle: jQuery('title').text() 
-				}					
+					MMdoctitle: jQuery('title').text()
+				}
 			};
 		// Ask the user to update (if specified).
 		} else if (pluginOptions.update) {
@@ -1831,22 +1831,22 @@ $$ = jQuery.fn.flash = function(htmlOptions, pluginOptions, replace, update) {
 			return this;
 		}
 	}
-	
+
 	// Merge the default, express install and passed html options.
 	htmlOptions = $$.copy($$.htmlOptions, expressInstallOptions, htmlOptions);
-	
+
 	// Invoke $block (with a copy of the merged html options) for each element.
 	return this.each(function(){
 		block.call(this, $$.copy(htmlOptions));
 	});
-	
+
 };
 /**
  *
  * @name flash.copy
  * @desc Copy an arbitrary number of objects into a new object.
  * @type Object
- * 
+ *
  * @example $$.copy({ foo: 1 }, { bar: 2 });
  * @result { foo: 1, bar: 2 };
  *
@@ -1902,8 +1902,8 @@ $$.hasFlash.playerVersion = function() {
 			// avoid fp6 minor version lookup issues
 			// see: http://blog.deconcept.com/2006/01/11/getvariable-setvariable-crash-internet-explorer-flash-6/
 			var axo = new ActiveXObject('ShockwaveFlash.ShockwaveFlash.6');
-			try { axo.AllowScriptAccess = 'always';	} 
-			catch(e) { return '6,0,0'; }				
+			try { axo.AllowScriptAccess = 'always';	}
+			catch(e) { return '6,0,0'; }
 		} catch(e) {}
 		return new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version').replace(/\D+/g, ',').match(/^,?(.+),?$/)[1];
 	// other browsers
@@ -1912,7 +1912,7 @@ $$.hasFlash.playerVersion = function() {
 			if(navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin){
 				return (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]).description.replace(/\D+/g, ",").match(/^,?(.+),?$/)[1];
 			}
-		} catch(e) {}		
+		} catch(e) {}
 	}
 	return '0,0,0';
 };
@@ -1928,7 +1928,7 @@ $$.htmlOptions = {
 	pluginspage: 'http://www.adobe.com/go/getflashplayer',
 	src: '#',
 	type: 'application/x-shockwave-flash',
-	width: 320		
+	width: 320
 };
 /**
  *
@@ -1971,7 +1971,7 @@ $$.update = function(htmlOptions) {
 };
 /**
  *
- * @desc Convert a hash of html options to a string of attributes, using Function.apply(). 
+ * @desc Convert a hash of html options to a string of attributes, using Function.apply().
  * @example toAttributeString.apply(htmlOptions)
  * @result foo="bar" foo="bar"
  *
@@ -1981,11 +1981,11 @@ function toAttributeString() {
 	for(var key in this)
 		if(typeof this[key] != 'function')
 			s += key+'="'+this[key]+'" ';
-	return s;		
+	return s;
 };
 /**
  *
- * @desc Convert a hash of flashvars to a url-encoded string, using Function.apply(). 
+ * @desc Convert a hash of flashvars to a url-encoded string, using Function.apply().
  * @example toFlashvarsString.apply(flashvarsObject)
  * @result foo=bar&foo=bar
  *
@@ -1995,27 +1995,27 @@ function toFlashvarsString() {
 	for(var key in this)
 		if(typeof this[key] != 'function')
 			s += key+'='+encodeURIComponent(this[key])+'&';
-	return s.replace(/&$/, '');		
+	return s.replace(/&$/, '');
 };
 /**
  *
  * @name flash.transform
  * @desc Transform a set of html options into an embed tag.
- * @type String 
+ * @type String
  *
  * @example $$.transform(htmlOptions)
  * @result <embed src="foo.swf" ... />
  *
- * Note: The embed tag is NOT standards-compliant, but it 
+ * Note: The embed tag is NOT standards-compliant, but it
  * works in all current browsers. flash.transform can be
- * overwritten with a custom function to generate more 
+ * overwritten with a custom function to generate more
  * standards-compliant markup.
  *
 **/
 $$.transform = function(htmlOptions) {
 	htmlOptions.toString = toAttributeString;
 	if(htmlOptions.flashvars) htmlOptions.flashvars.toString = toFlashvarsString;
-	return '<embed ' + String(htmlOptions) + '/>';		
+	return '<embed ' + String(htmlOptions) + '/>';
 };
 
 /**
@@ -2029,7 +2029,7 @@ if (window.attachEvent) {
 		__flash_savedUnloadHandler = function() {};
 	});
 }
-	
+
 })();
 (function($){
     $._i18n = { trans: {}, 'default':  'en', language: 'en' };
@@ -2037,13 +2037,13 @@ if (window.attachEvent) {
         var getTrans = function(ns, str) {
             var trans = false;
             // check if string exists in translation
-            if ($._i18n.trans[$._i18n.language] 
+            if ($._i18n.trans[$._i18n.language]
                 && $._i18n.trans[$._i18n.language][ns]
                 && $._i18n.trans[$._i18n.language][ns][str]) {
                 trans = $._i18n.trans[$._i18n.language][ns][str];
             }
             // or exists in default
-            else if ($._i18n.trans[$._i18n['default']] 
+            else if ($._i18n.trans[$._i18n['default']]
                      && $._i18n.trans[$._i18n['default']][ns]
                      && $._i18n.trans[$._i18n['default']][ns][str]) {
                 trans = $._i18n.trans[$._i18n['default']][ns][str];
@@ -2053,7 +2053,7 @@ if (window.attachEvent) {
         };
         // Set language (accepted formats: en or en-US)
         if (arguments.length < 2) {
-            $._i18n.language = arguments[0]; 
+            $._i18n.language = arguments[0];
             return $._i18n.language;
         }
         else {
@@ -2086,7 +2086,7 @@ if (window.attachEvent) {
 })(jQuery);
 /*
  * Copyright (c) 2007-2008 Josh Bush (digitalbush.com)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -2097,7 +2097,7 @@ if (window.attachEvent) {
  * conditions:
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -2105,20 +2105,20 @@ if (window.attachEvent) {
  * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE. 
+ * OTHER DEALINGS IN THE SOFTWARE.
  */
- 
+
 /*
  * Version: 1.1.3
  * Release: 2008-04-16
- */ 
+ */
 (function($) {
 
 	//Helper Function for Caret positioning
-	$.fn.caret=function(begin,end){	
+	$.fn.caret=function(begin,end){
 		if(this.length==0) return;
 		if (typeof begin == 'number') {
-            end = (typeof end == 'number')?end:begin;  
+            end = (typeof end == 'number')?end:begin;
 			return this.each(function(){
 				if(this.setSelectionRange){
 					this.focus();
@@ -2136,12 +2136,12 @@ if (window.attachEvent) {
 				begin = this[0].selectionStart;
 				end = this[0].selectionEnd;
 			}else if (document.selection && document.selection.createRange){
-				var range = document.selection.createRange();			
+				var range = document.selection.createRange();
 				begin = 0 - range.duplicate().moveStart('character', -100000);
 				end = begin + range.text.length;
 			}
 			return {begin:begin,end:end};
-        }       
+        }
 	};
 
 	//Predefined character definitions
@@ -2150,175 +2150,175 @@ if (window.attachEvent) {
 		'a':"[A-Za-z]",
 		'*':"[A-Za-z0-9]"
 	};
-	
+
 	//Helper method to inject character definitions
 	$.mask={
 		addPlaceholder : function(c,r){
 			charMap[c]=r;
 		}
 	};
-	
+
 	$.fn.unmask=function(){
 		return this.trigger("unmask");
 	};
-	
-	//Main Method
-	$.fn.mask = function(mask,settings) {	
-		settings = $.extend({
-			placeholder: "_",			
-			completed: null
-		}, settings);		
-		
-		//Build Regex for format validation
-		var re = new RegExp("^"+	
-		$.map( mask.split(""), function(c,i){		  		  
-		  return charMap[c]||((/[A-Za-z0-9]/.test(c)?"":"\\")+c);
-		}).join('')+				
-		"$");		
 
-		return this.each(function(){		
+	//Main Method
+	$.fn.mask = function(mask,settings) {
+		settings = $.extend({
+			placeholder: "_",
+			completed: null
+		}, settings);
+
+		//Build Regex for format validation
+		var re = new RegExp("^"+
+		$.map( mask.split(""), function(c,i){
+		  return charMap[c]||((/[A-Za-z0-9]/.test(c)?"":"\\")+c);
+		}).join('')+
+		"$");
+
+		return this.each(function(){
 			var input=$(this);
 			var buffer=new Array(mask.length);
 			var locked=new Array(mask.length);
-			var valid=false;   
+			var valid=false;
 			var ignore=false;  			//Variable for ignoring control keys
-			var firstNonMaskPos=null; 
-			
-			//Build buffer layout from mask & determine the first non masked character			
-			$.each( mask.split(""), function(i,c){				
-				locked[i]=(charMap[c]==null);				
-				buffer[i]=locked[i]?c:settings.placeholder;									
+			var firstNonMaskPos=null;
+
+			//Build buffer layout from mask & determine the first non masked character
+			$.each( mask.split(""), function(i,c){
+				locked[i]=(charMap[c]==null);
+				buffer[i]=locked[i]?c:settings.placeholder;
 				if(!locked[i] && firstNonMaskPos==null)
 					firstNonMaskPos=i;
-			});		
-			
-			function focusEvent(){					
+			});
+
+			function focusEvent(){
 				checkVal();
 				writeBuffer();
 				setTimeout(function(){
-					$(input[0]).caret(valid?mask.length:firstNonMaskPos);					
+					$(input[0]).caret(valid?mask.length:firstNonMaskPos);
 				},0);
 			};
-			
-			function keydownEvent(e){				
+
+			function keydownEvent(e){
 				var pos=$(this).caret();
 				var k = e.keyCode;
 				ignore=(k < 16 || (k > 16 && k < 32 ) || (k > 32 && k < 41));
-				
+
 				//delete selection before proceeding
 				if((pos.begin-pos.end)!=0 && (!ignore || k==8 || k==46)){
 					clearBuffer(pos.begin,pos.end);
-				}	
+				}
 				//backspace and delete get special treatment
-				if(k==8){//backspace					
+				if(k==8){//backspace
 					while(pos.begin-->=0){
-						if(!locked[pos.begin]){								
+						if(!locked[pos.begin]){
 							buffer[pos.begin]=settings.placeholder;
 							if($.browser.opera){
-								//Opera won't let you cancel the backspace, so we'll let it backspace over a dummy character.								
+								//Opera won't let you cancel the backspace, so we'll let it backspace over a dummy character.
 								s=writeBuffer();
 								input.val(s.substring(0,pos.begin)+" "+s.substring(pos.begin));
-								$(this).caret(pos.begin+1);								
+								$(this).caret(pos.begin+1);
 							}else{
 								writeBuffer();
-								$(this).caret(Math.max(firstNonMaskPos,pos.begin));								
-							}									
-							return false;								
+								$(this).caret(Math.max(firstNonMaskPos,pos.begin));
+							}
+							return false;
 						}
-					}						
+					}
 				}else if(k==46){//delete
 					clearBuffer(pos.begin,pos.begin+1);
 					writeBuffer();
-					$(this).caret(Math.max(firstNonMaskPos,pos.begin));					
+					$(this).caret(Math.max(firstNonMaskPos,pos.begin));
 					return false;
 				}else if (k==27){//escape
 					clearBuffer(0,mask.length);
 					writeBuffer();
-					$(this).caret(firstNonMaskPos);					
+					$(this).caret(firstNonMaskPos);
 					return false;
-				}									
+				}
 			};
-			
-			function keypressEvent(e){					
+
+			function keypressEvent(e){
 				if(ignore){
 					ignore=false;
 					//Fixes Mac FF bug on backspace
 					return (e.keyCode == 8)? false: null;
 				}
 				e=e||window.event;
-				var k=e.charCode||e.keyCode||e.which;						
+				var k=e.charCode||e.keyCode||e.which;
 				var pos=$(this).caret();
-								
+
 				if(e.ctrlKey || e.altKey){//Ignore
 					return true;
 				}else if ((k>=41 && k<=122) ||k==32 || k>186){//typeable characters
-					var p=seekNext(pos.begin-1);					
+					var p=seekNext(pos.begin-1);
 					if(p<mask.length){
 						if(new RegExp(charMap[mask.charAt(p)]).test(String.fromCharCode(k))){
-							buffer[p]=String.fromCharCode(k);									
+							buffer[p]=String.fromCharCode(k);
 							writeBuffer();
 							var next=seekNext(p);
 							$(this).caret(next);
 							if(settings.completed && next == mask.length)
 								settings.completed.call(input);
-						}				
+						}
 					}
-				}				
-				return false;				
+				}
+				return false;
 			};
-			
+
 			function clearBuffer(start,end){
 				for(var i=start;i<end&&i<mask.length;i++){
 					if(!locked[i])
 						buffer[i]=settings.placeholder;
-				}				
+				}
 			};
-			
-			function writeBuffer(){				
-				return input.val(buffer.join('')).val();				
+
+			function writeBuffer(){
+				return input.val(buffer.join('')).val();
 			};
-			
-			function checkVal(){	
+
+			function checkVal(){
 				//try to place charcters where they belong
 				var test=input.val();
 				var pos=0;
-				for(var i=0;i<mask.length;i++){					
+				for(var i=0;i<mask.length;i++){
 					if(!locked[i]){
 						buffer[i]=settings.placeholder;
 						while(pos++<test.length){
 							//Regex Test each char here.
 							var reChar=new RegExp(charMap[mask.charAt(i)]);
 							if(test.charAt(pos-1).match(reChar)){
-								buffer[i]=test.charAt(pos-1);								
+								buffer[i]=test.charAt(pos-1);
 								break;
-							}									
+							}
 						}
 					}
 				}
 				var s=writeBuffer();
-				if(!s.match(re)){							
-					input.val("");	
+				if(!s.match(re)){
+					input.val("");
 					clearBuffer(0,mask.length);
 					valid=false;
 				}else
 					valid=true;
 			};
-			
-			function seekNext(pos){				
-				while(++pos<mask.length){					
+
+			function seekNext(pos){
+				while(++pos<mask.length){
 					if(!locked[pos])
 						return pos;
 				}
 				return mask.length;
 			};
-			
+
 			input.one("unmask",function(){
 				input.unbind("focus",focusEvent);
 				input.unbind("blur",checkVal);
 				input.unbind("keydown",keydownEvent);
 				input.unbind("keypress",keypressEvent);
-				if ($.browser.msie) 
-					this.onpaste= null;                     
+				if ($.browser.msie)
+					this.onpaste= null;
 				else if ($.browser.mozilla)
 					this.removeEventListener('input',checkVal,false);
 			});
@@ -2327,11 +2327,11 @@ if (window.attachEvent) {
 			input.bind("keydown",keydownEvent);
 			input.bind("keypress",keypressEvent);
 			//Paste events for IE and Mozilla thanks to Kristinn Sigmundsson
-			if ($.browser.msie) 
-				this.onpaste= function(){setTimeout(checkVal,0);};                     
+			if ($.browser.msie)
+				this.onpaste= function(){setTimeout(checkVal,0);};
 			else if ($.browser.mozilla)
 				this.addEventListener('input',checkVal,false);
-				
+
 			checkVal();//Perform initial check for existing values
 		});
 	};
@@ -2346,7 +2346,7 @@ if (window.attachEvent) {
  * $Rev: 4265 $
  *
  * Version: 3.0
- * 
+ *
  * Requires: $ 1.2.2+
  */
 
@@ -2355,7 +2355,7 @@ if (window.attachEvent) {
 $.event.special.mousewheel = {
 	setup: function() {
 		var handler = $.event.special.mousewheel.handler;
-		
+
 		// Fix pageX, pageY, clientX and clientY for mozilla
 		if ( $.browser.mozilla )
 			$(this).bind('mousemove.mousewheel', function(event) {
@@ -2366,41 +2366,41 @@ $.event.special.mousewheel = {
 					clientY: event.clientY
 				});
 			});
-	
+
 		if ( this.addEventListener )
 			this.addEventListener( ($.browser.mozilla ? 'DOMMouseScroll' : 'mousewheel'), handler, false);
 		else
 			this.onmousewheel = handler;
 	},
-	
+
 	teardown: function() {
 		var handler = $.event.special.mousewheel.handler;
-		
+
 		$(this).unbind('mousemove.mousewheel');
-		
+
 		if ( this.removeEventListener )
 			this.removeEventListener( ($.browser.mozilla ? 'DOMMouseScroll' : 'mousewheel'), handler, false);
 		else
 			this.onmousewheel = function(){};
-		
+
 		$.removeData(this, 'mwcursorposdata');
 	},
-	
+
 	handler: function(event) {
 		var args = Array.prototype.slice.call( arguments, 1 );
-		
+
 		event = $.event.fix(event || window.event);
 		// Get correct pageX, pageY, clientX and clientY for mozilla
 		$.extend( event, $.data(this, 'mwcursorposdata') || {} );
 		var delta = 0, returnValue = true;
-		
+
 		if ( event.wheelDelta ) delta = event.wheelDelta/120;
 		if ( event.detail     ) delta = -event.detail/3;
 		if ( $.browser.opera  ) delta = -event.wheelDelta;
-		
+
 		event.data  = event.data || {};
 		event.type  = "mousewheel";
-		
+
 		// Add delta to the front of the arguments
 		args.unshift(delta);
 		// Add event to the front of the arguments
@@ -2414,7 +2414,7 @@ $.fn.extend({
 	mousewheel: function(fn) {
 		return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
 	},
-	
+
 	unmousewheel: function(fn) {
 		return this.unbind("mousewheel", fn);
 	}

@@ -55,8 +55,8 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
             };
 
             this.Total = pedido.ExibirTotalEspelho
-                ? pedido.Total
-                : pedido.TotalEspelho;
+                ? pedido.TotalEspelho
+                : pedido.Total;
 
             this.TipoVenda = pedido.DescrTipoVenda;
             this.DataPedido = pedido.DataPedido;

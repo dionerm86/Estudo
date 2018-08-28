@@ -181,7 +181,7 @@ namespace Glass.Data.DAL
         public void AlteraSituacao(uint idChapa)
         {
             var chapaVidro = GetElementByPrimaryKey(idChapa);
-            chapaVidro.Situacao = chapaVidro.Situacao == 1 ? 2 : 1;
+            chapaVidro.Situacao = chapaVidro.Situacao == Situacao.Ativo ? Situacao.Inativo : Situacao.Ativo;
             Update(chapaVidro);
         }
 

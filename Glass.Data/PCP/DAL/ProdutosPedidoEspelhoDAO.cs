@@ -1981,23 +1981,23 @@ namespace Glass.Data.DAL
         public ProdutosPedidoEspelho[] GetForRpt(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
             int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
             string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, bool soFinalizados, bool pedidosSemAnexos, bool pedidosAComprar,
-            string idsPedidos, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas)
+            string idsPedidos, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, int? tipoVenda)
         {
             return GetForRpt(idPedido, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente,
              situacao, situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
              dataIniFin, dataFimFin, dataIniConf, dataFimConf, soFinalizados, pedidosSemAnexos, pedidosAComprar,
-             idsPedidos, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, 0, 0);
+             idsPedidos, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, 0, 0, tipoVenda);
         }
 
         public ProdutosPedidoEspelho[] GetForRpt(uint idPedido, uint idCli, string nomeCli, uint idLoja, uint idFunc, uint idFuncionarioConferente,
             int situacao, string situacaoPedOri, string idsProcesso, string dataIniEnt, string dataFimEnt, string dataIniFab, string dataFimFab,
             string dataIniFin, string dataFimFin, string dataIniConf, string dataFimConf, bool soFinalizados, bool pedidosSemAnexos, bool pedidosAComprar,
-            string idsPedidos, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, int origemPedido, int pedidosConferidos)
+            string idsPedidos, string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, string tipoPedido, string idsRotas, int origemPedido, int pedidosConferidos, int? tipoVenda)
         {
             string ids = "";
             foreach (uint id in PedidoEspelhoDAO.Instance.GetIdsForRpt(idPedido, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao,
                 situacaoPedOri, idsProcesso, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, soFinalizados,
-                pedidosSemAnexos, pedidosAComprar, idsPedidos, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, null, null, 0, origemPedido, pedidosConferidos))
+                pedidosSemAnexos, pedidosAComprar, idsPedidos, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas, null, null, 0, origemPedido, pedidosConferidos, tipoVenda))
                 ids += "," + id;
 
             if (ids.Length == 0)

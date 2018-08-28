@@ -1391,6 +1391,8 @@ namespace Glass.Data.DAL
             string sql = SqlListCredito(codCliente, nome, bairro, telefone, cpfCnpj, true, out filtroAdicional).
                 Replace("?filtroAdicional?", filtroAdicional);
 
+            sql += " order by c.Nome ASC ";
+
             return objPersistence.LoadData(sql, GetParamFilter(codCliente, nome, null, null, bairro, telefone, cpfCnpj, null, null, null, null, null, null, 0)).ToArray();
         }
 

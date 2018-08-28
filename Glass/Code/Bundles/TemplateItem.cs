@@ -23,12 +23,12 @@ namespace Glass.UI.Web.Bundles
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="TemplateItem"/>.
         /// </summary>
-        /// <param name="path">O caminho do script no bundle.</param>
+        /// <param name="bundle">O bundle.</param>
         /// <param name="type">O tipo de script no bundle.</param>
-        public TemplateItem(string path, string type = TIPO_TEMPLATE_VUE)
-            : base(path)
+        public TemplateItem(Bundle bundle, string type = TIPO_TEMPLATE_VUE)
+            : base(bundle)
         {
-            this.Id = path.Split('/')
+            this.Id = this.Path.Split('/')
                 .Last()
                 .Replace('.', '-')
                 .TrimEnd('-')
@@ -52,18 +52,20 @@ namespace Glass.UI.Web.Bundles
         {
             const string SCRIPT = @"<script type=""{0}"" id=""{1}"">{3}{2}{3}</script>{3}";
 
-            var httpContext = new HttpContextWrapper(HttpContext.Current);
-            var context = new BundleContext(httpContext, BundleTable.Bundles, string.Empty);
+            var contextoHttp = new HttpContextWrapper(HttpContext.Current);
+            var contexto = new BundleContext(contextoHttp, BundleTable.Bundles, string.Empty);
 
-            var bundle = BundleTable.Bundles.First(b => b.Path == this.Path);
-            var conteudo = bundle.GenerateBundleResponse(context);
+            var conteudo = this.bundle.GenerateBundleResponse(contexto);
+            var separador = conteudo.Content.IndexOf('\n') > -1
+                ? Environment.NewLine
+                : string.Empty;
 
             var script = string.Format(
                 SCRIPT,
                 this.Type,
                 this.Id,
                 conteudo.Content,
-                Environment.NewLine);
+                separador);
 
             return new HtmlString(script)
                 .ToHtmlString();

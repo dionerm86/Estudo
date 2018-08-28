@@ -1,4 +1,27 @@
-﻿.adjustedZIndex {
+﻿#ctl00_ctl00_Menu_mnuGeral {
+  text-align: center;
+  float: none !important;
+}
+
+  #ctl00_ctl00_Menu_mnuGeral ul.static {
+    float: none !important;
+    display: inline-block;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral a.dynamic, #ctl00_ctl00_Menu_mnuGeral a.highlighted {
+    text-align: left;
+    height: auto !important;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral a.dynamic {
+    padding: 4px !important;
+  }
+
+  #ctl00_ctl00_Menu_mnuGeral li.dynamic.has-popup a.dynamic {
+    padding-right: 16px !important;
+  }
+
+.adjustedZIndex {
   z-index: 1;
 }
 

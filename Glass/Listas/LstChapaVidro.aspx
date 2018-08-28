@@ -269,6 +269,11 @@
                                             <asp:Label ID="lblSituacao" runat="server" 
                                                 Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
                                         </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:Label ID="lblSituacao" runat="server" 
+                                                Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
+                                            <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
+                                        </EditItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>

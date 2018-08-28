@@ -454,6 +454,24 @@ namespace Glass.UI.Web.Listas {
         protected global::System.Web.UI.WebControls.DropDownList drpConferente;
         
         /// <summary>
+        /// lblTipoVenda control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblTipoVenda;
+        
+        /// <summary>
+        /// drpTipoVenda control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList drpTipoVenda;
+        
+        /// <summary>
         /// ImageButton7 control.
         /// </summary>
         /// <remarks>
@@ -686,6 +704,15 @@ namespace Glass.UI.Web.Listas {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoPedido;
+        
+        /// <summary>
+        /// odsTipoVenda control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoVenda;
         
         /// <summary>
         /// lnkTotaisMarcacoes control.
