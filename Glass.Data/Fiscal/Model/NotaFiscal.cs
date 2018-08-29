@@ -79,7 +79,8 @@ namespace Glass.Data.Model
             Entrada = 1,
             Saída,
             EntradaTerceiros,
-            NotaCliente
+            NotaCliente,
+            Transporte
         }
 
         public enum FinalidadeEmissaoEnum
@@ -825,11 +826,6 @@ namespace Glass.Data.Model
                     Situacao == (int)SituacaoEnum.FalhaCancelar) && !String.IsNullOrEmpty(NumProtocolo)) ||
                     EmitirNfFsVisible || Situacao == (int)SituacaoEnum.ContingenciaOffline;
             }
-        }
-
-        public bool PrintNfTercVisible
-        {
-            get { return Situacao == (int)SituacaoEnum.FinalizadaTerceiros; }
         }
 
         public bool AnexarXMLTercVisible

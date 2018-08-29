@@ -859,15 +859,6 @@ namespace Glass.UI.Web.Listas {
         protected global::Colosoft.WebControls.VirtualObjectDataSource odsTipoCfop;
         
         /// <summary>
-        /// odsFormasPagto control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::Colosoft.WebControls.VirtualObjectDataSource odsFormasPagto;
-        
-        /// <summary>
         /// odsFormaPagtoNotaFiscal control.
         /// </summary>
         /// <remarks>
