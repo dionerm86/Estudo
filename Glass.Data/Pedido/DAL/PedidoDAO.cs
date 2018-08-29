@@ -4126,8 +4126,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <returns></returns>
         public Pedido[] GetForConfirmation(uint idPedido, uint idCli, string nomeCli, uint idFunc, string codCliente,
-            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido,
-            bool apenasFastDelivery, string sortExpression)
+            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido, string sortExpression)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -4142,7 +4141,7 @@ namespace Glass.Data.DAL
 
             var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, null, null, null, situacaoPedido.ToString(),
                 String.Empty, String.Empty, null, dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
-                tipoPedidoStr, 0, apenasFastDelivery ? 1 : 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
+                tipoPedidoStr, 0, 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sortExpression = !sortExpression.IsNullOrEmpty() ? sortExpression : "IdPedido";
 
