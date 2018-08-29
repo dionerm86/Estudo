@@ -1281,9 +1281,10 @@ namespace Glass.Data.DAL
                     INNER JOIN plano_corte pc ON(rpc.IdPlanoCorte = pc.IdPlanoCorte)
                     INNER JOIN plano_otimizacao po ON(pc.IdPlanoOtimizacao = po.IdPlanoOtimizacao)
                     SET pi.IdImpressao = ?idImpressao 
-                    WHERE po.IdSolucaoOtimizacao=?idSolucaoOtimizacao";
+                    WHERE po.IdSolucaoOtimizacao=?idSolucaoOtimizacao AND 
+                          pi.PlanoCorte IN (SELECT PlanoCorte FROM produto_impressao pi2 WHERE pi2.IdImpressao=?idImpressao)";
 
-            objPersistence.ExecuteCommand(sessao, sql,
+            CurrentPersistenceObject.ExecuteCommand(sessao, sql,
                 new GDAParameter("?idImpressao", idImpressao),
                 new GDAParameter("?idSolucaoOtimizacao", idSolucaoOtimizacao));
         }

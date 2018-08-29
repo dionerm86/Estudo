@@ -1,60 +1,55 @@
-﻿using System;
+﻿using Colosoft;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Colosoft;
 
 namespace Glass.Otimizacao.Negocios.Componentes
 {
     /// <summary>
     /// Classe responsável pela conversão dos dados para a solução da otimização.
     /// </summary>
-    class ConversorSolucaoOtimizacao
+    internal class ConversorSolucaoOtimizacao
     {
-        #region Variáveis Locais
-
-        private readonly List<Global.Negocios.Entidades.Produto> _produtosRetalhos = 
-            new List<Global.Negocios.Entidades.Produto>();
-
-        private readonly List<Data.Model.RetalhoProducao> _retalhosProducao = 
-            new List<Data.Model.RetalhoProducao>();
-
-        #endregion
-
-        #region Properties
+        private readonly List<Global.Negocios.Entidades.Produto> _produtosRetalhos = new List<Global.Negocios.Entidades.Produto>();
+        private readonly List<Data.Model.RetalhoProducao> _retalhosProducao = new List<Data.Model.RetalhoProducao>();
+        private readonly Entidades.SolucaoOtimizacao _solucao;
 
         /// <summary>
         /// Obtém a solução associada.
         /// </summary>
-        public Entidades.SolucaoOtimizacao Solucao { get; }
-
-        #endregion
-
-        #region Construtores
+        public Entidades.SolucaoOtimizacao Solucao => _solucao;
 
         /// <summary>
-        /// Construtor padrão.
+        /// Obtém ou define um valor que indica se é para criar um retalho de produção
+        /// para cada retalho importado.
         /// </summary>
-        /// <param name="solucao"></param>
+        public bool CriarRetalhosProducao { get; set; } = false;
+
+        /// <summary>
+        /// Inicia uma nova instância da classe <see cref="ConversorSolucaoOtimizacao"/>.
+        /// </summary>
+        /// <param name="solucao">Instância da solução que será convertida.</param>
         public ConversorSolucaoOtimizacao(Entidades.SolucaoOtimizacao solucao)
         {
             if (solucao == null)
+            {
                 throw new ArgumentNullException(nameof(solucao));
+            }
 
-            Solucao = solucao;
+            this._solucao = solucao;
         }
-
-        #endregion
-
-        #region Métodos Públicos
 
         /// <summary>
         /// Preenche os dados da solução de otimização com as etiquetas do documento informado.
         /// </summary>
-        /// <param name="documentoEtiquetas"></param>
+        /// <param name="documentoEtiquetas">Documento contendo as etiquetas.</param>
         public void Executar(eCutter.DocumentoEtiquetas documentoEtiquetas)
         {
-            if (!documentoEtiquetas.PlanosOtimizacao.Any()) return;
+            if (!documentoEtiquetas.PlanosOtimizacao.Any())
+            {
+                return;
+            }
 
             var codigosMateriais = documentoEtiquetas.PlanosOtimizacao.Select(f => f.CodigoMaterial).Distinct();
 
@@ -72,7 +67,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .Select(f => new
                 {
                     CodOtimizacao = f.GetString(0),
-                    IdProd = f.GetInt32(1)
+                    IdProd = f.GetInt32(1),
                 }).ToList();
 
             var processados = new List<Entidades.PlanoOtimizacao>();
@@ -81,59 +76,63 @@ namespace Glass.Otimizacao.Negocios.Componentes
             {
                 var produto = produtos.FirstOrDefault(f => f.CodOtimizacao == etiqueta.CodigoMaterial);
                 if (produto == null)
+                {
                     continue;
+                }
 
-                var planoOtimizacao = Solucao.PlanosOtimizacao.FirstOrDefault(f => f.Nome == etiqueta.Nome);
+                var planoOtimizacao = this.Solucao.PlanosOtimizacao.FirstOrDefault(f => f.Nome == etiqueta.Nome);
                 if (planoOtimizacao == null)
                 {
                     planoOtimizacao = SourceContext.Instance.Create<Entidades.PlanoOtimizacao>();
                     planoOtimizacao.Nome = etiqueta.Nome;
-                    Solucao.PlanosOtimizacao.Add(planoOtimizacao);
+                    this.Solucao.PlanosOtimizacao.Add(planoOtimizacao);
                 }
 
                 planoOtimizacao.IdProduto = produto.IdProd;
 
-                PreencherPlanosCorte(planoOtimizacao, etiqueta);
+                this.PreencherPlanosCorte(planoOtimizacao, etiqueta);
 
                 processados.Add(planoOtimizacao);
             }
 
-            var apagados = Solucao.PlanosOtimizacao.Where(f => !processados.Contains(f)).ToArray();
+            var apagados = this.Solucao.PlanosOtimizacao.Where(f => !processados.Contains(f)).ToArray();
             foreach (var planoOtimizacao in apagados)
-                Solucao.PlanosOtimizacao.Remove(planoOtimizacao);
+            {
+                this.Solucao.PlanosOtimizacao.Remove(planoOtimizacao);
+            }
         }
 
         /// <summary>
         /// Salva todos os dados gerados na conversão.
         /// </summary>
-        /// <param name="session"></param>
-        /// <returns></returns>
+        /// <param name="session">Sessão de persistencia que será usada para salva os dados.</param>
+        /// <returns>Resultado da operação.</returns>
         public Colosoft.Business.SaveResult Salvar(Colosoft.Data.IPersistenceSession session)
         {
             Colosoft.Business.SaveResult resultado;
 
-            foreach (var produto in _produtosRetalhos)
+            foreach (var produto in this._produtosRetalhos)
             {
                 resultado = produto.Save(session);
                 if (!resultado)
+                {
                     return resultado;
+                }
             }
 
-            foreach (var retalhoProducao in _retalhosProducao)
+            foreach (var retalhoProducao in this._retalhosProducao)
+            {
                 session.Insert(retalhoProducao);
+            }
 
-            return Solucao.Save(session);
+            return this.Solucao.Save(session);
         }
-
-        #endregion
-
-        #region Métodos Privados
 
         /// <summary>
         /// Obtém o código interno do produto associado com o retalho.
         /// </summary>
         /// <param name="retalho">Retalho base que será usado para recuperar o código interno do produto.</param>
-        /// <returns></returns>
+        /// <returns>Código interno do produto associado com o retalho do plano de corte.</returns>
         private string ObterCodInternoProduto(Entidades.RetalhoPlanoCorte retalho)
         {
             var planoOtimizacao = retalho.GetOwner<Entidades.PlanoOtimizacao>();
@@ -143,24 +142,26 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Obtém o produto associado com o retalho do plano de corte.
         /// </summary>
-        /// <param name="retalho"></param>
-        /// <returns></returns>
+        /// <param name="retalho">Retalho de onde será recupera o produto.</param>
+        /// <returns>Produto associado com o retalho.</returns>
         private Global.Negocios.Entidades.Produto ObterProduto(Entidades.RetalhoPlanoCorte retalho)
         {
-            var codInterno = ObterCodInternoProduto(retalho);
-            var produto = _produtosRetalhos.FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(f.CodInterno, codInterno));
+            var codInterno = this.ObterCodInternoProduto(retalho);
+            var produto = this._produtosRetalhos.FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(f.CodInterno, codInterno));
 
             var produtoJaCarregado = produto != null;
-             
+
             if (produto == null)
+            {
                 produto = SourceContext.Instance.CreateQuery()
-                        .From<Data.Model.Produto>()
-                        .Where("CodInterno=?codInterno AND IdGrupoProd=?idGrupoProd AND IdSubgrupoProd=?idSubgrupoProd")
-                        .Add("?codInterno", codInterno)
-                        .Add("?idGrupoProd", Data.Model.NomeGrupoProd.Vidro)
-                        .Add("?idSubgrupoProd", Data.Helper.Utils.SubgrupoProduto.RetalhosProducao)
-                        .ProcessResult<Global.Negocios.Entidades.Produto>()
-                        .FirstOrDefault();
+                    .From<Data.Model.Produto>()
+                    .Where("CodInterno=?codInterno AND IdGrupoProd=?idGrupoProd AND IdSubgrupoProd=?idSubgrupoProd")
+                    .Add("?codInterno", codInterno)
+                    .Add("?idGrupoProd", Data.Model.NomeGrupoProd.Vidro)
+                    .Add("?idSubgrupoProd", Data.Helper.Utils.SubgrupoProduto.RetalhosProducao)
+                    .ProcessResult<Global.Negocios.Entidades.Produto>()
+                    .FirstOrDefault();
+            }
 
             var planoOtimizacao = retalho.GetOwner<Entidades.PlanoOtimizacao>();
 
@@ -183,14 +184,18 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 produto.CodInterno = codInterno;
                 produto.IdProdOrig = planoOtimizacao.Produto.IdProd;
                 produto.Situacao = Situacao.Ativo;
-                produto.Obs = "";
+                produto.Obs = string.Empty;
                 produto.DataCadastro = DateTime.Now;
 
                 if (Data.Helper.UserInfo.GetUserInfo != null)
+                {
                     produto.IdUsuarioCadastro = (int)Data.Helper.UserInfo.GetUserInfo.CodUser;
+                }
             }
             else
+            {
                 produto.Descricao = planoOtimizacao.Produto.Descricao;
+            }
 
             var m2 = (produto.Altura.GetValueOrDefault(0) * produto.Largura.GetValueOrDefault(0)) / 1000000m;
             produto.ValorAtacado = m2 * produto.ValorAtacado;
@@ -198,7 +203,9 @@ namespace Glass.Otimizacao.Negocios.Componentes
             produto.ValorObra = m2 * produto.ValorObra;
 
             if (!produtoJaCarregado)
-                _produtosRetalhos.Add(produto);
+            {
+                this._produtosRetalhos.Add(produto);
+            }
 
             return produto;
         }
@@ -206,8 +213,8 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Preenche os dados planos de corte do plano de otimização com base nas etiquetas.
         /// </summary>
-        /// <param name="planoOtimizacao"></param>
-        /// <param name="etiquetaPlanoOtimizacao"></param>
+        /// <param name="planoOtimizacao">Plano de otimização.</param>
+        /// <param name="etiquetaPlanoOtimizacao">Eetiqueta do plano de otimização.</param>
         private void PreencherPlanosCorte(Entidades.PlanoOtimizacao planoOtimizacao, eCutter.EtiquetaPlanoOtimizacao etiquetaPlanoOtimizacao)
         {
             var processados = new List<Entidades.PlanoCorte>();
@@ -226,22 +233,24 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 planoCorte.Largura = etiqueta.Largura;
                 planoCorte.Altura = etiqueta.Altura;
 
-                PreencherPecasPlanoCorte(planoCorte, etiqueta);
-                PreencherRetalhosPlanoCorte(planoCorte, etiqueta);
+                this.PreencherPecasPlanoCorte(planoCorte, etiqueta);
+                this.PreencherRetalhosPlanoCorte(planoCorte, etiqueta);
 
                 processados.Add(planoCorte);
             }
 
             var apagados = planoOtimizacao.PlanosCorte.Where(f => !processados.Contains(f)).ToArray();
             foreach (var planoCorte in apagados)
+            {
                 planoOtimizacao.PlanosCorte.Remove(planoCorte);
+            }
         }
 
         /// <summary>
         /// Preenche os dados da peças do plano de corte.
         /// </summary>
-        /// <param name="planoCorte"></param>
-        /// <param name="etiquetaPlanoCorte"></param>
+        /// <param name="planoCorte">Plano de corte que será preenchido.</param>
+        /// <param name="etiquetaPlanoCorte">Etiqueta o plano de corte que será usado como referência.</param>
         private void PreencherPecasPlanoCorte(Entidades.PlanoCorte planoCorte, eCutter.EtiquetaPlanoCorte etiquetaPlanoCorte)
         {
             var processadas = new List<Entidades.PecaPlanoCorte>();
@@ -249,7 +258,6 @@ namespace Glass.Otimizacao.Negocios.Componentes
             // os números das etiquetas do produto pedido pe
             var numerosEtiqueta = etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaPeca>()
                 .Select(f => f.Notas?.Trim())
-                // Verifica se a etiqueta é aceita no webglass
                 .Where(f => f.Contains(".") && f.Contains("/") && f.Contains("-"))
                 .Distinct();
 
@@ -267,14 +275,17 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .Select(f => new
                 {
                     Etiqueta = f.GetString(0),
-                    IdProdPedProducao = f.GetInt32(1)
+                    IdProdPedProducao = f.GetInt32(1),
                 })
                 .ToList();
 
             foreach (var etiqueta in etiquetaPlanoCorte.Etiquetas.OfType<eCutter.EtiquetaPeca>())
             {
                 var produtoPedidoProducao = etiquetasProdutoPedidoProducao.FirstOrDefault(f => f.Etiqueta == etiqueta.Notas?.Trim());
-                if (produtoPedidoProducao == null) continue;
+                if (produtoPedidoProducao == null)
+                {
+                    continue;
+                }
 
                 var peca = planoCorte.Pecas.FirstOrDefault(f => f.IdProdPedProducao == produtoPedidoProducao.IdProdPedProducao);
                 if (peca == null)
@@ -293,14 +304,16 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
             var apagadas = planoCorte.Pecas.Where(f => !processadas.Contains(f)).ToArray();
             foreach (var peca in apagadas)
+            {
                 planoCorte.Pecas.Remove(peca);
+            }
         }
 
         /// <summary>
         /// Preenche os dados dos retalhos do plano de corte.
         /// </summary>
-        /// <param name="planoCorte"></param>
-        /// <param name="etiquetaPlanoCorte"></param>
+        /// <param name="planoCorte">Plano de corte que será preenchido.</param>
+        /// <param name="etiquetaPlanoCorte">Etiqueta do plano de corte.</param>
         private void PreencherRetalhosPlanoCorte(Entidades.PlanoCorte planoCorte, eCutter.EtiquetaPlanoCorte etiquetaPlanoCorte)
         {
             var processados = new List<Entidades.RetalhoPlanoCorte>();
@@ -320,27 +333,31 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 retalho.Altura = etiqueta.Altura;
                 retalho.Reaproveitavel = etiqueta.Reaproveitavel;
 
-                var produto = ObterProduto(retalho);
+                var produto = this.ObterProduto(retalho);
 
-                var retalhoProducao = new Data.Model.RetalhoProducao
+                if (this.CriarRetalhosProducao)
                 {
-                    IdRetalhoProducao = retalho.TypeManager.GenerateInstanceUid(typeof(Data.Model.RetalhoProducao)),
-                    DataCad = DateTime.Now,
-                    IdProd = produto.IdProd,
-                    Situacao = Data.Model.SituacaoRetalhoProducao.Indisponivel,
-                    UsuCad = Data.Helper.UserInfo.GetUserInfo?.CodUser ?? 0
-                };
+                    var retalhoProducao = new Data.Model.RetalhoProducao
+                    {
+                        IdRetalhoProducao = retalho.TypeManager.GenerateInstanceUid(typeof(Data.Model.RetalhoProducao)),
+                        DataCad = DateTime.Now,
+                        IdProd = produto.IdProd,
+                        Situacao = Data.Model.SituacaoRetalhoProducao.Indisponivel,
+                        UsuCad = Data.Helper.UserInfo.GetUserInfo?.CodUser ?? 0,
+                    };
 
-                _retalhosProducao.Add(retalhoProducao);
-                retalho.IdRetalhoProducao = retalhoProducao.IdRetalhoProducao;
+                    this._retalhosProducao.Add(retalhoProducao);
+                    retalho.IdRetalhoProducao = retalhoProducao.IdRetalhoProducao;
+                }
+
                 processados.Add(retalho);
             }
 
             var apagados = planoCorte.Retalhos.Where(f => !processados.Contains(f)).ToArray();
             foreach (var retalho in apagados)
+            {
                 planoCorte.Retalhos.Remove(retalho);
+            }
         }
-
-        #endregion
     }
 }

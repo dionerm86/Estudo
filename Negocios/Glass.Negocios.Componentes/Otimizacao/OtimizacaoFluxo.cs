@@ -1,9 +1,7 @@
-﻿using Glass.Otimizacao;
+﻿using Colosoft;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Colosoft;
 
 namespace Glass.Otimizacao.Negocios.Componentes
 {
@@ -12,50 +10,42 @@ namespace Glass.Otimizacao.Negocios.Componentes
     /// </summary>
     public class OtimizacaoFluxo : IOtimizacaoFluxo
     {
-        #region Propriedades
-
         /// <summary>
         /// Obtém o repositório da solução.
         /// </summary>
-        protected IRepositorioSolucaoOtimizacao Repositorio { get; }
+        private readonly IRepositorioSolucaoOtimizacao _repositorio;
 
         /// <summary>
         /// Obtém o provedor do plano de corte.
         /// </summary>
-        protected Entidades.IProvedorPlanoCorte ProvedorPlanoCorte { get; }
-
-        #endregion
-
-        #region Construtores
+        private readonly Entidades.IProvedorPlanoCorte _provedorPlanoCorte;
 
         /// <summary>
-        /// Construtor padrão.
+        /// Inicia uma nova instância da classe <see cref="OtimizacaoFluxo"/>.
         /// </summary>
-        /// <param name="repositorioSolucaoOtimizacao"></param>
-        /// <param name="provedorPlanoCorte"></param>
+        /// <param name="repositorioSolucaoOtimizacao">Repositório das soluções de otimização.</param>
+        /// <param name="provedorPlanoCorte">Provedor dos planos de corte.</param>
         public OtimizacaoFluxo(
             IRepositorioSolucaoOtimizacao repositorioSolucaoOtimizacao,
             Entidades.IProvedorPlanoCorte provedorPlanoCorte)
         {
-            Repositorio = repositorioSolucaoOtimizacao;
-            ProvedorPlanoCorte = provedorPlanoCorte;
+            this._repositorio = repositorioSolucaoOtimizacao;
+            this._provedorPlanoCorte = provedorPlanoCorte;
         }
-
-        #endregion
-
-        #region Métodos Privados
 
         /// <summary>
         /// Recupera as entradas do estoque de chapas.
         /// </summary>
-        /// <param name="idsProd"></param>
-        /// <returns></returns>
+        /// <param name="idsProd">Identificadores do produtos para recuperar as chapas.</param>
+        /// <returns>Entrada do estoque de chapas.</returns>
         private IEnumerable<IEntradaEstoqueChapa> ObterEntradasEstoqueChapas(IEnumerable<int> idsProd)
         {
             var idsProd2 = string.Join(",", idsProd);
 
             if (string.IsNullOrEmpty(idsProd2))
+            {
                 yield break;
+            }
 
             // Recupera os identificadores dos produtos de baixa
             var idsProdBaixa = SourceContext.Instance.CreateQuery()
@@ -77,15 +67,16 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     .From<Data.Model.RetalhoProducao>("r")
                     .InnerJoin<Data.Model.Produto>("r.IdProd=p.IdProd", "p")
                     .LeftJoin<Data.Model.ProdutoPedidoProducao>("r.IdProdPedProducaoOrig=ppp.IdProdPedProducao", "ppp")
-                    .LeftJoin(SourceContext.Instance.CreateQuery()
-                        .From<Data.Model.UsoRetalhoProducao>("ur1")
-                        .GroupBy("ur1.IdRetalhoProducao")
-                        .Select("MIN(ur1.IdUsoRetalhoProducao) AS IdUsoRetalhoProducao, ur1.IdRetalhoProducao"),
-                        "r.IdRetalhoProducao=ur.IdRetalhoProducao", "ur")
+                    .LeftJoin(
+                        SourceContext.Instance.CreateQuery()
+                            .From<Data.Model.UsoRetalhoProducao>("ur1")
+                            .GroupBy("ur1.IdRetalhoProducao")
+                            .Select("MIN(ur1.IdUsoRetalhoProducao) AS IdUsoRetalhoProducao, ur1.IdRetalhoProducao"),
+                        "r.IdRetalhoProducao=ur.IdRetalhoProducao",
+                        "ur")
                     .Where($"r.Situacao=?situacaoRetalho AND (p.IdProdOrig IN ({idsProdBaixa2}) OR p.IdProdBase IN ({idsProdBaixa2}))")
                     .GroupBy("r.IdProd")
                     .Select("MIN(p.CodOtimizacao) AS CodMaterial, MIN(p.Altura) AS Altura, MIN(p.Largura) AS Largura, COUNT(r.IdProd) AS Qtde, 1 AS Retalho"));
-
             }
 
             idsProd2 = string.Join(",", idsProd.Concat(idsProdBaixa));
@@ -107,7 +98,9 @@ namespace Glass.Otimizacao.Negocios.Componentes
             var consulta = consultas.First();
 
             if (consultas.Count > 0)
+            {
                 consulta.UnionAll(consultas[1]);
+            }
 
             consulta.Add("?situacaoRetalho", Data.Model.SituacaoRetalhoProducao.Disponivel);
 
@@ -124,24 +117,28 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     Altura = f["Altura"],
                     Retalho = f["Retalho"],
                     TipoCorte = TipoCorteTransversal.XY,
-                    Prioridade = f.GetBoolean("Retalho") ? 999 : 0
+                    Prioridade = f.GetBoolean("Retalho") ? 999 : 0,
                 }).ToList();
 
             foreach (var i in entradas)
+            {
                 yield return i;
+            }
         }
 
         /// <summary>
         /// Recupera os materiais.
         /// </summary>
-        /// <param name="idsProd"></param>
-        /// <returns></returns>
+        /// <param name="idsProd">Identificadores do produtos para recuperar os materiais.</param>
+        /// <returns>Materiais associados com os produtos.</returns>
         private IEnumerable<IMaterial> ObterMateriais(IEnumerable<int> idsProd)
         {
             var idsProd2 = string.Join(",", idsProd);
 
             if (string.IsNullOrEmpty(idsProd2))
+            {
                 yield break;
+            }
 
             var materiais = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Produto>("p")
@@ -170,79 +167,42 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     DesperdicioMinY = f["DesperdicioMinY"],
                     DistanciaMin = f["DistanciaMin"],
                     RecorteAutomaticoForma = f["RecorteAutomaticoForma"],
-                    AnguloRecorteAutomatico = f["AnguloRecorteAutomatico"]
+                    AnguloRecorteAutomatico = f["AnguloRecorteAutomatico"],
                 }).ToList();
 
             foreach (var i in materiais)
+            {
                 yield return i;
-        }
-
-        /// <summary>
-        /// Realiza a importação do arquivo de otimização do optyway
-        /// </summary>
-        /// <param name="arquivo"></param>
-        /// <returns></returns>
-        private ImportacaoOtimizacao ImportarArquivoOptyWay(IArquivoSolucaoOtimizacao arquivo)
-        {
-            var proditosPedidoEspelho = new List<Data.Model.ProdutosPedidoEspelho>();
-            var etiquetasJaImpressas = string.Empty;
-            var qtdPecasImpressas = 0;
-
-            List<string> lstEtiquetas = new List<string>();
-            var pedidosAlteradosAposExportacao = new List<int>();
-
-          
-            // Lê o arquivo de otimização enviado
-            var xmlDoc = new System.Xml.XmlDocument();
-            using (var reader = new System.IO.StreamReader(arquivo.Abrir()))
-                /* Chamado 50941. */
-                xmlDoc.LoadXml(reader.ReadToEnd());
-
-            Data.DAL.ImpressaoEtiquetaDAO.Instance.ImportarArquivoOtimizacaoOptyWay(xmlDoc, ref lstEtiquetas, ref etiquetasJaImpressas, ref pedidosAlteradosAposExportacao, ref proditosPedidoEspelho, ref qtdPecasImpressas);
-
-            if (lstEtiquetas == null || lstEtiquetas.Count == 0)
-                throw new InvalidOperationException("Não há etiquetas para importar.");
-
-            string extensao = System.IO.Path.GetExtension(arquivo.Nome);
-
-            var a = Data.DAL.ArquivoOtimizacaoDAO.Instance.InserirArquivoOtimizacao(Data.Model.ArquivoOtimizacao.DirecaoEnum.Importar,
-                extensao, lstEtiquetas, null, null);
-
-            // Salva arquivo otimizado
-            xmlDoc.Save(System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, a.NomeArquivo));
-
-            return new ImportacaoOtimizacao((int)a.IdArquivoOtimizacao);
+            }
         }
 
         /// <summary>
         /// Obtém o documento com os dados de etiqueta da solução de otimização.
         /// </summary>
-        /// <param name="solucaoOtimizacao"></param>
-        /// <returns></returns>
+        /// <param name="solucaoOtimizacao">Solução de otimização.</param>
+        /// <returns>Documento de etiquetas da solução.</returns>
         private eCutter.DocumentoEtiquetas ObterDocumentoEtiquetas(Entidades.SolucaoOtimizacao solucaoOtimizacao)
         {
-            foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
+            foreach (var arquivo in this._repositorio.ObterArquivos(solucaoOtimizacao))
             {
                 if (StringComparer.InvariantCultureIgnoreCase.Equals(
                     System.IO.Path.GetExtension(arquivo.Nome), ".optlbl"))
                 {
                     using (var conteudo = arquivo.Abrir())
+                    {
                         return eCutter.DocumentoEtiquetas.Open(conteudo);
+                    }
                 }
             }
 
             return null;
         }
 
-        #endregion
-
-        #region Métodos Públicos
-
         /// <summary>
         /// Verifica se existe uma solução de otimização configurada para o arquivo de otimização.
         /// </summary>
         /// <param name="idArquivoOtimizacao">Identificador do arquiv de otimização.</param>
-        /// <returns></returns>
+        /// <returns>Identifica se o arquivo possui uma solução de otimizaçao.</returns>
         public bool PossuiSolucaoOtimizacao(int idArquivoOtimizacao)
         {
             return SourceContext.Instance.CreateQuery()
@@ -256,7 +216,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// Obtém a solução de otimização pelo arquivo de otimização.
         /// </summary>
         /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
-        /// <returns></returns>
+        /// <returns>Solução de otimização associada com o arquivo.</returns>
         public Entidades.SolucaoOtimizacao ObterSolucaoOtimizacaoPelaArquivoOtimizacao(int idArquivoOtimizacao)
         {
             return SourceContext.Instance.CreateQuery()
@@ -271,7 +231,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// Obtém a solução de otimização.
         /// </summary>
         /// <param name="idSolucaoOtimizacao">Identificador da solução.</param>
-        /// <returns></returns>
+        /// <returns>Solução de otimização associada com o id.</returns>
         public Entidades.SolucaoOtimizacao ObterSolucaoOtimizacao(int idSolucaoOtimizacao)
         {
             return SourceContext.Instance.CreateQuery()
@@ -285,8 +245,8 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// <summary>
         /// Recupera a sessão de otimização associado com o identificador do arquivo de otimização.
         /// </summary>
-        /// <param name="idArquivoOtimizacao"></param>
-        /// <returns></returns>
+        /// <param name="idArquivoOtimizacao">Identificador do arquivo base para a sessão de otimização.</param>
+        /// <returns>Sessão de otimização associada com o arquivo.</returns>
         public ISessaoOtimizacao ObterSessaoOtimizacao(int idArquivoOtimizacao)
         {
             // Recupera os identificadores dos produtos associado com o arquivo de otimização
@@ -302,11 +262,15 @@ namespace Glass.Otimizacao.Negocios.Componentes
             IEnumerable<IEntradaEstoqueChapa> entradasEstoqueChapa;
 
             if (Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Interno)
-                entradasEstoqueChapa = ObterEntradasEstoqueChapas(idsProd);
+            {
+                entradasEstoqueChapa = this.ObterEntradasEstoqueChapas(idsProd);
+            }
             else
+            {
                 entradasEstoqueChapa = new IEntradaEstoqueChapa[0];
+            }
 
-            var estoque = new EstoqueChapa(ObterMateriais(idsProd), entradasEstoqueChapa);
+            var estoque = new EstoqueChapa(this.ObterMateriais(idsProd), entradasEstoqueChapa);
 
             return new SessaoOtimizacao(estoque, new IPecaPadrao[0]);
         }
@@ -316,7 +280,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
         /// </summary>
         /// <param name="idArquivoOtimizacao">Identificador do arquivo de otimização.</param>
         /// <param name="arquivos">Arquivos da otimização.</param>
-        /// <returns></returns>
+        /// <returns>Resultado da importação da otimização.</returns>
         public ImportacaoOtimizacao Importar(int idArquivoOtimizacao, IEnumerable<IArquivoSolucaoOtimizacao> arquivos)
         {
             var solucaoOtimizacao = SourceContext.Instance.CreateQuery()
@@ -328,14 +292,16 @@ namespace Glass.Otimizacao.Negocios.Componentes
 
             var importacaoNova = solucaoOtimizacao == null;
             if (importacaoNova)
+            {
                 solucaoOtimizacao = new Entidades.SolucaoOtimizacao()
                 {
-                    IdArquivoOtimizacao = idArquivoOtimizacao
+                    IdArquivoOtimizacao = idArquivoOtimizacao,
                 };
+            }
 
-            Repositorio.SalvarArquivos(solucaoOtimizacao, arquivos);
-            
-            var documentoEtiquetas = ObterDocumentoEtiquetas(solucaoOtimizacao);
+            this._repositorio.SalvarArquivos(solucaoOtimizacao, arquivos);
+
+            var documentoEtiquetas = this.ObterDocumentoEtiquetas(solucaoOtimizacao);
             var conversor = new ConversorSolucaoOtimizacao(solucaoOtimizacao);
             conversor.Executar(documentoEtiquetas);
 
@@ -345,31 +311,14 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 session.Execute(true);
             }
 
-            //if (importacaoNova)
-            //{
-            //    var tipoExportacaoEtiqueta = Configuracoes.EtiquetaConfig.TipoExportacaoEtiqueta;
-
-            //    foreach (var arquivo in Repositorio.ObterArquivos(solucaoOtimizacao))
-            //    {
-            //        if ((tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.OptyWay ||
-            //             tipoExportacaoEtiqueta == Data.Helper.DataSources.TipoExportacaoEtiquetaEnum.eCutter) &&
-            //             StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(arquivo.Nome), ".xml"))
-            //            return ImportarArquivoOptyWay(arquivo);
-            //    }
-
-            //    throw new InvalidOperationException("Não foi encontrado nenhum arquivo compatível para a importação.");
-            //}
-            //else
-            //    return null;
-
             return new ImportacaoOtimizacao(solucaoOtimizacao);
         }
 
         /// <summary>
         /// Obtém os itens da otimização base no identificador da solução de otimização.
         /// </summary>
-        /// <param name="idSolucaoOtimizacao"></param>
-        /// <returns></returns>
+        /// <param name="idSolucaoOtimizacao">Identificador da solução de otimização associada.</param>
+        /// <returns>Itens de otimização associado com a solução.</returns>
         public IEnumerable<ItemOtimizacao> ObterItensPelaSolucao(int idSolucaoOtimizacao)
         {
             var etiquetasPeca = SourceContext.Instance.CreateQuery()
@@ -417,17 +366,17 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte"),
                     Cor = f.GetString("Cor"),
                 }).ToList();
-            
+
             var planosOtimizacao = new Dictionary<int, int>();
 
             // Obtém a relação da quantidade de planos de corte por planos de otimização
-            foreach (var i in     
+            foreach (var i in
                etiquetasPeca
                 .GroupBy(f => f.IdPlanoOtimizacao)
                 .Select(f => new
                 {
                     IdPlanoOtimizacao = f.Key,
-                    QuantidePlanosCorte = f.GroupBy(x => x.IdPlanoCorte).Count()
+                    QuantidePlanosCorte = f.GroupBy(x => x.IdPlanoCorte).Count(),
                 }))
             {
                 planosOtimizacao.Add(i.IdPlanoOtimizacao, i.QuantidePlanosCorte);
@@ -439,7 +388,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .Select(f => new
                 {
                     IdPlanoCorte = f.IdPlanoCorte,
-                    PlanoCorte = ProvedorPlanoCorte.ObterNumeroEtiqueta(f.PlanoOtimizacao, f.PosicaoPlanoCorte, planosOtimizacao[f.IdPlanoOtimizacao])
+                    PlanoCorte = this._provedorPlanoCorte.ObterNumeroEtiqueta(f.PlanoOtimizacao, f.PosicaoPlanoCorte, planosOtimizacao[f.IdPlanoOtimizacao]),
                 }).ToList();
 
             var pecas = etiquetasPeca
@@ -472,7 +421,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                         TotM2 = (float)Math.Round(totM2, 3),
                         TotM2Calc = (float)Math.Round(totM2Calc, 3),
                         PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == item.IdPlanoCorte).PlanoCorte,
-                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta).ToList()
+                        Etiquetas = grupoProdPed.Select(f => f.NumEtiqueta).ToList(),
                     };
                 });
 
@@ -499,9 +448,8 @@ namespace Glass.Otimizacao.Negocios.Componentes
                     IdPlanoOtimizacao = f.GetInt32("IdPlanoOtimizacao"),
                     IdPlanoCorte = f.GetInt32("IdPlanoCorte"),
                     PlanoOtimizacao = f.GetString("PlanoOtimizacao"),
-                    PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte")
+                    PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte"),
                 });
-
 
             var retalhos = etiquetasRetalho
                 .GroupBy(f => $"{f.PlanoOtimizacao}|{f.PosicaoPlanoCorte}|{f.Largura}X{f.Altura}")
@@ -519,13 +467,11 @@ namespace Glass.Otimizacao.Negocios.Componentes
                         AlturaProducao = etiqueta.Altura,
                         LarguraProducao = etiqueta.Largura,
                         PlanoCorteEtiqueta = planosCorte.First(f => f.IdPlanoCorte == etiqueta.IdPlanoCorte).PlanoCorte,
-                        Etiquetas = grupo.Select(f => f.NumEtiqueta).ToList()
+                        Etiquetas = grupo.Select(f => f.NumEtiqueta).ToList(),
                     };
                 });
 
             return pecas.Concat(retalhos).ToList();
         }
-
-        #endregion
     }
 }
