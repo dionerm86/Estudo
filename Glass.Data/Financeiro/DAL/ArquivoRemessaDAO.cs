@@ -282,7 +282,7 @@ namespace Glass.Data.DAL
             else if (codigoBanco == (int)CodigoBanco.CaixaEconomicaFederal)
             {
                 numero = "14" + idContaR.ToString().FormataNumero("ID Conta Receber", 15, false);
-                digito = "";
+                digito = "1";
             }
 
             #endregion

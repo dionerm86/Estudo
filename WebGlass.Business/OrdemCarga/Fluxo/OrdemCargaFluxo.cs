@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.DAL;
@@ -252,7 +252,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 try
                                 {
                                     //Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                                    if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
+                                    if (PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
                                         throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
                                     //Adiciona o pedido a OC.
@@ -667,8 +667,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             continue;
 
                         // Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                        if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
+                        if(PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
                             throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
+
 
                         //Adiciona o pedido a OC.
                         PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga()
