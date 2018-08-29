@@ -59,6 +59,34 @@
                 FindControl("hdfValMin", "input").value = txtValor.value;
             }
         }
+
+        function validaValorMinimo()
+        {
+            var codInterno = FindControl("txtCodProdIns", "input");
+            codInterno = codInterno != null ? codInterno.value : FindControl("hdfCodInterno", "input").value;
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var cliRevenda = FindControl("hdfCliRevenda", "input").value;
+            var idCliente = FindControl("hdfIdCliente", "input").value;
+                
+            var idMaterItemProj = FindControl("hdfIdMaterItemProj", "input");
+            idMaterItemProj = idMaterItemProj != null ? idMaterItemProj.value : "";                
+ 
+            var reposicao = FindControl("hdfIsReposicao", "input").value;
+            var tipoPedido = FindControl("hdfTipoPedido", "input").value;
+
+            FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", "0").value;
+
+            var txtValor = insKit ? FindControl("txtValorKit", "input") : insTubo ? FindControl("txtValorTubo", "input") : FindControl("txtValorIns", "input");
+
+            var valor = txtValor.value != "" ? txtValor.value.replace(',', '.') : 0;
+            var valorMinimo = FindControl("hdfValMin", "input").value != "" ? parseFloat(FindControl("hdfValMin", "input").value.replace(',', '.')) : 0;
+        
+            if (valor < valorMinimo)
+            {
+                alert("O valor digitado é menor que o valor mínimo do produto (R$ " + valorMinimo.toFixed(2).replace('.', ',') + ").");
+                FindControl("txtValor", "input").value = valorMinimo.toFixed(2).replace('.', ',');
+            }
+        }
         
         function getNomeControleBenef()
         {
@@ -1383,11 +1411,11 @@
                                 <asp:Label ID="Label2" runat="server" Text='<%# Eval("Valor", "{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtValorIns" runat="server" onblur="calcTotalProd();" onkeypress="return soNumeros(event, false, true);"
+                                <asp:TextBox ID="txtValorIns" runat="server" onblur="calcTotalProd();" onchange="validaValorMinimo();" onkeypress="return soNumeros(event, false, true);"
                                     Text='<%# Bind("Valor") %>' Width="50px" OnLoad="txtValorIns_Load"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:TextBox ID="txtValorIns" runat="server" onkeydown="if (isEnter(event)) calcTotalProd();"
+                                <asp:TextBox ID="txtValorIns" runat="server" onkeydown="if (isEnter(event)) calcTotalProd();" onchange="validaValorMinimo();"
                                     onkeypress="return soNumeros(event, false, true);" onblur="calcTotalProd();"
                                     Width="50px" OnLoad="txtValorIns_Load"></asp:TextBox>
                             </FooterTemplate>
