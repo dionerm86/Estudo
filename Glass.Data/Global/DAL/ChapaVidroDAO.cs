@@ -189,6 +189,7 @@ namespace Glass.Data.DAL
 
         public override uint Insert(ChapaVidro objInsert)
         {
+            objInsert.Situacao = Situacao.Ativo;
             // Verifica se já foi cadastrada uma chapa de vidro para este produto
             if (objPersistence.ExecuteSqlQueryCount("Select Count(*) From chapa_vidro Where idProd=" + objInsert.IdProd) > 0)
                 throw new Exception("Já existe uma chapa de vidro cadastrada para este produto.");
