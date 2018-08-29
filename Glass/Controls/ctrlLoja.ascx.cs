@@ -8,20 +8,26 @@ namespace Glass.UI.Web.Controls
 {
     public partial class ctrlLoja : BaseUserControl
     {
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            if (MostrarTodas)
+                drpLoja.Items.Add(new ListItem("Todas", "", true));
+            else if (MostrarVazia)
+                drpLoja.Items.Add(new ListItem());
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
-                if (MostrarTodas)
-                    drpLoja.Items.Add(new ListItem("Todas", "", true));
-                else if (MostrarVazia)
-                    drpLoja.Items.Add(new ListItem());
-                else
+                if(!MostrarTodas && !MostrarVazia)
                 {
                     uint idLoja = UserInfo.GetUserInfo.IdLoja;
                     drpLoja.SelectedValue = idLoja.ToString();
                 }
-    
+
                 if (!SomenteAtivas)
                     drpLoja.DataSourceID = "odsLoja";
     
