@@ -18,19 +18,14 @@ namespace Glass.Data.Helper
 
         public GenericModel[] GetSituacaoNotaFiscal()
         {
-            Array dados = Enum.GetValues(typeof(NotaFiscal.SituacaoEnum));
+            var retorno = new List<GenericModel>();
 
-            List<GenericModel> lstRetorno = new List<GenericModel>();
-
-            int index = 0;
-
-            foreach (var d in dados)
+            foreach (var situacao in Enum.GetValues(typeof(NotaFiscal.SituacaoEnum)))
             {
-                lstRetorno.Add(new GenericModel((uint)index + 1, ((NotaFiscal.SituacaoEnum)d).ToString()));
-                index++;
+                retorno.Add(new GenericModel((int)((NotaFiscal.SituacaoEnum)situacao), ((NotaFiscal.SituacaoEnum)situacao).Translate().ToString()));
             }
 
-            return lstRetorno.ToArray();
+            return retorno.ToArray();
         }
 
         public GenericModel[] GetSituacaoCliente()

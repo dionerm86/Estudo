@@ -1617,6 +1617,9 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.Filtro.js" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.js" />
+    <Content Include="Vue\NotasFiscais\Templates\LstNotasFiscais.Filtro.html" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.Filtro.js" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.js" />
     <Content Include="Vue\Liberacoes\Templates\LstLiberacoes.Filtro.html" />

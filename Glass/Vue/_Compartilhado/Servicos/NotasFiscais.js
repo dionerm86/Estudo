@@ -165,6 +165,14 @@ Servicos.NotasFiscais = (function(http) {
           idLiberacao: idLiberacao || 0
         }
       });
+    },
+
+    /**
+     * Recupera o objeto com as situações de nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return http().get(API + 'situacoes');
     }
   };
 }) (function () {
