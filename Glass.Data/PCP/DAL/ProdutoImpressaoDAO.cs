@@ -1267,25 +1267,182 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Otimização
-        
+
         /// <summary>
         /// Atualiza a impressão dos retalhos da solução de otimização.
         /// </summary>
-        /// <param name="sessao"></param>
-        /// <param name="idSolucaoOtimizacao"></param>
-        /// <param name="idImpressao"></param>
+        /// <param name="sessao">Sessão que será usada na operação.</param>
+        /// <param name="idSolucaoOtimizacao">Identificador da solução de otimização.</param>
+        /// <param name="idImpressao">Identificador da impressão criada.</param>
         public void AtualizarImpressaoRetalhosSolucaoOtimizacao(GDASession sessao, int idSolucaoOtimizacao, int idImpressao)
         {
-            var sql = @"UPDATE produto_impressao pi
-                    INNER JOIN retalho_plano_corte rpc ON(pi.IdRetalhoProducao = rpc.IdRetalhoProducao)
-                    INNER JOIN plano_corte pc ON(rpc.IdPlanoCorte = pc.IdPlanoCorte)
-                    INNER JOIN plano_otimizacao po ON(pc.IdPlanoOtimizacao = po.IdPlanoOtimizacao)
-                    SET pi.IdImpressao = ?idImpressao 
-                    WHERE po.IdSolucaoOtimizacao=?idSolucaoOtimizacao";
+            var planoCortesImpressao = this.CurrentPersistenceObject.LoadResult(
+                sessao,
+                "SELECT DISTINCT PlanoCorte FROM produto_impressao pi2 WHERE pi2.IdImpressao=?idImpressao",
+                new GDAParameter("?idImpressao", idImpressao))
+                .Select(f => f.GetString(0))
+                .ToList();
 
-            objPersistence.ExecuteCommand(sessao, sql,
-                new GDAParameter("?idImpressao", idImpressao),
-                new GDAParameter("?idSolucaoOtimizacao", idSolucaoOtimizacao));
+            var retalhos = this.CurrentPersistenceObject.LoadResult(
+                sessao,
+                @"SELECT 
+                    po.IdPlanoOtimizacao, rpc.IdRetalhoPlanoCorte, po.IdProduto, rpc.Largura, rpc.Altura, rpc.Posicao,
+                    pc.IdPlanoCorte, pc.Posicao AS PosicaoPlanoCorte, rpc.IdRetalhoProducao
+                 FROM retalho_plano_corte rpc
+                 INNER JOIN plano_corte pc ON (rpc.IdPlanoCorte = pc.IdPlanoCorte)
+                 INNER JOIN plano_otimizacao po ON (po.IdPlanoOtimizacao = pc.IdPlanoOtimizacao)
+                 WHERE po.IdSolucaoOtimizacao=?id AND rpc.Reaproveitavel=1",
+                new GDAParameter("?id", idSolucaoOtimizacao))
+                .Select(f =>
+                    new
+                    {
+                        IdPlanoOtimizacao = f.GetInt32("IdPlanoOtimizacao"),
+                        IdRetalhoPlanoCorte = f.GetInt32("IdRetalhoPlanoCorte"),
+                        IdProduto = f.GetInt32("IdProduto"),
+                        Largura = f.GetDouble("Largura"),
+                        Altura = f.GetDouble("Altura"),
+                        Posicao = f.GetInt32("Posicao"),
+                        IdPlanoCorte = f.GetInt32("IdPlanoCorte"),
+                        PosicaoPlanoCorte = f.GetInt32("PosicaoPlanoCorte"),
+                        IdRetalhoProducao = (int?)f["IdRetalhoProducao"],
+                    })
+                .ToList();
+
+            var planosOtimizacao = this.CurrentPersistenceObject.LoadResult(
+                sessao,
+                @"SELECT po.IdPlanoOtimizacao, po.Nome, COUNT(*) AS PlanosCorte 
+                 FROM plano_corte pc
+                 INNER JOIN plano_otimizacao po ON (pc.IdPlanoOtimizacao=po.IdPlanoOtimizacao) 
+                 WHERE po.IdSolucaoOtimizacao=?id
+                 GROUP BY pc.IdPlanoOtimizacao",
+                new GDAParameter("?id", idSolucaoOtimizacao))
+                .Select(f =>
+                    new
+                    {
+                        IdPlanoOtimizacao = f.GetInt32("IdPlanoOtimizacao"),
+                        Nome = f.GetString("Nome"),
+                        PlanosCorte = f.GetInt32("PlanosCorte"),
+                    })
+                .ToList();
+
+            // Carrega os dados dos planos de cortes associados com os retalhos
+            var planosCorte = retalhos
+                .GroupBy(f => f.IdPlanoCorte)
+                .Select(f =>
+                {
+                    var retalho = f.First();
+                    var planoOtimizacao = planosOtimizacao.First(po => po.IdPlanoOtimizacao == retalho.IdPlanoOtimizacao);
+
+                    return new
+                    {
+                        IdPlanoCorte = f.Key,
+                        Posicao = retalho.PosicaoPlanoCorte,
+                        NumeroEtiqueta = string.Format("{0}-{1:#00}/{2:#00}", planoOtimizacao.Nome, retalho.PosicaoPlanoCorte, planoOtimizacao.PlanosCorte),
+                        Retalhos = f.AsEnumerable(),
+                    };
+                })
+
+                // Vamos garantir que serão processados somente os retalhos dos planos
+                // de corte da impressão
+                .Where(f => planoCortesImpressao.Contains(f.NumeroEtiqueta));
+
+            var produtos = ProdutoDAO.Instance.ObterProdutos(sessao, retalhos.Select(f => (uint)f.IdProduto).Distinct()).ToList();
+
+            foreach (var planoCorte in planosCorte)
+            {
+                foreach (var retalho in planoCorte.Retalhos)
+                {
+                    // Se já existir um retalho de produção associado, vamos atualiza 
+                    // o produto impressão associada com o mesmo
+                    if (retalho.IdRetalhoProducao.HasValue)
+                    {
+                        this.CurrentPersistenceObject.ExecuteCommand(
+                            sessao,
+                            "UPDATE produto_impressao SET IdImpressao=?idImpressao WHERE IdRetalhoProducao=?idRetalhoProducao",
+                            new GDAParameter("?idImpressao", idImpressao),
+                            new GDAParameter("?idRetalhoProducao", retalho.IdRetalhoProducao));
+                        continue;
+                    }
+
+                    var produto = produtos.First(f => f.IdProd == retalho.IdProduto);
+
+                    // Verifica se o produto existe
+                    var novoProduto = ProdutoDAO.Instance.ObterProduto(sessao, $"{produto.CodInterno}-{(int)retalho.Altura}x{(int)retalho.Largura}-R");
+
+                    // Se não existir cria um novo
+                    if (novoProduto == null)
+                    {
+                        novoProduto = MetodosExtensao.Clonar(produto);
+                        novoProduto.Altura = (int)retalho.Altura;
+                        novoProduto.Largura = (int)retalho.Largura;
+                        novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
+                        novoProduto.IdSubgrupoProd = (int)Utils.SubgrupoProduto.RetalhosProducao;
+                        novoProduto.CodInterno = produto.CodInterno + "-" + novoProduto.Altura + "x" + novoProduto.Largura + "-R";
+                        novoProduto.IdProdOrig = produto.IdProd;
+                        novoProduto.Situacao = Glass.Situacao.Ativo;
+                        novoProduto.Obs = string.Empty;
+
+                        if (Data.Helper.UserInfo.GetUserInfo != null)
+                        {
+                            novoProduto.Usucad = Data.Helper.UserInfo.GetUserInfo.CodUser;
+                        }
+
+                        // Chamado 65546
+                        var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                        novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                        novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                        novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                        ProdutoDAO.Instance.Insert(sessao, novoProduto);
+                    }
+                    else
+                    {
+                        novoProduto.Descricao = produto.Descricao;
+
+                        // Chamado 65546
+                        var m2 = (novoProduto.Altura.GetValueOrDefault(0) * novoProduto.Largura.GetValueOrDefault(0)) / 1000000m;
+                        novoProduto.ValorAtacado = m2 * produto.ValorAtacado;
+                        novoProduto.ValorBalcao = m2 * produto.ValorBalcao;
+                        novoProduto.ValorObra = m2 * produto.ValorObra;
+
+                        ProdutoDAO.Instance.Update(sessao, novoProduto);
+                    }
+
+                    var retalhoProducao = new RetalhoProducao();
+                    retalhoProducao.DataCad = DateTime.Now;
+                    retalhoProducao.IdProd = novoProduto.IdProd;
+                    retalhoProducao.Situacao = PCPConfig.SituacaoRetalhoAoCriar;
+
+                    if (Data.Helper.UserInfo.GetUserInfo != null)
+                    {
+                        retalhoProducao.UsuCad = Data.Helper.UserInfo.GetUserInfo.CodUser;
+                    }
+
+                    RetalhoProducaoDAO.Instance.Insert(sessao, retalhoProducao);
+
+                    string etiqueta = "R" + retalhoProducao.IdRetalhoProducao + "-1/1";
+
+                    var produtoImpressao = new Data.Model.ProdutoImpressao
+                    {
+                        IdRetalhoProducao = retalhoProducao.IdRetalhoProducao,
+                        PosicaoProd = 1,
+                        ItemEtiqueta = 1,
+                        QtdeProd = 1,
+                        PosicaoArqOtimiz = retalho.Posicao,
+                        PlanoCorte = planoCorte.NumeroEtiqueta,
+                        NumEtiqueta = etiqueta,
+                        IdImpressao = (uint)idImpressao,
+                    };
+
+                    ProdutoImpressaoDAO.Instance.Insert(sessao, produtoImpressao);
+
+                    this.CurrentPersistenceObject.ExecuteCommand(
+                        sessao,
+                        "UPDATE retalho_plano_corte SET IdRetalhoProducao=?idRetalhoProducao WHERE IdRetalhoPlanoCorte=?idRetalhoPlanoCorte",
+                        new GDAParameter("?idRetalhoProducao", retalhoProducao.IdRetalhoProducao),
+                        new GDAParameter("?idRetalhoPlanoCorte", retalho.IdRetalhoPlanoCorte));
+                }
+            }
         }
 
         #endregion

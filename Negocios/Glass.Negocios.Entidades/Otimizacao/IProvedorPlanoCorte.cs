@@ -16,7 +16,7 @@ namespace Glass.Otimizacao.Negocios.Entidades
         /// <param name="planoOtimizacao">Nome do plano de otimização pai.</param>
         /// <param name="posicaoPlanoCorte">Posição do plano de corte.</param>
         /// <param name="quantidadePlanosCorte">Quantidade de planos de corte no plano de otimização.</param>
-        /// <returns></returns>
+        /// <returns>Número da etiqueta para o plano de corte.</returns>
         string ObterNumeroEtiqueta(string planoOtimizacao, int posicaoPlanoCorte, int quantidadePlanosCorte);
 
         /// <summary>

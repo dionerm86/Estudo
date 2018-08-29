@@ -160,7 +160,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 }
 
                 var retalho = item as RetalhoPlanoCorte;
-                if (retalho != null &&  retalho.IdRetalhoProducao.HasValue)
+                if (retalho != null && retalho.IdRetalhoProducao.HasValue)
                 {
                     string etiqueta = "R" + retalho.IdRetalhoProducao + "-1/1";
 
@@ -173,7 +173,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                         QtdeProd = 1,
                         PosicaoArqOtimiz = retalho.Posicao,
                         PlanoCorte = planoCorte.NumeroEtiqueta,
-                        NumEtiqueta = etiqueta
+                        NumEtiqueta = etiqueta,
                     };
                 }
             }
