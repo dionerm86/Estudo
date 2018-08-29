@@ -1,5 +1,6 @@
 <%@ Page Title="Marcar Peça Produção" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="CadMarcarPecaProducao.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadMarcarPecaProducao" %>
+    AutoEventWireup="true" CodeBehind="CadMarcarPecaProducao.aspx.cs"
+    Inherits="Glass.UI.Web.Cadastros.CadMarcarPecaProducao" %>
 
 <%@ Register Src="../Controls/ctrlTipoPerda.ascx" TagName="ctrlTipoPerda" TagPrefix="uc1" %>
 <%@ Register Src="../Controls/ctrlRetalhoProducao.ascx" TagName="ctrlRetalhoProducao"

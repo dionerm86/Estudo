@@ -333,10 +333,10 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 retalho.Altura = etiqueta.Altura;
                 retalho.Reaproveitavel = etiqueta.Reaproveitavel;
 
-                var produto = this.ObterProduto(retalho);
-
                 if (this.CriarRetalhosProducao)
                 {
+                    var produto = this.ObterProduto(retalho);
+
                     var retalhoProducao = new Data.Model.RetalhoProducao
                     {
                         IdRetalhoProducao = retalho.TypeManager.GenerateInstanceUid(typeof(Data.Model.RetalhoProducao)),
