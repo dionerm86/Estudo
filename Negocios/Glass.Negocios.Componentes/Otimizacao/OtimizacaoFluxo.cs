@@ -430,9 +430,9 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .InnerJoin<Data.Model.PlanoOtimizacao>("so.IdSolucaoOtimizacao=po.IdSolucaoOtimizacao", "po")
                 .InnerJoin<Data.Model.PlanoCorte>("po.IdPlanoOtimizacao=pc.IdPlanoOtimizacao", "pc")
                 .InnerJoin<Data.Model.RetalhoPlanoCorte>("pc.IdPlanoCorte=rpc.IdPlanoCorte", "rpc")
-                .InnerJoin<Data.Model.RetalhoProducao>("rpc.IdRetalhoProducao=rp.IdRetalhoProducao", "rp")
-                .InnerJoin<Data.Model.ProdutoImpressao>("rpc.IdRetalhoProducao=pi.IdRetalhoProducao", "pi")
-                .InnerJoin<Data.Model.Produto>("p.IdProd=rp.IdProd", "p")
+                .LeftJoin<Data.Model.RetalhoProducao>("rpc.IdRetalhoProducao=rp.IdRetalhoProducao", "rp")
+                .LeftJoin<Data.Model.ProdutoImpressao>("rpc.IdRetalhoProducao=pi.IdRetalhoProducao", "pi")
+                .InnerJoin<Data.Model.Produto>("p.IdProd=po.IdProduto", "p")
                 .Where("so.IdSolucaoOtimizacao=?id")
                 .Add("?id", idSolucaoOtimizacao)
                 .Select(@"p.Descricao AS DescricaoProduto, 

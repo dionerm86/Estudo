@@ -33,7 +33,7 @@ namespace Glass.Data.Model
         public int? IdRetalhoProducao { get; set; }
 
         /// <summary>
-        /// Obtém a posição.
+        /// Obtém ou define a posição.
         /// </summary>
         [PersistenceProperty("Posicao")]
         public int Posicao { get; set; }
@@ -51,7 +51,7 @@ namespace Glass.Data.Model
         public double Altura { get; set; }
 
         /// <summary>
-        /// Obtém ou define se o retalho é reaproveitavel.
+        /// Obtém ou define um valor que indica se o retalho é reaproveitavel.
         /// </summary>
         [PersistenceProperty("Reaproveitavel")]
         public bool Reaproveitavel { get; set; }

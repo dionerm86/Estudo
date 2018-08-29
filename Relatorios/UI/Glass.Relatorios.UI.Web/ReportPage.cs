@@ -390,6 +390,8 @@ namespace Glass.Relatorios.UI.Web
                             var log = Environment.NewLine;
 
                             sw.Start();
+
+                            UserInfo.ConfigurarLoginUsuarioGetterThread(() => login);
                             log += "Funcionário: " + login.CodUser + " - " + DateTime.Now + Environment.NewLine;
 
                             d.Status = "Buscando dados";
