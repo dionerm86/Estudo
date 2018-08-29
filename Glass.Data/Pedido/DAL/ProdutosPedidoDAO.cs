@@ -2073,11 +2073,46 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Retorna os produtos para liberação de um pedido.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(uint idPedido, string idsOc)
+        {
+            return GetForLiberacao(null, idPedido, idsOc);
+        }
+
+        /// <summary>
         /// Retorna os produtos para liberação de vários pedidos.
         /// </summary>
         public ProdutosPedido[] GetForLiberacao(string idsPedidos)
         {
-            return GetForLiberacao(null, idsPedidos);
+            return GetForLiberacao(null, idsPedidos, string.Empty);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(string idsPedidos, string idsOc)
+        {
+            return GetForLiberacao(null, idsPedidos, idsOc);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, string idsOc)
+        {
+            return GetForLiberacao(session, idsPedidos, true, false, idsOc);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de um pedido.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, uint idPedido, string idsOc)
+        {
+            if (idPedido == 0)
+                return new ProdutosPedido[0];
+
+            return GetForLiberacao(session, idPedido.ToString(), idsOc);
         }
 
         /// <summary>
@@ -2103,6 +2138,14 @@ namespace Glass.Data.DAL
         /// Retorna os produtos para liberação de vários pedidos.
         /// </summary>
         public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial, bool isRelatorioPedidoParcial)
+        {
+            return GetForLiberacao(session, idsPedidos, removerProdutosOrdemCargaParcial, isRelatorioPedidoParcial, string.Empty);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial, bool isRelatorioPedidoParcial, string idsOc)
         {
             if (string.IsNullOrEmpty(idsPedidos))
                 return new ProdutosPedido[0];
@@ -2130,9 +2173,9 @@ namespace Glass.Data.DAL
 
                     if (!isRelatorioPedidoParcial)
                     {
-                        if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed) == 0)
+                        if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed, idsOc) == 0)
                         {
-                            retorno.RemoveAt(i);
+                            retorno.RemoveAt(i); 
                             continue;
                         }
                     }

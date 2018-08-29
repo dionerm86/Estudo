@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Glass.Data.DAL;
 using Glass.Configuracoes;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
             string idParcelaStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
             string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario,
             string parcCredito, string descontarComissao, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
-            string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao);
+            string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao, string idsOc);
 
         string ConfirmarGarantiaReposicao(string idCliente, string idsPedido, string idsProdutosPedido,
             string idsProdutosProducao, string qtdeProdutosLiberar);
@@ -106,7 +106,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                         continue;
                     }
 
-                    var retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
+                    var retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null, string.Empty).Split('|');
 
                     if (retorno[0] != "true")
                     {
@@ -154,7 +154,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
             string idParcelaStr, string valoresParcelasStr, string receberEntradaStr, string fPagtos, string tpCartoes,
             string valores, string contas, string depositoNaoIdentificado, string cartaoNaoIdentificado, string utilizarCredito, string creditoUtilizado, string numAutConstrucard, string cxDiario,
             string parcCredito, string descontarComissao, string tipoDescontoStr, string descontoStr, string tipoAcrescimoStr,
-            string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao)
+            string acrescimoStr, string formaPagtoPrazoStr, string valorUtilizadoObraStr, string chequesPagto, string numAutCartao, string idsOc)
         {
             try
             {
@@ -260,7 +260,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                     if (String.IsNullOrEmpty(idPedido))
                         continue;
 
-                    string[] retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null).Split('|');
+                    string[] retorno = Pedido.Fluxo.BuscarEValidar.Ajax.ValidaPedido(idPedido, null, null, cxDiario, null, idsOc).Split('|');
 
                     if (retorno[0] != "true")
                         return "Erro\tPedido " + idPedido + ": " + retorno[1];
@@ -294,7 +294,7 @@ namespace WebGlass.Business.LiberarPedido.Ajax
                         diasParcelas, valoresParcelas, idParcela, receberEntrada, formasPagto, tiposCartao,
                         valoresPagos, idContasBanco, depNaoIdentificado, cartNaoIdentificado, utilizarCredito == "true", creditoUtil,
                         numAutConstrucard, cxDiario == "1", descontarComissao == "true", parcCartoes, tipoDesconto,
-                        desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto, sNumAutCartao);
+                        desconto, tipoAcrescimo, acrescimo, formaPagtoPrazo, valorUtilizadoObra, chequesPagto, sNumAutCartao, idsOc);
 
                 return "ok\tPedidos liberados.\t" +
                        LiberarPedidoDAO.Instance.ExibirNotaPromissoria(idLiberarPedido).ToString().ToLower() + "\t" +

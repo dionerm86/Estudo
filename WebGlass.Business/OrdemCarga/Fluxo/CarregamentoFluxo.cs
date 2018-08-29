@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.DAL;
@@ -1422,7 +1422,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         idLiberarPedido = LiberarPedidoDAO.Instance.CriarLiberacaoAPrazo(transaction, d.IdCliente, d.IdsPedidos, idsProdPed.ToArray(), prodPedsProducao.ToArray(),
                             qtdesProdPed.ToArray(), d.ValorTotalPedidos, numParcelas, d.Parcelas.NumeroDias, valoresParcelas.ToArray(), (uint?)d.Parcelas.IdParcela,
                             false, new uint[] { d.IdFormaPagto }, new uint[] { }, new decimal[] { }, new uint[] { }, new uint[] { }, new uint[] { }, false, 0, string.Empty, false, false,
-                            new uint[] { 1, 1, 1, 1, 1 }, 2, 0, 2, 0, d.IdFormaPagto, 0, string.Empty, new string[] { });
+                            new uint[] { 1, 1, 1, 1, 1 }, 2, 0, 2, 0, d.IdFormaPagto, 0, string.Empty, new string[] { }, string.Empty);
 
                         PedidoDAO.Instance.ForcarTransacaoPedido(transaction, d.IdsPedidos.Split(',').FirstOrDefault().StrParaUint(), false);
 

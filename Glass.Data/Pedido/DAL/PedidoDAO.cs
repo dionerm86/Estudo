@@ -4283,7 +4283,7 @@ namespace Glass.Data.DAL
 
             var retorno = "";
             foreach (var i in itens)
-                if (!lstPedidosRem.Contains(i.ToString()))
+                if (!lstPedidosRem.Contains(i.ToString()) && !ObtemOrdemCargaParcial(null,i))
                     retorno += "," + i;
 
             return retorno.Length > 0 ? retorno.Substring(1) : "0";
@@ -16263,7 +16263,7 @@ namespace Glass.Data.DAL
 
         #region Valida Pedido para Liberação
 
-        public string ValidaPedidoLiberacao(GDASession session, uint idPedido, int? tipoVenda, int? idFormaPagto, bool cxDiario, List<uint> idsPedido)
+        public string ValidaPedidoLiberacao(GDASession session, uint idPedido, int? tipoVenda, int? idFormaPagto, bool cxDiario, List<uint> idsPedido, string idsOcStr)
         {
             try
             {
@@ -16404,6 +16404,18 @@ namespace Glass.Data.DAL
                 #endregion
 
                 #endregion
+
+                var idsOC = idsOcStr.Split(',').Select(idOc => Glass.Conversoes.StrParaUint(idOc));
+                var pedidosOc = new List<uint>();
+
+                foreach (var idOc in idsOC)
+                {
+                    pedidosOc.AddRange(OrdemCargaDAO.Instance.GetIdsPedidosOC(null, idOc, OrdemCarga.TipoOCEnum.Venda));
+                }
+
+                //Verifica se o Pedido está configurado como pedido de ordem de carga parcial
+                if (ObtemOrdemCargaParcial(null, idPedido) && !pedidosOc.Any(p => p == idPedido))
+                    return $"false|O pedido {idPedido} está configurado como um pedido de Ordem de Carga Parcial. Para liberar o pedido informe o número da ordem de carga.";
 
                 // Se for pedido de obra, recalcula o saldo da mesma, em alguns casos o saldo já havia debitado o valor do pedido antes de ser liberado.
                 if (idObra > 0)

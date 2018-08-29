@@ -611,7 +611,7 @@
                                     <Paragraph>
                                       <TextRuns>
                                         <TextRun>
-                                          <Value>=IIf(Parameters!IsRetalho.Value, "Retalho: ", IIf(IsNothing(Fields!IdPedido.Value), "NF-e: ", "OS: ")) + IIf(Parameters!IsRetalho.Value, Fields!CodInterno.Value, IIf(IsNothing(Fields!IdPedido.Value), Fields!NumeroNFe.Value, Fields!IdPedido.Value))</Value>
+                                          <Value>=IIf(Parameters!IsRetalho.Value, "Retalho: ", IIf(IsNothing(Fields!IdPedido.Value), IIf(Fields!NumeroNFe.Value, "Retalho: ", "NF-e: "), "OS: ")) + IIf(Parameters!IsRetalho.Value, Fields!CodInterno.Value, IIf(IsNothing(Fields!IdPedido.Value), IIf(Fields!NumeroNFe.Value, Fields!BarCodeData, Fields!NumeroNFe.Value), Fields!IdPedido.Value))</Value>
                                           <Style>
                                             <FontSize>14pt</FontSize>
                                             <FontWeight>Bold</FontWeight>

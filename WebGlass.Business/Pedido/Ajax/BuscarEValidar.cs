@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Glass.Data.DAL;
@@ -14,7 +14,7 @@ namespace WebGlass.Business.Pedido.Ajax
         string GetPedidoParaConferencia(string idPedido);
         string IsPedidosAlterados(string idsPedidos, string idsSinais, string idsPagtoAntecip, string dataTela);
         string GetPedidosByCliente(string idCliente, string nomeCliente, string idsPedidosRem, string dataIni, string dataFim, string situacaoProd, string tiposPedidos, string idLoja);
-        string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr);
+        string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr, string idsOc);
         string GetDadosPedido(string idPedidoStr);
         string GetPedidosByCliente(string idCliente, string nomeCliente);
         string PedidoExiste(string idPedido);
@@ -124,7 +124,7 @@ namespace WebGlass.Business.Pedido.Ajax
             }
         }
 
-        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr)
+        public string ValidaPedido(string idPedidoStr, string tipoVendaStr, string idFormaPagtoStr, string cxDiario, string idsPedidoStr, string idsOc)
         {
             var idPedido = idPedidoStr.StrParaUintNullable().GetValueOrDefault();
             var tipoVenda = tipoVendaStr.StrParaIntNullable();
@@ -132,7 +132,7 @@ namespace WebGlass.Business.Pedido.Ajax
             var idsPedido = !string.IsNullOrEmpty(idsPedidoStr) && idsPedidoStr.Split(',') != null ?
                 idsPedidoStr.Split(',').Select(f => f.StrParaUintNullable().GetValueOrDefault()).ToList() : new List<uint>();
 
-            return PedidoDAO.Instance.ValidaPedidoLiberacao(null, idPedido, tipoVenda, idFormaPagto, cxDiario == "1", idsPedido);
+            return PedidoDAO.Instance.ValidaPedidoLiberacao(null, idPedido, tipoVenda, idFormaPagto, cxDiario == "1", idsPedido, idsOc);
         }
 
         public string GetDadosPedido(string idPedidoStr)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -433,7 +433,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idsProdutosPedido"></param>
-        public void AtualizaCarregamentoParcial(GDASession session, string idsPedido)
+        public void AtualizaCarregamentoParcial(GDASession session, string idsPedido, string idsOc, uint idLiberarPedido)
         {
 
             uint[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
@@ -446,11 +446,15 @@ namespace Glass.Data.DAL
             //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
+                var produtoLiberarPedido = ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
                 var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
+
                 if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
                     continue;
 
-                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i]);
+                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, idsProdutosPedido[i], produtoLiberarPedido);
+
+                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i], idsOc);
                 idsUsados.Add(idsProdutosPedido[i]);
             }
 
