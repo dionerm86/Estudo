@@ -675,13 +675,14 @@ namespace Glass.UI.Web.Utils
                 ((Controls.ctrlLoja)sender).Enabled = !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
         }
 
-        protected bool Importado()
+        protected bool PodeAlterarPedCli()
         {
             string idPedido = Request["idPedido"];
             if (idPedido != null)
             {
-                Glass.Data.Model.Pedido p = PedidoDAO.Instance.GetElementByPrimaryKey(Glass.Conversoes.StrParaUint(idPedido));
-                return p.Importado;
+                var p = PedidoDAO.Instance.GetElementByPrimaryKey(Conversoes.StrParaUint(idPedido));
+
+                return p.Importado || p.SituacaoProducao > 1;
             }
             return false;
         }
