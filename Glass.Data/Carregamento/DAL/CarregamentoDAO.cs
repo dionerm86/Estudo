@@ -436,7 +436,7 @@ namespace Glass.Data.DAL
         public void AtualizaCarregamentoParcial(GDASession session, string idsPedido, string idsOc, uint idLiberarPedido)
         {
 
-            int[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
+            uint[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
 
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
                 return;
@@ -446,16 +446,16 @@ namespace Glass.Data.DAL
             //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
-                var idProdLiberarPedido = (int)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, (uint)idsProdutosPedido[i]);
-                var idPedido = (int)ProdutosPedidoDAO.Instance.ObtemIdPedido(session, (uint)idsProdutosPedido[i]);
+                var idProdLiberarPedido = (int)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
+                var idPedido = (int)ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
 
                 if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, (uint)idPedido))
                     continue;
 
-                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, idsProdutosPedido[i], idProdLiberarPedido);
+                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, (int)idsProdutosPedido[i], idProdLiberarPedido);
 
-                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, (uint)idsProdutosPedido[i], idsOc);
-                idsUsados.Add(idsProdutosPedido[i]);
+                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i], idsOc);
+                idsUsados.Add((int)idsProdutosPedido[i]);
             }
 
             //Marca as ocs como carregada parcialmente

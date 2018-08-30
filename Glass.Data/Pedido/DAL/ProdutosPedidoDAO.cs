@@ -460,7 +460,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Busca os ids dos produtos de vários pedidos.
         /// </summary>
-        public IList<int> ObtemIdsProdPedByPedidos(GDASession sessao, string idsPedidos)
+        public IList<uint> ObtemIdsProdPedByPedidos(GDASession sessao, string idsPedidos)
         {
             var sql = @"
                 SELECT IdProdPed
@@ -469,7 +469,7 @@ namespace Glass.Data.DAL
 
             sql = string.Format(sql, idsPedidos);
 
-            return ExecuteMultipleScalar<int>(sessao, sql);
+            return ExecuteMultipleScalar<uint>(sessao, sql);
         }
 
         /// <summary>
