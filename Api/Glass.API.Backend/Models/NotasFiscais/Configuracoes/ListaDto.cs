@@ -5,6 +5,7 @@
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Glass.Data.Model;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -23,6 +24,9 @@ namespace Glass.API.Backend.Models.NotasFiscais.Configuracoes
         internal ListaDto()
         {
             this.AtivarContingencia = Config.PossuiPermissao(Config.FuncaoMenuFiscal.AtivarContingenciaNFe);
+            this.UfUsuario = UserInfo.GetUserInfo.UfLoja;
+            this.SituacaoFinalizada = NotaFiscal.SituacaoEnum.FinalizadaTerceiros;
+            this.SituacaoAutorizada = NotaFiscal.SituacaoEnum.Autorizada;
         }
 
         /// <summary>
@@ -31,5 +35,26 @@ namespace Glass.API.Backend.Models.NotasFiscais.Configuracoes
         [DataMember]
         [JsonProperty("ativarContingencia")]
         public bool AtivarContingencia { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica a UF do usuário logado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("ufUsuario")]
+        public string UfUsuario { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica qual a situação finalizada da nota.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacaoFinalizada")]
+        public NotaFiscal.SituacaoEnum SituacaoFinalizada { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica qual a situação autorizada da nota.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacaoAutorizada")]
+        public NotaFiscal.SituacaoEnum SituacaoAutorizada { get; set; }
     }
 }

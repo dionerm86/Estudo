@@ -246,6 +246,7 @@
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\DescontoQuantidadeController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\GetDescontoQuantidadeController.cs" />
+    <Compile Include="Controllers\NotasFiscais\V1\DeleteNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\PostNotasFiscaisController.cs" />

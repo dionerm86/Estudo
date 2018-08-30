@@ -58,19 +58,46 @@ namespace Glass.Data.Model
 
         public enum SituacaoEnum
         {
+            [Description("Aberta")]
             Aberta = 1,
+
+            [Description("Autorizada")]
             Autorizada,
+
+            [Description("Não emitida")]
             NaoEmitida,
+
+            [Description("Cancelada")]
             Cancelada,
-            Inutilizada,            //5
+
+            [Description("Inutilizada")]
+            Inutilizada,
+
+            [Description("Denegada")]
             Denegada,
+
+            [Description("Processo de emissão")]
             ProcessoEmissao,
+
+            [Description("Processo de cancelamento")]
             ProcessoCancelamento,
+
+            [Description("Processo de inutilização")]
             ProcessoInutilizacao,
-            FalhaEmitir,            //10
+
+            [Description("Falha ao emitir")]
+            FalhaEmitir,
+
+            [Description("Falha ao cancelar")]
             FalhaCancelar,
+
+            [Description("Falha ao inutilizar")]
             FalhaInutilizar,
+
+            [Description("Finalizada")]
             FinalizadaTerceiros,
+
+            [Description("Contingência offline")]
             ContingenciaOffline
         }
 

@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando o status do lote.</returns>
         [HttpPost]
         [Route("{id}/consultarSituacaoLote")]
-        [SwaggerResponse(200, "Nota fiscal autorizada para uso.")]
+        [SwaggerResponse(202, "Nota fiscal processada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na consulta do lote.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult ConsultarSituacaoLote(int id)
@@ -47,12 +47,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                     sessao.Commit();
 
-                    if (mensagem == "NFe está autorizada para uso.")
-                    {
-                        return this.Ok();
-                    }
-
-                    return this.ErroValidacao(mensagem);
+                    return this.Aceito(mensagem);
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +64,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando o status do lote.</returns>
         [HttpPost]
         [Route("{id}/consultarSituacao")]
-        [SwaggerResponse(200, "Nota fiscal autorizada para uso.")]
+        [SwaggerResponse(202, "Nota fiscal processada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na consulta da situação da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult ConsultarSituacao(int id)
@@ -91,12 +86,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                     sessao.Commit();
 
-                    if (mensagem == "NFe está autorizada para uso.")
-                    {
-                        return this.Ok();
-                    }
-
-                    return this.ErroValidacao(mensagem);
+                    return this.Aceito(mensagem);
                 }
                 catch (Exception ex)
                 {
@@ -191,7 +181,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando o status do lote.</returns>
         [HttpPost]
         [Route("{id}/emitirNotaFiscalFsda")]
-        [SwaggerResponse(200, "Nota fiscal FS-DA emitida.")]
+        [SwaggerResponse(202, "Nota fiscal FS-DA processada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na emissão da nota fiscal FS-DA.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult EmitirNotaFiscalFsda(int id)
@@ -209,11 +199,11 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 {
                     sessao.BeginTransaction();
 
-                    NotaFiscalDAO.Instance.EmitirNfFS((uint)id);
+                    var retorno = NotaFiscalDAO.Instance.EmitirNfFS((uint)id);
 
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito(retorno);
                 }
                 catch (Exception ex)
                 {

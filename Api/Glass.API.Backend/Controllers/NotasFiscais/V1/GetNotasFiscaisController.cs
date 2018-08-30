@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.NotasFiscais.Boleto;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
@@ -254,6 +255,29 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     {
                         Mensagem = mensagem,
                     });
+            }
+        }
+
+        /// <summary>
+        /// Recupera as situações de nota fiscal para o controle de pesquisa.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
+        [HttpGet]
+        [Route("situações")]
+        [SwaggerResponse(200, "Situações encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações não encontradas.")]
+        public IHttpActionResult ObterSituacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = Data.Helper.DataSources.Instance.GetSituacaoNotaFiscal()
+                    .Select(c => new IdNomeDto()
+                    {
+                        Id = (int?)c.Id,
+                        Nome = c.Descr,
+                    });
+
+                return this.Lista(situacoes);
             }
         }
     }

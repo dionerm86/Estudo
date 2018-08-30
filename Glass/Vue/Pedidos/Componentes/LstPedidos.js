@@ -157,7 +157,7 @@ const app = new Vue({
      * @param {Object} item O pedido que será exibido no relatório.
      */
     abrirItensFaltamLiberar: function(item) {
-      openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=ProdutosLiberar&idPedido=' + item.id);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ProdutosLiberar&idPedido=' + item.id);
     },
 
     /**
