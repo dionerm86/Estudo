@@ -406,7 +406,7 @@ namespace Glass.Data.DAL
             foreach (var idItemCarregamento in idsItemCarregamento)
             {
                 var sql = $@"UPDATE item_carregamento 
-                                SET idProdLiberarPed = {idProdLiberarPedido}
+                                SET idProdLiberarPedido = {idProdLiberarPedido}
                          WHERE idItemCarregamento = {idItemCarregamento}";
 
                 objPersistence.ExecuteCommand(session, sql);
