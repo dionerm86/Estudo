@@ -670,60 +670,79 @@
                                 <asp:HyperLink ID="lnkEditar" runat="server" ToolTip="Editar" NavigateUrl='<%# LinkEditarNf((uint)Eval("IdNf"), Eval("TipoDocumento").ToString(), (int)Eval("Situacao")) %>'
                                     Visible='<%# Eval("EditVisible") %>' OnLoad="lnkEditar_Load">
                                       <img border="0" src="../Images/EditarGrid.gif" /></asp:HyperLink>
+
                                 <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" Visible='<%# Eval("TerceirosEmAbertoVisible") %>'
                                     ImageUrl="~/Images/ExcluirGrid.gif" OnClientClick="return confirm(&quot;Tem certeza que deseja excluir esta Nota Fiscal?&quot;);"
                                     ToolTip="Excluir" />
+
                                 <asp:PlaceHolder ID="PlaceHolder4" runat="server" Visible='<%# (int)Eval("Situacao") != (int)Glass.Data.Model.NotaFiscal.SituacaoEnum.FinalizadaTerceiros %>'>
                                     <a href="#" onclick="openWindow(450, 700, '../Utils/ShowLogNfe.aspx?IdNf=<%# Eval("IdNf") %>'); return false;">
                                         <img src="../Images/blocodenotas.png" title="Log de eventos" border="0" /></a>
                                 </asp:PlaceHolder>
+
                                 <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="NotaFiscal" IdRegistro='<%# Eval("IdNf") %>' />
+
                                 <asp:PlaceHolder ID="PlaceHolder2" runat="server" Visible='<%# Eval("PrintDanfeVisible") %>'>
                                     <a href="#" onclick="openRptDanfe('<%# Eval("IdNf") %>');">
                                         <img border="0" src="../Images/Relatorio.gif" border="0" /></a></asp:PlaceHolder>
+
                                 <asp:PlaceHolder ID="PlaceHolder1" runat="server" Visible='<%# Eval("PrintNfTercVisible") %>'>
                                     <a href="#" onclick="openRptTerc('<%# Eval("IdNf") %>');">
                                         <img border="0" src="../Images/Relatorio.gif" border="0" /></a></asp:PlaceHolder>
+
                                 <asp:LinkButton ID="lnkConsultaSitLote" runat="server" CommandName="ConsultaSitLote"
                                     Visible='<%# Eval("ConsSitLoteVisible") %>' CommandArgument='<%# Eval("IdNf") %>'>
                                     <img border="0" src="../Images/ConsSitLoteNFe.gif" title="Consulta Situação do Lote" border="0" /></asp:LinkButton>
+
                                 <asp:LinkButton ID="lnkConsultaSitNFe" runat="server" CommandName="ConsultaSitNFe"
                                     Visible='<%# Eval("ConsSitVisible") %>' CommandArgument='<%# Eval("IdNf") %>'>
                                     <img border="0" src="../Images/ConsSitNFe.gif" title="Consulta Situação da NFe" border="0" /></asp:LinkButton>
+
                                 <asp:LinkButton ID="lnkSalvarXmlNota" runat="server" Visible='<%# Eval("BaixarXmlVisible") %>'
                                     OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo da nota fiscal" /></asp:LinkButton>
+
                                 <asp:LinkButton ID="lnkSalvarXmlNotaInut" runat="server" Visible='<%# Eval("ExibirSalvarInutilizacao") %>'
                                     OnClientClick='<%# "salvarNota(\"" + Eval("IdNf") + "\", \"inut\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo de inutilização da nota fiscal" /></asp:LinkButton>
+
                                 <asp:LinkButton ID="lnkAnexarXMLTer" runat="server" Visible='<%# Eval("AnexarXMLTercVisible") %>'
                                     OnClientClick='<%# "anexarXMLTer(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/page_attach.gif" title="Anexar XML Entrada Terceiros" /></asp:LinkButton>
+
                                 <asp:LinkButton ID="lnkBaixarXMLTer" runat="server" Visible='<%# Eval("BaixarXMLTercVisible") %>'
                                     OnClientClick='<%# "baixarXMLTer(\"" + Eval("IdNf") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/page_save.gif" title="Baixar XML Entrada Terceiros" /></asp:LinkButton>
+
                                 <asp:ImageButton ID="ImageButton7" runat="server" ImageUrl="~/Images/clipe.gif" Visible='<%# Eval("ExibirDocRef") %>'
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/DocRefNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
                                     ToolTip="Processos/Documentos Referenciados" />
+
                                 <asp:ImageButton ID="imgAguaGasEnergia" runat="server" ImageUrl="~/Images/page_gear.png"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/InfoAdicNotaFiscal.aspx?idNf=" + Eval("IdNf") + "&tipo=" + Eval("TipoDocumento") +"\"); return false" %>'
                                     ToolTip="Informações adicionais" Visible='<%# Eval("ExibirLinkInfoAdic") %>' />
+
                                 <asp:ImageButton ID="imgEmitirFs" runat="server" ImageUrl="~/Images/arrow_right.gif"
                                     ToolTip="Emitir NF-e" Visible='<%# Eval("EmitirNfFsVisible") %>' CommandArgument='<%# Eval("IdNf") %>'
                                     CommandName="Emitir" />
+
                                 <uc5:ctrlBoleto ID="ctrlBoleto1" runat="server" Visible='<%# Eval("ExibirBoleto") %>'
                                     CodigoNotaFiscal='<%# Eval("IdNf") != null ? Glass.Conversoes.StrParaInt(Eval("IdNf").ToString()) : (int?)null %>' />
+
                                 <asp:ImageButton ID="imgObsLancFiscal" runat="server" ImageUrl="~/Images/Nota.gif"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/SetObsLancFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
                                     ToolTip="Observações do Lançamento Fiscal" />
+
                                 <asp:ImageButton ID="imgAjustes" runat="server" ImageUrl="~/Images/dinheiro.gif" 
                                     onclientclick='<%# Eval("IdNf", "openWindow(600, 950, \"../Listas/LstAjusteDocumentoFiscal.aspx?idNf={0}\"); return false;") %>' 
                                     ToolTip="Ajustes do Documento Fiscal" />
+
                                 <asp:ImageButton ID="imgReenviarXml" runat="server" ImageUrl="~/Images/reenvio_email.png"
                                     ToolTip='<%# (bool)Eval("ReenviarEmailXmlVisible") ? "Reenviar e-mail XML / DANFE" : (bool)Eval("ReenviarEmailXmlCancelamentoVisible") ? "Reenviar e-mail XML / DANFE (Cancelamento)" : "" %>' 
                                     CommandName='<%# (bool)Eval("ReenviarEmailXmlVisible") ? "ReenviarEmailXml" : (bool)Eval("ReenviarEmailXmlCancelamentoVisible") ? "ReenviarEmailXmlCancelamento" : "" %>'
                                     CommandArgument='<%# Eval("IdNf") %>' Visible='<%# (bool)Eval("ReenviarEmailXmlVisible") || (bool)Eval("ReenviarEmailXmlCancelamentoVisible") %>'
-                                    OnClientClick="if (!confirm('Deseja reenviar o e-mail do XML / DANFE?')) return false"/>                                
+                                    OnClientClick="if (!confirm('Deseja reenviar o e-mail do XML / DANFE?')) return false"/>
+
                                 <asp:HiddenField ID="hdfCorLinha" runat="server" Value='<%# Eval("CorLinhaGrid") %>' />
 
                                 <asp:PlaceHolder ID="pchRentabillidade" runat="server" Visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadeNotaFiscal && ((Glass.Data.Model.NotaFiscal.TipoDoc)Eval("TipoDocumento")) == Glass.Data.Model.NotaFiscal.TipoDoc.Saída  %>'>
@@ -1055,9 +1074,6 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoCfop" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.TipoCfopDAO">
-                </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormasPagto" runat="server" SelectMethod="GetFormasPagtoNf"
-                    TypeName="Glass.Data.Helper.DataSources">
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagtoNotaFiscal" runat="server"
                     TypeName="Colosoft.Translator" SelectMethod="GetTranslatesFromTypeName">

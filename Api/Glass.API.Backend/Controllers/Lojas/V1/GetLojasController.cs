@@ -3,9 +3,12 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Lojas.Certificado;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -48,6 +51,38 @@ namespace Glass.API.Backend.Controllers.Lojas.V1
                     });
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a data de vencimento do certificado cadastrado na loja informada.
+        /// </summary>
+        /// <param name="id">O identificador da loja.</param>
+        /// <returns>Data de vencimento do certificado.</returns>
+        [HttpGet]
+        [Route("{id}/obterDataVencimentoCertificado")]
+        [SwaggerResponse(200, "Data de vencimento do certificado da loja recuperado.", Type = typeof(CertificadoDto))]
+        [SwaggerResponse(204, "Loja não encontrada.")]
+        [SwaggerResponse(400, "Erro de valor ou formato do campo id.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterDataVencimentoCertificado(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarIdLoja(id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var loja = LojaDAO.Instance.GetElement(sessao, (uint)id);
+
+                return this.Item(new CertificadoDto()
+                {
+                    DataVencimento = loja.DataVencimentoCertificado,
+                    Vencido = loja.DataVencimentoCertificado?.Ticks < DateTime.Now.Ticks,
+                    DiasParaVencimento = loja.DataVencimentoCertificado?.Subtract(DateTime.Now).Days ?? 0,
+                });
             }
         }
     }

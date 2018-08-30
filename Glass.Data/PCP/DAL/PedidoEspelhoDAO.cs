@@ -417,7 +417,7 @@ namespace Glass.Data.DAL
             {
                 sql += " AND p.TipoVenda =" + tipoVenda;
                 temFiltro = true;
-                criterio += "Tipo Venda " + ((Pedido.TipoVendaPedido)tipoVenda).ToString() + "   ";
+                criterio += "Tipo Venda: " + Pedido.GetDescrTipoVenda(tipoVenda) + "   ";
             }
 
             if (selecionar)
@@ -476,7 +476,7 @@ namespace Glass.Data.DAL
         {
             string filtro = " Order By p.DataCad Desc";
 
-            bool apenasMaoDeObra = false; //!Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
 
             bool temFiltro;
             return objPersistence.LoadData(Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri,
@@ -542,8 +542,8 @@ namespace Glass.Data.DAL
         {
             string filtro = String.IsNullOrEmpty(sortExpression) ? "pe.idPedido Desc" : sortExpression;
 
-            bool apenasMaoDeObra = false; //!Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) &&
-                //Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) &&
+                Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
 
             bool temFiltro;
             string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
@@ -594,7 +594,7 @@ namespace Glass.Data.DAL
             string situacaoCnc, string dataIniSituacaoCnc, string dataFimSituacaoCnc, bool pedidosAComprar, string tipoPedido, string idsRotas,
             int origemPedido, int pedidosConferidos, int? tipoVenda)
         {
-            bool apenasMaoDeObra = false; //!Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
+            bool apenasMaoDeObra = !Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetas) && Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra);
 
             bool temFiltro;
             string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,

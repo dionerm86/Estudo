@@ -1617,6 +1617,9 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.Filtro.js" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.js" />
+    <Content Include="Vue\NotasFiscais\Templates\LstNotasFiscais.Filtro.html" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.Filtro.js" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.js" />
     <Content Include="Vue\Liberacoes\Templates\LstLiberacoes.Filtro.html" />
@@ -1692,6 +1695,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Cfops.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
