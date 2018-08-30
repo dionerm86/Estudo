@@ -45,11 +45,12 @@
                 
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 */
-                var percDescontoQtde = 0;
+
+                var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 
-                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", "0").value;
+                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido).value;
             }
             else
             {

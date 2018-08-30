@@ -62,8 +62,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("DATALEITURA")]
         public DateTime DataLeitura { get; set; }
 
-        [PersistenceProperty("IdProdLiberarPed")]
-        public uint? IdprodLiberarPed { get; set; }
+        [PersistenceProperty("IDPRODLIBERARPEDIDO")]
+        public uint? IdprodLiberarPedido { get; set; }
 
         #endregion
 

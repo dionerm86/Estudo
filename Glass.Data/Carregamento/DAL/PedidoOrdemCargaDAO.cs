@@ -34,7 +34,7 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        public bool VerificarPedidoOrdemCargaSemItemCarregamento(GDASession sessao, uint idPedido)
+        public bool VerificarPedidoOrdemCargaSemItemCarregamento(GDASession sessao, int idPedido)
         {
             if (idPedido == 0)
                 return true;
@@ -56,9 +56,9 @@ namespace Glass.Data.DAL
         /// <param name="tipoOC"></param>
         /// <param name="idPedido"></param>
         /// <returns></returns>
-        public bool VerificarSePedidoPossuiOrdemCarga(GDATransaction sessao, OrdemCarga.TipoOCEnum tipoOC, uint idPedido)
+        public bool VerificarSePedidoPossuiOrdemCarga(GDATransaction sessao, OrdemCarga.TipoOCEnum tipoOC, int idPedido)
         {
-            return PossuiOrdemCarga(sessao, tipoOC, idPedido) || (PedidoDAO.Instance.ObtemOrdemCargaParcial(sessao, idPedido) && VerificarPedidoOrdemCargaSemItemCarregamento(sessao, idPedido));
+            return PossuiOrdemCarga(sessao, tipoOC, (uint)idPedido) || (PedidoDAO.Instance.ObtemOrdemCargaParcial(sessao, (uint)idPedido) && VerificarPedidoOrdemCargaSemItemCarregamento(sessao, idPedido));
         }
 
         /// <summary>
