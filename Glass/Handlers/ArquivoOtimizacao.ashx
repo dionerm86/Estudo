@@ -89,7 +89,7 @@ public class ArquivoOtimizacao : IHttpHandler
 
         a.ExtensaoArquivo = extensaoArquivo;
 
-        if (lstErrosArq.Any())
+        if (lstErrosArq.Any(f => !string.IsNullOrWhiteSpace(f.Key)))
         {
             var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))
                 .Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value))));

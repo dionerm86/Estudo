@@ -2766,7 +2766,8 @@ namespace Glass.Data.DAL
 
                 List<uint> idsProdImpressaoRetalho = new List<uint>();
 
-                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
+                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ||
+                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     // Recupera quais produtos impressos são referentes a retalhos
                     idsProdImpressaoRetalho = ExecuteMultipleScalar<uint>(sessao, @"select idRetalhoProducao from produto_impressao 
@@ -2985,7 +2986,8 @@ namespace Glass.Data.DAL
                 }
 
                 // Cancela os retalhos associados
-                if (cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
+                if ((cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho) ||
+                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     foreach (uint idRetalhoProducao in idsProdImpressaoRetalho)
                         RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, "Cancelamento da impressão " + idImpressao,
