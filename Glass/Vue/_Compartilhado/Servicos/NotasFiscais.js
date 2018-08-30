@@ -35,6 +35,19 @@ Servicos.NotasFiscais = (function(http) {
     },
 
     /**
+     * Remove uma nota fiscal.
+     * @param {!number} id O identificador da nota fiscal que será excluída.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (id) {
+      if (!id) {
+        throw new Error('Nota fiscal é obrigatória.');
+      }
+
+      return http().delete(API + id);
+    },
+
+    /**
      * Consulta a situação do lote da nota fiscal na receita.
      * @param {?number} id O identificador da nota fiscal.
      * @returns {Promise} Uma promise com o resultado da operação.

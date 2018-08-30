@@ -203,6 +203,13 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
         public bool ExibirLogEstoque { get; set; }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se a nota fiscal tem carta de correção registrada.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("possuiCartaCorrecaoRegistrada")]
+        public bool PossuiCartaCorrecaoRegistrada { get; set; }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se a nota fiscal possui log de alterações.
         /// </summary>
         [DataMember]

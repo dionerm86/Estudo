@@ -53,6 +53,7 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
             this.ValorIcms = notaFiscal.Valoricms;
             this.ValorIcmsSt = notaFiscal.ValorIcmsSt;
             this.ValorIpi = notaFiscal.ValorIpi;
+            this.Consumidor = notaFiscal.Consumidor;
 
             this.Permissoes = new PermissoesDto
             {
@@ -83,6 +84,7 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
                 CancelarSeparacaoDeValores = notaFiscal.CancelarSeparacaoValoresVisible,
                 EmitirNfce = notaFiscal.EmitirNFCeVisible,
                 ExibirLogEstoque = notaFiscal.Situacao == (int)NotaFiscal.SituacaoEnum.Autorizada || notaFiscal.Situacao == (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros,
+                PossuiCartaCorrecaoRegistrada = NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(null, notaFiscal.IdNf),
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.NotaFiscal, notaFiscal.IdNf, null),
             };
         }
@@ -247,6 +249,13 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
         [DataMember]
         [JsonProperty("valorIpi")]
         public decimal ValorIpi { get; set; }
+
+        /// <summary>
+        /// Obtém ou define se a nota fiscal é para consumidor final (NFC-e)
+        /// </summary>
+        [DataMember]
+        [JsonProperty("consumidor")]
+        public bool Consumidor { get; set; }
 
         /// <summary>
         /// Obtém ou define a lista de permissões concedidas na nota fiscal.
