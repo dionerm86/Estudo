@@ -3052,6 +3052,9 @@ namespace Glass.Data.DAL
             sql = SqlProdutosProducaoAcessoExterno(codigoPedidoCliente, idPedido, true);
             parametros = ObterParametrosProdutosProducaoAcessoExterno(codigoPedidoCliente);
 
+            sql = GetSqlWithLimit(sql, sort, 0, pageSize, "ppp", string.Empty, false, !string.IsNullOrEmpty(sortExpression) || idPedido > 0,
+                out numeroRegistros, parametros);
+
             produtosPedidoProducao = objPersistence.LoadData(sql, parametros).ToArray();
 
             SetInfoPaging(sort, 0, pageSize);
