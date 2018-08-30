@@ -217,7 +217,7 @@
         
         for (var i = 0; i < idsNovos.length; i++){
         
-            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, cxDiario, "",idOC).value.split('|');        
+            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto , cxDiario, "",idOC).value.split('|');        
             if (validaPedido[0] == "false")
             {
                 alert(validaPedido[1]);

@@ -383,10 +383,10 @@ namespace Glass.Data.DAL
             return sql;
         }
 
-        internal void VincularItensCarregamentoAoProdutoLiberarPedido(GDASession session, string idOc, uint idProdPed, uint produtoLiberarPedido)
+        internal void VincularItensCarregamentoAoProdutoLiberarPedido(GDASession session, string idOc, int idProdPed, int idProdLiberarPedido)
         {
 
-            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idProdPed);
+            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, (uint)idProdPed);
             if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
                 return;
 
@@ -406,7 +406,7 @@ namespace Glass.Data.DAL
             foreach (var idItemCarregamento in idsItemCarregamento)
             {
                 var sql = $@"UPDATE item_carregamento 
-                                SET idProdLiberarPed = {produtoLiberarPedido}
+                                SET idProdLiberarPed = {idProdLiberarPedido}
                          WHERE idItemCarregamento = {idItemCarregamento}";
 
                 objPersistence.ExecuteCommand(session, sql);
@@ -662,10 +662,10 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idsProdPed"></param>
         /// <returns></returns>
-        public List<uint> ObterIdsCarregamento(GDASession sessao, List<uint> idsProdPed)
+        public List<int> ObterIdsCarregamento(GDASession sessao, List<int> idsProdPed)
         {
             if (idsProdPed == null || idsProdPed.Count == 0)
-                return new List<uint>();
+                return new List<int>();
 
             var sql = @"
                 SELECT distinct(ic.IdCarregamento) 
@@ -673,7 +673,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
                 WHERE ic.IdProdPed IN ({0}) OR vpp.IdProdPed IN ({0})";
 
-            var idsCarregamento = ExecuteMultipleScalar<uint>(sessao, string.Format(sql, string.Join(",", idsProdPed)));
+            var idsCarregamento = ExecuteMultipleScalar<int>(sessao, string.Format(sql, string.Join(",", idsProdPed)));
 
             return idsCarregamento;
         }
