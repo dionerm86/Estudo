@@ -2960,7 +2960,7 @@ namespace Glass.Data.DAL
 
             campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, ppp.PlanoCorte, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.DataPerda, ppp.Obs, ppp.IdSetor,
                     ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.PecaReposta, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso, p.CodInterno,
-                    CONCAT(p.Descricao, IF(pp.Redondo AND {0}, ' REDONDO', ''))) AS DescrProduto,
+                    CONCAT(p.Descricao, IF(pp.Redondo AND {0}, ' REDONDO', '')) AS DescrProduto,
                     IF(ped.TipoPedido={1}, a.Altura, IF(pp.AlturaReal > 0, pp.AlturaReal, pp.Altura)) AS Altura,
                     IF(ped.TipoPedido={1}, a.Largura, IF(pp.Redondo, 0, IF(pp.LarguraReal > 0, pp.LarguraReal, pp.Largura))) AS Largura,
                     CONCAT(CAST(ped.IdPedido AS CHAR), IF(ped.IdPedidoAnterior IS NOT NULL, CONCAT(' (', CONCAT(CAST(ped.IdPedidoAnterior AS CHAR), 'R)')), ''),
@@ -3051,8 +3051,7 @@ namespace Glass.Data.DAL
                         
             sql = SqlProdutosProducaoAcessoExterno(codigoPedidoCliente, idPedido, true);
             parametros = ObterParametrosProdutosProducaoAcessoExterno(codigoPedidoCliente);
-            sql = GetSqlWithLimit(sql, sort, 0, pageSize, "ppp", sql.Substring(sql.ToLower().IndexOf("where") + "where".Length), false, !string.IsNullOrEmpty(sortExpression) || idPedido > 0,
-                out numeroRegistros, parametros);
+
             produtosPedidoProducao = objPersistence.LoadData(sql, parametros).ToArray();
 
             SetInfoPaging(sort, 0, pageSize);
