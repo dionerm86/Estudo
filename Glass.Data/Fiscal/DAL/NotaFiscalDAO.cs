@@ -1282,7 +1282,7 @@ namespace Glass.Data.DAL
 
                         #region Informações de Pagamento da nota
 
-                        CriarPagtoNotaFiscal(transaction, nf, idsLiberarPedidos?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), contasReceber);
+                        CriarPagtoNotaFiscal(transaction, nf, idsLiberarPedidos?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), contasReceber, idsPedidos);
 
                         #endregion
 
@@ -1331,7 +1331,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
-        private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido, ContasReceber[] contasReceber)
+        private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido, ContasReceber[] contasReceber, string idsPedidos)
         {
             decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0, valorRecebRelativo = 0,
                    totalCartaoDebito = 0, totalCartaoCredito = 0, totalFormaPagtoLiberacao = 0;
@@ -1445,6 +1445,16 @@ namespace Glass.Data.DAL
                 var contasReceberTotal = contasReceber.Sum(f => f.ValorVec);
 
                 valorRecebRelativo = contasReceberTotal > 0 ? (valorParcelasNf > 0 ? valorParcelasNf : notaFiscal.TotalNota) / contasReceberTotal : 1;
+
+                if (!string.IsNullOrEmpty(idsPedidos))
+                {
+                    var valoresPagtoAntecipado = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorPagamentoAntecipado) FROM pedido
+                            WHERE IdPedido IN ({ idsPedidos }) AND (IdPagamentoAntecipado > 0 OR IdObra > 0);");
+                    var valoresSinal = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorEntrada) FROM pedido
+                            WHERE IdPedido IN ({ idsPedidos }) AND IdSinal > 0;");
+
+                    totalOutros += valoresPagtoAntecipado + valoresSinal;
+                }
 
                 foreach (var formaPagamento in contasReceber)
                 {
