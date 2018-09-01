@@ -54,7 +54,7 @@
                     // Busca as qtde a serem impressas dos produtos
                     for (var i = 0; i < idsProdPedNf.length; i++) 
                     {
-                        var isReposicao = idsProdPedNf[i].indexOf("R") >= 0;
+                        var isReposicao = idsProdPedNf[i].indexOf("R") == 0;
                     
                         // Qtd já impressa
                         var qtdImpressa = window.opener.document.getElementById("hdfQtdImpresso_" + idsProdPedNf[i]);

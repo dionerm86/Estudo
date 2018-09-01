@@ -1394,10 +1394,13 @@ namespace Glass.Data.DAL
             bool usarAliasPedidoSemCalc, string campoCalcProd, string campoCalcBenef, string nomeCampo, string aliasPedido,
             string aliasPedidoEspelho, string aliasAmbientePedido, string aliasProdutosLiberarPedido, bool arredondarResultado)
         {
-            var campoSemCalc = string.Format(PCPConfig.UsarConferenciaFluxo && PedidoConfig.LiberarPedido && !string.IsNullOrEmpty(aliasPedidoEspelho) && !string.IsNullOrEmpty(campoSemCalcPcp) ?
+            if (!PedidoConfig.LiberarPedido)
+                return $"((pp.total + COALESCE(pp.valorBenef, 0)) / pp1.totalProd * {aliasPedido}.{campoSemCalcPedido}) as {nomeCampo}";
+
+            var campoSemCalc = string.Format(PCPConfig.UsarConferenciaFluxo && !string.IsNullOrEmpty(aliasPedidoEspelho) && !string.IsNullOrEmpty(campoSemCalcPcp) ?
                 "coalesce({0}.{1}, {2}.{3})" : usarAliasPedidoSemCalc ? "{2}.{3}" : "{3}", aliasPedidoEspelho, campoSemCalcPcp, aliasPedido, campoSemCalcPedido);
 
-            if (!usarTotalCalc || !PedidoConfig.LiberarPedido)
+            if (!usarTotalCalc)
                 return campoSemCalc + " as " + nomeCampo;
 
             // Campo que corresponde ao valor do produto (total ou custo)
@@ -16405,16 +16408,16 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                var idsOC = idsOcStr.Split(',').Select(idOc => Glass.Conversoes.StrParaUint(idOc));
+                var idsOC = idsOcStr.Split(',').Select(idOc => Glass.Conversoes.StrParaInt(idOc));
                 var pedidosOc = new List<uint>();
 
                 foreach (var idOc in idsOC)
                 {
-                    pedidosOc.AddRange(OrdemCargaDAO.Instance.GetIdsPedidosOC(null, idOc, OrdemCarga.TipoOCEnum.Venda));
+                    pedidosOc.AddRange(OrdemCargaDAO.Instance.GetIdsPedidosOC(session, (uint)idOc, OrdemCarga.TipoOCEnum.Venda));
                 }
 
                 //Verifica se o Pedido está configurado como pedido de ordem de carga parcial
-                if (ObtemOrdemCargaParcial(null, idPedido) && !pedidosOc.Any(p => p == idPedido))
+                if (ObtemOrdemCargaParcial(session, idPedido) && !pedidosOc.Any(p => p == idPedido))
                     return $"false|O pedido {idPedido} está configurado como um pedido de Ordem de Carga Parcial. Para liberar o pedido informe o número da ordem de carga.";
 
                 // Se for pedido de obra, recalcula o saldo da mesma, em alguns casos o saldo já havia debitado o valor do pedido antes de ser liberado.

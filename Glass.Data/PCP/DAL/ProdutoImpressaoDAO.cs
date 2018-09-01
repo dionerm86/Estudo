@@ -1411,7 +1411,7 @@ namespace Glass.Data.DAL
                     var retalhoProducao = new RetalhoProducao();
                     retalhoProducao.DataCad = DateTime.Now;
                     retalhoProducao.IdProd = novoProduto.IdProd;
-                    retalhoProducao.Situacao = PCPConfig.SituacaoRetalhoAoCriar;
+                    retalhoProducao.Situacao = SituacaoRetalhoProducao.Indisponivel;
 
                     if (Data.Helper.UserInfo.GetUserInfo != null)
                     {

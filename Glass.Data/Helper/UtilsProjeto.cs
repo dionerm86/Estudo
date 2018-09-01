@@ -2217,7 +2217,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Calcula a expressão informada por parâmetro, retorna o valor final.
         /// </summary>
-        private static float CalcularExpressao(string expressao)
+        public static float CalcularExpressao(string expressao)
         {
             // IMPORTANTE: NÃO REMOVER ESTE CONTADOR PARA IMPEDIR LOOP INFINITO NOS CÁLCULOS DE PROJETO.
             // Contador usado para sair do while (sinal de -)

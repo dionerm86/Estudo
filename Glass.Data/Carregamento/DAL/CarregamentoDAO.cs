@@ -240,7 +240,7 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, string.Format("UPDATE carregamento SET Situacao={0} WHERE IdCarregamento={1}", situacao, idCarregamento));
             
-            foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, idCarregamento))
+            foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, (uint)idCarregamento))
                 OrdemCargaDAO.Instance.VerificaOCCarregada(sessao, idCarregamento, idOC, etiqueta);
 
             var carregamentoNovo = GetElementByPrimaryKey(sessao, idCarregamento);
@@ -441,26 +441,26 @@ namespace Glass.Data.DAL
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
                 return;
 
-            var idsUsados = new List<uint>();
+            var idsUsados = new List<int>();
 
             //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
-                var produtoLiberarPedido = ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
-                var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
+                var idProdLiberarPedido = (int)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
+                var idPedido = (int)ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
 
-                if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
+                if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, (uint)idPedido))
                     continue;
 
-                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, idsProdutosPedido[i], produtoLiberarPedido);
+                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, (int)idsProdutosPedido[i], idProdLiberarPedido);
 
                 ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i], idsOc);
-                idsUsados.Add(idsProdutosPedido[i]);
+                idsUsados.Add((int)idsProdutosPedido[i]);
             }
 
             //Marca as ocs como carregada parcialmente
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
-                Instance.AtualizaCarregamentoCarregado(session, idCarregamento, null);
+                Instance.AtualizaCarregamentoCarregado(session, (uint)idCarregamento, null);
         }
 
         #endregion
