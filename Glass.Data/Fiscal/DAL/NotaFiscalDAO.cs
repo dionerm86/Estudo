@@ -6538,7 +6538,7 @@ namespace Glass.Data.DAL
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
-                valorInicial, valorFinal, cnpjFornecedor, null));
+                valorInicial, valorFinal, cnpjFornecedor, lote));
         }
 
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
@@ -6550,7 +6550,7 @@ namespace Glass.Data.DAL
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
-                descrProd, valorInicial, valorFinal, cnpjFornecedor, null));
+                descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
 
         #endregion
@@ -9719,26 +9719,18 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(nfReferencia))
                 throw new Exception("Esta nota fiscal não pode ser excluída pois existem notas fiscais referenciando a mesma.\nNotas:" + nfReferencia);
 
-            try
-            {
-                var prodsNF = ProdutosNfDAO.Instance.GetByNf(sessao, idNf);
-                foreach (ProdutosNf pnf in prodsNF)
-                    ProdutosNfDAO.Instance.DeleteProdutoNf(sessao, pnf.IdProdNf);
+            var prodsNF = ProdutosNfDAO.Instance.GetByNf(sessao, idNf);
+            foreach (ProdutosNf pnf in prodsNF)
+                ProdutosNfDAO.Instance.DeleteProdutoNf(sessao, pnf.IdProdNf);
 
-                var parcNF = ParcelaNfDAO.Instance.GetByNf(sessao, idNf).ToArray();
-                foreach (ParcelaNf pnf in parcNF)
-                    ParcelaNfDAO.Instance.Delete(sessao, pnf);
+            var parcNF = ParcelaNfDAO.Instance.GetByNf(sessao, idNf).ToArray();
+            foreach (ParcelaNf pnf in parcNF)
+                ParcelaNfDAO.Instance.Delete(sessao, pnf);
 
-                CompraNotaFiscalDAO.Instance.ApagarPelaNFe(sessao, idNf);
+            CompraNotaFiscalDAO.Instance.ApagarPelaNFe(sessao, idNf);
 
-                PagtoNotaFiscalDAO.Instance.RemovePagamentos(sessao, (int)idNf);
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
+            PagtoNotaFiscalDAO.Instance.RemovePagamentos(sessao, (int)idNf);
 
-            LogAlteracaoDAO.Instance.ApagaLogNotaFiscal(idNf);
             return GDAOperations.Delete(sessao, new NotaFiscal { IdNf = idNf });
         }
 

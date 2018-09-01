@@ -65,7 +65,7 @@ namespace Glass.Data.DAL
         {
             // Apaga os registro de rentabilidade
             objPersistence.ExecuteCommand(sessao, 
-                "DELETE FROM produto_nf_custo_rentabilidade WHERE IdProdNfCusto IN (SELECT IdProdNfCust FROM produto_nf_custo pnc WHERE pnc.IdProdNf=?id", 
+                "DELETE FROM produto_nf_custo_rentabilidade WHERE IdProdNfCusto IN (SELECT IdProdNfCusto FROM produto_nf_custo pnc WHERE pnc.IdProdNf=?id)", 
                 new GDA.GDAParameter("?id", idProdNf));
 
             objPersistence.ExecuteCommand(sessao, "DELETE FROM produto_nf_custo WHERE IdProdNf=?id", new GDA.GDAParameter("?id", idProdNf));

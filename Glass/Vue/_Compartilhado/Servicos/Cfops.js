@@ -3,7 +3,7 @@ var Servicos = Servicos || {};
 /**
  * Objeto com os serviços para a API de notas fiscais.
  */
-Servicos.NotasFiscais = (function(http) {
+Servicos.Cfops = (function(http) {
   const API = '/api/v1/cfops/';
 
   return {

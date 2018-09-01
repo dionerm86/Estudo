@@ -374,6 +374,7 @@
     <Compile Include="Models\NotasFiscais\Boleto\BoletoImpressoDto.cs" />
     <Compile Include="Models\NotasFiscais\Boleto\NotaFiscalDto.cs" />
     <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\NotasFiscais\Contingencia\EntradaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\FiltroDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\ListaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\PermissoesDto.cs" />

@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Controllers.Cfops.V1
     /// <summary>
     /// Controller de cfops.
     /// </summary>
-    public partial class GetCfopsController : BaseController
+    public partial class CfopsController : BaseController
     {
         /// <summary>
         /// Recupera os cfops para o controle de pesquisa.

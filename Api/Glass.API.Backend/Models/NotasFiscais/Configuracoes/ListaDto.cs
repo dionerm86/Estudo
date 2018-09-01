@@ -25,6 +25,10 @@ namespace Glass.API.Backend.Models.NotasFiscais.Configuracoes
         {
             this.AtivarContingencia = Config.PossuiPermissao(Config.FuncaoMenuFiscal.AtivarContingenciaNFe);
             this.UfUsuario = UserInfo.GetUserInfo.UfLoja;
+            this.QuantidadeNotasFsda = NotaFiscalDAO.Instance.GetCountEmitirFs();
+            this.TipoContingenciaScan = DataSources.TipoContingenciaNFe.SCAN;
+            this.TipoContingenciaFsda = DataSources.TipoContingenciaNFe.FSDA;
+            this.TipoContingenciaNaoUtilizar = DataSources.TipoContingenciaNFe.NaoUtilizar;
             this.SituacaoFinalizada = NotaFiscal.SituacaoEnum.FinalizadaTerceiros;
             this.SituacaoAutorizada = NotaFiscal.SituacaoEnum.Autorizada;
         }
@@ -42,6 +46,34 @@ namespace Glass.API.Backend.Models.NotasFiscais.Configuracoes
         [DataMember]
         [JsonProperty("ufUsuario")]
         public string UfUsuario { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica a quantidade de notas FS-DA.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("quantidadeNotasFsda")]
+        public int QuantidadeNotasFsda { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica o tipo de contingência SCAN.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoContingenciaScan")]
+        public DataSources.TipoContingenciaNFe TipoContingenciaScan { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica o tipo de contingência FS-DA.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoContingenciaFsda")]
+        public DataSources.TipoContingenciaNFe TipoContingenciaFsda { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica o tipo de contingência "Não Utilizar".
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoContingenciaNaoUtilizar")]
+        public DataSources.TipoContingenciaNFe TipoContingenciaNaoUtilizar { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica qual a situação finalizada da nota.

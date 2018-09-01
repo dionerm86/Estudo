@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.NotasFiscais
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "IdNf DESC"; }
+            get { return "DataEmissao DESC"; }
         }
 
         /// <inheritdoc/>
@@ -31,6 +31,37 @@ namespace Glass.API.Backend.Helper.NotasFiscais
             {
                 case "id":
                     return "IdNf";
+
+                case "codigocfop":
+                    return "codcfop";
+
+                case "usuariocadastro":
+                    return "descrusucad";
+
+                case "nomedestinatario":
+                    return "nomedestrem";
+
+                case "dataentradasaida":
+                    return "datasaidaent";
+
+                case "basedecalculoicms":
+                    return "bcicms";
+
+                case "basedecalculoicmsst":
+                    return "bcicmsst";
+
+                case "numeronfe":
+                case "serie":
+                case "modelo":
+                case "tipodocumento":
+                case "nomeemitente":
+                case "dataemissao":
+                case "valoricms":
+                case "valoricmsst":
+                case "valoripi":
+                case "totalnota":
+                case "situacao":
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;
