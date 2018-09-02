@@ -1394,13 +1394,10 @@ namespace Glass.Data.DAL
             bool usarAliasPedidoSemCalc, string campoCalcProd, string campoCalcBenef, string nomeCampo, string aliasPedido,
             string aliasPedidoEspelho, string aliasAmbientePedido, string aliasProdutosLiberarPedido, bool arredondarResultado)
         {
-            if (!PedidoConfig.LiberarPedido)
-                return $"((pp.total + COALESCE(pp.valorBenef, 0)) / pp1.totalProd * {aliasPedido}.{campoSemCalcPedido}) as {nomeCampo}";
-
-            var campoSemCalc = string.Format(PCPConfig.UsarConferenciaFluxo && !string.IsNullOrEmpty(aliasPedidoEspelho) && !string.IsNullOrEmpty(campoSemCalcPcp) ?
+            var campoSemCalc = string.Format(PCPConfig.UsarConferenciaFluxo && PedidoConfig.LiberarPedido && !string.IsNullOrEmpty(aliasPedidoEspelho) && !string.IsNullOrEmpty(campoSemCalcPcp) ?
                 "coalesce({0}.{1}, {2}.{3})" : usarAliasPedidoSemCalc ? "{2}.{3}" : "{3}", aliasPedidoEspelho, campoSemCalcPcp, aliasPedido, campoSemCalcPedido);
 
-            if (!usarTotalCalc)
+            if (!usarTotalCalc || !PedidoConfig.LiberarPedido)
                 return campoSemCalc + " as " + nomeCampo;
 
             // Campo que corresponde ao valor do produto (total ou custo)
