@@ -215,7 +215,7 @@ namespace Glass.Data.RelDAL
             mdfe.QuantidadeCTe = string.IsNullOrWhiteSpace(GetNodeValue(xmlInfMDFe, "tot", "qCTe")) ? "0" : GetNodeValue(xmlInfMDFe, "tot", "qCTe");
             mdfe.QuantidadeNFe = string.IsNullOrWhiteSpace(GetNodeValue(xmlInfMDFe, "tot", "qNFe")) ? "0" : GetNodeValue(xmlInfMDFe, "tot", "qNFe");
             mdfe.ValorCarga = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfMDFe, "tot", "vCarga"), 2);
-            mdfe.CodigoUnidade = GetNodeValue(xmlInfMDFe, "tot", "cUnid") == "1" ? "KG" : "TON";
+            mdfe.CodigoUnidade = GetNodeValue(xmlInfMDFe, "tot", "cUnid").StrParaInt() == 1 ? "KG" : "TON";
             mdfe.PesoTotalCarga = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfMDFe, "tot", "qCarga"), 4);
 
             #endregion
