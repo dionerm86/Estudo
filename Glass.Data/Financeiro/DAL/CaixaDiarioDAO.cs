@@ -1093,9 +1093,15 @@ namespace Glass.Data.DAL
                         continue;
                     }
 
+                    var idsContaTransferencia = new List<uint>()
+                    {
+                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfParaCxGeralDinheiro),
+                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfParaCxGeralCheque),
+                    };
+
                     // Só altera se o saldo tiver sido alterado
                     if (lstCx[i].Saldo != ObtemSaldoMovAnterior(session, lstCx[i].IdCaixaDiario) 
-                        && (lstCx[i].MudarSaldo.GetValueOrDefault() || lstCx[i].IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfParaCxGeralDinheiro)))
+                        && (lstCx[i].MudarSaldo.GetValueOrDefault() || idsContaTransferencia.Contains(lstCx[i].IdConta)))
                     {
                         if (lstCx[i].TipoMov == 1)
                             saldo += lstCx[i].Valor;
