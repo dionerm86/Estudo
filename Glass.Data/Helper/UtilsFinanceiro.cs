@@ -2569,6 +2569,8 @@ namespace Glass.Data.Helper
 
                 #region Estorna movimentações deste sinal no caixa geral/diário
 
+                var contadorDataUnica = 0;
+
                 foreach (CaixaGeral c in cxGeral)
                 {
                     if (c.TipoMov == 2)
@@ -2586,7 +2588,7 @@ namespace Glass.Data.Helper
                     CreditoCliente(sessao, sinal.IdCliente, c.IdConta, c.ValorMov);
 
                     CaixaGeralDAO.Instance.MovCxSinal(sessao, sinal.IdSinal, c.IdCliente,
-                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.ValorMov, 0, null, mudarSaldo, null, null);
+                        UtilsPlanoConta.EstornoSinalPedido(c.IdConta), 2, c.ValorMov, 0, null, mudarSaldo, null, null, contadorDataUnica++);
                 }
 
                 // Estorna movimentações feitas no caixa diário, deve sempre entrar aqui, pois pode ser que o sinal tenha sido recebido no caixa diário
