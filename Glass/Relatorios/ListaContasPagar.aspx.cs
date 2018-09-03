@@ -76,7 +76,7 @@ namespace Glass.UI.Web.Relatorios
             var planoConta = PlanoContasDAO.Instance.GetByIdConta((uint)ContasPagarDAO.Instance.ObtemIdConta(null, (int)idContaPg));
 
             // Se o funcionário deste pedido estiver inativo, inclui o mesmo na listagem para não ocorrer erro
-            if (!PlanoContasDAO.Instance.GetPlanoContas(2).Any(f => f.IdConta == planoConta.IdConta))
+            if (planoConta != null && !PlanoContasDAO.Instance.GetPlanoContas(2).Any(f => f.IdConta == planoConta.IdConta))
             {                
                 ((DropDownList)sender).Items.Add(new ListItem(planoConta.DescrPlanoGrupo, planoConta.IdConta.ToString()));
             }

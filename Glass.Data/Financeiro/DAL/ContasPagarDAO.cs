@@ -4129,6 +4129,11 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<int>(session, "IdConta", "idContaPg = " + idContaPg);
         }
 
+        public int? ObterIdFormaPagto(GDASession session, int idContaPg)
+        {
+            return ObtemValorCampo<int?>(session, "IdFormaPagto", "idContaPg = " + idContaPg);
+        }
+
         /// <summary>
         /// Obtem o total pago com permuta das contas informadas
         /// </summary>
