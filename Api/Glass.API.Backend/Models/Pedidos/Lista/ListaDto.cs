@@ -9,6 +9,7 @@ using Glass.Data.Model;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 
@@ -117,6 +118,8 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                 : pedido.IdsOCs.Split(',')
                     .Select(oc => oc.Trim().StrParaInt())
                     .Where(oc => oc > 0);
+
+            this.CorLinha = this.ObterCorLinha(pedido);
         }
 
         /// <summary>
@@ -280,6 +283,13 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
         [JsonProperty("idsOrdensDeCarga")]
         public IEnumerable<int> IdsOrdensDeCarga { get; set; }
 
+        /// <summary>
+        /// Obtém ou define a cor da linha do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("corLinha")]
+        public string CorLinha { get; set; }
+
         private DataFuncionarioDto DataEFuncionarioOperacao(DateTime? data, string funcionario)
         {
             return !data.HasValue && string.IsNullOrWhiteSpace(funcionario)
@@ -289,6 +299,36 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                     Data = data.Value,
                     Funcionario = funcionario,
                 };
+        }
+
+        private string ObterCorLinha(Data.Model.Pedido pedido)
+        {
+            Color? cor = null;
+
+            if (PedidoConfig.TelaListagem.ExibirLinhaAzulSePedidoPronto
+                && pedido.SituacaoProducao == (int)Data.Model.Pedido.SituacaoProducaoEnum.Pronto)
+            {
+                cor = Color.Blue;
+            }
+            else if (PedidoConfig.TelaListagem.ExibirLinhaPretaSeRevenda
+                && pedido.TipoPedido == (int)Data.Model.Pedido.TipoPedidoEnum.Revenda)
+            {
+                cor = Color.Black;
+            }
+            else if (PedidoConfig.TelaListagem.ExibirLinhaVermelhaSePendenteOuTemAlteracaoPCP
+                && (pedido.SituacaoProducao == (int)Data.Model.Pedido.SituacaoProducaoEnum.Pendente
+                    || pedido.TemAlteracaoPcp))
+            {
+                cor = Color.Red;
+            }
+            else if (pedido.GeradoParceiro || pedido.Importado)
+            {
+                cor = Color.FromName(PedidoConfig.TelaListagem.CorLinhaSeImportadoOuGeradoParceiro);
+            }
+
+            return cor.HasValue
+                ? ColorTranslator.ToHtml(cor.Value)
+                : null;
         }
     }
 }

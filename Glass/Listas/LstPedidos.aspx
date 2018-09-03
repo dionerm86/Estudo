@@ -79,7 +79,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                     <th></th>
                 </template>
                 <template slot="item" slot-scope="{ item }">
-                    <td style="white-space: nowrap">
+                    <td :style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
                         <a :href="obterLinkEditarPedido(item)" title="Editar" v-if="item.permissoes.editar">
                             <img border="0" src="../Images/EditarGrid.gif">
                         </a>
@@ -123,43 +123,43 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                             <img border="0" src="../Images/cash_red.png">
                         </a>
                     </td>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.idProjeto }}</td>
-                    <td>{{ item.idOrcamento }}</td>
-                    <td>{{ item.codigoPedidoCliente }}</td>
-                    <td>{{ item.cliente.id }} - {{ item.cliente.nome }}</td>
-                    <td v-if="configuracoes.exibirColunaLoja">{{ item.loja.nome }}</td>
-                    <td v-if="!vendedorFixo">
+                    <td :style="{ color: item.corLinha }">{{ item.id }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.idProjeto }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.idOrcamento }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.codigoPedidoCliente }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.cliente.id }} - {{ item.cliente.nome }}</td>
+                    <td :style="{ color: item.corLinha }" v-if="configuracoes.exibirColunaLoja">{{ item.loja.nome }}</td>
+                    <td :style="{ color: item.corLinha }" v-if="!vendedorFixo">
                         {{ item.vendedor.nome }}
                     </td>
-                    <td>{{ item.total | moeda }}</td>
-                    <td>{{ item.tipoVenda }}</td>
-                    <td>{{ item.dataPedido | dataHora }}</td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">{{ item.total | moeda }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.tipoVenda }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.dataPedido | dataHora }}</td>
+                    <td :style="{ color: item.corLinha }">
                         <span v-if="item.finalizacao">
                             {{ item.finalizacao.data | data }} (Func.: {{ item.finalizacao.funcionario }})
                         </span>
                     </td>
-                    <td>
+                    <td :style="{ color: item.corLinha }">
                         {{ item.dataEntrega.atual | data }}
                         <span v-if="item.dataEntrega.original">
                             ({{ item.dataEntrega.original | data }})
                         </span>
                     </td>
-                    <td v-if="configuracoes.exibirColunaConfirmacao">
+                    <td :style="{ color: item.corLinha }" v-if="configuracoes.exibirColunaConfirmacao">
                         <span v-if="item.confirmacao">
                             {{ item.confirmacao.data | data }} (Func.: {{ item.confirmacao.funcionario }})
                         </span>
                     </td>
-                    <td v-if="configuracoes.exibirColunaPedidoPronto">
+                    <td :style="{ color: item.corLinha }" v-if="configuracoes.exibirColunaPedidoPronto">
                         {{ item.dataPronto | data }}
                     </td>
-                    <td v-if="configuracoes.exibirColunaLiberacao">
+                    <td :style="{ color: item.corLinha }" v-if="configuracoes.exibirColunaLiberacao">
                         <span v-if="item.liberacao">
                             {{ item.liberacao.data | data }} (Func.: {{ item.liberacao.funcionario }})
                         </span>
                     </td>
-                    <td style="white-space: nowrap">
+                    <td :style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
                         <span v-if="!item.permissoes.anexosLiberacao || !item.liberacao">{{ item.situacao }}</span>
                         <a href="#" @click.prevent="abrirAnexosLiberacao(item)" v-else>{{ item.situacao }}</a>
 
@@ -167,7 +167,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                             <img src="../Images/cadeado.gif">
                         </a>
                     </td>
-                    <td v-if="configuracoes.exibirColunaSituacaoProducao" style="white-space: nowrap">
+                    <td v-if="configuracoes.exibirColunaSituacaoProducao" :style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
                         <a :href="obterLinkConsultaProducao(item)" v-if="configuracoes.controlarProducao && item.producao.situacao !== '-'">{{ item.producao.situacao }}</a>
                         <span v-else>{{ item.producao.situacao }}</span>
 
@@ -178,10 +178,10 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                             <img src="../Images/nao curtir.gif">
                         </a>
                     </td>
-                    <td v-if="!tipoPedidoFixo">
+                    <td :style="{ color: item.corLinha }" v-if="!tipoPedidoFixo">
                         {{ item.tipo }}
                     </td>
-                    <td v-if="configuracoes.exibirColunaLiberadoFinanceiro" style="white-space: nowrap">
+                    <td v-if="configuracoes.exibirColunaLiberadoFinanceiro" :style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
                         {{ item.liberadoFinanceiro | simNao }}
                         <a href="#" @click.prevent="alterarLiberacaoFinanceira(item, true)" v-if="!item.liberadoFinanceiro">
                             Liberar
@@ -190,7 +190,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                             Desfazer
                         </a>
                     </td>
-                    <td style="white-space: nowrap">
+                    <td :style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
                         <log-alteracao tabela="Pedido" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                         <img src="../Images/cifrao.png" title="Sinal e Pagamento Antecipado" key="sinalEPagamentoAntecipado" v-if="item.sinalEPagamentoAntecipado.temPagamentoAntecipado && item.sinalEPagamentoAntecipado.idSinal">
                         <img src="../Images/cifrao.png" title="Pagamento Antecipado" key="sinalEPagamentoAntecipado" v-else-if="item.sinalEPagamentoAntecipado.temPagamentoAntecipado">
