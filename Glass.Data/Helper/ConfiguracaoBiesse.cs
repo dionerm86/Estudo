@@ -69,6 +69,7 @@ namespace Glass.Data.Helper
                                 var configuracao = (ConfiguracaoMaquina)serializer.Deserialize(conteudo);
                                 maquina = configuracao.Maquina;
                                 diretorioSaida = configuracao.DiretorioSaida ?? Configuracoes.PCPConfig.CaminhoSalvarIntermac;
+                                geradorSaida = configuracao.GeradorSaida;
                             }
                         }
                         catch (Exception ex)
