@@ -16,19 +16,17 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                var data = new DateTime();
+                var idTipoCartao = IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)IdConta) : null;
+                _data = idTipoCartao == null ? _data.AddDays(1) : _data;
 
-                var idTipoCartao = this.IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)this.IdConta) : null;
-                data = idTipoCartao == null ? this._data.AddDays(1) : this._data;
-
-                while (!Glass.FuncoesData.DiaUtil(data))
+                while (!FuncoesData.DiaUtil(_data))
                 {
-                    data = data.AddDays(1);
+                    _data = _data.AddDays(1);
                 }
 
-                return data.Date;
+                return _data.Date;
             }
-            set { this._data = value; }
+            set { _data = value; }
         }
 
         [PersistenceProperty("IDCONTA")]
