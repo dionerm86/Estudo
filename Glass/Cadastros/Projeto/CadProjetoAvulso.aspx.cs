@@ -217,16 +217,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
             else
             {
                 ConfirmaProjeto();
-                
-                //Caso o produto for Material Projeto Modelo mostra outra mensagem de alerta
-                if(MaterialItemProjetoDAO.Instance.ObtemIdMaterProjMod(null, idMaterItemProj))
-                {
-                    MensagemAlerta.ShowMsg("Não é possivel alterar as medidas e quantidade deste material!", Page);
-                }
-                else
-                {
-                    MensagemAlerta.ShowMsg("Material atualizado com sucesso!", Page);
-                }
+                MensagemAlerta.ShowMsg("Material atualizado com sucesso!", Page);
             }
         }
 
