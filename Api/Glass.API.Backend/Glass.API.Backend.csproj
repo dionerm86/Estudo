@@ -379,6 +379,7 @@
     <Compile Include="Models\NotasFiscais\Lista\ListaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\TipoObrasFiltradas.cs" />
+    <Compile Include="Models\Pedidos\CadastroAtualizacao\ObservacoesPedidoDto.cs" />
     <Compile Include="Models\Pedidos\EnviarValidacaoFinanceiro\DadosEntradaDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\DadosEntradaDto.cs" />

@@ -122,6 +122,17 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         <a href="#" @click.prevent="abrirRentabilidade(item)" title="Rentabilidade" v-if="configuracoes.exibirRentabilidade">
                             <img border="0" src="../Images/cash_red.png">
                         </a>
+                        <a href="#" @click.prevent="exibirObsObsLib('boxObsObsLib_' + item.id, $event, item)" title="Alterar Obs." 
+                            v-if="item.permissoes.alterarObservacoes">
+                            <img alt="" border="0" src="../Images/blocodenotas.png" />
+                        </a>
+                        <div :id="'boxObsObsLib_' + item.id" style="display: none">
+                            <label>Observação</label><br />     
+                            <textarea id="txtObs" v-model="item.obs" style="width: 300px"></textarea><br />   
+                            <label>Observação liberação</label><br />   
+                            <textarea id="txtObsLib" v-model="item.obsLiberacao" style="width: 300px"></textarea><br />   
+                            <button @click.prevent="alterarObsObsLib(item)">Atualizar</button>
+                        </div>
                     </td>
                     <td>{{ item.id }}</td>
                     <td>{{ item.idProjeto }}</td>
@@ -260,7 +271,6 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
             </span>
         </section>
     </div>
-
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Pedidos/Componentes/LstPedidos.Filtro.js" />

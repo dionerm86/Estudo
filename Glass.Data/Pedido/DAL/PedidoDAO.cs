@@ -16854,6 +16854,19 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Altera Observação
+
+        /// <summary>
+        /// Atualiza observações do pedido
+        /// </summary>
+        public void AtualizaObs(GDASession sessao, uint idPedido, string obs, string obsLib)
+        {
+            string sql = "Update pedido Set Obs=?obs, ObsLiberacao=?obsLib Where idPedido=" + idPedido;
+            this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?obs", obs), new GDAParameter("?obsLib", obsLib));
+        }
+
+        #endregion
+
         public void ForcarTransacaoPedido(GDASession sessao, uint idPedido, bool inicio)
         {
             string sql = $@"

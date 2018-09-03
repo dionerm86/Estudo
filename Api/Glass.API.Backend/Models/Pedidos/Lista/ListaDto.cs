@@ -102,6 +102,7 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                 AnexosLiberacao = pedido.Situacao == Data.Model.Pedido.SituacaoPedido.Confirmado && PedidoConfig.LiberarPedido,
                 FinalizacoesFinanceiro = pedido.ExibirFinalizacoesFinanceiro,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, null),
+                AlterarObservacoes = pedido.TipoVenda == 3 || pedido.TipoVenda == 4,
             };
 
             this.SinalEPagamentoAntecipado = new SinalEPagamentoAntecipadoDto
@@ -117,6 +118,9 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                 : pedido.IdsOCs.Split(',')
                     .Select(oc => oc.Trim().StrParaInt())
                     .Where(oc => oc > 0);
+
+            this.Obs = pedido.Obs;
+            this.ObsLiberacao = pedido.ObsLiberacao;
         }
 
         /// <summary>
@@ -279,6 +283,20 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
         [DataMember]
         [JsonProperty("idsOrdensDeCarga")]
         public IEnumerable<int> IdsOrdensDeCarga { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a observação do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("obs")]
+        public string Obs { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a observação de Liberação do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("obsLiberacao")]
+        public string ObsLiberacao { get; set; }
 
         private DataFuncionarioDto DataEFuncionarioOperacao(DateTime? data, string funcionario)
         {
