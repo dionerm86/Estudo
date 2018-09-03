@@ -90,7 +90,7 @@
                 </template>
             </lista-paginada>
         </section>
-        <section>
+        <section class="links">
             <div>
                 <span v-if="configuracoes.imprimir">
                     <a href="#" @click.prevent="abrirListaClientes(false, false)" title="Imprimir">

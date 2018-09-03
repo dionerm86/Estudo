@@ -240,24 +240,26 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                 </template>
             </lista-paginada>
         </section>
-        <section>
-            <span>
-                <a href="#" @click.prevent="anexarArquivosAVariosPedidos()" title="Anexar arquivos a vários pedidos">
-                    <img src="../Images/Clipe.gif"> Anexar arquivos a vários pedidos
-                </a>
-            </span>
-            <span v-if="configuracoes.exibirBotoesTotais">
+        <section class="links">
+            <div>
                 <span>
-                    <a href="#" @click.prevent="abrirListaTotais()" title="Exibe os valores de preço, peso e m² totais dos pedidos listados">
-                        <img src="../Images/detalhes.gif"> Total
+                    <a href="#" @click.prevent="anexarArquivosAVariosPedidos()" title="Anexar arquivos a vários pedidos">
+                        <img src="../Images/Clipe.gif"> Anexar arquivos a vários pedidos
                     </a>
                 </span>
-                <span>
-                    <a href="#" @click.prevent="abrirGraficoTotaisDiarios()" title="Exibe os valores de preço, peso e m² totais dos pedidos listados">
-                        <img src="../Images/detalhes.gif"> Gráfico Totais Diários
-                    </a>
+                <span v-if="configuracoes.exibirBotoesTotais">
+                    <span>
+                        <a href="#" @click.prevent="abrirListaTotais()" title="Exibe os valores de preço, peso e m² totais dos pedidos listados">
+                            <img src="../Images/detalhes.gif"> Total
+                        </a>
+                    </span>
+                    <span>
+                        <a href="#" @click.prevent="abrirGraficoTotaisDiarios()" title="Exibe os valores de preço, peso e m² totais dos pedidos listados">
+                            <img src="../Images/detalhes.gif"> Gráfico Totais Diários
+                        </a>
+                    </span>
                 </span>
-            </span>
+            </div>
         </section>
     </div>
 
