@@ -1,4 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿// <copyright file="ObservacoesPedidoDto.cs" company="Sync Softwares">
+// Copyright (c) Sync Softwares. Todos os direitos reservados.
+// </copyright>
+
+using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao

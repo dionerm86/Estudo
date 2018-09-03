@@ -120,8 +120,8 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                     .Select(oc => oc.Trim().StrParaInt())
                     .Where(oc => oc > 0);
 
-            this.Obs = pedido.Obs;
-            this.ObsLiberacao = pedido.ObsLiberacao;
+            this.Observacao = pedido.Obs;
+            this.ObservacaoLiberacao = pedido.ObsLiberacao;
 
             this.CorLinha = this.ObterCorLinha(pedido);
         }
@@ -291,15 +291,15 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
         /// Obtém ou define a observação do pedido.
         /// </summary>
         [DataMember]
-        [JsonProperty("obs")]
-        public string Obs { get; set; }
+        [JsonProperty("observacao")]
+        public string Observacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a observação de Liberação do pedido.
         /// </summary>
         [DataMember]
-        [JsonProperty("obsLiberacao")]
-        public string ObsLiberacao { get; set; }
+        [JsonProperty("observacaoLiberacao")]
+        public string ObservacaoLiberacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a cor da linha do pedido.
