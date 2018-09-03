@@ -10,13 +10,7 @@ namespace Glass.Data.Helper
     /// </summary>
     public sealed class ConfiguracaoBiesse
     {
-        #region Variaveis Locais
-
-        public List<Exception> _erros = new List<Exception>();
-
-        #endregion
-
-        #region Propriedades
+        private readonly List<Exception> _erros = new List<Exception>();
 
         /// <summary>
         /// Obtém a instancia da configuração.
@@ -33,48 +27,33 @@ namespace Glass.Data.Helper
         /// </summary>
         public IEnumerable<Exception> Erros => _erros;
 
-        #endregion
-
-        #region Construtores
-
         /// <summary>
-        /// Construtor padrão.
+        /// Inicia uma nova instância da classe <see cref="ConfiguracaoBiesse"/>.
         /// </summary>
         private ConfiguracaoBiesse()
         {
         }
 
-        #endregion
-
-        #region Métodos Privados
-
         /// <summary>
         /// Carrega os contexto com base nas configurações contidas no diretório informado.
         /// </summary>
-        /// <param name="diretorio"></param>
-        /// <returns></returns>
+        /// <param name="diretorio">Diretório onde estão os contextos.</param>
+        /// <returns>Contextos.</returns>
         private IEnumerable<Contexto> CarregarContextos(string diretorio)
         {
-            if (!System.IO.Directory.Exists(diretorio)) yield break;
+            if (!System.IO.Directory.Exists(diretorio))
+            {
+                yield break;
+            }
 
-            foreach(var dir in System.IO.Directory.GetDirectories(diretorio, "*.*", System.IO.SearchOption.TopDirectoryOnly))
+            foreach (var dir in System.IO.Directory.GetDirectories(diretorio, "*.*", System.IO.SearchOption.TopDirectoryOnly))
             {
                 var setupDataFileName = System.IO.Path.Combine(dir, "SetupData.xml");
 
                 // Verifica se o arquivo base de configuração existe
                 if (System.IO.File.Exists(setupDataFileName))
                 {
-                    CalcEngine.Biesse.DxfImporterContext importerContext = null;
-                    try
-                    {
-                        importerContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), dir);
-                    }
-                    catch (Exception ex)
-                    {
-                        _erros.Add(ex);
-                        // Igonra erros ao carregar o contexto
-                        continue;
-                    }
+                    CalcEngine.Biesse.OutputGenerator geradorSaida = CalcEngine.Biesse.OutputGenerator.iCam;
 
                     string maquina = null;
                     string diretorioSaida = Configuracoes.PCPConfig.CaminhoSalvarIntermac;
@@ -90,6 +69,7 @@ namespace Glass.Data.Helper
                                 var configuracao = (ConfiguracaoMaquina)serializer.Deserialize(conteudo);
                                 maquina = configuracao.Maquina;
                                 diretorioSaida = configuracao.DiretorioSaida ?? Configuracoes.PCPConfig.CaminhoSalvarIntermac;
+                                geradorSaida = configuracao.GeradorSaida;
                             }
                         }
                         catch (Exception ex)
@@ -100,16 +80,26 @@ namespace Glass.Data.Helper
                     }
 
                     if (maquina == null)
+                    {
                         maquina = "VertMax Sx_Dx";
+                    }
+
+                    CalcEngine.Biesse.DxfImporterContext importerContext = null;
+                    try
+                    {
+                        importerContext = new CalcEngine.Biesse.DxfImporterContext(new System.IO.Abstractions.FileSystem(), dir, geradorSaida);
+                    }
+                    catch (Exception ex)
+                    {
+                        _erros.Add(ex);
+                        // Igonra erros ao carregar o contexto
+                        continue;
+                    }
 
                     yield return new Contexto(System.IO.Path.GetFileNameWithoutExtension(dir), maquina, diretorioSaida, importerContext);
                 }
             }
         }
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Inicializa a configuração.
@@ -117,20 +107,14 @@ namespace Glass.Data.Helper
         /// <param name="directorioConfiguracao">Diretório onde ficas dos dados da configuração.</param>
         public void Inicializar(string directorioConfiguracao)
         {
-            Contextos = CarregarContextos(directorioConfiguracao).ToList();
+            this.Contextos = this.CarregarContextos(directorioConfiguracao).ToList();
         }
-
-        #endregion
-
-        #region Tipos Aninhados
 
         /// <summary>
         /// Contexto de configuração.
         /// </summary>
         public class Contexto
         {
-            #region Propriedades
-
             /// <summary>
             /// Obtém o nome do contexto.
             /// </summary>
@@ -151,26 +135,20 @@ namespace Glass.Data.Helper
             /// </summary>
             public CalcEngine.Biesse.DxfImporterContext ImporterContext { get; }
 
-            #endregion
-
-            #region Construtores
-
             /// <summary>
-            /// Construtor padrão.
+            /// Inicia uma nova instância da classe <see cref="Contexto"/>.
             /// </summary>
-            /// <param name="nome"></param>
-            /// <param name="nomeMaquina"></param>
-            /// <param name="diretorioSaida"></param>
-            /// <param name="importerContext"></param>
+            /// <param name="nome">Nome do contexto.</param>
+            /// <param name="nomeMaquina">Nome da máquina do contexto.</param>
+            /// <param name="diretorioSaida">Diretório de saída.</param>
+            /// <param name="importerContext">Contexto do importador.</param>
             internal Contexto(string nome, string nomeMaquina, string diretorioSaida, CalcEngine.Biesse.DxfImporterContext importerContext)
             {
-                Nome = nome;
-                NomeMaquina = nomeMaquina;
-                DiretorioSaida = diretorioSaida;
-                ImporterContext = importerContext;
+                this.Nome = nome;
+                this.NomeMaquina = nomeMaquina;
+                this.DiretorioSaida = diretorioSaida;
+                this.ImporterContext = importerContext;
             }
-
-            #endregion
         }
 
         /// <summary>
@@ -178,8 +156,6 @@ namespace Glass.Data.Helper
         /// </summary>
         public class ConfiguracaoMaquina
         {
-            #region Propriedades
-
             /// <summary>
             /// Obtém ou define o nome da máquina.
             /// </summary>
@@ -190,9 +166,10 @@ namespace Glass.Data.Helper
             /// </summary>
             public string DiretorioSaida { get; set; }
 
-            #endregion
+            /// <summary>
+            /// Obtém ou define o tipo do gerador de saída.
+            /// </summary>
+            public CalcEngine.Biesse.OutputGenerator GeradorSaida { get; set; }
         }
-
-        #endregion
     }
 }

@@ -498,3 +498,11 @@ section {
       background-color: transparent;
       font-weight: normal;
     }
+
+div.links > div, section.links > div {
+  padding-top: 8px;
+}
+
+  div.links > div:first-child, section.links > div:first-child {
+    padding-top: initial;
+  }

@@ -4161,7 +4161,7 @@ namespace Glass.Data.DAL
                     XmlElement fat = doc.CreateElement("fat");
                     ManipulacaoXml.SetNode(doc, fat, "nFat", nf.NumeroNFe.ToString());
                     ManipulacaoXml.SetNode(doc, fat, "vOrig", Formatacoes.TrataValorDecimal(nf.TotalNota, 2));
-                    //if (false) ManipulacaoXml.SetNode(doc, fat, "vDesc", Formatacoes.TrataValorDecimal(0, 2));
+                    ManipulacaoXml.SetNode(doc, fat, "vDesc", Formatacoes.TrataValorDecimal(0, 2));
                     ManipulacaoXml.SetNode(doc, fat, "vLiq", Formatacoes.TrataValorDecimal(nf.TotalNota, 2));
                     cobr.AppendChild(fat);
 
