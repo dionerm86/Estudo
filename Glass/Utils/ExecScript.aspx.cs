@@ -1402,16 +1402,16 @@ namespace Glass.UI.Web.Utils
             rgx = rgx + "|FOLGA[a-zA-Z0-9]*|P[a-zA-Z0-9]*LARG|P[a-zA-Z0-9]*ESP|P[a-zA-Z0-9]*ALT|LARG[a-zA-Z0-9]*|ALT[a-zA-Z0-9]*";
             Regex calculo = new Regex($@"{rgx}\w*");
 
-            foreach (var calculoAltura in materiaisProjetoModelo.Where(f => !string.IsNullOrWhiteSpace(f.CalculoAltura)).GroupBy(f => f.CalculoAltura).Select(grp => grp.First()))
+            foreach (var materialProjetoModelo in materiaisProjetoModelo.Where(f => !string.IsNullOrWhiteSpace(f.CalculoAltura)).GroupBy(f => f.CalculoAltura).Select(grp => grp.First()))
             {
-                var expressao = calculo.Replace(calculoAltura.CalculoAltura, 1000.ToString());
+                var expressao = calculo.Replace(materialProjetoModelo.CalculoAltura, 1000.ToString());
                 try
                 {
                     UtilsProjeto.CalcularExpressao(expressao.Replace(" ", string.Empty));
                 }
                 catch (Exception ex)
                 {
-                    retorno += $"UPDATE material_projeto_modelo set CALCULOALTURA = WHERE CALCULOALTURA = \'{ calculoAltura.CalculoAltura }\';/* Expressão Calc.:{ expressao }\t{ ex.Message.Replace("\r\n", " ") }\tProjeto de exemplo:{ calculoAltura.ProjetoModelo }*/\n";
+                    retorno += $"UPDATE material_projeto_modelo set CALCULOALTURA = WHERE CALCULOALTURA = \'{ materialProjetoModelo.CalculoAltura }\';/* Expressão Calc.:{ expressao }\t{ ex.Message.Replace("\r\n", " ") }\tProjeto de exemplo:{ materialProjetoModelo.ProjetoModelo }*/\n";
                 }
             }
 
