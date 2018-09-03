@@ -160,7 +160,11 @@ Servicos.NotasFiscais = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     baixarXml: function (id, inutilizacao) {
-      return http().get('../Handlers/NotaXml.ashx?idNf=' + id + '&tipo=' + (inutilizacao ? 'inut' : ''));
+      const url = '../Handlers/NotaXml.ashx'
+        + '?idNf=' + id
+        + (inutilizacao ? '&tipo=inut' : '');
+
+      window.location.assign(url);
     },
 
     /**
@@ -169,7 +173,7 @@ Servicos.NotasFiscais = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     baixarXmlEmLote: function (filtros) {
-      return http().get('../Handlers/NotaXmlLote.ashx' + filtros);
+      window.location.assign('../Handlers/NotaXmlLote.ashx' + filtros);
     },
 
     /**
@@ -178,7 +182,7 @@ Servicos.NotasFiscais = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     baixarXmlTerceiros: function (id) {
-      return http().get('../Handlers/NFeEntradaTerceirosXML.ashx?idNfTer=' + id);
+      window.location.assign('../Handlers/NFeEntradaTerceirosXML.ashx?idNfTer=' + id);
     },
 
     /**

@@ -170,16 +170,7 @@ const app = new Vue({
      * @param {Boolean} inutilizacao Define se será baixado XML de inutilização.
      */
     baixarXml: function (item, inutilizacao) {
-      var vm = this;
-
-      Servicos.NotasFiscais.baixarXml(item.id, inutilizacao)
-        .then(function (resposta) {          
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+      Servicos.NotasFiscais.baixarXml(item.id, inutilizacao);
     },
 
     /**
@@ -195,14 +186,7 @@ const app = new Vue({
      * @param {Object} item A nota fiscal de terceiros que será baixado o XML.
      */
     baixarXmlTerceiros: function (item) {
-      Servicos.NotasFiscais.baixarXmlTerceiros(item.id)
-        .then(function (resposta) {
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+      Servicos.NotasFiscais.baixarXmlTerceiros(item.id);
     },
 
     /**
@@ -504,16 +488,8 @@ const app = new Vue({
      * @param {Boolean} inutilizacao Define se deverão ser baixados xmls de inutilização.
      */
     baixarXmlEmLote: function (inutilizacao) {
-      var filtros = this.formatarFiltros_() + '&tipo=' + (inutilizacao ? 'inut' : '');
-      
-      Servicos.NotasFiscais.baixarXmlEmLote(filtros)
-        .then(function (resposta) {
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+      var filtros = this.formatarFiltros_() + (inutilizacao ? '&tipo=inut' : '');
+      Servicos.NotasFiscais.baixarXmlEmLote(filtros);
     },
 
     /**
