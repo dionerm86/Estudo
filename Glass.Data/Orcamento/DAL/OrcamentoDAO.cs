@@ -2895,7 +2895,7 @@ namespace Glass.Data.DAL
 
             foreach (var p in produtosOrcamento.Where(p => !p.IdProdParent.HasValue))
             {
-                if (p.Desconto <= 0 && p.Acrescimo <= 0)
+                if (p.Desconto <= 0 && p.Acrescimo <= 0 && p.IdItemProjeto == null)
                     continue;
 
                 var dadosDesconto = new KeyValuePair<int, decimal>(p.TipoDesconto, p.Desconto);
@@ -2908,7 +2908,25 @@ namespace Glass.Data.DAL
                 if (p.IdItemProjeto == null)
                     produtos.AddRange(ProdutosOrcamentoDAO.Instance.GetByProdutoOrcamento(session, p.IdProd));
                 else
+                {
                     produtos.Add(p);
+
+                    foreach (var mip in MaterialItemProjetoDAO.Instance.GetByItemProjeto(session, p.IdItemProjeto.Value))
+                    {
+                        MaterialItemProjetoDAO.Instance.RecalcularValores(session, mip, orcamento);
+                        MaterialItemProjetoDAO.Instance.Update(session, mip, orcamento);
+                    }
+
+                    #region Update Total Item Projeto
+
+                    ItemProjetoDAO.Instance.UpdateTotalItemProjeto(session, p.IdItemProjeto.Value);
+
+                    var idProd = ProdutosOrcamentoDAO.Instance.ObtemIdProdutoPorIdItemProjeto(session, p.IdItemProjeto.Value);
+                    if (idProd > 0)
+                        ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
+
+                    #endregion
+                }
 
                 ProdutosOrcamentoDAO.Instance.RemoverDesconto(session, p, orcamento, produtos);
                 ProdutosOrcamentoDAO.Instance.RemoverAcrescimo(session, p, orcamento, produtos);
