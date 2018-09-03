@@ -182,13 +182,13 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
         /// Obtém ou define o valor inicial para filtro do total da nota fiscal.
         /// </summary>
         [JsonProperty("valorNotaFiscalInicio")]
-        public decimal ValorNotaFiscalInicio { get; set; }
+        public decimal? ValorNotaFiscalInicio { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor final para filtro do total da nota fiscal.
         /// </summary>
         [JsonProperty("valorNotaFiscalFim")]
-        public decimal ValorNotaFiscalFim { get; set; }
+        public decimal? ValorNotaFiscalFim { get; set; }
 
         /// <summary>
         /// Obtém ou define a ordenação a ser usada na listagem.

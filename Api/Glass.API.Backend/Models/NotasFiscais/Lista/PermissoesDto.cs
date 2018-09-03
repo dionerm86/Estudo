@@ -126,6 +126,13 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
         public bool ReenviarEmail { get; set; }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se deverá exibir a opção de reenviar email de nota cancelada.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("reenviarEmailCancelamento")]
+        public bool ReenviarEmailCancelamento { get; set; }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se deverá exibir dados de rentabilidade.
         /// </summary>
         [DataMember]

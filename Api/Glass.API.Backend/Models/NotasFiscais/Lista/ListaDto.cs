@@ -42,7 +42,13 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
             this.NomeDestinatario = notaFiscal.NomeDestRem;
             this.TotalNota = notaFiscal.TotalNota;
             this.DataEmissao = notaFiscal.DataEmissao;
-            this.Situacao = notaFiscal.SituacaoString;
+            this.DataEntradaSaida = notaFiscal.DataSaidaEnt;
+            this.Situacao = new IdNomeDto
+            {
+                Id = (int)notaFiscal.Situacao,
+                Nome = notaFiscal.SituacaoString,
+            };
+
             this.CorSituacao = notaFiscal.CorSituacao;
             this.CorLinhaTabela = notaFiscal.CorLinhaGrid;
             this.IdsPedido = !string.IsNullOrEmpty(notaFiscal.IdsPedido) ? notaFiscal.IdsPedido.Split(',').Select(f => f.StrParaInt()) : new List<int>();
@@ -72,7 +78,8 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
                 ExibirInformacoesAdicionais = notaFiscal.ExibirLinkInfoAdic,
                 EmitirNotaFiscalFsda = notaFiscal.EmitirNfFsVisible,
                 ExibirBoleto = notaFiscal.ExibirBoleto,
-                ReenviarEmail = notaFiscal.ReenviarEmailXmlVisible || notaFiscal.ReenviarEmailXmlCancelamentoVisible,
+                ReenviarEmail = notaFiscal.ReenviarEmailXmlVisible,
+                ReenviarEmailCancelamento = notaFiscal.ReenviarEmailXmlCancelamentoVisible,
                 ExibirRentabilidade = RentabilidadeConfig.ExibirRentabilidadeNotaFiscal && notaFiscal.TipoDocumento == (int)NotaFiscal.TipoDoc.Saída,
                 Reabrir = notaFiscal.ExibirReabrir,
                 GerarNotaFiscalComplementar = notaFiscal.GerarNFComplVisible,
@@ -178,7 +185,7 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public string Situacao { get; set; }
+        public IdNomeDto Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a cor do campo de situação da lista da nota fiscal.

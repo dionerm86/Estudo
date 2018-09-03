@@ -88,7 +88,7 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Cabecalho_NomeLoja", String.IsNullOrEmpty(loja.RazaoSocial) ? "." : loja.RazaoSocial));
                         lstParam.Add(new ReportParameter("Cabecalho_EmailLoja", String.IsNullOrEmpty(loja.EmailContato) ? "." : loja.EmailContato));
                         lstParam.Add(new ReportParameter("Cabecalho_Criterio", dados.Count > 0 ? dados[0].Criterio : ""));
-                        lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"]));
+                        lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"] ?? "0"));
 
                         if (Request["rel"] == "FiscalAutFin")
                             lstParam.Add(new ReportParameter("ExibeTotalImposto", (situacao.Contains("2") || situacao.Contains("13")).ToString()));

@@ -1194,10 +1194,10 @@ namespace Glass.Data.DAL
 
                         nf = GetElement(transaction, nf.IdNf);
 
+                        ContasReceber[] contasReceber = null;
+
                         if (nf.FormaPagto == (int)LiberarPedido.TipoPagtoEnum.APrazo)
                         {
-                            ContasReceber[] contasReceber = null;
-
                             if (!string.IsNullOrWhiteSpace(idsLiberarPedidos))
                             {
                                 foreach (var idLiberarPedido in (idsLiberarPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
@@ -1215,7 +1215,7 @@ namespace Glass.Data.DAL
                             {
                                 foreach (var idPedido in (idsPedidos?.Split(',')?.Select(f => f?.StrParaInt()))?.ToList())
                                 {
-                                    ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
+                                    contasReceber = ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
 
                                     if (contasReceber?.Count() > 0)
                                     {
@@ -1282,7 +1282,7 @@ namespace Glass.Data.DAL
 
                         #region Informações de Pagamento da nota
 
-                        CriarPagtoNotaFiscal(transaction, nf, idsLiberarPedidos?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>());
+                        CriarPagtoNotaFiscal(transaction, nf, idsLiberarPedidos?.Split(',')?.Select(f => f.StrParaInt())?.ToList() ?? new List<int>(), contasReceber, idsPedidos);
 
                         #endregion
 
@@ -1331,11 +1331,16 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
-        private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido)
+        private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido, ContasReceber[] contasReceber, string idsPedidos)
         {
+            decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0, valorRecebRelativo = 0,
+                   totalCartaoDebito = 0, totalCartaoCredito = 0, totalFormaPagtoLiberacao = 0;
+            var valorParcelasNf = notaFiscal?.ValoresParcelas?.Sum() ?? 0;
+
+            var pagamentoNotaFiscal = new PagtoNotaFiscal();
+
             if (notaFiscal.Consumidor && FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe.HasValue)
             {
-                var pagamentoNotaFiscal = new PagtoNotaFiscal();
                 pagamentoNotaFiscal.IdNf = (int)notaFiscal.IdNf;
                 pagamentoNotaFiscal.FormaPagto = (int)FiscalConfig.TelaCadastro.FormaPagtoPadraoNFCe;
                 pagamentoNotaFiscal.Valor = notaFiscal.TotalNota;
@@ -1343,11 +1348,7 @@ namespace Glass.Data.DAL
                 PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
             }
             else if (idsLiberarPedido.Any(f => f > 0))
-            {
-                decimal totalDinheiro = 0, totalCheque = 0, totalCreditoLoja = 0, totalBoleto = 0, totalOutros = 0, valorRecebRelativo = 0,
-                   totalCartaoDebito = 0, totalCartaoCredito = 0, totalFormaPagtoLiberacao = 0;
-                var valorParcelasNf = notaFiscal?.ValoresParcelas?.Sum() ?? 0;
-
+            {                
                 foreach (var idLiberarPedido in idsLiberarPedido.Where(f => f > 0))
                 {
                     var formaPagamentoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, (uint)idLiberarPedido);
@@ -1437,60 +1438,141 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
+            }
+            //Chamado 79613 - Cria PagtoNotaFiscal para sistemas de confirmação.
+            else if (contasReceber?.Length > 0 && !PedidoConfig.LiberarPedido)
+            {
+                var contasReceberTotal = contasReceber.Sum(f => f.ValorVec);
 
-                var totais = totalDinheiro + totalCheque + totalCreditoLoja + totalBoleto + totalOutros + totalCartaoCredito + totalCartaoDebito;
+                valorRecebRelativo = contasReceberTotal > 0 ? (valorParcelasNf > 0 ? valorParcelasNf : notaFiscal.TotalNota) / contasReceberTotal : 1;
 
-                // Ajusta com uma tolerância de 5 centavos o valor receb. nos casos onde o valor ficar menor
-                if (Math.Abs(totais - valorParcelasNf) <= (decimal)0.05)
+                if (!string.IsNullOrEmpty(idsPedidos))
                 {
-                    if (valorParcelasNf > totais)
+                    var valoresPagtoAntecipado = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorPagamentoAntecipado) FROM pedido
+                            WHERE IdPedido IN ({ idsPedidos }) AND (IdPagamentoAntecipado > 0 OR IdObra > 0);");
+                    var valoresSinal = ExecuteScalar<decimal>(sessao, $@"SELECT SUM(ValorEntrada) FROM pedido
+                            WHERE IdPedido IN ({ idsPedidos }) AND IdSinal > 0;");
+
+                    totalOutros += valoresPagtoAntecipado + valoresSinal;
+                }
+
+                foreach (var formaPagamento in contasReceber)
+                {
+                    switch (formaPagamento.IdFormaPagto)
                     {
-                        totalOutros += Math.Abs(totais - valorParcelasNf);
+                        case (uint)Pagto.FormaPagto.Dinheiro:
+                            {
+                                totalDinheiro += formaPagamento.ValorVec * valorRecebRelativo;
+                                break;
+                            }
+                        case (uint)Pagto.FormaPagto.ChequeProprio:
+                        case (uint)Pagto.FormaPagto.ChequeTerceiro:
+                            {
+                                totalCheque += formaPagamento.ValorVec * valorRecebRelativo;
+                                break;
+                            }
+                        case (uint)Pagto.FormaPagto.Credito:
+                            {
+                                totalCreditoLoja += formaPagamento.ValorVec * valorRecebRelativo;
+                                break;
+                            }
+                        case (uint)Pagto.FormaPagto.Boleto:
+                            {
+                                totalBoleto += formaPagamento.ValorVec * valorRecebRelativo;
+                                break;
+                            }
+                        case (uint)Pagto.FormaPagto.Cartao:
+                        case (uint)Pagto.FormaPagto.CartaoNaoIdentificado:
+                            {
+                                if (formaPagamento?.TipoRecebimentoParcCartao > 0)
+                                {
+                                    var tipoCartao = TipoCartaoCreditoDAO.Instance.ObterTipoCartao(sessao, (int)formaPagamento.TipoRecebimentoParcCartao);
+                                    var pagtoNotaFiscalCartao = new PagtoNotaFiscal();
+
+                                    if (tipoCartao == TipoCartaoEnum.Debito)
+                                    {
+                                        pagtoNotaFiscalCartao.IdNf = (int)notaFiscal.IdNf;
+                                        pagtoNotaFiscalCartao.FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoDebito;
+                                        pagtoNotaFiscalCartao.Valor = formaPagamento.ValorVec * valorRecebRelativo;
+                                        pagtoNotaFiscalCartao.NumAut = formaPagamento.NumAutCartao;
+                                    }
+                                    else if (tipoCartao == TipoCartaoEnum.Credito)
+                                    {
+                                        pagtoNotaFiscalCartao.IdNf = (int)notaFiscal.IdNf;
+                                        pagtoNotaFiscalCartao.FormaPagto = (int)FormaPagtoNotaFiscalEnum.CartaoCredito;
+                                        pagtoNotaFiscalCartao.Valor = formaPagamento.ValorVec * valorRecebRelativo;
+                                        pagtoNotaFiscalCartao.NumAut = formaPagamento.NumAutCartao;
+                                    }
+
+                                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagtoNotaFiscalCartao);
+                                    totalCartaoDebito += formaPagamento.ValorVec * valorRecebRelativo;
+                                }
+                                else
+                                {
+                                    totalOutros += formaPagamento.ValorVec * valorRecebRelativo;
+                                }
+                                break;
+                            }
+                        default:
+                            {
+                                totalOutros += formaPagamento.ValorVec * valorRecebRelativo;
+                                break;
+                            }
                     }
                 }
+            }
 
-                var pagamentoNotaFiscal = new PagtoNotaFiscal();
-                pagamentoNotaFiscal.IdNf = (int)notaFiscal.IdNf;
+            var totais = totalDinheiro + totalCheque + totalCreditoLoja + totalBoleto + totalOutros + totalCartaoCredito + totalCartaoDebito;
 
-                if (totalDinheiro > 0)
+            // Ajusta com uma tolerância de 5 centavos o valor receb. nos casos onde o valor ficar menor
+            if (Math.Abs(totais - valorParcelasNf) <= (decimal)0.05)
+            {
+                if (valorParcelasNf > totais)
                 {
-                    pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Dinheiro;
-                    pagamentoNotaFiscal.Valor = totalDinheiro;
-
-                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
+                    totalOutros += Math.Abs(totais - valorParcelasNf);
                 }
+            }
 
-                if (totalCheque > 0)
-                {
-                    pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Cheque;
-                    pagamentoNotaFiscal.Valor = totalCheque;
+            pagamentoNotaFiscal.IdNf = (int)notaFiscal.IdNf;
 
-                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
-                }
+            if (totalDinheiro > 0)
+            {
+                pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Dinheiro;
+                pagamentoNotaFiscal.Valor = totalDinheiro;
 
-                if (totalCreditoLoja > 0)
-                {
-                    pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.CreditoLoja;
-                    pagamentoNotaFiscal.Valor = totalCreditoLoja;
+                PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
+            }
 
-                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
-                }
+            if (totalCheque > 0)
+            {
+                pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Cheque;
+                pagamentoNotaFiscal.Valor = totalCheque;
 
-                if (totalBoleto > 0)
-                {
-                    pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.BoletoBancario;
-                    pagamentoNotaFiscal.Valor = totalBoleto;
+                PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
+            }
 
-                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
-                }
+            if (totalCreditoLoja > 0)
+            {
+                pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.CreditoLoja;
+                pagamentoNotaFiscal.Valor = totalCreditoLoja;
 
-                if (totalOutros > 0)
-                {
-                    pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Outros;
-                    pagamentoNotaFiscal.Valor = totalOutros;
+                PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
+            }
 
-                    PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
-                }
+            if (totalBoleto > 0)
+            {
+                pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.BoletoBancario;
+                pagamentoNotaFiscal.Valor = totalBoleto;
+
+                PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
+            }
+
+            if (totalOutros > 0)
+            {
+                pagamentoNotaFiscal.FormaPagto = (int)FormaPagtoNotaFiscalEnum.Outros;
+                pagamentoNotaFiscal.Valor = totalOutros;
+
+                PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
             }
         }
 
@@ -6538,7 +6620,7 @@ namespace Glass.Data.DAL
                 situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, true), sortExpression, startRow, pageSize,
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd, descrProd,
-                valorInicial, valorFinal, cnpjFornecedor, null));
+                valorInicial, valorFinal, cnpjFornecedor, lote));
         }
 
         public int GetCountListaPadrao(uint numeroNFe, uint idPedido, string modelo, uint idLoja, uint idCliente, string nomeCliente, int tipoFiscal, uint idFornec,
@@ -6550,7 +6632,7 @@ namespace Glass.Data.DAL
                 codRota, situacao, tipoDoc, dataIni, dataFim, idsCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade,
                 formaEmissao, infCompl, codInternoProd, descrProd, lote, valorInicial, valorFinal, cnpjFornecedor, ordenar, false, false, false),
                 GetParams(modelo, codRota, nomeCliente, nomeFornec, dataIni, dataFim, dataEntSaiIni, dataEntSaiFim, infCompl, codInternoProd,
-                descrProd, valorInicial, valorFinal, cnpjFornecedor, null));
+                descrProd, valorInicial, valorFinal, cnpjFornecedor, lote));
         }
 
         #endregion
@@ -9719,26 +9801,18 @@ namespace Glass.Data.DAL
             if (!string.IsNullOrEmpty(nfReferencia))
                 throw new Exception("Esta nota fiscal não pode ser excluída pois existem notas fiscais referenciando a mesma.\nNotas:" + nfReferencia);
 
-            try
-            {
-                var prodsNF = ProdutosNfDAO.Instance.GetByNf(sessao, idNf);
-                foreach (ProdutosNf pnf in prodsNF)
-                    ProdutosNfDAO.Instance.DeleteProdutoNf(sessao, pnf.IdProdNf);
+            var prodsNF = ProdutosNfDAO.Instance.GetByNf(sessao, idNf);
+            foreach (ProdutosNf pnf in prodsNF)
+                ProdutosNfDAO.Instance.DeleteProdutoNf(sessao, pnf.IdProdNf);
 
-                var parcNF = ParcelaNfDAO.Instance.GetByNf(sessao, idNf).ToArray();
-                foreach (ParcelaNf pnf in parcNF)
-                    ParcelaNfDAO.Instance.Delete(sessao, pnf);
+            var parcNF = ParcelaNfDAO.Instance.GetByNf(sessao, idNf).ToArray();
+            foreach (ParcelaNf pnf in parcNF)
+                ParcelaNfDAO.Instance.Delete(sessao, pnf);
 
-                CompraNotaFiscalDAO.Instance.ApagarPelaNFe(sessao, idNf);
+            CompraNotaFiscalDAO.Instance.ApagarPelaNFe(sessao, idNf);
 
-                PagtoNotaFiscalDAO.Instance.RemovePagamentos(sessao, (int)idNf);
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
+            PagtoNotaFiscalDAO.Instance.RemovePagamentos(sessao, (int)idNf);
 
-            LogAlteracaoDAO.Instance.ApagaLogNotaFiscal(idNf);
             return GDAOperations.Delete(sessao, new NotaFiscal { IdNf = idNf });
         }
 

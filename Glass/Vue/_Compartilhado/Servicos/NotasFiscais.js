@@ -143,6 +143,45 @@ Servicos.NotasFiscais = (function(http) {
     },
 
     /**
+     * Habilitar o modo de contingência da nota fiscal.
+     * @param {!number} tipoContingencia Define o tipo de contingencia que será alterado.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarContingencia: function (tipoContingencia) {
+      return http().post(API + '/alterarContingencia', {
+          tipoContingencia
+      });
+    },
+
+    /**
+     * Baixa o XML da nota.
+     * @param {!number} id O identificador da nota fiscal.
+     * @param {?boolean} inutilizacao Define se será buscado o xml de inutilização da nota.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXml: function (id, inutilizacao) {
+      return http().get('../Handlers/NotaXml.ashx?idNf=' + id + '&tipo=' + (inutilizacao ? 'inut' : ''));
+    },
+
+    /**
+     * Baixa vários arquivos XML em lote.
+     * @param {string} filtros Os filtros que serão usados para filtrar as notas fiscais.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXmlEmLote: function (filtros) {
+      return http().get('../Handlers/NotaXmlLote.ashx' + filtros);
+    },
+
+    /**
+     * Baixa o XML da nota fiscal de terceiros.
+     * @param {!number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXmlTerceiros: function (id) {
+      return http().get('../Handlers/NFeEntradaTerceirosXML.ashx?idNfTer=' + id);
+    },
+
+    /**
      * Valida se um boleto pode ser impresso.
      * @param {?number} id O identificador da nota fiscal.
      * @returns {Promise} Uma promise com o resultado da operação.

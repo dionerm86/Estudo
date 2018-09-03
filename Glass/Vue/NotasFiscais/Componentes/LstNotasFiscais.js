@@ -4,11 +4,12 @@ const app = new Vue({
 
   data: {
     dadosOrdenacao_: {
-      campo: 'id',
-      direcao: 'desc'
+      campo: '',
+      direcao: ''
     },
     configuracoes: {},
-    filtro: {}
+    filtro: {},
+    notasAutorizadasEFinalizadas: false
   },
 
   methods: {
@@ -22,6 +23,7 @@ const app = new Vue({
      */
     atualizarNotasFiscais: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
+      this.verificarFiltroAutorizadaFinalizada();
       return Servicos.NotasFiscais.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
@@ -36,6 +38,46 @@ const app = new Vue({
       } else {
         this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
       }
+    },
+
+    /**
+     * Verifica se está filtrando por notas autorizadas e/ou finalizadas.
+     */
+    verificarFiltroAutorizadaFinalizada: function () {
+      if (this.filtro.situacao == null) {
+        return;
+      }
+
+      for (var i=0; i< this.filtro.situacao.length; i++) {
+        if (this.filtro.situacao[i] == this.configuracoes.situacaoAutorizada || this.filtro.situacao[i] == this.configuracoes.situacaoFinalizada) {
+          this.notasAutorizadasEFinalizadas = true;
+          return;
+        }
+      }
+
+      this.notasAutorizadasEFinalizadas = false;
+    },
+
+    /**
+     * Verifica se ao editar a nota, será feita uma alteração manual de valores (sem cálculos automáticos).
+     * @param {Object} item A nota fiscal que será editada.
+     */
+    verificarAlteracaoManual: function (item) {
+      return item.situacao.id == this.configuracoes.situacaoFinalizada || (item.situacao.id == this.configuracoes.situacaoAutorizada && item.permissoes.possuiCartaCorrecaoRegistrada);
+    },
+
+    /**
+     * Obtém link para a tela de edição de NF-e.
+     * @param {Object} item A nota fiscal que será editada.
+     */
+    obterLinkEditar: function (item) {
+      var url = '../Cadastros/CadNotaFiscal.aspx?idNf=' + item.id + '&tipo=' + item.tipoDocumento.id;
+
+      if (this.verificarAlteracaoManual(item)) {
+        url += '&manual=1';
+      }
+
+      return url;
     },
 
     /**
@@ -58,20 +100,6 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
-    },
-
-    /**
-     * Obtém link para a tela de edição de NF-e.
-     * @param {Object} item A nota fiscal que será editada.
-     */
-    obterLinkEditar: function (item) {
-      var url = '../Cadastros/CadNotaFiscal.aspx?idNf=' + item.id + '&tipo=' + item.tipoDocumento.id;
-
-      if (item.situacao === this.configuracoes.situacaoFinalizada || (item.situacao === this.configuracoes.situacaoAutorizada && item.permissoes.possuiCartaCorrecaoRegistrada)) {
-        url += '&manual=1';
-      }
-
-      return url;
     },
 
     /**
@@ -107,7 +135,7 @@ const app = new Vue({
 
       Servicos.NotasFiscais.consultarSituacaoLote(item.id)
         .then(function (resposta) {
-          vm.exibirMensagem('Emissão de nota fiscal', resposta.mensagem);
+          vm.exibirMensagem('Emissão de nota fiscal', resposta.data.mensagem);
           vm.atualizarLista();
         })
         .catch(function (erro) {
@@ -126,7 +154,7 @@ const app = new Vue({
 
       Servicos.NotasFiscais.consultarSituacao(item.id)
         .then(function (resposta) {
-          vm.exibirMensagem('Emissão de nota fiscal', resposta.mensagem);
+          vm.exibirMensagem('Emissão de nota fiscal', resposta.data.mensagem);
           vm.atualizarLista();
         })
         .catch(function (erro) {
@@ -142,7 +170,16 @@ const app = new Vue({
      * @param {Boolean} inutilizacao Define se será baixado XML de inutilização.
      */
     baixarXml: function (item, inutilizacao) {
-      window.location.href = '../Handlers/NotaXml.ashx?idNf=' + item.id + '&tipo=' + (inutilizacao ? 'inut' : '');
+      var vm = this;
+
+      Servicos.NotasFiscais.baixarXml(item.id, inutilizacao)
+        .then(function (resposta) {          
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -158,7 +195,14 @@ const app = new Vue({
      * @param {Object} item A nota fiscal de terceiros que será baixado o XML.
      */
     baixarXmlTerceiros: function (item) {
-      window.location.href = '../Handlers/NFeEntradaTerceirosXML.ashx?idNfTer=' + item.id;
+      Servicos.NotasFiscais.baixarXmlTerceiros(item.id)
+        .then(function (resposta) {
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**
@@ -186,7 +230,7 @@ const app = new Vue({
 
       Servicos.NotasFiscais.emitirNotaFiscalFsda(item.id)
         .then(function (resposta) {
-          vm.exibirMensagem('Emissão de nota fiscal FS-DA', resposta.mensagem);
+          vm.exibirMensagem('Emissão de nota fiscal FS-DA', resposta.data.mensagem);
           vm.atualizarLista();
         })
         .catch(function (erro) {
@@ -278,7 +322,7 @@ const app = new Vue({
 
       Servicos.NotasFiscais.gerarNotaFiscalComplementar(item.id)
         .then(function (resposta) {
-          window.location.href = '../Cadastros/CadNotaFiscal.aspx?idNf=' + resposta.id + '&tipo=' + item.tipoDocumento.id;
+          window.location.href = '../Cadastros/CadNotaFiscal.aspx?idNf=' + resposta.data.id + '&tipo=' + item.tipoDocumento.id;
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -372,7 +416,7 @@ const app = new Vue({
               vm.emitirNfceOffline(vm.item);
             }
           } else if (reposta.mensagem != 'Lote processado.') {
-            vm.exibirMensagem('Retorno emissão', resposta.mensagem);
+            vm.exibirMensagem('Retorno emissão', resposta.data.mensagem);
           } else if (vm.configuracoes.ufUsuario != "BA" && vm.configuracoes.ufUsuario != "SP") {
             vm.consultarSituacaoLote(vm.item);
           }
@@ -400,6 +444,83 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Altera o modo de contingência da nota fiscal.
+     * @param {!number} tipoContingencia Define se o modo de contingência a ser alterado.
+     */
+    alterarContingencia: function (tipoContingencia) {
+      var vm = this;
+
+      Servicos.NotasFiscais.alterarContingencia(tipoContingencia)
+        .then(function (resposta) {
+          vm.exibirMensagem('Processo concluído', 'Modo de contingência habilitado.');
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Desabilita o modo de contingência da nota fiscal.
+     */
+    desabilitarContingencia: function () {
+      var vm = this;
+
+      Servicos.NotasFiscais.desabilitarContingencia(fsda || 0)
+        .then(function (resposta) {
+          vm.exibirMensagem('Processo concluído', 'Modo de contingência desabilitado.');
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Exibe a impressão da lista de notas fiscais.
+     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
+     */
+    abrirImpressaoNotasFiscais: function (exportarExcel) {
+      var nomeRelatorio = this.notasAutorizadasEFinalizadas ? "FiscalAutFin" : "Fiscal";
+
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=' + nomeRelatorio + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel);
+    },
+
+    /**
+     * Exibe a impressão da lista de produtos de notas fiscais.
+     * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
+     */
+    abrirImpressaoProdutosNotasFiscais: function (exportarExcel) {
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=FiscalAutFinProd' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel);
+    },
+
+    /**
+     * Baixa vários arquivos XML em lote.
+     * @param {Boolean} inutilizacao Define se deverão ser baixados xmls de inutilização.
+     */
+    baixarXmlEmLote: function (inutilizacao) {
+      var filtros = this.formatarFiltros_() + '&tipo=' + (inutilizacao ? 'inut' : '');
+      
+      Servicos.NotasFiscais.baixarXmlEmLote(filtros)
+        .then(function (resposta) {
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Abre uma tela para consultar a disponibilidade do servidor de emissão de notas fiscais.
+     */
+    consultarDisponibilidadeNfe: function () {
+      this.abrirJanela(600, 800, 'http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx?versao=0.00&tipoConteudo=Skeuqr8PQBY=');
     },
 
     /**

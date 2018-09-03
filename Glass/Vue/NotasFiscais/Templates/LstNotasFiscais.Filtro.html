@@ -116,7 +116,7 @@
     <div>
         <span class="form-group">
             <label>Produto</label>
-            <input type="number" v-model.number="filtroAtual.codigoInternoProduto" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.codigoInternoProduto" style="width: 50px" />
             <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -161,11 +161,12 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label>Ordenar por</label>
+            <label>Ordenar relatório por</label>
             <select v-model="filtroAtual.ordenacaoFiltro">
+                <option></option>
                 <option Value="1">Número NF (decresc.)</option>
                 <option Value="2">Número NF (cresc.)</option>
-                <option Value="3" selected="selected">Data de emissão (descresc.)</option>
+                <option Value="3">Data de emissão (descresc.)</option>
                 <option Value="4">Data de emissão (cresc.)</option>
                 <option Value="5">Data de entrada/saída (descresc.)</option>
                 <option Value="6">Data de entrada/saída (cresc.)</option>
@@ -173,6 +174,11 @@
                 <option Value="8">Valor Total (descresc.)</option>
             </select>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>{{ vencimentoCertificado }}</label>
         </span>
     </div>
 </section>

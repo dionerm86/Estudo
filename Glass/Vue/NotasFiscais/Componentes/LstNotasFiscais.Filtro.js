@@ -1,4 +1,4 @@
-Vue.component('notasfiscais-filtros', {
+Vue.component('notafiscal-filtros', {
   mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
   props: {
     /**
@@ -45,12 +45,13 @@ Vue.component('notasfiscais-filtros', {
           valorNotaFiscalInicio: null,
           valorNotaFiscalFim: null,
           ordenacaoFiltro: null,
-          agrupar: null
+          agrupar: 0
         },
         this.filtro
       ),
       rotaAtual: null,
       lojaAtual: null,
+      vencimentoCertificado: null
     };
   },
 
@@ -103,7 +104,36 @@ Vue.component('notasfiscais-filtros', {
      */
     obterItensFiltroSituacoes: function () {
       return Servicos.NotasFiscais.obterSituacoes();
+    },
+
+    /**
+     * Retorna os itens para o .
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterVencimentoCertificado: function () {
+      var vm = this;
+
+      Servicos.Lojas.obterDataVencimentoCertificado(vm.lojaAtual.id)
+        .then(function (resposta) {
+          if (resposta.dataVencimento != null){
+            if (resposta.vencido){
+              vm.vencimentoCertificado = 'Falta(m) ' + resposta.diasParaVencimento + ' dia(s) para a data de vencimento do Certificado';
+            } else {
+              vm.vencimentoCertificado = 'ATENÇÃO: Certificado vencido desde o dia ' + resposta.dataVencimento;
+            }
+          }
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     }
+  },
+
+  mounted: function () {
+    this.filtroAtual.agrupar = 0;
+    this.filtroAtual.ordenacaoFiltro = 3;
   },
 
   watch: {
@@ -125,6 +155,7 @@ Vue.component('notasfiscais-filtros', {
     lojaAtual: {
       handler: function (atual) {
         this.filtroAtual.idLoja = atual ? atual.id : null;
+        this.obterVencimentoCertificado();
       },
       deep: true
     }

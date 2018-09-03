@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
+using Glass.API.Backend.Models.NotasFiscais.Contingencia;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;
@@ -52,7 +53,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao consultar situação do lote.", ex);
                 }
             }
         }
@@ -91,7 +92,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao consultar situação da nota fiscal", ex);
                 }
             }
         }
@@ -130,7 +131,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao reabrir nota fiscal.", ex);
                 }
             }
         }
@@ -169,7 +170,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao gerar nota complementar.", ex);
                 }
             }
         }
@@ -208,7 +209,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao emitir nota fiscal.", ex);
                 }
             }
         }
@@ -248,7 +249,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao reenviar e-mail", ex);
                 }
             }
         }
@@ -305,7 +306,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao vincular valores.", ex);
                 }
             }
         }
@@ -355,7 +356,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao desvincular valores", ex);
                 }
             }
         }
@@ -394,7 +395,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao emitir NFC-e.", ex);
                 }
             }
         }
@@ -433,7 +434,38 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                 catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao(ex.Message, ex);
+                    return this.ErroValidacao("Falha ao emitir NFC-e.", ex);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Habilita o modo de contingência da nota fiscal.
+        /// </summary>
+        /// <param name="entrada">Define se o tipo de contingência a ser alterado.</param>
+        /// <returns>Um status HTTP indicando se o modo de contingência foi alterado.</returns>
+        [HttpPost]
+        [Route("alterarContingencia")]
+        [SwaggerResponse(200, "Modo de contingência alterado.")]
+        [SwaggerResponse(400, "Erro ao habilitar modo de contingência.", Type = typeof(MensagemDto))]
+        public IHttpActionResult AlterarContingencia([FromBody] EntradaDto entrada)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                try
+                {
+                    sessao.BeginTransaction();
+
+                    ConfigDAO.Instance.SetValue(Config.ConfigEnum.ContingenciaNFe, UserInfo.GetUserInfo.IdLoja, (int)entrada.TipoContingencia);
+
+                    sessao.Commit();
+
+                    return this.Ok();
+                }
+                catch (Exception ex)
+                {
+                    sessao.Rollback();
+                    return this.ErroValidacao("Falha ao habilitar contingência.", ex);
                 }
             }
         }

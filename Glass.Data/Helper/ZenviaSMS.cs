@@ -14,6 +14,7 @@ namespace Glass.Data.Helper
         {
             var conta = System.Configuration.ConfigurationManager.AppSettings["ContaSMS"];
             var senha = System.Configuration.ConfigurationManager.AppSettings["SenhaSMS"];
+            var agrupador = System.Configuration.ConfigurationManager.AppSettings["Agrupador"];
 
             var auth = string.Format("Basic {0}", string.Format("{0}:{1}", conta, senha).Base64Encode());
 
@@ -25,6 +26,9 @@ namespace Glass.Data.Helper
             payload.Request.Msg = mensagem;
             payload.Request.Id = codMensagem;
             payload.Request.CallbackOption = "NONE";
+
+            if (!string.IsNullOrEmpty(agrupador))
+                payload.Request.AggregateId = agrupador;
 
             using (var wc = new WebClient())
             {
@@ -89,6 +93,9 @@ namespace Glass.Data.Helper
 
             [JsonProperty("id")]
             public string Id { get; set; }
+
+            [JsonProperty("aggregateId")]
+            public string AggregateId { get; set; }
         }
 
         public class ZenviaSmsResponse

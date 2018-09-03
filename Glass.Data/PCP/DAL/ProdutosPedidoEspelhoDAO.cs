@@ -994,7 +994,7 @@ namespace Glass.Data.DAL
             int larguraIni, int larguraFim, string codProcesso, string codAplicacao)
         {
             return idPedido == 0 && numeroNFe == 0 && String.IsNullOrEmpty(numEtiqueta) && String.IsNullOrEmpty(descrProd) &&
-                alturaIni == 0 && alturaFim == 0 && larguraIni == 0 && larguraFim == 0 && String.IsNullOrEmpty(codProcesso) && String.IsNullOrEmpty(codAplicacao);
+                alturaIni == 0 && alturaFim == 0 && larguraIni == 0 && larguraFim == 0 && (String.IsNullOrEmpty(codProcesso) || codProcesso == "0") && (String.IsNullOrEmpty(codAplicacao) || codAplicacao == "0");
         }
 
         private GDAParameter[] GetParamImpIndiv(string descrProd, string codProcesso, string codAplicacao)

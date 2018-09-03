@@ -122,7 +122,7 @@ namespace Glass.Fiscal.Negocios.Componentes
         {
             if ((item.NaturezaOperacao?.CalcIpi ?? false) && item.AliqIpi > 0)
             {
-                var bcIpi = item.Total;
+                var bcIpi = item.Total - item.ValorDesconto;
 
                 if (item.NaturezaOperacao.FreteIntegraBcIpi)
                     bcIpi += item.ValorFrete;

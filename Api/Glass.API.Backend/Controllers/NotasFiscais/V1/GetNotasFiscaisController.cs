@@ -80,11 +80,11 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     filtro.InformacaoComplementar,
                     filtro.CodigoInternoProduto,
                     filtro.DescricaoProduto,
-                    filtro.ValorNotaFiscalInicio.ToString().Replace(".", ","),
-                    filtro.ValorNotaFiscalFim.ToString().Replace(".", ","),
+                    filtro.ValorNotaFiscalInicio != null ? filtro.ValorNotaFiscalInicio.ToString().Replace(".", ",") : null,
+                    filtro.ValorNotaFiscalFim != null ? filtro.ValorNotaFiscalFim.ToString().Replace(".", ",") : null,
                     null,
                     filtro.Lote,
-                    filtro.OrdenacaoFiltro,
+                    0,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
@@ -263,7 +263,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
         [HttpGet]
-        [Route("situações")]
+        [Route("situacoes")]
         [SwaggerResponse(200, "Situações encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Situações não encontradas.")]
         public IHttpActionResult ObterSituacoes()
