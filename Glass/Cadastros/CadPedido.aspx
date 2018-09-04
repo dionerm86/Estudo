@@ -219,7 +219,7 @@
                         <button @click.prevent="preencherEnderecoObra">
                             <img src="../Images/home.gif" title="Buscar endereço do cliente" />
                         </button>
-                        <campo-endereco :endereco="pedido.enderecoObra" required>
+                        <campo-endereco :endereco="pedido.enderecoObra" :exibir-complemento="false" required>
                     </span>
                 </template>
                 <span class="colspan4" style="padding: 8px 0" v-if="vIfControleParcelas">

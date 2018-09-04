@@ -21,6 +21,13 @@ namespace Glass.API.Backend.Models.Genericas
         public string Logradouro { get; set; }
 
         /// <summary>
+        /// Obtém ou define o logradouro.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("complemento")]
+        public string Complemento { get; set; }
+
+        /// <summary>
         /// Obtém ou define o bairro.
         /// </summary>
         [DataMember]

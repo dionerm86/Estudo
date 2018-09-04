@@ -11,6 +11,17 @@
       twoWay: true,
       validator: Mixins.Validacao.validarObjetoOuVazio
     },
+
+    /**
+     * Indica se o campo para o complemento será exibido.
+     * @type {?boolean}
+     */
+    exibirComplemento: {
+      required: false,
+      twoWay: false,
+      default: true,
+      validator: Mixins.Validacao.validarBooleanOuVazio
+    }
   },
 
   computed: {
