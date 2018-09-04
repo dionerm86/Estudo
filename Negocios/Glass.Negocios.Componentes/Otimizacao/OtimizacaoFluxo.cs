@@ -51,7 +51,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
             var idsProdBaixa = SourceContext.Instance.CreateQuery()
                 .From<Data.Model.ProdutoBaixaEstoque>()
                 .Where($"IdProd IN ({idsProd2})")
-                .Select("IdProdBaixa")
+                .SelectDistinct("IdProdBaixa")
                 .Execute()
                 .Select(f => f.GetInt32(0))
                 .ToList();
@@ -66,6 +66,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 consultas.Add(SourceContext.Instance.CreateQuery()
                     .From<Data.Model.RetalhoProducao>("r")
                     .InnerJoin<Data.Model.Produto>("r.IdProd=p.IdProd", "p")
+                    .InnerJoin<Data.Model.Produto>("p.IdProd=pref.IdProd OR p.IdProdOrig=pref.IdProd OR p.IdProdBase=pref.IdProd", "pref")
                     .LeftJoin<Data.Model.ProdutoPedidoProducao>("r.IdProdPedProducaoOrig=ppp.IdProdPedProducao", "ppp")
                     .LeftJoin(
                         SourceContext.Instance.CreateQuery()
@@ -74,25 +75,28 @@ namespace Glass.Otimizacao.Negocios.Componentes
                             .Select("MIN(ur1.IdUsoRetalhoProducao) AS IdUsoRetalhoProducao, ur1.IdRetalhoProducao"),
                         "r.IdRetalhoProducao=ur.IdRetalhoProducao",
                         "ur")
-                    .Where($"r.Situacao=?situacaoRetalho AND (p.IdProdOrig IN ({idsProdBaixa2}) OR p.IdProdBase IN ({idsProdBaixa2}))")
+                    .Where($"r.Situacao=?situacaoRetalho AND pref.IdProd IN({idsProdBaixa2})")
                     .GroupBy("r.IdProd")
-                    .Select("MIN(p.CodOtimizacao) AS CodMaterial, MIN(p.Altura) AS Altura, MIN(p.Largura) AS Largura, COUNT(r.IdProd) AS Qtde, 1 AS Retalho"));
+                    .Select("MIN(pref.CodOtimizacao) AS CodMaterial, MIN(p.Altura) AS Altura, MIN(p.Largura) AS Largura, COUNT(r.IdProd) AS Qtde, 1 AS Retalho"));
             }
 
             idsProd2 = string.Join(",", idsProd.Concat(idsProdBaixa));
 
             consultas.Add(SourceContext.Instance.CreateQuery()
                 .From<Data.Model.Produto>("p")
-                .InnerJoin<Data.Model.SubgrupoProd>("p.IdSubgrupoProd=sg.IdSubgrupoProd AND (sg.TipoSubgrupo=1 OR sg.TipoSubgrupo=3)", "sg")
+                .InnerJoin<Data.Model.Produto>("p.IdProd=pref.IdProd OR p.IdProdOrig=pref.IdProd OR p.IdProdBase=pref.IdProd", "pref")
+                .InnerJoin<Data.Model.SubgrupoProd>("p.IdSubgrupoProd=sg.IdSubgrupoProd AND (sg.TipoSubgrupo=?tipoChapaVidro OR sg.TipoSubgrupo=?tipoChapaVidroLaminado)", "sg")
                 .LeftJoin<Data.Model.RetalhoProducao>("p.IdProd=rp.IdProd AND rp.Situacao=?situacaoRetalho", "rp")
                 .InnerJoin<Data.Model.ProdutoLoja>("p.IdProd=pl.IdProd", "pl")
                 .LeftJoin<Data.Model.Produto>("p.IdProdBase=pbase.IdProd", "pbase")
                 .LeftJoin<Data.Model.Produto>("p.IdProdOrig=pbase.IdProd", "porig")
-                .Where($"rp.IdRetalhoProducao IS NULL AND (p.IdProd IN({idsProd2}) OR p.IdProdOrig IN ({idsProd2}) OR p.IdProdBase IN ({idsProd2}))")
-                .GroupBy("ISNULL(p.CodOtimizacao, ISNULL(pbase.CodOtimizacao, porig.CodOtimizacao)), Altura, Largura")
+                .Where($"rp.IdRetalhoProducao IS NULL AND pref.IdProd IN({idsProd2})")
+                .GroupBy("Altura, Largura")
                 .Having("SUM(pl.QtdEstoque) > 0")
                 .OrderBy("CodMaterial")
-                .Select(@"ISNULL(MIN(p.CodOtimizacao), ISNULL(MIN(pbase.CodOtimizacao), MIN(porig.CodOtimizacao))) AS CodMaterial, 
+                .Add("?tipoChapaVidro", Data.Model.TipoSubgrupoProd.ChapasVidro)
+                .Add("?tipoChapaVidroLaminado", Data.Model.TipoSubgrupoProd.ChapasVidroLaminado)
+                .Select(@"MIN(pref.CodOtimizacao) AS CodMaterial, 
                          p.Altura, p.Largura, SUM(pl.QtdEstoque) AS Qtde, 0 AS Retalho"));
 
             var consulta = consultas.First();
@@ -255,6 +259,8 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .InnerJoin<Data.Model.ProdutosPedidoEspelho>("eao.IdPedido=ppe.IdPedido", "ppe")
                 .InnerJoin<Data.Model.ProdutoPedidoProducao>("ppe.IdProdPed=ppp.IdProdPed AND ppp.NumEtiqueta=eao.NumEtiqueta", "ppp")
                 .SelectDistinct("ppe.IdProd")
+                .Where("IdArquivoOtimiz=?id")
+                .Add("?id", idArquivoOtimizacao)
                 .Execute()
                 .Select(f => f.GetInt32(0))
                 .ToList();
