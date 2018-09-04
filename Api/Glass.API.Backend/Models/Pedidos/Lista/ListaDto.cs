@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using Glass.Data.Helper;
 
 namespace Glass.API.Backend.Models.Pedidos.Lista
 {
@@ -103,7 +104,7 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                 AnexosLiberacao = pedido.Situacao == Data.Model.Pedido.SituacaoPedido.Confirmado && PedidoConfig.LiberarPedido,
                 FinalizacoesFinanceiro = pedido.ExibirFinalizacoesFinanceiro,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, null),
-                AlterarObservacoes = pedido.TipoVenda == 3 || pedido.TipoVenda == 4,
+                AlterarObservacoes = (pedido.TipoVenda == 3 || pedido.TipoVenda == 4) && (UserInfo.GetUserInfo.IsAdministrador || UserInfo.GetUserInfo.CodUser == pedido.Usucad),
             };
 
             this.SinalEPagamentoAntecipado = new SinalEPagamentoAntecipadoDto
