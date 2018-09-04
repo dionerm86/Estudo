@@ -255,6 +255,9 @@
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\PostNotasFiscaisController.cs" />
+    <Compile Include="Controllers\Processos\V1\PatchProcessosController.cs" />
+    <Compile Include="Controllers\Processos\V1\PostProcessosController.cs" />
+    <Compile Include="Controllers\Processos\V1\DeleteProcessosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
@@ -323,6 +326,8 @@
     <Compile Include="Helper\Liberacoes\TraducaoOrdenacaoListaLiberacoes.cs" />
     <Compile Include="Helper\NumberExtension.cs" />
     <Compile Include="Helper\Orcamentos\TraducaoOrdenacaoListaOrcamentos.cs" />
+    <Compile Include="Helper\Processos\ConverterCadastroAtualizacaoParaProcesso.cs" />
+    <Compile Include="Helper\Processos\TraducaoOrdenacaoListaProcessos.cs" />
     <Compile Include="Helper\Produtos\Estrategias\CalculoTotal\IValidacaoCalculoTotal.cs" />
     <Compile Include="Helper\Produtos\Estrategias\CalculoTotal\ValidacaoCalculoTotalPedidoStrategy.cs" />
     <Compile Include="Helper\Produtos\Estrategias\CalculoTotal\ValidacaoCalculoTotalSemOperacaoStrategy.cs" />
@@ -462,6 +467,7 @@
     <Compile Include="Models\Pedidos\ProdutosPedido\CadastroAtualizacao\ProdutoDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Observacao\DadosEntradaDto.cs" />
     <Compile Include="Models\Pedidos\ValidarDescontoPedido\DescontoDto.cs" />
+    <Compile Include="Models\Processos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Processos\Filtro\ProcessoDto.cs" />
     <Compile Include="Models\Genericas\Venda\AlturaDto.cs" />
     <Compile Include="Models\Genericas\Venda\AreaDto.cs" />
@@ -471,6 +477,8 @@
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\ListaDto.cs" />
     <Compile Include="Models\Genericas\Venda\ProdutoDto.cs" />
     <Compile Include="Models\Genericas\Venda\TipoProdutoDto.cs" />
+    <Compile Include="Models\Processos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Processos\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\AreaCalculadaDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />

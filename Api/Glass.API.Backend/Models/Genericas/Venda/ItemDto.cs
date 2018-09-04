@@ -131,22 +131,5 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         [DataMember]
         [JsonProperty("composicao")]
         public ComposicaoDto Composicao { get; set; }
-
-        /// <summary>
-        /// Recupera um objeto IdCodigoDto de acordo com os valores informados.
-        /// </summary>
-        /// <param name="id">O identificador do item.</param>
-        /// <param name="codigo">O código do item.</param>
-        /// <returns>Um objeto IdCodigoDto, se possível.</returns>
-        protected IdCodigoDto ObterIdCodigo(int? id, string codigo)
-        {
-            return !id.HasValue || string.IsNullOrWhiteSpace(codigo)
-                ? null
-                : new IdCodigoDto
-                {
-                    Id = id.Value,
-                    Codigo = codigo,
-                };
-        }
     }
 }
