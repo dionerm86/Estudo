@@ -240,6 +240,7 @@
     <Compile Include="Financeiro\ArquivoCartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\CartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\CartoesFluxo.cs" />
+    <Compile Include="Financeiro\ChequesFluxo.cs" />
     <Compile Include="Financeiro\ContaBancariaFluxo.cs" />
     <Compile Include="Financeiro\DominioFluxo.cs" />
     <Compile Include="Financeiro\GConFluxo.cs" />

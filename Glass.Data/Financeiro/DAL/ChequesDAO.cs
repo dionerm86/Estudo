@@ -21,19 +21,19 @@ namespace Glass.Data.DAL
         {
             filtroAdicional = String.Empty;
             string campos = selecionar
-                ? @"c.*, cli.Nome as NomeCliente, coalesce(forn.NomeFantasia, forn.RazaoSocial) as NomeFornecedor, 
+                ? @"c.*, cli.Nome as NomeCliente, coalesce(forn.NomeFantasia, forn.RazaoSocial) as NomeFornecedor,
                 pag.IdPagto"
                 : "Count(*)";
 
             if (selecionar)
                 campos +=
-                    @", Cast(group_concat(distinct Coalesce(cp.idCompra, '') separator ', ') as Char) as IdsCompra, 
+                    @", Cast(group_concat(distinct Coalesce(cp.idCompra, '') separator ', ') as Char) as IdsCompra,
                     Cast(group_concat(distinct Coalesce(cp.idNf, '')) as Char) as IdsNF";
 
             string sql = @"
                 Select " + campos + @" From cheques c
-                    Left join cliente cli on (c.idCliente=cli.id_cli) 
-                    Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) 
+                    Left join cliente cli on (c.idCliente=cli.id_cli)
+                    Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque)
                     Left Join pagto pag on (pag.idPagto=pagc.idPagto)
                     Left Join fornecedor forn on (forn.idFornec=pag.idFornec) ";
 
@@ -146,23 +146,23 @@ namespace Glass.Data.DAL
             filtroAdicional = String.Empty;
 
             string campos = selecionar
-                ? @"c.*, cli.Nome as NomeCliente, '$$$' as Criterio, forn.idFornec as IdFornecedor, 
+                ? @"c.*, cli.Nome as NomeCliente, '$$$' as Criterio, forn.idFornec as IdFornecedor,
                 pag.IdPagto, coalesce(forn.NomeFantasia, forn.RazaoSocial) as NomeFornecedor,
                 coalesce(l.nomeFantasia, l.razaoSocial) as nomeLoja"
                 : "Count(*)";
 
             if (selecionar)
-                campos += @", Cast(group_concat(distinct cp.idCompra) as Char) as IdsCompra, 
+                campos += @", Cast(group_concat(distinct cp.idCompra) as Char) as IdsCompra,
                     Cast(group_concat(distinct cp.idNf) as Char) as IdsNF";
 
             string criterio = String.Empty;
 
-            string sql = "Select " + campos + @" From cheques c 
+            string sql = "Select " + campos + @" From cheques c
                 Left Join loja l on (c.idLoja=l.idLoja)
-                Left join cliente cli on (c.idCliente=cli.id_cli) 
-                Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) 
+                Left join cliente cli on (c.idCliente=cli.id_cli)
+                Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque)
                 Left Join pagto pag on (pag.idPagto=pagc.idPagto)
-                Left Join credito_fornecedor cf on (cf.idcreditofornecedor = c.idcreditofornecedor) 
+                Left Join credito_fornecedor cf on (cf.idcreditofornecedor = c.idcreditofornecedor)
                 Left Join fornecedor forn on (forn.idFornec=coalesce(pag.idFornec,cf.idFornec))
                 LEFT JOIN rota_cliente rc ON (cli.id_cli = rc.IdCliente)";
 
@@ -493,7 +493,7 @@ namespace Glass.Data.DAL
                     sql += " ORDER BY " + string.Join(",", sqlOrd);
                     criterio += "Ordenar por: " + string.Join(", ", criterioOrd) + "     ";
                 }
-            } 
+            }
 
             if (!string.IsNullOrEmpty(filtroAdicional))
                 temFiltro = true;
@@ -1088,9 +1088,9 @@ namespace Glass.Data.DAL
                 : "Count(*)";
 
             string sql = @"
-                Select " + campos + @" From cheques c 
-                    Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) 
-                    Left Join pagto pag on (pag.idPagto=pagc.idPagto) 
+                Select " + campos + @" From cheques c
+                    Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque)
+                    Left Join pagto pag on (pag.idPagto=pagc.idPagto)
                     Left Join credito_fornecedor cf on (cf.idcreditofornecedor = c.idcreditofornecedor)
                     Left Join fornecedor forn on (forn.idFornec=coalesce(pag.idFornec,cf.idFornec))
                 Where 1 ?filtroAdicional?";
@@ -1451,7 +1451,7 @@ namespace Glass.Data.DAL
                     c.idSinal, c.idDepositoCanc, c.cancelouDevolucao, c.idCreditoFornecedor, c.idSinalCompra, c.idAntecipFornec, c.cpfCnpj,
                     c.idLoja, iac.idAcertoCheque As IdAcertoChequeAcertado, pag.idPagto, iac.valorReceb as valorAcertoCheque
                 From cheques c
-                    Left Join pagto_cheque pagc On (pagc.idCheque=c.idCheque) 
+                    Left Join pagto_cheque pagc On (pagc.idCheque=c.idCheque)
                     Left Join pagto pag On (pag.idPagto=pagc.idPagto)
                     Inner Join item_acerto_cheque iac ON (c.idCheque=iac.idCheque And iac.idAcertoCheque=" +
                   idAcertoCheque + ")"
@@ -1827,7 +1827,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public decimal GetTotalInPagto(uint idPagto)
         {
-            return ExecuteScalar<decimal>(@"Select Sum(Valor) From cheques c 
+            return ExecuteScalar<decimal>(@"Select Sum(Valor) From cheques c
                 Left Join pagto_cheque pagc on (pagc.idCheque=c.idCheque) Where pagc.idPagto=" + idPagto +
                                           " and (c.Origem<>" + (int) Cheques.OrigemCheque.FinanceiroPagto +
                                           " or (c.Origem=" +
@@ -2003,7 +2003,7 @@ namespace Glass.Data.DAL
             string sql =
                 "Select Coalesce(Sum(Valor), 0) From cheques c " +
                 (idContaBanco > 0
-                    ? @"left join conta_banco b on (Cast(c.banco as Char Character Set latin1)=Cast(b.nome as Char Character Set latin1) 
+                    ? @"left join conta_banco b on (Cast(c.banco as Char Character Set latin1)=Cast(b.nome as Char Character Set latin1)
                     and Cast(c.conta as Char Character Set latin1)=Cast(b.conta as Char Character Set latin1)) "
                     : String.Empty) +
                 "Where c.tipo=1 and c.situacao in (" + situacao + ")";
@@ -2349,7 +2349,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Cancela cheques utilizados em antecipação de fornecedor
-        
+
         /// <summary>
         /// Cancela cheques utilizados em antecipação de fornecedor
         /// </summary>
@@ -3250,7 +3250,7 @@ namespace Glass.Data.DAL
 
                         // Atualiza o acerto do cheque
                         AcertoChequeDAO.Instance.AtualizaAcertoCheque(transaction, idAcertoCheque, idCliente, totalCheques, juros);
-                        
+
                         transaction.Commit();
                         transaction.Close();
 
@@ -3303,7 +3303,7 @@ namespace Glass.Data.DAL
                         null, 2, cheque.Valor - cheque.JurosPagto - cheque.MultaPagto, dataQuitacao) < 1)
                         throw new Exception("Falha ao quitar cheque. Inserção retornou 0;");
 
-                    // O juros e a multa devem ser debitados nesta função, uma vez que não foram debitados ao inserir 
+                    // O juros e a multa devem ser debitados nesta função, uma vez que não foram debitados ao inserir
                     // o pagamento pois os cheques estavam em aberto
                     // Gera movimentação de juros
                     if (cheque.JurosPagto > 0)
@@ -3318,7 +3318,7 @@ namespace Glass.Data.DAL
                     cheque.Situacao = (int)Cheques.SituacaoCheque.Compensado;
                     cheque.DataReceb = !String.IsNullOrEmpty(dataQuitChequeProprio) ? DateTime.Parse(dataQuitChequeProprio) : DateTime.Now;
                     Update(transaction, cheque);
-                    
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -3485,7 +3485,7 @@ namespace Glass.Data.DAL
         public Cheques GetForFinanceiro(uint idCheque)
         {
             string sql = @"
-                select c.*, coalesce(g.idConta, m.idConta) as idConta, coalesce(g.descrPlanoConta, m.descrPlanoConta) as descrPlanoConta, 
+                select c.*, coalesce(g.idConta, m.idConta) as idConta, coalesce(g.descrPlanoConta, m.descrPlanoConta) as descrPlanoConta,
                     coalesce(g.descrContaBanco, m.descrContaBanco) as descrContaBanco
                 from cheques c
                     left join (
@@ -3654,7 +3654,7 @@ namespace Glass.Data.DAL
                     objPersistence.ExecuteCommand(transaction, "update cheques set reapresentado=true, advogado=false where idCheque=" + idCheque);
 
                     LogAlteracaoDAO.Instance.LogCheque(transaction, c, LogAlteracaoDAO.SequenciaObjeto.Atual);
-                    
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -3869,7 +3869,7 @@ namespace Glass.Data.DAL
         {
             return ObtemValorCampo<decimal>(session, "valor", "idCheque=" + idCheque);
         }
-        
+
         /// <summary>
         /// Obtem a situação do cheque.
         /// </summary>
@@ -4052,7 +4052,7 @@ namespace Glass.Data.DAL
         #region Validação do limite do cheque
 
         /// <summary>
-        /// Validação do limite do cheque 
+        /// Validação do limite do cheque
         /// </summary>
         /// <param name="session"></param>
         /// <param name="cheque"></param>
@@ -4071,7 +4071,7 @@ namespace Glass.Data.DAL
 
             // Valida apenas cheques de terceiros, que possuam cpfCnpj e que esteja em uma das situações definidas acima
             lstCheque = lstCheque.Where(f => f.Tipo != 1 && !string.IsNullOrEmpty(f.CpfCnpj) && situacoesLimite.Contains(f.Situacao)).ToList();
-            
+
             if (lstCheque.Count() == 0)
                 return;
 
@@ -4093,7 +4093,7 @@ namespace Glass.Data.DAL
                         string.Format("Limite excedido para o CPF/CNPJ {0} - Limite restante: {1:c}, Valor dos cheques: {2:c}",
                             cpfCnpj, valorRestante, totalCheques));
             }
-            
+
             // Filtra apenas os cheques que tenham cliente associado
             lstCheque = lstCheque.Where(f => f.IdCliente > 0).ToList();
 
@@ -4102,7 +4102,7 @@ namespace Glass.Data.DAL
             {
                 // Soma o total de cheques agrupado por cliente e cpf/cnpj
                 var totalCheques = c.Sum(f => f.Valor);
- 
+
                 bool validarLimite;
                 var valorRestante = LimiteChequeCpfCnpjDAO.Instance.ObtemValorRestanteLimiteCliente(session, c.Key.CpfCnpjFormatado, c.Key.IdCliente.Value, out validarLimite);
 
@@ -4133,7 +4133,7 @@ namespace Glass.Data.DAL
             // Coloca a situação do cheque em aberto
             objInsert.Situacao = (int)Cheques.SituacaoCheque.EmAberto;
             objInsert.Tipo = 2; // Cheque de terceiro
-            
+
             return InsertBase(sessao, objInsert, true);
         }
 

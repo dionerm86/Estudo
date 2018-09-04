@@ -11,7 +11,7 @@
         function openRptInd(idDeposito, exportarExcel) {
             var ordemCheque = FindControl("drpOrdemCheque", "select").value;
 
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=Deposito&idDeposito=" + idDeposito + "&ordemCheque=" + ordemCheque + 
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=Deposito&idDeposito=" + idDeposito + "&ordemCheque=" + ordemCheque +
                 "&exportarExcel=" + exportarExcel);
             return false;
         }
@@ -34,7 +34,11 @@
 
             return false;
         }
-    
+
+        function gerarArquivoCheques(idDeposito) {
+            window.open("../Handlers/ArquivoCheques.ashx?idDeposito=" + idDeposito);
+        }
+
     </script>
 
     <table>
@@ -111,6 +115,8 @@
                                     <img border="0" src="../Images/Relatorio.gif" title="Visualizar Depósito" /></a>
                                 <a id="lnkImprimir1" href="#" onclick='return openRptInd(<%# Eval("IdDeposito") %>, true);'>
                                     <img border="0" src="../Images/Excel.gif" title="Visualizar Depósito (Excel)" /></a>
+                                <a id="lnkArquivo" href="#" onclick="return gerarArquivoCheques(<%# Eval("IdDeposito") %>);">
+                                    <img border="0" src="../Images/disk.gif" title="Baixar Cheques Depósito" /></a>
                                 <asp:ImageButton ID="imgCancelar" runat="server" ImageUrl="~/Images/ExcluirGrid.gif"
                                     OnClientClick='<%# "return cancelarDeposito(" + Eval("IdDeposito") + ");"%>'
                                     Visible='<%# Eval("BotaoVisible") %>' />
@@ -159,10 +165,10 @@
         </tr>
         <tr>
             <td align="center">
-                <asp:LinkButton ID="lnkImprimir0" runat="server" CausesValidation="False" OnClientClick="openRpt(false); return false;"> <img alt="" border="0" 
+                <asp:LinkButton ID="lnkImprimir0" runat="server" CausesValidation="False" OnClientClick="openRpt(false); return false;"> <img alt="" border="0"
                     src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             </td>
         </tr>

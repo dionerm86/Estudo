@@ -111,6 +111,7 @@
     <Compile Include="Financeiro\IArquivoCartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\ICartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="Financeiro\ICartoesFluxo.cs" />
+    <Compile Include="Financeiro\IChequesFluxo.cs" />
     <Compile Include="Financeiro\IContaBancariaFluxo.cs" />
     <Compile Include="Financeiro\IDominioFluxo.cs" />
     <Compile Include="Financeiro\IGConFluxo.cs" />
