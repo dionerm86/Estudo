@@ -2259,7 +2259,10 @@ namespace Glass.Data.DAL
                 }
 
                 if (idSolucaoOtimizacao.HasValue)
+                {
                     ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
+                    AtualizarProdutosPedidoProducao(session, (int)idImpressao);
+                }
 
                 return idImpressao;
             }
@@ -2270,6 +2273,35 @@ namespace Glass.Data.DAL
                 ErroDAO.Instance.InserirFromException("NovaImpressaoPedido", ex);
                     
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Atualiza os produtos pedido produção associado com os
+        /// produtos da impressão.
+        /// </summary>
+        /// <param name="sessao">Sessão de conexão com o banco de dados.</param>
+        /// <param name="idImpressao">Identificador da impressão que será processada.</param>
+        private void AtualizarProdutosPedidoProducao(GDASession sessao, int idImpressao)
+        {
+            var etiquetasPlanoCorte = this.CurrentPersistenceObject.LoadResult(
+               sessao,
+               "SELECT NumEtiqueta, PlanoCorte FROM produto_impressao WHERE IdImpressao=?idImpressao AND IdPedido IS NOT NULL AND NumEtiqueta IS NOT NULL",
+               new GDAParameter("?idImpressao", idImpressao))
+               .Select(f => new
+               {
+                   NumEtiqueta = f.GetString("NumEtiqueta"),
+                   PlanoCorte = f.GetString("PlanoCorte")
+               }).ToList();
+
+            foreach (var etiquetaPlanoCorte in etiquetasPlanoCorte)
+            {
+                this.CurrentPersistenceObject.ExecuteCommand(
+                    sessao,
+                    "UPDATE produto_pedido_producao SET PlanoCorte=?planoCorte WHERE NumEtiqueta=?numEtiqueta AND Situacao=?situacao",
+                    new GDAParameter("?planoCorte", etiquetaPlanoCorte.PlanoCorte),
+                    new GDAParameter("?numEtiqueta", etiquetaPlanoCorte.NumEtiqueta),
+                    new GDAParameter("?situacao", ProdutoPedidoProducao.SituacaoEnum.Producao));
             }
         }
 

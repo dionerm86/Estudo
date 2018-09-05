@@ -1072,7 +1072,7 @@ namespace Glass.Data.DAL
                         }
 
                         // Volta situação do Cheque para Compensado
-                        cheque.Situacao = (int)Cheques.SituacaoCheque.Compensado;
+                        cheque.Situacao = cheque.IdPagto > 0 || cheque.IdDeposito > 0 || cheque.IdDepositoCanc > 0 ? (int)Cheques.SituacaoCheque.Compensado : (int)Cheques.SituacaoCheque.EmAberto;
                         cheque.IdDeposito = cheque.IdDepositoCanc;
                         cheque.IdDepositoCanc = null;
                         cheque.CancelouDevolucao = true;
