@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model.Cte;
@@ -1247,6 +1247,9 @@ namespace Glass.Data.DAL.CTe
                     throw new Exception("Para gerar a conta a receber do CTe é necessário informar o valor da duplicata e a data de vencimento da mesma.");
             }
 
+            if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario && NotaFiscalCteDAO.Instance.GetCount(cte.IdCte) == 0)
+                throw new Exception($"As informações dos documentos transportados pelo CT-e são obrigatórias para o tipo de serviço: {cte.TipoServicoString}. Informe pelo menos uma Nota Fiscal.");
+
             #region Gera XML
 
             XmlDocument doc = new XmlDocument();
@@ -2449,7 +2452,8 @@ namespace Glass.Data.DAL.CTe
                         }                        
                     }
 
-                    infCTeNorm.AppendChild(infDoc);
+                    if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario || infDoc.ChildNodes.Count > 0)
+                        infCTeNorm.AppendChild(infDoc);
                 }
 
                 #region Informações do Rodoviário
