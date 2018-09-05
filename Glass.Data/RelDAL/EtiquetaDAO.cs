@@ -1052,7 +1052,7 @@ namespace Glass.Data.RelDAL
                 ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<uint?>(session, "idAplicacao", "idProdPed=" + prodImp.IdProdPed);
 
             string obs = prodImp.IdProdNf > 0 ? ProdutosNfDAO.Instance.ObtemValorCampo<string>(session, "obs", "idProdNf=" + prodImp.IdProdNf) :
-                prodImp.IdRetalhoProducao > 0 ? null :
+                prodImp.IdRetalhoProducao > 0 ? ProdutoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idProd=" + prodImp.IdProd) :
                 prodImp.IdAmbientePedido > 0 ? AmbientePedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idAmbientePedido=" + prodImp.IdAmbientePedido) :
                 ProdutosPedidoEspelhoDAO.Instance.ObtemValorCampo<string>(session, "obs", "idProdPed=" + prodImp.IdProdPed);
 
