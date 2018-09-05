@@ -763,7 +763,7 @@ namespace Glass.Data.DAL
                 pp.TotM2Calc = FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? (float)pp.TotM2Nf : pp.TotM;
                 pp.Total = (decimal)pp.TotalNf;
                 pp.ValorBenef = (decimal)pp.ValorBenefNf;
-               
+
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
 
                 if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)
@@ -2175,7 +2175,7 @@ namespace Glass.Data.DAL
                     {
                         if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed, idsOc) == 0)
                         {
-                            retorno.RemoveAt(i); 
+                            retorno.RemoveAt(i);
                             continue;
                         }
                     }
@@ -4282,6 +4282,13 @@ namespace Glass.Data.DAL
                     var alturaFilho = p.Altura > 0 ? p.Altura : objInsert.Altura;
                     var larguraFilho = p.Largura > 0 ? p.Largura : objInsert.Largura;
 
+                    var beneficiamentosInserir = p.Beneficiamentos;
+
+                    if (objInsert.AplicarBenefComposicao)
+                        foreach (var item in objInsert.Beneficiamentos)
+                            if (!beneficiamentosInserir.Contains(item))
+                                beneficiamentosInserir.Add(item);
+
                     var idProdPed = Insert(session, new ProdutosPedido()
                     {
                         IdProdPedParent = objInsert.IdProdPed,
@@ -4295,7 +4302,7 @@ namespace Glass.Data.DAL
                         Largura = larguraFilho,
                         IdProdBaixaEst = p.IdProdBaixaEst,
                         ValorVendido = (objInsert as IProdutoCalculo).DadosProduto.ValorTabela(),
-                        Beneficiamentos = p.Beneficiamentos
+                        Beneficiamentos = beneficiamentosInserir
                     }, true, false);
 
                     var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoBaixaEstoqueRepositorioImagens>();

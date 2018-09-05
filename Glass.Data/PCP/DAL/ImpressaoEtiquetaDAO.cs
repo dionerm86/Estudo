@@ -1066,8 +1066,8 @@ namespace Glass.Data.DAL
                                 arqOtimiz += (etiqueta.IdPedido ?? "").PadLeft(32);
 
                                 //2 - Nome do Cliente (210 .. 241)
-                                var nomeCli = !string.IsNullOrEmpty(etiqueta.NomeCliente) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.NomeCliente) : "";
-                                arqOtimiz += (nomeCli.Length > 32 ? nomeCli.Substring(0, 32) : nomeCli).PadLeft(32);
+                                var idNomeCli = !string.IsNullOrEmpty(etiqueta.NomeCliente) ? etiqueta.IdCliente + "-" + Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.NomeCliente) : "";
+                                arqOtimiz += (idNomeCli.Length > 32 ? idNomeCli.Substring(0, 32) : idNomeCli).PadLeft(32);
 
                                 //3 - Rota (242 .. 273)
                                 var rota = !string.IsNullOrEmpty(etiqueta.RotaExterna) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.RotaExterna) : "";

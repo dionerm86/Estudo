@@ -672,6 +672,7 @@ Vue.component('lista-itens-venda', {
 
         this.itemVenda.produto.id = atual ? atual.id : null;
         this.itemVenda.produto.espessura = atual ? atual.espessura : null;
+        this.itemVenda.composicao = atual.composicao;
 
         if (atual && atual.altura && atual.altura.valor) {
           this.itemVenda.altura.paraCalculo = atual.altura.valor;
