@@ -4691,7 +4691,7 @@ namespace Glass.Data.DAL
             if (idPedidoExpedicao == 0)
                 throw new Exception("Indique o pedido de revenda que contém esse produto.");
 
-            if (PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedidoExpedicao) != (int)Pedido.TipoEntregaPedido.Balcao)
+            if (PedidoDAO.Instance.ObtemTipoEntrega(sessao, idPedidoExpedicao) != (int)Pedido.TipoEntregaPedido.Balcao && PCPConfig.UsarNovoControleExpBalcao)
                 throw new Exception("O pedido informado não é do tipo entrega balcão.");
 
             // Muda todos os caracteres para maiúsculo, em alguns leitores o N ou o C são lidos em letra minúscula
