@@ -324,8 +324,8 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
 
             if (Emitente.Count() > 30)
                 retorno.Append(Emitente.Substring(0, 30));
-
-            retorno.Append(Emitente.PadLeft(30, ' '));
+            else
+                retorno.Append(Emitente.PadLeft(30, ' '));
 
             retorno.Append(string.Empty.PadLeft(12, ' '));
             retorno.Append(Fatura.ToString().PadLeft(14, '0'));
