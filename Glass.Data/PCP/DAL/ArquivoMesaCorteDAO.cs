@@ -210,11 +210,32 @@ namespace Glass.Data.DAL
             var descricaoBeneficiamento = ProdutoPedidoEspelhoBenefDAO.Instance.GetDescrBenef(session, idProdPedEsp);
             uint idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(session, idProdPedEsp);
 
-            bool gerarArquivoDeMesa = EtiquetaProcessoDAO.Instance.ObterGerarArquivoDeMesa(idProcesso);
-            if (!gerarArquivoDeMesa)
+            var etiquetaProcesso =  EtiquetaProcessoDAO.Instance.GetElementByPrimaryKey(idProcesso);
+            if (!etiquetaProcesso.GerarArquivoDeMesa)
             {
                 idArquivoMesaCorte = null;
                 return false;
+            }
+
+            // Caso o processo exija a geração de SAG o sistema verifica se foi chamado da tela "imprimir etiqueta"
+            if (etiquetaProcesso.ForcarGerarSag)
+            {
+                // Caso tenha sido chamado da tela imprimir etiqueta
+                // Remove todas as flags e adiciona apenas a de SAG e define o tipo arqiivo como SAG
+                if (arquivoOtimizacao)
+                {
+                    var flag = FlagArqMesaDAO.Instance.GetAll().Where(f => f.Descricao.ToLower() == TipoArquivoMesaCorte.SAG.ToString().ToLower()).FirstOrDefault();
+
+                    if ( flag != null && !flags.Contains(flag))
+                        flags.Add(flag);
+
+                    tipoArquivo = (int)TipoArquivoMesaCorte.SAG;
+                }
+                else
+                {
+                    idArquivoMesaCorte = null;
+                    return false;
+                }
             }
 
             var aumentoPeca = ImpressaoEtiquetaDAO.Instance.GetAresta(session, (int)idProd, idArquivoMesaCorte, idsBenef, descricaoBeneficiamento, (int)idProcesso);
