@@ -265,58 +265,6 @@ namespace Glass.Data.Helper
             return wsSend.sendMessage(wsToken.token, remetente, "55" + destinatario, codMensagem, null, 0, 23, null, mensagem);
         }
 
-        public static void EnviaSmsAdministradorPrecoProdutoAlterado(Produto prodOld, Produto prodNew)
-        {
-            try
-            {
-                var idAdminEnvio = EmailConfig.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado;
-                if (idAdminEnvio == null)
-                    return;
-
-                string telCel = FuncionarioDAO.Instance.ObtemTelCel((uint)idAdminEnvio);
-                if (string.IsNullOrEmpty(telCel))
-                    return;
-
-                while (telCel.Contains(" "))
-                    telCel = telCel.Replace(" ", "");
-
-                telCel = telCel.Replace("(", "").Replace(")", "").Replace("-", "");
-
-                if (prodOld.Custofabbase == prodNew.Custofabbase && prodOld.CustoCompra == prodNew.CustoCompra && prodOld.ValorAtacado == prodNew.ValorAtacado &&
-                    prodOld.ValorBalcao == prodNew.ValorBalcao && prodOld.ValorObra == prodNew.ValorObra)
-                    return;
-
-                var mensagem = "O produto " + prodOld.Descricao + " teve seu preço alterado:" + Environment.NewLine +
-                    (prodOld.Custofabbase == prodNew.Custofabbase ? "" : "Custo Forn. Antigo: " + prodOld.Custofabbase.ToString("c") + " Novo: " + prodNew.Custofabbase.ToString("c") + Environment.NewLine) +
-                    (prodOld.CustoCompra == prodNew.CustoCompra ? "" : "Custo Imp. Antigo: " + prodOld.CustoCompra.ToString("c") + " Novo: " + prodNew.CustoCompra.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorAtacado == prodNew.ValorAtacado ? "" : "Atacado Antigo: " + prodOld.ValorAtacado.ToString("c") + " Novo: " + prodNew.ValorAtacado.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorBalcao == prodNew.ValorBalcao ? "" : " Balcão Antigo: " + prodOld.ValorBalcao.ToString("c") + " Novo: " + prodNew.ValorBalcao.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorObra == prodNew.ValorObra ? "" : "Obra Antigo: " + prodOld.ValorObra.ToString("c") + " Novo: " + prodNew.ValorObra.ToString("c"));
-
-                var codSMS = DateTime.Now.DayOfYear.ToString() + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString() + idAdminEnvio;
-
-                /* Chamado 65394. */
-                //verifica a quantidade de caracteres da mensagem pois o limite de SMS é de 149.
-                if (mensagem.Length >= 150)
-                    mensagem = mensagem.Substring(0, 149);
-
-                SMS.EnviaSMSAsync(codSMS, "WebGlass", telCel, mensagem, false);
-            }
-            catch (Exception ex)
-            {
-                ErroDAO.Instance.InserirFromException("SMS administrador preço produto alterado", ex);
-            }
-        }
-
-        public static void EnviaSmsAdministradorPrecoListProdutoAlterado(IList<Produto> produtosOld, IList<Produto> produtosNew)
-        {
-            for (int i = 0; i < produtosOld.Count; i++)
-            {
-                if (produtosOld[i].IdProd == produtosNew[i].IdProd)
-                    EnviaSmsAdministradorPrecoProdutoAlterado(produtosOld[i], produtosNew[i]);
-            }
-        }
-
         /// <summary>
         /// Texto que será inserido no e-mail de pedido pronto.
         /// </summary>

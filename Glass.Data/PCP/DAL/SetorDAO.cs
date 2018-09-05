@@ -148,9 +148,12 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public string GetNomeSetores(string idsSetor)
         {
-            return !String.IsNullOrEmpty(idsSetor) ?
-                GetValoresCampo("select descricao from setor where idSetor in (" + idsSetor + ") order by numSeq", "descricao") :
-                "";
+            if (string.IsNullOrEmpty(idsSetor))
+            {
+                return string.Empty;
+            }
+
+            return string.Join(",", ExecuteMultipleScalar<string>($"select descricao from setor where idSetor in ({idsSetor}) order by numSeq"));
         }
 
         /// <summary>
