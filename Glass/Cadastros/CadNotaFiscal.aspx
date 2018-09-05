@@ -1,4 +1,4 @@
-<%@ Page Title="Emiss√£o de Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
+<%@ Page Title="Emiss„o de Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadNotaFiscal.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadNotaFiscal" %>
 
 <%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString" TagPrefix="uc1" %>
@@ -41,7 +41,7 @@
     {
         for (iTip = 0; iTip < 2; iTip++)
         {
-            TagToTip('tbInfoAdicProdNf' + complTabela, FADEIN, 300, COPYCONTENT, false, TITLE, 'Informa√ß√µes Adicionais', CLOSEBTN, true, 
+            TagToTip('tbInfoAdicProdNf' + complTabela, FADEIN, 300, COPYCONTENT, false, TITLE, 'InformaÁıes Adicionais', CLOSEBTN, true, 
                 CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true, 
                 FIX, [botao, 9-getTableWidth('tbInfoAdicProdNf' + complTabela), -41-getTableHeight('tbInfoAdicProdNf' + complTabela)]);
         }
@@ -150,7 +150,7 @@
         var validar = validarCfop(idCfop);
 
         if (validar == "false") {
-            alert("A Natureza da Opera√ß√£o selecionada n√£o pode ser usada nesse tipo de nota")
+            alert("A Natureza da OperaÁ„o selecionada n„o pode ser usada nesse tipo de nota")
             FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value = "";
         }
 
@@ -212,9 +212,9 @@
         FindControl("txtCnpjDest", "input").value = "";
         FindControl("txtCodDest", "input").value = "";
         
-        if (selClienteDest(tipoDoc)) // Sa√≠da/NFe cliente - Seleciona cliente
+        if (selClienteDest(tipoDoc)) // SaÌda/NFe cliente - Seleciona cliente
             FindControl("hdfIdCliente", "input").value = "";
-        else if (selFornecDest(tipoDoc)) // Entrada (ou devolu√ß√£o) - Seleciona fornecedor
+        else if (selFornecDest(tipoDoc)) // Entrada (ou devoluÁ„o) - Seleciona fornecedor
             FindControl("hdfIdFornec", "input").value = "";
         else if (selLojaDest(tipoDoc))
             FindControl("hdfIdLoja", "input").value = "";
@@ -237,7 +237,7 @@
     function limparRemetente() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
         
-        // N√£o pode modificar o remetente se for nota de sa√≠da, pois o remetente ser√° sempre a loja
+        // N„o pode modificar o remetente se for nota de saÌda, pois o remetente ser· sempre a loja
         if (tipoDoc != 2)
         {
             FindControl("txtRazaoEmit", "input").value = "";
@@ -256,9 +256,9 @@
     function openDestinatario() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
         
-        if (selClienteDest(tipoDoc)) // Sa√≠da/NFe cliente - Seleciona cliente
+        if (selClienteDest(tipoDoc)) // SaÌda/NFe cliente - Seleciona cliente
             openWindow(500, 700, '../Utils/SelCliente.aspx?Nfe=1');
-        else if (selFornecDest(tipoDoc)) // Entrada (ou devolu√ß√£o) - Seleciona fornecedor
+        else if (selFornecDest(tipoDoc)) // Entrada (ou devoluÁ„o) - Seleciona fornecedor
             openWindow(500, 700, '../Utils/SelFornec.aspx?Nfe=1');
         else if (tipoDoc == 3)
             openWindow(500, 700, '../Utils/SelLoja.aspx?Nfe=2');
@@ -362,20 +362,20 @@
         }
     }
 
-    // Seta informa√ß√µes da Cidade selecionada no popup
+    // Seta informaÁıes da Cidade selecionada no popup
     function setCidade(idCidade, nomeCidade) {
         FindControl('hdfCidade', 'input').value = idCidade;
         FindControl('txtCidade', 'input').value = nomeCidade;
     }
 
-    // Seta informa√ß√µes da Loja selecionada no popup
+    // Seta informaÁıes da Loja selecionada no popup
     function setLojaNfe(idLoja, razaoSocial, cnpj) {
         FindControl("txtRazaoEmit", "input").value = razaoSocial;
         FindControl("txtCnpjEmit", "input").value = cnpj;
         FindControl("hdfIdLoja", "input").value = idLoja;
     }
 
-    // Seta informa√ß√µes do Emitente selecionado no popup
+    // Seta informaÁıes do Emitente selecionado no popup
     function setFornecEmit(idFornec, razaoSocial, cnpj, idConta) {
     
         var retorno = CadNotaFiscal.VigenciaPrecoFornec(idFornec).value.split(';');
@@ -392,7 +392,7 @@
         PodeConsSitCadContr();
     }
     
-    // Seta informa√ß√µes do Emitente selecionado no popup
+    // Seta informaÁıes do Emitente selecionado no popup
     function setClienteEmit(idCliente, razaoSocial, cnpj) {
         FindControl("txtRazaoEmit", "input").value = razaoSocial;
         FindControl("txtCnpjEmit", "input").value = cnpj;
@@ -400,7 +400,7 @@
         PodeConsSitCadContr();
     }
 
-    // Seta informa√ß√µes do Cliente selecionado no popup
+    // Seta informaÁıes do Cliente selecionado no popup
     function setClienteNfe(idCliente, razaoSocial, cpfCnpj, suframa, obsNfe) {
         FindControl("txtRazaoDest", "input").value = razaoSocial;
         FindControl("txtCnpjDest", "input").value = cpfCnpj;
@@ -452,7 +452,7 @@
         PodeConsSitCadContr();
     }
 
-    // Seta informa√ß√µes do Fornecedor selecionado no popup
+    // Seta informaÁıes do Fornecedor selecionado no popup
     function setFornecNfe(idFornec, razaoSocial, cpfCnpj) {
         FindControl("txtRazaoDest", "input").value = razaoSocial;
         FindControl("txtCnpjDest", "input").value = cpfCnpj;
@@ -460,7 +460,7 @@
         PodeConsSitCadContr();
     }
     
-    // Atribui as informa√ß√µes da loja ao destinat√°rio
+    // Atribui as informaÁıes da loja ao destinat·rio
     function setLojaDest(idLoja, razaoSocial, cpfCnpj) {
         FindControl("txtRazaoDest", "input").value = razaoSocial;
         FindControl("txtCnpjDest", "input").value = cpfCnpj;
@@ -483,7 +483,7 @@
         if (drpTipoPagto == null)
             return;
         
-        // Esconde o controle de pagamento se o tipo de pagamento for √† vista, antecipa√ß√£o ou se o n√∫mero de parcelas for superior
+        // Esconde o controle de pagamento se o tipo de pagamento for ‡ vista, antecipaÁ„o ou se o n˙mero de parcelas for superior
         var exibirParcelas = drpTipoPagto.value >= 2 && drpTipoPagto.value < 12 && parseInt(txtNumParc.value, 10) <= parseInt(maxNumParc.value, 10);
         
         if (lblNumParc != null) {
@@ -493,7 +493,7 @@
             Parc_visibilidadeParcelas("<%= dtvNf.ClientID %>_ctrlParcelas1");
         }
         
-        // Exibe campos de parcelas autom√°ticas se quantidade de parcelas for alto
+        // Exibe campos de parcelas autom·ticas se quantidade de parcelas for alto
         if (FindControl("tbParcAut", "table") != null)
             FindControl("tbParcAut", "table").style.display = (drpTipoPagto.value >= 2 && exibirParcelas) || drpTipoPagto.value == 12 || drpTipoPagto.value == 1 ? "none" : "";
             
@@ -542,34 +542,9 @@
         var dataSaidaSeparada = dataSaida != "" && dataSaida != null ? dataSaida.split('/') : null;
         var dataEmissaoSeparada = dataEmissao != "" && dataEmissao != null ? dataEmissao.split('/') : null;
 
-        //pega as horas de saida/entrada e emiss√£o
+        //pega as horas de saida/entrada e emiss„o
         var horaSaida = FindControl("ctrlDataSaida_txtHora", "input").value;
         var horaEmissao = FindControl("ctrlDataEmissao_txtHora", "input").value;
-
-        if (horaSaida == "") {
-        alert(horaEmissao== "" ?
-            "Os hor√°rios de sa√≠da e entrada devem ser informados!" : "O hor√°rio de sa√≠da deve ser informado!");
-        return false;
-        }
-            
-        if (horaEmissao == "") {
-            alert("O hor√°rio de emiss√£o deve ser informado!");
-            return false;
-        }
-
-        var horaValida = new RegExp("^([0-9]|0[0-9]|1[0-9]|2[0-3])\:[0-5][0-9]$");
-
-        if (!horaSaida.match(horaValida)) {
-            alert(!horaEmissao.match(horaValida) ?
-                "O valores " + horaSaida + " e " + horaEmissao + " n√£o s√£o v√°lidos para os campos do hor√°rio de sa√≠da e emiss√£o !" : "O valor " + horaSaida + " para o campo do hor√°rio de sa√≠da!");
-            return false;
-        }
-            
-        if (!horaEmissao.match(horaValida)) {
-                alert("O valor " + horaEmissao + " para o campo do hor√°rio de emiss√£o!");
-            return false;
-        }
-
 
         //Separa as horas em um array
         var horaSaidaSeparada = horaSaida != "" && horaSaida != null ? horaSaida.split(':') : null;
@@ -582,18 +557,18 @@
             var dataDeEmissao = new Date(dataEmissaoSeparada[2], dataEmissaoSeparada[1], dataEmissaoSeparada[0], horaEmissaoSeparada != "" ? horaEmissaoSeparada[0] : 0, horaEmissaoSeparada != ""? horaEmissaoSeparada[1] : 0);
             
             if (dataDeSaida < dataDeEmissao) {
-                alert("Data de sa√≠da/entrada n√£o pode ser inferior √† data de emiss√£o");
+                alert("Data de saÌda/entrada n„o pode ser inferior ‡ data de emiss„o");
                 return false;
             }
         }
         return true;
     }
 
-    // Valida√ß√µes realizadas ao inserir NF
+    // ValidaÁıes realizadas ao inserir NF
     function onSave() 
     {
-        // try...catch() necess√°rio para caso ocorra algum erro de javascript durante a valida√ß√£o, 
-        // o usu√°rio n√£o consiga salvar as altera√ß√µes feitas na nota
+        // try...catch() necess·rio para caso ocorra algum erro de javascript durante a validaÁ„o, 
+        // o usu·rio n„o consiga salvar as alteraÁıes feitas na nota
         try
         {
             if (!validarDataHora()) {
@@ -604,9 +579,9 @@
             if (FindControl("txtInfCmpl", "textarea") != null && FindControl("txtInfCmpl", "textarea").value != "")
                 FindControl("txtInfCmpl", "textarea").value = removeCaractereEspecial(FindControl("txtInfCmpl", "textarea").value);
 
-            // Verifica se a chave de acesso est√° correta
+            // Verifica se a chave de acesso est· correta
             if (FindControl("valChaveAcesso", "span") != null && FindControl("valChaveAcesso", "span").style.visibility == "visible") {
-                alert("Chave de acesso inv√°lida.");
+                alert("Chave de acesso inv·lida.");
                 clicked = false;
                 return false;
             }
@@ -620,9 +595,9 @@
                 return false;
             }
         
-            // Verifica se a s√©rie foi informada
+            // Verifica se a sÈrie foi informada
             if (((tipoDoc == 3 && FindControl("txtModelo", "input").value != "22") || tipoDoc != 3) && FindControl("txtSerie", "input").value == "") {
-                alert("Informe a s√©rie da nota fiscal.");
+                alert("Informe a sÈrie da nota fiscal.");
                 clicked = false;
                 return false;
             }
@@ -638,7 +613,7 @@
             {
                 if(FindControl("drpFormaPagto", "select").value == "12" &&
                     FindControl("hdfIdAntecipFornec", "input").value == ""){
-                    alert("Informe a antecipa√ß√£o.");
+                    alert("Informe a antecipaÁ„o.");
                     clicked = false;
                     return false;
                 }
@@ -658,7 +633,7 @@
                 if(FindControl("drpFormaPagto", "select").value == "1"){
                     for(var i=0; i < valoresRecebidos.length; i++){
                         if(formasPagamento[i] == 14 || formasPagamento[i] == 15){
-                            alert("N√£o √© poss√≠vel selecionar as formas de pagamento 'Boleto' ou 'Duplicata' √† vista.");
+                            alert("N„o È possÌvel selecionar as formas de pagamento 'Boleto' ou 'Duplicata' ‡ vista.");
                             clicked = false;
                             return false;
                         }
@@ -680,10 +655,10 @@
                 return false;
             }
 
-            // Verifica se o cliente/fornecedor foi informado, deve verificar os dois ao mesmo tempo, pois caso a nota seja de sa√≠da, 
-            // pode ser necess√°rio informar o cliente ou fornecedor, caso seja devolu√ß√£o por exemplo
+            // Verifica se o cliente/fornecedor foi informado, deve verificar os dois ao mesmo tempo, pois caso a nota seja de saÌda, 
+            // pode ser necess·rio informar o cliente ou fornecedor, caso seja devoluÁ„o por exemplo
             if (FindControl("hdfIdCliente", "input").value == "" && FindControl("hdfIdFornec", "input").value == "") {
-                alert("Informe o destinat√°rio/remetente.");
+                alert("Informe o destinat·rio/remetente.");
                 clicked = false;
                 return false;
             }
@@ -700,7 +675,7 @@
             var validar = validarCfop(idCfop);
 
             if (validar == "false") {
-                alert("A Natureza da Opera√ß√£o selecionada n√£o pode ser usada nesse tipo de nota")
+                alert("A Natureza da OperaÁ„o selecionada n„o pode ser usada nesse tipo de nota")
                 FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value = "";
                 return false;
             }
@@ -722,7 +697,7 @@
         return texto;
     }
 
-    // Carrega dados do produto com base no c√≥digo do produto passado
+    // Carrega dados do produto com base no cÛdigo do produto passado
     function selProduto(nomeControle, idProd) {
         if (idProd == "")
             return false;
@@ -743,10 +718,10 @@
             
             FindControl("hdfIdProd", "input").value = idProd;
             FindControl("txtValorIns", "input").value = finalidade == 1 || finalidade == null ? retorno[1] : 0;
-            FindControl("hdfValMin", "input").value = finalidade == 1 || finalidade == null ? retorno[1] : 0; // Armazena o valor m√≠nimo
-            FindControl("hdfIsVidro", "input").value = retorno[2]; // Informa se o produto √© vidro
-            FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto √© vidro
-            FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m¬≤ m√≠nimo
+            FindControl("hdfValMin", "input").value = finalidade == 1 || finalidade == null ? retorno[1] : 0; // Armazena o valor mÌnimo
+            FindControl("hdfIsVidro", "input").value = retorno[2]; // Informa se o produto È vidro
+            FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto È vidro
+            FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m≤ mÌnimo
             
             var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;
 
@@ -803,14 +778,14 @@
             if (retorno[17] != "" && FindControl("drpContaContabil", "select") != null)
                 FindControl("drpContaContabil", "select").value = retorno[17];
                 
-            // Define se a op√ß√£o de mostrar a qtd tribut√°ria ser√° mostrada
+            // Define se a opÁ„o de mostrar a qtd tribut·ria ser· mostrada
             var mostrarQtdeTrib = retorno[18] == "true";
             FindControl("txtQtdeTrib", "input").style.display = mostrarQtdeTrib ? "inline" : "none";
             FindControl("lblQtdeTrib", "span").style.display = mostrarQtdeTrib ? "inline" : "none";
             if (!mostrarQtdeTrib) FindControl("txtQtdeTrib", "input").value = "";
 
-            // Se o produto n√£o for vidro, desabilita os textboxes largura e altura,
-            // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alum√≠nio, deixa o campo altura habilitado
+            // Se o produto n„o for vidro, desabilita os textboxes largura e altura,
+            // mas se o produto for tipoCalc=ML AL e a empresa trabalhar com venda de alumÌnio, deixa o campo altura habilitado
             // no metro linear ou se o produto for tipoCalc=ML, deixa os campos altura e largura habilitados
             var cAltura = FindControl("txtAlturaIns", "input");
             var cLargura = FindControl("txtLarguraIns", "input");
@@ -853,7 +828,7 @@
         var validar = validarCfop(idCfop);
 
         if (validar == "false") {
-            alert("A Natureza da Opera√ß√£o selecionada n√£o pode ser usada nesse tipo de nota")
+            alert("A Natureza da OperaÁ„o selecionada n„o pode ser usada nesse tipo de nota")
             FindControl(nomeControle +"_selNaturezaOperacao_txtDescr", "input").value = "";
         }
 
@@ -862,7 +837,7 @@
 
     var botaoInserirProdutoClicado = false;
 
-    // Chamado quando um produto est√° para ser inserido no pedido
+    // Chamado quando um produto est· para ser inserido no pedido
     function onSaveProd() {
         if (!botaoInserirProdutoClicado)
             botaoInserirProdutoClicado = true;
@@ -880,7 +855,7 @@
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
         
         if (codProd == "") {
-            alert("Informe o c√≥digo do produto.");
+            alert("Informe o cÛdigo do produto.");
             botaoInserirProdutoClicado = false;
             return false;
         }
@@ -901,7 +876,7 @@
                 return false;
             }
         }
-        // Se o textbox da largura estiver habilitado, dever√° ser informada
+        // Se o textbox da largura estiver habilitado, dever· ser informada
         else if (FindControl("txtLarguraIns", "input").disabled == false && largura == "") {
             alert("Informe a largura.");
             botaoInserirProdutoClicado = false;
@@ -928,7 +903,7 @@
         return true;
     }
 
-    // Fun√ß√£o chamada quando o produto est√° para ser atualizado
+    // FunÁ„o chamada quando o produto est· para ser atualizado
     function onUpdateProd() {
         var valor = FindControl("txtValorIns", "input").value;
         var qtde = FindControl("txtQtdeIns", "input").value;
@@ -1035,7 +1010,7 @@
         }
     }
     
-    // Se a nota for s√©rie U ou a finalidade for NF-e Complementar, abre campos de impostos e do total da nota para edi√ß√£o,
+    // Se a nota for sÈrie U ou a finalidade for NF-e Complementar, abre campos de impostos e do total da nota para ediÁ„o,
     // e esconde os produtos
     function habilitaTxtImpostos(alterarSerie) {
         if (FindControl("txtSerie", "input") == null)
@@ -1055,7 +1030,7 @@
         var txtValorPis = FindControl("txtValorPis", "input");
         var txtValorCofins = FindControl("txtValorCofins", "input");
         
-        // Se for nota de s√©rie "U"
+        // Se for nota de sÈrie "U"
         if (FindControl("txtSerie", "input").value == "U") {
             if (lblBcIcmsSt != null) {
                 //lblBcIcmsSt.style.display = "none";
@@ -1131,7 +1106,7 @@
         }
     }
     
-    // Fun√ß√£o chamada ao clicar na check de nf complementar
+    // FunÁ„o chamada ao clicar na check de nf complementar
     function chkComplClick(chkCompl, alterarOutros) {
         if (chkCompl == null) 
             return false;
@@ -1168,7 +1143,7 @@
             habilitaTxtImpostos(true);
     }
     
-    // Se cst escolhido for 20, mostra campo para informar o percentual de redu√ß√£o da base de c√°lculo
+    // Se cst escolhido for 20, mostra campo para informar o percentual de reduÁ„o da base de c·lculo
     function drpCst_Changed(atualizarOutros) {
         var drpCst = FindControl("drpCst", "select");
         
@@ -1181,26 +1156,26 @@
         
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
 
-        // Define se ser√° exibido a table com informa√ß√µes adicionais de CST (Redu√ß√£o na BC, Desonera√ß√£o de ICMS e Perc. de diferimento)
+        // Define se ser· exibido a table com informaÁıes adicionais de CST (ReduÁ„o na BC, DesoneraÁ„o de ICMS e Perc. de diferimento)
         var displayInfoCST = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "51" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";                
         document.getElementById("percRedIcms").style.display = displayInfoCST;
 
-        // Define se ser√° exibido o percentual de redu√ß√£o da BC
+        // Define se ser· exibido o percentual de reduÁ„o da BC
         var displayRedBC = drpCst.value == "20" || drpCst.value == "51" || (drpCst.value == "70" && codValorFiscal == "1") ? "inline" : "none";        
         FindControl("txtPercRedBcIcms", "input").style.display = displayRedBC;
         FindControl("lblPercRedBcIcms", "span").style.display = displayRedBC;
         
-        // Define se ser√£o exibidos campos de icms desonerado
+        // Define se ser„o exibidos campos de icms desonerado
         var displayDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         FindControl("txtValorIcmsDeson", "input").style.display = displayDeson;
         FindControl("lblValorIcmsDeson", "span").style.display = displayDeson;
         FindControl("lblMotivoIcmsDeson", "span").style.display = displayDeson;
 
-        // Define se ser√° exibido o motivo da desonera√ß√£o do ICMS
+        // Define se ser· exibido o motivo da desoneraÁ„o do ICMS
         var displayMotivoDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         FindControl("drpMotivoIcmsDeson", "select").style.display = displayMotivoDeson;        
 
-        // Define se ser√£o exibidos campos de percentual de diferimento de ICMS
+        // Define se ser„o exibidos campos de percentual de diferimento de ICMS
         var displayPercDiferimento = drpCst.value == "51" ? "inline" : "none";
         FindControl("lblPercDiferimento", "span").style.display = displayPercDiferimento;
         FindControl("txtPercDiferimento", "input").style.display = displayPercDiferimento;
@@ -1255,8 +1230,8 @@
         
         if(simplesNacional && codValorFiscal.value != 3)
         {
-            var msg = tipoDocumento == 3 ? "Esse fornecedor est√° dentro do Simples Nacional, portanto, o c√≥digo do valor fiscal dever√° ser 3.\nDeseja alterar o c√≥digo ?" :
-                "Essa loja est√° dentro do Simples Nacional, portanto, o c√≥digo do valor fiscal dever√° ser 3.\nDeseja alterar o c√≥digo ?";
+            var msg = tipoDocumento == 3 ? "Esse fornecedor est· dentro do Simples Nacional, portanto, o cÛdigo do valor fiscal dever· ser 3.\nDeseja alterar o cÛdigo ?" :
+                "Essa loja est· dentro do Simples Nacional, portanto, o cÛdigo do valor fiscal dever· ser 3.\nDeseja alterar o cÛdigo ?";
             if(confirm(msg))
             {
                 codValorFiscal.value = "3";
@@ -1335,7 +1310,7 @@
         
         if (idFornec == "")
         {
-            alert("Selecione um fornecedor antes de selecionar a antecipa√ß√£o.");
+            alert("Selecione um fornecedor antes de selecionar a antecipaÁ„o.");
             return false;
         }
     
@@ -1392,7 +1367,7 @@
         var origCst = FindControl("drpOrigCst", "select");
         
         if(origCst == null || origCst.value == null){
-            alert("Falha ao validar n√∫mero de controle da FCI. A origem da mercadoria n√£o foi encontada.");
+            alert("Falha ao validar n˙mero de controle da FCI. A origem da mercadoria n„o foi encontada.");
             controle.value = "";
             return false;
         }
@@ -1401,21 +1376,21 @@
         
 //            if(<%= (TipoDocumentoNF() != 2).ToString().ToLower() %>){
 //                if(controle == null || controle.value == ""){
-//                    alert("O n√∫mero de controle da FCI n√£o foi informado.");
+//                    alert("O n˙mero de controle da FCI n„o foi informado.");
 //                    controle.value = "";
 //                    return false;
 //                }
 //            }
             
             if(controle != null && controle.value != "" && !isGUID(controle.value)){
-                alert("O n√∫mero de controle da FCI informado n√£o √© valido.");
+                alert("O n˙mero de controle da FCI informado n„o È valido.");
                 controle.value = "";
                 return false;
             }
             
         }
         else if(controle != null && controle.value != ""){
-            alert("O n√∫mero de controle da FCI deve ser informado apenas quando a origem da mercadoria for 3, 5 ou 8.");
+            alert("O n˙mero de controle da FCI deve ser informado apenas quando a origem da mercadoria for 3, 5 ou 8.");
             controle.value = "";
             return false;
         }
@@ -1457,7 +1432,7 @@
             return false;
         }
         
-        if(!confirm('Buscar n√∫m. de controle da FCI?'))
+        if(!confirm('Buscar n˙m. de controle da FCI?'))
             return false;
         
         txtNumControleFci.value = dadosFci.value.split(';')[0];
@@ -1483,7 +1458,7 @@
         
         var dados = retorno.value.split(';');
         
-        var msg = "√â necess√°rio informar FCI para o(s) produto(s):\n\n";
+        var msg = "… necess·rio informar FCI para o(s) produto(s):\n\n";
         
         for(var i = 0; i < dados.length ; i++)
             msg += dados[i] + "\n";
@@ -1502,7 +1477,7 @@
             }
             
             if(retornoValidacao.value == "nao") {
-                alert("Informe a natureza de opera√ß√£o da nota fiscal.");
+                alert("Informe a natureza de operaÁ„o da nota fiscal.");
                 return false;
             }
 
@@ -1514,7 +1489,7 @@
             }
         
             if(retorno.value == "nao")
-                return confirm("A natureza de opera√ß√£o selecionada na nota fiscal n√£o altera o estoque fiscal, deseja finaliz√°-la assim mesmo?");
+                return confirm("A natureza de operaÁ„o selecionada na nota fiscal n„o altera o estoque fiscal, deseja finaliz·-la assim mesmo?");
 
             return true;
         }
@@ -1554,17 +1529,17 @@
             }
 
             if (cst == "00"){
-                imbAlerta.title = "Para o CST 00 dever√° ser informado a al√≠quota de ICMS e al√≠quota de ICMS ST.";
+                imbAlerta.title = "Para o CST 00 dever· ser informado a alÌquota de ICMS e alÌquota de ICMS ST.";
                 imbAlerta.hidden = false;
                 return false;
             }
             else if (origCst + cst == "010"){
-                imbAlerta.title = "Para o CST 010 dever√° ser informado a al√≠quota de ICMS.";
+                imbAlerta.title = "Para o CST 010 dever· ser informado a alÌquota de ICMS.";
                 imbAlerta.hidden = false;
                 return false;
             }
             else if (origCst + cst == "060"){
-                imbAlerta.title = "Para o CST 060 n√£o dever√° ser informado a al√≠quota de ICMS.";
+                imbAlerta.title = "Para o CST 060 n„o dever· ser informado a alÌquota de ICMS.";
                 imbAlerta.hidden = false;
                 return false;
             }
@@ -1574,7 +1549,7 @@
             var imbAlerta = FindControl("imbAlerta", "img");
             var codProd = FindControl("hdfIdProd", "input").value;
 
-            // Recupera quais impostos a natureza de opera√ß√£o deve calcular
+            // Recupera quais impostos a natureza de operaÁ„o deve calcular
             var idNatureza = FindControl("ctrlNaturezaOperacaoProd_selNaturezaOperacao_hdfValor", "input").value;
             var retornoNat = CadNotaFiscal.ObterCalcularIcmsIpi(idNatureza).value.split(';');
 
@@ -1583,7 +1558,7 @@
                 return false;
             }
 
-            // Recupera os dados do produto para verificar se os impostos necess√°rios est√£o informados em seu cadastro.
+            // Recupera os dados do produto para verificar se os impostos necess·rios est„o informados em seu cadastro.
             var idNf = FindControl("hdfIdNf", "input").value;
             var idProd = FindControl("hdfIdProd", "input").value;
             var retornoProd = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value, 
@@ -1602,23 +1577,23 @@
             // Verifica se deve exibir mensagem de CFOP
             if(retornoNat[1] == "true")
                 if(retornoProd[7] == "0"){
-                    mensagem += "O produto " + codProd + " N√£o tem al√≠quota de ICMS informada em seu cadastro. ";
+                    mensagem += "O produto " + codProd + " N„o tem alÌquota de ICMS informada em seu cadastro. ";
                     hidden = false;
                 }
 
             if(retornoNat[2] == "true")
                 if(retornoProd[14] == "0"){
-                    mensagem += "O produto " + codProd + " N√£o tem al√≠quota de ICMSST informada em seu cadastro. ";
+                    mensagem += "O produto " + codProd + " N„o tem alÌquota de ICMSST informada em seu cadastro. ";
                     hidden = false;
                 }
 
             if(retornoNat[3] == "true")
                 if(retornoProd[8] == "0"){
-                    mensagem += "O produto " + codProd + " N√£o tem al√≠quota de IPI informada em seu cadastro. ";
+                    mensagem += "O produto " + codProd + " N„o tem alÌquota de IPI informada em seu cadastro. ";
                     hidden = false;
                 }
 
-            // Exibe a mensagem caso necess√°rio
+            // Exibe a mensagem caso necess·rio
             if(mensagem != ""){
                 imbAlerta.title += mensagem;
                 imbAlerta.hidden = hidden;
@@ -1650,11 +1625,11 @@
             var msg = "";
 
             if(gerarEtiqueta != null && gerarEtiqueta.innerHTML == "" && gerarEstoque != null && gerarEstoque.innerHTML == "")
-                msg = "As op√ß√µes Gerar estoque real e Gerar etiqueta de nota fiscal n√£o est√£o marcadas, deseja continuar?"
+                msg = "As opÁıes Gerar estoque real e Gerar etiqueta de nota fiscal n„o est„o marcadas, deseja continuar?"
             else if(gerarEtiqueta != null && gerarEtiqueta.innerHTML == "")
-                msg = "A op√ß√£o Gerar etiqueta de nota fiscal n√£o esta marcada, deseja continuar?";
+                msg = "A opÁ„o Gerar etiqueta de nota fiscal n„o esta marcada, deseja continuar?";
             else if(gerarEstoque != null && gerarEstoque.innerHTML == "")
-                msg = "A op√ß√£o Gerar estoque real n√£o esta marcada, deseja continuar?";
+                msg = "A opÁ„o Gerar estoque real n„o esta marcada, deseja continuar?";
 
             if(msg != "" && !confirm(msg))
                 return false;
@@ -1683,14 +1658,14 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label53" runat="server" Text="S√©rie"></asp:Label>
+                                            <asp:Label ID="Label53" runat="server" Text="SÈrie"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtSerie" runat="server" Enabled='<%# Request["tipo"] != ((int)Glass.Data.Model.NotaFiscal.TipoDoc.Sa√≠da).ToString() %>'
+                                            <asp:TextBox ID="txtSerie" runat="server" Enabled='<%# Request["tipo"] != ((int)Glass.Data.Model.NotaFiscal.TipoDoc.SaÌda).ToString() %>'
                                                 MaxLength="3" Text='<%# Bind("Serie") %>' Width="40px" onchange="return serieOnChange(this.value);"></asp:TextBox>
                                         </td>
                                         <td runat="server" id="titulo_subserie" onload="EntradaTerceiros_Load">
-                                            Subs√©rie
+                                            SubsÈrie
                                         </td>
                                         <td runat="server" id="subserie" onload="EntradaTerceiros_Load">
                                             <asp:TextBox ID="txtSubserie" runat="server" MaxLength="3" Text='<%# Bind("Subserie") %>'
@@ -1702,7 +1677,7 @@
                                         </td>
                                         <td style="padding-top: 2px">
                                             <asp:CheckBox ID="chkServico" runat="server" Checked='<%# Bind("Servico") %>' onClick="chkServicoClick(this, true)"
-                                                Text="Servi√ßo" OnLoad="EntradaTerceiros_Load" />
+                                                Text="ServiÁo" OnLoad="EntradaTerceiros_Load" />
                                         </td>
                                         <td>
                                             <asp:Label ID="Label328" runat="server" Text="Modelo"></asp:Label>
@@ -1712,7 +1687,7 @@
                                                 Width="40px"></asp:TextBox>
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label54" runat="server" Text="N√∫mero NF"></asp:Label>&nbsp;
+                                            <asp:Label ID="Label54" runat="server" Text="N˙mero NF"></asp:Label>&nbsp;
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtNumNfe" runat="server" onkeypress="return soNumeros(event, true, true)"
@@ -1724,7 +1699,7 @@
                                         <td>
                                             <asp:DropDownList ID="drpTipoDocumento" runat="server" Enabled="False" SelectedValue='<%# Eval("TipoDocumento") %>'>
                                                 <asp:ListItem Value="1">Entrada</asp:ListItem>
-                                                <asp:ListItem Value="2">Sa√≠da</asp:ListItem>
+                                                <asp:ListItem Value="2">SaÌda</asp:ListItem>
                                                 <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
                                                 <asp:ListItem Value="4">Nota Fiscal de Cliente</asp:ListItem>
                                             </asp:DropDownList>
@@ -1749,7 +1724,7 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label57" runat="server" Text="Natureza da Opera√ß√£o"></asp:Label>
+                                            <asp:Label ID="Label57" runat="server" Text="Natureza da OperaÁ„o"></asp:Label>
                                         </td>
                                         <td>
                                             <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server" 
@@ -1757,21 +1732,21 @@
                                                 Callback="atualizaCfopDevolucao" />
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label59" runat="server" Text="Munic√≠pio de ocorr√™ncia"></asp:Label>
+                                            <asp:Label ID="Label59" runat="server" Text="MunicÌpio de ocorrÍncia"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtCidade" runat="server" Width="200px" Enabled="False" Text='<%# Eval("MunicOcor") %>'></asp:TextBox>
                                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" OnClientClick="openWindow(500, 700, '../Utils/SelCidade.aspx'); return false;" />
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label55" runat="server" Text="Data Emiss√£o"></asp:Label>
+                                            <asp:Label ID="Label55" runat="server" Text="Data Emiss„o"></asp:Label>
                                         </td>
                                         <td>
                                             <uc6:ctrlData ID="ctrlDataEmissao" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataEmissao") %>'
                                                 ExibirHoras="true" />
                                         </td>
                                         <td>
-                                            <asp:Label ID="lblDataSaida" runat="server" Text="Data Sa√≠da/Entrada"></asp:Label>
+                                            <asp:Label ID="lblDataSaida" runat="server" Text="Data SaÌda/Entrada"></asp:Label>
                                         </td>
                                         <td>
                                             <uc6:ctrlData ID="ctrlDataSaida" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataSaidaEnt") %>'
@@ -1783,7 +1758,7 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label22" runat="server" Text="Per√≠odo Apura√ß√£o IPI"></asp:Label>
+                                            <asp:Label ID="Label22" runat="server" Text="PerÌodo ApuraÁ„o IPI"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:DropDownList ID="drpPeriodoIpi" runat="server" DataSourceID="odsPeriodoIpi"
@@ -1797,8 +1772,8 @@
                                             <asp:DropDownList ID="drpFormaPagto" runat="server" SelectedValue='<%# Bind("FormaPagto") %>'
                                                 onclick="exibeParcelas()" OnLoad="drpFormaPagto_Load">
                                                 <asp:ListItem Value="0" Text=""></asp:ListItem>
-                                                <asp:ListItem Value="1">√Ä Vista</asp:ListItem>
-                                                <asp:ListItem Value="2">√Ä Prazo</asp:ListItem>
+                                                <asp:ListItem Value="1">¿ Vista</asp:ListItem>
+                                                <asp:ListItem Value="2">¿ Prazo</asp:ListItem>
                                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                                             </asp:DropDownList>
                                             <asp:TextBox ID="txtAntecip" Enabled="false" runat="server" Width="250px" />
@@ -1848,7 +1823,7 @@
                                                 </asp:DropDownList>
                                             </td>
                                             <td>
-                                                N√∫m.
+                                                N˙m.
                                             </td>
                                             <td>
                                                 <asp:TextBox ID="txtNumFatura" runat="server" MaxLength="30" Text='<%# Bind("NumFatura") %>'
@@ -1889,7 +1864,7 @@
                                             <asp:TextBox ID="txtChaveAcesso" runat="server" OnLoad="EntradaTerceiros_Load" onkeypress="return soNumeros(event, true, true)"
                                                 MaxLength="44" Text='<%# Bind("ChaveAcesso") %>' Width="310px"></asp:TextBox>
                                             <asp:CustomValidator ID="valChaveAcesso" runat="server" ClientValidationFunction="validarChaveAcesso"
-                                                ControlToValidate="txtChaveAcesso" ErrorMessage="Chave de acesso inv√°lida" OnLoad="EntradaTerceiros_Load"></asp:CustomValidator>
+                                                ControlToValidate="txtChaveAcesso" ErrorMessage="Chave de acesso inv·lida" OnLoad="EntradaTerceiros_Load"></asp:CustomValidator>
                                         </td>
                                     </tr>
                                     <tr>
@@ -1930,7 +1905,7 @@
                                         <td>
                                             <asp:Label Text="Caso haja pagamento antecipado ou sinal em algum dos pedidos da nota fiscal,
                                                 o valor da primeira parcela deve ser igual a soma dos pagamentos antecipados e sinais,
-                                                pois a mesma ser√° desconsiderada ao efetuar a separa√ß√£o de valores."
+                                                pois a mesma ser· desconsiderada ao efetuar a separaÁ„o de valores."
                                                 ForeColor="Red" Font-Size="Small" Width="500px" runat="server" Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
                                             <td>
                                     </tr>
@@ -1959,14 +1934,14 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label64" runat="server" Text="C√≥d."></asp:Label>
+                                            <asp:Label ID="Label64" runat="server" Text="CÛd."></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtCodEmit" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getRemetente(this);"></asp:TextBox>
                                         </td> 
                                         <td>
-                                            <asp:Label ID="Label60" runat="server" Text="Raz√£o Social"></asp:Label>
+                                            <asp:Label ID="Label60" runat="server" Text="Raz„o Social"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtRazaoEmit" runat="server" Width="300px" Enabled="False" Text='<%# Eval("NomeEmitente") %>'></asp:TextBox>
@@ -1995,19 +1970,19 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Destinat√°rio/Remetente
+                                    Destinat·rio/Remetente
                                 </div>
                                 <table class="pos">
                                     <tr>
                                     <td>
-                                            <asp:Label ID="Label65" runat="server" Text="C√≥d."></asp:Label>
+                                            <asp:Label ID="Label65" runat="server" Text="CÛd."></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtCodDest" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getDestinatario(this);"></asp:TextBox>
                                         </td>
                                         <td nowrap="nowrap">
-                                            <asp:Label ID="Label1" runat="server" Text="Raz√£o Social"></asp:Label>
+                                            <asp:Label ID="Label1" runat="server" Text="Raz„o Social"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtRazaoDest" runat="server" ReadOnly="True" Text='<%# Eval("NomeDestRem") %>'
@@ -2020,7 +1995,7 @@
                                             <asp:TextBox ID="txtCnpjDest" runat="server" Width="150px" Enabled="False" Text='<%# Bind("CpfCnpjDestRem") %>'
                                                  onkeypress="maskCPF(event, this);"></asp:TextBox>
                                             <asp:CustomValidator ID="valCpfCnpj" runat="server" ClientValidationFunction="validarCpfCnpj"
-                                                ControlToValidate="txtCnpjDest" ErrorMessage="CPF Inv√°lido"></asp:CustomValidator>
+                                                ControlToValidate="txtCnpjDest" ErrorMessage="CPF Inv·lido"></asp:CustomValidator>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblSuframa" runat="server" 
@@ -2045,7 +2020,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    C√°lculo Impostos
+                                    C·lculo Impostos
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2194,7 +2169,7 @@
                                  <div style="<%= !IsNfExportacao() ? "display: none": "" %>">
 
                                     <div align="center" class="dtvTitle" style="padding: 3px">
-                                        Exporta√ß√£o
+                                        ExportaÁ„o
                                     </div>
                                      <br />
                                     <table class="pos">
@@ -2286,7 +2261,7 @@
                                                 onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label327" runat="server" Text="Esp√©cie"></asp:Label>
+                                            <asp:Label ID="Label327" runat="server" Text="EspÈcie"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtEspecie" runat="server" Text='<%# Bind("Especie") %>' MaxLength="60"></asp:TextBox>
@@ -2300,7 +2275,7 @@
                                             <asp:TextBox ID="txtMarca" runat="server" MaxLength="60" Text='<%# Bind("MarcaVol") %>'></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label333" runat="server" Text="Numera√ß√£o"></asp:Label>
+                                            <asp:Label ID="Label333" runat="server" Text="NumeraÁ„o"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtNumeracao" runat="server" MaxLength="60" Text='<%# Bind("NumeracaoVol") %>'></asp:TextBox>
@@ -2308,13 +2283,13 @@
                                     </tr>
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label318" runat="server" Text="Peso Cont√™iner (kg)" ToolTip="Peso do cont√™iner utilizado para transportar a carga"></asp:Label>
+                                            <asp:Label ID="Label318" runat="server" Text="Peso ContÍiner (kg)" ToolTip="Peso do contÍiner utilizado para transportar a carga"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtPesoConteiner" runat="server" Text='<%# Bind("PesoConteiner") %>'></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label319" runat="server" Text="Peso L√≠quido (kg)" ToolTip="Peso dos produtos da nota fiscal"></asp:Label>
+                                            <asp:Label ID="Label319" runat="server" Text="Peso LÌquido (kg)" ToolTip="Peso dos produtos da nota fiscal"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtPesoLiquido" runat="server" Text='<%# Bind("PesoLiq") %>'></asp:TextBox>
@@ -2322,7 +2297,7 @@
                                     </tr>
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="lblTotBruto" runat="server" Text="Peso Bruto (kg)" ToolTip="Peso l√≠quido somado com o peso do container"></asp:Label>
+                                            <asp:Label ID="lblTotBruto" runat="server" Text="Peso Bruto (kg)" ToolTip="Peso lÌquido somado com o peso do container"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtPesoBruto" runat="server" Text='<%# Bind("PesoBruto") %>'></asp:TextBox>
@@ -2331,7 +2306,7 @@
                                 </table>
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px; background: none">
-                                    Dados do ve√≠culo
+                                    Dados do veÌculo
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2349,7 +2324,7 @@
                                             <asp:TextBox ID="txtVeicRntc" runat="server" MaxLength="20" Text='<%# Bind("VeicRntc") %>'></asp:TextBox>
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label317" runat="server" Text="UF do ve√≠culo"></asp:Label>
+                                            <asp:Label ID="Label317" runat="server" Text="UF do veÌculo"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:DropDownList ID="drpVeicUf" runat="server" SelectedValue='<%# Bind("VeicUf") %>'>
@@ -2388,7 +2363,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Informa√ß√µes Complementares
+                                    InformaÁıes Complementares
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2403,12 +2378,12 @@
                                     <br />
                                     <br />
                                     <div align="center" class="dtvTitle" style="padding: 3px">
-                                        Dados sobre o formul√°rio FS-DA
+                                        Dados sobre o formul·rio FS-DA
                                     </div>
                                     <table class="pos">
                                         <tr>
                                             <td>
-                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N√∫mero do documento FS-DA"></asp:Label>
+                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N˙mero do documento FS-DA"></asp:Label>
                                             </td>
                                             <td>
                                                 <asp:TextBox ID="txtNumDocFsda" runat="server" onkeypress="return soNumeros(event, false, false)"
@@ -2425,7 +2400,7 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label53" runat="server" Text="S√©rie"></asp:Label>
+                                            <asp:Label ID="Label53" runat="server" Text="SÈrie"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtSerie" runat="server" Enabled='<%# Request["tipo"] == ((int)Glass.Data.Model.NotaFiscal.TipoDoc.EntradaTerceiros).ToString() || Request["tipo"] == ((int)Glass.Data.Model.NotaFiscal.TipoDoc.Entrada).ToString() %>'
@@ -2433,7 +2408,7 @@
                                                 Text='<%# Bind("Serie") %>' Width="40px"></asp:TextBox>
                                         </td>
                                         <td runat="server" id="titulo_subserie" onload="EntradaTerceiros_Load">
-                                            Subs√©rie
+                                            SubsÈrie
                                         </td>
                                         <td runat="server" id="subserie" onload="EntradaTerceiros_Load">
                                             <asp:TextBox ID="txtSubserie" runat="server" MaxLength="3" Text='<%# Bind("Subserie") %>'
@@ -2445,7 +2420,7 @@
                                         </td>
                                         <td style="padding-top: 2px">
                                             <asp:CheckBox ID="chkServico" runat="server" Checked='<%# Bind("Servico") %>' onClick="chkServicoClick(this, true)"
-                                                Text="Servi√ßo" OnLoad="EntradaTerceiros_Load" />
+                                                Text="ServiÁo" OnLoad="EntradaTerceiros_Load" />
                                         </td>
                                         <td>
                                             <asp:Label ID="Label328" runat="server" Text="Modelo"></asp:Label>
@@ -2455,7 +2430,7 @@
                                                 Width="40px"></asp:TextBox>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="lblNumeroNF" runat="server" Text="N√∫mero NF" OnLoad="txtNumNfe_Load"></asp:Label>
+                                            <asp:Label ID="lblNumeroNF" runat="server" Text="N˙mero NF" OnLoad="txtNumNfe_Load"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtNumeroNF" runat="server" Width="80px" onkeypress="return soNumeros(event, true, true)"
@@ -2467,10 +2442,10 @@
                                         <td>
                                             <asp:DropDownList ID="drpTipoDocumento" runat="server" Enabled="false">
                                                 <asp:ListItem Value="1">Entrada</asp:ListItem>
-                                                <asp:ListItem Value="2">Sa√≠da</asp:ListItem>
+                                                <asp:ListItem Value="2">SaÌda</asp:ListItem>
                                                 <asp:ListItem Value="3">Entrada (terceiros)</asp:ListItem>
                                                 <asp:ListItem Value="4">Nota Fiscal de Cliente</asp:ListItem>
-                                                <asp:ListItem Value="4">Sa√≠da NFC-e</asp:ListItem>
+                                                <asp:ListItem Value="4">SaÌda NFC-e</asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
                                         <td>
@@ -2493,7 +2468,7 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label57" runat="server" Text="Natureza da Opera√ß√£o"></asp:Label>
+                                            <asp:Label ID="Label57" runat="server" Text="Natureza da OperaÁ„o"></asp:Label>
                                         </td>
                                         <td>
                                             <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server" 
@@ -2501,7 +2476,7 @@
                                                 Callback="atualizaCfopDevolucao" />
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label59" runat="server" Text="Munic√≠pio de ocorr√™ncia"></asp:Label>
+                                            <asp:Label ID="Label59" runat="server" Text="MunicÌpio de ocorrÍncia"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtCidade" runat="server" Width="200px" Enabled="False"></asp:TextBox>
@@ -2509,14 +2484,14 @@
                                             <asp:HiddenField ID="hdfCidade" runat="server" Value='<%# Bind("IdCidade") %>' />
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label55" runat="server" Text="Data Emiss√£o"></asp:Label>
+                                            <asp:Label ID="Label55" runat="server" Text="Data Emiss„o"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <uc6:ctrlData ID="ctrlDataEmissao" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataEmissao") %>'
                                                 ExibirHoras="true" />
                                         </td>
                                         <td>
-                                            <asp:Label ID="lblDataSaida" runat="server" Text="Data Sa√≠da/Entrada"></asp:Label>
+                                            <asp:Label ID="lblDataSaida" runat="server" Text="Data SaÌda/Entrada"></asp:Label>
                                         </td>
                                         <td>
                                             <uc6:ctrlData ID="ctrlDataSaida" runat="server" ReadOnly="ReadWrite" DataString='<%# Bind("DataSaidaEnt") %>'
@@ -2528,7 +2503,7 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label22" runat="server" Text="Per√≠odo Apura√ß√£o IPI"></asp:Label>
+                                            <asp:Label ID="Label22" runat="server" Text="PerÌodo ApuraÁ„o IPI"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:DropDownList ID="drpPeriodoIpi" runat="server" DataSourceID="odsPeriodoIpi"
@@ -2542,8 +2517,8 @@
                                         <td id="fp2">
                                             <asp:DropDownList ID="drpFormaPagto" runat="server" SelectedValue='<%# Bind("FormaPagto") %>'
                                                 OnLoad="drpFormaPagto_Load">
-                                                <asp:ListItem Value="1">√Ä Vista</asp:ListItem>
-                                                <asp:ListItem Value="2">√Ä Prazo</asp:ListItem>
+                                                <asp:ListItem Value="1">¿ Vista</asp:ListItem>
+                                                <asp:ListItem Value="2">¿ Prazo</asp:ListItem>
                                                 <asp:ListItem Value="3">Outros</asp:ListItem>
                                             </asp:DropDownList>
                                         </td>
@@ -2589,7 +2564,7 @@
                                                 onkeypress="return soNumeros(event, true, true)" Text='<%# Bind("ChaveAcesso") %>'
                                                 Width="310px"></asp:TextBox>
                                             <asp:CustomValidator ID="valChaveAcesso" runat="server" ClientValidationFunction="validarChaveAcesso"
-                                                ControlToValidate="txtChaveAcesso" ErrorMessage="Chave de acesso inv√°lida"></asp:CustomValidator>
+                                                ControlToValidate="txtChaveAcesso" ErrorMessage="Chave de acesso inv·lida"></asp:CustomValidator>
                                         </td>
                                     </tr>
                                     <tr>
@@ -2632,14 +2607,14 @@
                                 <table class="pos">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label64" runat="server" Text="C√≥d."></asp:Label>
+                                            <asp:Label ID="Label64" runat="server" Text="CÛd."></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtCodEmit" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getRemetente(this);"></asp:TextBox>
                                         </td>
                                         <td nowrap="nowrap">
-                                            <asp:Label ID="Label60" runat="server" Text="Raz√£o Social"></asp:Label>
+                                            <asp:Label ID="Label60" runat="server" Text="Raz„o Social"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtRazaoEmit" runat="server" Width="300px" Enabled="False"></asp:TextBox>
@@ -2664,19 +2639,19 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Destinat√°rio/Remetente
+                                    Destinat·rio/Remetente
                                 </div>
                                 <table>
                                     <tr>
                                     <td>
-                                            <asp:Label ID="Label66" runat="server" Text="C√≥d."></asp:Label>
+                                            <asp:Label ID="Label66" runat="server" Text="CÛd."></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtCodDest" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getDestinatario(this);"></asp:TextBox>
                                         </td>
                                         <td nowrap="nowrap">
-                                            <asp:Label ID="Label1" runat="server" Text="Raz√£o Social"></asp:Label>
+                                            <asp:Label ID="Label1" runat="server" Text="Raz„o Social"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:TextBox ID="txtRazaoDest" runat="server" ReadOnly="True" Width="300px" Enabled="False"></asp:TextBox>
@@ -2707,7 +2682,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    C√°lculo Impostos
+                                    C·lculo Impostos
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2880,7 +2855,7 @@
                                                 onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label327" runat="server" Text="Esp√©cie"></asp:Label>
+                                            <asp:Label ID="Label327" runat="server" Text="EspÈcie"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtEspecie" runat="server" Text='<%# Bind("Especie") %>' MaxLength="60"></asp:TextBox>
@@ -2894,7 +2869,7 @@
                                             <asp:TextBox ID="txtMarca" runat="server" MaxLength="60" Text='<%# Bind("MarcaVol") %>'></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label333" runat="server" Text="Numera√ß√£o"></asp:Label>
+                                            <asp:Label ID="Label333" runat="server" Text="NumeraÁ„o"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtNumeracao" runat="server" MaxLength="60" Text='<%# Bind("NumeracaoVol") %>'></asp:TextBox>
@@ -2908,7 +2883,7 @@
                                             <asp:TextBox ID="txtPesoBruto" runat="server" MaxLength="10" Text='<%# Bind("PesoBruto") %>'></asp:TextBox>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label319" runat="server" Text="Peso L√≠quido (kg)"></asp:Label>
+                                            <asp:Label ID="Label319" runat="server" Text="Peso LÌquido (kg)"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtPesoLiquido" runat="server" MaxLength="10" Text='<%# Bind("PesoLiq") %>'></asp:TextBox>
@@ -2917,7 +2892,7 @@
                                 </table>
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px; background: none">
-                                    Dados do ve√≠culo
+                                    Dados do veÌculo
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2935,7 +2910,7 @@
                                             <asp:TextBox ID="txtVeicRntc" runat="server" Text='<%# Bind("VeicRntc") %>' MaxLength="20"></asp:TextBox>
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label317" runat="server" Text="UF do ve√≠culo"></asp:Label>
+                                            <asp:Label ID="Label317" runat="server" Text="UF do veÌculo"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:DropDownList ID="drpVeicUf" runat="server" SelectedValue='<%# Bind("VeicUf") %>'>
@@ -2974,7 +2949,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Informa√ß√µes Complementares
+                                    InformaÁıes Complementares
                                 </div>
                                 <table class="pos">
                                     <tr>
@@ -2989,12 +2964,12 @@
                                     <br />
                                     <br />
                                     <div align="center" class="dtvTitle" style="padding: 3px">
-                                        Dados sobre o formul√°rio FS-DA
+                                        Dados sobre o formul·rio FS-DA
                                     </div>
                                     <table class="pos">
                                         <tr>
                                             <td>
-                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N√∫mero do documento FS-DA"></asp:Label>
+                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N˙mero do documento FS-DA"></asp:Label>
                                             </td>
                                             <td>
                                                 <asp:TextBox ID="txtNumDocFsda" runat="server" onkeypress="return soNumeros(event, false, false)"
@@ -3011,20 +2986,20 @@
                                 <table class="pos espaco">
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label53" runat="server" Text="S√©rie" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label53" runat="server" Text="SÈrie" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label320" runat="server" Text='<%# Eval("Serie") %>'></asp:Label>
                                             <asp:Label ID="Label362" runat="server" Text='<%# !String.IsNullOrEmpty(Eval("Subserie") as string) ? "&nbsp;&nbsp;Sub.: " + Eval("Subserie") : "" %>'></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label54" runat="server" Text="N√∫mero NF" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label54" runat="server" Text="N˙mero NF" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label322" runat="server" Text='<%# Eval("NumeroNFe") %>'></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label55" runat="server" Text="Data de Emiss√£o" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label55" runat="server" Text="Data de Emiss„o" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label325" runat="server" Text='<%# Eval("DataEmissao", "{0:d}") %>'></asp:Label>
@@ -3032,7 +3007,7 @@
                                     </tr>
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label57" runat="server" Text="Natureza da Opera√ß√£o" 
+                                            <asp:Label ID="Label57" runat="server" Text="Natureza da OperaÁ„o" 
                                                 Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
@@ -3046,7 +3021,7 @@
                                             <asp:Label ID="Label323" runat="server" Text='<%# Eval("TipoDocumentoString") %>'></asp:Label>
                                         </td>
                                         <td nowrap="nowrap" align="left">
-                                            <asp:Label ID="Label56" runat="server" Text="Data Sa√≠da/Entrada" Font-Bold="True" OnLoad="Nfce_Load"></asp:Label>
+                                            <asp:Label ID="Label56" runat="server" Text="Data SaÌda/Entrada" Font-Bold="True" OnLoad="Nfce_Load"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label324" runat="server" Text='<%# Eval("DataSaidaEnt", "{0:g}") %>' OnLoad="Nfce_Load"></asp:Label>
@@ -3054,13 +3029,13 @@
                                     </tr>
                                     <tr>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label59" runat="server" Text="Munic√≠pio de ocorr√™ncia" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label59" runat="server" Text="MunicÌpio de ocorrÍncia" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label326" runat="server" Text='<%# Eval("MunicOcor") %>'></asp:Label>
                                         </td>
                                         <td nowrap="nowrap" align="left">
-                                            <asp:Label ID="Label23" runat="server" Font-Bold="True" Text="Per√≠odo Apura√ß√£o IPI"></asp:Label>
+                                            <asp:Label ID="Label23" runat="server" Font-Bold="True" Text="PerÌodo ApuraÁ„o IPI"></asp:Label>
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:Label ID="Label24" runat="server" Text='<%# Eval("DescrPeriodoApuracaoIpi") %>'></asp:Label>
@@ -3092,7 +3067,7 @@
                                             <table>
                                                 <tr>
                                                     <td><asp:Label ID="Label367" runat="server" Style="padding-right: 8px" ForeColor="Green"
-                                                Text='<%# (bool)Eval("Transporte") ? "Transporte" : (bool)Eval("Complementar") ? "Complementar" : "Servi√ßo" %>'
+                                                Text='<%# (bool)Eval("Transporte") ? "Transporte" : (bool)Eval("Complementar") ? "Complementar" : "ServiÁo" %>'
                                                 Visible='<%# (bool)Eval("Transporte") || (bool)Eval("Complementar") || (bool)Eval("Servico") %>'></asp:Label></td>
                                                     <td><asp:Label ID="Label16" runat="server" Font-Bold="False" ForeColor="Blue" Style="padding-right: 8px"
                                                 OnLoad="EntradaTerceiros_Load" Text='<%# Eval("DescrGerarContasPagar") %>'></asp:Label></td>
@@ -3114,7 +3089,7 @@
                                 <table class="pos espaco">
                                     <tr>
                                         <td>
-                                            <asp:Label ID="Label60" runat="server" Text="Raz√£o Social" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label60" runat="server" Text="Raz„o Social" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="Label327" runat="server" Text='<%# Eval("NomeEmitente") %>'></asp:Label>
@@ -3130,12 +3105,12 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Destinat√°rio/Remetente
+                                    Destinat·rio/Remetente
                                 </div>
                                 <table class="pos espaco">
                                     <tr>
                                         <td nowrap="nowrap">
-                                            <asp:Label ID="Label1" runat="server" Text="Raz√£o Social" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label1" runat="server" Text="Raz„o Social" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="Label329" runat="server" Text='<%# Eval("NomeDestRem") %>'></asp:Label>
@@ -3147,7 +3122,7 @@
                                             <asp:Label ID="Label330" runat="server" Text='<%# Eval("CpfCnpjDestRem") %>'></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:LinkButton ID="btnConsSitContr" ToolTip="Consulta Situa√ß√£o do Contribuinte no Sintegra"
+                                            <asp:LinkButton ID="btnConsSitContr" ToolTip="Consulta SituaÁ„o do Contribuinte no Sintegra"
                                                 Style="display: none;" runat="server" OnClientClick="ConsSitCadContr(); return false;"><img alt="" src="../Images/ConsSitNFe.gif" /></asp:LinkButton>
                                         </td>
                                     </tr>
@@ -3155,7 +3130,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    C√°lculo Impostos
+                                    C·lculo Impostos
                                 </div>
                                 <table class="pos espaco">
                                     <tr>
@@ -3321,7 +3296,7 @@
                                 <br />
                                 <div style="<%= !IsNfExportacao() ? "display: none": "" %>">
                                     <div align="center" class="dtvTitle" style="padding: 3px">
-                                        Exporta√ß√£o
+                                        ExportaÁ„o
                                     </div>
                                     <table class="pos espaco">
                                         <tr>
@@ -3373,7 +3348,7 @@
                                             <asp:Label ID="Label358" runat="server" Text='<%# Eval("QtdVol") %>'></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label360" runat="server" Font-Bold="True" Text="Esp√©cie"></asp:Label>
+                                            <asp:Label ID="Label360" runat="server" Font-Bold="True" Text="EspÈcie"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label359" runat="server" Text='<%# Eval("Especie") %>'></asp:Label>
@@ -3387,7 +3362,7 @@
                                             <asp:Label ID="Label374" runat="server" Text='<%# Eval("MarcaVol") %>'></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label373" runat="server" Font-Bold="True" Text="Numera√ß√£o"></asp:Label>
+                                            <asp:Label ID="Label373" runat="server" Font-Bold="True" Text="NumeraÁ„o"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label375" runat="server" Text='<%# Eval("NumeracaoVol") %>'></asp:Label>
@@ -3401,7 +3376,7 @@
                                             <asp:Label ID="Label340" runat="server" Text='<%# Eval("PesoBruto") %>'></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label319" runat="server" Font-Bold="True" Text="Peso L√≠quido (kg)"></asp:Label>
+                                            <asp:Label ID="Label319" runat="server" Font-Bold="True" Text="Peso LÌquido (kg)"></asp:Label>
                                         </td>
                                         <td align="left">
                                             <asp:Label ID="Label341" runat="server" Text='<%# Eval("PesoLiq") %>'></asp:Label>
@@ -3410,7 +3385,7 @@
                                 </table>
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px; background: none">
-                                    Dados do ve√≠culo
+                                    Dados do veÌculo
                                 </div>
                                 <table class="pos espaco">
                                     <tr>
@@ -3427,7 +3402,7 @@
                                             <asp:Label ID="Label343" runat="server" Text='<%# Eval("VeicRntc") %>'></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label317" runat="server" Text="UF do ve√≠culo" Font-Bold="True"></asp:Label>
+                                            <asp:Label ID="Label317" runat="server" Text="UF do veÌculo" Font-Bold="True"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="Label344" runat="server" Text='<%# Eval("VeicUf") %>'></asp:Label>
@@ -3442,7 +3417,7 @@
                                 <br />
                                 <br />
                                 <div align="center" class="dtvTitle" style="padding: 3px">
-                                    Informa√ß√µes Complementares
+                                    InformaÁıes Complementares
                                 </div>
                                 <table class="pos espaco">
                                     <tr>
@@ -3457,12 +3432,12 @@
                                 </table>
                                 <div style="<%= !IsContingenciaFsda() ? "display: none": "" %>">
                                     <div align="center" class="dtvTitle" style="padding: 3px">
-                                        Dados sobre o formul√°rio FS-DA
+                                        Dados sobre o formul·rio FS-DA
                                     </div>
                                     <table class="pos espaco">
                                         <tr>
                                             <td>
-                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N√∫mero do documento FS-DA"></asp:Label>
+                                                <asp:Label ID="Label26" runat="server" Font-Bold="True" Text="N˙mero do documento FS-DA"></asp:Label>
                                             </td>
                                             <td>
                                                 <asp:Label ID="Label27" runat="server" Text='<%# Eval("NumeroDocumentoFsda") %>'></asp:Label>
@@ -3514,15 +3489,15 @@
                                 <asp:Button ID="btnFinalizarFs" runat="server" ForeColor="Red" OnClick="btnFinalizarFs_Click"
                                     OnLoad="btnEmitirFinalizar_Load" Text="Finalizar"  CausesValidation="false" />
                                 <asp:Button ID="btnPreVisualizar" runat="server" CausesValidation="false" OnClick="btnPreVisualizar_Click"
-                                    OnLoad="btnPreVisualizar_Load" Text="Pr√©-visualizar" ToolTip="Exibe uma pr√©via de como ficar√° o DANFE ap√≥s emiss√£o da nota." />
+                                    OnLoad="btnPreVisualizar_Load" Text="PrÈ-visualizar" ToolTip="Exibe uma prÈvia de como ficar· o DANFE apÛs emiss„o da nota." />
                                 <asp:Button ID="btnVoltar" runat="server" CausesValidation="false" OnClick="btnCancelar_Click"
                                     Text="Voltar" />
                                 <asp:ImageButton ID="imgObsLancFiscal" runat="server" ImageUrl="~/Images/Nota.gif"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/SetObsLancFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
-                                    ToolTip="Observa√ß√µes do Lan√ßamento Fiscal" />
+                                    ToolTip="ObservaÁıes do LanÁamento Fiscal" />
                                 <asp:ImageButton ID="imgAguaGasEnergia" runat="server" ImageUrl="~/Images/page_gear.png"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/InfoAdicNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
-                                    ToolTip="Informa√ß√µes adicionais" Visible='<%# Eval("ExibirLinkInfoAdic") %>' />
+                                    ToolTip="InformaÁıes adicionais" Visible='<%# Eval("ExibirLinkInfoAdic") %>' />
                                 <asp:ImageButton ID="imgAjustes" runat="server" ImageUrl="~/Images/dinheiro.gif" 
                                     onclientclick='<%# Eval("IdNf", "openWindow(600, 950, \"../Listas/LstAjusteDocumentoFiscal.aspx?idNf={0}\"); return false;") %>' 
                                     ToolTip="Ajustes do Documento Fiscal" />
@@ -3578,7 +3553,7 @@
                                 </EditItemTemplate>
                                 <ItemStyle Wrap="False" />
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="C√≥d." SortExpression="CodInterno">
+                            <asp:TemplateField HeaderText="CÛd." SortExpression="CodInterno">
                                 <ItemTemplate>
                                     <asp:Label ID="Label8" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
                                 </ItemTemplate>
@@ -3690,7 +3665,7 @@
                                         onblur="calcM2Prod();" Width="35px"></asp:TextBox>
                                 </FooterTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="M¬≤" SortExpression="TotM">
+                            <asp:TemplateField HeaderText="M≤" SortExpression="TotM">
                                 <ItemTemplate>
                                     <asp:Label ID="Label6" runat="server" Text='<%# Bind("TotM") %>'></asp:Label>
                                 </ItemTemplate>
@@ -3811,24 +3786,24 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <asp:Label ID="lblMotivoIcmsDeson" runat="server" Text="Motivo Desonera√ß√£o" Style="display: none"></asp:Label>
+                                                <asp:Label ID="lblMotivoIcmsDeson" runat="server" Text="Motivo DesoneraÁ„o" Style="display: none"></asp:Label>
                                             </td>
                                             <td>
                                                 <asp:DropDownList ID="drpMotivoIcmsDeson" runat="server" Style="display: none" SelectedValue='<%# Bind("MotivoDesoneracao") %>'
                                                     Width="200px">
                                                     <asp:ListItem Value="0" Text=""></asp:ListItem>
-                                                    <asp:ListItem Value="1" Text="T√°xi"></asp:ListItem>
-                                                    <asp:ListItem Value="3" Text="Produtor Agropecu√°rio"></asp:ListItem>
+                                                    <asp:ListItem Value="1" Text="T·xi"></asp:ListItem>
+                                                    <asp:ListItem Value="3" Text="Produtor Agropecu·rio"></asp:ListItem>
                                                     <asp:ListItem Value="4" Text="Frotista/Locadora"></asp:ListItem>
-                                                    <asp:ListItem Value="5" Text="Diplom√°tico/Consular"></asp:ListItem>
-                                                    <asp:ListItem Value="6" Text="Utilit√°rios e Motocicletas da Amaz√¥nia Ocidental e 
-                                                           √Åreas de Livre Com√©rcio (Resolu√ß√£o 714/88 e 790/94 ‚Äì CONTRAN e suas altera√ß√µes)"></asp:ListItem>
+                                                    <asp:ListItem Value="5" Text="Diplom·tico/Consular"></asp:ListItem>
+                                                    <asp:ListItem Value="6" Text="Utilit·rios e Motocicletas da AmazÙnia Ocidental e 
+                                                           ¡reas de Livre ComÈrcio (ResoluÁ„o 714/88 e 790/94 ñ CONTRAN e suas alteraÁıes)"></asp:ListItem>
                                                     <asp:ListItem Value="7" Text="SUFRAMA"></asp:ListItem>
-                                                    <asp:ListItem Value="8" Text="Venda a √ìrg√£o P√∫blico"></asp:ListItem>
+                                                    <asp:ListItem Value="8" Text="Venda a ”rg„o P˙blico"></asp:ListItem>
                                                     <asp:ListItem Value="9" Text="Outros. (NT 2011/004)"></asp:ListItem>
-                                                    <asp:ListItem Value="10" Text="Deficiente Condutor (Conv√™nio ICMS 38/12)"></asp:ListItem>
-                                                    <asp:ListItem Value="11" Text="Deficiente N√£o Condutor (Conv√™nio ICMS 38/12)"></asp:ListItem>
-                                                    <asp:ListItem Value="16" Text="Olimp√≠adas Rio 2016 (NT 2015.002)"></asp:ListItem>
+                                                    <asp:ListItem Value="10" Text="Deficiente Condutor (ConvÍnio ICMS 38/12)"></asp:ListItem>
+                                                    <asp:ListItem Value="11" Text="Deficiente N„o Condutor (ConvÍnio ICMS 38/12)"></asp:ListItem>
+                                                    <asp:ListItem Value="16" Text="OlimpÌadas Rio 2016 (NT 2015.002)"></asp:ListItem>
                                                     <asp:ListItem Value="90" Text="Solicitado pelo Fisco"></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
@@ -3889,16 +3864,16 @@
                                         </tr>
                                         <tr>
                                             <td>
-                                                <asp:Label ID="lblMotivoIcmsDeson" runat="server" Text="Motivo Desonera√ß√£o" Style="display: none"></asp:Label>
+                                                <asp:Label ID="lblMotivoIcmsDeson" runat="server" Text="Motivo DesoneraÁ„o" Style="display: none"></asp:Label>
                                             </td>
                                             <td>                                  
                                                 <asp:DropDownList ID="drpMotivoIcmsDeson" runat="server" Style="display: none" SelectedValue='<%# Bind("MotivoDesoneracao") %>'
                                                     Width="200px">
                                                     <asp:ListItem Value="0" Text=""></asp:ListItem>
-                                                    <asp:ListItem Value="3" Text="Uso na agropecu√°ria"></asp:ListItem>
+                                                    <asp:ListItem Value="3" Text="Uso na agropecu·ria"></asp:ListItem>
                                                     <asp:ListItem Value="7" Text="SUFRAMA"></asp:ListItem>
                                                     <asp:ListItem Value="9" Text="Outros"></asp:ListItem>
-                                                    <asp:ListItem Value="12" Text="√ìrg√£o de fomento e desenv. agropecu√°rio"></asp:ListItem>
+                                                    <asp:ListItem Value="12" Text="”rg„o de fomento e desenv. agropecu·rio"></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
                                         </tr>
@@ -4101,7 +4076,7 @@
                                     <asp:Label ID="lblParcelaImportada" runat="server" Text='<%# Bind("ParcelaImportada") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Sa√≠da Interestadual">
+                            <asp:TemplateField HeaderText="SaÌda Interestadual">
                                 <EditItemTemplate>
                                     <asp:TextBox ID="txtSaidaInterestadual" runat="server" Text='<%# Bind("SaidaInterestadual") %>'
                                     Width="40px" onkeypress="return soNumeros(event, false, true)"></asp:TextBox>
@@ -4114,7 +4089,7 @@
                                     <asp:Label ID="lblSaidaInterestadual" runat="server" Text='<%# Bind("SaidaInterestadual") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
-                            <asp:TemplateField HeaderText="Conteudo Importa√ß√£o">
+                            <asp:TemplateField HeaderText="Conteudo ImportaÁ„o">
                                 <ItemTemplate>
                                     <asp:Label ID="lblCounteudoImportacao" runat="server" Text='<%# Bind("ConteudoImportacao") %>'></asp:Label>
                                 </ItemTemplate>
@@ -4155,13 +4130,13 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                C√≥d. Valor Fiscal ICMS
+                                                CÛd. Valor Fiscal ICMS
                                             </td>
                                             <td align="left" style="padding-left: 4px">
                                                 <asp:DropDownList ID="ddlCodValorFiscal" runat="server" AppendDataBoundItems="True"
                                                     DataSourceID="odsCodValorFiscal" DataTextField="Descr" DataValueField="Id" SelectedValue='<%# Bind("CodValorFiscal") %>'
                                                     onchange="ddlCodValorFiscal_change(this)" Width="200px">
-                                                    <asp:ListItem Text="Selecione um c√≥digo" Value=""></asp:ListItem>
+                                                    <asp:ListItem Text="Selecione um cÛdigo" Value=""></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
                                         </tr>
@@ -4178,7 +4153,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold" style="padding-left: 1px">
-                                                Plano Conta Cont√°bil
+                                                Plano Conta Cont·bil
                                             </td>
                                             <td align="left">
                                                 <asp:DropDownList ID="drpContaContabil" runat="server" AppendDataBoundItems="True"
@@ -4190,12 +4165,12 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Natureza BC do Cr√©dito
+                                                Natureza BC do CrÈdito
                                             </td>
                                             <td align="left" style="padding-left: 4px">
                                                 <uc5:ctrlSelPopup ID="selNatBcCred" runat="server" DataSourceID="odsNaturezaBcCredito"
                                                     DataTextField="Descr" DataValueField="Id" Descricao='<%# Eval("DescrNaturezaBcCred") %>'
-                                                    FazerPostBackBotaoPesquisar="False" TextWidth="200px" TituloTela="Selecione a Natureza da Base de C√°lculo do Cr√©dito"
+                                                    FazerPostBackBotaoPesquisar="False" TextWidth="200px" TituloTela="Selecione a Natureza da Base de C·lculo do CrÈdito"
                                                     Valor='<%# Bind("NaturezaBcCred") %>' />
                                             </td>
                                         </tr>
@@ -4212,22 +4187,22 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Contribui√ß√£o Social
+                                                Tipo de ContribuiÁ„o Social
                                             </td>
                                             <td align="left" style="padding-left: 4px">
                                                 <uc5:ctrlSelPopup ID="selCodCont" runat="server" DataSourceID="odsCodCont" DataTextField="Descr"
                                                     DataValueField="Id" Descricao='<%# Eval("DescrCodCont") %>' FazerPostBackBotaoPesquisar="False"
-                                                    TextWidth="200px" TituloTela="Selecione o Tipo de Contribui√ß√£o Social" Valor='<%# Bind("CodCont") %>' />
+                                                    TextWidth="200px" TituloTela="Selecione o Tipo de ContribuiÁ„o Social" Valor='<%# Bind("CodCont") %>' />
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Cr√©dito
+                                                Tipo de CrÈdito
                                             </td>
                                             <td align="left" style="padding-left: 4px">
                                                 <uc5:ctrlSelPopup ID="selCodCred" runat="server" DataSourceID="odsCodCred" DataTextField="Descr"
                                                     DataValueField="Id" Descricao='<%# Eval("DescrCodCred") %>' FazerPostBackBotaoPesquisar="False"
-                                                    TextWidth="200px" TituloTela="Selecione o Tipo de Cr√©dito" Valor='<%# Bind("CodCred") %>' />
+                                                    TextWidth="200px" TituloTela="Selecione o Tipo de CrÈdito" Valor='<%# Bind("CodCred") %>' />
                                             </td>
                                         </tr>
                                         <tr>
@@ -4252,7 +4227,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Al√≠quota PIS
+                                                AlÌquota PIS
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtAliqPis" runat="server" MaxLength="20" onchange="calcValorPis()"
@@ -4294,7 +4269,7 @@
                                         --%>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Al√≠quota Cofins
+                                                AlÌquota Cofins
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtAliqCofins" runat="server" MaxLength="20" onchange="calcValorCofins()"
@@ -4313,7 +4288,7 @@
                                         </tr>
                                         <tr style='<%= !IsNfImportacao() ? "display: none": "" %>'>
                                             <td align="left" style="font-weight: bold">
-                                                N√∫mero Ato Concession√°rio Drawback
+                                                N˙mero Ato Concession·rio Drawback
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtNumACDrawback" runat="server" Text='<%# Bind("NumACDrawback") %>'
@@ -4325,20 +4300,20 @@
                                                 <br />
                                                 <table width="100%">
                                                     <tr align="center">
-                                                        <td colspan="2"><b>Exporta√ß√£o</b></td>
+                                                        <td colspan="2"><b>ExportaÁ„o</b></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. Ato Concession√°rio Drawback</b></td>
+                                                        <td><b>N˙m. Ato Concession·rio Drawback</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="NumACDrawbackExp" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:TextBox></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. do Reg. de exporta√ß√£o.</b></td>
+                                                        <td><b>N˙m. do Reg. de exportaÁ„o.</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="txtNumRegExportacao" runat="server" Text='<%# Bind("NumRegExportacao") %>'></asp:TextBox></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>Chave acesso de exporta√ß√£o</b></td>
+                                                        <td><b>Chave acesso de exportaÁ„o</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="txtChaveAcessoExportacao" runat="server" Text='<%# Bind("ChaveAcessoExportacao") %>'></asp:TextBox></td>
                                                     </tr>
@@ -4369,13 +4344,13 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                C√≥d. Valor Fiscal ICMS
+                                                CÛd. Valor Fiscal ICMS
                                             </td>
                                             <td align="left" style="padding-left: 0px">
                                                 <asp:DropDownList ID="ddlCodValorFiscal" runat="server" AppendDataBoundItems="True"
                                                     DataSourceID="odsCodValorFiscal" DataTextField="Descr" DataValueField="Id" SelectedValue='<%# Bind("CodValorFiscal") %>'
                                                     onchange="ddlCodValorFiscal_change(this)" Width="200px">
-                                                    <asp:ListItem Text="Selecione um c√≥digo" Value=""></asp:ListItem>
+                                                    <asp:ListItem Text="Selecione um cÛdigo" Value=""></asp:ListItem>
                                                 </asp:DropDownList>
                                             </td>
                                         </tr>
@@ -4391,7 +4366,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Plano Conta Cont√°bil
+                                                Plano Conta Cont·bil
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:DropDownList ID="drpContaContabil" runat="server" AppendDataBoundItems="True"
@@ -4403,12 +4378,12 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Natureza BC do Cr√©dito
+                                                Natureza BC do CrÈdito
                                             </td>
                                             <td align="left">
                                                 <uc5:ctrlSelPopup ID="selNatBcCred" runat="server" DataSourceID="odsNaturezaBcCredito"
                                                     DataTextField="Descr" DataValueField="Id" FazerPostBackBotaoPesquisar="False"
-                                                    TextWidth="200px" TituloTela="Selecione a Natureza da Base de C√°lculo do Cr√©dito" />
+                                                    TextWidth="200px" TituloTela="Selecione a Natureza da Base de C·lculo do CrÈdito" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -4423,22 +4398,22 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Contribui√ß√£o Social
+                                                Tipo de ContribuiÁ„o Social
                                             </td>
                                             <td align="left">
                                                 <uc5:ctrlSelPopup ID="selCodCont" runat="server" DataSourceID="odsCodCont" DataTextField="Descr"
                                                     DataValueField="Id" OnLoad="selCodCont_Load" FazerPostBackBotaoPesquisar="False"
-                                                    TextWidth="200px" TituloTela="Selecione o Tipo de Contribui√ß√£o Social" />
+                                                    TextWidth="200px" TituloTela="Selecione o Tipo de ContribuiÁ„o Social" />
                                             </td>
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Cr√©dito
+                                                Tipo de CrÈdito
                                             </td>
                                             <td align="left">
                                                 <uc5:ctrlSelPopup ID="selCodCred" runat="server" DataSourceID="odsCodCred" DataTextField="Descr"
                                                     DataValueField="Id" OnLoad="selCodCred_Load" FazerPostBackBotaoPesquisar="False"
-                                                    TextWidth="200px" TituloTela="Selecione o Tipo de Cr√©dito" />
+                                                    TextWidth="200px" TituloTela="Selecione o Tipo de CrÈdito" />
                                             </td>
                                         </tr>
                                         <tr>
@@ -4462,7 +4437,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Al√≠quota PIS
+                                                AlÌquota PIS
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtAliqPis" runat="server" MaxLength="20" onchange="calcValorPis()"
@@ -4503,7 +4478,7 @@
                                         --%>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Al√≠quota Cofins
+                                                AlÌquota Cofins
                                             </td>
                                             <td align="left" style="padding-left: 2px">
                                                 <asp:TextBox ID="txtAliqCofins" runat="server" MaxLength="20" onchange="calcValorCofins()"
@@ -4522,7 +4497,7 @@
                                         </tr>
                                         <tr style='<%= !IsNfImportacao() ? "display: none": "" %>'>
                                             <td align="left" style="font-weight: bold">
-                                                N√∫mero Ato Concession√°rio Drawback
+                                                N˙mero Ato Concession·rio Drawback
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:TextBox ID="txtNumACDrawback" runat="server" Text='<%# Bind("NumACDrawback") %>'
@@ -4534,20 +4509,20 @@
                                                 <br />
                                                 <table width="100%">
                                                     <tr align="center">
-                                                        <td colspan="2"><b>Exporta√ß√£o</b></td>
+                                                        <td colspan="2"><b>ExportaÁ„o</b></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. Ato Concession√°rio Drawback</b></td>
+                                                        <td><b>N˙m. Ato Concession·rio Drawback</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="NumACDrawbackExp" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:TextBox></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. do Reg. de exporta√ß√£o.</b></td>
+                                                        <td><b>N˙m. do Reg. de exportaÁ„o.</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="txtNumRegExportacao" runat="server" Text='<%# Bind("NumRegExportacao") %>'></asp:TextBox></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>Chave acesso de exporta√ß√£o</b></td>
+                                                        <td><b>Chave acesso de exportaÁ„o</b></td>
                                                         <td align="left">
                                                             <asp:TextBox ID="txtChaveAcessoExportacao" runat="server" Text='<%# Bind("ChaveAcessoExportacao") %>'></asp:TextBox></td>
                                                     </tr>
@@ -4567,7 +4542,7 @@
                                         <img border="0" src="../Images/gear_add.gif" />
                                     </asp:LinkButton>
                                     <a href="#" id="lnkInfCompl" onclick="infComplProd(<%# Eval("IdProdNf") %>); return false;">
-                                        <img src="../Images/Nota.gif" border="0" title="Informa√ß√µes adicionais"></a>
+                                        <img src="../Images/Nota.gif" border="0" title="InformaÁıes adicionais"></a>
                                     <asp:ImageButton ID="imgInfoAdic" runat="server" ImageUrl="~/Images/book_go.png"
                                         OnClientClick='<%# "openInfoAdic(" + Eval("IdProdNf") + "); return false" %>'
                                         ToolTip="Dados adicionais" Visible='<%# Eval("IsNfImportacao") %>' />
@@ -4583,7 +4558,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                C√≥d. Valor Fiscal ICMS
+                                                CÛd. Valor Fiscal ICMS
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label21" runat="server" Text='<%# Eval("CodValorFiscalString") %>'></asp:Label>
@@ -4599,7 +4574,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Plano Conta Cont√°bil
+                                                Plano Conta Cont·bil
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label29" runat="server" Text='<%# Bind("DescrPlanoContaContabil") %>'></asp:Label>
@@ -4607,7 +4582,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Natureza BC do Cr√©dito
+                                                Natureza BC do CrÈdito
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label31" runat="server" Text='<%# Bind("DescrNaturezaBcCred") %>'></asp:Label>
@@ -4623,7 +4598,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Contribui√ß√£o Social
+                                                Tipo de ContribuiÁ„o Social
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label41" runat="server" Text='<%# Bind("DescrCodCont") %>'></asp:Label>
@@ -4631,7 +4606,7 @@
                                         </tr>
                                         <tr>
                                             <td align="left" style="font-weight: bold">
-                                                Tipo de Cr√©dito
+                                                Tipo de CrÈdito
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label42" runat="server" Text='<%# Bind("DescrCodCred") %>'></asp:Label>
@@ -4687,7 +4662,7 @@
                                         </tr>
                                         <tr style='<%= !IsNfImportacao() ? "display: none": "" %>'>
                                             <td align="left" style="font-weight: bold">
-                                                N√∫mero Ato Concession√°rio Drawback
+                                                N˙mero Ato Concession·rio Drawback
                                             </td>
                                             <td align="left" style="padding-left: 3px">
                                                 <asp:Label ID="Label40" runat="server" Text='<%# Bind("NumACDrawback") %>'></asp:Label>
@@ -4698,20 +4673,20 @@
                                                 <br />
                                                 <table width="100%">
                                                     <tr align="center">
-                                                        <td colspan="2"><b>Exporta√ß√£o</b></td>
+                                                        <td colspan="2"><b>ExportaÁ„o</b></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. Ato Concession√°rio Drawback</b></td>
+                                                        <td><b>N˙m. Ato Concession·rio Drawback</b></td>
                                                         <td align="left">
                                                             <asp:Label ID="Label78" runat="server" Text='<%# Eval("NumACDrawback") %>'></asp:Label></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>N√∫m. do Reg. de exporta√ß√£o.</b></td>
+                                                        <td><b>N˙m. do Reg. de exportaÁ„o.</b></td>
                                                         <td align="left">
                                                             <asp:Label ID="Label79" runat="server" Text='<%# Eval("NumRegExportacao") %>'></asp:Label></td>
                                                     </tr>
                                                     <tr>
-                                                        <td><b>Chave acesso de exporta√ß√£o</b></td>
+                                                        <td><b>Chave acesso de exportaÁ„o</b></td>
                                                         <td align="left">
                                                             <asp:Label ID="Label80" runat="server" Text='<%# Eval("ChaveAcessoExportacao") %>'></asp:Label></td>
                                                     </tr>
@@ -4841,7 +4816,7 @@
 
     <script type="text/javascript">
 
-        // Se a empressa n√£o vende vidros, esconde campos
+        // Se a empressa n„o vende vidros, esconde campos
         if (FindControl("hdfNaoVendeVidro", "input").value == "true" && FindControl("grdProdutos", "table") != null) {
             var tbProd = FindControl("grdProdutos", "table");
             var rows = tbProd.children[0].children;
@@ -4885,11 +4860,11 @@
 
         drpCst_Changed();
 
-        // Mostra/Esconde campos de inser√ß√£o de impostos
+        // Mostra/Esconde campos de inserÁ„o de impostos
         habilitaTxtImpostos(true);
 
         if (manual) {
-            FindControl("lblSubtitle", "span").innerHTML = "Altera√ß√£o manual de valores";
+            FindControl("lblSubtitle", "span").innerHTML = "AlteraÁ„o manual de valores";
             FindControl("lblSubtitle", "span").style.color = "Red";
 
             if (FindControl("txtBcPis", "input") != null) {
