@@ -13,42 +13,42 @@
 
     <script type="text/javascript">
         var nomeTabelaChequesOpener = <%= !String.IsNullOrEmpty(Request["tabelaCheque"]) ? Request["tabelaCheque"] : "'tbChequePagto'" %>;
-                
+
         function validar()
         {
             var dataVenc = FindControl("ctrlData_txtData", "input");
-            
+
             // Verifica se a data dos cheques deve ser maior que a data de hoje
             var bloquearRetroativo = <%= Glass.Configuracoes.FinanceiroConfig.FormaPagamento.BloquearChequesDataRetroativa.ToString().ToLower() %>;
             if (bloquearRetroativo && dataVenc.value != "")
             {
                 var dataMin = "<%= GetDataVencMin() %>";
-                
+
                 if (firstGreaterThenSec(dataMin, dataVenc.value))
                 {
                     alert("A data de vencimento do cheque deve ser, no mínimo, " + dataMin + ".");
                     return false;
                 }
             }
-            
+
             //var origem = FindControl("ctrOrigem_hdfLink", "input").value;
             //var idLiberarPedido = FindControl("ctrlLinkQueryString3_hdfLink", "input").value;
-            
+
             // Verifica se o cheque é para pagamento à vista de liberação
             // Bloqueia se a data de vencimento for superior à de amanhã e se a liberação bloquear dados do pedido
             var bloquearVista = <%= (Glass.Configuracoes.Liberacao.FormaPagamento.NumeroDiasChequeVistaLiberarPedido > 0).ToString().ToLower() %>;
-            
+
             // Verifica se o cheque é para pagamento à prazo de liberação
             // Bloqueia se a data de vencimento for superior ao prazo máximo do cliente e se a liberação bloquear dados do pedido
             var bloquearPrazo = <%= Glass.Configuracoes.Liberacao.DadosLiberacao.BloquearLiberacaoDadosPedido.ToString().ToLower() %>;
-            
+
             var dataMax = null;
-            
+
             if (bloquearVista && (nomeTabelaChequesOpener.indexOf("ctrlFormaPagto1") > -1 || nomeTabelaChequesOpener.indexOf("ctrlFormaPagto2") > -1))
                 dataMax = "<%= GetDataVencMaxVista() %>";
             else if (bloquearPrazo && nomeTabelaChequesOpener.indexOf("ctrlFormaPagto3") > -1)
                 dataMax = "<%= GetDataVencMaxPrazo() %>";
-            
+
             if (dataMax != null)
             {
                 if (firstGreaterThenSec(dataVenc.value, dataMax))
@@ -57,15 +57,15 @@
                     return false;
                 }
             }
-            
+
             return validate(null);
         }
-    
+
         function setOpenerCheque()
         {
             if (!validar())
                 return false;
-            
+
             var numCheque = FindControl("txtNumero", "input").value;
             var digitoNum = FindControl("txtDigitoNum", "input").value;
             var titular = FindControl("txtTitular", "input").value;
@@ -89,18 +89,18 @@
             var nomeLoja = loja.options[loja.selectedIndex].text;
             var cpfCnpj = FindControl("txtCpfCnpj", "input");
             cpfCnpj = cpfCnpj ? cpfCnpj.value : "";
-            
+
             // Verifica se a data é válida
             if (!verifica_data(dataVenc))
                 return false;
-                
+
             // Verificar se o titular possui menos de 45 caracteres
             if (titular != "" && titular.toString().length > 45)
             {
                 alert("O Titular deve ter no máximo 45 caracteres.");
                 return false;
             }
-            
+
             // Verifica se o cheque já existe
             var validaCheque = CadCheque.ValidaCheque(idCliente, banco, agencia, conta, numCheque, digitoNum).value.split('|');
             if (validaCheque[0] == "false")
@@ -108,7 +108,7 @@
                 alert(validaCheque[1]);
                 return false;
             }
-            
+
             // Verifica se o número do cheque foi digitado com 6 caracteres
             var numeroDigitosCheque = <%= NumeroDigitosCheque() %>;
             if (numeroDigitosCheque > 0 && FindControl("txtNumero", "input").value.toString().length != numeroDigitosCheque)
@@ -116,27 +116,27 @@
                 alert("O número do cheque deve ser informado com " + numeroDigitosCheque + " caracteres.");
                 return false;
             }
-            
+
             var callbackIncluir = <%= !String.IsNullOrEmpty(Request["callbackIncluir"]) ? Request["callbackIncluir"] : "''" %>;
             var callbackExcluir = <%= !String.IsNullOrEmpty(Request["callbackExcluir"]) ? Request["callbackExcluir"] : "''" %>;
             var nomeControleFormaPagto = <%= !String.IsNullOrEmpty(Request["nomeControleFormaPagto"]) ? Request["nomeControleFormaPagto"] : "''" %>;
             var controlePagto = <%= !String.IsNullOrEmpty(Request["controlPagto"]) ? Request["controlPagto"] : "''" %>;
-            
+
             var exibirCpfCnpj = "<%= ExibirDadosLimiteCheque().ToString().ToLower() %>";
-           
-            window.opener.setCheque(nomeTabelaChequesOpener, null, null, numCheque, digitoNum, titular, valor, dataVenc, banco, agencia, 
-                conta, 1, obs, window, "terceiro", origem, idAcertoCheque, idContaR, idPedido, idSinal, idAcerto, idLiberarPedido, idTrocaDevolucao, 
+
+            window.opener.setCheque(nomeTabelaChequesOpener, null, null, numCheque, digitoNum, titular, valor, dataVenc, banco, agencia,
+                conta, 1, obs, window, "terceiro", origem, idAcertoCheque, idContaR, idPedido, idSinal, idAcerto, idLiberarPedido, idTrocaDevolucao,
                 cpfCnpj, loja.value, nomeLoja, controlePagto, linha, callbackIncluir, callbackExcluir, nomeControleFormaPagto, exibirCpfCnpj);
-            
+
             var tabela = document.getElementById("tbChequePagto");
             var tabelaOpener = window.opener.document.getElementById(nomeTabelaChequesOpener);
             duplicarTabela(tabela, tabelaOpener);
-            
+
             atualizaTotal();
-            
+
             FindControl("drpLoja", "select").focus();
         }
-        
+
         function atualizaTotal()
         {
             var controleTotal = FindControl("lblTotal", "span");
@@ -145,11 +145,11 @@
                 var total = parseFloat(window.opener.document.getElementById(<%= Request["controlPagto"] %>).value.replace(',', '.'));
                 if (isNaN(total))
                     total = 0;
-                
+
                 controleTotal.innerHTML = "<br />Total: R$ " + total.toFixed(2).replace('.', ',') + "<br /><br />";
             }
         }
-        
+
         function limpar()
         {
             var control = GetQueryString("controlForma");
@@ -176,15 +176,15 @@
             FindControl("hdfLinha", "input").value = "";
             FindControl("btnInserir", "input").value = "Inserir";
         }
-        
+
         function fechar()
         {
             if (FindControl("hdfLinha", "input").value != "")
                 window.opener.document.getElementById(nomeTabelaChequesOpener).rows[FindControl("hdfLinha", "input").value].style.backgroundColor = "White";
-                
+
             closeWindow();
         }
-        
+
         function alteraTipoPessoa()
         {
             if (!FindControl("drpTipoPessoa", "select"))
@@ -194,57 +194,57 @@
             var label = FindControl("Label9", "span");
             var controle = FindControl("txtCpfCnpj", "input");
             var validador = eval(FindControl("ctvCpfCnpj", "span").id);
-            
+
             if (controle)
                 controle.value = "";
-            
+
             if (tipoPessoa == "F")
             {
                 label.innerHTML = "CPF";
-                
+
                 if (controle)
                     controle.setAttribute("onkeydown","return maskCPF(event, this)");
             }
             else
             {
                 label.innerHTML = "CNPJ";
-                
+
                 if (controle)
                     controle.setAttribute("onkeydown","return maskCNPJ(event, this)");
             }
         }
-        
+
         window.onload=function(){
-        
+
             var idCli = GetQueryString("idCliente");
-            
+
             if(idCli == null || idCli == "")
                 idCli = GetQueryString("IdCli");
-            
+
             var control = GetQueryString("controlForma");
-            
-            
+
+
             if(idCli != null && idCli != "" && control != null && control != 9){
-            
+
                 var retorno = CadCheque.DadosCliente(idCli);
-                
+
                 if(retorno.error != null){
                     alert(retorno.error.description);
                     return false;
                 }
-                
+
                 var dados = retorno.value.split(";");
-                
+
                 FindControl("txtTitular", "input").value = dados[0];
-                
+
                 if (FindControl("drpTipoPessoa", "select")) FindControl("drpTipoPessoa", "select").value = dados[1];
                 if (FindControl("txtCpfCnpj", "input")) FindControl("txtCpfCnpj", "input").value = dados[2];
-               
-                if(FindControl("drpTipoPessoa", "select").value == "J")                
-                    FindControl("Label9", "span").innerHTML = "CNPJ"                
+
+                if(FindControl("drpTipoPessoa", "select").value == "J")
+                    FindControl("Label9", "span").innerHTML = "CNPJ"
             }
         };
-        
+
     </script>
 
     <table>
@@ -376,6 +376,15 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                                            <asp:Label ID="Label2" runat="server" Text="CMC7"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCMC7" runat="server" onkeypress="return soNumeros(event, true, true);" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
+                                            <img runat="server" src="~/Images/Help.gif" title="Digite as faixas de valor separando a primeira da segunda com (<) e a segunda da terceira com (>) como no exemplo a seguir: 40903151<0013002665>500074931502" />
+                                        </td>
+                                    </td>
+                                    <tr class="alt">
                                         <td align="left" nowrap="nowrap" class="dtvHeader">
                                             <asp:Label ID="Label8" runat="server" Text="Obs."></asp:Label>
                                         </td>
@@ -405,9 +414,9 @@
                     <Columns>
                         <asp:TemplateField>
                             <EditItemTemplate>
-                                <asp:LinkButton ID="lnkAtualizar" runat="server" CommandName="Update"><img 
+                                <asp:LinkButton ID="lnkAtualizar" runat="server" CommandName="Update"><img
                                     border="0" src="../Images/Ok.gif" /></asp:LinkButton>
-                                <asp:LinkButton ID="lnkCancelar" runat="server" CommandName="Cancel"><img 
+                                <asp:LinkButton ID="lnkCancelar" runat="server" CommandName="Cancel"><img
                                     border="0" src="../Images/ExcluirGrid.gif" /></asp:LinkButton>
                                 <asp:HiddenField ID="hdfPedido" runat="server" Value='<%# Bind("IdPedido") %>' />
                             </EditItemTemplate>
@@ -493,7 +502,7 @@
             </td>
         </tr>
     </table>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server"
         SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsCheques" runat="server" EnablePaging="True"
@@ -528,28 +537,28 @@
     <script type="text/javascript">
     <% if (!Cadastrar()) %>
     <% { %>
-    
+
     var tabela = document.getElementById("tbChequePagto");
     var tabelaOpener = window.opener.document.getElementById(nomeTabelaChequesOpener);
     duplicarTabela(tabela, tabelaOpener);
     atualizaTotal();
     alteraTipoPessoa();
-    
+
     if (<%= (!String.IsNullOrEmpty(Request["editar"])).ToString().ToLower() %>)
         editarItemCheque("tbChequePagto", '<%= Request["editar"] %>', <%= Request["controlPagto"] %>, '', '');
-    
+
     <% } %>
     <% else %>
     <% { %>
-    
+
     try
     {
         window.opener.document.getElementById(<%= Request["controlPagto"] %>).value = parseFloat(FindControl("hdfTotal", "input").value).toFixed(2).toString().replace(".", ",");
     }
     catch (err) {}
-    
+
     <% } %>
-    
+
     </script>
 
 </asp:Content>

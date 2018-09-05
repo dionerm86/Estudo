@@ -1029,7 +1029,6 @@ namespace Glass.Global.Negocios.Componentes
                     var produtoAntigo = ObtemProduto(produto.IdProd);
                     MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(produtoAntigo.DataModel, produto.DataModel);
                     Email.EnviaEmailAdministradorPrecoProdutoAlterado(null, produtoAntigo.DataModel, produto.DataModel);
-                    SMS.EnviaSmsAdministradorPrecoProdutoAlterado(produtoAntigo.DataModel, produto.DataModel);
                 }
 
                 var resultado = produto.Save(session);

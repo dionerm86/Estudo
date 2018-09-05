@@ -2219,7 +2219,6 @@ namespace Glass.Data.DAL
                         /* Chamado 43961 */
                         MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(prodOld, prodNew);
                         Email.EnviaEmailAdministradorPrecoProdutoAlterado(transaction, prodOld, prodNew);
-                        SMS.EnviaSmsAdministradorPrecoProdutoAlterado(prodOld, prodNew);
                     }
 
 
@@ -2285,7 +2284,6 @@ namespace Glass.Data.DAL
                     var produtoAtualizado = GetElementByPrimaryKey(trans, idProd);
                     MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(prod, produtoAtualizado);
                     Email.EnviaEmailAdministradorPrecoProdutoAlterado(trans, prod, produtoAtualizado);
-                    SMS.EnviaSmsAdministradorPrecoProdutoAlterado(prod, produtoAtualizado);
 
                     LogAlteracaoDAO.Instance.LogProduto(trans, prod, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
@@ -4720,7 +4718,6 @@ namespace Glass.Data.DAL
             // Chamado 43961
             MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(produtoAntigo, objUpdate);
             Email.EnviaEmailAdministradorPrecoProdutoAlterado(session, produtoAntigo, objUpdate);
-            SMS.EnviaSmsAdministradorPrecoProdutoAlterado(produtoAntigo, objUpdate);
 
             // Reinsere beneficiamentos
             if (atualizarBenef)
