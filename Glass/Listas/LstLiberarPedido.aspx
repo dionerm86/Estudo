@@ -85,7 +85,7 @@
                 </template>
             </lista-paginada>
         </section>
-        <section>
+        <section class="links">
             <div v-if="!configuracoes.apenasConsultaLiberacao">
                 <span>
                     <img border="0" src="../Images/Clipe.gif">
@@ -94,7 +94,6 @@
                     </a>
                 </span>
             </div>
-            <br />
             <div v-if="!configuracoes.apenasConsultaLiberacao">
                 <span>
                     <a href="#" @click.prevent="abrirListaLiberacoes(false)">

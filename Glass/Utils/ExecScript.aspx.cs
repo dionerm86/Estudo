@@ -1379,35 +1379,39 @@ namespace Glass.UI.Web.Utils
 
             [PersistenceProperty("CALCULOALTURA")]
             public string CalculoAltura { get; set; }
+
+            [PersistenceProperty("PROJETOMODELO")]
+            public string ProjetoModelo { get; set; }
+
         }
 
         private string Sql()
         {
-            return @"SELECT IdMaterProjMod, CalculoAltura FROM material_projeto_modelo";
+            return @"SELECT mpm.IdMaterProjMod, mpm.CalculoAltura, (SELECT Codigo FROM projeto_modelo WHERE IdProjetoModelo = mpm.IdProjetoModelo) ProjetoModelo FROM material_projeto_modelo mpm";
         }
 
         public string AjustaExpressaoCalculo()
         {
             var sql = Sql();
-            var calculosAltura = objPersistence.LoadData(sql).ToList();
+            var materiaisProjetoModelo = objPersistence.LoadData(sql).ToList();
 
             var retorno = string.Empty;
             var listaMedidas = MedidaProjetoDAO.Instance.GetMedidas().Select(f => f.DescricaoTratada).OrderByDescending(f => f.Length).ToList();
 
             var rgx = string.Join("|", listaMedidas);
-            rgx = rgx + "|FOLGA[a-zA-Z0-9]*|P[a-zA-Z0-9]*LARG|P[a-zA-Z0-9]*ESP|P[a-zA-Z0-9]*ALT|LARG[a-zA-Z0-9]*";
+            rgx = rgx + "|FOLGA[a-zA-Z0-9]*|P[a-zA-Z0-9]*LARG|P[a-zA-Z0-9]*ESP|P[a-zA-Z0-9]*ALT|LARG[a-zA-Z0-9]*|ALT[a-zA-Z0-9]*";
             Regex calculo = new Regex($@"{rgx}\w*");
 
-            foreach (var calculoAltura in calculosAltura.Where(f => !string.IsNullOrWhiteSpace(f.CalculoAltura)).GroupBy(f => f.CalculoAltura).Select(grp => grp.First()))
+            foreach (var materialProjetoModelo in materiaisProjetoModelo.Where(f => !string.IsNullOrWhiteSpace(f.CalculoAltura)).GroupBy(f => f.CalculoAltura).Select(grp => grp.First()))
             {
-                var expressao = calculo.Replace(calculoAltura.CalculoAltura, 1000.ToString());
+                var expressao = calculo.Replace(materialProjetoModelo.CalculoAltura, 1000.ToString());
                 try
                 {
-                    UtilsProjeto.CalcularExpressao(expressao);
+                    UtilsProjeto.CalcularExpressao(expressao.Replace(" ", string.Empty));
                 }
                 catch (Exception ex)
                 {
-                    retorno += "UPDATE material_projeto_modelo set CALCULOALTURA = WHERE CALCULOALTURA = \'" + calculoAltura.CalculoAltura + "\';/* Expressão Calc.:" + expressao + "\t" + ex.Message + "*/\n";
+                    retorno += $"UPDATE material_projeto_modelo set CALCULOALTURA = WHERE CALCULOALTURA = \'{ materialProjetoModelo.CalculoAltura }\';/* Expressão Calc.:{ expressao }\t{ ex.Message.Replace("\r\n", " ") }\tProjeto de exemplo:{ materialProjetoModelo.ProjetoModelo }*/\n";
                 }
             }
 

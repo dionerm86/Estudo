@@ -187,6 +187,39 @@ const app = new Vue({
     },
 
     /**
+     * Exibe uma div como 'popup'.
+     * @param {string} nome O nome da DIV que será exibida.
+     * @param {Object} event O objeto com o evento JavaScript.
+     * @param {Object} item O produto que será atualizado.
+     */
+    exibirObsObsLib: function(nome, event, item) {
+      var botao = event.target;
+
+      TagToTip(nome, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação do pedido: ' + item.id, CLOSEBTN, true,
+        CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true,
+        FIX, [botao, 320 - getTableWidth(nome), -41 - getTableHeight(nome)]);
+    },
+
+    /**
+     * Salva a observação de um produto de pedido.
+     * @param {Object} item O produto que será atualizado.
+     */
+    alterarObsObsLib: function (item) {
+      var vm = this;
+
+      Servicos.Pedidos.salvarObservacao(item.id, item.observacao, item.observacaoLiberacao)
+        .then(function (resposta) {
+          vm.exibirMensagem('Sucesso', resposta.data.mensagem);
+          UnTip();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        })
+    },
+
+    /**
      * Reabre um pedido, se possível.
      * @param {Object} item O pedido que será reaberto.
      */

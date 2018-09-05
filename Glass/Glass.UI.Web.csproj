@@ -193,6 +193,10 @@
       <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
+      <HintPath>..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\FC.dll</HintPath>
       <Private>True</Private>

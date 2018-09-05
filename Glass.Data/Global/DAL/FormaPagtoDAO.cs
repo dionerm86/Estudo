@@ -546,8 +546,8 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<FormaPagto> GetForCompra()
         {
-            var sqlFormasPagto = string.Format("{0},{1},{2},{3},{4}", (uint)Pagto.FormaPagto.Boleto, (uint)Pagto.FormaPagto.ChequeProprio, (uint)Pagto.FormaPagto.Dinheiro,
-                (uint)Pagto.FormaPagto.Deposito, (uint)Pagto.FormaPagto.Prazo);
+            var sqlFormasPagto = string.Format("{0},{1},{2},{3},{4},{5}", (uint)Pagto.FormaPagto.Boleto, (uint)Pagto.FormaPagto.ChequeProprio, (uint)Pagto.FormaPagto.Dinheiro,
+                (uint)Pagto.FormaPagto.Deposito, (uint)Pagto.FormaPagto.Cartao, (uint)Pagto.FormaPagto.Prazo);
 
             if (FinanceiroConfig.FormaPagamento.PermitirFormaPagtoPermutaApenasAdministrador)
             {

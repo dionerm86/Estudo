@@ -190,20 +190,26 @@
                 </template>
             </lista-paginada>
         </section>
-        <section>
+        <section class="links">
             <div v-if="configuracoes.quantidadeNotasFsda > 0">
                 Número de notas fiscais a emitir (Formulário de Segurança): {{ configuracoes.quantidadeNotasFsda }}
             </div>
             <div v-if="configuracoes.ativarContingencia">
-                <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaScan)">
-                    Habilitar Contingência da NF-e
-                </a>
-                <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaFsda)">
-                    <img border="0" src="../Images/fsda.gif" /> Habilitar Contingência FS-DA da NF-e
-                </a>
-                <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaNaoUtilizar)">
-                    Desabilitar Contingência da NF-e
-                </a>
+                <span>
+                    <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaScan)">
+                        Habilitar Contingência da NF-e
+                    </a>
+                </span>
+                <span>
+                    <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaFsda)">
+                        <img border="0" src="../Images/fsda.gif" /> Habilitar Contingência FS-DA da NF-e
+                    </a>
+                </span>
+                <span>
+                    <a href="#" @click.prevent="alterarContingencia(configuracoes.tipoContingenciaNaoUtilizar)">
+                        Desabilitar Contingência da NF-e
+                    </a>
+                </span>
             </div>
             <div>
                 <span>
@@ -222,14 +228,14 @@
                     </a>
                 </span>
             </div>
-            <div>
+            <div v-if="notasAutorizadasEFinalizadas">
                 <span>
-                    <a href="#" @click.prevent="abrirImpressaoProdutosNotasFiscais(false)" v-if="notasAutorizadasEFinalizadas">
+                    <a href="#" @click.prevent="abrirImpressaoProdutosNotasFiscais(false)">
                         <img border="0" src="../Images/Printer.png" /> Imprimir (Produtos)
                     </a>
                 </span>
                 <span>
-                    <a href="#" @click.prevent="abrirImpressaoProdutosNotasFiscais(true)" v-if="notasAutorizadasEFinalizadas">
+                    <a href="#" @click.prevent="abrirImpressaoProdutosNotasFiscais(true)">
                         <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel (Produtos)
                     </a>
                 </span>

@@ -675,7 +675,7 @@ namespace Glass.UI.Web.Utils
                 ((Controls.ctrlLoja)sender).Enabled = !PedidoOrdemCargaDAO.Instance.PedidoTemOC(null, Request["IdPedido"].StrParaUint());
         }
 
-        protected bool PodeAlterarPedCli()
+        protected bool PedCliApenasLeitura()
         {
             string idPedido = Request["idPedido"];
             if (idPedido != null)
