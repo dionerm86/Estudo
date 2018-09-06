@@ -59,7 +59,10 @@ namespace Glass.Data.RelModel
                 var idProdPedParent = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, IdProdPedEsp);
 
                 if (idProdPedParent.GetValueOrDefault() > 0)
-                    return _dataEntrega.GetValueOrDefault().AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+                {
+                    var dataFabricaComposicao = ProdutosPedidoEspelhoDAO.Instance.CalcularDataComposicao(_dataEntrega ?? DateTime.Now);
+                    return dataFabricaComposicao;
+                }
 
                 return _dataEntrega;
             }
@@ -74,7 +77,10 @@ namespace Glass.Data.RelModel
                 var idProdPedParent = ProdutosPedidoEspelhoDAO.Instance.ObterIdProdPedParent(null, IdProdPedEsp);
 
                 if (idProdPedParent.GetValueOrDefault() > 0)
-                    return _dataFabrica.GetValueOrDefault().AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+                {
+                    var dataFabricaComposicao = ProdutosPedidoEspelhoDAO.Instance.CalcularDataComposicao(_dataFabrica ?? DateTime.Now);
+                    return dataFabricaComposicao;
+                }
 
                 return _dataFabrica;
             }
