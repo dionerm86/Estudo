@@ -545,6 +545,18 @@ namespace Glass.Data.DAL
                 campoIdProdPedParent); // 2
         }
 
+        public DateTime CalcularDataComposicao(DateTime dataComposicao)
+        {
+            dataComposicao = dataComposicao.AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+
+            while (!FuncoesData.DiaUtil(dataComposicao))
+            {
+                dataComposicao = dataComposicao.AddDays(-1);
+            }
+
+            return dataComposicao;
+        }
+
         public bool IsProdToEtiq(uint idProdPed)
         {
             string sql = SqlProdEtiq(0, idProdPed, null, 0, 0, 0, null, null, null, null, null, null, false, null, 0, false,

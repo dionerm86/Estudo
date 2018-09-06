@@ -891,7 +891,10 @@ namespace Glass.Data.Model
             get
             {
                 if (IdProdPedParent.GetValueOrDefault() > 0)
-                    return DataFabrica.AddDays(-PCPConfig.DiasReduzirDataFabricaComposicaoDuploLaminado);
+                {
+                    var dataFabricaComposicao = ProdutosPedidoEspelhoDAO.Instance.CalcularDataComposicao(DataFabrica);
+                    return dataFabricaComposicao;
+                }
 
                 return DataFabrica;
             }
