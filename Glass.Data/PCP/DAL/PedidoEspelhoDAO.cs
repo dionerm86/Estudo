@@ -551,8 +551,8 @@ namespace Glass.Data.DAL
                 apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
                 null, null, 0, false, origemPedido, pedidosConferidos, tipoVenda, true, out temFiltro);
 
-            var pedidos = LoadDataWithSortExpression(sql, filtro, startRow, pageSize, temFiltro, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
-                dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
+            var pedidos = objPersistence.LoadDataWithSortExpression(sql, new InfoSortExpression(filtro), new InfoPaging(startRow, pageSize), GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab,
+                dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null)).ToList();
 
             foreach (var pedido in pedidos)
             {
@@ -600,9 +600,9 @@ namespace Glass.Data.DAL
             string sql = Sql(idPedido, null, idCli, nomeCli, idLoja, idFunc, idFuncionarioConferente, situacao, situacaoPedOri, idsProcesso, dataIniEnt,
                 dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin, dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, soFinalizados,
                 apenasMaoDeObra, null, pedidosSemAnexo, pedidosAComprar, situacaoCnc, dataIniSituacaoCnc, dataFimSituacaoCnc, tipoPedido, idsRotas,
-                null, null, 0, false, origemPedido, pedidosConferidos, tipoVenda, true, out temFiltro);
+                null, null, 0, false, origemPedido, pedidosConferidos, tipoVenda, false, out temFiltro);
 
-            return GetCountWithInfoPaging(sql, temFiltro, null, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin,
+            return objPersistence.ExecuteSqlQueryCount(sql, GetParam(null, nomeCli, dataIniEnt, dataFimEnt, dataIniFab, dataFimFab, dataIniFin, dataFimFin,
                 dataIniConf, dataFimConf, dataIniEmis, dataFimEmis, dataIniSituacaoCnc, dataFimSituacaoCnc, null, null));
         }
 
@@ -3223,46 +3223,28 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Altera a situação conferido do pedido interno
         /// <summary>
-        /// Altera a situação conferido do pedido interno
+        /// Altera a situação conferido do pedido interno.
         /// </summary>
+        /// <param name="sessao"></param>
         /// <param name="idPedido"></param>
-        public void AlteraSituacaoPedidoImportadoConferido(uint idPedido)
+        public void AlteraSituacaoPedidoImportadoConferido(GDASession sessao, int idPedido)
         {
-            using (var transaction = new GDATransaction())
-            {
-                try
-                {
-                    transaction.BeginTransaction();
+            var pedEsp = GetElement(sessao, (uint)idPedido);
+            if (pedEsp == null)
+                throw new Exception("Pedido não encontrado.");
 
-                    var pedEsp = GetElement(idPedido);
-                    if (pedEsp == null)
-                        throw new Exception("Pedido não encontrado.");
+            if (pedEsp.PedidoConferido && IsPedidoImpresso(sessao, (uint)idPedido))
+                throw new Exception("Existe pelo menos uma peça impressa para este pedido");
 
-                    if (pedEsp.PedidoConferido && IsPedidoImpresso(transaction, idPedido))
-                        throw new Exception("Existe pelo menos uma peça impressa para este pedido");
+            if (pedEsp.PedidoConferido)
+                pedEsp.PedidoConferido = false;
+            else
+                pedEsp.PedidoConferido = true;
 
-                    if (pedEsp.PedidoConferido)
-                        pedEsp.PedidoConferido = false;
-                    else
-                        pedEsp.PedidoConferido = true;
-
-                    LogAlteracaoDAO.Instance.LogPedidoEspelho(transaction, pedEsp, LogAlteracaoDAO.SequenciaObjeto.Novo);
-                    Update(transaction, pedEsp);
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
-            }
+            LogAlteracaoDAO.Instance.LogPedidoEspelho(sessao, pedEsp, LogAlteracaoDAO.SequenciaObjeto.Novo);
+            Update(sessao, pedEsp);
         }
-
-        #endregion
 
         #region Verifica se o pedido está impresso
 

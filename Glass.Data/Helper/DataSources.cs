@@ -210,6 +210,21 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
+        /// Retorna as situações do pedido conferência.
+        /// </summary>
+        public GenericModel[] GetSituacaoPedidoConferencia()
+        {
+            var retorno = new List<GenericModel>();
+
+            foreach (var situacao in Enum.GetValues(typeof(PedidoEspelho.SituacaoPedido)))
+            {
+                retorno.Add(new GenericModel((int)((PedidoEspelho.SituacaoPedido)situacao), ((PedidoEspelho.SituacaoPedido)situacao).Translate().ToString()));
+            }
+
+            return retorno.ToArray();
+        }
+
+        /// <summary>
         /// Retorna todas as situações de cheques
         /// </summary>
         /// <returns></returns>
