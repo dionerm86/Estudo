@@ -1408,7 +1408,7 @@ function corrigeLeituraEtiqueta(codBarras) {
     codBarras = codBarras.toString();
 
     if (codBarras.length > 0 && codBarras[0].toLowerCase() == 'c') {
-        return codBarras;
+        return codBarras.replace(';', '/');
     }
 
     if (codBarras.toString().indexOf(".cni") >= 0)
