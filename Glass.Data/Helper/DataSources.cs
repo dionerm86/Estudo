@@ -174,7 +174,10 @@ namespace Glass.Data.Helper
             {
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.Cancelado, "Cancelado"));
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.ConfirmadoLiberacao, "Confirmado PCP"));
-                lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
+                if (Liberacao.DadosLiberacao.LiberarPedidoProdutos)
+                    lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.Confirmado, "Liberado"));
             }
 
@@ -202,7 +205,10 @@ namespace Glass.Data.Helper
             else
             {
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.ConfirmadoLiberacao, "Confirmado PCP"));
-                lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
+                if (Liberacao.DadosLiberacao.LiberarPedidoProdutos)
+                    lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.Confirmado, "Liberado"));
             }
 
@@ -255,7 +261,10 @@ namespace Glass.Data.Helper
             else
             {
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.ConfirmadoLiberacao, "Confirmado PCP"));
-                lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
+                if (Liberacao.DadosLiberacao.LiberarPedidoProdutos)
+                    lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.LiberadoParcialmente, "Liberado Parcialmente"));
+
                 lstTipo.Add(new GenericModel((int)Pedido.SituacaoPedido.Confirmado, "Liberado"));
             }
 
