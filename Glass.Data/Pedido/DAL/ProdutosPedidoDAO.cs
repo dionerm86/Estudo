@@ -846,7 +846,10 @@ namespace Glass.Data.DAL
                 return lst.ToArray();
             }
 
-            return LoadDataWithSortExpression(SqlForGerarVolume(idPedido, true), sortExpression, startRow, pageSize);
+            var sql = SqlForGerarVolume(idPedido, true);
+            sql += " ORDER BY gp.Descricao ";
+
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize);
         }
 
         public int GetForGerarVolumeCountReal(uint idPedido)
