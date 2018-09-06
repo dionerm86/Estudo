@@ -110,10 +110,10 @@
                         </button>
                     </td>
                     <td>
-                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" />
+                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" required />
                     </td>
                     <td>
-                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" />
+                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" required />
                     </td>
                     <td>
                         <campo-busca-etiqueta-aplicacao :aplicacao.sync="aplicacaoAtual"></campo-busca-etiqueta-aplicacao>
@@ -158,10 +158,10 @@
                         </button>
                     </td>
                     <td>
-                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" v-if="inserindo" />
+                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" v-if="inserindo" required />
                     </td>
                     <td>
-                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" v-if="inserindo" />
+                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" v-if="inserindo" required />
                     </td>
                     <td>
                         <campo-busca-etiqueta-aplicacao :aplicacao.sync="aplicacaoAtual" v-if="inserindo"></campo-busca-etiqueta-aplicacao>
