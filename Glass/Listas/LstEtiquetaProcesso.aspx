@@ -29,7 +29,7 @@
     <div id="app">
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum processo encontrado"
-                :numero-registros="15">
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
@@ -95,9 +95,52 @@
                             {{ item.situacao.nome }}
                         </span>
                     </td>
-                    <td style="white-space: nowrap">
+                    <td>
                         <log-alteracao tabela="Processo" :id-item="item.id" :atualizar-ao-alterar="false"
                             v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" />
+                    </td>
+                    <td>
+                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" />
+                    </td>
+                    <td>
+                        <campo-busca-etiqueta-aplicacao :aplicacao.sync="aplicacaoAtual"></campo-busca-etiqueta-aplicacao>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.destacarNaEtiqueta" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.gerarFormaInexistente" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="processo.numeroDiasUteisDataEntrega" maxlength="10"
+                            style="width: 60px" />
+                    </td>
+                    <td>
+                        tipo processo
+                    </td>
+                    <td>
+                        tipo pedido
+                    </td>
+                    <td>
+                        situacao
+                    </td>
+                    <td>
                     </td>
                 </template>
             </lista-paginada>

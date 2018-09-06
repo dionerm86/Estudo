@@ -484,7 +484,7 @@ Vue.component('lista-itens-venda', {
     },
 
     /**
-     * Função que indica se o formulário de ambientes possui valores válidos de acordo com os controles.
+     * Função que indica se o formulário de itens de venda possui valores válidos de acordo com os controles.
      * @param {Object} botao O botão que foi disparado no controle.
      * @returns {boolean} Um valor que indica se o formulário está válido.
      */

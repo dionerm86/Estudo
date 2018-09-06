@@ -25,14 +25,6 @@ Servicos.Processos = (function(http) {
         params: filtro
       });
     },
-
-    /**
-     * Recupera as configurações para a tela de lista de processos.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterConfiguracoesLista: function () {
-      return Promise.reject();
-    }
   };
 })(function() {
   return Vue.prototype.$http;
