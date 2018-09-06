@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Processos
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "Descricao"; }
+            get { return "Descricao ASC"; }
         }
 
         /// <inheritdoc/>
@@ -33,20 +33,20 @@ namespace Glass.API.Backend.Helper.Processos
                     return "CodInterno";
 
                 case "aplicacao":
-                    return "DescrAplicacao";
+                    return "CodInternoAplicacao";
 
                 case "destacarnaetiqueta":
                     return "DestacarEtiqueta";
 
+                case "descricao":
                 case "gerarformainexistente":
                 case "gerararquivodemesa":
                 case "numerodiasuteisdataentrega":
                 case "tipoprocesso":
-                case "tipospedidos":
                     return campo;
 
-                case "situacao":
-                    return "DescrSituacao";
+                case "tipospedidos":
+                    return "TipoPedido";
 
                 default:
                     return this.OrdenacaoPadrao;

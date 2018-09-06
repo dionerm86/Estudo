@@ -479,6 +479,7 @@
     <Compile Include="Models\Genericas\Venda\TipoProdutoDto.cs" />
     <Compile Include="Models\Processos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Processos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Processos\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\AreaCalculadaDto.cs" />
     <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />

@@ -12,5 +12,5 @@ Vue.filter('simNao', function (valor) {
     return valor;
   }
 
-  return valor ? 'Sim' : 'Não';
+  return valor ? '\u2714' : '\u2717';
 });

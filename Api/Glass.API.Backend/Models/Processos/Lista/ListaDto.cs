@@ -4,6 +4,7 @@
 
 using Colosoft;
 using Glass.API.Backend.Models.Genericas;
+using Glass.Data.DAL;
 using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace Glass.API.Backend.Models.Processos.Lista
         {
             this.Id = processo.IdProcesso;
             this.Codigo = processo.CodInterno;
+            this.Descricao = processo.Descricao;
             this.Aplicacao = IdCodigoDto.TentarConverter(processo.IdAplicacao, processo.CodInternoAplicacao);
             this.DestacarNaEtiqueta = processo.DestacarEtiqueta;
             this.GerarFormaInexistente = processo.GerarFormaInexistente;
@@ -48,6 +50,13 @@ namespace Glass.API.Backend.Models.Processos.Lista
 
             string descricaoSituacao = processo.Situacao.Translate().Format();
             this.Situacao = IdNomeDto.TentarConverter((int)processo.Situacao, descricaoSituacao);
+            this.Permissoes = new PermissoesDto
+            {
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(
+                    Data.Model.LogAlteracao.TabelaAlteracao.Processo,
+                    (uint)processo.IdProcesso,
+                    null),
+            };
         }
 
         /// <summary>
@@ -68,14 +77,14 @@ namespace Glass.API.Backend.Models.Processos.Lista
         /// Obtém ou define um valor que indica se o processo de etiqueta exibe um destaque na etiqueta impressa.
         /// </summary>
         [DataMember]
-        [JsonProperty("descricao")]
+        [JsonProperty("destacarNaEtiqueta")]
         public bool DestacarNaEtiqueta { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o processo de etiqueta gera forma inexistente.
         /// </summary>
         [DataMember]
-        [JsonProperty("descricao")]
+        [JsonProperty("gerarFormaInexistente")]
         public bool GerarFormaInexistente { get; set; }
 
         /// <summary>
@@ -112,5 +121,12 @@ namespace Glass.API.Backend.Models.Processos.Lista
         [DataMember]
         [JsonProperty("situacao")]
         public IdNomeDto Situacao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define as permissões para o processo de etiqueta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("permissoes")]
+        public PermissoesDto Permissoes { get; set; }
     }
 }
