@@ -38,16 +38,15 @@ namespace Glass.Financeiro.Negocios.Componentes
         {
             foreach (var item in itens)
             {
-                var idNfRecebimento = Glass.Data.DAL.ChequesDAO.Instance.ObtemIdsNfRecebimento(item.IdLiberarPedido, item.IdPedido, item.IdAcerto).Split(',')[0];
+                var idNfRecebimento = Data.DAL.ChequesDAO.Instance.ObtemIdsNfRecebimento(item.IdLiberarPedido, item.IdPedido, item.IdAcerto);
 
                 if (string.IsNullOrEmpty(idNfRecebimento))
-                    return;
+                    continue;
 
-                var notaFiscal = Data.DAL.NotaFiscalDAO.Instance.GetElement(idNfRecebimento.StrParaUint());
+                var notaFiscal = Data.DAL.NotaFiscalDAO.Instance.GetElement(idNfRecebimento.Split(',')[0].StrParaUint());
 
-                //item.Emitente = notaFiscal.NomeEmitente;
-                item.Fatura = notaFiscal.NumeroNFe.ToString().PadLeft(14, '0');
-                item.ValorFatura = notaFiscal.TotalNota.ToString().Replace(".", string.Empty).Replace(",", string.Empty).PadLeft(15, '0');
+                item.Fatura = notaFiscal.NumeroNFe;
+                item.ValorFatura = notaFiscal.TotalNota;
                 item.ChaveDanfe = notaFiscal.ChaveAcesso;
                 item.SerieFatura = notaFiscal.Serie;
             }
