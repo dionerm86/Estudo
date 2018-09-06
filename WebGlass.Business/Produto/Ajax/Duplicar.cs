@@ -6,13 +6,13 @@ namespace WebGlass.Business.Produto.Ajax
     public interface IDuplicar
     {
         string DuplicarProduto(string idsProd, string idNovoGrupo, string idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir);
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura);
     }
 
     internal class Duplicar : IDuplicar
     {
         public string DuplicarProduto(string idsProd, string idNovoGrupo, string idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir)
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace WebGlass.Business.Produto.Ajax
                     return "Erro##Informe o subgrupo do produto.";
 
                 ProdutoDAO.Instance.Duplicar(idsProd.Trim(' ', ','), Glass.Conversoes.StrParaUint(idNovoGrupo), Glass.Conversoes.StrParaUintNullable(idNovoSubgrupo),
-                    codInternoRemover, codInternoSubstituir, descricaoRemover, descricaoSubstituir);
+                    codInternoRemover, codInternoSubstituir, descricaoRemover, descricaoSubstituir, novaAltura, novaLargura);
 
                 return "Ok##alert('Produtos duplicados com sucesso!'); redirectUrl(window.location.href);\n";
             }
