@@ -3816,13 +3816,13 @@ namespace Glass.Data.DAL
                         }
                     }
 
-                    if (retornoPlanoCorte == "")
-                        throw new Exception("Esse plano de corte não possui peças para serem marcadas nesse setor." + msg);
-
                     // Caso tenha ocorrido algum erro na leitura, salva na tabela de erros
                     if (!String.IsNullOrEmpty(msg))
                         ErroDAO.Instance.InserirFromException(String.Format("AtualizaSituacao - Chapa: {0} Plano: {1}", codMateriaPrima, codEtiqueta),
                             new Exception(msg));
+
+                    if (retornoPlanoCorte == "")
+                        throw new Exception("Esse plano de corte não possui peças para serem marcadas nesse setor." + msg);
 
                     /* Chamado 17508. */
                     retornoPlanoCorte = !string.IsNullOrEmpty(msg) ? msg + "-" + retornoPlanoCorte : retornoPlanoCorte;
