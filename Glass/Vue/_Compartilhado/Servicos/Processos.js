@@ -15,7 +15,7 @@ Servicos.Processos = (function(http) {
      * @param {string} ordenacao A ordenação para o resultado.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+    obter: function (filtro, pagina, numeroRegistros, ordenacao) {
       filtro = filtro || {};
       filtro.pagina = pagina;
       filtro.numeroRegistros = numeroRegistros;
@@ -25,6 +25,70 @@ Servicos.Processos = (function(http) {
         params: filtro
       });
     },
+
+    /**
+     * Remove um processo de etiqueta.
+     * @param {!number} idProcesso O identificador do processo de etiqueta que será excluído.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function(idProcesso) {
+      if (!idProcesso) {
+        throw new Error('Processo é obrigatório.');
+      }
+
+      return http().delete(API + idProcesso);
+    },
+
+    /**
+      * Insere um processo de etiqueta.
+      * @param {!Object} processo O objeto com os dados do processo a ser inserido.
+      * @returns {Promise} Uma promise com o resultado da operação.
+      */
+    inserir: function (processo) {
+      return http().post(API.substr(0, API.length - 1), processo);
+    },
+
+    /**
+     * Altera os dados de um processo de etiqueta.
+     * @param {!number} idProcesso O identificador do processo de etiqueta que será alterado.
+     * @param {!Object} processo O objeto com os dados do processo a serem alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    atualizar: function (idProcesso, processo) {
+      if (!idProcesso) {
+        throw new Error('Processo é obrigatório.');
+      }
+
+      if (!processo || processo === {}) {
+        return Promise.resolve();
+      }
+
+      return http().patch(API + idProcesso, processo);
+    },
+
+    /**
+     * Recupera as configurações para a tela de lista de processos.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoes: function () {
+      return http().get(API + 'configuracoes');
+    },
+
+    /**
+     * Recupera os tipos de processo para o controle.
+     * @return {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposProcesso: function () {
+      return http().get(API + 'tipos');
+    },
+
+    /**
+     * Recupera as situações processo para o controle.
+     * @return {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return http().get(API + 'situacoes');
+    }
   };
 })(function() {
   return Vue.prototype.$http;

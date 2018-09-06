@@ -468,6 +468,7 @@
     <Compile Include="Models\Pedidos\ProdutosPedido\Observacao\DadosEntradaDto.cs" />
     <Compile Include="Models\Pedidos\ValidarDescontoPedido\DescontoDto.cs" />
     <Compile Include="Models\Processos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Processos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Processos\Filtro\ProcessoDto.cs" />
     <Compile Include="Models\Genericas\Venda\AlturaDto.cs" />
     <Compile Include="Models\Genericas\Venda\AreaDto.cs" />

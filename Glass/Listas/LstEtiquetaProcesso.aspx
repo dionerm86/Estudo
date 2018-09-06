@@ -132,16 +132,66 @@
                             style="width: 60px" />
                     </td>
                     <td>
-                        tipo processo
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoProcessoAtual"
+                            :funcao-recuperar-itens="obterTiposProcesso"></lista-selecao-id-valor>
                     </td>
                     <td>
-                        tipo pedido
+                        <lista-selecao-multipla :ids-selecionados.sync="processo.tiposPedidos"
+                            :funcao-recuperar-itens="obterTiposPedido"></lista-selecao-multipla>
                     </td>
                     <td>
-                        situacao
+                        <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
+                            :funcao-recuperar-itens="obterSituacoes"></lista-selecao-id-valor>
+                    </td>
+                    <td></td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo produto..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
                     </td>
                     <td>
+                        <input type="text" v-model="processo.codigo" maxlength="10" style="width: 50px" v-if="inserindo" />
                     </td>
+                    <td>
+                        <input type="text" v-model="processo.descricao" maxlength="30" style="width: 150px" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <campo-busca-etiqueta-aplicacao :aplicacao.sync="aplicacaoAtual" v-if="inserindo"></campo-busca-etiqueta-aplicacao>
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.destacarNaEtiqueta" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.gerarFormaInexistente" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="processo.numeroDiasUteisDataEntrega" maxlength="10"
+                            style="width: 60px" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor :item-selecionado.sync="tipoProcessoAtual"
+                            :funcao-recuperar-itens="obterTiposProcesso" v-if="inserindo"></lista-selecao-id-valor>
+                    </td>
+                    <td>
+                        <lista-selecao-multipla :ids-selecionados.sync="processo.tiposPedidos"
+                            :funcao-recuperar-itens="obterTiposPedido" v-if="inserindo"></lista-selecao-multipla>
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
+                            :funcao-recuperar-itens="obterSituacoes" v-if="inserindo"></lista-selecao-id-valor>
+                    </td>
+                    <td></td>
                 </template>
             </lista-paginada>
         </section>

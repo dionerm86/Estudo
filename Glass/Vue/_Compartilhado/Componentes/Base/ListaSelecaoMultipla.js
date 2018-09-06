@@ -79,6 +79,7 @@ Vue.component('lista-selecao-multipla', {
       validator: Mixins.Validacao.validarStringOuVazio
     }
   },
+
   data: function() {
     return {
       uuid: null,
@@ -88,6 +89,7 @@ Vue.component('lista-selecao-multipla', {
       itensSelecionados: ''
     };
   },
+
   methods: {
     /**
      * Recupera os itens a partir da função definida na propriedade.
@@ -120,7 +122,7 @@ Vue.component('lista-selecao-multipla', {
      */
     alternarOpcoes: function(event) {
       var controle = event.target;
-      while (controle.parentNode.className !== 'form-group') {
+      while (controle.className !== 'lista-selecao-multipla') {
         controle = controle.parentNode;
       }
 

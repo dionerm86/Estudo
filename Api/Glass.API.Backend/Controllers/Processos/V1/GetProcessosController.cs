@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Processos.Filtro;
 using Glass.API.Backend.Models.Processos.Lista;
@@ -52,6 +53,22 @@ namespace Glass.API.Backend.Controllers.Processos.V1
         }
 
         /// <summary>
+        /// Recupera as configurações para a tela de processos de etiquetas.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Processos.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Processos.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de processos (etiqueta) para controle de filtro.
         /// </summary>
         /// <returns>Uma lista JSON com os dados dos processos de etiqueta.</returns>
@@ -72,6 +89,44 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                     });
 
                 return this.Lista(processos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de processos (etiqueta) para controle de filtro.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados dos tipos de processos de etiqueta.</returns>
+        [HttpGet]
+        [Route("tipos")]
+        [SwaggerResponse(200, "Tipos de processo encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de processo não encontrados.")]
+        public IHttpActionResult ObterTiposProcessos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Data.Model.EtiquetaTipoProcesso>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações para controle de filtro na tela de processos de etiqueta.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados dos situações de processo de etiqueta.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações não encontradas.")]
+        public IHttpActionResult ObterSituacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = new ConversorEnum<Situacao>()
+                    .ObterTraducao();
+
+                return this.Lista(tipos);
             }
         }
     }
