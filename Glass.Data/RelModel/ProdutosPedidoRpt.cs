@@ -53,9 +53,10 @@ namespace Glass.Data.RelModel
             Peso = prodPed.Peso;
             IsVidro = GrupoProdDAO.Instance.IsVidro((int)prodPed.IdGrupoProd);
             IsVidroEstoqueQtde = prodPed.TipoCalc == (int)TipoCalculoGrupoProd.Qtd && prodPed.IsVidroEstoque;
+            NomeGrupoProd = GrupoProdDAO.Instance.GetDescricao((int)prodPed.IdGrupoProd);
 
             var corVidro = ProdutoDAO.Instance.ObtemIdCorVidro((int)prodPed.IdProd);
-            
+
             if (corVidro > 0)
                 CorVidro = CorVidroDAO.Instance.GetNome((uint)corVidro.GetValueOrDefault());
 
@@ -144,6 +145,8 @@ namespace Glass.Data.RelModel
         public bool IsVidro { get; set; }
 
         public bool IsVidroEstoqueQtde { get; set; }
+
+        public string NomeGrupoProd { get; set; }
 
         #endregion
     }

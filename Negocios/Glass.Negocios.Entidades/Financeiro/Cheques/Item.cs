@@ -19,6 +19,9 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// <param name="numCmc7">número bruto do CMC7</param>
         public Cmc7(string numCmc7)
         {
+            if (string.IsNullOrEmpty(numCmc7))
+                throw new Exception("CMC7 do cheque não encontrado.");
+
             _numCmc7 = numCmc7.Replace('<', '|').Replace('>', '|').Split('|').ToList();
         }
 
@@ -109,7 +112,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 8.
         /// Tamanho 5.
         /// </summary>
-        public string Agencia => _cheque.Agencia.PadLeft(5, '0');
+        public string Agencia => _cheque.Agencia;
 
         /// <summary>
         /// Obtém a Conta do cheque.
@@ -117,7 +120,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 18.
         /// Tamanho 10.
         /// </summary>
-        public string Conta => _cheque.Conta.Replace("-", string.Empty).PadLeft(10, '0');
+        public string Conta => _cheque.Conta;
 
         /// <summary>
         /// Obtém o número do cheque.
@@ -125,7 +128,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 24.
         /// Tamanho 6.
         /// </summary>
-        public string Num => _cheque.Num.ToString().PadLeft(6, '0');
+        public int Num => _cheque.Num;
 
         /// <summary>
         /// Obtém o valor do cheque.
@@ -133,7 +136,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 37.
         /// Tamanho 13 (11+2).
         /// </summary>
-        public string Valor => _cheque.Valor.ToString().Replace(".", string.Empty).Replace(",", string.Empty).PadLeft(13, '0');
+        public decimal Valor => _cheque.Valor;
 
         /// <summary>
         /// Obtém a data de cadastro do cheque.
@@ -141,7 +144,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 47.
         /// Tamanho 10.
         /// </summary>
-        public string DataCad => _cheque.DataCad.ToShortDateString();
+        public DateTime DataCad => _cheque.DataCad;
 
         /// <summary>
         /// Obtém a data de cadastro do cheque.
@@ -149,7 +152,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 61.
         /// Tamanho 14.
         /// </summary>
-        public string CpfCnpj => _cheque.CpfCnpj.LimpaCpfCnpj().PadLeft(14, '0');
+        public string CpfCnpj => _cheque.CpfCnpj;
 
         /// <summary>
         /// Obtém a UF do cheque.
@@ -157,7 +160,18 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 63.
         /// Tamanho 2.
         /// </summary>
-        public string UF => Data.DAL.ClienteDAO.Instance.ObtemCidadeUf(_cheque.IdCliente.GetValueOrDefault()).Split('/')[1];
+        public string UF
+        {
+            get
+            {
+                var cidadeUf = Data.DAL.ClienteDAO.Instance.ObtemCidadeUf(_cheque.IdCliente.GetValueOrDefault());
+
+                if (string.IsNullOrEmpty(cidadeUf))
+                    return string.Empty;
+
+                return cidadeUf.Split('/')[1];
+            }
+        }
 
         /// <summary>
         /// Obtém a data de vencimento do cheque.
@@ -165,7 +179,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 73.
         /// Tamanho 10.
         /// </summary>
-        public string DataVenc => _cheque.DataVenc.GetValueOrDefault().ToShortDateString();
+        public DateTime? DataVenc => _cheque.DataVenc;
 
         /// <summary>
         /// Obtém a data de vencimento do cheque.
@@ -173,7 +187,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 83.
         /// Tamanho 10.
         /// </summary>
-        public string DataVencUtil => _cheque.DataVenc.GetValueOrDefault().ToShortDateString();
+        public DateTime? DataVencUtil => _cheque.DataVenc;
 
         /// <summary>
         /// Obtém a data de vencimento do cheque.
@@ -181,7 +195,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 93.
         /// Tamanho 10.
         /// </summary>
-        public string DataVencOriginal => _cheque.DataVenc.GetValueOrDefault().ToShortDateString();
+        public DateTime? DataVencOriginal => _cheque.DataVenc;
 
         /// <summary>
         /// Obtém a data de vencimento do cheque.
@@ -189,7 +203,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 103.
         /// Tamanho 10.
         /// </summary>
-        public string DataVencUtilOriginal => _cheque.DataVenc.GetValueOrDefault().ToShortDateString();
+        public DateTime? DataVencUtilOriginal => _cheque.DataVenc;
 
         /// <summary>
         /// Obtém o código de compensação do cheque.
@@ -245,18 +259,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 176.
         /// Tamanho 30.
         /// </summary>
-        public string Emitente
-        {
-            get
-            {
-                var nomeCliente = Glass.Data.DAL.ClienteDAO.Instance.GetNome(_cheque.IdCliente.GetValueOrDefault());
-
-                if (nomeCliente.Count() > 30)
-                    return nomeCliente.Substring(0, 30);
-
-                return nomeCliente.PadLeft(30, ' ');
-            }
-        }
+        public string Emitente => Glass.Data.DAL.ClienteDAO.Instance.GetNome(_cheque.IdCliente.GetValueOrDefault());
 
         /// <summary>
         /// Obtém ou define a fatura do cheque.
@@ -264,7 +267,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 202.
         /// Tamanho 14.
         /// </summary>
-        public string Fatura { get; set; }
+        public uint Fatura { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor da fatura do cheque.
@@ -272,7 +275,7 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         /// posição final 217.
         /// Tamanho 14.
         /// </summary>
-        public string ValorFatura { get; set; }
+        public decimal ValorFatura { get; set; }
 
         /// <summary>
         /// Obtém ou define a chave de acesso da fatura do cheque.
@@ -300,17 +303,17 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
         {
             var retorno = new StringBuilder();
             retorno.Append(Banco);
-            retorno.Append(Agencia);
-            retorno.Append(Conta);
-            retorno.Append(Num);
-            retorno.Append(Valor);
-            retorno.Append(DataCad);
-            retorno.Append(CpfCnpj);
+            retorno.Append(Agencia.PadLeft(5, '0'));
+            retorno.Append(Conta.Replace("-", string.Empty).PadLeft(10, '0'));
+            retorno.Append(Num.ToString().PadLeft(6, '0'));
+            retorno.Append(Valor.ToString().Replace(".", string.Empty).Replace(",", string.Empty).PadLeft(13, '0'));
+            retorno.Append(DataCad.ToShortDateString());
+            retorno.Append(CpfCnpj.LimpaCpfCnpj().PadLeft(14, '0'));
             retorno.Append(UF);
-            retorno.Append(DataVenc);
-            retorno.Append(DataVencUtil);
-            retorno.Append(DataVencOriginal);
-            retorno.Append(DataVencUtilOriginal);
+            retorno.Append(DataVenc.GetValueOrDefault().ToShortDateString());
+            retorno.Append(DataVencUtil.GetValueOrDefault().ToShortDateString());
+            retorno.Append(DataVencOriginal.GetValueOrDefault().ToShortDateString());
+            retorno.Append(DataVencUtilOriginal.GetValueOrDefault().ToShortDateString());
             retorno.Append(CodCompensacao);
             retorno.Append(DigitoVerificador2);
             retorno.Append(Tipificacao);
@@ -318,10 +321,15 @@ namespace Glass.Financeiro.Negocios.Entidades.Cheques
             retorno.Append(DigitoVerificador3);
             retorno.Append(PracaCompensacao);
             retorno.Append(string.Empty.PadLeft(33, ' '));
-            retorno.Append(Emitente);
+
+            if (Emitente.Count() > 30)
+                retorno.Append(Emitente.Substring(0, 30));
+            else
+                retorno.Append(Emitente.PadLeft(30, ' '));
+
             retorno.Append(string.Empty.PadLeft(12, ' '));
-            retorno.Append(Fatura);
-            retorno.Append(ValorFatura);
+            retorno.Append(Fatura.ToString().PadLeft(14, '0'));
+            retorno.Append(ValorFatura.ToString().Replace(".", string.Empty).Replace(",", string.Empty).PadLeft(15, '0'));
             retorno.Append(ChaveDanfe);
             retorno.Append(SerieFatura);
 

@@ -32,6 +32,7 @@ namespace Glass.UI.Web.Listas
                 processo.DestacarEtiqueta = ((CheckBox)grdProcesso.FooterRow.FindControl("chkDestacar")).Checked;
                 processo.GerarFormaInexistente = ((CheckBox)grdProcesso.FooterRow.FindControl("chkGerarForma")).Checked;
                 processo.GerarArquivoDeMesa = ((CheckBox)grdProcesso.FooterRow.FindControl("chkGerarArquivoDeMesa")).Checked;
+                processo.ForcarGerarSag = ((CheckBox)grdProcesso.FooterRow.FindControl("chkForcarGerarSag")).Checked;
                 processo.TipoPedido = ((Sync.Controls.CheckBoxListDropDown)grdProcesso.FooterRow.FindControl("drpTipoPedido")).SelectedValue;
                 processo.NumeroDiasUteisDataEntrega = ((TextBox)grdProcesso.FooterRow.FindControl("txtDiasEntrega")).Text.StrParaInt();
 

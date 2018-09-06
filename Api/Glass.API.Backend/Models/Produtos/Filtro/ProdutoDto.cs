@@ -5,6 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Genericas.Venda;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Model;
@@ -44,6 +45,10 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
             this.ExibirBeneficiamentos = this.ObterExibirBeneficiamentos(produto, tipoCalculo);
             this.Beneficiamentos = produto.Beneficiamentos?.ObterListaBeneficiamentos();
             this.ExigirProcessoEAplicacao = this.ObterExigirProcessoEAplicacao(produto, tipoCalculo);
+            this.Composicao = new ComposicaoDto
+            {
+                PossuiFilhos = this.IsProdLamComposicao(produto),
+            };
         }
 
         /// <summary>
@@ -172,6 +177,13 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
         [JsonProperty("estoque")]
         public EstoqueDto Estoque { get; set; }
 
+        /// <summary>
+        /// Obtém ou define os dados de composição do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("composicao")]
+        public ComposicaoDto Composicao { get; set; }
+
         private AlturaDto ObterAltura(Produto produto, TipoCalculoGrupoProd tipoCalculo)
         {
             var tiposCalculoAlturaDecimal = new[]
@@ -271,6 +283,12 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
             return tiposCalculoObrigarProcessoEAplicacao.Contains(tipoCalculo)
                 && (roteiroProducao
                     || obrigarDadosEtiquetaVidrosBeneficiaveis);
+        }
+
+        private bool IsProdLamComposicao(Produto produto)
+        {
+            var subGrupos = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
+            return subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)produto.IdProd));
         }
     }
 }

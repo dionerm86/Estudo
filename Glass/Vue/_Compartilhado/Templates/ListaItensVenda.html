@@ -440,6 +440,10 @@
                                 v-bind:disabled="itemVenda.produto.espessura > 0" step="0.01" min="0.01"
                                 v-if="itemVenda && itemVenda.produto">
                         </div>
+                        <div style="text-align: center" v-if="itemVenda && itemVenda.composicao.possuiFilhos">
+                            Aplicar Beneficiamentos Composição
+                            <input type="checkbox" v-model="itemVenda.composicao.aplicarBeneficiamentosProdutosFilhos" />
+                        </div>
                         <div style="padding-top: 8px">
                             <controle-beneficiamentos v-bind:itens-selecionados.sync="itemVenda.beneficiamentos.itens" v-bind:redondo.sync="itemVenda.beneficiamentos.redondo"
                                 v-bind:valor-beneficiamentos.sync="itemVenda.beneficiamentos.valor" v-bind:id-produto="produtoAtual.id" v-bind:id-subgrupo-produto="produtoAtual.idSubgrupo"

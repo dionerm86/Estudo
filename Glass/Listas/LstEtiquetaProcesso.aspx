@@ -57,6 +57,18 @@
             }
         }
 
+        function habilitarOuDesabilitarForcarGerarSag(gerarArquivoMesa)
+        {
+            if (gerarArquivoMesa)
+                FindControl("chkForcarGerarSag", "input").disabled = false;
+            else {
+                FindControl("chkForcarGerarSag", "input").disabled = true;
+                FindControl("chkForcarGerarSag", "input").checked = false;
+            }
+
+            return true;
+        }
+
     </script>
 
     <table>
@@ -184,15 +196,33 @@
                             SortExpression="GerarArquivoDeMesa">
                             <EditItemTemplate>
                                 <asp:CheckBox ID="chkGerarArquivoDeMesa" runat="server" 
-                                    Checked='<%# Bind("GerarArquivoDeMesa") %>' />
+                                    Checked='<%# Bind("GerarArquivoDeMesa") %>'  onclick="habilitarOuDesabilitarForcarGerarSag(this.checked);"/>
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:CheckBox ID="chkGerarArquivoDeMesa" runat="server" 
-                                    Checked='<%# Bind("GerarArquivoDeMesa") %>' />
+                                    Checked='<%# Bind("GerarArquivoDeMesa") %>' onclick="habilitarOuDesabilitarForcarGerarSag(this.checked);"/>
                             </FooterTemplate>
                             <ItemTemplate>
                                 <asp:CheckBox ID="chkGerarArquivoDeMesa" runat="server" 
                                     Checked='<%# Eval("GerarArquivoDeMesa") %>' Enabled="False" />
+                            </ItemTemplate>
+                            <FooterStyle HorizontalAlign="Center" />
+                            <HeaderStyle HorizontalAlign="Left" />
+                            <ItemStyle HorizontalAlign="Center" />
+                        </asp:TemplateField>
+                        <asp:TemplateField HeaderText="Forçar Gerar SAG"
+                            SortExpression="ForcarGerarSag">
+                            <EditItemTemplate>
+                                <asp:CheckBox ID="chkForcarGerarSag" runat="server"
+                                    Checked='<%# Bind("ForcarGerarSag") %>' Enabled='<%# Eval("GerarArquivoDeMesa") %>'/>
+                            </EditItemTemplate>
+                            <FooterTemplate>
+                                <asp:CheckBox ID="chkForcarGerarSag" runat="server"
+                                    Checked='<%# Bind("ForcarGerarSag") %>' Enabled="false" />
+                            </FooterTemplate>
+                            <ItemTemplate>
+                                <asp:CheckBox ID="chForcarGerarSag" runat="server"
+                                    Checked='<%# Eval("ForcarGerarSag") %>' Enabled="false"/>
                             </ItemTemplate>
                             <FooterStyle HorizontalAlign="Center" />
                             <HeaderStyle HorizontalAlign="Left" />

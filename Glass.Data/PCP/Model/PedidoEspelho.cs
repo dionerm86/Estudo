@@ -6,6 +6,7 @@ using Glass.Data.DAL;
 using Glass.Configuracoes;
 using Glass.Log;
 using Glass.Data.Model.Calculos;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
@@ -17,11 +18,22 @@ namespace Glass.Data.Model
 
         public enum SituacaoPedido : int
         {
+            [Description("Processando")]
             Processando = 0,
+
+            [Description("Aberto")]
             Aberto,
+
+            [Description("Finalizado")]
             Finalizado,
+
+            [Description("Impresso")]
             Impresso,
+
+            [Description("Impresso comum")]
             ImpressoComum,
+
+            [Description("Cancelado")]
             Cancelado
         }
 
