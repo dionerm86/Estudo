@@ -3001,9 +3001,9 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
-        public bool PossuiEdicaoCadProject(uint idProdPed)
+        public bool PossuiEdicaoCadProject(uint idProdPed, bool pcp)
         {
-            var caminho = PCPConfig.CaminhoSalvarCadProject(true) + idProdPed + ".dxf";
+            var caminho = PCPConfig.CaminhoSalvarCadProject(pcp) + idProdPed + ".dxf";
 
             return File.Exists(caminho);
         }

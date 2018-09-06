@@ -136,7 +136,7 @@ namespace Glass.Data.DAL
             var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(session, pecaItemProjeto.IdPecaItemProj);
             // Chamado 74968.
             // A propriedade ImagemEditada é marcada como true somente ao salvar a edição do projeto, ou seja, caso o usuário somente abra a tela o sistema não deve considerar que a peça foi editada.
-            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp) && pecaItemProjeto.ImagemEditada;
+            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject(idProdPedEsp, true) && pecaItemProjeto.ImagemEditada;
 
             // Se possuir imagem associada, não deve gerar arquivo de mesa, a menos que seja .fml básico ou tenha sido editado no CadProject
             if ((produtoPossuiImagemEditada || pecaItemProjeto.ImagemEditada || pecaPossuiFiguraAssociada) &&
