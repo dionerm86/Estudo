@@ -149,6 +149,29 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         }
 
         /// <summary>
+        /// Obtém uma lista de funcionários do caixa diário.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos funcionários.</returns>
+        [HttpGet]
+        [Route("caixaDiario")]
+        [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Funcionários não encontrados.")]
+        public IHttpActionResult ObterFuncionariosCaixaDiario()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var funcionarios = FuncionarioDAO.Instance.GetCaixaDiario()
+                    .Select(f => new IdNomeDto
+                    {
+                        Id = f.IdFunc,
+                        Nome = f.Nome,
+                    });
+
+                return this.Lista(funcionarios);
+            }
+        }
+
+        /// <summary>
         /// Obtém uma lista de liberadores de pedido.
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos dos liberadores de pedido.</returns>
