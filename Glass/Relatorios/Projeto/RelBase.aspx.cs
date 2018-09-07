@@ -82,7 +82,7 @@ namespace Glass.UI.Web.Relatorios.Projeto
                         for (var x = 0; x < lstPeca.Count; x++)
                         {
                             var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(null, lstPeca[x].IdPecaItemProj);
-                            var pecaPossuiEdicaoCadProject = ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject((uint)lstPeca[x].IdProdPed, pcp) && lstPeca[x].ImagemEditada;
+                            var pecaPossuiEdicaoCadProject = lstPeca[x].IdProdPed != null ? lstPeca[x].ImagemEditada &&  ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject((uint)lstPeca[x].IdProdPed, pcp):false;
                             var produtoPossuiImagemEditada = pcp && ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(null, (uint)lstPeca[x].IdProdPed);
 
                             if (lstPeca[x].IdArquivoMesaCorte > 0 && lstPeca[x].TipoArquivoMesaCorte > 0)
