@@ -14,12 +14,12 @@
             var codInterno = FindControl(insert ? "txtCodInternoIns" : "txtCodInterno", "input").value;
 
             if (descricao == "") {
-                alert("Informe a descrição.");
+                alert("Informe a descriÃ§Ã£o.");
                 return false;
             }
 
             if (codInterno == "") {
-                alert("Informe o código.");
+                alert("Informe o cÃ³digo.");
                 return false;
             }
         }
@@ -33,13 +33,13 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('codigo')">Código</a>
+                        <a href="#" @click.prevent="ordenar('codigo')">CÃ³digo</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('descricao')">Descrição</a>
+                        <a href="#" @click.prevent="ordenar('descricao')">DescriÃ§Ã£o</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('aplicacao')">Aplicação</a>
+                        <a href="#" @click.prevent="ordenar('aplicacao')">AplicaÃ§Ã£o</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('destacarNaEtiqueta')">Destacar na Etiqueta?</a>
@@ -51,7 +51,7 @@
                         <a href="#" @click.prevent="ordenar('gerarArquivoDeMesa')">Gerar Arquivo de Mesa</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('numeroDiasUteisDataEntrega')">Número dias úteis data entrega</a>
+                        <a href="#" @click.prevent="ordenar('numeroDiasUteisDataEntrega')">NÃºmero dias Ãºteis data entrega</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('tipoProcesso')">Tipo</a>
@@ -60,7 +60,7 @@
                         <a href="#" @click.prevent="ordenar('tiposPedidos')">Tipo de Pedido</a>
                     </th>
                     <th>
-                        Situação
+                        SituaÃ§Ã£o
                     </th>
                     <th></th>
                 </template>
@@ -141,7 +141,7 @@
                     </td>
                     <td>
                         <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
-                            :funcao-recuperar-itens="obterSituacoes"></lista-selecao-id-valor>
+                            :funcao-recuperar-itens="obterSituacoes" required></lista-selecao-id-valor>
                     </td>
                     <td></td>
                 </template>
@@ -189,7 +189,7 @@
                     </td>
                     <td>
                         <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
-                            :funcao-recuperar-itens="obterSituacoes" v-if="inserindo"></lista-selecao-id-valor>
+                            :funcao-recuperar-itens="obterSituacoes" required v-if="inserindo"></lista-selecao-id-valor>
                     </td>
                     <td></td>
                 </template>

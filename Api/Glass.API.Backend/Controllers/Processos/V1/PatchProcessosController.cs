@@ -1,4 +1,4 @@
-﻿// <copyright file="PatchProcessosController.cs" company="Sync Softwares">
+// <copyright file="PatchProcessosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -21,19 +21,21 @@ namespace Glass.API.Backend.Controllers.Processos.V1
         /// <summary>
         /// Atualiza um processo de etiqueta.
         /// </summary>
+        /// <param name="id">O identificador do processo que será alterado.</param>
+        /// <param name="dadosParaAlteracao">Os novos dados que serão alterados no processo indicado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
         [Route("{id}")]
         [SwaggerResponse(202, "Processo alterado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Processo não encontrado para o id informado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarProcesso(int id, [FromBody] CadastroAtualizacaoDto dadosParaCadastro)
+        public IHttpActionResult AlterarProcesso(int id, [FromBody] CadastroAtualizacaoDto dadosParaAlteracao)
         {
             using (var sessao = new GDATransaction())
             {
                 try
                 {
-                    var validacao = this.ValidarAtualizacaoProcesso(sessao, id, dadosParaCadastro);
+                    var validacao = this.ValidarAtualizacaoProcesso(sessao, id, dadosParaAlteracao);
 
                     if (validacao != null)
                     {
@@ -47,7 +49,7 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                         return this.NaoEncontrado($"Processo de etiqueta {id} não encontrado.");
                     }
 
-                    processo = new ConverterCadastroAtualizacaoParaProcesso(dadosParaCadastro, processo)
+                    processo = new ConverterCadastroAtualizacaoParaProcesso(dadosParaAlteracao, processo)
                         .ConverterParaProcesso();
 
                     EtiquetaProcessoDAO.Instance.Update(sessao, processo);

@@ -1,4 +1,4 @@
-﻿const app = new Vue({
+const app = new Vue({
   el: '#app',
   mixins: [Mixins.Clonar, Mixins.Patch],
 
@@ -134,11 +134,9 @@
       }
 
       var processoAtualizar = this.patch(this.processo, this.processoOriginal);
-      processoAtualizar.id = this.processo.id;
-
       var vm = this;
 
-      Servicos.Processos.atualizar(processoAtualizar)
+      Servicos.Processos.atualizar(this.processo.id, processoAtualizar)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();
@@ -165,7 +163,7 @@
     iniciarCadastroOuAtualizacao_: function (processo) {
       this.aplicacaoAtual = processo ? this.clonar(processo.aplicacao) : null;
       this.tipoProcessoAtual = processo ? this.clonar(processo.tipoProcesso) : null;
-      this.situacaoAtual = processo ? this.clonar(processo.situacao) : null;
+      this.situacaoAtual = processo ? this.clonar(processo.situacao) : this.configuracoes.situacaoPadrao;
 
       var tiposPedidos = function () {
         if (!processo || !processo.tiposPedidos || !processo.tiposPedidos.length) {
@@ -192,7 +190,7 @@
         numeroDiasUteisDataEntrega: processo ? processo.numeroDiasUteisDataEntrega : null,
         tipoProcesso: processo && processo.tipoProcesso ? processo.tipoProcesso.id : null,
         tiposPedidos: tiposPedidos(),
-        situacao: processo && processo.situacao ? processo.situacao.id : null
+        situacao: processo && processo.situacao ? processo.situacao.id : this.configuracoes.situacaoPadrao.id
       };
 
       this.processoOriginal = this.clonar(this.processo);

@@ -1,8 +1,11 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Helper;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Processos.Configuracoes
@@ -22,6 +25,10 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
             {
                 Data.Model.Pedido.TipoPedidoEnum.Revenda,
             };
+
+            this.SituacaoPadrao = new ConversorEnum<Glass.Situacao>()
+                .ObterTraducao()
+                .FirstOrDefault(s => s.Id == (int)Glass.Situacao.Ativo);
         }
 
         /// <summary>
@@ -30,5 +37,12 @@ namespace Glass.API.Backend.Models.Processos.Configuracoes
         [DataMember]
         [JsonProperty("tiposPedidosIgnorar")]
         public Data.Model.Pedido.TipoPedidoEnum[] TiposPedidosIgnorar { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a situação padrão para o cadastro de processo.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacaoPadrao")]
+        public IdNomeDto SituacaoPadrao { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿// <copyright file="CadastroAtualizacaoDto.cs" company="Sync Softwares">
+// <copyright file="CadastroAtualizacaoDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

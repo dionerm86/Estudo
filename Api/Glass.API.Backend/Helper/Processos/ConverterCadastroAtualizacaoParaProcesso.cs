@@ -1,4 +1,4 @@
-﻿// <copyright file="ConverterCadastroAtualizacaoParaProcesso.cs" company="Sync Softwares">
+// <copyright file="ConverterCadastroAtualizacaoParaProcesso.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Helper.Processos
 
         private void ConverterDtoParaModelo(Data.Model.EtiquetaProcesso destino)
         {
-            destino.CodAplicacao = this.cadastro.Codigo ?? destino.CodAplicacao;
+            destino.CodInterno = this.cadastro.Codigo ?? destino.CodInterno;
             destino.Descricao = this.cadastro.Descricao ?? destino.Descricao;
             destino.IdAplicacao = this.cadastro.IdAplicacao ?? destino.IdAplicacao;
             destino.DestacarEtiqueta = this.cadastro.DestacarNaEtiqueta ?? destino.DestacarEtiqueta;
