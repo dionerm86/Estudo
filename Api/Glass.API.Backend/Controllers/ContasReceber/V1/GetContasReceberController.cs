@@ -151,7 +151,7 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
         /// </summary>
         /// <returns>Uma lista JSON com os tipos contábeis.</returns>
         [HttpGet]
-        [Route("tiposContabil")]
+        [Route("tiposContabeis")]
         [SwaggerResponse(200, "Tipos contábeis encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Tipos contábeis não encontrados.")]
         public IHttpActionResult ObterTiposCotabeis()

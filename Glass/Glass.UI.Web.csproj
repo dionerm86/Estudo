@@ -1621,6 +1621,9 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.Filtro.js" />
+    <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.js" />
+    <Content Include="Vue\ContasReceber\Templates\LstContasRecebidas.Filtro.html" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.Filtro.js" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.js" />
     <Content Include="Vue\PedidosConferencia\Templates\LstPedidosConferencia.Filtro.html" />
@@ -1703,6 +1706,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cfops.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ContasReceber.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
