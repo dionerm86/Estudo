@@ -389,6 +389,8 @@
     <Compile Include="Models\Genericas\IdDto.cs" />
     <Compile Include="Models\Genericas\Venda\ComposicaoDto.cs" />
     <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\FiltroLogCancelamentoDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\LogDto.cs" />
     <Compile Include="Models\Lojas\Certificado\CertificadoDto.cs" />
     <Compile Include="Models\PedidosConferencia\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />

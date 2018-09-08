@@ -1682,6 +1682,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\LogCancelamento.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Data.js" />
     <Content Include="Vue\_Compartilhado\Filtros\DataHora.js" />
