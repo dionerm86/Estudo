@@ -27,6 +27,24 @@ Servicos.ContasReceber = (function(http) {
     },
 
     /**
+     * Altera os dados de uma conta recebida.
+     * @param {!number} idContaReceber O identificador da conta recebida que será alterada.
+     * @param {!Object} contaRecebida O objeto com os dados da conta recebida a serem alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    atualizar: function (idContaReceber, contaRecebida) {
+      if (!idContaReceber) {
+        throw new Error('Conta recebida é obrigatória.');
+      }
+
+      if (!contaRecebida || contaRecebida === {}) {
+        return Promise.resolve();
+      }
+
+      return http().patch(API + idContaReceber, contaRecebida);
+    },
+
+    /**
      * Recupera o objeto com as configurações utilizadas na tela de listagem de contas recebidas.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
@@ -40,6 +58,14 @@ Servicos.ContasReceber = (function(http) {
      */
     obterTiposContabeis: function() {
       return http().get(API + 'tiposContabeis');
+    },
+
+    /**
+     * Recupera os tipos de busca de NF-e utilizadas na tela de listagem de contas recebidas.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterFiltroTiposBuscaNfe: function () {
+      return http().get(API + 'tiposBuscaNfe');
     }
   };
 }) (function () {

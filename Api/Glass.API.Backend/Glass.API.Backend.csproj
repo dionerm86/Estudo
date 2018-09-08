@@ -322,6 +322,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
+    <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
@@ -362,7 +363,7 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
-    <Compile Include="Models\ContasReceber\CadastroAtualizacao\ObservacaoContaRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
     <Compile Include="Models\ContasReceber\Configuracoes\ListaRecebidasDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />

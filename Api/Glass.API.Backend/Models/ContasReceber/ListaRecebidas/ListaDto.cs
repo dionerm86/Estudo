@@ -55,7 +55,7 @@ namespace Glass.API.Backend.Models.ContasReceber.ListaRecebidas
             this.ObservacaoDescontoAcrescimo = contaRecebida.ObsDescAcresc;
             this.DetalhamentoComissao = contaRecebida.DescrComissao;
             this.DescricaoContaContabil = contaRecebida.DescricaoContaContabil;
-            this.CorLinha = contaRecebida.Color;
+            this.CorLinha = this.ObterCorLinha(contaRecebida);
 
             this.Permissoes = new PermissoesDto
             {
@@ -261,5 +261,25 @@ namespace Glass.API.Backend.Models.ContasReceber.ListaRecebidas
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        private string ObterCorLinha(Data.Model.ContasReceber contaRecebida)
+        {
+            if (!contaRecebida.Recebida)
+            {
+                return "Green";
+            }
+
+            if (contaRecebida.Protestado)
+            {
+                return System.Drawing.Color.FromArgb(225, 200, 0).ToString();
+            }
+
+            if (contaRecebida.IdArquivoRemessa > 0)
+            {
+                return "Blue";
+            }
+
+            return "Black";
+        }
     }
 }

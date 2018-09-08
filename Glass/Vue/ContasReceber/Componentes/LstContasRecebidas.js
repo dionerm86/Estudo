@@ -8,7 +8,11 @@ const app = new Vue({
       direcao: 'desc'
     },
     configuracoes: {},
-    filtro: {}
+    filtro: {},
+    numeroLinhaEdicao: -1,
+    contaRecebida: {},
+    contaRecebidaAtual: {},
+    contaRecebidaOriginal: {}
   },
 
   methods: {
@@ -20,7 +24,7 @@ const app = new Vue({
      * @param {string} ordenacao A ordenação que será usada para a recuperação dos itens.
      * @returns {Promise} Uma promise com o resultado da busca dos itens.
      */
-    atualizarContasRecebidas: function(filtro, pagina, numeroRegistros, ordenacao) {
+    obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.ContasRecebidas.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
@@ -36,6 +40,47 @@ const app = new Vue({
       } else {
         this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
       }
+    },
+
+    /**
+     * Indica que uma conta recebida será editada.
+     * @param {Object} contaRecebida O item que será editado.
+     * @param {number} numeroLinha O número da linha que contém o iten que será editado.
+     */
+    editar: function (contaRecebida, numeroLinha) {
+      this.iniciarCadastroOuAtualizacao_(contaRecebida);
+      this.numeroLinhaEdicao = numeroLinha;
+    },
+
+    /**
+     * Atualiza os dados da conta recebida.
+     * @param {Object} event O objeto com o evento do JavaScript.
+     */
+    atualizar: function (event) {
+      if (!event || !this.validarFormulario_(event.target)) {
+        return;
+      }
+
+      var contaRecebidaAtualizar = this.patch(this.contaRecebida, this.contaRecebidaOriginal);
+      var vm = this;
+
+      Servicos.ContasReceber.atualizar(this.contaRecebida.id, contaRecebidaAtualizar)
+        .then(function (resposta) {
+          vm.atualizarLista();
+          vm.cancelar();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Cancela a edição da conta recebida.
+     */
+    cancelar: function () {
+      this.numeroLinhaEdicao = -1;
     },
 
     /**
@@ -144,6 +189,34 @@ const app = new Vue({
     },
 
     /**
+     * Função executada para criação dos objetos necessários para edição de conta recebida.
+     * @param {?Object} [contaRecebida=null] A conta recebida que servirá como base para criação do objeto (para edição).
+     */
+    iniciarCadastroOuAtualizacao_: function (contaRecebida) {
+      this.contaRecebidaAtual = contaRecebida;
+
+      this.contaRecebida = {
+        observacao: contaRecebida ? contaRecebida.observacao : null
+      };
+
+      this.contaRecebidaOriginal = this.clonar(this.contaRecebida);
+    },
+
+    /**
+     * Função que indica se o formulário possui valores válidos de acordo com os controles.
+     * @param {Object} botao O botão que foi disparado no controle.
+     * @returns {boolean} Um valor que indica se o formulário está válido.
+     */
+    validarFormulario_: function (botao) {
+      var form = botao.form || botao;
+      while (form.tagName.toLowerCase() !== 'form') {
+        form = form.parentNode;
+      }
+
+      return form.checkValidity();
+    },
+
+    /**
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
@@ -161,7 +234,7 @@ const app = new Vue({
       incluirFiltro('idTrocaDev', this.filtro.idTrocaDevolucao);
       incluirFiltro('numeroNfe', this.filtro.numeroNfe);
       incluirFiltro('idSinal', this.filtro.idSinal);
-      incluirFiltro('numCte', this.filtro.idCte);
+      incluirFiltro('numCte', this.filtro.numeroCte);
       incluirFiltro('dtIniVenc', this.filtro.periodoVencimentoInicio ? this.filtro.periodoVencimentoInicio.toLocaleDateString('pt-BR') : null);
       incluirFiltro('dtFimVenc', this.filtro.periodoVencimentoFim ? this.filtro.periodoVencimentoFim.toLocaleDateString('pt-BR') : null);
       incluirFiltro('dtIniRec', this.filtro.periodoRecebimentoInicio ? this.filtro.periodoRecebimentoInicio.toLocaleDateString('pt-BR') : null);

@@ -168,5 +168,40 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                 return this.Lista(tiposContabeis);
             }
         }
+
+        /// <summary>
+        /// Recupera os tipos de busca de NF-e para tela de conta recebida.
+        /// </summary>
+        /// <returns>Uma lista JSON com os tipos de busca de NF-e.</returns>
+        [HttpGet]
+        [Route("tiposBuscaNfe")]
+        [SwaggerResponse(200, "Tipos de busca de NF-e encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de busca de NF-e não encontrados.")]
+        public IHttpActionResult ObterTiposBucaNfe()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposBuscaNfe = new List<IdNomeDto>()
+                {
+                    new IdNomeDto()
+                    {
+                        Id = 1,
+                        Nome = "Contas COM NF-e geradas",
+                    },
+                    new IdNomeDto()
+                    {
+                        Id = 2,
+                        Nome = "Contas SEM NF-e geradas",
+                    },
+                    new IdNomeDto()
+                    {
+                        Id = 3,
+                        Nome = "Demais contas",
+                    },
+                };
+
+                return this.Lista(tiposBuscaNfe);
+            }
+        }
     }
 }

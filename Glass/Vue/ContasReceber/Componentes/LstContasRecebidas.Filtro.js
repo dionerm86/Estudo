@@ -9,6 +9,16 @@ Vue.component('contarecebida-filtros', {
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
+    },
+
+    /**
+     * Objeto com as configurações da tela de contas recebidas.
+     * @type {!Object}
+     */
+    configuracoes: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarObjeto
     }
   },
 
@@ -23,7 +33,7 @@ Vue.component('contarecebida-filtros', {
           idTrocaDevolucao: null,
           numeroNfe: null,
           idSinal: null,
-          idCte: null,
+          numeroCte: null,
           periodoVencimentoInicio: null,
           periodoVencimentoFim: null,
           periodoRecebimentoInicio: null,
@@ -142,7 +152,21 @@ Vue.component('contarecebida-filtros', {
      */
     obterItensFiltroComissionados: function () {
       return Servicos.Comissionados.obterComissionados();
+    },
+
+    /**
+     * Recupera as opções de busca de contas associadas ou não à notas fiscais.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    obterItensFiltroBuscaNfe: function () {
+      return Servicos.ContasReceber.obterFiltroBuscaNfe();
     }
+  },
+
+  mounted: function () {
+    this.filtroAtual.ordenacaoFiltro = 1;
+    this.filtroAtual.buscaArquivoRemessa = 2;
+    this.filtroAtual.buscarContasVinculadas = this.configuracoes.filtrarContasVinculadasPorPadrao;
   },
 
   watch: {

@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.ContasReceber;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.ContasReceber.CadastroAtualizacao;
 using Glass.Data.DAL;
@@ -18,17 +19,17 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
     public partial class ContasReceberController : BaseController
     {
         /// <summary>
-        /// Atualiza a observação de uma conta recebida.
+        /// Atualiza dados da conta recebida.
         /// </summary>
-        /// <param name="id">O identificador da conta recebida.</param>
-        /// <param name="dadosEntrada">Objeto com a observação da conta recebida.</param>
-        /// <returns>Um status HTTP com o resultado da operação.</returns>
+        /// <param name="id">O identificador da conta recebida que será alterada.</param>
+        /// <param name="dadosParaAlteracao">Os novos dados que serão alterados na conta recebida indicada.</param>
+        /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
-        [Route("{id}/alterarObservacoes")]
-        [SwaggerResponse(202, "Observação da conta recebida atualizada.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Conta recebida não encontrada.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarObservacao(int id, [FromBody] ObservacaoContaRecebidaDto dadosEntrada)
+        [Route("{id}/recebida")]
+        [SwaggerResponse(202, "Dados da conta recebida alterados.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Conta recebida não encontrada para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult AlterarContaRecebida(int id, [FromBody] CadastroAtualizacaoRecebidaDto dadosParaAlteracao)
         {
             using (var sessao = new GDATransaction())
             {
@@ -41,18 +42,25 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                         return validacao;
                     }
 
-                    var contaReceber = ContasReceberDAO.Instance.GetElementByPrimaryKey(id);
-                    contaReceber.Obs = dadosEntrada.Observacao;
+                    var contaRecebida = ContasReceberDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
-                    ContasReceberDAO.Instance.Update(sessao, contaReceber);
+                    if (contaRecebida == null)
+                    {
+                        return this.NaoEncontrado($"Conta recebida {id} não encontrada.");
+                    }
+
+                    contaRecebida = new ConverterCadastroAtualizacaoParaContaRecebida(dadosParaAlteracao, contaRecebida)
+                        .ConverterParaContaRecebida();
+
+                    ContasReceberDAO.Instance.Update(sessao, contaRecebida);
                     sessao.Commit();
 
-                    return this.Aceito("Conta recebida atualizada com sucesso.");
+                    return this.Aceito($"Conta recebida {id} atualizado com sucesso!");
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     sessao.Rollback();
-                    return this.ErroValidacao("Erro ao atualizar a observação da conta recebida.", e);
+                    return this.ErroValidacao($"Erro ao atualizar conta recebida.", ex);
                 }
             }
         }

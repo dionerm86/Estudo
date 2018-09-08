@@ -1,67 +1,220 @@
 <section class="filtros">
     <div>
-        <span class="form-group">
-            <label for="id">Liberação</label>
-            <input id="id" type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+        <span>
+            <label>Pedido</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label for="id">Pedido</label>
-            <input id="id" type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+        <span v-if="configuracoes.usarLiberacaoPedido">
+            <label>Liberação</label>
+            <input type="number" v-model.number="filtroAtual.idLiberarPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label for="id">Nota Fiscal</label>
-            <input id="id" type="number" v-model.number="filtroAtual.numeroNfe" style="width: 60px" />
+        <span>
+            <label>Acerto</label>
+            <input type="number" v-model.number="filtroAtual.idAcerto" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label for="idLoja">Loja</label>
-            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+        <span>
+            <label>Acerto parcial</label>
+            <input type="number" v-model.number="filtroAtual.idAcertoParcial" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-    </div>
-    <div>
-        <span class="form-group">
-            <label for="idCliente">Cliente</label>
-            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
-            <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+        <span>
+            <label>Troca/Devolução</label>
+            <input type="number" v-model.number="filtroAtual.idTrocaDevolucao" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label>Liberado por</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="liberadorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroLiberadores"
-                v-bind:ordenar="false"></lista-selecao-id-valor>
+        <span>
+            <label>NF-e</label>
+            <input type="number" v-model.number="filtroAtual.numeroNfe" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label for="situacao">Situação</label>
-            <select id="situacao" v-model="filtroAtual.situacao">
-                <option Value="0">Todas</option>
-                <option Value="1" selected="selected">Liberado</option>
-                <option Value="2">Cancelado</option>
-            </select>
+        <span>
+            <label>Sinal/Pagto. Antecipado</label>
+            <input type="number" v-model.number="filtroAtual.idSinal" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label for="liberacaoComSemNotaFiscal">Nota fiscal</label>
-            <select id="liberacaoComSemNotaFiscal" v-model="filtroAtual.liberacaoComSemNotaFiscal">
-                <option value="0">Todas</option>
-                <option Value="1">Apenas liberações com nota fiscal</option>
-                <option Value="2">Apenas liberações sem nota fiscal</option>
-            </select>
+        <span>
+            <label>CT-e</label>
+            <input type="number" v-model.number="filtroAtual.numeroCte" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
     <div>
-        <span class="form-group">
-            <label>Período liberação:</label>
+        <span>
+            <label>Período vencimento</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoVencimentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoVencimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Período recebimento</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoRecebimentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoRecebimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Período cadastro</label>
             <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <label>Período cancelamento:</label>
-            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCancelamentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCancelamentoFim"></campo-data-hora-periodo>
+        <span>
+            <label>Recebida por</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="recebidaPorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroFuncionariosCaixaDiario"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>Loja</label>
+            <span class="form-group">
+                <label for="idLoja">Loja</label>
+                <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+                <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+            </span>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>  
+        <span>
+            <label>Vendedor</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>  
+        <span>
+            <label>Cliente</label>
+            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>  
+        <span>
+            <label>Vendedor associado</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorAssociadoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedoresAssociadosAClientes"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>Vendedor obra</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorObraAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Forma pagamento</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.formasPagamento" texto-selecionar="Selecione a forma de pagamento"
+                v-bind:funcao-recuperar-itens="obterItensFiltroFormasPagamentoContasRecebidas" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span v-if="!configuracoes.usarLiberacaoPedido">
+            <label>Tipo entrega</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoEntregaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroTiposEntrega"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Valor recebido</label>
+            <input type="number" v-model.number="filtroAtual.valorRecebidoInicio" style="width: 60px" />
+            a
+            <input type="number" v-model.number="filtroAtual.valorRecebidoFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Ordenar por</label>
+            <select id="situacao" v-model="filtroAtual.ordenacaoFiltro">
+                <option Value="1">Vencimento</option>
+                <option Value="2">Cliente</option>
+                <option Value="3">Valor</option>
+                <option Value="4">Num. NFe</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span v-if="configuracoes.existeRotaCadastrada">
+            <label>Rota</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="rotaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroRotas"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Tipo conta</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tiposContabeis" texto-selecionar="Selecione o tipo contábil"
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposContabeis" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Comissionado</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="comissionadoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroComissionados"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Observação</label>
+            <input type="text" v-model.text="filtroAtual.observacao" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <label>Número autorização cartão</label>
+            <input type="number" v-model.number="filtroAtual.numeroAutorizacaoCartao" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span v-if="configuracoes.utilizarCnab">
+            <label>Número arquivo remessa</label>
+            <input type="number" v-model.number="filtroAtual.numeroArquivoRemessa" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span v-if="configuracoes.utilizarCnab">
+            <label>Busca arquivo remessa</label>
+            <select id="situacao" v-model="filtroAtual.buscaArquivoRemessa">
+                <option Value="1">Não incluir contas de arquivo de remessa</option>
+                <option Value="2">Incluir contas de arquivo de remessa</option>
+                <option Value="3">Somente contas de arquivo de remessa</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span v-if="configuracoes.comissaoPorContasRecebida">
+            <label>Comissão</label>
+            <input type="number" v-model.number="filtroAtual.idComissao" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <label>Buscar contas</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.buscaNotaFiscal" texto-selecionar="Selecione"
+                v-bind:funcao-recuperar-itens="obterFiltroTiposBuscaNfe" v-bind:ordenar="false"></lista-selecao-multipla>
+            <img border="0" src="../Images/help.gif" 
+                title="Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
+                    Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
+                    Demais contas: cliente sem percentual de redução em NFe ou conta sem referência direta com alguma liberação." />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span>
+            <input id="buscarContasAReceber" type="checkbox" v-model="filtroAtual.buscarContasAReceber" />
+            <label for="buscarContasAReceber">Exibir contas a receber</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <input id="buscarContasRenegociadas" type="checkbox" v-model="filtroAtual.buscarContasRenegociadas" />
+            <label for="buscarContasRenegociadas">Buscar contas renegociadas</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <input id="buscarContasDeObra" type="checkbox" v-model="filtroAtual.buscarContasDeObra" />
+            <label for="buscarContasDeObra">Buscar contas de obra</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span v-if="configuracoes.utilizarCnab">
+            <input id="buscarContasProtestadas" type="checkbox" v-model="filtroAtual.buscarContasProtestadas" />
+            <label for="buscarContasProtestadas">Buscar apenas contas em cartório</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span>
+            <input id="buscarContasVinculadas" type="checkbox" v-model="filtroAtual.buscarContasVinculadas" />
+            <label for="buscarContasVinculadas">Incluir contas vinculadas</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
