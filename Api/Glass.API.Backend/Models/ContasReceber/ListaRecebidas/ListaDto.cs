@@ -3,7 +3,6 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas;
-using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Newtonsoft.Json;
@@ -133,7 +132,7 @@ namespace Glass.API.Backend.Models.ContasReceber.ListaRecebidas
         /// Obtém ou define a referência da conta recebida.
         /// </summary>
         [DataMember]
-        [JsonProperty("referecia")]
+        [JsonProperty("referencia")]
         public string Referecia { get; set; }
 
         /// <summary>

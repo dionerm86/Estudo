@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.ContasReceber
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "IdLiberarPedido DESC"; }
+            get { return "DataVec DESC"; }
         }
 
         /// <inheritdoc/>
@@ -29,23 +29,48 @@ namespace Glass.API.Backend.Helper.ContasReceber
         {
             switch (campo.ToLowerInvariant())
             {
-                case "id":
-                    return "IdLiberarPedido";
-
-                case "total":
-                case "valoricms":
-                case "dataliberacao":
-                case "situacao":
+                case "idcomissao":
+                case "numeronfe":
                     return campo;
 
+                case "numeroparcela":
+                    return "NumParc";
+
                 case "nomecliente":
-                    return "NomeClienteFantasia";
+                    return "NomeCli";
 
-                case "descricaopagamento":
-                    return "DescrFormaPagto";
+                case "formapagamento":
+                    return "FormaPagto";
 
-                case "nomefuncionario":
+                case "valorvencimento":
+                    return "ValorVec";
+
+                case "datavencimento":
+                    return "DataVec";
+
+                case "valorrecebido":
+                    return "ValorRec";
+
+                case "datarecebimento":
+                    return "DataRec";
+
+                case "recebidapor":
                     return "NomeFunc";
+
+                case "localizacao":
+                    return "DestinoRec";
+
+                case "numeroarquivoremessa":
+                    return "NumArquivoRemessaCnab";
+
+                case "observacao":
+                    return "obs";
+
+                case "descricaocomissao":
+                    return "PercentualComissao";
+
+                case "tipocontabil":
+                    return "DescricaoContaContabil";
 
                 default:
                     return this.OrdenacaoPadrao;

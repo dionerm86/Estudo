@@ -14,7 +14,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#" @click.prevent="return false">Referência</a>
+                        <a href="#">Referência</a>
                     </th>
                     <th v-if="configuracoes.comissaoPorContasRecebida">
                         <a href="#" @click.prevent="ordenar('idComissao')">Comissão</a>
@@ -71,6 +71,32 @@
                         <a href="#" @click.prevent="abrirCancelamentoContaRecebida(item)" title="Cancelar" v-if="item.permissoes.cancelar && numeroLinhaEdicao === -1">
                             <img border="0" src="../Images/ExcluirGrid.gif">
                         </a>
+
+                        <a href="#" @click.prevent="abrirRelatorioLiberacao(item)" title="Liberação" v-if="item.idLiberarPedido > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioPedido(item)" title="Pedido" v-if="item.idPedido > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioAcertoParcial(item)" title="Acerto parcial" v-if="item.idAcertoParcial > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioSinal(item)" title="Sinal/Pagto. antecipado" v-if="item.idSinal > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioEncontroContas(item)" title="Encontro de contas" v-if="item.idEncontroContas > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioObra(item)" title="Obra" v-if="item.idObra > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        
+                        <a href="#" @click.prevent="abrirRelatorioAcerto(item)" title="Dados do recebimento" v-if="item.idAcerto > 0 && numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/script_go.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirRelatorioContaRecebida(item)" title="Dados do recebimento" v-else-if="numeroLinhaEdicao === -1">
+                            <img border="0" src="../Images/script_go.gif">
+                        </a>
                     </td>
                     <td :style="{ color: item.corLinha }">{{ item.referencia }}</td>
                     <td :style="{ color: item.corLinha }" v-if="configuracoes.comissaoPorContasRecebida">{{ item.idComissao }}</td>
@@ -93,7 +119,7 @@
                         <log-cancelamento tabela="ContasReceber" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logCancelamento"></log-cancelamento>
                     </td>
                 </template>
-                <template slot="itemEditando">
+                <template slot="itemEditando" v-if="false">
                     <td style="white-space: nowrap">
                         <button @click.prevent="atualizar" title="Atualizar">
                             <img src="../Images/ok.gif">
@@ -162,143 +188,4 @@
             <asp:ScriptReference Path="~/Vue/ContasReceber/Componentes/LstContasRecebidas.js" />
         </Scripts>
     </asp:ScriptManager>
-
-
-
-
-    <table>
-        <tr>
-            <td align="center">
-                <asp:GridView GridLines="None" ID="grdConta" runat="server" AutoGenerateColumns="False"
-                    DataKeyNames="IdContaR" DataSourceID="odsContasReceber" CssClass="gridStyle"
-                    PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit"
-                    EmptyDataText="Nenhuma conta recebida encontrada." AllowPaging="True" AllowSorting="True"
-                    OnRowDataBound="grdConta_RowDataBound">
-                    <PagerSettings PageButtonCount="20" />
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkEdit" runat="server" CausesValidation="False" CommandName="Edit"
-                                    Visible='<%# !(bool)Eval("IsParcelaCartao") %>'>
-                                      <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:ImageButton ID="imbAtualizar" runat="server" CausesValidation="false" CommandName="Update"
-                                    Height="16px" ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" />
-                                <asp:ImageButton ID="imbCancelar" runat="server" CausesValidation="False" CommandName="Cancel"
-                                    ImageUrl="~/Images/ExcluirGrid.gif" ToolTip="Cancelar" />
-                            </EditItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:PlaceHolder runat="server" ID="rptRef" Visible='<%# !String.IsNullOrEmpty(Eval("RelatorioPedido") as string) %>'>
-                                    <a href="#" onclick="openRptUnico('<%# Eval("RelatorioPedido") %>');">
-                                        <img border="0" src="../Images/Relatorio.gif" /></a> </asp:PlaceHolder>
-                                <asp:PlaceHolder runat="server" ID="rptRec">
-                                    <a href="#" onclick="openRptUnico('<%# Eval("UrlRelatorio") %>');">
-                                        <img border="0" src="../Images/script_go.gif" title="Dados do recebimento" /></a>
-                                </asp:PlaceHolder>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Referência" SortExpression="Referencia">
-                            <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Bind("Referencia") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Cód. Comissão" SortExpression="IdComissao">
-                            <ItemTemplate>
-                                <asp:Label ID="Label22" runat="server" Text='<%# Bind("IdComissao") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Parc." SortExpression="NumParcString">
-                            <ItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("NumParcString") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Cliente" SortExpression="IdNomeCli">
-                            <ItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Eval("IdNomeCli") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Forma Pagto." SortExpression="DescrFormaPagto">
-                            <ItemTemplate>
-                                <asp:Label ID="Label4" runat="server" Text='<%# Bind("DescrFormaPagto") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Valor" SortExpression="ValorVec">
-                            <ItemTemplate>
-                                <asp:Label ID="Label5" runat="server" Text='<%# Eval("ValorVec", "{0:C}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Data. Venc." SortExpression="DataVec">
-                            <ItemTemplate>
-                                <asp:Label ID="Label6" runat="server" Text='<%# Bind("DataVec", "{0:d}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Valor Rec." SortExpression="ValorRec">
-                            <ItemTemplate>
-                                <asp:Label ID="Label71" runat="server" Text='<%# Eval("ValorRec", "{0:C}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Data Rec." SortExpression="DataRec">
-                            <ItemTemplate>
-                                <asp:Label ID="Label9" runat="server" Text='<%# Bind("DataRec", "{0:d}") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Recebida por" SortExpression="NomeFunc">
-                            <ItemTemplate>
-                                <asp:Label ID="Label8" runat="server" Text='<%# Bind("NomeFunc") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Num. NF" SortExpression="NumeroNFe">
-                            <ItemTemplate>
-                                <asp:Label ID="Label10" runat="server" Text='<%# Bind("NumeroNFe") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Localização" SortExpression="DestinoRec">
-                            <ItemTemplate>
-                                <asp:Label ID="Label11" runat="server" Text='<%# Bind("DestinoRec") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Num. Arquivo Remessa" SortExpression="NumeroArquivoRemessaCnab">
-                            <ItemTemplate>
-                                <asp:Label ID="Label72" runat="server" Text='<%# Bind("NumeroArquivoRemessaCnab") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Obs" SortExpression="Obs">
-                            <ItemTemplate>
-                                <asp:Label ID="lblObs" runat="server" Text='<%# Bind("Obs") %>'></asp:Label>
-                                <asp:Label ID="lblObsDescAcresc" runat="server" Text='<%# Bind("ObsDescAcresc") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtObs" runat="server" MaxLength="300" Text='<%# Bind("Obs") %>'
-                                    Width="200px"></asp:TextBox>
-                            </EditItemTemplate>
-                        </asp:TemplateField>
-                        <asp:BoundField DataField="DescrComissao" HeaderText="Comissão" SortExpression="DescrComissao"></asp:BoundField>
-                        <asp:TemplateField HeaderText="Tipo" SortExpression="DescricaoContaContabil">
-                            <ItemTemplate>
-                                <asp:Label ID="Label13" runat="server" Text='<%# Bind("DescricaoContaContabil") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc1:ctrlLogCancPopup ID="ctrlLogCancPopup1" runat="server" IdRegistro='<%# Eval("IdContaR") %>'
-                                    Tabela="ContasReceber" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <uc4:ctrlLogPopup ID="ctrlLogContasReceber" runat="server" Tabela="ContasReceber" IdRegistro='<%# Eval("IdContaR") %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                    <PagerStyle />
-                    <EditRowStyle />
-                    <AlternatingRowStyle />
-                </asp:GridView>
-            </td>
-        </tr>
-    </table>
 </asp:Content>

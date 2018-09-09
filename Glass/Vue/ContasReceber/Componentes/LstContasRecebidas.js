@@ -26,7 +26,7 @@ const app = new Vue({
      */
     obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
-      return Servicos.ContasRecebidas.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
+      return Servicos.ContasReceber.obterListaRecebidas(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -112,7 +112,7 @@ const app = new Vue({
      * @param {Object} item A conta recebida que terá o acerto parcial referente impresso.
      */
     abrirRelatorioAcertoParcial: function (item) {
-      this.abrirJanela(600, 800, '../RelBase.aspx?rel=Acerto&idAcerto=' + item.idAcertoParcial);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=' + item.idAcertoParcial);
     },
 
     /**
@@ -120,7 +120,7 @@ const app = new Vue({
      * @param {Object} item A conta recebida que terá o sinal referente impresso.
      */
     abrirRelatorioSinal: function (item) {
-      this.abrirJanela(600, 800, '../RelBase.aspx?rel=Sinal&idSinal=' + item.idSinal);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Sinal&idSinal=' + item.idSinal);
     },
 
     /**
@@ -128,7 +128,7 @@ const app = new Vue({
      * @param {Object} item A conta recebida que terá o encontro de contas referente impresso.
      */
     abrirRelatorioEncontroContas: function (item) {
-      this.abrirJanela(600, 800, '../RelBase.aspx?rel=EncontroContas&IdEncontroContas=' + item.idEncontroContas);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=EncontroContas&IdEncontroContas=' + item.idEncontroContas);
     },
 
     /**
@@ -136,7 +136,7 @@ const app = new Vue({
      * @param {Object} item A conta recebida que terá a obra referente impressa.
      */
     abrirRelatorioObra: function (item) {
-      this.abrirJanela(600, 800, '../RelBase.aspx?rel=Obra&obraDetalhada=false&idObra=' + item.idObra);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Obra&obraDetalhada=false&idObra=' + item.idObra);
     },
 
     /**
@@ -144,7 +144,7 @@ const app = new Vue({
      * @param {Object} item A conta recebida que terá o acerto referente impresso.
      */
     abrirRelatorioAcerto: function (item) {
-      this.abrirJanela(600, 800, '../RelBase.aspx?rel=Acerto&idAcerto=' + item.idAcerto);
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=' + item.idAcerto);
     },
 
     /**
@@ -160,7 +160,7 @@ const app = new Vue({
      * @param {Boolean} exportarExcel Define se deverá ser gerada exportação para o excel.
      */
     abrirListaContasRecebidas: function (exportarExcel) {
-      var url = '../RelBase.aspx?Rel=ContasRecebidas' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel;
+      var url = '../Relatorios/RelBase.aspx?Rel=ContasRecebidas' + this.formatarFiltros_() + '&exportarExcel=' + exportarExcel;
       this.abrirJanela(600, 800, url);
     },
 

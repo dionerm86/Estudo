@@ -71,6 +71,7 @@ Vue.component('contarecebida-filtros', {
       ),
       recebidaPorAtual: null,
       vendedorAtual: null,
+      lojaAtual: null,
       vendedorAssociadoAtual: null,
       vendedorObraAtual: null,
       tipoEntregaAtual: null,
@@ -188,6 +189,17 @@ Vue.component('contarecebida-filtros', {
     vendedorAtual: {
       handler: function (atual) {
         this.filtroAtual.idVendedor = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'lojaAtual'.
+     * Atualiza o filtro com o ID do item selecionado.
+     */
+    lojaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idLoja = atual ? atual.id : null;
       },
       deep: true
     },

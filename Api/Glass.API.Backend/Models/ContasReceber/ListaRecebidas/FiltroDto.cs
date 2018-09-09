@@ -254,7 +254,7 @@ namespace Glass.API.Backend.Models.ContasReceber.ListaRecebidas
         /// Obtém ou define um valor que indica se serão buscadas ou não contas vinculadas.
         /// </summary>
         [JsonProperty("buscarContasVinculadas")]
-        public bool BuscarContasVinculadas { get; set; }
+        public bool? BuscarContasVinculadas { get; set; }
 
         /// <summary>
         /// Obtém ou define a ordenação a ser usada na listagem.

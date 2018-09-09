@@ -1772,6 +1772,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\LogCancelamento.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />
     <Content Include="WebGlassParceiros\AlterarObsLiberacaoPedido.aspx" />
     <Content Include="WebGlassParceiros\CadMensagemParceiro.aspx" />

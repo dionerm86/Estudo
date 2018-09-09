@@ -52,6 +52,9 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
             {
                 filtro = filtro ?? new Models.ContasReceber.ListaRecebidas.FiltroDto();
 
+                var buscaArquivoRemessa = filtro.BuscaArquivoRemessa.GetValueOrDefault(2);
+                var buscarContasVinculadas = filtro.BuscarContasVinculadas ?? FinanceiroConfig.FiltroContasVinculadasMarcadoPorPadrao;
+
                 var contasRecebidas = ContasReceberDAO.Instance.GetForListRpt(
                     (uint)(filtro.IdPedido ?? 0),
                     (uint)(filtro.IdLiberarPedido ?? 0),
@@ -73,8 +76,8 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                     filtro.PeriodoCadastroFim?.ToShortDateString(),
                     filtro.FormasPagamento != null && filtro.FormasPagamento.Any() ? string.Join(",", filtro.FormasPagamento) : null,
                     0,
-                    (float)filtro.ValorRecebidoInicio,
-                    (float)filtro.ValorRecebidoFim,
+                    (float)(filtro.ValorRecebidoInicio ?? 0),
+                    (float)(filtro.ValorRecebidoFim ?? 0),
                     filtro.BuscarContasRenegociadas,
                     !filtro.BuscarContasAReceber,
                     (uint)(filtro.IdComissionado ?? 0),
@@ -84,14 +87,14 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                     filtro.TiposContabeis != null && filtro.TiposContabeis.Any() ? string.Join(",", filtro.TiposContabeis) : null,
                     (uint)(filtro.NumeroArquivoRemessa ?? 0),
                     filtro.BuscarContasDeObra,
-                    filtro.BuscaArquivoRemessa.GetValueOrDefault(1),
+                    buscaArquivoRemessa,
                     filtro.IdVendedorAssociadoCliente ?? 0,
                     filtro.IdVendedorObra ?? 0,
                     filtro.IdComissao ?? 0,
                     filtro.IdSinal ?? 0,
                     filtro.IdCte ?? 0,
                     filtro.BuscarContasProtestadas,
-                    filtro.BuscarContasVinculadas,
+                    buscarContasVinculadas,
                     filtro.BuscaNotaFiscal != null && filtro.BuscaNotaFiscal.Any() ? string.Join(",", filtro.BuscaNotaFiscal) : null,
                     filtro.NumeroAutorizacaoCartao,
                     filtro.ObterTraducaoOrdenacao(),
@@ -122,8 +125,8 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                         filtro.PeriodoCadastroFim?.ToShortDateString(),
                         filtro.FormasPagamento != null && filtro.FormasPagamento.Any() ? string.Join(",", filtro.FormasPagamento) : null,
                         0,
-                        (float)filtro.ValorRecebidoInicio,
-                        (float)filtro.ValorRecebidoFim,
+                        (float)(filtro.ValorRecebidoInicio ?? 0),
+                        (float)(filtro.ValorRecebidoFim ?? 0),
                         filtro.BuscarContasRenegociadas,
                         !filtro.BuscarContasAReceber,
                         (uint)(filtro.IdComissionado ?? 0),
@@ -133,14 +136,14 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
                         filtro.TiposContabeis != null && filtro.TiposContabeis.Any() ? string.Join(",", filtro.TiposContabeis) : null,
                         (uint)(filtro.NumeroArquivoRemessa ?? 0),
                         filtro.BuscarContasDeObra,
-                        filtro.BuscaArquivoRemessa.GetValueOrDefault(1),
+                        buscaArquivoRemessa,
                         filtro.IdVendedorAssociadoCliente ?? 0,
                         filtro.IdVendedorObra ?? 0,
                         filtro.IdComissao ?? 0,
                         filtro.IdSinal ?? 0,
                         filtro.IdCte ?? 0,
                         filtro.BuscarContasProtestadas,
-                        filtro.BuscarContasVinculadas,
+                        buscarContasVinculadas,
                         filtro.BuscaNotaFiscal != null && filtro.BuscaNotaFiscal.Any() ? string.Join(",", filtro.BuscaNotaFiscal) : null,
                         filtro.NumeroAutorizacaoCartao));
             }

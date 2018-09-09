@@ -21,7 +21,7 @@ Servicos.ContasReceber = (function(http) {
       filtro.numeroRegistros = numeroRegistros;
       filtro.ordenacao = ordenacao;
 
-      return http().get(API + '/recebidas', {
+      return http().get(API + 'recebidas', {
         params: filtro
       });
     },
@@ -64,7 +64,7 @@ Servicos.ContasReceber = (function(http) {
      * Recupera os tipos de busca de NF-e utilizadas na tela de listagem de contas recebidas.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterFiltroTiposBuscaNfe: function () {
+    obterFiltroBuscaNfe: function () {
       return http().get(API + 'tiposBuscaNfe');
     }
   };
