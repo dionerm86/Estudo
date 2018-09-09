@@ -46,30 +46,30 @@ namespace Glass.API.Backend.Helper.Processos
 
         private void ConverterDtoParaModelo(Data.Model.EtiquetaProcesso destino)
         {
-            destino.CodInterno = this.cadastro.Codigo ?? destino.CodInterno;
-            destino.Descricao = this.cadastro.Descricao ?? destino.Descricao;
-            destino.IdAplicacao = this.cadastro.IdAplicacao ?? destino.IdAplicacao;
-            destino.DestacarEtiqueta = this.cadastro.DestacarNaEtiqueta ?? destino.DestacarEtiqueta;
-            destino.GerarFormaInexistente = this.cadastro.GerarFormaInexistente ?? destino.GerarFormaInexistente;
-            destino.GerarArquivoDeMesa = this.cadastro.GerarArquivoDeMesa ?? destino.GerarArquivoDeMesa;
-            destino.NumeroDiasUteisDataEntrega = this.cadastro.NumeroDiasUteisDataEntrega ?? destino.NumeroDiasUteisDataEntrega;
-            destino.TipoProcesso = this.cadastro.TipoProcesso ?? destino.TipoProcesso;
-            destino.Situacao = this.cadastro.Situacao ?? destino.Situacao;
+            destino.CodInterno = this.cadastro.ObterValorNormalizado(c => c.Codigo, destino.CodInterno);
+            destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Descricao, destino.Descricao);
+            destino.IdAplicacao = this.cadastro.ObterValorNormalizado(c => c.IdAplicacao, destino.IdAplicacao);
+            destino.DestacarEtiqueta = this.cadastro.ObterValorNormalizado(c => c.DestacarNaEtiqueta, destino.DestacarEtiqueta);
+            destino.GerarFormaInexistente = this.cadastro.ObterValorNormalizado(c => c.GerarFormaInexistente, destino.GerarFormaInexistente);
+            destino.GerarArquivoDeMesa = this.cadastro.ObterValorNormalizado(c => c.GerarArquivoDeMesa, destino.GerarArquivoDeMesa);
+            destino.NumeroDiasUteisDataEntrega = this.cadastro.ObterValorNormalizado(c => c.NumeroDiasUteisDataEntrega, destino.NumeroDiasUteisDataEntrega);
+            destino.TipoProcesso = this.cadastro.ObterValorNormalizado(c => c.TipoProcesso, destino.TipoProcesso);
+            destino.Situacao = this.cadastro.ObterValorNormalizado(c => c.Situacao, destino.Situacao);
 
             this.ConverterTiposPedidos(destino);
         }
 
         private void ConverterTiposPedidos(Data.Model.EtiquetaProcesso destino)
         {
-            if (this.cadastro.TiposPedidos == null)
-            {
-                return;
-            }
+            var valorDestino = destino.TipoPedido?.Split(',')
+                .Select(tipoPedido => tipoPedido.StrParaInt())
+                .Select(tipoPedido => (Data.Model.Pedido.TipoPedidoEnum)tipoPedido);
 
-            destino.TipoPedido = string.Join(
-                ",",
-                this.cadastro.TiposPedidos
-                    .Select(tipoPedido => (int)tipoPedido));
+            var valorNormalizado = this.cadastro.ObterValorNormalizado(c => c.TiposPedidos, valorDestino);
+
+            destino.TipoPedido = valorNormalizado != null
+                ? string.Join(",", valorNormalizado.Select(tipoPedido => (int)tipoPedido))
+                : null;
         }
     }
 }
