@@ -32,7 +32,7 @@ namespace Glass.Data.DAL
                     select pc.idProd, c.idLoja, sum(pc.totM) as totMComprando, sum(pc.qtde) as qtdeComprando
                     from produtos_compra pc
                         inner Join compra c On (pc.idCompra=c.idCompra)
-                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @") 
+                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @")
                         and (c.estoqueBaixado=false or c.estoqueBaixado is null)
                     group by pc.idProd" +
                         (!String.IsNullOrEmpty(aliasProdutoLoja) ? ", c.idLoja" : "") + @"
@@ -1469,7 +1469,7 @@ namespace Glass.Data.DAL
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
             if (idOrcamento == 0 && idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-           
+
             if (idLoja > 0)
                 filtroAdicional += " And p.IdProd Not In (Select IdProd From produto_loja Where IdLoja=" + idLoja + ")";
 
@@ -3870,7 +3870,7 @@ namespace Glass.Data.DAL
         /// Duplica uma lista de produtos.
         /// </summary>
         public void Duplicar(string idsProd, uint idNovoGrupo, uint? idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir)
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura)
         {
             if (idNovoSubgrupo == 0) idNovoSubgrupo = null;
 
@@ -3895,6 +3895,8 @@ namespace Glass.Data.DAL
                 p.IdProd = 0;
                 p.IdGrupoProd = (int)idNovoGrupo;
                 p.IdSubgrupoProd = (int?)idNovoSubgrupo;
+                p.Altura = string.IsNullOrWhiteSpace(novaAltura) ? p.Altura : novaAltura.StrParaInt();
+                p.Largura = string.IsNullOrWhiteSpace(novaLargura) ? p.Largura : novaLargura.StrParaInt();
 
                 if (!string.IsNullOrEmpty(codInternoRemover))
                     p.CodInterno = p.CodInterno.ToUpper().Replace(codInternoRemover.ToUpper(), codInternoSubstituir != null ? codInternoSubstituir.ToUpper() : string.Empty).Trim();

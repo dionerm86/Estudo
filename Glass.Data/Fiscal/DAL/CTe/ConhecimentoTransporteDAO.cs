@@ -1247,7 +1247,10 @@ namespace Glass.Data.DAL.CTe
                     throw new Exception("Para gerar a conta a receber do CTe é necessário informar o valor da duplicata e a data de vencimento da mesma.");
             }
 
-            if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario && NotaFiscalCteDAO.Instance.GetCount(cte.IdCte) == 0)
+            var possuiChaveAcessoInformada = ExecuteScalar<bool>($@"SELECT COUNT(*)>0 FROM chave_acesso_cte cac
+                        WHERE cac.IdCte={idCte}");
+
+            if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario && (NotaFiscalCteDAO.Instance.GetCount(cte.IdCte) == 0 && !possuiChaveAcessoInformada))
                 throw new Exception($"As informações dos documentos transportados pelo CT-e são obrigatórias para o tipo de serviço: {cte.TipoServicoString}. Informe pelo menos uma Nota Fiscal.");
 
             #region Gera XML

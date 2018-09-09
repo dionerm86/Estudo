@@ -74,14 +74,20 @@ namespace Glass.UI.Web.Relatorios.Projeto
     
                     for (int i = 0; i < itemProjeto.Length; i++)
                     {
+                        var pcp = itemProjeto[i].IdPedidoEspelho.HasValue;
                         ProjetoModelo modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto[i].IdProjetoModelo);
-                        lstPeca.AddRange(PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(itemProjeto[i].IdItemProjeto, itemProjeto[i].IdProjetoModelo, true));
-                        
+                        lstPeca.AddRange(PecaItemProjetoDAO.Instance.GetByItemProjetoRpt(itemProjeto[i].IdItemProjeto, itemProjeto[i].IdProjetoModelo, pcp));
+
                         // Caso a imagem da peça tenha sido editada então a impressão não deve exibir se a peça possui arquivo de otimização.
                         for (var x = 0; x < lstPeca.Count; x++)
                         {
-                            if (lstPeca[x].IdArquivoMesaCorte.GetValueOrDefault() > 0 && lstPeca[x].TipoArquivoMesaCorte.GetValueOrDefault() > 0)
-                                if (PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(lstPeca[x].IdPecaItemProj) || lstPeca[x].ImagemEditada)
+                            var pecaPossuiFiguraAssociada = PecaItemProjetoDAO.Instance.PossuiFiguraAssociada(null, lstPeca[x].IdPecaItemProj);
+                            var pecaPossuiEdicaoCadProject = lstPeca[x].IdProdPed != null ? lstPeca[x].ImagemEditada &&  ProdutosPedidoEspelhoDAO.Instance.PossuiEdicaoCadProject((uint)lstPeca[x].IdProdPed, pcp):false;
+                            var produtoPossuiImagemEditada = pcp && ProdutosPedidoEspelhoDAO.Instance.PossuiImagemAssociada(null, (uint)lstPeca[x].IdProdPed);
+
+                            if (lstPeca[x].IdArquivoMesaCorte > 0 && lstPeca[x].TipoArquivoMesaCorte > 0)
+                                if ((produtoPossuiImagemEditada || lstPeca[x].ImagemEditada || pecaPossuiFiguraAssociada) &&
+                                    lstPeca[x].TipoArquivoMesaCorte != (int)TipoArquivoMesaCorte.FMLBasico && !pecaPossuiEdicaoCadProject)
                                 {
                                     lstPeca[x].IdArquivoMesaCorte = null;
                                     lstPeca[x].TipoArquivoMesaCorte = null;
