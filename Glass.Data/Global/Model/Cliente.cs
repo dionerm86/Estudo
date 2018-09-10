@@ -690,6 +690,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("DescontoEcommerce")]
         public float? DescontoEcommerce { get; set; }
 
+        /// <summary>
+        /// Define se os pedidos emitidos para esse cliente
+        /// serão contabilizados no SMS de resumo diário
+        /// </summary>
+        [Log("IgnorarNoSmsResumoDiario")]
+        [PersistenceProperty("IgnorarNoSmsResumoDiario")]
+        public bool IgnorarNoSmsResumoDiario { get; set; }
+        
         #endregion
 
         #region Propriedades Estendidas
