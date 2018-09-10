@@ -44,7 +44,7 @@ namespace Glass.Data.CTeUtils
                     nomeSchema = "inutCte_v3.00.xsd";
                     break;
                 case TipoArquivoXml.CancCTe:
-                    nomeSchema = "evCancCTe_v3.00.xsd";
+                    nomeSchema = "eventoCTe_v3.00.xsd";
                     break;
             }
 
