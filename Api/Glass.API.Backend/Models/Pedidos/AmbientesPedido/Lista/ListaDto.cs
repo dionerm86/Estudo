@@ -1,4 +1,4 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -15,7 +15,7 @@ namespace Glass.API.Backend.Models.Pedidos.AmbientesPedido.Lista
     /// Classe que encapsula os dados de um ambiente de pedido.
     /// </summary>
     [DataContract(Name = "Ambiente")]
-    public class ListaDto : CadastroAtualizacaoDto
+    public class ListaDto : CadastroAtualizacaoDto<ProdutoMaoDeObraDto>
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.

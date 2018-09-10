@@ -4,9 +4,7 @@
 
 using Glass.API.Backend.Models.Genericas.CadastroAtualizacao;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
@@ -24,63 +22,63 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         [JsonProperty("codigo")]
         public string Codigo
         {
-            get { return this["codigo"] as string; }
-            set { this["codigo"] = value; }
+            get { return this.ObterValor(c => c.Codigo); }
+            set { this.AdicionarValor(c => c.Codigo, value); }
         }
 
         /// <summary>
-        /// Obtém ou define o código do processo de etiqueta.
+        /// Obtém ou define a descrição do processo de etiqueta.
         /// </summary>
         [DataMember]
         [JsonProperty("descricao")]
         public string Descricao
         {
-            get { return this["descricao"] as string; }
-            set { this["descricao"] = value; }
+            get { return this.ObterValor(c => c.Descricao); }
+            set { this.AdicionarValor(c => c.Descricao, value); }
         }
 
         /// <summary>
-        /// Obtém ou define o código do processo de etiqueta.
+        /// Obtém ou define o identificador da aplicação do processo de etiqueta.
         /// </summary>
         [DataMember]
         [JsonProperty("idAplicacao")]
         public int? IdAplicacao
         {
-            get { return this["idAplicacao"] as int?; }
-            set { this["idAplicacao"] = value; }
+            get { return this.ObterValor(c => c.IdAplicacao); }
+            set { this.AdicionarValor(c => c.IdAplicacao, value); }
         }
 
         /// <summary>
-        /// Obtém ou define o código do processo de etiqueta.
+        /// Obtém ou define um valor que indica se o processo cria um destaque na etiqueta.
         /// </summary>
         [DataMember]
         [JsonProperty("destacarNaEtiqueta")]
         public bool DestacarNaEtiqueta
         {
-            get { return (this["destacarNaEtiqueta"] as bool?).GetValueOrDefault(); }
-            set { this["destacarNaEtiqueta"] = value; }
+            get { return this.ObterValor(c => c.DestacarNaEtiqueta); }
+            set { this.AdicionarValor(c => c.DestacarNaEtiqueta, value); }
         }
 
         /// <summary>
-        /// Obtém ou define o código do processo de etiqueta.
+        /// Obtém ou define um valor que indica se o processo gera uma forma inexistente.
         /// </summary>
         [DataMember]
         [JsonProperty("gerarFormaInexistente")]
         public bool GerarFormaInexistente
         {
-            get { return (this["gerarFormaInexistente"] as bool?).GetValueOrDefault(); }
-            set { this["gerarFormaInexistente"] = value; }
+            get { return this.ObterValor(c => c.GerarFormaInexistente); }
+            set { this.AdicionarValor(c => c.GerarFormaInexistente, value); }
         }
 
         /// <summary>
-        /// Obtém ou define o código do processo de etiqueta.
+        /// Obtém ou define um valor que indica se o processo gera um arquivo de corte para mesa.
         /// </summary>
         [DataMember]
         [JsonProperty("gerarArquivoDeMesa")]
         public bool GerarArquivoDeMesa
         {
-            get { return (this["gerarArquivoDeMesa"] as bool?).GetValueOrDefault(); }
-            set { this["gerarArquivoDeMesa"] = value; }
+            get { return this.ObterValor(c => c.GerarArquivoDeMesa); }
+            set { this.AdicionarValor(c => c.GerarArquivoDeMesa, value); }
         }
 
         /// <summary>
@@ -90,8 +88,8 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         [JsonProperty("numeroDiasUteisDataEntrega")]
         public int NumeroDiasUteisDataEntrega
         {
-            get { return (this["numeroDiasUteisDataEntrega"] as int?).GetValueOrDefault(); }
-            set { this["numeroDiasUteisDataEntrega"] = value; }
+            get { return this.ObterValor(c => c.NumeroDiasUteisDataEntrega); }
+            set { this.AdicionarValor(c => c.NumeroDiasUteisDataEntrega, value); }
         }
 
         /// <summary>
@@ -101,8 +99,8 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         [JsonProperty("tipoProcesso")]
         public Data.Model.EtiquetaTipoProcesso? TipoProcesso
         {
-            get { return this["tipoProcesso"] as Data.Model.EtiquetaTipoProcesso?; }
-            set { this["tipoProcesso"] = value; }
+            get { return this.ObterValor(c => c.TipoProcesso); }
+            set { this.AdicionarValor(c => c.TipoProcesso, value); }
         }
 
         /// <summary>
@@ -112,8 +110,8 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         [JsonProperty("tiposPedidos")]
         public IEnumerable<Data.Model.Pedido.TipoPedidoEnum> TiposPedidos
         {
-            get { return (this["tiposPedidos"] as JArray).Values<int>().Cast<Data.Model.Pedido.TipoPedidoEnum>(); }
-            set { this["tiposPedidos"] = value; }
+            get { return this.ObterValor(c => c.TiposPedidos); }
+            set { this.AdicionarValor(c => c.TiposPedidos, value); }
         }
 
         /// <summary>
@@ -123,8 +121,8 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         [JsonProperty("situacao")]
         public Situacao Situacao
         {
-            get { return (this["situacao"] as Situacao?).GetValueOrDefault(); }
-            set { this["situacao"] = value; }
+            get { return this.ObterValor(c => c.Situacao); }
+            set { this.AdicionarValor(c => c.Situacao, value); }
         }
     }
 }

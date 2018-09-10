@@ -360,7 +360,6 @@
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
     <Compile Include="Models\Genericas\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Genericas\CadastroAtualizacao\ItemCadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />
@@ -391,6 +390,8 @@
     <Compile Include="Models\NotasFiscais\Lista\ListaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\TipoObrasFiltradas.cs" />
+    <Compile Include="Models\Pedidos\AmbientesPedido\CadastroAtualizacao\BaseProdutoMaoDeObraDto.cs" />
+    <Compile Include="Models\Pedidos\AmbientesPedido\Lista\ProdutoMaoDeObraDto.cs" />
     <Compile Include="Models\Pedidos\CadastroAtualizacao\ObservacoesPedidoDto.cs" />
     <Compile Include="Models\Pedidos\EnviarValidacaoFinanceiro\DadosEntradaDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />

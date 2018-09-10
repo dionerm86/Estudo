@@ -3,6 +3,7 @@
 // </copyright>
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -67,13 +68,6 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
             {
                 this.valores[key] = value;
             }
-        }
-
-        /// <inheritdoc/>
-        protected object this[string key]
-        {
-            get { return (this as IDictionary<string, object>)[key]; }
-            set { (this as IDictionary<string, object>)[key] = value; }
         }
 
         /// <inheritdoc/>
@@ -143,22 +137,61 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
         }
 
         /// <summary>
-        /// 
-        /// </summary
-        /// <typeparam name="TPropriedade"></typeparam>
-        /// <param name="campoEnviado"></param>
-        /// <param name="valorModelo"></param>
-        /// <returns></returns>
+        /// Recupera o valor que será utilizado para a conversão do DTO para o modelo.
+        /// </summary>
+        /// <typeparam name="TPropriedade">O tipo de retorno do método.</typeparam>
+        /// <param name="campoEnviado">O campo do DTO que está sendo avaliado.</param>
+        /// <param name="valorModelo">O valor atual do campo no modelo.</param>
+        /// <returns>O valor normalizado para uso no modelo.</returns>
         internal TPropriedade ObterValorNormalizado<TPropriedade>(Expression<Func<T, TPropriedade>> campoEnviado, TPropriedade valorModelo)
         {
             var propriedade = this.ObterPropriedade(campoEnviado);
             var nomeCampo = this.ObterNomeCampoJSON(propriedade);
 
             var campoInformado = this.valores.ContainsKey(nomeCampo);
-            var valorInformado = campoInformado ? (TPropriedade)propriedade.GetValue(this) : default(TPropriedade);
 
-            var item = new ItemCadastroAtualizacaoDto<TPropriedade>(campoInformado, valorInformado);
-            return item.ObterValor(valorModelo);
+            if (!campoInformado)
+            {
+                return valorModelo;
+            }
+
+            var valorInformado = (TPropriedade)propriedade.GetValue(this);
+            return valorInformado;
+        }
+
+        /// <summary>
+        /// Recupera o valor do dicionário interno.
+        /// </summary>
+        /// <typeparam name="TPropriedade">O tipo de retorno do método.</typeparam>
+        /// <param name="campoEnviado">O campo do DTO que está sendo avaliado.</param>
+        /// <returns>O valor convertido.</returns>
+        protected TPropriedade ObterValor<TPropriedade>(Expression<Func<T, TPropriedade>> campoEnviado)
+        {
+            var propriedade = this.ObterPropriedade(campoEnviado);
+            var nomeCampo = this.ObterNomeCampoJSON(propriedade);
+
+            var valorInformado = this.valores[nomeCampo];
+
+            if (valorInformado is JArray)
+            {
+                valorInformado = (valorInformado as JArray).Values<object>();
+            }
+
+            return (TPropriedade)valorInformado;
+        }
+
+        /// <summary>
+        /// Adiciona um valor correspondente a um campo do DTO no dicionário interno.
+        /// </summary>
+        /// <typeparam name="TPropriedade">O tipo de retorno do método.</typeparam>
+        /// <param name="campoEnviado">O campo do DTO que está sendo avaliado.</param>
+        /// <param name="valor">O valor que será adicionado ao dicionário.</param>
+        protected void AdicionarValor<TPropriedade>(Expression<Func<T, TPropriedade>> campoEnviado, TPropriedade valor)
+        {
+            var propriedade = this.ObterPropriedade(campoEnviado);
+            var nomeCampo = this.ObterNomeCampoJSON(propriedade);
+
+            this.valores[nomeCampo] = valor;
         }
 
         private PropertyInfo ObterPropriedade<TPropriedade>(Expression<Func<T, TPropriedade>> campoEnviado)
@@ -168,19 +201,14 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
 
             if (member == null)
             {
-                throw new ArgumentException($"Expression '{campoEnviado}' refers to a method, not a property.");
+                throw new ArgumentException($"Expressão '{campoEnviado}' é um método, e não uma propriedade.");
             }
 
             var propInfo = member.Member as PropertyInfo;
 
             if (propInfo == null)
             {
-                throw new ArgumentException($"Expression '{campoEnviado}' refers to a field, not a property.");
-            }
-
-            if (type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType))
-            {
-                throw new ArgumentException($"Expression '{campoEnviado}' refers to a property that is not from type {type}.");
+                throw new ArgumentException($"Expressão '{campoEnviado}' é um campo, e não uma propriedade.");
             }
 
             return propInfo;

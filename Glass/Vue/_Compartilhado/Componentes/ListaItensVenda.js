@@ -418,15 +418,8 @@ Vue.component('lista-itens-venda', {
         }
         : null;
 
-      this.processoAtual = {
-        id: item && item.processo ? item.processo.id : null,
-        codigo: item && item.processo ? item.processo.codigo : null
-      };
-
-      this.aplicacaoAtual = {
-        id: item && item.aplicacao ? item.aplicacao.id : null,
-        codigo: item && item.aplicacao ? item.aplicacao.codigo : null
-      };
+      this.processoAtual = item ? this.clonar(item.processo) : null;
+      this.aplicacaoAtual = item ? this.clonar(item.aplicacao) : null;
 
       this.itemVendaOriginal = {
         id: item ? item.id : null,
@@ -452,14 +445,8 @@ Vue.component('lista-itens-venda', {
           real: item && item.areaEmM2 ? item.areaEmM2.real : null
         },
         valorUnitario: item ? item.valorUnitario : null,
-        processo: {
-          id: item && item.processo ? item.processo.id : null,
-          codigo: item && item.processo ? item.processo.codigo : null
-        },
-        aplicacao: {
-          id: item && item.aplicacao ? item.aplicacao.id : null,
-          codigo: item && item.aplicacao ? item.aplicacao.codigo : null
-        },
+        idProcesso: item && item.processo ? item.processo.id : null,
+        idAplicacao: item && item.aplicacao ? item.aplicacao.id : null,
         codigoPedidoCliente: item ? item.codigoPedidoCliente : null,
         total: item ? item.total : null,
         beneficiamentos: {
@@ -696,12 +683,11 @@ Vue.component('lista-itens-venda', {
       handler: function (atual) {
         this.validarFormulario_(this.$el);
 
-        if (!this.itemVenda || !this.itemVenda.processo) {
+        if (!this.itemVenda) {
           return;
         }
 
-        this.itemVenda.processo.id = atual ? atual.id : null;
-        this.itemVenda.processo.codigo = atual ? atual.codigo : null;
+        this.itemVenda.idProcesso = atual ? atual.id : null;
 
         if (atual && atual.aplicacao) {
           this.aplicacaoAtual = {
@@ -721,12 +707,11 @@ Vue.component('lista-itens-venda', {
       handler: function (atual) {
         this.validarFormulario_(this.$el);
 
-        if (!this.itemVenda || !this.itemVenda.aplicacao) {
+        if (!this.itemVenda) {
           return;
         }
 
-        this.itemVenda.aplicacao.id = atual ? atual.id : null;
-        this.itemVenda.aplicacao.codigo = atual ? atual.codigo : null;
+        this.itemVenda.idAplicacao = atual ? atual.id : null;
       },
       deep: true
     },
