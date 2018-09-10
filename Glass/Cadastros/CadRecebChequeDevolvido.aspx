@@ -86,7 +86,7 @@
             }
         
             var contasBanco = document.getElementById("contaBancoReap").rows[0].cells[1].getElementsByTagName("select")[0].value;
-            if (contasBanco == "")
+            if (contasBanco == "" && financeiroPagto)
             {
                 alert("Selecione a conta bancária.");
                 FindControl("btnReceber", "input").disabled = false;
@@ -238,7 +238,7 @@
         document.getElementById(nomeControle + "_tblFormaPagto").style.display = "none";
         document.getElementById("contaBancoReap").rows[0].cells[0].innerHTML = document.getElementById(nomeControle + "_tblFormaPagto_Pagto1_Conta_Titulo").innerHTML;
         document.getElementById("contaBancoReap").rows[0].cells[1].innerHTML = document.getElementById(nomeControle + "_tblFormaPagto_Pagto1_Conta_Controles").innerHTML;
-        document.getElementById("contaBancoReap").style.display = "";
+        document.getElementById("contaBancoReap").style.display = financeiroPagto == true ? "" : "none";
     }
 
     function getUrlCheques(tipoPagto, urlPadrao)
