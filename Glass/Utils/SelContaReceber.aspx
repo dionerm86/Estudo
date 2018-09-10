@@ -232,6 +232,18 @@
                         </td>
                     </tr>
                 </table>
+                <table>
+                    <tr align="center">
+                        <td align="center" nowrap="nowrap">
+                            <asp:Label ID="lblObs" runat="server" ForeColor="#0066FF" Text="Observação"></asp:Label>
+                        </td>
+                        <td align="center" nowrap="nowrap">
+                            <asp:TextBox ID="txtObs" runat="server" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);" Width="200px"></asp:TextBox>
+                            <asp:ImageButton ID="imbObs" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
+                                OnClick="imgPesq_Click" />
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr>            
@@ -294,6 +306,7 @@
                                 <asp:Label ID="Label1" runat="server" Text='<%# Bind("DataVec", "{0:d}") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
+                        <asp:BoundField DataField="Obs" HeaderText="Obs." SortExpression="Obs" />
                         <asp:BoundField DataField="DescricaoContaContabil" HeaderText="Tipo" 
                             SortExpression="DescricaoContaContabil" />
                     </Columns>
@@ -486,6 +499,7 @@
             <asp:Parameter Name="buscarContasValorZerado" Type="Boolean" DefaultValue="false" />
             <asp:ControlParameter ControlID="txtCTe" Name="numeroCTe" PropertyName="Text" Type="UInt32" />
             <asp:ControlParameter ControlID="txtTrocaDev" Name="idTrocaDevolucao" PropertyName="Text" Type="UInt32" />
+            <asp:ControlParameter ControlID="txtObs" Name="observacao" PropertyName="Text" Type="String" />
         </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.LojaDAO">

@@ -3870,7 +3870,8 @@ namespace Glass.Data.DAL
         /// Duplica uma lista de produtos.
         /// </summary>
         public void Duplicar(string idsProd, uint idNovoGrupo, uint? idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura)
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura,
+            string processo, string aplicacao)
         {
             if (idNovoSubgrupo == 0) idNovoSubgrupo = null;
 
@@ -3897,6 +3898,8 @@ namespace Glass.Data.DAL
                 p.IdSubgrupoProd = (int?)idNovoSubgrupo;
                 p.Altura = string.IsNullOrWhiteSpace(novaAltura) ? p.Altura : novaAltura.StrParaInt();
                 p.Largura = string.IsNullOrWhiteSpace(novaLargura) ? p.Largura : novaLargura.StrParaInt();
+                p.IdProcesso = string.IsNullOrEmpty(processo) ? p.IdProcesso : (int?)EtiquetaProcessoDAO.Instance.ObtemIdProcesso(processo);
+                p.IdAplicacao = string.IsNullOrEmpty(aplicacao) ? p.IdAplicacao : (int?)EtiquetaAplicacaoDAO.Instance.ObtemIdAplicacao(aplicacao);
 
                 if (!string.IsNullOrEmpty(codInternoRemover))
                     p.CodInterno = p.CodInterno.ToUpper().Replace(codInternoRemover.ToUpper(), codInternoSubstituir != null ? codInternoSubstituir.ToUpper() : string.Empty).Trim();

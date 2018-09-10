@@ -874,7 +874,7 @@ namespace Glass.Data.DAL
         public IList<ContasReceber> GetForEfetuarAcerto(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNFe,
             uint idLoja, uint idCli, string nomeCli, string dtIni, string dtFim, uint idFormaPagto, bool contasVinculadas,
             string tipoContaContabil, bool naoBuscarReneg, int ordenar, bool buscarContasValorZerado, int numeroCTe,
-            uint idTrocaDevolucao, string sortExpression, int startRow, int pageSize)
+            uint idTrocaDevolucao, string observacao, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -884,11 +884,11 @@ namespace Glass.Data.DAL
 
             string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
                 null, null, null, null, null, null, "", 0, 0, false, contasVinculadas, idFormaPagto, 0, 0, false, false, naoBuscarReneg ? 3 : 0,
-                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe,
+                false, "", 0, null, observacao, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe,
                 out temFiltro, out filtroAdicional);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional, 
-                GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, null, tipoContaContabil, null, null, null));
+                GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, observacao, tipoContaContabil, null, null, null));
         }
 
         /// <summary>
@@ -898,18 +898,18 @@ namespace Glass.Data.DAL
         public int GetForEfetuarAcertoCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint numeroNFe,
             uint idLoja, uint idCli, string nomeCli, string dtIni, string dtFim, uint idFormaPagto, bool contasVinculadas,
             string tipoContaContabil, bool naoBuscarReneg, int ordenar, bool buscarContasValorZerado, int numeroCTe,
-            uint idTrocaDevolucao)
+            uint idTrocaDevolucao, string observacao)
         {
             bool temFiltro;
             string filtroAdicional;
 
             string sql = SqlAReceber(0, idPedido, idLiberarPedido, idAcerto, idTrocaDevolucao, numeroNFe, idLoja, false, idCli, 0, 0, nomeCli, 0, dtIni, dtFim,
                 null, null, null, null, null, null, "", 0, 0, false, contasVinculadas, idFormaPagto, 0, 0, false, false, naoBuscarReneg ? 3 : 0,
-                false, "", 0, null, null, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, 
+                false, "", 0, null, observacao, null, tipoContaContabil, true, buscarContasValorZerado, 0, true, 0, 0, numeroCTe, 
                 out temFiltro, out filtroAdicional);
 
             return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional,
-                GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, null, tipoContaContabil, null, null, null));
+                GetParam(nomeCli, dtIni, dtFim, null, null, null, null, null, null, observacao, tipoContaContabil, null, null, null));
         }
 
         public ContasReceber GetByIdContaR(uint idContaR)
