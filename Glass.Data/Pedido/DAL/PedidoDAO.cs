@@ -13250,7 +13250,8 @@ namespace Glass.Data.DAL
 
                 if (ped.IdTransportador != objUpdate.IdTransportador)
                 {
-                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}", objUpdate.IdTransportador, objUpdate.IdPedido));
+                    objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}",
+                        objUpdate.IdTransportador.GetValueOrDefault() > 0 ? objUpdate.IdTransportador.ToString() : "NULL", objUpdate.IdPedido));
                 }
 
                 objUpdate.ObsLiberacao = string.IsNullOrEmpty(objUpdate.ObsLiberacao) ? null :
