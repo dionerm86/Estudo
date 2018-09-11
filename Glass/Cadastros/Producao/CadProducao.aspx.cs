@@ -105,7 +105,7 @@ namespace Glass.UI.Web.Cadastros.Producao
 
             perdaDefinitiva.Visible = false; //Glass.Configuracoes.ProducaoConfig.TipoControleReposicao == DataSources.TipoReposicaoEnum.Peca;
 
-            // Carrega dados da peça consultada 
+            // Carrega dados da peça consultada
             // Não pode por !IsPostBack aqui, pois isso faz com que os dados da peça não sejam carregados na tela
             ConsultaDadosPeca();
 
@@ -209,7 +209,7 @@ namespace Glass.UI.Web.Cadastros.Producao
         #region Dados de peça
 
         void ConsultaDadosPeca()
-        {    
+        {
             try
             {
                 // Carrega a imagem desta peça, se tiver sido informado uma etiqueta válida
@@ -218,10 +218,10 @@ namespace Glass.UI.Web.Cadastros.Producao
                     var prodPedProducao = ProdutoPedidoProducaoDAO.Instance.GetByEtiqueta(txtCodPeca.Text);
                     var prodPed = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(null, prodPedProducao.IdProdPed, true);
                     PecaItemProjeto peca = null;
-    
+
                     if (prodPed.IdMaterItemProj > 0)
                         peca = PecaItemProjetoDAO.Instance.GetByMaterial(prodPed.IdMaterItemProj.Value);
-    
+
                     uint idItemProjeto = 0;
 
                     //caminho do arquivo SVG
@@ -255,12 +255,12 @@ namespace Glass.UI.Web.Cadastros.Producao
                         imgPeca.ImageUrl = String.Empty;
                     else
                         imgPeca.ImageUrl = imagem;
-    
+
                     // Carrega a imagem completa da peça
                     if (idItemProjeto > 0)
                     {
                         imgProjeto.ImageUrl = UtilsProjeto.GetFiguraAssociadaUrl(idItemProjeto, prodPedProducao.NumEtiqueta, true) + "&perc=0,6";
-    
+
                         // Carrega a imagem modelo
                         imgModelo.ImageUrl = Data.Helper.Utils.GetModelosProjetoVirtualPath + ProjetoModeloDAO.Instance.ObtemNomeFigura(
                             ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, idItemProjeto));
@@ -273,43 +273,43 @@ namespace Glass.UI.Web.Cadastros.Producao
                                 ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, MaterialItemProjetoDAO.Instance.GetIdItemProjeto(prodPed.IdMaterItemProj.Value)));
                         else
                             imgModelo.ImageUrl = String.Empty;
-    
+
                         imgProjeto.ImageUrl = String.Empty;
                     }
-    
+
                     // Exibe ou esconde o link para baixa o arquivo ISO, caso seja exibido, configura o link para baixar o arquivo.
                     uint? idCnc = SetorDAO.Instance.ObtemIdCnc(Glass.Conversoes.StrParaUint(hdfSetor.Value));
                     lnkArquivoIso.Visible = idCnc > 0 && PecaProjetoModeloDAO.Instance.ObtemIdArquivoMesaCorte(peca.IdPecaProjMod) > 0;
                     if (lnkArquivoIso.Visible)
                         lnkArquivoIso.NavigateUrl = "../../Handlers/ArquivoOtimizacao.ashx?apenasArqMesa=true&numEtiqueta=" + txtCodPeca.Text +
                             "&idSetor=" + Glass.Conversoes.StrParaUint(hdfSetor.Value);
-    
+
                     lnkAnexo.OnClientClick = "openWindow(600, 700, '../CadFotos.aspx?id=" + prodPed.IdPedido + "&tipo=pedido'); return false;";
                     lnkAnexo.Visible = true;
-    
+
                     if (((ProducaoConfig.TelaMarcacaoPeca.ExibirAnexosPedidosMaoDeObraAoConsultarPeca && PedidoDAO.Instance.IsMaoDeObra(null, prodPed.IdPedido)) ||
                         ProducaoConfig.TelaMarcacaoPeca.SempreExibirAnexosPedidosAoConsultarPeca) && FotosPedidoDAO.Instance.PossuiAnexo(prodPed.IdPedido))
                         ClientScript.RegisterStartupScript(typeof(string), "anexo", "document.getElementById(\"lnkAnexo\").onclick();", true);
-    
+
                     lblTitleCliente.Text = "Cliente: ";
                     lblTitleVendedor.Text = "Vendedor: ";
                     lblTitlePeca.Text = "Peça: ";
                     lblTitleApl.Text = "Aplicação: ";
                     lblTitleProc.Text = "Processo: ";
-    
+
                     lblCliente.Text = ClienteDAO.Instance.GetByPedido(prodPed.IdPedido).Nome;
                     lblVendedor.Text = PedidoDAO.Instance.ObtemNomeFuncResp(null, prodPed.IdPedido);
                     lblPeca.Text = prodPed.DescrProduto + " " + prodPed.LarguraProducao + "x" + prodPed.AlturaProducao;
                     lblApl.Text = prodPed.CodAplicacao;
                     lblProc.Text = prodPed.CodProcesso;
-    
+
                     if (idItemProjeto == 0 && prodPed.IdMaterItemProj > 0)
                         idItemProjeto = MaterialItemProjetoDAO.Instance.GetIdItemProjeto(prodPed.IdMaterItemProj.Value);
 
-                    // Exibe a observação do projeto se a peça vier de projeto, for instalação ou se o projeto possuir apenas fixos ou 
+                    // Exibe a observação do projeto se a peça vier de projeto, for instalação ou se o projeto possuir apenas fixos ou
                     // se a peça for de pedido importado e o processo da mesma bater com a configuração de instalação nos proejtos.
                     // A obervação da peça deve ser exibida sempre que existir
-                    lblObsProj.Text = lblObsProjAcima.Text = (idItemProjeto > 0 && 
+                    lblObsProj.Text = lblObsProjAcima.Text = (idItemProjeto > 0 &&
                         (peca != null && (peca.Tipo == 1 || PecaProjetoModeloDAO.Instance.ProjetoPossuiApenasFixos(ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, idItemProjeto)))) ?
                         ItemProjetoDAO.Instance.ObtemObs(idItemProjeto) : string.Empty) +
                         (!string.IsNullOrEmpty(prodPed.Obs) ? string.Format(" {0}", prodPed.Obs) : string.Empty) + (!string.IsNullOrEmpty(prodPed.DescrBeneficiamentos) ? string.Format(" {0}", prodPed.DescrBeneficiamentos) : string.Empty);
@@ -329,8 +329,8 @@ namespace Glass.UI.Web.Cadastros.Producao
                 hdfTeste.Value = Glass.MensagemAlerta.FormatErrorMsg("", ex);
                 LimpaDadosPeca();
             }
-        }    
-    
+        }
+
         void LimpaDadosPeca()
         {
             imgPeca.ImageUrl = String.Empty;
@@ -338,20 +338,20 @@ namespace Glass.UI.Web.Cadastros.Producao
             imgProjeto.ImageUrl = String.Empty;
             imgModelo.ImageUrl = String.Empty;
             txtCodPeca.Text = String.Empty;
-    
+
             lblTitleCliente.Text = String.Empty;
             lblTitleVendedor.Text = string.Empty;
             lblTitlePeca.Text = String.Empty;
             lblTitleApl.Text = String.Empty;
             lblTitleProc.Text = String.Empty;
-    
+
             lblCliente.Text = String.Empty;
             lblVendedor.Text = String.Empty;
             lblPeca.Text = String.Empty;
             lblApl.Text = String.Empty;
             lblProc.Text = String.Empty;
             lblObsProj.Text = String.Empty;
-    
+
             lnkAnexo.Visible = false;
         }
 
@@ -382,7 +382,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             return html;
         }
 
-          
+
 
        #endregion
 
@@ -392,7 +392,7 @@ namespace Glass.UI.Web.Cadastros.Producao
 
             if (idSetor.GetValueOrDefault() == 0)
                 throw new Exception("Não foi possível recuperar a identificação do setor.");
-            
+
             var setor = Data.Helper.Utils.ObtemSetor(idSetor.Value);
 
             if (setor == null || setor.IdSetor == 0)
@@ -406,7 +406,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             // Habilita campos se o tipo do setor selecionado for "Entregue"
             var setorEntregue = setor.Tipo == TipoSetor.Entregue;
             pedidoNovo.Visible = setorEntregue;
-    
+
             // Desmarca checkBoxes
             chkPedidoNovo.Checked = false;
             chkPerda.Checked = false;
@@ -414,10 +414,10 @@ namespace Glass.UI.Web.Cadastros.Producao
             tdCodCavalete.Visible = setor.InformarCavalete;
             tdFornada.Visible = setor.Forno && setor.GerenciarFornada && Configuracoes.PCPConfig.GerenciamentoFornada;
             tbRota.Style.Value = "display: " + (setor.InformarRota ? "inline" : "none");
-    
+
             if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ReposicaoDePeca))
                 chkPerda.Attributes.Add("style", "display: none");
-    
+
             // Altera campos para que fique com os dados do setor selecionado
             lblTitulo.Text = setor.Descricao;
             hdfTitulo.Value = setor.Descricao;
@@ -426,21 +426,21 @@ namespace Glass.UI.Web.Cadastros.Producao
             hdfCorTela.Value = setor.DescrCorTela;
             hdfInformarRota.Value = setor.InformarRota.ToString().ToLower();
             hdfSituacao.Value = ((int)ProdutoPedidoProducao.SituacaoEnum.Producao).ToString();
-    
+
             tbImagemCompleta.Visible = setor.ExibirImagemCompleta;
             tbSetoresPeca.Visible = setor.ExibirSetores;
-    
+
             ConsultaDadosPeca();
 
             if (dtvTotaisSetor.Visible)
                 dtvTotaisSetor.DataBind();
         }
-    
+
         #region Métodos Ajax
-    
+
         [Ajax.AjaxMethod()]
-        public string AtualizaSituacao(string idFuncStr, string numChapa, string numEtiqueta, string idSetor, string isPerdaStr, string tipoPerdaStr, 
-            string subtipoPerdaStr, string obs, string idPedidoNovo, string idRota, string isEntradaEstoqueStr, 
+        public string AtualizaSituacao(string idFuncStr, string numChapa, string numEtiqueta, string idSetor, string isPerdaStr, string tipoPerdaStr,
+            string subtipoPerdaStr, string obs, string idPedidoNovo, string idRota, string isEntradaEstoqueStr,
             string perdaDefinitivaStr, string altura, string largura, string quantidade, string observacao, string etiquetasMateriaPrima,
             string etiquetaCavalete, string idFornada)
         {
@@ -450,10 +450,10 @@ namespace Glass.UI.Web.Cadastros.Producao
                 string descrProd = null;
                 var pedidoNovo = !string.IsNullOrEmpty(idPedidoNovo) ? (uint?)idPedidoNovo.StrParaUint() : null;
                 var perdaDefinitiva = bool.Parse(perdaDefinitivaStr);
-                var etiquetasMp = etiquetasMateriaPrima.Split(',').Where(f => !string.IsNullOrEmpty(f)).ToList();                
-    
+                var etiquetasMp = etiquetasMateriaPrima.Split(',').Where(f => !string.IsNullOrEmpty(f)).ToList();
+
                 numEtiqueta = numEtiqueta.Replace("p", "P");
-    
+
                 if (!isPerda)
                 {
                     if (Data.Helper.Utils.ObtemSetor(idSetor.StrParaUint()).Tipo == TipoSetor.Entregue &&
@@ -493,7 +493,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                             false, tipoPerdaStr.StrParaUint(),
                             subtipoPerdaStr.StrParaUintNullable(), obs, null, 0, null, null, false, etiquetaCavalete, idFornada.StrParaInt());
                 else
-                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaReposta(numChapa, numEtiqueta,
+                    descrProd = ProdutoPedidoProducaoDAO.Instance.MarcarPecaRepostaComTransacao(numChapa, numEtiqueta,
                         idSetor.StrParaUint(),
                         UserInfo.GetUserInfo.CodUser, DateTime.Now, tipoPerdaStr.StrParaUint(),
                         subtipoPerdaStr.StrParaUintNullable(),
@@ -501,7 +501,7 @@ namespace Glass.UI.Web.Cadastros.Producao
 
                 //Insere retalho se tiver sido preechido
                 bool hasRetalho = !string.IsNullOrEmpty(altura) && !string.IsNullOrEmpty(largura) && !string.IsNullOrEmpty(quantidade);
-    
+
                 if (hasRetalho)
                 {
                     if (bool.Parse(IsCorte(idSetor)) && !string.IsNullOrEmpty(numChapa))
@@ -510,7 +510,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                         uint idProdImpressao = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(numChapa, tipoEtiqueta);
                         uint idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(numChapa, tipoEtiqueta);
                         uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(idProdImpressao);
-    
+
                         List<RetalhoProducaoAuxiliar> dadosRetalho = new List<RetalhoProducaoAuxiliar>();
                         //Separa os valores dos retalhos
                         string[] alturaArray = altura.Split(';');
@@ -521,13 +521,13 @@ namespace Glass.UI.Web.Cadastros.Producao
                             dadosRetalho.Add(new RetalhoProducaoAuxiliar(0, decimal.Parse(alturaArray[i]), decimal.Parse(larguraArray[i]),
                                 Glass.Conversoes.StrParaInt(quantidadeArray[i]),
                                 observacaoArray != null && observacaoArray.Length > 0 && observacaoArray.Length >= i - 1 ? observacaoArray[i] : null));
-    
+
                         RetalhoProducaoDAO.Instance.CriarRetalho(dadosRetalho, idProd.Value, idProdNf);
                     }
                     else
                         RetalhoProducaoDAO.Instance.CriarRetalho(altura, largura, quantidade, numEtiqueta, observacao);
                 }
-    
+
                 return "Ok|" + descrProd.Replace("<br />", " - ");
             }
             catch (Exception ex)
@@ -535,7 +535,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return "Erro|" + Glass.MensagemAlerta.FormatErrorMsg("", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string IsProducao(string numEtiqueta)
         {
@@ -589,7 +589,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return "false";
             }
         }
-    
+
         /// <summary>
         /// Verifica se a matéria-prima ja teve um plano de corte lido.
         /// </summary>
@@ -616,7 +616,7 @@ namespace Glass.UI.Web.Cadastros.Producao
         }
 
         /// <summary>
-        /// Verifica se a matéria-prima ja teve leitura em dias 
+        /// Verifica se a matéria-prima ja teve leitura em dias
         /// </summary>
         /// <param name="numChapa"></param>
         /// <param name="numEtiqueta"></param>
@@ -646,7 +646,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             return temLeitura.ToString().ToLower() + "\t" +
                 ProducaoConfig.TelaMarcacaoPeca.ImpedirLeituraChapaComPlanoCorteVinculado.ToString().ToLower();
         }
-    
+
         /// <summary>
         /// Busca os produtos de estoque do pedido
         /// </summary>
@@ -660,21 +660,21 @@ namespace Glass.UI.Web.Cadastros.Producao
                 uint id;
                 if (!uint.TryParse(idPedido, out id))
                     throw new Exception("Número do pedido inválido.");
-    
+
                 if (PedidoConfig.DadosPedido.BloquearItensTipoPedido && PedidoDAO.Instance.GetTipoPedido(null, id) != Glass.Data.Model.Pedido.TipoPedidoEnum.Revenda)
                     throw new Exception("Apenas pedidos de revenda podem ser utilizados nesta opção.");
-    
+
                 var produtosTemp = id > 0 ? ProdutosPedidoDAO.Instance.GetByPedido(id, true) : new ProdutosPedido[0];
                 if (produtosTemp.Count == 0)
                     throw new Exception("Não foram encontrados produtos para esse pedido.");
-    
+
                 var retorno = new StringBuilder(@"<table>
                     <tr><th style='font-size: small'>Produto</th>
                     <th style='padding-left: 8px; font-size: small'>Qtde.</th>
                     <th style='padding-left: 8px; font-size: small'>Qtde. Expedir</th>
                     <th style='padding-left: 8px; font-size: small'>Altura</th>
                     <th style='padding-left: 8px; font-size: small'>Largura</th></tr>");
-    
+
                 var agrupa = new Dictionary<uint,ProdutosPedido>();
                 foreach (var p in produtosTemp)
                 {
@@ -683,15 +683,15 @@ namespace Glass.UI.Web.Cadastros.Producao
                     else
                         agrupa[p.IdProd].Qtde += p.Qtde;
                 }
-    
+
                 foreach (var p in agrupa.Values)
                 {
                     int qtde = (int)p.Qtde;
                     qtde -= ProdutoPedidoProducaoDAO.Instance.GetQtdeLiberadaByPedProd(p.IdPedido, null, p.IdProd);
-    
+
                     if (qtde <= 0)
                         continue;
-    
+
                     retorno.Append("<tr><td style='font-size: small'>");
                     retorno.Append(p.DescrProduto);
                     retorno.Append("</td><td style='padding-left: 8px; font-size: small'>");
@@ -704,7 +704,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     retorno.Append(p.Largura);
                     retorno.Append("</td></tr>");
                 }
-    
+
                 retorno.Append("</table>");
                 return retorno.ToString();
             }
@@ -713,17 +713,17 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return "Erro: " + ex.Message;
             }
         }
-    
+
         [Ajax.AjaxMethod()]
         public string GetRota(string codRota)
         {
             try
             {
                 var rota = RotaDAO.Instance.GetByCodInterno(codRota);
-    
+
                 if (rota == null)
                     return "Erro|Não foi encontrada nenhuma rota com o código informado.";
-    
+
                 return "Ok|" + rota.IdRota + "|" + rota.Descricao;
             }
             catch (Exception ex)
@@ -731,7 +731,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return "Erro|" + Glass.MensagemAlerta.FormatErrorMsg("Falha ao buscar rota.", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string ConsultaAntes(string setor)
         {
@@ -744,7 +744,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return Glass.MensagemAlerta.FormatErrorMsg("Erro.", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string IsCorte(string setor)
         {
@@ -757,7 +757,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return Glass.MensagemAlerta.FormatErrorMsg("Erro.", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string IsLaminado(string setor)
         {
@@ -770,12 +770,12 @@ namespace Glass.UI.Web.Cadastros.Producao
                 return Glass.MensagemAlerta.FormatErrorMsg("Erro.", ex);
             }
         }
-    
+
         [Ajax.AjaxMethod]
         public string CamposMateriaPrima(string etiqueta)
         {
             ProdutoPedidoProducaoDAO.Instance.ValidaEtiquetaProducao(null, ref etiqueta);
-    
+
             var idProd = ProdutoDAO.Instance.ObtemIdProdByEtiqueta(etiqueta);
 
             var retorno = @"<table id=""tbMateriaPrima"">";
@@ -813,7 +813,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                         if (!string.IsNullOrEmpty(etiquetaMostrar))
                             informouEtiqueta = true;
 
-                        var isVidro = ProdutoDAO.Instance.IsVidro(null, (int)pecas[i].IdProd);                        
+                        var isVidro = ProdutoDAO.Instance.IsVidro(null, (int)pecas[i].IdProd);
                         var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(null, (int)pecas[i].IdProd);
 
                         if (!isVidro && tipoSubgrupo != TipoSubgrupoProd.PVB)
@@ -881,7 +881,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     }
                 }
             }
-    
+
             retorno += "</table>";
 
             if (idProdPedProducaoParent.GetValueOrDefault(0) > 0)
@@ -889,7 +889,7 @@ namespace Glass.UI.Web.Cadastros.Producao
 
             return retorno;
         }
-    
+
         [Ajax.AjaxMethod]
         public void ValidaMateriaPrimaLaminado(string etiqueta)
         {
@@ -902,7 +902,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     throw new Exception("A etiqueta: " + etiqueta + "não esta vinculada a nenhum produto do subgrupo Vidro Duplo ou Laminado.");
 
                 //Verifica se a etiqueta já foi utilizada
-                if (ChapaCortePecaDAO.Instance.ValidarChapa(null, ProdutoDAO.Instance.GetByIdProd(ProdutosNfDAO.Instance.GetIdProdByEtiquetaAtiva(null, etiqueta))) 
+                if (ChapaCortePecaDAO.Instance.ValidarChapa(null, ProdutoDAO.Instance.GetByIdProd(ProdutosNfDAO.Instance.GetIdProdByEtiquetaAtiva(null, etiqueta)))
                     && ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(etiqueta, tipoEtiquetaChapa)))
                     throw new Exception("A matéria-prima: " + etiqueta + " já foi utilizada.");
 
@@ -920,7 +920,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             if (ChapaCortePecaDAO.Instance.ValidarChapa(null, produto) && ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(idProdImpressaoChapa))
                 throw new Exception("A matéria-prima: " + etiqueta + " já foi utilizada.");
         }
-    
+
         /// <summary>
         /// Verifica se a peça esta parada na producao
         /// </summary>
@@ -933,7 +933,7 @@ namespace Glass.UI.Web.Cadastros.Producao
             var listaEtiquetas = new List<string>();
 
             if (etiqueta.Contains('='))
-            {                
+            {
                 var posicao = Conversoes.StrParaInt(etiqueta.Split('-')[1].Split('/')[0].Split('.')[0]);
 
                 var intervaloEtiquetas = etiqueta.Split('/')[1].Split('=');
@@ -968,7 +968,7 @@ namespace Glass.UI.Web.Cadastros.Producao
 
             return "false;";
         }
-    
+
         /// <summary>
         /// Retorna a empresa que está utilizando o sistema.
         /// </summary>
@@ -1042,10 +1042,10 @@ namespace Glass.UI.Web.Cadastros.Producao
             FormsAuthentication.SignOut();
             FormsAuthentication.RedirectToLoginPage();
         }
-    
+
         protected void imgPesq_Click(object sender, EventArgs e)
         {
-    
+
         }
 
     }
