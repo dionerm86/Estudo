@@ -44,8 +44,8 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(idsOCs))
             {
-                sql += " AND oc.idOrdemCarga IN(" + idsOCs + ")";
-                criterio += "OCs: " + idsOCs + "     ";
+                sql += " AND oc.idOrdemCarga IN(" + idsOCs.TrimEnd(',') + ")";
+                criterio += "OCs: " + idsOCs.TrimEnd(',') + "     ";
             }
 
             if (idOC > 0)
