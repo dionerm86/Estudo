@@ -69,19 +69,19 @@
             <label>Loja</label>
             <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>  
+        </span>
         <span class="form-group">
             <label>Vendedor</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedores"
                 v-bind:ordenar="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>  
+        </span>
         <span class="form-group">
             <label>Cliente</label>
             <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
             <input id="nomeCliente" type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
-        </span>  
+        </span>
         <span class="form-group">
             <label>Vendedor associado</label>
             <lista-selecao-id-valor v-bind:item-selecionado.sync="vendedorAssociadoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroVendedoresAssociadosAClientes"
@@ -180,10 +180,7 @@
             <label>Buscar contas</label>
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.buscaNotaFiscal" texto-selecionar="Selecione"
                 v-bind:funcao-recuperar-itens="obterItensFiltroBuscaNfe" v-bind:ordenar="false"></lista-selecao-multipla>
-            <img border="0" src="../Images/help.gif" 
-                title="Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-                    Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
-                    Demais contas: cliente sem percentual de redução em NFe ou conta sem referência direta com alguma liberação." />
+            <img border="0" src="../Images/help.gif" v-bind:title="ajudaBuscarContas()" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

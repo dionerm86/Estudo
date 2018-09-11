@@ -161,6 +161,16 @@ Vue.component('contarecebida-filtros', {
      */
     obterItensFiltroBuscaNfe: function () {
       return Servicos.ContasReceber.obterFiltroBuscaNfe();
+    },
+
+    /**
+     * Recupera o texto para ajuda do campo 'Buscar contas'.
+     * @returns {string} O texto que será exibido na ajuda do campo.
+     */
+    ajudaBuscarContas: function () {
+      return '* Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.'
+        + '\n* Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.'
+        + '\n* Demais contas: cliente sem percentual de redução em NFe ou conta sem referência direta com alguma liberação.';
     }
   },
 
