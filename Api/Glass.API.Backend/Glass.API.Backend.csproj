@@ -239,6 +239,8 @@
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
     <Compile Include="Controllers\Cfops\V1\GetCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\CfopsController.cs" />
+    <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
+    <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -258,6 +260,16 @@
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\PostNotasFiscaisController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresAluminio\CoresAluminioController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresAluminio\GetCoresAluminioController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresFerragem\CoresFerragemController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresFerragem\GetCoresFerragemController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\GetCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\CoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\GetSubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\SubgruposProduto\SubgruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\GetGruposProdutoController.cs" />
+    <Compile Include="Controllers\Produtos\V1\GruposProduto\GruposProdutoController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
@@ -322,6 +334,7 @@
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
+    <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaEstoques.cs" />
     <Compile Include="Helper\PedidosConferencia\TraducaoOrdenacaoListaPedidosConferencia.cs" />
     <Compile Include="Helper\NotasFiscais\TraducaoOrdenacaoListaNotasFiscais.cs" />
     <Compile Include="Helper\Liberacoes\TraducaoOrdenacaoListaLiberacoes.cs" />
@@ -358,6 +371,10 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
+    <Compile Include="Models\Estoques\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />
@@ -509,6 +526,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Estoques\CadastroAtualizacao\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
