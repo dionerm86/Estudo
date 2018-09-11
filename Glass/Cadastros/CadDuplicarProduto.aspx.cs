@@ -29,10 +29,12 @@ namespace Glass.UI.Web.Cadastros
 
         [Ajax.AjaxMethod]
         public string Duplicar(string idsProd, string idNovoGrupo, string idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura)
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura,
+            string processo, string aplicacao)
         {
             return WebGlass.Business.Produto.Fluxo.Duplicar.Ajax.DuplicarProduto(idsProd, idNovoGrupo, idNovoSubgrupo,
-                codInternoRemover, codInternoSubstituir, descricaoRemover, descricaoSubstituir, novaAltura, novaLargura);
+                codInternoRemover, codInternoSubstituir, descricaoRemover, descricaoSubstituir, novaAltura, novaLargura,
+                processo, aplicacao);
         }
     }
 }

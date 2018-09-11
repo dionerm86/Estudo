@@ -3348,9 +3348,8 @@ namespace Glass.Data.DAL
                 {
                     var forma = string.Empty;
                     var nomeArquivoIntermac = ImpressaoEtiquetaDAO.Instance.ObterNomeArquivo(session, null, TipoArquivoMesaCorte.DXF, idProdPed, etiqueta, true, out forma, false);
-                    var caminhoArquivoIntermac = Path.Combine(PCPConfig.CaminhoSalvarIntermac, Path.GetFileNameWithoutExtension(nomeArquivoIntermac));
 
-                    if (File.Exists(caminhoArquivoIntermac))
+                    if (Directory.EnumerateFiles(PCPConfig.CaminhoSalvarIntermac, nomeArquivoIntermac, SearchOption.AllDirectories).Count() > 0)
                     {
                         return true;
                     }

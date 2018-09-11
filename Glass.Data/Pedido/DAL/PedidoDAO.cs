@@ -7627,7 +7627,9 @@ namespace Glass.Data.DAL
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+            if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli == UserInfo.GetUserInfo.IdCliente)
+                return false;
+            else if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
                 return false;
 
             // Não deixa reabrir se recebeu sinal
@@ -13250,7 +13252,8 @@ namespace Glass.Data.DAL
 
                 if (ped.IdTransportador != objUpdate.IdTransportador)
                 {
-                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}", objUpdate.IdTransportador, objUpdate.IdPedido));
+                    objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}",
+                        objUpdate.IdTransportador.GetValueOrDefault() > 0 ? objUpdate.IdTransportador.ToString() : "NULL", objUpdate.IdPedido));
                 }
 
                 objUpdate.ObsLiberacao = string.IsNullOrEmpty(objUpdate.ObsLiberacao) ? null :

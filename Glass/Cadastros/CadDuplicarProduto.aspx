@@ -198,9 +198,11 @@
             var descricaoSubstituir = FindControl("txtTextoDescricaoNovo", "input").value;
             var altura = FindControl("txtAltura", "input").value;
             var largura = FindControl("txtLargura", "input").value;
+            var processo = FindControl("txtProc", "input").value;
+            var aplicacao = FindControl("txtApl", "input").value;
 
             var resposta = CadDuplicarProduto.Duplicar(idsProd, idNovoGrupo, idNovoSubgrupo, codInternoRemover, codInternoSubstituir,
-                descricaoRemover, descricaoSubstituir, altura, largura).value.split("##");
+                descricaoRemover, descricaoSubstituir, altura, largura, processo, aplicacao).value.split("##");
 
             if (resposta[0] == "Erro")
                 alert(resposta[1]);
@@ -304,6 +306,11 @@
                         Largura <asp:TextBox ID="txtLargura" runat="server" Width="50px"></asp:TextBox>
                     </div>
                     <br />
+                    <div>
+                        Proc. <asp:TextBox ID="txtProc" runat="server" Width="50px"></asp:TextBox>
+                        Apl. <asp:TextBox ID="txtApl" runat="server" Width="50px"></asp:TextBox>
+                    </div>
+                    <br />
                     <div style="font-style: italic">
                         se os campos "de" ficarem em branco o texto do campo "para" será acrescido ao final
                         do texto existente;
@@ -312,6 +319,10 @@
                         existente.
                         <br />
                         Se nada for definido nos campos Altura e Largura serão considerados os valores dos produtos originais.
+                        <br />
+                        Se nada for definido nos campos Proc e Apl serão considerados os valores dos produtos originais.
+                        <br />
+                        Nos campos de Proc. e Apl. devem ser inseridos códigos dos processos e aplicações que serão utilizados.
                     </div>
                     <br />
                     <div>

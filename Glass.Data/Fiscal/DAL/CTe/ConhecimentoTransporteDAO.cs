@@ -1087,8 +1087,7 @@ namespace Glass.Data.DAL.CTe
             #region Monta XML
 
             Loja emitente = LojaDAO.Instance.GetElement(
-                ParticipanteCteDAO.Instance.GetParticipanteByIdCteTipo(cte.IdCte, (int)ParticipanteCte.TipoParticipanteEnum.Emitente).IdLoja.Value
-                );
+                ParticipanteCteDAO.Instance.GetParticipanteByIdCteTipo(cte.IdCte, (int)ParticipanteCte.TipoParticipanteEnum.Emitente).IdLoja.Value);
             string codUf = emitente.CodUf;
 
             XmlDocument xmlCanc = new XmlDocument();
@@ -1128,7 +1127,7 @@ namespace Glass.Data.DAL.CTe
             XmlElement CNPJ = xmlCanc.CreateElement("CNPJ");
             CNPJ.InnerText = LojaDAO.Instance.ObtemValorCampo<string>
                 ("cnpj", "idLoja=" + emitente.IdLoja)
-                .Replace(".", String.Empty).Replace("-", String.Empty).Replace("/", String.Empty); ;
+                .Replace(".", String.Empty).Replace("-", String.Empty).Replace("/", String.Empty);
             infEvento.AppendChild(CNPJ);
 
             XmlElement chNFe = xmlCanc.CreateElement("chCTe");
