@@ -1683,6 +1683,7 @@
     <Content Include="Vue\_Compartilhado\Filtros\Decimal.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Moeda.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Clonar.js" />

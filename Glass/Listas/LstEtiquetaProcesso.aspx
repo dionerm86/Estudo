@@ -1,31 +1,8 @@
-<%@ Page Title="Processos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+﻿<%@ Page Title="Processos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstEtiquetaProcesso.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaProcesso" %>
 
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-
-
-
-
-        function onSave(insert) {
-            var descricao = FindControl(insert ? "txtDescricaoIns" : "txtDescricao", "input").value;
-            var codInterno = FindControl(insert ? "txtCodInternoIns" : "txtCodInterno", "input").value;
-
-            if (descricao == "") {
-                alert("Informe a descrição.");
-                return false;
-            }
-
-            if (codInterno == "") {
-                alert("Informe o código.");
-                return false;
-            }
-        }
-
-    </script>
-
     <div id="app">
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum processo encontrado"
@@ -80,9 +57,9 @@
                             {{ item.aplicacao.codigo }}
                         </span>
                     </td>
-                    <td>{{ item.destacarNaEtiqueta | simNao }}</td>
-                    <td>{{ item.gerarFormaInexistente | simNao }}</td>
-                    <td>{{ item.gerarArquivoDeMesa | simNao }}</td>
+                    <td>{{ item.destacarNaEtiqueta | indicaMarcado }}</td>
+                    <td>{{ item.gerarFormaInexistente | indicaMarcado }}</td>
+                    <td>{{ item.gerarArquivoDeMesa | indicaMarcado }}</td>
                     <td>{{ item.numeroDiasUteisDataEntrega }}</td>
                     <td>
                         <span v-if="item.tipoProcesso">

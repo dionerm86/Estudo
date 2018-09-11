@@ -108,7 +108,7 @@ namespace Glass.API.Backend.Helper
         {
             return new IdNomeDto
             {
-                Id = (int)item,
+                Id = (int)Convert.ChangeType(item, typeof(int)),
                 Nome = this.ObterDescricao(item as Enum) ?? item.ToString(),
             };
         }

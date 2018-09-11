@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("idAplicacao")]
-        public int? IdAplicacao
+        public long? IdAplicacao
         {
             get { return this.ObterValor(c => c.IdAplicacao); }
             set { this.AdicionarValor(c => c.IdAplicacao, value); }
@@ -86,7 +86,7 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("numeroDiasUteisDataEntrega")]
-        public int NumeroDiasUteisDataEntrega
+        public long NumeroDiasUteisDataEntrega
         {
             get { return this.ObterValor(c => c.NumeroDiasUteisDataEntrega); }
             set { this.AdicionarValor(c => c.NumeroDiasUteisDataEntrega, value); }

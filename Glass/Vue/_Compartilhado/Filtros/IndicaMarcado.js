@@ -1,9 +1,9 @@
 ﻿/**
  * Filtro para formatação de valores boolean.
  * @param {boolean} valor O valor boolean a ser formatado.
- * @returns 'Sim', caso o boolean seja verdadeiro. Senão, 'Não'.
+ * @returns '✓', caso o boolean seja verdadeiro. Senão, ''.
  */
-Vue.filter('simNao', function (valor) {
+Vue.filter('indicaMarcado', function (valor) {
   if (valor === null || valor === undefined) {
     return '';
   }
@@ -12,5 +12,5 @@ Vue.filter('simNao', function (valor) {
     return valor;
   }
 
-  return valor ? 'Sim' : 'Não';
+  return valor ? '\u2713' : '';
 });
