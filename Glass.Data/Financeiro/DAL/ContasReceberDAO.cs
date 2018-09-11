@@ -1319,7 +1319,7 @@ namespace Glass.Data.DAL
 
             if (idLoja > 0)
             {
-                filtroAdicional += " And c.idLoja=" + idLoja;
+                where += " And c.idLoja=" + idLoja;
                 criterio += "Loja: " + LojaDAO.Instance.GetNome(idLoja) + "    ";
             }
 
@@ -1480,7 +1480,7 @@ namespace Glass.Data.DAL
             if (!refObra)
             {
                 filtroAdicional += " And c.IdObra IS NULL";
-                criterio += "Sem referência para obra";
+                criterio += "Sem referência para obra    ";
             }
 
             if (idVendedorAssociado > 0)
@@ -1580,12 +1580,8 @@ namespace Glass.Data.DAL
                     (Select nf.idNf From nota_fiscal nf Where nf.numeroNfe=" + numeroNFe + @"))
                     GROUP by c.IdContaR";
 
-
                     criterio += "Número NFe: " + numeroNFe + "    ";
                     temFiltro = true;
-
-                    if (!selecionar)
-                        sql = "select sum(contagem) from (" + sql + ") as temp";
                 }
                 else
                     sql += " group by c.idContaR";
@@ -1606,9 +1602,6 @@ namespace Glass.Data.DAL
                         sql += " and concat(',', numeroNFe, ',') like '%," + numeroNFe + ",%'";
                         criterio += "Número NFe: " + numeroNFe + "    ";
                     }
-
-                    if (!selecionar)
-                        sql = "select coalesce(sum(contagem),0) from (" + sql + ") as temp";
 
                     // Ignora a otimização de SQL se houver Having
                     temFiltro = true;
@@ -1653,6 +1646,11 @@ namespace Glass.Data.DAL
                 sql += " and (" + filtroBuscar.Substring(4) + ")";
             }
 
+            if (!selecionar)
+            {
+                sql = $"SELECT SUM(contagem) FROM ({sql}) AS temp";
+            }
+
             return sql;
         }
 
@@ -1690,13 +1688,11 @@ namespace Glass.Data.DAL
             uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, 
             bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao, string sortExpression, int startRow, int pageSize)
         {
-            sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression :
-                ordenacao == 2 ? "cli.Nome Asc" :
-                ordenacao == 3 ? "c.ValorVec Asc" :
-                ordenacao == 4 ? "numeroNfe Desc" :
-                "c.DataVec Desc";
-
-            sortExpression += ", c.idContaR Desc";
+            var ordenacaoSql = !string.IsNullOrEmpty(sortExpression) ? string.Empty :
+                ordenacao == 2 ? " ORDER BY cli.Nome Asc, c.idContaR Desc" :
+                ordenacao == 3 ? " ORDER BY c.ValorVec Asc, c.idContaR Desc" :
+                ordenacao == 4 ? " ORDER BY numeroNfe Desc, c.idContaR Desc" :
+                " ORDER BY c.DataVec Desc, c.idContaR Desc";
 
             bool temFiltro;
             string filtroAdicional;
@@ -1704,20 +1700,20 @@ namespace Glass.Data.DAL
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
                 idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, 0, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
-            var lst = ((List<ContasReceber>)LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, temFiltro, filtroAdicional,
-                GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs))).ToArray();
+            var lst = objPersistence.LoadDataWithSortExpression(sql + ordenacaoSql, new InfoSortExpression(sortExpression), new InfoPaging(startRow, pageSize),
+                GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
 
-            return lst;
+            return lst.ToArray();
         }
 
-        public int GetRptCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, uint numeroNFe, 
-            uint idLoja, uint idCli, uint idFunc, uint idFuncRecebido, uint tipoEntrega, string nomeCli, string dtIniVenc, string dtFimVenc,
-            string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal, bool? renegociadas,
-            bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil, uint numArqRemessa,
-            bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, bool protestadas,
-            bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
+        public int GetRptCount(uint idPedido, uint idLiberarPedido, uint idAcerto, uint idAcertoParcial, uint idTrocaDevolucao, 
+            uint numeroNFe, uint idLoja, uint idFunc, uint idFuncRecebido, uint idCli, uint tipoEntrega, string nomeCli, string dtIniVenc, 
+            string dtFimVenc, string dtIniRec, string dtFimRec, string dataIniCad, string dataFimCad, string idsFormaPagto, uint idTipoBoleto, float precoInicial, float precoFinal,
+            bool? renegociadas, bool? recebida, uint idComissionado, uint idRota, string obs, int ordenacao, string tipoContaContabil,
+            uint numArqRemessa, bool refObra, int contasCnab, int idVendedorAssociado, int idVendedorObra, int idComissao, int idSinal, int numCte, 
+            bool protestadas, bool contasVinculadas, string tipoContasBuscar, string numAutCartao)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -1725,10 +1721,9 @@ namespace Glass.Data.DAL
             string sql = SqlRpt(idPedido, idLiberarPedido, idAcerto, idAcertoParcial, idTrocaDevolucao, numeroNFe, idLoja, idFunc, idFuncRecebido,
                 idCli, tipoEntrega, nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, idsFormaPagto, idTipoBoleto, precoInicial, precoFinal,
                 recebida, idComissionado, idRota, obs, ordenacao, renegociadas, tipoContaContabil, true, numArqRemessa, refObra, contasCnab, idVendedorAssociado,
-                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, true, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", temFiltro ? filtroAdicional : "");
+                idVendedorObra, idComissao, idSinal, numCte, protestadas, contasVinculadas, tipoContasBuscar, numAutCartao, false, false, out temFiltro, out filtroAdicional).Replace("?filtroAdicional?", filtroAdicional);
 
-            return GetCountWithInfoPaging(sql, temFiltro, filtroAdicional, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, 
-                dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
+            return objPersistence.ExecuteSqlQueryCount(sql, GetParamRpt(nomeCli, dtIniVenc, dtFimVenc, dtIniRec, dtFimRec, dataIniCad, dataFimCad, null, null, null, null, obs));
         }
 
         /// <summary>

@@ -1,13 +1,13 @@
 var Log = Log || {};
-Log.Alteracao = {
+Log.Cancelamento = {
   Tabelas: null,
   Controles: []
 };
 
-Vue.component('log-alteracao', {
+Vue.component('log-cancelamento', {
   props: {
     /**
-     * Tabela vinculada ao log de alterações.
+     * Tabela vinculada ao log de cancelamento.
      * @type {!string}
      */
     tabela: {
@@ -16,7 +16,7 @@ Vue.component('log-alteracao', {
     },
 
     /**
-     * ID do item para recuperação do log de alterações.
+     * ID do item para recuperação do log de cancelamento.
      * @type {!number}
      */
     idItem: {
@@ -49,7 +49,7 @@ Vue.component('log-alteracao', {
   data: function() {
     return {
       itemTabela: null,
-      dados: Log.Alteracao
+      dados: Log.Cancelamento
     };
   },
 
@@ -68,7 +68,7 @@ Vue.component('log-alteracao', {
     },
 
     /**
-     * Verifica se o item atual (tabela e ID) possui log de alterações.
+     * Verifica se o item atual (tabela e ID) possui log de cancelamento.
      * Apenas é executado se as tabelas já tiverem sido carregadas e se o controle for responsável
      * pela exibição ou não do botão.
      */
@@ -82,7 +82,7 @@ Vue.component('log-alteracao', {
       } else {
         var vm = this;
 
-        Servicos.Log.Alteracao.verificarLogItem(this.itemTabela.id, this.idItem, this.campo)
+        Servicos.Log.Cancelamento.verificarLogItem(this.itemTabela.id, this.idItem, this.campo)
           .then(function(resposta) {
             vm.visivel = true;
           })
@@ -93,12 +93,10 @@ Vue.component('log-alteracao', {
     },
 
     /**
-     * Exibe os logs de alteração em um popup.
+     * Exibe os logs de cancelamento em um popup.
      */
-    abrirLogAlteracoes: function() {
-      var filtroCampo = this.campo ? '&campo=' + this.campo : '';
-      const url = '../Utils/ShowLogAlteracao.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem + filtroCampo;
-
+    abrirLogCancelamento: function() {
+      const url = '../Utils/ShowLogCancelamento.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem;
       this.abrirJanela(500, 700, url);
     }
   },
@@ -110,7 +108,7 @@ Vue.component('log-alteracao', {
 
       var vm = this;
 
-      Servicos.Log.Alteracao.obterTabelas().then(function(resposta) {
+      Servicos.Log.Cancelamento.obterTabelas().then(function(resposta) {
         vm.dados.Tabelas = resposta.data;
 
         for (var controle of vm.dados.Controles) {
@@ -128,7 +126,7 @@ Vue.component('log-alteracao', {
     /**
      * Propriedade computada que indica se o item está visível.
      */
-    visivel: function () {
+    visivel: function() {
       return !this.atualizarAoAlterar;
     }
   },
@@ -163,5 +161,5 @@ Vue.component('log-alteracao', {
     }
   },
 
-  template: '#LogAlteracao-template'
+  template: '#LogCancelamento-template'
 });

@@ -382,6 +382,11 @@ section {
       padding: 0;
     }
 
+    div.filtros span > input[type="checkbox"], section.filtros span > input[type="checkbox"] {
+      position: relative;
+      top: 3px;
+    }
+
     div.filtros .botaoPesquisar, section.filtros .botaoPesquisar {
       position: relative;
       top: 2px;
