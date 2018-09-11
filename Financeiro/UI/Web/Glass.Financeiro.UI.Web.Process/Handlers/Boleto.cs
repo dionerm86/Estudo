@@ -22,13 +22,14 @@ namespace Glass.Financeiro.UI.Web.Process.Handlers
             var codigoNotaFiscal = context.Request["codigoNotaFiscal"].StrParaInt();
             var codigoContaReceber = context.Request["codigoContaReceber"].StrParaInt();
             var codigoLiberacao = context.Request["codigoLiberacao"].StrParaInt();
+            var codigoCte = context.Request["codigoCte"].StrParaInt();
 
             using (var stream = new System.IO.MemoryStream())
             {
                 var geradorBoleto = ServiceLocator.Current.GetInstance<IGeradorBoleto>();
 
-               var boletoResultado = geradorBoleto.GerarBoleto(codigoContaReceber, codigoNotaFiscal, codigoLiberacao, codigoContaBanco,
-                    carteira, especieDocumento, instrucoes, stream);
+                var boletoResultado = geradorBoleto.GerarBoleto(codigoContaReceber, codigoNotaFiscal, codigoLiberacao, codigoCte,
+                   codigoContaBanco, carteira, especieDocumento, instrucoes, stream);
 
                 if (boletoResultado)
                 {

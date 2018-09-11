@@ -25,7 +25,7 @@ namespace Glass.Financeiro.UI.Web.Process
         /// <param name="conteudoBoleto"></param>
         /// <returns></returns>
         public Colosoft.Business.OperationResult<IEnumerable<uint>> GerarBoleto(
-            int codigoContaReceber, int codigoNotaFiscal, int codigoLiberacao,
+            int codigoContaReceber, int codigoNotaFiscal, int codigoLiberacao, int codigoCte,
             int codigoContaBanco, string carteira, int especieDocumento, string[] instrucoes,
             System.IO.Stream conteudoBoleto)
         {
@@ -33,6 +33,9 @@ namespace Glass.Financeiro.UI.Web.Process
 
             if (codigoNotaFiscal > 0)
                 idsContasR = ContasReceberDAO.Instance.ObtemPelaNfe((uint)codigoNotaFiscal).ToList();
+
+            if (codigoCte > 0)
+                idsContasR = ContasReceberDAO.Instance.ObterIdContaRPeloIdCte((uint)codigoCte).ToList();
 
             if ((idsContasR.Count == 0 || idsContasR.FirstOrDefault() == 0) && codigoLiberacao > 0)
             {
@@ -108,52 +111,100 @@ namespace Glass.Financeiro.UI.Web.Process
                 outPdf.Save(conteudoBoleto, false);
 
                 if (Configuracoes.FinanceiroConfig.EnviarEmailEmitirBoleto &&
-                    !Impresso.Instance.BoletoFoiImpresso((int)idsContasR.FirstOrDefault()) && codigoNotaFiscal > 0)
+                    !Impresso.Instance.BoletoFoiImpresso((int)idsContasR.FirstOrDefault()))
                 {
-                    var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja((uint)codigoNotaFiscal);
-
-                    if (idLoja == 0)
+                    if (codigoNotaFiscal > 0)
                     {
-                        throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
-                    }
+                        var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja((uint)codigoNotaFiscal);
 
-                    var idCliente = NotaFiscalDAO.Instance.ObtemIdCliente((uint)codigoNotaFiscal);
-
-                    var email = ClienteDAO.Instance.GetEmail(null, idCliente.GetValueOrDefault(0));
-                    if (!string.IsNullOrWhiteSpace(email))
-                    {
-                        var numNfe = NotaFiscalDAO.Instance.ObtemNumeroNf(null, (uint)codigoNotaFiscal);
-
-                        var texto = string.Format("Prezado(a) cliente,\nSegue anexo boleto da sua NF-e: {0}.\n\nAtt.\n{1}", numNfe,
-                            LojaDAO.Instance.GetElement(null, idLoja).RazaoSocial);
-
-                        var assunto = string.Format("Boleto NF-e: {0}", numNfe);
-
-                        var caminho = string.Format("{0}", "BoletoNFe" + codigoNotaFiscal);
-
-                        var anexo = new Data.Model.AnexoEmail(caminho, string.Format("boletoNFe{0}.pdf", numNfe));                                                      
-
-                        uint idEmail = 0;
-
-                        try
+                        if (idLoja == 0)
                         {
-                            idEmail = Email.EnviaEmailAsyncComTransacao(idLoja, email, assunto, texto, Email.EmailEnvio.Comercial, false, anexo);
-
-                            //Salva o pdf em uma pasta local
-                            outPdf.Save(Armazenamento.ArmazenamentoIsolado.DiretorioBoletos + string.Format("\\anexo{0}.pdf", anexo.IdAnexoEmail));
+                            throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
                         }
-                        catch (System.Exception ex)
-                        {
-                            ErroDAO.Instance.InserirFromException("GerarBoletoAnexoEmail", ex);
 
-                            if (idEmail > 0)
-                                FilaEmailDAO.Instance.DeleteByPrimaryKey(idEmail);
+                        var idCliente = NotaFiscalDAO.Instance.ObtemIdCliente((uint)codigoNotaFiscal);
+
+                        var email = ClienteDAO.Instance.GetEmail(null, idCliente.GetValueOrDefault(0));
+                        if (!string.IsNullOrWhiteSpace(email))
+                        {
+                            var numNfe = NotaFiscalDAO.Instance.ObtemNumeroNf(null, (uint)codigoNotaFiscal);
+
+                            var texto = string.Format("Prezado(a) cliente,\nSegue anexo boleto da sua NF-e: {0}.\n\nAtt.\n{1}", numNfe,
+                                LojaDAO.Instance.GetElement(null, idLoja).RazaoSocial);
+
+                            var assunto = string.Format("Boleto NF-e: {0}", numNfe);
+
+                            var caminho = string.Format("{0}", "BoletoNFe" + codigoNotaFiscal);
+
+                            var anexo = new Data.Model.AnexoEmail(caminho, string.Format("boletoNFe{0}.pdf", numNfe));
+
+                            uint idEmail = 0;
+
+                            try
+                            {
+                                idEmail = Email.EnviaEmailAsyncComTransacao(idLoja, email, assunto, texto, Email.EmailEnvio.Comercial, false, anexo);
+
+                                //Salva o pdf em uma pasta local
+                                outPdf.Save(Armazenamento.ArmazenamentoIsolado.DiretorioBoletos + string.Format("\\anexo{0}.pdf", anexo.IdAnexoEmail));
+                            }
+                            catch (System.Exception ex)
+                            {
+                                ErroDAO.Instance.InserirFromException("GerarBoletoAnexoEmail", ex);
+
+                                if (idEmail > 0)
+                                    FilaEmailDAO.Instance.DeleteByPrimaryKey(idEmail);
+                            }
+                        }
+                    }
+                    else if (codigoCte > 0)
+                    {
+                        var idContaR = ContasReceberDAO.Instance.ObterIdContaRPeloIdCte((uint)codigoCte).FirstOrDefault();
+
+                        var idLoja = ContasReceberDAO.Instance.ObtemIdLoja(null, idContaR);
+
+                        if (idLoja == 0)
+                        {
+                            throw new Exception("Não foi possível recuperar a loja da nota fiscal ao salvar o e-mail a ser enviado.");
+                        }
+
+                        var idCliente = ContasReceberDAO.Instance.ObtemIdCliente((uint)codigoCte);
+
+                        var email = ClienteDAO.Instance.GetEmail(null, idCliente);
+                        if (!string.IsNullOrWhiteSpace(email))
+                        {
+                            var numCte = Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.ObtemNumeroCte((uint)codigoCte);
+
+                            var texto = string.Format("Prezado(a) cliente,\nSegue anexo boleto do seu Ct-e: {0}.\n\nAtt.\n{1}", numCte,
+                                LojaDAO.Instance.GetElement(null, (uint)idLoja).RazaoSocial);
+
+                            var assunto = string.Format("Boleto CT-e: {0}", numCte);
+
+                            var caminho = string.Format("{0}", "BoletoCTe" + codigoCte);
+
+                            var anexo = new Data.Model.AnexoEmail(caminho, string.Format("boletoCTe{0}.pdf", numCte));
+
+                            uint idEmail = 0;
+
+                            try
+                            {
+                                idEmail = Email.EnviaEmailAsyncComTransacao((uint)idLoja, email, assunto, texto, Email.EmailEnvio.Comercial, false, anexo);
+
+                                //Salva o pdf em uma pasta local
+                                outPdf.Save(Armazenamento.ArmazenamentoIsolado.DiretorioBoletos + string.Format("\\anexo{0}.pdf", anexo.IdAnexoEmail));
+                            }
+                            catch (System.Exception ex)
+                            {
+                                ErroDAO.Instance.InserirFromException("GerarBoletoAnexoEmail", ex);
+
+                                if (idEmail > 0)
+                                    FilaEmailDAO.Instance.DeleteByPrimaryKey(idEmail);
+                            }
                         }
                     }
                 }
 
                 foreach (var b in idsContasR)
-                    Impresso.Instance.IndicarBoletoImpresso((int)b, (int)codigoNotaFiscal, (int)codigoLiberacao, (int)codigoContaBanco, UserInfo.GetUserInfo);
+                    Impresso.Instance.IndicarBoletoImpresso((int)b, codigoNotaFiscal, codigoLiberacao, codigoCte, codigoContaBanco, UserInfo.GetUserInfo);
             }
 
             return new Colosoft.Business.OperationResult<IEnumerable<uint>>(idsContasR);
