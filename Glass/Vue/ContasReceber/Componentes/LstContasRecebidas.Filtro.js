@@ -1,4 +1,4 @@
-Vue.component('contarecebida-filtros', {
+Vue.component('contas-recebidas-filtros', {
   mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
   props: {
     /**

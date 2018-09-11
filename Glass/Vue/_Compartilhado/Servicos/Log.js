@@ -52,7 +52,7 @@ Servicos.Log = (function(http) {
         return http().get(API + 'cancelamento/' + idTabela + '/possuiLog/' + idItem, {
           params: {
             campo
-            }
+          }
         });
       },
 

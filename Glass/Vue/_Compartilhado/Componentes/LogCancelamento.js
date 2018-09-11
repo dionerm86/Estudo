@@ -49,8 +49,7 @@ Vue.component('log-cancelamento', {
   data: function() {
     return {
       itemTabela: null,
-      dados: Log.Cancelamento,
-      visivel: !this.atualizarAoAlterar
+      dados: Log.Cancelamento
     };
   },
 
@@ -98,8 +97,7 @@ Vue.component('log-cancelamento', {
      */
     abrirLogCancelamento: function() {
       const url = '../Utils/ShowLogCancelamento.aspx?tabela=' + this.itemTabela.id + '&id=' + this.idItem;
-
-      this.abrirJanela(600, 800, url);
+      this.abrirJanela(500, 700, url);
     }
   },
 
@@ -121,6 +119,15 @@ Vue.component('log-cancelamento', {
       this.dados.Controles.push(this);
     } else {
       this.atualizaTabelas();
+    }
+  },
+
+  computed: {
+    /**
+     * Propriedade computada que indica se o item está visível.
+     */
+    visivel: function() {
+      return !this.atualizarAoAlterar;
     }
   },
 

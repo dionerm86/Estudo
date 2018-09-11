@@ -8,7 +8,7 @@
             "~/Vue/ContasReceber/Templates/LstContasRecebidas.Filtro.html")
     %>
     <div id="app">
-        <contarecebida-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></contarecebida-filtros>
+        <contas-recebidas-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></contas-recebidas-filtros>
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma conta recebida encontrada." :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
