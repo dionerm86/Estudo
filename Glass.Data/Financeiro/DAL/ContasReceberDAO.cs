@@ -5849,6 +5849,13 @@ namespace Glass.Data.DAL
             return ExecuteMultipleScalar<uint>(sql);
         }
 
+        public IList<uint> ObterIdContaRPeloIdCte(uint idCte)
+        {
+            return ExecuteMultipleScalar<uint>($@"SELECT cr.idContaR
+                FROM contas_receber cr
+                WHERE IdCte={ idCte } and cr.DataCad <> COALESCE(cr.DataRec, now())");
+        }
+
         public bool NfeTemContasReceber(uint idNf)
         {
             var numeroNfe = NotaFiscalDAO.Instance.ObtemNumeroNf(null, idNf);
@@ -9100,6 +9107,20 @@ namespace Glass.Data.DAL
                 SELECT COUNT(*)
                 FROM contas_receber
                 WHERE recebida = 1
+                    AND IdCte = " + idCte) > 0;
+        }
+
+        /// <summary>
+        /// Verifica se o CT-e informado possui uma conta recebida.
+        /// </summary>
+        /// <param name="idCte"></param>
+        /// <returns></returns>
+        public bool CTeTemContaReceber(int idCte)
+        {
+            return objPersistence.ExecuteSqlQueryCount(@"
+                SELECT COUNT(*)
+                FROM contas_receber
+                WHERE recebida = 0
                     AND IdCte = " + idCte) > 0;
         }
 

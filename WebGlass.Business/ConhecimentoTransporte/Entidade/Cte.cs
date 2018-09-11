@@ -430,6 +430,14 @@ namespace WebGlass.Business.ConhecimentoTransporte.Entidade
             get { return IdCteAnterior > 0 ? ConhecimentoTransporteDAO.Instance.ObtemNumeroCte(IdCteAnterior.Value) : (uint?)null; }
         }
 
+        public bool ExibirBoleto
+        {
+            get
+            {
+                return ContasReceberDAO.Instance.CTeTemContaReceber((int)IdCte);
+            }
+        }
+
         #endregion
     }
 }

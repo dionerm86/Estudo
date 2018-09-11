@@ -23,7 +23,7 @@ namespace Glass
         /// <param name="instrucoes"></param>
         /// <param name="conteudoBoleto"> Boleto que foi gerado</param>
         /// <returns></returns>
-        Colosoft.Business.OperationResult<IEnumerable<uint>> GerarBoleto(int codigoContaReceber, int codigoNotaFiscal, int codigoLiberacao,
+        Colosoft.Business.OperationResult<IEnumerable<uint>> GerarBoleto(int codigoContaReceber, int codigoNotaFiscal, int codigoLiberacao, int codigoCte,
             int codigoContaBanco, string carteira, int especieDocumento, string[] instrucoes,
             System.IO.Stream conteudoBoleto);
     }

@@ -307,7 +307,18 @@ namespace Glass.Data.DAL.CTe
                 GetParams(dataEmiIni, dataEmiFim)).ToList();
         }
 
-        #endregion        
+        public IList<uint> ObterIdCtePeloIdContaR(uint idContaR, bool apenasAutorizados)
+        {
+            string sql = @"
+                SELECT cte.IdCte from conhecimento_transporte cte
+                    Inner Join contas_receber cr ON (cte.IdCte = cr.IdCte)
+                 WHERE " + (apenasAutorizados ? "cte.Situacao = " + (int)Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.Autorizado : "1") +
+                $" AND cr.idContaR = {idContaR} ";
+
+            return ExecuteMultipleScalar<uint>(sql);
+        }
+
+        #endregion
 
         public override uint Insert(ConhecimentoTransporte objInsert)
         {
