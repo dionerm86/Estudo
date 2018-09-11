@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.DAL;
 using Glass.Data.RelModel;
@@ -474,7 +474,7 @@ namespace Glass.Data.RelDAL
                     @"UNION ALL
 
                     SELECT * FROM
-                        (SELECT SUM(ROUND(pnf.TotM / pnf.Qtde, 4)) AS TotM2, YEAR(pcv.DataPerda) AS Ano, MONTH(pcv.DataPerda) AS Mes
+                        (SELECT SUM(ROUND(pnf.TotM / pnf.Qtde, 2)) AS TotM2, YEAR(pcv.DataPerda) AS Ano, MONTH(pcv.DataPerda) AS Mes
                         FROM perda_chapa_vidro pcv
                             INNER JOIN produto_impressao pi ON (pcv.IdProdImpressao=pi.IdProdImpressao)
                             INNER JOIN produtos_nf pnf ON (pi.IdProdNf=pnf.IdProdNf)
@@ -494,7 +494,7 @@ namespace Glass.Data.RelDAL
             var sqlPerda =
                 string.Format(
                     @"SELECT * FROM 
-                        (SELECT SUM(ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={0}, a.Qtde, 1)), 4)) AS TotM2, YEAR(ppp.DataRepos) AS Ano, MONTH(ppp.DataRepos) AS Mes
+                        (SELECT SUM(ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={0}, a.Qtde, 1)), 2)) AS TotM2, YEAR(ppp.DataRepos) AS Ano, MONTH(ppp.DataRepos) AS Mes
                         FROM produto_pedido_producao ppp
                             INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed) 
                             LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido) 
@@ -515,7 +515,7 @@ namespace Glass.Data.RelDAL
                     UNION ALL
 
                     SELECT * FROM
-                        (SELECT SUM(ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={0}, a.Qtde, 1)), 4)) AS TotM2, YEAR(dr.DataRepos) AS Ano, MONTH(dr.DataRepos) AS Mes
+                        (SELECT SUM(ROUND(pp.TotM/(pp.Qtde*IF(ped.TipoPedido={0}, a.Qtde, 1)), 2)) AS TotM2, YEAR(dr.DataRepos) AS Ano, MONTH(dr.DataRepos) AS Mes
                         FROM produto_pedido_producao ppp
                             INNER JOIN dados_reposicao dr ON (ppp.IdProdPedProducao=dr.IdProdPedProducao)
                             INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed=pp.IdProdPed)
