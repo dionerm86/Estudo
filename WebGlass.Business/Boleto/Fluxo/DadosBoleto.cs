@@ -29,7 +29,7 @@ namespace WebGlass.Business.Boleto.Fluxo
 
             var cedente = ObtemCedente(bancoInfo, idLoja, contaBancaria, convenio);
 
-            var numeroDocumento = ArquivoRemessaDAO.Instance.ObtemNumeroDocumento(idContaR, true, bancoInfo.Codigo);
+            var numeroDocumento = ArquivoRemessaDAO.Instance.ObtemNumeroDocumento(idContaR, true, bancoInfo.Codigo, true);
             var nossoNumero = ArquivoRemessaDAO.Instance.ObtemNossoNumero(idContaR, banco, Glass.Conversoes.StrParaInt(carteira),
                 contaBancaria.Agencia, int.Parse(contaBancaria.Conta.Replace(".", "").Replace("-", "")), contaBancaria.Posto,
                 cedente.Convenio.ToString(), cedente.ContaBancaria.CodCliente.ToString(), cedente.ContaBancaria.DigitoCodCliente);

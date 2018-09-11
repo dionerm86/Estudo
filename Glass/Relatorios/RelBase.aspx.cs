@@ -465,9 +465,9 @@ namespace Glass.UI.Web.Relatorios
                             Request["dtFimRec"], Request["dataIniCad"], Request["dataFimCad"], null, null, Request["idsFormaPagto"], Glass.Conversoes.StrParaUint(Request["tipoBoleto"]),
                             Glass.Conversoes.StrParaFloat(Request["valorInicial"]), Glass.Conversoes.StrParaFloat(Request["valorFinal"]), Glass.Conversoes.StrParaInt(Request["ordenar"]),
                             Request["renegociadas"] == "true", recebida, Glass.Conversoes.StrParaUint(Request["idComissionado"]), Glass.Conversoes.StrParaUint(Request["idRota"]),
-                            Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"]), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
+                            Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"] ?? "false"), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
                             Glass.Conversoes.StrParaInt(Request["idVendedorAssociado"]), Glass.Conversoes.StrParaInt(Request["idVendedorObra"]), Request["idComissao"].StrParaInt(),
-                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"]), bool.Parse(Request["contasVinculadas"]), Request["tipoContasBuscar"], Request["numAutCartao"]);
+                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"]);
 
                         var idsContas = contasRecebidas.Select(f => f.IdContaR).ToList();
 

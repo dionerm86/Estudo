@@ -16,9 +16,10 @@
 
             var codigoNotaFiscal = '<%= Request["codigoNotaFiscal"] %>';
             var codigoContaReceber = '<%= Request["codigoContaReceber"] %>';
+            var codigoCte = '<%= Request["codigoCte"] %>';
 
             var base = '<%= ResolveUrl("~/") %>';
-            window.opener.openWindow(600, 800, base + '../../Handlers/Boleto.ashx?codigoNotaFiscal=' + codigoNotaFiscal +
+            window.opener.openWindow(600, 800, base + '../../Handlers/Boleto.ashx?codigoNotaFiscal=' + codigoNotaFiscal + '&codigoCte=' + codigoCte +
                 '&codigoContaReceber=' + codigoContaReceber + '&codigoLiberacao=' + codigoLiberacao + '&codigoContaBanco=' + contaBanco +
                 '&carteira=' + carteira + '&especieDocumento=' + especieDoc + '&instrucoes=' + instrucoes);
 

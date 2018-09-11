@@ -55,6 +55,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de funcionários de caixa diário.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterCaixaDiario: function () {
+      return http().get(API + 'caixaDiario');
+    },
+
+    /**
      * Recupera a lista de funcionários ativos associados à clientes.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

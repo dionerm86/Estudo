@@ -19,7 +19,10 @@ namespace Glass.Data.Model
         public int? IdLiberarPedido { get; set; }
 
         [PersistenceProperty("IDCONTABANCO")]
-        public int IdContaBanco { get; set; }               
+        public int IdContaBanco { get; set; }
+
+        [PersistenceProperty("IDCTE")]
+        public int? IdCte { get; set; }
 
         #endregion
     }

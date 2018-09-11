@@ -108,7 +108,7 @@ namespace Glass.Data.DAL
 
         #region Recupera números para o boleto
 
-        public string ObtemNumeroDocumento(uint idContaR, bool buscarComNf, int codigoBanco)
+        public string ObtemNumeroDocumento(uint idContaR, bool buscarComNf, int codigoBanco, bool buscarComCte)
         {
             const string ALFABETO = "ABCDEFGHIJLMNOPQRSTUVXZ";
 
@@ -116,6 +116,8 @@ namespace Glass.Data.DAL
             if (numParc < 1) numParc = 1;
 
             var idNf = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idNf", "idContaR=" + idContaR);
+
+            var idCte = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idCte", "idContaR=" + idContaR);
 
             var numDoc = idContaR.ToString();
 
@@ -142,6 +144,9 @@ namespace Glass.Data.DAL
 
             if (buscarComNf && idNf != 0)
                 return NotaFiscalDAO.Instance.ObtemNumeroNf(null, idNf).ToString().FormataNumero("numDoc", 8, false) + "-" + ALFABETO[numParc - 1];
+
+            if (buscarComCte && idCte != 0)
+                return CTe.ConhecimentoTransporteDAO.Instance.ObtemNumeroCte(idCte).ToString().FormataNumero("numDoc", 8, false) + "-" + ALFABETO[numParc - 1];
 
             return numDoc.ToString().FormataNumero("numDoc", 10, false);
         }
@@ -499,8 +504,8 @@ namespace Glass.Data.DAL
                     boleto.ValorIOF = boletos.ValorIOF;
                     boleto.Sacado = sacado;
                     boleto.DataVencimentoTitulo = c.DataVec;
-                    boleto.NumeroDocumento = ObtemNumeroDocumento(c.IdContaR, true, boletos.Banco.Codigo);
-                    boleto.IdTituloEmpresa = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo);
+                    boleto.NumeroDocumento = ObtemNumeroDocumento(c.IdContaR, true, boletos.Banco.Codigo, true);
+                    boleto.IdTituloEmpresa = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo, false);
 
                     var nossoNumero = ObtemNossoNumero(c.IdContaR, boletos.Banco.Codigo, boleto.CaracteristicaCobranca.Carteira.Numero,
                         boleto.ContaBancaria.Agencia, int.Parse(boleto.ContaBancaria.Conta), boleto.ContaBancaria.Posto, boleto.Cedente.Convenio.ToString(), boleto.Cedente.ContaBancaria.CodCliente.ToString(),
@@ -512,7 +517,7 @@ namespace Glass.Data.DAL
                     boleto.NumParcela = c.NumParc;
                     boletos.Add(boleto);
 
-                    var numeroDocumento = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo);
+                    var numeroDocumento = ObtemNumeroDocumento(c.IdContaR, false, boletos.Banco.Codigo, false);
 
                     if (boletos.Banco.Codigo == (int)CodigoBanco.Sicredi)
                         numeroDocumento = nossoNumero.Key + nossoNumero.Value;
