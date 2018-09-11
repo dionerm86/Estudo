@@ -7627,7 +7627,9 @@ namespace Glass.Data.DAL
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+            if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli == UserInfo.GetUserInfo.IdCliente)
+                return false;
+            else if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
                 return false;
 
             // Não deixa reabrir se recebeu sinal
