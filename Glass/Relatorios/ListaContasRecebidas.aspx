@@ -90,7 +90,7 @@
                         <a href="#" @click.prevent="abrirRelatorioObra(item)" title="Obra" v-if="item.idObra > 0 && numeroLinhaEdicao === -1">
                             <img border="0" src="../Images/relatorio.gif">
                         </a>
-                        
+
                         <a href="#" @click.prevent="abrirRelatorioAcerto(item)" title="Dados do recebimento" v-if="item.idAcerto > 0 && numeroLinhaEdicao === -1">
                             <img border="0" src="../Images/script_go.gif">
                         </a>
@@ -119,7 +119,7 @@
                         <log-cancelamento tabela="ContasReceber" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logCancelamento"></log-cancelamento>
                     </td>
                 </template>
-                <template slot="itemEditando" v-if="false">
+                <template slot="itemEditando">
                     <td style="white-space: nowrap">
                         <button @click.prevent="atualizar" title="Atualizar">
                             <img src="../Images/ok.gif">
@@ -131,7 +131,9 @@
                     <td>{{ contaRecebidaAtual.referencia }}</td>
                     <td v-if="configuracoes.comissaoPorContasRecebida">{{ contaRecebidaAtual.idComissao }}</td>
                     <td>{{ contaRecebidaAtual.numeroParcela }}/{{ contaRecebidaAtual.numeroMaximoParcelas }}</td>
-                    <td>{{ contaRecebidaAtual.cliente.id }} - {{ contaRecebidaAtual.cliente.nome }}</td>
+                    <td v-if="contaRecebidaAtual && contaRecebidaAtual.cliente">
+                        {{ contaRecebidaAtual.cliente.id }} - {{ contaRecebidaAtual.cliente.nome }}
+                    </td>
                     <td>{{ contaRecebidaAtual.formaPagamento }}</td>
                     <td>{{ contaRecebidaAtual.valorVencimento | moeda }}</td>
                     <td>{{ contaRecebidaAtual.dataVencimento | data }}</td>

@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.Patch],
 
   data: {
     dadosOrdenacao_: {
@@ -26,7 +26,7 @@ const app = new Vue({
      */
     obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
-      return Servicos.ContasReceber.obterListaRecebidas(filtroUsar, pagina, numeroRegistros, ordenacao);
+      return Servicos.ContasReceber.Recebidas.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -64,7 +64,7 @@ const app = new Vue({
       var contaRecebidaAtualizar = this.patch(this.contaRecebida, this.contaRecebidaOriginal);
       var vm = this;
 
-      Servicos.ContasReceber.atualizar(this.contaRecebida.id, contaRecebidaAtualizar)
+      Servicos.ContasReceber.Recebidas.atualizar(this.contaRecebidaAtual.id, contaRecebidaAtualizar)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();
@@ -295,7 +295,7 @@ const app = new Vue({
   mounted: function() {
     var vm = this;
 
-    Servicos.ContasReceber.obterConfiguracoesListaRecebidas()
+    Servicos.ContasReceber.Recebidas.obterConfiguracoesLista()
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });

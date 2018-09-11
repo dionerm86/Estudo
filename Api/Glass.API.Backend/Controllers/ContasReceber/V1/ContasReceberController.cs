@@ -28,7 +28,7 @@ namespace Glass.API.Backend.Controllers.ContasReceber.V1
         {
             var validacao = this.ValidarIdContaReceber(id);
 
-            if (validacao == null && !LiberarPedidoDAO.Instance.Exists(sessao, id))
+            if (validacao == null && !ContasReceberDAO.Instance.Exists(sessao, id))
             {
                 return this.NaoEncontrado("Conta a receber/recebida não encontrada.");
             }
