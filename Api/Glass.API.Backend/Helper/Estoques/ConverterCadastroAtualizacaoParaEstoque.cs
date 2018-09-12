@@ -47,7 +47,7 @@ namespace Glass.API.Backend.Helper.Estoques
         {
             destino.EstMinimo = (double)this.cadastro.EstoqueMinimo;
             destino.M2 = (double)this.cadastro.EstoqueM2;
-            destino.EstMinimo = (double)this.cadastro.QuantidadeEstoque;
+            destino.QtdEstoque = (double)this.cadastro.QuantidadeEstoque;
             destino.EstoqueFiscal = (double)this.cadastro.QuantidadeEstoqueFiscal;
             destino.Defeito = (double)this.cadastro.QuantidadeDefeito;
             destino.QtdePosseTerceiros = (double)this.cadastro.QuantidadePosseTerceiros;

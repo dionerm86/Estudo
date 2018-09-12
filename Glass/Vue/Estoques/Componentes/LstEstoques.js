@@ -64,7 +64,7 @@ const app = new Vue({
       var estoqueProdutoAtualizar = this.patch(this.estoqueProduto, this.estoqueProdutoOriginal);
       var vm = this;
 
-      Servicos.Estoque.atualizar(this.estoqueProdutoAtual.id, estoqueProdutoAtualizar)
+      Servicos.Estoques.atualizar(this.estoqueProdutoAtual.idProduto, this.estoqueProdutoAtual.idLoja, estoqueProdutoAtualizar)
         .then(function (resposta) {
           vm.atualizarLista();
           vm.cancelar();

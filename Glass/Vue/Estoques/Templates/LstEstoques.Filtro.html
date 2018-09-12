@@ -73,8 +73,8 @@
             <label for="apenasComEstoque">Apenas produtos com estoque</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
-            <input id="aguardandoSaidaEstoque" type="checkbox" v-model="filtroAtual.aguardandoSaidaEstoque" v-if="exibirFiltroAguardandoSaidaEstoque" />
+        <span class="form-group" v-if="exibirFiltroAguardandoSaidaEstoque">
+            <input id="aguardandoSaidaEstoque" type="checkbox" v-model="filtroAtual.aguardandoSaidaEstoque" />
             <label for="aguardandoSaidaEstoque">Produtos aguardando saída de estoque</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>

@@ -10,7 +10,7 @@
     <div id="app">
         <estoque-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></estoque-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :numero-registros="20">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :numero-registros="20" :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
                     <th></th>
                     <th>
@@ -105,7 +105,7 @@
                         {{ estoqueProdutoAtual.descricaoTipoCalculo }}
                     </td>
                     <td v-if="!exibirEstoqueFiscal">
-                        {{ estoqueProdutoAtual.quantidadeReseva }}
+                        {{ estoqueProdutoAtual.quantidadeReserva }}
                     </td>
                     <td v-if="configuracoes.usarLiberacaoPedido && !exibirEstoqueFiscal">
                         {{ estoqueProdutoAtual.quantidadeLiberacao }}
@@ -129,7 +129,7 @@
                     <td v-if="exibirEstoqueFiscal">
 
                     </td>
-                    <td>
+                    <td v-if="exibirEstoqueFiscal">
                     </td>
                 </template>
             </lista-paginada>

@@ -69,7 +69,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     (int)situacao,
                     filtro.EstoqueFiscal ? 1 : 0,
                     filtro.AguardandoSaidaEstoque,
-                    filtro.OrdenacaoFiltro,
+                    0,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);

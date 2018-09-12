@@ -75,6 +75,7 @@ Vue.component('estoque-filtros', {
     this.filtroAtual.situacao = 1;
     this.filtroAtual.ordenacaoFiltro = 1;
     this.lojaAtual = { id: 1 }; //this.configuracoes.idLojaUsuario  };
+    this.filtroAtual.estoqueFiscal = this.exibirEstoqueFiscal;
   },
 
   methods: {
