@@ -99,7 +99,8 @@ namespace Glass.PCP.Negocios.Entidades
                         {
                             Func = ObtemDescritor().ObtemDescritor<Global.Negocios.Entidades.Funcionario>(idFunc).Name,
                             Setor = Glass.Data.Helper.Utils.ObtemSetor((uint)idSetor).Descricao,
-                            DataLeitura = dataLeitura
+                            DataLeitura = dataLeitura,
+                            planoCorte = idSetor == 1 ? PlanoCorte : string.Empty,
                         };
                     })
                     .OrderBy(x => x.DataLeitura);
@@ -108,8 +109,8 @@ namespace Glass.PCP.Negocios.Entidades
 
                 foreach (var item in itens)
                     retorno.Add(String.Format(
-                        "• Marcador: {0}, Setor: {1}, Data leitura: {2:dd/MM/yyyy HH:mm:ss}",
-                        item.Func, item.Setor, item.DataLeitura));
+                        "• Marcador: {0}, Setor: {1}{2}, Data leitura: {3:dd/MM/yyyy HH:mm:ss}",
+                        item.Func, item.Setor,!string.IsNullOrWhiteSpace(item.planoCorte) ? $",Plano Corte:{ item.planoCorte }" : string.Empty ,item.DataLeitura));
 
                 return String.Join("<br />", retorno);
             }
