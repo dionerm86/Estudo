@@ -1,8 +1,10 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas;
 using Glass.Configuracoes;
+using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
@@ -25,7 +27,11 @@ namespace Glass.API.Backend.Models.Estoques.Configuracoes
             this.MarcarSaidaEstoqueAoLiberarPedido = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido;
             this.MarcarSaidaEstoqueAutomaticaAoConfirmar = FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar;
             this.AlterarEstoqueManualmente = Config.PossuiPermissao(Config.FuncaoMenuEstoque.AlterarEstoqueManualmente);
-            this.IdLojaUsuario = (int)UserInfo.GetUserInfo.IdLoja;
+            this.LojaUsuario = new IdNomeDto
+            {
+                Id = (int)UserInfo.GetUserInfo.IdLoja,
+                Nome = LojaDAO.Instance.GetNome(UserInfo.GetUserInfo.IdLoja),
+            };
         }
 
         /// <summary>
@@ -64,10 +70,10 @@ namespace Glass.API.Backend.Models.Estoques.Configuracoes
         public bool AlterarEstoqueManualmente { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador da loja do usuário logado.
+        /// Obtém ou define os dados da loja do usuário logado.
         /// </summary>
         [DataMember]
-        [JsonProperty("idLojaUsuario")]
-        public int IdLojaUsuario { get; set; }
+        [JsonProperty("lojaUsuario")]
+        public IdNomeDto LojaUsuario { get; set; }
     }
 }

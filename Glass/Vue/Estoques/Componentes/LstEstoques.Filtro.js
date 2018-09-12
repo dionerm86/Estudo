@@ -132,6 +132,23 @@ Vue.component('estoque-filtros', {
 
   watch: {
     /**
+     * Observador para a propriedade 'configuracoes'.
+     * Atualiza o filtro com a loja atual do usuário.
+     */
+    configuracoes: {
+      handler: function (atual) {
+        this.lojaAtual = atual ? this.clonar(atual.lojaUsuario) : null;
+
+        var vm = this;
+
+        this.$nextTick(function () {
+          vm.filtrar();
+        });
+      },
+      deep: true
+    },
+
+    /**
      * Observador para a variável 'lojaAtual'.
      * Atualiza o filtro com o ID do item selecionado.
      */
