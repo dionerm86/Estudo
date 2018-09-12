@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Estoques
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "Descricao ASC"; }
+            get { return "p.CodInterno ASC"; }
         }
 
         /// <inheritdoc/>
@@ -62,7 +62,7 @@ namespace Glass.API.Backend.Helper.Estoques
                 case "quantidadeposseterceiros":
                     return "QtdePosseTerceiros";
 
-                case "idloja":
+                case "pl.idloja":
                     return campo;
 
                 default:

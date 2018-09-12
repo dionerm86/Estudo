@@ -1,9 +1,5 @@
 using System;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using Glass.Data.Helper;
-using Glass.Data.DAL;
-using Glass.Configuracoes;
 
 namespace Glass.UI.Web.Listas
 {
@@ -14,59 +10,15 @@ namespace Glass.UI.Web.Listas
             if (Request["fiscal"] == "1")
                 Page.Title = "Estoque Fiscal de Produtos";
 
-            if (!Config.PossuiPermissao(Config.FuncaoMenuEstoque.AlterarEstoqueManualmente))
-                chkInsercaoRapidaEstoque.Style.Add("display", "none");
-        }
-
-        protected void chkInsercaoRapidaEstoque_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkInsercaoRapidaEstoque.Checked)
-            {
-                grdEstoque.Columns[0].Visible = false;
-                grdEstoque.Columns[4].Visible = false;
-                grdEstoque.Columns[5].Visible = false;
-                grdEstoque.Columns[6].Visible = false;
-                grdEstoque.Columns[7].Visible = false;
-                grdEstoque.Columns[8].Visible = false;
-                grdEstoque.Columns[9].Visible = false;
-                grdEstoque.Columns[10].Visible = false;
-                grdEstoque.Columns[11].Visible = false;
-                grdEstoque.Columns[12].Visible = false;
-                grdEstoque.Columns[13].Visible = false;
-                grdEstoque.Columns[14].Visible = false;
-
-                btnSalvarInsercaoRapida.Visible = true;
-
-                if (Request["fiscal"] == "1")
-                    grdEstoque.Columns[17].Visible = true;
-                else
-                    grdEstoque.Columns[16].Visible = true;
-            }
-            else
-            {
-                grdEstoque.Columns[0].Visible = true;
-                grdEstoque.Columns[4].Visible = true;
-                grdEstoque.Columns[5].Visible = true;
-                grdEstoque.Columns[6].Visible = true;
-                grdEstoque.Columns[7].Visible = true;
-                grdEstoque.Columns[8].Visible = true;
-                grdEstoque.Columns[9].Visible = true;
-                grdEstoque.Columns[10].Visible = true;
-                grdEstoque.Columns[11].Visible = true;
-                grdEstoque.Columns[12].Visible = true;
-                grdEstoque.Columns[13].Visible = true;
-                grdEstoque.Columns[14].Visible = true;
-                grdEstoque.Columns[16].Visible = false;
-                grdEstoque.Columns[17].Visible = false;
-                btnSalvarInsercaoRapida.Visible = false;
-            }
+            //if (!Config.PossuiPermissao(Config.FuncaoMenuEstoque.AlterarEstoqueManualmente))
+            //    chkInsercaoRapidaEstoque.Style.Add("display", "none");
         }
 
         /// <summary>
         /// Método acionado para salvar a inserção rapida de estoque
         /// </summary>
         protected void SalvarInsercaoRapida(object sender, EventArgs e)
-        {
+        {/*
             try
             {
                 Glass.Data.Model.ProdutoLoja produtoLoja;
@@ -121,7 +73,7 @@ namespace Glass.UI.Web.Listas
                 chkInsercaoRapidaEstoque.Checked = false;
                 chkInsercaoRapidaEstoque_CheckedChanged(null, null);
                 grdEstoque.DataBind();
-            }
+            }*/
         }
     }
 }

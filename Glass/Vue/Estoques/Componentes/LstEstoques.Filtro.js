@@ -74,7 +74,7 @@ Vue.component('estoque-filtros', {
   mounted: function () {
     this.filtroAtual.situacao = 1;
     this.filtroAtual.ordenacaoFiltro = 1;
-    this.filtroAtual.idLoja = this.configuracoes.idLojaUsuario;
+    this.lojaAtual = { id: 1 }; //this.configuracoes.idLojaUsuario  };
   },
 
   methods: {

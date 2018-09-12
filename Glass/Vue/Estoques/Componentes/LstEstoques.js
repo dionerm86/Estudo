@@ -43,6 +43,16 @@ const app = new Vue({
     },
 
     /**
+     * Indica que um estoque de produto será editado.
+     * @param {Object} estoqueProduto O item que será editado.
+     * @param {number} numeroLinha O número da linha que contém o iten que será editado.
+     */
+    editar: function (estoqueProduto, numeroLinha) {
+      this.iniciarCadastroOuAtualizacao_(estoqueProduto);
+      this.numeroLinhaEdicao = numeroLinha;
+    },
+
+    /**
      * Atualiza os dados do estoque do produto.
      * @param {Object} event O objeto com o evento do JavaScript.
      */
@@ -110,7 +120,17 @@ const app = new Vue({
       this.estoqueProdutoAtual = estoqueProduto;
 
       this.estoqueProduto = {
-        observacao: estoqueProduto ? estoqueProduto.observacao : null
+        estoqueMinimo: estoqueProduto ? estoqueProduto.estoqueMinimo : null,
+        estoqueM2: estoqueProduto ? estoqueProduto.estoqueM2 : null,
+        quantidadeEstoque: estoqueProduto ? estoqueProduto.quantidadeEstoque : null,
+        quantidadeEstoqueFiscal: estoqueProduto ? estoqueProduto.quantidadeEstoqueFiscal : null,
+        quantidadeDefeito: estoqueProduto ? estoqueProduto.quantidadeDefeito : null,
+        quantidadePosseTerceiros: estoqueProduto ? estoqueProduto.quantidadePosseTerceiros : null,
+        idCliente: estoqueProduto ? estoqueProduto.idCliente : null,
+        idFornecedor: estoqueProduto ? estoqueProduto.idFornecedor : null,
+        idLojaTerceiros: estoqueProduto ? estoqueProduto.idLojaTerceiros : null,
+        idTransportador: estoqueProduto ? estoqueProduto.idTransportador : null,
+        idAdministradoraCartao: estoqueProduto ? estoqueProduto.idAdministradoraCartao : null
       };
 
       this.estoqueProdutoOriginal = this.clonar(this.estoqueProduto);

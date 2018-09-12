@@ -5,6 +5,7 @@
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,8 +51,11 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
             {
                 filtro = filtro ?? new Models.Estoques.Lista.FiltroDto();
 
+                var situacao = filtro.Situacao.GetValueOrDefault(Situacao.Ativo);
+                var idLoja = filtro.IdLoja.GetValueOrDefault((int)UserInfo.GetUserInfo.IdLoja);
+
                 var estoques = ProdutoLojaDAO.Instance.GetForEstoque(
-                    (uint)(filtro.IdLoja ?? 0),
+                    (uint)idLoja,
                     filtro.CodigoInternoProduto,
                     filtro.DescricaoProduto,
                     (uint)(filtro.IdGrupoProduto ?? 0),
@@ -62,7 +66,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     (uint)(filtro.IdCorVidro ?? 0),
                     (uint)(filtro.IdCorFerragem ?? 0),
                     (uint)(filtro.IdCorAluminio ?? 0),
-                    (int)filtro.Situacao,
+                    (int)situacao,
                     filtro.EstoqueFiscal ? 1 : 0,
                     filtro.AguardandoSaidaEstoque,
                     filtro.OrdenacaoFiltro,
@@ -74,7 +78,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                     estoques.Select(o => new Models.Estoques.Lista.ListaDto(o)),
                     filtro,
                     () => ProdutoLojaDAO.Instance.GetForEstoqueCount(
-                        (uint)(filtro.IdLoja ?? 0),
+                        (uint)idLoja,
                         filtro.CodigoInternoProduto,
                         filtro.DescricaoProduto,
                         (uint)(filtro.IdGrupoProduto ?? 0),
@@ -85,7 +89,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                         (uint)(filtro.IdCorVidro ?? 0),
                         (uint)(filtro.IdCorFerragem ?? 0),
                         (uint)(filtro.IdCorAluminio ?? 0),
-                        (int)filtro.Situacao,
+                        (int)situacao,
                         filtro.EstoqueFiscal ? 1 : 0,
                         filtro.AguardandoSaidaEstoque,
                         filtro.OrdenacaoFiltro));

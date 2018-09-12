@@ -272,17 +272,17 @@ namespace Glass.Data.DAL
             switch (ordenacao)
             {
                 case 1:
-                    order = "p.Descricao asc"; break;
+                    order = "p.CodInterno asc"; break;
                 case 2:
                     order = estoqueFiscal == 1 ? "coalesce(sum(pl.EstoqueFiscal), 0) asc" : "coalesce(sum(pl.QtdEstoque), 0) asc"; break;
                 case 3:
                     order = estoqueFiscal == 1 ? "coalesce(sum(pl.EstoqueFiscal), 0) desc" : "coalesce(sum(pl.QtdEstoque), 0) desc"; break;
             }
 
-            sortExpression = String.IsNullOrEmpty(sortExpression) ? order : sortExpression;
-            return LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
+            sortExpression = string.IsNullOrEmpty(sortExpression) ? order : sortExpression;
+            return objPersistence.LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao,
-                estoqueFiscal == 1, aguardandoSaidaEstoque, true), sortExpression, startRow, pageSize, EstoqueParam(codInternoProd, descricao, null));
+                estoqueFiscal == 1, aguardandoSaidaEstoque, true) + $" ORDER BY {sortExpression}", null, new InfoPaging(startRow, pageSize), EstoqueParam(codInternoProd, descricao, null)).ToList();
         }
 
         public int GetForEstoqueCount(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd,

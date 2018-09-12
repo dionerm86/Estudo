@@ -92,7 +92,7 @@ namespace Glass.API.Backend.Models.Estoques.Lista
         /// Obtém ou define a situação do produto.
         /// </summary>
         [JsonProperty("situacao")]
-        public Situacao Situacao { get; set; }
+        public Situacao? Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se deverá retornar o estoque fiscal dos produtos.
