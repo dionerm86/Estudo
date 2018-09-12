@@ -1128,9 +1128,10 @@ namespace Glass.Data.DAL
                                     arqOtimiz += (etiqueta.Altura + " X " + etiqueta.Largura).PadLeft(32);
 
                                 //13 - Ped. Cli (602 .. 633)
-                                var pedCliExterno = etiqueta.PedCliExterno != null && etiqueta.PedCliExterno.Length > 32 ? etiqueta.PedCliExterno.Substring(0, 32) : etiqueta.PedCliExterno;
+                                var pedCliExterno = (etiqueta.PedCliExterno != null ? etiqueta.PedCliExterno : string.Empty) + " | " + (produtoPedido.PedCli != null ? produtoPedido.PedCli : string.Empty);
+                                pedCliExterno = pedCliExterno.Length > 32 ? pedCliExterno.Substring(0, 32) : pedCliExterno;
                                 pedCliExterno = Glass.Formatacoes.RetiraCaracteresEspeciais(pedCliExterno);
-                                arqOtimiz += (pedCliExterno ?? String.Empty).PadLeft(32);
+                                arqOtimiz += (pedCliExterno).PadLeft(32);
 
                                 //14 - Cód de Barras (634 .. 665)
                                 arqOtimiz += etiqueta.BarCode.PadLeft(32);
