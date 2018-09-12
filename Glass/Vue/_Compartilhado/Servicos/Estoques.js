@@ -35,13 +35,13 @@ Servicos.Estoques = (function(http) {
     },
 
     /**
-     * Altera os dados do estoque de um produto.
+     * Altera os dados do estoque real de um produto.
      * @param {!number} idProduto O identificador do produto que terá o estoque alterado.
      * @param {!number} idLoja O identificador da loja do produto que terá o estoque alterado.
      * @param {!Object} estoqueProduto O objeto com os dados da conta recebida a serem alterados.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    atualizar: function (idProduto, idLoja, estoqueProduto) {
+    atualizarEstoqueReal: function (idProduto, idLoja, estoqueProduto) {
       if (!idProduto) {
         throw new Error('Produto é obrigatório.');
       }
@@ -54,7 +54,30 @@ Servicos.Estoques = (function(http) {
         return Promise.resolve();
       }
 
-      return http().patch(API + 'produto/' + idProduto + '/loja/' + idLoja, estoqueProduto);
+      return http().patch(API + 'produto/' + idProduto + '/loja/' + idLoja + '/real', estoqueProduto);
+    },
+
+    /**
+     * Altera os dados do estoque fiscal de um produto.
+     * @param {!number} idProduto O identificador do produto que terá o estoque alterado.
+     * @param {!number} idLoja O identificador da loja do produto que terá o estoque alterado.
+     * @param {!Object} estoqueProduto O objeto com os dados da conta recebida a serem alterados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    atualizarEstoqueFiscal: function (idProduto, idLoja, estoqueProduto) {
+      if (!idProduto) {
+        throw new Error('Produto é obrigatório.');
+      }
+
+      if (!idLoja) {
+        throw new Error('Loja é obrigatória.');
+      }
+
+      if (!estoqueProduto || estoqueProduto === {}) {
+        return Promise.resolve();
+      }
+
+      return http().patch(API + 'produto/' + idProduto + '/loja/' + idLoja + '/fiscal', estoqueProduto);
     }
   };
 }) (function () {

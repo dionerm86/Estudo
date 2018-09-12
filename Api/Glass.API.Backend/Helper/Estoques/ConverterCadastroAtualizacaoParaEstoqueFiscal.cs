@@ -1,4 +1,4 @@
-﻿// <copyright file="ConverterCadastroAtualizacaoParaEstoque.cs" company="Sync Softwares">
+﻿// <copyright file="ConverterCadastroAtualizacaoParaEstoqueFiscal.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -8,20 +8,20 @@ using System;
 namespace Glass.API.Backend.Helper.Estoques
 {
     /// <summary>
-    /// Classe que realiza a tradução entre o DTO e a model para cadastro ou atualização de conta recebida.
+    /// Classe que realiza a tradução entre o DTO e a model para cadastro ou atualização de estoque fiscal.
     /// </summary>
-    internal class ConverterCadastroAtualizacaoParaEstoque
+    internal class ConverterCadastroAtualizacaoParaEstoqueFiscal
     {
-        private readonly CadastroAtualizacaoDto cadastro;
+        private readonly CadastroAtualizacaoFiscalDto cadastro;
         private readonly Lazy<Data.Model.ProdutoLoja> estoque;
 
         /// <summary>
-        /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaEstoque"/>.
+        /// Inicia uma nova instância da classe <see cref="ConverterCadastroAtualizacaoParaEstoqueFiscal"/>.
         /// </summary>
         /// <param name="cadastro">O DTO de cadastro, enviado para o endpoint.</param>
         /// <param name="atual">O estoque do produto atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
-        public ConverterCadastroAtualizacaoParaEstoque(
-            CadastroAtualizacaoDto cadastro,
+        public ConverterCadastroAtualizacaoParaEstoqueFiscal(
+            CadastroAtualizacaoFiscalDto cadastro,
             Data.Model.ProdutoLoja atual = null)
         {
             this.cadastro = cadastro;
@@ -45,11 +45,7 @@ namespace Glass.API.Backend.Helper.Estoques
 
         private void ConverterDtoParaModelo(Data.Model.ProdutoLoja destino)
         {
-            destino.EstMinimo = (double)this.cadastro.EstoqueMinimo;
-            destino.M2 = (double)this.cadastro.EstoqueM2;
-            destino.QtdEstoque = (double)this.cadastro.QuantidadeEstoque;
             destino.EstoqueFiscal = (double)this.cadastro.QuantidadeEstoqueFiscal;
-            destino.Defeito = (double)this.cadastro.QuantidadeDefeito;
             destino.QtdePosseTerceiros = (double)this.cadastro.QuantidadePosseTerceiros;
             destino.IdCliente = this.cadastro.IdCliente;
             destino.IdFornec = this.cadastro.IdFornecedor;

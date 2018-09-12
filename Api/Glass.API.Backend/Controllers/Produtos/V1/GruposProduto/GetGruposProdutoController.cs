@@ -30,6 +30,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
             using (var sessao = new GDATransaction())
             {
                 var situacoes = GrupoProdDAO.Instance.GetForFilter()
+                    .Where(g => g.IdGrupoProd > 0)
                     .Select(g => new IdNomeDto
                     {
                         Id = g.IdGrupoProd,

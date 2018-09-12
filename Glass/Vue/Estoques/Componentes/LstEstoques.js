@@ -64,16 +64,29 @@ const app = new Vue({
       var estoqueProdutoAtualizar = this.patch(this.estoqueProduto, this.estoqueProdutoOriginal);
       var vm = this;
 
-      Servicos.Estoques.atualizar(this.estoqueProdutoAtual.idProduto, this.estoqueProdutoAtual.idLoja, estoqueProdutoAtualizar)
-        .then(function (resposta) {
-          vm.atualizarLista();
-          vm.cancelar();
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-        });
+      if (this.exibirEstoqueFiscal) {
+        Servicos.Estoques.atualizarEstoqueFiscal(this.estoqueProdutoAtual.idProduto, this.estoqueProdutoAtual.idLoja, estoqueProdutoAtualizar)
+          .then(function (resposta) {
+            vm.atualizarLista();
+            vm.cancelar();
+          })
+          .catch(function (erro) {
+            if (erro && erro.mensagem) {
+              vm.exibirMensagem('Erro', erro.mensagem);
+            }
+          });
+      } else {
+        Servicos.Estoques.atualizarEstoqueReal(this.estoqueProdutoAtual.idProduto, this.estoqueProdutoAtual.idLoja, estoqueProdutoAtualizar)
+          .then(function (resposta) {
+            vm.atualizarLista();
+            vm.cancelar();
+          })
+          .catch(function (erro) {
+            if (erro && erro.mensagem) {
+              vm.exibirMensagem('Erro', erro.mensagem);
+            }
+          });
+      }
     },
 
     /**
@@ -119,19 +132,24 @@ const app = new Vue({
     iniciarCadastroOuAtualizacao_: function (estoqueProduto) {
       this.estoqueProdutoAtual = estoqueProduto;
 
-      this.estoqueProduto = {
-        estoqueMinimo: estoqueProduto ? estoqueProduto.estoqueMinimo : null,
-        estoqueM2: estoqueProduto ? estoqueProduto.estoqueM2 : null,
-        quantidadeEstoque: estoqueProduto ? estoqueProduto.quantidadeEstoque : null,
-        quantidadeEstoqueFiscal: estoqueProduto ? estoqueProduto.quantidadeEstoqueFiscal : null,
-        quantidadeDefeito: estoqueProduto ? estoqueProduto.quantidadeDefeito : null,
-        quantidadePosseTerceiros: estoqueProduto ? estoqueProduto.quantidadePosseTerceiros : null,
-        idCliente: estoqueProduto ? estoqueProduto.idCliente : null,
-        idFornecedor: estoqueProduto ? estoqueProduto.idFornecedor : null,
-        idLojaTerceiros: estoqueProduto ? estoqueProduto.idLojaTerceiros : null,
-        idTransportador: estoqueProduto ? estoqueProduto.idTransportador : null,
-        idAdministradoraCartao: estoqueProduto ? estoqueProduto.idAdministradoraCartao : null
-      };
+      if (this.exibirEstoqueFiscal) {
+        this.estoqueProduto = {
+          quantidadeEstoqueFiscal: estoqueProduto ? estoqueProduto.quantidadeEstoqueFiscal : null,
+          quantidadePosseTerceiros: estoqueProduto ? estoqueProduto.quantidadePosseTerceiros : null,
+          idCliente: estoqueProduto ? estoqueProduto.idCliente : null,
+          idFornecedor: estoqueProduto ? estoqueProduto.idFornecedor : null,
+          idLojaTerceiros: estoqueProduto ? estoqueProduto.idLojaTerceiros : null,
+          idTransportador: estoqueProduto ? estoqueProduto.idTransportador : null,
+          idAdministradoraCartao: estoqueProduto ? estoqueProduto.idAdministradoraCartao : null
+        };
+      } else {
+        this.estoqueProduto = {
+          estoqueMinimo: estoqueProduto ? estoqueProduto.estoqueMinimo : null,
+          estoqueM2: estoqueProduto ? estoqueProduto.estoqueM2 : null,
+          quantidadeEstoque: estoqueProduto ? estoqueProduto.quantidadeEstoque : null,
+          quantidadeDefeito: estoqueProduto ? estoqueProduto.quantidadeDefeito : null,
+        };
+      }
 
       this.estoqueProdutoOriginal = this.clonar(this.estoqueProduto);
     },

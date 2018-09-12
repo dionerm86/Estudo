@@ -68,13 +68,25 @@ Vue.component('estoque-filtros', {
       return !this.exibirEstoqueFiscal
         && (!this.configuracoes.usarLiberacaoPedido || !this.configuracoes.marcarSaidaEstoqueAoLiberarPedido)
         && (this.configuracoes.usarLiberacaoPedido || !this.configuracoes.marcarSaidaEstoqueAutomaticaAoConfirmar);
+    },
+
+    /**
+     * Propriedade computada que retorna o filtro de subgrupos de produto.
+     * @type {filtroSubgruposProduto}
+     *
+     * @typedef filtroSubgruposProduto
+     * @property {?number} idGrupoProduto O ID do grupo de produto.
+     */
+    filtroSubgruposProduto: function() {
+      return {
+        idGrupoProduto: (this.filtroAtual || {}).idGrupoProduto || 0
+      };
     }
   },
 
   mounted: function () {
     this.filtroAtual.situacao = 1;
     this.filtroAtual.ordenacaoFiltro = 1;
-    this.lojaAtual = { id: 1 }; //this.configuracoes.idLojaUsuario  };
     this.filtroAtual.estoqueFiscal = this.exibirEstoqueFiscal;
   },
 
@@ -101,8 +113,8 @@ Vue.component('estoque-filtros', {
      * Retorna os itens para o controle de subgrupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgruposProduto: function () {
-      return Servicos.Produtos.Subgrupos.obterParaControle(this.filtroAtual.idGrupoProduto);
+    obterItensFiltroSubgruposProduto: function (filtro) {
+      return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
     },
 
     /**

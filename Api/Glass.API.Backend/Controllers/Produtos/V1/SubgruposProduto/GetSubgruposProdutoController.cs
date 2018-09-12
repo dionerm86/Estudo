@@ -31,6 +31,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.SubgruposProduto
             using (var sessao = new GDATransaction())
             {
                 var situacoes = SubgrupoProdDAO.Instance.GetForFilter(idGrupoProduto.GetValueOrDefault())
+                    .Where(g => g.IdSubgrupoProd > 0)
                     .Select(g => new IdNomeDto
                     {
                         Id = g.IdSubgrupoProd,

@@ -29,11 +29,9 @@ Servicos.Produtos = (function(http) {
        * @param {?number} [idGrupoProduto=null] O identificador do grupo de produto que irá filtrar os subgrupos.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
-      obterParaControle: function (idGrupoProduto) {
+      obterParaControle: function (filtro) {
         return http().get(API + 'subgrupos/filtro', {
-          params: {
-            idGrupoProduto: idGrupoProduto
-          }
+          params: filtro
         });
       }
     },

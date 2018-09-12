@@ -24,6 +24,7 @@ namespace Glass.API.Backend.Models.Estoques.Lista
         {
             this.IdProduto = estoqueProduto.IdProd;
             this.IdLoja = estoqueProduto.IdLoja;
+            this.IdLog = (int)estoqueProduto.IdLog;
             this.CodigoInternoProduto = estoqueProduto.CodInternoProd;
             this.DescricaoProduto = estoqueProduto.DescrProduto;
             this.DescricaoGrupoProduto = estoqueProduto.DescrGrupoProd;
@@ -96,6 +97,13 @@ namespace Glass.API.Backend.Models.Estoques.Lista
         [DataMember]
         [JsonProperty("idLoja")]
         public int IdLoja { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador do log do estoque.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idLog")]
+        public int IdLog { get; set; }
 
         /// <summary>
         /// Obtém ou define o código interno do produto.

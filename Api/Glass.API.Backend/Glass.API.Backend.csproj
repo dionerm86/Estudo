@@ -338,7 +338,8 @@
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
-    <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoque.cs" />
+    <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueFiscal.cs" />
+    <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueReal.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
     <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaEstoques.cs" />
     <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
@@ -379,7 +380,8 @@
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaDto.cs" />
-    <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoFiscalDto.cs" />
+    <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
     <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
