@@ -19,7 +19,7 @@ namespace Glass.API.Backend.Models.Genericas
         /// </summary>
         [DataMember]
         [JsonProperty("valor")]
-        public decimal Valor { get; set; }
+        public decimal? Valor { get; set; }
 
         /// <summary>
         /// Obtém ou define a altura do beneficiamento.

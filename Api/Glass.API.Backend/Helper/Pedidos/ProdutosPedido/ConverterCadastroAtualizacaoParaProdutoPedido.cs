@@ -47,8 +47,8 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
             destino.IdProd = this.cadastro.Produto != null ? (uint)this.cadastro.Produto.Id : destino.IdProd;
             destino.Espessura = this.cadastro.Produto != null ? (float)this.cadastro.Produto.Espessura : destino.Espessura;
             destino.Qtde = (float)this.cadastro.ObterValorNormalizado(c => c.Quantidade, (double)destino.Qtde);
-            destino.PercDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? (float)this.cadastro.DescontoPorQuantidade.Percentual : destino.PercDescontoQtde;
-            destino.ValorDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? this.cadastro.DescontoPorQuantidade.Valor : destino.ValorDescontoQtde;
+            destino.PercDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? (float)this.cadastro.DescontoPorQuantidade.Percentual.GetValueOrDefault() : destino.PercDescontoQtde;
+            destino.ValorDescontoQtde = this.cadastro.DescontoPorQuantidade != null ? this.cadastro.DescontoPorQuantidade.Valor.GetValueOrDefault() : destino.ValorDescontoQtde;
             destino.Largura = this.cadastro.ObterValorNormalizado(c => c.Largura, destino.Largura);
             destino.Altura = (float?)this.cadastro.Altura?.ParaCalculo ?? destino.Altura;
             destino.AlturaReal = (float?)this.cadastro.Altura?.Real ?? destino.Altura;
@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
             destino.CodPedCliente = this.cadastro.ObterValorNormalizado(c => c.CodigoPedidoCliente, destino.CodPedCliente);
             destino.Total = this.cadastro.ObterValorNormalizado(c => c.Total, destino.Total);
             destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
-            destino.AplicarBenefComposicao = this.cadastro.Composicao != null ? this.cadastro.Composicao.AplicarBeneficiamentosProdutosFilhos : destino.AplicarBenefComposicao;
+            destino.AplicarBenefComposicao = this.cadastro.Composicao != null ? this.cadastro.Composicao.AplicarBeneficiamentosProdutosFilhos.GetValueOrDefault() : destino.AplicarBenefComposicao;
 
             this.ConverterBeneficiamentos(destino);
         }

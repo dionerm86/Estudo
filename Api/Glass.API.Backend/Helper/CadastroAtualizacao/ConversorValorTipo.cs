@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
     internal class ConversorValorTipo<T>
     {
         private readonly Type tipoConverter;
+        private readonly Type tipoBaseConverter;
         private readonly Type tipoEnum;
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
         public ConversorValorTipo()
         {
             this.tipoConverter = typeof(T);
+            this.tipoBaseConverter = null;
             this.tipoEnum = null;
 
             if (this.tipoConverter.IsGenericType)
@@ -37,6 +40,7 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
 
             if (typeof(T).UnderlyingSystemType.Name == typeof(Nullable<>).Name)
             {
+                this.tipoBaseConverter = this.tipoConverter;
                 this.tipoConverter = typeof(T);
             }
         }
@@ -88,7 +92,7 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
 
         private T ConverterObjeto(JObject valorInformado)
         {
-            return default(T);
+            return JsonConvert.DeserializeObject<T>(valorInformado.ToString());
         }
 
         private T ConverterValor(object valorInformado)
@@ -103,7 +107,18 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
                 return this.ConverterEnum(valorUsar);
             }
 
-            return (T)valorUsar;
+            var valorConvertido = this.tipoBaseConverter != null
+                ? Convert.ChangeType(valorUsar, this.tipoBaseConverter)
+                : valorUsar;
+
+            try
+            {
+                return (T)Convert.ChangeType(valorConvertido, this.tipoConverter);
+            }
+            catch
+            {
+                return (T)valorConvertido;
+            }
         }
 
         private T ConverterEnum(object valorInformado)

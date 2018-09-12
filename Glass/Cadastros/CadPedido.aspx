@@ -209,7 +209,7 @@
                 <span class="colspan3">
                     <lista-selecao-id-valor :item-selecionado.sync="transportadorAtual" :funcao-recuperar-itens="obterTransportadores"></lista-selecao-id-valor>
                 </span>
-                <template v-if="pedido && pedido.entrega.tipo && pedido.entrega.tipo.id != configuracoes.tipoEntregaBalcao">
+                <template v-if="pedido && pedido.entrega && pedido.entrega.tipo != configuracoes.tipoEntregaBalcao">
                     <span class="cabecalho">
                         <label>
                             Local da Obra

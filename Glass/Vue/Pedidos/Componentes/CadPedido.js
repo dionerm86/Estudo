@@ -1200,7 +1200,7 @@
      */
     tipoEntregaAtual: {
       handler: function(atual) {
-        this.pedido.entrega.tipo = atual;
+        this.pedido.entrega.tipo = atual ? atual.id : null;
       },
       deep: true
     },

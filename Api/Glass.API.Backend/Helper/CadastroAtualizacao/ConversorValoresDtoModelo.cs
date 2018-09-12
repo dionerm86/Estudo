@@ -82,7 +82,7 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
         {
             if (!this.VerificarCampoInformado(valores))
             {
-                throw new ArgumentNullException("valores", "Campo não está presente nos valores informados.");
+                return default(U);
             }
 
             var valorInformado = valores[this.nomeCampo];

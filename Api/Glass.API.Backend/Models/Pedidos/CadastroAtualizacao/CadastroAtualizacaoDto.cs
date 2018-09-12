@@ -55,7 +55,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("dataPedido")]
-        public DateTime? DataPedido
+        public DateTime DataPedido
         {
             get { return this.ObterValor(c => c.DataPedido); }
             set { this.AdicionarValor(c => c.DataPedido, value); }
@@ -66,7 +66,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("fastDelivery")]
-        public bool? FastDelivery
+        public bool FastDelivery
         {
             get { return this.ObterValor(c => c.FastDelivery); }
             set { this.AdicionarValor(c => c.FastDelivery, value); }
@@ -88,7 +88,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("deveTransferir")]
-        public bool? DeveTransferir
+        public bool DeveTransferir
         {
             get { return this.ObterValor(c => c.DeveTransferir); }
             set { this.AdicionarValor(c => c.DeveTransferir, value); }
@@ -99,7 +99,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public Data.Model.Pedido.TipoPedidoEnum? Tipo
+        public Data.Model.Pedido.TipoPedidoEnum Tipo
         {
             get { return this.ObterValor(c => c.Tipo); }
             set { this.AdicionarValor(c => c.Tipo, value); }
@@ -121,7 +121,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("idVendedor")]
-        public int? IdVendedor
+        public int IdVendedor
         {
             get { return this.ObterValor(c => c.IdVendedor); }
             set { this.AdicionarValor(c => c.IdVendedor, value); }
@@ -176,7 +176,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("gerarPedidoCorte")]
-        public bool? GerarPedidoCorte
+        public bool GerarPedidoCorte
         {
             get { return this.ObterValor(c => c.GerarPedidoCorte); }
             set { this.AdicionarValor(c => c.GerarPedidoCorte, value); }
