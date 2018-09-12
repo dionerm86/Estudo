@@ -212,13 +212,13 @@ namespace Glass.Data.DAL
             string situacaoProd, string byVend, string vendas, string maoObra, string maoObraEspecial, string producao,
             string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim, string funcFinalizacao, uint idOrcamento,
             bool opcionais, bool infoPedidos, float altura, int largura, int numeroDiasDiferencaProntoLib, float valorDe, float valorAte,
-            string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, bool selecionar, out string filtroAdicional, out bool temFiltro)
+            string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, bool selecionar, out string filtroAdicional, out bool temFiltro, string obsLiberacao = "")
         {
             return Sql(sessao, idPedido, idLiberarPedido, idsPedido, idsLiberarPedidos, idLoja, idCli, nomeCli, idFunc, codCliente,
                 idCidade, endereco, bairro, null, situacao, situacaoProd, byVend, vendas, maoObra, maoObraEspecial, producao, dataCadIni,
                 dataCadFim, dataFinIni, dataFinFim, funcFinalizacao, idOrcamento, opcionais, infoPedidos, altura, largura,
                 numeroDiasDiferencaProntoLib, valorDe, valorAte, tipo, fastDelivery, tipoVenda, origemPedido, obs, false, selecionar,
-                out filtroAdicional, out temFiltro);
+                out filtroAdicional, out temFiltro, obsLiberacao);
         }
 
         private string Sql(GDASession sessao, uint idPedido, uint idLiberarPedido, string idsPedido, string idsLiberarPedidos, uint idLoja,
@@ -4417,13 +4417,13 @@ namespace Glass.Data.DAL
 
         #region Busca pedidos para Nota Fiscal
 
-        private string SqlNfe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente)
+        private string SqlNfe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             bool temFiltro;
             string filtroAdicional;
 
             var sql = Sql(0, 0, idsPedidos, idsLiberarPedidos, 0, idCliente, nomeCliente, 0, null, 0, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null,
+                null, null, null, null, null, null, dataIni, dataFim, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null,
                 0, 0, 0, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             var situacoes = (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + "," +
@@ -4440,24 +4440,24 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os pedidos para geração da nota fiscal.
         /// </summary>
-        public Pedido[] GetForNFe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente)
+        public Pedido[] GetForNFe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             if (string.IsNullOrEmpty(idsPedidos) && string.IsNullOrEmpty(idsLiberarPedidos) && idCliente == 0 && string.IsNullOrEmpty(nomeCliente))
                 return new Pedido[0];
 
-            return objPersistence.LoadData(SqlNfe(idsPedidos, idsLiberarPedidos, idCliente, nomeCliente),
-                GetParam(nomeCliente, null, null, null, null, null, null, null, null, null, null, null)).ToArray();
+            return objPersistence.LoadData(SqlNfe(idsPedidos, idsLiberarPedidos, idCliente, nomeCliente, dataIni, dataFim),
+                GetParam(nomeCliente, null, null, null, null, null, null, dataIni, dataFim, null, null, null)).ToArray();
         }
 
         /// <summary>
         /// Retorna os pedidos para geração da nota fiscal.
         /// </summary>
-        public Pedido[] GetForNFe(uint idPedido, uint idLiberarPedido, uint idCliente, string nomeCliente)
+        public Pedido[] GetForNFe(uint idPedido, uint idLiberarPedido, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             if (idPedido == 0 && idLiberarPedido == 0 && idCliente == 0 && string.IsNullOrEmpty(nomeCliente))
                 return new Pedido[0];
 
-            return GetForNFe(idPedido.ToString(), idLiberarPedido.ToString(), idCliente, nomeCliente);
+            return GetForNFe(idPedido.ToString(), idLiberarPedido.ToString(), idCliente, nomeCliente, dataIni, dataFim);
         }
 
         /// <summary>
@@ -4465,7 +4465,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public string GetIdsForNFe(uint idCliente, string nomeCliente)
         {
-            var sql = "select distinct idPedido from (" + SqlNfe(null, null, idCliente, nomeCliente) + ") as temp";
+            var sql = "select distinct idPedido from (" + SqlNfe(null, null, idCliente, nomeCliente, null, null) + ") as temp";
             var ids = objPersistence.LoadResult(sql, GetParam(nomeCliente, null, null, null, null, null, null, null, null, null, null, null)).
                 Select(f => f.GetUInt32(0)).ToList();
 

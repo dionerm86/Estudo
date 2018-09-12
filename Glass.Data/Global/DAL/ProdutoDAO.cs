@@ -702,7 +702,7 @@ namespace Glass.Data.DAL
                 (pp.altura* If(pp.totM > 0, 0, (" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @"))) as totalML1,
                 (pp.altura) as totalAltura1, " + campoTotal + @", cast(" + campoValorUnitario + @" as decimal(12,2)) as valorVendido1,
                 ped.idFunc, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Coalesce(" + campoCalcTotM2 + @", 0) as totalM21,
-                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as signed) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo,
+                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as decimal(12,2)) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo,
                 " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio, ped.idCli as idClienteVend, c.nome as nomeClienteVend,
                 pp.idPedido," + (calcularLiberados ? " plp.idLiberarPedido," : "") + @" coalesce(cv.descricao, ca.descricao, cf.descricao, '-') as descrCor, ped.idCli,
                 p.codInterno As codigoProduto, ap.IdAmbientePedido as IdAmbiente, ap.Ambiente" :
@@ -714,7 +714,7 @@ namespace Glass.Data.DAL
             // faz com que o cálculo fique incorreto, por isso foi alterado para calcular o valor vendido com base no total e na qtde.
             string campos = selecionar ? @"*, sum(totalAltura1) as totalAltura, round(sum(totalVend1),2) as totalVend,
                 round(sum(totalCusto1),2) as totalCusto, round(sum(totalM21),2) as totalM2, round(sum(totalML1),2) as totalML,
-                cast(sum(Coalesce(totalQtdeLong1,0)) as signed) as totalQtdeLong,
+                cast(sum(Coalesce(totalQtdeLong1,0)) as decimal(12,2)) as totalQtdeLong,
                 Cast(sum(totalVend1)/if(tipoCalc in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"),
                 sum(totalM21), cast(sum(Coalesce(totalQtdeLong1,0)) as signed)) as decimal(12,2)) as valorVendido" : "Count(*)";
 

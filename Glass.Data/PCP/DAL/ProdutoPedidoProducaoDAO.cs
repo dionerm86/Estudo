@@ -173,37 +173,37 @@ namespace Glass.Data.DAL
             bool buscarNomeFantasia = ProducaoConfig.TelaConsulta.BuscarNomeFantasiaConsultaProducao;
 
             string campos = selecionar ? @"
-                ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura, if(pp.alturaReal > 0, pp.alturaReal, 
-                pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.largura, if(pp.Redondo, 0, 
-                if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.Ambiente, concat(p.Descricao, if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) 
-                as DescrProduto, p.CodInterno, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, 
-                
+                ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura, if(pp.alturaReal > 0, pp.alturaReal,
+                pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.largura, if(pp.Redondo, 0,
+                if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.Ambiente, concat(p.Descricao, if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', '')))
+                as DescrProduto, p.CodInterno, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente,
+
                 /* Retorna o nome do cliente concatenado com o nome externo e rota externa */
-                Concat(" + (buscarNomeFantasia ? "Coalesce(cli.nomeFantasia, cli.nome)" : "cli.nome") + @", ' ', 
+                Concat(" + (buscarNomeFantasia ? "Coalesce(cli.nomeFantasia, cli.nome)" : "cli.nome") + @", ' ',
                 if(ped.clienteExterno is not null and ped.clienteExterno<>'', Concat('(', ped.clienteExterno, ')'), ''),
                 if(ped.rotaExterna is not null and ped.rotaExterna<>'', Concat('(', ped.rotaExterna, ')'), '')) as nomeCliente,
 
-                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), 
-                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''), 
-                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir, 
+                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char),
+                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''),
+                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
                 pp.ValorVendido as ValorUnit, ped.CodCliente, round(
                     if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
-                    * a.qtde, pp.TotM2Calc)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, 
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
+                    * a.qtde, pp.TotM2Calc)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2,
                 round(
                     /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                     if(ped.tipoPedido=3, (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                     * a.qtde, pp.TotM)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totM, " +
 
                 (calcPeso ? "pp.peso/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))" : "0") + @" as Peso,
 
-                (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
-                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, 
-                If(lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @", lp.dataLiberacao, null) as DataLiberacaoPedido, 
+                (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
+                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra,
+                If(lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @", lp.dataLiberacao, null) as DataLiberacaoPedido,
                 ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(" + (int)tipoRetorno + @" as signed) as Tipo,
                 s.Descricao as DescrSetor, '$$$' as Criterio, s.tipo as tipoSetor" +
                 (PCPConfig.ControleCavalete ? ", c.CodInterno AS NumCavalete" : "") +
@@ -216,7 +216,7 @@ namespace Glass.Data.DAL
                 FROM produto_pedido_producao ppp
                     LEFT JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
                     LEFT JOIN produto p ON (pp.IdProd = p.IdProd)
-                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)                    
+                    LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
                     LEFT JOIN cliente cli ON (ped.idCli = cli.id_Cli)
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
                     LEFT JOIN setor s ON (ppp.idSetor = s.idSetor)
@@ -676,9 +676,9 @@ namespace Glass.Data.DAL
             }
             else if (tipoRetorno == TipoRetorno.AguardandoExpedicao)
             {
-                sql += @" and ped.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao + @" and ped.idPedido in 
-                    (select * from (select idPedido from produtos_liberar_pedido plp 
-                    left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido) 
+                sql += @" and ped.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao + @" and ped.idPedido in
+                    (select * from (select idPedido from produtos_liberar_pedido plp
+                    left join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)
                     where lp.situacao<>" + (int)LiberarPedido.SituacaoLiberarPedido.Cancelado + @") as temp)
                     And ppp.situacaoProducao<>" + (int)SituacaoProdutoProducao.Entregue + " And ppp.Situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao;
 
@@ -968,7 +968,7 @@ namespace Glass.Data.DAL
                     inner join produtos_pedido_espelho ppe on (ppp.idProdPed=ppe.idProdPed)
                     inner join produto_impressao pi on (ppe.idPedido=pi.idPedido and ppe.idProdPed=pi.idProdPed
                         and ppp.numEtiqueta=pi.numEtiqueta)
-                where pi.cancelado=false 
+                where pi.cancelado=false
                     and ppp.idProdPedProducao in (" + ids + ")", "valor");
 
             if (String.IsNullOrEmpty(ids))
@@ -1238,19 +1238,19 @@ namespace Glass.Data.DAL
             string campoTotMCanceladasCalc = "if(" + campoCanceladas + ", totMCalc, 0)";
 
             sql = String.Format(@"select cast(concat(sum({0}), ';', sum({1}), ';', sum({2}), ';', sum({3}), ';', sum({4}), ';', sum({5}), ';', sum({6}), ';', sum({7}),
-                ';', sum({8}), ';', sum({9}), ';', sum({10}), ';', sum({11}), ';', sum({12}), ';', sum({13}), ';', sum({14})) as char) 
-                from (select ppp.idProdPedProducao, ppp.situacaoProducao, 
+                ';', sum({8}), ';', sum({9}), ';', sum({10}), ';', sum({11}), ';', sum({12}), ';', sum({13}), ';', sum({14})) as char)
+                from (select ppp.idProdPedProducao, ppp.situacaoProducao,
                 ppp.situacao, round(
                     /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                     if(ped.tipoPedido=3, (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                     * a.qtde, pp.TotM2Calc)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totMCalc,
                     round(
                     /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                     if(ped.tipoPedido=3, (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                     * a.qtde, pp.TotM)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totM " +
                 sql.Substring(sql.ToLower().IndexOf(" from ", StringComparison.Ordinal)) + ") as temp",
 
@@ -1424,28 +1424,28 @@ namespace Glass.Data.DAL
             bool buscarNomeFantasia = ProducaoConfig.TelaConsulta.BuscarNomeFantasiaConsultaProducao;
 
             string campos = selecionar ? @"
-                ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura, if(pp.alturaReal > 0, pp.alturaReal, 
-                pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.largura, if(pp.Redondo, 0, 
-                if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.Ambiente, concat(p.Descricao, if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) 
-                as DescrProduto, p.CodInterno, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, 
-                
+                ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura, if(pp.alturaReal > 0, pp.alturaReal,
+                pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.largura, if(pp.Redondo, 0,
+                if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.Ambiente, concat(p.Descricao, if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', '')))
+                as DescrProduto, p.CodInterno, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente,
+
                 /* Retorna o nome do cliente concatenado com o nome externo e rota externa */
-                Concat(" + (buscarNomeFantasia ? "Coalesce(cli.nomeFantasia, cli.nome)" : "cli.nome") + @", ' ', 
+                Concat(" + (buscarNomeFantasia ? "Coalesce(cli.nomeFantasia, cli.nome)" : "cli.nome") + @", ' ',
                 if(ped.clienteExterno is not null and ped.clienteExterno<>'', Concat('(', ped.clienteExterno, ')'), ''),
                 if(ped.rotaExterna is not null and ped.rotaExterna<>'', Concat('(', ped.rotaExterna, ')'), '')) as nomeCliente,
 
-                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), 
-                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''), 
-                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir, 
+                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char),
+                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''),
+                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
                 pp.ValorVendido as ValorUnit, ped.CodCliente,
-                round(if(ped.tipoPedido=3, ((((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) + a.altura) * 
-                    ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000) * a.qtde, pp.TotM2Calc) / 
-                    (pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, 
+                round(if(ped.tipoPedido=3, ((((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) + a.altura) *
+                    ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000) * a.qtde, pp.TotM2Calc) /
+                    (pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2,
                 pp.peso/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)) as Peso,
-                (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, 
-                If(lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @", lp.dataLiberacao, null) as DataLiberacaoPedido, 
+                (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra,
+                If(lp.situacao=" + (int)LiberarPedido.SituacaoLiberarPedido.Liberado + @", lp.dataLiberacao, null) as DataLiberacaoPedido,
                 ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(" + (int)tipoRetorno + @" as signed) as Tipo,
                 s.Descricao as DescrSetor, '$$$' as Criterio, s.tipo as tipoSetor" : "count(distinct ppp.idProdPedProducao)";
 
@@ -1469,8 +1469,8 @@ namespace Glass.Data.DAL
             if (idLiberarPedido > 0)
             {
                 var sqlLiberarPedido = @"
-                    SELECT IdPedido 
-                    FROM produtos_liberar_pedido 
+                    SELECT IdPedido
+                    FROM produtos_liberar_pedido
                     WHERE IdLiberarPedido = " + idLiberarPedido + @"
                     GROUP BY IdPedido";
 
@@ -1701,19 +1701,19 @@ namespace Glass.Data.DAL
             string campoTotMCanceladasCalc = "if(" + campoCanceladas + ", totMCalc, 0)";
 
             sql = string.Format(@"select cast(concat(sum({0}), ';', sum({1}), ';', sum({2}), ';', sum({3}), ';', sum({4}), ';', sum({5}), ';', sum({6}), ';', sum({7}),
-                ';', sum({8}), ';', sum({9}), ';', sum({10}), ';', sum({11}), ';', sum({12}), ';', sum({13}), ';', sum({14})) as char) 
-                from (select ppp.idProdPedProducao, ppp.situacaoProducao, 
+                ';', sum({8}), ';', sum({9}), ';', sum({10}), ';', sum({11}), ';', sum({12}), ';', sum({13}), ';', sum({14})) as char)
+                from (select ppp.idProdPedProducao, ppp.situacaoProducao,
                 ppp.situacao, round(
                     /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                     if(ped.tipoPedido=3, (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                     * a.qtde, pp.TotM2Calc)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totMCalc,
                     round(
                     /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                     if(ped.tipoPedido=3, (
                     (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                     * a.qtde, pp.TotM)/(pp.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totM " +
                 sql.Substring(sql.ToLower().IndexOf(" from ", StringComparison.Ordinal)) + ") as temp",
 
@@ -1780,9 +1780,9 @@ namespace Glass.Data.DAL
             {
                 sql += " LEFT JOIN leitura_producao lp1 ON (ppp.IdProdPedProducao = lp1.IdProdPedProducao)";
             }
-            
+
             sql += " WHERE 1 ";
-            
+
             if (idCarregamento > 0)
             {
                 sql += string.Format(" AND ppp.IdProdPedProducao IN (SELECT IdProdPedProducao FROM item_carregamento WHERE IdCarregamento={0})", idCarregamento);
@@ -1896,7 +1896,7 @@ namespace Glass.Data.DAL
                     }
                 }
 
-                sqlSituacoes += ")";                
+                sqlSituacoes += ")";
                 sql += sqlSituacoes;
             }
 
@@ -1919,7 +1919,7 @@ namespace Glass.Data.DAL
                         break;
                 }
             }
-            
+
             if (dataLeituraInicio > DateTime.MinValue)
             {
                 if (situacoes?.Any(f => f == (int)ProdutoPedidoProducao.SituacaoEnum.Perda) ?? false)
@@ -2062,8 +2062,8 @@ namespace Glass.Data.DAL
             else if (tipoRetorno == TipoRetorno.AguardandoExpedicao)
             {
                 sql += string.Format(@" AND ped.TipoPedido<>{0} AND ped.IdPedido IN
-                    (SELECT * FROM (SELECT IdPedido FROM produtos_liberar_pedido plp 
-                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido) 
+                    (SELECT * FROM (SELECT IdPedido FROM produtos_liberar_pedido plp
+                        LEFT JOIN liberarpedido lp ON (plp.IdLiberarPedido=lp.IdLiberarPedido)
                     WHERE lp.Situacao<>{1}) AS temp) AND ppp.SituacaoProducao<>{2} AND ppp.Situacao={3}",
                     (int)Pedido.TipoPedidoEnum.Producao, (int)LiberarPedido.SituacaoLiberarPedido.Cancelado, (int)SituacaoProdutoProducao.Entregue, (int)ProdutoPedidoProducao.SituacaoEnum.Producao);
             }
@@ -2094,7 +2094,7 @@ namespace Glass.Data.DAL
             {
                 sql += " AND 0=1";
             }
-            
+
             if (!string.IsNullOrEmpty(planoCorte))
             {
                 sql += " AND ppp.PlanoCorte=?planoCorte";
@@ -2124,7 +2124,7 @@ namespace Glass.Data.DAL
             {
                 sql += " AND ppp.PecaReposta";
             }
-            
+
             if (idSetor > 0 || idSetor == -1)
             {
                 if (!setoresPosteriores && !setoresAnteriores && !disponiveisLeituraSetor)
@@ -2283,7 +2283,7 @@ namespace Glass.Data.DAL
             DateTime? dataFabricaFim, DateTime? dataFabricaInicio, DateTime? dataLeituraFim, DateTime? dataLeituraInicio, float espessura, int idPedidoImportado, string planoCorte)
         {
             var parametros = new List<GDAParameter>();
-            
+
             if (!string.IsNullOrEmpty(codigoEtiquetaChapa))
             {
                 parametros.Add(new GDAParameter("?codigoEtiquetaChapa", codigoEtiquetaChapa));
@@ -2364,7 +2364,7 @@ namespace Glass.Data.DAL
             #endregion
 
             #region Consulta
-            
+
             campos = selecionar ? string.Format(@"ppp.IdProdPedProducao, ppp.IdProdPed, ppp.Situacao, ppp.IdImpressao, ppp.PlanoCorte, ppp.NumEtiqueta, ppp.NumEtiquetaCanc, ppp.DataPerda, ppp.Obs,
                     ppp.SituacaoProducao, ppp.IdSetor, ppp.PecaReposta, ppp.TipoPerda, ppp.IdSubtipoPerda, ppp.TipoPerdaRepos, ppp.IdSubtipoPerdaRepos, ppp.DadosReposicaoPeca, ppp.PecaParadaProducao,
                     ped.IdPedido, ped.TipoPedido={0} AS PedidoMaoObra, ped.Situacao={1} AS PedidoCancelado, ped.DataEntrega, ped.DataEntregaOriginal, p.CodInterno,
@@ -2432,7 +2432,7 @@ namespace Glass.Data.DAL
             {
                 return new List<ProdutoPedidoProducao>();
             }
-            
+
             produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
                 !string.IsNullOrEmpty(sortExpression), out numeroRegistros)).ToArray();
 
@@ -2499,7 +2499,7 @@ namespace Glass.Data.DAL
                         ) p ON (pp.IdProd = p.IdProd)
                     LEFT JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
                     LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
-                    LEFT JOIN 
+                    LEFT JOIN
                         (
                             SELECT s.IdSetor, s.Descricao FROM setor s
                         ) s ON (ppp.IdSetor = s.IdSetor)
@@ -2523,7 +2523,7 @@ namespace Glass.Data.DAL
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
-                
+
                 if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
@@ -2684,7 +2684,7 @@ namespace Glass.Data.DAL
         internal string SqlProdutosProducaoMarcarPecaPronta(string codigoEtiqueta, int idPedido, int idSetor, bool perda, bool selecionar)
         {
             #region Declaração de variáveis
-            
+
             // Mostra as peças em todos os setores, se for marcação de perda.
             idSetor = perda ? 0 : idSetor;
             var situacao = perda ? ProdutoPedidoProducao.SituacaoEnum.Producao : (ProdutoPedidoProducao.SituacaoEnum?)null;
@@ -2737,7 +2737,7 @@ namespace Glass.Data.DAL
                 {
                     sql += string.Format(" OR ped.IdPedidoAnterior={0}", idPedido);
                 }
-                
+
                 if (PedidoDAO.Instance.IsPedidoExpedicaoBox(null, (uint)idPedido))
                 {
                     sql += string.Format(" OR ppp.IdPedidoExpedicao={0}", idPedido);
@@ -2754,7 +2754,7 @@ namespace Glass.Data.DAL
             }
 
             if (situacao != null)
-            {             
+            {
                 sql += string.Format(" AND ppp.Situacao={0}", (int)situacao.Value);
             }
 
@@ -3048,7 +3048,7 @@ namespace Glass.Data.DAL
             var numeroRegistros = 0;
             var sort = string.IsNullOrWhiteSpace(sortExpression) ? "ppp.IdProdPedProducao DESC" : sortExpression;
             ProdutoPedidoProducao[] produtosPedidoProducao;
-                        
+
             sql = SqlProdutosProducaoAcessoExterno(codigoPedidoCliente, idPedido, true);
             parametros = ObterParametrosProdutosProducaoAcessoExterno(codigoPedidoCliente);
 
@@ -3068,7 +3068,7 @@ namespace Glass.Data.DAL
         /// Recupera a quantidade de produtos de produção para a consulta de produção do E-Commerce.
         /// </summary>
         public int PesquisarProdutosProducaoAcessoExternoCount(string codigoPedidoCliente, int idPedido)
-        {            
+        {
             return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoAcessoExterno(codigoPedidoCliente, idPedido, false), ObterParametrosProdutosProducaoAcessoExterno(codigoPedidoCliente));
         }
 
@@ -3097,7 +3097,7 @@ namespace Glass.Data.DAL
             SELECT " + (selecionar ? "ppp.NumEtiqueta" : "COUNT(*)") + @"
                 FROM produto_pedido_producao ppp
                     INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
-                    WHERE ppp.situacao in (" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + ", " + (int)ProdutoPedidoProducao.SituacaoEnum.Perda + @") 
+                    WHERE ppp.situacao in (" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + ", " + (int)ProdutoPedidoProducao.SituacaoEnum.Perda + @")
                         AND pp.idPedido = " + idPedido;
 
             return sql;
@@ -3154,8 +3154,8 @@ namespace Glass.Data.DAL
                 select pi.numEtiqueta
                 from produto_impressao pi
                     inner join impressao_etiqueta ie on (pi.idImpressao=ie.idImpressao)
-                where ie.situacao=" + (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa + @" 
-                    and !coalesce(pi.cancelado, false) 
+                where ie.situacao=" + (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa + @"
+                    and !coalesce(pi.cancelado, false)
                     and pi.planoCorte=?pc";
 
             return ExecuteMultipleScalar<string>(sessao, sql, new GDAParameter("?pc", planoCorte)).ToArray();
@@ -3176,36 +3176,36 @@ namespace Glass.Data.DAL
                 /*Caso o pedido seja mão de obra o m2 da peça deve ser considerado*/
                 if(ped.tipoPedido=3, (
                 (((50 - If(Mod(ap.altura, 50) > 0, Mod(ap.altura, 50), 50)) +
-                ap.altura) * ((50 - If(Mod(ap.largura, 50) > 0, Mod(ap.largura, 50), 50)) + ap.largura)) / 1000000)             
+                ap.altura) * ((50 - If(Mod(ap.largura, 50) > 0, Mod(ap.largura, 50), 50)) + ap.largura)) / 1000000)
                 * ap.qtde, " + (PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? "ppo.totM2Calc" : "ppo.totM") + ")/(ppo.qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ap.qtde, 1))*producao.qtde, 4)";
 
             string campoTotal = @"cast((pp.Total + coalesce(pp.valorBenef, 0))/
                  " + campoQtde + "*producao.Qtde as decimal(12,2))";
 
             string camposGerais = @"
-                Select null as idProdPedProducao, idprodped, null as idSetor, null as idFuncPerda, null as idPedidoExpedicao, null as situacao, 
-                    null as dataPerda, null as numEtiqueta, null as planoCorte, null as tipoPerda, null as obs, false as entrouEstoque, DescrProduto, 
-                    codInterno, Sum(TotM2) as TotM2, cast(sum(Qtde) as decimal(12,2)) as Qtde, Cor, espessura, idGrupoProd, idSubgrupoProd, 
-                    null as numEtiquetaCanc, null as idImpressao, descrSubgrupoProd, null as idFuncRepos, null as idSetorRepos, null as pecaReposta, 
-                    null as tipoPerdaRepos, null as dataRepos, false as canceladoAdmin, CodProcesso, CodAplicacao, null as dadosReposicaoPeca, 
+                Select null as idProdPedProducao, idprodped, null as idSetor, null as idFuncPerda, null as idPedidoExpedicao, null as situacao,
+                    null as dataPerda, null as numEtiqueta, null as planoCorte, null as tipoPerda, null as obs, false as entrouEstoque, DescrProduto,
+                    codInterno, Sum(TotM2) as TotM2, cast(sum(Qtde) as decimal(12,2)) as Qtde, Cor, espessura, idGrupoProd, idSubgrupoProd,
+                    null as numEtiquetaCanc, null as idImpressao, descrSubgrupoProd, null as idFuncRepos, null as idSetorRepos, null as pecaReposta,
+                    null as tipoPerdaRepos, null as dataRepos, false as canceladoAdmin, CodProcesso, CodAplicacao, null as dadosReposicaoPeca,
                     dataAgrupar, Sum(Total) as Total, idSubTipoPerda, idSubTipoPerdaRepos, '$$$' as Criterio, round(2.5 * Espessura * Sum(TotM2), 2) as Peso
                 From (";
 
             string sql = camposGerais + @"
-                SELECT prod.Descricao AS DescrProduto, prod.CodInterno, " + campoCalcTotM2 + @" AS TotM2, 
+                SELECT prod.Descricao AS DescrProduto, prod.CodInterno, " + campoCalcTotM2 + @" AS TotM2,
                     SUM(producao.Qtde) AS Qtde, prod.DescricaoCor AS Cor, prod.Espessura, prod.IdGrupoProd, prod.IdSubgrupoProd,
-                    prod.DescricaoSubGrupo AS DescrSubgrupoProd, pp.IdProd, pp.IdProdPed, 
-                    producao.DataAgrupar, " + campoTotal + @" AS Total, 
+                    prod.DescricaoSubGrupo AS DescrSubgrupoProd, pp.IdProd, pp.IdProdPed,
+                    producao.DataAgrupar, " + campoTotal + @" AS Total,
                     producao.IdSubTipoPerda, producao.IdSubTipoPerdaRepos, Coalesce(apl.CodInterno,apl2.CodInterno) as CodAplicacao, Coalesce(prc.CodInterno,prc2.CodInterno) as CodProcesso
                 FROM produtos_pedido_espelho pp
                     INNER JOIN produtos_pedido ppo ON (pp.IdProdPed=ppo.IdProdPedEsp)
                     LEFT JOIN ambiente_pedido_espelho ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
                     LEFT JOIN etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
-                    LEFT JOIN etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
+                    LEFT JOIN etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
                     LEFT JOIN etiqueta_aplicacao apl2 On (ap.idAplicacao=apl2.idAplicacao)
-                    LEFT JOIN etiqueta_processo prc2 On (ap.idProcesso=prc2.idProcesso) 
+                    LEFT JOIN etiqueta_processo prc2 On (ap.idProcesso=prc2.idProcesso)
 
-                    LEFT JOIN ( 
+                    LEFT JOIN (
 		                SELECT p.IdProd,
                             p.CodInterno,
 			                p.Descricao,
@@ -3498,21 +3498,21 @@ namespace Glass.Data.DAL
             LeituraProducaoDAO.Instance.ApagarPeloIdLiberarPedido(sessao, (int)idLiberacao);
 
             var sql = @"
-                Update produto_pedido_producao ppp 
+                Update produto_pedido_producao ppp
                 Set ppp.idSetor=(
-                    Select lprod.idSetor From leitura_producao lprod  
+                    Select lprod.idSetor From leitura_producao lprod
                         Inner Join setor s On (lprod.idSetor=s.idSetor)
                     Where idProdPedProducao=ppp.idProdPedProducao
                     Order By s.numSeq desc Limit 1
                 )
                 Where idProdPed In (
                     select * from (
-                        Select idProdPed 
-                        From produtos_pedido_espelho 
+                        Select idProdPed
+                        From produtos_pedido_espelho
                         Where idPedido In (
                             select * from (
-                                Select idPedido 
-                                From produtos_liberar_pedido 
+                                Select idPedido
+                                From produtos_liberar_pedido
                                 Where idLiberarPedido=" + idLiberacao + @"
                             ) as temp
                         )
@@ -3681,7 +3681,7 @@ namespace Glass.Data.DAL
                         }
                         catch (Exception ex)
                         {
-                            // Salva o erro mas continua lendo as outras peças, para que as que não tenham sido lidas sejam lidas 
+                            // Salva o erro mas continua lendo as outras peças, para que as que não tenham sido lidas sejam lidas
                             // quando ler peças usando P + Número do pedido
                             msg += MensagemAlerta.FormatErrorMsg("Falha ao marcar peça.", ex);
                         }
@@ -4070,7 +4070,7 @@ namespace Glass.Data.DAL
                 /* Chamado 23146. */
                 var setoresObrigatorios = ((List<Setor>)SetorDAO.Instance.ObtemSetoresObrigatorios(sessao, idProdPedProducao));
 
-                // Verifica se este setor impede que sejam colocadas peças no mesmo caso a peça não tenha passado em algum setor 
+                // Verifica se este setor impede que sejam colocadas peças no mesmo caso a peça não tenha passado em algum setor
                 // relacionado ao beneficiamento que a peça possua
                 if (!isCarregamento && !perda && (setor.ImpedirAvanco || PCPConfig.ObrigarLeituraSetorImpedirAvanco) &&
                     SetorDAO.Instance.ObtemSetoresObrigatoriosNaoLidos(sessao, idProdPedProducao, idSetor).Count > 0 &&
@@ -4156,7 +4156,7 @@ namespace Glass.Data.DAL
                     && !PedidoDAO.Instance.IsLiberadoEntregaFinanc(sessao, idPedido))
                     throw new Exception("O financeiro não liberou este pedido para entrega.");
 
-                // Busca o produto ao qual se refere a etiqueta 
+                // Busca o produto ao qual se refere a etiqueta
                 // (Deve buscar somente visiveis por causa de um erro ao buscar etiqueta de box na expedição)
                 ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, ObtemIdProdPed(sessao, idProdPedProducao), true);
 
@@ -4712,7 +4712,7 @@ namespace Glass.Data.DAL
             if (FinanceiroConfig.UsarControleLiberarFinanc && !PedidoDAO.Instance.IsLiberadoEntregaFinanc(sessao, idPedidoExpedicao))
                 throw new Exception("O financeiro não liberou este pedido para entrega.");
 
-            // Busca o produto ao qual se refere a etiqueta 
+            // Busca o produto ao qual se refere a etiqueta
             //var prodNf = ProdutosNfDAO.Instance.GetProdNfByEtiqueta(codEtiquetaChapa);
             // var idLoja = NotaFiscalDAO.Instance.ObtemIdLoja(Glass.Conversoes.StrParaUint(codEtiquetaChapa.Split('-')[0]));
 
@@ -4994,7 +4994,7 @@ namespace Glass.Data.DAL
 
                 bool m2 = new[] { (int)TipoCalculoGrupoProd.M2, (int)TipoCalculoGrupoProd.M2Direto }
                     .Contains(GrupoProdDAO.Instance.TipoCalculo((int)pp.IdProd));
-                
+
                 float m2CalcAreaMinima = CalculoM2.Instance.CalcularM2Calculo(null, pedido, pp,
                     false, true, pp.Beneficiamentos.CountAreaMinima);
 
@@ -5034,9 +5034,9 @@ namespace Glass.Data.DAL
         #region Marca Peça Reposta
 
         /// <summary>
-        /// Marca Peça Reposta
+        /// Marca Peça Reposta.
         /// </summary>
-        public string MarcarPecaReposta(string numChapa, string numEtiqueta, uint idSetorRepos, uint idFuncPerda,
+        public string MarcarPecaRepostaComTransacao(string numChapa, string numEtiqueta, uint idSetorRepos, uint idFuncPerda,
             DateTime dataPerda, uint tipoPerdaRepos, uint? subtipoPerdaRepos, string obs, bool forcarPerda)
         {
             using (var transaction = new GDATransaction())
@@ -5045,214 +5045,13 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    // Verifica se a etiqueta é uma etiqueta de pedido
-                    if (numEtiqueta[0] == 'P')
-                        throw new Exception("Não é possível marcar reposição de peças por pedido.");
-
-                    if (Glass.Configuracoes.ProducaoConfig.ObrigarMotivoPerda && String.IsNullOrEmpty(obs))
-                        throw new Exception("Defina o motivo da perda para continuar.");
-
-                    string retorno = "";
-                    uint idPedido = Glass.Conversoes.StrParaUint(numEtiqueta.Split('-')[0]);
-                    bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(transaction, idPedido);
-
-                    uint idProdPedProducao = ObtemIdProdPedProducao(transaction, numEtiqueta).GetValueOrDefault();
-                    uint idProdPedProducaoParent = ObterIdProdPedProducaoParent(transaction, idProdPedProducao).GetValueOrDefault();
-
-                    if (idProdPedProducao == 0)
-                        throw new Exception(string.Format("Não foi possível recuperar o produto de produção da etiqueta {0}.", numEtiqueta));
-
-                    if (ExecuteScalar<int>(transaction, $"SELECT count(*) FROM produto_pedido_producao WHERE IdProdPedProducaoParent={idProdPedProducao}") > 0)
-                        throw new Exception($"Não é possível marcar reposição em produtos pais de composição. Cancele a impressão da etiqueta e faça a reposição das peças filhas.");
-
-                    var numEtiquetaParent = ObtemValorCampo<string>(transaction, "NumEtiqueta", "idProdPedProducao=" + idProdPedProducaoParent);
-
-                    if (idProdPedProducaoParent > 0 && !string.IsNullOrWhiteSpace(numEtiquetaParent) &&
-                        ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiquetaParent, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
-                        throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso. Cancele a impressão da etiqueta pai: {numEtiquetaParent}");
-
-                    /* Chamado 51854. */
-                    if (SetorDAO.Instance.ObterSituacao(transaction, (int)ObtemIdSetor(transaction, idProdPedProducao)) == Situacao.Inativo)
-                        throw new Exception(string.Format("O último setor lido na etiqueta {0} está inativo, ative-o para marcá-la peça como reposta.", numEtiqueta));
-
-                    //Verifica se a peça tem leitura no carregamento, se tiver deve estornar antes de marcar perda.
-                    var itens = ItemCarregamentoDAO.Instance.GetByIdProdPedProducao(transaction, idProdPedProducao);
-                    var carregamentos = "";
-                    foreach (var item in itens)
-                        if (item.Carregado)
-                            carregamentos += item.IdCarregamento + ", ";
-
-                    if (!string.IsNullOrEmpty(carregamentos))
-                        throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
-                            ". Efetue o estorno antes.");
-
-                    var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(transaction, idPedido);
-                    var possuiLiberacaoParcial = false;
-
-                    if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
-                    {
-                        var idprodped = ObtemIdProdPed(transaction, numEtiqueta);
-                        var produtoPedido = ProdutosPedidoDAO.Instance.GetByProdPedEsp(transaction, idprodped, false);
-
-                        possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(transaction, produtoPedido.IdProdPed, idProdPedProducao) > 0;
-                    }
-
-                    if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
-                        (situacaoPedido == Pedido.SituacaoPedido.Confirmado || possuiLiberacaoParcial))
-                    {
-                        throw new Exception("Não é possível marcar perda em peças de pedido mão de obra liberados.");
-                    }
-
-                    // Valida a etiqueta
-                    ValidaEtiquetaProducao(transaction, ref numEtiqueta);
-
-                    if (PecaEstaCancelada(transaction, numEtiqueta, true))
-                        throw new Exception("Não é possível repor uma peça cancelada.");
-
-                    // Se a perda for forçada ou se o pedido for mão-de-obra, marca a perda usando o método original
-                    // (se o pedido for mão-de-obra atualiza a quantidade de ambientes)
-                    if (forcarPerda || isMaoDeObra)
-                    {
-                        if (isMaoDeObra && GetCountByPedido(transaction, idPedido) == 1)
-                            throw new Exception("Não é possível marcar reposição de mão de obra caso o pedido possua somente um produto de mão de obra. Cancele o pedido.");
-
-                        retorno = AtualizaSituacao(transaction, idFuncPerda, numChapa, numEtiqueta, idSetorRepos, true, false, tipoPerdaRepos, subtipoPerdaRepos, obs, null, 0, null, null, false, null, false, 0);
-
-                        if (LiberarPedidoDAO.Instance.IsPedidoLiberado(transaction, idPedido) && isMaoDeObra)
-                            objPersistence.ExecuteCommand(transaction, "Update pedido Set situacao=" + (int)Pedido.SituacaoPedido.Confirmado + " Where idPedido=" + idPedido);
-
-                        transaction.Commit();
-                        transaction.Close();
-
-                        return retorno;
-                    }
-
-                    if (!LeituraProducaoDAO.Instance.VerificarEtiquetaLida(transaction, numEtiqueta))
-                        throw new Exception("Não é possível repor uma peça que ainda não foi impressa.");
-
-                    if (obs != null && obs.Length > 250)
-                        throw new Exception("O campo motivo da reposição não pode ter mais que 250 caracteres.");
-
-                    // Busca o produto ao qual se refere a etiqueta
-                    ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(transaction, null, ObtemIdProdPed(transaction, idProdPedProducao), true);
-
-                    // Monta a string que possibilita voltar a situação da peça
-                    string dadosReposicao = ObtemValorCampo<uint?>(transaction, "idPedidoExpedicao", "idProdPedProducao=" + idProdPedProducao) + "~" +
-                        ObtemValorCampo<uint>(transaction, "idSetor", "idProdPedProducao=" + idProdPedProducao) + "~" +
-                        ObtemValorCampo<string>(transaction, "obs", "idProdPedProducao=" + idProdPedProducao) + "~" +
-                        ObtemValorCampo<int>(transaction, "situacaoProducao", "idProdPedProducao=" + idProdPedProducao);
-
-                    ProdutoImpressao dados = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(transaction, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
-                    dadosReposicao += dados == null ? "~~~" :
-                        String.Format("~{0}~{1}~{2}", dados.IdImpressao, dados.PlanoCorte, dados.PosicaoArqOtimiz);
-
-                    var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(transaction, idProdPedProducao);
-
-                    foreach (LeituraProducao lp in leituras)
-                        dadosReposicao += "~" + lp.IdFuncLeitura + "!" + lp.IdSetor + "!" + lp.DataLeitura;
-
-                    // Salva os dados atuais da reposição (se houverem) na tabela dados_reposicao
-                    DadosReposicaoDAO.Instance.Empilha(transaction, idProdPedProducao);
-
-                    // Marca que este produto foi reposto
-                    string sp = subtipoPerdaRepos > 0 ? ", idSubtipoPerdaRepos=" + subtipoPerdaRepos : "";
-                    objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set idPedidoExpedicao=null, pecaReposta=true, tipoPerdaRepos=" +
-                        tipoPerdaRepos + sp + ", obs=?obs, dataRepos=?dataPerda, situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao +
-                        ", idSetor=1, situacaoProducao=" + (int)SituacaoProdutoProducao.Pendente + ", idSetorRepos=" + idSetorRepos +
-                        ", idFuncRepos=" + idFuncPerda + ", dadosReposicaoPeca=?dadosReposicao Where idProdPedProducao=" + idProdPedProducao,
-                        new GDAParameter("?obs", obs), new GDAParameter("?dadosReposicao", dadosReposicao), new GDAParameter("?dataPerda", dataPerda));
-
-                    //Cancela a associação com o retalho caso ela exista.
-                    UsoRetalhoProducaoDAO.Instance.CancelarAssociacao(transaction, idProdPedProducao);
-
-                    // Exclui leituras feitas nesta peça
-                    LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(transaction, new List<int>() { (int)idProdPedProducao });
-
-                    #region Remove a associação da peça ou da chapa
-
-                    var quantidadeLeiturasChapa = ChapaCortePecaDAO.Instance.QtdeLeiturasChapa(transaction, (uint)dados.IdProdImpressao);
-
-                    // O ideal é agregar à esta condição o mesmo código do método RetiraPecaSituacao, para que a reposição fique correta.
-                    // Além disso, temos que salvar os dados da chapa nos dados da reposição, pois se o usuário voltar a situação da peça, tudo deve ser revertido.
-                    if (quantidadeLeiturasChapa > 0)
-                    {
-                        ChapaCortePecaDAO.Instance.MarcarPecaRepostaChapaCortePeca(transaction, idProdPedProducao);
-                    }
-
-                    if (prodPedEsp.IsProdFilhoLamComposicao)
-                    {
-                        ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)dados.IdProdImpressao);
-                    }
-                    else
-                    {
-                        ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, (uint)dados.IdProdImpressao, idProdPedProducao);
-                    }
-
-                    #endregion
-
-                    // Atualiza a situação da produção do pedido para pendente, desde que não seja mão de obra
-                    if (!PedidoDAO.Instance.IsMaoDeObra(transaction, idPedido))
-                        objPersistence.ExecuteCommand(transaction, "update pedido set dataPronto=null, situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Pendente + " where idPedido=" + idPedido);
-
-                    //Remove o plano de corte da impressão e a posição do plano de corte
-                    if (dados != null)
-                    {
-                        // Remove dos produtos_impressao
-                        objPersistence.ExecuteCommand(transaction, @"
-                            UPDATE produto_impressao 
-                            set planoCorte=null, posicaoArqOtimiz=null 
-                            WHERE idProdImpressao=" + dados.IdProdImpressao);
-
-                        /* Chamado 23141.
-                         * Remove o plano de corte do produto de produção. */
-                        objPersistence.ExecuteCommand(transaction, @"
-                            UPDATE produto_pedido_producao SET Planocorte=NULL
-                            WHERE PlanoCorte=?planoCorte AND IdProdPedProducao=?idProdPedProducao",
-                            new GDAParameter("?planoCorte", dados.PlanoCorte),
-                            new GDAParameter("?idProdPedProducao", idProdPedProducao));
-                    }
-
-                    var temEntradaEstoque = false;
-
-                    foreach (var idSetor in leituras.Select(f => f.IdSetor))
-                    {
-                        if (SetorDAO.Instance.IsEntradaEstoque(transaction, idSetor))
-                        {
-                            temEntradaEstoque = true;
-                            break;
-                        }
-                    }
-
-                    // Altera o estoque (caso seja um pedido de produção e ter passado por algum setor entrada de estoque
-                    if (PedidoDAO.Instance.IsProducao(transaction, idPedido) && temEntradaEstoque)
-                    {
-                        string codEtiqueta = ObtemEtiqueta(transaction, idProdPedProducao);
-                        LoginUsuario login = UserInfo.GetUserInfo;
-
-                        float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
-                        bool m2 = new List<int>
-                        {
-                            (int)Glass.Data.Model.TipoCalculoGrupoProd.M2,
-                            (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto
-                        }
-                        .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
-
-                        MovEstoqueDAO.Instance.BaixaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, 1, 0, false, false, true);
-
-                        // Só baixa apenas se a peça possuir produto para baixa associado
-                        MovEstoqueDAO.Instance.CreditaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, (decimal)(m2Calc > 0 ? m2Calc : 1), true, true);
-
-                        // Marca que este produto não entrou em estoque
-                        objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set entrouEstoque=false Where idProdPedProducao=" + idProdPedProducao);
-                    }
-
-
-                    retorno = prodPedEsp.DescrProduto + " " + prodPedEsp.Largura + "x" + prodPedEsp.Altura;
+                    var retorno = MarcarPecaReposta(transaction, numChapa, numEtiqueta, idSetorRepos, idFuncPerda,
+                        dataPerda, tipoPerdaRepos, subtipoPerdaRepos, obs, forcarPerda);
 
                     transaction.Commit();
                     transaction.Close();
 
-                    return "PEÇA REPOSTA: " + retorno + " (" + numEtiqueta + ")";
+                    return retorno;
                 }
                 catch (Exception ex)
                 {
@@ -5262,6 +5061,229 @@ namespace Glass.Data.DAL
                     throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao marcar peça reposta.", ex));
                 }
             }
+        }
+
+        /// <summary>
+        /// Marca Peça Reposta.
+        /// </summary>
+        public string MarcarPecaReposta(GDATransaction transaction, string numChapa, string numEtiqueta, uint idSetorRepos, uint idFuncPerda,
+            DateTime dataPerda, uint tipoPerdaRepos, uint? subtipoPerdaRepos, string obs, bool forcarPerda, bool forcarPerdaFilhas = false)
+        {
+            transaction.BeginTransaction();
+
+            // Verifica se a etiqueta é uma etiqueta de pedido
+            if (numEtiqueta[0] == 'P')
+                throw new Exception("Não é possível marcar reposição de peças por pedido.");
+
+            if (ProducaoConfig.ObrigarMotivoPerda && string.IsNullOrEmpty(obs))
+                throw new Exception("Defina o motivo da perda para continuar.");
+
+            string retorno = string.Empty;
+            uint idPedido = Conversoes.StrParaUint(numEtiqueta.Split('-')[0]);
+            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(transaction, idPedido);
+
+            uint idProdPedProducao = ObtemIdProdPedProducao(transaction, numEtiqueta).GetValueOrDefault();
+            uint idProdPedProducaoParent = ObterIdProdPedProducaoParent(transaction, idProdPedProducao).GetValueOrDefault();
+
+            if (idProdPedProducao == 0)
+                throw new Exception(string.Format("Não foi possível recuperar o produto de produção da etiqueta {0}.", numEtiqueta));
+
+            var numEtiquetaParent = ObtemValorCampo<string>(transaction, "NumEtiqueta", "idProdPedProducao=" + idProdPedProducaoParent);
+
+            if (!forcarPerdaFilhas && idProdPedProducaoParent > 0 && !string.IsNullOrWhiteSpace(numEtiquetaParent) &&
+                ProdutoImpressaoDAO.Instance.EstaImpressa(transaction, numEtiquetaParent, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                throw new Exception($"Não é possível marcar reposição em produtos de composição caso o produto pai esteja impresso. Cancele a impressão da etiqueta pai: {numEtiquetaParent}");
+
+            /* Chamado 51854. */
+            if (SetorDAO.Instance.ObterSituacao(transaction, (int)ObtemIdSetor(transaction, idProdPedProducao)) == Situacao.Inativo)
+                throw new Exception(string.Format("O último setor lido na etiqueta {0} está inativo, ative-o para marcá-la peça como reposta.", numEtiqueta));
+
+            //Verifica se a peça tem leitura no carregamento, se tiver deve estornar antes de marcar perda.
+            var itens = ItemCarregamentoDAO.Instance.GetByIdProdPedProducao(transaction, idProdPedProducao);
+            var carregamentos = "";
+            foreach (var item in itens)
+                if (item.Carregado)
+                    carregamentos += item.IdCarregamento + ", ";
+
+            if (!string.IsNullOrEmpty(carregamentos))
+                throw new Exception("Não é possível marcar resposição, pois a peça tem leitura no carregamento " + carregamentos.Trim().Trim(',') +
+                    ". Efetue o estorno antes.");
+
+            var situacaoPedido = PedidoDAO.Instance.ObtemSituacao(transaction, idPedido);
+            var possuiLiberacaoParcial = false;
+
+            if (situacaoPedido == Pedido.SituacaoPedido.LiberadoParcialmente)
+            {
+                var idprodped = ObtemIdProdPed(transaction, numEtiqueta);
+                var produtoPedido = ProdutosPedidoDAO.Instance.GetByProdPedEsp(transaction, idprodped, false);
+
+                possuiLiberacaoParcial = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(transaction, produtoPedido.IdProdPed, idProdPedProducao) > 0;
+            }
+
+            if (PedidoDAO.Instance.GetTipoPedido(transaction, idPedido) == Pedido.TipoPedidoEnum.MaoDeObra &&
+                (situacaoPedido == Pedido.SituacaoPedido.Confirmado || possuiLiberacaoParcial))
+            {
+                throw new Exception("Não é possível marcar perda em peças de pedido mão de obra liberados.");
+            }
+
+            // Valida a etiqueta
+            ValidaEtiquetaProducao(transaction, ref numEtiqueta);
+
+            if (PecaEstaCancelada(transaction, numEtiqueta, true))
+                throw new Exception("Não é possível repor uma peça cancelada.");
+
+            // Se a perda for forçada ou se o pedido for mão-de-obra, marca a perda usando o método original
+            // (se o pedido for mão-de-obra atualiza a quantidade de ambientes)
+            if (forcarPerda || isMaoDeObra)
+            {
+                if (isMaoDeObra && GetCountByPedido(transaction, idPedido) == 1)
+                    throw new Exception("Não é possível marcar reposição de mão de obra caso o pedido possua somente um produto de mão de obra. Cancele o pedido.");
+
+                retorno = AtualizaSituacao(transaction, idFuncPerda, numChapa, numEtiqueta, idSetorRepos, true, false, tipoPerdaRepos, subtipoPerdaRepos, obs, null, 0, null, null, false, null, false, 0);
+
+                if (LiberarPedidoDAO.Instance.IsPedidoLiberado(transaction, idPedido) && isMaoDeObra)
+                    objPersistence.ExecuteCommand(transaction, "Update pedido Set situacao=" + (int)Pedido.SituacaoPedido.Confirmado + " Where idPedido=" + idPedido);
+
+                transaction.Commit();
+                transaction.Close();
+
+                return retorno;
+            }
+
+            if (!LeituraProducaoDAO.Instance.VerificarEtiquetaLida(transaction, numEtiqueta))
+                throw new Exception("Não é possível repor uma peça que ainda não foi impressa.");
+
+            if (obs != null && obs.Length > 250)
+                throw new Exception("O campo motivo da reposição não pode ter mais que 250 caracteres.");
+
+            var passouSetorLaminado = LeituraProducaoDAO.Instance.PassouSetorLaminado(transaction, numEtiqueta);
+
+            // Busca o produto ao qual se refere a etiqueta
+            ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(transaction, null, ObtemIdProdPed(transaction, idProdPedProducao), true);
+
+            // Monta a string que possibilita voltar a situação da peça
+            string dadosReposicao = ObtemValorCampo<uint?>(transaction, "idPedidoExpedicao", "idProdPedProducao=" + idProdPedProducao) + "~" +
+                ObtemValorCampo<uint>(transaction, "idSetor", "idProdPedProducao=" + idProdPedProducao) + "~" +
+                ObtemValorCampo<string>(transaction, "obs", "idProdPedProducao=" + idProdPedProducao) + "~" +
+                ObtemValorCampo<int>(transaction, "situacaoProducao", "idProdPedProducao=" + idProdPedProducao);
+
+            ProdutoImpressao dados = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(transaction, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+            dadosReposicao += dados == null ? "~~~" :
+                String.Format("~{0}~{1}~{2}", dados.IdImpressao, dados.PlanoCorte, dados.PosicaoArqOtimiz);
+
+            var leituras = LeituraProducaoDAO.Instance.GetByProdPedProducao(transaction, idProdPedProducao);
+
+            foreach (LeituraProducao lp in leituras)
+                dadosReposicao += "~" + lp.IdFuncLeitura + "!" + lp.IdSetor + "!" + lp.DataLeitura;
+
+            // Salva os dados atuais da reposição (se houverem) na tabela dados_reposicao
+            DadosReposicaoDAO.Instance.Empilha(transaction, idProdPedProducao);
+
+            // Marca que este produto foi reposto
+            string sp = subtipoPerdaRepos > 0 ? ", idSubtipoPerdaRepos=" + subtipoPerdaRepos : "";
+            objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set idPedidoExpedicao=null, pecaReposta=true, tipoPerdaRepos=" +
+                tipoPerdaRepos + sp + ", obs=?obs, dataRepos=?dataPerda, situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao +
+                ", idSetor=1, situacaoProducao=" + (int)SituacaoProdutoProducao.Pendente + ", idSetorRepos=" + idSetorRepos +
+                ", idFuncRepos=" + idFuncPerda + ", dadosReposicaoPeca=?dadosReposicao Where idProdPedProducao=" + idProdPedProducao,
+                new GDAParameter("?obs", obs), new GDAParameter("?dadosReposicao", dadosReposicao), new GDAParameter("?dataPerda", dataPerda));
+
+            //Cancela a associação com o retalho caso ela exista.
+            UsoRetalhoProducaoDAO.Instance.CancelarAssociacao(transaction, idProdPedProducao);
+
+            // Exclui leituras feitas nesta peça
+            LeituraProducaoDAO.Instance.ApagarPelosIdsProdPedProducao(transaction, new List<int>() { (int)idProdPedProducao });
+
+            #region Remove a associação da peça ou da chapa
+
+            var quantidadeLeiturasChapa = ChapaCortePecaDAO.Instance.QtdeLeiturasChapa(transaction, (uint)dados.IdProdImpressao);
+
+            // O ideal é agregar à esta condição o mesmo código do método RetiraPecaSituacao, para que a reposição fique correta.
+            // Além disso, temos que salvar os dados da chapa nos dados da reposição, pois se o usuário voltar a situação da peça, tudo deve ser revertido.
+            if (quantidadeLeiturasChapa > 0)
+            {
+                ChapaCortePecaDAO.Instance.MarcarPecaRepostaChapaCortePeca(transaction, idProdPedProducao);
+            }
+
+            if (prodPedEsp.IsProdFilhoLamComposicao)
+            {
+                ChapaCortePecaDAO.Instance.DeleteByIdProdImpressaoChapa(transaction, (uint)dados.IdProdImpressao);
+            }
+            else
+            {
+                ChapaCortePecaDAO.Instance.AtualizarReferenciaMovimentacaoEstoque(transaction, (uint)dados.IdProdImpressao, idProdPedProducao);
+            }
+
+            #endregion
+
+            // Atualiza a situação da produção do pedido para pendente, desde que não seja mão de obra
+            if (!PedidoDAO.Instance.IsMaoDeObra(transaction, idPedido))
+                objPersistence.ExecuteCommand(transaction, "update pedido set dataPronto=null, situacaoProducao=" + (int)Pedido.SituacaoProducaoEnum.Pendente + " where idPedido=" + idPedido);
+
+            //Remove o plano de corte da impressão e a posição do plano de corte
+            if (dados != null)
+            {
+                // Remove dos produtos_impressao
+                objPersistence.ExecuteCommand(transaction, @"
+                    UPDATE produto_impressao
+                    set planoCorte=null, posicaoArqOtimiz=null
+                    WHERE idProdImpressao=" + dados.IdProdImpressao);
+
+                /* Chamado 23141.
+                    * Remove o plano de corte do produto de produção. */
+                objPersistence.ExecuteCommand(transaction, @"
+                    UPDATE produto_pedido_producao SET Planocorte=NULL
+                    WHERE PlanoCorte=?planoCorte AND IdProdPedProducao=?idProdPedProducao",
+                    new GDAParameter("?planoCorte", dados.PlanoCorte),
+                    new GDAParameter("?idProdPedProducao", idProdPedProducao));
+            }
+
+            var temEntradaEstoque = false;
+
+            foreach (var idSetor in leituras.Select(f => f.IdSetor))
+            {
+                if (SetorDAO.Instance.IsEntradaEstoque(transaction, idSetor))
+                {
+                    temEntradaEstoque = true;
+                    break;
+                }
+            }
+
+            // Altera o estoque (caso seja um pedido de produção e ter passado por algum setor entrada de estoque
+            if (PedidoDAO.Instance.IsProducao(transaction, idPedido) && temEntradaEstoque)
+            {
+                string codEtiqueta = ObtemEtiqueta(transaction, idProdPedProducao);
+                LoginUsuario login = UserInfo.GetUserInfo;
+
+                float m2Calc = Glass.Global.CalculosFluxo.ArredondaM2(transaction, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
+                bool m2 = new List<int>
+                {
+                    (int)Glass.Data.Model.TipoCalculoGrupoProd.M2,
+                    (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto
+                }
+                .Contains(Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(transaction, (int)prodPedEsp.IdGrupoProd, (int)prodPedEsp.IdSubgrupoProd));
+
+                MovEstoqueDAO.Instance.BaixaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, 1, 0, false, false, true);
+
+                // Só baixa apenas se a peça possuir produto para baixa associado
+                MovEstoqueDAO.Instance.CreditaEstoqueProducao(transaction, prodPedEsp.IdProd, login.IdLoja, idProdPedProducao, (decimal)(m2Calc > 0 ? m2Calc : 1), true, true);
+
+                // Marca que este produto não entrou em estoque
+                objPersistence.ExecuteCommand(transaction, "Update produto_pedido_producao Set entrouEstoque=false Where idProdPedProducao=" + idProdPedProducao);
+            }
+
+            if (passouSetorLaminado)
+            {
+                var etiquetasPecasFilhas = ExecuteMultipleScalar<string>(transaction, $"SELECT NumEtiqueta FROM produto_pedido_producao WHERE IdProdPedProducaoParent={ idProdPedProducao }");
+
+                foreach (var item in etiquetasPecasFilhas)
+                {
+                    MarcarPecaReposta(transaction, numChapa, item, idSetorRepos, idFuncPerda, dataPerda, tipoPerdaRepos, subtipoPerdaRepos, obs, forcarPerda, true);
+                }
+            }
+
+            retorno = prodPedEsp.DescrProduto + " " + prodPedEsp.Largura + "x" + prodPedEsp.Altura;
+
+            return "PEÇA REPOSTA: " + retorno + " (" + numEtiqueta + ")";
         }
 
         /// <summary>
@@ -5405,7 +5427,7 @@ namespace Glass.Data.DAL
                     // Verifica mais uma vez se a peça já está em produção devido a um problema ocorrido de duplicar peças na produção
                     if (!EstaEmProducao(session, numEtiqueta))
                     {
-                        // Estão ocorrendo três erros misteriosos ao chamar esse insert, "The given key was not present in the dictionary", 
+                        // Estão ocorrendo três erros misteriosos ao chamar esse insert, "The given key was not present in the dictionary",
                         // "Probable I/O race condition..." e "Index out of range", alterei para tentar inserir 5 vezes e caso ocorra erro, salva o mesmo no banco
                         var cont = 1;
                         while (true)
@@ -5794,8 +5816,8 @@ namespace Glass.Data.DAL
         public int ObtemQtdLiberadaRevenda(GDASession session, uint idPedido, uint idProd)
         {
             var sql = String.Format(@"
-                Select Count(*) 
-                From produto_pedido_producao ppp 
+                Select Count(*)
+                From produto_pedido_producao ppp
                     Inner Join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
                 Where ppp.idPedidoExpedicao={0} and ppe.idProd={1}", idPedido, idProd);
 
@@ -5988,23 +6010,23 @@ namespace Glass.Data.DAL
 
                 string comandoTotal =
                     @" /*ProdutoPedidoProducaoDAO.ObtemTotaisSetor()*/
-                    SELECT 
+                    SELECT
 	                    COUNT(*) as Qtde,
 	                    SUM(Round(if(ped.tipoPedido=3 /* MaoDeObra */, (
 	                    /*Caso o pedido for de mão de obra então o m2 da peça é cosiderado*/
 	                    (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-	                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+	                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
 	                    * a.qtde, pp.TotM2Calc) / (pp.qtde * If(ped.tipoPedido=3 /* MaoDeObra */, a.qtde, 1)), 4)) As TotM2
                     FROM produto_pedido_producao ppp
                         INNER JOIN produtos_pedido_espelho pp ON (ppp.idProdPed = pp.idProdPed)
                         INNER JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
                         LEFT JOIN ambiente_pedido_espelho a ON (pp.idAmbientePedido=a.idAmbientePedido)
-                        INNER JOIN roteiro_producao_etiqueta rpe ON (rpe.idProdPedProducao = ppp.idProdPedProducao AND rpe.IdSetor = ?idSetor) 
+                        INNER JOIN roteiro_producao_etiqueta rpe ON (rpe.idProdPedProducao = ppp.idProdPedProducao AND rpe.IdSetor = ?idSetor)
                         INNER JOIN setor srot ON (rpe.IdSetor = srot.IdSetor)
                         INNER JOIN setor s ON (ppp.IdSetor = s.IdSetor)
                     WHERE s.NumSeq < srot.NumSeq
                         AND ppp.situacao = ?situacaoPPP
-                        AND  ppp.IdSetor <> rpe.IdSetor 
+                        AND  ppp.IdSetor <> rpe.IdSetor
                         AND ppp.situacaoProducao = ?situacaoProducaoPPP";
 
                 var total = CurrentPersistenceObject.LoadResult(session, comandoTotal,
@@ -6018,12 +6040,12 @@ namespace Glass.Data.DAL
                     }).First();
 
                 var comandoTotaisMomento =
-                    @"SELECT 
+                    @"SELECT
 	                    COUNT(*) as Qtde,
 	                    SUM(Round(if(ped.tipoPedido=3 /* MaoDeObra */, (
 	                    /*Caso o pedido for de mão de obra então o m2 da peça é cosiderado*/
 	                    (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-	                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+	                    a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
 	                    * a.qtde, pp.TotM2Calc) / (pp.qtde * If(ped.tipoPedido=3 /* MaoDeObra */, a.qtde, 1)), 4)) As TotM2
                     FROM produto_pedido_producao ppp
                         INNER JOIN produtos_pedido_espelho pp ON (ppp.idProdPed = pp.idProdPed)
@@ -6076,19 +6098,19 @@ namespace Glass.Data.DAL
         public float ObtemTotM2Setor(int idSetor, int? idClassificacao, string dataIniFabr, string dataFimFabr, bool selecionar)
         {
             var sql = @"
-                SELECT ROUND(IF(ped.tipoPedido = " + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ((((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) + a.altura) * 
-                    ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000) * a.qtde, pp.TotM2Calc) / 
+                SELECT ROUND(IF(ped.tipoPedido = " + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", ((((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) + a.altura) *
+                    ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000) * a.qtde, pp.TotM2Calc) /
                     (pp.qtde * if(ped.tipoPedido = " + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as totM
              FROM produto_pedido_producao ppp
 				INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
 				INNER JOIN produto p ON (pp.IdProd = p.IdProd)
                 INNER JOIN pedido ped ON (pp.IdPedido = ped.IdPedido)
-                INNER JOIN pedido_espelho pedEsp On (ped.idPedido = pedEsp.idPedido)  
+                INNER JOIN pedido_espelho pedEsp On (ped.idPedido = pedEsp.idPedido)
 				LEFT JOIN ambiente_pedido_espelho a On (pp.idAmbientePedido = a.idAmbientePedido)
-                    WHERE 1  
-                    AND ppp.IdSetor = " + idSetor + @" 
-                    AND ppp.Situacao IN (" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + ", " + (int)ProdutoPedidoProducao.SituacaoEnum.Perda + @") 
-                    AND exists (SELECT * FROM leitura_producao where IdProdPedProducao = ppp.IdProdPedProducao AND idSetor = " + idSetor + @" AND dataLeitura IS NOT NULL) 
+                    WHERE 1
+                    AND ppp.IdSetor = " + idSetor + @"
+                    AND ppp.Situacao IN (" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + ", " + (int)ProdutoPedidoProducao.SituacaoEnum.Perda + @")
+                    AND exists (SELECT * FROM leitura_producao where IdProdPedProducao = ppp.IdProdPedProducao AND idSetor = " + idSetor + @" AND dataLeitura IS NOT NULL)
                     AND pp.IdProdPedParent IS NULL";
 
             if (!string.IsNullOrWhiteSpace(dataIniFabr))
@@ -6130,7 +6152,7 @@ namespace Glass.Data.DAL
                     Select Round(if(ped.tipoPedido=3, (
                         /*Caso o pedido for de mão de obra então o m2 da peça é cosiderado*/
                         (((50 - If(Mod(a.altura, 50) > 0, Mod(a.altura, 50), 50)) +
-                        a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)             
+                        a.altura) * ((50 - If(Mod(a.largura, 50) > 0, Mod(a.largura, 50), 50)) + a.largura)) / 1000000)
                         * a.qtde, ppo.TotM2Calc) / (pp.qtde * If(ped.tipoPedido=3, a.qtde, 1)), 4) As TotM2
                 From pedido ped
                     Inner Join produtos_pedido_espelho pp On (ped.idPedido=pp.idPedido)
@@ -6254,7 +6276,7 @@ namespace Glass.Data.DAL
         public string ObterDescrProdEtiqueta(GDASession sessao, uint idProdPedProducao)
         {
             var sql = @"
-            SELECT concat(p.CodInterno, ' - ', if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
+            SELECT concat(p.CodInterno, ' - ', if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
                     a.Ambiente, concat(p.Descricao, if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) , ' (', COALESCE(ppp.NumEtiqueta, ''), ')')
             FROM produto_pedido_producao ppp
 	            INNER JOIN produtos_pedido_espelho pp ON (ppp.IdProdPed = pp.IdProdPed)
@@ -6683,7 +6705,7 @@ namespace Glass.Data.DAL
             {
                 // Volta os dados da reposição anterior ao produto
                 objPersistence.ExecuteCommand(sessao, @"update produto_pedido_producao set pecaReposta=true, obs=?o,
-                    tipoPerdaRepos=?tp, idSubtipoPerdaRepos=?sp, dataRepos=?d, idSetorRepos=?s, idFuncRepos=?f, 
+                    tipoPerdaRepos=?tp, idSubtipoPerdaRepos=?sp, dataRepos=?d, idSetorRepos=?s, idFuncRepos=?f,
                     " + (anterior.SituacaoProducao > 0 ? "situacaoProducao=?spr, " : String.Empty) +
                     "dadosReposicaoPeca=?dados where idProdPedProducao=" + idProdPedProducao,
                     new GDAParameter("?o", anterior.Obs), new GDAParameter("?tp", anterior.TipoPerdaRepos),
@@ -6991,20 +7013,20 @@ namespace Glass.Data.DAL
         {
             string criterio = "";
             string sql;
-            string campos = selecionar ? @"ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura, 
-                if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.largura, if(pp.Redondo, 0, if(pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, 
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao, 
-                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno, 
-                p.custoCompra as valorCustoUnitario, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, 
-                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, p.espessura, concat(cast(ped.IdPedido as char), 
-                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''), 
-                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir, 
-                s.descricao as descrSetor, d.descricao as DescrDepart, pp.ValorVendido as ValorUnit, ped.CodCliente, 
-                Round(pp.TotM/(pp.Qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, 
-                (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
-                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, 
-                lp.dataLiberacao as DataLiberacaoPedido, ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, 
+            string campos = selecionar ? @"ppp.*, pp.idPedido, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.altura,
+                if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.largura, if(pp.Redondo, 0, if(pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura,
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao,
+                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno,
+                p.custoCompra as valorCustoUnitario, ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente,
+                apl.CodInterno as CodAplicacao, prc.CodInterno as CodProcesso, p.espessura, concat(cast(ped.IdPedido as char),
+                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 'R)')), ''),
+                if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
+                s.descricao as descrSetor, d.descricao as DescrDepart, pp.ValorVendido as ValorUnit, ped.CodCliente,
+                Round(pp.TotM/(pp.Qtde*if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2,
+                (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
+                ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda,
+                lp.dataLiberacao as DataLiberacaoPedido, ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao,
                 '$$$' as Criterio" : "count(*)";
 
             /* Chamado 22928. */
@@ -7025,17 +7047,17 @@ namespace Glass.Data.DAL
                     select " + campos + @"
                     from produto_pedido_producao ppp
                         Left Join setor s On (ppp.idSetor=s.idSetor)
-                        Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed) 
-                        Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido) 
-                        Inner Join pedido ped On (pp.idPedido=ped.idPedido) 
-                        Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
-                        Inner Join cliente cli On (ped.idCli=cli.id_Cli) 
+                        Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed)
+                        Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido)
+                        Inner Join pedido ped On (pp.idPedido=ped.idPedido)
+                        Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido)
+                        Inner Join cliente cli On (ped.idCli=cli.id_Cli)
                         Inner Join produto p On (pp.idProd=p.idProd)
-                        Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao) 
-                        Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
+                        Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
+                        Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
                         Inner Join funcionario f On (ppp.idFuncPerda=f.idFunc)
-                        Left Join func_departamento fd On (ppp.idFuncPerda=fd.idFunc) 
-                        Left Join departamento d On (fd.idDepartamento=d.idDepartamento) 
+                        Left Join func_departamento fd On (ppp.idFuncPerda=fd.idFunc)
+                        Left Join departamento d On (fd.idDepartamento=d.idDepartamento)
                     where ppp.dataPerda is not null and ppp.situacao<>" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao;
 
             if (idFuncPerda > 0)
@@ -7147,80 +7169,80 @@ namespace Glass.Data.DAL
         {
             string criterio = "";
             string campos1 = selecionar ? @"
-                ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao, 
-                ppp.idFuncRepos, ppp.idSetorRepos, ppp.situacao, ppp.dataPerda, ppp.numEtiqueta, ppp.planoCorte, ppp.tipoPerda, ppp.idSubtipoPerda, 
-                ppp.obs, ppp.entrouEstoque, ppp.pecaReposta, ppp.tipoPerdaRepos, ppp.idSubtipoPerdaRepos, ppp.dataRepos, 
-                ppp.numEtiquetaCanc, ppp.idImpressao, ppp.canceladoAdmin, ppp.dadosReposicaoPeca, pp.idPedido, 
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.altura, if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
+                ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao,
+                ppp.idFuncRepos, ppp.idSetorRepos, ppp.situacao, ppp.dataPerda, ppp.numEtiqueta, ppp.planoCorte, ppp.tipoPerda, ppp.idSubtipoPerda,
+                ppp.obs, ppp.entrouEstoque, ppp.pecaReposta, ppp.tipoPerdaRepos, ppp.idSubtipoPerdaRepos, ppp.dataRepos,
+                ppp.numEtiquetaCanc, ppp.idImpressao, ppp.canceladoAdmin, ppp.dadosReposicaoPeca, pp.idPedido,
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.altura, if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
                 a.largura, if(pp.Redondo, 0, if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, cv.descricao As Cor, p.Espessura,
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao, 
-                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno, 
-                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao, 
-                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 
-                'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir, 
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao,
+                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno,
+                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao,
+                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
+                'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
                 s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
-                (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
+                (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos2 = selecionar ? @"
-                ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao, 
-                dr.idFuncRepos, dr.idSetorRepos, ppp.situacao, ppp.dataPerda, ppp.numEtiqueta, ppp.planoCorte, ppp.tipoPerda, ppp.idSubtipoPerda, 
-                dr.obs, ppp.entrouEstoque, ppp.pecaReposta, dr.tipoPerdaRepos, dr.idSubtipoPerdaRepos, dr.dataRepos, 
-                ppp.numEtiquetaCanc, ppp.idImpressao, ppp.canceladoAdmin, dr.dadosReposicaoPeca, pp.idPedido, 
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.altura, if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
+                ppp.idProdPedProducao, null as numeroNFe, ppp.idProdPed, ppp.idSetor, ppp.idFuncPerda, ppp.idPedidoExpedicao,
+                dr.idFuncRepos, dr.idSetorRepos, ppp.situacao, ppp.dataPerda, ppp.numEtiqueta, ppp.planoCorte, ppp.tipoPerda, ppp.idSubtipoPerda,
+                dr.obs, ppp.entrouEstoque, ppp.pecaReposta, dr.tipoPerdaRepos, dr.idSubtipoPerdaRepos, dr.dataRepos,
+                ppp.numEtiquetaCanc, ppp.idImpressao, ppp.canceladoAdmin, dr.dadosReposicaoPeca, pp.idPedido,
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.altura, if(pp.alturaReal > 0, pp.alturaReal, pp.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
                 a.largura, if(pp.Redondo, 0, if (pp.larguraReal > 0, pp.larguraReal, pp.largura))) as Largura, cv.descricao As Cor, p.Espessura,
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao, 
-                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno, 
-                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao, 
-                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 
-                'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir, 
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao,
+                if(pp.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno,
+                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao,
+                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
+                'R)')), ''), if(ppp.idPedidoExpedicao is not null, concat(' (Exp. ', cast(ppp.idPedidoExpedicao as char), ')'), '')) as IdPedidoExibir,
                 s.descricao as descrSetor, sr.descricao as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pp.ValorVendido as ValorUnit, ped.CodCliente, round(pp.TotM/(pp.qtde*if(ped.tipoPedido=" +
-                (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, 
-                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
+                (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.qtde, 1)), 4) as TotM2, (ped.situacao=" + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado,
+                (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @") as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
                 (ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + ") as PedidoProducao, 1 as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos3 = selecionar ? @"
-                null, null, pt.idProdPed, null, td.idFunc, null, 
-                td.idFunc, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", td.dataTroca, null, null, td.idTipoPerda, td.idSubtipoPerda, 
-                td.descricao, null, true, td.idTipoPerda, td.idSubtipoPerda, td.dataTroca,  
-                null, null, null, null, td.idPedido, 
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
-                a.altura, if(pt.alturaReal > 0, pt.alturaReal, pt.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", 
+                null, null, pt.idProdPed, null, td.idFunc, null,
+                td.idFunc, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", td.dataTroca, null, null, td.idTipoPerda, td.idSubtipoPerda,
+                td.descricao, null, true, td.idTipoPerda, td.idSubtipoPerda, td.dataTroca,
+                null, null, null, null, td.idPedido,
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
+                a.altura, if(pt.alturaReal > 0, pt.alturaReal, pt.altura)) as Altura, if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @",
                 a.largura, if(pt.Redondo, 0, pt.largura)) as Largura, cv.descricao As Cor, p.Espessura,
-                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao, 
-                if(pt.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno, 
-                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao, 
-                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char), 
-                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char), 
-                'R)')), '')) as IdPedidoExibir, if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetor, 
-                if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetorRepos, pt.CustoProd AS ValorCustoUnitario, pt.ValorVendido as ValorUnit, 
+                if(ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + @", a.Ambiente, concat(p.Descricao,
+                if(pt.Redondo and " + (!BenefConfigDAO.Instance.CobrarRedondo()).ToString() + @", ' REDONDO', ''))) as DescrProduto, p.CodInterno,
+                ped.dataEntrega, ped.dataEntregaOriginal, cli.id_cli as IdCliente, cli.nome as nomeCliente, apl.CodInterno as CodAplicacao,
+                prc.CodInterno as CodProcesso, concat(cast(ped.IdPedido as char),
+                if(ped.IdPedidoAnterior is not null, concat(' (', concat(cast(ped.IdPedidoAnterior as char),
+                'R)')), '')) as IdPedidoExibir, if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetor,
+                if(td.tipo=" + (int)TrocaDevolucao.TipoTrocaDev.Troca + @", 'Troca', 'Devolução') as descrSetorRepos, pt.CustoProd AS ValorCustoUnitario, pt.ValorVendido as ValorUnit,
                 ped.CodCliente, pt.TotM as TotM2, (ped.situacao= " + (int)Pedido.SituacaoPedido.Cancelado + @") as PedidoCancelado, ped.tipoPedido=" +
-                (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido, 
+                (int)Pedido.TipoPedidoEnum.MaoDeObra + @" as PedidoMaoObra, f.nome as nomeFuncPerda, lp.dataLiberacao as DataLiberacaoPedido,
                 ped.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @" as PedidoProducao, cast(pt.qtde as decimal(12,2)) as qtde, sp.TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos4 = selecionar ? @"
-                null, nf.numeroNFe, null, null, pcv.idFuncPerda, null, 
-                null, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", pcv.dataPerda, pi.numEtiqueta, null, pcv.idTipoPerda, pcv.idSubtipoPerda, 
-                pcv.obs, null, null, pcv.idTipoPerda, pcv.idSubtipoPerda, pcv.dataPerda,  
-                null, pi.idImpressao, false, null, null, 
-                pnf.altura, pnf.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno, 
-                null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao, 
-                null as CodProcesso, null as IdPedidoExibir, 'Chapa de Vidro' as descrSetor, 'Chapa de Vidro' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit, 
-                null, round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra, 
+                null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
+                null, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", pcv.dataPerda, pi.numEtiqueta, null, pcv.idTipoPerda, pcv.idSubtipoPerda,
+                pcv.obs, null, null, pcv.idTipoPerda, pcv.idSubtipoPerda, pcv.dataPerda,
+                null, pi.idImpressao, false, null, null,
+                pnf.altura, pnf.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno,
+                null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
+                null as CodProcesso, null as IdPedidoExibir, 'Chapa de Vidro' as descrSetor, 'Chapa de Vidro' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
+                null, round(pnf.TotM / pnf.qtde, 4) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
                 f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string campos5 = selecionar ? @"
-                null, nf.numeroNFe, null, null, pcv.idFuncPerda, null, 
-                null, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", pcv.dataPerda, pi.numEtiqueta, null, pcv.idTipoPerda, pcv.idSubtipoPerda, 
-                pcv.obs, null, null, pcv.idTipoPerda, pcv.idSubtipoPerda, pcv.dataPerda,  
-                null, pi.idImpressao, false, null, null, 
-                p.altura, p.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno, 
-                null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao, 
-                null as CodProcesso, null as IdPedidoExibir, 'Retalho de Produção' as descrSetor, 'Retalho de Producao' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit, 
-                null, round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra, 
+                null, nf.numeroNFe, null, null, pcv.idFuncPerda, null,
+                null, null, " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @", pcv.dataPerda, pi.numEtiqueta, null, pcv.idTipoPerda, pcv.idSubtipoPerda,
+                pcv.obs, null, null, pcv.idTipoPerda, pcv.idSubtipoPerda, pcv.dataPerda,
+                null, pi.idImpressao, false, null, null,
+                p.altura, p.largura, cv.descricao as Cor, p.Espessura, p.Descricao as DescrProduto, p.CodInterno,
+                null, null, null as IdCliente, null as nomeCliente, null as CodAplicacao,
+                null as CodProcesso, null as IdPedidoExibir, 'Retalho de Produção' as descrSetor, 'Retalho de Producao' as descrSetorRepos, p.CustoCompra AS ValorCustoUnitario, pnf.ValorUnitario as ValorUnit,
+                null, round((p.Altura * p.Largura) / 1000000, 2) as TotM2, (nf.situacao= " + (int)NotaFiscal.SituacaoEnum.Cancelada + @") as PedidoCancelado, false as PedidoMaoObra,
                 f.nome as nomeFuncPerda, null as DataLiberacaoPedido, false as PedidoProducao, 1 as qtde, sp.TipoCalculoNf as TipoCalculo, '$$$' as Criterio" : "count(*)";
 
             string sql =
@@ -7228,50 +7250,50 @@ namespace Glass.Data.DAL
                 from produto_pedido_producao ppp
                     Left Join setor s On (ppp.idSetor=s.idSetor)
                     Left Join setor sr On (ppp.idSetorRepos=sr.idSetor)
-                    Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed) 
-                    Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido) 
-                    Inner Join pedido ped On (pp.idPedido=ped.idPedido) 
-                    Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
-                    Inner Join cliente cli On (ped.idCli=cli.id_Cli) 
+                    Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed)
+                    Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido)
+                    Inner Join pedido ped On (pp.idPedido=ped.idPedido)
+                    Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido)
+                    Inner Join cliente cli On (ped.idCli=cli.id_Cli)
                     Inner Join produto p On (pp.idProd=p.idProd)
                     Inner Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
-                    Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao) 
-                    Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
+                    Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
+                    Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
                     Inner Join funcionario f on (ppp.idFuncRepos=f.idFunc)
                 where ppp.pecaReposta=true{0})
-                
+
                 " + (selecionar ? "union all" : "+") + " (select " + campos2 + @"
                 from produto_pedido_producao ppp
                     Inner Join dados_reposicao dr on (ppp.idProdPedProducao=dr.idProdPedProducao)
                     Left Join setor s On (ppp.idSetor=s.idSetor)
                     Left Join setor sr On (dr.idSetorRepos=sr.idSetor)
-                    Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed) 
-                    Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido) 
-                    Inner Join pedido ped On (pp.idPedido=ped.idPedido) 
-                    Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
-                    Inner Join cliente cli On (ped.idCli=cli.id_Cli) 
+                    Inner Join produtos_pedido_espelho pp On (ppp.idProdPed=pp.idProdPed)
+                    Left Join ambiente_pedido_espelho a On (pp.idAmbientePedido=a.idAmbientePedido)
+                    Inner Join pedido ped On (pp.idPedido=ped.idPedido)
+                    Left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido)
+                    Inner Join cliente cli On (ped.idCli=cli.id_Cli)
                     Inner Join produto p On (pp.idProd=p.idProd)
                     Inner Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
-                    Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao) 
-                    Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso) 
+                    Left Join etiqueta_aplicacao apl On (pp.idAplicacao=apl.idAplicacao)
+                    Left Join etiqueta_processo prc On (pp.idProcesso=prc.idProcesso)
                     Inner Join funcionario f on (dr.idFuncRepos=f.idFunc)
                 where ppp.pecaReposta=true{1})
-                
+
                 " + (selecionar ? "union all" : "+") + " (select " + campos3 + @"
                 from produto_trocado pt
                     inner join troca_devolucao td on (pt.idTrocaDevolucao=td.idTrocaDevolucao)
-                    left join pedido ped On (td.idPedido=ped.idPedido) 
+                    left join pedido ped On (td.idPedido=ped.idPedido)
                     left join produtos_pedido pp on (pt.idProdPed=pp.idProdPed)
-                    left Join ambiente_pedido a On (pp.idAmbientePedido=a.idAmbientePedido) 
-                    left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido) 
-                    left Join cliente cli On (ped.idCli=cli.id_Cli) 
+                    left Join ambiente_pedido a On (pp.idAmbientePedido=a.idAmbientePedido)
+                    left Join liberarpedido lp On (lp.idLiberarPedido=ped.idLiberarPedido)
+                    left Join cliente cli On (ped.idCli=cli.id_Cli)
                     left Join produto p On (pt.idProd=p.idProd)
                     left Join subgrupo_prod sp On (sp.idSubgrupoProd=p.idSubgrupoProd)
                     Left Join cor_vidro cv On (p.idCorVidro=cv.idCorVidro)
-                    left Join etiqueta_aplicacao apl On (pt.idAplicacao=apl.idAplicacao) 
-                    left Join etiqueta_processo prc On (pt.idProcesso=prc.idProcesso) 
+                    left Join etiqueta_aplicacao apl On (pt.idAplicacao=apl.idAplicacao)
+                    left Join etiqueta_processo prc On (pt.idProcesso=prc.idProcesso)
                     left Join funcionario f on (td.idFunc=f.idFunc)
                 where td.situacao=" + (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada + @"{2})
 
@@ -7997,11 +8019,11 @@ namespace Glass.Data.DAL
         public bool FoiLidoOCTransferencia(GDASession sessao, uint idProdPedProducao)
         {
             var sql = @"
-                SELECT count(*) 
+                SELECT count(*)
                 FROM produto_pedido_producao ppp
 	                INNER JOIN pedido_ordem_carga poc ON (ppp.IdPedidoExpedicao = poc.IdPedido)
                     INNER JOIN ordem_carga oc ON (poc.IdOrdemCarga = oc.IdOrdemCarga)
-                WHERE oc.TipoOrdemCarga = " + (int)OrdemCarga.TipoOCEnum.Transferencia + @" 
+                WHERE oc.TipoOrdemCarga = " + (int)OrdemCarga.TipoOCEnum.Transferencia + @"
                     AND idProdPedProducao = " + idProdPedProducao;
 
             return objPersistence.ExecuteSqlQueryCount(sessao, sql) > 0;
@@ -8052,12 +8074,12 @@ namespace Glass.Data.DAL
         public bool PecaPassouSetorLaminado(GDASession sessao, string codEtiqueta)
         {
             var sql = @"
-            SELECT COUNT(*) 
+            SELECT COUNT(*)
             FROM produto_pedido_producao ppp
 	            INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
                 INNER JOIN setor s ON (lp.IdSetor = s.IdSetor)
-            WHERE s.Laminado 
-                AND ppp.NumEtiqueta = ?etq 
+            WHERE s.Laminado
+                AND ppp.NumEtiqueta = ?etq
                 AND ppp.Situacao = " + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
                 AND s.Situacao = " + (int)Situacao.Ativo;
 
@@ -8097,11 +8119,11 @@ namespace Glass.Data.DAL
         public uint? ObterIdProdPedProducaoRevinculoComposicao(GDASession sessao, uint idProdPedProducaoParent, uint idProdPed, List<uint> idsProdPedProducao)
         {
             var sql = @"
-                SELECT IdProdPedProducao 
-                FROM produto_pedido_producao 
+                SELECT IdProdPedProducao
+                FROM produto_pedido_producao
                 WHERE Situacao = {0}
-                    AND IdProdPedProducaoParent = {1} 
-                    AND IdProdPed = {2} 
+                    AND IdProdPedProducaoParent = {1}
+                    AND IdProdPed = {2}
                     AND IdProdPedProducao NOT IN ({3})
                 LIMIT 1";
 
@@ -8119,7 +8141,7 @@ namespace Glass.Data.DAL
             var campos = selecionar ? "ppp.*, ppe.Altura, ppe.Largura, p.CodInterno, p.Descricao AS DescrProduto" : "COUNT(*)";
 
             var sql = @"SELECT " + campos + @"
-                FROM produto_pedido_producao ppp 
+                FROM produto_pedido_producao ppp
                     INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
                     INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
                 WHERE ppp.IdFornada=" + idFornada;
@@ -8164,7 +8186,7 @@ namespace Glass.Data.DAL
             var campos = "ppp.*, ppe.Altura, ppe.Largura, p.CodInterno, p.Descricao AS DescrProduto";
 
             var sql = @"SELECT " + campos + @"
-                FROM produto_pedido_producao ppp 
+                FROM produto_pedido_producao ppp
                     INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
                     INNER JOIN produto p ON (ppe.IdProd = p.IdProd)
                 WHERE ppp.IdFornada IN({0})";
@@ -8189,7 +8211,7 @@ namespace Glass.Data.DAL
         /// Obtém os produtos de produção pelos ID's produto de pedido.
         /// </summary>
         public List<int> ObterIdsProdPedProducaoPelosIdProdPed(GDASession session, List<int> idsProdPed)
-        {            
+        {
             return ExecuteMultipleScalar<int>(session, $"SELECT IdProdPedProducao FROM produto_pedido_producao WHERE IdProdPed IN ({ string.Join(",", idsProdPed) });")?.ToList() ?? new List<int>();
         }
 

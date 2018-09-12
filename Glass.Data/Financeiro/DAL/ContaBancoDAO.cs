@@ -104,10 +104,10 @@ namespace Glass.Data.DAL
         /// Utilizado em ContasReceberDAO
         /// </summary>
         public uint MovContaContaR(GDASession sessao, uint idContaBanco, uint idConta, int idLoja, uint? idPedido, uint? idLiberarPedido, uint? idContaR, uint? idSinal,
-            uint idCliente, int tipoMov, decimal valorMov, DateTime dataMov, uint? idCartaoNaoIdentificado)
+            uint idCliente, int tipoMov, decimal valorMov, DateTime dataMov, uint? idCartaoNaoIdentificado, string obs)
         {
             return MovimentaConta(sessao, idContaBanco, idConta, idLoja, idCliente, null, idPedido, idSinal, null, idContaR, null, null, null, null, null, idLiberarPedido,
-                null, null, null, null, null, tipoMov, valorMov, 0, dataMov, null, null, null, null, idCartaoNaoIdentificado, null, null, null, false);
+                null, null, null, null, null, tipoMov, valorMov, 0, dataMov, obs, null, null, null, idCartaoNaoIdentificado, null, null, null, false);
         }
 
         /// <summary>
