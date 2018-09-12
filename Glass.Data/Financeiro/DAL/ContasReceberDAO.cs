@@ -6971,12 +6971,12 @@ namespace Glass.Data.DAL
                             var valor = conta.ValorVec + (!FinanceiroConfig.Cartao.CobrarJurosCartaoCliente ? valorJurosCartao : 0);
 
                             // Gera a movimentação bancária
-                            GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, conta.IdConta.Value, dataMov, tipoMov, valor);
+                            GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, conta.IdConta.Value, dataMov, tipoMov, valor, conta.Obs);
 
                             // Gera a movimentação de juros
                             if (valorJurosCartao > 0)
                             {
-                                GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, FinanceiroConfig.PlanoContaJurosCartao, dataMov, tipoMovJuros, valorJurosCartao);
+                                GerarMovimentacaoBancariaContaReceber(transaction, idContaR, conta, FinanceiroConfig.PlanoContaJurosCartao, dataMov, tipoMovJuros, valorJurosCartao, conta.Obs);
                             }
                         }
 
@@ -7010,12 +7010,12 @@ namespace Glass.Data.DAL
         /// Gera a movimentação bancaria pela conta a receber.
         /// </summary>
         private void GerarMovimentacaoBancariaContaReceber(GDASession sessao, uint idContaR, ContasReceber conta, uint planoConta,
-            DateTime dataMov, int tipoMov, decimal valor)
+            DateTime dataMov, int tipoMov, decimal valor, string obs)
         {
             /* Chamado 64406. */
             // Gera a movimentação bancária
             ContaBancoDAO.Instance.MovContaContaR(sessao, conta.IdContaBanco.Value, planoConta, (int)UserInfo.GetUserInfo.IdLoja, null, null, idContaR, null,
-                conta.IdCliente, tipoMov, valor, dataMov, (uint?)conta.IdCartaoNaoIdentificado);
+                conta.IdCliente, tipoMov, valor, dataMov, (uint?)conta.IdCartaoNaoIdentificado, obs);
         }
 
         private void MovimentaCaixaGeralDiario(GDASession sessao, bool isCaixaDiario, ContasReceber conta, DateTime dataMov, int tipoMov)
