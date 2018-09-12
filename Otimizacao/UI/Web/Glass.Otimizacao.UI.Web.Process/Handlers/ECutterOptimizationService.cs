@@ -12,45 +12,34 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
     /// </summary>
     public class ECutterOptimizationService : IHttpHandler
     {
-        #region Propriedades
+        bool IHttpHandler.IsReusable => false;
 
-        /// <summary>
-        /// Identifica se a requisição pode ser reutilizada.
-        /// </summary>
-        public bool IsReusable
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// Fluxo de negócio da otimização.
-        /// </summary>
         private Negocios.IOtimizacaoFluxo OtimizacaoFluxo =>
             Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<Otimizacao.Negocios.IOtimizacaoFluxo>();
 
-        /// <summary>
-        /// Obtém o autenticador do protocolo do eCutter.
-        /// </summary>
         private eCutter.IAutenticadorProtocolo Autenticator =>
             Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<eCutter.IAutenticadorProtocolo>();
 
-        /// <summary>
-        /// Obtém o repositório das soluções de otimização.
-        /// </summary>
         private IRepositorioSolucaoOtimizacao RepositorioSolucaoOtimizacao =>
             Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<IRepositorioSolucaoOtimizacao>();
 
-        #endregion
+        private static string ObterCaminhoArquivoPlanoOtimizacao(string id)
+        {
+            var nome = "Exp_" + id.PadLeft(10, '0');
 
-        #region Métodos Privados
+            var arquivo = System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, string.Format("{0}.zip", nome));
 
-        /// <summary>
-        /// Envia para o cliente a reposta de página não encontrada.
-        /// </summary>
-        /// <param name="context"></param>
+            if (!System.IO.File.Exists(arquivo))
+            {
+                arquivo = System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, string.Format("{0}.asc", nome));
+            }
+
+            return arquivo;
+        }
+
         private void NaoEncontrado(HttpContext context)
         {
             context.Response.StatusCode = 404;
@@ -59,10 +48,6 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.End();
         }
 
-        /// <summary>
-        /// Envia para o cliente a resposta de requisição não autorizada.
-        /// </summary>
-        /// <param name="context"></param>
         private void NaoAutorizado(HttpContext context)
         {
             context.Response.StatusCode = 401;
@@ -71,119 +56,119 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.End();
         }
 
-        /// <summary>
-        /// Recupera o nome do arquivo do plano de otimização.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        private static string ObterCaminhoArquivoPlanoOtimizacao(string id)
-        {
-            var nome = "Exp_" + id.PadLeft(10, '0');
-
-            var arquivo = System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, string.Format("{0}.zip", nome));
-
-            if (!System.IO.File.Exists(arquivo))
-                arquivo = System.IO.Path.Combine(Data.Helper.Utils.GetArquivoOtimizacaoPath, string.Format("{0}.asc", nome));
-
-            return arquivo;
-        }
-
-        /// <summary>
-        /// Importa o arquivo do OptyWay.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="token">Token da autenticação.</param>
-        /// <param name="arquivo"></param>
-        /// <returns></returns>
         private eCutter.ResultadoSalvarTransacao Importar(HttpContext context, string token, IEnumerable<IArquivoSolucaoOtimizacao> arquivos)
         {
             if (!arquivos.Any())
-                return new eCutter.ResultadoSalvarTransacao(false, null, new[]
-                {
-                    new eCutter.MensagemTransacao("Falha", "Não foi encontrado o arquivo de importação.", eCutter.TipoMensagemTransacao.Erro)
-                });
+            {
+                return new eCutter.ResultadoSalvarTransacao(
+                    false,
+                    null,
+                    new[]
+                    {
+                        new eCutter.MensagemTransacao("Falha", "Não foi encontrado o arquivo de importação.", eCutter.TipoMensagemTransacao.Erro),
+                    });
+            }
 
             var idArquivoOtimizacao = 0;
             if (!int.TryParse(context.Request["id"], out idArquivoOtimizacao))
-                return new eCutter.ResultadoSalvarTransacao(false, null, new[]
-                {
-                    new eCutter.MensagemTransacao("Falha", "Não foi encontrado o identificador do arquivo de otimização.", eCutter.TipoMensagemTransacao.Erro)
-                });
+            {
+                return new eCutter.ResultadoSalvarTransacao(
+                    false,
+                    null,
+                    new[]
+                    {
+                        new eCutter.MensagemTransacao("Falha", "Não foi encontrado o identificador do arquivo de otimização.", eCutter.TipoMensagemTransacao.Erro),
+                    });
+            }
 
             try
             {
-                var importacao = OtimizacaoFluxo.Importar(idArquivoOtimizacao, arquivos);
+                var importacao = this.OtimizacaoFluxo.Importar(idArquivoOtimizacao, arquivos);
 
                 if (importacao == null)
                 {
-                    return new eCutter.ResultadoSalvarTransacao(true, null, new[]
-                    {
-                        new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao)
-                    });
+                    return new eCutter.ResultadoSalvarTransacao(
+                        true,
+                        null,
+                        new[]
+                        {
+                            new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao),
+                        });
                 }
 
                 // Verifica se nenhum plano de corte foi impotado
                 if (importacao.Solucao != null && !importacao.Solucao.PlanosOtimizacao.Any(f => f.PlanosCorte.Any()))
                 {
-                    return new eCutter.ResultadoSalvarTransacao(true, null, new[]
-                    {
-                        new eCutter.MensagemTransacao("Otimização incompleta", $"Nenhum plano de corte foi otimizado.", eCutter.TipoMensagemTransacao.Erro)
-                    });
+                    return new eCutter.ResultadoSalvarTransacao(
+                        true,
+                        null,
+                        new[]
+                        {
+                            new eCutter.MensagemTransacao("Otimização incompleta", $"Nenhum plano de corte foi otimizado.", eCutter.TipoMensagemTransacao.Erro),
+                        });
                 }
 
-                var redirectUrl = "";
+                var redirectUrl = string.Empty;
                 var url = context.Request.Url.AbsoluteUri;
-                //url = url.Substring(0, url.LastIndexOf("handlers/", StringComparison.InvariantCultureIgnoreCase));
 
                 if (importacao.Solucao != null)
+                {
                     redirectUrl = "../Listas/LstEtiquetaImprimir.aspx?idsolucaootimizacao=" + importacao.Solucao.IdSolucaoOtimizacao;
-                
+                }
                 else
+                {
                     redirectUrl = "../Listas/LstEtiquetaImprimir.aspx?idarquivootimizacao=" + importacao.IdArquivoOtimizacao;
+                }
 
                 if (!string.IsNullOrEmpty(context.Request.QueryString["token"]))
+                {
                     // Adiciona no resultado o token correto
                     url = url.Replace($"token={context.Request.QueryString["Token"]}", $"token={token}");
+                }
                 else
+                {
                     url += $"token={token}";
+                }
 
                 url += $"&confirm=true&redirect={HttpUtility.UrlEncode(redirectUrl)}";
 
-                return new eCutter.ResultadoSalvarTransacao(true, new Uri(url), new[]
-                {
-                    new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao)
-                });
+                return new eCutter.ResultadoSalvarTransacao(
+                    true,
+                    new Uri(url),
+                    new[]
+                    {
+                        new eCutter.MensagemTransacao("Sucesso", $"Otimização salva com sucesso.", eCutter.TipoMensagemTransacao.Informacao),
+                    });
             }
             catch (Exception ex)
             {
-                return new eCutter.ResultadoSalvarTransacao(false, null, new[]
-                {
-                    new eCutter.MensagemTransacao("Falha", $"Ocorreu uma falha na importação do resultado da otimização pelo WebGlass. {ex.Message}", eCutter.TipoMensagemTransacao.Erro)
-                });
+                return new eCutter.ResultadoSalvarTransacao(
+                    false,
+                    null,
+                    new[]
+                    {
+                        new eCutter.MensagemTransacao(
+                            "Falha",
+                            $"Ocorreu uma falha na importação do resultado da otimização pelo WebGlass. {ex.Message}",
+                            eCutter.TipoMensagemTransacao.Erro),
+                    });
             }
         }
 
-        /// <summary>
-        /// Realiza a autenticação.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="usuario"></param>
-        /// <param name="senha"></param>
-        /// <param name="token">Token da autenticação.</param>
         private void Autenticar(HttpContext context, string usuario, string senha, out string token)
         {
             eCutter.AutenticacaoProtocolo autenticacao;
 
             try
             {
-                autenticacao = Autenticator.Autenticar(usuario, senha);
+                autenticacao = this.Autenticator.Autenticar(usuario, senha);
             }
             catch (Exception ex)
             {
                 autenticacao = new eCutter.AutenticacaoProtocolo
                 {
                     Sucesso = false,
-                    Mensagem = ex.Message
+                    Mensagem = ex.Message,
                 };
             }
 
@@ -194,11 +179,12 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 token = System.Web.Security.FormsAuthentication.Encrypt(ticket);
             }
 
-            var writer = XmlWriter.Create(context.Response.OutputStream,
-                    new XmlWriterSettings
-                    {
-                        CloseOutput = false
-                    });
+            var writer = XmlWriter.Create(
+                context.Response.OutputStream,
+                new XmlWriterSettings
+                {
+                    CloseOutput = false,
+                });
 
             writer.WriteStartElement("Authentication");
             Otimizacao.eCutter.Serializador.Serializar(writer, autenticacao, token);
@@ -207,12 +193,6 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             context.Response.Flush();
         }
 
-        /// <summary>
-        /// Verifica os dados de autenticação.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="token">Token da autenticação.</param>
-        /// <returns></returns>
         private bool VerificarAutenticacao(HttpContext context, out string token)
         {
             var requestType = context.Request.RequestType?.ToLower();
@@ -223,7 +203,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 var usuario = context.Request.Form["username"];
                 var senha = context.Request.Form["password"];
 
-                Autenticar(context, usuario, senha, out token);
+                this.Autenticar(context, usuario, senha, out token);
                 return false;
             }
             else
@@ -231,12 +211,14 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 token = context.Request.Headers["x-token"];
 
                 if (string.IsNullOrEmpty(token))
+                {
                     token = context.Request["token"];
+                }
 
                 // Verifica se o token de segurança foi informado
                 if (string.IsNullOrEmpty(token))
                 {
-                    NaoAutorizado(context);
+                    this.NaoAutorizado(context);
                     return false;
                 }
 
@@ -248,7 +230,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     // Verifica se o ticket expirou
                     if (ticket.Expired)
                     {
-                        NaoAutorizado(context);
+                        this.NaoAutorizado(context);
                         return false;
                     }
                     else if (context.Request.Form["operation"] == "check-token")
@@ -260,7 +242,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 }
                 catch
                 {
-                    NaoAutorizado(context);
+                    this.NaoAutorizado(context);
                     return false;
                 }
             }
@@ -268,31 +250,25 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             return true;
         }
 
-        #endregion
-
-        #region Métodos Públicos
-
-        /// <summary>
-        /// Processa a requisição.
-        /// </summary>
-        /// <param name="context"></param>
-        public void ProcessRequest(HttpContext context)
+        void IHttpHandler.ProcessRequest(HttpContext context)
         {
             var requestType = context.Request.RequestType?.ToLower();
 
             var id = context.Request["id"];
-            var tipoId = context.Request["idtype"];
 
             // Verifica foi informado o identificador do plano de otimização
             if (string.IsNullOrEmpty(id))
             {
-                NaoEncontrado(context);
+                this.NaoEncontrado(context);
                 return;
             }
 
             string token;
-            if (!VerificarAutenticacao(context, out token))
+
+            if (!this.VerificarAutenticacao(context, out token))
+            {
                 return;
+            }
 
             if (requestType == "post")
             {
@@ -308,16 +284,19 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     var arquivos = new List<IArquivoSolucaoOtimizacao>();
 
                     for (var i = 0; i < context.Request.Files.Count; i++)
+                    {
                         arquivos.Add(new ConteudoArquivoOtimizacao(context.Request.Files[i]));
+                    }
 
-                    resultado = Importar(context, token, arquivos);
+                    resultado = this.Importar(context, token, arquivos);
                 }
 
-                var writer = XmlWriter.Create(context.Response.OutputStream,
-                   new XmlWriterSettings
-                   {
-                       CloseOutput = false
-                   });
+                var writer = XmlWriter.Create(
+                    context.Response.OutputStream,
+                    new XmlWriterSettings
+                    {
+                        CloseOutput = false,
+                    });
 
                 writer.WriteStartElement("ProtocolTransactionOperationResult");
                 eCutter.Serializador.Serializar(writer, resultado);
@@ -327,15 +306,17 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 context.Response.Flush();
                 context.Response.End();
             }
+
             // Verifica se é uma requisição para recuperar o estoque de chapas
             else if (!string.IsNullOrEmpty(context.Request["sheetstock"]))
             {
-                var sessaoOtimizacao = OtimizacaoFluxo.ObterSessaoOtimizacao(int.Parse(id));
+                var sessaoOtimizacao = this.OtimizacaoFluxo.ObterSessaoOtimizacao(int.Parse(id));
 
-                var writer = System.Xml.XmlWriter.Create(context.Response.OutputStream,
+                var writer = System.Xml.XmlWriter.Create(
+                    context.Response.OutputStream,
                     new System.Xml.XmlWriterSettings
                     {
-                        CloseOutput = false
+                        CloseOutput = false,
                     });
 
                 writer.WriteStartElement("SheetStock");
@@ -344,35 +325,37 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                 writer.Flush();
                 context.Response.Flush();
             }
+
             // Verifica se é uma requisição para recuperar as peças padrão
             else if (!string.IsNullOrEmpty(context.Request["standardpieces"]))
             {
-                var sessaoOtimizacao = OtimizacaoFluxo.ObterSessaoOtimizacao(int.Parse(id));
+                var sessaoOtimizacao = this.OtimizacaoFluxo.ObterSessaoOtimizacao(int.Parse(id));
 
-                var writer = System.Xml.XmlWriter.Create(context.Response.OutputStream,
-                   new System.Xml.XmlWriterSettings
-                   {
-                       CloseOutput = false
-                   });
+                var writer = System.Xml.XmlWriter.Create(
+                    context.Response.OutputStream,
+                    new System.Xml.XmlWriterSettings
+                    {
+                        CloseOutput = false,
+                    });
 
                 eCutter.Serializador.Serializar(writer, sessaoOtimizacao.ObterPecasPadrao());
                 writer.Flush();
                 context.Response.Flush();
-
             }
+
             // Verifica se foi informado o arquivo para download
             else if (!string.IsNullOrEmpty(context.Request["optimizationplan"]))
             {
                 var idArquivoOtimizacao = int.Parse(id);
-                var solucaoOtimizacao = OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(idArquivoOtimizacao);
-                
+                var solucaoOtimizacao = this.OtimizacaoFluxo.ObterSolucaoOtimizacaoPelaArquivoOtimizacao(idArquivoOtimizacao);
+
                 // O nome da solução será gerado com base no identificador do arquivo de otimização
                 // codificado sobre a base 32.
                 var nomeSolucaoOtimizacao = Data.Helper.Utils.BytesToBase32(System.BitConverter.GetBytes(idArquivoOtimizacao).Take(3).ToArray());
 
                 if (solucaoOtimizacao != null)
                 {
-                    var arquivo = RepositorioSolucaoOtimizacao.ObterArquivos(solucaoOtimizacao)
+                    var arquivo = this.RepositorioSolucaoOtimizacao.ObterArquivos(solucaoOtimizacao)
                         .FirstOrDefault(f => StringComparer.InvariantCultureIgnoreCase.Equals(System.IO.Path.GetExtension(f.Nome), ".optsln"));
 
                     if (arquivo != null)
@@ -390,13 +373,17 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
 
                             var outputStream = context.Response.OutputStream;
                             while ((read = stream.Read(buffer, 0, buffer.Length)) > 0)
+                            {
                                 outputStream.Write(buffer, 0, read);
+                            }
 
                             outputStream.Flush();
                         }
                     }
                     else
-                        NaoEncontrado(context);
+                    {
+                        this.NaoEncontrado(context);
+                    }
                 }
                 else
                 {
@@ -410,7 +397,7 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                     }
                     else
                     {
-                        NaoEncontrado(context);
+                        this.NaoEncontrado(context);
                     }
                 }
             }
@@ -421,13 +408,16 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
             }
             else
             {
-                var possuiSolucaoOtimizacao = OtimizacaoFluxo.PossuiSolucaoOtimizacao(int.Parse(id));
+                var possuiSolucaoOtimizacao = this.OtimizacaoFluxo.PossuiSolucaoOtimizacao(int.Parse(id));
 
                 string formato = null;
 
                 if (possuiSolucaoOtimizacao)
+                {
                     formato = "eCutter";
+                }
                 else
+                {
                     switch (System.IO.Path.GetExtension(ObterCaminhoArquivoPlanoOtimizacao(id))?.ToLower())
                     {
                         case ".zip":
@@ -437,74 +427,53 @@ namespace Glass.Otimizacao.UI.Web.Process.Handlers
                             formato = "Optway ASCII Import File";
                             break;
                     }
+                }
 
-                var mergeSheetStock = 
+                var mergeSheetStock =
                     Configuracoes.OtimizacaoConfig.TipoEstoqueChapas == Data.Helper.DataSources.TipoEstoqueChapasOtimizacaoEnum.Externo &&
                     !possuiSolucaoOtimizacao;
 
                 var serializer = new System.Xml.Serialization.XmlSerializer(typeof(eCutter.ProtocolConfiguration));
-                serializer.Serialize(context.Response.OutputStream, 
+                serializer.Serialize(
+                    context.Response.OutputStream,
                     new eCutter.ProtocolConfiguration(context.Request.Url, id, formato)
                     {
                         IsReadOnly = possuiSolucaoOtimizacao,
                         MergeSheetStock = mergeSheetStock,
-                        ConsolidateSheetStock = mergeSheetStock
+                        ConsolidateSheetStock = mergeSheetStock,
                     });
 
                 context.Response.Flush();
             }
-
         }
-
-        #endregion
-
-        #region Tipos Aninhados
 
         /// <summary>
         /// Implementação que encapsula o arquivo postado com um conteúdo
         /// do arquivo de otimização.
         /// </summary>
-        class ConteudoArquivoOtimizacao : IArquivoSolucaoOtimizacao
+        private class ConteudoArquivoOtimizacao : IArquivoSolucaoOtimizacao
         {
-            #region Variáveis Locais
-
-            private readonly HttpPostedFile _arquivo;
-
-            #endregion
-
-            #region Propriedades
+            private readonly HttpPostedFile arquivo;
 
             /// <summary>
-            /// Nome do arquivo.
+            /// Obtém o nome do arquivo.
             /// </summary>
-            public string Nome => _arquivo.FileName;
-
-            #endregion
-
-            #region Construtores
+            public string Nome => arquivo.FileName;
 
             /// <summary>
-            /// Construtor padrão.
+            /// Initializes a new instance of the <see cref="ConteudoArquivoOtimizacao"/> class.
             /// </summary>
-            /// <param name="arquivo"></param>
+            /// <param name="arquivo">Arquivo postado.</param>
             public ConteudoArquivoOtimizacao(HttpPostedFile arquivo)
             {
-                _arquivo = arquivo;
+                this.arquivo = arquivo;
             }
-
-            #endregion
-
-            #region Métodos Públicos
 
             /// <summary>
             /// Abre o conteúdo do arquivo.
             /// </summary>
-            /// <returns></returns>
-            public System.IO.Stream Abrir() => _arquivo.InputStream;
-
-            #endregion
+            /// <returns>Stream do contéudo do arquivo.</returns>
+            public System.IO.Stream Abrir() => this.arquivo.InputStream;
         }
-
-        #endregion
     }
 }
