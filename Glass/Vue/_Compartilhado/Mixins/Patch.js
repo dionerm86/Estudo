@@ -33,13 +33,19 @@ Mixins.Patch = {
           continue;
         }
 
-        if (typeof alterado[campo] === 'object' && !verificarEVazio(alterado[campo]) && !(alterado[campo] instanceof Date || Array.isArray(alterado[campo]))) {
-          var alteracoes = this.patch(alterado[campo], original[campo]);
-          if (Object.keys(alteracoes).length > 0) {
-            destino[campo] = alteracoes;
+        if (typeof alterado[campo] === 'object' && !verificarEVazio(alterado[campo]) && !(alterado[campo] instanceof Date)) {
+          if (Array.isArray(alterado[campo])) {
+            if (!Mixins.Comparar.methods.equivalentes(original[campo], alterado[campo])) {
+              destino[campo] = Mixins.Clonar.methods.clonar(alterado[campo]);
+            }
+          } else {
+            var alteracoes = this.patch(alterado[campo], original[campo]);
+            if (Object.keys(alteracoes).length > 0) {
+              destino[campo] = alteracoes;
+            }
           }
         } else {
-          destino[campo] = Mixins.Clonar.methods.clonar(alterado[campo]);
+          destino[campo] = alterado[campo];
         }
       }
 
