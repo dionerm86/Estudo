@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
         [SwaggerResponse(201, "Ambiente inserido no pedido.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo idPedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult Cadastrar(int idPedido, [FromBody] CadastroAtualizacaoDto<ProdutoMaoDeObraDto> dadosParaCadastro)
+        public IHttpActionResult Cadastrar(int idPedido, [FromBody] CadastroAtualizacaoDto dadosParaCadastro)
         {
             using (var sessao = new GDATransaction())
             {

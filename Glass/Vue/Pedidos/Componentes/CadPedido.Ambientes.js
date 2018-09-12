@@ -58,7 +58,7 @@ Vue.component('pedido-ambientes', {
       dadosValidacaoProduto: {},
       processoAtual: null,
       aplicacaoAtual: null,
-      exibir: false
+      numeroItensLista: 0
     };
   },
 
@@ -84,7 +84,7 @@ Vue.component('pedido-ambientes', {
      * @param {!number} numeroItens O número de itens que foram carregados no controle interno.
      */
     listaAtualizada: function(numeroItens) {
-      this.exibir = numeroItens > 0;
+      this.numeroItensLista = numeroItens;
     },
 
     /**
@@ -348,6 +348,15 @@ Vue.component('pedido-ambientes', {
         idPedido: this.pedido.id,
         refresh: this.refresh_
       };
+    },
+
+    /**
+     * Propriedade computada que determina a exibição da seção com os ambientes.
+     * @type {boolean}
+     */
+    exibir: function () {
+      return this.numeroItensLista > 0
+        || (this.configuracoes && this.configuracoes.exibirAmbientes);
     }
   },
 

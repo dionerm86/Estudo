@@ -3,7 +3,6 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas;
-using Glass.API.Backend.Models.Pedidos.AmbientesPedido.CadastroAtualizacao;
 using Glass.Data.DAL;
 using Glass.Data.Model;
 using Newtonsoft.Json;
@@ -15,7 +14,7 @@ namespace Glass.API.Backend.Models.Pedidos.AmbientesPedido.Lista
     /// Classe que encapsula os dados de um ambiente de pedido.
     /// </summary>
     [DataContract(Name = "Ambiente")]
-    public class ListaDto : CadastroAtualizacaoDto<ProdutoMaoDeObraDto>
+    public class ListaDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -94,6 +93,41 @@ namespace Glass.API.Backend.Models.Pedidos.AmbientesPedido.Lista
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o nome do ambiente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("nome")]
+        public string Nome { get; set; }
+
+        /// <summary>
+        /// Obtém ou define os dados do produto mão-de-obra, se existir.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("produtoMaoDeObra")]
+        public ProdutoMaoDeObraDto ProdutoMaoDeObra { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a descrição do ambiente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("descricao")]
+        public string Descricao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o acréscimo aplicado ao ambiente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("acrescimo")]
+        public AcrescimoDescontoDto Acrescimo { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o desconto aplicado ao ambiente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("desconto")]
+        public AcrescimoDescontoDto Desconto { get; set; }
 
         private bool AmbienteEMaoDeObra(AmbientePedido ambientePedido)
         {

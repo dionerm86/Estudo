@@ -31,7 +31,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
         [SwaggerResponse(202, "Ambiente atualizado no pedido.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido dos campos idPedido ou id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Pedido ou ambiente não encontrados.", Type = typeof(MensagemDto))]
-        public IHttpActionResult Atualizar(int idPedido, int id, [FromBody] CadastroAtualizacaoDto<ProdutoMaoDeObraDto> dadosParaAtualizacao)
+        public IHttpActionResult Atualizar(int idPedido, int id, [FromBody] CadastroAtualizacaoDto dadosParaAtualizacao)
         {
             using (var sessao = new GDATransaction())
             {

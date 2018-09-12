@@ -13,8 +13,7 @@ namespace Glass.API.Backend.Models.Pedidos.AmbientesPedido.CadastroAtualizacao
     /// Classe que encapsula os dados para cadastro ou atualização de ambiente.
     /// </summary>
     [DataContract(Name = "CadastroAtualizacao")]
-    public class CadastroAtualizacaoDto<T> : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto<T>>
-        where T : BaseProdutoMaoDeObraDto<T>
+    public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
     {
         /// <summary>
         /// Obtém ou define o nome do ambiente.
@@ -32,7 +31,7 @@ namespace Glass.API.Backend.Models.Pedidos.AmbientesPedido.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("produtoMaoDeObra")]
-        public T ProdutoMaoDeObra
+        public ProdutoMaoDeObraDto ProdutoMaoDeObra
         {
             get { return this.ObterValor(c => c.ProdutoMaoDeObra); }
             set { this.AdicionarValor(c => c.ProdutoMaoDeObra, value); }

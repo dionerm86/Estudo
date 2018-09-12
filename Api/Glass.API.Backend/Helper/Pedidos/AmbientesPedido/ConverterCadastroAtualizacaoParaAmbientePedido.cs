@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Helper.Pedidos.AmbientesPedido
     /// </summary>
     internal class ConverterCadastroAtualizacaoParaAmbientePedido
     {
-        private readonly CadastroAtualizacaoDto<ProdutoMaoDeObraDto> cadastro;
+        private readonly CadastroAtualizacaoDto cadastro;
         private readonly Lazy<AmbientePedido> ambientePedido;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Pedidos.AmbientesPedido
         /// </summary>
         /// <param name="cadastro">O DTO de cadastro, enviado para o endpoint.</param>
         /// <param name="atual">O ambiente de pedido atual (opcional), para que sejam aproveitados os valores, se necessário.</param>
-        public ConverterCadastroAtualizacaoParaAmbientePedido(CadastroAtualizacaoDto<ProdutoMaoDeObraDto> cadastro, AmbientePedido atual = null)
+        public ConverterCadastroAtualizacaoParaAmbientePedido(CadastroAtualizacaoDto cadastro, AmbientePedido atual = null)
         {
             this.cadastro = cadastro;
             this.ambientePedido = new Lazy<AmbientePedido>(() =>
@@ -44,10 +44,10 @@ namespace Glass.API.Backend.Helper.Pedidos.AmbientesPedido
 
         private void ConverterDtoParaModelo(AmbientePedido destino)
         {
-            destino.Acrescimo = this.cadastro.Acrescimo != null ? this.cadastro.Acrescimo.Valor : destino.Acrescimo;
-            destino.TipoAcrescimo = this.cadastro.Acrescimo != null ? this.cadastro.Acrescimo.Tipo : destino.TipoAcrescimo;
-            destino.Desconto = this.cadastro.Desconto != null ? this.cadastro.Desconto.Valor : destino.Desconto;
-            destino.TipoDesconto = this.cadastro.Desconto != null ? this.cadastro.Desconto.Tipo : destino.TipoDesconto;
+            destino.Acrescimo = this.cadastro.Acrescimo?.Valor ?? destino.Acrescimo;
+            destino.TipoAcrescimo = this.cadastro.Acrescimo?.Tipo ?? destino.TipoAcrescimo;
+            destino.Desconto = this.cadastro.Desconto?.Valor ?? destino.Desconto;
+            destino.TipoDesconto = this.cadastro.Desconto?.Tipo ?? destino.TipoDesconto;
             destino.Descricao = this.cadastro.ObterValorNormalizado(c => c.Descricao, destino.Descricao);
             destino.Ambiente = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Ambiente);
 
