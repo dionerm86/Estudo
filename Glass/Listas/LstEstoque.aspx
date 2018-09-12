@@ -12,7 +12,7 @@
         <section>
             <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum estoque de produto encontrado." :numero-registros="20" :linha-editando="numeroLinhaEdicao">
                 <template slot="cabecalho">
-                    <th></th>
+                    <th v-if="!insercaoRapidaEstoque"></th>
                     <th>
                         <a href="#" @click.prevent="ordenar('codigoInternoProduto')">Cód.</a>
                     </th>
@@ -55,7 +55,7 @@
                     <th v-if="exibirEstoqueFiscal"></th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
-                    <td style="white-space: nowrap">
+                    <td style="white-space: nowrap" v-if="!insercaoRapidaEstoque">
                         <a href="#" @click.prevent="editar(item, index)" title="Editar" v-if="item.permissoes.editar && numeroLinhaEdicao === -1">
                             <img border="0" src="../Images/Edit.gif">
                         </a>
@@ -75,10 +75,24 @@
                             {{ item.quantidadeLiberacao }}
                         </a>
                     </td>
-                    <td v-if="!exibirEstoqueFiscal">{{ item.descricaoQuantidadeEstoque }}</td>
+                    <td v-if="!exibirEstoqueFiscal">
+                        <label v-if="!insercaoRapidaEstoque">{{ item.descricaoQuantidadeEstoque }}</label>
+                        <span v-else>
+                            <input type="number" @change.prevent="atualizarCampoUnico(item)" v-model.number="item.quantidadeEstoque" style="width: 60px" />
+                            <img border="0" title="Atualizando..." src="../Images/load.gif" style="height: 16px; width:16px" v-if="item.idProduto == idProdutoEmAtualizacao" />
+                            <img border="0" title="Atualizado" src="../Images/check.gif" style="height: 16px; width:16px" v-else />
+                        </span>
+                    </td>
                     <td v-if="!exibirEstoqueFiscal">{{ item.descricaoEstoqueDisponivel }}</td>
                     <td v-if="!exibirEstoqueFiscal">{{ item.quantidadeDefeito }}</td>
-                    <td v-if="exibirEstoqueFiscal">{{ item.quantidadeEstoqueFiscal }}</td>
+                    <td v-if="exibirEstoqueFiscal">
+                        <label v-if="!insercaoRapidaEstoque">{{ item.quantidadeEstoqueFiscal }}</label>
+                        <span v-else>
+                            <input type="number" @change.prevent="atualizarCampoUnico(item)" v-model.number="item.quantidadeEstoqueFiscal" style="width: 60px" />
+                            <img border="0" title="Atualizando..." src="../Images/load.gif" style="height: 16px; width:16px" v-if="item.idProduto == idProdutoEmAtualizacao" />
+                            <img border="0" title="Atualizado" src="../Images/check.gif" style="height: 16px; width:16px" v-else />
+                        </span>
+                    </td>
                     <td v-if="exibirEstoqueFiscal">{{ item.quantidadePosseTerceiros }}</td>
                     <td v-if="exibirEstoqueFiscal">{{ item.descricaoTipoTerceiro }} {{ item.nomeTerceiro }}</td>
                     <td v-if="exibirEstoqueFiscal" style="white-space: nowrap">
@@ -97,6 +111,10 @@
                     <td>{{ estoqueProdutoAtual.codigoInternoProduto }}</td>
                     <td>{{ estoqueProdutoAtual.descricaoProduto }}</td>
                     <td>{{ estoqueProdutoAtual.descricaoGrupoProduto }} - {{ estoqueProdutoAtual.descricaoSubgrupoProduto }}</td>
+                    <td v-if="!exibirEstoqueFiscal">
+                        <input type="number" v-model.number="estoqueProduto.estoqueMinimo" style="width: 60px" />
+                        {{ estoqueProdutoAtual.descricaoTipoCalculo }}
+                    </td>
                     <td v-if="!configuracoes.naoVendeVidro && !exibirEstoqueFiscal">
                         <input type="number" v-model.number="estoqueProduto.estoqueM2" style="width: 60px" />
                         {{ estoqueProdutoAtual.descricaoTipoCalculo }}
@@ -132,6 +150,13 @@
             </lista-paginada>
         </section>
         <section class="links">
+            <div v-if="configuracoes.alterarEstoqueManualmente">
+                <span>
+                    <a href="#" @click.prevent="ativarDesativarInsercaoRapidaEstoque()" title="Inserção rápida">
+                        <img src="../Images/addMany.gif"> Inserção rápida de estoque
+                    </a>
+                </span>
+            </div>
             <div>
                 <span>
                     <a href="#" @click.prevent="abrirListaEstoquesProduto(false)">

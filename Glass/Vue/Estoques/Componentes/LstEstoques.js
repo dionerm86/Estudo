@@ -12,7 +12,9 @@ const app = new Vue({
     numeroLinhaEdicao: -1,
     estoqueProduto: {},
     estoqueProdutoAtual: {},
-    estoqueProdutoOriginal: {}
+    estoqueProdutoOriginal: {},
+    insercaoRapidaEstoque: false,
+    idProdutoEmAtualizacao: null
   },
 
   methods: {
@@ -123,6 +125,46 @@ const app = new Vue({
         this.formatarFiltros_() + '&exportarExcel=' + exportarExcel;
 
       this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Ativa/Desativa a inserção rápida de estoque.
+     */
+    ativarDesativarInsercaoRapidaEstoque: function () {
+      this.cancelar();
+      this.insercaoRapidaEstoque = !this.insercaoRapidaEstoque;
+    },
+
+    /**
+     * Atualiza o estoque do produto ("Inserção rápida de estoque").
+     * @param {Object} estoqueProduto O item que será editado.
+     */
+    atualizarCampoUnico: function (item) {
+      var vm = this;
+      
+      this.idProdutoEmAtualizacao = item.idProduto;
+
+      if (this.exibirEstoqueFiscal) {
+        Servicos.Estoques.atualizarEstoqueFiscalCampoUnico(item.idProduto, item.idLoja, item.quantidadeEstoqueFiscal)
+          .then(function (resposta) {
+            vm.idProdutoEmAtualizacao = null;
+          })
+          .catch(function (erro) {
+            if (erro && erro.mensagem) {
+              vm.exibirMensagem('Erro', erro.mensagem);
+            }
+          });
+      } else {
+        Servicos.Estoques.atualizarEstoqueRealCampoUnico(item.idProduto, item.idLoja, item.quantidadeEstoque)
+          .then(function (resposta) {
+            vm.idProdutoEmAtualizacao = null;
+          })
+          .catch(function (erro) {
+            if (erro && erro.mensagem) {
+              vm.exibirMensagem('Erro', erro.mensagem);
+            }
+          });
+      }
     },
 
     /**
