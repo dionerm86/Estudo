@@ -381,7 +381,7 @@ namespace Glass.Data.DAL
 
                     if (cxDiario)
                         CaixaDiarioDAO.Instance.MovCxObra(sessao, UserInfo.GetUserInfo.IdLoja, idCliente, idObra, 1, creditoGerado, 0,
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false, null);
                     else
                         CaixaGeralDAO.Instance.MovCxObra(sessao, idObra, idCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), 1,
                             creditoGerado, 0, null, false, null, null);
@@ -468,7 +468,7 @@ namespace Glass.Data.DAL
                     if (cxDiario)
                     {
                         CaixaDiarioDAO.Instance.MovCxObra(sessao, usuarioLogado.IdLoja, obra.IdCliente, idObra, 1, creditoGerado, 0,
-                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
+                            UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false, null);
                     }
                     else
                     {
@@ -1094,7 +1094,7 @@ namespace Glass.Data.DAL
                 if (recebimentoCaixaDiario)
                 {
                     CaixaDiarioDAO.Instance.MovCxObra(session, (uint)idLojaRecebimento, obra.IdCliente, obra.IdObra, 1, retorno.creditoGerado, 0,
-                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false);
+                        UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.CreditoObraGerado), null, null, false, null);
                 }
                 else
                 {
