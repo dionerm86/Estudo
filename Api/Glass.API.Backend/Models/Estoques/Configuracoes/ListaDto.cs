@@ -25,6 +25,7 @@ namespace Glass.API.Backend.Models.Estoques.Configuracoes
             this.MarcarSaidaEstoqueAoLiberarPedido = Liberacao.Estoque.SaidaEstoqueAoLiberarPedido;
             this.MarcarSaidaEstoqueAutomaticaAoConfirmar = FinanceiroConfig.Estoque.SaidaEstoqueAutomaticaAoConfirmar;
             this.AlterarEstoqueManualmente = Config.PossuiPermissao(Config.FuncaoMenuEstoque.AlterarEstoqueManualmente);
+            this.IdLojaUsuario = (int)UserInfo.GetUserInfo.IdLoja;
         }
 
         /// <summary>
@@ -61,5 +62,12 @@ namespace Glass.API.Backend.Models.Estoques.Configuracoes
         [DataMember]
         [JsonProperty("alterarEstoqueManualmente")]
         public bool AlterarEstoqueManualmente { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o identificador da loja do usuário logado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idLojaUsuario")]
+        public int IdLojaUsuario { get; set; }
     }
 }

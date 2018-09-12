@@ -6196,9 +6196,9 @@ namespace Glass.UI.Web.Utils
                     var qtdeAlterar = saldo - prod.Value;
 
                     if (qtdeAlterar > 0)
-                        MovEstoqueDAO.Instance.BaixaEstoqueManual((uint)prod.Key, 1, qtdeAlterar, null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
+                        MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao((uint)prod.Key, 1, qtdeAlterar, null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
                     else if (qtdeAlterar < 0)
-                        MovEstoqueDAO.Instance.CreditaEstoqueManual((uint)prod.Key, 1, Math.Abs(qtdeAlterar), null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
+                        MovEstoqueDAO.Instance.CreditaEstoqueManualComTransacao((uint)prod.Key, 1, Math.Abs(qtdeAlterar), null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
 
                 }
                 catch (Exception ex)

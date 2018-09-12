@@ -27,6 +27,7 @@ namespace Glass.API.Backend.Models.Estoques.Lista
             this.CodigoInternoProduto = estoqueProduto.CodInternoProd;
             this.DescricaoProduto = estoqueProduto.DescrProduto;
             this.DescricaoGrupoProduto = estoqueProduto.DescrGrupoProd;
+            this.DescricaoTipoCalculo = estoqueProduto.DescrEstoque;
             this.DescricaoSubgrupoProduto = estoqueProduto.DescrSubgrupoProd;
             this.EstoqueMinimo = (decimal)estoqueProduto.EstMinimo;
             this.DescricaoEstoqueMinimo = estoqueProduto.EstoqueMinimoString;
@@ -123,6 +124,13 @@ namespace Glass.API.Backend.Models.Estoques.Lista
         [DataMember]
         [JsonProperty("descricaoSubgrupoProduto")]
         public string DescricaoSubgrupoProduto { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a descrição do tipo de cálculo do produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("descricaoTipoCalculo")]
+        public string DescricaoTipoCalculo { get; set; }
 
         /// <summary>
         /// Obtém ou define o estoque mínimo do produto.

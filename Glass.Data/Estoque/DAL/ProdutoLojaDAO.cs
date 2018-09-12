@@ -772,17 +772,22 @@ namespace Glass.Data.DAL
 
         #region Atualiza estoque
 
+        public int AtualizaEstoque(ProdutoLoja objUpdate)
+        {
+            return AtualizaEstoque(null, objUpdate);
+        }
+
         /// <summary>
         /// Método usado apenas na tela de Lançamento inicial de estoque (LstEstoque.aspx)
         /// </summary>
-        public int AtualizaEstoque(ProdutoLoja objUpdate)
+        public int AtualizaEstoque(GDASession sessao, ProdutoLoja objUpdate)
         {
             int retorno;
             ProdutoLoja atual;
 
-            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar("select coalesce(Count(*), 0) from produto_loja where idLoja=" + objUpdate.IdLoja + " and idProd=" + objUpdate.IdProd).ToString()) > 0)
+            if (Glass.Conversoes.StrParaInt(objPersistence.ExecuteScalar(sessao, "select coalesce(Count(*), 0) from produto_loja where idLoja=" + objUpdate.IdLoja + " and idProd=" + objUpdate.IdProd).ToString()) > 0)
             {
-                atual = GetElement((uint)objUpdate.IdLoja, (uint)objUpdate.IdProd);
+                atual = GetElement(sessao, (uint)objUpdate.IdLoja, (uint)objUpdate.IdProd);
 
                 // Não atualiza o estoque/estoque fiscal, o mesmo será modificado na função da MovEstoqueDAO logo abaixo
                 string sql = "Update produto_loja Set estMinimo=" + objUpdate.EstMinimo.ToString().Replace(",", ".") +
@@ -801,7 +806,7 @@ namespace Glass.Data.DAL
                     " Where idLoja=" + objUpdate.IdLoja +
                     " and idProd=" + objUpdate.IdProd;
 
-                retorno = objPersistence.ExecuteCommand(sql);
+                retorno = objPersistence.ExecuteCommand(sessao, sql);
             }
             else
             {
@@ -811,8 +816,8 @@ namespace Glass.Data.DAL
                 retorno = (int)base.Insert(objUpdate);
             }
 
-            var possuiMovReal = MovEstoqueDAO.Instance.VerificarIdProdIdLojaPossuiMovimentacao(null, objUpdate.IdProd, objUpdate.IdLoja);
-            bool possuiMovFiscal = ExecuteScalar<bool>("Select Count(*)>0 From mov_estoque_fiscal Where idProd=" + objUpdate.IdProd + " And idLoja=" + objUpdate.IdLoja);
+            var possuiMovReal = MovEstoqueDAO.Instance.VerificarIdProdIdLojaPossuiMovimentacao(sessao, objUpdate.IdProd, objUpdate.IdLoja);
+            bool possuiMovFiscal = ExecuteScalar<bool>(sessao, "Select Count(*)>0 From mov_estoque_fiscal Where idProd=" + objUpdate.IdProd + " And idLoja=" + objUpdate.IdLoja);
 
             // Se a quantidade alterada for maior que a quantidade atual, gera uma movimentação de estoque creditando o estoque,
             // mas caso a quantidade modificada seja menor que a atual, gera uma movimentação de estoque debitando o estoque
@@ -820,14 +825,14 @@ namespace Glass.Data.DAL
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(objUpdate.QtdEstoque - atual.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.CreditaEstoqueManual((uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
+                MovEstoqueDAO.Instance.CreditaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
                     qtdMov, null, DateTime.Now, null);
             }
             else if (Math.Round(objUpdate.QtdEstoque, 2) < Math.Round(atual.QtdEstoque, 2))
             {
                 decimal qtdMov = possuiMovReal ? (decimal)(atual.QtdEstoque - objUpdate.QtdEstoque) : (decimal)objUpdate.QtdEstoque;
 
-                MovEstoqueDAO.Instance.BaixaEstoqueManual((uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
+                MovEstoqueDAO.Instance.BaixaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
                     qtdMov, null, DateTime.Now, null);
             }
 
@@ -837,17 +842,17 @@ namespace Glass.Data.DAL
             {
                 decimal qtdMov = possuiMovFiscal ? (decimal)(objUpdate.EstoqueFiscal - atual.EstoqueFiscal) : (decimal)objUpdate.EstoqueFiscal;
 
-                MovEstoqueFiscalDAO.Instance.CreditaEstoqueManual((uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
+                MovEstoqueFiscalDAO.Instance.CreditaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja,
                     qtdMov, null, DateTime.Now, null);
             }
             else if (Math.Round(objUpdate.EstoqueFiscal, 2) < Math.Round(atual.EstoqueFiscal, 2))
             {
                 decimal qtdMov = possuiMovFiscal ? (decimal)(atual.EstoqueFiscal - objUpdate.EstoqueFiscal) : (decimal)objUpdate.EstoqueFiscal;
 
-                MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(null, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja, qtdMov, null, DateTime.Now, null);
+                MovEstoqueFiscalDAO.Instance.BaixaEstoqueManual(sessao, (uint)objUpdate.IdProd, (uint)objUpdate.IdLoja, qtdMov, null, DateTime.Now, null);
             }
 
-            LogAlteracaoDAO.Instance.LogProdutoLoja(atual);
+            LogAlteracaoDAO.Instance.LogProdutoLoja(sessao, atual);
             return retorno;
         }
 

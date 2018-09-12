@@ -1,0 +1,91 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="idLoja">Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cód.</label>
+            <input type="text" v-model="filtroAtual.codigoInternoProduto" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Descrição</label>
+            <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <select id="situacao" v-model="filtroAtual.situacao">
+                <option Value="0">Todas</option>
+                <option Value="1">Ativo</option>
+                <option Value="2">Inativo</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasProdutosProjeto" type="checkbox" v-model="filtroAtual.apenasProdutosProjeto" />
+            <label for="apenasProdutosProjeto">Exibir apenas produtos associados a projetos</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Grupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroGruposProduto"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Subgrupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSubgruposProduto"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cor vidro</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="corVidroAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresVidro"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cor ferragem</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="corFerragemAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresFerragem"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cor alumínio</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="corAluminioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroCoresAluminio"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="exibirEstoqueFiscal">
+            <input id="apenasPosseTerceiros" type="checkbox" v-model="filtroAtual.apenasPosseTerceiros" />
+            <label for="apenasPosseTerceiros">Exibir apenas produtos em posse de terceiros</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <input id="apenasComEstoque" type="checkbox" v-model="filtroAtual.apenasComEstoque" />
+            <label for="apenasComEstoque">Apenas produtos com estoque</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="aguardandoSaidaEstoque" type="checkbox" v-model="filtroAtual.aguardandoSaidaEstoque" v-if="exibirFiltroAguardandoSaidaEstoque" />
+            <label for="aguardandoSaidaEstoque">Produtos aguardando saída de estoque</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="exibirEstoqueFiscal">
+            <label>Ordenar por</label>
+            <select v-model="filtroAtual.ordenacaoFiltro">
+                <option Value="1">Produto</option>
+                <option Value="2">Qtd. Estoque (Cresc.)</option>
+                <option Value="3">Qtd. Estoque (Decresc.)</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

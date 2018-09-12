@@ -244,6 +244,7 @@
     <Compile Include="Controllers\ContasReceber\V1\PatchContasReceberController.cs" />
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
+    <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -337,6 +338,7 @@
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
+    <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoque.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
     <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaEstoques.cs" />
     <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
@@ -376,6 +378,8 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaDto.cs" />
+    <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
@@ -538,7 +542,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Estoques\CadastroAtualizacao\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Comum\Glass.Comum\Glass.Comum.csproj">
