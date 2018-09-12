@@ -14,30 +14,30 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
     /// <typeparam name="T">O tipo de valor do DTO para conversão.</typeparam>
     internal class ConversorValorTipo<T>
     {
-        private readonly Type tipoBaseConverter;
-        private readonly Type tipoBaseEnum;
+        private readonly Type tipoConverter;
+        private readonly Type tipoEnum;
 
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ConversorValorTipo{T}"/>.
         /// </summary>
         public ConversorValorTipo()
         {
-            this.tipoBaseConverter = typeof(T);
-            this.tipoBaseEnum = null;
+            this.tipoConverter = typeof(T);
+            this.tipoEnum = null;
 
-            if (this.tipoBaseConverter.IsGenericType)
+            if (this.tipoConverter.IsGenericType)
             {
-                this.tipoBaseConverter = this.tipoBaseConverter.GenericTypeArguments[0];
+                this.tipoConverter = this.tipoConverter.GenericTypeArguments[0];
             }
 
-            if (this.tipoBaseConverter.IsEnum)
+            if (this.tipoConverter.IsEnum)
             {
-                this.tipoBaseEnum = this.tipoBaseConverter;
+                this.tipoEnum = this.tipoConverter;
             }
 
             if (typeof(T).UnderlyingSystemType.Name == typeof(Nullable<>).Name)
             {
-                this.tipoBaseConverter = typeof(T);
+                this.tipoConverter = typeof(T);
             }
         }
 
@@ -72,13 +72,12 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
 
         private T ConverterArray(JArray valorInformado)
         {
-            var tipo = this.tipoBaseEnum ?? this.tipoBaseConverter;
+            var tipo = this.tipoEnum ?? this.tipoConverter;
             var conversor = Activator.CreateInstance(typeof(ConversorValorTipo<>).MakeGenericType(tipo));
             var metodo = conversor.GetType().GetMethod("Converter");
 
             var itens = valorInformado.Values()
-                .Select(item => metodo.Invoke(conversor, new[] { item }))
-                .ToList();
+                .Select(item => metodo.Invoke(conversor, new[] { item }));
 
             var itensConvertidos = typeof(Enumerable).GetMethod("Cast")
                 .MakeGenericMethod(tipo)
@@ -99,14 +98,19 @@ namespace Glass.API.Backend.Helper.CadastroAtualizacao
                 ? valor.Value
                 : valorInformado;
 
-            if (this.tipoBaseEnum == null)
+            if (this.tipoEnum != null)
             {
-                return (T)valorUsar;
+                return this.ConverterEnum(valorUsar);
             }
 
+            return (T)valorUsar;
+        }
+
+        private T ConverterEnum(object valorInformado)
+        {
             try
             {
-                return (T)Enum.Parse(this.tipoBaseEnum, valorUsar.ToString(), true);
+                return (T)Enum.Parse(this.tipoEnum, valorInformado.ToString(), true);
             }
             catch
             {

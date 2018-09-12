@@ -2,8 +2,8 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.Comum.Cache;
 using Glass.API.Backend.Helper.CadastroAtualizacao;
+using Glass.Comum.Cache;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
 
         static BaseCadastroAtualizacaoDto()
         {
-            CACHE_CONVERSORES = new CacheMemoria<object, string>("cacheConversores");
+            CACHE_CONVERSORES = new CacheMemoria<object, string>("cacheConversores", 10);
         }
 
         /// <summary>

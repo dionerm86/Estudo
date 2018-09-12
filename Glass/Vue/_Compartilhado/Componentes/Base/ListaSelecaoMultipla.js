@@ -113,6 +113,9 @@ Vue.component('lista-selecao-multipla', {
           }
 
           vm.itens = [];
+        })
+        .then(function() {
+          vm.atualizarItensSelecionados();
         });
     },
 
@@ -237,6 +240,17 @@ Vue.component('lista-selecao-multipla', {
     filtroRecuperarItens: {
       handler: function () {
         this.buscar();
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a propriedade 'idsSelecionados'.
+     * Atualiza os itens selecionados internamente.
+     */
+    idsSelecionados: {
+      handler: function () {
+        this.atualizarItensSelecionados();
       },
       deep: true
     }
