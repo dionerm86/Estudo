@@ -129,6 +129,10 @@
       <HintPath>..\..\packages\Colosoft.Web.Http.1.0.0\lib\net452\Colosoft.Web.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GDA, Version=1.4.5.14925, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.GDA.1.4.5.14925\lib\net35\GDA.dll</HintPath>
       <Private>True</Private>
@@ -233,6 +237,11 @@
     <Compile Include="Controllers\Beneficiamentos\V1\GetBeneficiamentosController.cs" />
     <Compile Include="Controllers\Cep\V1\GetCepController.cs" />
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
+    <Compile Include="Controllers\Cfops\V1\GetCfopsController.cs" />
+    <Compile Include="Controllers\Cfops\V1\CfopsController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\GetContasReceberController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\ContasReceberController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\PatchContasReceberController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -244,8 +253,14 @@
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\DescontoQuantidadeController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\GetDescontoQuantidadeController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\DeletePedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\GetPedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\PedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\PostPedidosConferenciaController.cs" />
+    <Compile Include="Controllers\NotasFiscais\V1\DeleteNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
+    <Compile Include="Controllers\NotasFiscais\V1\PostNotasFiscaisController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
@@ -307,9 +322,13 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
+    <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
+    <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
+    <Compile Include="Helper\PedidosConferencia\TraducaoOrdenacaoListaPedidosConferencia.cs" />
+    <Compile Include="Helper\NotasFiscais\TraducaoOrdenacaoListaNotasFiscais.cs" />
     <Compile Include="Helper\Liberacoes\TraducaoOrdenacaoListaLiberacoes.cs" />
     <Compile Include="Helper\NumberExtension.cs" />
     <Compile Include="Helper\Orcamentos\TraducaoOrdenacaoListaOrcamentos.cs" />
@@ -344,6 +363,11 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\ContasReceber\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\Configuracoes\ListaRecebidasDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />
@@ -365,9 +389,22 @@
     <Compile Include="Models\Genericas\IdDto.cs" />
     <Compile Include="Models\Genericas\Venda\ComposicaoDto.cs" />
     <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\FiltroLogCancelamentoDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\LogDto.cs" />
+    <Compile Include="Models\Lojas\Certificado\CertificadoDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\PermissoesDto.cs" />
     <Compile Include="Models\NotasFiscais\Boleto\BoletoImpressoDto.cs" />
     <Compile Include="Models\NotasFiscais\Boleto\NotaFiscalDto.cs" />
+    <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\NotasFiscais\Contingencia\EntradaDto.cs" />
+    <Compile Include="Models\NotasFiscais\Lista\FiltroDto.cs" />
+    <Compile Include="Models\NotasFiscais\Lista\ListaDto.cs" />
+    <Compile Include="Models\NotasFiscais\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\TipoObrasFiltradas.cs" />
+    <Compile Include="Models\Pedidos\CadastroAtualizacao\ObservacoesPedidoDto.cs" />
     <Compile Include="Models\Pedidos\EnviarValidacaoFinanceiro\DadosEntradaDto.cs" />
     <Compile Include="Models\Pedidos\ProdutosPedido\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Obras\Filtro\DadosEntradaDto.cs" />

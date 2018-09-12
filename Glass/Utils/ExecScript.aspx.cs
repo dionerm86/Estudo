@@ -8,6 +8,7 @@ using Glass.Data.Model;
 using System.IO;
 using GDA;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Linq;
 using Glass.Configuracoes;
@@ -30,7 +31,7 @@ namespace Glass.UI.Web.Utils
     [PersistenceClass("item_carregamento")]
     public class ItemCarregamentoTemp : ModelBaseCadastro
     {
-        #region Enumerações
+        #region EnumeraÃ§Ãµes
 
         public enum TipoItemCarregamento : long
         {
@@ -113,7 +114,7 @@ namespace Glass.UI.Web.Utils
         [PersistenceProperty("Criterio", DirectionParameter.InputOptional)]
         public string Criterio { get; set; }
 
-        #region Peça
+        #region PeÃ§a
 
         [PersistenceProperty("CodInterno", DirectionParameter.InputOptional)]
         public string CodProduto { get; set; }
@@ -507,7 +508,7 @@ namespace Glass.UI.Web.Utils
         public string DestinoRec { get; set; }
 
         /// <summary>
-        /// Busca valor recebido desde que não tenha recebido por crédito, usado na tela de histórico de cliente
+        /// Busca valor recebido desde que nÃ£o tenha recebido por crÃ©dito, usado na tela de histÃ³rico de cliente
         /// </summary>
         [PersistenceProperty("VALORRECSEMCREDITO", DirectionParameter.InputOptional)]
         public decimal ValorRecSemCredito { get; set; }
@@ -551,7 +552,7 @@ namespace Glass.UI.Web.Utils
         [PersistenceProperty("TIPOENTREGA", DirectionParameter.InputOptional)]
         public int? TipoEntrega { get; set; }
 
-        // Propriedade criada para buscar o número do cheque na tela do histórico do cliente.
+        // Propriedade criada para buscar o nÃºmero do cheque na tela do histÃ³rico do cliente.
         [PersistenceProperty("NUMCHEQUE", DirectionParameter.InputOptional)]
         public Int64 NumCheque { get; set; }
 
@@ -581,7 +582,7 @@ namespace Glass.UI.Web.Utils
         {
             get
             {
-                return DataPrimNeg != null ? DataVec.ToString("d") + " (1ª Neg.: " + DataPrimNeg.Value.ToString("d") + ")" :
+                return DataPrimNeg != null ? DataVec.ToString("d") + " (1Âª Neg.: " + DataPrimNeg.Value.ToString("d") + ")" :
                     DataVec.ToString("d");
             }
         }
@@ -704,7 +705,7 @@ namespace Glass.UI.Web.Utils
         }
 
         /// <summary>
-        /// Observação tratada para ser exibida corretamente via javascript (tela de acerto por exemplo)
+        /// ObservaÃ§Ã£o tratada para ser exibida corretamente via javascript (tela de acerto por exemplo)
         /// </summary>
         public string ObsScript
         {
@@ -1286,7 +1287,7 @@ namespace Glass.UI.Web.Utils
 
         private string Sql()
         {
-            var sql = @"SELECT IF(TABLE_COMMENT = 'IGNORAR LIMPAR BANCO', concat('/* A TABELA ', table_name, ' ESTÁ CONFIGURADA PARA NÃO SER APAGADA (POSSUI COMENTÁRIO IGNORAR LIMPAR BANCO EM SUA ESTRUTURA) */'), 
+            var sql = @"SELECT IF(TABLE_COMMENT = 'IGNORAR LIMPAR BANCO', concat('/* A TABELA ', table_name, ' ESTÃ CONFIGURADA PARA NÃƒO SER APAGADA (POSSUI COMENTÃRIO IGNORAR LIMPAR BANCO EM SUA ESTRUTURA) */'), 
                 CONCAT('DELETE FROM ', table_name, '; ALTER TABLE ', table_name, ' AUTO_INCREMENT=1; ')) as SqlLimparBanco 
                 FROM information_schema.TABLES WHERE TABLE_SCHEMA = ?nomebanco ORDER BY TABLE_COMMENT DESC, TABLE_NAME;";
 
@@ -1341,11 +1342,11 @@ namespace Glass.UI.Web.Utils
                 if (projMod.NomeFiguraAssociada != null && projMod.NomeFiguraAssociada.Replace(".jpg", "").Replace(".JPG", "") == projMod.IdProjetoModelo.ToString())
                 {
                     // Altera o nome da figura associada na pasta
-                    ManipulacaoImagem.RenomearImagem(Data.Helper.Utils.GetModelosProjetoPath + projMod.NomeFiguraAssociada, Data.Helper.Utils.GetModelosProjetoPath + projMod.Codigo + "§E.jpg");
+                    ManipulacaoImagem.RenomearImagem(Data.Helper.Utils.GetModelosProjetoPath + projMod.NomeFiguraAssociada, Data.Helper.Utils.GetModelosProjetoPath + projMod.Codigo + "Â§E.jpg");
                     // Atualiza o nome da figura associada no banco
                     /* O nome no banco deve ser atualizado independente da existencia da imagem,
-                     porque isso é utilizado ao perder todas as imagens da pasta e as imagens substittas deverão utilizar o padão novo*/
-                    ProjetoModeloDAO.Instance.AtualizaNomeFigura(projMod.IdProjetoModelo, projMod.Codigo + "§E.jpg", null);
+                     porque isso Ã© utilizado ao perder todas as imagens da pasta e as imagens substittas deverÃ£o utilizar o padÃ£o novo*/
+                    ProjetoModeloDAO.Instance.AtualizaNomeFigura(projMod.IdProjetoModelo, projMod.Codigo + "Â§E.jpg", null);
                 }
             }
 
@@ -1355,17 +1356,68 @@ namespace Glass.UI.Web.Utils
                 var nomeImagem = pathImagem.Replace(Data.Helper.Utils.GetModelosProjetoPath, "").Replace(".jpg", "").Replace(".JPG", "");
                 var idORcodigo = nomeImagem.Split('_')[0];
                 uint idProjMod;
-                // Se a imagem começar com o IdProjetoModelo e for uma peça
+                // Se a imagem comeÃ§ar com o IdProjetoModelo e for uma peÃ§a
                 if (uint.TryParse(idORcodigo, out idProjMod) && nomeImagem.Contains('_'))
                 {
                     var item = nomeImagem.Split('_')[1];
                     var codigo = ProjetoModeloDAO.Instance.ObtemCodigo(idProjMod);
                     // Se o projeto existir no sistema
                     if (codigo != null && codigo.Length > 0)
-                        ManipulacaoImagem.RenomearImagem(pathImagem, Data.Helper.Utils.GetModelosProjetoPath + codigo + "§" + item + ".jpg");
+                        ManipulacaoImagem.RenomearImagem(pathImagem, Data.Helper.Utils.GetModelosProjetoPath + codigo + "Â§" + item + ".jpg");
                 }
             }
         }
+    }
+
+    public sealed class tempMaterialProjetoModelo : tempBaseDAO<tempMaterialProjetoModelo.Model, tempMaterialProjetoModelo>
+    {
+        [PersistenceBaseDAO(typeof(tempMaterialProjetoModelo))]
+        public class Model
+        {
+            [PersistenceProperty("IDMATERPROJMOD")]
+            public uint idMaterProjMod { get; set; }
+
+            [PersistenceProperty("CALCULOALTURA")]
+            public string CalculoAltura { get; set; }
+
+            [PersistenceProperty("PROJETOMODELO")]
+            public string ProjetoModelo { get; set; }
+
+        }
+
+        private string Sql()
+        {
+            return @"SELECT mpm.IdMaterProjMod, mpm.CalculoAltura, (SELECT Codigo FROM projeto_modelo WHERE IdProjetoModelo = mpm.IdProjetoModelo) ProjetoModelo FROM material_projeto_modelo mpm";
+        }
+
+        public string AjustaExpressaoCalculo()
+        {
+            var sql = Sql();
+            var materiaisProjetoModelo = objPersistence.LoadData(sql).ToList();
+
+            var retorno = string.Empty;
+            var listaMedidas = MedidaProjetoDAO.Instance.GetMedidas().Select(f => f.DescricaoTratada).OrderByDescending(f => f.Length).ToList();
+
+            var rgx = string.Join("|", listaMedidas);
+            rgx = rgx + "|FOLGA[a-zA-Z0-9]*|P[a-zA-Z0-9]*LARG|P[a-zA-Z0-9]*ESP|P[a-zA-Z0-9]*ALT|LARG[a-zA-Z0-9]*|ALT[a-zA-Z0-9]*";
+            Regex calculo = new Regex($@"{rgx}\w*");
+
+            foreach (var materialProjetoModelo in materiaisProjetoModelo.Where(f => !string.IsNullOrWhiteSpace(f.CalculoAltura)).GroupBy(f => f.CalculoAltura).Select(grp => grp.First()))
+            {
+                var expressao = calculo.Replace(materialProjetoModelo.CalculoAltura, 1000.ToString());
+                try
+                {
+                    UtilsProjeto.CalcularExpressao(expressao.Replace(" ", string.Empty));
+                }
+                catch (Exception ex)
+                {
+                    retorno += $"UPDATE material_projeto_modelo set CALCULOALTURA = WHERE CALCULOALTURA = \'{ materialProjetoModelo.CalculoAltura }\';/* ExpressÃ£o Calc.:{ expressao }\t{ ex.Message.Replace("\r\n", " ") }\tProjeto de exemplo:{ materialProjetoModelo.ProjetoModelo }*/\n";
+                }
+            }
+
+            return retorno;
+        }
+
     }
 
     public partial class ExecScript : System.Web.UI.Page
@@ -1424,7 +1476,7 @@ namespace Glass.UI.Web.Utils
         //                new GDAParameter("?d", prod.ValorDescontoCliente), new GDAParameter("?a", prod.ValorAcrescimoCliente));
         //        }
 
-        //        #region Orçamento
+        //        #region OrÃ§amento
 
         //        private string SqlOrcamento(bool selecionar)
         //        {
@@ -1503,7 +1555,7 @@ namespace Glass.UI.Web.Utils
 
         //        #endregion
 
-        //        #region Troca/devolução
+        //        #region Troca/devoluÃ§Ã£o
 
         //        private string SqlTrocaDev(bool selecionar)
         //        {
@@ -1978,7 +2030,7 @@ namespace Glass.UI.Web.Utils
         //            int trocado = ProdutoTrocadoDAO.Instance.GetCountValorBruto();
         //            int projeto = MaterialItemProjetoDAO.Instance.GetCountValorBruto();
 
-        //            return orca + " orçamento + " + ped + " pedido + " +
+        //            return orca + " orÃ§amento + " + ped + " pedido + " +
         //                pcp + " pcp + " + troca + " troca + " +
         //                trocado + " trocado + " + projeto + " projeto = " +
         //                (orca + ped + pcp + troca + trocado + projeto);
@@ -2113,10 +2165,10 @@ namespace Glass.UI.Web.Utils
         //    {
         //        try
         //        {
-        //            // Garante que o script ainda não foi executado
+        //            // Garante que o script ainda nÃ£o foi executado
         //            GenericDAO.Instance.ExecutarSql("select dadosRegistro from log_cancelamento");
 
-        //            // Apaga os registros que já foram inseridos
+        //            // Apaga os registros que jÃ¡ foram inseridos
         //            GenericDAO.Instance.ExecutarSql("delete from log_cancelamento where campo is not null;");
         //        }
         //        catch
@@ -2159,7 +2211,7 @@ namespace Glass.UI.Web.Utils
         //            }
         //        }
 
-        //        GenericDAO.Instance.ExecutarSql(@"update log_cancelamento set campo='Tipo Receb. Parc. Cartão' where campo='Tipo de Recebimento Parc. C...';
+        //        GenericDAO.Instance.ExecutarSql(@"update log_cancelamento set campo='Tipo Receb. Parc. CartÃ£o' where campo='Tipo de Recebimento Parc. C...';
         //                delete from log_cancelamento where campo is null;
         //                alter table log_cancelamento drop column DADOSREGISTRO;");
         //    }
@@ -2180,7 +2232,7 @@ namespace Glass.UI.Web.Utils
         //            if (GenericDAO.Instance.ExecutarCount("select count(*) from pagto_acerto where idAcerto=" + a.IdAcerto) > 0)
         //                continue;
 
-        //            // Busca movimentações relacionadas a este acerto e agrupadas pela forma de pagto
+        //            // Busca movimentaÃ§Ãµes relacionadas a este acerto e agrupadas pela forma de pagto
         //            CaixaDiario[] lstDiario = CaixaDiarioDAO.Instance.GetByAcerto(a.IdAcerto);
         //            CaixaGeral[] lstGeral = CaixaGeralDAO.Instance.GetByAcerto(a.IdAcerto);
         //            MovBanco[] lstMovBanco = MovBancoDAO.Instance.GetByAcerto(a.IdAcerto);
@@ -2191,7 +2243,7 @@ namespace Glass.UI.Web.Utils
 
         //            List<KeyValuePair<uint, decimal>> inseridos = new List<KeyValuePair<uint, decimal>>();
 
-        //            // Se estiver nas contas bancárias
+        //            // Se estiver nas contas bancÃ¡rias
         //            if (lstMovBanco.Length > 0)
         //                foreach (MovBanco m in lstMovBanco)
         //                {
@@ -2212,7 +2264,7 @@ namespace Glass.UI.Web.Utils
         //                        continue;
         //                    else if (fp.IdFormaPagto == null)
         //                    {
-        //                        if (fp.Descricao == "Crédito")
+        //                        if (fp.Descricao == "CrÃ©dito")
         //                        {
         //                            GenericDAO.Instance.ExecutarSql(@"update acerto set creditoUtilizadoCriar=?c where creditoUtilizadoCriar=null 
         //                                    and idAcerto=" + a.IdAcerto, new GDAParameter("?c", m.ValorMov));
@@ -2254,7 +2306,7 @@ namespace Glass.UI.Web.Utils
         //                        continue;
         //                    else if (fp.IdFormaPagto == null)
         //                    {
-        //                        if (fp.Descricao == "Crédito")
+        //                        if (fp.Descricao == "CrÃ©dito")
         //                        {
         //                            GenericDAO.Instance.ExecutarSql(@"update acerto set creditoUtilizadoCriar=?c where creditoUtilizadoCriar=null 
         //                                    and idAcerto=" + a.IdAcerto, new GDAParameter("?c", c.ValorMov));
@@ -2273,7 +2325,7 @@ namespace Glass.UI.Web.Utils
         //                    pa.ValorPagto = c.ValorMov;
         //                    PagtoAcertoDAO.Instance.Insert(pa);
         //                }
-        //            // Se estiver no caixa diário
+        //            // Se estiver no caixa diÃ¡rio
         //            else if (lstDiario.Length > 0)
         //                foreach (CaixaDiario c in lstDiario)
         //                {
@@ -2294,7 +2346,7 @@ namespace Glass.UI.Web.Utils
         //                        continue;
         //                    else if (fp.IdFormaPagto == null)
         //                    {
-        //                        if (fp.Descricao == "Crédito")
+        //                        if (fp.Descricao == "CrÃ©dito")
         //                        {
         //                            GenericDAO.Instance.ExecutarSql(@"update acerto set creditoUtilizadoCriar=?c where creditoUtilizadoCriar=null 
         //                                    and idAcerto=" + a.IdAcerto, new GDAParameter("?c", c.Valor));
@@ -2412,7 +2464,7 @@ namespace Glass.UI.Web.Utils
         //                continue;
 
         //            TipoCartaoCredito tpCartao = TipoCartaoCreditoDAO.Instance.GetElementByPrimaryKey(p.IdTipoCartao.Value);
-        //            if (tpCartao.Descricao.ToLower().Contains("débito") && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
+        //            if (tpCartao.Descricao.ToLower().Contains("dÃ©bito") && !FinanceiroConfig.Cartao.QuitarParcCartaoDebito)
         //                continue;
 
         //            Pedido ped = c.IdPedido > 0 ? PedidoDAO.Instance.GetElementByPrimaryKey(c.IdPedido.Value) : null;
@@ -2479,7 +2531,7 @@ namespace Glass.UI.Web.Utils
         //                            break;
 
         //                        if (idContaPg.Equals(atual))
-        //                            throw new Exception("Erro ao atualizar a conta a pagar número " + idContaPg.ToString());
+        //                            throw new Exception("Erro ao atualizar a conta a pagar nÃºmero " + idContaPg.ToString());
 
         //                        atual = idContaPg;
         //                        ContasPagarDAO.Instance.AtualizaNumParcContaPg(Glass.Conversoes.StrParaUint(idContaPg.ToString()));
@@ -2804,7 +2856,7 @@ namespace Glass.UI.Web.Utils
         //                }
 
         //            }
-        //            Glass.MensagemAlerta.ShowMsg("Base calculo da comissão preenchida.", this);
+        //            Glass.MensagemAlerta.ShowMsg("Base calculo da comissÃ£o preenchida.", this);
         //        }
         //        catch (Exception ex)
         //        {
@@ -3179,7 +3231,7 @@ namespace Glass.UI.Web.Utils
             reader.Close();
             string[] clientes = txt.Replace("\r", "").Replace("\n", "").Replace("\t", "").Split(new string[] { "$$$" }, StringSplitOptions.None);
 
-            string log = clientes.Length + " clientes para importação.\n\n";
+            string log = clientes.Length + " clientes para importaÃ§Ã£o.\n\n";
 
             uint idLoja = Glass.Conversoes.StrParaUint(drpLoja.SelectedValue);
 
@@ -3276,7 +3328,7 @@ namespace Glass.UI.Web.Utils
                 }
             }
 
-            txtLogImportaçãoCliente.Text = log;
+            txtLogImportaÃ§Ã£oCliente.Text = log;
         }
 
         protected void btnImportarFornecedores_Click(object sender, EventArgs e)
@@ -3292,7 +3344,7 @@ namespace Glass.UI.Web.Utils
             reader.Close();
             List<string> fornecedores = new List<string>(txt.Replace("\r", "").Replace("\n", "").Split(';'));
 
-            string log = fornecedores.Count + " fornecedores para importação.\n\n";
+            string log = fornecedores.Count + " fornecedores para importaÃ§Ã£o.\n\n";
 
             for (int i = 0; i < fornecedores.Count; i++)
             {
@@ -3410,14 +3462,14 @@ namespace Glass.UI.Web.Utils
                     if (grupo.Contains(','))
                         throw new Exception("Grupo duplicado: " + produto[2].Trim());
                     if (string.IsNullOrEmpty(grupo))
-                        throw new Exception("Grupo não encontrado: " + produto[2].Trim());
+                        throw new Exception("Grupo nÃ£o encontrado: " + produto[2].Trim());
                     else
                         p.IdGrupoProd = Glass.Conversoes.StrParaInt(grupo);
 
                     var subgrupo = SubgrupoProdDAO.Instance.GetValoresCampo(sqlSubgrupoProd + "'" + produto[3].Trim()
                         + "' AND idGrupoProd=" + grupo, "idSubgrupoProd");
                     if (string.IsNullOrEmpty(subgrupo))
-                        throw new Exception("Subgrupo não encontrado: " + produto[3].Trim());
+                        throw new Exception("Subgrupo nÃ£o encontrado: " + produto[3].Trim());
                     else
                         p.IdSubgrupoProd = Glass.Conversoes.StrParaInt(subgrupo);
 
@@ -3628,7 +3680,7 @@ namespace Glass.UI.Web.Utils
                             cli = ClienteDAO.Instance.GetByCpfCnpj(CpfCpnj);
 
                             if (cli == null)
-                                throw new Exception("Cliente não encontrado");
+                                throw new Exception("Cliente nÃ£o encontrado");
                         }
 
                         if (!CpfCpnj.Equals(cli.CpfCnpj))
@@ -3683,7 +3735,7 @@ namespace Glass.UI.Web.Utils
                         if (Numero.Length > 10)
                         {
                             if (!int.TryParse(Numero.Split(' ')[0], out num))
-                                throw new Exception("Número ultrapassa 10 caracteres.");
+                                throw new Exception("NÃºmero ultrapassa 10 caracteres.");
                         }
 
                         var cli = ClienteDAO.Instance.GetElement(Id);
@@ -3693,7 +3745,7 @@ namespace Glass.UI.Web.Utils
                             cli = ClienteDAO.Instance.GetByCpfCnpj(CpfCpnj);
 
                             if (cli == null)
-                                throw new Exception("Cliente não encontrado");
+                                throw new Exception("Cliente nÃ£o encontrado");
                         }
 
                         if (!CpfCpnj.Equals(cli.CpfCnpj))
@@ -3749,7 +3801,7 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         //if (dados.Length != 12)
-                        //    throw new Exception("Dados inválidos: número de informações diferente de 12.");
+                        //    throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 12.");
 
                         //var idLoja = (lojas.FirstOrDefault(x => String.Compare(dados[0].Trim(), x.NomeFantasia.Trim(),
                         //    StringComparison.InvariantCultureIgnoreCase) == 0) ?? new Loja()).IdLoja;
@@ -3766,7 +3818,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetByCpfCnpj(dados[0].Trim());
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado. " + dados[0].Trim());
+                            throw new Exception("Cliente nÃ£o encontrado. " + dados[0].Trim());
 
                         var contaReceber = new ContasReceber()
                         {
@@ -3790,7 +3842,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro: " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro: " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -3827,7 +3879,7 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         if (dados.Length != 11)
-                            throw new Exception("Dados inválidos: número de informações diferente de 11.");
+                            throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 11.");
 
                         var idFornec = (fornecedores.FirstOrDefault(x => String.Compare(dados[0].Trim(),
                             (x.CpfCnpj ?? String.Empty).Replace(".", "").Replace("/", "").Replace("-", "").Trim()) == 0) ?? new Fornecedor()).IdFornec;
@@ -3855,7 +3907,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -3893,7 +3945,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetElement(Id);
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado");
+                            throw new Exception("Cliente nÃ£o encontrado");
 
                         cli.LimiteCheques = limite;
                         cli.Crt = simpes;
@@ -3944,7 +3996,7 @@ namespace Glass.UI.Web.Utils
                         var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
                         if (prod == null)
-                            throw new Exception("Produto não encontrado");
+                            throw new Exception("Produto nÃ£o encontrado");
 
                         prod.ValorAtacado = valor;
                         prod.ValorObra = valor;
@@ -3995,7 +4047,7 @@ namespace Glass.UI.Web.Utils
                         var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
 
                         if (idProd == 0)
-                            throw new Exception("Produto não encontrado");
+                            throw new Exception("Produto nÃ£o encontrado");
 
 
                         tempClienteDAO.Instance.AtualizaTipoMercadoriaCodOtimizacao((uint)idProd, codOtimizacao, tipoMercadoria);
@@ -4045,7 +4097,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetElement(idCli);
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado");
+                            throw new Exception("Cliente nÃ£o encontrado");
 
                         int idProd = 0;
 
@@ -4053,7 +4105,7 @@ namespace Glass.UI.Web.Utils
                         {
                             idProd = ProdutoDAO.Instance.ObtemIdProd(descProd);
                             if (idProd == 0)
-                                throw new Exception("Produto não encontrado");
+                                throw new Exception("Produto nÃ£o encontrado");
                         }
 
                         SubgrupoProd subGrupoCli;
@@ -4063,7 +4115,7 @@ namespace Glass.UI.Web.Utils
                             var idSubgrupoProd = ProdutoDAO.Instance.ObtemIdSubgrupoProd((int)idProd);
 
                             if (idSubgrupoProd.GetValueOrDefault(0) == 0)
-                                throw new Exception("Subgrupo não encontrado");
+                                throw new Exception("Subgrupo nÃ£o encontrado");
 
                             subGrupoCli = SubgrupoProdDAO.Instance.GetElementByPrimaryKey((uint)idSubgrupoProd.Value);
                         }
@@ -4073,10 +4125,10 @@ namespace Glass.UI.Web.Utils
                         }
 
                         if (subGrupoCli == null)
-                            throw new Exception("Subgrupo não encontrado");
+                            throw new Exception("Subgrupo nÃ£o encontrado");
 
                         if (!string.IsNullOrEmpty(grupo) && !GrupoProdDAO.Instance.GetDescricao(subGrupoCli.IdGrupoProd).ToLower().Equals(grupo))
-                            throw new Exception("Grupo não encontrado");
+                            throw new Exception("Grupo nÃ£o encontrado");
 
 
 
@@ -4132,7 +4184,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetElement(idCli);
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado");
+                            throw new Exception("Cliente nÃ£o encontrado");
 
                         if (string.IsNullOrEmpty(idRota))
                         {
@@ -4152,7 +4204,7 @@ namespace Glass.UI.Web.Utils
                                 continue;
                             }
                             else
-                                throw new Exception("rota não encontrada");
+                                throw new Exception("rota nÃ£o encontrada");
                         }
 
 
@@ -4199,7 +4251,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetElement(idCli);
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado");
+                            throw new Exception("Cliente nÃ£o encontrado");
 
                         if (percDesc == 0)
                             continue;
@@ -4286,18 +4338,18 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetElement(idCli);
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado");
+                            throw new Exception("Cliente nÃ£o encontrado");
 
                         if (string.IsNullOrEmpty(nomeFantasia))
-                            throw new Exception("Nome fantasia não informado");
+                            throw new Exception("Nome fantasia nÃ£o informado");
 
                         if (string.IsNullOrEmpty(nomeVendedor))
-                            throw new Exception("Vendedor não informado");
+                            throw new Exception("Vendedor nÃ£o informado");
 
                         var idVendedor = vendedores.Where(f => f.Nome.Contains(nomeVendedor.ToUpper())).Select(f => f.IdFunc).FirstOrDefault();
 
                         //if (idVendedor == 0)
-                        //throw new Exception("Vendedor não encontrado");
+                        //throw new Exception("Vendedor nÃ£o encontrado");
 
                         cli.NomeFantasia = nomeFantasia;
 
@@ -4356,23 +4408,23 @@ namespace Glass.UI.Web.Utils
                         var idProd = ProdutoDAO.Instance.ObtemIdProd(codInterno);
 
                         if (idProd == 0)
-                            throw new Exception("Produto não encontrado");
+                            throw new Exception("Produto nÃ£o encontrado");
 
                         // var aplicacao = aplicacoes.Where(f => f.CodInterno.Trim().ToUpper().Equals(aplicacaoStr)).FirstOrDefault();
                         // var processo = processos.Where(f => f.CodInterno.Trim().ToUpper().Equals(processoStr)).FirstOrDefault();
 
                         //if(aplicacao == null)
-                        //throw new Exception("Aplicação não encontrada");
+                        //throw new Exception("AplicaÃ§Ã£o nÃ£o encontrada");
 
                         //if (aplicacao == null)
-                        //throw new Exception("Processo não encontrada");
+                        //throw new Exception("Processo nÃ£o encontrada");
 
 
                         tempClienteDAO.Instance.AtualizaAltLargBox((uint)idProd, altura * 1000, largura * 1000);
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4492,19 +4544,19 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         if (dados.Length != 5)
-                            throw new Exception("Dados inválidos: número de informações diferente de 5.");
+                            throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 5.");
 
                         var idLoja = (lojas.FirstOrDefault(x => String.Compare(dados[0].Trim(), x.NomeFantasia.Trim(),
                             StringComparison.InvariantCultureIgnoreCase) == 0) ?? new Loja()).IdLoja;
 
                         if (idLoja == 0)
-                            throw new Exception("Loja não encontrada: " + dados[0].Trim());
+                            throw new Exception("Loja nÃ£o encontrada: " + dados[0].Trim());
 
                         var idProd = (produtos.FirstOrDefault(x => String.Compare(dados[1].Trim(), x.CodInterno.Trim(),
                             StringComparison.InvariantCultureIgnoreCase) == 0) ?? new Produto()).IdProd;
 
                         if (idProd == 0)
-                            throw new Exception("Produto não encontrado: " + dados[1].Trim());
+                            throw new Exception("Produto nÃ£o encontrado: " + dados[1].Trim());
 
                         var produtoLoja = new ProdutoLoja()
                         {
@@ -4521,7 +4573,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4558,13 +4610,13 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         if (dados.Length != 12)
-                            throw new Exception("Dados inválidos: número de informações diferente de 12.");
+                            throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 12.");
 
                         var idLoja = (lojas.FirstOrDefault(x => String.Compare(dados[0].Trim(), x.NomeFantasia.Trim(),
                             StringComparison.InvariantCultureIgnoreCase) == 0) ?? new Loja()).IdLoja;
 
                         if (idLoja == 0)
-                            throw new Exception("Loja não encontrada: " + dados[0].Trim());
+                            throw new Exception("Loja nÃ£o encontrada: " + dados[0].Trim());
 
                         var cheque = new Cheques()
                         {
@@ -4587,7 +4639,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4622,7 +4674,7 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         if (dados.Length != 2)
-                            throw new Exception("Dados inválidos: número de informações diferente de 2.");
+                            throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 2.");
 
                         var idFornec = Glass.Conversoes.StrParaUint(dados[0].Trim());
                         var valorAtual = FornecedorDAO.Instance.GetCredito(idFornec);
@@ -4633,7 +4685,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4668,7 +4720,7 @@ namespace Glass.UI.Web.Utils
 
                         string[] dados = line.Split('|');
                         if (dados.Length != 2)
-                            throw new Exception("Dados inválidos: número de informações diferente de 2.");
+                            throw new Exception("Dados invÃ¡lidos: nÃºmero de informaÃ§Ãµes diferente de 2.");
 
                         var idCliente = Glass.Conversoes.StrParaUint(dados[0].Trim());
                         var valorAtual = ClienteDAO.Instance.GetCredito(idCliente);
@@ -4679,7 +4731,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4769,18 +4821,18 @@ namespace Glass.UI.Web.Utils
                         var desc = dados[2].Trim().ToUpper();
 
                         if (string.IsNullOrEmpty(categoriaStr))
-                            throw new Exception("Categoria não infomada.");
+                            throw new Exception("Categoria nÃ£o infomada.");
 
                         if (string.IsNullOrEmpty(grupoConta))
-                            throw new Exception("Grupo de conta não infomado.");
+                            throw new Exception("Grupo de conta nÃ£o infomado.");
 
                         if (string.IsNullOrEmpty(desc))
-                            throw new Exception("Descrição do grupo não infomada.");
+                            throw new Exception("DescriÃ§Ã£o do grupo nÃ£o infomada.");
 
                         var grupo = grupoContas.Where(f => f.Descricao.ToUpper().Trim().Equals(grupoConta)).FirstOrDefault();
 
                         if (grupo == null)
-                            throw new Exception("Grupo de conta não encontrado.");
+                            throw new Exception("Grupo de conta nÃ£o encontrado.");
 
 
                         var planoConta = new PlanoContas()
@@ -4794,7 +4846,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4835,15 +4887,15 @@ namespace Glass.UI.Web.Utils
                         var desc = dados[1].Trim().ToUpper();
 
                         if (string.IsNullOrEmpty(categoriaStr))
-                            throw new Exception("Categoria não infomada.");
+                            throw new Exception("Categoria nÃ£o infomada.");
 
                         if (string.IsNullOrEmpty(desc))
-                            throw new Exception("Descrição do grupo não infomada.");
+                            throw new Exception("DescriÃ§Ã£o do grupo nÃ£o infomada.");
 
                         var categoria = categoriasContas.Where(f => f.Descricao.ToUpper().Trim().Equals(categoriaStr)).FirstOrDefault();
 
                         if (categoria == null)
-                            throw new Exception("Categoria não encontrada.");
+                            throw new Exception("Categoria nÃ£o encontrada.");
 
 
                         var grupoConta = new GrupoConta()
@@ -4857,7 +4909,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -4939,12 +4991,12 @@ namespace Glass.UI.Web.Utils
                         var descProd = dados[0].Trim().ToUpper();
 
                         if (string.IsNullOrEmpty(descProd))
-                            throw new Exception("Produto não infomado.");
+                            throw new Exception("Produto nÃ£o infomado.");
 
                         var idProd = ProdutoDAO.Instance.ObtemIdProd(descProd);
 
                         if (idProd == 0)
-                            throw new Exception("Produto não encontrado.");
+                            throw new Exception("Produto nÃ£o encontrado.");
 
 
                         for (int i = 0; i < line.Trim(';').Split(';').Length; i++)
@@ -4955,12 +5007,12 @@ namespace Glass.UI.Web.Utils
                             var descProdBaixa = line.Split(';')[i];
 
                             if (string.IsNullOrEmpty(descProdBaixa))
-                                throw new Exception("Matéria-prima " + i + " não infomada.");
+                                throw new Exception("MatÃ©ria-prima " + i + " nÃ£o infomada.");
 
                             var idProdBaixa = ProdutoDAO.Instance.ObtemIdProd(descProdBaixa);
 
                             if (idProdBaixa == 0)
-                                throw new Exception("Matéria-prima " + i + " não encontrada.");
+                                throw new Exception("MatÃ©ria-prima " + i + " nÃ£o encontrada.");
 
                             var prodBaixaEstoque = new ProdutoBaixaEstoque()
                             {
@@ -4975,7 +5027,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -5150,7 +5202,7 @@ namespace Glass.UI.Web.Utils
             //}
             //catch (Exception ex)
             //{
-            //    log += "•\t" + ex.Message + "\n";
+            //    log += "â€¢\t" + ex.Message + "\n";
             //}
 
             //txtLogMarcarPecaPronta.Text = log;
@@ -5171,7 +5223,7 @@ namespace Glass.UI.Web.Utils
             }
             catch (Exception ex)
             {
-                txtLogEnvioEmailCarregamento.Text = "â€¢\t" + ex.Message + "\n";
+                txtLogEnvioEmailCarregamento.Text = "Ã¢â‚¬Â¢\t" + ex.Message + "\n";
             }
         }
 
@@ -5204,13 +5256,13 @@ namespace Glass.UI.Web.Utils
                         var valor = Glass.Conversoes.StrParaDecimal(dados[3]);
 
                         if (!FornecedorDAO.Instance.Exists(idFornec))
-                            throw new Exception("Fornec. não encontrado.");
+                            throw new Exception("Fornec. nÃ£o encontrado.");
 
                         if (idProduto == 0)
-                            throw new Exception("Produto não encontrado.");
+                            throw new Exception("Produto nÃ£o encontrado.");
 
                         if (valor == 0)
-                            throw new Exception("Valor não informado.");
+                            throw new Exception("Valor nÃ£o informado.");
 
                         var prods = ProdutoFornecedorDAO.Instance.ObtemParaRelatorio((uint)idProduto, (uint)idFornec, null, null);
 
@@ -5227,7 +5279,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n\n";
+                        log += "â€¢ Registro (linha " + linha + "): " + line + "\t" + ex.Message + "\n\n";
                     }
                 }
             }
@@ -5246,13 +5298,13 @@ namespace Glass.UI.Web.Utils
             //    foreach (var idPedido in idsPedidos)
             //    {
             //        if (!PedidoDAO.Instance.Exists(idPedido))
-            //            throw new Exception("Pedido " + idPedido + " não encontrado");
+            //            throw new Exception("Pedido " + idPedido + " nÃ£o encontrado");
 
             //        if (PedidoDAO.Instance.ObtemSituacao(idPedido) != Glass.Data.Model.Pedido.SituacaoPedido.Conferido)
-            //            throw new Exception("Pedido " + idPedido + " não finalizado");
+            //            throw new Exception("Pedido " + idPedido + " nÃ£o finalizado");
 
             //        if (PedidoDAO.Instance.ObtemTipoEntrega(idPedido) != (int)Glass.Data.Model.Pedido.TipoEntregaPedido.Balcao)
-            //            throw new Exception("Pedido " + idPedido + " não é balcão");
+            //            throw new Exception("Pedido " + idPedido + " nÃ£o Ã© balcÃ£o");
             //    }
 
             //    log += "Confirmando pedidos...\n\n";
@@ -5351,7 +5403,7 @@ namespace Glass.UI.Web.Utils
             //}
             //catch (Exception ex)
             //{
-            //    log += "• " + ex.Message + "\n\n";
+            //    log += "â€¢ " + ex.Message + "\n\n";
             //}
 
             //txtLogProduzirPedidos.Text = log;
@@ -5384,7 +5436,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• " + ex.Message + "\n";
+                    log += "â€¢ " + ex.Message + "\n";
                 }
             }
 
@@ -5409,29 +5461,29 @@ namespace Glass.UI.Web.Utils
 
                     if (nf == null)
                     {
-                        throw new Exception("Nota fiscal não encontrada");
+                        throw new Exception("Nota fiscal nÃ£o encontrada");
                     }
 
                     if (nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
                     {
-                        throw new Exception("A forma de pagamento da nota informada é à vista");
+                        throw new Exception("A forma de pagamento da nota informada Ã© Ã  vista");
                     }
 
                     if (nf.TipoDocumento == 2 && !new SeparacaoValoresFiscaisEReaisContasReceber().SepararComTransacao(nf.IdNf))
                     {
-                        throw new Exception("Não foram encontradas contas a receber para realizar a separação.");
+                        throw new Exception("NÃ£o foram encontradas contas a receber para realizar a separaÃ§Ã£o.");
                     }
 
                     if (nf.TipoDocumento == 3 && !new SeparacaoValoresFiscaisEReaisContasPagar().SepararComTransacao(nf.IdNf))
                     {
-                        throw new Exception("Não foram encontradas contas a pagar para realizar a separação.");
+                        throw new Exception("NÃ£o foram encontradas contas a pagar para realizar a separaÃ§Ã£o.");
                     }
 
-                    throw new Exception("Separação feita com sucesso!");
+                    throw new Exception("SeparaÃ§Ã£o feita com sucesso!");
                 }
                 catch (Exception ex)
                 {
-                    log += "• NFe " + num + ": " + Glass.MensagemAlerta.FormatErrorMsg("", ex) + "\n";
+                    log += "â€¢ NFe " + num + ": " + Glass.MensagemAlerta.FormatErrorMsg("", ex) + "\n";
                 }
             }
 
@@ -5456,12 +5508,12 @@ namespace Glass.UI.Web.Utils
 
                     if (nf == null)
                     {
-                        throw new Exception("Nota fiscal não encontrada");
+                        throw new Exception("Nota fiscal nÃ£o encontrada");
                     }
 
                     if (nf.FormaPagto == (int)NotaFiscal.FormaPagtoEnum.AVista)
                     {
-                        throw new Exception("A forma de pagamento da nota informada é à vista");
+                        throw new Exception("A forma de pagamento da nota informada Ã© Ã  vista");
                     }
 
                     if (nf.TipoDocumento == 2)
@@ -5478,7 +5530,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• NFe " + num + ": " + MensagemAlerta.FormatErrorMsg("", ex) + "\n";
+                    log += "â€¢ NFe " + num + ": " + MensagemAlerta.FormatErrorMsg("", ex) + "\n";
                 }
             }
 
@@ -5499,7 +5551,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• Pedido " + id + ": " + Glass.MensagemAlerta.FormatErrorMsg("", ex) + "\n";
+                    log += "â€¢ Pedido " + id + ": " + Glass.MensagemAlerta.FormatErrorMsg("", ex) + "\n";
                 }
             }
 
@@ -5533,22 +5585,22 @@ namespace Glass.UI.Web.Utils
                         string previsto = prodPed.IdProdPed + "_" + item;
 
                         if (arquivos.Length != 1)
-                            throw new Exception(String.Format("Arquivos encontrados além do previsto. Previsto: {0}, encontrados: {1}", previsto,
+                            throw new Exception(String.Format("Arquivos encontrados alÃ©m do previsto. Previsto: {0}, encontrados: {1}", previsto,
                                 String.Join(", ", arquivos)));
                         else if (!arquivos[0].Contains(previsto))
-                            throw new Exception(String.Format("Arquivo inválido. Previsto: {0}, encontrado: {1}", previsto, arquivos[0].Split('.')[0]));
+                            throw new Exception(String.Format("Arquivo invÃ¡lido. Previsto: {0}, encontrado: {1}", previsto, arquivos[0].Split('.')[0]));
                     }
                 }
                 catch (Exception ex)
                 {
-                    log += "• Prod. Ped. " + prodPed.IdProdPed + ": " + ex.ToString()/*Glass.MensagemAlerta.FormatErrorMsg("", ex)*/ + "\n";
+                    log += "â€¢ Prod. Ped. " + prodPed.IdProdPed + ": " + ex.ToString()/*Glass.MensagemAlerta.FormatErrorMsg("", ex)*/ + "\n";
                 }
             }
 
             txtLogBuscarPecasErradas.Text = log;
         }
 
-        protected void btnVoltarSituaçãoPeca_Click(object sender, EventArgs e)
+        protected void btnVoltarSituaÃ§Ã£oPeca_Click(object sender, EventArgs e)
         {
             string log = "";
             uint idProdPedProducaoLog = 0;
@@ -5565,7 +5617,7 @@ namespace Glass.UI.Web.Utils
             }
             catch (Exception ex)
             {
-                log += "• Prod. Ped. Produção: " + idProdPedProducaoLog + "\t" + ex.ToString() + "\n";
+                log += "â€¢ Prod. Ped. ProduÃ§Ã£o: " + idProdPedProducaoLog + "\t" + ex.ToString() + "\n";
             }
 
             txtLogVoltarSituacaoPeca.Text = log;
@@ -5607,7 +5659,7 @@ namespace Glass.UI.Web.Utils
 
 
                     if (string.IsNullOrEmpty(grupo))
-                        throw new Exception("Grupo não encontrado: " + subgrupo[2]);
+                        throw new Exception("Grupo nÃ£o encontrado: " + subgrupo[2]);
 
                     var subgrupoExistente = SubgrupoProdDAO.Instance.GetValoresCampo(sqlSubgrupoProd + "'" + subgrupo[3]
                         + "' AND idGrupoProd=" + grupo, "idSubgrupoProd");
@@ -5623,7 +5675,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• Erro: " + line + "\t" + ex.Message + "\n";
+                    log += "â€¢ Erro: " + line + "\t" + ex.Message + "\n";
                 }
             }
 
@@ -5657,7 +5709,7 @@ namespace Glass.UI.Web.Utils
                     idContaBanco = 43;
 
                 if (idContaBanco == 0)
-                    throw new Exception("Conta bancaria não encontrada.");
+                    throw new Exception("Conta bancaria nÃ£o encontrada.");
 
                 var banco = new Banco(ContaBancoDAO.Instance.ObtemCodigoBanco(idContaBanco).Value);
 
@@ -5686,7 +5738,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Carregamento: " + idRetorno + "\t" + ex.Message + "\n";
+                        log += "â€¢ Carregamento: " + idRetorno + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -5712,7 +5764,7 @@ namespace Glass.UI.Web.Utils
 
         private void AtualizaSituacaoProducaoPedido(params tempSituacaoProducaoDAO.Model[] pedidos)
         {
-            ErroDAO.Instance.InserirFromException("AtualizaSituacaoProducaoPedido - Início", new Exception(""));
+            ErroDAO.Instance.InserirFromException("AtualizaSituacaoProducaoPedido - InÃ­cio", new Exception(""));
 
             for (int i = 0; i < pedidos.Length; i++)
             {
@@ -5732,7 +5784,7 @@ namespace Glass.UI.Web.Utils
 
         private void AtualizaSetorSituacaoProdutoProducao(List<uint> idsProdPedProducao)
         {
-            ErroDAO.Instance.InserirFromException("AtualizaSetorSituacaoProdutoProducao - Início", new Exception(""));
+            ErroDAO.Instance.InserirFromException("AtualizaSetorSituacaoProdutoProducao - InÃ­cio", new Exception(""));
 
             uint idProdPedProducao = 0;
 
@@ -5815,7 +5867,7 @@ namespace Glass.UI.Web.Utils
             var idSetor = leituras.OrderByDescending(f => f.Setor.NumeroSequencia).Select(f => f.Setor.IdSetor).FirstOrDefault();
 
             if (idSetor == 0)
-                throw new Exception("Setor não encontrado. " + idProdPedProducao);
+                throw new Exception("Setor nÃ£o encontrado. " + idProdPedProducao);
 
             tempProdutoPedidoProducaoDAO.Instance.AtualizaSetor(idProdPedProducao, idSetor);
         }
@@ -5828,7 +5880,7 @@ namespace Glass.UI.Web.Utils
                 ProdutosNf[] lstProd = ProdutosNfDAO.Instance.GetByNf(idNf);
                 NotaFiscal nf = NotaFiscalDAO.Instance.GetElement(idNf);
 
-                // Se for entrada e ainda não tiver dado entrada no estoque, credita estoque fiscal
+                // Se for entrada e ainda nÃ£o tiver dado entrada no estoque, credita estoque fiscal
                 if (nf.TipoDocumento == 1)
                 {
                     if (nf.EntrouEstoque == false)
@@ -5841,7 +5893,7 @@ namespace Glass.UI.Web.Utils
                         objPersistence.ExecuteCommand("Update nota_fiscal Set entrouEstoque=true Where idNf=" + nf.IdNf);
                     }
                 }
-                // Se for saída e ainda não tiver dado saída no estoque, baixa estoque fiscal
+                // Se for saÃ­da e ainda nÃ£o tiver dado saÃ­da no estoque, baixa estoque fiscal
                 else if (nf.TipoDocumento == 2)
                 {
                     if (nf.SaiuEstoque == false)
@@ -6028,7 +6080,7 @@ namespace Glass.UI.Web.Utils
                 catch (Exception ex)
                 {
 
-                    log += "• Id: " + i + " - " + ex.Message + Environment.NewLine;
+                    log += "â€¢ Id: " + i + " - " + ex.Message + Environment.NewLine;
                 }
 
             }
@@ -6068,7 +6120,7 @@ namespace Glass.UI.Web.Utils
                         var cli = ClienteDAO.Instance.GetByCpfCnpj(dados[0].Trim());
 
                         if (cli == null)
-                            throw new Exception("Cliente não encontrado. " + dados[0].Trim());
+                            throw new Exception("Cliente nÃ£o encontrado. " + dados[0].Trim());
 
                         contasArq.Add(new ContasReceber()
                         {
@@ -6084,7 +6136,7 @@ namespace Glass.UI.Web.Utils
                     }
                     catch (Exception ex)
                     {
-                        log += "• Registro: " + line + "\t" + ex.Message + "\n";
+                        log += "â€¢ Registro: " + line + "\t" + ex.Message + "\n";
                     }
                 }
             }
@@ -6105,7 +6157,7 @@ namespace Glass.UI.Web.Utils
 
                 if (qtdeContas <= 0)
                 {
-                    log += "• Removida - IdCliente: " + c.IdCliente + " DataVec: " + c.DataVec + " Valor: " + c.ValorVec + "Parc: " + c.NumParc + " OBS: " + c.Obs + "\n";
+                    log += "â€¢ Removida - IdCliente: " + c.IdCliente + " DataVec: " + c.DataVec + " Valor: " + c.ValorVec + "Parc: " + c.NumParc + " OBS: " + c.Obs + "\n";
                     contasApagar.Add(c.IdContaR);
                 }
             }
@@ -6144,14 +6196,14 @@ namespace Glass.UI.Web.Utils
                     var qtdeAlterar = saldo - prod.Value;
 
                     if (qtdeAlterar > 0)
-                        MovEstoqueDAO.Instance.BaixaEstoqueManual((uint)prod.Key, 1, qtdeAlterar, null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
+                        MovEstoqueDAO.Instance.BaixaEstoqueManual((uint)prod.Key, 1, qtdeAlterar, null, DateTime.Now, "Ajuste de acordo com PosiÃ§Ã£o de MatÃ©ria-Prima");
                     else if (qtdeAlterar < 0)
-                        MovEstoqueDAO.Instance.CreditaEstoqueManual((uint)prod.Key, 1, Math.Abs(qtdeAlterar), null, DateTime.Now, "Ajuste de acordo com Posição de Matéria-Prima");
+                        MovEstoqueDAO.Instance.CreditaEstoqueManual((uint)prod.Key, 1, Math.Abs(qtdeAlterar), null, DateTime.Now, "Ajuste de acordo com PosiÃ§Ã£o de MatÃ©ria-Prima");
 
                 }
                 catch (Exception ex)
                 {
-                    log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "");
+                    log += "â€¢ " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "");
                 }
             }
 
@@ -6269,7 +6321,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+                    log += "â€¢ " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
                 }
             }
 
@@ -6293,7 +6345,7 @@ namespace Glass.UI.Web.Utils
 
             #endregion
 
-            #region Liberação
+            #region LiberaÃ§Ã£o
 
             foreach (var liberacaoGroup in contas.Where(f => f.IdLiberarPedido.GetValueOrDefault(0) > 0
                 && f.IdAcerto.GetValueOrDefault(0) == 0 && f.IdAcertoParcial.GetValueOrDefault(0) == 0).GroupBy(f => f.IdLiberarPedido))
@@ -6381,17 +6433,17 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+                    log += "â€¢ " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
                 }
             }
 
             #endregion
 
-            #region Troca/Devolução
+            #region Troca/DevoluÃ§Ã£o
 
             #endregion
 
-            #region Devolução de pagamento
+            #region DevoluÃ§Ã£o de pagamento
 
             #endregion
 
@@ -6442,7 +6494,7 @@ namespace Glass.UI.Web.Utils
                 if (totais.Gerado - totais.Utilizado >= 0 && creditoAtual == totais.Gerado - totais.Utilizado)
                     continue;
 
-                retorno.Add(string.Format("Cliente: {0}-{1} | Crédito atual: {2} | Saldo crédito movimentado: {3}",
+                retorno.Add(string.Format("Cliente: {0}-{1} | CrÃ©dito atual: {2} | Saldo crÃ©dito movimentado: {3}",
                     cliente.IdCli, cliente.Nome, creditoAtual.ToString("C"), (totais.Gerado - totais.Utilizado).ToString("C")));
             }
 
@@ -6460,7 +6512,7 @@ namespace Glass.UI.Web.Utils
                 var totalPorFormaPagamento = new Dictionary<int, decimal>();
                 var totalPorFormaPagamentoAux = new Dictionary<int, decimal>();
 
-                // Salva o valor pagto por forma de pagamento em cada movimentação do caixa geral.
+                // Salva o valor pagto por forma de pagamento em cada movimentaÃ§Ã£o do caixa geral.
                 foreach (var cxG in cxGeral)
                 {
                     if (totalPorFormaPagamento.ContainsKey((int)dicFormasPagto[(int)cxG.IdConta]))
@@ -6475,7 +6527,7 @@ namespace Glass.UI.Web.Utils
                     }
                 }
 
-                // Salva o valor pagto por forma de pagamento em cada movimentação do caixa diário.
+                // Salva o valor pagto por forma de pagamento em cada movimentaÃ§Ã£o do caixa diÃ¡rio.
                 foreach (var cxD in cxDiario)
                 {
                     if (totalPorFormaPagamento.ContainsKey((int)dicFormasPagto[(int)cxD.IdConta]))
@@ -6499,7 +6551,7 @@ namespace Glass.UI.Web.Utils
                     var c = contasRec[i];
                     var ultConta = i + 1 == contasRec.Count();
 
-                    // Obtém o percentual que esta conta representa em todo o acerto, é necessário remover o valor de juros para que
+                    // ObtÃ©m o percentual que esta conta representa em todo o acerto, Ã© necessÃ¡rio remover o valor de juros para que
                     // o percentual da conta seja calculado corretamente..
                     var perc = contasRec.Count() == 1 ? 100 : (c.ValorRec * 100) / (total - (cxDiario.Sum(f => f.Juros) + cxGeral.Sum(f => f.Juros)));
 
@@ -6513,7 +6565,7 @@ namespace Glass.UI.Web.Utils
                         pagto.IdContaR = c.IdContaR;
                         pagto.IdFormaPagto = (uint)idFormaPagto;
 
-                        // Se for a última conta, salva o valor restante do pagto.
+                        // Se for a Ãºltima conta, salva o valor restante do pagto.
                         pagto.ValorPagto = ultConta ? totalPorFormaPagamentoAux[idFormaPagto] : (totalPorFormaPagamento[idFormaPagto] * perc) / 100;
                         totalPorFormaPagamentoAux[idFormaPagto] -= pagto.ValorPagto;
 
@@ -6523,7 +6575,7 @@ namespace Glass.UI.Web.Utils
             }
             catch (Exception ex)
             {
-                log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+                log += "â€¢ " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
             }
 
             return log;
@@ -6557,10 +6609,10 @@ namespace Glass.UI.Web.Utils
                         var idLoja = (int)UserInfo.GetUserInfo.IdLoja;
 
                         if (idProd == 0)
-                            throw new Exception("Produto não encontrado.");
+                            throw new Exception("Produto nÃ£o encontrado.");
 
                         if (valor == 0)
-                            throw new Exception("Não foi informado valor para o produto: " + codInterno);
+                            throw new Exception("NÃ£o foi informado valor para o produto: " + codInterno);
 
                         var saldoQtde = MovEstoqueDAO.Instance.ObtemSaldoQtdeMov(null, 0, (uint)idProd, (uint)idLoja, null, false);
 
@@ -6604,8 +6656,8 @@ namespace Glass.UI.Web.Utils
             }
             catch (NullReferenceException ex)
             {
-                MensagemAlerta.ErrorMsg("Verifique se existe somente uma configuração (connectionstring) no web.config com o nome do banco de dados." +
-                    " Remova a configuração comentada e tente novamente. Erro: ", ex, Page);
+                MensagemAlerta.ErrorMsg("Verifique se existe somente uma configuraÃ§Ã£o (connectionstring) no web.config com o nome do banco de dados." +
+                    " Remova a configuraÃ§Ã£o comentada e tente novamente. Erro: ", ex, Page);
                 return;
             }
 
@@ -6711,7 +6763,7 @@ namespace Glass.UI.Web.Utils
                 }
                 catch (Exception ex)
                 {
-                    log += "• " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
+                    log += "â€¢ " + ex.Message + (ex.InnerException != null ? " - " + ex.InnerException.Message : "") + Environment.NewLine;
                 }
             }
 
@@ -6719,7 +6771,7 @@ namespace Glass.UI.Web.Utils
 
             #region Insere os Pagamentos
 
-            // Apaga todos os registros da tabela pagto_contas_receber associados às contas que serão ajustadas.
+            // Apaga todos os registros da tabela pagto_contas_receber associados Ã s contas que serÃ£o ajustadas.
             PagtoContasReceberDAO.Instance.ApagarInserirPagamentosAntigos(string.Format("DELETE FROM pagto_contas_receber WHERE IdContaR IN ({0})",
                 string.Join(",", lstPagtoInserir.Select(f => f.IdContaR).Distinct().ToList())));
 
@@ -6805,6 +6857,12 @@ namespace Glass.UI.Web.Utils
 
             MensagemAlerta.ShowMsg("Feito conforme solicitado.", this);
         }
+
+        protected void btnAtualizaExpressaoCalculo_Click(object sender, EventArgs e)
+        {
+            txtExpressaoCalculoCorrigido.Text = tempMaterialProjetoModelo.Instance.AjustaExpressaoCalculo();
+        }
+
 
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)
         //{

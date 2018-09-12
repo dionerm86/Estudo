@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -240,7 +240,7 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, string.Format("UPDATE carregamento SET Situacao={0} WHERE IdCarregamento={1}", situacao, idCarregamento));
             
-            foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, idCarregamento))
+            foreach (var idOC in OrdemCargaDAO.Instance.GetIdsOCsByCarregamento(sessao, (uint)idCarregamento))
                 OrdemCargaDAO.Instance.VerificaOCCarregada(sessao, idCarregamento, idOC, etiqueta);
 
             var carregamentoNovo = GetElementByPrimaryKey(sessao, idCarregamento);
@@ -277,28 +277,45 @@ namespace Glass.Data.DAL
             {
                 var cidadesExternas = oc.Pedidos.Where(f => !string.IsNullOrEmpty(f.CidadeClienteExterno) && !string.IsNullOrEmpty(f.UfClienteExterno))
                     .GroupBy(f => (f.CidadeClienteExterno + " - " + f.UfClienteExterno))
-                    .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
+                    .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count(), PesoPorCidade = f.Sum(p=> p.PesoOC) });
 
                 foreach (var c in cidadesExternas)
                 {
                     if (cidadesCarregamento.Where(x => x.NomeCidade == c.NomeCidade).Count() == 0)
-                        cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes });
+                        cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes, PesoPorCidade = c.PesoPorCidade });
                     else
-                        cidadesCarregamento.ForEach(x => x.QtdeClientes += (x.NomeCidade == c.NomeCidade ? c.QtdeClientes : 0));
+                    {
+                        foreach (var cidade in cidadesCarregamento)
+                        {
+                            if (cidade.NomeCidade == c.NomeCidade)
+                            {
+                                cidade.QtdeClientes += c.QtdeClientes;
+                                cidade.PesoPorCidade += c.PesoPorCidade;
+                            }
+                        }
+                    }
                 }
             }
 
             var cidades = ocs.Where(f => !ClienteDAO.Instance.ClienteImportacao(f.IdCliente))
                 .GroupBy(f => f.CidadeCliente)
-                .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count() });
+                .Select(f => new { NomeCidade = f.Key, QtdeClientes = f.Count(), PesoPorCidade = f.Sum(p => p.Peso) });
 
             foreach (var c in cidades)
             {
                 if (cidadesCarregamento.Where(x => x.NomeCidade == c.NomeCidade).Count() == 0)
-                    cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes });
+                    cidadesCarregamento.Add(new CidadesCarregamento() { NomeCidade = c.NomeCidade, QtdeClientes = c.QtdeClientes, PesoPorCidade = c.PesoPorCidade });
                 else
-
-                    cidadesCarregamento.ForEach(x => x.QtdeClientes += (x.NomeCidade == c.NomeCidade ? c.QtdeClientes : 0));
+                {
+                    foreach (var cidade in cidadesCarregamento)
+                    {
+                        if (cidade.NomeCidade == c.NomeCidade)
+                        {
+                            cidade.QtdeClientes += c.QtdeClientes;
+                            cidade.PesoPorCidade += c.PesoPorCidade;
+                        }
+                    }
+                }
             }
 
             return cidadesCarregamento.OrderBy(f => f.NomeCidade).ToList();
@@ -416,7 +433,7 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="session"></param>
         /// <param name="idsProdutosPedido"></param>
-        public void AtualizaCarregamentoParcial(GDASession session, string idsPedido)
+        public void AtualizaCarregamentoParcial(GDASession session, string idsPedido, string idsOc, uint idLiberarPedido)
         {
 
             uint[] idsProdutosPedido = ProdutosPedidoDAO.Instance.ObtemIdsProdPedByPedidos(session, idsPedido).ToArray();
@@ -424,22 +441,26 @@ namespace Glass.Data.DAL
             if (!OrdemCargaConfig.UsarOrdemCargaParcial)
                 return;
 
-            var idsUsados = new List<uint>();
+            var idsUsados = new List<int>();
 
             //Percorrer as peças liberadas removendo as que não foram liberadas do item carregamento 
             for (var i = 0; i < idsProdutosPedido.Length; i++)
             {
-                var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
-                if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
+                var idProdLiberarPedido = (int)ProdutosLiberarPedidoDAO.Instance.ObtemIdProdLiberarPedido(session, idLiberarPedido, idsProdutosPedido[i]);
+                var idPedido = (int)ProdutosPedidoDAO.Instance.ObtemIdPedido(session, idsProdutosPedido[i]);
+
+                if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, (uint)idPedido))
                     continue;
 
-                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i]);
-                idsUsados.Add(idsProdutosPedido[i]);
+                ItemCarregamentoDAO.Instance.VincularItensCarregamentoAoProdutoLiberarPedido(session, idsOc, (int)idsProdutosPedido[i], idProdLiberarPedido);
+
+                ItemCarregamentoDAO.Instance.DeleteByIdProdPed(session, idsProdutosPedido[i], idsOc);
+                idsUsados.Add((int)idsProdutosPedido[i]);
             }
 
             //Marca as ocs como carregada parcialmente
             foreach (var idCarregamento in ItemCarregamentoDAO.Instance.ObterIdsCarregamento(session, idsUsados))
-                Instance.AtualizaCarregamentoCarregado(session, idCarregamento, null);
+                Instance.AtualizaCarregamentoCarregado(session, (uint)idCarregamento, null);
         }
 
         #endregion

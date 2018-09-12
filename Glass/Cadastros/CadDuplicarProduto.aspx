@@ -12,15 +12,15 @@
             document.getElementById("produto").style.display = tipo == 1 ? "" : "none";
             document.getElementById("grupoSubgrupo").style.display = tipo == 2 ? "" : "none";
         }
-        
+
         function numeroProdutos()
         {
             var tabela = document.getElementById("tbProdutos");
             var retorno = 0;
-            
+
             for (i = 1; i < tabela.rows.length; i++)
                 retorno += tabela.rows[i].style.display != "none" ? 1 : 0;
-                
+
             return retorno;
         }
 
@@ -36,7 +36,7 @@
                 alert(dadosProd[1]);
                 return;
             }
-            
+
             if (numeroProdutos() == 0)
             {
                 FindControl("drpNovoGrupo", "select").value = dadosProd[5];
@@ -46,7 +46,7 @@
 
             adicionar(dadosProd[1], codInterno, dadosProd[2], dadosProd[3], dadosProd[4]);
             atualizaPreview();
-            
+
             FindControl("txtCodProd", "input").value = "";
         }
 
@@ -67,14 +67,14 @@
             for (iProd = 0; iProd < produtos.length; iProd++)
             {
                 var dadosProd = produtos[iProd].split("~");
-            
+
                 if (iProd == 0 && numeroProdutos() == 0)
                 {
                     FindControl("drpNovoGrupo", "select").value = dadosProd[5];
                     FindControl("drpNovoGrupo", "select").onchange();
                     FindControl("drpNovoSubgrupo", "select").value = dadosProd[6];
                 }
-                
+
                 adicionar(dadosProd[0], dadosProd[1], dadosProd[2], dadosProd[3], dadosProd[4]);
             }
 
@@ -89,24 +89,24 @@
                 if (idsProd[i] == idProd)
                     return;
             }
-            
+
             var titulos = new Array("Cód.", "Descrição", "Grupo/Subgrupo");
             var itens = new Array(codInterno, descricao, grupo + (subgrupo != "" ? " - " + subgrupo : ""));
 
             addItem(itens, titulos, "tbProdutos", idProd, "hdfIdProd", null, null, "atualizaPreview", false);
         }
-        
+
         function substituiTexto(textoAtual, remover, substituir)
         {
             var retorno = textoAtual.toUpperCase();
             var pos = retorno.indexOf(remover.toUpperCase());
-            
+
             while (pos > -1)
             {
 		        retorno = retorno.substr(0, pos) + substituir.toUpperCase() + retorno.substr(pos + remover.length);
 		        pos = retorno.indexOf(remover.toUpperCase(), pos + substituir.length);
 	        }
-            
+
             return retorno;
         }
 
@@ -118,22 +118,22 @@
 
             return "";
         }
-        
+
         var alterandoPreview = false;
 
         function atualizaPreview()
         {
             if (alterandoPreview)
                 return;
-            
+
             alterandoPreview = true;
-            
+
             try
             {
                 var tbProdutos = document.getElementById("tbProdutos");
                 var tbPreview = document.getElementById("tbPreview");
                 tbPreview.innerHTML = tbProdutos.innerHTML;
-                
+
                 var codInternoRemover = FindControl("txtTextoCodigoAtual", "input").value;
                 var codInternoSubstituir = FindControl("txtTextoCodigoNovo", "input").value;
                 var descricaoRemover = FindControl("txtTextoDescricaoAtual", "input").value;
@@ -144,11 +144,11 @@
 
                 if (tbPreview.rows.length > 0)
                     tbPreview.rows[0].cells[0].style.display = "none";
-                    
+
                 for (i = 1; i < tbPreview.rows.length; i++)
                 {
                     tbPreview.rows[i].cells[0].style.display = "none";
-                    
+
                     if (codInternoRemover != "")
                         tbPreview.rows[i].cells[1].innerHTML = substituiTexto(tbPreview.rows[i].cells[1].innerHTML, codInternoRemover, codInternoSubstituir);
                     else
@@ -183,23 +183,27 @@
                 alert("Selecione um produto para ser duplicado.");
                 return;
             }
-            
+
             var codInternoSubstituir = FindControl("txtTextoCodigoNovo", "input").value;
             if (codInternoSubstituir == "")
             {
                 alert("Digite o texto que será acrescido ao final do código do produto.");
                 return;
             }
-            
+
             var idNovoGrupo = FindControl("drpNovoGrupo", "select").value;
             var idNovoSubgrupo = FindControl("drpNovoSubgrupo", "select").value;
             var codInternoRemover = FindControl("txtTextoCodigoAtual", "input").value;
             var descricaoRemover = FindControl("txtTextoDescricaoAtual", "input").value;
             var descricaoSubstituir = FindControl("txtTextoDescricaoNovo", "input").value;
+            var altura = FindControl("txtAltura", "input").value;
+            var largura = FindControl("txtLargura", "input").value;
+            var processo = FindControl("txtProc", "input").value;
+            var aplicacao = FindControl("txtApl", "input").value;
 
             var resposta = CadDuplicarProduto.Duplicar(idsProd, idNovoGrupo, idNovoSubgrupo, codInternoRemover, codInternoSubstituir,
-                descricaoRemover, descricaoSubstituir).value.split("##");
-            
+                descricaoRemover, descricaoSubstituir, altura, largura, processo, aplicacao).value.split("##");
+
             if (resposta[0] == "Erro")
                 alert(resposta[1]);
             else
@@ -208,7 +212,7 @@
     </script>
 
     <section>
-    
+
         <section id="pesquisa">
             <div>
                 <asp:Label runat="server" ID="lblTipo" Text="Tipo" ForeColor="#0066FF"></asp:Label>
@@ -241,9 +245,9 @@
                 </colo:VirtualObjectDataSource>
             </div>
         </section>
-        
+
         <br />
-        
+
         <section id="produtos">
             <div style="display: table">
                 <div style="float: left; width: 350px;">
@@ -265,13 +269,13 @@
                 <asp:HiddenField ID="hdfIdProd" runat="server" />
             </div>
         </section>
-        
+
         <section id="dadosDuplicacao">
-        
+
              <header>
                     <p>Salvar em:</p>
              </header>
-              
+
              <div>
                     Grupo
                     <asp:DropDownList ID="drpNovoGrupo" runat="server" DataSourceID="odsGrupo" onchange="carregaSubgrupos('drpNovoGrupo', 'drpNovoSubgrupo', 'Nenhum'); atualizaPreview()"
@@ -281,9 +285,9 @@
                     <asp:DropDownList ID="drpNovoSubgrupo" runat="server" onchange="atualizaPreview()">
                     </asp:DropDownList>
                 </div>
-              
+
               <br />
-              
+
              <div>
                     <p>Substituir texto: </p>
                     <div>
@@ -297,12 +301,29 @@
                         para <asp:TextBox ID="txtTextoDescricaoNovo" runat="server" Width="150px" onchange="atualizaPreview()"></asp:TextBox>
                     </div>
                     <br />
+                    <div>
+                        Altura  <asp:TextBox ID="txtAltura" runat="server" Width="50px"></asp:TextBox>
+                        Largura <asp:TextBox ID="txtLargura" runat="server" Width="50px"></asp:TextBox>
+                    </div>
+                    <br />
+                    <div>
+                        Proc. <asp:TextBox ID="txtProc" runat="server" Width="50px"></asp:TextBox>
+                        Apl. <asp:TextBox ID="txtApl" runat="server" Width="50px"></asp:TextBox>
+                    </div>
+                    <br />
                     <div style="font-style: italic">
                         se os campos "de" ficarem em branco o texto do campo "para" será acrescido ao final
                         do texto existente;
                         <br />
                         caso contrário o texto do campo "para" substitui o texto do campo "de" no texto
-                        existente</div>
+                        existente.
+                        <br />
+                        Se nada for definido nos campos Altura e Largura serão considerados os valores dos produtos originais.
+                        <br />
+                        Se nada for definido nos campos Proc e Apl serão considerados os valores dos produtos originais.
+                        <br />
+                        Nos campos de Proc. e Apl. devem ser inseridos códigos dos processos e aplicações que serão utilizados.
+                    </div>
                     <br />
                     <div>
                         <asp:Button ID="btnDuplicar" runat="server" Text="Duplicar" OnClientClick="duplicar(); return false" />
@@ -314,11 +335,11 @@
                         </colo:VirtualObjectDataSource>
                     </div>
                 </div>
-          
+
         </section>
-        
+
      </section>
-        
+
         <%--<table>
         <tr>
             <td align="center">
@@ -495,7 +516,7 @@
                     </tr>
                 </table>
                 <br />
-                <asp:Button ID="btnDuplicar" runat="server" Text="Duplicar" 
+                <asp:Button ID="btnDuplicar" runat="server" Text="Duplicar"
                     onclientclick="duplicar(); return false" />
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsGrupo" runat="server" SelectMethod="GetForFilter" TypeName="Glass.Data.DAL.GrupoProdDAO">
                     <SelectParameters>

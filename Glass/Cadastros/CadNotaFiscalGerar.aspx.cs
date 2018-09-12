@@ -46,6 +46,8 @@ namespace Glass.UI.Web.Cadastros
                 pedido_buscar.Visible = false;
                 pedido_separa.Visible = false;
                 cliente.Visible = false;
+                ctrlDataIni.Visible = false;
+                ctrlDataFim.Visible = false;
             }
 
             txtIdCli.Text = "";

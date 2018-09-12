@@ -205,7 +205,11 @@
         var idsNovos = idsPedidosNovos[1].split(','); 
         var idsAntigos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
         var retorno = new Array();
-        
+
+         var idsOcs = FindControl("hdfIdsOc", "input").value;
+         idsOcs += idsOcs == "" ? idOC : "," + idOC;
+         FindControl("hdfIdsOc", "input").value = idsOcs;
+
         for (var i = 0; i < idsAntigos.length; i++){
             if(idsAntigos[i].length > 0 && idsAntigos[i] != " ")
                 retorno.push(idsAntigos[i]);
@@ -213,8 +217,7 @@
         
         for (var i = 0; i < idsNovos.length; i++){
         
-            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto, cxDiario, "").value.split('|');
-        
+            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto , cxDiario, "",idOC).value.split('|');        
             if (validaPedido[0] == "false")
             {
                 alert(validaPedido[1]);
@@ -258,7 +261,7 @@
         var cxDiario = FindControl("hdfCxDiario", "input").value;        
         var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value;
         
-        var validaPedido = CadLiberarPedido.ValidaPedido(idPedido, tipoVenda, idFormaPagto, cxDiario, (idsPedidos == "" || idsPedidos == null ? "" : idsPedidos + ",") + idPedido).value.split('|');
+        var validaPedido = CadLiberarPedido.ValidaPedido(idPedido, tipoVenda, idFormaPagto, cxDiario, (idsPedidos == "" || idsPedidos == null ? "" : idsPedidos + ",") + idPedido, "").value.split('|');
             
         if (validaPedido[0] == "false")
         {
@@ -402,7 +405,7 @@
         var ctrTipoPagto = FindControl("drpTipoPagto", "select");
         if (ctrTipoPagto == null) return;
 
-        // Mostra/Esconde campos de pagamento ‡ vista/‡ prazo dependendo do tipo pagto
+        // Mostra/Esconde campos de pagamento √† vista/√† prazo dependendo do tipo pagto
         FindControl("msgErroTipoPagto", "div").style.display = ctrTipoPagto.value == "" ? "" : "none";
         FindControl("tbAVista", "table").style.display = ctrTipoPagto.value == 1 ? "inline" : "none";
         FindControl("tbAPrazo", "table").style.display = ctrTipoPagto.value == 2 ? "inline" : "none";
@@ -417,7 +420,7 @@
         <%= ctrlFormaPagto2.ClientID %>.Calcular();
         <%= ctrlParcelas1.ClientID %>.Calcular();
         
-        // Esconde o campo de desconto se for liberaÁ„o ‡ prazo e se a empresa n„o permitir
+        // Esconde o campo de desconto se for libera√ß√£o √† prazo e se a empresa n√£o permitir
         var descontoPrazo = true;
         if (descontoLiberacao && !descontoPrazo)
         {
@@ -442,7 +445,7 @@
                 return false;
 
             if (FindControl("hdfLibParc", "input").value == "true" && 
-                !confirm("Um ou mais pedidos desta liberaÁ„o est„o sendo liberados PARCIALMENTE, deseja continuar?"))
+                !confirm("Um ou mais pedidos desta libera√ß√£o est√£o sendo liberados PARCIALMENTE, deseja continuar?"))
                 return false;
 
             try {
@@ -452,13 +455,14 @@
                 var idsProdutosProducao = FindControl("hdfIdsProdutoPedidoProducao", "input").value;
                 var qtdeProdutosLiberar = FindControl("hdfQtdeProdutosLiberar", "input").value;
                 var totalASerPago = FindControl("hdfTotalASerPago", "input").value;
-            
+                var idsOc = FindControl("hdfIdsOc", "input").value;
+
                 // Verifica se algum dos pedidos foi pago antecipado ou recebeu sinal ou teve algum cancelamento do momento que foi 
-                // adicionado na tela atÈ agora.
+                // adicionado na tela at√© agora.
                 if (!verificaAlteracaoPedidos())
                     return false;
 
-                // Se for garantia/reposiÁ„o
+                // Se for garantia/reposi√ß√£o
                 if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
                 {
                     retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido, 
@@ -502,7 +506,7 @@
                     var tipoRecebimento = <%= (int)Glass.Data.Helper.UtilsFinanceiro.TipoReceb.LiberacaoAVista %>;
                     var receberCappta = isAVista && utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1;
 
-                    // Se o tipo de pagamento for ‡ vista
+                    // Se o tipo de pagamento for √† vista
                     if (isAVista) {
                         retorno = CadLiberarPedido.ConfirmarAVista(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, formasPagto, tiposCartao,
                             totalASerPago, valores, contas, depositoNaoIdentificado, CNI, isGerarCredito, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao, cheques,
@@ -520,7 +524,7 @@
                     
                         retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
                             idParcela, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
-                            tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao).value;
+                            tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao, idsOc).value;
                     }
                 }
 
@@ -615,6 +619,7 @@
         FindControl("hdfIdCliente", "input").value = "";
         FindControl("hdfIdsPedido", "input").value = "";
         FindControl("hdfTotalASerPago", "input").value = "";
+        FindControl("hdfIdsOc", "input").value = "";
 
         try {
             FindControl("hdfIdsProdutosPedido", "input").value = "";
@@ -669,7 +674,7 @@
         document.getElementById("valorTotalPrazo").innerHTML = "Valor a ser Pago: R$ " + (totalEntrada + totalPrazo).toFixed(2).replace('.', ',');
         
         if (document.getElementById("<%= creditoClientePrazo.ClientID %>") != null)
-            document.getElementById("<%= creditoClientePrazo.ClientID %>").innerHTML = "O cliente possui R$ " + totalCredito.toFixed(2).replace(".", ",") + " de CrÈdito.";
+            document.getElementById("<%= creditoClientePrazo.ClientID %>").innerHTML = "O cliente possui R$ " + totalCredito.toFixed(2).replace(".", ",") + " de Cr√©dito.";
         
         if (document.getElementById("<%= valorObraPrazo.ClientID %>") != null)
         {
@@ -749,7 +754,7 @@
                             <uc4:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="false" />
                         </td>
                         <td>
-                            <asp:Label ID="lblSituacaoProd" runat="server" Text="SituaÁ„o Prod." ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="lblSituacaoProd" runat="server" Text="Situa√ß√£o Prod." ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpSituacaoProd" runat="server" AppendDataBoundItems="True"
@@ -774,6 +779,7 @@
                 <asp:HiddenField ID="hdfBuscarIdsPedidos" runat="server" />
                 <asp:HiddenField ID="hdfPedidosAbertos" runat="server" />
                 <asp:HiddenField ID="hdfDataTela" runat="server" />
+                <asp:HiddenField ID="hdfIdsOc" runat="server" />
             </td>
         </tr>
         <tr>
@@ -815,9 +821,9 @@
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdPedido" HeaderText="Num" SortExpression="IdPedido" />
-                        <asp:BoundField DataField="CodCliente" HeaderText="CÛd. Pedido Cli." SortExpression="CodCliente" />
+                        <asp:BoundField DataField="CodCliente" HeaderText="C√≥d. Pedido Cli." SortExpression="CodCliente" />
                         <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
-                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion·rio" SortExpression="NomeFunc" />
+                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcion√°rio" SortExpression="NomeFunc" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
                         <asp:BoundField DataField="ValorEntrada" DataFormatString="{0:c}" HeaderText="Valor Entrada"
                             SortExpression="ValorEntrada" />
@@ -861,7 +867,7 @@
                                     Enabled="False" Text='<%# ((decimal)Eval("ValorFastDeliveryLiberacao")).ToString("C") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="SituaÁ„o ProduÁ„o" SortExpression="DescrSituacaoProducao">
+                        <asp:TemplateField HeaderText="Situa√ß√£o Produ√ß√£o" SortExpression="DescrSituacaoProducao">
                             <ItemTemplate>
                                 <asp:Label ID="Label9" runat="server" Text='<%# Bind("DescrSituacaoProducao") %>'></asp:Label>
                             </ItemTemplate>
@@ -945,7 +951,7 @@
                                                         <asp:Label ID="lblLargura" runat="server" Text='<%# Bind("LarguraLista") %>'></asp:Label>
                                                     </ItemTemplate>
                                                 </asp:TemplateField>
-                                                <asp:TemplateField HeaderText="Tot. m≤" SortExpression="TotM">
+                                                <asp:TemplateField HeaderText="Tot. m¬≤" SortExpression="TotM">
                                                     <ItemTemplate>
                                                         <asp:Label ID="lblTotM" runat="server" Text='<%# Bind("TotM2Liberacao") %>'></asp:Label>
                                                     </ItemTemplate>
@@ -1009,6 +1015,8 @@
                                             <SelectParameters>
                                                 <asp:ControlParameter ControlID="hdfIdPedidoProdutos" Name="idPedido" PropertyName="Value"
                                                     Type="UInt32" />
+                                                <asp:ControlParameter ControlID="hdfIdsOc" Name="idsOc" PropertyName="Value"
+                                                    Type="String" />
                                             </SelectParameters>
                                         </colo:VirtualObjectDataSource>
                             </ItemTemplate>
@@ -1067,7 +1075,7 @@
         <tr>
             <td align="center">
                 <asp:Label ID="lblMensagemRecalcular" runat="server" ForeColor="Red" Font-Size="Medium"></asp:Label>
-                <asp:Button ID="btnRecalcular" runat="server" Text="Recalcular liberaÁ„o" OnClick="btnRecalcular_Click"
+                <asp:Button ID="btnRecalcular" runat="server" Text="Recalcular libera√ß√£o" OnClick="btnRecalcular_Click"
                     CausesValidation="False" />
             </td>
         </tr>
@@ -1075,7 +1083,7 @@
     <table id="pagamento">
         <tr>
             <td align="center">
-                <asp:CheckBox ID="chkTaxaPrazo" runat="server" Text="Calcular a taxa de juros de venda ‡ prazo para liberaÁ„o ‡ vista"
+                <asp:CheckBox ID="chkTaxaPrazo" runat="server" Text="Calcular a taxa de juros de venda √† prazo para libera√ß√£o √† vista"
                     Visible="False" onclick="alterouProduto()" />
                 <span runat="server" id="mensagemErro" visible="false">
                     <br />
@@ -1095,9 +1103,9 @@
                     <tr>
                         <td align="center">
                             <div id="msgErroTipoPagto" style="display: none; color: Red; font-size: 120%">
-                                Selecione uma parcela disponÌvel para o cliente
+                                Selecione uma parcela dispon√≠vel para o cliente
                                 <br />
-                                (ou habilite a permiss„o para o cliente pagar ‡ vista se sÛ tiver parcelas ‡ prazo)
+                                (ou habilite a permiss√£o para o cliente pagar √† vista se s√≥ tiver parcelas √† prazo)
                                 <br />
                                 <br />
                                 <br />
@@ -1110,8 +1118,8 @@
                                     <td>
                                         <asp:DropDownList ID="drpTipoPagto" runat="server" onchange="tipoPagtoChanged();"
                                             OnLoad="drpTipoPagto_Load">
-                                            <asp:ListItem Value="1">¿ Vista</asp:ListItem>
-                                            <asp:ListItem Value="2">¿ Prazo</asp:ListItem>
+                                            <asp:ListItem Value="1">√Ä Vista</asp:ListItem>
+                                            <asp:ListItem Value="2">√Ä Prazo</asp:ListItem>
                                         </asp:DropDownList>
                                     </td>
                                 </tr>
@@ -1130,7 +1138,7 @@
                                 </tr>
                                 <tr id="dadosAcrescimo">
                                     <td>
-                                        <asp:Label ID="lblAcrescimo" runat="server" Text="AcrÈscimo"></asp:Label>
+                                        <asp:Label ID="lblAcrescimo" runat="server" Text="Acr√©scimo"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:DropDownList ID="drpTipoAcrescimo" runat="server">
@@ -1170,7 +1178,7 @@
                                             <span id="valorTotalPrazo" style="font-size: large;">Valor a ser Pago: R$ 0,00 </span>
                                         </div>
                                         <div id="creditoClientePrazo" style="font-size: 10pt; padding-top: 4px" runat="server">
-                                            O cliente possui R$ 0,00 de crÈdito.
+                                            O cliente possui R$ 0,00 de cr√©dito.
                                         </div>
                                         <div id="valorObraPrazo" style="font-size: 10pt; padding-top: 4px" runat="server">
                                             Valor utilizado da(s) obra(s): R$ 0,00

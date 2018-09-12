@@ -317,6 +317,12 @@ namespace Glass.Data.Helper
             VmGlobal,
 
             #endregion
+
+            #region "W"
+
+            WickertVidros,
+
+            #endregion
         }
 
         #endregion

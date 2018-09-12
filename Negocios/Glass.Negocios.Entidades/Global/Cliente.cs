@@ -1996,7 +1996,25 @@ namespace Glass.Global.Negocios.Entidades
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Define se os pedidos emitidos para esse cliente
+        /// serão contabilizados no SMS de resumo diário
+        /// </summary>
+        public bool IgnorarNoSmsResumoDiario
+        {
+            get { return DataModel.IgnorarNoSmsResumoDiario; }
+            set
+            {
+                if (DataModel.IgnorarNoSmsResumoDiario != value &&
+                    RaisePropertyChanging("IgnorarNoSmsResumoDiario", value))
+                {
+                    DataModel.IgnorarNoSmsResumoDiario = value;
+                    RaisePropertyChanged("IgnorarNoSmsResumoDiario");
+                }
+            }
+        }
+
         #endregion
 
         #region Propriedades referenciadas/filhos

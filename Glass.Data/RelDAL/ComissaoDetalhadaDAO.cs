@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Glass.Data.RelModel;
+﻿using Glass.Data.DAL;
 using Glass.Data.Model;
-using Glass.Data.DAL;
+using Glass.Data.RelModel;
+using System.Collections.Generic;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class ComissaoDetalhadaDAO : Glass.Pool.PoolableObject<ComissaoDetalhadaDAO>
+    public sealed class ComissaoDetalhadaDAO : Glass.Pool.Singleton<ComissaoDetalhadaDAO>
     {
         private ComissaoDetalhadaDAO() { }
 

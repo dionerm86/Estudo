@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GDA;
 using Glass.Data.DAL;
 using System.Drawing;
@@ -61,6 +61,9 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("DATALEITURA")]
         public DateTime DataLeitura { get; set; }
+
+        [PersistenceProperty("IDPRODLIBERARPEDIDO")]
+        public uint? IdprodLiberarPedido { get; set; }
 
         #endregion
 

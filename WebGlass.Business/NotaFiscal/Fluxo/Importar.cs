@@ -387,12 +387,14 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
 
                 try
                 {
-                    nfe.DataSaidaEnt = new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(0, 4)),
+                    var dataSaidaEnt = nfeRoot["infNFe"]["ide"]["dhSaiEnt"] != null ? new DateTime(Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(0, 4)),
                         Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(5, 2)),
                         Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(8, 2)),
                         Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(11, 2)),
                         Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(14, 2)),
-                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(17, 2)));
+                        Int32.Parse(nfeRoot["infNFe"]["ide"]["dhSaiEnt"].InnerText.Substring(17, 2))) : DateTime.Now;
+
+                    nfe.DataSaidaEnt = dataSaidaEnt;
                 }
                 catch (NullReferenceException) { }
 

@@ -220,6 +220,15 @@ namespace Glass.UI.Web.Cadastros {
         protected global::System.Web.UI.WebControls.HiddenField hdfDataTela;
         
         /// <summary>
+        /// hdfIdsOc control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField hdfIdsOc;
+        
+        /// <summary>
         /// lblObsCliente control.
         /// </summary>
         /// <remarks>

@@ -1,0 +1,184 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Num. NF</label>
+            <input type="number" v-model.number="filtroAtual.numeroNfe" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Num. Pedido</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Modelo</label>
+            <input type="text" maxlength="3" v-model="filtroAtual.modelo" style="width: 25px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idLoja">Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacao" texto-selecionar="Selecione a situação"
+                v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes" v-bind:ordenar="false" style="width: 188px"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>CFOP</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsCfop" texto-selecionar="Selecione o CFOP"
+                v-bind:funcao-recuperar-itens="obterItensFiltroCfops" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Tipo CFOP</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tiposCfop" texto-selecionar="Selecione o tipo de CFOP"
+                v-bind:funcao-recuperar-itens="obterItensFiltroTiposCfop" v-bind:ordenar="false" style="width: 200px"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Tipo NF</label>
+            <select v-model="filtroAtual.tipoDocumento">
+                <option Value="0">Todos</option>
+                <option Value="1">Entrada</option>
+                <option Value="2">Saída</option>
+                <option Value="3">Entrada (terceiros)</option>
+                <option Value="5">Transporte</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Finalidade</label>
+            <select v-model="filtroAtual.finalidade">
+                <option Value="0">Todas</option>
+                <option Value="1">Normal</option>
+                <option Value="2">Complementar</option>
+                <option Value="3">Ajuste</option>
+                <option Value="4">Devolução/Retorno</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Rota</label>
+            <campo-busca-com-popup v-bind:nome.sync="filtroAtual.codigoRota" v-bind:item-selecionado.sync="rotaAtual" v-bind:funcao-buscar-itens="obterItensFiltroRotas"
+                url-popup="../Utils/SelRota.aspx" v-bind:largura-popup="700" v-bind:altura-popup="500" style="width: 80px"></campo-busca-com-popup>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Tipo Fiscal</label>
+            <select v-model="filtroAtual.tipoFiscal">
+                <option Value="0">Todos</option>
+                <option Value="1">Consumidor Final</option>
+                <option Value="2">Revenda</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input type="number" v-model.number="filtroAtual.idFornecedor" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Forma de emissão</label>
+            <select v-model="filtroAtual.tipoEmissao">
+                <option Value="0">Todos</option>
+                <option Value="1">Normal</option>
+                <option Value="3">Contingência com SCAN</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período Emissão</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoEmissaoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoEmissaoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período Entrada/Saída</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoEntradaSaidaInicio" v-bind:data-hora-final.sync="filtroAtual.periodoEntradaSaidaFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Produto</label>
+            <input type="text" v-model="filtroAtual.codigoInternoProduto" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.descricaoProduto" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Lote</label>
+            <input type="text" v-model="filtroAtual.lote" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Forma Pagto.</label>
+            <select v-model="filtroAtual.tipoVenda">
+                <option Value="0">Todas</option>
+                <option Value="1">À Vista</option>
+                <option Value="2">À Prazo</option>
+                <option Value="3">Outros</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Total Nota</label>
+            <input type="number" v-model.number="filtroAtual.valorNotaFiscalInicio" style="width: 60px" />
+            a
+            <input type="number" v-model.number="filtroAtual.valorNotaFiscalFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Inf. Compl./Obs.</label>
+            <input type="text" v-model="filtroAtual.informacaoComplementar" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Agrupar relatório por</label>
+            <select v-model="filtroAtual.agrupar">
+                <option Value="0">Não agrupar</option>
+                <option Value="1">Emitente</option>
+                <option Value="2">Destinatário</option>
+                <option Value="3">CFOP</option>
+                <option Value="4">Data Emissão</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Ordenar relatório por</label>
+            <select v-model="filtroAtual.ordenacaoFiltro">
+                <option></option>
+                <option Value="1">Número NF (decresc.)</option>
+                <option Value="2">Número NF (cresc.)</option>
+                <option Value="3">Data de emissão (descresc.)</option>
+                <option Value="4">Data de emissão (cresc.)</option>
+                <option Value="5">Data de entrada/saída (descresc.)</option>
+                <option Value="6">Data de entrada/saída (cresc.)</option>
+                <option Value="7">Valor Total(cresc.)</option>
+                <option Value="8">Valor Total (descresc.)</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>{{ vencimentoCertificado }}</label>
+        </span>
+    </div>
+</section>

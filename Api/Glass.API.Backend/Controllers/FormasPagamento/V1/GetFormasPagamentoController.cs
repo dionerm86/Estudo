@@ -40,5 +40,51 @@ namespace Glass.API.Backend.Controllers.FormasPagamento.V1
                 return this.Lista(formasPagamento);
             }
         }
+
+        /// <summary>
+        /// Recupera as formas de pagamento para os controles de filtro das telas.
+        /// </summary>
+        /// <returns>Uma lista JSON com as formas de pagamento encontradas.</returns>
+        [HttpGet]
+        [Route("filtroNotaFiscal")]
+        [SwaggerResponse(200, "Formas de pagamento de nota fiscal encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Formas de pagamento de nota fiscal não encontradas.")]
+        public IHttpActionResult ObterFiltroNotaFiscal()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var formasPagamento = FormaPagtoDAO.Instance.GetForNotaFiscal(0)
+                    .Select(p => new IdNomeDto
+                    {
+                        Id = (int)p.IdFormaPagto,
+                        Nome = p.Descricao,
+                    });
+
+                return this.Lista(formasPagamento);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as formas de pagamento para os controles de filtro das telas.
+        /// </summary>
+        /// <returns>Uma lista JSON com as formas de pagamento encontradas.</returns>
+        [HttpGet]
+        [Route("filtroContasRecebidas")]
+        [SwaggerResponse(200, "Formas de pagamento de contas recebidas encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Formas de pagamento de contas recebidas não encontradas.")]
+        public IHttpActionResult ObterFiltroContasRecebidas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var formasPagamento = FormaPagtoDAO.Instance.GetForConsultaConta()
+                    .Select(p => new IdNomeDto
+                    {
+                        Id = (int)p.IdFormaPagto,
+                        Nome = p.Descricao,
+                    });
+
+                return this.Lista(formasPagamento);
+            }
+        }
     }
 }

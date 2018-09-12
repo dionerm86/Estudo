@@ -193,6 +193,10 @@
       <HintPath>..\packages\Common.Logging.Core.3.0.0\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
+      <HintPath>..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FC, Version=4.3.1771.7, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CalcEngine.Forvet.1.9.81\lib\net35\FC.dll</HintPath>
       <Private>True</Private>
@@ -1617,6 +1621,15 @@
     <Content Include="Utils\ShowPrecoAnterior.aspx" />
     <Content Include="Utils\TrocarSenha.aspx" />
     <Content Include="Utils\UsuariosLogados.aspx" />
+    <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.Filtro.js" />
+    <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.js" />
+    <Content Include="Vue\ContasReceber\Templates\LstContasRecebidas.Filtro.html" />
+    <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.Filtro.js" />
+    <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.js" />
+    <Content Include="Vue\PedidosConferencia\Templates\LstPedidosConferencia.Filtro.html" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.Filtro.js" />
+    <Content Include="Vue\NotasFiscais\Componentes\LstNotasFiscais.js" />
+    <Content Include="Vue\NotasFiscais\Templates\LstNotasFiscais.Filtro.html" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.Filtro.js" />
     <Content Include="Vue\Liberacoes\Componentes\LstLiberacoes.js" />
     <Content Include="Vue\Liberacoes\Templates\LstLiberacoes.Filtro.html" />
@@ -1669,6 +1682,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\LogCancelamento.js" />
     <Content Include="Vue\_Compartilhado\Componentes\LogAlteracao.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Data.js" />
     <Content Include="Vue\_Compartilhado\Filtros\DataHora.js" />
@@ -1692,8 +1706,11 @@
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Cfops.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\ContasReceber.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
@@ -1755,6 +1772,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\LogCancelamento.html" />
     <Content Include="Vue\_Compartilhado\Templates\LogAlteracao.html" />
     <Content Include="WebGlassParceiros\AlterarObsLiberacaoPedido.aspx" />
     <Content Include="WebGlassParceiros\CadMensagemParceiro.aspx" />
@@ -1826,6 +1844,7 @@
       <Link>stylecop.json</Link>
     </AdditionalFiles>
     <Content Include="packages.config" />
+    <Content Include="Handlers\ArquivoCheques.ashx" />
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>
     </None>

@@ -1,24 +1,23 @@
 <%@ Master Language="C#" MasterPageFile="~/Layout.master" AutoEventWireup="true"
-    CodeBehind="Painel.master.cs" Inherits="Glass.UI.Web.Painel" EnableViewState="false" %>
+    CodeBehind="Painel.master.cs" Inherits="Glass.UI.Web.Painel" %>
 
 <asp:Content ID="Menu" ContentPlaceHolderID="Menu" runat="server">
-    <asp:Menu ID="mnuGeral" runat="server" Orientation="Horizontal" MaximumDynamicDisplayLevels="5" ViewStateMode="Disabled"
-        Font-Size="8pt" ForeColor="#EAFFFF" StaticSubMenuIndent="2px" Font-Bold="True"
-        Font-Names="arial,verdana" StaticPopOutImageUrl="~/Images/divisoria.png" StaticPopOutImageTextFormatString=""
-        Style="margin-bottom: 0px" DisappearAfter="1000" EnableViewState="False" RenderingMode="List">
-        <LevelSubMenuStyles>
-            <asp:SubMenuStyle Font-Underline="False" />
-        </LevelSubMenuStyles>
-        <StaticMenuItemStyle HorizontalPadding="7px" VerticalPadding="8px" />
-        <StaticHoverStyle CssClass="itemMenu" />
+    <div style="display: none">
+        <asp:Menu ID="mnuGeral" runat="server" Orientation="Horizontal" MaximumDynamicDisplayLevels="5" ViewStateMode="Disabled"
+            Font-Size="8pt" ForeColor="#EAFFFF" StaticSubMenuIndent="2px" Font-Bold="True"
+            Font-Names="arial,verdana" StaticPopOutImageUrl="~/Images/divisoria.png" StaticPopOutImageTextFormatString=""
+            Style="margin-bottom: 0px" DisappearAfter="1000" EnableViewState="False" RenderingMode="List">
+            <LevelSubMenuStyles>
+                <asp:SubMenuStyle Font-Underline="False" />
+            </LevelSubMenuStyles>
+            <StaticMenuItemStyle HorizontalPadding="7px" VerticalPadding="8px" />
+            <StaticHoverStyle CssClass="itemMenu" />
 
-        <DynamicHoverStyle Height="20px" BackColor="#99CCFF" CssClass="itemSubMenu" />
-        <DynamicMenuStyle CssClass="adjustedZIndex" />
-        <DynamicMenuItemStyle BackColor="#66C1FF" Height="20px" HorizontalPadding="5px" />
-    </asp:Menu>
-
-    <script type="text/javascript">
-    </script>
+            <DynamicHoverStyle Height="20px" BackColor="#99CCFF" CssClass="itemSubMenu" />
+            <DynamicMenuStyle CssClass="adjustedZIndex" />
+            <DynamicMenuItemStyle BackColor="#66C1FF" Height="20px" HorizontalPadding="5px" />
+        </asp:Menu>
+    </div>
 
 </asp:Content>
 <asp:Content ID="Pagina" ContentPlaceHolderID="Pagina" runat="server">
@@ -32,11 +31,19 @@
         {
             try
             {
-                var menu = document.getElementById("ctl00_ctl00_linhaMenu");
-                if (menu != null && menu.childNodes != null && menu.childNodes.length >= 2)
-                {
-                    if (menu.childNodes[1].childElementCount <= 1)
+                var menu = document.getElementById("<%= mnuGeral.ClientID %>");
+
+                if (menu != null) {
+                    if (menu.childNodes != null
+                        && menu.childNodes.length >= 2
+                        && menu.childNodes[1].childElementCount <= 1) {
+
                         window.location.reload();
+                    } else {
+                        $().ready(function () {
+                            menu.parentNode.style.display = "";
+                        });
+                    }
                 }
             }
             catch (err)

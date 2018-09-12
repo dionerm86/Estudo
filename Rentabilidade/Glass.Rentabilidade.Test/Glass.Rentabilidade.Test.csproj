@@ -42,6 +42,10 @@
       <HintPath>..\..\packages\Colosoft.Core.1.0.0.272\lib\net40\Colosoft.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EditorConfig.Core, Version=0.0.0.0, Culture=neutral, PublicKeyToken=fe6ce3ea283749f2, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\editorconfig.0.12.1\lib\net45\EditorConfig.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Mef.CommonServiceLocator, Version=4.0.0.0, Culture=neutral, PublicKeyToken=86b4579dafa904fd, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Colosoft.CommonServiceLocator.1.0.0\lib\net40\Microsoft.Mef.CommonServiceLocator.dll</HintPath>
       <Private>True</Private>

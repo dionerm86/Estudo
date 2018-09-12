@@ -547,7 +547,7 @@
                                         <td style="font-weight: bold">Cód. Ped. Cli. </td>
                                         <td align="left">
                                             <asp:TextBox ID="txtCodPedCli" runat="server" MaxLength="20" Text='<%#  Bind("CodCliente") %>'
-                                                ReadOnly='<%# Importado() %>'></asp:TextBox>
+                                                ReadOnly='<%# PedCliApenasLeitura() %>'></asp:TextBox>
                                         </td>
                                     </tr>
                                     <tr>

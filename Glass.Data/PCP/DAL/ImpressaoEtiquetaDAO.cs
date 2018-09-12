@@ -1066,8 +1066,8 @@ namespace Glass.Data.DAL
                                 arqOtimiz += (etiqueta.IdPedido ?? "").PadLeft(32);
 
                                 //2 - Nome do Cliente (210 .. 241)
-                                var nomeCli = !string.IsNullOrEmpty(etiqueta.NomeCliente) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.NomeCliente) : "";
-                                arqOtimiz += (nomeCli.Length > 32 ? nomeCli.Substring(0, 32) : nomeCli).PadLeft(32);
+                                var idNomeCli = !string.IsNullOrEmpty(etiqueta.NomeCliente) ? etiqueta.IdCliente + "-" + Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.NomeCliente) : "";
+                                arqOtimiz += (idNomeCli.Length > 32 ? idNomeCli.Substring(0, 32) : idNomeCli).PadLeft(32);
 
                                 //3 - Rota (242 .. 273)
                                 var rota = !string.IsNullOrEmpty(etiqueta.RotaExterna) ? Glass.Formatacoes.RetiraCaracteresEspeciais(etiqueta.RotaExterna) : "";
@@ -2259,7 +2259,10 @@ namespace Glass.Data.DAL
                 }
 
                 if (idSolucaoOtimizacao.HasValue)
+                {
                     ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
+                    AtualizarProdutosPedidoProducao(session, (int)idImpressao);
+                }
 
                 return idImpressao;
             }
@@ -2270,6 +2273,35 @@ namespace Glass.Data.DAL
                 ErroDAO.Instance.InserirFromException("NovaImpressaoPedido", ex);
                     
                 throw;
+            }
+        }
+
+        /// <summary>
+        /// Atualiza os produtos pedido produção associado com os
+        /// produtos da impressão.
+        /// </summary>
+        /// <param name="sessao">Sessão de conexão com o banco de dados.</param>
+        /// <param name="idImpressao">Identificador da impressão que será processada.</param>
+        private void AtualizarProdutosPedidoProducao(GDASession sessao, int idImpressao)
+        {
+            var etiquetasPlanoCorte = this.CurrentPersistenceObject.LoadResult(
+               sessao,
+               "SELECT NumEtiqueta, PlanoCorte FROM produto_impressao WHERE IdImpressao=?idImpressao AND IdPedido IS NOT NULL AND NumEtiqueta IS NOT NULL",
+               new GDAParameter("?idImpressao", idImpressao))
+               .Select(f => new
+               {
+                   NumEtiqueta = f.GetString("NumEtiqueta"),
+                   PlanoCorte = f.GetString("PlanoCorte")
+               }).ToList();
+
+            foreach (var etiquetaPlanoCorte in etiquetasPlanoCorte)
+            {
+                this.CurrentPersistenceObject.ExecuteCommand(
+                    sessao,
+                    "UPDATE produto_pedido_producao SET PlanoCorte=?planoCorte WHERE NumEtiqueta=?numEtiqueta AND Situacao=?situacao",
+                    new GDAParameter("?planoCorte", etiquetaPlanoCorte.PlanoCorte),
+                    new GDAParameter("?numEtiqueta", etiquetaPlanoCorte.NumEtiqueta),
+                    new GDAParameter("?situacao", ProdutoPedidoProducao.SituacaoEnum.Producao));
             }
         }
 
@@ -2766,7 +2798,8 @@ namespace Glass.Data.DAL
 
                 List<uint> idsProdImpressaoRetalho = new List<uint>();
 
-                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
+                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ||
+                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     // Recupera quais produtos impressos são referentes a retalhos
                     idsProdImpressaoRetalho = ExecuteMultipleScalar<uint>(sessao, @"select idRetalhoProducao from produto_impressao 
@@ -2985,7 +3018,8 @@ namespace Glass.Data.DAL
                 }
 
                 // Cancela os retalhos associados
-                if (cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho)
+                if ((cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho) ||
+                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     foreach (uint idRetalhoProducao in idsProdImpressaoRetalho)
                         RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, "Cancelamento da impressão " + idImpressao,

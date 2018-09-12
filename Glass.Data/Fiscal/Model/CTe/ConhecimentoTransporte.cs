@@ -393,6 +393,14 @@ namespace Glass.Data.Model.Cte
             }
         }
 
+        public bool ExibirBoleto
+        {
+            get
+            {
+                return ContasReceberDAO.Instance.CTeTemContaReceber((int)IdCte);
+            }
+        }
+
         #endregion
 
         #region ICTe Members

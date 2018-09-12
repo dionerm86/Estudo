@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.DAL;
@@ -239,7 +239,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 .Insert(trans, new Glass.Data.Model.OrdemCarga(idCliente, idLoja, idRota,
                                     DateTime.Parse(dtEntPedidoIni), DateTime.Parse(dtEntPedidoFin), tipoOC));
 
-                            var idsPedidos = cep.Value.Split(',').Select(p => Glass.Conversoes.StrParaUint(p)).ToList();
+                            var idsPedidos = cep.Value.Split(',').Select(p => Glass.Conversoes.StrParaInt(p)).ToList();
 
                             var pedidosAdicionados = false;
 
@@ -252,11 +252,11 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 try
                                 {
                                     //Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                                    if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
+                                    if (PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
                                         throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
                                     //Adiciona o pedido a OC.
-                                    PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga(idPedido, idOrdemCarga));
+                                    PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga((uint)idPedido, idOrdemCarga));
 
                                     pedidosAdicionados = true;
                                 }
@@ -651,7 +651,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     //if (idCarregamento.GetValueOrDefault(0) == 0)
                     //    throw new Exception("Carregamento não encontrado.");
 
-                    var idsPedidos = pedidos.Split(',').Select(p => Glass.Conversoes.StrParaUint(p)).ToList();
+                    var idsPedidos = pedidos.Split(',').Select(p => Glass.Conversoes.StrParaInt(p)).ToList();
 
                     /* Chamado 32031. */
                     if (string.IsNullOrEmpty(pedidos) ||
@@ -667,13 +667,14 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             continue;
 
                         // Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                        if (PedidoOrdemCargaDAO.Instance.PossuiOrdemCarga(trans, tipoOC, idPedido))
+                        if(PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
                             throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
+
 
                         //Adiciona o pedido a OC.
                         PedidoOrdemCargaDAO.Instance.Insert(trans, new Glass.Data.Model.PedidoOrdemCarga()
                         {
-                            IdPedido = idPedido,
+                            IdPedido = (uint)idPedido,
                             IdOrdemCarga = idOC
                         });
                     }

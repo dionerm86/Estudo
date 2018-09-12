@@ -400,6 +400,33 @@ namespace Glass.UI.Web.Utils {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton4;
         
         /// <summary>
+        /// lblObs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblObs;
+        
+        /// <summary>
+        /// txtObs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtObs;
+        
+        /// <summary>
+        /// imbObs control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton imbObs;
+        
+        /// <summary>
         /// btnFechar control.
         /// </summary>
         /// <remarks>

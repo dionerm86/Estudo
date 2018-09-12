@@ -545,6 +545,23 @@ Servicos.Pedidos = (function (http) {
       }
 
       return http().post(API + idPedido + '/colocarEmConferencia');
+    },
+
+   /**
+   * Altera a observação de um produto de pedido.
+   * @param {number} idPedido O identificador do pedido que terá a conferência gerada.
+   * @param {string} obs a nova observação do pedido.
+   * @param {string} obsLiberacao nova observação de liberação do pedido.
+   * @returns {Promise} Uma promise com o resultado da operação.
+   */
+    salvarObservacao: function (idPedido, obs, obsLiberacao) {
+      if (!idPedido) {
+        throw new Error('Pedido é obrigatório.');
+      }
+      return http().patch(API + idPedido + '/alterarObservacoes', {
+        observacao: obs || '',
+        observacaoLiberacao: obsLiberacao || ''
+      });
     }
   };
 })(function () {

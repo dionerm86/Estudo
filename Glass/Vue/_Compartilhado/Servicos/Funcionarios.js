@@ -39,11 +39,27 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de funcionários conferentes.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConferentes: function () {
+      return http().get(API + 'conferentes');
+    },
+
+    /**
      * Recupera a lista de funcionários liberadores de pedido.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLiberadores: function () {
       return http().get(API + 'liberadores');
+    },
+
+    /**
+     * Recupera a lista de funcionários de caixa diário.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterCaixaDiario: function () {
+      return http().get(API + 'caixaDiario');
     },
 
     /**

@@ -1,19 +1,19 @@
-﻿using System.Collections.Generic;
-using Glass.Data.RelModel;
+﻿using Glass.Data.DAL;
 using Glass.Data.Model;
-using Glass.Data.DAL;
+using Glass.Data.RelModel;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class NotaPromissoriaDAO : Glass.Pool.PoolableObject<NotaPromissoriaDAO>
+    public sealed class NotaPromissoriaDAO : Glass.Pool.Singleton<NotaPromissoriaDAO>
     {
         private NotaPromissoriaDAO() { }
 
         public NotaPromissoria[] GetByLiberacao(uint idLiberarPedido)
         {
             LiberarPedido lp = LiberarPedidoDAO.Instance.GetElementByPrimaryKey(idLiberarPedido);
-            
+
             List<NotaPromissoria> retorno = new List<NotaPromissoria>();
 
             var contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(idLiberarPedido, true);

@@ -16,12 +16,15 @@ namespace Glass.Data.RelModel
         {
             get
             {
-                var data = (int)_data.DayOfWeek == 0 || (int)_data.DayOfWeek == 6 ? _data.AddDays(1) : _data;
                 var idTipoCartao = IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)IdConta) : null;
+                _data = idTipoCartao == null ? _data.AddDays(1) : _data;
 
-                data = idTipoCartao == null ? data.AddDays(1) : data;
+                while (!FuncoesData.DiaUtil(_data))
+                {
+                    _data = _data.AddDays(1);
+                }
 
-                return data.Date;
+                return _data.Date;
             }
             set { _data = value; }
         }

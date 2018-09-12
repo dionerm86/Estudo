@@ -136,7 +136,7 @@
                         <td>
                             <asp:DropDownList ID="drpNome" runat="server" DataSourceID="odsFuncionario" OnChange="showLoadGif()"
                                 DataTextField="Nome" DataValueField="IdFunc" AutoPostBack="True" OnDataBound="drpNome_DataBound"
-                                AppendDataBoundItems="true" OnSelectedIndexChanged="drpNome_SelectedIndexChanged">
+                                AppendDataBoundItems="true" OnSelectedIndexChanged="drpNome_SelectedIndexChanged" EnableViewState="true">
                                 <asp:ListItem></asp:ListItem>
                             </asp:DropDownList>
                             <asp:HiddenField ID="hdfNome" runat="server" />

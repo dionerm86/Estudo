@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -44,8 +44,8 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(idsOCs))
             {
-                sql += " AND oc.idOrdemCarga IN(" + idsOCs + ")";
-                criterio += "OCs: " + idsOCs + "     ";
+                sql += " AND oc.idOrdemCarga IN(" + idsOCs.TrimEnd(',') + ")";
+                criterio += "OCs: " + idsOCs.TrimEnd(',') + "     ";
             }
 
             if (idOC > 0)
@@ -671,6 +671,9 @@ namespace Glass.Data.DAL
         {
             var idsPedidos = string.Join(",", PedidoDAO.Instance.GetIdsPedidosByOCs(sessao, idOrdemCarga.ToString()).Select(f => f.ToString()).ToArray());
             var idCarregamento = OrdemCargaDAO.Instance.GetIdCarregamento(sessao, idOrdemCarga);
+
+            if (idCarregamento == null)
+                return false;
 
             string sql = @"
                 SELECT COUNT(*)

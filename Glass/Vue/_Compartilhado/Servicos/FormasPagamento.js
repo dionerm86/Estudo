@@ -13,6 +13,22 @@ Servicos.FormasPagamento = (function(http) {
      */
     obterFiltro: function () {
       return http().get(API + 'filtro');
+    },
+
+    /**
+     * Recupera a lista de formas de pagamento para uso no controle de seleção de formas de pagamento de notas fiscais.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterFiltroNotaFiscal: function () {
+      return http().get(API + 'filtroNotaFiscal');
+    },
+
+    /**
+     * Recupera a lista de formas de pagamento para uso no controle de seleção de formas de pagamento de contas recebidas.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterFiltroContasRecebidas: function () {
+      return http().get(API + 'filtroContasRecebidas');
     }
   };
 })(function() {

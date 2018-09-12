@@ -18,6 +18,19 @@ Servicos.Lojas = (function(http) {
           ativas
         }
       });
+    },
+
+    /**
+     * Recupera a data de vencimento do certificado da loja.
+     * @param {!number} id O identificador da loja.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterDataVencimentoCertificado: function (id) {
+      if (!id) {
+        throw new Error('Loja é obrigatório.');
+      }
+
+      return http().get(API + id + '/obterDataVencimentoCertificado');
     }
   };
 })(function() {

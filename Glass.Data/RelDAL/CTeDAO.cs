@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Glass.Data.RelModel;
-using System.Xml;
-using System.IO;
-using Glass.Data.Helper;
+﻿using Glass.Data.Helper;
 using Glass.Data.Model.Cte;
-using System.Web;
+using Glass.Data.RelModel;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Web;
+using System.Xml;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class CTeDAO : Glass.Pool.PoolableObject<CTeDAO>
+    public sealed class CTeDAO : Glass.Pool.Singleton<CTeDAO>
     {
         private CTeDAO() { }
 
@@ -73,8 +73,8 @@ namespace Glass.Data.RelDAL
 
             //Tipo Ambiente
             cte.TipoAmbiente = Glass.Conversoes.StrParaInt(GetNodeValue(xmlInfCTe, "ide", "tpAmb"));
-            
-            //Data e hora de emissão            
+
+            //Data e hora de emissão
             cte.DHEmissao = GetNodeValue(xmlInfCTe, "ide", "dhEmi");
 
             cte.FormaEmissao = GetNodeValue(xmlInfCTe, "ide", "tpEmis");
@@ -83,7 +83,7 @@ namespace Glass.Data.RelDAL
             cte.InscSuframa = GetNodeValue(xmlInfCTe, "dest", "ISUF");
 
             //Chave de acesso
-            cte.ChaveAcesso = Formatacoes.MascaraChaveAcessoCTe(chaveAcesso);            
+            cte.ChaveAcesso = Formatacoes.MascaraChaveAcessoCTe(chaveAcesso);
 
             //Protocolo de autorização
             if (xmlCTe["CTe"] != null && xmlCTe["CTe"]["infProt"] != null) // Sql montado no sistema
@@ -93,12 +93,12 @@ namespace Glass.Data.RelDAL
 
             //Tipo Cte
             var tipoCte = GetNodeValue(xmlInfCTe, "ide", "tpCTe");
-            cte.TipoCte = tipoCte == "0" ? "Normal" : tipoCte == "1" ? "Complemento Valores" : tipoCte == "2" ? "Anulação Valores" : "Substituto" ;
+            cte.TipoCte = tipoCte == "0" ? "Normal" : tipoCte == "1" ? "Complemento Valores" : tipoCte == "2" ? "Anulação Valores" : "Substituto";
 
             //Tipo Servico
             var tipoServico = GetNodeValue(xmlInfCTe, "ide", "tpServ");
-            cte.TipoServico = tipoServico == "0" ? "Normal" : tipoServico == "1" ? "Subcontratação" : tipoServico == "2" ? "Redespacho" : "Redespacho Intermediário" ;
-            
+            cte.TipoServico = tipoServico == "0" ? "Normal" : tipoServico == "1" ? "Subcontratação" : tipoServico == "2" ? "Redespacho" : "Redespacho Intermediário";
+
             //CFOP - natureza operação
             cte.NatOperacao = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfCTe, "ide", "natOp"));
 
@@ -114,9 +114,9 @@ namespace Glass.Data.RelDAL
             //Destino prestação
             cte.DestinoPrestacao = GetNodeValue(xmlInfCTe, "ide", "UFFim") + "-" + GetNodeValue(xmlInfCTe, "ide", "xMunFim");
 
-            //Campo de uso livre do contribuinte 
+            //Campo de uso livre do contribuinte
             cte.InformacoesAdicionais = GetNodeValue(xmlInfCTe, "compl", "xObs") + "\n" + cfop.Obs;
-            
+
             //Remetente
             cte.Remetente = Formatacoes.RestauraStringDocFiscal(GetNodeValue(xmlInfCTe, "rem", "xNome"));
             cte.EnderecoRem = GetEnderecoRem(xmlInfCTe);
@@ -165,7 +165,7 @@ namespace Glass.Data.RelDAL
             cte.PaisReceb = GetNodeValue(xmlInfCTe, "receb/enderReceb", "xPais");
             cte.FoneReceb = GetNodeValue(xmlInfCTe, "receb", "fone");
 
-            //Tomador            
+            //Tomador
 
             var tipoTomador = GetNodeValue(xmlInfCTe, "ide/toma3", "toma");
             cte.TipoTomador = tipoTomador;
@@ -225,13 +225,13 @@ namespace Glass.Data.RelDAL
                 cte.PaisToma = GetNodeValue(xmlInfCTe, "dest/enderDest", "xPais");
                 cte.FoneToma = GetNodeValue(xmlInfCTe, "dest", "fone");
             }
-           
+
             // Produto Predominante
             cte.ProdutoPredominante = GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "proPred");
 
             // Outras caracteristicas da carga
-            if(GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "xOutCat") != null)
-            cte.OutCarctCarga = GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "xOutCat");
+            if (GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "xOutCat") != null)
+                cte.OutCarctCarga = GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "xOutCat");
 
             cte.ValorTotalMercadoria = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfCTe, "infCTeNorm/infCarga", "vCarga"), 2);
 
@@ -254,20 +254,20 @@ namespace Glass.Data.RelDAL
                         TipoMedida = xmlInfo.GetElementsByTagName("tpMed")[0].InnerText,
                         TipoUnidade = Glass.Conversoes.StrParaInt(xmlInfo.GetElementsByTagName("cUnid")[0].InnerText)
                     };
-                    
+
                     listaInfCarga.Add(infoCarga);
                 }
-                cte.ListaInfoCargaCte = listaInfCarga;                
+                cte.ListaInfoCargaCte = listaInfCarga;
             }
-                       
-            //Seguradoras            
+
+            //Seguradoras
             var respSeg = GetNodeValue(xmlInfCTe, "infCTeNorm/seg", "respSeg");
             cte.ResponsavelSeguro = respSeg == "0" ? "Remetente" : respSeg == "1" ? "Expedidor" : respSeg == "2" ? "Recebedor"
                 : respSeg == "3" ? "Destinatário" : respSeg == "4" ? "Emitente" : "Tomador";
             cte.NomeSeguradora = GetNodeValue(xmlInfCTe, "infCTeNorm/seg", "xSeg");
             cte.NumApolice = GetNodeValue(xmlInfCTe, "infCTeNorm/seg", "nApol");
-            cte.NumAverbacao = GetNodeValue(xmlInfCTe, "infCTeNorm/seg", "nAver");            
-                    
+            cte.NumAverbacao = GetNodeValue(xmlInfCTe, "infCTeNorm/seg", "nAver");
+
             //Componentes valor
             XmlNodeList xmlListaComponenteValor = xmlInfCTe["vPrest"].GetElementsByTagName("Comp");
             if (xmlListaComponenteValor.Count > 0)
@@ -281,7 +281,7 @@ namespace Glass.Data.RelDAL
                         NomeComponente = xmlComp.GetElementsByTagName("xNome")[0].InnerText,
                         ValorComponente = Glass.Conversoes.StrParaDecimal(xmlComp.GetElementsByTagName("vComp")[0].InnerText)
                     };
-                    listaComponentes.Add(componente);                    
+                    listaComponentes.Add(componente);
                 }
                 cte.ListaComponentes = listaComponentes;
             }
@@ -290,7 +290,7 @@ namespace Glass.Data.RelDAL
             cte.ValorReceberComponente = Glass.Conversoes.StrParaDecimal(GetNodeValue(xmlInfCTe, "vPrest", "vRec"));
 
             //Informações relativas ao imposto
-            if(!string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "imp/ICMS", "ICMS00")))
+            if (!string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "imp/ICMS", "ICMS00")))
             {
                 cte.SubstituicaoTributaria = "00 - tributação normal ICMS";
                 cte.BaseCalculo = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS00", "vBC"), 2);
@@ -304,7 +304,7 @@ namespace Glass.Data.RelDAL
                 cte.AliquotaIcms = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS20", "pICMS"), 2);
                 cte.ValorIcms = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS20", "vICMS"), 2);
                 cte.ReducaoBaseCalculo = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS20", "pRedBC"), 2);
-            }            
+            }
             else if (!string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "imp/ICMS", "ICMS60")))
             {
                 cte.SubstituicaoTributaria = "60 - ICMS cobrado anteriormente por substituição tributária";
@@ -319,7 +319,7 @@ namespace Glass.Data.RelDAL
             }
             else if (!string.IsNullOrEmpty(GetNodeValue(xmlInfCTe, "imp/ICMS", "ICMS45")))
             {
-                switch(GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS45", "CST"))
+                switch (GetNodeValue(xmlInfCTe, "imp/ICMS/ICMS45", "CST"))
                 {
                     case "40":
                         cte.SubstituicaoTributaria = "40 - ICMS isenção";
@@ -465,7 +465,7 @@ namespace Glass.Data.RelDAL
                     veiculosPlaca.Add(veiculoCte.Placa);
                     veiculosUf.Add(veiculo.UfLicenc);
                 }
-                
+
                 cte.TipoVeiculo = string.Join("\n", veiculosTipo);
                 cte.Placa = string.Join("\n", veiculosPlaca);
                 cte.UFVeiculo = string.Join("\n", veiculosUf);
@@ -491,11 +491,11 @@ namespace Glass.Data.RelDAL
 
             XmlNodeList xmlListaLacre = xmlInfCTe["infCTeNorm"].GetElementsByTagName("lacRodo");
             if (xmlListaLacre.Count > 0)
-            {                
+            {
                 var listaNumLacre = new List<LacreCteRod>();
 
                 foreach (XmlElement xmlLacre in xmlListaLacre)
-                {                    
+                {
                     var lacre = new LacreCteRod
                     {
                         NumeroLacre = xmlLacre.GetElementsByTagName("nLacre")[0].InnerText
@@ -503,8 +503,8 @@ namespace Glass.Data.RelDAL
                     listaNumLacre.Add(lacre);
                 }
                 cte.ListaNumeroLacre = listaNumLacre;
-            }            
-            
+            }
+
             #endregion
 
             return cte;
@@ -553,7 +553,7 @@ namespace Glass.Data.RelDAL
             if (!String.IsNullOrEmpty(GetNodeValue(xmlInfCte, "rem/enderReme", "xCpl")))
                 enderRemetente.Append(" - " + GetNodeValue(xmlInfCte, "rem/enderReme", "xCpl"));
 
-            enderRemetente.Append(" - " + GetNodeValue(xmlInfCte, "rem/enderReme", "xBairro"));            
+            enderRemetente.Append(" - " + GetNodeValue(xmlInfCte, "rem/enderReme", "xBairro"));
 
             return Formatacoes.RestauraStringDocFiscal(enderRemetente.ToString());
         }
@@ -644,7 +644,7 @@ namespace Glass.Data.RelDAL
 
             string[] parentsNodes = parentsNodeName.Split('/');
 
-            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML, 
+            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML,
             // deixando de lado níveis acima que não interessam
             foreach (string pNode in parentsNodes)
             {

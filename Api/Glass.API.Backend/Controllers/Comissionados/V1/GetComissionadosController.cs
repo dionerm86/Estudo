@@ -31,11 +31,6 @@ namespace Glass.API.Backend.Controllers.Comissionados.V1
         [SwaggerResponse(400, "Filtros não informados.", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterFiltro(int? id = null, string nome = null)
         {
-            if (id == null && string.IsNullOrWhiteSpace(nome))
-            {
-                return this.ErroValidacao("Pelo menos um filtro (id ou nome) deve ser informado.");
-            }
-
             using (var sessao = new GDATransaction())
             {
                 var comissionados = ComissionadoDAO.Instance.ObterAtivos(

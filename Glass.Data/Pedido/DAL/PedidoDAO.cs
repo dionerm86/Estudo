@@ -212,13 +212,13 @@ namespace Glass.Data.DAL
             string situacaoProd, string byVend, string vendas, string maoObra, string maoObraEspecial, string producao,
             string dataCadIni, string dataCadFim, string dataFinIni, string dataFinFim, string funcFinalizacao, uint idOrcamento,
             bool opcionais, bool infoPedidos, float altura, int largura, int numeroDiasDiferencaProntoLib, float valorDe, float valorAte,
-            string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, bool selecionar, out string filtroAdicional, out bool temFiltro)
+            string tipo, int fastDelivery, int tipoVenda, int origemPedido, string obs, bool selecionar, out string filtroAdicional, out bool temFiltro, string obsLiberacao = "")
         {
             return Sql(sessao, idPedido, idLiberarPedido, idsPedido, idsLiberarPedidos, idLoja, idCli, nomeCli, idFunc, codCliente,
                 idCidade, endereco, bairro, null, situacao, situacaoProd, byVend, vendas, maoObra, maoObraEspecial, producao, dataCadIni,
                 dataCadFim, dataFinIni, dataFinFim, funcFinalizacao, idOrcamento, opcionais, infoPedidos, altura, largura,
                 numeroDiasDiferencaProntoLib, valorDe, valorAte, tipo, fastDelivery, tipoVenda, origemPedido, obs, false, selecionar,
-                out filtroAdicional, out temFiltro);
+                out filtroAdicional, out temFiltro, obsLiberacao);
         }
 
         private string Sql(GDASession sessao, uint idPedido, uint idLiberarPedido, string idsPedido, string idsLiberarPedidos, uint idLoja,
@@ -4126,7 +4126,8 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <returns></returns>
         public Pedido[] GetForConfirmation(uint idPedido, uint idCli, string nomeCli, uint idFunc, string codCliente,
-            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido, string sortExpression)
+            string dataIni, string dataFim, bool revenda, bool liberarPedido, uint idLoja, int origemPedido, int tipoPedido,
+            bool apenasFastDelivery, string sortExpression)
         {
             bool temFiltro;
             string filtroAdicional;
@@ -4139,9 +4140,9 @@ namespace Glass.Data.DAL
 
             var situacaoPedido = (int)Pedido.SituacaoPedido.Conferido;
 
-            var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, null, null, null, situacaoPedido.ToString(),
-                String.Empty, String.Empty, null, dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
-                tipoPedidoStr, 0, 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
+            var sql = Sql(idPedido, 0, null, null, idLoja, idCli, nomeCli, idFunc, codCliente, 0, null, null, situacaoPedido.ToString(),
+                null, null, null, String.Empty, String.Empty, null, dataIni, dataFim, null, null, null, 0, true, false, 0, 0, 0, 0, 0,
+                tipoPedidoStr, 0, apenasFastDelivery ? 1 : 0, origemPedido, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sortExpression = !sortExpression.IsNullOrEmpty() ? sortExpression : "IdPedido";
 
@@ -4282,7 +4283,7 @@ namespace Glass.Data.DAL
 
             var retorno = "";
             foreach (var i in itens)
-                if (!lstPedidosRem.Contains(i.ToString()))
+                if (!lstPedidosRem.Contains(i.ToString()) && !ObtemOrdemCargaParcial(null,i))
                     retorno += "," + i;
 
             return retorno.Length > 0 ? retorno.Substring(1) : "0";
@@ -4416,13 +4417,13 @@ namespace Glass.Data.DAL
 
         #region Busca pedidos para Nota Fiscal
 
-        private string SqlNfe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente)
+        private string SqlNfe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             bool temFiltro;
             string filtroAdicional;
 
             var sql = Sql(0, 0, idsPedidos, idsLiberarPedidos, 0, idCliente, nomeCliente, 0, null, 0, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null,
+                null, null, null, null, null, null, dataIni, dataFim, null, null, null, 0, false, false, 0, 0, 0, 0, 0, null,
                 0, 0, 0, "", true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             var situacoes = (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + "," +
@@ -4439,24 +4440,24 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna os pedidos para geração da nota fiscal.
         /// </summary>
-        public Pedido[] GetForNFe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente)
+        public Pedido[] GetForNFe(string idsPedidos, string idsLiberarPedidos, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             if (string.IsNullOrEmpty(idsPedidos) && string.IsNullOrEmpty(idsLiberarPedidos) && idCliente == 0 && string.IsNullOrEmpty(nomeCliente))
                 return new Pedido[0];
 
-            return objPersistence.LoadData(SqlNfe(idsPedidos, idsLiberarPedidos, idCliente, nomeCliente),
-                GetParam(nomeCliente, null, null, null, null, null, null, null, null, null, null, null)).ToArray();
+            return objPersistence.LoadData(SqlNfe(idsPedidos, idsLiberarPedidos, idCliente, nomeCliente, dataIni, dataFim),
+                GetParam(nomeCliente, null, null, null, null, null, null, dataIni, dataFim, null, null, null)).ToArray();
         }
 
         /// <summary>
         /// Retorna os pedidos para geração da nota fiscal.
         /// </summary>
-        public Pedido[] GetForNFe(uint idPedido, uint idLiberarPedido, uint idCliente, string nomeCliente)
+        public Pedido[] GetForNFe(uint idPedido, uint idLiberarPedido, uint idCliente, string nomeCliente, string dataIni, string dataFim)
         {
             if (idPedido == 0 && idLiberarPedido == 0 && idCliente == 0 && string.IsNullOrEmpty(nomeCliente))
                 return new Pedido[0];
 
-            return GetForNFe(idPedido.ToString(), idLiberarPedido.ToString(), idCliente, nomeCliente);
+            return GetForNFe(idPedido.ToString(), idLiberarPedido.ToString(), idCliente, nomeCliente, dataIni, dataFim);
         }
 
         /// <summary>
@@ -4464,7 +4465,7 @@ namespace Glass.Data.DAL
         /// </summary>
         public string GetIdsForNFe(uint idCliente, string nomeCliente)
         {
-            var sql = "select distinct idPedido from (" + SqlNfe(null, null, idCliente, nomeCliente) + ") as temp";
+            var sql = "select distinct idPedido from (" + SqlNfe(null, null, idCliente, nomeCliente, null, null) + ") as temp";
             var ids = objPersistence.LoadResult(sql, GetParam(nomeCliente, null, null, null, null, null, null, null, null, null, null, null)).
                 Select(f => f.GetUInt32(0)).ToList();
 
@@ -7626,7 +7627,9 @@ namespace Glass.Data.DAL
             var apenasVendedorNaoReabrePedidoConfirmadoPCP = PedidoConfig.ReabrirPedidoConfirmadoPCPTodosMenosVendedor;
 
             /* Chamado 52903. */
-            if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
+            if (!PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli == UserInfo.GetUserInfo.IdCliente)
+                return false;
+            else if (geradoParceiro && !PedidoConfig.PodeReabrirPedidoGeradoParceiro && idCli != UserInfo.GetUserInfo.IdCliente)
                 return false;
 
             // Não deixa reabrir se recebeu sinal
@@ -13249,7 +13252,8 @@ namespace Glass.Data.DAL
 
                 if (ped.IdTransportador != objUpdate.IdTransportador)
                 {
-                    objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}", objUpdate.IdTransportador, objUpdate.IdPedido));
+                    objPersistence.ExecuteCommand(session, string.Format(@"UPDATE pedido SET IdTransportador={0} WHERE IdPedido={1}",
+                        objUpdate.IdTransportador.GetValueOrDefault() > 0 ? objUpdate.IdTransportador.ToString() : "NULL", objUpdate.IdPedido));
                 }
 
                 objUpdate.ObsLiberacao = string.IsNullOrEmpty(objUpdate.ObsLiberacao) ? null :
@@ -16262,7 +16266,7 @@ namespace Glass.Data.DAL
 
         #region Valida Pedido para Liberação
 
-        public string ValidaPedidoLiberacao(GDASession session, uint idPedido, int? tipoVenda, int? idFormaPagto, bool cxDiario, List<uint> idsPedido)
+        public string ValidaPedidoLiberacao(GDASession session, uint idPedido, int? tipoVenda, int? idFormaPagto, bool cxDiario, List<uint> idsPedido, string idsOcStr)
         {
             try
             {
@@ -16403,6 +16407,18 @@ namespace Glass.Data.DAL
                 #endregion
 
                 #endregion
+
+                var idsOC = idsOcStr.Split(',').Select(idOc => Glass.Conversoes.StrParaInt(idOc));
+                var pedidosOc = new List<uint>();
+
+                foreach (var idOc in idsOC)
+                {
+                    pedidosOc.AddRange(OrdemCargaDAO.Instance.GetIdsPedidosOC(session, (uint)idOc, OrdemCarga.TipoOCEnum.Venda));
+                }
+
+                //Verifica se o Pedido está configurado como pedido de ordem de carga parcial
+                if (ObtemOrdemCargaParcial(session, idPedido) && !pedidosOc.Any(p => p == idPedido))
+                    return $"false|O pedido {idPedido} está configurado como um pedido de Ordem de Carga Parcial. Para liberar o pedido informe o número da ordem de carga.";
 
                 // Se for pedido de obra, recalcula o saldo da mesma, em alguns casos o saldo já havia debitado o valor do pedido antes de ser liberado.
                 if (idObra > 0)
@@ -16837,6 +16853,19 @@ namespace Glass.Data.DAL
             UpdateTotalPedido(session, novo, false, false, alterouDesconto, true);
 
             #endregion
+        }
+
+        #endregion
+
+        #region Altera Observação
+
+        /// <summary>
+        /// Atualiza observações do pedido
+        /// </summary>
+        public void AtualizaObs(GDASession sessao, uint idPedido, string obs, string obsLib)
+        {
+            string sql = "Update pedido Set Obs=?obs, ObsLiberacao=?obsLib Where idPedido=" + idPedido;
+            this.objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?obs", obs), new GDAParameter("?obsLib", obsLib));
         }
 
         #endregion

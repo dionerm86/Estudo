@@ -3,6 +3,7 @@
 
 <%@ Register Src="~/Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc1" %>
 <%@ Register Src="~/Controls/ctrlLoja.ascx" TagName="ctrlLoja" TagPrefix="uc3" %>
+<%@ Register Src="../Controls/ctrlBoleto.ascx" TagName="ctrlBoleto" TagPrefix="uc7" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
@@ -419,6 +420,8 @@
                             <asp:LinkButton ID="lnkSalvarXmlCte" runat="server" Visible='<%# Eval("BaixarXmlVisible") %>'
                                 OnClientClick='<%# "salvarCte(\"" + Eval("IdCte") + "\"); return false;" %>'><img border="0" 
                                     src="../Images/disk.gif" title="Salvar arquivo do cte" /></asp:LinkButton>
+                            <uc7:ctrlBoleto ID="ctrlBoleto1" runat="server" CodigoCte='<%# Eval("IdCte") != null ? Glass.Conversoes.StrParaInt(Eval("IdCte").ToString()) : (int?)null %>'
+                                    Visible='<%# Eval("ExibirBoleto") %>' />
                             <asp:ImageButton ID="imgObsLancFiscal" runat="server" ImageUrl="~/Images/Nota.gif"
                                 OnClientClick='<%# "openWindow(600, 800, \"../Utils/SetObsLancFiscal.aspx?idCte=" + Eval("IdCte") + "\"); return false" %>'
                                 ToolTip="Observações do Lançamento Fiscal" />

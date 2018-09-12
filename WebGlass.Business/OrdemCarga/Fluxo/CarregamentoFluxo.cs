@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.DAL;
@@ -294,7 +294,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                 #endregion
 
-                var erroEtq = new List<string>();
+                string msg = string.Empty;
 
                 foreach (string e in etiquetas)
                 {
@@ -302,19 +302,15 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     {
                         EfetuaLeitura(idFunc, idCarregamento, e, null, idCliente, nomeCli, idOc, idPedidoFiltro, altura, largura, numEtqFiltro, idPedidoExterno, nomeClienteExterno, idPedidoExterno);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        erroEtq.Add(e);
+                        msg = Glass.MensagemAlerta.FormatErrorMsg($"Falha ao marcar peça {e}.", ex);
+                        break;
                     }
                 }
 
-                if (erroEtq.Count > 0)
-                {
-                    var erros = string.Join(",", erroEtq.ToArray());
-
-                    ErroDAO.Instance.InserirFromException("Leitura com (=)", new Exception("Etiqueta: " + etiqueta + " Leituras: " + erros));
-                    throw new Exception("Algumas leituras não foram efetuadas. Etiquetas: " + erros);
-                }
+                if (!string.IsNullOrEmpty(msg))
+                    throw new Exception(msg);
 
                 return;
             }
@@ -1426,7 +1422,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         idLiberarPedido = LiberarPedidoDAO.Instance.CriarLiberacaoAPrazo(transaction, d.IdCliente, d.IdsPedidos, idsProdPed.ToArray(), prodPedsProducao.ToArray(),
                             qtdesProdPed.ToArray(), d.ValorTotalPedidos, numParcelas, d.Parcelas.NumeroDias, valoresParcelas.ToArray(), (uint?)d.Parcelas.IdParcela,
                             false, new uint[] { d.IdFormaPagto }, new uint[] { }, new decimal[] { }, new uint[] { }, new uint[] { }, new uint[] { }, false, 0, string.Empty, false, false,
-                            new uint[] { 1, 1, 1, 1, 1 }, 2, 0, 2, 0, d.IdFormaPagto, 0, string.Empty, new string[] { });
+                            new uint[] { 1, 1, 1, 1, 1 }, 2, 0, 2, 0, d.IdFormaPagto, 0, string.Empty, new string[] { }, string.Empty);
 
                         PedidoDAO.Instance.ForcarTransacaoPedido(transaction, d.IdsPedidos.Split(',').FirstOrDefault().StrParaUint(), false);
 

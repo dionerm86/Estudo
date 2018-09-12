@@ -35,6 +35,157 @@ Servicos.NotasFiscais = (function(http) {
     },
 
     /**
+     * Remove uma nota fiscal.
+     * @param {!number} id O identificador da nota fiscal que será excluída.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (id) {
+      if (!id) {
+        throw new Error('Nota fiscal é obrigatória.');
+      }
+
+      return http().delete(API + id);
+    },
+
+    /**
+     * Consulta a situação do lote da nota fiscal na receita.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    consultarSituacaoLote: function (id) {
+      return http().post(API + id + '/consultarSituacaoLote');
+    },
+
+    /**
+     * Consulta a situação da nota fiscal na receita.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    consultarSituacao: function (id) {
+      return http().post(API + id + '/consultarSituacao');
+    },
+
+    /**
+     * Reabre a nota fiscal de terceiros.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    reabrir: function (id) {
+      return http().post(API + id + '/reabrir');
+    },
+
+    /**
+     * Gerar nota fiscal complementar a partir da nota fiscal.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    gerarNotaFiscalComplementar: function (id) {
+      return http().post(API + id + '/gerarNotaFiscalComplementar');
+    },
+
+    /**
+     * Emitir nota fiscal FS-DA.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    emitirNotaFiscalFsda: function (id) {
+      return http().post(API + id + '/emitirNotaFiscalFsda');
+    },
+
+    /**
+     * Reenviar email da nota fiscal.
+     * @param {?number} id O identificador da nota fiscal.
+     * @param {?boolean} cancelamento Define se é para reenviar email de cancelamento.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    reenviarEmail: function (id, cancelamento) {
+      return http().post(API + id + '/reenviarEmail', {
+        params: {
+          cancelamento: cancelamento || 0
+        }
+      });
+    },
+
+    /**
+     * Separar valores de contas a receber da liberação e da nota fiscal.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    separarValores: function (id) {
+      return http().post(API + id + '/separarValores');
+    },
+
+    /**
+     * Cancela separação de valores de contas a receber da liberação e da nota fiscal.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    cancelarSeparacaoValores: function (id) {
+      return http().post(API + id + '/cancelarSeparacaoValores');
+    },
+
+    /**
+     * Emitir NFC-e.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    emitirNfce: function (id) {
+      return http().post(API + id + '/emitirNfce');
+    },
+
+    /**
+     * Emitir NFC-e em modo offline.
+     * @param {?number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    emitirNfceOffline: function (id) {
+      return http().post(API + id + '/emitirNfceOffline');
+    },
+
+    /**
+     * Habilitar o modo de contingência da nota fiscal.
+     * @param {!number} tipoContingencia Define o tipo de contingencia que será alterado.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    alterarContingencia: function (tipoContingencia) {
+      return http().post(API + '/alterarContingencia', {
+          tipoContingencia
+      });
+    },
+
+    /**
+     * Baixa o XML da nota.
+     * @param {!number} id O identificador da nota fiscal.
+     * @param {?boolean} inutilizacao Define se será buscado o xml de inutilização da nota.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXml: function (id, inutilizacao) {
+      const url = '../Handlers/NotaXml.ashx'
+        + '?idNf=' + id
+        + (inutilizacao ? '&tipo=inut' : '');
+
+      window.location.assign(url);
+    },
+
+    /**
+     * Baixa vários arquivos XML em lote.
+     * @param {string} filtros Os filtros que serão usados para filtrar as notas fiscais.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXmlEmLote: function (filtros) {
+      window.location.assign('../Handlers/NotaXmlLote.ashx' + filtros);
+    },
+
+    /**
+     * Baixa o XML da nota fiscal de terceiros.
+     * @param {!number} id O identificador da nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    baixarXmlTerceiros: function (id) {
+      window.location.assign('../Handlers/NFeEntradaTerceirosXML.ashx?idNfTer=' + id);
+    },
+
+    /**
      * Valida se um boleto pode ser impresso.
      * @param {?number} id O identificador da nota fiscal.
      * @returns {Promise} Uma promise com o resultado da operação.
@@ -70,6 +221,14 @@ Servicos.NotasFiscais = (function(http) {
           idLiberacao: idLiberacao || 0
         }
       });
+    },
+
+    /**
+     * Recupera o objeto com as situações de nota fiscal.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return http().get(API + 'situacoes');
     }
   };
 }) (function () {

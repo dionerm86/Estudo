@@ -231,6 +231,23 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        ///Define se deve obrigar a gerar SAG
+        /// </summary>
+        public bool ForcarGerarSag
+        {
+            get { return DataModel.ForcarGerarSag; }
+            set
+            {
+                if (DataModel.ForcarGerarSag != value &&
+                    RaisePropertyChanging("ForcarGerarSag", value))
+                {
+                    DataModel.ForcarGerarSag = value;
+                    RaisePropertyChanged("ForcarGerarSag");
+                }
+            }
+        }
+
         #endregion
 
         #region Construtores

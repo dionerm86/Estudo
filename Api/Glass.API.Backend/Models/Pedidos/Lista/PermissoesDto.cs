@@ -124,5 +124,12 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
         [DataMember]
         [JsonProperty("logAlteracoes")]
         public bool LogAlteracoes { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se as observações do pedido podem ser alteradas na listagem do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("alterarObservacoes")]
+        public bool AlterarObservacoes { get; set; }
     }
 }

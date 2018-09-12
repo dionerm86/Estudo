@@ -12,7 +12,7 @@ namespace WebGlass.Business.Boleto.Fluxo
     {
         private Impresso() { }
 
-        public void IndicarBoletoImpresso(int codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao, int codigoContaBancaria, LoginUsuario login)
+        public void IndicarBoletoImpresso(int codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao, int? codigoCte, int codigoContaBancaria, LoginUsuario login)
         {
             FilaOperacoes.BoletoImpresso.AguardarVez();
 
@@ -26,7 +26,8 @@ namespace WebGlass.Business.Boleto.Fluxo
                     IdContaR = (uint)codigoContaReceber,
                     IdNf = codigoNotaFiscal > 0 ? codigoNotaFiscal.Value : (int?)null,
                     IdLiberarPedido = codigoLiberacao > 0 ? codigoLiberacao.Value : (int?)null,
-                    IdContaBanco = codigoContaBancaria
+                    IdContaBanco = codigoContaBancaria,
+                    IdCte = codigoCte > 0 ? codigoCte.Value : (int?)null,
                 };
 
                 boleto.Usucad = login.CodUser;

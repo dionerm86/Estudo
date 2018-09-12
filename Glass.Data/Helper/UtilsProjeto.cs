@@ -484,7 +484,7 @@ namespace Glass.Data.Helper
             #region Recupera as medidas do vão
 
             var isBoxPadrao = ProjetoModeloDAO.Instance.IsBoxPadrao(sessao, projetoModelo.IdProjetoModelo);
-            var quantidade = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 1).FirstOrDefault().Valor;
+            var quantidade = medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == 1).Valor;
             var larguraVao = 0;
             var alturaVao = 0;
             var larguraPorta = 0;
@@ -500,9 +500,21 @@ namespace Glass.Data.Helper
                 // Recupera o ID da medida "larg vão direita".
                 idMedidaLarguraVaoDireito = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão direita").GetValueOrDefault();
 
-                larguraVao = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 2).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 2).FirstOrDefault().Valor : 0;
-                alturaVao = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 3).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 3).FirstOrDefault().Valor : 0;
-                larguraPorta = medidasItemProjeto.Where(f => f.IdMedidaProjeto == 4).FirstOrDefault() != null ? medidasItemProjeto.Where(f => f.IdMedidaProjeto == 4).FirstOrDefault().Valor : 0;
+                larguraVao = medidasItemProjeto.Any(f => f.IdMedidaProjeto == 2) ? medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == 2).Valor : 0;
+                alturaVao = medidasItemProjeto.Any(f => f.IdMedidaProjeto == 3) ? medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == 3).Valor : 0;
+                larguraPorta = medidasItemProjeto.Any(f => f.IdMedidaProjeto == 4) ? medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == 4).Valor : 0;
+
+                if (larguraVao == 0)
+                {
+                    var idLarguraVao = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão").GetValueOrDefault();
+                    larguraVao = medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idLarguraVao)?.Valor ?? 0;
+                }
+
+                if (alturaVao == 0)
+                {
+                    var idAlturaVao = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "alt vão").GetValueOrDefault();
+                    alturaVao = medidasItemProjeto.FirstOrDefault(f => f.IdMedidaProjeto == idAlturaVao)?.Valor ?? 0;
+                }
 
                 // Verifica se a medida "larg vão esquerda" existe na listagem de medidas do item de projeto e recupera seu valor.
                 larguraVaoEsquerdo = idMedidaLarguraVaoEsquerdo > 0 && medidasItemProjeto.Any(f => f.IdMedidaProjeto == idMedidaLarguraVaoEsquerdo) ?
@@ -2205,7 +2217,7 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Calcula a expressão informada por parâmetro, retorna o valor final.
         /// </summary>
-        private static float CalcularExpressao(string expressao)
+        public static float CalcularExpressao(string expressao)
         {
             // IMPORTANTE: NÃO REMOVER ESTE CONTADOR PARA IMPEDIR LOOP INFINITO NOS CÁLCULOS DE PROJETO.
             // Contador usado para sair do while (sinal de -)

@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using Glass.Data.RelModel;
-using Glass.Data.DAL;
+﻿using Glass.Data.DAL;
 using Glass.Data.Model;
+using Glass.Data.RelModel;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class LiberarPedidoMovDAO : Glass.Pool.PoolableObject<LiberarPedidoMovDAO>
+    public sealed class LiberarPedidoMovDAO : Glass.Pool.Singleton<LiberarPedidoMovDAO>
     {
         private LiberarPedidoMovDAO() { }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="idCli"></param>
         /// <param name="nomeCli"></param>
@@ -19,7 +19,7 @@ namespace Glass.Data.RelDAL
         /// <param name="dataFim"></param>
         /// <param name="situacao"></param>
         /// <param name="buscarCredito">0-Não buscar, 1-Incluir crédito gerado na listagem, 2-Buscar apenas crédito gerado</param>
-        private LiberarPedidoMov[] BaseGet(uint idCli, string nomeCli, uint idFunc, string dataIni, string dataFim, int situacao, 
+        private LiberarPedidoMov[] BaseGet(uint idCli, string nomeCli, uint idFunc, string dataIni, string dataFim, int situacao,
             int buscarCredito, bool buscarPagtoAntecip, bool buscarSinal, string sortExpression, int startRow, int pageSize)
         {
             LiberarPedido[] liberacoes = null;
@@ -27,11 +27,11 @@ namespace Glass.Data.RelDAL
             Obra[] lstObra = null;
             List<Sinal> lstPagtoAntecip = null;
             List<LiberarPedidoMov> retorno = new List<LiberarPedidoMov>();
-            
+
             if (String.IsNullOrEmpty(sortExpression))
                 sortExpression = "IdLiberarPedido desc";
 
-            if (!buscarPagtoAntecip && ! buscarSinal)
+            if (!buscarPagtoAntecip && !buscarSinal)
             {
                 if (buscarCredito != 2)
                 {
@@ -44,13 +44,13 @@ namespace Glass.Data.RelDAL
                     lstObra = ObraDAO.Instance.GetListRpt(idCli, nomeCli, 0, idFunc, 0, (int)Obra.SituacaoObra.Finalizada, dataIni, dataFim, null, null, true, null, 0, 0, null);
             }
 
-            else if(buscarPagtoAntecip)
+            else if (buscarPagtoAntecip)
             {
                 // Busca os pagamentos antecipados
                 lstPagtoAntecip = SinalDAO.Instance.GetForMovLib(idCli, idFunc, dataIni, dataFim, (int)Sinal.SituacaoEnum.Aberto, true);
             }
 
-            else if(buscarSinal)
+            else if (buscarSinal)
             {
                 // Busca os sinais
                 lstPagtoAntecip = (SinalDAO.Instance.GetForMovLib(idCli, idFunc, dataIni, dataFim, (int)Sinal.SituacaoEnum.Aberto, false));
@@ -288,7 +288,7 @@ namespace Glass.Data.RelDAL
             string sort = dadosSort[0];
             string direcaoSort = dadosSort.Length > 1 ? dadosSort[1] : "asc";
 
-            retorno.Sort(new Comparison<LiberarPedidoMov>(delegate(LiberarPedidoMov x, LiberarPedidoMov y)
+            retorno.Sort(new Comparison<LiberarPedidoMov>(delegate (LiberarPedidoMov x, LiberarPedidoMov y)
             {
                 switch (sort)
                 {

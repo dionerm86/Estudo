@@ -92,9 +92,15 @@ namespace Glass.Data.Helper
                 string.Format("select sum({0}) from pedido where situacao<>{1} and dataCad>=?dataIni and dataCad<=?dataFim and tipoPedido<>{2} {3}",
                     "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
 
+            var sqlTotalPedidos =
+                string.Format(@"select sum({0}) from pedido p
+                    Inner Join Cliente c ON (p.IdCli = c.Id_Cli) where c.IgnorarNoSmsResumoDiario = false AND 
+                    p.situacao<>{1} and p.dataCad>=?dataIni and p.dataCad<=?dataFim and p.tipoPedido<>{2} {3}",
+                    "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
+
             // Se houver alteração neste sql, altera também no envio do email para os administradores
             decimal totalPedidos = PedidoDAO.Instance.ExecuteScalar<decimal>(
-                string.Format(sql, "total",
+                string.Format(sqlTotalPedidos, "total",
                     EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
                         string.Empty :
                         string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)),
@@ -130,8 +136,10 @@ namespace Glass.Data.Helper
 		                    AND lp.IdSetor In ({0})
                     ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", idsSetorPronto), lstParam.ToArray());
 
-            decimal totalLiberados = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>("select sum(total) from liberarpedido where situacao=" +
-                (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " and dataLiberacao>=?dataIni and dataLiberacao<=?dataFim", lstParam.ToArray());
+            decimal totalLiberados = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>
+                (@"select sum(total) from liberarpedido lp
+                   Inner Join Cliente c ON (lp.IdCliente = c.Id_Cli) where c.IgnorarNoSmsResumoDiario = false AND lp.situacao=" +
+                (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " and lp.dataLiberacao>=?dataIni and lp.dataLiberacao<=?dataFim", lstParam.ToArray());
 
             // Verifica se será enviado SMS hoje
             // Só envia se houver algum dado para enviar
@@ -263,58 +271,6 @@ namespace Glass.Data.Helper
             var wsToken = wsManager.getAuthentication(login, pass);
 
             return wsSend.sendMessage(wsToken.token, remetente, "55" + destinatario, codMensagem, null, 0, 23, null, mensagem);
-        }
-
-        public static void EnviaSmsAdministradorPrecoProdutoAlterado(Produto prodOld, Produto prodNew)
-        {
-            try
-            {
-                var idAdminEnvio = EmailConfig.AdministradorEnviarEmailSmsMensagemPrecoProdutoAlterado;
-                if (idAdminEnvio == null)
-                    return;
-
-                string telCel = FuncionarioDAO.Instance.ObtemTelCel((uint)idAdminEnvio);
-                if (string.IsNullOrEmpty(telCel))
-                    return;
-
-                while (telCel.Contains(" "))
-                    telCel = telCel.Replace(" ", "");
-
-                telCel = telCel.Replace("(", "").Replace(")", "").Replace("-", "");
-
-                if (prodOld.Custofabbase == prodNew.Custofabbase && prodOld.CustoCompra == prodNew.CustoCompra && prodOld.ValorAtacado == prodNew.ValorAtacado &&
-                    prodOld.ValorBalcao == prodNew.ValorBalcao && prodOld.ValorObra == prodNew.ValorObra)
-                    return;
-
-                var mensagem = "O produto " + prodOld.Descricao + " teve seu preço alterado:" + Environment.NewLine +
-                    (prodOld.Custofabbase == prodNew.Custofabbase ? "" : "Custo Forn. Antigo: " + prodOld.Custofabbase.ToString("c") + " Novo: " + prodNew.Custofabbase.ToString("c") + Environment.NewLine) +
-                    (prodOld.CustoCompra == prodNew.CustoCompra ? "" : "Custo Imp. Antigo: " + prodOld.CustoCompra.ToString("c") + " Novo: " + prodNew.CustoCompra.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorAtacado == prodNew.ValorAtacado ? "" : "Atacado Antigo: " + prodOld.ValorAtacado.ToString("c") + " Novo: " + prodNew.ValorAtacado.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorBalcao == prodNew.ValorBalcao ? "" : " Balcão Antigo: " + prodOld.ValorBalcao.ToString("c") + " Novo: " + prodNew.ValorBalcao.ToString("c") + Environment.NewLine) +
-                    (prodOld.ValorObra == prodNew.ValorObra ? "" : "Obra Antigo: " + prodOld.ValorObra.ToString("c") + " Novo: " + prodNew.ValorObra.ToString("c"));
-
-                var codSMS = DateTime.Now.DayOfYear.ToString() + DateTime.Now.Year.ToString() + DateTime.Now.Hour.ToString() + idAdminEnvio;
-
-                /* Chamado 65394. */
-                //verifica a quantidade de caracteres da mensagem pois o limite de SMS é de 149.
-                if (mensagem.Length >= 150)
-                    mensagem = mensagem.Substring(0, 149);
-
-                SMS.EnviaSMSAsync(codSMS, "WebGlass", telCel, mensagem, false);
-            }
-            catch (Exception ex)
-            {
-                ErroDAO.Instance.InserirFromException("SMS administrador preço produto alterado", ex);
-            }
-        }
-
-        public static void EnviaSmsAdministradorPrecoListProdutoAlterado(IList<Produto> produtosOld, IList<Produto> produtosNew)
-        {
-            for (int i = 0; i < produtosOld.Count; i++)
-            {
-                if (produtosOld[i].IdProd == produtosNew[i].IdProd)
-                    EnviaSmsAdministradorPrecoProdutoAlterado(produtosOld[i], produtosNew[i]);
-            }
         }
 
         /// <summary>

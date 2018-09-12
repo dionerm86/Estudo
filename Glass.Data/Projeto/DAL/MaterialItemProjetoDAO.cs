@@ -1386,6 +1386,7 @@ namespace Glass.Data.DAL
                 prod.Beneficiamentos = new GenericBenefCollection();
                 prod.ValorBenef = 0;
 
+                ValorUnitario.Instance.Calcular(session, container, prod);
                 ValorBruto.Instance.Calcular(session, container, prod);
                 CalcTotais(session, ref prod, true);
             }

@@ -211,6 +211,33 @@ namespace Glass.UI.Web.Cadastros {
         protected global::Glass.UI.Web.Controls.ctrlConsultaCadCliSintegra ctrlConsultaCadCliSintegra1;
         
         /// <summary>
+        /// Label10 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label10;
+        
+        /// <summary>
+        /// ctrlDataIni control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataIni;
+        
+        /// <summary>
+        /// ctrlDataFim control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Glass.UI.Web.Controls.ctrlData ctrlDataFim;
+        
+        /// <summary>
         /// btnBuscarPedidos control.
         /// </summary>
         /// <remarks>

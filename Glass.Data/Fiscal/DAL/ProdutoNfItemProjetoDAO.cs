@@ -92,18 +92,31 @@ namespace Glass.Data.DAL
 
                         #region Corrige as medidas do projeto
 
+                        var idLarguraVao = 2;
+                        var idAlturaVao = 3;
+
+                        if (Array.FindIndex(medidas, x => x.IdMedidaProjeto == idLarguraVao) == -1)
+                        {
+                            idLarguraVao = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "larg vão").GetValueOrDefault();
+                        }
+
+                        if (Array.FindIndex(medidas, x => x.IdMedidaProjeto == idAlturaVao) == -1)
+                        {
+                            idAlturaVao = (int)MedidaProjetoDAO.Instance.FindByDescricao(0, "alt vão").GetValueOrDefault();
+                        }
+
                         // Qtde
                         int index = Array.FindIndex(medidas, x => x.IdMedidaProjeto == 1);
                         if (index > -1)
                             medidas[index].Valor = ip.Qtde;
 
                         // Largura
-                        index = Array.FindIndex(medidas, x => x.IdMedidaProjeto == 2);
+                        index = Array.FindIndex(medidas, x => x.IdMedidaProjeto == idLarguraVao);
                         if (index > -1)
                             medidas[index].Valor = largura;
 
                         // Altura
-                        index = Array.FindIndex(medidas, x => x.IdMedidaProjeto == 3);
+                        index = Array.FindIndex(medidas, x => x.IdMedidaProjeto == idAlturaVao);
                         if (index > -1)
                             medidas[index].Valor = altura;
 

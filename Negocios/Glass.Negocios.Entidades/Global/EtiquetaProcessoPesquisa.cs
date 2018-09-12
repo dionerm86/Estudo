@@ -75,6 +75,11 @@
         /// </summary>
         public string DescricaoTipoPedido { get; set; }
 
+        /// <summary>
+        /// Define se a peça com esse processo irá gerar Arquivo de Mesa
+        /// </summary>
+        public bool ForcarGerarSAG { get; set; }
+
         #endregion
     }
 }

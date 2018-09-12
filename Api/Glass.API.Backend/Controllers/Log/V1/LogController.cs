@@ -22,5 +22,15 @@ namespace Glass.API.Backend.Controllers.Log.V1
 
             return null;
         }
+
+        private IHttpActionResult ValidarTabelaCancelamento(LogCancelamento.TabelaCancelamento? tabela)
+        {
+            if (!tabela.HasValue)
+            {
+                return this.ErroValidacao("Tabela informada é inválida.");
+            }
+
+            return null;
+        }
     }
 }

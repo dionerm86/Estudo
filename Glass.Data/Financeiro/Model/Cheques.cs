@@ -102,8 +102,8 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCONTABANCO")]
         public uint? IdContaBanco
         {
-            get 
-            { 
+            get
+            {
                 if (Tipo == 1 && (_idContaBanco == null || _idContaBanco == 0))
                 {
                     try { _idContaBanco = ContaBancoDAO.Instance.GetIdByAgenciaConta(_agencia, _conta); }
@@ -291,6 +291,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("MOVCAIXADIARIO")]
         public bool MovCaixaDiario { get; set; }
 
+        [Log("CMC7")]
+        [PersistenceProperty("CMC7")]
+        public string Cmc7 { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -327,7 +331,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("NOMELOJA", DirectionParameter.InputOptional)]
         public string NomeLoja { get; set; }
- 
+
         /// <summary>
         /// Usado no relatório de Acerto de Cheques Devolvidoa/Aberto, salva o id do acerto
         /// de cheques em que o cheque foi acertado.
@@ -352,8 +356,8 @@ namespace Glass.Data.Model
         /// </summary>
         public bool AlterarDataVenc
         {
-            get 
-            { 
+            get
+            {
                 return Situacao == (int)SituacaoCheque.EmAberto;
             }
         }
@@ -382,10 +386,10 @@ namespace Glass.Data.Model
 
         public string ValorRecebido
         {
-            get 
+            get
             {
-                return (Situacao == (int)SituacaoCheque.Devolvido || Situacao == (int)SituacaoCheque.Protestado || Situacao == (int)SituacaoCheque.Trocado) && ValorReceb > 0 ? 
-                    Valor.ToString("C") + " (Rec.: " + ValorReceb.ToString("C") + (DescontoReceb > 0 ? " Desc.: " + DescontoReceb.ToString("C") : "") + ")" : Valor.ToString("C"); 
+                return (Situacao == (int)SituacaoCheque.Devolvido || Situacao == (int)SituacaoCheque.Protestado || Situacao == (int)SituacaoCheque.Trocado) && ValorReceb > 0 ?
+                    Valor.ToString("C") + " (Rec.: " + ValorReceb.ToString("C") + (DescontoReceb > 0 ? " Desc.: " + DescontoReceb.ToString("C") : "") + ")" : Valor.ToString("C");
             }
         }
 
@@ -460,10 +464,10 @@ namespace Glass.Data.Model
 
         public bool EditDeleteVisible
         {
-            get 
-            { 
-                return Situacao == (int)SituacaoCheque.EmAberto || 
-                    (Situacao == (int)SituacaoCheque.Protestado && Origem == (int)OrigemCheque.FinanceiroPagto && 
+            get
+            {
+                return Situacao == (int)SituacaoCheque.EmAberto ||
+                    (Situacao == (int)SituacaoCheque.Protestado && Origem == (int)OrigemCheque.FinanceiroPagto &&
                     IdDeposito == null && PagtoChequeDAO.Instance.GetPagtoByCheque(IdCheque) == 0);
             }
         }
@@ -493,7 +497,7 @@ namespace Glass.Data.Model
             get
             {
                 string refer = String.Empty;
-                string idsNfRec = Configuracoes.FinanceiroConfig.ExibirReferenciaDeNotaListaCheques ? 
+                string idsNfRec = Configuracoes.FinanceiroConfig.ExibirReferenciaDeNotaListaCheques ?
                     ChequesDAO.Instance.ObtemIdsNfRecebimento(IdLiberarPedido, IdPedido, IdAcerto) :
                     String.Empty;
 
@@ -565,10 +569,10 @@ namespace Glass.Data.Model
 
         public string DescrMovCaixaEBanco
         {
-            get 
-            { 
-                return MovCaixaFinanceiro ? "Gerar movimentação no caixa geral" : 
-                    MovBanco ? "Gerar movimentação na conta bancária" : ""; 
+            get
+            {
+                return MovCaixaFinanceiro ? "Gerar movimentação no caixa geral" :
+                    MovBanco ? "Gerar movimentação na conta bancária" : "";
             }
         }
 
@@ -635,5 +639,5 @@ namespace Glass.Data.Model
         }
 
         #endregion
-	}
+    }
 }

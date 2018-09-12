@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model;
@@ -383,6 +383,37 @@ namespace Glass.Data.DAL
             return sql;
         }
 
+        internal void VincularItensCarregamentoAoProdutoLiberarPedido(GDASession session, string idOc, int idProdPed, int idProdLiberarPedido)
+        {
+
+            var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(session, (uint)idProdPed);
+            if (!PedidoDAO.Instance.ObtemOrdemCargaParcial(session, idPedido))
+                return;
+
+            var sqlBuscaItemCarregamentoVincular = $@"SELECT ic.idItemCarregamento 
+                                                FROM item_carregamento ic 
+                                                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
+                                                WHERE ic.idOrdemCarga in ({idOc})
+                                                And (ic.idProdPed = {idProdPed} or vpp.idProdPed = {idProdPed}) 
+                                                And IFNULL(ic.carregado,false)=true";
+
+            var idsItemCarregamento =
+                ExecuteMultipleScalar<uint>(session, sqlBuscaItemCarregamentoVincular);
+
+            if (idsItemCarregamento.Count() == 0)
+                return;
+
+            foreach (var idItemCarregamento in idsItemCarregamento)
+            {
+                var sql = $@"UPDATE item_carregamento 
+                                SET idProdLiberarPedido = {idProdLiberarPedido}
+                         WHERE idItemCarregamento = {idItemCarregamento}";
+
+                objPersistence.ExecuteCommand(session, sql);
+            }
+
+        }
+
         #region Busca os itens do carregamento para expedição
 
         public IList<ItemCarregamento> GetItensCarregamentoForExpedicao(uint idCarregamento, uint idOC, uint idPedido, uint idCliente,
@@ -604,7 +635,7 @@ namespace Glass.Data.DAL
                 agruparProdutos, dtSaidaIni, dtSaidaFim, rotas, ignorarPedidosVendaTransferencia, idCliExterno, nomeCliExterno, idsRotasExternas);
 
             sql = @"
-                    SELECT CONCAT(IdCarregamento, ';', IdCliente, ';', NomeCliente, ';', COALESCE(IdClienteExterno, 0), ';', COALESCE(ClienteExterno, ''), ';', SUM(Peso))
+                    SELECT CONCAT(IdCarregamento, ';', IdCliente, ';', NomeCliente, ';', COALESCE(IdClienteExterno, 0), ';', COALESCE(ClienteExterno, ''), ';', SUM(IFNULL(Peso,0)))
                     FROM (" + sql + @") as tmp
                     GROUP BY IdCarregamento, IdCliente, IdClienteExterno, ClienteExterno
                     ORDER BY NomeCliente";
@@ -631,10 +662,10 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idsProdPed"></param>
         /// <returns></returns>
-        public List<uint> ObterIdsCarregamento(GDASession sessao, List<uint> idsProdPed)
+        public List<int> ObterIdsCarregamento(GDASession sessao, List<int> idsProdPed)
         {
             if (idsProdPed == null || idsProdPed.Count == 0)
-                return new List<uint>();
+                return new List<int>();
 
             var sql = @"
                 SELECT distinct(ic.IdCarregamento) 
@@ -642,7 +673,7 @@ namespace Glass.Data.DAL
                     LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
                 WHERE ic.IdProdPed IN ({0}) OR vpp.IdProdPed IN ({0})";
 
-            var idsCarregamento = ExecuteMultipleScalar<uint>(sessao, string.Format(sql, string.Join(",", idsProdPed)));
+            var idsCarregamento = ExecuteMultipleScalar<int>(sessao, string.Format(sql, string.Join(",", idsProdPed)));
 
             return idsCarregamento;
         }
@@ -1124,14 +1155,16 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdPed"></param>
-        public void DeleteByIdProdPed(GDASession sessao, uint idProdPed)
+        public void DeleteByIdProdPed(GDASession sessao, uint idProdPed, string idsOc)
         {
-            var sql = string.Format(@"
+
+            var sql = $@"
                 SELECT ic.IdItemCarregamento
                 FROM item_carregamento ic
 	                INNER JOIN ordem_carga oc ON (ic.IdOrdemCarga = oc.IdOrdemCarga)
 	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND (ic.IdProdPed = {0} OR vpp.IdProdPed = {0}) AND oc.Situacao={1}", idProdPed, (int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente);
+                WHERE (ic.Carregado IS NULL OR ic.Carregado = 0) AND (ic.IdProdPed = {idProdPed} OR vpp.IdProdPed = {idProdPed}) AND
+                (oc.IdOrdemCarga in ({ idsOc }) AND oc.Situacao={(int)OrdemCarga.SituacaoOCEnum.CarregadoParcialmente})";
 
             var ids = ExecuteMultipleScalar<uint>(sessao, sql);
 
@@ -1170,13 +1203,16 @@ namespace Glass.Data.DAL
         /// <param name="sessao"></param>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
-        public float ObterQtdeLiberarParcial(GDASession sessao, uint idProdPed)
+        public float ObterQtdeLiberarParcial(GDASession sessao, uint idProdPed, string idsOc)
         {
-            var sql = @"
-                SELECT COALESCE(SUM(vpp.Qtde), count(ic.IdItemCarregamento), 0) - COALESCE((SELECT SUM(coalesce(QtdeCalc, 0)) FROM produtos_liberar_pedido WHERE IdProdPed = ?id), 0)
+            if (string.IsNullOrWhiteSpace(idsOc))
+                return 0;
+
+            var sql = $@"
+                SELECT COALESCE(SUM(vpp.Qtde), COUNT(ic.IdItemCarregamento), 0)
                 FROM item_carregamento ic
-	                LEFT JOIN volume_produtos_pedido vpp ON (ic.IdVolume = vpp.IdVolume)
-                WHERE ic.Carregado AND (ic.IdProdPed = ?id OR vpp.IdProdPed = ?id)";
+                    LEFT JOIN volume_produtos_pedido vpp ON(ic.IdVolume = vpp.IdVolume)
+                WHERE ic.Carregado And ic.IdOrdemCarga in ({ idsOc }) AND (ic.IdProdPed = ?id OR vpp.IdProdPed = ?id)";
 
             var qtde = ExecuteScalar<float>(sessao, sql, new GDAParameter("?id", idProdPed));
 

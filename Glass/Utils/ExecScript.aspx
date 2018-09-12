@@ -32,7 +32,7 @@
             </tr>
             <tr>
                 <td colspan="4">
-                    <asp:TextBox ID="txtLogImportaçãoCliente" runat="server" TextMode="MultiLine" Height="100px"
+                    <asp:TextBox ID="txtLogImportaÃ§Ã£oCliente" runat="server" TextMode="MultiLine" Height="100px"
                         Width="600px"></asp:TextBox>
                 </td>
             </tr>
@@ -137,7 +137,7 @@
                     <asp:FileUpload ID="fupAtualizarEndereco" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btnAtualizaroEndereco" runat="server" Text="Atualizar Endereço" OnClick="btnAtualizaroEndereco_Click" />
+                    <asp:Button ID="btnAtualizaroEndereco" runat="server" Text="Atualizar EndereÃ§o" OnClick="btnAtualizaroEndereco_Click" />
                 </td>
             </tr>
             <tr>
@@ -225,7 +225,7 @@
                     <asp:FileUpload ID="fupDadosCliente" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btnDadosCliente" runat="server" Text="Importar limite, simples, data fundação"
+                    <asp:Button ID="btnDadosCliente" runat="server" Text="Importar limite, simples, data fundaÃ§Ã£o"
                         OnClick="btnDadosCliente_Click" />
                 </td>
             </tr>
@@ -244,7 +244,7 @@
                     <asp:FileUpload ID="fupImportarPrecoProduto" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btmImportarPrecoProduto" runat="server" Text="Importar preço do produto"
+                    <asp:Button ID="btmImportarPrecoProduto" runat="server" Text="Importar preÃ§o do produto"
                         OnClick="btmImportarPrecoProduto_Click" />
                 </td>
             </tr>
@@ -263,7 +263,7 @@
                     <asp:FileUpload ID="fupImportarTipoMercadoria" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="Button1" runat="server" Text="Importar Tipo Mercadoria, Cod. Otimização"
+                    <asp:Button ID="Button1" runat="server" Text="Importar Tipo Mercadoria, Cod. OtimizaÃ§Ã£o"
                         OnClick="btmImportarTipoMercadoria_Click" />
                 </td>
             </tr>
@@ -334,7 +334,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td>
-                    <asp:Button ID="btnPrecoTransferencia" runat="server" Text="Gerar preço transfêrencia"
+                    <asp:Button ID="btnPrecoTransferencia" runat="server" Text="Gerar preÃ§o transfÃªrencia"
                         OnClick="btnPrecoTransferencia_Click" />
                 </td>
             </tr>
@@ -403,7 +403,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td>
-                    <asp:Button ID="btnImpMatPri" runat="server" Text="Importar matéria-prima" OnClick="btnImpMatPri_Click" />
+                    <asp:Button ID="btnImpMatPri" runat="server" Text="Importar matÃ©ria-prima" OnClick="btnImpMatPri_Click" />
                 </td>
             </tr>
             <tr>
@@ -457,7 +457,7 @@
                     <asp:FileUpload ID="filImportarCreditoFornec" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btnImportarCreditoFornec" runat="server" Text="Importar crédito fornecedor"
+                    <asp:Button ID="btnImportarCreditoFornec" runat="server" Text="Importar crÃ©dito fornecedor"
                         OnClick="btnImportarCreditoFornec_Click" />
                 </td>
             </tr>
@@ -476,7 +476,7 @@
                     <asp:FileUpload ID="filImportarCreditoCliente" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btnImportarCreditoCliente" runat="server" Text="Importar crédito cliente"
+                    <asp:Button ID="btnImportarCreditoCliente" runat="server" Text="Importar crÃ©dito cliente"
                         OnClick="btnImportarCreditoCliente_Click" />
                 </td>
             </tr>
@@ -584,7 +584,7 @@
             OnClick="btnApagarMovBancoEstorno_Click" />
         <br />
         <br />
-        <asp:Button ID="btnCorrigirPecasRoteiro" runat="server" Text="Corrigir peças de roteiro"
+        <asp:Button ID="btnCorrigirPecasRoteiro" runat="server" Text="Corrigir peÃ§as de roteiro"
             OnClick="btnCorrigirPecasRoteiro_Click" />
         <br />
         <br />
@@ -592,7 +592,7 @@
             <tr>
                 <td>
                     <asp:TextBox ID="txtIdsPedidosAtuSituacao" runat="server" Width="338px"></asp:TextBox>&nbsp;&nbsp;
-                    <asp:Button ID="btnAtualizaSituacaoProducaoPedido" runat="server" Text="Atualizar situação produção nos pedidos"
+                    <asp:Button ID="btnAtualizaSituacaoProducaoPedido" runat="server" Text="Atualizar situaÃ§Ã£o produÃ§Ã£o nos pedidos"
                         OnClick="btnAtualizaSituacaoProducaoPedido_Click" Width="250px" />
                 </td>
             </tr>
@@ -607,11 +607,11 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td>
-                    <asp:Label ID="lbl1" runat="server" Text="Ids dos Pedidos para marcar peça pronta"></asp:Label>
+                    <asp:Label ID="lbl1" runat="server" Text="Ids dos Pedidos para marcar peÃ§a pronta"></asp:Label>
                     <asp:TextBox ID="txtIdsPedidosMarcarPecaPronta" runat="server"></asp:TextBox>
                 </td>
                 <td>
-                    <asp:Button ID="Button3" runat="server" Text="Marcar peça pronta" OnClick="btnMarcarPecaPronta_Click" />
+                    <asp:Button ID="Button3" runat="server" Text="Marcar peÃ§a pronta" OnClick="btnMarcarPecaPronta_Click" />
                 </td>
             </tr>
             <tr>
@@ -647,7 +647,7 @@
                     <asp:FileUpload ID="fupImpPrecoFornec" runat="server" />
                 </td>
                 <td class="style1">
-                    <asp:Button ID="btnImpPrecoFornec" runat="server" Text="Importar preço do fornec."
+                    <asp:Button ID="btnImpPrecoFornec" runat="server" Text="Importar preÃ§o do fornec."
                         OnClick="btnImpPrecoFornec_Click" />
                 </td>
             </tr>
@@ -678,7 +678,7 @@
         </table>
         <br />
         <br />
-        <asp:Button ID="btnApagarMovEstoqueTrocaDev" runat="server" Text="Apagar movimentações troca/devolução Personal"
+        <asp:Button ID="btnApagarMovEstoqueTrocaDev" runat="server" Text="Apagar movimentaÃ§Ãµes troca/devoluÃ§Ã£o Personal"
             OnClick="btnApagarMovEstoqueTrocaDev_Click" />
         <br />
         <br />
@@ -688,7 +688,7 @@
                     <asp:TextBox ID="txtGerarEstoqueRealNotas" runat="server"></asp:TextBox>
                 </td>
                 <td class="style1">
-                    <asp:Button ID="btnGerarEstoqueRealNotas" runat="server" Text="Gerar movimentações estoque notas"
+                    <asp:Button ID="btnGerarEstoqueRealNotas" runat="server" Text="Gerar movimentaÃ§Ãµes estoque notas"
                         OnClick="btnGerarEstoqueRealNotas_Click" />
                 </td>
             </tr>
@@ -709,7 +709,7 @@
                 </td>
                 <td class="style1">
                     <asp:Button ID="btnSepararValores" runat="server" Text="Separar valores" OnClick="btnSepararValores_Click" />
-                    <asp:Button ID="btnCancelarSepararValores" runat="server" Text="Cancelar separação valores"
+                    <asp:Button ID="btnCancelarSepararValores" runat="server" Text="Cancelar separaÃ§Ã£o valores"
                         OnClick="btnCancelarSepararValores_Click" />
                 </td>
             </tr>
@@ -745,7 +745,7 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    <asp:Button ID="btnBuscarPecasErradas" runat="server" Text="Buscar peças erradas"
+                    <asp:Button ID="btnBuscarPecasErradas" runat="server" Text="Buscar peÃ§as erradas"
                         OnClick="btnBuscarPecasErradas_Click" />
                 </td>
             </tr>
@@ -761,12 +761,12 @@
         <table cellspacing="5" cellpadding="5">
             <tr>
                 <td class="style1">
-                    Produtos Pedido Produção:
+                    Produtos Pedido ProduÃ§Ã£o:
                     <asp:TextBox ID="txtIdsProdPedProducao" runat="server"></asp:TextBox>
                 </td>
                 <td class="style1">
-                    <asp:Button ID="btnVoltarSituaçãoPeca" runat="server" Text="Voltar situação peça"
-                        OnClick="btnVoltarSituaçãoPeca_Click" />
+                    <asp:Button ID="btnVoltarSituaÃ§Ã£oPeca" runat="server" Text="Voltar situaÃ§Ã£o peÃ§a"
+                        OnClick="btnVoltarSituaÃ§Ã£oPeca_Click" />
                 </td>
             </tr>
             <tr>
@@ -798,7 +798,7 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnAtualizarProducaoPedido" runat="server" 
-                        Text="Atualizar setor e situação do produto na produção" 
+                        Text="Atualizar setor e situaÃ§Ã£o do produto na produÃ§Ã£o" 
                         onclick="btnAtualizarProducaoPedido_Click"  />
                 </td>
             </tr>
@@ -813,7 +813,7 @@
             <tr>
                 <td>
                     <asp:Label ID="lbl2" runat="server" 
-                        Text="Id NF dar saída/entrada estoque (Autorizadas na Sefaz em outro PC)"></asp:Label>
+                        Text="Id NF dar saÃ­da/entrada estoque (Autorizadas na Sefaz em outro PC)"></asp:Label>
                     <asp:TextBox ID="txtIdNf" runat="server"></asp:TextBox>
                 </td>
                 <td>
@@ -849,7 +849,7 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnCorrigirProducaoCarregamento" runat="server" 
-                        Text="Corrigir Produção Carregamento" OnClick="btnCorrigirProducaoCarregamento_Click" />
+                        Text="Corrigir ProduÃ§Ã£o Carregamento" OnClick="btnCorrigirProducaoCarregamento_Click" />
                 </td>
             </tr>
             <tr>
@@ -868,7 +868,7 @@
                     <asp:TextBox ID="txtPedidoCorrigirSituacaoPecas" runat="server"></asp:TextBox>
                 </td>
                 <td class="style1">
-                    <asp:Button ID="btnCorrigirSituacaoPecas" runat="server" Text="Corrigir situação peças pedido"
+                    <asp:Button ID="btnCorrigirSituacaoPecas" runat="server" Text="Corrigir situaÃ§Ã£o peÃ§as pedido"
                         OnClick="btnCorrigirSituacaoPecas_Click" />
                 </td>
             </tr>
@@ -895,7 +895,7 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnEstoquePosicaoMateriaPrima" runat="server" 
-                        Text="Ajustar estoque com posição da materia-prima" OnClick="btnEstoquePosicaoMateriaPrima_Click"   />
+                        Text="Ajustar estoque com posiÃ§Ã£o da materia-prima" OnClick="btnEstoquePosicaoMateriaPrima_Click"   />
                 </td>
             </tr>
             <tr>
@@ -929,7 +929,7 @@
                     <asp:FileUpload ID="fupImportarValorCentroCusto" runat="server" />
                 </td>
                 <td>
-                    <asp:Button ID="btnImporarValorCentroCusto" runat="server" Text="Importar preço do centro de custo do produto" OnClick="btnImporarValorCentroCusto_Click"
+                    <asp:Button ID="btnImporarValorCentroCusto" runat="server" Text="Importar preÃ§o do centro de custo do produto" OnClick="btnImporarValorCentroCusto_Click"
                      />
                 </td>
             </tr>
@@ -946,7 +946,7 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnClientesCreditoIncorreto" runat="server" 
-                        Text="Buscar clientes com crédito incorreto" OnClick="btnClientesCreditoIncorreto_Click"    />
+                        Text="Buscar clientes com crÃ©dito incorreto" OnClick="btnClientesCreditoIncorreto_Click"    />
                 </td>
             </tr>
             <tr>
@@ -1004,7 +1004,7 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnLocalizacaoContas" runat="server" 
-                        Text="Ajustar Localização das contas pagas" OnClick="btnLocalizacaoContas_Click" />
+                        Text="Ajustar LocalizaÃ§Ã£o das contas pagas" OnClick="btnLocalizacaoContas_Click" />
                 </td>
             </tr>
         </table>
@@ -1012,7 +1012,21 @@
             <tr>
                 <td class="style1">
                     <asp:Button ID="btnLocalizacaoContasReceber" runat="server" 
-                        Text="Ajustar Localização das contas recebidas" OnClick="btnLocalizacaoContasReceber_Click" />
+                        Text="Ajustar LocalizaÃ§Ã£o das contas recebidas" OnClick="btnLocalizacaoContasReceber_Click" />
+                </td>
+            </tr>
+        </table>
+        <table cellspacing="5" cellpadding="5">
+            <tr>
+                <td class="style1">
+                    <asp:Button ID="btnAtualizaExpressaoCalculo" runat="server" 
+                        Text="Ajustar ExpressÃµes de cÃ¡lculo" OnClick="btnAtualizaExpressaoCalculo_Click" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:TextBox ID="txtExpressaoCalculoCorrigido" runat="server" Height="100px" Width="600px"
+                        TextMode="MultiLine"></asp:TextBox>
                 </td>
             </tr>
         </table>

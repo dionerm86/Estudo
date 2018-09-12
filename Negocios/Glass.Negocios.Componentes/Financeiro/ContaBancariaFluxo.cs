@@ -153,8 +153,9 @@ namespace Glass.Financeiro.Negocios.Componentes
             yield return new EntityDescriptor(409, "409 - UNIBANCO - União de Bancos Brasileiros S.A.");
             yield return new EntityDescriptor(230, "230 - Unicard Banco Múltiplo S.A.");
             yield return new EntityDescriptor(97, "97 - A Cooperativa de CréditoRural de Ji-Paraná, (CrediSis)");
+            yield return new EntityDescriptor(136, "136 - Unicred do Brasil");
         }
-
+        
         #endregion
 
         #region ContaBanco

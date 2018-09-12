@@ -78,6 +78,10 @@ namespace Glass.Data.Model
         [PersistenceProperty("TipoPedido")]
         public string TipoPedido { get; set; }
 
+        [Log("ForcarGerarSag")]
+        [PersistenceProperty("ForcarGerarSag")]
+        public bool ForcarGerarSag { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

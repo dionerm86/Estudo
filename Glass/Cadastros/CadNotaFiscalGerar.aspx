@@ -1,10 +1,10 @@
 <%@ Page Title="Gerar Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadNotaFiscalGerar.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadNotaFiscalGerar" %>
 
-<%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra"
-    TagPrefix="uc2" %>
-<%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao"
-    TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlConsultaCadCliSintegra.ascx" TagName="ctrlConsultaCadCliSintegra" TagPrefix="uc2" %>
+<%@ Register Src="../Controls/ctrlNaturezaOperacao.ascx" TagName="ctrlNaturezaOperacao" TagPrefix="uc1" %>
+<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc5" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
@@ -496,6 +496,15 @@
                                             <uc2:ctrlConsultaCadCliSintegra runat="server" ID="ctrlConsultaCadCliSintegra1" OnLoad="ctrlConsultaCadCliSintegra1_Load" />
                                         </div>
                                     </td>
+                                    <td align="right">
+                                        <asp:Label ID="Label10" runat="server" Text="Perido Cad. Pedido" ForeColor="#0066FF"></asp:Label>
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <uc5:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="false" />
+                                    </td>
+                                    <td nowrap="nowrap">
+                                        <uc5:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" ExibirHoras="false" />
+                                    </td>
                                 </tr>
                             </table>
                             <asp:Button ID="btnBuscarPedidos" runat="server" Text="Buscar Pedidos" OnClick="btnBuscarPedidos_Click"
@@ -622,8 +631,9 @@
                                     <asp:ControlParameter ControlID="hdfBuscarIdsLiberacoes" Name="idsLiberarPedidos"
                                         PropertyName="Value" Type="String" />
                                     <asp:ControlParameter ControlID="txtIdCli" Name="idCliente" PropertyName="Text" Type="UInt32" />
-                                    <asp:ControlParameter ControlID="txtNomeCli" Name="nomeCliente" PropertyName="Text"
-                                        Type="String" />
+                                    <asp:ControlParameter ControlID="txtNomeCli" Name="nomeCliente" PropertyName="Text" Type="String" />
+                                    <asp:ControlParameter ControlID="ctrlDataIni" Name="dataIni" PropertyName="DataString" Type="String" />
+                                    <asp:ControlParameter ControlID="ctrlDataFim" Name="dataFim" PropertyName="DataString" Type="String" />
                                 </SelectParameters>
                             </colo:VirtualObjectDataSource>
                             <br />

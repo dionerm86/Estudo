@@ -45,11 +45,12 @@
                 
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 */
-                var percDescontoQtde = 0;
+
+                var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 
-                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, percDescontoQtde).value;
+                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido).value;
             }
             else
             {
@@ -58,7 +59,7 @@
                     
                 FindControl("hdfValMin", "input").value = txtValor.value;
             }
-        }
+        }        
         
         function getNomeControleBenef()
         {
@@ -1387,8 +1388,7 @@
                                     Text='<%# Bind("Valor") %>' Width="50px" OnLoad="txtValorIns_Load"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
-                                <asp:TextBox ID="txtValorIns" runat="server" onkeydown="if (isEnter(event)) calcTotalProd();"
-                                    onkeypress="return soNumeros(event, false, true);" onblur="calcTotalProd();"
+                                <asp:TextBox ID="txtValorIns" runat="server" onkeydown="if (isEnter(event)) calcTotalProd();" onkeypress="return soNumeros(event, false, true);" onblur="calcTotalProd();"
                                     Width="50px" OnLoad="txtValorIns_Load"></asp:TextBox>
                             </FooterTemplate>
                         </asp:TemplateField>

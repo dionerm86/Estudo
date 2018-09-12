@@ -763,7 +763,7 @@ namespace Glass.Data.DAL
                 pp.TotM2Calc = FiscalConfig.NotaFiscalConfig.ConsiderarM2CalcNotaFiscal ? (float)pp.TotM2Nf : pp.TotM;
                 pp.Total = (decimal)pp.TotalNf;
                 pp.ValorBenef = (decimal)pp.ValorBenefNf;
-               
+
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)pp.IdGrupoProd, (int?)pp.IdSubgrupoProd, true);
 
                 if (tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.Qtd || tipoCalc == (uint)Glass.Data.Model.TipoCalculoGrupoProd.QtdM2)
@@ -846,7 +846,10 @@ namespace Glass.Data.DAL
                 return lst.ToArray();
             }
 
-            return LoadDataWithSortExpression(SqlForGerarVolume(idPedido, true), sortExpression, startRow, pageSize);
+            var sql = SqlForGerarVolume(idPedido, true);
+            sql += " ORDER BY gp.Descricao ";
+
+            return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize);
         }
 
         public int GetForGerarVolumeCountReal(uint idPedido)
@@ -2073,11 +2076,46 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Retorna os produtos para liberação de um pedido.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(uint idPedido, string idsOc)
+        {
+            return GetForLiberacao(null, idPedido, idsOc);
+        }
+
+        /// <summary>
         /// Retorna os produtos para liberação de vários pedidos.
         /// </summary>
         public ProdutosPedido[] GetForLiberacao(string idsPedidos)
         {
-            return GetForLiberacao(null, idsPedidos);
+            return GetForLiberacao(null, idsPedidos, string.Empty);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(string idsPedidos, string idsOc)
+        {
+            return GetForLiberacao(null, idsPedidos, idsOc);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, string idsOc)
+        {
+            return GetForLiberacao(session, idsPedidos, true, false, idsOc);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de um pedido.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, uint idPedido, string idsOc)
+        {
+            if (idPedido == 0)
+                return new ProdutosPedido[0];
+
+            return GetForLiberacao(session, idPedido.ToString(), idsOc);
         }
 
         /// <summary>
@@ -2103,6 +2141,14 @@ namespace Glass.Data.DAL
         /// Retorna os produtos para liberação de vários pedidos.
         /// </summary>
         public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial, bool isRelatorioPedidoParcial)
+        {
+            return GetForLiberacao(session, idsPedidos, removerProdutosOrdemCargaParcial, isRelatorioPedidoParcial, string.Empty);
+        }
+
+        /// <summary>
+        /// Retorna os produtos para liberação de vários pedidos.
+        /// </summary>
+        public ProdutosPedido[] GetForLiberacao(GDASession session, string idsPedidos, bool removerProdutosOrdemCargaParcial, bool isRelatorioPedidoParcial, string idsOc)
         {
             if (string.IsNullOrEmpty(idsPedidos))
                 return new ProdutosPedido[0];
@@ -2130,7 +2176,7 @@ namespace Glass.Data.DAL
 
                     if (!isRelatorioPedidoParcial)
                     {
-                        if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed) == 0)
+                        if (!subgrupoPermiteItemRevendaNaVenda && ItemCarregamentoDAO.Instance.ObterQtdeLiberarParcial(session, retorno[i].IdProdPed, idsOc) == 0)
                         {
                             retorno.RemoveAt(i);
                             continue;
@@ -4239,6 +4285,13 @@ namespace Glass.Data.DAL
                     var alturaFilho = p.Altura > 0 ? p.Altura : objInsert.Altura;
                     var larguraFilho = p.Largura > 0 ? p.Largura : objInsert.Largura;
 
+                    var beneficiamentosInserir = p.Beneficiamentos;
+
+                    if (objInsert.AplicarBenefComposicao)
+                        foreach (var item in objInsert.Beneficiamentos)
+                            if (!beneficiamentosInserir.Contains(item))
+                                beneficiamentosInserir.Add(item);
+
                     var idProdPed = Insert(session, new ProdutosPedido()
                     {
                         IdProdPedParent = objInsert.IdProdPed,
@@ -4252,7 +4305,7 @@ namespace Glass.Data.DAL
                         Largura = larguraFilho,
                         IdProdBaixaEst = p.IdProdBaixaEst,
                         ValorVendido = (objInsert as IProdutoCalculo).DadosProduto.ValorTabela(),
-                        Beneficiamentos = p.Beneficiamentos
+                        Beneficiamentos = beneficiamentosInserir
                     }, true, false);
 
                     var repositorio = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<IProdutoBaixaEstoqueRepositorioImagens>();

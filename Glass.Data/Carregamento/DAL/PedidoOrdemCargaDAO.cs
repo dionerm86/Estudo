@@ -1,4 +1,4 @@
-﻿using Glass.Data.Model;
+using Glass.Data.Model;
 using GDA;
 using System.Collections.Generic;
 
@@ -26,6 +26,39 @@ namespace Glass.Data.DAL
                     AND poc.idPedido=" + idPedido;
 
             return objPersistence.LoadOneData(sessao, sql);
+        }
+
+        /// <summary>
+        /// Verifica se o pedido informado possui alguma ordem carga ainda sem item carregamento. Neste caso é necessário primeiro gerar o carregamento desta OC.
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool VerificarPedidoOrdemCargaSemItemCarregamento(GDASession sessao, int idPedido)
+        {
+            if (idPedido == 0)
+                return true;
+
+            var sql = $@"SELECT COUNT(*) > 0 FROM 
+                         pedido_ordem_carga poc LEFT JOIN 
+                         	item_carregamento ic ON (ic.IdOrdemCarga = poc.IdOrdemCarga) 
+                         WHERE poc.idPedido = {idPedido} 
+                         AND ic.IdItemCarregamento IS NULL";
+
+            return ExecuteScalar<bool>(sessao, sql);
+
+        }
+
+        /// <summary>
+        /// Verifica se o pedido informado possui ordem de carga considerando ordens de carga parciais
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="tipoOC"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        public bool VerificarSePedidoPossuiOrdemCarga(GDATransaction sessao, OrdemCarga.TipoOCEnum tipoOC, int idPedido)
+        {
+            return PossuiOrdemCarga(sessao, tipoOC, (uint)idPedido) || (PedidoDAO.Instance.ObtemOrdemCargaParcial(sessao, (uint)idPedido) && VerificarPedidoOrdemCargaSemItemCarregamento(sessao, idPedido));
         }
 
         /// <summary>

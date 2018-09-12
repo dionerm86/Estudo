@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace Glass.Data.RelDAL
 {
-    public sealed class MDFeDAO : Glass.Pool.PoolableObject<MDFeDAO>
+    public sealed class MDFeDAO : Glass.Pool.Singleton<MDFeDAO>
     {
         #region Utilizado pelo ReportViewer
 
@@ -104,10 +104,10 @@ namespace Glass.Data.RelDAL
                         _ResponsaveisCIOT.Add(Formatacoes.MascaraCnpj(infCIOT["CNPJ"].InnerXml));
                     }
 
-                    if(xmlRodo["infANTT"]["valePed"] != null)
+                    if (xmlRodo["infANTT"]["valePed"] != null)
                     {
                         var xmlListaValePedagio = xmlRodo["infANTT"]["valePed"].GetElementsByTagName("disp");
-                        foreach(XmlElement disp in xmlListaValePedagio)
+                        foreach (XmlElement disp in xmlListaValePedagio)
                         {
                             _CNPJsResponsaveisPedagio.Add(disp["CNPJPg"] != null ? Formatacoes.MascaraCnpj(disp["CNPJPg"].InnerXml) : mdfe.CNPJEmitente);
                             _CNPJsFornecedoresPedagio.Add(Formatacoes.MascaraCnpj(disp["CNPJForn"].InnerXml));
@@ -133,7 +133,7 @@ namespace Glass.Data.RelDAL
 
                 // Dados do Veículo Tração
                 _placasVeiculos.Add(GetNodeValue(xmlRodo, "veicTracao", "placa"));
-                if(xmlRodo["veicTracao"]["prop"] != null)
+                if (xmlRodo["veicTracao"]["prop"] != null)
                 {
                     _RNTRCsVeiculos.Add(GetNodeValue(xmlRodo, "veicTracao/prop", "RNTRC"));
                 }
@@ -144,7 +144,7 @@ namespace Glass.Data.RelDAL
 
                 // Informações do(s) Condutor(s) do veículo
                 var xmlListaCondutor = xmlRodo["veicTracao"].GetElementsByTagName("condutor");
-                foreach(XmlElement condutor in xmlListaCondutor)
+                foreach (XmlElement condutor in xmlListaCondutor)
                 {
                     _CPFsCondutores.Add(Formatacoes.MascaraCpf(condutor["CPF"].InnerXml));
                     _NomesCondutores.Add(condutor["xNome"].InnerXml);
@@ -154,7 +154,7 @@ namespace Glass.Data.RelDAL
                 if (xmlRodo["veicReboque"] != null)
                 {
                     var xmlListaVeicReboque = xmlRodo.GetElementsByTagName("veicReboque");
-                    foreach(XmlElement veicReboque in xmlListaVeicReboque)
+                    foreach (XmlElement veicReboque in xmlListaVeicReboque)
                     {
                         _placasVeiculos.Add(veicReboque["placa"].InnerXml);
                         if (xmlRodo["prop"] != null)
@@ -180,11 +180,11 @@ namespace Glass.Data.RelDAL
 
             #region INFORMAÇÕES DOS DOCUMENTOS FISCAIS VINCULADOS
 
-            if(mdfe.TipoEmissao == "Contingência" && xmlInfMDFe["infDoc"] != null)
+            if (mdfe.TipoEmissao == "Contingência" && xmlInfMDFe["infDoc"] != null)
             {
                 var _documentosVinculados = new List<string>();
                 var xmlListaInfMunDescarga = xmlInfMDFe["infDoc"].GetElementsByTagName("infMunDescarga");
-                foreach(XmlElement infMunDescarga in xmlListaInfMunDescarga)
+                foreach (XmlElement infMunDescarga in xmlListaInfMunDescarga)
                 {
                     // Se Tipo Emitente for Transportador de carga própria
                     if (GetNodeValue(xmlInfMDFe, "ide", "tpEmit") == "2")
@@ -215,7 +215,7 @@ namespace Glass.Data.RelDAL
             mdfe.QuantidadeCTe = string.IsNullOrWhiteSpace(GetNodeValue(xmlInfMDFe, "tot", "qCTe")) ? "0" : GetNodeValue(xmlInfMDFe, "tot", "qCTe");
             mdfe.QuantidadeNFe = string.IsNullOrWhiteSpace(GetNodeValue(xmlInfMDFe, "tot", "qNFe")) ? "0" : GetNodeValue(xmlInfMDFe, "tot", "qNFe");
             mdfe.ValorCarga = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfMDFe, "tot", "vCarga"), 2);
-            mdfe.CodigoUnidade = GetNodeValue(xmlInfMDFe, "tot", "cUnid") == "1" ? "KG" : "TON";
+            mdfe.CodigoUnidade = GetNodeValue(xmlInfMDFe, "tot", "cUnid").StrParaInt() == 1 ? "KG" : "TON";
             mdfe.PesoTotalCarga = Formatacoes.FormataValorDecimal(GetNodeValue(xmlInfMDFe, "tot", "qCarga"), 4);
 
             #endregion
@@ -255,7 +255,7 @@ namespace Glass.Data.RelDAL
 
             string[] parentsNodes = parentsNodeName.Split('/');
 
-            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML, 
+            // Verifica se xml possui nodo pai passado, se possuir, vai entrando no XML,
             // deixando de lado níveis acima que não interessam
             foreach (string pNode in parentsNodes)
             {

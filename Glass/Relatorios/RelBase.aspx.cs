@@ -88,7 +88,7 @@ namespace Glass.UI.Web.Relatorios
                         lstParam.Add(new ReportParameter("Cabecalho_NomeLoja", String.IsNullOrEmpty(loja.RazaoSocial) ? "." : loja.RazaoSocial));
                         lstParam.Add(new ReportParameter("Cabecalho_EmailLoja", String.IsNullOrEmpty(loja.EmailContato) ? "." : loja.EmailContato));
                         lstParam.Add(new ReportParameter("Cabecalho_Criterio", dados.Count > 0 ? dados[0].Criterio : ""));
-                        lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"]));
+                        lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"] ?? "0"));
 
                         if (Request["rel"] == "FiscalAutFin")
                             lstParam.Add(new ReportParameter("ExibeTotalImposto", (situacao.Contains("2") || situacao.Contains("13")).ToString()));
@@ -465,9 +465,9 @@ namespace Glass.UI.Web.Relatorios
                             Request["dtFimRec"], Request["dataIniCad"], Request["dataFimCad"], null, null, Request["idsFormaPagto"], Glass.Conversoes.StrParaUint(Request["tipoBoleto"]),
                             Glass.Conversoes.StrParaFloat(Request["valorInicial"]), Glass.Conversoes.StrParaFloat(Request["valorFinal"]), Glass.Conversoes.StrParaInt(Request["ordenar"]),
                             Request["renegociadas"] == "true", recebida, Glass.Conversoes.StrParaUint(Request["idComissionado"]), Glass.Conversoes.StrParaUint(Request["idRota"]),
-                            Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"]), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
+                            Request["obs"], Request["tipoConta"], Glass.Conversoes.StrParaUint(Request["numArqRemessa"]), bool.Parse(Request["refObra"] ?? "false"), Glass.Conversoes.StrParaInt(Request["contasCnab"]),
                             Glass.Conversoes.StrParaInt(Request["idVendedorAssociado"]), Glass.Conversoes.StrParaInt(Request["idVendedorObra"]), Request["idComissao"].StrParaInt(),
-                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"]), bool.Parse(Request["contasVinculadas"]), Request["tipoContasBuscar"], Request["numAutCartao"]);
+                            Request["idSinal"].StrParaInt(), Request["numCte"].StrParaInt(), bool.Parse(Request["protestadas"] ?? "false"), bool.Parse(Request["contasVinculadas"] ?? "false"), Request["tipoContasBuscar"], Request["numAutCartao"]);
 
                         var idsContas = contasRecebidas.Select(f => f.IdContaR).ToList();
 
@@ -1803,7 +1803,9 @@ namespace Glass.UI.Web.Relatorios
                             Request["dataFimEnt"], Request["dataIniFab"], Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"],
                             Request["dataIniConf"], Request["dataFimConf"], Request["dataIniEmis"], Request["dataFimEmis"], false, Request["pedidos"],
                             Request["pedidosSemAnexos"] == "true", Request["pedidosAComprar"] == "true", Request["situacaoCnc"], Request["dataIniSituacaoCnc"],
-                            Request["dataFimSituacaoCnc"], Request["tipoPedido"], Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]), login);
+                            Request["dataFimSituacaoCnc"], Request["tipoPedido"], Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]),
+                            Conversoes.StrParaInt(Request["pedidosConferidos"]), login, Conversoes.StrParaInt(Request["tipoVenda"]));
+
                         var lstProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetForRpt(Conversoes.StrParaUint(Request["idPedido"]),
                             Conversoes.StrParaUint(Request["idCliente"]), Request["NomeCliente"], Conversoes.StrParaUint(Request["idLoja"]),
                             Conversoes.StrParaUint(Request["idFunc"]), Conversoes.StrParaUint(Request["idFuncionarioConferente"]),
@@ -1811,7 +1813,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["dataFimEnt"], Request["dataIniFab"], Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"],
                             Request["dataIniConf"], Request["dataFimConf"], false, Request["pedidosSemAnexos"] == "true", Request["pedidosAComprar"] == "true",
                             Request["pedidos"], Request["situacaoCnc"], Request["dataIniSituacaoCnc"], Request["dataFimSituacaoCnc"], Request["tipoPedido"],
-                            Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]));
+                            Request["idsRotas"], Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]), Conversoes.StrParaInt(Request["tipoVenda"]));
 
                         lstParam.Add(new ReportParameter("ExibirSituacaoCnc", PCPConfig.UsarControleGerenciamentoProjCnc.ToString()));
                         report.DataSources.Add(new ReportDataSource("PedidoEspelho", lstPedEsp.ToArray()));
@@ -2491,7 +2493,7 @@ namespace Glass.UI.Web.Relatorios
                             Request["situacaoPedOri"], Request["idsProcesso"], Request["dataIniEnt"], Request["dataFimEnt"], Request["dataIniFab"],
                             Request["dataFimFab"], Request["dataIniFin"], Request["dataFimFin"], Request["dataIniConf"], Request["dataFimConf"], false,
                             Request["pedidosSemAnexos"].ToLower() == "true", true, null, Request["situacaoCnc"], Request["dataIniSituacaoCnc"],
-                            Request["dataFimSituacaoCnc"], null, Request["idsRotas"], null, null, 0, Glass.Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"])).ToArray();
+                            Request["dataFimSituacaoCnc"], null, Request["idsRotas"], null, null, 0, Glass.Conversoes.StrParaInt(Request["origemPedido"]), Conversoes.StrParaInt(Request["pedidosConferidos"]), Conversoes.StrParaInt(Request["tipoVenda"])).ToArray();
                         var idsPedidosEspelhoStr = idsPedidosEspelho == null || idsPedidosEspelho.Length == 0 ? null :
                             String.Join(",", Array.ConvertAll<uint, string>(idsPedidosEspelho, new Converter<uint, string>(
                                 delegate (uint x) { return x.ToString(); }
@@ -3539,7 +3541,7 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["nomeCliente"], idLoja, 0, 0,
                             Glass.Conversoes.StrParaInt(Request["situacao"]), Request["situacaoPedOri"], null, Request["dtEntIni"], Request["dtEntFim"], null, null, Request["dataIniFin"],
                             Request["dataFimFin"], null, null, false, false, false, null, null, null, null, null, Request["idsRota"], Request["dtCompraIni"], Request["dtCompraFim"],
-                            Glass.Conversoes.StrParaInt(Request["idCompra"])).ToArray();
+                            Glass.Conversoes.StrParaInt(Request["idCompra"]), null).ToArray();
                         var idsPedEspStr = "";
                         var compraGerada = Request["compraGerada"];
                         var ordenarPor = Glass.Conversoes.StrParaInt(Request["ordenarPor"]);

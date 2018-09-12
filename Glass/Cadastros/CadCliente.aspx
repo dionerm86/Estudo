@@ -1360,7 +1360,7 @@
                                                             DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
                                                             SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
                                                         </sync:CheckBoxListDropDown>
-                                                    </td>
+                                                    </td>                                                    
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -1373,8 +1373,13 @@
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
-                                                    <td align="left" style="display: none"></td>
-                                                    <td align="left" style="display: none"></td>
+                                                    <td align="left" class="dtvHeader">
+                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Diário"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:CheckBox ID="chkIgnorarNoSmsResumoDiario" runat="server" Checked='<%# Bind("IgnorarNoSmsResumoDiario") %>'
+                                                           Text="Ignorar no SMS de Resumo Diário" />
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
@@ -2300,7 +2305,7 @@
                                                             DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
                                                             SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
                                                         </sync:CheckBoxListDropDown>
-                                                    </td>
+                                                    </td>                                                    
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -2313,8 +2318,13 @@
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
-                                                    <td align="left" style="display: none"></td>
-                                                    <td align="left" style="display: none"></td>
+                                                    <td align="left" class="dtvHeader" style="width: 170px">
+                                                        <asp:Label ID="lblIgnorarNoSmsResumoDiario" runat="server" Text="Ignorar no SMS de Resumo Diário"></asp:Label>
+                                                    </td>
+                                                    <td align="left" style="width: 381px">
+                                                        <asp:CheckBox ID="chkIgnorarNoSmsResumoDiario" runat="server" Checked='<%# Bind("IgnorarNoSmsResumoDiario") %>'
+                                                           Text="Ignorar no SMS de Resumo Diário" />
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">

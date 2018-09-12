@@ -64,8 +64,8 @@ namespace WebGlass.Business.Produto.Ajax
                            prod.Espessura + "|" +
                            custoCompra.ToString("F2") + "|" +
                            prod.IdCorVidro + "|" +
-                           "false|" + 
-                           prod.Altura + "|" + 
+                           "false|" +
+                           prod.Altura + "|" +
                            prod.Largura + "|" +
                            prod.CodInterno;
                 }
@@ -108,8 +108,9 @@ namespace WebGlass.Business.Produto.Ajax
 
                 return "Ok##" + prod.IdProd + "##" + prod.Descricao + "##" + GrupoProdDAO.Instance.GetDescricao(prod.IdGrupoProd) + "##" +
                     (prod.IdSubgrupoProd > 0 ? SubgrupoProdDAO.Instance.GetDescricao(prod.IdSubgrupoProd.Value) : "") + "##" +
-                    prod.IdGrupoProd + "##" + (prod.IdSubgrupoProd > 0 ? prod.IdSubgrupoProd : 0) + "##" + 
-                    (prod.IdSubgrupoProd > 0 ? SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(prod.IdProd) == Glass.Data.Model.TipoSubgrupoProd.ChapasVidro : false);
+                    prod.IdGrupoProd + "##" + (prod.IdSubgrupoProd > 0 ? prod.IdSubgrupoProd : 0) + "##" +
+                    (prod.IdSubgrupoProd > 0 ? SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(prod.IdProd) == Glass.Data.Model.TipoSubgrupoProd.ChapasVidro : false) + "##" +
+                    prod.Altura + "##" + prod.Largura;
             }
             catch (Exception ex)
             {
@@ -124,10 +125,10 @@ namespace WebGlass.Business.Produto.Ajax
 
             var nova = new List<string>();
             var temp = texto.Split('/');
-            
+
             for (var i = 0; i < temp.Length; i++)
                 nova.Add(temp[i]);
-            
+
             texto = texto0 + ": " + nova[0] + " / " + texto1 + ": " + nova[1];
             if (nova.Count > 2)
             {
@@ -135,10 +136,10 @@ namespace WebGlass.Business.Produto.Ajax
                 nova.RemoveAt(0);
                 texto += " / Exceções: " + String.Join(" / ", nova.ToArray());
             }
-            
+
             nova.Clear();
             temp = texto.Split('|');
-            
+
             for (var i = 0; i < temp.Length; i++)
                 if (temp[i] != "")
                     nova.Add(temp[i]);
@@ -295,7 +296,7 @@ namespace WebGlass.Business.Produto.Ajax
             uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
             uint idNatOp = RegraNaturezaOperacao.Fluxo.BuscarEValidar.Instance.BuscaCodigoNaturezaOperacaoPorRegra(idNf, tipoDocumento, idLoja, idCli, Glass.Conversoes.StrParaInt(idProd)) ??
                 NotaFiscalDAO.Instance.GetIdNaturezaOperacao(null, idNf);
-            var prod = ProdutoDAO.Instance.GetElement(null, Glass.Conversoes.StrParaUint(idProd), idNfStr.StrParaIntNullable(), idLoja, Glass.Conversoes.StrParaUintNullable(idCliente), 
+            var prod = ProdutoDAO.Instance.GetElement(null, Glass.Conversoes.StrParaUint(idProd), idNfStr.StrParaIntNullable(), idLoja, Glass.Conversoes.StrParaUintNullable(idCliente),
                 Glass.Conversoes.StrParaUintNullable(idFornecedor),
                 (tipoDocumento == Glass.Data.Model.NotaFiscal.TipoDoc.Saída ||
                 /* Chamado 32984. */
@@ -372,7 +373,7 @@ namespace WebGlass.Business.Produto.Ajax
             else
             {
                 uint? idCliente = !String.IsNullOrEmpty(idClienteStr) ? (uint?)Glass.Conversoes.StrParaUint(idClienteStr) : null;
-                return "Prod;" + prod.IdProd + ";" + prod.Descricao + ";" + 
+                return "Prod;" + prod.IdProd + ";" + prod.Descricao + ";" +
                     ProdutoDAO.Instance.GetValorTabela(prod.IdProd, null, idCliente, false, false, 0, null, null, null).ToString("0.00");
             }
         }
@@ -412,7 +413,7 @@ namespace WebGlass.Business.Produto.Ajax
 
                 retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(prod.IdGrupoProd).ToString().ToLower() + ";" +
                     (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
-                
+
                 bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
                 retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja,
                     (uint)prod.IdProd).ToString() : "999999999");
@@ -427,7 +428,7 @@ namespace WebGlass.Business.Produto.Ajax
                 retorno += ";" + prod.AliqICMSInterna.ToString().Replace(',', '.');
 
                 //if (isPedidoProducao)
-                retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? 
+                retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ?
                     prod.Largura.Value.ToString() : "");
 
                 retorno += ";" + prod.IdCorVidro + ";" + prod.Forma;
@@ -453,7 +454,7 @@ namespace WebGlass.Business.Produto.Ajax
                 bool isPedidoMaoObraEspecial = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
                 bool isPedidoMaoObra = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObra;
                 bool isPedidoProducao = tipoPedido == (int)Glass.Data.Model.Pedido.TipoPedidoEnum.Producao;
-                int tipoVenda = Glass.Conversoes.StrParaInt(tipoVendaStr);               
+                int tipoVenda = Glass.Conversoes.StrParaInt(tipoVendaStr);
 
                 var prod = ProdutoDAO.Instance.GetByCodInterno(codInterno, null, Glass.Conversoes.StrParaUint(idLoja), Glass.Conversoes.StrParaUintNullable(idCliente), null, true);
 
@@ -501,7 +502,7 @@ namespace WebGlass.Business.Produto.Ajax
                                         return "Erro;Todos os produtos devem ter a mesma cor e espessura.";
                     }
                 }
-                else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra && 
+                else if (PedidoConfig.DadosPedido.BloqueioPedidoMaoDeObra &&
                     prod.IdGrupoProd == (uint)Glass.Data.Model.NomeGrupoProd.MaoDeObra)
                     return "Erro;Produtos do grupo 'Mão de Obra Beneficiamento' estão bloqueados para pedidos comuns.";
 
@@ -538,7 +539,7 @@ namespace WebGlass.Business.Produto.Ajax
                     {
                         foreach (var prodped in ProdutosPedidoDAO.Instance.GetByPedido(idPedido))
                         {
-                            var itemRevendaNaVenda = prodped.IdSubgrupoProd == 0 ? 
+                            var itemRevendaNaVenda = prodped.IdSubgrupoProd == 0 ?
                                 false :
                                 SubgrupoProdDAO.Instance.ObtemPermitirItemRevendaNaVenda((int)prodped.IdSubgrupoProd);
 
@@ -562,7 +563,7 @@ namespace WebGlass.Business.Produto.Ajax
 
                 string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
                 decimal valorProduto = 0;
-                
+
                 // Recupera o valor de tabela do produto
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
@@ -579,7 +580,7 @@ namespace WebGlass.Business.Produto.Ajax
                     (prod.AtivarAreaMinima ? prod.AreaMinima.ToString().Replace(',', '.') : "0");
 
                 bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd) && !isPedidoProducao;
-                
+
                 retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(Glass.Conversoes.StrParaUint(idLoja),
                     (uint)prod.IdProd, isPedidoProducao).ToString() : "999999999");
 
@@ -734,7 +735,7 @@ namespace WebGlass.Business.Produto.Ajax
                     bool pedidoReposicao = false;
                     if (!string.IsNullOrEmpty(idPedidoStr))
                         pedidoReposicao = PedidoDAO.Instance.ObtemTipoVenda(null, idPedido) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição;
-                    
+
                     // Recupera o valor de tabela do produto
                     int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                     uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
@@ -807,13 +808,13 @@ namespace WebGlass.Business.Produto.Ajax
             string retorno = "Prod;" + prod.IdProd + ";" + prod.Descricao;
 
             bool bloquearEstoque = GrupoProdDAO.Instance.BloquearEstoque(prod.IdGrupoProd, prod.IdSubgrupoProd);
-            retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja, 
+            retorno += ";" + (bloquearEstoque ? ProdutoLojaDAO.Instance.GetEstoque(null, UserInfo.GetUserInfo.IdLoja,
                 (uint)prod.IdProd, null, false, false, false).ToString() : "999999999");
 
             // Verifica como deve ser feito o cálculo do produto
             retorno += ";" + Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(prod.IdGrupoProd, prod.IdSubgrupoProd);
 
-            retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ? 
+            retorno += ";" + (prod.Altura != null ? prod.Altura.Value.ToString() : "") + ";" + (prod.Largura != null ?
                 prod.Largura.Value.ToString() : "");
 
             return retorno;

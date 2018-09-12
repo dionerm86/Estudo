@@ -20,7 +20,7 @@
         var totalASerPago = 0;
 
         function openRptPedido(url)
-        {    
+        {
             openWindow(600, 800, url);
         }
 
@@ -64,7 +64,7 @@
             var idContaBanco = FindControl("drpContaBanco", "select").value;
             var exibirContasVinculadas = FindControl("chkExibirContasVinculadas", "input").checked;
             var numCte = FindControl("txtNumCte", "input").value;
-    
+
             var queryString = idPedido == "" ? "&idPedido=0" : "&idPedido=" + idPedido;
             queryString += idLiberarPedido == "" ? "&idLiberarPedido=0" : "&idLiberarPedido=" + idLiberarPedido;
             queryString += "&idTrocaDev=" + idTrocaDev;
@@ -82,26 +82,26 @@
             queryString += "&protestadas=" + protestadas;
             queryString += "&idContaBanco=" + idContaBanco;
             queryString += "&numCte=" + numCte;
-    
-    
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ContasReceber" + (total ? "Total" : "") + 
-                "&nomeCli=" + nomeCli + "&idLoja=" + idLoja + "&lojaCliente=" + lojaCliente + "&dtIni=" + dtIni + 
-                "&renegociadas=" + "&dtFim=" + dtFim + 
-                "&precoInicial=" + precoInicial + "&precoFinal=" + precoFinal + "&sort=" + sort + 
-                "&formaPagto=" + formaPagto + "&idFunc=" + idFunc + queryString + "&exportarExcel=" + exportarExcel + 
-                "&incluirParcCartao=" + incluirParcCartao + 
-                "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim + "&contasRenegociadas=" + contasRenegociadas + 
-                "&idAcerto=" + idAcerto + "&idsRotas=" + idsRotas + "&apenasNfe=" + apenasNfe + 
+
+
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ContasReceber" + (total ? "Total" : "") +
+                "&nomeCli=" + nomeCli + "&idLoja=" + idLoja + "&lojaCliente=" + lojaCliente + "&dtIni=" + dtIni +
+                "&renegociadas=" + "&dtFim=" + dtFim +
+                "&precoInicial=" + precoInicial + "&precoFinal=" + precoFinal + "&sort=" + sort +
+                "&formaPagto=" + formaPagto + "&idFunc=" + idFunc + queryString + "&exportarExcel=" + exportarExcel +
+                "&incluirParcCartao=" + incluirParcCartao +
+                "&dataCadIni=" + dataCadIni + "&dataCadFim=" + dataCadFim + "&contasRenegociadas=" + contasRenegociadas +
+                "&idAcerto=" + idAcerto + "&idsRotas=" + idsRotas + "&apenasNfe=" + apenasNfe +
                 "&contasCnab=" + contasCnab);
-    
+
             return false;
         }
 
         function setContaReceber(idContaR, idPedido, idLiberarPedido, cliente, valor, dataVenc, idCli, juros, multa, obs, control, renegociar){
 
             // Limpa o que estiver na tela, pois caso cadastre o cheque antes, o mesmo não terá referência do pedido
-            limpar(); 
-            
+            limpar();
+
             FindControl("hdfIdContaR", "input").value = idContaR;
             FindControl("hdfIdPedido", "input").value = idPedido;
             FindControl("hdfIdLiberarPedido", "input").value = idLiberarPedido;
@@ -110,15 +110,15 @@
             FindControl("lblValor", "span").innerHTML = valor;
             FindControl("lblDataVenc", "span").innerHTML = dataVenc;
             FindControl("hdfValorCredito", "input").value = MetodosAjax.GetClienteCredito(idCli).value;
-    
+
             <%= ctrlFormaPagto1.ClientID %>.LimparIDs();
             <%= ctrlFormaPagto1.ClientID %>.AdicionarID(idContaR);
             <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(parseFloat(juros.replace(',', '.')) + parseFloat(multa.replace(',', '.')));
             usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
-    
+
             if (renegociar)
                 FindControl("chkRenegociar", "input").checked= true;
-                
+
             chkRenegociarChecked(FindControl("chkRenegociar", "input"));
 
             var row = $(control).parent().parent();
@@ -129,10 +129,10 @@
         function onReceber() {
             if (!validate())
                 return false;
-    
+
             var control = FindControl("btnReceber", "input");
             //control.disabled = true;
-    
+
             var controle = <%= ctrlFormaPagto1.ClientID %>;
             var idPedido = FindControl("hdfIdPedido", "input").value;
             var idConta = FindControl("hdfIdContaR", "input").value;
@@ -152,7 +152,7 @@
 
             bloquearPagina();
             //FindControl("loadGif", "img").style.visibility = "visible";
-    
+
             // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
             var chequesPagto = controle.Cheques();
             var CNI = controle.CartoesNaoIdentificados();
@@ -178,7 +178,7 @@
 
             retorno = CadContaReceber.Receber(idPedido, idConta, dataRecebido, formasPagto, valores, contas, tiposCartao, tiposBoleto, taxasAntecipacao, juros, parcial, isGerarCredito,
                 creditoUtilizado, cxDiario, numAut, parcelasCredito, chequesPagto, isDescontarComissao, depositoNaoIdentificado, CNI, numAutCartao, receberCappta.toString().toLowerCase()).value.split('\t');
-                
+
             if (retorno[0] == "Erro") {
                 desbloquearPagina(true);
                 alert(retorno[1]);
@@ -218,7 +218,7 @@
             desbloquearPagina(true);
 
             if(!sucesso){
-                alert(msg); 
+                alert(msg);
                 return false;
             }
 
@@ -234,7 +234,7 @@
                 return;
 
             var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
-    
+
             if (retorno[0] == "Erro")
             {
                 alert(retorno[1]);
@@ -242,7 +242,7 @@
                 FindControl("txtNome", "input").value = "";
                 return false;
             }
-    
+
             FindControl("txtNome", "input").value = retorno[1];
         }
 
@@ -251,7 +251,7 @@
             var idPedido = FindControl("hdfIdPedido", "input").value;
             var idLiberarPedido = FindControl("hdfIdLiberarPedido", "input").value;
             //alert(idPedido);
-            return (idPedido != "" ? "?IdPedido=" + idPedido : "?IdLiberarPedido=" + idLiberarPedido) + 
+            return (idPedido != "" ? "?IdPedido=" + idPedido : "?IdLiberarPedido=" + idLiberarPedido) +
                 "&IdContaR=" + FindControl("hdfIdContaR", "input").value + "&origem=3";
         }
 
@@ -264,7 +264,7 @@
         function chkRenegociarChecked(chk) {
             document.getElementById("tbPagto").style.display = chk.checked ? "none" : "";
             document.getElementById("tbRenegociar").style.display = !chk.checked ? "none" : "";
-    
+
             if (chk.checked) setParcelas();
         }
 
@@ -276,10 +276,10 @@
         function callbackUsarCredito(controle, checked) {
             var valor = FindControl("lblValor", "span").innerHTML;
             totalASerPago = valor.replace("R$", "").replace(" ", "").replace('.', '').replace(',', '.');
-    
+
             // Busca referência ao hiddenfield que guarda quanto de crédito este cliente possui
             var creditoCli = checked ? FindControl("hdfValorCredito", "input").value : 0;
-        
+
             // se o cliente possuir crédito
             if (creditoCli > 0) {
                 // Se o crédito do cliente for superior ao valor da conta
@@ -296,12 +296,12 @@
                     return false;
             }
             catch (err) { alert(err); }
-    
+
             var numParc = parseInt(FindControl("drpNumParc", "select").value);
             var parcelas = "";
 
             // Salva os valores das parcelas
-            for (i=0; i<numParc; i++) 
+            for (i=0; i<numParc; i++)
                 parcelas += FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtValor", "input").value + ";" +
                     FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtData", "input").value + ";" +
                     FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtJuros", "input").value+ "|";
@@ -309,30 +309,30 @@
             var idPedido = FindControl("hdfIdPedido", "input").value;
             var idConta = FindControl("hdfIdContaR", "input").value;
             var idFormaPagto = FindControl("drpPagtoReneg", "select").value;
-        
+
             var multa = FindControl("txtMultaReneg", "input").value;
 
             bloquearPagina();
             //control.disabled = true;
-    
+
             var retornoValidaCnab = CadContaReceber.TemCnabGerado(idConta);
-    
+
             if(retornoValidaCnab.error!=null){
                 alert(retornoValidaCnab.error.description);
                 desbloquearPagina(true);
                 return false;
             }
-    
+
             if(retornoValidaCnab.value.toLowerCase() == "true" && !confirm('A conta a receber possui arquivo remessa gerado. Deseja continuar?')){
                 desbloquearPagina(true);
                 return false;
             }
 
-            var retorno = CadContaReceber.Renegociar(idPedido, idConta, idFormaPagto, 
+            var retorno = CadContaReceber.Renegociar(idPedido, idConta, idFormaPagto,
                 numParc, parcelas, multa).value.split('\t');
 
             desbloquearPagina(true);
-    
+
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 //control.disabled = false;
@@ -357,7 +357,7 @@
             FindControl("hdfIdCliente", "input").value = "";
             FindControl("hdfValorCredito", "input").value = "";
             FindControl("txtNumPedido", "input").value = "";
-    
+
             <%= ctrlFormaPagto1.ClientID %>.Limpar();
 
             var grdContasRows = $('#<%= grdConta.ClientID %> tr');
@@ -370,7 +370,7 @@
             }
 
         }
-         
+
         function openRptProm(idContaR) {
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idContaR=" + idContaR);
         }
@@ -553,8 +553,7 @@
                             <asp:Label ID="Label33" runat="server" Text="Contas Antecipadas" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpFiltroContasAntecipadas" runat="server" AutoPostBack="True"
-                                OnSelectedIndexChanged="drpFiltroContasAntecipadas_SelectedIndexChanged">
+                            <asp:DropDownList ID="drpFiltroContasAntecipadas" runat="server" AutoPostBack="True">
                                 <asp:ListItem Value="0">Apenas Contas Não Antecipadas</asp:ListItem>
                                 <asp:ListItem Value="1">Incluir Contas Antecipadas</asp:ListItem>
                                 <asp:ListItem Value="2">Apenas Contas Antecipadas</asp:ListItem>
@@ -732,7 +731,7 @@
                             <asp:ImageButton ID="imbBuscarContas" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                                 OnClick="imgPesq_Click"/>
-                            <asp:Image ID="imgBuscarContas" runat="server" ImageUrl="~/Images/help.gif" AlternateText=" " 
+                            <asp:Image ID="imgBuscarContas" runat="server" ImageUrl="~/Images/help.gif" AlternateText=" "
                                 ToolTip=
                                     "Contas com NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
 Sem NFe gerada: cliente com percentual de redução em NFe E conta com referência direta com alguma liberação E liberação NÃO associada à alguma nota fiscal que não esteja cancelada, denegada ou inutilizada.
@@ -796,7 +795,7 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                                         <img src="../Images/handshakesmall.png" border="0" title="Renegociar" alt="Renegociar" /></a>
                                 </asp:PlaceHolder>
                             </ItemTemplate>
-                        </asp:TemplateField>  
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 <asp:ImageButton ID="imbRelatorio" runat="server" ImageUrl="~/Images/Relatorio.gif"
@@ -965,10 +964,10 @@ Demais contas: cliente sem percentual de redução em NFe ou conta sem referência 
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false, false); return false;"
                     CausesValidation="False"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkTotal" runat="server" OnClientClick="openRpt(true, true); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkTotal" runat="server" OnClientClick="openRpt(true, true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Relatório de totais</asp:LinkButton>
             </td>
         </tr>
