@@ -360,8 +360,8 @@
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
     <Compile Include="Models\Genericas\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
-    <Compile Include="Models\Genericas\CadastroAtualizacao\ConversorValorTipo.cs" />
-    <Compile Include="Models\Genericas\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
+    <Compile Include="Helper\CadastroAtualizacao\ConversorValorTipo.cs" />
+    <Compile Include="Helper\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />

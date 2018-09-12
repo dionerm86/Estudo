@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.Comum.Cache;
+using Glass.API.Backend.Helper.CadastroAtualizacao;
 using System;
 using System.Collections;
 using System.Collections.Generic;

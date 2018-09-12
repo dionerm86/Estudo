@@ -2,13 +2,14 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas.CadastroAtualizacao;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
+namespace Glass.API.Backend.Helper.CadastroAtualizacao
 {
     /// <summary>
     /// Classe responsável pelos métodos de conversão entre o DTO e o modelo.
@@ -85,8 +86,7 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
             }
 
             var valorInformado = valores[this.nomeCampo];
-            return new ConversorValorTipo()
-                .Converter<U>(valorInformado);
+            return new ConversorValorTipo<U>().Converter(valorInformado);
         }
 
         /// <summary>
