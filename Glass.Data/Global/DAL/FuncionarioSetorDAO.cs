@@ -11,7 +11,7 @@ namespace Glass.Data.DAL
         //private FuncionarioSetorDAO() { }
 
         /// <summary>
-        /// Retorna os setores que o funcionário informado possui acesso
+        /// Retorna os setores que o funcionário informado possui acesso.
         /// </summary>
         /// <param name="idFunc"></param>
         /// <returns></returns>
@@ -27,7 +27,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna os setores que o funcionário informado possui acesso
+        /// Retorna os setores que o funcionário informado possui acesso.
         /// </summary>
         /// <param name="idFunc"></param>
         /// <returns></returns>
@@ -47,7 +47,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Associa os setores selecionados ao funcionário informado
+        /// Associa os setores selecionados ao funcionário informado.
         /// </summary>
         /// <param name="idFunc"></param>
         /// <param name="setores"></param>
@@ -80,12 +80,24 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Remove todos os setores de um funcionário
+        /// Remove todos os setores de um funcionário.
         /// </summary>
         /// <param name="idFunc"></param>
         public void DeleteByIdFunc(uint idFunc)
         {
             objPersistence.ExecuteCommand("DELETE FROM funcionario_setor WHERE idFunc=" + idFunc);
         }
+
+        public bool PossuiSetorCarregamento(uint idFunc)
+        {
+            string sql = @"
+                Select Count(*) > 0 From funcionario_setor fs
+                    Inner Join setor s On (fs.idSetor=s.idSetor)
+                Where idFunc=" + idFunc + @"
+                    And s.tipo=" + (int)TipoSetor.ExpCarregamento;
+
+            return ExecuteScalar<bool>(sql);
+        }
+
     }
 }
