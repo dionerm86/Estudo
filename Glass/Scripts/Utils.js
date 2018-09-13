@@ -1405,16 +1405,12 @@ function diferencaDatas(data1, data2)
 // --------------------------------------------------------
 function corrigeLeituraEtiqueta(codBarras) {
 
-    codBarras = codBarras.toString();
-
-    if (codBarras.length > 0 && codBarras[0].toLowerCase() == 'c') {
-        return codBarras.replace(';', '/');
+    if (codBarras.length > 0 && codBarras.charAt(0).toLowerCase() == 'c') {
+        return codBarras.replace(';', '/').replace('ç', '/').replace('Ç', '/');
     }
 
     if (codBarras.toString().indexOf(".cni") >= 0)
-    {
         codBarras = codBarras.toString().substring(0, codBarras.toString().indexOf(".cni"));
-    }
 
     if (codBarras.toString().indexOf("-") <= 0)
         codBarras = codBarras.replace('F', '_').replace('f', '_');

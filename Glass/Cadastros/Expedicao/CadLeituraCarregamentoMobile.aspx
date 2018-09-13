@@ -8,8 +8,8 @@
 
     <title>Leitura de Carregamento</title>
 
-    <link type="text/css" rel="Stylesheet" href='<%= ResolveUrl("~/Style/CarregamentoMobile.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'/>
-    <link type="text/css" rel="Stylesheet" href='<%= ResolveUrl("~/Style/gridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'/>
+    <link type="text/css" rel="Stylesheet" href='../../Style/CarregamentoMobile.css'/>
+    <link type="text/css" rel="Stylesheet" href='../../Style/gridView.css'/>
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Utils.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/jquery-1.4.4.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>

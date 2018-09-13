@@ -163,8 +163,9 @@ namespace Glass.Data.Helper
                             Email.EnviaEmailAdministradores();
                 }
 
-                FilaEmail email = FilaEmailDAO.Instance.GetNext();
-                if (email != null)
+                var email = FilaEmailDAO.Instance.GetNext();
+
+                if (email?.IdEmail > 0 && FilaEmailDAO.Instance.Exists(email.IdEmail))
                 {
                     try
                     {
@@ -178,9 +179,8 @@ namespace Glass.Data.Helper
                     }
                     catch (Exception ex)
                     {
+                        FilaEmailDAO.Instance.SetLast((int)email.IdEmail);
                         ErroDAO.Instance.InserirFromException("ProcessaEmail (1)", ex);
-
-                        FilaEmailDAO.Instance.SetLast(email.IdEmail);
                     }
                 }
             }
@@ -233,7 +233,6 @@ namespace Glass.Data.Helper
                         {
                             FilaSmsDAO.Instance.SetLast(sms.IdSms, string.Empty);
                             ErroDAO.Instance.InserirFromException("EnviarSMS", ex);
-                            throw;
                         }
                     }
                 }

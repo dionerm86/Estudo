@@ -344,7 +344,7 @@ namespace Glass.Data.Model
         {
             get 
             {
-                if (_beneficiamentos == null)
+                if (_beneficiamentos == null && ProdutoPedido != null)
                     _beneficiamentos = ProdutoPedido.Beneficiamentos;
 
                 return _beneficiamentos; 
@@ -372,7 +372,7 @@ namespace Glass.Data.Model
                     
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
-                    decimal? valorUnitario = ValorUnitario.Instance.CalcularValor(null, pedido, ProdutoPedido, ValorProd - ValorBenefProd);
+                    decimal? valorUnitario = ProdutoPedido != null ? ValorUnitario.Instance.CalcularValor(null, pedido, ProdutoPedido, ValorProd - ValorBenefProd) : null;
                     if (valorUnitario.HasValue)
                     {
                         _valorUnit = valorUnitario + valorUnitBenef;

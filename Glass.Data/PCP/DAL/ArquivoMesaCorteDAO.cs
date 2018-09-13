@@ -11940,15 +11940,16 @@ namespace Glass.Data.DAL
                                 {
                                     // Adiciona os arquivos
                                     var zip = new ZipFile(arquivo);
-                                    
-                                    foreach(var contexto in contextos)
+
+                                    var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
                                     {
-                                        var dxfDocument = projeto.SaveDxf(new CalcEngine.Dxf.CreateDxfDocumentOptions()
-                                        {
-                                            IncludeBounds = true,
-                                            IncludeProjectVariables = true,
-                                            ConfigureGroupsLeads = true
-                                        });
+                                        IncludeBounds = true,
+                                        IncludeProjectVariables = true,
+                                        ConfigureGroupsLeads = true
+                                    });
+
+                                    foreach (var contexto in contextos)
+                                    {
                                         var importer = new CalcEngine.Biesse.DxfImporter(contexto.ImporterContext, dxfDocument, contexto.NomeMaquina);
 
                                         using (var resultado = importer.Execute(espessura))

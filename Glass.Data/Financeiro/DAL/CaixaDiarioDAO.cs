@@ -100,10 +100,10 @@ namespace Glass.Data.DAL
         }
 
         public uint MovCxObra(GDASession sessao, uint idLoja, uint idCliente, uint idObra, int tipoMov, decimal valorMov, decimal juros, uint idConta,
-            string numAutConstrucard, string obs, bool mudarSaldo)
+            string numAutConstrucard, string obs, bool mudarSaldo, int? contadorDataUnica)
         {
             return MovimentaCaixa(sessao, idLoja, idCliente, null, null, null, null, null, null, idObra, null, tipoMov, valorMov, juros, idConta,
-                numAutConstrucard, 0, obs, mudarSaldo, null, null, 0);
+                numAutConstrucard, 0, obs, mudarSaldo, null, null, 0, contadorDataUnica);
         }
 
         public uint MovCxTrocaDev(GDASession sessao, uint idLoja, uint idCliente, uint idTrocaDev, uint? idPedido, int tipoMov, decimal valorMov,

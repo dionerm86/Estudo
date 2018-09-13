@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace Glass.Data.wsNFeSVANStatus {
+namespace Glass.Data.wsNFeSVANStatusServico {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -21,8 +21,8 @@ namespace Glass.Data.wsNFeSVANStatus {
     using System.Xml.Serialization;
     using System.ComponentModel;
     using NFeUtils;
-    
-    
+
+
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.7.3056.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -36,7 +36,7 @@ namespace Glass.Data.wsNFeSVANStatus {
         
         /// <remarks/>
         public NFeStatusServico4() {
-            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsNFeSVANStatus_NFeStatusServico4;
+            this.Url = global::Glass.Data.Properties.Settings.Default.Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -75,7 +75,7 @@ namespace Glass.Data.wsNFeSVANStatus {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4/nfeStatusServicoNF", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Bare)]
-        [return: System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4")]
+        [return: System.Xml.Serialization.XmlElementAttribute("nfeResultMsg", Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4")]
         public System.Xml.XmlNode nfeStatusServicoNF([System.Xml.Serialization.XmlElementAttribute(Namespace="http://www.portalfiscal.inf.br/nfe/wsdl/NFeStatusServico4")] System.Xml.XmlNode nfeDadosMsg) {
             object[] results = this.Invoke("nfeStatusServicoNF", new object[] {
                         nfeDadosMsg});

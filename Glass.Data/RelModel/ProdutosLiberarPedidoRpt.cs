@@ -64,10 +64,10 @@ namespace Glass.Data.RelModel
             PesoVidro = plp.PesoVidro;
             PesoNaoVidro = plp.PesoNaoVidro;
 
-            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int)IdSubgrupoProd, false);
+            var tipoCalculo = GrupoProdDAO.Instance.TipoCalculo(null, (int)IdGrupoProd, (int?)IdSubgrupoProd.GetValueOrDefault(), false);
 
             IsVidroEstoqueQtde = tipoCalculo == (int)TipoCalculoGrupoProd.Qtd &&
-                GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) && SubgrupoProdDAO.Instance.IsProdutoEstoque((int)IdSubgrupoProd);
+                GrupoProdDAO.Instance.IsVidro((int)IdGrupoProd) && SubgrupoProdDAO.Instance.IsProdutoEstoque((int)IdSubgrupoProd.GetValueOrDefault());
 
             // Campos usados como base para o IResumoCorte
             IdProdLiberarPedido = plp.IdProdLiberarPedido;
