@@ -25,7 +25,7 @@ namespace Glass.Global.Negocios.Componentes
                 .From<Data.Model.EtiquetaProcesso>("ep")
                 .LeftJoin<Data.Model.EtiquetaAplicacao>("ep.IdAplicacao = ea.IdAplicacao", "ea")
                 .Select(
-                    @"ep.IdProcesso, ep.CodInterno, ep.IdAplicacao, ep.Descricao,
+                    @"ep.IdProcesso, ep.CodInterno, ep.IdAplicacao, ep.Descricao, ep.ForcarGerarSag,
                       ep.DestacarEtiqueta, ep.GerarFormaInexistente, ep.TipoProcesso,
                       ep.Situacao, ea.CodInterno AS CodInternoAplicacao,
                       ea.Descricao AS DescricaoAplicacao, ep.GerarArquivoDeMesa, ep.TipoPedido, ep.NumeroDiasUteisDataEntrega")

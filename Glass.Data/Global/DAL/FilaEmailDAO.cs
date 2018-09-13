@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.Helper;
 using GDA;
 using Glass.Configuracoes;
+using System.Linq;
 
 namespace Glass.Data.DAL
 {
@@ -71,54 +72,34 @@ namespace Glass.Data.DAL
         #endregion
 
         /// <summary>
+        /// Obtém o número de tentativas de envio do e-mail.
+        /// </summary>
+        private int ObterNumeroTentativasEnvio(GDASession session, int idEmail)
+        {
+            return ObtemValorCampo<int?>("NumTentativas", $"IdEmail = { idEmail }").GetValueOrDefault();
+        }
+
+        /// <summary>
         /// Retorna o próximo e-mail que será enviado.
         /// </summary>
         /// <returns></returns>
         public FilaEmail GetNext()
         {
-            string sql = "select * from fila_email where dataEnvio is null order by idEmail asc limit 1";
-            List<FilaEmail> email = objPersistence.LoadData(sql);
-            return email.Count > 0 ? email[0] : null;
+            var sql = $"SELECT * FROM fila_email WHERE NumTentativas < { FilaEmail.MAX_NUMERO_TENTATIVAS } AND DataEnvio IS NULL ORDER BY IdEmail ASC LIMIT 1;";
+            var email = objPersistence.LoadData(sql)?.ToList();
+
+            return email?.Count() > 0 ? email[0] : null;
         }
 
         /// <summary>
         /// Marca o e-mail como último a ser enviado.
         /// Utilizado em caso de erro na fila de e-mail.
         /// </summary>
-        /// <param name="idEmail"></param>
-        public void SetLast(uint idEmail)
+        public void SetLast(int idEmail)
         {
+            var numeroTentativas = ObterNumeroTentativasEnvio(null, idEmail);
             // Incrementa o número de tentativas
-            objPersistence.ExecuteCommand("update fila_email set numTentativas=coalesce(numTentativas,0)+1 where idEmail=" + idEmail);
-            if (ObtemValorCampo<int>("numTentativas", "idEmail=" + idEmail) > FilaEmail.MAX_NUMERO_TENTATIVAS)
-            {
-                DeleteByPrimaryKey(idEmail);
-                return;
-            }        
-
-            var idLoja = ObtemValorCampo<uint>("IdLoja", "idEmail=" + idEmail);
-            var emailDestinatario = ObtemValorCampo<string>("EmailDestinatario", "idEmail=" + idEmail);
-            var assuntoEmail = ObtemValorCampo<string>("Assunto", "idEmail=" + idEmail);
-            var mensagemEmail = ObtemValorCampo<string>("Mensagem, EmailEnvio, DataCad, EmailAdmin", "idEmail=" + idEmail);
-            var emailEnvio = ObtemValorCampo<Email.EmailEnvio>("EmailEnvio", "idEmail=" + idEmail);
-            var dataCad = ObtemValorCampo<DateTime>("DataCad", "idEmail=" + idEmail);
-            var emailAdmin = ObtemValorCampo<bool>("EmailAdmin", "idEmail=" + idEmail);
-            
-            var novoEmail = new FilaEmail();
-            novoEmail.IdLoja = idLoja;
-            novoEmail.EmailDestinatario = emailDestinatario;
-            novoEmail.Assunto = assuntoEmail;
-            novoEmail.Mensagem = mensagemEmail;
-            novoEmail.EmailEnvio = emailEnvio;
-            novoEmail.DataCad = dataCad;
-            novoEmail.EmailAdmin = emailAdmin;
-
-            Insert(null, novoEmail);           
-
-            string sql = @"Delete from fila_email where idEmail=" + idEmail + @"; 
-                update anexo_email set idEmail=" + novoEmail.IdEmail + " where idEmail=" + idEmail + @";";
-
-            objPersistence.ExecuteCommand(sql);
+            objPersistence.ExecuteCommand($"UPDATE fila_email SET NumTentativas = { numeroTentativas + 1 } WHERE IdEmail = { idEmail };");
         }
 
         /// <summary>
@@ -129,14 +110,6 @@ namespace Glass.Data.DAL
         {
             string sql = "update fila_email set dataEnvio=now() where idEmail=" + idEmail;
             objPersistence.ExecuteCommand(sql);
-        }
-
-        /// <summary>
-        /// Verifica pela mensagem se email foi enviado
-        /// </summary>
-        public bool EmailEnviado(string assunto, string mensagem)
-        {
-            return EmailEnviado(null, assunto, mensagem);
         }
 
         /// <summary>

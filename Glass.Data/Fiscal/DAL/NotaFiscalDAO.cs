@@ -103,7 +103,12 @@ namespace Glass.Data.DAL
                 if (PedidoConfig.LiberarPedido && FiscalConfig.BloquearEmissaoNFeApenasPedidosLiberados)
                     foreach (var p in peds)
                         if (p.Situacao != Pedido.SituacaoPedido.Confirmado && p.Situacao != Pedido.SituacaoPedido.LiberadoParcialmente)
-                            throw new Exception("O pedido " + p.IdPedido + " não está liberado ou liberado parcialmente. Emissão da NF-e não permitida.");
+                        {
+                            if (Liberacao.DadosLiberacao.LiberarPedidoProdutos)
+                                throw new Exception("O pedido " + p.IdPedido + " não está liberado ou liberado parcialmente. Emissão da NF-e não permitida.");
+                            else
+                                throw new Exception("O pedido " + p.IdPedido + " não está liberado. Emissão da NF-e não permitida.");
+                        }
 
                 bool liberacaoParcial = false;
 
@@ -310,7 +315,7 @@ namespace Glass.Data.DAL
                         totalNota += descLib;
 
                         // Motivo retirada: Mesmo que seja nota de liberação normal ou parcial, deve considerar o desconto dado no pedido,
-                        // caso contrário o mesmo não será rateado na nota, logo, o total da nota nesta parte deve ser somado somente 
+                        // caso contrário o mesmo não será rateado na nota, logo, o total da nota nesta parte deve ser somado somente
                         // um possível desconto na liberação
                         //totalNota += LiberarPedidoDAO.Instance.ObtemValorCampo<decimal>("total", "idLiberarPedido=" + idLib);
                     }
@@ -394,7 +399,7 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
-                        
+
                         #region Insere a nota fiscal
 
                         var totalLiberado = LiberarPedidoDAO.Instance.GetTotalLiberado(transaction, idsLiberarPedidos);
@@ -624,7 +629,7 @@ namespace Glass.Data.DAL
 
                                     string sql = @"
                                 SELECT CAST(CONCAT(pnf.idProdNf, ';',pnf.cstOrig) as CHAR)
-                                FROM produto_impressao pi 
+                                FROM produto_impressao pi
                                     INNER JOIN produtos_nf pnf ON (pi.idProdNf = pnf.idProdNf)
                                     INNER JOIN nota_fiscal nf ON (pnf.idNf = nf.IdNf)
                                 WHERE pi.cancelado = false AND nf.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + @"
@@ -905,7 +910,7 @@ namespace Glass.Data.DAL
                             // valor trazido quando a nota fiscal é de liberação e utiliza o agrupamento de produtos já é o valor liberado
                             // Foi acrescentado o ControleSistema.GetSite() != ControleSistema.ClienteSistema.VidroCel pelo mesmo motivo da Dekor
 
-                            // Soma o ValorDescontoQtde ao total devido ao rateio que é feito logo abaixo do desconto total do pedido 
+                            // Soma o ValorDescontoQtde ao total devido ao rateio que é feito logo abaixo do desconto total do pedido
                             // (Que inclui o desconto por qtd, o qual é rateado no total do produto)
                             prodNf.Total = !FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe && nfDeLiberacao && pp.QtdeOriginal > 0 && !Liberacao.DadosLiberacao.LiberarPedidoProdutos ?
                                 (pp.Total + (!PedidoConfig.RatearDescontoProdutos ? pp.ValorDescontoQtdeNf : 0) + pp.ValorBenef) / (decimal)pp.QtdeOriginal * (decimal)pp.Qtde :
@@ -995,10 +1000,10 @@ namespace Glass.Data.DAL
 
                                 if (!lojaCalculaIpiPedido || !clienteCalcIpi)
                                 {
-                                    // Caso a alíquota de icms esteja zerada (automaticamente não considerando a diferença no cálculo do ICMS ST 
+                                    // Caso a alíquota de icms esteja zerada (automaticamente não considerando a diferença no cálculo do ICMS ST
                                     // que a cobrança do IPI iria causar) e o cliente calcule ICMS ST no pedido considerando o IPI no cálculo
-                                    // e o cliente esteja marcado para calcular ICMS no pedido mas não para calcular IPI no mesmo porém a nota 
-                                    // calcule ICMS ST e IPI, é necessário recalcular este produto considerando a AliqICMSInterna junto com a 
+                                    // e o cliente esteja marcado para calcular ICMS no pedido mas não para calcular IPI no mesmo porém a nota
+                                    // calcule ICMS ST e IPI, é necessário recalcular este produto considerando a AliqICMSInterna junto com a
                                     // alíquota do IPI e depois adicionando o valor da AliqICMSInterna somente
                                     var recalcularIcmsStProd = aliqIcms == 0 && FiscalConfig.NotaFiscalConfig.CalculoAliquotaIcmsSt == ConfigNFe.TipoCalculoIcmsSt.ComIpiNoCalculo &&
                                         (!clienteCalcIpi || !lojaCalculaIpiPedido) && clienteCalcIcmsSt && lojaCalculaIcmsStPedido;
@@ -1018,7 +1023,7 @@ namespace Glass.Data.DAL
                                 {
                                     decimal aliqIcmsCalc = (decimal)IcmsProdutoUfDAO.Instance.ObterIcmsPorProduto(transaction, idProd, nf.IdLoja.Value, nf.IdFornec, nf.IdCliente);
 
-                                    // Se tiver sido cobrado ipi no pedido e esteja tentando ratear o st na nota e  
+                                    // Se tiver sido cobrado ipi no pedido e esteja tentando ratear o st na nota e
                                     // a alíquota de icms seja diferente da alíquota de icms st, usa esta função
                                     if (pp.ValorIpiNf > 0 && (aliqIcmsCalc != (decimal)prod.AliqIcmsStInterna))
                                     {
@@ -1348,7 +1353,7 @@ namespace Glass.Data.DAL
                 PagtoNotaFiscalDAO.Instance.Insert(sessao, pagamentoNotaFiscal);
             }
             else if (idsLiberarPedido.Any(f => f > 0))
-            {                
+            {
                 foreach (var idLiberarPedido in idsLiberarPedido.Where(f => f > 0))
                 {
                     var formaPagamentoLiberacao = PagtoLiberarPedidoDAO.Instance.GetByLiberacao(sessao, (uint)idLiberarPedido);
@@ -1876,7 +1881,7 @@ namespace Glass.Data.DAL
 
                 #endregion
 
-                // Soma o ValorDescontoQtde ao total devido ao rateio que é feito logo abaixo do desconto total do pedido 
+                // Soma o ValorDescontoQtde ao total devido ao rateio que é feito logo abaixo do desconto total do pedido
                 // (Que inclui o desconto por qtd, o qual é rateado no total do produto)
                 prodNf.Total =
                     !FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFeTerceiros && pc.QtdeOriginal > 0 ?
@@ -2089,7 +2094,7 @@ namespace Glass.Data.DAL
             // Verifica se algum produto da nota possui o CFOP da própria nota
             if (objPersistence.ExecuteSqlQueryCount(@"Select Count(*) From produtos_nf pnf
                 inner join natureza_operacao no on (pnf.idNaturezaOperacao=no.idNaturezaOperacao)
-                Where pnf.idNf=" + idNf + @" And no.idCfop=(Select no1.idCfop From nota_fiscal nf 
+                Where pnf.idNf=" + idNf + @" And no.idCfop=(Select no1.idCfop From nota_fiscal nf
                 inner join natureza_operacao no1 on (nf.idNaturezaOperacao=no1.idNaturezaOperacao) Where nf.idNf=" + idNf + ")") == 0)
                 throw new Exception("Nenhum produto desta nota fiscal possui o CFOP informado na própria nota.");
 
@@ -4415,7 +4420,7 @@ namespace Glass.Data.DAL
 
                 if (alteraEstoqueFiscal || alteraEstoqueTerceiros)
                 {
-                    // Valida o estoque deste produto somando a quantidade de todos os produtos iguais à este 
+                    // Valida o estoque deste produto somando a quantidade de todos os produtos iguais à este
                     // (ou o produto em si ou o produto que ele dá baixa) inseridos nesta nota
                     foreach (ProdutosNf pVal in lstProdNfValida)
                     {
@@ -4460,7 +4465,7 @@ namespace Glass.Data.DAL
             try
             {
                 var loja = LojaDAO.Instance.GetElement(ObtemIdLoja(idNf));
-                
+
                 #region Verificações para emissão assíncrona
 
                 if (loja.Uf.ToUpper() == "BA" || loja.Uf.ToUpper() == "SP")
@@ -4516,7 +4521,7 @@ namespace Glass.Data.DAL
                         if (ids.Count > 0)
                         {
                             var total = PedidoDAO.Instance.ExecuteScalar<decimal>(@"
-                                Select sum(Coalesce(pe.total, p.total)) 
+                                Select sum(Coalesce(pe.total, p.total))
                                 From pedido p
                                     Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
                                 Where p.idPedido In (" + String.Join(",", ids) + ")");
@@ -4684,14 +4689,14 @@ namespace Glass.Data.DAL
 
             XmlElement infEvento = xmlCanc.CreateElement("infEvento");
 
-            //Identificador da TAG a ser assinada, a regra de formação 
-            //do Id é: 
-            //“ID” + tpEvento +  chave da NF-e + nSeqEvento 
+            //Identificador da TAG a ser assinada, a regra de formação
+            //do Id é:
+            //“ID” + tpEvento +  chave da NF-e + nSeqEvento
             infEvento.SetAttribute("Id", "ID110111" + nf.ChaveAcesso + "1".PadLeft(2, '0'));
             evento.AppendChild(infEvento);
 
-            // Código do órgão de recepção do Evento. Utilizar a Tabela 
-            // do IBGE, utilizar 90 para identificar o Ambiente Nacional. 
+            // Código do órgão de recepção do Evento. Utilizar a Tabela
+            // do IBGE, utilizar 90 para identificar o Ambiente Nacional.
             XmlElement cOrgao = xmlCanc.CreateElement("cOrgao");
             uint idCidade = LojaDAO.Instance.ObtemValorCampo<uint>(session, "idCidade", "idLoja=" + NotaFiscalDAO.Instance.ObtemIdLoja(session, nf.IdNf));
             string codIbgeUf = CidadeDAO.Instance.ObtemValorCampo<string>(session, "codIbgeUf", "idCidade=" + idCidade);
@@ -4699,8 +4704,8 @@ namespace Glass.Data.DAL
             infEvento.AppendChild(cOrgao);
 
             // Identificação do Amb
-            // 1 - Produção 
-            // 2 – Homologação 
+            // 1 - Produção
+            // 2 – Homologação
             XmlElement tpAmb = xmlCanc.CreateElement("tpAmb");
             tpAmb.InnerText = nf.TipoAmbiente.ToString();
             infEvento.AppendChild(tpAmb);
@@ -4918,7 +4923,7 @@ namespace Glass.Data.DAL
             xmlInut.AppendChild(procInutNFE);
             var inut = xmlInut.ImportNode(inutilizacao, true);
             procInutNFE.AppendChild(inut);
-            
+
             XmlElement retInutNFE = xmlInut.CreateElement("retInutNFE");
             retInutNFE.SetAttribute("xmlns", "http://www.portalfiscal.inf.br/nfe");
             retInutNFE.SetAttribute("versao", ConfigNFe.VersaoInutilizacao);
@@ -5074,7 +5079,7 @@ namespace Glass.Data.DAL
                 if (string.IsNullOrWhiteSpace(idsPedido))
                     return;
 
-                var sql = string.Format(@"SELECT cr.IdContaR 
+                var sql = string.Format(@"SELECT cr.IdContaR
                 FROM contas_receber cr
                     INNER JOIN pedido p ON (cr.IdSinal = COALESCE(p.IdPagamentoAntecipado, p.IdSinal))
                 WHERE (p.IdPagamentoAntecipado IS NOT NULL OR p.IdSinal IS NOT NULL) AND p.IdPedido IN ({0})", idsPedido);
@@ -5128,7 +5133,7 @@ namespace Glass.Data.DAL
             var idsPedido = pedidosNf.Where(f => f.IdPedido.GetValueOrDefault(0) > 0).Select(f => f.IdPedido.Value).ToArray();
 
             var sql = string.Format(@"
-                        SELECT IdContaR 
+                        SELECT IdContaR
                         FROM contas_receber cr
                             INNER JOIN pedido p ON (cr.IdSinal = COALESCE(p.IdPagamentoAntecipado, p.IdSinal))
                         WHERE (p.IdPagamentoAntecipado IS NOT NULL OR  p.IdSinal IS NOT NULL)
@@ -5210,7 +5215,7 @@ namespace Glass.Data.DAL
                     LogNfDAO.Instance.NewLog(nf.IdNf, "Emissão", cStat.StrParaInt(), ConsultaSituacao.CustomizaMensagemRejeicao(nf.IdNf, xmlProt?["infProt"]?["xMotivo"]?.InnerXml));
 
                     var path = $"{ nfePath }{ nf.ChaveAcesso }-nfe.xml";
-                    
+
                     // Atualiza número do protocolo de uso da NFe
                     if (cStat == "100" || cStat == "150")
                     {
@@ -5482,7 +5487,7 @@ namespace Glass.Data.DAL
 
                             mensagemLog = string.Empty;
 
-                            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e 
+                            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e
                             // se o tipo de ambiente da NFe estiver em produção
                             if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
                                 mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
@@ -5559,7 +5564,7 @@ namespace Glass.Data.DAL
 
                             var mensagemLog = string.Empty;
 
-                            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e 
+                            // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e
                             // se o tipo de ambiente da NFe estiver em produção
                             if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
                                 mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
@@ -5702,7 +5707,7 @@ namespace Glass.Data.DAL
 
             try
             {
-                // Verifica se o produto possui cor e a espessura 
+                // Verifica se o produto possui cor e a espessura
                 float espessura = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)idProd);
                 var idCorVidro = ProdutoDAO.Instance.ObtemIdCorVidro((int)idProd);
 
@@ -5811,51 +5816,51 @@ namespace Glass.Data.DAL
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
-            string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
-                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
-                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas, 
+            string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
+                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio,
+                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas,
                 t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
-                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join 
-                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega, 
-                (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join 
-                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf group by pnf.idNf) as idsPedido, 
+                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join
+                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega,
+                (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join
+                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf group by pnf.idNf) as idsPedido,
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad, (" + SqlIsImportacao("n.idNf") + ") as isNfImportacao";
 
             string sql = "";
 
             if (selecionar)
-                sql = "Select " + campos + @" From nota_fiscal n 
+                sql = "Select " + campos + @" From nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                    Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                    Left Join loja l On (n.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
-                    Left Join transportador t On (n.idTransportador=t.idTransportador) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
+                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                    Left Join cidade mun On (n.idCidade=mun.idCidade)
+                    Left Join loja l On (n.idLoja=l.idLoja)
+                    Left Join fornecedor f On (n.idFornec=f.idFornec)
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
+                    Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Left Join (
                         select pnf.idNf
-                        from movimentacao_bem_ativo_imob mbai 
+                        from movimentacao_bem_ativo_imob mbai
                             left join produtos_nf pnf on (mbai.idProdNf=pnf.idProdNf)
                         group by pnf.idNf
                     ) as mbai on (n.idNf=mbai.idNf)
                     Where 1";
             else
-                sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n 
+                sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                    Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                    Left Join loja l On (n.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
-                    Left Join transportador t On (n.idTransportador=t.idTransportador) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
+                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                    Left Join cidade mun On (n.idCidade=mun.idCidade)
+                    Left Join loja l On (n.idLoja=l.idLoja)
+                    Left Join fornecedor f On (n.idFornec=f.idFornec)
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
+                    Left Join transportador t On (n.idTransportador=t.idTransportador)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Left Join plano_contas pc on (n.idConta=pc.idConta)
-                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
+                    Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                     Where 1";
 
             NotaFiscal temp = new NotaFiscal();
@@ -5983,7 +5988,7 @@ namespace Glass.Data.DAL
             }
             else
             {
-                sql += " And coalesce(if(n.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + @", 
+                sql += " And coalesce(if(n.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + @",
                     n.dataSaidaEnt, null), n.dataEmissao) Between ?dataIni And ?dataFim";
             }
 
@@ -6080,7 +6085,7 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(idsCfop))
             {
-                sql += " and (no.idCfop IN(" + idsCfop + @") or EXISTS (select * from produtos_nf pnf 
+                sql += " and (no.idCfop IN(" + idsCfop + @") or EXISTS (select * from produtos_nf pnf
                     inner join natureza_operacao no1 on (pnf.idNaturezaOperacao=no1.idNaturezaOperacao) where idNf=n.idNf AND no1.idCfop IN (" + idsCfop + ")))";
 
                 criterio += "CFOP: " + CfopDAO.Instance.GetDescricoes(idsCfop) + "    ";
@@ -6088,12 +6093,12 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(idsTiposCfop))
             {
-                sql += string.Format(@" 
+                sql += string.Format(@"
                     And (cf.idTipoCfop IN (" + idsTiposCfop + @") or EXISTS
                     (
-                        select * from produtos_nf p 
+                        select * from produtos_nf p
                             inner join natureza_operacao no1 on (p.idNaturezaOperacao=no1.idNaturezaOperacao)
-                            inner join cfop c On (no1.idCfop=c.idCfop) 
+                            inner join cfop c On (no1.idCfop=c.idCfop)
                         Where idNf=n.idNf And c.idTipoCfop IN (" + idsTiposCfop + @") {0}
                     ))", !String.IsNullOrEmpty(idsCfop) ? "AND c.idCfop IN (" + idsCfop + @")" : "");
 
@@ -6113,9 +6118,9 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(codInternoProd))
             {
                 string idsProd = ProdutoDAO.Instance.ObtemIds(codInternoProd, null);
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.idProd In (" + idsProd + @")
                     )";
 
@@ -6124,9 +6129,9 @@ namespace Glass.Data.DAL
             else if (!String.IsNullOrEmpty(descrProd))
             {
                 string idsProd = ProdutoDAO.Instance.ObtemIds(null, descrProd);
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.idProd In (" + idsProd + @")
                     )";
 
@@ -6135,9 +6140,9 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(lote))
             {
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.Lote Like ?lote
                     )";
 
@@ -6248,38 +6253,38 @@ namespace Glass.Data.DAL
             int finalidade, int formaEmissao, string infCompl, string codInternoProd, string descrProd, string lote, string valorInicial, string valorFinal,
             string cnpjFornecedor, int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
-            string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, 
-                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, '$$$' as Criterio, 
-                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc", "transp") + @" as nomeDestRem, 
+            string campos = @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor,
+                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, '$$$' as Criterio,
+                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc", "transp") + @" as nomeDestRem,
                 " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc", "transp") + @" as cpfCnpjDestRem,
-                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, 
-                (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join 
-                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf group by pnf.idNf) as idsPedido, 
+                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente,
+                (select cast(group_concat(ped.idPedido) as char) from pedido ped inner join
+                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf group by pnf.idNf) as idsPedido,
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad, (" + SqlIsImportacao("n.idNf") + ") as isNfImportacao";
 
             string sql = "";
 
             if (selecionar)
-                sql = "Select " + campos + @" From nota_fiscal n 
+                sql = "Select " + campos + @" From nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                    Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                    Left Join loja l On (n.idLoja=l.idLoja) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
+                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                    Left Join cidade mun On (n.idCidade=mun.idCidade)
+                    Left Join loja l On (n.idLoja=l.idLoja)
                     Left Join fornecedor f On (n.idFornec=f.idFornec)
                     LEFT JOIN transportador transp ON (n.IdTransportador=transp.IdTransportador)
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Where 1";
             else
-                sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n 
+                sql = @"Select Count(*) From (Select Distinct n.idNf From nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                    Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                    Left Join loja l On (n.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
+                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                    Left Join cidade mun On (n.idCidade=mun.idCidade)
+                    Left Join loja l On (n.idLoja=l.idLoja)
+                    Left Join fornecedor f On (n.idFornec=f.idFornec)
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
                     Left Join funcionario func On (n.usuCad=func.idFunc)
                     Where 1";
 
@@ -6406,7 +6411,7 @@ namespace Glass.Data.DAL
                 }
                 else
                 {
-                    sql += " And coalesce(if(n.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + @", 
+                    sql += " And coalesce(if(n.tipoDocumento<>" + (int)NotaFiscal.TipoDoc.Saída + @",
                     n.dataSaidaEnt, null), n.dataEmissao) Between ?dataIni And ?dataFim";
                 }
 
@@ -6505,7 +6510,7 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(idsCfop))
             {
-                sql += " and (no.idCfop IN(" + idsCfop + @") or EXISTS (select * from produtos_nf pnf 
+                sql += " and (no.idCfop IN(" + idsCfop + @") or EXISTS (select * from produtos_nf pnf
                     inner join natureza_operacao no1 on (pnf.idNaturezaOperacao=no1.idNaturezaOperacao) where idNf=n.idNf AND no1.idCfop IN (" + idsCfop + ")))";
 
                 criterio += "CFOP: " + CfopDAO.Instance.GetDescricoes(idsCfop) + "    ";
@@ -6513,12 +6518,12 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(idsTiposCfop))
             {
-                sql += string.Format(@" 
+                sql += string.Format(@"
                     And (cf.idTipoCfop IN (" + idsTiposCfop + @") or EXISTS
                     (
-                        select * from produtos_nf p 
+                        select * from produtos_nf p
                             inner join natureza_operacao no1 on (p.idNaturezaOperacao=no1.idNaturezaOperacao)
-                            inner join cfop c On (no1.idCfop=c.idCfop) 
+                            inner join cfop c On (no1.idCfop=c.idCfop)
                         Where idNf=n.idNf And c.idTipoCfop IN (" + idsTiposCfop + @") {0}
                     ))", !String.IsNullOrEmpty(idsCfop) ? "AND c.idCfop IN (" + idsCfop + @")" : "");
 
@@ -6538,9 +6543,9 @@ namespace Glass.Data.DAL
             if (!String.IsNullOrEmpty(codInternoProd))
             {
                 string idsProd = ProdutoDAO.Instance.ObtemIds(codInternoProd, null);
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.idProd In (" + idsProd + @")
                     )";
 
@@ -6549,9 +6554,9 @@ namespace Glass.Data.DAL
             else if (!String.IsNullOrEmpty(descrProd))
             {
                 string idsProd = ProdutoDAO.Instance.ObtemIds(null, descrProd);
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.idProd In (" + idsProd + @")
                     )";
 
@@ -6560,9 +6565,9 @@ namespace Glass.Data.DAL
 
             if (!string.IsNullOrEmpty(lote))
             {
-                sql += @" 
+                sql += @"
                     And n.idNf In (
-                        Select p.idNf from produtos_nf p 
+                        Select p.idNf from produtos_nf p
                         Where p.Lote Like ?lote
                     )";
 
@@ -6668,7 +6673,7 @@ namespace Glass.Data.DAL
         private string SqlCampoDestinatario(TipoCampo tipoCampo, string aliasLoja, string aliasCliente, string aliasFornecedor,
             string aliasNotaFiscal, string aliasTipoCfop, string aliasTransportador)
         {
-            var baseEmitente = string.Format(@"if(({0}.tipoDocumento=1 and !coalesce({1}.devolucao,false)) or ({0}.tipoDocumento=2 and {1}.devolucao), Coalesce({3},{2}), 
+            var baseEmitente = string.Format(@"if(({0}.tipoDocumento=1 and !coalesce({1}.devolucao,false)) or ({0}.tipoDocumento=2 and {1}.devolucao), Coalesce({3},{2}),
                 if(({0}.tipoDocumento=1 and {1}.devolucao) or ({0}.tipodocumento in (2,4) and !coalesce({1}.devolucao, false)), Coalesce({3},{2}), {4}))",
                 aliasNotaFiscal, aliasTipoCfop, "{0}", "{1}", "{2}");
 
@@ -6700,29 +6705,29 @@ namespace Glass.Data.DAL
             int formaEmissao, string infCompl, string codInternoProd, string descrProd, string valorInicial, string valorFinal,
             int ordenar, bool acessoExterno, bool sintegra, bool selecionar)
         {
-            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, concat(mun.codIbgeUf, mun.codIbgeCidade) as codMunicipio, 
-                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio, 
-                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, c.suframa as suframaCliente, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas, 
+            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, cf.descricao as DescrCfop, mun.NomeCidade as municOcor, concat(mun.codIbgeUf, mun.codIbgeCidade) as codMunicipio,
+                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, (mbai.idNf is not null) as temMovimentacaoBemAtivo, '$$$' as Criterio,
+                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, c.suframa as suframaCliente, concat(g.Descricao, concat(' - ', pc.Descricao)) as DescrPlanoContas,
                 t.Nome as nomeTransportador, " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
-                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join 
-                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega, 
+                " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente, (select tipoEntrega from pedido ped inner join
+                pedidos_nota_fiscal pnf on (ped.idPedido=pnf.idPedido) where pnf.idNf=n.idNf limit 1) as tipoEntrega,
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad, (" + SqlIsImportacao("n.idNf") + ") as isNfImportacao" : "Count(*)";
 
-            string sql = "Select Distinct " + campos + @" From nota_fiscal n 
+            string sql = "Select Distinct " + campos + @" From nota_fiscal n
                 Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                Left Join loja l On (n.idLoja=l.idLoja) 
-                Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                Left Join cliente c On (n.idCliente=c.id_Cli) 
-                Left Join transportador t On (n.idTransportador=t.idTransportador) 
+                Left Join cfop cf On (no.idCfop=cf.idCfop)
+                Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                Left Join cidade mun On (n.idCidade=mun.idCidade)
+                Left Join loja l On (n.idLoja=l.idLoja)
+                Left Join fornecedor f On (n.idFornec=f.idFornec)
+                Left Join cliente c On (n.idCliente=c.id_Cli)
+                Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Left Join funcionario func On (n.usuCad=func.idFunc)
                 Left Join plano_contas pc on (n.idConta=pc.idConta)
-                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo) 
+                Left Join grupo_conta g On (pc.IdGrupo=g.IdGrupo)
                 Left Join (
                     select pnf.idNf
-                    from movimentacao_bem_ativo_imob mbai 
+                    from movimentacao_bem_ativo_imob mbai
                         left join produtos_nf pnf on (mbai.idProdNf=pnf.idProdNf)
                     group by pnf.idNf
                 ) as mbai on (n.idNf=mbai.idNf)
@@ -6910,7 +6915,7 @@ namespace Glass.Data.DAL
 
             if (idCfop > 0)
             {
-                sql += " and (no.idCfop=" + idCfop + " or " + idCfop + @" in (select no1.idCfop from produtos_nf pnf 
+                sql += " and (no.idCfop=" + idCfop + " or " + idCfop + @" in (select no1.idCfop from produtos_nf pnf
                     inner join natureza_operacao no1 on (pnf.idNaturezaOperacao=no1.idNaturezaOperacao) where idNf=n.idNf))";
 
                 criterio += "CFOP: " + CfopDAO.Instance.ObtemValorCampo<string>(session, "codInterno", "idCfop=" + idCfop) + "    ";
@@ -6918,12 +6923,12 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(idsTiposCfop))
             {
-                sql += @" 
-                    And (cf.idTipoCfop IN (" + idsTiposCfop + ") or " + idCfop + @" in 
+                sql += @"
+                    And (cf.idTipoCfop IN (" + idsTiposCfop + ") or " + idCfop + @" in
                     (
-                        select c.idCfop from produtos_nf p 
+                        select c.idCfop from produtos_nf p
                             inner join natureza_operacao no1 On (p.idNaturezaOperacao=no1.idNaturezaOperacao)
-                            inner join cfop c On (no1.idCfop=c.idCfop) 
+                            inner join cfop c On (no1.idCfop=c.idCfop)
                         Where idNf=n.idNf And c.idTipoCfop IN (" + idsTiposCfop + @")
                     ))";
 
@@ -7235,22 +7240,22 @@ namespace Glass.Data.DAL
 
         private string SqlCanc(uint idNf, uint numeroNFe, uint idPedido, uint idLoja, int situacao, int tipoDoc, bool selecionar)
         {
-            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, mun.NomeCidade as municOcor, 
-                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, 
-                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, 
-                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem, 
+            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, mun.NomeCidade as municOcor,
+                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente,
+                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem,
+                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, t.Nome as nomeTransportador, " +
                 SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente" : "Count(*)";
 
-            string sql = "Select " + campos + @" From nota_fiscal n 
+            string sql = "Select " + campos + @" From nota_fiscal n
                 Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                Left Join loja l On (n.idLoja=l.idLoja) 
-                Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                Left Join cliente c On (n.idCliente=c.id_Cli) 
-                Left Join transportador t On (n.idTransportador=t.idTransportador) 
+                Left Join cfop cf On (no.idCfop=cf.idCfop)
+                Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                Left Join cidade mun On (n.idCidade=mun.idCidade)
+                Left Join loja l On (n.idLoja=l.idLoja)
+                Left Join fornecedor f On (n.idFornec=f.idFornec)
+                Left Join cliente c On (n.idCliente=c.id_Cli)
+                Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Where tipoDocumento not in (" + (int)NotaFiscal.TipoDoc.EntradaTerceiros + "," + (int)NotaFiscal.TipoDoc.NotaCliente + @")
                 And n.situacao in (" + (int)NotaFiscal.SituacaoEnum.Autorizada + "," +
                     (int)NotaFiscal.SituacaoEnum.FalhaCancelar + "," + (int)NotaFiscal.SituacaoEnum.ProcessoCancelamento + ")";
@@ -7294,23 +7299,23 @@ namespace Glass.Data.DAL
 
         private string SqlInut(uint idNf, uint numeroNFe, uint idPedido, uint idLoja, int situacao, int tipoDoc, bool selecionar)
         {
-            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, mun.NomeCidade as municOcor, 
-                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente, 
-                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem, 
-                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem, 
+            string campos = selecionar ? @"n.*, cf.codInterno as codCfop, mun.NomeCidade as municOcor,
+                " + SqlCampoEmitente(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeEmitente,
+                " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "n", "tc") + @" as nomeDestRem,
+                " + SqlCampoDestinatario(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cpfCnpjDestRem,
                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, t.Nome as nomeTransportador,
                 " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente" : "Count(*)";
 
             string sql =
-                "Select " + campos + @" From nota_fiscal n 
+                "Select " + campos + @" From nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
-                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop) 
-                    Left Join cidade mun On (n.idCidade=mun.idCidade) 
-                    Left Join loja l On (n.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
-                    Left Join transportador t On (n.idTransportador=t.idTransportador) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
+                    Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
+                    Left Join cidade mun On (n.idCidade=mun.idCidade)
+                    Left Join loja l On (n.idLoja=l.idLoja)
+                    Left Join fornecedor f On (n.idFornec=f.idFornec)
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
+                    Left Join transportador t On (n.idTransportador=t.idTransportador)
                 Where tipoDocumento<>" + (int)NotaFiscal.TipoDoc.EntradaTerceiros +
                 " And n.situacao in (" + (int)NotaFiscal.SituacaoEnum.Aberta + "," +
                     (int)NotaFiscal.SituacaoEnum.FalhaInutilizar + "," +
@@ -7366,11 +7371,11 @@ namespace Glass.Data.DAL
                 SELECT n.*, " + SqlCampoEmitente(TipoCampo.CpfCnpj, "l", "c", "f", "n", "tc") + @" as cnpjEmitente
                 FROM nota_fiscal n
                     Left Join natureza_operacao no On (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                    Left Join cfop cf On (no.idCfop=cf.idCfop) 
+                    Left Join cfop cf On (no.idCfop=cf.idCfop)
                     Left Join tipo_cfop tc On (cf.idTipoCfop=tc.idTipoCfop)
-                    Left Join loja l On (n.idLoja=l.idLoja) 
-                    Left Join fornecedor f On (n.idFornec=f.idFornec) 
-                    Left Join cliente c On (n.idCliente=c.id_Cli) 
+                    Left Join loja l On (n.idLoja=l.idLoja)
+                    Left Join fornecedor f On (n.idFornec=f.idFornec)
+                    Left Join cliente c On (n.idCliente=c.id_Cli)
                 WHERE n.chaveAcesso=?chAcesso";
 
             List<NotaFiscal> lstNf = objPersistence.LoadData(session, sql,
@@ -8090,7 +8095,7 @@ namespace Glass.Data.DAL
         public decimal ObterValoresPagosAntecipadamente(int idNf)
         {
             return ExecuteScalar<decimal>(@"select sum(p.valorentrada + ValorPagamentoAntecipado) as valorPagamentoAntecipado
-                                                from pedidos_nota_fiscal pnf 
+                                                from pedidos_nota_fiscal pnf
                                                 inner join pedido p on (p.idPedido = pnf.idPedido)
                                                 where idnf =" + idNf);
         }
@@ -8258,7 +8263,7 @@ namespace Glass.Data.DAL
 
             // Calcula o peso bruto/líquido
             sql += @"PesoBruto = COALESCE(PesoConteiner, 0) +
-                    COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0), 
+                    COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0),
 
                 PesoLiq = COALESCE(ROUND((SELECT SUM(pn.Peso) FROM produtos_nf pn WHERE pn.IdNf=n.IdNf), 2), 0) ";
 
@@ -8282,7 +8287,7 @@ namespace Glass.Data.DAL
                 select idProd from produto p
                 where situacao=" + (int)Situacao.Ativo + @" and exists (
                     select idSubgrupoProd from subgrupo_prod
-                    where idSubgrupoProd=p.idSubgrupoProd 
+                    where idSubgrupoProd=p.idSubgrupoProd
                         and tipoSubgrupo IN (" + (int)TipoSubgrupoProd.ChapasVidro + "," + (int)TipoSubgrupoProd.ChapasVidroLaminado + @")
                 )", "idProd");
 
@@ -8368,7 +8373,7 @@ namespace Glass.Data.DAL
 
                         #region Valida dados da Nota Fiscal
 
-                        // TODO: Fazer validações do tipo: CNPJ/Insc Est do transportador, 
+                        // TODO: Fazer validações do tipo: CNPJ/Insc Est do transportador,
                         // codigo NCM preenchido automaticamente entre outros.
 
                         if (nf.NumeroNFe == 0)
@@ -8746,7 +8751,7 @@ namespace Glass.Data.DAL
 
                                 mensagemLog = string.Empty;
 
-                                // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e 
+                                // Altera o estoque somente se estiver marcado para alterar no cadastro de subgrupo, no cadastro de CFOP e
                                 // se o tipo de ambiente da NFe estiver em produção
                                 if (Glass.Data.DAL.GrupoProdDAO.Instance.NaoAlterarEstoqueFiscal(idGrupoProd, idSubgrupoProd))
                                     mensagemLog += "Grupo/Subgrupo do produto está configurado para não gerar estoque fiscal. ";
@@ -9147,7 +9152,7 @@ namespace Glass.Data.DAL
         private string SqlIsImportacao(string idNf)
         {
             return "select count(*) from nota_fiscal nf where tipoDocumento=" + (int)NotaFiscal.TipoDoc.Entrada + @"
-                and (select count(*) from fornecedor f inner join cidade c on (f.idCidade=c.idCidade) where c.codIbgeCidade='99999' 
+                and (select count(*) from fornecedor f inner join cidade c on (f.idCidade=c.idCidade) where c.codIbgeCidade='99999'
                 and f.idFornec=nf.idFornec)>0 and idNf=" + idNf;
         }
 
@@ -9858,14 +9863,14 @@ namespace Glass.Data.DAL
         {
             string sql = @"SELECT DISTINCT nf.*, func.nome as DescrUsuCad,
                 " + SqlCampoDestinatario(TipoCampo.Nome, "l", "c", "f", "nf", "tc") + @" as NomeDestRem
-                    FROM nota_fiscal nf 
+                    FROM nota_fiscal nf
                     INNER JOIN produtos_nf pnf ON(pnf.IDNF=nf.IDNF)
                     LEFT JOIN natureza_operacao no ON (nf.idNaturezaOperacao=no.idNaturezaOperacao)
                     LEFT JOIN cfop cf ON (no.idCfop=cf.idCfop)
-                    LEFT JOIN tipo_cfop tc ON (cf.idTipoCfop=tc.idTipoCfop) 
+                    LEFT JOIN tipo_cfop tc ON (cf.idTipoCfop=tc.idTipoCfop)
                     LEFT JOIN funcionario func ON (nf.usuCad=func.idFunc)
-                    LEFT JOIN cliente c ON (nf.idCliente=c.id_Cli) 
-                    LEFT JOIN loja l ON (nf.idLoja=l.idLoja) 
+                    LEFT JOIN cliente c ON (nf.idCliente=c.id_Cli)
+                    LEFT JOIN loja l ON (nf.idLoja=l.idLoja)
                     LEFT JOIN fornecedor f ON (nf.idFornec=f.idFornec)
                 WHERE nf.situacao = " + (int)NotaFiscal.SituacaoEnum.Aberta + @"
                     AND nf.tipoDocumento = " + (int)NotaFiscal.TipoDoc.Saída + @"
@@ -9890,12 +9895,12 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                            SELECT n.*, cf.codInterno as codCfop, CONCAT(f.IdFornec,' - ',f.nomeFantasia) as nomeEmitente, l.nomeFantasia as nomeDestRem,
-                                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad 
-                           FROM nota_fiscal n 
+                                 coalesce(no.codInterno, cf.codInterno) as CodNaturezaOperacao, func.nome as DescrUsuCad
+                           FROM nota_fiscal n
                            LEFT JOIN natureza_operacao no ON (n.idNaturezaOperacao=no.idNaturezaOperacao)
-                           LEFT JOIN cfop cf ON (no.idCfop=cf.idCfop) 
-                           LEFT JOIN loja l ON (n.idLoja=l.idLoja) 
-                           Left JOIN fornecedor f ON (n.idFornec=f.idFornec) 
+                           LEFT JOIN cfop cf ON (no.idCfop=cf.idCfop)
+                           LEFT JOIN loja l ON (n.idLoja=l.idLoja)
+                           Left JOIN fornecedor f ON (n.idFornec=f.idFornec)
                            Left JOIN funcionario func ON (n.usuCad=func.idFunc)
                            WHERE n.idAntecipFornec=" + idAntecipFornec + " AND n.situacao=" + (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros;
 
@@ -10306,7 +10311,7 @@ namespace Glass.Data.DAL
         //}
 
         ///// <summary>
-        ///// Marca que houve um erro de conexão ao tentar emitir uma NFC-e, para poder posteriormente ser possivel 
+        ///// Marca que houve um erro de conexão ao tentar emitir uma NFC-e, para poder posteriormente ser possivel
         ///// emitir em modo offline
         ///// </summary>
         ///// <param name="idNf"></param>

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
+using Glass.Data.Helper;
 
 namespace Glass.API.Backend.Models.Pedidos.Lista
 {
@@ -103,7 +104,7 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                 AnexosLiberacao = pedido.Situacao == Data.Model.Pedido.SituacaoPedido.Confirmado && PedidoConfig.LiberarPedido,
                 FinalizacoesFinanceiro = pedido.ExibirFinalizacoesFinanceiro,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.Pedido, pedido.IdPedido, null),
-                AlterarObservacoes = pedido.TipoVenda == 3 || pedido.TipoVenda == 4,
+                AlterarObservacoes = (pedido.TipoVenda == 3 || pedido.TipoVenda == 4) && (UserInfo.GetUserInfo.IsAdministrador || UserInfo.GetUserInfo.CodUser == pedido.Usucad),
             };
 
             this.SinalEPagamentoAntecipado = new SinalEPagamentoAntecipadoDto
@@ -120,8 +121,8 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                     .Select(oc => oc.Trim().StrParaInt())
                     .Where(oc => oc > 0);
 
-            this.Obs = pedido.Obs;
-            this.ObsLiberacao = pedido.ObsLiberacao;
+            this.Observacao = pedido.Obs;
+            this.ObservacaoLiberacao = pedido.ObsLiberacao;
 
             this.CorLinha = this.ObterCorLinha(pedido);
         }
@@ -291,15 +292,15 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
         /// Obtém ou define a observação do pedido.
         /// </summary>
         [DataMember]
-        [JsonProperty("obs")]
-        public string Obs { get; set; }
+        [JsonProperty("observacao")]
+        public string Observacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a observação de Liberação do pedido.
         /// </summary>
         [DataMember]
-        [JsonProperty("obsLiberacao")]
-        public string ObsLiberacao { get; set; }
+        [JsonProperty("observacaoLiberacao")]
+        public string ObservacaoLiberacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a cor da linha do pedido.

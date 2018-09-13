@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Glass.Data.Model.Cte;
@@ -307,7 +307,18 @@ namespace Glass.Data.DAL.CTe
                 GetParams(dataEmiIni, dataEmiFim)).ToList();
         }
 
-        #endregion        
+        public IList<uint> ObterIdCtePeloIdContaR(uint idContaR, bool apenasAutorizados)
+        {
+            string sql = @"
+                SELECT cte.IdCte from conhecimento_transporte cte
+                    Inner Join contas_receber cr ON (cte.IdCte = cr.IdCte)
+                 WHERE " + (apenasAutorizados ? "cte.Situacao = " + (int)Glass.Data.Model.Cte.ConhecimentoTransporte.SituacaoEnum.Autorizado : "1") +
+                $" AND cr.idContaR = {idContaR} ";
+
+            return ExecuteMultipleScalar<uint>(sql);
+        }
+
+        #endregion
 
         public override uint Insert(ConhecimentoTransporte objInsert)
         {
@@ -1087,8 +1098,7 @@ namespace Glass.Data.DAL.CTe
             #region Monta XML
 
             Loja emitente = LojaDAO.Instance.GetElement(
-                ParticipanteCteDAO.Instance.GetParticipanteByIdCteTipo(cte.IdCte, (int)ParticipanteCte.TipoParticipanteEnum.Emitente).IdLoja.Value
-                );
+                ParticipanteCteDAO.Instance.GetParticipanteByIdCteTipo(cte.IdCte, (int)ParticipanteCte.TipoParticipanteEnum.Emitente).IdLoja.Value);
             string codUf = emitente.CodUf;
 
             XmlDocument xmlCanc = new XmlDocument();
@@ -1128,7 +1138,7 @@ namespace Glass.Data.DAL.CTe
             XmlElement CNPJ = xmlCanc.CreateElement("CNPJ");
             CNPJ.InnerText = LojaDAO.Instance.ObtemValorCampo<string>
                 ("cnpj", "idLoja=" + emitente.IdLoja)
-                .Replace(".", String.Empty).Replace("-", String.Empty).Replace("/", String.Empty); ;
+                .Replace(".", String.Empty).Replace("-", String.Empty).Replace("/", String.Empty);
             infEvento.AppendChild(CNPJ);
 
             XmlElement chNFe = xmlCanc.CreateElement("chCTe");
@@ -1246,6 +1256,12 @@ namespace Glass.Data.DAL.CTe
                 if (cobrancaDuplicataCTe == null || cobrancaDuplicataCTe.ValorDupl == 0 || !cobrancaDuplicataCTe.DataVenc.HasValue)
                     throw new Exception("Para gerar a conta a receber do CTe é necessário informar o valor da duplicata e a data de vencimento da mesma.");
             }
+
+            var possuiChaveAcessoInformada = ExecuteScalar<bool>($@"SELECT COUNT(*)>0 FROM chave_acesso_cte cac
+                        WHERE cac.IdCte={idCte}");
+
+            if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario && (NotaFiscalCteDAO.Instance.GetCount(cte.IdCte) == 0 && !possuiChaveAcessoInformada))
+                throw new Exception($"As informações dos documentos transportados pelo CT-e são obrigatórias para o tipo de serviço: {cte.TipoServicoString}. Informe pelo menos uma Nota Fiscal.");
 
             #region Gera XML
 
@@ -2449,7 +2465,8 @@ namespace Glass.Data.DAL.CTe
                         }                        
                     }
 
-                    infCTeNorm.AppendChild(infDoc);
+                    if (cte.TipoServico != (int)ConhecimentoTransporte.TipoServicoEnum.RedespachoIntermediario || infDoc.ChildNodes.Count > 0)
+                        infCTeNorm.AppendChild(infDoc);
                 }
 
                 #region Informações do Rodoviário

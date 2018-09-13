@@ -32,7 +32,7 @@ namespace Glass.Data.DAL
                     select pc.idProd, c.idLoja, sum(pc.totM) as totMComprando, sum(pc.qtde) as qtdeComprando
                     from produtos_compra pc
                         inner Join compra c On (pc.idCompra=c.idCompra)
-                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @") 
+                    where c.situacao in (" + (int)Compra.SituacaoEnum.Ativa + "," + (int)Compra.SituacaoEnum.Finalizada + "," + (int)Compra.SituacaoEnum.AguardandoEntrega + @")
                         and (c.estoqueBaixado=false or c.estoqueBaixado is null)
                     group by pc.idProd" +
                         (!String.IsNullOrEmpty(aliasProdutoLoja) ? ", c.idLoja" : "") + @"
@@ -702,7 +702,7 @@ namespace Glass.Data.DAL
                 (pp.altura* If(pp.totM > 0, 0, (" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @"))) as totalML1,
                 (pp.altura) as totalAltura1, " + campoTotal + @", cast(" + campoValorUnitario + @" as decimal(12,2)) as valorVendido1,
                 ped.idFunc, g.Descricao as DescrGrupo, s.Descricao as DescrSubgrupo, Coalesce(" + campoCalcTotM2 + @", 0) as totalM21,
-                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as signed) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo,
+                cast((" + (calcularLiberados ? "Sum(plp.QtdeCalc)" : "pp.qtde") + @") as decimal(12,2)) as totalQtdeLong1, coalesce(s.tipoCalculo, g.tipoCalculo,
                 " + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @") as tipoCalc, '$$$' as Criterio, ped.idCli as idClienteVend, c.nome as nomeClienteVend,
                 pp.idPedido," + (calcularLiberados ? " plp.idLiberarPedido," : "") + @" coalesce(cv.descricao, ca.descricao, cf.descricao, '-') as descrCor, ped.idCli,
                 p.codInterno As codigoProduto, ap.IdAmbientePedido as IdAmbiente, ap.Ambiente" :
@@ -714,7 +714,7 @@ namespace Glass.Data.DAL
             // faz com que o cálculo fique incorreto, por isso foi alterado para calcular o valor vendido com base no total e na qtde.
             string campos = selecionar ? @"*, sum(totalAltura1) as totalAltura, round(sum(totalVend1),2) as totalVend,
                 round(sum(totalCusto1),2) as totalCusto, round(sum(totalM21),2) as totalM2, round(sum(totalML1),2) as totalML,
-                cast(sum(Coalesce(totalQtdeLong1,0)) as signed) as totalQtdeLong,
+                cast(sum(Coalesce(totalQtdeLong1,0)) as decimal(12,2)) as totalQtdeLong,
                 Cast(sum(totalVend1)/if(tipoCalc in (" + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 + "," + (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto + @"),
                 sum(totalM21), cast(sum(Coalesce(totalQtdeLong1,0)) as signed)) as decimal(12,2)) as valorVendido" : "Count(*)";
 
@@ -1469,7 +1469,7 @@ namespace Glass.Data.DAL
             /*Chamado 63721 Verifica se idPedido e idloja é 0, para filtrar pela loja do funcionario */
             if (idOrcamento == 0 && idPedido == 0 && idLoja == 0 && !UserInfo.GetUserInfo.IsAdministrador)
                 sql = String.Format(sql, " And pl.idLoja=" + UserInfo.GetUserInfo.IdLoja);
-           
+
             if (idLoja > 0)
                 filtroAdicional += " And p.IdProd Not In (Select IdProd From produto_loja Where IdLoja=" + idLoja + ")";
 
@@ -2219,7 +2219,6 @@ namespace Glass.Data.DAL
                         /* Chamado 43961 */
                         MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(prodOld, prodNew);
                         Email.EnviaEmailAdministradorPrecoProdutoAlterado(transaction, prodOld, prodNew);
-                        SMS.EnviaSmsAdministradorPrecoProdutoAlterado(prodOld, prodNew);
                     }
 
 
@@ -2285,7 +2284,6 @@ namespace Glass.Data.DAL
                     var produtoAtualizado = GetElementByPrimaryKey(trans, idProd);
                     MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(prod, produtoAtualizado);
                     Email.EnviaEmailAdministradorPrecoProdutoAlterado(trans, prod, produtoAtualizado);
-                    SMS.EnviaSmsAdministradorPrecoProdutoAlterado(prod, produtoAtualizado);
 
                     LogAlteracaoDAO.Instance.LogProduto(trans, prod, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
@@ -3872,7 +3870,8 @@ namespace Glass.Data.DAL
         /// Duplica uma lista de produtos.
         /// </summary>
         public void Duplicar(string idsProd, uint idNovoGrupo, uint? idNovoSubgrupo, string codInternoRemover,
-            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir)
+            string codInternoSubstituir, string descricaoRemover, string descricaoSubstituir, string novaAltura, string novaLargura,
+            string processo, string aplicacao)
         {
             if (idNovoSubgrupo == 0) idNovoSubgrupo = null;
 
@@ -3897,6 +3896,10 @@ namespace Glass.Data.DAL
                 p.IdProd = 0;
                 p.IdGrupoProd = (int)idNovoGrupo;
                 p.IdSubgrupoProd = (int?)idNovoSubgrupo;
+                p.Altura = string.IsNullOrWhiteSpace(novaAltura) ? p.Altura : novaAltura.StrParaInt();
+                p.Largura = string.IsNullOrWhiteSpace(novaLargura) ? p.Largura : novaLargura.StrParaInt();
+                p.IdProcesso = string.IsNullOrEmpty(processo) ? p.IdProcesso : (int?)EtiquetaProcessoDAO.Instance.ObtemIdProcesso(processo);
+                p.IdAplicacao = string.IsNullOrEmpty(aplicacao) ? p.IdAplicacao : (int?)EtiquetaAplicacaoDAO.Instance.ObtemIdAplicacao(aplicacao);
 
                 if (!string.IsNullOrEmpty(codInternoRemover))
                     p.CodInterno = p.CodInterno.ToUpper().Replace(codInternoRemover.ToUpper(), codInternoSubstituir != null ? codInternoSubstituir.ToUpper() : string.Empty).Trim();
@@ -4720,7 +4723,6 @@ namespace Glass.Data.DAL
             // Chamado 43961
             MensagemDAO.Instance.EnviarMsgPrecoProdutoAlterado(produtoAntigo, objUpdate);
             Email.EnviaEmailAdministradorPrecoProdutoAlterado(session, produtoAntigo, objUpdate);
-            SMS.EnviaSmsAdministradorPrecoProdutoAlterado(produtoAntigo, objUpdate);
 
             // Reinsere beneficiamentos
             if (atualizarBenef)

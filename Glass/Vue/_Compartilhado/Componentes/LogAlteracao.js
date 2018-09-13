@@ -49,8 +49,7 @@ Vue.component('log-alteracao', {
   data: function() {
     return {
       itemTabela: null,
-      dados: Log.Alteracao,
-      visivel: !this.atualizarAoAlterar
+      dados: Log.Alteracao
     };
   },
 
@@ -122,6 +121,15 @@ Vue.component('log-alteracao', {
       this.dados.Controles.push(this);
     } else {
       this.atualizaTabelas();
+    }
+  },
+
+  computed: {
+    /**
+     * Propriedade computada que indica se o item está visível.
+     */
+    visivel: function () {
+      return !this.atualizarAoAlterar;
     }
   },
 

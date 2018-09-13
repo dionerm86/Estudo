@@ -128,9 +128,9 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         </a>
                         <div :id="'boxObsObsLib_' + item.id" style="display: none">
                             <label>Observação</label><br />     
-                            <textarea id="txtObs" v-model="item.obs" style="width: 300px"></textarea><br />   
+                            <textarea id="txtObs" v-model="item.observacao" style="width: 300px"></textarea><br />   
                             <label>Observação liberação</label><br />   
-                            <textarea id="txtObsLib" v-model="item.obsLiberacao" style="width: 300px"></textarea><br />   
+                            <textarea id="txtObsLib" v-model="item.observacaoLiberacao" style="width: 300px"></textarea><br />   
                             <button @click.prevent="alterarObsObsLib(item)">Atualizar</button>
                         </div>
                     </td>

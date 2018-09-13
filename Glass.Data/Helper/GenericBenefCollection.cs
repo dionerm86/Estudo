@@ -70,8 +70,12 @@ namespace Glass.Data.Helper
         public GenericBenefCollection(IEnumerable<ProdutoPedidoBenef> produtosPedido)
         {
             _tipo = TipoProdutoBeneficiamento.ProdutoPedido;
-            foreach (ProdutoPedidoBenef p in produtosPedido)
-                Add(new GenericBenef(p));
+
+            if (produtosPedido != null)
+            {
+                foreach (ProdutoPedidoBenef p in produtosPedido)
+                    Add(new GenericBenef(p));
+            }
         }
 
         public GenericBenefCollection(IEnumerable<ProdutoOrcamentoBenef> produtosOrcamento)

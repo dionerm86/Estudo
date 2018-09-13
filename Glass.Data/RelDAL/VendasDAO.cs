@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.RelModel;
 using GDA;
@@ -18,7 +18,9 @@ namespace Glass.Data.RelDAL
         {
             var criterio = "";
             var isLiberarPedido = PedidoConfig.LiberarPedido;
-            var total = PedidoDAO.Instance.SqlCampoTotalLiberacao(isLiberarPedido, "valor", "p", "pe", "ap", "plp", false);
+            var total = PedidoConfig.LiberarPedido ?
+                PedidoDAO.Instance.SqlCampoTotalLiberacao(isLiberarPedido, "valor", "p", "pe", "ap", "plp", false) :
+                "((pp.Total + COALESCE(pp.valorBenef, 0)) / pp1.totalProd * p.Total) as Valor";
 
             var campoData = (isLiberarPedido ? "lp.DataLiberacao, " : "");
 
@@ -96,7 +98,22 @@ namespace Glass.Data.RelDAL
                         Left Join pedido_espelho pe On (p.idPedido=pe.idPedido)
                         Left Join ambiente_pedido ap On (pp.IdAmbientePedido=ap.IdAmbientePedido)
                         Left Join produtos_liberar_pedido plp On (pp.IdProdPed=plp.IdProdPed)
-                        Left Join liberarpedido lp On (plp.IdLiberarPedido = lp.IdLiberarPedido)" : string.Empty),
+                        Left Join liberarpedido lp On (plp.IdLiberarPedido = lp.IdLiberarPedido)" :
+                        @"LEFT JOIN
+                        subgrupo_prod s ON (prod.IdSubGrupoProd = s.IdSubGrupoProd)
+                            LEFT JOIN
+                        grupo_prod g ON (prod.IdGrupoProd = g.IdGrupoProd)
+                            LEFT JOIN
+                        (SELECT 
+                            idpedido,
+                                SUM(total + COALESCE(valorBenef, 0)) AS totalProd,
+                                SUM(custoProd) AS custoProd
+                        FROM
+                            produtos_pedido
+                        WHERE
+                            invisivelPedido = FALSE
+                                OR invisivelPedido IS NULL
+                        GROUP BY idpedido) pp1 ON (pp.idpedido = pp1.idPedido)"),
                     isLiberarPedido ? string.Format("lp.Situacao={0}", (int)LiberarPedido.SituacaoLiberarPedido.Liberado) : "1",
                     idsPedido,
                     string.Format(

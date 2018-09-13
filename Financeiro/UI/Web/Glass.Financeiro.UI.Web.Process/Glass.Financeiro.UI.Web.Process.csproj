@@ -138,6 +138,7 @@
   <ItemGroup>
     <Compile Include="CartaoNaoIdentificado\CadastroCartaoNaoIdentificadoFluxo.cs" />
     <Compile Include="GeradorBoleto.cs" />
+    <Compile Include="Handlers\ArquivoCheques.cs" />
     <Compile Include="Handlers\ArquivoDominio.cs" />
     <Compile Include="Handlers\ArquivoGCon.cs" />
     <Compile Include="Handlers\RetornoRecebimentoCappta.cs" />

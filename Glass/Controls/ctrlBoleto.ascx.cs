@@ -61,7 +61,7 @@ namespace Glass.UI.Web.Controls
 
         #endregion
 
-        private int? _codigoNotaFiscal, _codigoContaReceber, _codigoLiberacao;
+        private int? _codigoNotaFiscal, _codigoContaReceber, _codigoLiberacao, _codigoCte;
 
         public int? CodigoNotaFiscal
         {
@@ -102,10 +102,26 @@ namespace Glass.UI.Web.Controls
             set { _codigoLiberacao = value; }
         }
 
+        public int? CodigoCte
+        {
+            get
+            {
+                if (_codigoCte.GetValueOrDefault() == 0 && _codigoContaReceber > 0)
+                {
+                    var idsCte = Glass.Data.DAL.CTe.ConhecimentoTransporteDAO.Instance.ObterIdCtePeloIdContaR((uint)_codigoContaReceber.Value, true);
+                    _codigoCte = idsCte != null && idsCte.Count > 0 ? (int)idsCte[0] : (int?)null;
+                    return _codigoCte;
+                }
+                else
+                    return _codigoCte;
+            }
+            set { _codigoCte = value; }
+        }
+
         protected void Page_PreRender(object sender, EventArgs e)
         {
             imgBoleto.OnClientClick = "abreBoleto(" + (CodigoNotaFiscal ?? 0) + ", " +
-                (CodigoContaReceber ?? 0) + ", " + (CodigoLiberacao ?? 0) + "); return false";
+                (CodigoContaReceber ?? 0) + ", " + (CodigoLiberacao ?? 0) + ", " + (CodigoCte ?? 0) + "); return false";
     
             string jaImpresso = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(CodigoContaReceber, CodigoNotaFiscal, CodigoLiberacao);
             imgBoleto.ToolTip = "Boleto" + (!String.IsNullOrEmpty(jaImpresso) ? String.Format(" ({0})", jaImpresso) : String.Empty);
@@ -115,7 +131,7 @@ namespace Glass.UI.Web.Controls
                 string relative = this.ResolveUrl("~/");
     
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlBoleto", @"
-                    function abreBoleto(codigoNotaFiscal, codigoContaReceber, codigoLiberacao)
+                    function abreBoleto(codigoNotaFiscal, codigoContaReceber, codigoLiberacao, codigoCte)
                     {
                         var validacao = ctrlBoleto.ValidaImpressaoBoleto(codigoNotaFiscal);
                         
@@ -125,7 +141,7 @@ namespace Glass.UI.Web.Controls
                         }
 
                         openWindow(400, 600, '" + relative + @"Relatorios/Boleto/Imprimir.aspx?codigoNotaFiscal=' + codigoNotaFiscal + 
-                            '&codigoContaReceber=' + codigoContaReceber + '&codigoLiberacao=' + codigoLiberacao);
+                            '&codigoContaReceber=' + codigoContaReceber + '&codigoLiberacao=' + codigoLiberacao + '&codigoCte=' + codigoCte);
                     }", true);
             }
         }

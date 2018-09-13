@@ -491,7 +491,7 @@ namespace Glass.Data.Model
 
         /// <summary>
         /// Obtém ou define a dimensão mínima em X da superfície de desperdício
-        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// geradas pelo programa de otimização que, ao serem suficientemente
         /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
         /// de novo no estoque para otimizações posteriores
         /// </summary>
@@ -501,7 +501,7 @@ namespace Glass.Data.Model
 
         /// <summary>
         /// Obtém ou define a dimensão mínima em Y da superfície de desperdício
-        /// geradas pelo programa de otimização que, ao serem suficientemente 
+        /// geradas pelo programa de otimização que, ao serem suficientemente
         /// grandes, se podem considerar reutilizáveis e é desejável introduzi-las
         /// de novo no estoque para otimizações posteriores
         /// </summary>
@@ -510,8 +510,8 @@ namespace Glass.Data.Model
         public double DesperdicioMinY { get; set; }
 
         /// <summary>
-        /// Obtém ou define a distância minima aceitavel durante a otimização 
-        /// entre dois cortes paralelos, com o intuito de facilitar ou tornar 
+        /// Obtém ou define a distância minima aceitavel durante a otimização
+        /// entre dois cortes paralelos, com o intuito de facilitar ou tornar
         /// possível a abertura dos cortes.
         /// </summary>
         /// <example>
@@ -520,7 +520,7 @@ namespace Glass.Data.Model
         /// de distância inferior à anteriormente introduzida (20mm).
         /// </example>
         /// <remarks>
-        /// Evidentemente, esta distância não é tida em conta nos casos em que 
+        /// Evidentemente, esta distância não é tida em conta nos casos em que
         /// 2 peças compartilham o mesmo corte.
         /// </remarks>
         [Log("Distância Mínima")]
@@ -529,7 +529,7 @@ namespace Glass.Data.Model
 
         /// <summary>
         /// Obtém ou define a configuração do valor de recorte que deve
-        /// introduzir-se nas formas no caso de esta conter ângulos 
+        /// introduzir-se nas formas no caso de esta conter ângulos
         /// inferiores ao configurado no campo "AnguloRecorteAutomatico"
         /// </summary>
         [Log("Recorte Automático da Forma")]
@@ -589,10 +589,10 @@ namespace Glass.Data.Model
         public double TotalQtde { get; set; }
 
         [PersistenceProperty("TotalQtdeLong", DirectionParameter.InputOptional)]
-        public long TotalQtdeLong
+        public double TotalQtdeLong
         {
             get { return (long)TotalQtde; }
-            set { TotalQtde = (double)value; }
+            set { TotalQtde = value; }
         }
 
         [PersistenceProperty("TotalM2", DirectionParameter.InputOptional)]

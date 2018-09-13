@@ -174,9 +174,14 @@ namespace Glass.UI.Web.Controls.CTe
                 var impostoCteScript =
                     @"
                     function inArray(array, valor) {
-                        for (var i in array)
-                            if (array[i] == valor)
+                        for (var i in array){
+
+                            var valorArray = array[i];
+
+                            if (valorArray == valor){
                                 return true;
+                            }
+                        }    
 
                         return false;
                     }
@@ -267,6 +272,7 @@ namespace Glass.UI.Web.Controls.CTe
                         }
                         else if(inArray(cstComCred, valorCst))
                         {
+                            bcStRetido.hidden = false;
                             perRedBC.hidden = false;
                             valorBC.hidden = false;
                             aliquota.hidden = false;

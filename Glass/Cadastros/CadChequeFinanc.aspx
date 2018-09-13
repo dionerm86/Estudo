@@ -96,7 +96,7 @@
 
             return true;
         }
-        
+
     </script>
 
     <table style="width: 100%;">
@@ -184,7 +184,7 @@
                                             <asp:Label ID="Label45" runat="server" Text="Valor"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <uc1:ctrltextboxfloat ID="ctrValor" runat="server" Value='<%# Bind("Valor") %>' 
+                                            <uc1:ctrltextboxfloat ID="ctrValor" runat="server" Value='<%# Bind("Valor") %>'
                                                 OnPreRender="ctrValor_PreRender" />
                                         </td>
                                         <td align="left" class="dtvHeader">
@@ -207,7 +207,7 @@
                                             <asp:Label ID="Label46" runat="server" Text="Tipo"></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
-                                            <asp:DropDownList ID="drpTipo" runat="server" 
+                                            <asp:DropDownList ID="drpTipo" runat="server"
                                                 SelectedValue='<%# Bind("Tipo") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                                 <asp:ListItem Value="2">Cheque de Terceiros</asp:ListItem>
@@ -224,7 +224,7 @@
                                             <asp:TextBox ID="txtNumCli" runat="server" onblur="getCli(this);" onkeydown="if (isEnter(event)) getCli(this);"
                                                 onkeypress="return soNumeros(event, true, true);" Text='<%# Eval("IdCliente") %>'
                                                 Width="50px"></asp:TextBox>
-                                            <asp:TextBox ID="txtNomeCliente" runat="server" ReadOnly="True" Width="250px" 
+                                            <asp:TextBox ID="txtNomeCliente" runat="server" ReadOnly="True" Width="250px"
                                                 Text='<%# Eval("NomeCliente") %>'></asp:TextBox>
                                             <asp:LinkButton ID="lnkSelCliente" runat="server" OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx'); return false;">
                                                 <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
@@ -234,7 +234,7 @@
                                             <asp:Label ID="Label1" runat="server" Text="Situação"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpSituacao" runat="server" 
+                                            <asp:DropDownList ID="drpSituacao" runat="server"
                                                 SelectedValue='<%# Bind("Situacao") %>'>
                                                 <asp:ListItem Value="1">Em aberto</asp:ListItem>
                                                 <asp:ListItem Value="7">Protestado</asp:ListItem>
@@ -242,6 +242,15 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                                            <asp:Label ID="Label2" runat="server" Text="CMC7"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCMC7" runat="server" onkeypress="return soNumeros(event, true, true);" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
+                                            <img runat="server" src="~/Images/Help.gif" title="Digite as faixas de valor separando a primeira da segunda com (<) e a segunda da terceira com (>) como no exemplo a seguir: 40903151<0013002665>500074931502" />
+                                        </td>
+                                    </td>
+                                    <tr class="alt">
                                         <td align="left" class="dtvHeader">
                                             Obs.
                                         </td>
@@ -391,7 +400,7 @@
                                             <asp:Label ID="Label46" runat="server" Text="Tipo"></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
-                                            <asp:DropDownList ID="drpTipo" runat="server" 
+                                            <asp:DropDownList ID="drpTipo" runat="server"
                                                 SelectedValue='<%# Bind("Tipo") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                                 <asp:ListItem Value="2">Cheque de Terceiros</asp:ListItem>
@@ -426,6 +435,15 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td align="left" class="dtvHeader" nowrap="nowrap">
+                                            <asp:Label ID="Label2" runat="server" Text="CMC7"></asp:Label>
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtCMC7" runat="server" onkeypress="return soNumeros(event, true, true);" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
+                                            <img runat="server" src="~/Images/Help.gif" title="Digite as faixas de valor separando a primeira da segunda com (<) e a segunda da terceira com (>) como no exemplo a seguir: 40903151<0013002665>500074931502" />
+                                        </td>
+                                    </td>
+                                    <tr class="alt">
                                         <td class="dtvHeader" align="left">
                                             Obs.
                                         </td>

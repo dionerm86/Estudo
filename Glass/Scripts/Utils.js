@@ -1405,10 +1405,12 @@ function diferencaDatas(data1, data2)
 // --------------------------------------------------------
 function corrigeLeituraEtiqueta(codBarras) {
 
-    if (codBarras.toString().indexOf(".cni") >= 0)
-    {
-        codBarras = codBarras.toString().substring(0, codBarras.toString().indexOf(".cni"));
+    if (codBarras.length > 0 && codBarras.charAt(0).toLowerCase() == 'c') {
+        return codBarras.replace(';', '/').replace('ç', '/').replace('Ç', '/');
     }
+
+    if (codBarras.toString().indexOf(".cni") >= 0)
+        codBarras = codBarras.toString().substring(0, codBarras.toString().indexOf(".cni"));
 
     if (codBarras.toString().indexOf("-") <= 0)
         codBarras = codBarras.replace('F', '_').replace('f', '_');
@@ -1514,66 +1516,68 @@ function isGUID(objGuid) {
     else
         return false;
 }
+
 // -----------------------------------------------------------------------
 // Lê o código do cheque e preenche os campos
 // -----------------------------------------------------------------------
 function verificaLeituraCheque(controle, e) {
-    var retLeitura = controle.value.toString().trim();
+  var retLeitura = controle.value.toString().trim();
 
-    if (retLeitura.indexOf("<") == -1)
-        return false;
+  if (retLeitura.indexOf("<") == -1)
+    return false;
 
-    retLeitura = retLeitura.substring(retLeitura.indexOf("<"), retLeitura.length);
+  retLeitura = retLeitura.substring(retLeitura.indexOf("<"), retLeitura.length);
 
-    var leuCheque =
-        retLeitura.substring(retLeitura.length - 1) == ":" ||
-        retLeitura.substring(retLeitura.length - 1) == "Ç" ||
-        retLeitura.substring(retLeitura.length - 1) == "ç" ||
-        retLeitura.substring(retLeitura.length - 1) == "?";
+  var leuCheque =
+    retLeitura.substring(retLeitura.length - 1) == ":" ||
+    retLeitura.substring(retLeitura.length - 1) == "Ç" ||
+    retLeitura.substring(retLeitura.length - 1) == "ç" ||
+    retLeitura.substring(retLeitura.length - 1) == "?";
 
-    if (leuCheque) {
-        controle.value = controle.value.toString().substring(0, controle.value.length - retLeitura.length - 1).trim();
+  if (leuCheque) {
+    controle.value = controle.value.toString().substring(0, controle.value.length - retLeitura.length - 1).trim();
 
-        var codBanco = retLeitura.substring(1, 4);
-        var numeroCheque = retLeitura.substring(13, 19);
-        var digitoVerificadorCheque = 0;
+    var codBanco = retLeitura.substring(1, 4);
+    var numeroCheque = retLeitura.substring(13, 19);
+    var digitoVerificadorCheque = 0;
 
-        FindControl("txtBanco", "input").value = codBanco;
-        FindControl("txtAgencia", "input").value = retLeitura.substring(4, 8);
-        FindControl("txtNumero", "input").value = numeroCheque;
+    FindControl("txtBanco", "input").value = codBanco;
+    FindControl("txtAgencia", "input").value = retLeitura.substring(4, 8);
+    FindControl("txtNumero", "input").value = numeroCheque;
 
-        for (var i = 0; i < numeroCheque.length; i++) {
-            digitoVerificadorCheque += (7 - i) * numeroCheque.charAt(i);
-        }
+    for (var i = 0; i < numeroCheque.length; i++) {
+      digitoVerificadorCheque += (7 - i) * numeroCheque.charAt(i);
+    }
 
-        var resto = digitoVerificadorCheque % 11;
+    var resto = digitoVerificadorCheque % 11;
 
-        if (resto == 0 || resto == 1)
-            digitoVerificadorCheque = 0;
-        else
-            digitoVerificadorCheque = 11 - resto;
+    if (resto == 0 || resto == 1)
+      digitoVerificadorCheque = 0;
+    else
+      digitoVerificadorCheque = 11 - resto;
 
-        FindControl("txtDigitoNum", "input").value = digitoVerificadorCheque;
+    FindControl("txtDigitoNum", "input").value = digitoVerificadorCheque;
 
-        var conta = "";
+    var conta = "";
 
-        switch (codBanco) {
-            case "001":
-            case "033":
-            case "237":
-            case "341":
-            case "399":
-            case "748": conta = retLeitura.substring(26, 31) + "-" + retLeitura.substring(31, 32); break;
-            case "409": conta = retLeitura.substring(25, 31) + "-" + retLeitura.substring(31, 32); break;
-            case "356": conta = retLeitura.substring(24, 31) + "-" + retLeitura.substring(31, 32); break;
-            case "104":
-            case "320":
-            case "389": conta = retLeitura.substring(23, 31) + "-" + retLeitura.substring(31, 32); break;
-            default:
-                conta = retLeitura.substring(23, 31) + "-" + retLeitura.substring(31, 32); break;
-        }
+    switch (codBanco) {
+      case "001":
+      case "033":
+      case "237":
+      case "341":
+      case "399":
+      case "748": conta = retLeitura.substring(26, 31) + "-" + retLeitura.substring(31, 32); break;
+      case "409": conta = retLeitura.substring(25, 31) + "-" + retLeitura.substring(31, 32); break;
+      case "356": conta = retLeitura.substring(24, 31) + "-" + retLeitura.substring(31, 32); break;
+      case "104":
+      case "320":
+      case "389": conta = retLeitura.substring(23, 31) + "-" + retLeitura.substring(31, 32); break;
+      default:
+        conta = retLeitura.substring(23, 31) + "-" + retLeitura.substring(31, 32); break;
+      }
 
-        FindControl("txtConta", "input").value = conta;
+      FindControl("txtConta", "input").value = conta;
+      FindControl("txtCMC7", "input").value = retLeitura.substring(1, retLeitura.length - 1);
     }
 
     return false;

@@ -40,6 +40,19 @@ Servicos.Orcamentos = (function(http) {
     },
 
     /**
+     * Gera pedidos a partir do orçamento, se possível.
+     * @param {!number} idOrcamento O identificador do orçamento que será finalizado.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    gerarPedidosAgrupados: function (idOrcamento) {
+      if (!idOrcamento) {
+        throw new Error('Orçamento é obrigatório.');
+      }
+      debugger;
+      return http().post(API + idOrcamento + '/gerarPedidosAgrupados');
+    },
+
+    /**
      * Envia um email do orçamento.
      * @param {!number} idOrcamento O identificador do orçamento que será enviado por email.
      * @returns {Promise} Uma promise com o resultado da operação.

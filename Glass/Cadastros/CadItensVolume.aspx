@@ -1,6 +1,8 @@
 <%@ Page Title="Itens do Volume" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadItensVolume.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadItensVolume" %>
 
+<%@ Register Src="../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc1" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/calcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
@@ -94,6 +96,8 @@
                                             <asp:CheckBox ID="chkSelProd" ToolTip='<%# "Selecionar a peça: " + Eval("CodInternoDescProd")  %>'
                                                 runat="server" />
                                             <asp:HiddenField runat="server" ID="hdfIdProdPed" Value='<%# Eval("idProdPed") %>' />
+                                            <uc1:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server"
+                                                ImageUrl='<%# Glass.Global.UI.Web.Process.ProdutoRepositorioImagens.Instance.ObtemUrl(Int32.Parse(Eval("IdProd").ToString())) %>' />
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:BoundField HeaderText="Produto" DataField="CodInternoDescProd" />
@@ -166,7 +170,7 @@
                     </tr>
                     <tr>
                         <td align="center" colspan="3">
-                            <asp:Button ID="Button1" runat="server" Text="Fechar Volume" 
+                            <asp:Button ID="Button1" runat="server" Text="Fechar Volume"
                                 OnClientClick="return fecharVolume();" Width="150px" />
                         </td>
                     </tr>

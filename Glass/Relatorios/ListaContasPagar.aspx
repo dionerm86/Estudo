@@ -458,6 +458,7 @@
                             <EditItemTemplate>
                                 <asp:DropDownList ID="drpPlanoConta" runat="server" DataSourceID="odsPlanoConta" DataTextField="DescrPlanoGrupo"
                                     DataValueField="IdConta" SelectedValue='<%# Bind("IdConta") %>' AppendDataBoundItems="True" OnDataBinding="drpPlanoConta_DataBinding">
+                                    <asp:ListItem></asp:ListItem>
                                 </asp:DropDownList>
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -466,7 +467,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Forma Pagto." SortExpression="FormaPagtoCompra">
                             <EditItemTemplate>
-                                <asp:DropDownList ID="drpFormaPagto" runat="server" AppendDataBoundItems="True" DataSourceID="odsFormaPagto"
+                                <asp:DropDownList ID="drpFormaPagto" runat="server" AppendDataBoundItems="True" DataSourceID="odsFormaPagto" 
                                     DataTextField="Descricao" DataValueField="IdFormaPagto" SelectedValue='<%# Bind("IdFormaPagto") %>'>
                                     <asp:ListItem></asp:ListItem>
                                 </asp:DropDownList>

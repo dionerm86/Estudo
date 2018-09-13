@@ -1697,11 +1697,11 @@ namespace Glass.Data.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx")]
-        public string Glass_Data_wsNFeSVANStatus_NFeStatusServico4
+        public string Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4
         {
             get
             {
-                return ((string)(this["Glass_Data_wsNFeSVANStatus_NFeStatusServico4"]));
+                return ((string)(this["Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4"]));
             }
         }
 

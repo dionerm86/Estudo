@@ -415,7 +415,7 @@ namespace Glass
             if (String.IsNullOrEmpty(number))
                 return 0.ToString("N" + numeroCasasDecimais, System.Globalization.CultureInfo.GetCultureInfoByIetfLanguageTag("pt-BR"));
 
-            // EDIT: (André 23/01/2012) Ao formatar valor de NF-e, ao imprimir o DANFE a partir do XML, 
+            // EDIT: (André 23/01/2012) Ao formatar valor de NF-e, ao imprimir o DANFE a partir do XML,
             // estava retirando a 3ª casa em diante dos valores, o que não pode ser feito
             // Se houver 4 casa decimais nesse número, retorna apenas 2
             //if (number.Substring(number.LastIndexOf('.') + 1).Length > 2)
@@ -541,7 +541,7 @@ namespace Glass
 
             return str.Trim();
         }
-        
+
         /// <summary>
         /// Trata as informações complementares da nota.
         /// </summary>
@@ -574,7 +574,7 @@ namespace Glass
         /// </summary>
         /// <param name="valor"></param>
         /// <param name="casasAposVirgula"></param>
-        /// <returns></returns>      
+        /// <returns></returns>
         public static string TrataValorDecimal(decimal valor, int casasAposVirgula)
         {
             return valor.ToString("N" + casasAposVirgula).Replace(".", "").Replace(',', '.');
@@ -623,7 +623,7 @@ namespace Glass
             }
         }
 
-        public static string LimpaCpfCnpj(string CpfCnpj)
+        public static string LimpaCpfCnpj(this string CpfCnpj)
         {
             try
             {
@@ -749,7 +749,7 @@ namespace Glass
                     throw new Exception("O campo " + nomeCampo + " possui " + texto.Length +
                         " caracteres e o máximo permitido são " + tamanho + " caracteres.");
 
-                // O Substring deve pegar até tamanho - 2, pois, dessa forma irá pegar o tamanho exato menos um 
+                // O Substring deve pegar até tamanho - 2, pois, dessa forma irá pegar o tamanho exato menos um
                 // que é o espaço para o caractere '0' no caso de campo numérico e ' ' no caso de um texto.
                 texto = texto.Substring(0, tamanho - 1);
             }

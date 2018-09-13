@@ -240,6 +240,9 @@
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
     <Compile Include="Controllers\Cfops\V1\GetCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\CfopsController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\GetContasReceberController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\ContasReceberController.cs" />
+    <Compile Include="Controllers\ContasReceber\V1\PatchContasReceberController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -251,6 +254,10 @@
     <Compile Include="Controllers\Datas\V1\DatasController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\DescontoQuantidadeController.cs" />
     <Compile Include="Controllers\DescontoQuantidade\V1\GetDescontoQuantidadeController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\DeletePedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\GetPedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\PedidosConferenciaController.cs" />
+    <Compile Include="Controllers\PedidosConferencia\V1\PostPedidosConferenciaController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\DeleteNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
@@ -319,9 +326,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
+    <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
+    <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
+    <Compile Include="Helper\PedidosConferencia\TraducaoOrdenacaoListaPedidosConferencia.cs" />
     <Compile Include="Helper\NotasFiscais\TraducaoOrdenacaoListaNotasFiscais.cs" />
     <Compile Include="Helper\Liberacoes\TraducaoOrdenacaoListaLiberacoes.cs" />
     <Compile Include="Helper\NumberExtension.cs" />
@@ -362,6 +372,11 @@
     <Compile Include="Models\Genericas\CadastroAtualizacao\BaseCadastroAtualizacaoDto.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValorTipo.cs" />
     <Compile Include="Helper\CadastroAtualizacao\ConversorValoresDtoModelo.cs" />
+    <Compile Include="Models\ContasReceber\CadastroAtualizacao\CadastroAtualizacaoRecebidaDto.cs" />
+    <Compile Include="Models\ContasReceber\Configuracoes\ListaRecebidasDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
+    <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />
@@ -383,7 +398,13 @@
     <Compile Include="Models\Genericas\IdDto.cs" />
     <Compile Include="Models\Genericas\Venda\ComposicaoDto.cs" />
     <Compile Include="Models\Genericas\Venda\ItemDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\FiltroLogCancelamentoDto.cs" />
+    <Compile Include="Models\Log\Cancelamento\LogDto.cs" />
     <Compile Include="Models\Lojas\Certificado\CertificadoDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />
+    <Compile Include="Models\PedidosConferencia\Lista\PermissoesDto.cs" />
     <Compile Include="Models\NotasFiscais\Boleto\BoletoImpressoDto.cs" />
     <Compile Include="Models\NotasFiscais\Boleto\NotaFiscalDto.cs" />
     <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />

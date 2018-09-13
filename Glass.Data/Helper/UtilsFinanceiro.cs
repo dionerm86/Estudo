@@ -977,6 +977,8 @@ namespace Glass.Data.Helper
                     if (!CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, UserInfo.GetUserInfo.IdLoja))
                         throw new Exception("O caixa não foi fechado no último dia de trabalho.");
 
+                    var contadorDataUnicaCxDiario = 0;
+
                     #region Recebimentos
 
                     for (int i = 0; i < valoresReceb.Length; i++)
@@ -1137,7 +1139,7 @@ namespace Glass.Data.Helper
 
                                     tipoReceb == TipoReceb.Obra ?
                                         CaixaDiarioDAO.Instance.MovCxObra(sessao, UserInfo.GetUserInfo.IdLoja, obra.IdCliente, obra.IdObra, 1, valorMov, juros, item.Value.Item1,
-                                        formasPagto[i] == (uint)Pagto.FormaPagto.Construcard ? numAutConstrucard : null, obs, mudarSaldoCxDiario) :
+                                        formasPagto[i] == (uint)Pagto.FormaPagto.Construcard ? numAutConstrucard : null, obs, mudarSaldoCxDiario, contadorDataUnicaCxDiario++) :
 
                                     tipoReceb == TipoReceb.TrocaDevolucao ?
                                         CaixaDiarioDAO.Instance.MovCxTrocaDev(sessao, UserInfo.GetUserInfo.IdLoja, trocaDev.IdCliente, trocaDev.IdTrocaDevolucao, trocaDev.IdPedido, 1, valorMov, juros, item.Value.Item1,
@@ -1402,7 +1404,7 @@ namespace Glass.Data.Helper
                                     CaixaDiarioDAO.Instance.MovCxDevolucaoPagto(sessao, UserInfo.GetUserInfo.IdLoja, idDevolucaoPagto, idCliente, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.DevolucaoPagtoCredito), 2, creditoUtilizado, jurosCredito, null, false, null) :
                                 /* Chamado 49146. */
                                 tipoReceb == TipoReceb.Obra ?
-                                    CaixaDiarioDAO.Instance.MovCxObra(sessao, UserInfo.GetUserInfo.IdLoja, idCliente, obra.IdObra, 1, creditoUtilizado, jurosCredito, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecObraCredito), null, null, false) : 0;
+                                    CaixaDiarioDAO.Instance.MovCxObra(sessao, UserInfo.GetUserInfo.IdLoja, idCliente, obra.IdObra, 1, creditoUtilizado, jurosCredito, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.RecObraCredito), null, null, false, null) : 0;
 
                             // Debita Crédito do cliente
                             ClienteDAO.Instance.DebitaCredito(sessao, idCliente, creditoUtilizado);
@@ -4198,7 +4200,7 @@ namespace Glass.Data.Helper
 
                         // Estorna valor no caixa diário                    
                         CaixaDiarioDAO.Instance.MovCxObra(sessao, cd.IdLoja, obra.IdCliente, obra.IdObra, 2,
-                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAVista(cd.IdConta), null, null, mudarSaldo);
+                            cd.Valor, cd.Juros, UtilsPlanoConta.EstornoAVista(cd.IdConta), null, null, mudarSaldo, null);
                     }
                 }
                 else

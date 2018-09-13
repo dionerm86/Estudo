@@ -1,4 +1,4 @@
-<%@ Page Title="Quitar Parcelas do Cartão" Language="C#" MasterPageFile="~/Painel.master"
+<%@ Page Title="Quitar Parcelas do CartÃ£o" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadQuitarParcCartao.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadQuitarParcCartao" %>
 
 <%@ Register Src="../Controls/ctrlTextBoxFloat.ascx" TagName="ctrltextboxfloat" TagPrefix="uc1" %>
@@ -114,7 +114,7 @@
                                 OnClick="imgPesq_Click" Style="width: 16px" />
                         </td>
                         <td align="right" nowrap="nowrap" runat="server" id="liberarPedidoTitulo">
-                            <asp:Label ID="Label3" runat="server" Text="Liberação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label3" runat="server" Text="LiberaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td align="right" nowrap="nowrap" runat="server" id="liberarPedido">
                             <asp:TextBox ID="txtNumLiberacao" runat="server" Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
@@ -169,7 +169,7 @@
                                 OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
                         </td>
                         <td runat="server" id="tipoCartaoTitulo">
-                            <asp:Label ID="Label2" runat="server" Text="Tipo Cartão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label2" runat="server" Text="Tipo CartÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td runat="server" id="tipoCartao">
                             <asp:DropDownList ID="drpTipoCartao" runat="server" DataSourceID="odsTipoCartao"
@@ -222,7 +222,7 @@
                             <asp:TextBox ID="txtValorIni" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
                                 onkeypress="return soNumeros(event, false, true);"></asp:TextBox>
                         </td>
-                        <td>até
+                        <td>atÃ©
                         </td>
                         <td>
                             <asp:TextBox ID="txtValorFim" runat="server" Width="50px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
@@ -233,7 +233,7 @@
                                 OnClick="imgPesq_Click" Style="width: 16px" />
                         </td>
                         <td>
-                            <asp:Label ID="Label17" runat="server" Text="Tipo Receb. Cartão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label17" runat="server" Text="Tipo Receb. CartÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoRecebCartao" runat="server" DataSourceID="odsTipo"
@@ -246,7 +246,7 @@
                 <table>
                     <tr>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
-                            <asp:Label ID="Label13" runat="server" ForeColor="#0066FF" Text="Nº CNI" CssClass="exibir"></asp:Label>
+                            <asp:Label ID="Label13" runat="server" ForeColor="#0066FF" Text="NÂº CNI" CssClass="exibir"></asp:Label>
                         </td>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtnumCNI" runat="server" Width="160px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -256,7 +256,7 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" Style="width: 16px" />
                         </td>
                         <td>
-                            <asp:Label ID="Label19" runat="server" ForeColor="#0066FF" Text="Nº Aut."></asp:Label>
+                            <asp:Label ID="Label19" runat="server" ForeColor="#0066FF" Text="NÂº Aut."></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtNumAutCartao" runat="server" Width="70" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -266,7 +266,7 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click"  />
                         </td>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
-                            <asp:Label ID="Label20" runat="server" ForeColor="#0066FF" Text="Nº Estabelecimento"></asp:Label>
+                            <asp:Label ID="Label20" runat="server" ForeColor="#0066FF" Text="NÂº Estabelecimento"></asp:Label>
                         </td>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtNumEstabCartao" runat="server" Width="70" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -276,7 +276,7 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click"  />
                         </td>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
-                            <asp:Label ID="Label21" runat="server" ForeColor="#0066FF" Text="Ult. Dig. Cartão"></asp:Label>
+                            <asp:Label ID="Label21" runat="server" ForeColor="#0066FF" Text="Ult. Dig. CartÃ£o"></asp:Label>
                         </td>
                         <td style='<%= Glass.Configuracoes.MenuConfig.ExibirCartaoNaoIdentificado ? "": "display: none" %>'>
                             <asp:TextBox ID="txtUltDigCartao" runat="server" Width="50" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"></asp:TextBox>
@@ -338,7 +338,7 @@
                                     ToolTip="Atualizar" CausesValidation="false" Height="16px" />
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Referência" >
+                        <asp:TemplateField HeaderText="ReferÃªncia" >
                             <ItemTemplate>
                                 <asp:Label ID="Label2" runat="server" Text='<%# Bind("Referencia") %>'></asp:Label>
                             </ItemTemplate>
@@ -389,7 +389,7 @@
                                 <asp:Label ID="Label6" runat="server" Text='<%# Eval("NomeLoja") %>'></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Tipo Cartão" SortExpression="DescrTipoCartao">
+                        <asp:TemplateField HeaderText="Tipo CartÃ£o" SortExpression="DescrTipoCartao">
                             <ItemTemplate>
                                 <asp:Label ID="Label7" runat="server" Text='<%# Bind("DescrTipoCartao") %>'></asp:Label>
                             </ItemTemplate>
@@ -450,7 +450,7 @@
                                 <asp:Label ID="lbltj" runat="server" Text='<%# Eval("TaxaJuros") %>'></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Descrição Cartão" >
+                        <asp:TemplateField HeaderText="DescriÃ§Ã£o CartÃ£o" >
                             <ItemTemplate>
                                 <asp:Label ID="lbldc" runat="server" Text='<%# Bind("DescricaoCartao") %>'></asp:Label>
                             </ItemTemplate>
@@ -516,10 +516,6 @@
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoCartao" runat="server" SelectMethod="ObterListaTipoCartao"
         TypeName="Glass.Data.DAL.TipoCartaoCreditoDAO">
-        <SelectParameters>
-            <asp:Parameter Name="situacao" Type="Int32"
-                DefaultValue="0" />
-        </SelectParameters>
     </colo:VirtualObjectDataSource>
     <colo:VirtualObjectDataSource runat="server" ID="odsTipo"
         SelectMethod="GetTranslatesFromTypeName" EnableViewState="false"

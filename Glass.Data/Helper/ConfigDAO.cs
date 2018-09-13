@@ -29,7 +29,7 @@ namespace Glass.Data.Helper
 
             switch ((Config.TipoConfigEnum)config.Tipo)
             {
-                case Config.TipoConfigEnum.Decimal: 
+                case Config.TipoConfigEnum.Decimal:
                     return configLoja.ValorDecimal;
 
                 case Config.TipoConfigEnum.Inteiro:
@@ -97,7 +97,7 @@ namespace Glass.Data.Helper
 
             bool valorAlterado = false;
             ConfiguracaoLoja configLoja = ConfiguracaoLojaDAO.Instance.GetItem(item, idLoja);
-            
+
             if (configLoja == null)
             {
                 configLoja = new ConfiguracaoLoja();
@@ -225,7 +225,7 @@ namespace Glass.Data.Helper
             string nomeTipoEnum = ConfiguracaoDAO.Instance.ObtemValorCampo<string>("nomeTipoEnum", "idConfig=" + idConfig);
             string nomeTipoMetodo = ConfiguracaoDAO.Instance.ObtemValorCampo<string>("nomeTipoMetodo", "idConfig=" + idConfig);
 
-            tipo = tipo == Config.TipoConfigEnum.GrupoEnumMetodo && !String.IsNullOrEmpty(nomeTipoEnum) ? Config.TipoConfigEnum.Enum : 
+            tipo = tipo == Config.TipoConfigEnum.GrupoEnumMetodo && !String.IsNullOrEmpty(nomeTipoEnum) ? Config.TipoConfigEnum.Enum :
                 tipo == Config.TipoConfigEnum.GrupoEnumMetodo && !String.IsNullOrEmpty(nomeTipoMetodo) ? Config.TipoConfigEnum.ListaMetodo : tipo;
 
             string nome = tipo == Config.TipoConfigEnum.Enum ? nomeTipoEnum : nomeTipoMetodo;
@@ -355,7 +355,7 @@ namespace Glass.Data.Helper
 
             if (FinanceiroConfig.UsarPgtoAntecipFornec)
                 itens.Add(Config.ConfigEnum.TipoUsoAntecipacaoFornecedor);
-            
+
             itens.Add(Config.ConfigEnum.UsarControleCobrancaEmail);
             if (FinanceiroConfig.UsarControleCobrancaEmail)
             {
@@ -367,7 +367,7 @@ namespace Glass.Data.Helper
 
             if (!PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.SaidaEstoqueManual);
-            
+
             itens.Add(Config.ConfigEnum.LimitePadraoCliente);
             itens.Add(Config.ConfigEnum.ExibirDescricaoParcelaLiberacao);
             itens.Add(Config.ConfigEnum.EmpresaConsideraChequeLimite);
@@ -381,7 +381,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.PercMinimoSinalPedidoPadrao);
             itens.Add(Config.ConfigEnum.UsarControleFinalizacaoCompra);
             itens.Add(Config.ConfigEnum.LimitarChequesPorCpfOuCnpj);
-            
+
             itens.Add(Config.ConfigEnum.PermitirConfirmacaoPedidoPeloFinanceiro);
             if (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro)
                 itens.Add(Config.ConfigEnum.PerguntarVendedorConfirmacaoFinanceiro);
@@ -401,7 +401,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.PermitirTrocaPorPedido);
             itens.Add(Config.ConfigEnum.UsarTipoCalculoNfParaCompra);
             itens.Add(Config.ConfigEnum.NumeroDiasIgnorarClientesRecemAtivosInativarAutomaticamente);
-            itens.Add(Config.ConfigEnum.ExibirCnab);            
+            itens.Add(Config.ConfigEnum.ExibirCnab);
             itens.Add(Config.ConfigEnum.CobrarPedidoReposicao);
             itens.Add(Config.ConfigEnum.ManterDescontoAdministrador);
             itens.Add(Config.ConfigEnum.BloquearClienteAoDevolverProtestarCheque);
@@ -441,6 +441,8 @@ namespace Glass.Data.Helper
 
             itens.Add(Config.ConfigEnum.PermirtirSalvarOrcamentoSemProcAplic);
 
+            itens.Add(Config.ConfigEnum.DesmembrarOrcamentoPorSubgrupoGerarPedido);
+
             return ConfiguracaoDAO.Instance.GetItens(itens.ToArray());
         }
 
@@ -451,7 +453,7 @@ namespace Glass.Data.Helper
         public IList<Configuracao> GetItensPedido()
         {
             var itens = new List<Config.ConfigEnum>();
-            
+
             itens.Add(Config.ConfigEnum.AmbientePedido);
             if (PedidoConfig.DadosPedido.AmbientePedido)
                 itens.Add(Config.ConfigEnum.UsarAmbienteInstalacao);
@@ -481,7 +483,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.NumeroFormasPagto);
             itens.Add(Config.ConfigEnum.NumParcelasPedido);
             itens.Add(Config.ConfigEnum.CalcularAreaMinimaApenasVidroBeneficiado);
-            
+
             itens.Add(Config.ConfigEnum.UsarTamanhoMaximoVidro);
             if (PedidoConfig.TamanhoVidro.UsarTamanhoMaximoVidro)
             {
@@ -499,7 +501,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.BloquearDataEntregaPedidoVendedor);
             itens.Add(Config.ConfigEnum.DiasMinimosEntregaTipo);
             itens.Add(Config.ConfigEnum.ExibirDatasParcelasPedido);
-            itens.Add(Config.ConfigEnum.BloquearDadosClientePedido);          
+            itens.Add(Config.ConfigEnum.BloquearDadosClientePedido);
 
             itens.Add(Config.ConfigEnum.DescontoPedidoApenasAVista);
             if (PedidoConfig.Desconto.DescontoPedidoApenasAVista)
@@ -508,7 +510,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ImpedirDescontoSomativo);
             itens.Add(Config.ConfigEnum.ImpedirConfirmacaoPedidoPagamento);
             itens.Add(Config.ConfigEnum.TipoEntregaPadraoPedido);
-            itens.Add(Config.ConfigEnum.AlterarValorUnitarioProduto);      
+            itens.Add(Config.ConfigEnum.AlterarValorUnitarioProduto);
             itens.Add(Config.ConfigEnum.BloquearItensTipoPedido);
 
             if (PedidoConfig.DadosPedido.BloquearItensTipoPedido)
@@ -534,7 +536,7 @@ namespace Glass.Data.Helper
                 itens.Add(Config.ConfigEnum.ObrigarProcAplVidros);
                 itens.Add(Config.ConfigEnum.NumeroDiasPedidoProntoAtrasado);
             }
-            
+
             if (!FiscalConfig.NotaFiscalConfig.PercentualCargaTributariaParaClienteSimplesNacional.HasValue)
             {
                 itens.Add(Config.ConfigEnum.CalcularIcmsPedido);
@@ -568,7 +570,7 @@ namespace Glass.Data.Helper
                 return new Configuracao[0];
 
             var itens = new List<Config.ConfigEnum>();
-            
+
             itens.Add(Config.ConfigEnum.ApenasAdminCancelaLiberacao);
             itens.Add(Config.ConfigEnum.BloquearLiberacaoDadosPedido);
             itens.Add(Config.ConfigEnum.DescontoLiberarPedido);
@@ -710,7 +712,7 @@ namespace Glass.Data.Helper
 
             if (PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.BloquearEmissaoNFeApenasPedidosLiberados);
-            
+
             itens.Add(Config.ConfigEnum.AliquotaPis);
             itens.Add(Config.ConfigEnum.AliquotaCofins);
 
@@ -731,13 +733,13 @@ namespace Glass.Data.Helper
             var itens = new List<Config.ConfigEnum>();
             itens.Add(Config.ConfigEnum.UsarConferenciaFluxo);
             itens.Add(Config.ConfigEnum.GerarArquivoMesaCorte);
-            
+
             if (PedidoConfig.LiberarPedido)
                 itens.Add(Config.ConfigEnum.EnviarEmailPedidoConfirmado);
-            
+
             if (Geral.ControlePCP)
                 itens.Add(Config.ConfigEnum.EnviarEmailPedidoPronto);
-            
+
             if (PedidoConfig.LiberarPedido || PCPConfig.ControlarProducao)
                 itens.Add(Config.ConfigEnum.EnviarPedidoAnexoEmail);
 
@@ -779,7 +781,7 @@ namespace Glass.Data.Helper
                 else if (PCPConfig.MetaProducaoDiaria > 0)
                     ConfigDAO.Instance.SetValue(Config.ConfigEnum.MetaProducaoDiaria, 0, null);
             }
-            
+
             itens.Add(Config.ConfigEnum.BloquearExpedicaoApenasPecasProntas);
             itens.Add(Config.ConfigEnum.UsarControleGerenciamentoProjCnc);
             itens.Add(Config.ConfigEnum.ConcatenarEspAltLargAoNumEtiqueta);
@@ -883,7 +885,7 @@ namespace Glass.Data.Helper
                     alter table mov_estoque_cliente change SALDOQTDEMOV SALDOQTDEMOV decimal({0},{1});
                     alter table mov_estoque_fiscal change SALDOQTDEMOV SALDOQTDEMOV decimal({0},{1});";
 
-                ConfiguracaoDAO.Instance.ExecuteScalar<int>(String.Format(sql, 10 + Geral.NumeroCasasDecimaisTotM, 
+                ConfiguracaoDAO.Instance.ExecuteScalar<int>(String.Format(sql, 10 + Geral.NumeroCasasDecimaisTotM,
                     Geral.NumeroCasasDecimaisTotM));
             }
             else if(item == Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes)
