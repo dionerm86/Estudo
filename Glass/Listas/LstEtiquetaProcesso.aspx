@@ -28,6 +28,9 @@
                         <a href="#" @click.prevent="ordenar('gerarArquivoDeMesa')">Gerar Arquivo de Mesa</a>
                     </th>
                     <th>
+                        <a href="#" @click.prevent="ordenar('forcarGerarSag')">Forçar Gerar SAG</a>
+                    </th>
+                    <th>
                         <a href="#" @click.prevent="ordenar('numeroDiasUteisDataEntrega')">Número dias úteis data entrega</a>
                     </th>
                     <th>
@@ -60,6 +63,7 @@
                     <td>{{ item.destacarNaEtiqueta | indicaMarcado }}</td>
                     <td>{{ item.gerarFormaInexistente | indicaMarcado }}</td>
                     <td>{{ item.gerarArquivoDeMesa | indicaMarcado }}</td>
+                    <td>{{ item.forcarGerarSag | indicaMarcado }}</td>
                     <td>{{ item.numeroDiasUteisDataEntrega }}</td>
                     <td>
                         <span v-if="item.tipoProcesso">
@@ -102,7 +106,10 @@
                         <input type="checkbox" v-model="processo.gerarFormaInexistente" />
                     </td>
                     <td>
-                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" />
+                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" @change.prevent="desmarcarGerarSag" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.forcarGerarSag" :disabled="!processo.gerarArquivoDeMesa" />
                     </td>
                     <td>
                         <input type="number" v-model.number="processo.numeroDiasUteisDataEntrega" maxlength="10"
@@ -150,7 +157,10 @@
                         <input type="checkbox" v-model="processo.gerarFormaInexistente" v-if="inserindo" />
                     </td>
                     <td>
-                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" v-if="inserindo" />
+                        <input type="checkbox" v-model="processo.gerarArquivoDeMesa" @change.prevent="desmarcarGerarSag" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="processo.forcarGerarSag" :disabled="!processo.gerarArquivoDeMesa" v-if="inserindo" />
                     </td>
                     <td>
                         <input type="number" v-model.number="processo.numeroDiasUteisDataEntrega" maxlength="10"

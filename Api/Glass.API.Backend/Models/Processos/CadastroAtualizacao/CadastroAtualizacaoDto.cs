@@ -71,6 +71,17 @@ namespace Glass.API.Backend.Models.Processos.CadastroAtualizacao
         }
 
         /// <summary>
+        /// Obtém ou define um valor que indica se o processo gera uma forma inexistente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("forcarGerarSag")]
+        public bool ForcarGerarSag
+        {
+            get { return this.ObterValor(c => c.ForcarGerarSag); }
+            set { this.AdicionarValor(c => c.ForcarGerarSag, value); }
+        }
+
+        /// <summary>
         /// Obtém ou define um valor que indica se o processo gera um arquivo de corte para mesa.
         /// </summary>
         [DataMember]

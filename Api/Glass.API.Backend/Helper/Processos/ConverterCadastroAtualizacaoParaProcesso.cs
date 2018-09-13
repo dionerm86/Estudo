@@ -51,6 +51,7 @@ namespace Glass.API.Backend.Helper.Processos
             destino.IdAplicacao = (int?)this.cadastro.ObterValorNormalizado(c => c.IdAplicacao, destino.IdAplicacao);
             destino.DestacarEtiqueta = this.cadastro.ObterValorNormalizado(c => c.DestacarNaEtiqueta, destino.DestacarEtiqueta);
             destino.GerarFormaInexistente = this.cadastro.ObterValorNormalizado(c => c.GerarFormaInexistente, destino.GerarFormaInexistente);
+            destino.ForcarGerarSag = this.cadastro.ObterValorNormalizado(c => c.ForcarGerarSag, destino.ForcarGerarSag);
             destino.GerarArquivoDeMesa = this.cadastro.ObterValorNormalizado(c => c.GerarArquivoDeMesa, destino.GerarArquivoDeMesa);
             destino.NumeroDiasUteisDataEntrega = (int)this.cadastro.ObterValorNormalizado(c => c.NumeroDiasUteisDataEntrega, destino.NumeroDiasUteisDataEntrega);
             destino.TipoProcesso = this.cadastro.ObterValorNormalizado(c => c.TipoProcesso, destino.TipoProcesso);

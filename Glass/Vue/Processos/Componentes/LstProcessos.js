@@ -187,6 +187,7 @@ const app = new Vue({
         destacarNaEtiqueta: processo ? processo.destacarNaEtiqueta : null,
         gerarFormaInexistente: processo ? processo.gerarFormaInexistente : null,
         gerarArquivoDeMesa: processo ? processo.gerarArquivoDeMesa : null,
+        forcarGerarSag: processo ? processo.forcarGerarSag : null,
         numeroDiasUteisDataEntrega: processo ? processo.numeroDiasUteisDataEntrega : null,
         tipoProcesso: processo && processo.tipoProcesso ? processo.tipoProcesso.id : null,
         tiposPedidos: tiposPedidos(),
@@ -251,6 +252,15 @@ const app = new Vue({
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
+    },
+
+    /**
+     * Desmarca o campo de geração de arquivo SAG se não for gerar arquivo de mesa.
+     */
+    desmarcarGerarSag: function () {
+      if (!this.processo.gerarArquivoDeMesa) {
+        this.processo.forcarGerarSag = false;
+      }
     }
   },
 

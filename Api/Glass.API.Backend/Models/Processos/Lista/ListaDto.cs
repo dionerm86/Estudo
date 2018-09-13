@@ -20,7 +20,7 @@ namespace Glass.API.Backend.Models.Processos.Lista
     public class ListaDto : IdCodigoDto
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ListaDto"/> class.
+        /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
         /// <param name="processo">O processo que será retornado.</param>
         public ListaDto(EtiquetaProcessoPesquisa processo)
@@ -32,6 +32,7 @@ namespace Glass.API.Backend.Models.Processos.Lista
             this.DestacarNaEtiqueta = processo.DestacarEtiqueta;
             this.GerarFormaInexistente = processo.GerarFormaInexistente;
             this.GerarArquivoDeMesa = processo.GerarArquivoDeMesa;
+            this.ForcarGerarSag = processo.ForcarGerarSAG;
             this.NumeroDiasUteisDataEntrega = processo.NumeroDiasUteisDataEntrega;
 
             string descricaoTipoProcesso = processo.TipoProcesso?.Translate().Format();
@@ -93,6 +94,13 @@ namespace Glass.API.Backend.Models.Processos.Lista
         [DataMember]
         [JsonProperty("gerarArquivoDeMesa")]
         public bool GerarArquivoDeMesa { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o arquivo de SAG deve ser sempre gerado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("forcarGerarSag")]
+        public bool ForcarGerarSag { get; set; }
 
         /// <summary>
         /// Obtém ou define o número de dias úteis para calcular data de entrega do processo de etiqueta.
