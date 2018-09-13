@@ -11,6 +11,12 @@
         </label>
         <input type="text" v-model="enderecoAtual.logradouro" style="width: 200px" v-bind="$attrs">
     </span>
+    <span class="form-group" v-if="exibirComplemento">
+        <label>
+            Complemento
+        </label>
+        <input type="text" v-model="enderecoAtual.complemento" style="width: 80px" v-bind="$attrs">
+    </span>
     <span class="form-group">
         <label>
             Bairro

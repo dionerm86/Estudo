@@ -139,5 +139,15 @@
         </tr>
     </table>
     </form>
+    <script type="text/javascript" src="<%= ConfigurationManager.AppSettings["VueJsPath"] %>"></script>
+    <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="../Vue/_Compartilhado/Servicos/Publicos.js"></script>
+    <script type="text/javascript">
+        Vue.prototype.$http = axios.create({
+            baseURL: '<%= ConfigurationManager.AppSettings["backendUrl"] %>'
+        });
+
+        Servicos.Publicos.disponibilidade(30000);
+    </script>
 </body>
 </html>

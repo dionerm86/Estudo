@@ -2,7 +2,6 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
 using System;
 using System.Runtime.Serialization;
@@ -20,7 +19,7 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public IdNomeDto Tipo { get; set; }
+        public int? Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define a data de entrega do pedido.

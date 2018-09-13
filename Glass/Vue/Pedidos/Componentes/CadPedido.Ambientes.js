@@ -58,7 +58,7 @@ Vue.component('pedido-ambientes', {
       dadosValidacaoProduto: {},
       processoAtual: null,
       aplicacaoAtual: null,
-      exibir: false
+      numeroItensLista: 0
     };
   },
 
@@ -84,7 +84,7 @@ Vue.component('pedido-ambientes', {
      * @param {!number} numeroItens O número de itens que foram carregados no controle interno.
      */
     listaAtualizada: function(numeroItens) {
-      this.exibir = numeroItens > 0;
+      this.numeroItensLista = numeroItens;
     },
 
     /**
@@ -261,7 +261,10 @@ Vue.component('pedido-ambientes', {
         ambiente: true
       };
 
-      this.ambientePedidoOriginal = {
+      this.processoAtual = item && item.produtoMaoDeObra ? this.clonar(item.produtoMaoDeObra.processo) : null;
+      this.aplicacaoAtual = item && item.produtoMaoDeObra ? this.clonar(item.produtoMaoDeObra.aplicacao) : null;
+
+      this.ambientePedido = {
         id: item ? item.id : null,
         nome: item ? item.nome : null,
         produtoMaoDeObra: {
@@ -270,26 +273,8 @@ Vue.component('pedido-ambientes', {
           quantidade: item && item.produtoMaoDeObra ? item.produtoMaoDeObra.quantidade : null,
           altura: item && item.produtoMaoDeObra ? item.produtoMaoDeObra.altura : null,
           largura: item && item.produtoMaoDeObra ? item.produtoMaoDeObra.largura : null,
-          processo: {
-            id:
-              item && item.produtoMaoDeObra && item.produtoMaoDeObra.processo
-                ? item.produtoMaoDeObra.processo.id
-                : null,
-            codigo:
-              item && item.produtoMaoDeObra && item.produtoMaoDeObra.processo
-                ? item.produtoMaoDeObra.processo.codigo
-                : null
-          },
-          aplicacao: {
-            id:
-              item && item.produtoMaoDeObra && item.produtoMaoDeObra.aplicacao
-                ? item.produtoMaoDeObra.aplicacao.id
-                : null,
-            codigo:
-              item && item.produtoMaoDeObra && item.produtoMaoDeObra.aplicacao
-                ? item.produtoMaoDeObra.aplicacao.codigo
-                : null
-          },
+          idProcesso: item && item.produtoMaoDeObra && item.produtoMaoDeObra.processo ? item.produtoMaoDeObra.processo.id : null,
+          idAplicacao: item && item.produtoMaoDeObra && item.produtoMaoDeObra.aplicacao ? item.produtoMaoDeObra.aplicacao.id : null,
           redondo: item && item.produtoMaoDeObra ? item.produtoMaoDeObra.redondo : false
         },
         descricao: item ? item.descricao : null,
@@ -304,7 +289,7 @@ Vue.component('pedido-ambientes', {
         }
       };
 
-      this.ambientePedido = this.clonar(this.ambientePedidoOriginal);
+      this.ambientePedidoOriginal = this.clonar(this.ambientePedido);
       this.ambientePedido.produtoMaoDeObra.id = null;
       this.produtoAtual = null;
     },
@@ -363,6 +348,15 @@ Vue.component('pedido-ambientes', {
         idPedido: this.pedido.id,
         refresh: this.refresh_
       };
+    },
+
+    /**
+     * Propriedade computada que determina a exibição da seção com os ambientes.
+     * @type {boolean}
+     */
+    exibir: function () {
+      return this.numeroItensLista > 0
+        || (this.configuracoes && this.configuracoes.exibirAmbientes);
     }
   },
 
@@ -389,16 +383,11 @@ Vue.component('pedido-ambientes', {
      */
     processoAtual: {
       handler: function(atual) {
-        if (
-          !this.ambientePedido ||
-          !this.ambientePedido.produtoMaoDeObra ||
-          !this.ambientePedido.produtoMaoDeObra.processo
-        ) {
+        if (!this.ambientePedido || !this.ambientePedido.produtoMaoDeObra) {
           return;
         }
 
-        this.ambientePedido.processo.id = atual ? atual.id : null;
-        this.ambientePedido.processo.codigo = atual ? atual.codigo : null;
+        this.ambientePedido.produtoMaoDeObra.idProcesso = atual ? atual.id : null;
 
         if (atual && atual.idAplicacao) {
           this.aplicacaoAtual = {
@@ -416,16 +405,11 @@ Vue.component('pedido-ambientes', {
      */
     aplicacaoAtual: {
       handler: function(atual) {
-        if (
-          !this.ambientePedido ||
-          !this.ambientePedido.produtoMaoDeObra ||
-          !this.ambientePedido.produtoMaoDeObra.aplicacao
-        ) {
+        if (!this.ambientePedido || !this.ambientePedido.produtoMaoDeObra) {
           return;
         }
 
-        this.ambientePedido.aplicacao.id = atual ? atual.id : null;
-        this.ambientePedido.aplicacao.codigo = atual ? atual.codigo : null;
+        this.ambientePedido.produtoMaoDeObra.idAplicacao = atual ? atual.id : null;
       },
       deep: true
     }

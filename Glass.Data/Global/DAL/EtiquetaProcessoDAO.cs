@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
 using GDA;
 using Glass.Data.Model;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
     public sealed class EtiquetaProcessoDAO : BaseDAO<EtiquetaProcesso, EtiquetaProcessoDAO>
-	{
+    {
         //private EtiquetaProcessoDAO() { }
 
         private string SqlList(string codInterno, string descricao, uint idAplicacao, int situacao, uint idSubgrupo, bool selecionar)
@@ -27,9 +27,9 @@ namespace Glass.Data.DAL
                 sql += " and p.situacao=" + situacao;
 
             if (idSubgrupo > 0)
-                sql += @" AND IF ((SELECT COUNT(*) FROM classificacao_subgrupo) > 0, p.IdProcesso IN (Select rp.IdProcesso from classificacao_subgrupo cs 
+                sql += @" AND IF ((SELECT COUNT(*) FROM classificacao_subgrupo) > 0, p.IdProcesso IN (Select rp.IdProcesso from classificacao_subgrupo cs
                           LEFT JOIN classificacao_roteiro_producao crp ON (cs.IdClassificacaoRoteiroProducao = crp.IdClassificacaoRoteiroProducao)
-                          LEFT JOIN roteiro_producao rp ON (crp.IdClassificacaoRoteiroProducao = rp.IdClassificacaoRoteiroProducao) 
+                          LEFT JOIN roteiro_producao rp ON (crp.IdClassificacaoRoteiroProducao = rp.IdClassificacaoRoteiroProducao)
                           WHERE cs.idsubgrupoprod = " + idSubgrupo + "), 1)";
 
             return sql;
@@ -83,7 +83,7 @@ namespace Glass.Data.DAL
         {
             string orderBy = String.IsNullOrEmpty(sortExpression) ? "Descricao" : sortExpression;
 
-            return LoadDataWithSortExpression(SqlList(codProcesso, descricao, idAplicacao, (int)Glass.Situacao.Ativo, idSubgrupo, true), 
+            return LoadDataWithSortExpression(SqlList(codProcesso, descricao, idAplicacao, (int)Glass.Situacao.Ativo, idSubgrupo, true),
                 orderBy, startRow, pageSize, GetParams(codProcesso, descricao));
         }
 
@@ -219,16 +219,24 @@ namespace Glass.Data.DAL
 
         public override int Update(EtiquetaProcesso objUpdate)
         {
-            string codInterno = ObtemCodInterno((uint)objUpdate.IdProcesso);
+            return Update(null, objUpdate);
+        }
+
+        public override int Update(GDASession session, EtiquetaProcesso objUpdate)
+        {
+            var atual = GetElementByPrimaryKey(session, objUpdate.IdProcesso);
+            var retorno = base.Update(session, objUpdate);
 
             // Atualiza a configuração para ficar igual à esta alteração
-            if (objUpdate.CodInterno != codInterno)
+            if (retorno > 0 && objUpdate.CodInterno != atual.CodInterno)
             {
-                objPersistence.ExecuteCommand("Update config_loja set valorTexto=?codProcNovo Where idConfig In (19,21) And valorTexto=?codProcAntigo", 
-                    new GDAParameter("?codProcNovo", objUpdate.CodInterno), new GDAParameter("?codProcAntigo", codInterno));
+                objPersistence.ExecuteCommand(session, "Update config_loja set valorTexto=?codProcNovo Where idConfig In (19,21) And valorTexto=?codProcAntigo",
+                    new GDAParameter("?codProcNovo", objUpdate.CodInterno), new GDAParameter("?codProcAntigo", atual.CodInterno));
             }
 
-            return base.Update(objUpdate);
+            LogAlteracaoDAO.Instance.LogEtiquetaProcesso(atual, objUpdate);
+
+            return retorno;
         }
 
         public override int Delete(EtiquetaProcesso objDelete)

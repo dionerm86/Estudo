@@ -209,7 +209,7 @@
                 <span class="colspan3">
                     <lista-selecao-id-valor :item-selecionado.sync="transportadorAtual" :funcao-recuperar-itens="obterTransportadores"></lista-selecao-id-valor>
                 </span>
-                <template v-if="pedido && pedido.entrega.tipo && pedido.entrega.tipo.id != configuracoes.tipoEntregaBalcao">
+                <template v-if="pedido && pedido.entrega && pedido.entrega.tipo != configuracoes.tipoEntregaBalcao">
                     <span class="cabecalho">
                         <label>
                             Local da Obra
@@ -219,7 +219,7 @@
                         <button @click.prevent="preencherEnderecoObra">
                             <img src="../Images/home.gif" title="Buscar endereço do cliente" />
                         </button>
-                        <campo-endereco :endereco="pedido.enderecoObra" required>
+                        <campo-endereco :endereco="pedido.enderecoObra" :exibir-complemento="false" required>
                     </span>
                 </template>
                 <span class="colspan4" style="padding: 8px 0" v-if="vIfControleParcelas">

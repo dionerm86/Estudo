@@ -104,7 +104,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando o status do lote.</returns>
         [HttpPost]
         [Route("{id}/reabrir")]
-        [SwaggerResponse(200, "Nota fiscal reaberta.")]
+        [SwaggerResponse(202, "Nota fiscal reaberta.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na reabertura da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult Reabrir(int id)
@@ -120,13 +120,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     NotaFiscalDAO.Instance.ReabrirNotaEntradaTerceiros((uint)id);
-
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito($"Nota fiscal {id} reaberta.");
                 }
                 catch (Exception ex)
                 {
@@ -143,7 +140,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando o status do lote.</returns>
         [HttpPost]
         [Route("{id}/gerarNotaFiscalComplementar")]
-        [SwaggerResponse(200, "Nota fiscal complementar gerada.", Type = typeof(CriadoDto<int>))]
+        [SwaggerResponse(201, "Nota fiscal complementar gerada.", Type = typeof(CriadoDto<int>))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na geração da nota fiscal complementar.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult GerarNotaFiscalComplementar(int id)
@@ -159,13 +156,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var idNf = NotaFiscalDAO.Instance.GeraNFeComplementar((uint)id);
-
                     sessao.Commit();
 
-                    return this.Criado<int>("Nota fiscal complementar gerada.", (int)idNf);
+                    return this.Criado("Nota fiscal complementar gerada.", (int)idNf);
                 }
                 catch (Exception ex)
                 {
@@ -198,10 +192,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var retorno = NotaFiscalDAO.Instance.EmitirNfFS((uint)id);
-
                     sessao.Commit();
 
                     return this.Aceito(retorno);
@@ -222,7 +213,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se o email foi inserido na fila de envio.</returns>
         [HttpPost]
         [Route("{id}/reenviarEmail")]
-        [SwaggerResponse(200, "Email adicionado na fila de envio.")]
+        [SwaggerResponse(202, "Email adicionado à fila de envio.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação no reenvio de email de nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult ReenviarEmail(int id, bool cancelamento)
@@ -238,13 +229,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     NotaFiscalDAO.Instance.EnviarEmailXml(sessao, NotaFiscalDAO.Instance.GetElement(sessao, (uint)id), cancelamento);
-
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito("E-mail adicionado à fila de envio.");
                 }
                 catch (Exception ex)
                 {
@@ -261,7 +249,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se a separação de valores foi realizada.</returns>
         [HttpPost]
         [Route("{id}/separarValores")]
-        [SwaggerResponse(200, "Separação de valores concluída.")]
+        [SwaggerResponse(202, "Separação de valores concluída.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na separação de valores de contas a receber da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult SepararValores(int id)
@@ -277,8 +265,6 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)id);
 
                     if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
@@ -301,7 +287,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito($"Separação de valores da nota fiscal {id} concluída.");
                 }
                 catch (Exception ex)
                 {
@@ -318,7 +304,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se o cancelamento da separação de valores foi realizada.</returns>
         [HttpPost]
         [Route("{id}/cancelarSeparacaoValores")]
-        [SwaggerResponse(200, "Cancelamento da separação de valores concluída.")]
+        [SwaggerResponse(202, "Cancelamento da separação de valores concluída.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação no cancelamento da separação de valores de contas a receber da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult CancelarSeparacaoValores(int id)
@@ -334,8 +320,6 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var tipoDocumento = NotaFiscalDAO.Instance.GetTipoDocumento(sessao, (uint)id);
 
                     if (tipoDocumento == (int)NotaFiscal.TipoDoc.Saída)
@@ -351,7 +335,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito($"Separação de valores da nota fiscal {id} cancelada.");
                 }
                 catch (Exception ex)
                 {
@@ -368,7 +352,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se a emissão da NFC-e foi realizada.</returns>
         [HttpPost]
         [Route("{id}/emitirNfce")]
-        [SwaggerResponse(200, "Nota fiscal emitida.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(202, "Nota fiscal emitida.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na emissão da nota fiscal de consumidor final.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult EmitirNfce(int id)
@@ -384,10 +368,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var retornoEmissao = NotaFiscalDAO.Instance.EmitirNfcOffline((uint)id);
-
                     sessao.Commit();
 
                     return this.Aceito(retornoEmissao);
@@ -407,7 +388,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se a emissão da NFC-e foi realizada.</returns>
         [HttpPost]
         [Route("{id}/emitirNfceOffline")]
-        [SwaggerResponse(200, "Nota fiscal emitida em modo offline.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(202, "Nota fiscal emitida em modo offline.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo `id` ou de validação na emissão da nota fiscal de consumidor final em modo offline.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult EmitirNfceOffline(int id)
@@ -423,10 +404,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
                 try
                 {
-                    sessao.BeginTransaction();
-
                     var retornoEmissao = NotaFiscalDAO.Instance.EmitirNf((uint)id, false, true, false);
-
                     sessao.Commit();
 
                     return this.Aceito(retornoEmissao);
@@ -446,7 +424,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se o modo de contingência foi alterado.</returns>
         [HttpPost]
         [Route("alterarContingencia")]
-        [SwaggerResponse(200, "Modo de contingência alterado.")]
+        [SwaggerResponse(202, "Modo de contingência alterado.")]
         [SwaggerResponse(400, "Erro ao habilitar modo de contingência.", Type = typeof(MensagemDto))]
         public IHttpActionResult AlterarContingencia([FromBody] EntradaDto entrada)
         {
@@ -454,13 +432,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
             {
                 try
                 {
-                    sessao.BeginTransaction();
-
                     ConfigDAO.Instance.SetValue(Config.ConfigEnum.ContingenciaNFe, UserInfo.GetUserInfo.IdLoja, (int)entrada.TipoContingencia);
-
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito("Modo de contingência alterado.");
                 }
                 catch (Exception ex)
                 {

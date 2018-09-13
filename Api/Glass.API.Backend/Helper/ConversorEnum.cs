@@ -4,8 +4,10 @@
 
 using Glass.API.Backend.Models.Genericas;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Glass.API.Backend.Helper
 {
@@ -16,6 +18,8 @@ namespace Glass.API.Backend.Helper
     internal class ConversorEnum<T>
         where T : struct
     {
+        private readonly ISet<T> listaIgnorados;
+
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ConversorEnum{T}"/>.
         /// </summary>
@@ -25,6 +29,8 @@ namespace Glass.API.Backend.Helper
             {
                 throw new ArgumentException("Tipo T precisa ser um Enum.", "T");
             }
+
+            listaIgnorados = new HashSet<T>();
         }
 
         /// <summary>
@@ -35,13 +41,9 @@ namespace Glass.API.Backend.Helper
         {
             var lista = new List<IdNomeDto>();
 
-            foreach (var item in Enum.GetValues(typeof(T)))
+            foreach (var item in this.ObterItens())
             {
-                lista.Add(new IdNomeDto
-                {
-                    Id = (int)item,
-                    Nome = this.ObterDescricao(item as Enum),
-                });
+                lista.Add(this.ConverterItem(item));
             }
 
             return lista;
@@ -56,18 +58,59 @@ namespace Glass.API.Backend.Helper
         {
             var dicionario = new Dictionary<string, IdNomeDto>();
 
-            foreach (var item in Enum.GetValues(typeof(T)))
+            foreach (var item in this.ObterItens())
             {
                 dicionario.Add(
                     this.FormatarParaCamelCase(item.ToString()),
-                    new IdNomeDto
-                    {
-                        Id = (int)item,
-                        Nome = this.ObterDescricao(item as Enum),
-                    });
+                    this.ConverterItem(item));
             }
 
             return dicionario;
+        }
+
+        /// <summary>
+        /// Adiciona itens que devem ser ignorados no momento da tradução.
+        /// </summary>
+        /// <param name="itens">Os itens que devem ser ignorados.</param>
+        /// <returns>O próprio objeto de conversão.</returns>
+        public ConversorEnum<T> AdicionarIgnorados(params T[] itens)
+        {
+            foreach (var item in itens)
+            {
+                listaIgnorados.Add(item);
+            }
+
+            return this;
+        }
+
+        private IEnumerable ObterItens()
+        {
+            var validarItensIgnorados = listaIgnorados.Any();
+
+            foreach (var item in Enum.GetValues(typeof(T)))
+            {
+                bool retornar = true;
+
+                if (validarItensIgnorados)
+                {
+                    var valorConvertido = (T)item;
+                    retornar = !listaIgnorados.Contains(valorConvertido);
+                }
+
+                if (retornar)
+                {
+                    yield return item;
+                }
+            }
+        }
+
+        private IdNomeDto ConverterItem(object item)
+        {
+            return new IdNomeDto
+            {
+                Id = (int)Convert.ChangeType(item, typeof(int)),
+                Nome = this.ObterDescricao(item as Enum) ?? item.ToString(),
+            };
         }
 
         private string ObterDescricao(Enum valor)

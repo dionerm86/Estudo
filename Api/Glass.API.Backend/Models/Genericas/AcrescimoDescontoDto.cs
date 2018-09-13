@@ -18,13 +18,13 @@ namespace Glass.API.Backend.Models.Genericas
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public int Tipo { get; set; }
+        public int? Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor ou percentual de acréscimo ou desconto, pelo tipo.
         /// </summary>
         [DataMember]
         [JsonProperty("valor")]
-        public decimal Valor { get; set; }
+        public decimal? Valor { get; set; }
     }
 }
