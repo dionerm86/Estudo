@@ -33,10 +33,10 @@ namespace Glass.API.Backend.Helper.Produtos
                     return "CodInterno";
 
                 case "descricaogrupo":
-                    return "TipoProduto";
+                    return "Grupo";
 
                 case "custofornecedor":
-                    return "Custofabase";
+                    return "Custofabbase";
 
                 case "custocomimpostos":
                     return "CustoCompra";

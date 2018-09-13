@@ -58,7 +58,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                     .PesquisarProdutos(
                         filtro.Codigo,
                         filtro.Descricao,
-                        filtro.Situacao,
+                        filtro.Situacao ?? Situacao.Ativo,
                         null,
                         null,
                         null,
@@ -71,7 +71,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
                         filtro.ValorAlturaFim,
                         filtro.ValorLarguraInicio,
                         filtro.ValorLarguraFim,
-                        0);
+                        null);
 
                 ((Colosoft.Collections.IVirtualList)produtos).Configure(filtro.NumeroRegistros);
                 ((Colosoft.Collections.ISortableCollection)produtos).ApplySort(filtro.ObterTraducaoOrdenacao());

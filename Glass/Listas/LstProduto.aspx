@@ -49,16 +49,19 @@
                         <a href="#" @click.prevent="ordenar('valorobra')">Obra</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('quantidadereserva')">Reserva</a>
+                        <a href="#" @click.prevent="ordenar('valorreposicao')">Reposição</a>
                     </th>
                     <th>
+                        <a href="#" @click.prevent="ordenar('quantidadereserva')">Reserva</a>
+                    </th>
+                    <th v-if="configuracoes.usarLiberacaoPedido">
                         <a href="#" @click.prevent="ordenar('quantidadeliberacao')">Liberação</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('estoque')">Estoque</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('estoquedisponivel')">Disponível</a>
+                        <a href="#">Disponível</a>
                     </th>
                     <th></th>
                 </template>
@@ -89,7 +92,7 @@
                     <td>{{ item.valorObra }}</td>
                     <td>{{ item.valorReposicao }}</td>
                     <td>{{ item.quantidadeReserva }}</td>
-                    <td>{{ item.quantidadeLiberacao }}</td>
+                    <td v-if="configuracoes.usarLiberacaoPedido">{{ item.quantidadeLiberacao }}</td>
                     <td>{{ item.estoque }}</td>
                     <td>{{ item.estoqueDisponivel }}</td>
                     <td style="white-space: nowrap">

@@ -117,7 +117,7 @@ const app = new Vue({
     abrirListaProdutos: function (ficha, exportarExcel) {
       var filtroReal = this.formatarFiltros_();
       
-      var url = '../Relatorios/RelBase.aspx?Rel=' + (ficha ? 'Ficha' : '') + 'Produtos&' + filtroReal + "&exportarExcel=" + exportarExcel;
+      var url = '../Relatorios/RelBase.aspx?Rel=' + (ficha ? 'Ficha' : '') + 'Produtos' + filtroReal + '&exportarExcel=' + exportarExcel;
 
       this.abrirJanela(600, 800, url);
     },
@@ -165,6 +165,7 @@ const app = new Vue({
       incluirFiltro('larguraInicio', this.filtro.valorLarguraInicio);
       incluirFiltro('larguraFim', this.filtro.valorLarguraFim);
       incluirFiltro('orderBy', this.filtro.ordenacaoFiltro);
+      incluirFiltro('colunas', '3,4,5,6,7,8');
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

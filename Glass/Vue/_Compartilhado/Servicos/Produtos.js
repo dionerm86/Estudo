@@ -40,7 +40,7 @@ Servicos.Produtos = (function(http) {
      * @returns {Promise} Uma promise com o resultado da operação.
      */
     excluir: function (idProduto) {
-      if (!idCliente) {
+      if (!idProduto) {
         throw new Error('Produto é obrigatório.');
       }
 

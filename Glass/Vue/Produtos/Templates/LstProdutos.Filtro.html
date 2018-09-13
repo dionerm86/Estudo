@@ -2,7 +2,7 @@
     <div>
         <span class="form-group">
             <label>Cód.</label>
-            <input type="number" v-model.number="filtroAtual.codigo" style="width: 60px" />
+            <input type="text" v-model="filtroAtual.codigo" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -13,7 +13,6 @@
         <span class="form-group">
             <label>Situação</label>
             <select v-model="filtroAtual.situacao">
-                <option Value="0">Todas</option>
                 <option Value="1">Ativo</option>
                 <option Value="2">Inativo</option>
             </select>

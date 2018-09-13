@@ -60,7 +60,7 @@ Vue.component('produtos-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroGrupos: function() {
-      return Servicos.Produtos.Grupos.obterParaControle();
+      return null;//return Servicos.Produtos.Grupos.obterParaControle();
     },
 
     /**
@@ -68,7 +68,7 @@ Vue.component('produtos-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSubgrupos: function (filtro) {
-      return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
+      return null;//return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
     }
   },
 
