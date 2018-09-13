@@ -129,8 +129,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
         /// <summary>
         /// Valida se um boleto pode ser impresso.
-        /// <param name="id">O identificador da nota fiscal.</param>
         /// </summary>
+        /// <param name="id">O identificador da nota fiscal.</param>
         /// <returns>Um status HTTP indicando se o boleto pode ser impresso.</returns>
         [HttpGet]
         [Route("{id}/validarBoleto")]
@@ -197,8 +197,8 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
         /// <summary>
         /// Retorna o id da nota fiscal com base no id conta receber.
-        /// <param name="idContaReceber">O identificador da conta a receber.</param>
         /// </summary>
+        /// <param name="idContaReceber">O identificador da conta a receber.</param>
         /// <returns>O identificador da nota fiscal.</returns>
         [HttpGet]
         [Route("obterIdNotaFiscalPeloIdContaReceber")]
@@ -227,10 +227,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
 
         /// <summary>
         /// Retorna uma mensagem indicando se o boleto está impresso.
+        /// </summary>
         /// <param name="id">O identificador da nota fiscal.</param>
         /// <param name="idContaReceber">O identificador da conta a receber.</param>
         /// <param name="idLiberacao">O identificador da liberação.</param>
-        /// </summary>
         /// <returns>Uma mensagem indicando se o boleto está impreso.</returns>
         [HttpGet]
         [Route("{id}/obterMensagemBoletoImpresso")]

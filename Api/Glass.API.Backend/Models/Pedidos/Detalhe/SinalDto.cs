@@ -25,6 +25,6 @@ namespace Glass.API.Backend.Models.Pedidos.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("valor")]
-        public decimal? Valor { get; set; }
+        public decimal Valor { get; set; }
     }
 }

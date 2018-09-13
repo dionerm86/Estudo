@@ -91,6 +91,8 @@ namespace Glass.Data.DAL
                 }
             }
 
+            sql += "Order by DataCad DESC";
+
             return sql.Replace("$$$", criterio);
         }
 

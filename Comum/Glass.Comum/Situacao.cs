@@ -1,6 +1,6 @@
-﻿using Colosoft.Globalization;
+﻿using Colosoft;
+using Colosoft.Globalization;
 using System.Collections.Generic;
-using Colosoft;
 
 namespace Glass
 {
@@ -8,7 +8,7 @@ namespace Glass
     /// Situação padrão do sistema.
     /// </summary>
     [Colosoft.Translate(typeof(SituacaoTranslateProvider))]
-    public enum Situacao
+    public enum Situacao : long
     {
         /// <summary>
         /// Ativo.

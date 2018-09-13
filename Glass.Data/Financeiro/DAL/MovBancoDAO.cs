@@ -96,7 +96,7 @@ namespace Glass.Data.DAL
                 criterioRpt += "Apenas lançamentos manuais    ";
             }
 
-            sql += " Order By DATE_FORMAT(m.dataMov, '%Y-%m-%d %H%i') Asc, IdMovBanco Asc";
+            sql += " Group by IdMovBanco Order By DATE_FORMAT(m.dataMov, '%Y-%m-%d %H%i') Asc, IdMovBanco Asc";
 
             List<MovBanco> lstMov = objPersistence.LoadData(sql.Replace("$$$", criterioRpt), GetParams(dtIni, dtFim));
 
