@@ -150,7 +150,7 @@
                     </td>
                     <td v-if="exibirEstoqueFiscal">
                         <controle-selecao-participante-fiscal :participante.sync="participanteAtual"
-                            :tipo-participante.sync="tipoParticipanteAtual"></controle-selecao-participante-fiscal>
+                            :tipo-participante.sync="estoqueProduto.tipoParticipante"></controle-selecao-participante-fiscal>
                     </td>
                     <td v-if="exibirEstoqueFiscal">
                     </td>

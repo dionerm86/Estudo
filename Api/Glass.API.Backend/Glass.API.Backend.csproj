@@ -347,6 +347,7 @@
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
     <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaEstoques.cs" />
     <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
+    <Compile Include="Helper\NotasFiscais\ConversorParticipanteDtoParaModelo.cs" />
     <Compile Include="Helper\PedidosConferencia\TraducaoOrdenacaoListaPedidosConferencia.cs" />
     <Compile Include="Helper\NotasFiscais\TraducaoOrdenacaoListaNotasFiscais.cs" />
     <Compile Include="Helper\Liberacoes\TraducaoOrdenacaoListaLiberacoes.cs" />
@@ -390,7 +391,7 @@
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
     <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Estoques\Lista\ConversorParticipante.cs" />
+    <Compile Include="Helper\NotasFiscais\ConversorParticipanteModeloParaDto.cs" />
     <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
     <Compile Include="Models\Estoques\Lista\PermissoesDto.cs" />

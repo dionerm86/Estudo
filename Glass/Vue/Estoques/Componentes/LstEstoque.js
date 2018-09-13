@@ -15,8 +15,7 @@ const app = new Vue({
     estoqueProdutoOriginal: {},
     insercaoRapidaEstoque: false,
     idProdutoEmAtualizacao: null,
-    participanteAtual: null,
-    tipoParticipanteAtual: null
+    participanteAtual: null
   },
 
   methods: {
@@ -175,16 +174,14 @@ const app = new Vue({
      */
     iniciarCadastroOuAtualizacao_: function (estoqueProduto) {
       this.estoqueProdutoAtual = estoqueProduto;
-
-      var tipoParticipanteAtual = estoqueProduto ? this.clonar(estoqueProduto.tipoParticipante) : null;
-      var participanteAtual = estoqueProduto ? this.clonar(estoqueProduto.participante) : null;
+      this.participanteAtual = estoqueProduto ? this.clonar(estoqueProduto.participante) : null;
 
       if (this.exibirEstoqueFiscal) {
         this.estoqueProduto = {
           quantidadeEstoqueFiscal: estoqueProduto ? estoqueProduto.quantidadeEstoqueFiscal : null,
           quantidadePosseTerceiros: estoqueProduto ? estoqueProduto.quantidadePosseTerceiros : null,
-          tipoParticipante: (tipoParticipanteAtual || {}).id,
-          idParticipante: (participanteAtual || {}).id
+          tipoParticipante: estoqueProduto && estoqueProduto.tipoParticipante ? estoqueProduto.tipoParticipante.id : null,
+          idParticipante: (this.participanteAtual || {}).id
         };
       } else {
         this.estoqueProduto = {

@@ -90,6 +90,18 @@ namespace Glass.API.Backend.Models.Genericas.CadastroAtualizacao
         }
 
         /// <summary>
+        /// Verifica se um campo foi informado no JSON.
+        /// </summary>
+        /// <typeparam name="U">O tipo de retorno do método.</typeparam>
+        /// <param name="campoEnviado">O campo do DTO que está sendo avaliado.</param>
+        /// <returns>Verdadeiro, se o campo está presente no JSON.</returns>
+        internal bool VerificarCampoInformado<U>(Expression<Func<T, U>> campoEnviado)
+        {
+            var conversor = ObterConversor(campoEnviado);
+            return conversor.VerificarCampoInformado(this.valores);
+        }
+
+        /// <summary>
         /// Recupera o valor que será utilizado para a conversão do DTO para o modelo.
         /// </summary>
         /// <typeparam name="U">O tipo de retorno do método.</typeparam>

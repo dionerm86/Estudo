@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Helper.NotasFiscais;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.NotasFiscais.TiposParticipantes;
 using Glass.Data.DAL;
@@ -43,7 +44,7 @@ namespace Glass.API.Backend.Models.Estoques.Lista
             this.QuantidadeDefeito = (decimal)estoqueProduto.Defeito;
             this.QuantidadePosseTerceiros = (decimal)estoqueProduto.QtdePosseTerceiros;
 
-            var conversor = new ConversorParticipante(estoqueProduto);
+            var conversor = new ConversorParticipanteModeloParaDto(estoqueProduto);
             this.Participante = conversor.ObterParticipante();
             this.TipoParticipante = conversor.ObterTipoParticipante();
 

@@ -1,8 +1,7 @@
-﻿// <copyright file="ConversorParticipante.cs" company="Sync Softwares">
+﻿// <copyright file="ConversorParticipanteModeloParaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.NotasFiscais.TiposParticipantes;
 using Glass.Data.Model;
@@ -10,21 +9,21 @@ using System;
 using System.Linq;
 using static Glass.Data.EFD.DataSourcesEFD;
 
-namespace Glass.API.Backend.Models.Estoques.Lista
+namespace Glass.API.Backend.Helper.NotasFiscais
 {
     /// <summary>
-    /// Classe com os métodos de conversão para o participante a partir do estoque.
+    /// Classe com os métodos de conversão para o participante a partir de um modelo.
     /// </summary>
-    internal class ConversorParticipante
+    internal class ConversorParticipanteModeloParaDto
     {
         private IdNomeDto participante;
         private IdNomeDto tipoParticipante;
 
         /// <summary>
-        /// Inicia uma nova instância da classe <see cref="ConversorParticipante"/>.
+        /// Inicia uma nova instância da classe <see cref="ConversorParticipanteModeloParaDto"/>.
         /// </summary>
         /// <param name="estoqueProduto">Os dados de estoque que serão convertidos.</param>
-        public ConversorParticipante(ProdutoLoja estoqueProduto)
+        public ConversorParticipanteModeloParaDto(ProdutoLoja estoqueProduto)
         {
             this.Converter(estoqueProduto);
         }

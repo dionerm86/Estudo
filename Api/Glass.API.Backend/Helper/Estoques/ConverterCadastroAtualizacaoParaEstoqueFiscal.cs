@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Helper.NotasFiscais;
 using Glass.API.Backend.Models.Estoques.CadastroAtualizacao;
 using System;
 
@@ -45,47 +46,34 @@ namespace Glass.API.Backend.Helper.Estoques
 
         private void ConverterDtoParaModelo(Data.Model.ProdutoLoja destino)
         {
-            destino.EstoqueFiscal = (double)this.cadastro.QuantidadeEstoqueFiscal;
-            destino.QtdePosseTerceiros = (double)this.cadastro.QuantidadePosseTerceiros;
+            destino.EstoqueFiscal = this.cadastro.ObterValorNormalizado(c => c.QuantidadeEstoqueFiscal, destino.EstoqueFiscal);
+            destino.QtdePosseTerceiros = this.cadastro.ObterValorNormalizado(c => c.QuantidadePosseTerceiros, destino.QtdePosseTerceiros);
 
             this.ConverterParticipante(destino);
         }
 
         private void ConverterParticipante(Data.Model.ProdutoLoja destino)
         {
-            if (this.cadastro.IdParticipante == null && this.cadastro.TipoParticipante == null)
+            var participanteInformado = this.cadastro.VerificarCampoInformado(c => c.IdParticipante);
+            var tipoParticipanteInformado = this.cadastro.VerificarCampoInformado(c => c.TipoParticipante);
+
+            if (!participanteInformado && !tipoParticipanteInformado)
             {
                 return;
             }
 
-            destino.IdCliente = null;
-            destino.IdFornec = null;
-            destino.IdLojaTerc = null;
-            destino.IdTransportador = null;
-            destino.IdAdminCartao = null;
+            var conversor = new ConversorParticipanteDtoParaModelo(
+                participanteInformado,
+                this.cadastro.IdParticipante,
+                tipoParticipanteInformado,
+                this.cadastro.TipoParticipante,
+                destino);
 
-            switch (this.cadastro.TipoParticipante.Value)
-            {
-                case Data.EFD.DataSourcesEFD.TipoPartEnum.Cliente:
-                    destino.IdCliente = this.cadastro.IdParticipante;
-                    break;
-
-                case Data.EFD.DataSourcesEFD.TipoPartEnum.Fornecedor:
-                    destino.IdFornec = this.cadastro.IdParticipante;
-                    break;
-
-                case Data.EFD.DataSourcesEFD.TipoPartEnum.Loja:
-                    destino.IdLojaTerc = this.cadastro.IdParticipante;
-                    break;
-
-                case Data.EFD.DataSourcesEFD.TipoPartEnum.Transportador:
-                    destino.IdTransportador = this.cadastro.IdParticipante;
-                    break;
-
-                case Data.EFD.DataSourcesEFD.TipoPartEnum.AdministradoraCartao:
-                    destino.IdAdminCartao = this.cadastro.IdParticipante;
-                    break;
-            }
+            destino.IdCliente = conversor.IdCliente;
+            destino.IdFornec = conversor.IdFornecedor;
+            destino.IdLojaTerc = conversor.IdLoja;
+            destino.IdTransportador = conversor.IdTransportador;
+            destino.IdAdminCartao = conversor.IdAdministradoraCartao;
         }
     }
 }
