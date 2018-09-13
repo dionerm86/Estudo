@@ -37,7 +37,7 @@
                 alert("Informe o tipo do funcionário.");
                 return false;
             }
-
+            cblSeto
             if (FindControl("txtEndereco", "input").value == "") {
                 alert("Informe o endereço do funcionário.");
                 return false;
@@ -82,7 +82,7 @@
 
             FindControl("cblSetor", "table").style.display = display;
         }
-        
+
 
     </script>
 
@@ -382,7 +382,7 @@
                                             <asp:Label ID="lblTipoPedido" runat="server" Text="Tipo de Pedido"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <sync:CheckBoxListDropDown ID="cbdTipoPedido" runat="server" 
+                                            <sync:CheckBoxListDropDown ID="cbdTipoPedido" runat="server"
                                                 SelectedValue='<%# Bind("TipoPedido") %>' Title="" DataSourceID="odsTipoPedido"
                                                 DataTextField="Name" DataValueField="Id">
                                             </sync:CheckBoxListDropDown>
@@ -423,8 +423,8 @@
                                                 Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
-                                            <asp:CheckBox ID="CheckBox2" runat="server" Checked='<%# Bind("HabilitarChat") %>' 
-                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />                                            
+                                            <asp:CheckBox ID="CheckBox2" runat="server" Checked='<%# Bind("HabilitarChat") %>'
+                                                Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />
                                         </td>
                                     </tr>
                                     <tr>
@@ -513,7 +513,7 @@
                                             <asp:Label ID="Label39" runat="server" Text="Registrado"></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
-                                            <asp:CheckBox ID="chkRegistrado" runat="server" Checked='<%# Bind("Registrado") %>' />                                            
+                                            <asp:CheckBox ID="chkRegistrado" runat="server" Checked='<%# Bind("Registrado") %>' />
                                         </td>
                                     </tr>
                                     <tr>
@@ -600,7 +600,7 @@
                                             <asp:Label ID="Label3" runat="server" Text="Loja"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name" AppendDataBoundItems="true" 
+                                            <asp:DropDownList ID="drpLoja" runat="server" DataSourceID="odsLoja" DataTextField="Name" AppendDataBoundItems="true"
                                                 OnLoad="drpLojaEdit_Load" DataValueField="Id" SelectedValue='<%# Bind("IdLoja") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
@@ -745,7 +745,7 @@
                                             <asp:Image ID="Image1" runat="server" ImageUrl='<%# Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.ObtemUrl((int)Eval("IdFunc")) %>' Height="120px"
                                                 Width="140px" visible='<%# Glass.Global.UI.Web.Process.Funcionarios.FuncionarioRepositorioImagens.Instance.PossuiImagem((int)Eval("IdFunc")) %>'/>
                                         </td>
-                                    </tr>                                    
+                                    </tr>
                                     <tr>
                                         <td align="left" class="dtvHeader">
                                             <asp:Label ID="Label10" runat="server" Text="Foto Funcionário"></asp:Label>
@@ -758,7 +758,7 @@
                                             <asp:Label ID="Label21" runat="server" Text="Habilitar Chat WebGlass" Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
-                                            <asp:CheckBox ID="chkHabilitarChat" runat="server" Checked='<%# Bind("HabilitarChat") %>' Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />                                            
+                                            <asp:CheckBox ID="chkHabilitarChat" runat="server" Checked='<%# Bind("HabilitarChat") %>' Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />
                                         </td>
                                     </tr>
                                     <tr >
@@ -811,15 +811,15 @@
             </td>
         </tr>
     </table>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSetor" runat="server" 
-        SelectMethod="ObtemSetores" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSetor" runat="server"
+        SelectMethod="ObtemSetores"
         TypeName="Glass.PCP.Negocios.ISetorFluxo">
     </colo:VirtualObjectDataSource>
 
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncionario" runat="server" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFuncionario" runat="server"
         DataObjectTypeName="Glass.Global.Negocios.Entidades.Funcionario"
-        InsertMethod="SalvarFuncionario" 
-        SelectMethod="ObtemFuncionario" 
+        InsertMethod="SalvarFuncionario"
+        SelectMethod="ObtemFuncionario"
         CreateDataObjectMethod="CriarFuncionario"
         TypeName="Glass.Global.Negocios.IFuncionarioFluxo"
         UpdateMethod="SalvarFuncionario" UpdateStrategy="GetAndUpdate"
@@ -830,14 +830,14 @@
         </SelectParameters>
     </colo:VirtualObjectDataSource>
 
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoFunc" runat="server" 
-        SelectMethod="ObtemTiposFuncionario" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoFunc" runat="server"
+        SelectMethod="ObtemTiposFuncionario"
         TypeName="Glass.Global.Negocios.IFuncionarioFluxo">
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server"
         SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
     </colo:VirtualObjectDataSource>
-    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPedido" runat="server" 
+    <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPedido" runat="server"
         SelectMethod="ObtemTiposPedido"
         TypeName="Glass.Global.UI.Web.Process.Funcionarios.CadastroFuncionario">
     </colo:VirtualObjectDataSource>
@@ -845,7 +845,7 @@
     <script type="text/javascript">
 
         hideShowSetor();
-        
+
     </script>
 
 </asp:Content>

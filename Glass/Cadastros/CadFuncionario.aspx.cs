@@ -21,7 +21,7 @@ namespace Glass.UI.Web.Cadastros
         /// Instancia do funcionário que está sendo editada.
         /// </summary>
         private Glass.Global.Negocios.Entidades.Funcionario _funcionario;
-        
+
         #endregion
 
         #region Properties
@@ -31,7 +31,7 @@ namespace Glass.UI.Web.Cadastros
         /// </summary>
         protected IList<Glass.PCP.Negocios.Entidades.SetorDescritor> Setores
         {
-            get 
+            get
             {
                 if (_setores == null)
                 {
@@ -40,7 +40,7 @@ namespace Glass.UI.Web.Cadastros
 
                     _setores = fluxo.ObtemSetores().Where(f => f.Id != 1/* Impr. Etiqueta */).ToList();
                 }
-                return _setores; 
+                return _setores;
             }
         }
 
@@ -51,7 +51,7 @@ namespace Glass.UI.Web.Cadastros
             base.OnInit(e);
 
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
-            
+
             dtvFuncionario.Register("../Listas/LstFuncionario.aspx");
             odsFuncionario.Register();
 
@@ -61,7 +61,7 @@ namespace Glass.UI.Web.Cadastros
         {
             if (Request["idFunc"] != null)
                 dtvFuncionario.ChangeMode(DetailsViewMode.Edit);
-    
+
             if (!IsPostBack)
             {
                 // Impede o acesso não autorizado à esta tela
@@ -73,18 +73,18 @@ namespace Glass.UI.Web.Cadastros
                     Response.Redirect("../WebGlass/Main.aspx");
             }
         }
-    
+
         protected void btnCancelar_Click(object sender, EventArgs e)
         {
             Response.Redirect("../Listas/LstFuncionario.aspx");
         }
-    
+
         protected void odsFuncionario_Inserting(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
             _funcionario = e.InputParameters[0] as Glass.Global.Negocios.Entidades.Funcionario;
             ProcessarSetores(_funcionario);
         }
-    
+
         protected void odsFuncionario_Inserted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -93,13 +93,13 @@ namespace Glass.UI.Web.Cadastros
             else
                 FuncionarioSalvo(e.ReturnValue as Colosoft.Business.SaveResult);
         }
-    
+
         protected void odsFuncionario_Updating(object sender, Colosoft.WebControls.VirtualObjectDataSourceMethodEventArgs e)
         {
             _funcionario = e.InputParameters[0] as Glass.Global.Negocios.Entidades.Funcionario;
             ProcessarSetores(_funcionario);
         }
-    
+
         protected void odsFuncionario_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -108,7 +108,7 @@ namespace Glass.UI.Web.Cadastros
             else
                 FuncionarioSalvo(e.ReturnValue as Colosoft.Business.SaveResult);
         }
-    
+
         /// <summary>
         /// Processa os setores selecionados para o funcionário.
         /// </summary>
@@ -117,7 +117,7 @@ namespace Glass.UI.Web.Cadastros
         {
             string cblSetorName = dtvFuncionario.CurrentMode == DetailsViewMode.Edit ? "cblSetor" : "cblSetorIns";
             CheckBoxList cblSetor = ((CheckBoxList)dtvFuncionario.FindControl(cblSetorName));
-    
+
             string setores = String.Empty;
             var atualizados = new List<Glass.Global.Negocios.Entidades.FuncionarioSetor>();
             var setoresAdicionados = string.Empty;
@@ -182,12 +182,12 @@ namespace Glass.UI.Web.Cadastros
                 Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Glass.Global.Negocios.IMenuFluxo>().RemoveMenuFuncMemoria(int.Parse(Request["idFunc"]));
         }
-    
+
         protected void dtvFuncionario_DataBound(object sender, EventArgs e)
         {
             CheckBoxListDropDown cbdTipoPedido = (CheckBoxListDropDown)dtvFuncionario.FindControl("cbdTipoPedido");
             Label lblTipoPedido = (Label)dtvFuncionario.FindControl("lblTipoPedido");
-    
+
             // Verifica se o pedido tem itens que não são permitidos pelo seu tipo
             if (!PedidoConfig.DadosPedido.BloquearItensTipoPedido)
             {
@@ -200,22 +200,22 @@ namespace Glass.UI.Web.Cadastros
                 ((TextBox)dtvFuncionario.FindControl("txtNumPdv")).Visible = false;
                 ((Label)dtvFuncionario.FindControl("lblNumPdv")).Visible = false;
             }
-    
+
             if (dtvFuncionario.CurrentMode != DetailsViewMode.Edit)
                 return;
 
             var funcionario = dtvFuncionario.DataItem as Glass.Global.Negocios.Entidades.Funcionario;
 
             CheckBoxList cblSetor = ((CheckBoxList)dtvFuncionario.FindControl("cblSetor"));
-    
+
             // Seleciona os setores do funcionário
             foreach (var fs in funcionario.FuncionarioSetores)
                 foreach (ListItem li in cblSetor.Items)
                     if (li.Value == fs.IdSetor.ToString())
                         li.Selected = true;
-    
+
         }
-    
+
         protected void cblSetorIns_SelectedIndexChanged(object sender, EventArgs e)
         {
             var chk = (CheckBoxList)sender;
@@ -223,17 +223,20 @@ namespace Glass.UI.Web.Cadastros
 
             foreach (ListItem item in chk.Items)
             {
+                if (expCarregamento && expBalcao)
+                {
+                    break;
+                }
+
                 // Recupera o setor associado
                 var setor = Setores.FirstOrDefault(f => f.Id == int.Parse(item.Value));
                 if (item.Selected && setor.TipoSetor == TipoSetor.ExpCarregamento)
                 {
                     expCarregamento = true;
-                    break;
                 }
                 else if (item.Selected && setor.TipoSetor == TipoSetor.Entregue && Glass.Configuracoes.PCPConfig.UsarNovoControleExpBalcao)
                 {
                     expBalcao = true;
-                    break;
                 }
             }
 
@@ -243,17 +246,18 @@ namespace Glass.UI.Web.Cadastros
                 {
                     // Recupera o setor associado
                     var setor = Setores.FirstOrDefault(f => f.Id == int.Parse(item.Value));
-                    if (setor.TipoSetor != TipoSetor.ExpCarregamento)
+                    if (setor.TipoSetor != TipoSetor.ExpCarregamento && setor.TipoSetor != TipoSetor.Entregue && Glass.Configuracoes.PCPConfig.UsarNovoControleExpBalcao)
                         item.Selected = false;
                 }
             }
-            else if (expBalcao)
+
+            if (expBalcao)
             {
                 foreach (ListItem item in chk.Items)
                 {
                     // Recupera o setor associado
                     var setor = Setores.FirstOrDefault(f => f.Id == int.Parse(item.Value));
-                    if (setor.TipoSetor != TipoSetor.Entregue && Glass.Configuracoes.PCPConfig.UsarNovoControleExpBalcao)
+                    if (setor.TipoSetor != TipoSetor.ExpCarregamento && setor.TipoSetor != TipoSetor.Entregue && Glass.Configuracoes.PCPConfig.UsarNovoControleExpBalcao)
                         item.Selected = false;
                 }
             }
