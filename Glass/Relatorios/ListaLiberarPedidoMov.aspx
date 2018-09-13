@@ -6,7 +6,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
-        function openRpt(semValor)
+        function openRpt(semValor, exportarExcel)
         {
             var idCliente = FindControl("txtNumCli", "input").value;
             var nomeCliente = FindControl("txtNome", "input").value;
@@ -17,7 +17,7 @@
             
             openWindow(600, 800, "RelBase.aspx?rel=LiberarPedidoMov" + (semValor ? "SemValor" : "") + 
                 "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni + 
-                "&dataFim=" + dataFim + "&situacao=" + situacao + "&idFunc=" + idFunc);
+                "&dataFim=" + dataFim + "&situacao=" + situacao + "&idFunc=" + idFunc + "&exportarExcel=" + exportarExcel);
         }
         
         function getCli(idCli)
@@ -161,10 +161,13 @@
                     TypeName="Glass.Data.DAL.FuncionarioDAO">
                 </colo:VirtualObjectDataSource>
                 <br />
-                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false, false); return false;"><img border="0" 
                     src="../Images/Printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkImprimirSemValor" runat="server" OnClientClick="openRpt(true); return false;"><img border="0" 
+               <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(false, true); return false;"><img border="0"
+                    src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
+                &nbsp;&nbsp;&nbsp;
+                <asp:LinkButton ID="lnkImprimirSemValor" runat="server" OnClientClick="openRpt(true, false); return false;"><img border="0" 
                     src="../Images/Printer.png" /> Imprimir (sem valores)</asp:LinkButton>
             </td>
         </tr>
