@@ -48,7 +48,7 @@ namespace Glass.Configuracoes
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirItensProdutosRelatorio); }
         }
-        
+
         /// <summary>
         /// Retorna o limite diário de medições.
         /// </summary>
@@ -92,6 +92,14 @@ namespace Glass.Configuracoes
         public static bool PermirtirSalvarOrcamentoSemProcAplic
         {
             get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermirtirSalvarOrcamentoSemProcAplic); }
+        }
+
+        /// <summary>
+        /// Verifica se na geração de pedidos agrupados o orçamento deve ser desmembrado por subgrupo.
+        /// </summary>
+        public static bool DesmembrarOrcamentoPorSubgrupoGerarPedido
+        {
+            get { return Config.GetConfigItem<bool>(Config.ConfigEnum.DesmembrarOrcamentoPorSubgrupoGerarPedido); }
         }
     }
 }

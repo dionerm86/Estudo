@@ -23,10 +23,10 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Um status HTTP indicando se a nota fiscal foi excluída.</returns>
         [HttpDelete]
         [Route("{id}")]
-        [SwaggerResponse(200, "Nota fiscal excluída.")]
+        [SwaggerResponse(202, "Nota fiscal excluída.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na exclusão da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Notas fiscal não encontrada.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ExcluirPedido(int id)
+        public IHttpActionResult ExcluirNotaFiscal(int id)
         {
             using (var sessao = new GDATransaction())
             {
@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     NotaFiscalDAO.Instance.DeleteNotaFiscal(sessao, (uint)id);
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito($"Nota fiscal {id} excluída.");
                 }
                 catch (Exception e)
                 {

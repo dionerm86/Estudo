@@ -1,4 +1,4 @@
-﻿// <copyright file="PatchAmbientesPedidoController.cs" company="Sync Softwares">
+// <copyright file="PatchAmbientesPedidoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

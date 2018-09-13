@@ -1405,6 +1405,10 @@ function diferencaDatas(data1, data2)
 // --------------------------------------------------------
 function corrigeLeituraEtiqueta(codBarras) {
 
+    if (codBarras.length > 0 && codBarras.charAt(0).toLowerCase() == 'c') {
+        return codBarras.replace(';', '/').replace('ç', '/').replace('Ç', '/');
+    }
+
     if (codBarras.toString().indexOf(".cni") >= 0)
         codBarras = codBarras.toString().substring(0, codBarras.toString().indexOf(".cni"));
 

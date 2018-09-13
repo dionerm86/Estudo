@@ -40,11 +40,6 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
                     return validacao;
                 }
 
-                if (dadosParaAtualizacao == null)
-                {
-                    return this.ErroValidacao("É preciso informar os dados para atualização do pedido.");
-                }
-
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, id);
 
                 if (pedido == null)
