@@ -1778,7 +1778,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="Web References\wsNFeSVANStatus\Reference.cs">
+    <Compile Include="Web References\wsNFeSVANStatusServico\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
@@ -2298,7 +2298,10 @@
     <None Include="Properties\DataSources\Glass.Data.Model.Cheques.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
     <EmbeddedResource Include="Resources\FML_Basico.calcpackage" />
-    <None Include="Properties\Settings.settings" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Web References\wsHConsultaCadastro\cadconsultacadastro4.wsdl" />
     <None Include="Web References\wsHConsultaCadastro\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -2419,8 +2422,8 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Web References\wsNFeSVANStatus\NFeStatusServico4.wsdl" />
-    <None Include="Web References\wsNFeSVANStatus\Reference.map">
+    <None Include="Web References\wsNFeSVANStatusServico\NFeStatusServico4.wsdl" />
+    <None Include="Web References\wsNFeSVANStatusServico\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
@@ -3977,14 +3980,14 @@
     </WebReferenceUrl>
     <WebReferenceUrl Include="https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx%3fwsdl">
       <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\wsNFeSVANStatus\</RelPath>
+      <RelPath>Web References\wsNFeSVANStatusServico\</RelPath>
       <UpdateFromURL>https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx%3fwsdl</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>Glass_Data_wsNFeSVANStatus_NFeStatusServico4</CachedSettingsPropName>
+      <CachedSettingsPropName>Glass_Data_wsNFeSVANStatusServico_NFeStatusServico4</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
