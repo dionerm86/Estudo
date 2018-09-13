@@ -341,6 +341,7 @@
     <Compile Include="Helper\Produtos\Estrategias\Filtro\ValidacaoFiltroPedidoStrategy.cs" />
     <Compile Include="Helper\Produtos\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
     <Compile Include="Helper\Produtos\Estrategias\Filtro\IValidacaoFiltro.cs" />
+    <Compile Include="Helper\Produtos\TraducaoOrdenacaoListaProdutos.cs" />
     <Compile Include="Helper\Produtos\ValidacaoFactory.cs" />
     <Compile Include="Helper\Clientes\Estrategias\Filtro\ValidacaoFiltroPedidoStrategy.cs" />
     <Compile Include="Helper\Clientes\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
@@ -495,12 +496,16 @@
     <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\TotalCalculadoDto.cs" />
+    <Compile Include="Models\Produtos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\Filtro\AlturaDto.cs" />
     <Compile Include="Models\Produtos\Filtro\DescontoAcrescimoClienteDto.cs" />
     <Compile Include="Models\Produtos\Filtro\QuantidadeDto.cs" />
     <Compile Include="Models\Produtos\Filtro\LarguraDto.cs" />
     <Compile Include="Models\Produtos\Filtro\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\Filtro\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\Lista\PermissoesDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
