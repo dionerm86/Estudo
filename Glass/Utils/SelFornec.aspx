@@ -18,6 +18,8 @@
                 eval("window.opener." + '<%= Request["controle"] %>').AlteraValor(idFornec, idFornec);
             else if ('<%= Request["callback"] %>' == "setForPart")
                 window.opener.ctrlSelParticipante_setFornec(idFornec, '<%= Request["controle"] %>');
+            else if ('<%= Request["callback"] %>' == "participanteFiscal")
+                window.opener.ControleSelecaoParticipanteFiscal.selecionar('<%= Request["controle"] %>', idFornec, nomeFantasia || razaoSocial);
             else
                 window.opener.setFornec(idFornec, nomeFantasia, idConta);
 

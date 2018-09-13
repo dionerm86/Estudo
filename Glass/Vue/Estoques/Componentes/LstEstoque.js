@@ -14,7 +14,9 @@ const app = new Vue({
     estoqueProdutoAtual: {},
     estoqueProdutoOriginal: {},
     insercaoRapidaEstoque: false,
-    idProdutoEmAtualizacao: null
+    idProdutoEmAtualizacao: null,
+    participanteAtual: null,
+    tipoParticipanteAtual: null
   },
 
   methods: {
@@ -141,7 +143,7 @@ const app = new Vue({
      */
     atualizarCampoUnico: function (item) {
       var vm = this;
-      
+
       this.idProdutoEmAtualizacao = item.idProduto;
 
       if (this.exibirEstoqueFiscal) {
@@ -174,15 +176,15 @@ const app = new Vue({
     iniciarCadastroOuAtualizacao_: function (estoqueProduto) {
       this.estoqueProdutoAtual = estoqueProduto;
 
+      var tipoParticipanteAtual = estoqueProduto ? this.clonar(estoqueProduto.tipoParticipante) : null;
+      var participanteAtual = estoqueProduto ? this.clonar(estoqueProduto.participante) : null;
+
       if (this.exibirEstoqueFiscal) {
         this.estoqueProduto = {
           quantidadeEstoqueFiscal: estoqueProduto ? estoqueProduto.quantidadeEstoqueFiscal : null,
           quantidadePosseTerceiros: estoqueProduto ? estoqueProduto.quantidadePosseTerceiros : null,
-          idCliente: estoqueProduto ? estoqueProduto.idCliente : null,
-          idFornecedor: estoqueProduto ? estoqueProduto.idFornecedor : null,
-          idLojaTerceiros: estoqueProduto ? estoqueProduto.idLojaTerceiros : null,
-          idTransportador: estoqueProduto ? estoqueProduto.idTransportador : null,
-          idAdministradoraCartao: estoqueProduto ? estoqueProduto.idAdministradoraCartao : null
+          tipoParticipante: (tipoParticipanteAtual || {}).id,
+          idParticipante: (participanteAtual || {}).id
         };
       } else {
         this.estoqueProduto = {
@@ -274,5 +276,21 @@ const app = new Vue({
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
+  },
+
+  watch: {
+    participanteAtual: {
+      handler: function (atual) {
+        this.estoqueProduto.idParticipante = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    tipoParticipanteAtual: {
+      handler: function (atual) {
+        this.estoqueProduto.tipoParticipante = typeof atual === 'number' ? atual : null;
+      },
+      deep: true
+    }
   }
 });

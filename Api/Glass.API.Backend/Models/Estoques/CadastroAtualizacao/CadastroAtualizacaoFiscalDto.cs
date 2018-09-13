@@ -28,38 +28,17 @@ namespace Glass.API.Backend.Models.Estoques.CadastroAtualizacao
         public decimal QuantidadePosseTerceiros { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador do cliente em posse de estoque do produto.
+        /// Obtém ou define o identificador do participante em posse de estoque do produto.
         /// </summary>
         [DataMember]
-        [JsonProperty("idCliente")]
-        public int? IdCliente { get; set; }
+        [JsonProperty("idParticipante")]
+        public int? IdParticipante { get; set; }
 
         /// <summary>
-        /// Obtém ou define o identificador do fornecedor em posse de estoque do produto.
+        /// Obtém ou define o tipo de participante em posse de estoque do produto.
         /// </summary>
         [DataMember]
-        [JsonProperty("idFornecedor")]
-        public int? IdFornecedor { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o identificador da loja em posse de estoque do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("idLojaTerceiros")]
-        public int? IdLojaTerceiros { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o identificador do transportador em posse de estoque do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("idTransportador")]
-        public int? IdTransportador { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o identificador da administradora de cartão em posse de estoque do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("idAdministradoraCartao")]
-        public int? IdAdministradoraCartao { get; set; }
+        [JsonProperty("tipoParticipante")]
+        public Data.EFD.DataSourcesEFD.TipoPartEnum? TipoParticipante { get; set; }
     }
 }

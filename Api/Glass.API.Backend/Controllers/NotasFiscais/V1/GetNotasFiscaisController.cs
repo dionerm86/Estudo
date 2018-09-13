@@ -3,9 +3,11 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.NotasFiscais.Boleto;
+using Glass.API.Backend.Models.NotasFiscais.TiposParticipantes;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -264,7 +266,7 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <returns>Uma lista JSON com os dados das situações encontradas.</returns>
         [HttpGet]
         [Route("situacoes")]
-        [SwaggerResponse(200, "Situações encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(200, "Situações encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Situações não encontradas.")]
         public IHttpActionResult ObterSituacoes()
         {
@@ -278,6 +280,32 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     });
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os tipos de participantes fiscais para o controle de pesquisa.
+        /// </summary>
+        /// <param name="incluirAdministradoraCartao">Indica se as administradoras de cartão serão consideradas participantes no retorno.</param>
+        /// <returns>Uma lista JSON com os dados dos tipos de participantes encontradas.</returns>
+        [HttpGet]
+        [Route("tiposParticipantes")]
+        [SwaggerResponse(200, "Tipos de participantes encontrados.", Type = typeof(IEnumerable<TipoParticipanteDto>))]
+        [SwaggerResponse(204, "Tipos de participantes não encontradas.")]
+        public IHttpActionResult ObterTiposParticipantesFiscais(bool incluirAdministradoraCartao = false)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposParticipantes = new ConversorEnum<Data.EFD.DataSourcesEFD.TipoPartEnum>()
+                    .ObterTraducao()
+                    .Where(tipoParticipante =>
+                    {
+                        return incluirAdministradoraCartao
+                            || tipoParticipante.Id != (int)Data.EFD.DataSourcesEFD.TipoPartEnum.AdministradoraCartao;
+                    })
+                    .Select(tipoParticipante => new TipoParticipanteDto(tipoParticipante));
+
+                return this.Lista(tiposParticipantes);
             }
         }
     }

@@ -1,13 +1,13 @@
-<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelLoja.aspx.cs" Inherits="Glass.UI.Web.Utils.SelLoja" 
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="SelLoja.aspx.cs" Inherits="Glass.UI.Web.Utils.SelLoja"
     Title="Selecione a Loja" MasterPageFile="~/Layout.master" %>
-    
+
 <asp:Content ID="menu" runat="server" ContentPlaceHolderID="Menu">
 </asp:Content>
 
 <asp:Content ID="pagina" runat="server" ContentPlaceHolderID="Pagina">
     <script type="text/javascript">
 
-    function setLoja(idLoja, razaoSocial, cpfCnpj) {
+    function setLoja(idLoja, razaoSocial, cpfCnpj, nomeFantasia) {
         // Se for busca de loja para NF-e
         if (FindControl("hdfNfe", "input").value == 1)
             window.opener.setLojaNfe(idLoja, razaoSocial, cpfCnpj);
@@ -15,6 +15,8 @@
             window.opener.setLojaDest(idLoja, razaoSocial, cpfCnpj);
         else if ('<%= Request["callback"] %>' == "setForPart")
             window.opener.ctrlSelParticipante_setLoja(idLoja, '<%= Request["controle"] %>');
+        else if ('<%= Request["callback"] %>' == "participanteFiscal")
+            window.opener.ControleSelecaoParticipanteFiscal.selecionar('<%= Request["controle"] %>', idLoja, nomeFantasia || razaoSocial);
 
         closeWindow();
     }
@@ -26,12 +28,12 @@
                 <asp:GridView GridLines="None" ID="grdLoja" runat="server" AllowPaging="True" AllowSorting="True"
                     AutoGenerateColumns="False" DataSourceID="odsLoja"
                     CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-                    EditRowStyle-CssClass="edit" DataKeyNames="IdLoja" 
+                    EditRowStyle-CssClass="edit" DataKeyNames="IdLoja"
                     EmptyDataText="Não há Lojas cadastradas">
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick="setLoja('<%# Eval("IdLoja") %>', '<%# Eval("RazaoSocial") %>', '<%# Eval("Cnpj") %>'); closeWindow();">
+                                <a href="#" onclick="setLoja('<%# Eval("IdLoja") %>', '<%# Eval("RazaoSocial") %>', '<%# Eval("Cnpj") %>', '<%# Eval("NomeFantasia") %>'); closeWindow();">
                                     <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                             </ItemTemplate>
                         </asp:TemplateField>

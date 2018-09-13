@@ -7,9 +7,13 @@
 
     <script type="text/javascript">
 
-        function setAdminCartao(idAdminCartao)
+        function setAdminCartao(idAdminCartao, nome)
         {
-            window.opener.ctrlSelParticipante_setAdminCartao(idAdminCartao, '<%= Request["controle"] %>');
+            if ('<%= Request["callback"] %>' == "setForPart")
+                window.opener.ctrlSelParticipante_setAdminCartao(idAdminCartao, '<%= Request["controle"] %>');
+            else if ('<%= Request["callback"] %>' == "participanteFiscal")
+                window.opener.ControleSelecaoParticipanteFiscal.selecionar('<%= Request["controle"] %>', idAdminCartao, nome);
+
             closeWindow();
         }
 
@@ -25,7 +29,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick="setAdminCartao('<%# Eval("IdAdminCartao") %>'); closeWindow();">
+                                <a href="#" onclick="setAdminCartao('<%# Eval("IdAdminCartao") %>', '<%# Eval("Nome") %>'); closeWindow();">
                                     <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                             </ItemTemplate>
                         </asp:TemplateField>

@@ -227,5 +227,5 @@ Vue.component('estoque-filtros', {
     }
   },
 
-  template: '#LstEstoques-Filtro-template'
+  template: '#LstEstoque-Filtro-template'
 });

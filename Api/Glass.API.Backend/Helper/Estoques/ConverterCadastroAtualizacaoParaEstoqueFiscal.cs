@@ -47,11 +47,45 @@ namespace Glass.API.Backend.Helper.Estoques
         {
             destino.EstoqueFiscal = (double)this.cadastro.QuantidadeEstoqueFiscal;
             destino.QtdePosseTerceiros = (double)this.cadastro.QuantidadePosseTerceiros;
-            destino.IdCliente = this.cadastro.IdCliente;
-            destino.IdFornec = this.cadastro.IdFornecedor;
-            destino.IdLojaTerc = this.cadastro.IdLojaTerceiros;
-            destino.IdTransportador = this.cadastro.IdTransportador;
-            destino.IdAdminCartao = this.cadastro.IdAdministradoraCartao;
+
+            this.ConverterParticipante(destino);
+        }
+
+        private void ConverterParticipante(Data.Model.ProdutoLoja destino)
+        {
+            if (this.cadastro.IdParticipante == null && this.cadastro.TipoParticipante == null)
+            {
+                return;
+            }
+
+            destino.IdCliente = null;
+            destino.IdFornec = null;
+            destino.IdLojaTerc = null;
+            destino.IdTransportador = null;
+            destino.IdAdminCartao = null;
+
+            switch (this.cadastro.TipoParticipante.Value)
+            {
+                case Data.EFD.DataSourcesEFD.TipoPartEnum.Cliente:
+                    destino.IdCliente = this.cadastro.IdParticipante;
+                    break;
+
+                case Data.EFD.DataSourcesEFD.TipoPartEnum.Fornecedor:
+                    destino.IdFornec = this.cadastro.IdParticipante;
+                    break;
+
+                case Data.EFD.DataSourcesEFD.TipoPartEnum.Loja:
+                    destino.IdLojaTerc = this.cadastro.IdParticipante;
+                    break;
+
+                case Data.EFD.DataSourcesEFD.TipoPartEnum.Transportador:
+                    destino.IdTransportador = this.cadastro.IdParticipante;
+                    break;
+
+                case Data.EFD.DataSourcesEFD.TipoPartEnum.AdministradoraCartao:
+                    destino.IdAdminCartao = this.cadastro.IdParticipante;
+                    break;
+            }
         }
     }
 }

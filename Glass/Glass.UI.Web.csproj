@@ -1624,9 +1624,9 @@
     <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.Filtro.js" />
     <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.js" />
     <Content Include="Vue\ContasReceber\Templates\LstContasRecebidas.Filtro.html" />
-    <Content Include="Vue\Estoques\Componentes\LstEstoques.Filtro.js" />
-    <Content Include="Vue\Estoques\Componentes\LstEstoques.js" />
-    <Content Include="Vue\Estoques\Templates\LstEstoques.Filtro.html" />
+    <Content Include="Vue\Estoques\Componentes\LstEstoque.Filtro.js" />
+    <Content Include="Vue\Estoques\Componentes\LstEstoque.js" />
+    <Content Include="Vue\Estoques\Templates\LstEstoque.Filtro.html" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.Filtro.js" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.js" />
     <Content Include="Vue\PedidosConferencia\Templates\LstPedidosConferencia.Filtro.html" />
@@ -1682,6 +1682,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
@@ -1776,6 +1777,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />

@@ -384,6 +384,7 @@
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRealDto.cs" />
     <Compile Include="Models\Estoques\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Estoques\Lista\ConversorParticipante.cs" />
     <Compile Include="Models\Estoques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Estoques\Lista\ListaDto.cs" />
     <Compile Include="Models\Estoques\Lista\PermissoesDto.cs" />
@@ -416,6 +417,7 @@
     <Compile Include="Models\Log\Cancelamento\FiltroLogCancelamentoDto.cs" />
     <Compile Include="Models\Log\Cancelamento\LogDto.cs" />
     <Compile Include="Models\Lojas\Certificado\CertificadoDto.cs" />
+    <Compile Include="Models\NotasFiscais\TiposParticipantes\TipoParticipanteDto.cs" />
     <Compile Include="Models\PedidosConferencia\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />

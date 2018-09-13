@@ -1,11 +1,11 @@
-<%@ Page Title="Estoque de Produtos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+<%@ Page Title="Estoque de Produtos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstEstoque.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEstoque" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Estoques/Templates/LstEstoques.Filtro.html")
+            "~/Vue/Estoques/Templates/LstEstoque.Filtro.html")
     %>
     <div id="app">
         <estoque-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></estoque-filtros>
@@ -94,7 +94,14 @@
                         </span>
                     </td>
                     <td v-if="exibirEstoqueFiscal">{{ item.quantidadePosseTerceiros }}</td>
-                    <td v-if="exibirEstoqueFiscal">{{ item.descricaoTipoTerceiro }} {{ item.nomeTerceiro }}</td>
+                    <td v-if="exibirEstoqueFiscal">
+                        <span v-if="item.tipoParticipante" style="font-style: italic">
+                            {{ item.tipoParticipante.nome }}
+                        </span>
+                        <span v-if="item.participante">
+                            {{ item.participante.nome }}
+                        </span>
+                    </td>
                     <td v-if="exibirEstoqueFiscal" style="white-space: nowrap">
                         <log-alteracao tabela="ProdutoLoja" :id-item="item.idLog" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
@@ -142,7 +149,8 @@
                         {{ estoqueProdutoAtual.descricaoTipoCalculo }}
                     </td>
                     <td v-if="exibirEstoqueFiscal">
-
+                        <controle-selecao-participante-fiscal :participante.sync="participanteAtual"
+                            :tipo-participante.sync="tipoParticipanteAtual"></controle-selecao-participante-fiscal>
                     </td>
                     <td v-if="exibirEstoqueFiscal">
                     </td>
@@ -173,8 +181,8 @@
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Estoques/Componentes/LstEstoques.Filtro.js" />
-            <asp:ScriptReference Path="~/Vue/Estoques/Componentes/LstEstoques.js" />
+            <asp:ScriptReference Path="~/Vue/Estoques/Componentes/LstEstoque.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Estoques/Componentes/LstEstoque.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>

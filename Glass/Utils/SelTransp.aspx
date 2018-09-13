@@ -7,9 +7,13 @@
 
     <script type="text/javascript">
 
-        function setTransp(idTransp)
+        function setTransp(idTransp, nome)
         {
-            window.opener.ctrlSelParticipante_setTransp(idTransp, '<%= Request["controle"] %>');
+            if ('<%= Request["callback"] %>' == "setForPart")
+                window.opener.ctrlSelParticipante_setTransp(idTransp, '<%= Request["controle"] %>');
+            else if ('<%= Request["callback"] %>' == "participanteFiscal")
+                window.opener.ControleSelecaoParticipanteFiscal.selecionar('<%= Request["controle"] %>', idTransp, nome);
+
             closeWindow();
         }
 
@@ -53,7 +57,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <a href="#" onclick="setTransp('<%# Eval("IdTransportador") %>'); closeWindow();">
+                                <a href="#" onclick="setTransp('<%# Eval("IdTransportador") %>', '<%# Eval("Nome") %>'); closeWindow();">
                                     <img src="../Images/ok.gif" border="0" title="Selecionar" alt="Selecionar" /></a>
                             </ItemTemplate>
                         </asp:TemplateField>
