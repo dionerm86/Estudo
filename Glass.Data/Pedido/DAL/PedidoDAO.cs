@@ -15813,12 +15813,13 @@ namespace Glass.Data.DAL
                 var idsAmbienteGerar = produtosGerar.Select(f => f.IdProdParent).ToList();
                 var ambientesGerar = ambientesOrcamento.Where(f => idsAmbienteGerar.Contains(f.IdProd)).ToList();
 
+                var produtoComparar = produtosGerar.First();
+                var idGrupoComparar = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)produtoComparar.IdProduto.Value);
+
                 if (ambientesOrcamento.Any(f => f.IdItemProjeto > 0))
                 {
-                    var produtoComparar = produtosGerar.First();
                     var idCorVidroComparar = ProdutoDAO.Instance.ObtemIdCorVidro(sessao, (int)produtoComparar.IdProduto.Value);
                     var idEspessuraComparar = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)produtoComparar.IdProduto.Value);
-                    var idGrupoComparar = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)produtoComparar.IdProduto.Value);
 
                     var grupoAmbientesProjetos = ambientesOrcamento.Where(f =>
                     {
@@ -15850,6 +15851,10 @@ namespace Glass.Data.DAL
                     ambientesGerar.AddRange(grupoAmbientesProjetos);
                     idsAmbientesProjetosGerados.AddRange(grupoAmbientesProjetos.Select(f => f.IdProd));
                 }
+
+                orcamento.TipoOrcamento = idGrupoComparar == (uint)NomeGrupoProd.Vidro ?
+                    (int)Data.Model.Orcamento.TipoOrcamentoEnum.Venda :
+                    (int)Data.Model.Orcamento.TipoOrcamentoEnum.Revenda;
 
                 GerarPedidoIndividualOrcamento(sessao, orcamento, ambientesGerar, produtosGerar);
             }
