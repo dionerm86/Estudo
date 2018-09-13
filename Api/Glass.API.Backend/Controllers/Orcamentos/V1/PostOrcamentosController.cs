@@ -59,6 +59,45 @@ namespace Glass.API.Backend.Controllers.Orcamentos.V1
         }
 
         /// <summary>
+        /// Gera pedidos a partir do orçamento.
+        /// </summary>
+        /// <param name="id">O identificador do orçamento que será usado para gerar o pedido.</param>
+        /// <returns>Um status HTTP indicando se o pedido foi gerado com seu identificador.</returns>
+        [HttpPost]
+        [Route("{id}/gerarPedidosAgrupados")]
+        [SwaggerResponse(201, "Pedidos gerados.", Type = typeof(CriadoDto<int>))]
+        [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na geração dos pedidos.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Orçamentos não encontrados para o filtro informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult GerarPedidosAgrupados(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdOrcamento(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                try
+                {
+                    sessao.BeginTransaction();
+
+                    PedidoDAO.Instance.GerarPedidosAgrupados(sessao, (uint)id);
+
+                    sessao.Commit();
+
+                    return this.Aceito("Pedidos gerados com sucesso!");
+                }
+                catch (Exception ex)
+                {
+                    sessao.Rollback();
+                    return this.ErroValidacao(ex.Message, ex);
+                }
+            }
+        }
+
+        /// <summary>
         /// Envia email para o cliente com o orçamento.
         /// </summary>
         /// <param name="id">O identificador do orçamento a ser enviado por email.</param>
