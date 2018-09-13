@@ -261,6 +261,7 @@
     <Compile Include="Controllers\NotasFiscais\V1\GetNotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\NotasFiscaisController.cs" />
     <Compile Include="Controllers\NotasFiscais\V1\PostNotasFiscaisController.cs" />
+    <Compile Include="Controllers\Produtos\V1\DeleteProdutosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />

@@ -1,0 +1,62 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Cód.</label>
+            <input type="number" v-model.number="filtroAtual.codigo" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Descrição</label>
+            <input id="nomeCliente" type="text" v-model="filtroAtual.descricao" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <select v-model="filtroAtual.situacao">
+                <option Value="0">Todas</option>
+                <option Value="1">Ativo</option>
+                <option Value="2">Inativo</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Grupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="grupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroGrupos"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Subgrupo</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSubgrupos"
+                v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Ordenar por</label>
+            <select v-model="filtroAtual.ordenacaoFiltro">
+                <option></option>
+                <option Value="1">Código</option>
+                <option Value="2">Descrição</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Altura</label>
+            <input type="number" v-model.number="filtroAtual.valorAlturaInicio" style="width: 60px" />
+            a
+            <input type="number" v-model.number="filtroAtual.valorAlturaFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Largura</label>
+            <input type="number" v-model.number="filtroAtual.valorLarguraInicio" style="width: 60px" />
+            a
+            <input type="number" v-model.number="filtroAtual.valorLarguraFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

@@ -24,7 +24,6 @@ namespace Glass.API.Backend.Models.Produtos.Configuracoes
             this.UsarLiberacaoPedido = PedidoConfig.LiberarPedido;
             this.UsarDescontoPorQuantidade = PedidoConfig.Desconto.DescontoPorProduto;
             this.ExibirPrecoAnterior = UserInfo.GetUserInfo.IsAdministrador;
-            this.UsarRelatorioProdutosDiferenteDoOriginal = ProdutoConfig.TelaListagem.UsarRelatorioProdutosDiferente;
         }
 
         /// <summary>
@@ -54,12 +53,5 @@ namespace Glass.API.Backend.Models.Produtos.Configuracoes
         [DataMember]
         [JsonProperty("exibirPrecoAnterior")]
         public bool ExibirPrecoAnterior { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se será utilizado um relatório de produtos diferente do original.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("usarRelatorioProdutosDiferenteDoOriginal")]
-        public bool UsarRelatorioProdutosDiferenteDoOriginal { get; set; }
     }
 }

@@ -47,12 +47,10 @@ namespace Glass.API.Backend.Helper.Produtos
                 case "quantidadeliberacao":
                     return "Liberacao";
 
-                case "quantidadeestoque":
+                case "estoque":
                     return "QtdeEstoque";
 
-                case "quantidadeestoquedisponivel":
-                    return "EstoqueDisponivel";
-
+                case "estoquedisponivel":
                 case "descricao":
                 case "altura":
                 case "largura":
