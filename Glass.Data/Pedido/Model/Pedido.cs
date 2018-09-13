@@ -1,21 +1,21 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.DAL;
+using Glass.Data.Helper;
+using Glass.Data.Model.Calculos;
+using Glass.Log;
 using System;
 using System.Collections.Generic;
-using GDA;
-using Glass.Data.Helper;
-using Glass.Data.DAL;
+using System.ComponentModel;
 using System.Drawing;
 using System.Xml.Serialization;
-using Glass.Configuracoes;
-using Glass.Log;
-using System.ComponentModel;
-using Glass.Data.Model.Calculos;
 
 namespace Glass.Data.Model
 {
     [PersistenceBaseDAO(typeof(PedidoDAO))]
-	[PersistenceClass("pedido")]
-	public class Pedido : ModelBaseCadastro, IContainerCalculo
-	{
+    [PersistenceClass("pedido")]
+    public class Pedido : ModelBaseCadastro, IContainerCalculo
+    {
         /*
             Criação de campos novos nesta model devem ser incluídos nos métodos SqlComissao() e SqlRptSit(), na PedidoDAO
          */
@@ -36,7 +36,7 @@ namespace Glass.Data.Model
 
         public enum SituacaoPedido : int
         {
-            Ativo                               = 1,
+            Ativo = 1,
             AtivoConferencia,
             EmConferencia,
             Conferido,
@@ -89,7 +89,7 @@ namespace Glass.Data.Model
         /// <summary>
         /// Possíveis tipos de pedido.
         /// </summary>
-        public enum TipoPedidoEnum
+        public enum TipoPedidoEnum : long
         {
             Selecione = 0,
             /// <summary>
@@ -238,12 +238,12 @@ namespace Glass.Data.Model
 
         private SituacaoPedido _situacao = SituacaoPedido.Ativo;
 
-		[PersistenceProperty("SITUACAO")]
+        [PersistenceProperty("SITUACAO")]
         public SituacaoPedido Situacao
-		{
-			get { return _situacao; }
-			set { _situacao = value; }
-		}
+        {
+            get { return _situacao; }
+            set { _situacao = value; }
+        }
 
         [Log("Valor Entrada")]
         [PersistenceProperty("VALORENTRADA")]
@@ -407,7 +407,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("VALORIPI")]
         public decimal ValorIpi { get; set; }
-        
+
         [Log(TipoLog.Atualizacao, "Tipo do Pedido")]
         [PersistenceProperty("TIPOPEDIDO")]
         public int TipoPedido { get; set; }
@@ -676,7 +676,7 @@ namespace Glass.Data.Model
         public bool ExibirFinalizacoesFinanceiro { get; set; }
 
         private decimal _totalReal;
-        
+
         [XmlIgnore]
         [PersistenceProperty("TOTALREAL", DirectionParameter.InputOptional)]
         public decimal TotalReal
@@ -907,7 +907,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("TEMESPELHO", DirectionParameter.InputOptional)]
         public bool TemEspelho
         {
-            get 
+            get
             {
                 if (_temEspelho == null)
                     _temEspelho = PedidoEspelhoDAO.Instance.ExisteEspelho(IdPedido);
@@ -1121,7 +1121,7 @@ namespace Glass.Data.Model
             {
                 if (PedidoConfig.TelaListagem.ExibirLinhaAzulSePedidoPronto && SituacaoProducao == (int)Pedido.SituacaoProducaoEnum.Pronto)
                     return Color.Blue;
-                
+
                 if (PedidoConfig.TelaListagem.ExibirLinhaPretaSeRevenda && TipoPedido == (int)TipoPedidoEnum.Revenda)
                     return Color.Black;
 
@@ -1198,8 +1198,8 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalPedidoFluxo
         {
-            get 
-            { 
+            get
+            {
                 return !Glass.Configuracoes.Geral.NaoVendeVidro() ? (TemEspelho ? (decimal)TotalEspelho : Total) :
                     TemEspelho ? TotalBrutoEspelho : TotalBruto;
             }
@@ -1210,7 +1210,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalParaLiberacao
         {
-            get 
+            get
             {
                 if (_totalParaLiberacao > 0)
                     return _totalParaLiberacao;
@@ -1225,7 +1225,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal ValorASerPagoLiberacao
         {
-            get 
+            get
             {
                 decimal total = PedidoDAO.Instance.GetTotalParaLiberacao(null, IdPedido);
 
@@ -1279,8 +1279,11 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool UsarControleReposicao
         {
-            get { return (TipoVenda == 3) && PCPConfig.ControlarProducao && 
-                PedidoReposicaoDAO.Instance.IsPedidoReposicao(IdPedido); }
+            get
+            {
+                return (TipoVenda == 3) && PCPConfig.ControlarProducao &&
+              PedidoReposicaoDAO.Instance.IsPedidoReposicao(IdPedido);
+            }
         }
 
         /// <summary>
@@ -1549,7 +1552,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalParaComissao
         {
-            get 
+            get
             {
                 switch (Configuracoes.ComissaoConfig.TotalParaComissao)
                 {
@@ -1568,14 +1571,14 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalRealParaComissao
         {
-            get 
-            { 
-                return TotalReal - (FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao ? ValorIcms : 0); 
+            get
+            {
+                return TotalReal - (FinanceiroConfig.FinanceiroPagto.SubtrairICMSCalculoComissao ? ValorIcms : 0);
             }
         }
 
         [XmlIgnore]
-        public decimal TotalParaComissaoProdutoInstalado{ get; set; }
+        public decimal TotalParaComissaoProdutoInstalado { get; set; }
 
         [XmlIgnore]
         public int NumDias { get; set; }
@@ -1682,7 +1685,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return DataEntregaString + (DataEntrega != DataEntregaOriginal && DataEntregaOriginal != null ? " (" + 
+                return DataEntregaString + (DataEntrega != DataEntregaOriginal && DataEntregaOriginal != null ? " (" +
                     Conversoes.ConverteData(DataEntregaOriginal, false) + ")" : "");
             }
         }
@@ -1739,13 +1742,13 @@ namespace Glass.Data.Model
         [Log("Tipo de venda")]
         public string DescrTipoVenda
         {
-            get 
+            get
             {
                 string descrFormaPagto = IdFormaPagto > 0 &&
                     (TipoVenda == (int)TipoVendaPedido.AVista || TipoVenda == (int)TipoVendaPedido.APrazo) ?
                     " - " + (IdFormaPagto == (uint)Glass.Data.Model.Pagto.FormaPagto.Credito ? "Crédito" : FormaPagto) : String.Empty;
 
-                return GetDescrTipoVenda(TipoVenda) + descrFormaPagto; 
+                return GetDescrTipoVenda(TipoVenda) + descrFormaPagto;
             }
         }
 
@@ -1824,7 +1827,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool EditVisible
         {
-            get 
+            get
             {
                 LoginUsuario login = UserInfo.GetUserInfo;
                 bool flagSituacao;
@@ -1854,7 +1857,7 @@ namespace Glass.Data.Model
                 // Se for supervisor temperado, pode editar pedido e mandá-lo para conferência
                 if (Config.PossuiPermissao(Config.FuncaoMenuConferencia.ControleConferenciaMedicao))
                     flagSupervisorTemperado = (_situacao == SituacaoPedido.Ativo || _situacao == SituacaoPedido.AtivoConferencia)
-                        && (TipoEntrega == (int)Pedido.TipoEntregaPedido.Temperado || 
+                        && (TipoEntrega == (int)Pedido.TipoEntregaPedido.Temperado ||
                         TipoEntrega == (int)Pedido.TipoEntregaPedido.ManutencaoTemperado);
 
                 // Se o pedido for de cliente
@@ -1875,8 +1878,8 @@ namespace Glass.Data.Model
             {
                 return TipoVenda == (int)TipoVendaPedido.APrazo &&
                     Geral.ControleConferencia &&
-                    (_situacao == SituacaoPedido.Ativo || 
-                    _situacao == SituacaoPedido.EmConferencia || 
+                    (_situacao == SituacaoPedido.Ativo ||
+                    _situacao == SituacaoPedido.EmConferencia ||
                     _situacao == SituacaoPedido.AtivoConferencia ||
                     _situacao == SituacaoPedido.Conferido);
             }
@@ -1885,7 +1888,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool DescontoVisible
         {
-            get 
+            get
             {
                 List<SituacaoPedido> situacoes = new List<SituacaoPedido>(new SituacaoPedido[] {
                     SituacaoPedido.ConfirmadoLiberacao
@@ -1913,8 +1916,11 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool TipoPedidoEnabled
         {
-            get { return !PedidoConfig.DadosPedido.BloquearItensTipoPedido || 
-                ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(IdPedido, 0) == 0; }
+            get
+            {
+                return !PedidoConfig.DadosPedido.BloquearItensTipoPedido ||
+              ProdutosPedidoDAO.Instance.CountInPedidoAmbiente(IdPedido, 0) == 0;
+            }
         }
 
         /// <summary>
@@ -1927,9 +1933,9 @@ namespace Glass.Data.Model
 
         [XmlIgnore]
         public bool PedidoEmConfer
-        { 
-            get 
-            { 
+        {
+            get
+            {
                 if (_pedidoEmConfer != null)
                     return _pedidoEmConfer.Value;
 
@@ -1943,10 +1949,10 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool CancelarVisible
         {
-            get 
-            { 
+            get
+            {
                 return Config.PossuiPermissao(Config.FuncaoMenuPedido.CancelarPedido) &&
-                    _situacao != SituacaoPedido.Cancelado; 
+                    _situacao != SituacaoPedido.Cancelado;
             }
         }
 
@@ -1961,15 +1967,18 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool ComissaoVisible
         {
-            get { return PedidoConfig.Comissao.ComissaoPedido && 
-                !PedidoConfig.Comissao.UsarComissionadoCliente; }
+            get
+            {
+                return PedidoConfig.Comissao.ComissaoPedido &&
+              !PedidoConfig.Comissao.UsarComissionadoCliente;
+            }
         }
 
         [XmlIgnore]
         public bool DescontoEnabled
         {
-            get 
-            { 
+            get
+            {
                 return true;
             }
         }
@@ -1991,8 +2000,8 @@ namespace Glass.Data.Model
         {
             get { return PCPConfig.ExibirDadosPcpListaAposConferencia && TemEspelho; }
         }
-        
-         [XmlIgnore]
+
+        [XmlIgnore]
         public bool ExibirTotalEspelhoGerarNfe
         {
             get { return PCPConfig.UsarConferenciaFluxo && TemEspelho; }
@@ -2025,9 +2034,9 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string LocalizacaoObra
         {
-            get 
+            get
             {
-                string localizacao = EnderecoObra + ", " + BairroObra + " - " + CidadeObra + 
+                string localizacao = EnderecoObra + ", " + BairroObra + " - " + CidadeObra +
                     (!String.IsNullOrEmpty(CepObra) ? " - CEP: " + CepObra : "");
 
                 return localizacao.Length < 10 ? String.Empty : localizacao;
@@ -2042,7 +2051,7 @@ namespace Glass.Data.Model
 
         [XmlIgnore]
         public string ConfirmouRecebeuSinal
-        { 
+        {
             get { return _confirmouRecebeuSinal + " " + MovimentacaoCreditoSinal; }
             set { _confirmouRecebeuSinal = value; }
         }
@@ -2065,7 +2074,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string RptPagto
         {
-            get 
+            get
             {
                 if (RptIsCliente)
                 {
@@ -2175,8 +2184,8 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string RptDataConf
         {
-            get 
-            { 
+            get
+            {
                 return DataConf != null ? DataConf.Value.ToString("dd/MM/yyyy") : String.Empty;
             }
         }
@@ -2222,7 +2231,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string RptTelContCli
         {
-            get 
+            get
             {
                 string tel = String.Empty;
                 bool telCont = !String.IsNullOrEmpty(RptTelCont);
@@ -2328,7 +2337,7 @@ namespace Glass.Data.Model
         public string RptBairroCobranca
         {
             get
-            {                
+            {
                 return _cliente.BairroCobranca;
             }
         }
@@ -2449,7 +2458,7 @@ namespace Glass.Data.Model
                 string retorno = "";
 
                 //if (PedidoConfig.Impostos.CalcularIcmsPedido)
-                    retorno += "VALOR ICMS ST R$\n";
+                retorno += "VALOR ICMS ST R$\n";
 
                 retorno += "TOTAL R$";
 
@@ -2465,10 +2474,10 @@ namespace Glass.Data.Model
                 string retorno = "";
 
                 //if (PedidoConfig.Impostos.CalcularIcmsPedido)
-                    retorno += ValorIcms.ToString("N") + "\n";
+                retorno += ValorIcms.ToString("N") + "\n";
 
-                retorno += Total.ToString("N"); 
-                
+                retorno += Total.ToString("N");
+
                 return retorno;
             }
         }
@@ -2481,7 +2490,7 @@ namespace Glass.Data.Model
                 string retorno = "";
 
                 //if (PedidoConfig.Impostos.CalcularIcmsPedido)
-                    retorno += ValorIcms.ToString("N") + "\n";
+                retorno += ValorIcms.ToString("N") + "\n";
 
                 retorno += TotalEspelho.ToString("N");
 
@@ -2533,7 +2542,7 @@ namespace Glass.Data.Model
                         break;
                     case TipoComissao.Comissionado:
                         _valorComissaoTotal = TotalRealParaComissao > 0 ?
-							Math.Round(ValorComissao * (ValorBaseCalcComissao / TotalRealParaComissao), 2) : 0; break;
+                            Math.Round(ValorComissao * (ValorBaseCalcComissao / TotalRealParaComissao), 2) : 0; break;
                     case TipoComissao.Instalador:
                         if (IdEquipe > 0 && IdInstalador > 0)
                             _valorComissaoTotal = ComissaoConfigDAO.Instance.GetComissaoValor(ValorBaseCalcComissao, IdInstalador.Value, IdPedido, ComissaoFuncionario); break;
@@ -2583,14 +2592,14 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal ValorComissaoPagar
         {
-            get 
+            get
             {
                 if (ComissaoFuncionario == TipoComissao.Gerente)
                     return ValorComissaoGerentePagar - ValorComissaoGerentePago;
 
                 decimal retorno = ValorComissaoTotal - ValorComissaoRecebida;
 
-                // Se o retorno for negativo, provavelmente este pedido foi liberado parcial e não está sendo considerando seu valor 
+                // Se o retorno for negativo, provavelmente este pedido foi liberado parcial e não está sendo considerando seu valor
                 // completo ao calcular o ValorBaseCalcComissao, que é usado dentro de ValorComissaoTotal, neste caso, é necessário considerar
                 // o valor total já liberado deste pedido para aí sim debitar o valor da comissão total do que já foi recebido
                 if (Math.Round(ValorComissaoTotal, 2) - Math.Round(ValorComissaoRecebida, 2) < 0 && PedidoConfig.LiberarPedido && ComissaoFuncionario == TipoComissao.Funcionario)
@@ -2869,7 +2878,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool GerouTodosVolumes
         {
-            get 
+            get
             {
                 if (IdPedido == 0)
                     return false;
@@ -2896,7 +2905,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public SituacaoVolumeEnum SituacaoVolume
         {
-            get 
+            get
             {
                 if (!PedidoDAO.Instance.TemVolume(null, IdPedido))
                     return SituacaoVolumeEnum.SemVolume;
@@ -2910,7 +2919,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public string SituacaoVolumeStr
         {
-            get 
+            get
             {
                 switch (SituacaoVolume)
                 {

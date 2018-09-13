@@ -12738,14 +12738,14 @@ namespace Glass.Data.DAL
 
                 dataEntregaMinima = dataBase.Value.Date;
                 dataFastDelivery = dataBase.Value.Date;
-                desabilitarCampo = PedidoConfig.DataEntrega.BloquearDataEntregaPedidoVendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega)
-                    && !UserInfo.GetUserInfo.IsAdministrador;
+                desabilitarCampo = PedidoConfig.DataEntrega.BloquearDataEntregaPedidoVendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega) && !UserInfo.GetUserInfo.IsAdministrador;
+                var pedidoRevendaNaEntrega = tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda && tipoEntrega != (int)Pedido.TipoEntregaPedido.Balcao;
 
                 int numeroDiasUteisMinimoConfig = tipoPedido == (int)Pedido.TipoPedidoEnum.Revenda ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda :
                     tipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoMaoDeObra :
                     PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido;
 
-                if (tipoEntrega != null)
+                if (tipoEntrega != null && !pedidoRevendaNaEntrega)
                 {
                     var existeTipo = PedidoConfig.DiasMinimosEntregaTipo.ContainsKey((Pedido.TipoEntregaPedido)tipoEntrega.Value);
 
@@ -12844,7 +12844,7 @@ namespace Glass.Data.DAL
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
                 }
 
-                if (numeroDiasSomar > 0)
+                if (numeroDiasSomar > 0 && !pedidoRevendaNaEntrega)
                 {
                     int i = 0;
 

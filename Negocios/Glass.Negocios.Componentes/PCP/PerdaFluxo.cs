@@ -55,7 +55,7 @@ namespace Glass.PCP.Negocios.Componentes
 
             if (idSetor > 0)
                 consulta.WhereClause
-                .And("s.IdSetor=?idSetor")
+                .And("s.IdSetor=?idSetor OR ISNULL(s.IdSetor, 0) = 0")
                 .Add("?idSetor", idSetor);
 
             return consulta

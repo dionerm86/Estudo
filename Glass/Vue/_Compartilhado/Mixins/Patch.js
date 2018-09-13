@@ -29,14 +29,20 @@ Mixins.Patch = {
       for (var indice in listaCampos) {
         var campo = listaCampos[indice];
 
-        if (alterado[campo] === original[campo]) {
+        if (alterado[campo] === original[campo] || (!alterado[campo] && !original[campo])) {
           continue;
         }
 
         if (typeof alterado[campo] === 'object' && !verificarEVazio(alterado[campo]) && !(alterado[campo] instanceof Date)) {
-          var alteracoes = this.patch(alterado[campo], original[campo]);
-          if (Object.keys(alteracoes).length > 0) {
-            destino[campo] = alteracoes;
+          if (Array.isArray(alterado[campo])) {
+            if (!Mixins.Comparar.methods.equivalentes(original[campo], alterado[campo])) {
+              destino[campo] = Mixins.Clonar.methods.clonar(alterado[campo]);
+            }
+          } else {
+            var alteracoes = this.patch(alterado[campo], original[campo]);
+            if (Object.keys(alteracoes).length > 0) {
+              destino[campo] = alteracoes;
+            }
           }
         } else {
           destino[campo] = alterado[campo];
