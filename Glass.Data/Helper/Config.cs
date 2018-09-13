@@ -337,6 +337,7 @@ namespace Glass.Data.Helper
             TipoEstoqueChapasOtimizacao = 375,
             EnviarEmailCobrancaApenasContasComPlanoContasBoleto = 376,
             MaximoDiasEnviarEmailCobrancaAposVencimento = 377,
+            DesmembrarOrcamentoPorSubgrupoGerarPedido = 378,
 
             #region Configs Suporte (Antiga config interna)
 
@@ -787,7 +788,7 @@ namespace Glass.Data.Helper
         /// Módulos do sistema
         /// </summary>
         public enum Modulo
-        { 
+        {
             Cadastros = 1,
             Medicao,
             Orcamento,
@@ -806,7 +807,7 @@ namespace Glass.Data.Helper
         }
 
         /// <summary>
-        /// Atributo usado para mapear os enumeradores das funções 
+        /// Atributo usado para mapear os enumeradores das funções
         /// </summary>
         private class ModuloAttr : Attribute
         {
@@ -898,10 +899,10 @@ namespace Glass.Data.Helper
             VisualizarMemoriaCalculo,                       // 15
             ExportarImportarPedido,
             ConfirmarPedidoLiberacao,
-            GerarReposicao,                                 
+            GerarReposicao,
             ReposicaoDePeca,
             ExibirRentabilidade,                            // 20
-            EmitirPedidoReposicao                     
+            EmitirPedidoReposicao
         }
 
         [ModuloAttr(Modulo.PCP)]
@@ -1009,7 +1010,7 @@ namespace Glass.Data.Helper
             // Recupera o IdModulo e o IdFuncao
             var idModulo = (int)((ModuloAttr)atributo).Modulo;
             var idFuncao = funcao.ToInt32(System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
-            
+
             return FuncaoMenuDAO.Instance.ObterIdFuncaoMenu(idFuncao, idModulo);
         }
 
@@ -1021,7 +1022,7 @@ namespace Glass.Data.Helper
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static bool PossuiPermissao<T>(T funcao) 
+        public static bool PossuiPermissao<T>(T funcao)
         {
             if (UserInfo.GetUserInfo == null)
                 return false;
@@ -1036,18 +1037,18 @@ namespace Glass.Data.Helper
         /// <param name="idFunc"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        public static bool PossuiPermissao<T>(int idFunc, T funcao) 
+        public static bool PossuiPermissao<T>(int idFunc, T funcao)
         {
             // Recupera o atributo (módulo) da função passada
             var atributo = funcao.GetType().GetCustomAttributes(false).Where(f => f is ModuloAttr).FirstOrDefault();
-            
+
             if (atributo == null)
                 return false;
 
             // Recupera o IdModulo e o IdFuncao
             var idModulo = (int)((ModuloAttr)atributo).Modulo;
             var idFuncao = Convert.ToInt32(funcao);
-            
+
             // Verifica se as funções do usuário já foram carregadas em memória e carrega caso não tenha sido
             if (!_funcoesUsuario.ContainsKey(idFunc))
             {
@@ -1175,8 +1176,8 @@ namespace Glass.Data.Helper
                         _config.Remove(chave);
                     }
                 }
-        }                                                                                    
-      
-        #endregion                          
+        }
+
+        #endregion
     }
 }

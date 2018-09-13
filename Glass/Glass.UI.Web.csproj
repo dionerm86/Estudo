@@ -1647,6 +1647,7 @@
     <Content Include="Vue\Pedidos\Templates\CadPedido.Ambientes.html" />
     <Content Include="Vue\Pedidos\Templates\CadPedido.Produtos.html" />
     <Content Include="Vue\Pedidos\Templates\LstPedidos.Filtro.html" />
+    <Content Include="Vue\Processos\Componentes\LstProcessos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoBisote.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoLapidacao.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoBeneficiamentoListaSelecao.js" />
@@ -1693,6 +1694,7 @@
     <Content Include="Vue\_Compartilhado\Filtros\Decimal.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Moeda.js" />
     <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
+    <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Clonar.js" />

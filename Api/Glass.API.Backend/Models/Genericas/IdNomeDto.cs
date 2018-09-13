@@ -13,6 +13,17 @@ namespace Glass.API.Backend.Models.Genericas
     [DataContract(Name = "IdNome")]
     public class IdNomeDto : IdDto
     {
+        internal static IdNomeDto TentarConverter(int? id, string nome)
+        {
+            return !id.HasValue || string.IsNullOrWhiteSpace(nome)
+                ? null
+                : new IdNomeDto
+                {
+                    Id = id.Value,
+                    Nome = nome,
+                };
+        }
+
         /// <summary>
         /// Obtém ou define o nome do item.
         /// </summary>

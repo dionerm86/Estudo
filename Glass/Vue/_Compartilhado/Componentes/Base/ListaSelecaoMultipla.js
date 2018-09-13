@@ -79,6 +79,7 @@ Vue.component('lista-selecao-multipla', {
       validator: Mixins.Validacao.validarStringOuVazio
     }
   },
+
   data: function() {
     return {
       uuid: null,
@@ -88,6 +89,7 @@ Vue.component('lista-selecao-multipla', {
       itensSelecionados: ''
     };
   },
+
   methods: {
     /**
      * Recupera os itens a partir da função definida na propriedade.
@@ -111,6 +113,9 @@ Vue.component('lista-selecao-multipla', {
           }
 
           vm.itens = [];
+        })
+        .then(function() {
+          vm.atualizarItensSelecionados();
         });
     },
 
@@ -120,7 +125,7 @@ Vue.component('lista-selecao-multipla', {
      */
     alternarOpcoes: function(event) {
       var controle = event.target;
-      while (controle.parentNode.className !== 'form-group') {
+      while (controle.className !== 'lista-selecao-multipla') {
         controle = controle.parentNode;
       }
 
@@ -235,6 +240,17 @@ Vue.component('lista-selecao-multipla', {
     filtroRecuperarItens: {
       handler: function () {
         this.buscar();
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a propriedade 'idsSelecionados'.
+     * Atualiza os itens selecionados internamente.
+     */
+    idsSelecionados: {
+      handler: function () {
+        this.atualizarItensSelecionados();
       },
       deep: true
     }

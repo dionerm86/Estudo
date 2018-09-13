@@ -8,7 +8,7 @@ namespace Glass.Data.Model
     /// <summary>
     /// Possíveis tipos de processo.
     /// </summary>
-    public enum EtiquetaTipoProcesso
+    public enum EtiquetaTipoProcesso : long
     {
         /// <summary>
         /// Instalação.
@@ -23,8 +23,8 @@ namespace Glass.Data.Model
     }
 
     [PersistenceBaseDAO(typeof(EtiquetaProcessoDAO))]
-	[PersistenceClass("etiqueta_processo")]
-	public class EtiquetaProcesso : Colosoft.Data.BaseModel
+    [PersistenceClass("etiqueta_processo")]
+    public class EtiquetaProcesso : Colosoft.Data.BaseModel
     {
         #region Propriedades
 
@@ -49,7 +49,7 @@ namespace Glass.Data.Model
         public bool DestacarEtiqueta { get; set; }
 
         /// <summary>
-        /// Define se a peça com este processo irá gerar uma forma inexistente na exportação para o Optyway 
+        /// Define se a peça com este processo irá gerar uma forma inexistente na exportação para o Optyway
         /// para o conferente saber que precisa criar uma forma para a mesma, desde que a mesma não possua forma.
         /// </summary>
         [Log("GERARFORMAINEXISTENTE")]
@@ -103,7 +103,7 @@ namespace Glass.Data.Model
 
         public string DescrTipoProcesso
         {
-            get 
+            get
             {
                 return Colosoft.Translator.Translate(TipoProcesso).Format();
             }

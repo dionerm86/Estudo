@@ -29,6 +29,9 @@ namespace Glass.API.Backend.Helper.Pedidos.AmbientesPedido
         {
             switch (campo.ToLowerInvariant())
             {
+                case "id":
+                    return "IdPedido";
+
                 case "valorprodutos":
                     return "totalProdutos";
 

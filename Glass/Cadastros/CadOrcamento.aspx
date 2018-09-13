@@ -25,7 +25,7 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/RecalcularOrcamento.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcProd.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <script type="text/javascript">
-        
+
         var alterarLojaOrcamento = "<%= AlterarLojaOrcamento() %>";
         var inserting = false;
         var lnkGerarPedido = null;
@@ -34,7 +34,7 @@
         var idCliente;
         var numProd = <%= GetNumeroProdutos() %>;
         var usarTabelaDescontoAcrescimoPedidoAVista = <%=(Glass.Configuracoes.PedidoConfig.UsarTabelaDescontoAcrescimoPedidoAVista).ToString().ToLower() %>;
-    
+
         function mensagemProdutoComDesconto(editar)
         {
             alert("Não é possível " + (editar ? "editar" : "remover") + " esse produto porque o orçamento possui desconto.\n" +
@@ -47,12 +47,12 @@
             alert("Não é possível editar esse produto porque o mesmo já foi negociado e adicionado em um pedido\n" +
                 "Para editar esse produto, cancele o pedido associado.\n");
         }
-    
+
         function getProduto()
         {
             openWindow(450, 700, '../Utils/SelProd.aspx');
         }
-    
+
         // Calcula em tempo real o valor total do produto
         function calcTotalProd() {
             try {
@@ -73,13 +73,13 @@
                 alturaBenef = alturaBenef != null ? alturaBenef.value : "0";
                 var larguraBenef = FindControl("drpLargBenef", "select");
                 larguraBenef = larguraBenef != null ? larguraBenef.value : "0";
-            
+
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDesconto = controleDescQtde.PercDesconto();
             var percDescontoAtual = controleDescQtde.PercDescontoAtual();
-            
+
             // Valida o valor unitário preenchido
             var valorMinimo = new Number(FindControl("hdfValMin", "input").value.replace(',', '.'));
             if (!FindControl("txtValorIns_txtNumber", "input").disabled && new Number(valorIns.replace(',', '.')) < valorMinimo) {
@@ -96,28 +96,28 @@
 
             }
         }
-    
+
         function atualizaValMin()
         {
             var codInterno = FindControl("txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
-        
+
             var idOrcamento = <%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>;
-            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
-        
+
             var idProdOrca = FindControl("hdfProdOrca", "input");
             idProdOrca = idProdOrca != null ? idProdOrca.value : "";
-        
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-        
+
             var percDescontoQtde = controleDescQtde.PercDesconto();
-        
+
             FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento).value;
         }
-    
+
         // Função chamada após selecionar produto pelo popup
         function setProduto(codInterno) {
             try {
@@ -128,7 +128,7 @@
 
             }
         }
-    
+
         // Carrega dados do produto com base no código do produto passado
         function loadProduto(codInterno) {
             if (codInterno == "")
@@ -136,35 +136,35 @@
 
             try {
                 var idOrcamento = <%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>;
-                var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;       
+                var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var cliRevenda = FindControl("hdfRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
                 var percComissao = getPercComissao();
                 percComissao = percComissao == null ? 0 : percComissao.toString().replace('.', ',');
-            
+
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
                 var percDescontoQtde = controleDescQtde.PercDesconto();
-            
-                var retorno = CadOrcamento.GetProduto(codInterno, tipoEntrega, cliRevenda, idCliente, 
+
+                var retorno = CadOrcamento.GetProduto(codInterno, tipoEntrega, cliRevenda, idCliente,
                     percComissao, percDescontoQtde, FindControl("hdfIdLoja", "input").value, idOrcamento).value.split(';');
-            
+
                 if (retorno[0] == "Erro") {
                     alert(retorno[1]);
                     FindControl("txtCodProd", "input").value = "";
                     return false;
                 }
-            
+
                 if (retorno[0] == "Prod") {
                     FindControl("hdfIdProd", "input").value = retorno[1];
                     FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
                     FindControl("hdfM2Minimo", "input").value = retorno[5]; // Informa se o produto possui m² mínimo
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
-                
+
                     atualizaValMin();
-                
+
                     qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     var tipoCalc = retorno[7];
 
@@ -180,7 +180,7 @@
                     cLargura.value = !maoDeObra ? "" : (tipoCalc != 1 && tipoCalc != 4 && tipoCalc != 5 && tipoCalc != 6 && tipoCalc != 7 && tipoCalc != 8 ?
                         FindControl("hdfLarguraAmbiente", "input").value : "");
                     */
-                    
+
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                     if (retorno[4] == "true" && retorno[7] == "2" && FindControl("lnkBenef", "a") != null) {
                         FindControl("lnkBenef", "a").style.display = "inline";
@@ -189,9 +189,9 @@
                     }
                     else if (FindControl("lnkBenef", "a") != null)
                         FindControl("lnkBenef", "a").style.display = "none";
-                    
+
                     FindControl("hdfAliquotaIcmsProd", "input").value = retorno[9];
-                
+
                     /*
                     //if (FindControl("hdfPedidoProducao", "input").value == "true")
                     {
@@ -208,7 +208,7 @@
                 alert(err);
             }
         }
-    
+
         function recalcular(idOrcamento, perguntar, tipoEntregaNovo, idClienteNovo)
         {
             var nomeControleBenef = "<%= ctrlBenef1.ClientID %>";
@@ -219,7 +219,7 @@
             var campoQtde = "<%= hdfBenefQtde.ClientID %>";
             var campoTotM = "<%= hdfBenefTotM.ClientID %>";
             var campoValorUnit = "<%= hdfBenefValorUnit.ClientID %>";
-        
+
             recalcularOrcamento(idOrcamento, perguntar, "loading", nomeControleBenef, campoAltura, campoEspessura, campoLargura,
                 campoIdProd, campoQtde, campoTotM, campoValorUnit, tipoEntregaNovo, idClienteNovo)
                 .then(executado => {
@@ -230,7 +230,7 @@
                     }
                 });
         }
-    
+
         function limparComissionado()
         {
             FindControl("hdfIdComissionado", "input").value = "";
@@ -238,35 +238,35 @@
             FindControl("txtPercentual", "input").value = "0";
             FindControl("txtValorComissao", "input").value = "R$ 0,00";
         }
-    
+
         function geraPedido(link, hiddenIdCliente, perguntar)
         {
             if (perguntar && !confirm("Tem certeza que deseja gerar um pedido para este orçamento?"))
                 return false;
-        
+
             lnkGerarPedido = link;
             hdfIdCliente = document.getElementById(hiddenIdCliente);
-        
+
             if (hdfIdCliente.value == "")
             {
                 alert("Você deve selecionar o cliente antes de continuar.");
                 openWindow(500, 750, "../Utils/SelCliente.aspx");
                 return false;
-            }   
-        
+            }
+
             return true;
         }
-    
+
         function setCliente(idCli, nome)
         {
             hdfIdCliente.value = idCli;
             recalcular(<%= Request["idOrca"] != null ? Request["idOrca"] : "0" %>, false, "", idCli);
-        
+
             eval(lnkGerarPedido.href.replace(/%20/g, " "));
         }
 
         var botaoAtualizarClicado = false;
-    
+
         function onSaveOrca() {
 
             if (botaoAtualizarClicado)
@@ -284,13 +284,13 @@
                 return false;
             }
             // Se o percentual de comissão a ser cobrado for > 0, verifica se o comissionado foi informado
-            if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" && 
+            if (txtPercentual != null && hdfIdComissionado != null && txtPercentual.value != "" &&
                 parseFloat(txtPercentual.value.replace(',', '.')) > 0 && hdfIdComissionado.value == "") {
                 alert("Informe o comissionado.");
                 botaoAtualizarClicado = false;
                 return false;
             }
-        
+
             if (<%= Glass.Configuracoes.OrcamentoConfig.TelaCadastro.PermitirInserirSemTipoOrcamento.ToString().ToLower() %> == false &&
                 FindControl("drpTipoOrcamento", "select") != null && FindControl("drpTipoOrcamento", "select").value == "")
             {
@@ -298,60 +298,60 @@
                 botaoAtualizarClicado = false;
                 return false;
             }
-        
+
             FindControl("drpFuncionario", "select").disabled = false;
 
             if (FindControl("drpLoja", "select"))
             {
                 FindControl("drpLoja", "select").disabled = false;
             }
-        
+
             return true;
         }
-    
+
         function onInsert()
         {
             if (inserting)
                 return false;
-            
+
             if (FindControl("txtNomeCliente", "input").value == "")
             {
                 alert("Digite o nome do cliente ou escolha-o na lista para continuar.");
                 return false;
             }
-        
+
             if (FindControl("ddlTipoEntrega", "select").value == "")
             {
                 alert("Selecione o tipo de entrega.");
                 return false;
-            }            
-            
+            }
+
             if(usarTabelaDescontoAcrescimoPedidoAVista && FindControl("DropDownList1", "select").value == "")
             {
                 alert("Selecione o tipo de Venda.");
                 return false;
             }
-        
+
             if (!onSaveOrca())
                 return false;
-        
+
             document.getElementById("load").style.display = "";
-        
+
             FindControl("drpFuncionario", "select").disabled = false;
-        
+
             inserting = true;
-       
+
             if (FindControl("drpLoja", "select"))
             {
                 FindControl("drpLoja", "select").disabled = false;
             }
             return true;
         }
-    
+
         function onUpdateProduto()
         {
             var txtAmbiente = FindControl("txtAmbienteProd", "input");
-        
+
             if (txtAmbiente != null)
             {
                 if (txtAmbiente.parentNode.style.display != "none")
@@ -375,10 +375,10 @@
             FindControl("txtValorIns_txtNumber", "input").value = "";
             return false;
         }
-        
+
         return true;
     }
-    
+
         function addAmbiente(add)
         {
             FindControl("imbNovo", "input").style.display = add ? "none" : "";
@@ -392,58 +392,58 @@
             var controle = FindControl("txtDesconto", "input");
             if (controle.value == "0")
                 return;
-            
+
             var tipo = FindControl("drpTipoDesconto", "select").value;
             var desconto = parseFloat(controle.value.replace(',', '.'));
             if (isNaN(desconto))
                 desconto = 0;
-        
+
             var tipoAtual = FindControl("hdfTipoDesconto", "input").value;
             var descontoAtual = parseFloat(FindControl("hdfDesconto", "input").value.replace(',', '.'));
             if (isNaN(descontoAtual))
                 descontoAtual = 0;
-        
+
             var idOrcamento = <%= !String.IsNullOrEmpty(Request["idOrca"]) ? Request["idOrca"] : "0" %>;
             var idFuncAtual = <%= Glass.Data.Helper.UserInfo.GetUserInfo.CodUser %>;
             var alterou = tipo != tipoAtual || desconto != descontoAtual;
             var descontoMaximo = CadOrcamento.PercDesconto(idOrcamento, idFuncAtual, alterou).value;
-        
+
             var total = parseFloat(FindControl("hdfTotalSemDesconto", "input").value.replace(/\./g, "").replace(',', '.'));
             var totalProduto = tipoCalculo == 2 ? parseFloat(FindControl("lblTotalProd", "span").innerHTML.replace("R$", "").replace(" ", "").replace(/\./g, "").replace(',', '.')) : 0;
             var valorDescontoMaximo = total * (descontoMaximo / 100);
-        
+
             var valorDescontoProdutos = <%= GetDescontoProdutos() %> - (tipoCalculo == 2 ? parseFloat(FindControl("hdfValorDescontoAtual", "input").value.replace(',', '.')) : 0);
             var valorDescontoOrcamento = tipoCalculo == 2 ? <%= GetDescontoOrcamento() %> : 0;
             var descontoProdutos = parseFloat(((valorDescontoProdutos / (total > 0 ? total : 1)) * 100).toFixed(2));
             var descontoOrcamento = parseFloat(((valorDescontoOrcamento / (total > 0 ? total : 1)) * 100).toFixed(2));
-        
+
             var descontoSomar = descontoProdutos + (tipoCalculo == 2 ? descontoOrcamento : 0);
             var valorDescontoSomar = valorDescontoProdutos + (tipoCalculo == 2 ? valorDescontoOrcamento : 0);
-        
+
             if (tipo == 2)
                 desconto = (desconto / total) * 100;
-        
+
             if (parseFloat((desconto + descontoSomar).toFixed(2)) > parseFloat(descontoMaximo))
             {
                 var mensagem = "O desconto máximo permitido é de " + (tipo == 1 ? descontoMaximo + "%" : "R$ " + valorDescontoMaximo.toFixed(2).replace('.', ',')) + ".";
                 if (descontoProdutos > 0)
                     mensagem += "\nO desconto já aplicado aos produtos é de " + (tipo == 1 ? descontoProdutos + "%" : "R$ " + valorDescontoProdutos.toFixed(2).replace('.', ',')) + ".";
-            
+
                 if (descontoOrcamento > 0)
                     mensagem += "\nO desconto já aplicado ao orçamento é de " + (tipo == 1 ? descontoOrcamento + "%" : "R$ " + valorDescontoOrcamento.toFixed(2).replace('.', ',')) + ".";
-            
+
                 alert(mensagem);
                 controle.value = tipo == 1 ? descontoMaximo - descontoSomar : (valorDescontoMaximo - valorDescontoSomar).toFixed(2).replace('.', ',') ;
-            
+
                 if (parseFloat(controle.value.replace(',', '.')) < 0)
                     controle.value = "0";
-                
+
                 return false;
             }
-        
+
             return true;
         }
-    
+
         function setComissionado(id, nome, percentual) {
             FindControl("lblComissionado", "span").innerHTML = nome;
             FindControl("hdfIdComissionado", "input").value = id;
@@ -471,17 +471,17 @@
             openWindow(600, 800, "../Relatorios/RelOrcamento.aspx?idOrca=" + idOrca);
             return false;
         }
-    
+
         function openRptMemoria(idOrca)
         {
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=MemoriaCalculoOrcamento&idOrca=" + idOrca);
             return false;
         }
-    
+
         function getCli(idCli)
         {
             var usarComissionado = <%= Glass.Configuracoes.PedidoConfig.Comissao.UsarComissionadoCliente.ToString().ToLower() %>;
-        
+
             var dados = CadOrcamento.GetCli(idCli.value).value;
             if (dados == null || dados == "" || dados.split('|')[0] == "Erro")
             {
@@ -489,23 +489,23 @@
                 FindControl("txtNomeCliente", "input").value = "";
                 FindControl("hdfIdCliente", "input").value = "";
                 FindControl("txtIdCliente", "input").value = "";
-                        
+
                 if (usarComissionado)
                     limparComissionado();
-                
+
                 if (dados.split('|')[0] == "Erro")
                     alert(dados.split('|')[1]);
-            
+
                 return;
             }
-        
+
             dados = dados.split("|");
             setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[12]);
-        
+
             var drpFuncionario = FindControl("drpFuncionario", "select");
             if (drpFuncionario != null && dados[9] != "0")
                 drpFuncionario.value = dados[9];
-        
+
             if (usarComissionado)
             {
                 var comissionado = MetodosAjax.GetComissionado("", idCli.value).value.split(';');
@@ -535,25 +535,25 @@
                 tipoEntrega = tipoEntrega.value;
             else
                 tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
-        
+
             if (tipoEntrega == "")
             {
                 alert("Selecione o tipo de entrega antes de inserir um produto.");
                 return false;
             }
-        
+
             var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
             if (ambiente != "") ambiente = "&idAmbiente=" + ambiente;
-        
+
             var idCliente = FindControl("hdfIdCliente", "input").value;
-        
-            openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd + 
+
+            openWindow(screen.height, screen.width, 'CadProdutoOrcamento.aspx?IdOrca=<%= Request["IdOrca"] %>&IdProd=' + idProd +
                 "&TipoEntrega=" + tipoEntrega + ambiente + (editar ? "&editar=true" : "") +
                 "&idCliente=" + idCliente + "&orcamentoRapido=false");
-            
+
             return false;
         }
-    
+
         function openProjeto(idProd)
         {
             var tipoEntrega = FindControl("ddlTipoEntrega", "select");
@@ -561,22 +561,22 @@
                 tipoEntrega = tipoEntrega.value;
             else
                 tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
-        
+
             if (tipoEntrega == "")
             {
                 alert("Selecione o tipo de entrega antes de inserir um projeto.");
                 return false;
             }
-        
+
             var idCliente = FindControl("hdfIdCliente", "input").value;
-        
+
             var ambiente = FindControl("hdfIdAmbienteOrca", "input") != null ? FindControl("hdfIdAmbienteOrca", "input").value : "";
-            if (ambiente != "") 
+            if (ambiente != "")
                 ambiente = "&idAmbienteOrca=" + ambiente;
-        
-            openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdOrcamento=<%= Request["IdOrca"] %>' + 
+
+            openWindow(screen.height, screen.width, '../Cadastros/Projeto/CadProjetoAvulso.aspx?IdOrcamento=<%= Request["IdOrca"] %>' +
                 "&IdProdOrca=" + idProd + "&idCliente=" + idCliente + "&TipoEntrega=" + tipoEntrega + ambiente);
-            
+
             return false;
         }
 
@@ -600,26 +600,26 @@
             setParcelas(true);
             if (typeof <%= dtvOrcamento.ClientID %>_ctrlParcelas1 != "undefined")
             Parc_visibilidadeParcelas("<%= dtvOrcamento.ClientID %>_ctrlParcelas1");
-            
+
                 // Verifica se a empresa permite desconto para pedidos à vista com uma parcela
         if (<%= (Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoUmaParcela && Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista).ToString().ToLower() %>)
                     showHideDesconto(FindControl("hdfNumParcelas", "input").value == "1" || FindControl("drpTipoVenda", "select").value == "1");
             }
-    
+
     function setParcelas(calcParcelas)
-    {        
+    {
         var nomeControleParcelas = "<%= dtvOrcamento.ClientID %>_ctrlParcelas1";
         if (document.getElementById(nomeControleParcelas + "_tblParcelas") == null)
             return;
-        
+
         var drpTipoVenda = FindControl("drpTipoVenda", "select");
-        
+
         if (drpTipoVenda == null)
             return;
-        
+
         if (FindControl("hdfExibirParcela", "input") != null)
             FindControl("hdfExibirParcela", "input").value = drpTipoVenda.value == 2;
-            
+
         FindControl("hdfCalcularParcela", "input").value = (calcParcelas == false ? false : true).toString();
     }
 
@@ -627,29 +627,29 @@
     function tipoVendaChange(control, calcParcelas) {
         if (control == null)
             return;
-        
+
         if (document.getElementById("divNumParc") != null)
             document.getElementById("divNumParc").style.display = parseInt(control.value) == 2 ? "" : "none";
-            
+
         setParcelas(calcParcelas);
         if (typeof <%= dtvOrcamento.ClientID %>_ctrlParcelas1 != "undefined")
             Parc_visibilidadeParcelas("<%= dtvOrcamento.ClientID %>_ctrlParcelas1");
-        
+
         var descontoApenasAVista = <%= Glass.Configuracoes.PedidoConfig.Desconto.DescontoPedidoApenasAVista.ToString().ToLower() %>;
         var exibirDesconto = !descontoApenasAVista || control.value == 1;
-        
+
         showHideDesconto(exibirDesconto);
     }
-    
+
     function showHideDesconto(exibirDesconto)
     {
         var drpTipoDesconto = FindControl("drpTipoDesconto", "select");
         if (drpTipoDesconto == null)
             return;
-        
+
         var txtDesconto = FindControl("txtDesconto", "input");
         var lblDescontoVista = FindControl("lblDescontoVista", "span");
-        
+
         drpTipoDesconto.style.display = exibirDesconto ? "" : "none";
         txtDesconto.style.display = exibirDesconto ? "" : "none";
 
@@ -658,11 +658,11 @@
           lblDescontoVista.style.display = !exibirDesconto ? "" : "none";
         }
 
-        txtDesconto.onchange();    
+        txtDesconto.onchange();
     }
 
     </script>
-    
+
     <table>
         <tr>
             <td align="center">
@@ -689,11 +689,11 @@
 
                                     <tr>
                                         <td align="left" class="cabecalho">
-                                            <asp:Label ID="lblProjetoEdit" runat="server" onload="ctrlProjeto_Load" 
+                                            <asp:Label ID="lblProjetoEdit" runat="server" onload="ctrlProjeto_Load"
                                                 Text="Projeto"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label8" runat="server" Text='<%# Eval("IdProjeto") %>' 
+                                            <asp:Label ID="Label8" runat="server" Text='<%# Eval("IdProjeto") %>'
                                                 Font-Size="Medium" onload="ctrlProjeto_Load"></asp:Label>
                                         </td>
                                         <td align="left" class="cabecalho" nowrap="nowrap">
@@ -791,14 +791,14 @@
                                     </tr--%>
                                     <tr>
                                         <td align="left" class="cabecalho" nowrap="nowrap">
-                                            <asp:Label ID="lblProjetoEdit0" runat="server" onload="ctrlMedicao_Load" 
+                                            <asp:Label ID="lblProjetoEdit0" runat="server" onload="ctrlMedicao_Load"
                                                 Text="Medição"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>' 
+                                            <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>'
                                                 Font-Size="Medium" onload="ctrlMedicao_Load"></asp:Label>
                                             <asp:Label ID="Label13" runat="server" Font-Size="Medium"
-                                                Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Definitiva: " + Eval("IdMedicaoDefinitiva") : "" %>' 
+                                                Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Definitiva: " + Eval("IdMedicaoDefinitiva") : "" %>'
                                                 onload="ctrlMedicao_Load"></asp:Label>
                                         </td>
                                         <td align="left" class="cabecalho" nowrap="nowrap">
@@ -859,27 +859,27 @@
                                             <table>
                                                 <tr>
                                                     <td class="cabecalho">
-                                                        <asp:Label ID="lblTitleTotal" runat="server" onload="lblTotalGeral_Load" 
+                                                        <asp:Label ID="lblTitleTotal" runat="server" onload="lblTotalGeral_Load"
                                                             Text="Total"></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="lblTotal" runat="server" onload="lblTotalGeral_Load" 
+                                                        <asp:Label ID="lblTotal" runat="server" onload="lblTotalGeral_Load"
                                                             Text='<%# Eval("Total", "{0:C}") %>'></asp:Label>
                                                     </td>
                                                     <td class="cabecalho" nowrap="nowrap">
-                                                        <asp:Label ID="lblTitleTotalBruto" runat="server" 
+                                                        <asp:Label ID="lblTitleTotalBruto" runat="server"
                                                             onload="lblTotalBrutoLiquido_Load" Text="Total Bruto"></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="lblTotalBruto" runat="server" onload="lblTotalBrutoLiquido_Load" 
+                                                        <asp:Label ID="lblTotalBruto" runat="server" onload="lblTotalBrutoLiquido_Load"
                                                             Text='<%# Eval("TotalBruto", "{0:C}") %>'></asp:Label>
                                                     </td>
                                                     <td class="cabecalho" nowrap="nowrap">
-                                                        <asp:Label ID="lblTitleTotalLiquido" runat="server" 
+                                                        <asp:Label ID="lblTitleTotalLiquido" runat="server"
                                                             onload="lblTotalBrutoLiquido_Load" Text="Total Líquido"></asp:Label>
                                                     </td>
                                                     <td>
-                                                        <asp:Label ID="lblTotalLiquido" runat="server" 
+                                                        <asp:Label ID="lblTotalLiquido" runat="server"
                                                             onload="lblTotalBrutoLiquido_Load" Text='<%# Eval("Total", "{0:C}") %>'></asp:Label>
                                                     </td>
                                                 </tr>
@@ -888,10 +888,10 @@
                                     </tr>
                                     <tr>
                                         <td align="center" colspan="8" style="padding-left: 4px; white-space: nowrap">
-                                            <asp:Label ID="Label38" runat="server" ForeColor="Green" 
+                                            <asp:Label ID="Label38" runat="server" ForeColor="Green"
                                                 Style="white-space: nowrap" Text='<%# Eval("DescrMostrarTotal") %>'></asp:Label>
-                                            <asp:Label ID="Label39" runat="server" ForeColor="Green" 
-                                                Style="white-space: nowrap" 
+                                            <asp:Label ID="Label39" runat="server" ForeColor="Green"
+                                                Style="white-space: nowrap"
                                                 Text='<%# (Eval("DescrMostrarTotal").ToString().Length > 0 && Eval("DescrMostrarTotalProd").ToString().Length > 0 ? "&nbsp;&nbsp;" : "") + Eval("DescrMostrarTotalProd").ToString() %>'></asp:Label>
                                         </td>
                                     </tr>
@@ -905,9 +905,9 @@
                                 </table>
                                 <asp:HiddenField ID="hdfTipoEntrega" runat="server" Value='<%# Eval("TipoEntrega") %>' />
                                 <asp:HiddenField ID="hdfTotalSemDesconto" runat="server" Value='<%# Eval("TotalSemDesconto") %>' />
-                                <asp:HiddenField ID="hdfIdCliente" runat="server" 
+                                <asp:HiddenField ID="hdfIdCliente" runat="server"
                                     Value='<%# Eval("IdCliente") %>' />
-                                <asp:HiddenField ID="hdfPercComissao" runat="server" 
+                                <asp:HiddenField ID="hdfPercComissao" runat="server"
                                     Value='<%# Eval("PercComissao") %>' />
                                 <asp:HiddenField ID="hdfRevenda" runat="server" onload="hdfRevenda_Load" />
                             </ItemTemplate>
@@ -919,31 +919,31 @@
                                             Orçamento
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label ID="Label7" runat="server" Font-Size="Medium" 
+                                            <asp:Label ID="Label7" runat="server" Font-Size="Medium"
                                                 Text='<%# Eval("IdOrcamento") %>'></asp:Label>
                                         </td>
                                         <td align="left" class="dtvHeader">
-                                            <asp:Label ID="lblProjetoEdit" runat="server" onload="ctrlProjeto_Load" 
+                                            <asp:Label ID="lblProjetoEdit" runat="server" onload="ctrlProjeto_Load"
                                                 Text="Projeto"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <table cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td>
-                                                        <asp:Label ID="Label8" runat="server" Font-Size="Medium" 
+                                                        <asp:Label ID="Label8" runat="server" Font-Size="Medium"
                                                             onload="ctrlProjeto_Load" Text='<%# Eval("IdProjeto") %>'></asp:Label>
                                                         &nbsp;</td>
                                                     <td class="dtvHeader">
-                                                        <asp:Label ID="lblMedicaoEdit" runat="server" onload="ctrlMedicao_Load" 
+                                                        <asp:Label ID="lblMedicaoEdit" runat="server" onload="ctrlMedicao_Load"
                                                             Text="Medição"></asp:Label>
                                                         &nbsp;&nbsp;</td>
                                                     <td>
-                                                        <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>' 
+                                                        <asp:Label ID="Label26" runat="server" Text='<%# Eval("IdsMedicao") %>'
                                                             Font-Size="Medium" onload="ctrlMedicao_Load"></asp:Label>
-                                                        <asp:Label ID="Label13" runat="server" 
-                                                            Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Def.: " + Eval("IdMedicaoDefinitiva") : "" %>' 
+                                                        <asp:Label ID="Label13" runat="server"
+                                                            Text='<%# Eval("IdMedicaoDefinitiva") != null ? "Def.: " + Eval("IdMedicaoDefinitiva") : "" %>'
                                                             onload="ctrlMedicao_Load"></asp:Label>
-                                                        <asp:HiddenField ID="hdfIdMedicaoDef" runat="server" 
+                                                        <asp:HiddenField ID="hdfIdMedicaoDef" runat="server"
                                                             Value='<%# Eval("IdMedicaoDefinitiva") %>' />
                                                     </td>
                                                 </tr>
@@ -981,11 +981,11 @@
                                                 Width="280px" MaxLength="50"></asp:TextBox>
                                             <asp:ImageButton ID="imgGetCliente" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                                 OnClientClick="openWindow(500, 700, '../Utils/SelCliente.aspx?dadosCliente=1&tipo=orcamento'); return false;" />
-                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />           
+                                            <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                             </span>
                                             <br />
                                             <asp:Label ID="lblObsCliente" runat="server" ForeColor="<%# GetCorObsCliente() %>"></asp:Label>
-                                        </td>                                        
+                                        </td>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Situação
                                         </td>
@@ -993,8 +993,8 @@
                                             <table cellpadding="0" cellspacing="0">
                                                 <tr>
                                                     <td>
-                                                        <asp:DropDownList ID="drpSituacao" runat="server" 
-                                                            SelectedValue='<%# Bind("Situacao") %>' DataSourceID="odsSituacao" 
+                                                        <asp:DropDownList ID="drpSituacao" runat="server"
+                                                            SelectedValue='<%# Bind("Situacao") %>' DataSourceID="odsSituacao"
                                                             DataTextField="Descr" DataValueField="Id">
                                                         </asp:DropDownList>
                                                         &nbsp;
@@ -1003,7 +1003,7 @@
                                                         Tipo
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="drpTipoOrcamento" runat="server" 
+                                                        <asp:DropDownList ID="drpTipoOrcamento" runat="server"
                                                             SelectedValue='<%# Bind("TipoOrcamento") %>'>
                                                             <asp:ListItem></asp:ListItem>
                                                             <asp:ListItem Value="1">Venda</asp:ListItem>
@@ -1167,12 +1167,12 @@
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
                                             Tipo Entrega</td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:DropDownList ID="ddlTipoEntrega" runat="server" 
-                                                AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr" 
+                                            <asp:DropDownList ID="ddlTipoEntrega" runat="server"
+                                                AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr"
                                                 DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>'>
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
-                                            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoEntrega" runat="server" 
+                                            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoEntrega" runat="server"
                                                 SelectMethod="GetTipoEntrega" TypeName="Glass.Data.Helper.DataSources">
                                             </colo:VirtualObjectDataSource>
                                         </td>
@@ -1180,7 +1180,7 @@
                                             Data
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <uc7:ctrlData ID="ctrlDataOrca" runat="server" ReadOnly="ReadWrite" 
+                                            <uc7:ctrlData ID="ctrlDataOrca" runat="server" ReadOnly="ReadWrite"
                                                 DataString='<%# Bind("DataCad") %>' ExibirHoras="False" />
                                         </td>
                                     </tr>
@@ -1189,7 +1189,7 @@
                                             Data Entrega
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <uc7:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadWrite" 
+                                            <uc7:ctrlData ID="ctrlDataEntrega" runat="server" ReadOnly="ReadWrite"
                                                 DataString='<%# Bind("DataEntrega") %>' ExibirHoras="False" />
                                         </td>
                                         <td align="left" class="dtvHeader" nowrap="nowrap">
@@ -1213,11 +1213,11 @@
                                                             <asp:ListItem Value="2">R$</asp:ListItem>
                                                             <asp:ListItem Value="1">%</asp:ListItem>
                                                         </asp:DropDownList>
-                                                        <asp:TextBox ID="txtDesconto" runat="server" 
-                                                            onchange="calcularDesconto(1)" 
-                                                            onkeypress="return soNumeros(event, false, true);" 
+                                                        <asp:TextBox ID="txtDesconto" runat="server"
+                                                            onchange="calcularDesconto(1)"
+                                                            onkeypress="return soNumeros(event, false, true);"
                                                             Text='<%# Bind("Desconto") %>' Width="70px"></asp:TextBox>
-                                                        <asp:HiddenField ID="hdfTipoDesconto" runat="server" 
+                                                        <asp:HiddenField ID="hdfTipoDesconto" runat="server"
                                                             Value='<%# Eval("TipoDesconto") %>' />
                                                         <asp:HiddenField ID="hdfDesconto" runat="server"
                                                             Value='<%# Eval("Desconto") %>' />
@@ -1230,13 +1230,13 @@
                                                         &nbsp;Acréscimo&nbsp;
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="drpTipoAcrescimo" runat="server" 
+                                                        <asp:DropDownList ID="drpTipoAcrescimo" runat="server"
                                                             SelectedValue='<%# Bind("TipoAcrescimo") %>'>
                                                             <asp:ListItem Value="2">R$</asp:ListItem>
                                                             <asp:ListItem Value="1">%</asp:ListItem>
                                                         </asp:DropDownList>
-                                                        <asp:TextBox ID="txtAcrescimo" runat="server" 
-                                                            onkeypress="return soNumeros(event, false, true);" 
+                                                        <asp:TextBox ID="txtAcrescimo" runat="server"
+                                                            onkeypress="return soNumeros(event, false, true);"
                                                             Text='<%# Bind("Acrescimo") %>' Width="70px"></asp:TextBox>
                                                     </td>
                                                 </tr>
@@ -1265,8 +1265,8 @@
                                             <asp:CheckBox ID="chkMostrarTotalProd" runat="server" Checked='<%# Bind("MostrarTotalProd") %>'
                                                 Text="Mostrar total por produto" />
                                             &nbsp;&nbsp;
-                                            <asp:CheckBox ID="chkImprimirProdutos" runat="server" 
-                                                Checked='<%# Bind("ImprimirProdutosOrcamento") %>' 
+                                            <asp:CheckBox ID="chkImprimirProdutos" runat="server"
+                                                Checked='<%# Bind("ImprimirProdutosOrcamento") %>'
                                                 Text="Exibir produtos no lugar dos itens no relatório" />
                                         </td>
                                     </tr>
@@ -1435,7 +1435,7 @@
                                                         Tipo
                                                     </td>
                                                     <td>
-                                                        <asp:DropDownList ID="drpTipoOrcamento" runat="server" 
+                                                        <asp:DropDownList ID="drpTipoOrcamento" runat="server"
                                                             SelectedValue='<%# Bind("TipoOrcamento") %>'>
                                                             <asp:ListItem></asp:ListItem>
                                                             <asp:ListItem Value="1">Venda</asp:ListItem>
@@ -1751,7 +1751,7 @@
                                                     <td>
                                                     </td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <td class="dtvHeader" colspan="2">
                                                         Observação Interna
@@ -1806,6 +1806,11 @@
                                     <asp:LinkButton ID="lnkGerarPedido" runat="server" CommandName="GerarPedido" OnClientClick="return geraPedido(this, '{0}', true)"
                                         OnClick="lnkGerarPedido_Click" OnLoad="lnkGerarPedido_Load" Visible='<%# Eval("GerarPedidoVisible") %>'>
                                         <img border="0" src="../Images/cart_add.gif">&nbsp;Gerar Pedido</img></asp:LinkButton>
+                                    <br />
+                                    <asp:LinkButton ID="lnkGerarPedidoAgrupado" runat="server" CommandName="GerarPedidoAgrupado" OnClientClick="return geraPedido(this, '{0}', true)"
+                                        OnClick="lnkGerarPedidoAgrupado_Click" OnLoad="lnkGerarPedidoAgrupado_Load" Visible='<%# Eval("GerarPedidoVisible") %>'>
+                                        <img border="0" src="../Images/cart_add.gif">&nbsp;Gerar Pedido Agrupado</img></asp:LinkButton>
+
                                     <asp:LinkButton ID="lnkMedicaoDef" runat="server" Visible='<%# Eval("ExibirMedicaoDefinitiva") %>'
                                         OnClick="lnkMedicaoDef_Click" OnClientClick="if (!confirm(&quot;Deseja gerar a medição definitiva para esse orçamento?&quot;)) return false">Gerar Medição Definitiva</asp:LinkButton>
                                 </div>
@@ -2207,14 +2212,14 @@
     </table>
 
     <script type="text/javascript">
-        
+
         // Esconde tabela de comissionado
         var hdfComissaoVisible = FindControl("hdfComissaoVisible", "input");
         var tbComissionado = FindControl("tbComissionado", "table");
         var loading = true;
         if (hdfComissaoVisible != null && tbComissionado != null && hdfComissaoVisible.value == "false")
             tbComissionado.style.display = "none";
-            
+
         // Esconde colunas do ambiente
         var grdAmbiente = document.getElementById("<%= grdAmbiente.ClientID %>");
         if (grdAmbiente != null)
@@ -2223,7 +2228,7 @@
             {
                 if (i == (grdAmbiente.rows.length - 1) && grdAmbiente.rows[i].cells.length == 1)
                     continue;
-                
+
                 grdAmbiente.rows[i].cells[2].style.display = "none";
             }
         }
@@ -2234,10 +2239,10 @@
             for (k = 0; k < tbProd.rows.length; k++)
                 tbProd.rows[k].cells[1].style.display = "none";
         }
-        
+
         tipoEntrega = FindControl("ddlTipoEntrega", "select");
         tipoEntrega = tipoEntrega != null ? tipoEntrega.value : "";
-        
+
         idCliente = FindControl("txtIdCliente", "input");
         idCliente = idCliente != null ? idCliente.value : "";
 
@@ -2252,7 +2257,7 @@
                 FindControl("lblObsCliente", "span").innerHTML = dados[12];
             }
         }
-        
+
         if (FindControl("drpLoja", "select") != null)
         {
             // Desabilita o drop da loja caso a config "Alterar loja no orçamento" esteja desabilitada
@@ -2261,15 +2266,15 @@
             else
                 FindControl("drpLoja", "select").disabled = false;
         }
-    
+
         var drpTipoVenda = FindControl("drpTipoVenda", "select");
         if (drpTipoVenda != null)
         {
             tipoVendaChange(drpTipoVenda, false);
-        
+
             if (FindControl("hdfExibirParcela", "input") != null)
                 FindControl("hdfExibirParcela", "input").value = drpTipoVenda.value == 2;
-        
+
             if (FindControl("hdfCalcularParcela", "input") != null)
                 FindControl("hdfCalcularParcela", "input").value = false;
         }

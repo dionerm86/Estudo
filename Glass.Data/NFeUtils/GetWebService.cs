@@ -605,7 +605,7 @@ namespace Glass.Data.NFeUtils
                 case "SP": retorno.Url = "https://nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx?wsdl"; break;
                 case "SVAN":
                     {
-                        retorno = new wsNFeSVANStatus.NFeStatusServico4();
+                        retorno = new wsNFeSVANStatusServico.NFeStatusServico4();
                         retorno.Url = "https://www.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl";
                         break;
                     }
@@ -644,7 +644,7 @@ namespace Glass.Data.NFeUtils
                 case "SP": retorno.Url = "https://homologacao.nfe.fazenda.sp.gov.br/ws/nfestatusservico4.asmx?wsdl"; break;
                 case "SVAN":
                     {
-                        retorno = new wsNFeSVANStatus.NFeStatusServico4();
+                        retorno = new wsNFeSVANStatusServico.NFeStatusServico4();
                         retorno.Url = "https://hom.sefazvirtual.fazenda.gov.br/NFeStatusServico4/NFeStatusServico4.asmx?wsdl";
                         break;
                     }

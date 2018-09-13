@@ -42,6 +42,8 @@
       set: function (valor) {
         if (!this.equivalentes(valor, this.processo)) {
           this.$emit('update:processo', valor);
+          this.idProcesso = valor ? valor.id : 0;
+          this.codigoProcesso = valor ? valor.codigo : null;
         }
       }
     }

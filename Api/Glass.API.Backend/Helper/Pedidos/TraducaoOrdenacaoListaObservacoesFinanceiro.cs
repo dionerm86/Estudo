@@ -29,6 +29,9 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             switch (campo.ToLowerInvariant())
             {
+                case "id":
+                    return "IdObsFinanc";
+
                 case "funcionario":
                     return "NomeFuncCad";
 

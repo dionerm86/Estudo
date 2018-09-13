@@ -2400,7 +2400,7 @@ namespace Glass.Data.DAL
                 // Posição 1.
                 (int)Pedido.TipoPedidoEnum.MaoDeObra,
                 // Posição 2.
-                filtrarDataFabrica ? "LEFT JOIN pedido_espelho ped_esp ON (ped.IdPedido = pedEsp.IdPedido)" : string.Empty);
+                filtrarDataFabrica ? "LEFT JOIN pedido_espelho ped_esp ON (ped.IdPedido = ped_esp.IdPedido)" : string.Empty);
 
             #endregion
 
