@@ -64,7 +64,11 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public bool VerificarCteJaIncluso(int idCTe)
         {
-            return objPersistence.ExecuteSqlQueryCount("SELECT IdCidadeDescarga FROM cte_cidade_descarga_mdfe WHERE IdCTe=" + idCTe) > 0;
+            return objPersistence.ExecuteSqlQueryCount(
+                $@"SELECT ccdm.IdCidadeDescarga FROM cidade_descarga_mdfe cdm 
+	                    INNER JOIN cte_cidade_descarga_mdfe ccdm ON (ccdm.IdCidadeDescarga = cdm.IdCidadeDescarga)
+	                    INNER JOIN manifesto_eletronico me ON (me.IdManifestoEletronico = cdm.IdManifestoEletronico)
+                    WHERE ccdm.IdCTe={ idCTe } AND me.Situacao <> { (int)SituacaoEnum.Cancelado }") > 0;
         }
 
         #region Metodos Sobrescritos
