@@ -60,15 +60,16 @@ Vue.component('produtos-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroGrupos: function() {
-      return null;//return Servicos.Produtos.Grupos.obterParaControle();
+      return Servicos.Produtos.Grupos.obterParaControle();
     },
 
     /**
      * Retorna os itens para o controle de subgrupos de produto.
+     * @param {?number} idGrupoProduto O ID do grupo de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgrupos: function (filtro) {
-      return null;//return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
+    obterItensFiltroSubgrupos: function (idGrupoProduto) {
+      return Servicos.Produtos.Subgrupos.obterParaControle(idGrupoProduto);
     }
   },
 
