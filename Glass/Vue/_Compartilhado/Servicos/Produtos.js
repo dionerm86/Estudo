@@ -45,7 +45,7 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function () {
-        return http().get(API + 'coresVidro/filtro');
+        return http().get(API + 'cores/vidro/filtro');
       }
     },
 
@@ -58,7 +58,7 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function () {
-        return http().get(API + 'coresFerragem/filtro');
+        return http().get(API + 'cores/ferragem/filtro');
       }
     },
 
@@ -71,7 +71,7 @@ Servicos.Produtos = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function () {
-        return http().get(API + 'coresAluminio/filtro');
+        return http().get(API + 'cores/aluminio/filtro');
       }
     },
 

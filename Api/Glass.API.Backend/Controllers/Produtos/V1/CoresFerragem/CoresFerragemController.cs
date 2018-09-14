@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresFerragem
     /// <summary>
     /// Controller de cores de ferragem.
     /// </summary>
-    [RoutePrefix("api/v1/produtos/coresFerragem")]
+    [RoutePrefix("api/v1/produtos/cores/ferragem")]
     public partial class CoresFerragemController : BaseController
     {
         private IHttpActionResult ValidarIdCorFerragem(int idCorFerragem)

@@ -28,7 +28,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         [HttpPatch]
         [Route("produto/{idProduto}/loja/{idLoja}/real")]
         [SwaggerResponse(202, "Dados de estoque do produto atualizados.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo `idProduto` ou `idLoja`.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo idProduto ou idLoja.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Estoque de produto não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult AlterarEstoqueReal(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoRealDto dadosParaAlteracao)
         {
@@ -76,7 +76,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         [HttpPatch]
         [Route("produto/{idProduto}/loja/{idLoja}/fiscal")]
         [SwaggerResponse(202, "Dados de estoque do produto atualizados.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo `idProduto` ou `idLoja`.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo idProduto ou idLoja.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Estoque de produto não encontrado.", Type = typeof(MensagemDto))]
         public IHttpActionResult AlterarEstoqueFiscal(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoFiscalDto dadosParaAlteracao)
         {
@@ -122,11 +122,11 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         /// <param name="dadosParaAlteracao">Os novos dados que serão alterados no estoque de produto indicado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
-        [Route("produto/{idProduto}/loja/{idLoja}/atualizacaoRapidaEstoqueReal")]
+        [Route("produto/{idProduto}/loja/{idLoja}/atualizarQuantidadeReal")]
         [SwaggerResponse(202, "Dados de estoque do produto atualizados.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo `idProduto` ou `idLoja`.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo idProduto ou idLoja.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Estoque de produto não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AtualizarEstoqueRealCampoUnico(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoRapidaRealDto dadosParaAlteracao)
+        public IHttpActionResult AtualizarQuantidadeReal(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoRapidaRealDto dadosParaAlteracao)
         {
             using (var sessao = new GDATransaction())
             {
@@ -169,11 +169,11 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
         /// <param name="dadosParaAlteracao">Os novos dados que serão alterados no estoque de produto indicado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
-        [Route("produto/{idProduto}/loja/{idLoja}/atualizacaoRapidaEstoqueFiscal")]
+        [Route("produto/{idProduto}/loja/{idLoja}/atualizarQuantidadeFiscal")]
         [SwaggerResponse(202, "Dados de estoque do produto atualizados.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo `idProduto` ou `idLoja`.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo idProduto ou idLoja.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Estoque de produto não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AtualizarEstoqueFiscalCampoUnico(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoRapidaFiscalDto dadosParaAlteracao)
+        public IHttpActionResult AtualizarQuantidadeFiscal(int idProduto, int idLoja, [FromBody] CadastroAtualizacaoRapidaFiscalDto dadosParaAlteracao)
         {
             using (var sessao = new GDATransaction())
             {
@@ -193,7 +193,7 @@ namespace Glass.API.Backend.Controllers.Estoques.V1
                         return this.NaoEncontrado($"Estoque de produto não encontrado.");
                     }
 
-                    estoque.QtdEstoque = (double)dadosParaAlteracao.QuantidadeEstoqueFiscal.GetValueOrDefault();
+                    estoque.EstoqueFiscal = (double)dadosParaAlteracao.QuantidadeEstoqueFiscal.GetValueOrDefault();
 
                     ProdutoLojaDAO.Instance.AtualizaEstoque(sessao, estoque);
                     sessao.Commit();

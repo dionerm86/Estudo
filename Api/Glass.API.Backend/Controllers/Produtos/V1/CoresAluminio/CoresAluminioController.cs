@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.CoresAluminio
     /// <summary>
     /// Controller de cores de alumínio.
     /// </summary>
-    [RoutePrefix("api/v1/produtos/coresAluminio")]
+    [RoutePrefix("api/v1/produtos/cores/aluminio")]
     public partial class CoresAluminioController : BaseController
     {
         private IHttpActionResult ValidarIdCorAluminio(int idCorAluminio)

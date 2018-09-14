@@ -5,13 +5,14 @@
 using Glass.API.Backend.Helper.Estoques;
 using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
-using System;
+using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Estoques.Lista
 {
     /// <summary>
     /// Classe com os itens para o filtro de lista de estoques.
     /// </summary>
+    [DataContract(Name = "Filtro")]
     public class FiltroDto : PaginacaoDto
     {
         /// <summary>

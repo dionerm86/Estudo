@@ -287,11 +287,11 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// Recupera os tipos de participantes fiscais para o controle de pesquisa.
         /// </summary>
         /// <param name="incluirAdministradoraCartao">Indica se as administradoras de cartão serão consideradas participantes no retorno.</param>
-        /// <returns>Uma lista JSON com os dados dos tipos de participantes encontradas.</returns>
+        /// <returns>Uma lista JSON com os dados dos tipos de participantes encontrados.</returns>
         [HttpGet]
         [Route("tiposParticipantes")]
         [SwaggerResponse(200, "Tipos de participantes encontrados.", Type = typeof(IEnumerable<TipoParticipanteDto>))]
-        [SwaggerResponse(204, "Tipos de participantes não encontradas.")]
+        [SwaggerResponse(204, "Tipos de participantes não encontrados.")]
         public IHttpActionResult ObterTiposParticipantesFiscais(bool incluirAdministradoraCartao = false)
         {
             using (var sessao = new GDATransaction())
