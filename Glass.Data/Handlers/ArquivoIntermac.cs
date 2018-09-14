@@ -49,16 +49,6 @@ namespace Glass.Data.Handlers
                     return;
                 }
 
-                if (lstErrosArq.Any())
-                {
-                    var erros = string.Join("</br>", lstErrosArq.Where(f => !string.IsNullOrWhiteSpace(f.Key))
-                        .Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value))));
-
-                    context.Response.Write(string.Format("Situações com arquivos de mesa: </br></br>{0}", erros));
-                    context.Response.Flush();
-                    return;
-                }
-
                 // Adiciona o arquivo de otimização ao zip            
                 context.Response.ContentType = "application/zip";
                 context.Response.AddHeader("content-disposition", "attachment; filename=\"" + nomeArquivo + ".zip\"");
@@ -72,7 +62,7 @@ namespace Glass.Data.Handlers
                         {
                             using (var zip2 = ZipFile.Read(lstArqMesa[i]))
                             {
-                                foreach(var entryFileName in zip2.EntryFilenames)
+                                foreach (var entryFileName in zip2.EntryFilenames)
                                 {
                                     var entryStream = new System.IO.MemoryStream();
                                     zip2.Extract(entryFileName, entryStream);
@@ -90,6 +80,18 @@ namespace Glass.Data.Handlers
                         else
                             zip.AddFileStream(lstCodArq[i].Replace("  ", "").Replace(" ", ""), "", new System.IO.MemoryStream(lstArqMesa[i]));
                     }
+
+                    // Verifica se existe algum erro tratado no momento da geração do arquivo.
+                    if (lstErrosArq.Any(f => f.Value != null))
+                    {
+                        // Monta um texto com todos os problemas ocorridos ao gerar o arquivo de mesa, ao final do método, o texto é salvo em um arquivo separado e é zipado junto com o ASC.
+                        var errosGeracaoMarcacao = string.Format("Situações com arquivos de mesa: </br></br>{0}",
+                            string.Join("</br>", lstErrosArq.Where(f => f.Value != null).Select(f => string.Format("Etiqueta: {0} Erro: {1}.", f.Key, Glass.MensagemAlerta.FormatErrorMsg(null, f.Value)))));
+
+                        if (!string.IsNullOrEmpty(errosGeracaoMarcacao))
+                            zip.AddStringAsFile(errosGeracaoMarcacao, "Erros.htm", string.Empty);
+                    }
+
                     zip.Save();
                 }
             }

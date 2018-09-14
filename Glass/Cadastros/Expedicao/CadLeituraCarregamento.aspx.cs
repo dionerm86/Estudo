@@ -53,7 +53,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
                 }
 
                 #region Mensagens
-                
+
                 var mensagemFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<Glass.Global.Negocios.IMensagemFluxo>();
 
@@ -68,6 +68,8 @@ namespace Glass.UI.Web.Cadastros.Expedicao
                 if (!OrdemCargaConfig.ControlarPedidosImportados)
                     tbClienteExterno.Style.Add("Display", "none");
             }
+
+            LinkBalcao.Visible = FuncionarioSetorDAO.Instance.PossuiSetorEntregue(UserInfo.GetUserInfo.CodUser);
         }
 
         protected void lnkLgout_Click(object sender, EventArgs e)
@@ -234,6 +236,11 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             string script = @"openWindow(100, 260, '../../Utils/SetMotivoEstornoItemCarregamento.aspx?popup=true&idCarregamento=" + txtCodCarregamento.Text +"&idCliente=" + txtNumCli.Text +"&idOc=" + txtIdOc.Text +"&idPedido=" + txtIdPedido.Text +"&etiqueta=" + txtEtqFiltro.Text +"&altura=" + txtAltura.Text +"&largura=" + txtLargura.Text +"', null, true, true);";
 
             Page.ClientScript.RegisterStartupScript(this.GetType(), "abrirEstorno", script, true);
+        }
+
+        protected void LinkBalcao_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CadLeituraExpBalcao.aspx");
         }
     }
 }

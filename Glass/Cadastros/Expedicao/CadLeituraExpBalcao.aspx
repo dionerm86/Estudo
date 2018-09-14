@@ -31,14 +31,21 @@
                             <tr>
                                 <td>
                                     <asp:LinkButton ID="LinkButton2" runat="server" ToolTip="Exp. Balcão" Text="Exp. Balcão"
-                                        OnClientClick="showCarregamento();"> 
+                                        OnClientClick="showCarregamento();">
+                                    </asp:LinkButton>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td>
+                                    <asp:LinkButton ID="LinkCarregamento" runat="server" ToolTip="Exp. Balcão" Text="Carregamento"
+                                        OnClick="LinkCarregamento_Click" >
                                     </asp:LinkButton>
                                 </td>
                                 <td>&nbsp;
                                 </td>
                                 <td>
                                     <asp:LinkButton ID="LinkButton3" runat="server" ToolTip="Consultar Produção" Text="Consultar Produção"
-                                        OnClientClick="return showConsultaProducao(false);"> 
+                                        OnClientClick="return showConsultaProducao(false);">
                                     </asp:LinkButton>
                                 </td>
                                 <td>&nbsp;
@@ -295,9 +302,9 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
                                                 <table width="100%">
                                                     <tr>
                                                         <td>
-                                                            <asp:Label ID="lblCliente" runat="server" Text="Cliente: " Font-Bold="True" 
+                                                            <asp:Label ID="lblCliente" runat="server" Text="Cliente: " Font-Bold="True"
                                                                 Font-Size="Medium" ForeColor="#6EA0D0"></asp:Label>
-                                                            <asp:Label ID="lblNomeCliente" runat="server" Text='<%# string.Format("{0} - {1}", Eval("IdCliente"), Eval("NomeCliente")) %>' 
+                                                            <asp:Label ID="lblNomeCliente" runat="server" Text='<%# string.Format("{0} - {1}", Eval("IdCliente"), Eval("NomeCliente")) %>'
                                                                 Font-Size="Large" ForeColor="#6EA0D0" Font-Bold="True" ></asp:Label>
                                                         </td>
                                                     </tr>
@@ -328,7 +335,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, uti
                                                                     </asp:TemplateField>
                                                                     <asp:TemplateField HeaderText="Pedido" SortExpression="IdPedido">
                                                                         <ItemTemplate>
-                                                                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("IdPedido") + " (" + Eval("NumEtiqueta") + ")" + 
+                                                                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("IdPedido") + " (" + Eval("NumEtiqueta") + ")" +
                                                                                     (((int?)Eval("IdPedidoRevenda")).GetValueOrDefault() > 0 ? "(Rev." + Eval("IdPedidoRevenda") + ")" : "" )  %>'></asp:Label>
                                                                         </ItemTemplate>
                                                                         <HeaderStyle HorizontalAlign="Left" />

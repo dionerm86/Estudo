@@ -473,7 +473,9 @@ namespace Glass.UI.Web.Cadastros
 
             if ((tipo == "1" || (tipo == "2" && devolucaoRef) || notaAjuste) && !consumidor)
                 return "true";
-            else if(tipo == "2" && idCfop == "5929")
+            else if (tipo == "2" && idCfop == "5929")
+                return "true";
+            else if (tipo == "1" && consumidor && devolucaoRef)
                 return "true";
             else
                 return "false";
