@@ -1,4 +1,4 @@
-﻿using GDA;
+using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Model;
 using System;
@@ -253,21 +253,14 @@ namespace Glass.Data.DAL
         /// </summary>
         public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota, Pedido.TipoPedidoEnum? tipoPedido)
         {
-            var dataConsiderarRevenda = dataInicial.AddDays(PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda);
-
             Rota rota = GetByCliente(session, idCli);
 
             if (rota == null || (rota.DiasSemana == Model.DiasSemana.Nenhum && rota.NumeroMinimoDiasEntrega == 0))
                 return null;
 
-            if (tipoPedido == Pedido.TipoPedidoEnum.Revenda)
-            {
-                while(!TemODia(dataConsiderarRevenda.DayOfWeek, rota.DiasSemana) || dataConsiderarRevenda.Feriado())
-                    dataConsiderarRevenda = dataConsiderarRevenda.AddDays(1);
-
-                return dataConsiderarRevenda;
-            }
-                
+            var diasConsiderar = tipoPedido == Pedido.TipoPedidoEnum.Revenda ?
+                PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda :
+                rota.NumeroMinimoDiasEntrega;
 
             int numeroDias = (dataInicial - DateTime.Now).Days;
 
@@ -279,7 +272,7 @@ namespace Glass.Data.DAL
                 // "numeroDias++ <= rota.NumeroMinimoDiasEntrega", a data usada será a da outra semana.
                 //while (numeroDias++ < rota.NumeroMinimoDiasEntrega || dataInicial.Feriado() ||
                 /* Chamado 54042. */
-                while ((somarDiasUteisRota ? numeroDias++ < rota.NumeroMinimoDiasEntrega : false) || dataInicial.Feriado() ||
+                while ((somarDiasUteisRota ? numeroDias++ < diasConsiderar : false) || dataInicial.Feriado() ||
                      (rota.DiasSemana != Model.DiasSemana.Nenhum && !TemODia(dataInicial.DayOfWeek, rota.DiasSemana)))
                 {
                     dataInicial = dataInicial.AddDays(1);
@@ -290,7 +283,7 @@ namespace Glass.Data.DAL
             {
                 /* Chamado 54042. */
                 if (somarDiasUteisRota)
-                    for (var i = 0; i < rota.NumeroMinimoDiasEntrega; i++)
+                    for (var i = 0; i < diasConsiderar; i++)
                     {
                         dataInicial = dataInicial.AddDays(1);
 
