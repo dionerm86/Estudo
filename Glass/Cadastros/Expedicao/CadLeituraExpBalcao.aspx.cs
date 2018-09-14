@@ -30,7 +30,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
                 var setor = Data.Helper.Utils.ObtemSetor((uint)funcSetor[0].IdSetor);
 
                 // Se não for exp. balcão, sai desta tela
-                if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.MarcadorProducao || 
+                if (UserInfo.GetUserInfo.TipoUsuario != (uint)Data.Helper.Utils.TipoFuncionario.MarcadorProducao ||
                     !FuncionarioSetorDAO.Instance.PossuiSetorEntregue(UserInfo.GetUserInfo.CodUser) ||
                     !Glass.Configuracoes.PCPConfig.UsarNovoControleExpBalcao)
                     Response.Redirect("../../WebGlass/Main.aspx");
@@ -43,7 +43,7 @@ namespace Glass.UI.Web.Cadastros.Expedicao
                 hdfFunc.Value = UserInfo.GetUserInfo.CodUser.ToString();
 
                 #region Mensagens
-                
+
                 var mensagemFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator.Current
                     .GetInstance<Glass.Global.Negocios.IMensagemFluxo>();
 
@@ -54,6 +54,8 @@ namespace Glass.UI.Web.Cadastros.Expedicao
 
                 #endregion
             }
+
+            LinkCarregamento.Visible = FuncionarioSetorDAO.Instance.PossuiSetorCarregamento(UserInfo.GetUserInfo.CodUser);
         }
 
         protected void lnkLgout_Click(object sender, EventArgs e)
@@ -249,6 +251,12 @@ namespace Glass.UI.Web.Cadastros.Expedicao
             return WebGlass.Business.OrdemCarga.Fluxo.CarregamentoFluxo.Ajax.ObterIdPedidoRevenda(etiqueta);
         }
 
+
         #endregion
+
+        protected void LinkCarregamento_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("CadLeituraCarregamento.aspx");
+        }
     }
 }

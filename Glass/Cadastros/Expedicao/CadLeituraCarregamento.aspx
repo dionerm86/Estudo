@@ -8,7 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title>Leitura de Carregamento</title>
-    
+
     <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/Carregamento.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
     <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/gridView.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
     <link type="text/css" rel="Stylesheet" href="<%= ResolveUrl("~/Style/m2br.dialog.producao.css?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>"/>
@@ -34,24 +34,31 @@
                             <tr>
                                 <td>
                                     <asp:LinkButton ID="LinkButton2" runat="server" ToolTip="Carregamento" Text="Carregamento"
-                                        OnClientClick="showCarregamento();"> 
+                                        OnClientClick="showCarregamento();">
+                                    </asp:LinkButton>
+                                </td>
+                                <td>&nbsp;
+                                </td>
+                                <td>
+                                    <asp:LinkButton ID="LinkBalcao" runat="server" ToolTip="Exp. Balcão" Text="Exp. Balcão"
+                                        OnClick="LinkBalcao_Click" >
                                     </asp:LinkButton>
                                 </td>
                                 <td>&nbsp;
                                 </td>
                                 <td>
                                     <asp:LinkButton ID="LinkButton3" runat="server" ToolTip="Consultar Produção" Text="Consultar Produção"
-                                        OnClientClick="return showConsultaProducao(false);"> 
+                                        OnClientClick="return showConsultaProducao(false);">
                                     </asp:LinkButton>
                                 </td>
                                 <td>&nbsp;
                                 </td>
                                 <td>
                                     <asp:LinkButton ID="lnkMensagensNaoLidas" runat="server" ToolTip="Mensagens Recebidas"
-                                        Visible="false" OnClientClick="openWindow(600, 800, '../../WebGlass/Main.aspx?popup=true')"> 
+                                        Visible="false" OnClientClick="openWindow(600, 800, '../../WebGlass/Main.aspx?popup=true')">
                                             <img src='<%= ResolveUrl("~/Images/mail_received.png") %>' border="0" /></asp:LinkButton>
                                     <asp:LinkButton ID="lnkMensagens" runat="server" ToolTip="Mensagens Recebidas" Visible="False"
-                                        OnClientClick="openWindow(600, 800, '../../WebGlass/Main.aspx?popup=true')"> 
+                                        OnClientClick="openWindow(600, 800, '../../WebGlass/Main.aspx?popup=true')">
                                             <img src='<%= ResolveUrl("~/Images/mail.png") %>' border="0" /></asp:LinkButton>
                                 </td>
                             </tr>
@@ -417,7 +424,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Cliente" SortExpression="IdCliente">
                                                         <ItemTemplate>
-                                                            <asp:Label ID="Label27" runat="server" Text='<%# Eval("IdNomeCliente") + (Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ? 
+                                                            <asp:Label ID="Label27" runat="server" Text='<%# Eval("IdNomeCliente") + (Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ?
                                                             " ("+Eval("IdClienteExterno") + " - " + Eval("ClienteExterno") +")" : "") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle HorizontalAlign="Left" />
@@ -432,7 +439,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Pedido" SortExpression="IdPedido">
                                                         <ItemTemplate>
-                                                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("IdPedido") + " (" + Eval("PedidoEtiqueta") + ")" + 
+                                                            <asp:Label ID="Label15" runat="server" Text='<%# Eval("IdPedido") + " (" + Eval("PedidoEtiqueta") + ")" +
                                                                     (Eval("IdPedidoRevenda") != null ? "(Rev. " + Eval("IdPedidoRevenda") + ")" : "").ToString() %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle HorizontalAlign="Left" />
@@ -446,7 +453,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                                     </asp:TemplateField>
                                                     <asp:TemplateField HeaderText="Pedido Cli." SortExpression="PedCli">
                                                         <ItemTemplate>
-                                                            <asp:Label ID="Label55" runat="server" Text='<%# Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ? 
+                                                            <asp:Label ID="Label55" runat="server" Text='<%# Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ?
                                                             Eval("IdPedidoExterno") : Eval("PedCli") %>'></asp:Label>
                                                         </ItemTemplate>
                                                         <HeaderStyle HorizontalAlign="Left" />
@@ -568,7 +575,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Cliente" SortExpression="IdCliente">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label27" runat="server" Text='<%# Eval("IdNomeCliente") + (Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ? 
+                                                                        <asp:Label ID="Label27" runat="server" Text='<%# Eval("IdNomeCliente") + (Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ?
                                                                             " ("+Eval("IdClienteExterno") + " - " + Eval("ClienteExterno") +")" : "") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle HorizontalAlign="Left" />
@@ -590,7 +597,7 @@ as etiquetas referentes à posição 1 serão lidas do item 2 até o item 6, utilizan
                                                                 </asp:TemplateField>
                                                                 <asp:TemplateField HeaderText="Pedido Cli." SortExpression="PedCli">
                                                                     <ItemTemplate>
-                                                                        <asp:Label ID="Label55" runat="server" Text='<%# Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ? 
+                                                                        <asp:Label ID="Label55" runat="server" Text='<%# Glass.Configuracoes.OrdemCargaConfig.ControlarPedidosImportados && Convert.ToBoolean(Eval("PedidoImportado")) ?
                                                                             Eval("IdPedidoExterno") : Eval("PedCli") %>'></asp:Label>
                                                                     </ItemTemplate>
                                                                     <HeaderStyle HorizontalAlign="Left" />

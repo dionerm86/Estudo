@@ -71,19 +71,19 @@ namespace Glass.Data.DAL
         {
             filtroAdicional = "";
 
-            string campos = selecionar ? @"ip.*, pm.codigo as codigoModelo, pm.descricao as DescrModelo, pm.TextoOrcamento, 
-                cv.Descricao as DescrCorVidro, ca.Descricao as DescrCorAluminio, cf.Descricao as DescrCorFerragem, 
+            string campos = selecionar ? @"ip.*, pm.codigo as codigoModelo, pm.descricao as DescrModelo, pm.TextoOrcamento,
+                cv.Descricao as DescrCorVidro, ca.Descricao as DescrCorAluminio, cf.Descricao as DescrCorFerragem,
                 ped.dataEntrega as dataEntregaPedido, pedEsp.dataFabrica as dataFabricaPedido" : "Count(*)";
 
             StringBuilder str = new StringBuilder();
 
-            str.Append("Select " + campos + @" From item_projeto ip 
+            str.Append("Select " + campos + @" From item_projeto ip
                 Left Join pedido ped on (coalesce(ip.idPedido, ip.idPedidoEspelho)=ped.idPedido)
                 Left Join pedido_espelho pedEsp on (ped.idPedido=pedEsp.idPedido)
-                Left Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)  
-                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro) 
-                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio) 
-                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem)  
+                Left Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
+                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro)
+                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio)
+                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem)
                 Where 1 ?filtroAdicional?");
 
             if (idItemProjeto > 0)
@@ -371,12 +371,12 @@ namespace Glass.Data.DAL
 
         public List<ItemProjeto> GetForPedido(GDASession session, uint idProjeto)
         {
-            string sql = @"Select ip.*, pm.codigo as codigoModelo, pm.textoOrcamento, cv.Descricao as DescrCorVidro, 
-                ca.Descricao as DescrCorAluminio, cf.Descricao as DescrCorFerragem 
-                From item_projeto ip Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo) 
-                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro) 
-                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio) 
-                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem)  
+            string sql = @"Select ip.*, pm.codigo as codigoModelo, pm.textoOrcamento, cv.Descricao as DescrCorVidro,
+                ca.Descricao as DescrCorAluminio, cf.Descricao as DescrCorFerragem
+                From item_projeto ip Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
+                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro)
+                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio)
+                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem)
                 Where ip.idProjeto=" + idProjeto + " Order By idItemProjeto";
 
             return objPersistence.LoadData(session, sql).ToList();
@@ -419,11 +419,11 @@ namespace Glass.Data.DAL
             string campos = selecionar ? @"ip.*, pm.codigo as codigoModelo, cv.Descricao as descrCorVidro,
                 ca.Descricao as descrCorAluminio, cf.Descricao as descrCorFerragem, ape.idAmbientePedido as idAmbientePedidoEspelho" : "Count(*)";
 
-            string sql = "Select " + campos + @" From item_projeto ip 
-                Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo) 
-                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro) 
-                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio) 
-                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem) 
+            string sql = "Select " + campos + @" From item_projeto ip
+                Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
+                Left Join cor_vidro cv On (ip.idCorVidro=cv.idCorVidro)
+                Left Join cor_aluminio ca On (ip.idCorAluminio=ca.idCorAluminio)
+                Left Join cor_ferragem cf On (ip.idCorFerragem=cf.idCorFerragem)
                 Left Join ambiente_pedido_espelho ape On (ip.idItemProjeto=ape.idItemProjeto)
                 Where 1 ";
 
@@ -498,8 +498,8 @@ namespace Glass.Data.DAL
             return obj != null && !String.IsNullOrEmpty(obj.ToString()) ? Glass.Conversoes.StrParaUint(objPersistence.ExecuteScalar(sql).ToString()) : 0;
         }
 
-        #endregion 
-        
+        #endregion
+
         #region Cria as peças e materiais do projeto
 
         /// <summary>
@@ -511,7 +511,7 @@ namespace Glass.Data.DAL
                 return;
 
             var isBoxPadrao = ProjetoModeloDAO.Instance.IsBoxPadrao(session, projetoModelo.IdProjetoModelo);
-            
+
             // Percorre cada peça do modelo de projeto e, com base na cor do vidro selecionada no item de projeto, recupera o produto.
             foreach (var pecaProjetoModelo in pecasProjetoModelo.Where(f => f.IdProd == 0))
                 pecaProjetoModelo.IdProd = ProdutoProjetoConfigDAO.Instance.GetIdProdVidro(session, pecaProjetoModelo.Tipo, isBoxPadrao, itemProjeto.EspessuraVidro,
@@ -641,7 +641,7 @@ namespace Glass.Data.DAL
                             tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(transaction, idPedidoEsp);
                             idObra = PedidoConfig.DadosPedido.UsarControleNovoObra ? PedidoDAO.Instance.GetIdObra(transaction, idPedidoEsp) : null;
                         }
-                        
+
                         // Calcula as medidas das peças, retornando lista
                         var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTela(transaction, modelo, itemProjeto, tbMedInst, tbPecaModelo, false, alterarMedidasPecas,
                             medidasAlteradasAreaInstalacao, out retornoValidacao);
@@ -675,9 +675,9 @@ namespace Glass.Data.DAL
                         // Monta tabela de peças
                         UtilsProjeto.CreateTablePecasItemProjeto(transaction, ref tbPecaModelo, itemProjeto.IdItemProjeto, itemProjeto, alterarMedidasPecas, visualizar, ecommerce);
 
-                        // Recarrega o item projeto após calcular os totais, para que no método "InsereAtualizaProdProj" abaixo 
+                        // Recarrega o item projeto após calcular os totais, para que no método "InsereAtualizaProdProj" abaixo
                         // considere o valor correto do item projeto ao inserir produto no orçamento
-                        // Deve ser GetElement para não dar problema ao criar a descrição das cores dos vidros/ferragens/alumínios dentro de 
+                        // Deve ser GetElement para não dar problema ao criar a descrição das cores dos vidros/ferragens/alumínios dentro de
                         // InsereAtualizaProdProj ao chamar a função UtilsProjeto.FormataTextoOrcamento
                         itemProjeto = GetElement(transaction, itemProjeto.IdItemProjeto);
                     }
@@ -743,7 +743,7 @@ namespace Glass.Data.DAL
 
                     if (idOrcamento > 0)
                         idAmbienteNovo = ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(transaction, idOrcamento, idAmbienteOrca, itemProjeto);
-                    
+
                     if (idPedido > 0)
                     {
                         /* Chamado 52637.
@@ -889,7 +889,7 @@ namespace Glass.Data.DAL
                 Select concat(pm.codigo, if(length(ip.ambiente)>0, concat(' (', ip.ambiente, ')'), '')) as codigo
                 From item_projeto ip
                     Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
-                Where idPedido=" + idPedido + @" 
+                Where idPedido=" + idPedido + @"
                     And Coalesce(conferido, false)=false";
 
             var retorno = GetValoresCampo(session, sql, "codigo", ", ");
@@ -901,7 +901,7 @@ namespace Glass.Data.DAL
                     Select concat(pm.codigo, if(length(ip.ambiente)>0, concat(' (', ip.ambiente, ')'), '')) as codigo
                     From item_projeto ip
                         Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
-                    Where idPedido=" + idPedido + @" 
+                    Where idPedido=" + idPedido + @"
                         And ip.idItemProjeto Not In (Select iditemprojeto from material_item_projeto)";
 
                 retorno = GetValoresCampo(session, sql, "codigo", ", ");
@@ -1404,14 +1404,14 @@ namespace Glass.Data.DAL
         {
             string sql = @"
                 update item_projeto ip set ip.total=Round((
-                        Select Sum(Total+Coalesce(valorBenef, 0)) 
-                        From material_item_projeto mip 
+                        Select Sum(Total+Coalesce(valorBenef, 0))
+                        From material_item_projeto mip
                         Where mip.idItemProjeto=ip.idItemProjeto
                     ), 2), ip.CustoTotal=Round((
-                        select sum(Coalesce(Custo,0)) 
-                        from material_item_projeto mip 
+                        select sum(Coalesce(Custo,0))
+                        from material_item_projeto mip
                         Where mip.idItemProjeto=ip.idItemProjeto
-                    ), 2) 
+                    ), 2)
                 Where idItemProjeto=" + idItemProjeto;
 
             objPersistence.ExecuteCommand(sessao, sql);
@@ -1518,7 +1518,7 @@ namespace Glass.Data.DAL
             return objPersistence.ExecuteSqlQueryCount("Select Count(*) From item_projeto Where apenasVidros=true And idItemProjeto=" + idItemProjeto) > 0;
         }
 
-        #endregion        
+        #endregion
 
         #region Retorna um elemento para usar na tela de projeto avulso
 
@@ -1556,8 +1556,8 @@ namespace Glass.Data.DAL
 
             // SQL otimizado, dessa forma fica mais rápido do que a outra forma que estava.
             string sql = @"
-                Select count(*) 
-                From impressao_etiqueta 
+                Select count(*)
+                From impressao_etiqueta
                 Where idImpressao In (Select idimpressao From produto_impressao pi Where pi.idprodped in (" + idsProdPed + @"))
                     And situacao=" + (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Ativa;
 
@@ -1815,10 +1815,10 @@ namespace Glass.Data.DAL
         public bool IsBoxPadrao(uint idItemProjeto)
         {
             string sql = @"
-                Select Count(*) From item_projeto ip 
-                    Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo) 
+                Select Count(*) From item_projeto ip
+                    Inner Join projeto_modelo pm On (ip.idProjetoModelo=pm.idProjetoModelo)
                     Left Join grupo_modelo g On (pm.idGrupoModelo=g.idGrupoModelo)
-                Where idItemProjeto=" + idItemProjeto + @" 
+                Where idItemProjeto=" + idItemProjeto + @"
                     And (pm.idGrupoModelo=" + (int)UtilsProjeto.GrupoModelo.BoxPadrao + " Or g.descricao Like 'box padrão%')";
 
             return objPersistence.ExecuteSqlQueryCount(sql, null) > 0;
@@ -1973,6 +1973,26 @@ namespace Glass.Data.DAL
                 ProjetoDAO.Instance.UpdateTotalProjeto(sessao, idProjeto.Value);
 
             return ret;
+        }
+
+        #endregion
+
+        #region Retorna Cor e Espessura do ItemProjeto
+
+        /// <summary>
+        /// Retorna a espessura do item do projeto.
+        /// </summary>
+        public int GetEspessuraItemProjeto(GDASession sessao, uint idItemProjeto)
+        {
+            return ExecuteScalar<int>(sessao, "Select ESPESSURAVIDRO From item_projeto ip Where ip.idItemProjeto=" + idItemProjeto);
+        }
+
+        /// <summary>
+        /// Retorna a cor do item do projeto.
+        /// </summary>
+        public uint GetCorItemProjeto(GDASession sessao, uint idItemProjeto)
+        {
+            return ExecuteScalar<uint>(sessao, "Select IDCORVIDRO From item_projeto ip Where ip.idItemProjeto=" + idItemProjeto);
         }
 
         #endregion

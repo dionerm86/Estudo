@@ -44,24 +44,23 @@ namespace Glass.API.Backend.Helper.Pedidos
 
         private void ConverterDtoParaModelo(Data.Model.Pedido destino)
         {
-            destino.IdCli = (uint?)this.cadastro.IdCliente ?? destino.IdCli;
-            destino.IdLoja = (uint?)this.cadastro.IdLoja ?? destino.IdLoja;
-            destino.IdObra = (uint?)this.cadastro.IdObra ?? destino.IdObra;
-            destino.DataPedido = this.cadastro.DataPedido ?? destino.DataPedido;
-            destino.FastDelivery = this.cadastro.FastDelivery ?? destino.FastDelivery;
-            destino.CodCliente = this.cadastro.CodigoPedidoCliente ?? destino.CodCliente;
-            destino.DeveTransferir = this.cadastro.DeveTransferir ?? destino.DeveTransferir;
-            destino.TipoPedido = (int?)this.cadastro.Tipo ?? destino.TipoPedido;
-            destino.TipoVenda = (int?)this.cadastro.TipoVenda ?? destino.TipoVenda;
-            destino.IdFunc = (uint?)this.cadastro.IdVendedor ?? destino.IdFunc;
-            destino.IdMedidor = (uint?)this.cadastro.IdMedidor ?? destino.IdMedidor;
-            destino.IdFuncVenda = (uint?)this.cadastro.IdFuncionarioComprador ?? destino.IdFuncVenda;
-            destino.IdTransportador = this.cadastro.IdTransportador ?? destino.IdTransportador;
-            destino.IdPedidoRevenda = this.cadastro.IdPedidoRevenda ?? destino.IdPedidoRevenda;
-            destino.GerarPedidoProducaoCorte = this.cadastro.GerarPedidoCorte ?? destino.GerarPedidoProducaoCorte;
-            destino.ValorEntrada = this.cadastro.Sinal.Valor ?? destino.ValorEntrada;
-            destino.Obs = this.cadastro.Observacao ?? destino.Obs;
-            destino.ObsLiberacao = this.cadastro.ObservacaoLiberacao ?? destino.ObsLiberacao;
+            destino.IdCli = (uint)this.cadastro.ObterValorNormalizado(c => c.IdCliente, (int)destino.IdCli);
+            destino.IdLoja = (uint)this.cadastro.ObterValorNormalizado(c => c.IdLoja, (int)destino.IdLoja);
+            destino.IdObra = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdObra, (int?)destino.IdObra);
+            destino.DataPedido = this.cadastro.ObterValorNormalizado(c => c.DataPedido, destino.DataPedido);
+            destino.FastDelivery = this.cadastro.ObterValorNormalizado(c => c.FastDelivery, destino.FastDelivery);
+            destino.CodCliente = this.cadastro.ObterValorNormalizado(c => c.CodigoPedidoCliente, destino.CodCliente);
+            destino.DeveTransferir = this.cadastro.ObterValorNormalizado(c => c.DeveTransferir, destino.DeveTransferir);
+            destino.TipoPedido = (int)this.cadastro.ObterValorNormalizado(c => c.Tipo, (Data.Model.Pedido.TipoPedidoEnum)destino.TipoPedido);
+            destino.TipoVenda = (int)this.cadastro.ObterValorNormalizado(c => c.TipoVenda, (Data.Model.Pedido.TipoVendaPedido)destino.TipoVenda);
+            destino.IdFunc = (uint)this.cadastro.ObterValorNormalizado(c => c.IdVendedor, (int)destino.IdFunc);
+            destino.IdMedidor = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdMedidor, (int?)destino.IdMedidor);
+            destino.IdFuncVenda = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdFuncionarioComprador, (int?)destino.IdFuncVenda);
+            destino.IdTransportador = this.cadastro.ObterValorNormalizado(c => c.IdTransportador, destino.IdTransportador);
+            destino.IdPedidoRevenda = this.cadastro.ObterValorNormalizado(c => c.IdPedidoRevenda, destino.IdPedidoRevenda);
+            destino.GerarPedidoProducaoCorte = this.cadastro.ObterValorNormalizado(c => c.GerarPedidoCorte, destino.GerarPedidoProducaoCorte);
+            destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
+            destino.ObsLiberacao = this.cadastro.ObterValorNormalizado(c => c.ObservacaoLiberacao, destino.ObsLiberacao);
 
             this.ConverterDadosEntrega(destino);
             this.ConverterDadosFormaPagamento(destino);
@@ -69,13 +68,14 @@ namespace Glass.API.Backend.Helper.Pedidos
             this.ConverterDadosAcrescimo(destino);
             this.ConverterDadosComissionado(destino);
             this.ConverterDadosEnderecoObra(destino);
+            this.ConverterDadosSinal(destino);
         }
 
         private void ConverterDadosEntrega(Data.Model.Pedido destino)
         {
             if (this.cadastro.Entrega != null)
             {
-                destino.TipoEntrega = this.cadastro.Entrega.Tipo?.Id ?? destino.TipoEntrega;
+                destino.TipoEntrega = this.cadastro.Entrega.Tipo ?? destino.TipoEntrega;
                 destino.DataEntrega = this.cadastro.Entrega.Data ?? destino.DataEntrega;
                 destino.ValorEntrega = this.cadastro.Entrega.Valor ?? destino.ValorEntrega;
             }
@@ -144,6 +144,14 @@ namespace Glass.API.Backend.Helper.Pedidos
                 destino.BairroObra = this.cadastro.EnderecoObra.Bairro;
                 destino.CidadeObra = this.cadastro.EnderecoObra.Cidade.Nome;
                 destino.CepObra = this.cadastro.EnderecoObra.Cep;
+            }
+        }
+
+        private void ConverterDadosSinal(Data.Model.Pedido destino)
+        {
+            if (this.cadastro.Sinal != null)
+            {
+                destino.ValorEntrada = this.cadastro.Sinal.Valor;
             }
         }
     }

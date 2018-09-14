@@ -253,13 +253,21 @@ namespace Glass.Data.DAL
         /// </summary>
         public DateTime? GetDataRota(GDASession session, uint idCli, DateTime dataInicial, bool somarDiasUteisRota, Pedido.TipoPedidoEnum? tipoPedido)
         {
+            var dataConsiderarRevenda = dataInicial.AddDays(PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda);
+
             Rota rota = GetByCliente(session, idCli);
 
             if (rota == null || (rota.DiasSemana == Model.DiasSemana.Nenhum && rota.NumeroMinimoDiasEntrega == 0))
                 return null;
 
             if (tipoPedido == Pedido.TipoPedidoEnum.Revenda)
-                return dataInicial.AddDays(PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoRevenda);
+            {
+                while(!TemODia(dataConsiderarRevenda.DayOfWeek, rota.DiasSemana) || dataConsiderarRevenda.Feriado())
+                    dataConsiderarRevenda = dataConsiderarRevenda.AddDays(1);
+
+                return dataConsiderarRevenda;
+            }
+                
 
             int numeroDias = (dataInicial - DateTime.Now).Days;
 

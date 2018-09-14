@@ -12,13 +12,9 @@ namespace Glass.UI.Web.Controls
             get { return !rfvTipoPerda.Enabled; }
             set { rfvTipoPerda.Enabled = !value; }
         }
-    
-        public bool ExibirItemVazio
-        {
-            get { return drpTipoPerda.AppendDataBoundItems; }
-            set { drpTipoPerda.AppendDataBoundItems = value; }
-        }
-    
+
+        public bool ExibirItemVazio { get; set; }
+
         public uint? IdTipoPerda
         {
             get { return Glass.Conversoes.StrParaUintNullable(drpTipoPerda.SelectedValue); }
@@ -71,7 +67,9 @@ namespace Glass.UI.Web.Controls
         protected void Page_Load(object sender, EventArgs e)
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(Controls.ctrlTipoPerda));
-    
+
+            drpTipoPerda.DataBound += DrpTipoPerda_DataBound;
+
             drpTipoPerda.Attributes.Add("OnChange", "getSubtipos('" + this.ClientID + "', this.value)");
     
             if (!Page.ClientScript.IsClientScriptBlockRegistered(GetType(), "ctrlTipoPerda_script"))
@@ -102,6 +100,14 @@ namespace Glass.UI.Web.Controls
                 }";
     
                 Page.ClientScript.RegisterClientScriptBlock(GetType(), "ctrlTipoPerda_script", script, true);
+            }
+        }
+
+        private void DrpTipoPerda_DataBound(object sender, EventArgs e)
+        {
+            if (ExibirItemVazio)
+            {
+                drpTipoPerda.Items.Insert(0, string.Empty);
             }
         }
 

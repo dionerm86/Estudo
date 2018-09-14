@@ -132,6 +132,33 @@ const app = new Vue({
     },
 
     /**
+     * Gera pedidos agrupados a partir do orçamento.
+     * @param {Object} item O orçamento a ser utilizado para geração do pedido.
+     */
+    gerarPedidosAgrupados: function (item) {
+      if (!this.perguntar('Gerar pedido', 'Tem certeza que deseja gerar pedidos para este orçamento?')) {
+        return;
+      }
+
+      if (!item.cliente.id || item.cliente.id === 0) {
+        this.exibirMensagem('Erro', 'Para gerar pedidos é preciso que o orçamento tenha um cliente associado. Edite o orçamento e informe um cliente cadastrado.');
+        return;
+      }
+
+      var vm = this;
+
+      Servicos.Orcamentos.gerarPedidosAgrupados(item.id)
+        .then(function (resposta) {
+          window.location.assign('../Listas/LstPedidos.aspx');
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem(erro.mensagem);
+          }
+        });
+    },
+
+    /**
      * Envia email para o cliente com o orçamento.
      * @param {Object} item O orçamento que será enviado por email.
      */

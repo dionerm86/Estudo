@@ -111,7 +111,7 @@
                 </td>
                 <td v-if="pedidoMaoDeObra">
                     <span v-if="item.produtoMaoDeObra">
-                        {{ item.produtoMaoDeObra.redondo | simNao }}
+                        {{ item.produtoMaoDeObra.redondo | indicaMarcado }}
                     </span>
                 </td>
                 <td>
@@ -144,7 +144,7 @@
                     </span>
                 </td>
                 <td>
-                    <log-alteracao tabela="AmbientePedido" v-bind:id-item="item.id" v-bind:atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
+                    <log-alteracao tabela="AmbientePedido" v-bind:id-item="item.id" v-bind:atualizar-ao-alterar="false" v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
                 </td>
             </template>
             <template slot="itemEditando">

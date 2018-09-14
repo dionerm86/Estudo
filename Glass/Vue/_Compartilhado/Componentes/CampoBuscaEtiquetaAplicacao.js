@@ -42,6 +42,8 @@
       set: function (valor) {
         if (!this.equivalentes(valor, this.aplicacao)) {
           this.$emit('update:aplicacao', valor);
+          this.idAplicacao = valor ? valor.id : 0;
+          this.codigoAplicacao = valor ? valor.codigo : null;
         }
       }
     }

@@ -86,6 +86,10 @@
                         <a href="#" @click.prevent="gerarPedido(item)" v-if="item.permissoes.gerarPedido">
                             Gerar Pedido
                         </a>
+                        <br />
+                        <a href="#" @click.prevent="gerarPedidosAgrupados(item)" v-if="item.permissoes.gerarPedido">
+                            Gerar Pedidos Agrupados
+                        </a>
                         <a href="#" @click.prevent="enviarEmail(item)" title="Enviar e-mail do orçamento" v-if="item.permissoes.enviarEmail">
                             <img border="0" src="../Images/email.png">
                         </a>

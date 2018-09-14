@@ -59,8 +59,8 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
             };
 
             this.ValorUnitario = produtoPedido.ValorVendido;
-            this.Processo = this.ObterIdCodigo((int?)produtoPedido.IdProcesso, produtoPedido.CodProcesso);
-            this.Aplicacao = this.ObterIdCodigo((int?)produtoPedido.IdAplicacao, produtoPedido.CodAplicacao);
+            this.Processo = IdCodigoDto.TentarConverter((int?)produtoPedido.IdProcesso, produtoPedido.CodProcesso);
+            this.Aplicacao = IdCodigoDto.TentarConverter((int?)produtoPedido.IdAplicacao, produtoPedido.CodAplicacao);
             this.CodigoPedidoCliente = produtoPedido.PedCli;
             this.Total = produtoPedido.Total;
             this.Beneficiamentos = new BeneficiamentosDto

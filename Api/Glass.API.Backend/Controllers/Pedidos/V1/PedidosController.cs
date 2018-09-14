@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -42,24 +43,34 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
 
         private IHttpActionResult ValidarCadastroPedido(GDASession sessao, CadastroAtualizacaoDto dados)
         {
-            var erros = new List<IHttpActionResult>();
+            var erros = new List<Lazy<IHttpActionResult>>();
 
-            erros.Add(this.ValidarCadastroAtualizacaoPedido(dados, "cadastro"));
-            erros.Add(this.ValidarPedidosProntosNaoLiberados(sessao, dados.IdCliente.GetValueOrDefault()));
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarCadastroAtualizacaoPedido(dados, "cadastro")));
 
-            return erros.FirstOrDefault(e => e != null);
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarPedidosProntosNaoLiberados(sessao, dados.IdCliente.GetValueOrDefault())));
+
+            return erros.FirstOrDefault(e => e.Value != null)?.Value;
         }
 
         private IHttpActionResult ValidarAtualizacaoPedido(GDASession sessao, int id, CadastroAtualizacaoDto dados)
         {
-            var erros = new List<IHttpActionResult>();
+            var erros = new List<Lazy<IHttpActionResult>>();
 
-            erros.Add(this.ValidarIdPedido(id));
-            erros.Add(this.ValidarCadastroAtualizacaoPedido(dados, "atualização"));
-            erros.Add(this.ValidarSituacaoPedido(sessao, id));
-            erros.Add(this.ValidarTipoVendaObra(sessao, id, dados));
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarIdPedido(id)));
 
-            return erros.FirstOrDefault(e => e != null);
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarCadastroAtualizacaoPedido(dados, "atualização")));
+
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarSituacaoPedido(sessao, id)));
+
+            erros.Add(new Lazy<IHttpActionResult>(() =>
+                this.ValidarTipoVendaObra(sessao, id, dados)));
+
+            return erros.FirstOrDefault(e => e.Value != null)?.Value;
         }
 
         private IHttpActionResult ValidarCadastroAtualizacaoPedido(CadastroAtualizacaoDto dados, string tipo)
