@@ -435,7 +435,7 @@ namespace Glass.Data.DAL
                 null, null, null, null, null, false, qtdeBaixa, totalProdPedInterno, true, false, true, DateTime.Now, true, null, null);
         }
 
-        public void BaixaEstoqueManual(uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
+        public void BaixaEstoqueManualComTransacao(uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
         {
             using (var transaction = new GDATransaction())
             {
@@ -443,10 +443,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var totalEstoqueManual = GetTotalEstoqueManual(transaction, (int)idProd, qtdeBaixa);
-
-                    MovimentaEstoque(transaction, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                        null, null, null, true, qtdeBaixa, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
+                    BaixaEstoqueManual(transaction, idProd, idLoja, qtdeBaixa, valor, dataMov, observacao);
 
                     transaction.Commit();
                     transaction.Close();
@@ -458,6 +455,14 @@ namespace Glass.Data.DAL
                     throw;
                 }
             }
+        }
+
+        public void BaixaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeBaixa, decimal? valor, DateTime dataMov, string observacao)
+        {
+            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeBaixa);
+
+            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Saida, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, true, qtdeBaixa, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
         }
 
         public void BaixaEstoqueProducao(GDASession sessao, uint idProd, uint idLoja, uint idProdPedProducao, decimal qtdeBaixa, decimal qtdeBaixaAreaMinima, bool alterarMateriaPrima,
@@ -567,7 +572,7 @@ namespace Glass.Data.DAL
                 null, null, false, qtdeEntrada, totalProdNf, true, false, true, dataMov, true, null, null);
         }
 
-        public void CreditaEstoqueManual(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
+        public void CreditaEstoqueManualComTransacao(uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
         {
             using (var transaction = new GDATransaction())
             {
@@ -575,10 +580,7 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var totalEstoqueManual = GetTotalEstoqueManual(transaction, (int)idProd, qtdeEntrada);
-
-                    MovimentaEstoque(transaction, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-                        null, null, null, null, true, qtdeEntrada, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
+                    CreditaEstoqueManual(transaction, idProd, idLoja, qtdeEntrada, valor, dataMov, observacao);
 
                     transaction.Commit();
                     transaction.Close();
@@ -590,6 +592,14 @@ namespace Glass.Data.DAL
                     throw;
                 }
             }
+        }
+
+        public void CreditaEstoqueManual(GDASession sessao, uint idProd, uint idLoja, decimal qtdeEntrada, decimal? valor, DateTime dataMov, string observacao)
+        {
+            var totalEstoqueManual = GetTotalEstoqueManual(sessao, (int)idProd, qtdeEntrada);
+
+            MovimentaEstoque(sessao, idProd, idLoja, MovEstoque.TipoMovEnum.Entrada, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, true, qtdeEntrada, valor.GetValueOrDefault(totalEstoqueManual), false, false, true, dataMov, true, null, observacao);
         }
 
         public void CreditaEstoqueProducao(GDASession sessao, uint idProd, uint idLoja, uint idProdPedProducao, decimal qtdeEntrada, bool alterarMateriaPrima, bool creditarEstoqueCliente)

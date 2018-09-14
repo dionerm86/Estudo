@@ -62,10 +62,10 @@ namespace Glass.UI.Web.Listas
                 TextBox obs = grdMovEstoque.FooterRow.FindControl("txtObs") as TextBox;
                 
                 if (tipo.SelectedValue == "1")
-                    MovEstoqueDAO.Instance.CreditaEstoqueManual(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
+                    MovEstoqueDAO.Instance.CreditaEstoqueManualComTransacao(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
                         Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
                 else
-                    MovEstoqueDAO.Instance.BaixaEstoqueManual(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
+                    MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao(idProd, idLoja, Glass.Conversoes.StrParaDecimal(qtde.Text),
                         Glass.Conversoes.StrParaDecimalNullable(valor.Text), data.Data, obs.Text);
     
                 data.DataString = null;

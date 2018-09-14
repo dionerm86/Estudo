@@ -57,6 +57,8 @@
                 eval("window.opener." + '<%= Request["controle"] %>').AlteraValor(idCli, idCli);
             else if ('<%= Request["callback"] %>' == "setForPart")
                 window.opener.ctrlSelParticipante_setCliente(idCli, '<%= Request["controle"] %>');
+            else if ('<%= Request["callback"] %>' == "participanteFiscal")
+                window.opener.ControleSelecaoParticipanteFiscal.selecionar('<%= Request["controle"] %>', idCli, nome);
             else if (FindControl("hdfDadosCliente", "input").value == 1)
             {
                 var dadosCli = "";

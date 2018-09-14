@@ -133,6 +133,17 @@ Vue.component('lista-selecao', {
         this.buscar();
       },
       deep: true
+    },
+
+    /**
+     * Observador para a propriedade 'itemSelecionado'.
+     * Altera o ID atual quando houver mudança no item selecionado.
+     */
+    itemSelecionado: {
+      handler: function (atual) {
+        this.idAtual = atual ? atual[this.campoId] : null;
+      },
+      deep: true
     }
   },
 

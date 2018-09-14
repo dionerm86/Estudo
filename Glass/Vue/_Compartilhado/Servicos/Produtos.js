@@ -8,43 +8,71 @@ Servicos.Produtos = (function(http) {
 
   return {
     /**
-     * Recupera a lista de produtos.
-     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos produtos.
-     * @param {number} pagina O número da página de resultados a ser exibida.
-     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
-     * @param {string} ordenacao A ordenação para o resultado.
-     * @returns {Promise} Uma promise com o resultado da busca.
+     * Objeto com os serviços para a API de grupos de produtos.
      */
-    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
-      return http().get(API.substr(0, API.length - 1), {
-        params: filtro
-      });
-    },
-
-    /**
-     * Recupera o objeto com as configurações utilizadas na tela de listagem de produtos.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterConfiguracoesLista: function () {
-      return http().get(API + 'configuracoes');
-    },
-
-    /**
-     * Remove um produto.
-     * @param {!number} idProduto O identificador do produto que será excluído.
-     * @returns {Promise} Uma promise com o resultado da operação.
-     */
-    excluir: function (idProduto) {
-      if (!idProduto) {
-        throw new Error('Produto é obrigatório.');
+    Grupos: {
+      /**
+       * Recupera a lista de grupos de produto para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'grupos/filtro');
       }
+    },
 
-      return http().delete(API + idProduto);
+    /**
+     * Objeto com os serviços para a API de subgrupos de produtos.
+     */
+    Subgrupos: {
+      /**
+       * Recupera a lista de subgrupos de produto para uso no controle de busca.
+       * @param {?number} [idGrupoProduto=null] O identificador do grupo de produto que irá filtrar os subgrupos.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function (filtro) {
+        return http().get(API + 'subgrupos/filtro', {
+          params: filtro
+        });
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de vidro.
+     */
+    CoresVidro: {
+      /**
+       * Recupera a lista de cores de vidro para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/vidro/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de ferragem.
+     */
+    CoresFerragem: {
+      /**
+       * Recupera a lista de cores de ferragem para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/ferragem/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de alumínio.
+     */
+    CoresAluminio: {
+      /**
+       * Recupera a lista de cores de alumínio para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/aluminio/filtro');
+      }
     },
 
     /**
