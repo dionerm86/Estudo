@@ -265,7 +265,7 @@ namespace Glass.Data.DAL
             int numeroDias = (dataInicial - DateTime.Now).Days;
 
             // Calcula a rota considerando dias corridos
-            if (RotaConfig.UsarDiasCorridosCalculoRota)
+            if (RotaConfig.UsarDiasCorridosCalculoRota && tipoPedido != Pedido.TipoPedidoEnum.Revenda)
             {
                 // A comparação do número de dias percorrido com o número mínimo de dias da rota deve ser "numeroDias++ < rota.NumeroMinimoDiasEntrega",
                 // porque dessa forma caso o último dia da contagem caia no dia da rota, esta data será usada, porém da forma como estava antes,
