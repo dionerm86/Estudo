@@ -1624,6 +1624,9 @@
     <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.Filtro.js" />
     <Content Include="Vue\ContasReceber\Componentes\LstContasRecebidas.js" />
     <Content Include="Vue\ContasReceber\Templates\LstContasRecebidas.Filtro.html" />
+    <Content Include="Vue\Estoques\Componentes\LstEstoque.Filtro.js" />
+    <Content Include="Vue\Estoques\Componentes\LstEstoque.js" />
+    <Content Include="Vue\Estoques\Templates\LstEstoque.Filtro.html" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.Filtro.js" />
     <Content Include="Vue\PedidosConferencia\Componentes\LstPedidosConferencia.js" />
     <Content Include="Vue\PedidosConferencia\Templates\LstPedidosConferencia.Filtro.html" />
@@ -1680,6 +1683,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
@@ -1706,10 +1710,14 @@
     <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\CoresAluminio.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\CoresVidro.js" />
     <Content Include="Vue\_Compartilhado\Servicos\DescontoPorQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cfops.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ContasReceber.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Estoques.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
@@ -1771,6 +1779,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />

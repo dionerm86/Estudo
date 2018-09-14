@@ -29,7 +29,9 @@ Mixins.Patch = {
       for (var indice in listaCampos) {
         var campo = listaCampos[indice];
 
-        if (alterado[campo] === original[campo] || (!alterado[campo] && !original[campo])) {
+        if ((alterado[campo] === original[campo])
+          || (!alterado[campo] && !original[campo] && typeof alterado[campo] === typeof original[campo])) {
+
           continue;
         }
 

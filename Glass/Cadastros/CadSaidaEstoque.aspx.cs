@@ -150,7 +150,7 @@ namespace Glass.UI.Web.Cadastros
                 int tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(idProd);
                 bool m2 = tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 || tipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto;
     
-                MovEstoqueDAO.Instance.BaixaEstoqueManual((uint)idProd, idLoja, (decimal)qtde, null, DateTime.Now, txtObservacao.Text);
+                MovEstoqueDAO.Instance.BaixaEstoqueManualComTransacao((uint)idProd, idLoja, (decimal)qtde, null, DateTime.Now, txtObservacao.Text);
             }
 
             txtObservacao.Text = null;

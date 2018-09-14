@@ -8,6 +8,74 @@ Servicos.Produtos = (function(http) {
 
   return {
     /**
+     * Objeto com os serviços para a API de grupos de produtos.
+     */
+    Grupos: {
+      /**
+       * Recupera a lista de grupos de produto para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'grupos/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de subgrupos de produtos.
+     */
+    Subgrupos: {
+      /**
+       * Recupera a lista de subgrupos de produto para uso no controle de busca.
+       * @param {?number} [idGrupoProduto=null] O identificador do grupo de produto que irá filtrar os subgrupos.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function (filtro) {
+        return http().get(API + 'subgrupos/filtro', {
+          params: filtro
+        });
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de vidro.
+     */
+    CoresVidro: {
+      /**
+       * Recupera a lista de cores de vidro para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/vidro/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de ferragem.
+     */
+    CoresFerragem: {
+      /**
+       * Recupera a lista de cores de ferragem para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/ferragem/filtro');
+      }
+    },
+
+    /**
+     * Objeto com os serviços para a API de cores de alumínio.
+     */
+    CoresAluminio: {
+      /**
+       * Recupera a lista de cores de alumínio para uso no controle de busca.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obterParaControle: function () {
+        return http().get(API + 'cores/aluminio/filtro');
+      }
+    },
+
+    /**
      * Recupera os produtos a partir do código interno.
      * @param {!string} codigoInterno O código interno do produto, para busca.
      * @param {?string} [tipoValidacao=null] O tipo de validação que será feita na busca.
