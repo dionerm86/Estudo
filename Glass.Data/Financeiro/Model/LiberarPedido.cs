@@ -193,6 +193,9 @@ namespace Glass.Data.Model
             set { _nomeFunc = value; }
         }
 
+        [PersistenceProperty("NOMECIDADECLIENTE", DirectionParameter.InputOptional)]
+        public string NomeCidadeCliente { get; set; }
+
         [PersistenceProperty("DESCRFORMAPAGTO", DirectionParameter.InputOptional)]
         public string DescrFormaPagto { get; set; }
 

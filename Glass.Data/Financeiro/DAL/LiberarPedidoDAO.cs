@@ -29,7 +29,7 @@ namespace Glass.Data.DAL
             temFiltro = false;
 
             var nomeCliente = Liberacao.DadosLiberacao.UsarRelatorioLiberacao4Vias ? "c.Nome" : ClienteDAO.Instance.GetNomeCliente("c");
-            var campos = selecionar ? "lp.*, " + nomeCliente + @" as NomeCliente, c.NomeFantasia as NomeClienteFantasia, f.Nome as NomeFunc, " +
+            var campos = selecionar ? "lp.*, " + nomeCliente + @" as NomeCliente, c.NomeFantasia as NomeClienteFantasia, ci.NomeCidade as NomeCidadeCliente, f.Nome as NomeFunc, " +
                 (Liberacao.Impostos.CalcularIcmsLiberacao ? "(" + SqlIcms("lp.idLiberarPedido") + ") as ValorIcms, " : "") + "(select cast(group_concat(distinct if(plp1.idFormaPagto=" +
                 (uint)Glass.Data.Model.Pagto.FormaPagto.Obra + ", 'Obra', if(plp1.idFormaPagto=" + (uint)Glass.Data.Model.Pagto.FormaPagto.Credito + 
                 ", 'Crédito', fp.descricao)) SEPARATOR ', ') as char) as DescrFormaPagto from pagto_liberar_pedido plp1 " +
@@ -40,7 +40,8 @@ namespace Glass.Data.DAL
             var criterio = String.Empty;
 
             var sql = "Select " + campos + @" From liberarpedido lp 
-                Left Join cliente c On (lp.idCliente=c.id_Cli) 
+                Left Join cliente c On (lp.idCliente=c.id_Cli)
+                Left Join cidade ci On (c.idcidade = ci.idcidade)
                 Left Join funcionario f On (lp.IdFunc=f.IdFunc) 
                 Where lp.Situacao <> " + (int)LiberarPedido.SituacaoLiberarPedido.Processando + " ";
 
