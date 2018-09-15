@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -1412,15 +1412,15 @@ namespace Glass.Global.Negocios.Componentes
                 .Add(SourceContext.Instance.CreateQuery()
                     .From<Data.Model.ProdutoBaixaEstoqueFiscal>()
                     .Count()
-                    .Where("IdProd=?idProd OR IdProdBaixa=?idProd")
+                    .Where("IdProdBaixa=?idProd")
                     .Add("?idProd", produto.IdProd),
-                    tratarResultado("Este produto não pode ser excluído pois existem outros produtos associados ao mesmo como baixa de estoque."))
+                    tratarResultado("Este produto não pode ser excluído pois existem outros produtos associados ao mesmo como baixa de estoque fiscal."))
 
                 // Verifica se o produto está sendo usado para baixa de estoque de outro
                .Add(SourceContext.Instance.CreateQuery()
                     .From<Data.Model.ProdutoBaixaEstoque>()
                     .Count()
-                    .Where("IdProd=?idProd OR IdProdBaixa=?idProd")
+                    .Where("IdProdBaixa=?idProd")
                     .Add("?idProd", produto.IdProd),
                     tratarResultado("Este produto não pode ser excluído pois existem outros produtos associados ao mesmo como baixa de estoque."))
 
