@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
@@ -35,7 +35,7 @@ namespace Glass.Data.DAL
                 cid.nomeUf as ufCliente, c.cep as cepCliente, concat(c.tel_Res, ' / ', c.tel_Cel, ' / ', c.tel_Cont) as telContCliente,
                 CAST(coalesce(p.idLoja, f.idLoja) as UNSIGNED) as idLoja, otd.descricao as DescrOrigemTrocaDevolucao,
                 c.IdFunc As IdFuncionarioAssociadoCliente, fc.Nome AS NomeFuncionarioAssociadoCliente, s.Descricao as Setor,
-                l.nomeFantasia as loja, f2.nome as nomeUsuCad,
+                l.nomeFantasia as loja, f2.nome as nomeUsuCad, tp.Descricao as tipoPerdaDesc ,
                 (SELECT sum(qtde) FROM produto_trocado WHERE IdTrocaDevolucao = td.IdTrocaDevolucao) as QtdePecas"
                 : "count(*)";
 
@@ -51,6 +51,7 @@ namespace Glass.Data.DAL
                     left join origem_troca_desconto otd on (td.idOrigemTrocaDevolucao = otd.idOrigemTrocaDesconto)
                     LEFT JOIN setor s ON (td.IdSetor = s.IdSetor) 
                     LEFT JOIN loja l ON (p.IdLoja = l.IdLoja)
+                    LEFT JOIN tipo_perda tp ON (td.IdTipoPerda = tp.IdTipoPerda)
                 where 1";
 
             TrocaDevolucao temp = new TrocaDevolucao();
