@@ -14,11 +14,11 @@ namespace Glass.API.Backend.Models.Cheques.Lista
     public class PermissoesDto
     {
         /// <summary>
-        /// Obtém ou define um valor que indica se será permitido alterar a agência e conta do cheque.
+        /// Obtém ou define um valor que indica se será permitido alterar dados do cheque.
         /// </summary>
         [DataMember]
-        [JsonProperty("alterarAgenciaConta")]
-        public bool AlterarAgenciaConta { get; set; }
+        [JsonProperty("alterarDadosCheque")]
+        public bool AlterarDadosCheque { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se será permitido alterar a data de vencimento do cheque.

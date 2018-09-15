@@ -41,9 +41,6 @@ namespace Glass.API.Backend.Helper.Cheques
                 case "numero":
                     return "num";
 
-                case "valorrecebido":
-                    return "valor";
-
                 case "datavencimento":
                     return "dataVenc";
 
@@ -58,6 +55,7 @@ namespace Glass.API.Backend.Helper.Cheques
                 case "titular":
                 case "banco":
                 case "cpfcnpj":
+                case "valor":
                     return campo;
 
                 default:

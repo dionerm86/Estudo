@@ -25,11 +25,11 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// <param name="dadosEntrada">Os novos dados que serão alterados no cheque indicado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
-        [Route("{id}")]
+        [Route("{id}/alterarDados")]
         [SwaggerResponse(202, "Dados do cheque atualizados.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Cheque não encontrado.", Type = typeof(MensagemDto))]
-        public IHttpActionResult AlterarCheque(int id, [FromBody] CadastroAtualizacaoDto dadosEntrada)
+        public IHttpActionResult AlterarDados(int id, [FromBody] CadastroAtualizacaoDto dadosEntrada)
         {
             using (var sessao = new GDATransaction())
             {

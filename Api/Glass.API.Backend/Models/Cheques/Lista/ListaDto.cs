@@ -54,7 +54,7 @@ namespace Glass.API.Backend.Models.Cheques.Lista
 
             this.Permissoes = new PermissoesDto
             {
-                AlterarAgenciaConta = cheque.EditarAgenciaConta,
+                AlterarDadosCheque = cheque.EditarAgenciaConta,
                 AlterarDataVencimento = cheque.AlterarDataVenc,
                 CancelarReapresentacao = cheque.CancelarReapresentadoVisible,
                 CancelarDevolucao = cheque.ExibirCancelarDevolucao,
