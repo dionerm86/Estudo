@@ -44,7 +44,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
         [HttpGet]
         [Route("")]
         [SwaggerResponse(200, "Produtos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
-        [SwaggerResponse(204, "Produtos não encontradas para o filtro informado.")]
+        [SwaggerResponse(204, "Produtos não encontrados para o filtro informado.")]
         [SwaggerResponse(206, "Produtos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
         public IHttpActionResult ObterListaProdutos([FromUri] Models.Produtos.Lista.FiltroDto filtro)

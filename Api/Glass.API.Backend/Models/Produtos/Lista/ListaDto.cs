@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas;
 using Glass.Data.DAL;
 using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
@@ -13,7 +14,7 @@ namespace Glass.API.Backend.Models.Produtos.Lista
     /// Classe que encapsula os dados de um produto para a tela de listagem.
     /// </summary>
     [DataContract(Name = "Produto")]
-    public class ListaDto
+    public class ListaDto : IdNomeDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -22,23 +23,36 @@ namespace Glass.API.Backend.Models.Produtos.Lista
         internal ListaDto(ProdutoPesquisa produto)
         {
             this.Id = produto.IdProd;
+            this.Nome = produto.Descricao;
             this.Codigo = produto.CodInterno;
-            this.Descricao = produto.DescricaoProdutoBeneficiamento;
             this.DescricaoBeneficiamentos = produto.DescricaoBeneficiamentos;
             this.DescricaoGrupo = produto.Grupo;
             this.DescricaoSubgrupo = produto.Subgrupo;
             this.Altura = produto.Altura;
             this.Largura = produto.Largura;
-            this.CustoFornecedor = produto.Custofabbase;
-            this.CustoComImpostos = produto.CustoCompra;
-            this.ValorAtacado = produto.ValorAtacado;
-            this.ValorBalcao = produto.ValorBalcao;
-            this.ValorObra = produto.ValorObra;
-            this.ValorReposicao = produto.ValorReposicao;
-            this.QuantidadeReserva = (decimal)produto.Reserva;
-            this.QuantidadeLiberacao = (decimal)produto.Liberacao;
-            this.Estoque = produto.Estoque;
-            this.EstoqueDisponivel = produto.EstoqueDisponivel;
+            this.Custos = new CustosDto()
+            {
+                Fornecedor = produto.Custofabbase,
+                ComImpostos = produto.CustoCompra,
+            };
+
+            this.ValoresVenda = new ValoresVendaDto()
+            {
+                Atacado = produto.ValorAtacado,
+                Balcao = produto.ValorBalcao,
+                Obra = produto.ValorObra,
+                Reposicao = produto.ValorReposicao,
+            };
+
+            this.Estoque = new EstoqueDto()
+            {
+                Reserva = (decimal)produto.Reserva,
+                Liberacao = (decimal)produto.Liberacao,
+                Real = (decimal)produto.QtdeEstoque,
+                Disponivel = (decimal)produto.Disponivel,
+                Unidade = Colosoft.Translator.Translate(produto.TipoCalculo, true).Format(),
+            };
+
             this.UrlImagemProduto = Global.UI.Web.Process.ProdutoRepositorioImagens.Instance.ObtemUrl(produto.IdProd);
             this.Permissoes = new PermissoesDto
             {
@@ -49,25 +63,11 @@ namespace Glass.API.Backend.Models.Produtos.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o identificador do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
-
-        /// <summary>
         /// Obtém ou define o código do produto.
         /// </summary>
         [DataMember]
         [JsonProperty("codigo")]
         public string Codigo { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a descrição do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("descricao")]
-        public string Descricao { get; set; }
 
         /// <summary>
         /// Obtém ou define a descrição dos beneficiamentos do produto.
@@ -105,74 +105,25 @@ namespace Glass.API.Backend.Models.Produtos.Lista
         public int? Largura { get; set; }
 
         /// <summary>
-        /// Obtém ou define o custo de fornecedor do produto.
+        /// Obtém ou define os custos do produto.
         /// </summary>
         [DataMember]
-        [JsonProperty("custoFornecedor")]
-        public decimal CustoFornecedor { get; set; }
+        [JsonProperty("custos")]
+        public CustosDto Custos { get; set; }
 
         /// <summary>
-        /// Obtém ou define o custo com impostos do produto.
+        /// Obtém ou define os valores de venda do produto.
         /// </summary>
         [DataMember]
-        [JsonProperty("custoComImpostos")]
-        public decimal CustoComImpostos { get; set; }
+        [JsonProperty("valoresVenda")]
+        public ValoresVendaDto ValoresVenda { get; set; }
 
         /// <summary>
-        /// Obtém ou define o valor de atacado do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorAtacado")]
-        public decimal ValorAtacado { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor de balcão do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorBalcao")]
-        public decimal ValorBalcao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor de obra do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorObra")]
-        public decimal ValorObra { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o valor de reposição do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("valorReposicao")]
-        public decimal ValorReposicao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a quantidade de estoque em "reserva" do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("quantidadeReserva")]
-        public decimal QuantidadeReserva { get; set; }
-
-        /// <summary>
-        /// Obtém ou define a quantidade de estoque em "liberação" do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("quantidadeLiberacao")]
-        public decimal QuantidadeLiberacao { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o estoque do produto.
+        /// Obtém ou define dados de estoque do produto.
         /// </summary>
         [DataMember]
         [JsonProperty("estoque")]
-        public string Estoque { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o estoque disponível do produto.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("estoqueDisponivel")]
-        public string EstoqueDisponivel { get; set; }
+        public EstoqueDto Estoque { get; set; }
 
         /// <summary>
         /// Obtém ou define a url da imagem do produto.

@@ -172,6 +172,10 @@ namespace Glass.Global.Relatorios.Produtos
                 this.DataSources.Add(new ReportDataSource("Produtos", produtos.ToArray()));
             }
 
+            if (string.IsNullOrEmpty(this.Colunas))
+            {
+                this.Colunas = "3,4,5,6,7,8";
+            }
 
             Parameters.Add("ApenasProdutosEstoqueBaixa", IdProduto.HasValue ? 
                 (!ApenasProdutosEstoqueBaixa).ToString() : ApenasProdutosEstoqueBaixa.ToString());

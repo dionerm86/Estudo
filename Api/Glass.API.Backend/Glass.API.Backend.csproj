@@ -547,6 +547,9 @@
     <Compile Include="Models\Produtos\Filtro\LarguraDto.cs" />
     <Compile Include="Models\Produtos\Filtro\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\Filtro\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\Lista\ValoresVendaDto.cs" />
+    <Compile Include="Models\Produtos\Lista\CustosDto.cs" />
     <Compile Include="Models\Produtos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\Lista\PermissoesDto.cs" />
