@@ -80,7 +80,8 @@ namespace Glass.API.Backend.Models.Cheques.Lista
         public bool Reapresentado { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o cheque está em "advogado".
+        /// Obtém ou define um valor que indica se o cheque está com um advogado, para cobrança/acionamento na justiça.
+        /// 0 - Busca todos os cheques, 1 - Apenas cheques repassados para advogado, 2 - Apenas cheques não repassados para advogados.
         /// </summary>
         [JsonProperty("advogado")]
         public int? Advogado { get; set; }

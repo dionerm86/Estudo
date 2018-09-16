@@ -25,20 +25,24 @@ namespace Glass.API.Backend.Models.Cheques.Lista
         {
             this.Id = (int)cheque.IdCheque;
             this.Referencia = cheque.Referencia;
-            this.Loja = new IdNomeDto {
+            this.Loja = new IdNomeDto
+            {
                 Id = (int)cheque.IdLoja,
                 Nome = cheque.NomeLoja,
             };
+
             this.Cliente = new IdNomeDto
             {
                 Id = (int)cheque.IdCliente,
                 Nome = cheque.NomeCliente,
             };
+
             this.Fornecedor = new IdNomeDto
             {
                 Id = (int)cheque.IdFornecedor,
                 Nome = cheque.NomeFornecedor,
             };
+
             this.NumeroCheque = cheque.Num;
             this.DigitoNumeroCheque = cheque.DigitoNum;
             this.Banco = cheque.Banco;

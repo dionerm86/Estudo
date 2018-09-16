@@ -92,7 +92,7 @@ Vue.component('cheques-filtros', {
   },
 
   mounted: function () {
-    this.filtroAtual.tipo = 2;
+    this.filtroAtual.tipo = this.configuracoes.tipoChequeTerceiros;
   },
 
   watch: {

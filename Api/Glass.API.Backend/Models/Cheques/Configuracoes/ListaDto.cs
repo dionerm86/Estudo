@@ -20,6 +20,7 @@ namespace Glass.API.Backend.Models.Cheques.Configuracoes
         internal ListaDto()
         {
             this.UsarLiberacaoPedido = PedidoConfig.LiberarPedido;
+            this.TipoChequeTerceiros = (int)Data.Model.Cheques.TipoCheque.Terceiros;
         }
 
         /// <summary>
@@ -28,5 +29,12 @@ namespace Glass.API.Backend.Models.Cheques.Configuracoes
         [DataMember]
         [JsonProperty("usarLiberacaoPedido")]
         public bool UsarLiberacaoPedido { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica qual o tipo de cheque é o tipo "Terceiros".
+        /// </summary>
+        [DataMember]
+        [JsonProperty("tipoChequeTerceiros")]
+        public int TipoChequeTerceiros { get; set; }
     }
 }
