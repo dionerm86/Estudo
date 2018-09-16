@@ -475,6 +475,9 @@
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Cheques\Componentes\LstCheque.Filtro.js" />
+    <Content Include="Vue\Cheques\Componentes\LstCheque.js" />
+    <Content Include="Vue\Cheques\Templates\LstCheque.Filtro.html" />
     <Content Include="Vue\Produtos\Componentes\LstProdutos.Filtro.js" />
     <Content Include="Vue\Produtos\Componentes\LstProdutos.js" />
     <Content Include="Vue\Produtos\Templates\LstProdutos.Filtro.html" />
@@ -1720,6 +1723,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Comissionados.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cfops.js" />
     <Content Include="Vue\_Compartilhado\Servicos\ContasReceber.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Cheques.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Estoques.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />

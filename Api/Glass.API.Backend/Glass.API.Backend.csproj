@@ -240,9 +240,13 @@
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
     <Compile Include="Controllers\Cfops\V1\GetCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\CfopsController.cs" />
+    <Compile Include="Controllers\Cheques\V1\DeleteChequesController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\GetContasReceberController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\ContasReceberController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\PatchContasReceberController.cs" />
+    <Compile Include="Controllers\Cheques\V1\ChequesController.cs" />
+    <Compile Include="Controllers\Cheques\V1\GetChequesController.cs" />
+    <Compile Include="Controllers\Cheques\V1\PatchChequesController.cs" />
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
@@ -343,6 +347,8 @@
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
     <Compile Include="Helper\ConversorDadosAdicionaisParaValidacao.cs" />
+    <Compile Include="Helper\Cheques\ConverterCadastroAtualizacaoParaCheque.cs" />
+    <Compile Include="Helper\Cheques\TraducaoOrdenacaoListaCheques.cs" />
     <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueFiscal.cs" />
     <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueReal.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
@@ -388,6 +394,12 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
+    <Compile Include="Models\Cheques\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Cheques\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cheques\Lista\AdvogadoEnum.cs" />
+    <Compile Include="Models\Cheques\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Cheques\Lista\ListaDto.cs" />
+    <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
