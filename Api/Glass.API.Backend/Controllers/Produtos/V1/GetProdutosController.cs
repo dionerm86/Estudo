@@ -9,6 +9,8 @@ using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Produtos.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 
 namespace Glass.API.Backend.Controllers.Produtos.V1
@@ -18,6 +20,72 @@ namespace Glass.API.Backend.Controllers.Produtos.V1
     /// </summary>
     public partial class ProdutosController : BaseController
     {
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de produtos.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações recuperadas.", Type = typeof(Models.Produtos.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaProdutos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Produtos.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de produtos.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos itens.</param>
+        /// <returns>Uma lista JSON com os dados dos produtos.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Produtos sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Produtos não encontrados para o filtro informado.")]
+        [SwaggerResponse(206, "Produtos paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Produtos.Lista.ListaDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaProdutos([FromUri] Models.Produtos.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.Produtos.Lista.FiltroDto();
+
+                var produtos = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IProdutoFluxo>()
+                    .PesquisarProdutos(
+                        filtro.Codigo,
+                        filtro.Descricao,
+                        filtro.Situacao ?? Situacao.Ativo,
+                        null,
+                        null,
+                        null,
+                        filtro.IdGrupo != null ? filtro.IdGrupo.ToString() : null,
+                        filtro.IdSubgrupo != null ? filtro.IdSubgrupo.ToString() : null,
+                        null,
+                        false,
+                        false,
+                        filtro.ValorAlturaInicio,
+                        filtro.ValorAlturaFim,
+                        filtro.ValorLarguraInicio,
+                        filtro.ValorLarguraFim,
+                        null);
+
+                ((Colosoft.Collections.IVirtualList)produtos).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)produtos).ApplySort(filtro.ObterTraducaoOrdenacao());
+
+                return this.ListaPaginada(
+                    produtos
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(c => new Models.Produtos.Lista.ListaDto(c)),
+                    filtro,
+                    () => produtos.Count);
+            }
+        }
+
         /// <summary>
         /// Recupera um produto para o controle de filtro.
         /// </summary>

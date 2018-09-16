@@ -278,6 +278,7 @@
     <Compile Include="Controllers\Processos\V1\PatchProcessosController.cs" />
     <Compile Include="Controllers\Processos\V1\PostProcessosController.cs" />
     <Compile Include="Controllers\Processos\V1\DeleteProcessosController.cs" />
+    <Compile Include="Controllers\Produtos\V1\DeleteProdutosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
@@ -364,6 +365,7 @@
     <Compile Include="Helper\Produtos\Estrategias\Filtro\ValidacaoFiltroPedidoStrategy.cs" />
     <Compile Include="Helper\Produtos\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
     <Compile Include="Helper\Produtos\Estrategias\Filtro\IValidacaoFiltro.cs" />
+    <Compile Include="Helper\Produtos\TraducaoOrdenacaoListaProdutos.cs" />
     <Compile Include="Helper\Produtos\ValidacaoFactory.cs" />
     <Compile Include="Helper\Clientes\Estrategias\Filtro\ValidacaoFiltroPedidoStrategy.cs" />
     <Compile Include="Helper\Clientes\Estrategias\Filtro\ValidacaoFiltroSemOperacaoStrategy.cs" />
@@ -538,12 +540,19 @@
     <Compile Include="Models\Produtos\CalculoAreaM2\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\DadosProdutoDto.cs" />
     <Compile Include="Models\Produtos\CalculoTotal\TotalCalculadoDto.cs" />
+    <Compile Include="Models\Produtos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\Filtro\AlturaDto.cs" />
     <Compile Include="Models\Produtos\Filtro\DescontoAcrescimoClienteDto.cs" />
     <Compile Include="Models\Produtos\Filtro\QuantidadeDto.cs" />
     <Compile Include="Models\Produtos\Filtro\LarguraDto.cs" />
     <Compile Include="Models\Produtos\Filtro\ProdutoDto.cs" />
     <Compile Include="Models\Produtos\Filtro\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\Lista\EstoqueDto.cs" />
+    <Compile Include="Models\Produtos\Lista\ValoresVendaDto.cs" />
+    <Compile Include="Models\Produtos\Lista\CustosDto.cs" />
+    <Compile Include="Models\Produtos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\Lista\PermissoesDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
