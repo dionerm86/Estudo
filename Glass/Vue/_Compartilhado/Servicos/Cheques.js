@@ -49,7 +49,7 @@ Servicos.Cheques = (function(http) {
         return Promise.resolve();
       }
 
-      return http().patch(API + id + '/alterarDados');
+      return http().patch(API + id + '/alterarDados', cheque);
     },
 
     /**

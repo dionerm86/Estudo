@@ -36,7 +36,7 @@ namespace Glass.API.Backend.Helper.Cheques
                     return "idCliente";
 
                 case "fornecedor":
-                    return "idForncedor";
+                    return "idFornecedor";
 
                 case "numero":
                     return "num";
@@ -48,7 +48,7 @@ namespace Glass.API.Backend.Helper.Cheques
                     return "obs";
 
                 case "situacao":
-                    return "descrSituacao";
+                    return "situacao";
 
                 case "agencia":
                 case "conta":

@@ -45,14 +45,14 @@ namespace Glass.API.Backend.Helper.Cheques
 
         private void ConverterDtoParaModelo(Data.Model.Cheques destino)
         {
-            destino.Num = this.cadastro.NumeroCheque;
-            destino.DigitoNum = this.cadastro.DigitoNumeroCheque;
-            destino.Banco = this.cadastro.Banco;
-            destino.Agencia = this.cadastro.Agencia;
-            destino.Conta = this.cadastro.Conta;
-            destino.Titular = this.cadastro.Titular;
-            destino.DataVenc = this.cadastro.DataVencimento;
-            destino.Obs = this.cadastro.Observacao;
+            destino.Num = this.cadastro.ObterValorNormalizado(c => c.NumeroCheque, destino.Num);
+            destino.DigitoNum = this.cadastro.ObterValorNormalizado(c => c.DigitoNumeroCheque, destino.DigitoNum);
+            destino.Banco = this.cadastro.ObterValorNormalizado(c => c.Banco, destino.Banco);
+            destino.Agencia = this.cadastro.ObterValorNormalizado(c => c.Agencia, destino.Agencia);
+            destino.Conta = this.cadastro.ObterValorNormalizado(c => c.Conta, destino.Conta);
+            destino.Titular = this.cadastro.ObterValorNormalizado(c => c.Titular, destino.Titular);
+            destino.DataVenc = this.cadastro.ObterValorNormalizado(c => c.DataVencimento, destino.DataVenc);
+            destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
         }
     }
 }

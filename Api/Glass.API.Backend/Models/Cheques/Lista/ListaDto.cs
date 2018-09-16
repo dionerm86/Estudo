@@ -50,7 +50,7 @@ namespace Glass.API.Backend.Models.Cheques.Lista
             this.DataVencimento = cheque.DataVenc;
             this.DataVencimentoOriginal = cheque.DataVencOriginal;
             this.Observacao = cheque.Obs;
-            this.Situacao = (Data.Model.Cheques.SituacaoCheque)cheque.Situacao;
+            this.Situacao = cheque.DescrSituacao;
 
             this.Permissoes = new PermissoesDto
             {
@@ -180,7 +180,7 @@ namespace Glass.API.Backend.Models.Cheques.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public Data.Model.Cheques.SituacaoCheque Situacao { get; set; }
+        public string Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define a lista de permissões concedidas na tela.

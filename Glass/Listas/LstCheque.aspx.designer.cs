@@ -11,32 +11,5 @@ namespace Glass.UI.Web.Listas {
     
     
     public partial class LstCheque {
-        
-        /// <summary>
-        /// grdCheque control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView grdCheque;
-        
-        /// <summary>
-        /// lnkImprimir control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkImprimir;
-        
-        /// <summary>
-        /// lnkExportarExcel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton lnkExportarExcel;
     }
 }

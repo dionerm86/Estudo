@@ -10,7 +10,7 @@
             <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
+        <span class="form-group" v-if="configuracoes.usarLiberacaoPedido">
             <label>Liberação</label>
             <input type="number" v-model.number="filtroAtual.idLiberacao" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
@@ -136,7 +136,7 @@
         </span>
         <span class="form-group">
             <label>Ordenar relatório por</label>
-            <select v-model="filtroAtual.advogado">
+            <select v-model="filtroAtual.ordenacaoFiltro">
                 <option Value="1">Titular</option>
                 <option Value="2">Data venc.</option>
                 <option Value="3">Banco</option>

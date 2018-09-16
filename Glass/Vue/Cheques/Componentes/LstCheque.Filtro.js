@@ -9,6 +9,16 @@ Vue.component('cheques-filtros', {
       required: true,
       twoWay: true,
       validator: Mixins.Validacao.validarObjeto
+    },
+
+    /**
+     * Objeto com as configurações da tela de cheques.
+     * @type {!Object}
+     */
+    configuracoes: {
+      required: true,
+      twoWay: false,
+      validator: Mixins.Validacao.validarObjeto
     }
   },
 

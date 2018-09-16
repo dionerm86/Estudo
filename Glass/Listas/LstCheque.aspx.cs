@@ -7,12 +7,7 @@ namespace Glass.UI.Web.Listas
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!PedidoConfig.LiberarPedido)
-            {
-                lblLiberacao.Visible = false;
-                imgPesqLib.Visible = false;
-                txtNumLiberarPedido.Visible = false;
-            }
+
         }
     }
 }

@@ -97,7 +97,7 @@ const app = new Vue({
      * @param {Object} item O cheque que terá os anexos exibidos.
      */
     abrirAnexos: function (item) {
-      this.abrirJanela(150, 500, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=cheque');
+      this.abrirJanela(600, 800, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=cheque');
     },
 
     /**
