@@ -12745,7 +12745,7 @@ namespace Glass.Data.DAL
                     tipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoMaoDeObra :
                     PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido;
 
-                if (tipoEntrega != null && !pedidoRevendaNaEntrega)
+                if (tipoEntrega != null && (!pedidoRevendaNaEntrega || dataRota == null))
                 {
                     var existeTipo = PedidoConfig.DiasMinimosEntregaTipo.ContainsKey((Pedido.TipoEntregaPedido)tipoEntrega.Value);
 
@@ -12844,7 +12844,7 @@ namespace Glass.Data.DAL
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
                 }
 
-                if (numeroDiasSomar > 0 && !pedidoRevendaNaEntrega)
+                if (numeroDiasSomar > 0 && (!pedidoRevendaNaEntrega || dataRota == null))
                 {
                     int i = 0;
 

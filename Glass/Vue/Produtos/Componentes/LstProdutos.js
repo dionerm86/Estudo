@@ -165,7 +165,6 @@ const app = new Vue({
       incluirFiltro('larguraInicio', this.filtro.valorLarguraInicio);
       incluirFiltro('larguraFim', this.filtro.valorLarguraFim);
       incluirFiltro('orderBy', this.filtro.ordenacaoFiltro);
-      incluirFiltro('colunas', '3,4,5,6,7,8');
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

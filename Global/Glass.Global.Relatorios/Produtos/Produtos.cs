@@ -158,6 +158,11 @@ namespace Glass.Global.Relatorios.Produtos
                 CodInterno, Descricao, Situacao, IdLoja, IdFornecedor, NomeFornecedor, IdGrupoProd, IdSubgrupoProd,
                 TipoNegociacaoProduto, ApenasProdutosEstoqueBaixa, Agrupar, AlturaInicio, AlturaFim, LarguraInicio, LarguraFim, Ordenacao);
 
+            if (string.IsNullOrEmpty(this.Colunas))
+            {
+                this.Colunas = "3,4,5,6,7,8";
+            }
+
             Parameters.Add("Criterio", produtos.GetSearchParameterDescriptions().Join(" ").Format() ?? "");
             Parameters.Add("ApenasProdutosEstoqueBaixa", ApenasProdutosEstoqueBaixa.ToString());
             Parameters.Add("Colunas", Colunas);

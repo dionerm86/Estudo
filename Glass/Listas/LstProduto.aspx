@@ -66,7 +66,7 @@
                     <th></th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
-                    <td style="white-space: nowrap" v-if="configuracoes.cadastrarProduto">
+                    <td style="white-space: nowrap" v-if="configuracoes && configuracoes.cadastrarProduto">
                         <a :href="obterLinkEditarProduto(item)" title="Editar">
                             <img border="0" src="../Images/EditarGrid.gif">
                         </a>
@@ -81,20 +81,26 @@
                         </a>
                     </td>
                     <td>{{ item.codigo }}</td>
-                    <td>{{ item.descricao }} {{ item.descricaoBeneficiamentos }}</td>
-                    <td>{{ item.descricaoGrupo }} - {{ item.descricaoSubgrupo }}</td>
+                    <td>{{ item.nome }} {{ item.descricaoBeneficiamentos }}</td>
+                    <td>
+                        {{ item.descricaoGrupo }}
+                        <template v-if="item.descricaoSubgrupo">
+                            -
+                            {{ item.descricaoSubgrupo }}
+                        </template>
+                    </td>
                     <td>{{ item.altura }}</td>
                     <td>{{ item.largura }}</td>
-                    <td>{{ item.custoFornecedor }}</td>
-                    <td>{{ item.custoComImpostos }}</td>
-                    <td>{{ item.valorAtacado }}</td>
-                    <td>{{ item.valorBalcao }}</td>
-                    <td>{{ item.valorObra }}</td>
-                    <td>{{ item.valorReposicao }}</td>
-                    <td>{{ item.quantidadeReserva }}</td>
-                    <td v-if="configuracoes.usarLiberacaoPedido">{{ item.quantidadeLiberacao }}</td>
-                    <td>{{ item.estoque }}</td>
-                    <td>{{ item.estoqueDisponivel }}</td>
+                    <td>{{ item.custos.fornecedor | moeda }}</td>
+                    <td>{{ item.custos.comImpostos | moeda }}</td>
+                    <td>{{ item.valoresVenda.atacado | moeda }}</td>
+                    <td>{{ item.valoresVenda.balcao | moeda }}</td>
+                    <td>{{ item.valoresVenda.obra | moeda }}</td>
+                    <td>{{ item.valoresVenda.reposicao | moeda }}</td>
+                    <td>{{ item.estoque.reserva }}</td>
+                    <td v-if="configuracoes && configuracoes.usarLiberacaoPedido">{{ item.estoque.liberacao }}</td>
+                    <td>{{ item.estoque.real }}{{ item.estoque.unidade }}</td>
+                    <td>{{ item.estoque.disponivel }}{{ item.estoque.unidade }}</td>
                     <td style="white-space: nowrap">
                         <a href="#" @click.prevent="abrirPrecoAnterior(item)" title="Preço anterior" v-if="configuracoes.exibirPrecoAnterior">
                             <img border="0" src="../Images/money_hist.gif">
