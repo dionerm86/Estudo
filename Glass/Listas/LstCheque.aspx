@@ -14,7 +14,7 @@
                 <template slot="cabecalho">
                     <th></th>
                     <th>
-                        <a href="#">Referência</a>
+                        <a href="#">ReferÃªncia</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('loja')">Loja</a>
@@ -26,13 +26,13 @@
                         <a href="#" @click.prevent="ordenar('fornecedor')">Fornecedor</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('numero')">Número</a>
+                        <a href="#" @click.prevent="ordenar('numero')">NÃºmero</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('banco')">Banco</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('agencia')">Agência</a>
+                        <a href="#" @click.prevent="ordenar('agencia')">AgÃªncia</a>
                     </th>
                     <th>
                         <a href="#" @click.prevent="ordenar('conta')">Conta</a>
@@ -50,10 +50,10 @@
                         <a href="#" @click.prevent="ordenar('dataVencimento')">Data vencimento</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('observacao')">Obervação</a>
+                        <a href="#" @click.prevent="ordenar('observacao')">ObervaÃ§Ã£o</a>
                     </th>
                     <th>
-                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
+                        <a href="#" @click.prevent="ordenar('situacao')">SituaÃ§Ã£o</a>
                     </th>
                     <th></th>
                 </template>
@@ -68,25 +68,25 @@
                     </td>
                     <td>{{ item.referencia }}</td>
                     <td>
-                        <label v-if="item.loja">
+                        <template v-if="item.loja">
                             {{ item.loja.nome }}
-                        </label>
+                        </template>
                     </td>
                     <td>
-                        <label v-if="item.cliente && item.cliente.id">
+                        <template v-if="item.cliente && item.cliente.id">
                             {{ item.cliente.id }} - {{ item.cliente.nome }}
-                        </label>
+                        </template>
                     </td>
                     <td>
-                        <label v-if="item.fornecedor && item.fornecedor.id">
+                        <template v-if="item.fornecedor && item.fornecedor.id">
                             {{ item.fornecedor.id }} - {{ item.fornecedor.nome }}
-                        </label>
+                        </template>
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         {{ item.numeroCheque }}
-                        <label v-if="item.digitoNumeroCheque">
+                        <template v-if="item.digitoNumeroCheque">
                              - {{ item.digitoNumeroCheque }}
-                        </label>
+                        </template>
                     </td>
                     <td>{{ item.banco }}</td>
                     <td>{{ item.agencia }}</td>
@@ -96,23 +96,23 @@
                     <td>{{ item.valorRecebido }}</td>
                     <td>
                         {{ item.dataVencimento | data }}
-                        <label v-if="item.dataVencimentoOriginal">
+                        <template v-if="item.dataVencimentoOriginal">
                             <br />(Data Venc. Orig. {{ item.dataVencimentoOriginal | data }})
-                        </label>
+                        </template>
                     </td>
                     <td>{{ item.observacao }}</td>
                     <td>{{ item.situacao }}</td>
-                    <td>
+                    <td style="white-space: nowrap">
                         <a href="#" @click.prevent="cancelarReapresentacao(item)" v-if="numeroLinhaEdicao === -1 && item.permissoes.cancelarReapresentacao">
-                            Cancelar reapresentação
+                            Cancelar reapresentaÃ§Ã£o
                         </a>
                         <a href="#" @click.prevent="cancelarDevolucao(item)" v-if="numeroLinhaEdicao === -1 && item.permissoes.cancelarDevolucao">
-                            Cancelar devolução
+                            Cancelar devoluÃ§Ã£o
                         </a>
                         <a href="#" @click.prevent="cancelarProtesto(item)" v-if="numeroLinhaEdicao === -1 && item.permissoes.cancelarProtesto">
                             Cancelar protesto
                         </a>
-                        <a href="#" @click.prevent="abrirLocalizacaoCheque(item)" title="Localização" v-if="numeroLinhaEdicao === -1">
+                        <a href="#" @click.prevent="abrirLocalizacaoCheque(item)" title="LocalizaÃ§Ã£o" v-if="numeroLinhaEdicao === -1">
                             <img border="0" src="../Images/environment.gif" />
                         </a>
                         <log-alteracao tabela="Cheque" :id-item="item.id" :atualizar-ao-alterar="false" v-if="numeroLinhaEdicao === -1 && item.permissoes.logAlteracoes"></log-alteracao>
@@ -129,30 +129,30 @@
                     </td>
                     <td>{{ chequeAtual.referencia }}</td>
                     <td>
-                        <label v-if="chequeAtual.loja">
+                        <template v-if="chequeAtual.loja">
                             {{ chequeAtual.loja.nome }}
-                        </label>
+                        </template>
                     </td>
                     <td>
-                        <label v-if="chequeAtual.cliente && chequeAtual.cliente.id">
+                        <template v-if="chequeAtual.cliente && chequeAtual.cliente.id">
                             {{ chequeAtual.cliente.id }} - {{ chequeAtual.cliente.nome }}
-                        </label>
+                        </template>
                     </td>
                     <td>
-                        <label v-if="chequeAtual.fornecedor && chequeAtual.fornecedor.id">
+                        <template v-if="chequeAtual.fornecedor && chequeAtual.fornecedor.id">
                             {{ chequeAtual.fornecedor.id }} - {{ chequeAtual.fornecedor.nome }}
-                        </label>
+                        </template>
                     </td>
-                    <td>
+                    <td style="white-space: nowrap">
                         <span v-if="chequeAtual && chequeAtual.permissoes && chequeAtual.permissoes.alterarDadosCheque">
                             <input type="number" v-model.number="cheque.numeroCheque" style="width: 60px" />
                             <input type="text" v-model="cheque.digitoNumeroCheque" style="width: 10px" maxlength="1" />
                         </span>
                         <span v-else style="white-space: nowrap">
                             {{ chequeAtual.numeroCheque }}
-                            <label v-if="chequeAtual.digitoNumeroCheque">
+                            <template v-if="chequeAtual.digitoNumeroCheque">
                                  - {{ chequeAtual.digitoNumeroCheque }}
-                            </label>
+                            </template>
                         </span>
                     </td>
                     <td>
@@ -190,9 +190,9 @@
                         </span>
                         <span v-else>
                             {{ chequeAtual.dataVencimento | data }}
-                            <label v-if="chequeAtual.dataVencimentoOriginal">
+                            <template v-if="chequeAtual.dataVencimentoOriginal">
                                 <br />(Data Venc. Orig. {{ chequeAtual.dataVencimentoOriginal | data }})
-                            </label>
+                            </template>
                         </span>
                     </td>
                     <td>

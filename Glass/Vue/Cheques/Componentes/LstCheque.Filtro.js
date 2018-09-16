@@ -91,10 +91,6 @@ Vue.component('cheques-filtros', {
     }
   },
 
-  mounted: function () {
-    this.filtroAtual.tipo = this.configuracoes.tipoChequeTerceiros;
-  },
-
   watch: {
     /**
      * Observador para a variável 'lojaAtual'.
@@ -103,6 +99,18 @@ Vue.component('cheques-filtros', {
     lojaAtual: {
       handler: function(atual) {
         this.filtroAtual.idLoja = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a propriedade 'configuracoes'.
+     * Inicia o filtro de tipos e realiza o filtro.
+     */
+    configuracoes: {
+      handler: function (atual) {
+        this.filtroAtual.tipo = atual ? atual.tipoChequeTerceiros : null;
+        this.filtrar();
       },
       deep: true
     }

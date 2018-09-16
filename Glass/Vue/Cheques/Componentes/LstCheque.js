@@ -25,7 +25,11 @@ const app = new Vue({
      * @param {string} ordenacao A ordenação que será usada para a recuperação dos itens.
      * @returns {Promise} Uma promise com o resultado da busca de cheques.
      */
-    obterLista: function(filtro, pagina, numeroRegistros, ordenacao) {
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
+        return Promise.reject();
+      }
+
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Cheques.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
