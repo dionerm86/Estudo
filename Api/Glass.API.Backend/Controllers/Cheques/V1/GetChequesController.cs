@@ -52,7 +52,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
             {
                 filtro = filtro ?? new Models.Cheques.Lista.FiltroDto();
 
-                var tipo = filtro.Tipo ?? 2;
+                var tipo = filtro.Tipo ?? Data.Model.Cheques.TipoCheque.Terceiros;
 
                 var cheques = ChequesDAO.Instance.GetByFilter(
                     (uint)(filtro.IdLoja ?? 0),
@@ -60,7 +60,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                     (uint)(filtro.IdLiberacao ?? 0),
                     (uint)(filtro.IdAcerto ?? 0),
                     (uint)(filtro.NumeroNfe ?? 0),
-                    tipo,
+                    (int)tipo,
                     filtro.NumeroCheque ?? 0,
                     filtro.Situacao != null && filtro.Situacao.Any() ? string.Join(",", filtro.Situacao.Select(f => (int)f)) : null,
                     filtro.Reapresentado,
@@ -97,7 +97,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                         (uint)(filtro.IdLiberacao ?? 0),
                         (uint)(filtro.IdAcerto ?? 0),
                         (uint)(filtro.NumeroNfe ?? 0),
-                        tipo,
+                        (int)tipo,
                         filtro.NumeroCheque ?? 0,
                         filtro.Situacao != null && filtro.Situacao.Any() ? string.Join(",", filtro.Situacao.Select(f => (int)f)) : null,
                         filtro.Reapresentado,

@@ -240,7 +240,7 @@
     <Compile Include="Controllers\Cep\V1\CepController.cs" />
     <Compile Include="Controllers\Cfops\V1\GetCfopsController.cs" />
     <Compile Include="Controllers\Cfops\V1\CfopsController.cs" />
-    <Compile Include="Controllers\Cheques\V1\PostChequesController.cs" />
+    <Compile Include="Controllers\Cheques\V1\DeleteChequesController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\GetContasReceberController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\ContasReceberController.cs" />
     <Compile Include="Controllers\ContasReceber\V1\PatchContasReceberController.cs" />

@@ -1,4 +1,4 @@
-﻿// <copyright file="PostChequesController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteChequesController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -21,8 +21,8 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// </summary>
         /// <param name="id">O identificador do cheque que terá a devolução cancelada.</param>
         /// <returns>Um status HTTP indicando se a devolução do cheque foi cancelada.</returns>
-        [HttpPost]
-        [Route("{id}/cancelarDevolucao")]
+        [HttpDelete]
+        [Route("{id}/devolucao")]
         [SwaggerResponse(202, "Devolução de cheque cancelada.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Cheque não encontrado para o id informado.", Type = typeof(MensagemDto))]
@@ -60,8 +60,8 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// </summary>
         /// <param name="id">O identificador do cheque que terá o protesto cancelado.</param>
         /// <returns>Um status HTTP indicando se a protesto do cheque foi cancelado.</returns>
-        [HttpPost]
-        [Route("{id}/cancelarProtesto")]
+        [HttpDelete]
+        [Route("{id}/protesto")]
         [SwaggerResponse(202, "Protesto de cheque cancelado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Cheque não encontrado para o id informado.", Type = typeof(MensagemDto))]
@@ -102,8 +102,8 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
         /// </summary>
         /// <param name="id">O identificador do cheque que terá a reapresentação cancelada.</param>
         /// <returns>Um status HTTP indicando se a reapresentação do cheque foi cancelada.</returns>
-        [HttpPost]
-        [Route("{id}/cancelarReapresentacao")]
+        [HttpDelete]
+        [Route("{id}/reapresentacao")]
         [SwaggerResponse(202, "Reapresentação de cheque cancelado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Cheque não encontrado para o id informado.", Type = typeof(MensagemDto))]

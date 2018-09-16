@@ -62,7 +62,7 @@ Servicos.Cheques = (function(http) {
         throw new Error('Cheque é obrigatório.');
       }
 
-      return http().post(API + id + '/cancelarDevolucao');
+      return http().delete(API + id + '/devolucao');
     },
 
     /**
@@ -75,7 +75,7 @@ Servicos.Cheques = (function(http) {
         throw new Error('Cheque é obrigatório.');
       }
 
-      return http().post(API + id + '/cancelarProtesto');
+      return http().delete(API + id + '/protesto');
     },
 
     /**
@@ -88,7 +88,7 @@ Servicos.Cheques = (function(http) {
         throw new Error('Cheque é obrigatório.');
       }
 
-      return http().post(API + id + '/cancelarReapresentacao');
+      return http().delete(API + id + '/reapresentacao');
     },
 
     /**

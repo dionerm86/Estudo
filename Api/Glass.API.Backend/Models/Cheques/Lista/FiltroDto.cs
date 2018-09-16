@@ -59,7 +59,7 @@ namespace Glass.API.Backend.Models.Cheques.Lista
         /// Obtém ou define o tipo do cheque (1-próprio, 2-terceiros).
         /// </summary>
         [JsonProperty("tipo")]
-        public int? Tipo { get; set; }
+        public Data.Model.Cheques.TipoCheque? Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define o número do cheque.
