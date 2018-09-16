@@ -396,6 +396,7 @@
     <Compile Include="Models\Cep\Endereco\ResultadoServicoDto.cs" />
     <Compile Include="Models\Cheques\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Cheques\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Cheques\Lista\AdvogadoEnum.cs" />
     <Compile Include="Models\Cheques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cheques\Lista\ListaDto.cs" />
     <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />

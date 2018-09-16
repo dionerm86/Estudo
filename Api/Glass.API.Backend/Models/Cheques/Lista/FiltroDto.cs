@@ -1,4 +1,4 @@
-﻿// <copyright file="FiltroDto.cs" company="Sync Softwares">
+// <copyright file="FiltroDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -81,10 +81,9 @@ namespace Glass.API.Backend.Models.Cheques.Lista
 
         /// <summary>
         /// Obtém ou define um valor que indica se o cheque está com um advogado, para cobrança/acionamento na justiça.
-        /// 0 - Busca todos os cheques, 1 - Apenas cheques repassados para advogado, 2 - Apenas cheques não repassados para advogados.
         /// </summary>
         [JsonProperty("advogado")]
-        public int? Advogado { get; set; }
+        public Advogado? Advogado { get; set; }
 
         /// <summary>
         /// Obtém ou define o titular do cheque.

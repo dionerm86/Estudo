@@ -1,4 +1,4 @@
-﻿// <copyright file="GetChequesController.cs" company="Sync Softwares">
+// <copyright file="GetChequesController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -64,7 +64,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                     filtro.NumeroCheque ?? 0,
                     filtro.Situacao != null && filtro.Situacao.Any() ? string.Join(",", filtro.Situacao.Select(f => (int)f)) : null,
                     filtro.Reapresentado,
-                    filtro.Advogado ?? 0,
+                    (int?)filtro.Advogado ?? 0,
                     filtro.Titular,
                     filtro.Agencia,
                     filtro.Conta,
@@ -101,7 +101,7 @@ namespace Glass.API.Backend.Controllers.Cheques.V1
                         filtro.NumeroCheque ?? 0,
                         filtro.Situacao != null && filtro.Situacao.Any() ? string.Join(",", filtro.Situacao.Select(f => (int)f)) : null,
                         filtro.Reapresentado,
-                        filtro.Advogado ?? 0,
+                        (int?)filtro.Advogado ?? 0,
                         filtro.Titular,
                         filtro.Agencia,
                         filtro.Conta,
