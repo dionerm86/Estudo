@@ -468,6 +468,7 @@
     <Compile Include="Financeiro\Model\RegistroArquivoRemessa.cs" />
     <Compile Include="Fiscal\DAL\DetalhamentoDebitosPisCofinsDAO.cs" />
     <Compile Include="Fiscal\DAL\EncontroContasDAO.cs" />
+    <Compile Include="Fiscal\DAL\FotosNotaFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\IestUfLojaDAO.cs" />
     <Compile Include="Fiscal\DAL\LogMovimentacaoNotaFiscalDAO.cs" />
     <Compile Include="Fiscal\DAL\MDFe\CidadeCargaMDFeDAO.cs" />
@@ -501,6 +502,7 @@
     <Compile Include="Fiscal\Model\Cest.cs" />
     <Compile Include="Fiscal\Model\CTe\ChaveAcessoCte.cs" />
     <Compile Include="Fiscal\Model\DetalhamentoDebitosPisCofins.cs" />
+    <Compile Include="Fiscal\Model\FotosNotaFiscal.cs" />
     <Compile Include="Fiscal\Model\IestUfLoja.cs" />
     <Compile Include="Fiscal\Model\ImpostoNcmUF.cs" />
     <Compile Include="Fiscal\Model\LogMovimentacaoNotaFiscal.cs" />

@@ -498,6 +498,13 @@ const app = new Vue({
     consultarDisponibilidadeNfe: function () {
       this.abrirJanela(600, 800, 'http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx?versao=0.00&tipoConteudo=Skeuqr8PQBY=');
     },
+      /**
+     * Exibe a tela de anexos da nota fiscal.
+     * @param {Object} item A Nota que será usado para abertura da tela.
+     */
+    abrirAnexos: function (item) {
+        this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=notaFiscal');
+    },
 
     /**
      * Retornar uma string com os filtros selecionados na tela
