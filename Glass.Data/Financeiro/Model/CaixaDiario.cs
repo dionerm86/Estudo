@@ -17,6 +17,12 @@ namespace Glass.Data.Model
             Cheque
         }
 
+        public enum TipoMovimentacaoEnum : int
+        {
+            Entrada = 1,
+            Saida
+        }
+
         #endregion
 
         #region Propriedades

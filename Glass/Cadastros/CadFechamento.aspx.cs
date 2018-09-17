@@ -202,7 +202,7 @@ namespace Glass.UI.Web.Cadastros
                     decimal saldoAnterior = CaixaDiarioDAO.Instance.GetSaldoDiaAnterior(Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue));
                     lblSaldoCaixaAtraso.Text = saldoAnterior.ToString("C");
                     lblSaldoDinheiroAtraso.Text = CaixaDiarioDAO.Instance.GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, 0, 
-                        Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue), 0, 
+                        Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue), 0,
                         CaixaDiarioDAO.Instance.GetDataCaixaAberto(Glass.Conversoes.StrParaUint(ddlLoja.SelectedValue)), 1).ToString("C");
                     txtValorTransfAtraso.Text = saldoAnterior.ToString();
                 }
