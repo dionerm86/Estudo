@@ -4129,9 +4129,11 @@ namespace Glass.Data.DAL
 
                     // Verifica se o cheque pode movimentar o Caixa Geral ou a Conta Bancaria
                     if (objInsert.Situacao != (int)Cheques.SituacaoCheque.Compensado &&
-                        (objInsert.IdConta.GetValueOrDefault(0) > 0 || objInsert.MovCaixaFinanceiro ||
-                        objInsert.IdContaBanco.GetValueOrDefault(0) > 0 || objInsert.MovBanco))
-                        throw new Exception("Apenas cheque Compensado pode ser marcado para movimentar Caixa Geral ou Conta Bancaria.");
+                        (objInsert.IdContaBanco.GetValueOrDefault(0) > 0 || objInsert.MovBanco))
+                        throw new Exception("Apenas cheque Compensado pode ser marcado para movimentar Conta Bancaria.");
+
+                    else if (objInsert.Situacao == (int)Cheques.SituacaoCheque.Protestado && (objInsert.IdConta.GetValueOrDefault(0) > 0 || objInsert.MovCaixaFinanceiro))
+                        throw new Exception("Apenas cheque Compensado Ou Em Aberto pode ser marcado para movimentar Caixa Geral.");
 
                     var idCheque = InsertBase(transaction, objInsert, true);
 
