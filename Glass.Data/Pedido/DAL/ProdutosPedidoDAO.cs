@@ -4296,8 +4296,8 @@ namespace Glass.Data.DAL
                     {
                         IdProdPedParent = objInsert.IdProdPed,
                         IdProd = (uint)p.IdProdBaixa,
-                        IdProcesso = (uint)p.IdProcesso,
-                        IdAplicacao = (uint)p.IdAplicacao,
+                        IdProcesso = objInsert.IdProcessoFilhas > 0 ? (uint)objInsert.IdProcessoFilhas : (uint)p.IdProcesso,
+                        IdAplicacao = objInsert.IdAplicacaoFilhas > 0 ? (uint)objInsert.IdAplicacaoFilhas : (uint)p.IdAplicacao,
                         IdPedido = objInsert.IdPedido,
                         IdAmbientePedido = objInsert.IdAmbientePedido,
                         Qtde = p.Qtde,

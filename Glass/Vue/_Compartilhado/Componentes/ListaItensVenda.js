@@ -263,6 +263,8 @@ Vue.component('lista-itens-venda', {
       numeroBeneficiamentosParaAreaMinima: 0,
       processoAtual: null,
       aplicacaoAtual: null,
+      processoFilhasAtual: null,
+      aplicacaoFilhasAtual: null,
       filhosEmExibicao: [],
       exibirBeneficiamentos: false,
       estiloContainerBeneficiamentos
@@ -447,6 +449,8 @@ Vue.component('lista-itens-venda', {
         valorUnitario: item ? item.valorUnitario : null,
         idProcesso: item && item.processo ? item.processo.id : null,
         idAplicacao: item && item.aplicacao ? item.aplicacao.id : null,
+        idProcessoFilhas: null,
+        idAplicacaoFilhas: null,
         codigoPedidoCliente: item ? item.codigoPedidoCliente : null,
         total: item ? item.total : null,
         beneficiamentos: {
@@ -659,7 +663,7 @@ Vue.component('lista-itens-venda', {
 
         this.itemVenda.produto.id = atual ? atual.id : null;
         this.itemVenda.produto.espessura = atual ? atual.espessura : null;
-        this.itemVenda.composicao = atual.composicao;
+        this.itemVenda.composicao = atual ? atual.composicao : null;
 
         if (atual && atual.altura && atual.altura.valor) {
           this.itemVenda.altura.paraCalculo = atual.altura.valor;
@@ -713,6 +717,43 @@ Vue.component('lista-itens-venda', {
         }
 
         this.itemVenda.idAplicacao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'processoFilhasAtual'.
+     * Atualiza os dados do produto pedido ao alterar o processo.
+     */
+    processoFilhasAtual: {
+      handler: function (atual) {
+        if (!this.itemVenda) {
+          return;
+        }
+
+        this.itemVenda.idProcessoFilhas = atual ? atual.id : null;
+
+        if (atual && atual.aplicacao) {
+          this.aplicacaoFilhasAtual = {
+            id: atual.aplicacao.id,
+            codigo: atual.aplicacao.codigo
+          };
+        }
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'aplicacaoFilhasAtual'.
+     * Atualiza os dados do produto pedido ao alterar a aplicação.
+     */
+    aplicacaoFilhasAtual: {
+      handler: function (atual) {
+        if (!this.itemVenda) {
+          return;
+        }
+
+        this.itemVenda.idAplicacaoFilhas = atual ? atual.id : null;
       },
       deep: true
     },
