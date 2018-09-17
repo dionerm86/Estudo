@@ -12793,6 +12793,16 @@ namespace Glass.Data.DAL
                             ));
                         }
 
+                    if (tipoPedido.GetValueOrDefault() == (int)Pedido.TipoPedidoEnum.MaoDeObra)
+                    {
+                        var ambientePedido = AmbientePedidoDAO.Instance.GetByPedido(session, 0, idPedido.Value, false);
+
+                        foreach (var ap in ambientePedido)
+                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, ap.IdProcesso.Value));
+                        // Considera a data maior entre a data das configurações e da data do processo.
+                        numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
+                    }
+
                     uint idSubgrupoMaiorPrazo = 0;
                     foreach (uint key in subgrupos.Keys)
                         if (subgrupos[key].Key > 0 || subgrupos[key].Value != null)
