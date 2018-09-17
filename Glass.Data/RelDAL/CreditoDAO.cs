@@ -344,9 +344,12 @@ namespace Glass.Data.RelDAL
                 input.Add(novo);
             }
 
-            List<Credito> output = new List<Credito>();
+            var output = new List<Credito>();
 
-            string[] tipos = tipoMovimentacao.Split(',');
+            // Caso o tipo de movimentação seja nulo então todos os tipos de movimentação devem ser considerados.
+            tipoMovimentacao = String.IsNullOrEmpty(tipoMovimentacao) ? "1,2,3,4" : tipoMovimentacao;
+
+            var tipos = tipoMovimentacao.Split(',');
 
             for (int i = 0; i < tipos.Length; i++)
             {
@@ -363,11 +366,24 @@ namespace Glass.Data.RelDAL
         public Credito[] GetCreditoFornecedor(uint idFornec, DateTime inicio, DateTime fim, string tipoMovimentacao, string sortExpression,
             int startRow, int pageSize)
         {
-            List<Credito> retorno = new List<Credito>(GetCreditoListFornecedor(idFornec, DateTime.MinValue, DateTime.MinValue, tipoMovimentacao));
+            var dataFimFiltro = DateTime.Parse(DateTime.Now.ToString("dd/MM/yyyy 23:59"));
+            dataFimFiltro = fim < dataFimFiltro ? dataFimFiltro : fim;
+
+            var retorno = new List<Credito>(GetCreditoListFornecedor(idFornec, inicio, dataFimFiltro, tipoMovimentacao));
 
             if (retorno.Count > 0)
             {
                 AtualizaSaldo(FornecedorDAO.Instance.GetCredito(idFornec), ref retorno);
+
+                // Retira as movimentações que não condizem com o filtro e foram utilizadas somente para calcular o saldo corretamente
+                fim = DateTime.Parse(fim.ToString("dd/MM/yyyy 23:59"));
+                if (dataFimFiltro > fim)
+                    for (int i = 0; i < retorno.Count; i++)
+                        if (retorno[i].Data > fim)
+                        {
+                            retorno.Remove(retorno[i]);
+                            i--;
+                        }
 
                 sortExpression = !String.IsNullOrEmpty(sortExpression) ? sortExpression : "Data DESC";
 
@@ -412,7 +428,7 @@ namespace Glass.Data.RelDAL
                             break;
 
                         case "Data":
-                            retornoSort = Comparer<long>.Default.Compare(x.Data.Ticks, y.Data.Ticks);
+                            retornoSort = Comparer<DateTime>.Default.Compare(x.Data, y.Data);
                             break;
 
                         case "IdCreditoFornecedor":
@@ -421,7 +437,7 @@ namespace Glass.Data.RelDAL
                     }
 
                     if (retornoSort == 0)
-                        retornoSort = x.IdCaixaGeral.CompareTo(y.IdCaixaGeral);
+                        retornoSort = y.IdCaixaGeral > 0 ? x.IdCaixaGeral.CompareTo(y.IdCaixaGeral) : 1;
 
                     if (sortExpression.IndexOf(" ") > -1)
                         retornoSort = -retornoSort;
