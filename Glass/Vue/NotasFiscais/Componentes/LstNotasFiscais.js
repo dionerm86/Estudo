@@ -503,7 +503,7 @@ const app = new Vue({
      * @param {Object} item A Nota que será usado para abertura da tela.
      */
     abrirAnexos: function (item) {
-        this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=notaFiscal');
+      this.abrirJanela(600, 700, '../Cadastros/CadFotos.aspx?id=' + item.id + '&tipo=notaFiscal');
     },
 
     /**

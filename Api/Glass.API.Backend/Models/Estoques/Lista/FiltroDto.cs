@@ -5,6 +5,7 @@
 using Glass.API.Backend.Helper.Estoques;
 using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Estoques.Lista
@@ -50,8 +51,8 @@ namespace Glass.API.Backend.Models.Estoques.Lista
         /// <summary>
         /// Obtém ou define o identificador do subgrupo do produto.
         /// </summary>
-        [JsonProperty("idSubgrupoProduto")]
-        public int? IdSubgrupoProduto { get; set; }
+        [JsonProperty("idsSubgrupoProduto")]
+        public IEnumerable<int> IdsSubgrupoProduto { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se serão retornados apenas produtos com estoque.

@@ -228,7 +228,7 @@ const app = new Vue({
       incluirFiltro('codProd', this.filtro.codigoInternoProduto);
       incluirFiltro('descr', this.filtro.descricaoProduto);
       incluirFiltro('idGrupo', this.filtro.idGrupoProduto);
-      incluirFiltro('idSubgrupo', this.filtro.idSubgrupoProduto);
+      incluirFiltro('idsSubgrupoProduto', this.filtro.idsSubgrupoProduto);
       incluirFiltro('apenasEstoqueFiscal', this.filtro.apenasComEstoque);
       incluirFiltro('apenasPosseTerceiros', this.filtro.apenasPosseTerceiros);
       incluirFiltro('apenasProdutosProjeto', this.filtro.apenasProdutosProjeto);
