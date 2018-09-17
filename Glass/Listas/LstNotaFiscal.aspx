@@ -115,6 +115,9 @@
                         <a href="#" @click.prevent="abrirObservacoesLancamentoFiscal(item)" title="Observações do Lançamento Fiscal">
                             <img border="0" src="../Images/Nota.gif">
                         </a>
+                        <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
+                            <img border="0" src="../Images/Clipe.gif">
+                        </a>
                         <a href="#" @click.prevent="abrirAjustesDocumentoFiscal(item)" title="Ajustes do Documento Fiscal">
                             <img border="0" src="../Images/dinheiro.gif">
                         </a>

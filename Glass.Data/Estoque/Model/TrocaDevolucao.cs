@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GDA;
 using Glass.Data.Helper;
 using System.Drawing;
@@ -197,6 +197,9 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("QtdePecas", DirectionParameter.InputOptional)]
         public Double QtdePecas { get; set; }
+
+        [PersistenceProperty("tipoPerdaDesc", DirectionParameter.InputOptional)]
+        public string TipoPerdaDesc { get; set; }
 
         #endregion
 

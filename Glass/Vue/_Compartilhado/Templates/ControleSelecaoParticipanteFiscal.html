@@ -1,0 +1,11 @@
+﻿<span style="white-space: nowrap">
+    <select v-model="idTipoParticipanteAtual" v-on:change.prevent="participanteAtual = null" v-bind="$attrs">
+        <option></option>
+        <option v-for="tipo in tiposParticipantes" v-bind:value="tipo.id">{{ tipo.nome }}</option>
+    </select>
+    <button v-on:click.prevent="abrirTelaBusca" class="botaoPesquisar" style="position: relative; top: 3px"
+        v-if="tipoParticipanteAtual"></button>
+    <div v-if="participanteAtual">
+        {{ participanteAtual.nome }}
+    </div>
+</span>

@@ -116,6 +116,9 @@ namespace Glass.UI.Web.Cadastros.Producao
         protected void drpSetor_SelectedIndexChanged(object sender, EventArgs e)
         {
             grdProdutos.DataBind();
+
+            ctrlTipoPerda1.IdSetor = drpSetor.SelectedValue.StrParaIntNullable();
+            ctrlTipoPerda1.DataBind();
         }
     }
 }

@@ -1001,140 +1001,79 @@ namespace Glass.Data.DAL
 
         #region Cancela devolução de cheque
 
-        private static readonly object _cancelarDevolucaoLock = new object();
-
-        public void CancelarDevolucao(uint idCheque)
+        public void CancelarDevolucao(GDASession sessao, uint idCheque)
         {
-            lock(_cancelarDevolucaoLock)
+            uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
+
+            if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
+                throw new Exception("Você não tem permissão para cancelar devolução do cheque.");
+
+            Cheques cheque = ChequesDAO.Instance.GetElement(sessao, idCheque);
+
+            if (cheque.Situacao != (int)Cheques.SituacaoCheque.Devolvido || cheque.Reapresentado)
+                throw new Exception("Este cheque não está marcado como devolvido.");
+
+            List<MovBanco> movs = new List<MovBanco>(MovBancoDAO.Instance.GetByCheque(sessao, idCheque));
+            Dictionary<uint, decimal> movBanco = new Dictionary<uint, decimal>();
+            string idsMovBanco = "";
+            uint idCaixaGeral = 0;
+
+            // Gera a movimentação de entrada no caixa geral somente se o cheque possuir movimentação no caixa geral e se for cheque de terceiros.
+            if (cheque.Tipo == 2 && !cheque.NaoMovCxGeral)
+                // Gera uma movimentação de entrada no caixa geral
+                idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(sessao, cheque.IdCheque, null, null, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.DepositoCheque),
+                    2, cheque.Valor, 0, null, true, "Cancelamento de devolução", null);
+
+            // Exclui a conta a pagar gerada pelo cheque.
+            if (cheque.Tipo == 2 && (cheque.IdPagto > 0 || cheque.IdCreditoFornecedor > 0 || cheque.IdSinalCompra > 0))
             {
-                using (var transaction = new GDATransaction())
+                // Cancela a conta a pagar do cheque, se houver
+                var cp = ContasPagarDAO.Instance.GetByChequeDev(sessao, (int)idCheque, (int?)cheque.IdPagto, (int?)cheque.IdCreditoFornecedor, (int?)cheque.IdSinalCompra);
+                if (cp != null)
                 {
-                    try
-                    {
-                        transaction.BeginTransaction();
+                    if (cp.Paga)
+                        throw new Exception("Conta associada ao cheque já foi paga. Cancele o pagamento antes de cancelar a devolução do cheque.");
 
-                        uint tipoFunc = UserInfo.GetUserInfo.TipoUsuario;
-
-                        if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                            throw new Exception("Você não tem permissão para cancelar devolução do cheque.");
-
-                        Cheques cheque = ChequesDAO.Instance.GetElement(transaction, idCheque);
-
-                        if (cheque.Situacao != (int)Cheques.SituacaoCheque.Devolvido || cheque.Reapresentado)
-                            throw new Exception("Este cheque não está marcado como devolvido.");
-
-                        List<MovBanco> movs = new List<MovBanco>(MovBancoDAO.Instance.GetByCheque(transaction, idCheque));
-                        Dictionary<uint, decimal> movBanco = new Dictionary<uint, decimal>();
-                        string idsMovBanco = "";
-                        uint idCaixaGeral = 0;
-
-                        // Gera a movimentação de entrada no caixa geral somente se o cheque possuir movimentação no caixa geral e se for cheque de terceiros.
-                        if (cheque.Tipo == 2 && !cheque.NaoMovCxGeral)
-                            // Gera uma movimentação de entrada no caixa geral
-                            idCaixaGeral = CaixaGeralDAO.Instance.MovCxCheque(transaction, cheque.IdCheque, null, null, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.DepositoCheque),
-                                2, cheque.Valor, 0, null, true, "Cancelamento de devolução", null);
-
-                        // Exclui a conta a pagar gerada pelo cheque.
-                        if (cheque.Tipo == 2 && (cheque.IdPagto > 0 || cheque.IdCreditoFornecedor > 0 || cheque.IdSinalCompra > 0))
-                        {
-                            // Cancela a conta a pagar do cheque, se houver
-                            var cp = ContasPagarDAO.Instance.GetByChequeDev(transaction, (int)idCheque, (int?)cheque.IdPagto, (int?)cheque.IdCreditoFornecedor, (int?)cheque.IdSinalCompra);
-                            if (cp != null)
-                            {
-                                if (cp.Paga)
-                                    throw new Exception("Conta associada ao cheque já foi paga. Cancele o pagamento antes de cancelar a devolução do cheque.");
-
-                                ContasPagarDAO.Instance.DeleteByPrimaryKey(transaction, cp.IdContaPg);
-                            }
-                        }
-
-                        foreach (var m in movs)
-                            // Chamado 29320: Ao cancelar devolução, todas as entradas e saídas devem ser excluídas (exceto a do depósito), principalmente entrada feita ao reapresentar cheque
-                            //Chamado: 55138 - Ao cancelar a devolução a movimentação da entrada estava sendo apagada.
-                            if (!(m.TipoMov == 1 && cheque.Origem == (int)Cheques.OrigemCheque.FinanceiroPagto) && (m.IdDeposito.GetValueOrDefault() == 0 || m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeDevolvido)))
-                            {
-                                movBanco.Add(m.IdMovBanco, m.ValorMov);
-                                idsMovBanco += m.IdMovBanco + ",";
-                            }
-
-                        if (movBanco.Count > 0)
-                        {
-                            // Verifica a conciliação bancária
-                            foreach (string id in idsMovBanco.TrimEnd(',').Split(','))
-                                ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(transaction, Glass.Conversoes.StrParaUint(id));
-
-                            objPersistence.ExecuteCommand(transaction, "update mov_banco set valorMov=0 where idMovBanco in (" + idsMovBanco.TrimEnd(',') + ")");
-
-                            foreach (var idMovBanco in idsMovBanco.Split(',').Select(f => f.StrParaInt()))
-                                MovBancoDAO.Instance.CorrigeSaldo(transaction, (uint)idMovBanco, (uint)idMovBanco);
-
-                            objPersistence.ExecuteCommand(transaction, "delete from mov_banco where idMovBanco in (" + idsMovBanco.TrimEnd(',') + ")");
-                        }
-
-                        // Volta situação do Cheque para Compensado
-                        cheque.Situacao = cheque.IdPagto > 0 || cheque.IdDeposito > 0 || cheque.IdDepositoCanc > 0 ? (int)Cheques.SituacaoCheque.Compensado : (int)Cheques.SituacaoCheque.EmAberto;
-                        cheque.IdDeposito = cheque.IdDepositoCanc;
-                        cheque.IdDepositoCanc = null;
-                        cheque.CancelouDevolucao = true;
-                        // Como a devolução do cheque foi cancelada o mesmo voltou para compensado, sendo assim a variável Advogado deve ser atualizada
-                        // para falsa pois o cheque não está com o advogado.
-                        cheque.Advogado = false;
-                        cheque.Obs = String.IsNullOrEmpty(cheque.Obs) || !cheque.Obs.Contains("Motivo da Devolução: ") ? cheque.Obs :
-                            cheque.Obs.Remove(cheque.Obs.IndexOf("Motivo da Devolução: "));
-
-                        // Chama o método UpdateBase para que não verifique se o cheque foi cadastrado
-                        ChequesDAO.Instance.UpdateBase(transaction, cheque, false);
-
-                        transaction.Commit();
-                        transaction.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException("Cancelar devolução de cheque", ex);
-                        throw ex;
-                    }
+                    ContasPagarDAO.Instance.DeleteByPrimaryKey(sessao, cp.IdContaPg);
                 }
             }
-        }
 
-        #endregion
-
-        #region Cancela Protesto de Cheque
-
-        private static readonly object _cancelarProtestoLock = new object();
-
-        public void CancelarProtesto(uint idCheque)
-        {
-            lock(_cancelarProtestoLock)
-            {
-                using (var transaction = new GDATransaction())
+            foreach (var m in movs)
+                // Chamado 29320: Ao cancelar devolução, todas as entradas e saídas devem ser excluídas (exceto a do depósito), principalmente entrada feita ao reapresentar cheque
+                //Chamado: 55138 - Ao cancelar a devolução a movimentação da entrada estava sendo apagada.
+                if (!(m.TipoMov == 1 && cheque.Origem == (int)Cheques.OrigemCheque.FinanceiroPagto) && (m.IdDeposito.GetValueOrDefault() == 0 || m.IdConta == UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.ChequeDevolvido)))
                 {
-                    try
-                    {
-                        transaction.BeginTransaction();
-
-                        Cheques cheque = ChequesDAO.Instance.GetElement(transaction, idCheque);
-
-                        cheque.Situacao = (int)Cheques.SituacaoCheque.Devolvido;
-                        // Chama o método UpdateBase para que não verifique se o cheque foi cadastrado
-                        ChequesDAO.Instance.UpdateBase(transaction, cheque, false);
-
-                        transaction.Commit();
-                        transaction.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        transaction.Close();
-
-                        ErroDAO.Instance.InserirFromException("Cancelar protesto de cheque", ex);
-                        throw ex;
-                    }
+                    movBanco.Add(m.IdMovBanco, m.ValorMov);
+                    idsMovBanco += m.IdMovBanco + ",";
                 }
+
+            if (movBanco.Count > 0)
+            {
+                // Verifica a conciliação bancária
+                foreach (string id in idsMovBanco.TrimEnd(',').Split(','))
+                    ConciliacaoBancariaDAO.Instance.VerificaDataConciliacao(sessao, Glass.Conversoes.StrParaUint(id));
+
+                objPersistence.ExecuteCommand(sessao, "update mov_banco set valorMov=0 where idMovBanco in (" + idsMovBanco.TrimEnd(',') + ")");
+
+                foreach (var idMovBanco in idsMovBanco.Split(',').Select(f => f.StrParaInt()))
+                    MovBancoDAO.Instance.CorrigeSaldo(sessao, (uint)idMovBanco, (uint)idMovBanco);
+
+                objPersistence.ExecuteCommand(sessao, "delete from mov_banco where idMovBanco in (" + idsMovBanco.TrimEnd(',') + ")");
             }
+
+            // Volta situação do Cheque para Compensado
+            cheque.Situacao = cheque.IdPagto > 0 || cheque.IdDeposito > 0 || cheque.IdDepositoCanc > 0 ? (int)Cheques.SituacaoCheque.Compensado : (int)Cheques.SituacaoCheque.EmAberto;
+            cheque.IdDeposito = cheque.IdDepositoCanc;
+            cheque.IdDepositoCanc = null;
+            cheque.CancelouDevolucao = true;
+            // Como a devolução do cheque foi cancelada o mesmo voltou para compensado, sendo assim a variável Advogado deve ser atualizada
+            // para falsa pois o cheque não está com o advogado.
+            cheque.Advogado = false;
+            cheque.Obs = String.IsNullOrEmpty(cheque.Obs) || !cheque.Obs.Contains("Motivo da Devolução: ") ? cheque.Obs :
+                cheque.Obs.Remove(cheque.Obs.IndexOf("Motivo da Devolução: "));
+
+            // Chama o método UpdateBase para que não verifique se o cheque foi cadastrado
+            ChequesDAO.Instance.UpdateBase(sessao, cheque, false);
         }
 
         #endregion

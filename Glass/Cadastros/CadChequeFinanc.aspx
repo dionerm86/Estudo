@@ -246,7 +246,7 @@
                                             <asp:Label ID="Label2" runat="server" Text="CMC7"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtCMC7" runat="server" onkeypress="return soNumeros(event, true, true);" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
+                                            <asp:TextBox ID="txtCMC7" runat="server" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
                                             <img runat="server" src="~/Images/Help.gif" title="Digite as faixas de valor separando a primeira da segunda com (<) e a segunda da terceira com (>) como no exemplo a seguir: 40903151<0013002665>500074931502" />
                                         </td>
                                     </td>
@@ -439,7 +439,7 @@
                                             <asp:Label ID="Label2" runat="server" Text="CMC7"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtCMC7" runat="server" onkeypress="return soNumeros(event, true, true);" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
+                                            <asp:TextBox ID="txtCMC7" runat="server" Text='<%# Bind("Cmc7") %>' Width="300px"></asp:TextBox>
                                             <img runat="server" src="~/Images/Help.gif" title="Digite as faixas de valor separando a primeira da segunda com (<) e a segunda da terceira com (>) como no exemplo a seguir: 40903151<0013002665>500074931502" />
                                         </td>
                                     </td>

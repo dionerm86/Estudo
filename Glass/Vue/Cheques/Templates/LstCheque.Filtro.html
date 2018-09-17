@@ -1,0 +1,154 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Num. cheque</label>
+            <input type="number" v-model.number="filtroAtual.numeroCheque" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Pedido</label>
+            <input type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="configuracoes.usarLiberacaoPedido">
+            <label>Liberação</label>
+            <input type="number" v-model.number="filtroAtual.idLiberacao" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Acerto</label>
+            <input type="number" v-model.number="filtroAtual.idAcerto" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Nota fiscal</label>
+            <input type="number" v-model.number="filtroAtual.numeroNfe" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Tipo</label>
+            <select v-model="filtroAtual.tipo">
+                <option Value="0">Todos</option>
+                <option Value="1">Próprio</option>
+                <option Value="2">Terceiros</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacao" texto-selecionar="Selecione a situação"
+                v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Rota</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsRota" texto-selecionar="Selecione as rotas"
+                v-bind:funcao-recuperar-itens="obterItensFiltroRotas" v-bind:ordenar="false"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>CPF/CNPJ</label>
+            <input type="text" v-model="filtroAtual.cpfCnpj" style="width: 100px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Cliente</label>
+            <input type="number" v-model.number="filtroAtual.idCliente" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Fornecedor</label>
+            <input type="number" v-model.number="filtroAtual.idFornecedor" style="width: 50px" />
+            <input type="text" v-model="filtroAtual.nomeFornecedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Titular</label>
+            <input type="text" v-model="filtroAtual.titular" style="width: 120px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Agência</label>
+            <input type="text" v-model="filtroAtual.agencia" style="width: 80px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Conta</label>
+            <input type="text" v-model="filtroAtual.conta" style="width: 80px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Valor</label>
+            <input type="number" v-model.number="filtroAtual.valorChequeInicio" style="width: 60px" />
+            <label>a</label>
+            <input type="number" v-model.number="filtroAtual.valorChequeFim" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Observação</label>
+            <input type="text" v-model="filtroAtual.observacao" style="width: 100px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Usuário cad.</label>
+            <input type="text" v-model="filtroAtual.usuarioCadastro" style="width: 100px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período cadastro</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Período vencimento</label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoVencimentoInicio" v-bind:data-hora-final.sync="filtroAtual.periodoVencimentoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Cheques advogados</label>
+            <select v-model="filtroAtual.advogado">
+                <option Value="0">Incluir Advogados</option>
+                <option Value="1">Apenas Advogados</option>
+                <option Value="2">Não Advogados</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="reapresentado" type="checkbox" v-model="filtroAtual.reapresentado" />
+            <label for="reapresentado">Incluir reapresentado</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Ordenar relatório por</label>
+            <select v-model="filtroAtual.ordenacaoFiltro">
+                <option Value="1">Titular</option>
+                <option Value="2">Data venc.</option>
+                <option Value="3">Banco</option>
+                <option Value="4">Pedido</option>
+                <option Value="5">Valor</option>
+            </select>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="agruparCliente" type="checkbox" v-model="filtroAtual.agruparCliente" />
+            <label for="agruparCliente">Agrupar impressão por cliente</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

@@ -2232,10 +2232,9 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptEstoqueFiscal.rdlc";
                         var idLoja = Glass.Conversoes.StrParaUint(Request["idLoja"]);
                         var idGrupo = Glass.Conversoes.StrParaUint(Request["idGrupo"]);
-                        var idSubgrupo = Glass.Conversoes.StrParaUint(Request["idSubgrupo"]);
 
                         report.DataSources.Add(new ReportDataSource("ProdutoLoja", ProdutoLojaDAO.Instance.GetForRptEstoque(idLoja,
-                            Request["codProd"], Request["descr"], idGrupo, idSubgrupo,
+                            Request["codProd"], Request["descr"], idGrupo, Request["idsSubgrupoProduto"],
                             Request["apenasEstoqueFiscal"] == "true", Request["apenasPosseTerceiros"] == "true", Request["apenasProdutosProjeto"] == "true",
                             Glass.Conversoes.StrParaUintNullable(Request["idCorVidro"]), Glass.Conversoes.StrParaUintNullable(Request["idCorFerragem"]),
                             Glass.Conversoes.StrParaUintNullable(Request["idCorAluminio"]), Glass.Conversoes.StrParaInt(Request["situacao"]), 1,
@@ -2248,10 +2247,9 @@ namespace Glass.UI.Web.Relatorios
                         report.ReportPath = "Relatorios/rptEstoqueReal.rdlc";
                         var idLoja = Glass.Conversoes.StrParaUint(Request["idLoja"]);
                         var idGrupo = Glass.Conversoes.StrParaUint(Request["idGrupo"]);
-                        var idSubgrupo = Glass.Conversoes.StrParaUint(Request["idSubgrupo"]);
 
                         var estoqueReal = ProdutoLojaDAO.Instance.GetForRptEstoque(idLoja,
-                            Request["codProd"], Request["descr"], idGrupo, idSubgrupo,
+                            Request["codProd"], Request["descr"], idGrupo, Request["idsSubgrupoProduto"],
                             Request["apenasEstoqueFiscal"] == "true", Request["apenasPosseTerceiros"] == "true", Request["apenasProdutosProjeto"] == "true",
                             Glass.Conversoes.StrParaUintNullable(Request["idCorVidro"]), Glass.Conversoes.StrParaUintNullable(Request["idCorFerragem"]),
                             Glass.Conversoes.StrParaUintNullable(Request["idCorAluminio"]), Glass.Conversoes.StrParaInt(Request["situacao"]), 0, Request["aguardSaidaEstoque"] == "true",

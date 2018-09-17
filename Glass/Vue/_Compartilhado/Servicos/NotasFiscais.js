@@ -229,6 +229,19 @@ Servicos.NotasFiscais = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera os tipos de participantes fiscais para o controle de seleção.
+     * @param {?boolean} [incluirAdministradoraCartao=null] Indica se a administradora de cartão será incluída como tipo de participante válido.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposParticipantesFiscais: function (incluirAdministradoraCartao) {
+      return http().get(API + 'tiposParticipantes', {
+        params: {
+          incluirAdministradoraCartao
+        }
+      });
     }
   };
 }) (function () {

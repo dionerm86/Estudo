@@ -12745,7 +12745,7 @@ namespace Glass.Data.DAL
                     tipoPedido == (int)Pedido.TipoPedidoEnum.MaoDeObra ? PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedidoMaoDeObra :
                     PedidoConfig.DataEntrega.NumeroDiasUteisDataEntregaPedido;
 
-                if (tipoEntrega != null && !pedidoRevendaNaEntrega)
+                if (tipoEntrega != null && (!pedidoRevendaNaEntrega || dataRota == null))
                 {
                     var existeTipo = PedidoConfig.DiasMinimosEntregaTipo.ContainsKey((Pedido.TipoEntregaPedido)tipoEntrega.Value);
 
@@ -12792,6 +12792,16 @@ namespace Glass.Data.DAL
                                 SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "diaSemanaEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd)
                             ));
                         }
+
+                    if (tipoPedido.GetValueOrDefault() == (int)Pedido.TipoPedidoEnum.MaoDeObra)
+                    {
+                        var ambientePedido = AmbientePedidoDAO.Instance.GetByPedido(session, 0, idPedido.Value, false);
+
+                        foreach (var ap in ambientePedido)
+                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, ap.IdProcesso.Value));
+                        // Considera a data maior entre a data das configurações e da data do processo.
+                        numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
+                    }
 
                     uint idSubgrupoMaiorPrazo = 0;
                     foreach (uint key in subgrupos.Keys)
@@ -12844,7 +12854,7 @@ namespace Glass.Data.DAL
                         dataFastDelivery = ProdutosPedidoDAO.Instance.GetFastDeliveryDay(session, idPedido.Value, dataFastDelivery, m2Pedido, false).GetValueOrDefault(dataFastDelivery);
                 }
 
-                if (numeroDiasSomar > 0 && !pedidoRevendaNaEntrega)
+                if (numeroDiasSomar > 0 && (!pedidoRevendaNaEntrega || dataRota == null))
                 {
                     int i = 0;
 

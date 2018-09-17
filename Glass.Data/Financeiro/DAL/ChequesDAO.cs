@@ -3573,40 +3573,33 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Altera dados do cheque.
         /// </summary>
-        /// <param name="c"></param>
-        public string AlterarDados(Cheques c)
+        /// <param name="cheque"></param>
+        public string AlterarDados(GDASession sessao, Cheques cheque)
         {
-            try
-            {
-                Cheques c1 = GetElementByPrimaryKey(c.IdCheque);
+            Cheques c1 = GetElementByPrimaryKey(sessao, cheque.IdCheque);
 
-                if (string.IsNullOrWhiteSpace(c.DataVenc.ToString()))
-                    return "A data de vencimento do cheque deve ser informada.";
+            if (string.IsNullOrWhiteSpace(cheque.DataVenc.ToString()))
+                return "A data de vencimento do cheque deve ser informada.";
 
-                //Caso algum dos dados abaixo tenham sido alterados valida se o cheque já existe
-                if (c1.Banco != c.Banco || c1.Num != c.Num || (c1.DigitoNum?.ToString() ?? string.Empty) != (c.DigitoNum?.ToString() ?? string.Empty))
-                    if ((c.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && c.IdCliente > 0 &&
-                        ExisteChequeDigito(c.IdCliente.Value, c.IdCheque, c.Num, c.DigitoNum))))
-                        return "Este cheque já foi cadastrado no sistema.";
+            //Caso algum dos dados abaixo tenham sido alterados valida se o cheque já existe
+            if (c1.Banco != cheque.Banco || c1.Num != cheque.Num || (c1.DigitoNum?.ToString() ?? string.Empty) != (cheque.DigitoNum?.ToString() ?? string.Empty))
+                if ((cheque.IdCliente != null && (FinanceiroConfig.FormaPagamento.BloquearChequesDigitoVerificador && cheque.IdCliente > 0 &&
+                    ExisteChequeDigito(sessao, cheque.IdCliente.Value, cheque.IdCheque, cheque.Num, cheque.DigitoNum))))
+                    return "Este cheque já foi cadastrado no sistema.";
 
-                ///Atualiza os dados do cheque
-                string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
-                    (c.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, num=?num, banco=?banco, DigitoNum=?digitoNum, " : "") +
-                    "dataVenc=?dataVenc, obs=?obs" + (!String.IsNullOrEmpty(c.Titular) ? ", titular=?titular" : "") +
-                    " where idCheque=" + c.IdCheque;
+            ///Atualiza os dados do cheque
+            string sql = "update cheques set dataVencOriginal=if(dataVencOriginal is not null, dataVencOriginal, dataVenc), " +
+                (cheque.EditarAgenciaConta ? "agencia=?agencia, conta=?conta, num=?num, banco=?banco, DigitoNum=?digitoNum, " : "") +
+                "dataVenc=?dataVenc, obs=?obs" + (!String.IsNullOrEmpty(cheque.Titular) ? ", titular=?titular" : "") +
+                " where idCheque=" + cheque.IdCheque;
 
-                objPersistence.ExecuteCommand(sql, new GDAParameter("?dataVenc", c.DataVenc), new GDAParameter("?agencia", c.Agencia),
-                    new GDAParameter("?num", c.Num), new GDAParameter("?banco", c.Banco), new GDAParameter("?digitoNum", c.DigitoNum),
-                    new GDAParameter("?conta", c.Conta), new GDAParameter("?obs", c.Obs), new GDAParameter("?titular", c.Titular));
+            objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?dataVenc", cheque.DataVenc), new GDAParameter("?agencia", cheque.Agencia),
+                new GDAParameter("?num", cheque.Num), new GDAParameter("?banco", cheque.Banco), new GDAParameter("?digitoNum", cheque.DigitoNum),
+                new GDAParameter("?conta", cheque.Conta), new GDAParameter("?obs", cheque.Obs), new GDAParameter("?titular", cheque.Titular));
 
-                LogAlteracaoDAO.Instance.LogCheque(c1, LogAlteracaoDAO.SequenciaObjeto.Atual);
+            LogAlteracaoDAO.Instance.LogCheque(sessao, c1, LogAlteracaoDAO.SequenciaObjeto.Atual);
 
-                return "Cheque Atualizado";
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+            return "Cheque Atualizado";
         }
 
         /// <summary>
@@ -3668,69 +3661,52 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Cancela a reapresentação do cheque
+        /// Cancela a reapresentação do cheque.
         /// </summary>
-        /// <param name="idCheque"></param>
-        public void CancelarReapresentacaoDeCheque(uint idCheque)
+        /// <param name="idCheque">O identificador do cheque.</param>
+        public void CancelarReapresentacaoDeCheque(GDASession sessao, uint idCheque)
         {
-            using (var transaction = new GDATransaction())
+            var cheque = GetElementByPrimaryKey(sessao, idCheque);
+
+            if (cheque.IdContaBanco.GetValueOrDefault() == 0)
+                throw new Exception("Esse cheque não possui a referência da conta bancária.");
+
+            // Se o cheque já estiver reapresentado, apenas não faz nada.
+            if (!cheque.Reapresentado)
+                throw new Exception("Esse cheque não está reapresentado.");
+
+            //Pega a data em que o cheque foi reapresentado
+            var sqldataReapresentado = "select max(dataalt) from log_alteracao where tabela =" + (int)LogAlteracao.TabelaAlteracao.Cheque + " and idregistroalt = " + idCheque + " and Campo = 'Reapresentado' and ValorAtual='Sim' ";
+
+            //Recupera a data em que ocorreu a ultima alteração do cheque em questão
+            var dataReapresentado = LogAlteracaoDAO.Instance.ExecuteScalar<DateTime>(sessao, sqldataReapresentado);
+
+            DepositoChequeDAO.Instance.CancelarCompensarChequesReapresentados(sessao, cheque, dataReapresentado);
+
+            //Busca todas as alterações feitas no cheque na ultima data de ocorrencia
+            var logAlteracoes = LogAlteracaoDAO.Instance.GetByItem(LogAlteracao.TabelaAlteracao.Cheque, idCheque, dataReapresentado, dataReapresentado, false);
+
+            var estavaAdvogado = false;
+            var advogado = false;
+            var reapresentado = false;
+
+            //Verifica se na ultima alteração o cheque mudou para "Reapresentado" e se estava "Advogado"
+            foreach (var alteracao in logAlteracoes)
             {
-                try
-                {
-                    transaction.BeginTransaction();
+                if (alteracao.Campo == "Advogado")
+                    advogado = alteracao.ValorAnterior == "Sim";
 
-                    var cheque = GetElementByPrimaryKey(transaction, idCheque);
+                if (alteracao.Campo == "Reapresentado")
+                    reapresentado = alteracao.ValorAtual == "Sim";
 
-                    if (cheque.IdContaBanco.GetValueOrDefault() == 0)
-                        throw new Exception("Esse cheque não possui a referência da conta bancária.");
-
-                    // Se o cheque já estiver reapresentado, apenas não faz nada.
-                    if (!cheque.Reapresentado)
-                        throw new Exception("Esse cheque não está reapresentado.");
-
-                    //Pega a data em que o cheque foi reapresentado
-                    var sqldataReapresentado = "select max(dataalt) from log_alteracao where tabela =" + (int)LogAlteracao.TabelaAlteracao.Cheque + " and idregistroalt = " + idCheque + " and Campo = 'Reapresentado' and ValorAtual='Sim' ";
-
-                    //Recupera a data em que ocorreu a ultima alteração do cheque em questão
-                    var dataReapresentado = LogAlteracaoDAO.Instance.ExecuteScalar<DateTime>(transaction, sqldataReapresentado);
-
-                    DepositoChequeDAO.Instance.CancelarCompensarChequesReapresentados(transaction, cheque, dataReapresentado);
-
-                    //Busca todas as alterações feitas no cheque na ultima data de ocorrencia
-                    var logAlteracoes = LogAlteracaoDAO.Instance.GetByItem(LogAlteracao.TabelaAlteracao.Cheque, idCheque, dataReapresentado, dataReapresentado, false);
-
-                    var estavaAdvogado = false;
-                    var advogado = false;
-                    var reapresentado = false;
-
-                    //Verifica se na ultima alteração o cheque mudou para "Reapresentado" e se estava "Advogado"
-                    foreach (var alteracao in logAlteracoes)
-                    {
-                        if (alteracao.Campo == "Advogado")
-                            advogado = alteracao.ValorAnterior == "Sim";
-
-                        if (alteracao.Campo == "Reapresentado")
-                            reapresentado = alteracao.ValorAtual == "Sim";
-
-                        if (reapresentado && advogado)
-                            estavaAdvogado = advogado;
-                    }
-
-                    // Retira o cheque da situação reapresentado e caso ele estivesse advogado ao ser reapresentado, volta essa situação para o mesmo
-                    objPersistence.ExecuteCommand(transaction, "update cheques set reapresentado=false, advogado=" + estavaAdvogado + " where idCheque=" + idCheque);
-
-                    LogAlteracaoDAO.Instance.LogCheque(transaction, cheque, LogAlteracaoDAO.SequenciaObjeto.Atual);
-
-                    transaction.Commit();
-                    transaction.Close();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    transaction.Close();
-                    throw;
-                }
+                if (reapresentado && advogado)
+                    estavaAdvogado = advogado;
             }
+
+            // Retira o cheque da situação reapresentado e caso ele estivesse advogado ao ser reapresentado, volta essa situação para o mesmo
+            objPersistence.ExecuteCommand(sessao, "update cheques set reapresentado=false, advogado=" + estavaAdvogado + " where idCheque=" + idCheque);
+
+            LogAlteracaoDAO.Instance.LogCheque(sessao, cheque, LogAlteracaoDAO.SequenciaObjeto.Atual);
         }
 
         /// <summary>
@@ -4245,12 +4221,12 @@ namespace Glass.Data.DAL
             return UpdateBase(session, objUpdate, true);
         }
 
-        internal int UpdateBase(Cheques objUpdate, bool verificarLimite)
+        public int UpdateBase(Cheques objUpdate, bool verificarLimite)
         {
             return UpdateBase(null, objUpdate, verificarLimite);
         }
 
-        internal int UpdateBase(GDASession session, Cheques objUpdate, bool verificarLimite)
+        public int UpdateBase(GDASession session, Cheques objUpdate, bool verificarLimite)
         {
             if (!String.IsNullOrEmpty(objUpdate.CpfCnpj))
                 objUpdate.CpfCnpj = objUpdate.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", "");

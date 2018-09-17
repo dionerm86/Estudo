@@ -159,7 +159,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (_tipoCalc == null)
+                if (_tipoCalc == null || _tipoCalc == 0)
                     _tipoCalc = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo((int)IdGrupoProd, (int?)IdSubgrupoProd);
 
                 return _tipoCalc.GetValueOrDefault((int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd);

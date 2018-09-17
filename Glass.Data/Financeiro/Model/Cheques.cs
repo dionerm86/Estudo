@@ -33,6 +33,12 @@ namespace Glass.Data.Model
             PagtoChequeDevolvido
         }
 
+        public enum TipoCheque : int
+        {
+            Proprio = 1,
+            Terceiros,
+        }
+
         #endregion
 
         #region Propriedades

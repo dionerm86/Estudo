@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Glass.Data.DAL;
 using Glass.Data.Model;
-using Glass.Data.DAL;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Glass.Data.EFD
@@ -49,7 +50,7 @@ namespace Glass.Data.EFD
             if (ordenar)
             {
                 retorno.Sort(new Comparison<GenericModel>(
-                    delegate(GenericModel x, GenericModel y)
+                    delegate (GenericModel x, GenericModel y)
                     {
                         return x.Descr.CompareTo(y.Descr);
                     }
@@ -304,10 +305,15 @@ namespace Glass.Data.EFD
         /// </summary>
         public enum TipoPartEnum
         {
+            [Description("Cliente")]
             Cliente,
+            [Description("Fornecedor")]
             Fornecedor,
+            [Description("Transportador")]
             Transportador,
+            [Description("Loja")]
             Loja,
+            [Description("Admininstradora de Cartão")]
             AdministradoraCartao
         }
 
@@ -1551,10 +1557,10 @@ namespace Glass.Data.EFD
                     and year(coalesce(if(nf.tipoDocumento<>{1}, nf.dataSaidaEnt, null), nf.dataEmissao))={3}
                     and pnf.aliq{0} is not null";
 
-            sql = String.Format(sql, 
+            sql = String.Format(sql,
                 tipoImposto == (int)TipoImpostoEnum.Pis ? "Pis" : "Cofins",
-                (int)NotaFiscal.TipoDoc.Saída, 
-                d.Month, 
+                (int)NotaFiscal.TipoDoc.Saída,
+                d.Month,
                 d.Year);
 
             List<GenericModel> retorno = new List<GenericModel>();
@@ -1644,17 +1650,17 @@ namespace Glass.Data.EFD
             {
                 case (int)CodAjusteIpi.EstornoDebito:
                     return "Valor do débito do IPI estornado";
-                case (int)CodAjusteIpi.CreditoRecebidoTransferencia: 
+                case (int)CodAjusteIpi.CreditoRecebidoTransferencia:
                     return "Valor do crédito do IPI recebidos por transferência, de outro(s) estabelecimento(s) da mesma empresa";
-                case (int)CodAjusteIpi.CreditoPresumidoIpiRessarcimentoPisCofinsLei9363: 
+                case (int)CodAjusteIpi.CreditoPresumidoIpiRessarcimentoPisCofinsLei9363:
                     return "Valor do crédito presumido de IPI decorrente do ressarcimento do PIS/Pasep e da Cofins nas operações de exportação de produtos industrializados (Lei nº 9.363/1996, art. 1º)";
-                case (int)CodAjusteIpi.CreditoPresumidoIpiRessarcimentoPisCofinsLei10276: 
+                case (int)CodAjusteIpi.CreditoPresumidoIpiRessarcimentoPisCofinsLei10276:
                     return "Valor do crédito presumido de IPI decorrente do ressarcimento do PIS/Pasep e da Cofins nas operações de exportação de produtos industrializados (Lei nº 10.276/2001, art. 1º)";
-                case (int)CodAjusteIpi.CreditoPresumidoIpiRegioesIncentivadas: 
+                case (int)CodAjusteIpi.CreditoPresumidoIpiRegioesIncentivadas:
                     return "Valor do crédito presumido relativo ao IPI incidente nas saídas, do estabelecimento industrial, dos produtos classificados nas posições 8702 a 8704 da Tipi (Lei nº 9.826/1999, art. 1º)";
-                case (int)CodAjusteIpi.CreditoPresumidoIpiFrete: 
+                case (int)CodAjusteIpi.CreditoPresumidoIpiFrete:
                     return "Valor do crédito presumido de IPI relativamente à parcela do frete cobrado pela prestação do serviço de transporte dos produtos classificados nos códigos 8433.53.00, 8433.59.1, 8701.10.00, 8701.30.00, 8701.90.00, 8702.10.00 Ex 01, 8702.90.90 Ex 01, 8703, 8704.2, 8704.3 e 87.06.00.20, da TIPI (MP nº 2.158/2001, art. 56)";
-                case (int)CodAjusteIpi.CreditoPresumidoIpiOutros: 
+                case (int)CodAjusteIpi.CreditoPresumidoIpiOutros:
                     return "Outros valores de crédito presumido de IPI";
                 case (int)CodAjusteIpi.CreditosDecorrentesMedidaJudicial:
                     return "Valores de crédito de IPI decorrentes de medida judicial";
@@ -1662,7 +1668,7 @@ namespace Glass.Data.EFD
                     return "Valor de outros créditos do IPI";
                 case (int)CodAjusteIpi.EstornoCredito:
                     return "Valor do crédito do IPI estornado";
-                case (int)CodAjusteIpi.TransferenciaCredito: 
+                case (int)CodAjusteIpi.TransferenciaCredito:
                     return "Valor do crédito do IPI transferido no período, para outro(s) estabelecimento(s) da mesma empresa, conforme previsto na legislação tributária";
                 case (int)CodAjusteIpi.RessarcimentoOuCompensacaoCreditosIpi:
                     return "Valor do crédito de IPI, solicitado junto à RFB/MF";

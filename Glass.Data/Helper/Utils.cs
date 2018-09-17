@@ -695,6 +695,14 @@ namespace Glass.Data.Helper
         /// <summary>
         /// Retorna o endereço físico do servidor onde deverá ser salva a foto
         /// </summary>
+        public static string GetFotosNotaFiscalPath
+        {
+            get { return HttpContext.Current.Server.MapPath("~/Upload/AnexosNotaFiscal"); }
+        }
+
+        /// <summary>
+        /// Retorna o endereço físico do servidor onde deverá ser salva a foto
+        /// </summary>
         public static string GetFotosDevolucaoPagtoPath
         {
             get { return HttpContext.Current.Server.MapPath("~/Upload/DevolucaoPagto"); }

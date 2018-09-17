@@ -19,16 +19,6 @@
       required: false,
       default: null,
       validator: Mixins.Validacao.validarBooleanOuVazio
-    },
-
-    /**
-     * Indica se o item 'Todas' deve ser exibido.
-     * @type {?boolean}
-     */
-    exibirTodas: {
-      required: false,
-      default: true,
-      validator: Mixins.Validacao.validarBooleanOuVazio
     }
   },
 

@@ -4,6 +4,7 @@ using Glass.Data.Model;
 using Glass.Data.RelModel;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Glass.Data.RelDAL
 {
@@ -362,7 +363,7 @@ namespace Glass.Data.RelDAL
         public Credito[] GetCreditoFornecedor(uint idFornec, DateTime inicio, DateTime fim, string tipoMovimentacao, string sortExpression,
             int startRow, int pageSize)
         {
-            List<Credito> retorno = new List<Credito>(GetCreditoListFornecedor(idFornec, inicio, fim, tipoMovimentacao));
+            List<Credito> retorno = new List<Credito>(GetCreditoListFornecedor(idFornec, DateTime.MinValue, DateTime.MinValue, tipoMovimentacao));
 
             if (retorno.Count > 0)
             {
@@ -428,6 +429,8 @@ namespace Glass.Data.RelDAL
                     return retornoSort;
 
                 }));
+
+                retorno = retorno.Where(f => f.Data >= inicio && f.Data <= fim).ToList();
 
                 // Faz paginação
                 if (startRow > 0)
