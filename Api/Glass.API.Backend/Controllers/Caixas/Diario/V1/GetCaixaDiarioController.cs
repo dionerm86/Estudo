@@ -74,7 +74,7 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
         [Route("{idLoja}/obterDadosFechamento")]
         [SwaggerResponse(200, "Dados de fechamento encontrados.", Type = typeof(FechamentoDto))]
         [SwaggerResponse(204, "Dados de fechamento encontrados.")]
-        public IHttpActionResult ObterSituacoes(int idLoja)
+        public IHttpActionResult ObterDadosFechamento(int idLoja)
         {
             using (var sessao = new GDATransaction())
             {
@@ -96,6 +96,12 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
                     SaldoDinheiro = CaixaDiarioDAO.Instance.GetSaldoByFormaPagto(sessao, Data.Model.Pagto.FormaPagto.Dinheiro, 0, (uint)idLoja, 0, dataCaixaAberto, 1),
                     DataCaixaAberto = dataCaixaAberto,
                 };
+
+                if (fechamento.DiaAtual.Saldo == 0 && !fechamento.DiaAtual.ExistemMovimentacoes)
+                {
+                    fechamento.DiaAtual.Saldo = fechamento.DiaAnterior.Saldo;
+                    fechamento.DiaAtual.SaldoDinheiro += fechamento.DiaAnterior.Saldo;
+                }
 
                 return this.Item(fechamento);
             }

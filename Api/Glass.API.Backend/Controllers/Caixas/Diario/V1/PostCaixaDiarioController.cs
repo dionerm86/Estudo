@@ -60,14 +60,14 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
         /// Fecha o caixa da loja informada.
         /// </summary>
         /// <param name="idLoja">O identificador da loja que terá o caixa fechado.</param>
-        /// <param name="fechamentoDto">Dados necessários para fechamento do caixa.</param>
+        /// <param name="fechamento">Dados necessários para fechamento do caixa.</param>
         /// <returns>Um status HTTP indicando se o caixa foi fechado.</returns>
         [HttpPost]
         [Route("{idLoja}/fechar")]
         [SwaggerResponse(202, "Caixa fechado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo idLoja ou de validação no fechamento do caixa.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Loja não encontrada.", Type = typeof(MensagemDto))]
-        public IHttpActionResult Fechar(int idLoja, [FromBody]FechamentoDto fechamentoDto)
+        public IHttpActionResult Fechar(int idLoja, [FromBody] FechamentoDto fechamento)
         {
             using (var sessao = new GDATransaction())
             {
@@ -78,25 +78,33 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
                     return validacao;
                 }
 
-                if (fechamentoDto.ValorATransferirCaixaGeral == null)
+                if (fechamento.ValorATransferirCaixaGeral == null)
                 {
                     return this.ErroValidacao("Informe o valor a ser transferido para o caixa geral");
+                }
+
+                var diaAnteriorAberto = !CaixaDiarioDAO.Instance.CaixaFechadoDiaAnterior(sessao, (uint)idLoja);
+
+                if (!diaAnteriorAberto && fechamento.SaldoTela != CaixaDiarioDAO.Instance.GetSaldoByLoja((uint)idLoja))
+                {
+                    return this.ErroValidacao("Foram feitas movimentações no caixa diário que não estão sendo exibidas na tela."
+                        + "\n\nEntre na tela novamente para recuperar o saldo correto do dia.");
                 }
 
                 try
                 {
                     sessao.BeginTransaction();
 
-                    var dataFechamento = fechamentoDto.DiaAnterior ?
+                    var dataFechamento = diaAnteriorAberto ?
                         CaixaDiarioDAO.Instance.GetDataCaixaAberto(sessao, (uint)idLoja) :
                         DateTime.Now;
 
                     CaixaDiarioDAO.Instance.FechaCaixa(
                         sessao,
                         (uint)idLoja,
-                        fechamentoDto.ValorATransferirCaixaGeral.GetValueOrDefault(),
+                        fechamento.ValorATransferirCaixaGeral.GetValueOrDefault(),
                         dataFechamento,
-                        fechamentoDto.DiaAnterior);
+                        diaAnteriorAberto);
 
                     sessao.Commit();
 

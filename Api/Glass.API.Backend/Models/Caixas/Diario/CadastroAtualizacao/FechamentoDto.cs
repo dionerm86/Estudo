@@ -21,10 +21,10 @@ namespace Glass.API.Backend.Models.Caixas.Diario.CadastroAtualizacao
         public decimal? ValorATransferirCaixaGeral { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se será fechado um dia anterior ao atual.
+        /// Obtém ou define o valor do saldo no momento do fechamento.
         /// </summary>
         [DataMember]
-        [JsonProperty("diaAnterior")]
-        public bool DiaAnterior { get; set; }
+        [JsonProperty("saldoTela")]
+        public decimal SaldoTela { get; set; }
     }
 }

@@ -2,7 +2,9 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas;
 using Glass.Configuracoes;
+using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
@@ -25,6 +27,17 @@ namespace Glass.API.Backend.Models.Caixas.Diario.Configuracoes
             this.AlterarDataConsulta = FinanceiroConfig.TelaFechamentoCaixaDiario.PermitirCaixaAlterarDataConsulta;
             this.ControleCaixaDiario = Config.PossuiPermissao(Config.FuncaoMenuCaixaDiario.ControleCaixaDiario);
             this.UsuarioAdministrador = UserInfo.GetUserInfo.IsAdministrador;
+            this.LojaUsuario = new IdNomeDto
+            {
+                Id = (int)UserInfo.GetUserInfo.IdLoja,
+                Nome = UserInfo.GetUserInfo.NomeLoja,
+            };
+
+            this.Usuario = new IdNomeDto
+            {
+                Id = (int)UserInfo.GetUserInfo.CodUser,
+                Nome = UserInfo.GetUserInfo.Nome,
+            };
         }
 
         /// <summary>
@@ -61,5 +74,19 @@ namespace Glass.API.Backend.Models.Caixas.Diario.Configuracoes
         [DataMember]
         [JsonProperty("usuarioAdministrador")]
         public bool UsuarioAdministrador { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a loja do usuário logado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("lojaUsuario")]
+        public IdNomeDto LojaUsuario { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o usuário logado.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("Usuario")]
+        public IdNomeDto Usuario { get; set; }
     }
 }

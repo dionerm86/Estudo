@@ -1,0 +1,21 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true" v-bind:disabled="!permitirAlterarLoja"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <campo-data-hora data-hora.sync="filtroAtual.data" v-bind:disabled="!permitirAlterarData"></campo-data-hora>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Funcionário</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="funcionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroFuncionarios"
+                v-bind:ordenar="false" v-bind:disabled="!permitirAlterarFuncionario"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>
