@@ -2022,8 +2022,9 @@ namespace Glass.Data.Model
                 var tipoPedido = PedidoDAO.Instance.GetTipoPedido(null, IdPedido);
                 var tipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(IdPedido);
 
-                return tipoPedido == Pedido.TipoPedidoEnum.Venda && (situacaoPedido == Pedido.SituacaoPedido.Conferido || situacaoPedido == Pedido.SituacaoPedido.ConfirmadoLiberacao) &&
-                    Pedido.GetDescrSituacaoProducao((int)tipoPedido, (int)situacaoProducao, tipoEntrega, UserInfo.GetUserInfo).ToLower() == "etiqueta não impressa";
+                return Config.PossuiPermissao(Config.FuncaoMenuPedido.PermitirAlterarProcessoAplicacaoPedidos) &&
+                    tipoPedido == TipoPedidoEnum.Venda && (situacaoPedido == SituacaoPedido.Conferido || situacaoPedido == SituacaoPedido.ConfirmadoLiberacao) &&
+                    GetDescrSituacaoProducao((int)tipoPedido, situacaoProducao, tipoEntrega, UserInfo.GetUserInfo).ToLower() == "etiqueta não impressa";
             }
         }
 
