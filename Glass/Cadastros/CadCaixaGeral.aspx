@@ -121,16 +121,6 @@
                             <asp:ImageButton ID="ImageButton4" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 ToolTip="Pesquisar" />
                         </td>
-                        <td>
-                            <asp:Label ID="Label1" runat="server" Text="Tipos de contas" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpContabil" runat="server" AutoPostBack="True" OnTextChanged="drpContabil_IndexChanged">
-                                <asp:ListItem Value="0">Todas</asp:ListItem>
-                                <asp:ListItem Value="1">Contábeis</asp:ListItem>
-                                <asp:ListItem Value="2">Não contábeis</asp:ListItem>
-                            </asp:DropDownList>
-                        </td>
                     </tr>
                 </table>
                 <table>

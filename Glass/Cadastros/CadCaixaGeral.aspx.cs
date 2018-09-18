@@ -117,7 +117,8 @@ namespace Glass.UI.Web.Cadastros
                 // Contas recebidas contábeis
                 lblContasContabeis.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfContasRecebidasContabeis")).Value;
                 
-                // Contas recebidas não contábeis
+                // Contas recebidas não contábeisconta
+
                 lblContasNaoContabeis.Text = ((HiddenField)grdCaixaGeral.Rows[0].Cells[0].FindControl("hdfContasRecebidasNaoContabeis")).Value;
             }
             else

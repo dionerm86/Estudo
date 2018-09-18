@@ -15,28 +15,6 @@ namespace Glass.Data.DAL
         #region Busca as movimentações do caixa geral no período passado
 
         /// <summary>
-        /// Busca as movimentações do caixa geral no período informado
-        /// </summary>
-        /// <param name="idCaixaGeral"></param>
-        /// <param name="idFunc"></param>
-        /// <param name="dtIni"></param>
-        /// <param name="dtFim"></param>
-        /// <param name="valorIni"></param>
-        /// <param name="valorFim"></param>
-        /// <param name="apenasDinheiro"></param>
-        /// <param name="tipoMov"></param>
-        /// <param name="tipoConta"></param>
-        /// <param name="semEstorno"></param>
-        /// <param name="idLoja"></param>
-        /// <returns></returns>
-        public CaixaGeral[] GetMovimentacoes(uint idCaixaGeral, uint idFunc, string dtIni, string dtFim, string valorIni, string valorFim,
-            bool apenasDinheiro, bool apenasCheque, int tipoMov, int tipoConta, bool semEstorno, uint idLoja)
-        {
-            return GetMovimentacoes(idCaixaGeral, idFunc, dtIni, dtFim, valorIni, valorFim, apenasDinheiro, apenasCheque,
-                tipoMov, tipoConta, semEstorno, idLoja, UserInfo.GetUserInfo);
-        }
-
-        /// <summary>
         /// Busca as movimentações do caixa geral no período informado, sobrecarga criada para receber por parâmetro o LoginUsuario, 
         /// no caso em que este relatório é chamado pela thread do relatório
         /// </summary>
@@ -53,7 +31,7 @@ namespace Glass.Data.DAL
         /// <param name="idLoja"></param>
         /// <param name="login"></param>
         /// <returns></returns>
-        public CaixaGeral[] GetMovimentacoes(uint idCaixaGeral, uint idFunc, string dtIni, string dtFim, string valorIni, string valorFim,
+        public CaixaGeral[] GetMovimentacoes(GDASession sessao, uint idCaixaGeral, uint idFunc, string dtIni, string dtFim, string valorIni, string valorFim,
             bool apenasDinheiro, bool apenasCheque, int tipoMov, int tipoConta, bool semEstorno, uint idLoja, LoginUsuario login)
         {
             string where = String.Empty;
@@ -220,7 +198,7 @@ namespace Glass.Data.DAL
                 Where 1 " + where + (tipoConta > 0 ? " group by c.idCaixaGeral" : "") +
                 " Order By IdCaixaGeral Asc";
 
-            List<CaixaGeral> lstCaixa = objPersistence.LoadData(sql, GetParams(dtIni, dtFim));
+            List<CaixaGeral> lstCaixa = objPersistence.LoadData(sessao, sql, GetParams(dtIni, dtFim));
 
             if (lstCaixa.Count == 0)
                 return new CaixaGeral[0];
@@ -309,66 +287,69 @@ namespace Glass.Data.DAL
                 lstCaixa.Add(mov);
             }
 
-            // Usado apenas se a empresa não possuir caixa diário
-            lstCaixa[0].TotalDinheiro = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, idFunc, null, null, !semEstorno ? 1 : 4, idLoja);
-            lstCaixa[0].SaldoDinheiro = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-            lstCaixa[0].TotalSaidaDinheiro = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-            lstCaixa[0].TotalEntradaDinheiro = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, 2, idLoja);
+            return lstCaixa.ToArray();
+        }
 
-            lstCaixa[0].TotalCheque = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ?
-                0 : ChequesDAO.Instance.GetTotalTerc(idLoja);
-            lstCaixa[0].TotalChequeDevolvido = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ?
-                0 : ChequesDAO.Instance.GetTotalTerc(false, true, ChequesDAO.TipoReapresentados.IgnorarReapresentados, idLoja);
-            lstCaixa[0].TotalChequeReapresentado = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ?
-                0 : ChequesDAO.Instance.GetTotalTerc(true, true, ChequesDAO.TipoReapresentados.ApenasReapresentados, idLoja);
-            lstCaixa[0].TotalChequeTerc = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ?
-                0 : ChequesDAO.Instance.GetTotalTercVenc(idLoja);
-            lstCaixa[0].SaldoCheque = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-            lstCaixa[0].TotalSaidaCheque = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-            lstCaixa[0].TotalEntradaCheque = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, 2, idLoja);
+        public CaixaGeral ObterTotalizadores(GDASession sessao, uint idFunc, string dtIni, string dtFim, bool apenasDinheiro, bool semEstorno, uint idLoja, LoginUsuario login)
+        {
+            var caixaGeral = new CaixaGeral();
+
+            // Usado apenas se a empresa não possuir caixa diário
+            caixaGeral.TotalDinheiro = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, null, null, !semEstorno ? 1 : 4, idLoja);
+            caixaGeral.SaldoDinheiro = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+            caixaGeral.TotalSaidaDinheiro = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+            caixaGeral.TotalEntradaDinheiro = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, idFunc, dtIni, dtFim, 2, idLoja);
+
+            caixaGeral.TotalCheque = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : ChequesDAO.Instance.GetTotalTerc(idLoja);
+            caixaGeral.TotalChequeDevolvido = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : ChequesDAO.Instance.GetTotalTerc(false, true, ChequesDAO.TipoReapresentados.IgnorarReapresentados, idLoja);
+            caixaGeral.TotalChequeReapresentado = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : ChequesDAO.Instance.GetTotalTerc(true, true, ChequesDAO.TipoReapresentados.ApenasReapresentados, idLoja);
+            caixaGeral.TotalChequeTerc = !FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo ? 0 : ChequesDAO.Instance.GetTotalTercVenc(idLoja);
+            caixaGeral.SaldoCheque = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+            caixaGeral.TotalSaidaCheque = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+            caixaGeral.TotalEntradaCheque = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, idFunc, dtIni, dtFim, 2, idLoja);
 
             if (!apenasDinheiro)
             {
-                lstCaixa[0].SaldoCartao = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-                lstCaixa[0].TotalSaidaCartao = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-                lstCaixa[0].TotalEntradaCartao = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, 2, idLoja);
+                caixaGeral.SaldoCartao = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+                caixaGeral.TotalSaidaCartao = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+                caixaGeral.TotalEntradaCartao = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Cartao, idFunc, dtIni, dtFim, 2, idLoja);
 
-                lstCaixa[0].SaldoConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-                lstCaixa[0].TotalSaidaConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+                caixaGeral.SaldoConstrucard = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+                caixaGeral.TotalSaidaConstrucard = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
 
-                lstCaixa[0].SaldoPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
-                lstCaixa[0].TotalSaidaPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+                caixaGeral.SaldoPermuta = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+                caixaGeral.TotalSaidaPermuta = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
 
-                lstCaixa[0].TotalSaidaDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-                lstCaixa[0].TotalEntradaDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, 2, idLoja);
-                lstCaixa[0].SaldoDeposito = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+                caixaGeral.TotalSaidaDeposito = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+                caixaGeral.TotalEntradaDeposito = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, 2, idLoja);
+                caixaGeral.SaldoDeposito = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Deposito, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
 
-                lstCaixa[0].TotalSaidaBoleto = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
-                lstCaixa[0].TotalEntradaBoleto = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, 2, idLoja);
-                lstCaixa[0].SaldoBoleto = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
+                caixaGeral.TotalSaidaBoleto = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, !semEstorno ? 3 : 5, idLoja);
+                caixaGeral.TotalEntradaBoleto = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, 2, idLoja);
+                caixaGeral.SaldoBoleto = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Boleto, idFunc, dtIni, dtFim, !semEstorno ? 1 : 4, idLoja);
             }
 
-            lstCaixa[0].TotalCreditoRecebido = GetCreditoRecebido(idFunc, dtIni, dtFim, idLoja);
-            lstCaixa[0].TotalCreditoGerado = GetCreditoGerado(idFunc, dtIni, dtFim, idLoja);
-            lstCaixa[0].TotalEntradaConstrucard = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, 2, idLoja);
-            lstCaixa[0].TotalEntradaPermuta = GetSaldoByFormaPagto(Glass.Data.Model.Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, 2, idLoja);
-            lstCaixa[0].ContasReceberGeradas = ContasReceberDAO.Instance.GetTotalGeradasPeriodo(idFunc, dtIni, dtFim, idLoja);
+            caixaGeral.TotalCreditoRecebido = GetCreditoRecebido(sessao, idFunc, dtIni, dtFim, idLoja);
+            caixaGeral.TotalCreditoGerado = GetCreditoGerado(sessao, idFunc, dtIni, dtFim, idLoja);
+            caixaGeral.TotalEntradaConstrucard = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Construcard, idFunc, dtIni, dtFim, 2, idLoja);
+            caixaGeral.TotalEntradaPermuta = GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Permuta, idFunc, dtIni, dtFim, 2, idLoja);
+            caixaGeral.ContasReceberGeradas = ContasReceberDAO.Instance.GetTotalGeradasPeriodo(idFunc, dtIni, dtFim, idLoja);
 
             if (FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber)
             {
-                lstCaixa[0].TotalContasRecebidasContabeis = ContasReceberDAO.Instance
+                caixaGeral.TotalContasRecebidasContabeis = ContasReceberDAO.Instance
                     .GetTotalRecebidasPeriodo(dtIni, dtFim, ((int)ContasReceber.TipoContaEnum.Contabil).ToString(), idLoja);
 
-                lstCaixa[0].TotalContasRecebidasNaoContabeis = ContasReceberDAO.Instance
+                caixaGeral.TotalContasRecebidasNaoContabeis = ContasReceberDAO.Instance
                     .GetTotalRecebidasPeriodo(dtIni, dtFim, ((int)ContasReceber.TipoContaEnum.NaoContabil).ToString(), idLoja);
             }
 
             // Irá mostrar total de dinheiro, cheque e cheques de terc em aberto se a empresa tiver caixa único
-            lstCaixa[0].MostrarTotalGeral = FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo &&
-                ((Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento) &&
-                Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento)));
+            caixaGeral.MostrarTotalGeral = FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo
+                && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento)
+                && Config.PossuiPermissao((int)login.CodUser, Config.FuncaoMenuFinanceiroPagto.ControleFinanceiroPagamento);
 
-            return lstCaixa.ToArray();
+            return caixaGeral;
         }
 
         private GDAParameter[] GetParams(string dtIni, string dtFim)
@@ -1021,14 +1002,14 @@ namespace Glass.Data.DAL
             string sqlEntrada = "Coalesce((Select Sum(valorMov) From caixa_geral Where tipomov=1 and (idConta in(" +
                 UtilsPlanoConta.GetLstEntradaByFormaPagto(formaPagto, 0, false) +
                 (formaPagto == Pagto.FormaPagto.Dinheiro ? "," + idsContaEstornoSaida : "") + ") " +
-                (formaPagto == Glass.Data.Model.Pagto.FormaPagto.Dinheiro ? " Or formaSaida=" + (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro :
-                formaPagto == Glass.Data.Model.Pagto.FormaPagto.ChequeProprio ? " Or (idConta not in (" + UtilsPlanoConta.GetLstEstornoSaidaByFormaPagto(formaPagto, 0) + ") and formaSaida=" + (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio + ")" : String.Empty) +
+                (formaPagto == Pagto.FormaPagto.Dinheiro ? " Or formaSaida=" + (int)Pagto.FormaPagto.Dinheiro :
+                formaPagto == Pagto.FormaPagto.ChequeProprio ? " Or (idConta not in (" + UtilsPlanoConta.GetLstEstornoSaidaByFormaPagto(formaPagto, 0) + ") and formaSaida=" + (int)Pagto.FormaPagto.ChequeProprio + ")" : String.Empty) +
                 ")&dtIni&&dtFim&&func&&idLoja&), 0)";
 
             string sqlSaida = "Coalesce((Select Sum(valorMov) From caixa_geral Where tipomov=2 and (idConta in (" +
                 UtilsPlanoConta.GetLstSaidaByFormaPagto(formaPagto, 0, 1) + ") " +
-                (formaPagto == Glass.Data.Model.Pagto.FormaPagto.Dinheiro ? " Or formaSaida=" + (int)Glass.Data.Model.Pagto.FormaPagto.Dinheiro :
-                formaPagto == Glass.Data.Model.Pagto.FormaPagto.ChequeProprio ? " Or formaSaida=" + (int)Glass.Data.Model.Pagto.FormaPagto.ChequeProprio : String.Empty) +
+                (formaPagto == Pagto.FormaPagto.Dinheiro ? " Or formaSaida=" + (int)Pagto.FormaPagto.Dinheiro :
+                formaPagto == Pagto.FormaPagto.ChequeProprio ? " Or formaSaida=" + (int)Pagto.FormaPagto.ChequeProprio : String.Empty) +
                 ")&dtIni&&dtFim&&func&&idLoja&), 0)";
 
             string sqlEstornoSaida = !String.IsNullOrEmpty(idsContaEstornoSaida) && formaPagto != Pagto.FormaPagto.Dinheiro ?
@@ -1058,7 +1039,7 @@ namespace Glass.Data.DAL
 
         #region Retorna os valores de crédito gerado/recebido por período
 
-        private decimal GetCreditoPeriodo(string idsContas, string idsContasEstorno, uint idFunc, string dtIni, string dtFim, uint idLoja)
+        private decimal GetCreditoPeriodo(GDASession sessao, string idsContas, string idsContasEstorno, uint idFunc, string dtIni, string dtFim, uint idLoja)
         {
             string sqlEntrada = "Coalesce((Select Sum(valorMov + Coalesce(juros, 0)) From caixa_geral Where tipomov=1 and idConta in(" +
                 idsContas + ") &dtIni&&dtFim&&func&&idLoja&), 0)";
@@ -1073,7 +1054,7 @@ namespace Glass.Data.DAL
             sql = sql.Replace("&func&", idFunc > 0 ? " And usuCad=" + idFunc : String.Empty);
             sql = sql.Replace("&idLoja&", idLoja > 0 ? " And idLoja=" + idLoja : String.Empty);
 
-            return ExecuteScalar<decimal>(sql, GetParams(dtIni, dtFim));
+            return ExecuteScalar<decimal>(sessao, sql, GetParams(dtIni, dtFim));
         }
 
         /// <summary>
@@ -1084,11 +1065,11 @@ namespace Glass.Data.DAL
         /// <param name="dtFim"></param>
         /// <param name="idLoja"></param>
         /// <returns></returns>
-        public decimal GetCreditoRecebido(uint idFunc, string dtIni, string dtFim, uint idLoja)
+        public decimal GetCreditoRecebido(GDASession sessao, uint idFunc, string dtIni, string dtFim, uint idLoja)
         {
             string idsContas = UtilsPlanoConta.ContasCredito(3);
             string idsContasEstorno = UtilsPlanoConta.ContasCredito(4);
-            return GetCreditoPeriodo(idsContas, idsContasEstorno, idFunc, dtIni, dtFim, idLoja);
+            return GetCreditoPeriodo(sessao, idsContas, idsContasEstorno, idFunc, dtIni, dtFim, idLoja);
         }
 
         /// <summary>
@@ -1099,11 +1080,11 @@ namespace Glass.Data.DAL
         /// <param name="dtFim"></param>
         /// <param name="idLoja"></param>
         /// <returns></returns>
-        public decimal GetCreditoGerado(uint idFunc, string dtIni, string dtFim, uint idLoja)
+        public decimal GetCreditoGerado(GDASession sessao, uint idFunc, string dtIni, string dtFim, uint idLoja)
         {
             string idsContas = UtilsPlanoConta.ContasCredito(2);
             string idsContasEstorno = UtilsPlanoConta.ContasCredito(5);
-            return GetCreditoPeriodo(idsContas, idsContasEstorno, idFunc, dtIni, dtFim, idLoja);
+            return GetCreditoPeriodo(sessao, idsContas, idsContasEstorno, idFunc, dtIni, dtFim, idLoja);
         }
 
         #endregion
@@ -1890,7 +1871,7 @@ namespace Glass.Data.DAL
                         mov.TipoMov == 1 ? "-" : "+", mov.IdCaixaGeral), new GDAParameter("?valor", mov.ValorMov));
 
                     if (mov.IdCheque > 0)
-                        ChequesDAO.Instance.UpdateSituacao(transaction, mov.IdCheque.Value, Glass.Data.Model.Cheques.SituacaoCheque.EmAberto);
+                        ChequesDAO.Instance.UpdateSituacao(transaction, mov.IdCheque.Value, Cheques.SituacaoCheque.EmAberto);
 
                     DeleteByPrimaryKey(transaction, mov.IdCaixaGeral);
                     LogCancelamentoDAO.Instance.LogCaixaGeral(transaction, mov, motivo, true);
