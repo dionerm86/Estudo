@@ -71,9 +71,9 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
         /// <param name="idLoja">O identificado da loja que terão os dados de fechamento recuperados.</param>
         /// <returns>Uma lista JSON com os dados para fechamento do caixa.</returns>
         [HttpGet]
-        [Route("{idLoja}/obterDadosFechamento")]
+        [Route("{idLoja}/saldoFechamento")]
         [SwaggerResponse(200, "Dados de fechamento encontrados.", Type = typeof(FechamentoDto))]
-        [SwaggerResponse(204, "Dados de fechamento encontrados.")]
+        [SwaggerResponse(204, "Dados de fechamento não encontrados.")]
         public IHttpActionResult ObterDadosFechamento(int idLoja)
         {
             using (var sessao = new GDATransaction())

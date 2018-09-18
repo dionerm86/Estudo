@@ -17,7 +17,7 @@ namespace Glass.Data.Model
             Cheque
         }
 
-        public enum TipoMovimentacaoEnum : int
+        public enum TipoMovimentacaoEnum
         {
             Entrada = 1,
             Saida

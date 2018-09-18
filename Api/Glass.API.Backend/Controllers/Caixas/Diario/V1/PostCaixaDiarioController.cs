@@ -24,7 +24,7 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
         /// <returns>Um status HTTP indicando se o caixa foi reaberto.</returns>
         [HttpPost]
         [Route("{idLoja}/reabrir")]
-        [SwaggerResponse(200, "Caixa reaberto.")]
+        [SwaggerResponse(202, "Caixa reaberto.")]
         [SwaggerResponse(400, "Erro de valor ou formato do campo idLoja ou de validação na reabertura do caixa.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Loja não encontrada.", Type = typeof(MensagemDto))]
         public IHttpActionResult Reabrir(int idLoja)
@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Controllers.Caixas.Diario.V1
 
                     sessao.Commit();
 
-                    return this.Ok();
+                    return this.Aceito("Caixa reaberto.");
                 }
                 catch (Exception ex)
                 {
