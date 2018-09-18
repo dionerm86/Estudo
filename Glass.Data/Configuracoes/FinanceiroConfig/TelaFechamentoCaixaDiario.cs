@@ -11,7 +11,7 @@ namespace Glass.Configuracoes
             /// </summary>
             public static bool PermitirCaixaAlterarDataConsulta
             {
-                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirCaixaAlterarDataConsulta); }
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.PermitirCaixaAlterarDataConsulta) || UserInfo.GetUserInfo.IsAdministrador; }
             }
         }
     }
