@@ -183,5 +183,12 @@ namespace Glass.Data.DAL
         {
             return objPersistence.LoadData("SELECT * FROM cidade GROUP BY CodIbgeUf").ToList();
         }
+
+        public IList<Cidade> ObterCidadesParaMdfe()
+        {
+            string sql = "select IdCidade, CONCAT(NomeCidade, ' - ', NomeUf) AS NomeCidade, CodIbgeCidade, NomeUf, CodIbgeUf from cidade order by NomeCidade Asc";
+            return objPersistence.LoadData(sql).ToList();
+        }
+
     }
 }

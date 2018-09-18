@@ -12765,6 +12765,16 @@ namespace Glass.Data.DAL
                     var diasDataEntregaAplicacao = 0;
                     var diasDataEntregaProcesso = 0;
 
+                    if (tipoPedido.GetValueOrDefault() == (int)Pedido.TipoPedidoEnum.MaoDeObra)
+                    {
+                        var idsProcessoAmbientePedido = AmbientePedidoDAO.Instance.ObterIdsProcessoByPedido(session, idPedido.Value);
+
+                        foreach (var ap in idsProcessoAmbientePedido)
+                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, (uint)ap));
+                        // Considera a data maior entre a data das configurações e da data do processo.
+                        numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
+                    }
+
                     foreach (var pp in produtosPedido.Where(f => f.IdProcesso > 0 || f.IdAplicacao > 0).ToList())
                     {
                         if (pp.IdAplicacao > 0)
@@ -12791,17 +12801,7 @@ namespace Glass.Data.DAL
                                 SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "numeroDiasMinimoEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd),
                                 SubgrupoProdDAO.Instance.ObtemValorCampo<int?>(session, "diaSemanaEntrega", "idSubgrupoProd=" + pp.IdSubgrupoProd)
                             ));
-                        }
-
-                    if (tipoPedido.GetValueOrDefault() == (int)Pedido.TipoPedidoEnum.MaoDeObra)
-                    {
-                        var ambientePedido = AmbientePedidoDAO.Instance.GetByPedido(session, 0, idPedido.Value, false);
-
-                        foreach (var ap in ambientePedido)
-                            diasDataEntregaProcesso = Math.Max(diasDataEntregaProcesso, EtiquetaProcessoDAO.Instance.ObterNumeroDiasUteisDataEntrega(session, ap.IdProcesso.Value));
-                        // Considera a data maior entre a data das configurações e da data do processo.
-                        numeroDiasSomar = Math.Max(numeroDiasSomar, diasDataEntregaProcesso);
-                    }
+                        }                   
 
                     uint idSubgrupoMaiorPrazo = 0;
                     foreach (uint key in subgrupos.Keys)

@@ -4303,6 +4303,8 @@ namespace Glass.Data.DAL
                 if (!string.IsNullOrWhiteSpace(retorno))
                     throw new Exception(retorno);
 
+                objUpdate.PedidoMaoObra = container.MaoDeObra;
+
                 ValorTotal.Instance.Calcular(
                     sessao,
                     container,

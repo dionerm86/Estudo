@@ -32,22 +32,28 @@
 
             // Se situação Compensado, exibe as opções de movimentar Caixa ou Banco
             if (situacao == "1") {
-                movCaixa.hidden = false;
+                movCaixa.hidden = true;
                 movBanco.hidden = true;
                 tabPlanoConta.hidden = false;
                 tabContaBanco.hidden = true;
+
+                habilitaPlanoContaBanco(1, true);
             }
             else if (situacao == "2") {
                 movCaixa.hidden = false;
                 movBanco.hidden = false;
                 tabPlanoConta.hidden = false;
                 tabContaBanco.hidden = false;
+
+                habilitaPlanoContaBanco(0, false);
             }
             else {
                 movCaixa.hidden = true;
                 movBanco.hidden = true;
                 tabPlanoConta.hidden = true;
                 tabContaBanco.hidden = true;
+
+                habilitaPlanoContaBanco(0, false);
             }
         }
 
@@ -466,7 +472,7 @@
                                         <td id="movCaixa" align="left" colspan="4">
                                             <asp:CheckBox ID="chkMovCaixaGeral" runat="server" Checked='<%# Bind("MovCaixaFinanceiro") %>'
                                                 onclick="habilitaPlanoContaBanco(1, this.checked)" Text="Gerar movimentação no caixa geral" />
-                                        </td>                                        
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td id="movBanco" align="left" colspan="4">

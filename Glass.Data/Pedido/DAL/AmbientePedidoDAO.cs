@@ -121,9 +121,11 @@ namespace Glass.Data.DAL
             return GetByPedido(null, idPedido, isRelatorioPcp);
         }
 
-        public IList<AmbientePedido> GetByPedido(GDASession sessao, uint idAmbientePedido, uint idPedido, bool apenasAmbientesComProdutos)
+        public List<int> ObterIdsProcessoByPedido(GDASession sessao, uint idPedido)
         {
-            return objPersistence.LoadData(sessao, Sql(idAmbientePedido, idPedido, false, apenasAmbientesComProdutos, true)).ToList();
+            var idsProcesso = ExecuteMultipleScalar<int>(sessao, $"SELECT DISTINCT(IdProcesso) FROM ambiente_pedido WHERE IdPedido = {idPedido}");
+
+            return idsProcesso ?? new List<int>();
         }
 
         public IList<AmbientePedido> GetByPedido(GDASession sessao, uint idPedido, bool isRelatorioPcp)

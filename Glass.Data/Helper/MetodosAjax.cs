@@ -792,7 +792,12 @@ namespace Glass.Data.Helper
             var merchantCnpj = LojaDAO.Instance.ObtemCnpj(UserInfo.GetUserInfo.IdLoja).RemoverAcentosEspacos();
             var authenticationKey = FinanceiroConfig.CapptaAuthKey;
 
-            return authenticationKey + ";" + merchantCnpj + ";" + checkoutNumber;
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                authenticationKey = authenticationKey,
+                merchantCnpj = merchantCnpj,
+                checkoutNumber = checkoutNumber,
+            });
         }
 
         /// <summary>
