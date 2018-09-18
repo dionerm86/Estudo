@@ -53,6 +53,8 @@ namespace Glass.UI.Web.Cadastros
                     return "do pedido interno";
                 case IFoto.TipoFoto.Fornecedor:
                     return "do fornecedor";
+                case IFoto.TipoFoto.NotaFiscal:
+                    return "da Nota Fiscal";
                 default:
                     throw new NotImplementedException();
             }
@@ -123,6 +125,9 @@ namespace Glass.UI.Web.Cadastros
                         break;
                     case IFoto.TipoFoto.Fornecedor:
                         subtitulo += "este fornecedor";
+                        break;
+                    case IFoto.TipoFoto.NotaFiscal:
+                        subtitulo += "esta nota fiscal";
                         break;
                     default:
                         throw new NotImplementedException();

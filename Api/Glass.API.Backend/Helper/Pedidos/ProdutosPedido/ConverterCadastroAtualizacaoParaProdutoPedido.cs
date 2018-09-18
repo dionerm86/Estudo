@@ -61,6 +61,8 @@ namespace Glass.API.Backend.Helper.Pedidos.ProdutosPedido
             destino.Total = this.cadastro.ObterValorNormalizado(c => c.Total, destino.Total);
             destino.Obs = this.cadastro.ObterValorNormalizado(c => c.Observacao, destino.Obs);
             destino.AplicarBenefComposicao = this.cadastro.Composicao != null ? this.cadastro.Composicao.AplicarBeneficiamentosProdutosFilhos.GetValueOrDefault() : destino.AplicarBenefComposicao;
+            destino.IdProcessoFilhas = this.cadastro.ObterValorNormalizado(c => c.IdProcessoFilhas, destino.IdProcessoFilhas);
+            destino.IdAplicacaoFilhas = this.cadastro.ObterValorNormalizado(c => c.IdAplicacaoFilhas, destino.IdAplicacaoFilhas);
 
             this.ConverterBeneficiamentos(destino);
         }

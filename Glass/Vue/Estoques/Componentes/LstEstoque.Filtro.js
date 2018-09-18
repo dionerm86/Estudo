@@ -30,7 +30,7 @@ Vue.component('estoque-filtros', {
           codigoInternoProduto: null,
           descricaoProduto: null,
           idGrupoProduto: null,
-          idSubgrupoProduto: null,
+          idsSubgrupoProduto: null,
           apenasComEstoque: null,
           apenasPosseTerceiros: null,
           apenasProdutosProjeto: null,
@@ -46,7 +46,6 @@ Vue.component('estoque-filtros', {
       ),
       lojaAtual: null,
       grupoProdutoAtual: null,
-      subgrupoProdutoAtual: null,
       corVidroAtual: null,
       corFerragemAtual: null,
       corAluminioAtual: null
@@ -178,17 +177,7 @@ Vue.component('estoque-filtros', {
     grupoProdutoAtual: {
       handler: function (atual) {
         this.filtroAtual.idGrupoProduto = atual ? atual.id : null;
-      },
-      deep: true
-    },
-
-    /**
-     * Observador para a variável 'subgrupoProdutoAtual'.
-     * Atualiza o filtro com o ID do item selecionado.
-     */
-    subgrupoProdutoAtual: {
-      handler: function (atual) {
-        this.filtroAtual.idSubgrupoProduto = atual ? atual.id : null;
+        this.filtroAtual.idsSubgrupoProduto = null;
       },
       deep: true
     },

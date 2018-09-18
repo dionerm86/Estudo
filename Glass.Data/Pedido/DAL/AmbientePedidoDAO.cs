@@ -121,6 +121,11 @@ namespace Glass.Data.DAL
             return GetByPedido(null, idPedido, isRelatorioPcp);
         }
 
+        public IList<AmbientePedido> GetByPedido(GDASession sessao, uint idAmbientePedido, uint idPedido, bool apenasAmbientesComProdutos)
+        {
+            return objPersistence.LoadData(sessao, Sql(idAmbientePedido, idPedido, false, apenasAmbientesComProdutos, true)).ToList();
+        }
+
         public IList<AmbientePedido> GetByPedido(GDASession sessao, uint idPedido, bool isRelatorioPcp)
         {
             var retorno = objPersistence.LoadData(sessao, Sql(0, idPedido, isRelatorioPcp, true, true)).ToList();

@@ -53,6 +53,16 @@
                     Apl.
                 </a>
             </th>
+            <th v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+                <a href="#" v-on:click.prevent="ordenar('processo')">
+                    Proc. Filhas
+                </a>
+            </th>
+            <th v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+                <a href="#" v-on:click.prevent="ordenar('aplicacao')">
+                    Apl. Filhas
+                </a>
+            </th>
             <th>
                 <a href="#" v-on:click.prevent="ordenar('codigoPedidoCliente')">
                     Ped. Cli.
@@ -123,6 +133,8 @@
                     {{ item.aplicacao.codigo }}
                 </span>
             </td>
+            <td v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos"></td>
+            <td v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos"></td>
             <td>
                 {{ item.codigoPedidoCliente }}
             </td>
@@ -386,6 +398,12 @@
             </td>
             <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao">
                 <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
+            </td>
+            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+                <campo-busca-etiqueta-processo v-bind:processo.sync="processoFilhasAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
+            </td>
+            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoFilhasAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
                 <input type="text" v-model="itemVenda.codigoPedidoCliente" maxlength="50" style="width: 50px" v-if="inserindo && itemVenda">

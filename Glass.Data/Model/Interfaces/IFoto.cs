@@ -31,6 +31,7 @@ namespace Glass.Data.Model
                 case TipoFoto.Sugestao: return new FotosSugestao();
                 case TipoFoto.PedidoInterno: return new FotosPedidoInterno();
                 case TipoFoto.Fornecedor: return new FotosFornecedor();
+                case TipoFoto.NotaFiscal: return new FotosNotaFiscal();
                 default: throw new NotImplementedException(tipo.ToString());
             }
         }
@@ -58,7 +59,8 @@ namespace Glass.Data.Model
             Obra,
             Sugestao,
             PedidoInterno,
-            Fornecedor
+            Fornecedor,
+            NotaFiscal
         }
 
         #endregion
@@ -106,6 +108,7 @@ namespace Glass.Data.Model
                     case TipoFoto.Sugestao: return Utils.GetFotosSugestaoPath;
                     case TipoFoto.PedidoInterno: return Utils.GetFotosPedidoInternoPath;
                     case TipoFoto.Fornecedor: return Utils.GetFotosFornecedorPath;
+                    case TipoFoto.NotaFiscal: return Utils.GetFotosNotaFiscalPath;
                     default: throw new NotImplementedException(Tipo.ToString());
                 }
             }
@@ -142,6 +145,7 @@ namespace Glass.Data.Model
                     case TipoFoto.Sugestao: return "../Upload/Sugestao";
                     case TipoFoto.PedidoInterno: return "../Upload/PedidoInterno";
                     case TipoFoto.Fornecedor: return "../Upload/Fornecedores";
+                    case TipoFoto.NotaFiscal: return "../Upload/AnexosNotaFiscal";
                     default: throw new NotImplementedException(Tipo.ToString());
                 }
             }
@@ -209,6 +213,9 @@ namespace Glass.Data.Model
                     case TipoFoto.Fornecedor:
                         inicio = "Fornec_";
                         break;
+                    case TipoFoto.NotaFiscal:
+                        inicio = "Nfe_";
+                        break;
                     default:
                         throw new NotImplementedException(Tipo.ToString());
                 }
@@ -252,6 +259,7 @@ namespace Glass.Data.Model
                 case TipoFoto.Sugestao: return FotosSugestaoDAO.Instance.ObterPelaSugestao((int)idParent);
                 case TipoFoto.PedidoInterno: return FotosPedidoInternoDAO.Instance.ObterPeloPedidoInterno((int)idParent);
                 case TipoFoto.Fornecedor: return FotosFornecedorDAO.Instance.GetByFornecedor(idParent);
+                case TipoFoto.NotaFiscal: return FotosNotaFiscalDAO.Instance.GetByNotaFiscal(idParent);
                 default: throw new NotImplementedException(tipo.ToString());
             }
         }
@@ -292,6 +300,7 @@ namespace Glass.Data.Model
                 case TipoFoto.Sugestao: return FotosSugestaoDAO.Instance.Insert((FotosSugestao)this);
                 case TipoFoto.PedidoInterno: return FotosPedidoInternoDAO.Instance.Insert((FotosPedidoInterno)this);
                 case TipoFoto.Fornecedor: return FotosFornecedorDAO.Instance.Insert((FotosFornecedor)this);
+                case TipoFoto.NotaFiscal: return FotosNotaFiscalDAO.Instance.Insert((FotosNotaFiscal)this);
                 default: throw new NotImplementedException(Tipo.ToString());
             }
         }
@@ -353,6 +362,9 @@ namespace Glass.Data.Model
                     break;
                 case TipoFoto.Fornecedor:
                     FotosFornecedorDAO.Instance.DeleteByPrimaryKey(IdFoto);
+                    break;
+                case TipoFoto.NotaFiscal:
+                    FotosNotaFiscalDAO.Instance.DeleteByPrimaryKey(IdFoto);
                     break;
                 default:
                     throw new NotImplementedException(Tipo.ToString());
@@ -416,6 +428,9 @@ namespace Glass.Data.Model
                     break;
                 case TipoFoto.Fornecedor:
                     FotosFornecedorDAO.Instance.Update((FotosFornecedor)this);
+                    break;
+                case TipoFoto.NotaFiscal:
+                    FotosNotaFiscalDAO.Instance.Update((FotosNotaFiscal)this);
                     break;
                 default:
                     throw new NotImplementedException(Tipo.ToString());

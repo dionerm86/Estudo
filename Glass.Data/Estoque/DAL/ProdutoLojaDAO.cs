@@ -123,7 +123,7 @@ namespace Glass.Data.DAL
 
         #region Busca para Estoque inicial
 
-        private string SqlEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd,
+        private string SqlEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, string idsSubgrupoProd,
             bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro,
             uint? idCorFerragem, uint? idCorAluminio, int situacao, bool estoqueFiscal, bool aguardandoSaidaEstoque, bool selecionar)
         {
@@ -189,10 +189,16 @@ namespace Glass.Data.DAL
                 criterio += "Grupo Prod.: " + GrupoProdDAO.Instance.GetDescricao((int)idGrupoProd) + "    ";
             }
 
-            if (idSubgrupoProd > 0)
+            if (!string.IsNullOrEmpty(idsSubgrupoProd))
             {
-                sql += " and p.IdSubgrupoProd=" + idSubgrupoProd;
-                criterio += "Subgrupo Prod.: " + SubgrupoProdDAO.Instance.GetDescricao((int)idSubgrupoProd) + "    ";
+                sql += $" and p.IdSubgrupoProd IN ({idsSubgrupoProd})";
+                var subgrupos = string.Empty;
+                foreach (var id in idsSubgrupoProd.Split(','))
+                {
+                    subgrupos += SubgrupoProdDAO.Instance.GetDescricao(null, id.StrParaInt()) + ", ";
+                }
+
+                criterio += "Subgrupo(s): " + subgrupos.TrimEnd(' ', ',') + "    ";
             }
 
             if (exibirApenasComEstoque)
@@ -263,7 +269,7 @@ namespace Glass.Data.DAL
         }
 
         public IList<ProdutoLoja> GetForEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd,
-            uint idSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro, uint? idCorFerragem,
+            string idsSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro, uint? idCorFerragem,
             uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao, string sortExpression, int startRow,
             int pageSize)
         {
@@ -280,16 +286,16 @@ namespace Glass.Data.DAL
             }
 
             sortExpression = string.IsNullOrEmpty(sortExpression) ? order : sortExpression;
-            return objPersistence.LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
+            return objPersistence.LoadDataWithSortExpression(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idsSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao,
                 estoqueFiscal == 1, aguardandoSaidaEstoque, true) + $" ORDER BY {sortExpression}", null, new InfoPaging(startRow, pageSize), EstoqueParam(codInternoProd, descricao, null)).ToList();
         }
 
-        public int GetForEstoqueCount(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, uint idSubgrupoProd,
+        public int GetForEstoqueCount(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd, string idsSubgrupoProd,
             bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto, uint? idCorVidro,
             uint? idCorFerragem, uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao)
         {
-            int i = objPersistence.ExecuteSqlQueryCount(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
+            int i = objPersistence.ExecuteSqlQueryCount(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idsSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio,
                 situacao, estoqueFiscal == 1, aguardandoSaidaEstoque, false), EstoqueParam(codInternoProd, descricao, null));
 
@@ -297,7 +303,7 @@ namespace Glass.Data.DAL
         }
 
         public ProdutoLoja[] GetForRptEstoque(uint idLoja, string codInternoProd, string descricao, uint idGrupoProd,
-            uint idSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto,
+            string idsSubgrupoProd, bool exibirApenasComEstoque, bool exibirApenasPosseTerceiros, bool exibirApenasProdutosProjeto,
             uint? idCorVidro, uint? idCorFerragem, uint? idCorAluminio, int situacao, int estoqueFiscal, bool aguardandoSaidaEstoque, int ordenacao)
         {
             string order = String.Empty;
@@ -312,7 +318,7 @@ namespace Glass.Data.DAL
                     order = estoqueFiscal == 1 ? " Order by coalesce(sum(pl.EstoqueFiscal), 0) desc" : " Order by coalesce(sum(pl.QtdEstoque), 0) desc"; break;
             }
 
-            return objPersistence.LoadData(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idSubgrupoProd,
+            return objPersistence.LoadData(SqlEstoque(idLoja, codInternoProd, descricao, idGrupoProd, idsSubgrupoProd,
                 exibirApenasComEstoque, exibirApenasPosseTerceiros, exibirApenasProdutosProjeto, idCorVidro, idCorFerragem, idCorAluminio, situacao, estoqueFiscal == 1,
                 aguardandoSaidaEstoque, true) + order, EstoqueParam(codInternoProd, descricao, null)).ToList().ToArray();
         }
@@ -889,11 +895,11 @@ namespace Glass.Data.DAL
         /// <param name="idGrupoProd"></param>
         /// <param name="idSubgrupoProd"></param>
         /// <returns></returns>
-        public int ZeraEstoque(uint idLoja, uint idGrupoProd, uint? idSubgrupoProd)
+        public int ZeraEstoque(uint idLoja, uint idGrupoProd, string idsSubgrupoProd)
         {
             var where = "pl.idLoja=" + idLoja + " and p.idGrupoProd=" + idGrupoProd;
-            if (idSubgrupoProd > 0)
-                where += " and p.idSubgrupoProd=" + idSubgrupoProd;
+            if (!string.IsNullOrEmpty(idsSubgrupoProd))
+                where += $" and p.idSubgrupoProd IN({idsSubgrupoProd})";
 
             var sql = "select pl.* from produto_loja pl left join produto p on (pl.idProd=p.idProd) where " + where;
             var prod = objPersistence.LoadData(sql).ToList().ToArray();

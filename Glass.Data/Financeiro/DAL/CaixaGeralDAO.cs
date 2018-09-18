@@ -1796,7 +1796,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public CaixaGeral[] GetByFornecedor(uint idFornec, DateTime inicio, DateTime fim, params uint[] planosConta)
         {
-            string sql = @"select * from caixa_geral where idFornec=?idFornec and DataCad>=?inicio and DataCad<=?fim";
+            string sql = @"select * from caixa_geral where idFornec=?idFornec and DataCad>=?inicio and DataCad <=?fim";
 
             if (planosConta.Length > 0)
             {

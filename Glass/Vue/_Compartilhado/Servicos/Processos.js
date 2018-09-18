@@ -88,6 +88,14 @@ Servicos.Processos = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de processos (etiqueta) para uso no controle de busca.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    obterParaControle: function () {
+      return http().get(API + 'filtro');
     }
   };
 })(function() {

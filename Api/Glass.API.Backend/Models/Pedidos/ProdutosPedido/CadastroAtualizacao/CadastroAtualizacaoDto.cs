@@ -180,5 +180,27 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.CadastroAtualizacao
             get { return this.ObterValor(c => c.Composicao); }
             set { this.AdicionarValor(c => c.Composicao, value); }
         }
+
+        /// <summary>
+        /// Obtém ou define o identificador do processo do produto do pedido peças filhas.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idProcessoFilhas")]
+        public int? IdProcessoFilhas
+        {
+            get { return this.ObterValor(c => c.IdProcessoFilhas); }
+            set { this.AdicionarValor(c => c.IdProcessoFilhas, value); }
+        }
+
+        /// <summary>
+        /// Obtém ou define o identificador da aplicação do produto do pedido peças filhas.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idAplicacaoFilhas")]
+        public int? IdAplicacaoFilhas
+        {
+            get { return this.ObterValor(c => c.IdAplicacaoFilhas); }
+            set { this.AdicionarValor(c => c.IdAplicacaoFilhas, value); }
+        }
     }
 }

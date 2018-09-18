@@ -39,8 +39,8 @@
         </span>
         <span class="form-group">
             <label>Subgrupo</label>
-            <lista-selecao-id-valor v-bind:item-selecionado.sync="subgrupoProdutoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSubgruposProduto"
-                v-bind:ordenar="false" v-bind:filtro-recuperar-itens="filtroSubgruposProduto"></lista-selecao-id-valor>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsSubgrupoProduto" texto-selecionar="Selecione o subgrupo"
+               v-bind:funcao-recuperar-itens="obterItensFiltroSubgruposProduto" v-bind:filtro-recuperar-itens="filtroSubgruposProduto" v-bind:ordenar="false"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
