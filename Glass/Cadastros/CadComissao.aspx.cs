@@ -70,6 +70,10 @@ namespace Glass.UI.Web.Cadastros
         {
             grdComissao.PageIndex = 0;
             grdComissao.DataBind();
+
+            drpNome.Items.Clear();
+            drpNome.Items.Add("");
+            drpNome.DataBind();
         }
     
         /// <summary>

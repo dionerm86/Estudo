@@ -31,13 +31,23 @@
             var situacao = FindControl("drpSituacao", "select").value;
 
             // Se situação Compensado, exibe as opções de movimentar Caixa ou Banco
-            if (situacao == "2") {
-                movCaixaBanco.hidden = false;
-                tabPlanoContaBanco.hidden = false;
+            if (situacao == "1") {
+                movCaixa.hidden = false;
+                movBanco.hidden = true;
+                tabPlanoConta.hidden = false;
+                tabContaBanco.hidden = true;
+            }
+            else if (situacao == "2") {
+                movCaixa.hidden = false;
+                movBanco.hidden = false;
+                tabPlanoConta.hidden = false;
+                tabContaBanco.hidden = false;
             }
             else {
-                movCaixaBanco.hidden = true;
-                tabPlanoContaBanco.hidden = true;
+                movCaixa.hidden = true;
+                movBanco.hidden = true;
+                tabPlanoConta.hidden = true;
+                tabContaBanco.hidden = true;
             }
         }
 
@@ -453,17 +463,20 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td id="movCaixaBanco" align="left" colspan="4">
+                                        <td id="movCaixa" align="left" colspan="4">
                                             <asp:CheckBox ID="chkMovCaixaGeral" runat="server" Checked='<%# Bind("MovCaixaFinanceiro") %>'
                                                 onclick="habilitaPlanoContaBanco(1, this.checked)" Text="Gerar movimentação no caixa geral" />
-                                            &nbsp;&nbsp;
+                                        </td>                                        
+                                    </tr>
+                                    <tr>
+                                        <td id="movBanco" align="left" colspan="4">
                                             <asp:CheckBox ID="chkMovBanco" runat="server" Checked='<%# Bind("MovBanco") %>' onclick="habilitaPlanoContaBanco(2, this.checked)"
                                                 Text="Gerar movimentação na conta bancária" />
                                         </td>
-                                    </tr>
+                                        </tr>
                                     <tr>
                                         <td align="left" colspan="4">
-                                            <table id="tabPlanoContaBanco">
+                                            <table id="tabPlanoConta">
                                                 <tr>
                                                     <td align="left">
                                                         Plano de conta
@@ -479,9 +492,10 @@
                                                             ControlToValidate="drpPlanoConta" Display="Dynamic" ValidateEmptyText="True"></asp:CustomValidator>
                                                     </td>
                                                 </tr>
+                                            </table>
+                                            <table id="tabContaBanco">
                                                 <tr>
-                                                    <td align="left">
-                                                        Conta bancária
+                                                    <td align="left">Conta bancária
                                                     </td>
                                                     <td align="left">
                                                         <asp:DropDownList ID="drpContaBanco" runat="server" DataSourceID="odsContaBanco"
