@@ -11,17 +11,18 @@ const app = new Vue({
     filtro: {},
     valorATransferirCaixaGeral: 0,
     diaAtual: {
-      caixaFechado: true,
+      caixaFechado: false,
       saldo: 0,
       saldoDinheiro: 0,
-      existemMovimentacoes: true
+      existemMovimentacoes: false
     },
     diaAnterior: {
       caixaFechado: true,
       saldo: 0,
       saldoDinheiro: 0,
       dataCaixaAberto: null
-    }
+    },
+    exibirDadosFechamento: false
   },
 
   methods: {
@@ -65,14 +66,15 @@ const app = new Vue({
 
       var vm = this;
 
-      Servicos.Caixas.Diario.fechar(filtro.idLoja, {
+      Servicos.Caixas.Diario.fechar(this.filtro.idLoja, {
         valorATransferirCaixaGeral: this.valorATransferirCaixaGeral,
         saldoTela: this.diaAnterior.caixaFechado ? this.diaAtual.saldo : this.diaAnterior.saldo
       })
         .then(function (resposta) {
-          vm.exibirMensagem('Concluído', 'Transferência concluída.');
-          vm.obterDadosFechamento();
+          vm.obterDadosFechamento(vm.filtro.idLoja);
+          vm.exibirEsconderCamposFechamento();
           vm.atualizarLista();
+          vm.exibirMensagem('Concluído', 'Transferência concluída.');
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -91,10 +93,10 @@ const app = new Vue({
 
       var vm = this;
 
-      Servicos.Caixas.Diario.reabrir(filtro.idLoja)
+      Servicos.Caixas.Diario.reabrir(this.filtro.idLoja)
         .then(function (resposta) {
           vm.exibirMensagem('Concluído', 'Caixa diário reaberto.');
-          vm.obterDadosFechamento();
+          vm.obterDadosFechamento(vm.filtro.idLoja);
           vm.atualizarLista();
         })
         .catch(function (erro) {
@@ -121,8 +123,8 @@ const app = new Vue({
 
       Servicos.Caixas.Diario.obterDadosFechamento(idLoja)
         .then(function (resposta) {
-          vm.diaAnterior = resposta.diaAnterior;
-          vm.diaAtual = resposta.diaAtual;
+          vm.diaAnterior = resposta.data.diaAnterior;
+          vm.diaAtual = resposta.data.diaAtual;
           vm.valorATransferirCaixaGeral = vm.diaAtual.saldo;
         })
         .catch(function (erro) {
@@ -130,6 +132,13 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Exibe/esconde campos usados para o fechamento do caixa.
+     */
+    exibirEsconderCamposFechamento: function () {
+      this.exibirDadosFechamento = !this.exibirDadosFechamento;
     },
 
     /**
@@ -157,7 +166,7 @@ const app = new Vue({
 
       incluirFiltro('idLoja', this.filtro.idLoja);
       incluirFiltro('idFunc', this.filtro.idFuncionario);
-      incluirFiltro('data', this.filtro.data);
+      incluirFiltro('data', this.filtro.data ? this.filtro.data.toLocaleDateString('pt-BR') : null);
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

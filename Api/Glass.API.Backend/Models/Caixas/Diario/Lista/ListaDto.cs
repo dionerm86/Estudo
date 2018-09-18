@@ -25,13 +25,13 @@ namespace Glass.API.Backend.Models.Caixas.Diario.Lista
             this.Referencia = caixaDiario.Referencia;
             this.Cliente = new IdNomeDto
             {
-                Id = (int)caixaDiario.IdCliente,
+                Id = (int?)caixaDiario.IdCliente,
                 Nome = caixaDiario.NomeCliente,
             };
 
             this.Fornecedor = new IdNomeDto
             {
-                Id = (int)caixaDiario.IdFornec,
+                Id = (int?)caixaDiario.IdFornec,
                 Nome = caixaDiario.NomeFornecedor,
             };
 

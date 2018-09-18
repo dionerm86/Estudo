@@ -6,7 +6,7 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <campo-data-hora data-hora.sync="filtroAtual.data" v-bind:disabled="!permitirAlterarData"></campo-data-hora>
+            <campo-data-hora v-bind:data-hora.sync="filtroAtual.data" v-bind:disabled="!permitirAlterarData"></campo-data-hora>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>

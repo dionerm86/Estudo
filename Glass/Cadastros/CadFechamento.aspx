@@ -10,7 +10,7 @@
     <div id="app">
         <caixa-diario-filtros :filtro.sync="filtro" :configuracoes="configuracoes" @loja-alterada="lojaAlterada"></caixa-diario-filtros>
         <section>
-            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma movimentação realizada.">
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhuma movimentação realizada." v-bind:numero-registros="200">
                 <template slot="cabecalho">
                     <th>Cód. Mov.</th>
                     <th>Referência</th>
@@ -43,7 +43,7 @@
             </lista-paginada>
         </section>
         <section class="links">
-            <div v-if="configuracoes.cadastrarProduto">
+            <div>
                 <span>
                     <a href="#" @click.prevent="abrirMovimentacoes(false)">
                         <img alt="" border="0" src="../Images/printer.png" /> Imprimir
@@ -56,69 +56,73 @@
                 </span>
             </div>
         </section>
-        <section v-if="diaAnterior && diaAnterior.caixaFechado && !diaAtual.caixaFechado && configuracoes && configuracoes.controleCaixaDiario">
+        <section class="links" v-if="diaAnterior && diaAnterior.caixaFechado && !diaAtual.caixaFechado && configuracoes && configuracoes.controleCaixaDiario">
             <div>
                 <span>
-                    <a href="#" @click.prevent="exibirFechamentoCaixa()">
+                    <a href="#" @click.prevent="exibirEsconderCamposFechamento()">
                         <img alt="" border="0" src="../Images/book_go.png" /> Fechar caixa diário
                     </a>
                 </span>
             </div>
-            <div>
-                <span>
-                    <label>Saldo do caixa:</label>
-                    {{ diaAtual.saldo | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
-                    <label>Saldo em dinheiro:</label>
-                    {{ diaAtual.saldoDinheiro | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
-                    <label>Valor a ser transferido para o caixa geral:</label>
-                    <input type="number" v-model.number="valorATransferirCaixaGeral" style="width: 100px;"/>
-                </span>
-            </div>
-            <div>
-                <span>
-                    <button @click.prevent="fechar()">Fechar caixa</button>
-                </span>
-            </div>
+            <template v-if="exibirDadosFechamento">
+                <div>
+                    <span>
+                        <label>Saldo do caixa:</label>
+                        {{ diaAtual.saldo | moeda }}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <label>Saldo em dinheiro:</label>
+                        {{ diaAtual.saldoDinheiro | moeda }}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <label>Valor a ser transferido para o caixa geral:</label>
+                        <input type="number" v-model.number="valorATransferirCaixaGeral" style="width: 100px;"/>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <button @click.prevent="fechar()">Fechar caixa</button>
+                    </span>
+                </div>
+            </template>
         </section>
-        <section v-else-if="diaAnterior && !diaAnterior.caixaFechado && configuracoes && configuracoes.controleCaixaDiario">
+        <section class="links" v-else-if="diaAnterior && !diaAnterior.caixaFechado && configuracoes && configuracoes.controleCaixaDiario">
             <div>
                 <span>
-                    <a href="#" @click.prevent="exibirFechamentoCaixaDiaAnterior()">
+                    <a href="#" @click.prevent="exibirEsconderCamposFechamento()">
                         <img alt="" border="0" src="../Images/book_go.png" /> Fechar caixa diário (dia anterior não foi fechado)
                     </a>
                 </span>
             </div>
-            <div>
-                <span>
-                    <label>Saldo do caixa (dia não fechado):</label>
-                    {{ diaAnterior.saldo | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
-                    <label>Saldo em dinheiro (dia não fechado):</label>
-                    {{ diaAnterior.saldoDinheiro | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
-                    <label>Valor a ser transferido para o caixa geral:</label>
-                    <input type="number" v-model.number="valorATransferirCaixaGeral" style="width: 100px;"/>
-                </span>
-            </div>
-            <div>
-                <span>
-                    <button @click.prevent="fechar()">Fechar caixa</button>
-                </span>
-            </div>            
+            <template v-if="exibirDadosFechamento">
+                <div>
+                    <span>
+                        <label>Saldo do caixa (dia não fechado):</label>
+                        {{ diaAnterior.saldo | moeda }}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <label>Saldo em dinheiro (dia não fechado):</label>
+                        {{ diaAnterior.saldoDinheiro | moeda }}
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <label>Valor a ser transferido para o caixa geral:</label>
+                        <input type="number" v-model.number="valorATransferirCaixaGeral" style="width: 100px;"/>
+                    </span>
+                </div>
+                <div>
+                    <span>
+                        <button @click.prevent="fechar()">Fechar caixa</button>
+                    </span>
+                </div>
+            </template>
         </section>
         <section>
             <div>

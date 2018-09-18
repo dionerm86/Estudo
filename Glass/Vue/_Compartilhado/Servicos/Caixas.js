@@ -25,7 +25,7 @@ Servicos.Caixas = (function(http) {
         filtro.numeroRegistros = numeroRegistros;
         filtro.ordenacao = ordenacao;
 
-        return http().get(API.substr(0, API.length - 1 + "diario"), {
+        return http().get(API.substr(0, API.length - 1) + '/diario', {
           params: filtro
         });
       },
@@ -62,11 +62,11 @@ Servicos.Caixas = (function(http) {
           throw new Error('Loja é obrigatória.');
         }
 
-        if (!dadosProduto) {
+        if (!dadosFechamento) {
           throw new Error('Dados do fechamento são obrigatórios.');
         }
 
-        return http().post(API + 'diario/' + idLoja + '/fechar', dadosProduto);
+        return http().post(API + 'diario/' + idLoja + '/fechar', dadosFechamento);
       },
 
       /**

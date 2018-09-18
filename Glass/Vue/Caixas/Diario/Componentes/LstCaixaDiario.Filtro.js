@@ -61,13 +61,6 @@ Vue.component('caixa-diario-filtros', {
     }
   },
 
-  mounted: function () {
-    this.lojaAtual = {
-      id: "1"
-    };
-
-  },
-
   computed: {
     /**
      * Propriedade computada que indica se o filtro por loja pode ser alterado.
