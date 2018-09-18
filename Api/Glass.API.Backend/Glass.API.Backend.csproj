@@ -399,6 +399,7 @@
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Caixas\Diario\CadastroAtualizacao\FechamentoDto.cs" />
     <Compile Include="Models\Caixas\Diario\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Caixas\Diario\Lista\DadosDoDiaDto.cs" />
     <Compile Include="Models\Caixas\Diario\Lista\DiaAnteriorDto.cs" />
     <Compile Include="Models\Caixas\Diario\Lista\DiaAtualDto.cs" />
     <Compile Include="Models\Caixas\Diario\Lista\FechamentoDto.cs" />
