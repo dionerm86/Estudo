@@ -19,7 +19,7 @@
 
 <asp:ObjectDataSource ID="odsCidade" runat="server"
     TypeName="Glass.Data.DAL.CidadeDAO" DataObjectTypeName="Glass.Data.Model.Cidade"
-    SelectMethod="GetList"></asp:ObjectDataSource>
+    SelectMethod="ObterCidadesParaMdfe"></asp:ObjectDataSource>
 
 
 
