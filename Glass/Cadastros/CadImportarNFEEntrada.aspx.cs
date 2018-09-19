@@ -607,7 +607,6 @@ namespace Glass.UI.Web.Cadastros
 
                 ctrlParcelas1.Visible = true;
                 hdfExibirParcelas.Value = "true";
-                hdfTotal.Value = nfeIde["fat"]["vLiq"].InnerText;
                 txtNumParc.Text = nfeIde.GetElementsByTagName("dup").Count > 0 ? nfeIde.GetElementsByTagName("dup").Count.ToString() : "1";
                 hdfNumParc.Value = txtNumParc.Text;
                 txtNumParc.Visible = true;
@@ -633,6 +632,15 @@ namespace Glass.UI.Web.Cadastros
                 ctrlParcelas1.Valores = valores.ToArray();
                 ctrlParcelas1.Datas = datas.ToArray();
                 ctrlParcelas1.Adicionais = numDup.ToArray();
+
+                try
+                {
+                    hdfTotal.Value = nfeIde["fat"]["vLiq"].InnerText;
+                }
+                catch (NullReferenceException)
+                {
+                    hdfTotal.Value = ctrlParcelas1.Valores.Sum().ToString();
+                }
 
                 tblParcelasRow.Cells.Add(tblParcelasRowCell);
                 tblParcelas.Rows.Add(tblParcelasRow);

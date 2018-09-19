@@ -3375,13 +3375,15 @@ namespace Glass.UI.Web.Relatorios
                         var itensVolumes = itensCarregamentoPendencia.Where(x => x.TipoItem == (long)ItemCarregamento.TipoItemCarregamento.Volume);
                         var itensVenda = itensCarregamentoPendencia.Where(x => x.TipoItem == (long)ItemCarregamento.TipoItemCarregamento.Venda);
                         var itensRevenda = itensCarregamentoPendencia.Where(x => x.TipoItem == (long)ItemCarregamento.TipoItemCarregamento.Revenda);
+                        var volumeProdutos = VolumeProdutosPedidoDAO.Instance.GetListForRpt(string.Join(",", itensVolumes.Select(p => p.IdVolume.ToString()).ToArray()));
 
                         lstParam.Add(new ReportParameter("IdCarregamento", idCarregamento.ToString()));
 
-                        report.DataSources.Add(new ReportDataSource("Cliente", cliCarregamento));
-                        report.DataSources.Add(new ReportDataSource("ItensVolumes", itensVolumes));
-                        report.DataSources.Add(new ReportDataSource("ItensVenda", itensVenda));
-                        report.DataSources.Add(new ReportDataSource("ItensRevenda", itensRevenda));
+                        report.DataSources.Add(new ReportDataSource("Cliente", cliCarregamento.ToArray()));
+                        report.DataSources.Add(new ReportDataSource("ItensVolumes", itensVolumes.ToArray()));
+                        report.DataSources.Add(new ReportDataSource("ItensVenda", itensVenda.ToArray()));
+                        report.DataSources.Add(new ReportDataSource("ItensRevenda", itensRevenda.ToArray()));
+                        report.DataSources.Add(new ReportDataSource("VolumeProdutosPedidoRpt", volumeProdutos.ToArray()));
 
                         break;
                     }
