@@ -61,6 +61,14 @@ namespace Glass.Data.Model
         [PersistenceProperty("QTDE")]
         public int Quantidade { get; set; }
 
+        [Log("Altura Máxima Sem Adicional")]
+        [PersistenceProperty("ALTURAMAXSEMADICIONAL")]
+        public int AlturaMaxSemAdicional { get; set; }
+
+        [Log("Valor Adicional")]
+        [PersistenceProperty("VALORADICIONAL")]
+        public float ValorAdicional { get; set; }
+
         /// <summary>
         /// 1-Ativo
         /// 2-Inativo

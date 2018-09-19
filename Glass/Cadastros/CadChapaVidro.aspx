@@ -127,6 +127,22 @@
                                     </tr>
                                     <tr>
                                         <td align="left" nowrap="nowrap">
+                                            Altura Máxima sem Adicional:
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:TextBox ID="txtAlturaMaxSemAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"
+                                                Text='<%# Bind("AlturaMaxSemAdicional") %>' Width="60px"></asp:TextBox>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            Adicional no Valor %:
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:TextBox ID="txtValorAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"
+                                                Text='<%# Bind("ValorAdicional") %>' Width="60px"></asp:TextBox>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" nowrap="nowrap">
                                             Total m² Mínimo (1):
                                         </td>
                                         <td align="left" nowrap="nowrap">
