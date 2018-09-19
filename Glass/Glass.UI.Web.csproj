@@ -476,6 +476,9 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
+    <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
+    <Content Include="Vue\Sinais\Templates\LstSinais.Filtro.html" />
     <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.Filtro.js" />
     <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.js" />
     <Content Include="Vue\Caixas\Geral\Templates\LstCaixaGeral.Filtro.html" />
@@ -1726,6 +1729,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresAluminio.js" />
