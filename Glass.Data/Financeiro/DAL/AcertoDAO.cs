@@ -223,11 +223,11 @@ namespace Glass.Data.DAL
         }
 
         public IList<Acerto> GetListRpt(uint idAcerto, uint idPedido, uint idLiberarPedido,
-            uint idCli, string dataIni, string dataFim, uint idFormaPagto, int numNotaFiscal)
+            uint idCli, string dataIni, string dataFim, uint idFormaPagto, int numNotaFiscal, int protesto)
         {
             bool temFiltro;
             var dados = (IList<Acerto>)objPersistence.LoadData(
-                SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, 0, numNotaFiscal, 0, true, out temFiltro)).ToList();
+                SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, 0, numNotaFiscal, protesto, true, out temFiltro)).ToList();
 
             PreencheIdRefJuros(ref dados);
             return dados;

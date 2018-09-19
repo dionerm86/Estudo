@@ -1,63 +1,120 @@
-<%@ Page Title="Consulta de Acertos" Language="C#" MasterPageFile="~/Painel.master"
-    AutoEventWireup="true" CodeBehind="LstAcerto.aspx.cs" Inherits="Glass.UI.Web.Listas.LstAcerto" %>
+<%@ Page Title="Consulta de Acertos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+    CodeBehind="LstAcerto.aspx.cs" Inherits="Glass.UI.Web.Listas.LstAcerto" EnableViewState="false" EnableViewStateMac="false"  %>
 
-<%@ Register Src="../Controls/ctrlLogCancPopup.ascx" TagName="ctrlLogCancPopup" TagPrefix="uc1" %>
-<%@ Register Src="../Controls/ctrlData.ascx" TagName="ctrlData" TagPrefix="uc2" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-
-        function openRpt(exportarExcel) {
-            var idPedido = FindControl("txtNumPedido", "input").value;
-            var idLiberarPedido = FindControl("txtNumLiberarPedido", "input").value;
-            var idAcerto = FindControl("txtNumAcerto", "input").value;
-            var idCliente = FindControl("txtNumCli", "input").value;
-            var nomeCliente = FindControl("txtNomeCliente", "input").value;
-            var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
-            var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
-            var idFormaPagto = FindControl("drpFormaPagto", "select").value;
-            var numNotaFiscal = FindControl("txtNumNotaFiscal", "input").value;
+    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
+    <%=
+        Glass.UI.Web.IncluirTemplateTela.Script(
+            "~/Vue/Acertos/Templates/LstAcertos.Filtro.html")
+    %>
+    <div id="app">
+        <cheques-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></cheques-filtros>
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :filtro="filtro" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum acerto encontrado." :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('id')">Acerto</a>
+                    </th>
+                    <th>
+                        Referência
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('cliente')">Cliente</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('funcionario')">Funcionário</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('total')">Total</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('situacao')">Situacao</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('dataCadastro')">Data</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('observacao')">Observação</a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <a href="#" @click.prevent="abrirCancelamento(item)" title="¨Cancelar">
+                            <img border="0" src="../Images/ExcluirGrid.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirImpressaoAcerto(item)" title="¨Visualizar dados do Acerto">
+                            <img border="0" src="../Images/relatorio.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirImpressaoNotasPromissorias(item)" title="¨Nota promissória">
+                            <img border="0" src="../Images/Nota.gif">
+                        </a>
+                        <a href="#" @click.prevent="abrirAnexos(item)" title="¨Anexos">
+                            <img border="0" src="../Images/Clipe.gif">
+                        </a>
+                    </td>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.referencia }}</td>
+                    <td>
+                        <template v-if="item.cliente && item.cliente.id">
+                            {{ item.cliente.id }} - {{ item.cliente.nome }}
+                        </template>
+                    </td>
+                    <td>{{ item.funcionario }}</td>
+                    <td>{{ item.total | moeda }}</td>
+                    <td>{{ item.situacao }}</td>
+                    <td>{{ item.dataCadastro | data }}</td>
+                    <td>{{ item.observacao }}</td>
+                    <td style="white-space: nowrap">
+                        <log-cancelamento tabela="Acerto" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logCancelamento"></log-cancelamento>
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
+        <section class="links">
+            <div style="color: blue">
+                Os acertos em azul foram renegociados.
+            </div>
+            <div style="color: gold">
+                Os acertos em amarelo foram enviados para Jurídico/Cartório.
+            </div>
+            <div>
+                Os acertos enviados para Jurídico/Cartório que também foram renegociados permaneceram em azul, para diferenciar utilize o filtro de Jurídico/Cartório.
+            </div>
+        </section>
+        <section class="links">
+            <div>
+                <span>
+                    <a href="#" @click.prevent="abrirListaAcertos(false)" title="Imprimir">
+                        <img border="0" src="../Images/printer.png" /> Imprimir
+                    </a>
+                </span>
+                <span>
+                    <a href="#" @click.prevent="abrirListaAcertos(true)" title="Exportar para o Excel">
+                        <img border="0" src="../Images/Excel.gif" /> Exportar para o Excel
+                    </a>
+                </span>
+            </div>
+        </section>
+    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Acertos/Componentes/LstAcertos.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Acertos/Componentes/LstAcertos.js" />
+        </Scripts>
+    </asp:ScriptManager>
     
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=ListaAcerto&idPedido=" + idPedido + "&idLiberarPedido=" + idLiberarPedido +
-                "&idAcerto=" + idAcerto + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni + "&dataFim=" + dataFim +
-                "&idFormaPagto=" + idFormaPagto + "&numNotaFiscal=" + numNotaFiscal + "&exportarExcel=" + exportarExcel);
-            
-            return false;
-        }
-
-        function openRptAcerto(idAcerto) {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + idAcerto);
-            return false;
-        }
-
-        function getCli(idCli)
-        {
-            if (idCli.value == "") {
-                openWindow(570, 760, '../Utils/SelCliente.aspx');
-                return false;
-            }
-
-            var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
-        
-            if (retorno[0] == "Erro")
-            {
-                alert(retorno[1]);
-                idCli.value = "";
-                FindControl("txtNomeCliente", "input").value = "";
-                return false;
-            }
-
-            FindControl("txtNomeCliente", "input").value = retorno[1];
-        }
-
-        function openRptProm(idAcerto) 
-        {
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=NotaPromissoria&idAcerto=" + idAcerto);
-        }
-
-    </script>
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <table>
         <tr>
             <td align="center">
@@ -117,11 +174,11 @@
                             <asp:Label ID="Label10" runat="server" ForeColor="#0066FF" Text="Período"></asp:Label>
                         </td>
                         <td>
-                            <uc2:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" 
+                            <uc2:ctrldata ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" 
                                 ExibirHoras="False" />
                         </td>
                         <td>
-                            <uc2:ctrlData ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" 
+                            <uc2:ctrldata ID="ctrlDataFim" runat="server" ReadOnly="ReadWrite" 
                                 ExibirHoras="False" />
                         </td>
                         <td>
@@ -134,12 +191,6 @@
                         <td>
                             <asp:DropDownList ID="drpFormaPagto" runat="server" DataSourceID="odsFormaPagto"
                                 DataTextField="Descricao" DataValueField="IdFormaPagto" AutoPostBack="True" OnSelectedIndexChanged="drpFormaPagto_SelectedIndexChanged">
-                            </asp:DropDownList>
-                        </td>
-                        <td>
-                            <asp:DropDownList ID="drpTipoBoleto" runat="server" AppendDataBoundItems="True" DataSourceID="odsTipoBoleto"
-                                DataTextField="Descricao" DataValueField="IdTipoBoleto" Visible="False" AutoPostBack="True">
-                                <asp:ListItem Value="0">Todos</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -178,27 +229,11 @@
                     OnPreRender="grdAcerto_PreRender" OnRowDataBound="grdAcerto_RowDataBound">
                     <PagerSettings PageButtonCount="20" />
                     <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkCancelar" runat="server" CommandName="Cancelar" OnClientClick='<%# "openWindow(200, 500, \"../Utils/SetMotivoCancReceb.aspx?tipo=acerto&id=" + Eval("IdAcerto") + "\"); return false" %>'
-                                    Visible='<%# Eval("CancelarVisible") %>'>
-                                     <img src="../Images/ExcluirGrid.gif" border="0" /></asp:LinkButton>
-                                <a href="#" onclick="return openRptAcerto(<%# Eval("IdAcerto") %>);">
-                                    <img src="../Images/relatorio.gif" border="0" title="Visualizar dados do Acerto"></a>
-                                <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/Nota.gif" OnClientClick='<%# "openRptProm(" + Eval("IdAcerto") + "); return false" %>'
-                                    ToolTip="Nota promissória" Visible='<%# Eval("ExibirNotaPromissoria") %>' />
-                                <asp:HiddenField ID="hdfRenegociacao" runat="server" Value='<%# Eval("Renegociacao") %>' />
-                                 <asp:PlaceHolder ID="pchAnexos" runat="server"><a href="#" onclick='openWindow(600, 700, &#039;../Cadastros/CadFotos.aspx?id=<%# Eval("IdAcerto") %>&tipo=acerto&#039;); return false;'>
-                                    <img border="0px" src="../Images/Clipe.gif"></img></a></asp:PlaceHolder>
-                            </ItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
                         <asp:BoundField DataField="IdAcerto" HeaderText="Acerto" SortExpression="IdAcerto" />
                         <asp:BoundField DataField="Referencia" HeaderText="Referência" SortExpression="IdPedido, IdLiberarPedido" />
                         <asp:BoundField DataField="IdNomeCliente" HeaderText="Cliente" SortExpression="IdNomeCliente" />
                         <asp:BoundField DataField="Funcionario" HeaderText="Funcionário" SortExpression="Funcionario" />
-                        <asp:BoundField DataField="TotalAcerto" DataFormatString="{0:C}" HeaderText="Total"
-                            SortExpression="TotalAcerto" />
+                        <asp:BoundField DataField="TotalAcerto" DataFormatString="{0:C}" HeaderText="Total" SortExpression="TotalAcerto" />
                         <asp:BoundField DataField="DescrSituacao" HeaderText="Situação" SortExpression="Situacao" />
                         <asp:BoundField DataField="DataCad" DataFormatString="{0:d}" HeaderText="Data" SortExpression="DataCad" />
                         <asp:BoundField DataField="Obs" HeaderText="Obs" SortExpression="Obs" />
@@ -258,10 +293,7 @@
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForConsultaConta"
                     TypeName="Glass.Data.DAL.FormaPagtoDAO">
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoBoleto" runat="server" SelectMethod="GetAll" TypeName="Glass.Data.DAL.TipoBoletoDAO">
-                </colo:VirtualObjectDataSource>
             </td>
         </tr>
     </table>
-
 </asp:Content>

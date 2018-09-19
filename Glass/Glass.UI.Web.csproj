@@ -481,6 +481,9 @@
     <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.Filtro.js" />
     <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.js" />
     <Content Include="Vue\Caixas\Diario\Templates\LstCaixaDiario.Filtro.html" />
+    <Content Include="Vue\Acertos\Componentes\LstAcertos.Filtro.js" />
+    <Content Include="Vue\Acertos\Componentes\LstAcertos.js" />
+    <Content Include="Vue\Acertos\Templates\LstAcertos.Filtro.html" />
     <Content Include="Vue\Cheques\Componentes\LstCheque.Filtro.js" />
     <Content Include="Vue\Cheques\Componentes\LstCheque.js" />
     <Content Include="Vue\Cheques\Templates\LstCheque.Filtro.html" />
@@ -1722,6 +1725,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresAluminio.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresVidro.js" />

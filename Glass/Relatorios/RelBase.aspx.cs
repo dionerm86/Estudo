@@ -1036,7 +1036,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstAcerto = AcertoDAO.Instance.GetListRpt(Glass.Conversoes.StrParaUint(Request["idAcerto"]),
                             Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["dataIni"], Request["dataFim"],
-                            Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Request["numNotaFiscal"].StrParaInt());
+                            Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Request["numNotaFiscal"].StrParaInt(), Request["protesto"].StrParaInt());
 
                         report.DataSources.Add(new ReportDataSource("Acerto", lstAcerto.ToArray()));
 
