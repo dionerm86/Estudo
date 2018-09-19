@@ -11,7 +11,7 @@ namespace Glass.Data.Model.Calculos
         private readonly IProdutoCalculo produtoCalculo;
 
         private readonly Lazy<ChapaVidro> chapaVidro;
-        
+
         static DadosChapaVidroDTO()
         {
             cacheChapasVidro = new CacheMemoria<ChapaVidro, uint>("chapasVidro");
@@ -61,6 +61,10 @@ namespace Glass.Data.Model.Calculos
             else if (chapaVidro.Value.TotM2Minimo1 > 0 && m2 >= (chapaVidro.Value.TotM2Minimo1 * produtoCalculo.Qtde))
             {
                 return chapaVidro.Value.PercAcrescimoTotM21 / 100;
+            }
+            else if (chapaVidro.Value.AlturaMaxSemAdicional > 0 && produtoCalculo.Altura >= chapaVidro.Value.AlturaMaxSemAdicional * produtoCalculo.Qtde)
+            {
+                return chapaVidro.Value.ValorAdicional / 100;
             }
 
             return 0;

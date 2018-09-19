@@ -5,6 +5,7 @@
 using Glass.API.Backend.Models.Genericas;
 using Glass.Configuracoes;
 using Glass.Data.DAL;
+using Glass.Data.Helper;
 using Glass.Data.Model;
 using Newtonsoft.Json;
 using System;
@@ -12,7 +13,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
-using Glass.Data.Helper;
 
 namespace Glass.API.Backend.Models.Pedidos.Lista
 {
@@ -122,8 +122,6 @@ namespace Glass.API.Backend.Models.Pedidos.Lista
                     .Where(oc => oc > 0);
 
             this.Observacao = pedido.Obs;
-            this.ObservacaoLiberacao = pedido.ObsLiberacao;
-
             this.CorLinha = this.ObterCorLinha(pedido);
         }
 

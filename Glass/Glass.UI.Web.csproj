@@ -1680,6 +1680,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoComMascara.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHora.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\CampoDataHoraPeriodo.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\Base\ControleTooltip.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\IndicadorSistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaPaginada.js" />
     <Content Include="Vue\_Compartilhado\Componentes\Base\ListaSelecao.js" />
@@ -1701,6 +1702,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleExibicaoImagem.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
@@ -1740,6 +1742,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\ContasReceber.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Cheques.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Estoques.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Imagens.js" />
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
@@ -1780,6 +1783,7 @@
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoComMascara.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHora.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoDataHoraPeriodo.html" />
+    <Content Include="Vue\_Compartilhado\Templates\Base\ControleTooltip.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\IndicadorSistemaOcupado.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaPaginada.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\ListaSelecao.html" />
@@ -1801,6 +1805,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleExibicaoImagem.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />

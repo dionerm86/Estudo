@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -246,17 +246,10 @@ namespace Glass.API.Backend
 
         private string ObterDiretorioSistema()
         {
-            var configuracaoAmbienteTeste = ConfigurationManager.AppSettings["ambienteTeste"];
-
+            var diretorioSistema = ConfigurationManager.AppSettings["diretorioSistema"];
             var diretorioAtual = HttpContext.Current.Server.MapPath("~");
-            var diretorioSistema = Path.Combine(diretorioAtual, "..");
 
-            if (bool.Parse(configuracaoAmbienteTeste))
-            {
-                diretorioSistema = Path.Combine(diretorioSistema, "..");
-            }
-
-            return diretorioSistema;
+            return Path.Combine(diretorioAtual, diretorioSistema);
         }
 
         #endregion
