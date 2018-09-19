@@ -485,9 +485,9 @@ namespace Glass.Global.Negocios.Entidades
                     "Não é possível cadastrar beneficiamento que seja do tipo seleção simples e calculado por quantidade.".GetFormatter());
 
             /* Chamado 45472. */
-            if (Nome.Contains("$") || Descricao.Contains("$"))
+            if (Nome.Contains("$") || Descricao.Contains("$") || Nome.Contains("'") || Descricao.Contains("'"))
                 return new Colosoft.Business.SaveResult(false,
-                    "O Nome/Descrição do beneficiamento não pode conter o caractere Cifrão.".GetFormatter());
+                    "O Nome/Descrição do beneficiamento não podem conter os caracteres Cifrão e Aspas.".GetFormatter());
 
             var validador = Microsoft.Practices.ServiceLocation.ServiceLocator
                 .Current.GetInstance<IValidadorBenefConfig>();
