@@ -42,7 +42,7 @@
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
-                        <a href="#" @click.prevent="abrirCancelamento(item)" title="¨Cancelar">
+                        <a href="#" @click.prevent="abrirCancelamento(item)" title="¨Cancelar" v-if="item.permissoes.cancelar">
                             <img border="0" src="../Images/ExcluirGrid.gif">
                         </a>
                         <a href="#" @click.prevent="abrirImpressaoAcerto(item)" title="¨Visualizar dados do Acerto">
