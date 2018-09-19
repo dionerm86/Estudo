@@ -773,6 +773,23 @@ namespace Glass.Global.Negocios.Entidades
         }
 
         /// <summary>
+        /// Habilitar Controle de usuários.
+        /// </summary>
+        public bool HabilitarControleUsuarios
+        {
+            get { return DataModel.HabilitarControleUsuarios; }
+            set
+            {
+                if (DataModel.HabilitarControleUsuarios != value &&
+                    RaisePropertyChanging("HabilitarControleUsuarios", value))
+                {
+                    DataModel.HabilitarControleUsuarios = value;
+                    RaisePropertyChanged("HabilitarControleUsuarios");
+                }
+            }
+        }
+
+        /// <summary>
         /// Identifica se o funcionário é vendedor.
         /// </summary>
         public bool Vendedor

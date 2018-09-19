@@ -474,7 +474,11 @@
     <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
+    <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.Filtro.js" />
+    <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.js" />
+    <Content Include="Vue\Caixas\Diario\Templates\LstCaixaDiario.Filtro.html" />
     <Content Include="Vue\Cheques\Componentes\LstCheque.Filtro.js" />
     <Content Include="Vue\Cheques\Componentes\LstCheque.js" />
     <Content Include="Vue\Cheques\Templates\LstCheque.Filtro.html" />
@@ -1728,6 +1732,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\NotasFiscais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Liberacoes.js" />
     <Content Include="Vue\_Compartilhado\Servicos\PedidosConferencia.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Caixas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TiposCartao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Rotas.js" />
     <Content Include="Vue\_Compartilhado\Servicos\TabelasDescontoAcrescimoCliente.js" />
@@ -3406,6 +3411,13 @@
     </Compile>
     <Compile Include="Cadastros\CadTipoCartao.aspx.designer.cs">
       <DependentUpon>CadTipoCartao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadGrupoCliente.aspx.cs">
+      <DependentUpon>CadGrupoCliente.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadGrupoCliente.aspx.designer.cs">
+      <DependentUpon>CadGrupoCliente.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\Expedicao\CadLeituraCarregamentoMobile.aspx.cs">
       <DependentUpon>CadLeituraCarregamentoMobile.aspx</DependentUpon>
@@ -8811,6 +8823,7 @@
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptCarregamento.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\OrdemCarga\rptItensVolumesPendentes.rdlc" />
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptListaCarregamentos.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

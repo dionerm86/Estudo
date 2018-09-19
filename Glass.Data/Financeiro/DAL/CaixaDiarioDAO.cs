@@ -743,191 +743,163 @@ namespace Glass.Data.DAL
         #region Fecha o caixa diário
 
         /// <summary>
-        /// Fecha o caixa diário
+        /// Fecha o caixa diário.
         /// </summary>
-        public void FechaCaixa(uint idLoja, decimal valorTransf, DateTime dataFechamento, bool fechamentoAtrasado)
+        public void FechaCaixa(GDASession sessao, uint idLoja, decimal valorTransf, DateTime dataFechamento, bool fechamentoAtrasado)
         {
-            using (var transaction = new GDATransaction())
+            CaixaDiario cxDiario = new CaixaDiario();
+
+            if (CaixaFechado(sessao, idLoja))
+                throw new Exception("O caixa já foi fechado.");
+
+            uint idCxDiario = 0;
+            uint idCxDiarioSaldoRemanescente = 0;
+            bool existeMovCxDiario = ExisteMovimentacoes(sessao, idLoja);
+            var contadorDataUnica = 0;
+
+            // Busca as movimentações para ter acesso ao total em dinheiro e cheque
+            cxDiario = GetForRpt(sessao, idLoja, 0, dataFechamento)[0];
+
+            // Busca o saldo acumulado no dia ou do dia que o caixa não foi fechado
+            decimal saldo = !fechamentoAtrasado ? GetSaldoByLoja(sessao, idLoja) : GetSaldoDiaAnterior(sessao, idLoja, DateTime.Now);
+
+            // Se houver apenas movimentação de restante de saldo, recupera o mesmo
+            decimal saldoAnterior = 0;
+            if (saldo == 0 && GetMovimentacoes(sessao, idLoja, 0, DateTime.Now).Length <= 1)
             {
-                CaixaDiario cxDiario = new CaixaDiario();
+                saldo = GetSaldoDiaAnterior(sessao, idLoja, DateTime.Now);
+                saldoAnterior = saldo;
+            }
 
-                try
+            if (saldo < 0)
+                throw new Exception("Não é possível fechar o caixa com saldo negativo.");
+
+            if (valorTransf != saldo)
+            {
+                // Verifica se o valor a ser transferido é menor que o saldo disponível
+                if (saldo < valorTransf)
+                    throw new Exception("O valor a ser transferido não pode ser maior que o saldo do caixa.");
+
+                // Verifica se o valor que será deixado no caixa é menor ou igual ao valor de dinheiro no caixa
+                if ((saldo - valorTransf) > cxDiario.TotalDinheiro + saldoAnterior)
+                    throw new Exception("O valor a ser transferido deve ser no mínimo de " +
+                        (saldo - cxDiario.TotalDinheiro + saldoAnterior).ToString("C") + ".");
+            }
+
+            // Insere registro no caixa diário indicando que o caixa foi fechado
+            CaixaDiario caixa = new CaixaDiario();
+            caixa.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
+            caixa.IdLoja = idLoja;
+            caixa.Valor = valorTransf;
+            caixa.Saldo = saldo - valorTransf;
+            caixa.TipoMov = 2;
+            caixa.DataCad = dataFechamento;
+            caixa.Usucad = UserInfo.GetUserInfo.CodUser;
+            /* Chamado 16661.
+                * Deve chamar o insert base para não alterar a data de cadastro da movimentação. */
+            idCxDiario = base.InsertBase(sessao, caixa);
+
+            // Se for fechamento de caixa atrasado e o valor transferido for menor que o saldo daquele dia,
+            // gera uma movimentação "saldo remanescente"
+            if (fechamentoAtrasado && (saldo - valorTransf) > 0)
+            {
+                CaixaDiario caixaSaldoRem = new CaixaDiario();
+                caixaSaldoRem.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.SaldoRemanescente);
+                caixaSaldoRem.IdLoja = idLoja;
+                caixaSaldoRem.Valor = saldo - valorTransf;
+                caixaSaldoRem.Saldo = caixaSaldoRem.Valor;
+                caixaSaldoRem.TipoMov = 1;
+                caixaSaldoRem.DataCad = DateTime.Now;
+                caixaSaldoRem.Usucad = UserInfo.GetUserInfo.CodUser;
+                /* Chamado 16661.
+                    * Deve chamar o insert base para não alterar a data de cadastro da movimentação. */
+                idCxDiarioSaldoRemanescente = base.InsertBase(sessao, caixaSaldoRem);
+            }
+
+            if (valorTransf > 0)
+            {
+                decimal valorTransfTemp = valorTransf;
+                decimal valor;
+
+                // Insere registros no caixa geral passando o valor que foi fechado no caixa diario
+
+                // Transfere valor em cheque para o caixa geral
+                valor = Math.Min(valorTransfTemp, cxDiario.TotalCheques);
+                if (valor > 0)
                 {
-                    transaction.BeginTransaction();
-
-                    if (CaixaFechado(transaction, idLoja))
-                        throw new Exception("O caixa já foi fechado.");
-
-                    uint idCxDiario = 0;
-                    uint idCxDiarioSaldoRemanescente = 0;
-                    bool existeMovCxDiario = ExisteMovimentacoes(transaction, idLoja);
-                    var contadorDataUnica = 0;
-
-                    // Busca as movimentações para ter acesso ao total em dinheiro e cheque
-                    cxDiario = GetForRpt(transaction, idLoja, 0, dataFechamento)[0];
-
-                    // Busca o saldo acumulado no dia ou do dia que o caixa não foi fechado
-                    decimal saldo = !fechamentoAtrasado ? GetSaldoByLoja(transaction, idLoja) : GetSaldoDiaAnterior(transaction, idLoja, DateTime.Now);
-
-                    // Se houver apenas movimentação de restante de saldo, recupera o mesmo
-                    decimal saldoAnterior = 0;
-                    if (saldo == 0 && GetMovimentacoes(transaction, idLoja, 0, DateTime.Now).Length <= 1)
-                    {
-                        saldo = GetSaldoDiaAnterior(transaction, idLoja, DateTime.Now);
-                        saldoAnterior = saldo;
-                    }
-
-                    if (saldo < 0)
-                        throw new Exception("Não é possível fechar o caixa com saldo negativo.");
-
-                    if (valorTransf != saldo)
-                    {
-                        // Verifica se o valor a ser transferido é menor que o saldo disponível
-                        if (saldo < valorTransf)
-                            throw new Exception("O valor a ser transferido não pode ser maior que o saldo do caixa.");
-
-                        // Verifica se o valor que será deixado no caixa é menor ou igual ao valor de dinheiro no caixa
-                        if ((saldo - valorTransf) > cxDiario.TotalDinheiro + saldoAnterior)
-                            throw new Exception("O valor a ser transferido deve ser no mínimo de " +
-                                (saldo - cxDiario.TotalDinheiro + saldoAnterior).ToString("C") + ".");
-                    }
-
-                    // Insere registro no caixa diário indicando que o caixa foi fechado
-                    CaixaDiario caixa = new CaixaDiario();
-                    caixa.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral);
-                    caixa.IdLoja = idLoja;
-                    caixa.Valor = valorTransf;
-                    caixa.Saldo = saldo - valorTransf;
-                    caixa.TipoMov = 2;
-                    caixa.DataCad = dataFechamento;
-                    caixa.Usucad = UserInfo.GetUserInfo.CodUser;
-                    /* Chamado 16661.
-                     * Deve chamar o insert base para não alterar a data de cadastro da movimentação. */
-                    idCxDiario = base.InsertBase(transaction, caixa);
-
-                    // Se for fechamento de caixa atrasado e o valor transferido for menor que o saldo daquele dia,
-                    // gera uma movimentação "saldo remanescente"
-                    if (fechamentoAtrasado && (saldo - valorTransf) > 0)
-                    {
-                        CaixaDiario caixaSaldoRem = new CaixaDiario();
-                        caixaSaldoRem.IdConta = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.SaldoRemanescente);
-                        caixaSaldoRem.IdLoja = idLoja;
-                        caixaSaldoRem.Valor = saldo - valorTransf;
-                        caixaSaldoRem.Saldo = caixaSaldoRem.Valor;
-                        caixaSaldoRem.TipoMov = 1;
-                        caixaSaldoRem.DataCad = DateTime.Now;
-                        caixaSaldoRem.Usucad = UserInfo.GetUserInfo.CodUser;
-                        /* Chamado 16661.
-                         * Deve chamar o insert base para não alterar a data de cadastro da movimentação. */
-                        idCxDiarioSaldoRemanescente = base.InsertBase(transaction, caixaSaldoRem);
-                    }
-
-                    if (valorTransf > 0)
-                    {
-                        decimal valorTransfTemp = valorTransf;
-                        decimal valor;
-
-                        // Insere registros no caixa geral passando o valor que foi fechado no caixa diario
-
-                        // Transfere valor em cheque para o caixa geral
-                        valor = Math.Min(valorTransfTemp, cxDiario.TotalCheques);
-                        if (valor > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, 0,
-                                valor, 0, null, true, null, dataFechamento);
-                            valorTransfTemp -= valor;
-                        }
-
-                        // Transfere o valor em cartão para o caixa geral
-                        if (cxDiario.TotalCartao > 0)
-                        {
-                            // Transfere o total de cartão de CRÉDITO para o caixa geral
-                            valor = cxDiario.Cartoes.Where(f => f.Tipo == TipoCartaoEnum.Credito).Sum(f => f.Valor);
-
-                            if (valor > 0)
-                            {
-                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
-                                    null, false, "Cartão de crédito", dataFechamento, false, contadorDataUnica++);
-                                valorTransfTemp -= valor;
-                            }
-
-                            // Transfere o total de cartão de DÉBITO para o caixa geral
-                            valor = cxDiario.TotalCartao - valor;
-                            if (valor > 0)
-                            {
-                                CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
-                                    null, false, "Cartão de débito", dataFechamento, false, contadorDataUnica++);
-                                valorTransfTemp -= valor;
-                            }
-                        }
-
-                        // Transfere o valor em depósito para o caixa geral
-                        if (cxDiario.TotalDeposito > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDeposito), 1, 0,
-                                cxDiario.TotalDeposito, 0, null, false, null, dataFechamento);
-                            valorTransfTemp -= cxDiario.TotalDeposito;
-                        }
-
-                        // Transfere o valor em construcard para o caixa geral
-                        if (cxDiario.TotalConstrucard > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioConstrucard), 1, 0,
-                                cxDiario.TotalConstrucard, 0, null, false, null, dataFechamento);
-                            valorTransfTemp -= cxDiario.TotalConstrucard;
-                        }
-
-                        // Transfere o valor em boleto para o caixa geral
-                        if (cxDiario.TotalBoleto > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioBoleto), 1, 0,
-                                cxDiario.TotalBoleto, 0, null, false, null, dataFechamento);
-                            valorTransfTemp -= cxDiario.TotalBoleto;
-                        }
-
-                        // Transfere o valor em permuta para o caixa geral (Não precisa subtrair a permuta de valorTransfTemp, pois este valor não é somado no saldo)
-                        if (cxDiario.TotalPermuta > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta), 1, 0,
-                                cxDiario.TotalPermuta, 0, null, false, null, dataFechamento);
-                        }
-
-                        // Transfere o valor em dinheiro para o caixa geral, inseri "- (saldo - valorTransf)" para que
-                        // o valor do saldo remanescente não seja transferido para o caixa geral
-                        valor = Math.Min(valorTransfTemp, cxDiario.TotalDinheiro - (saldo - valorTransf));
-
-                        // Caso o total em dinheiro do caixa de hoje esteja vazio, tenha valor em dinheiro para ser transferido e não
-                        // tenha nenhuma movimentação no caixa hoje, força a transferir o valor restante
-                        if (cxDiario.TotalDinheiro == 0 && valorTransfTemp > 0 && !existeMovCxDiario)
-                            valor = valorTransfTemp;
-
-                        if (valor > 0)
-                        {
-                            CaixaGeralDAO.Instance.MovCxGeral(transaction, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro), 1, 0,
-                                valor, 0, null, true, null, dataFechamento);
-                            valorTransfTemp -= valor;
-                        }
-                    }
-
-                    transaction.Commit();
-                    transaction.Close();
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque), 1, 0,
+                        valor, 0, null, true, null, dataFechamento);
+                    valorTransfTemp -= valor;
                 }
-                catch (Exception ex)
-                {
-                    transaction.Rollback();
-                    transaction.Close();
 
-                    ErroDAO.Instance.InserirFromException(string.Format("FechaCaixa - IdLoja: {0} - ValorTransf: {1} - DataFechamento: {2} - FechamentoAtrasado: {3} - " +
-                        "TotalBoleto: {4} - TotalBoletoBancoBrasil: {5} - TotalBoletoLumen: {6} - TotalBoletoOutros: {7} - TotalBoletoSantander: {8} - TotalCartao: {9} - " +
-                        "TotalCheques: {10} - TotalConstrucard: {11} - TotalDeposito: {12} - TotalDinheiro: {13} - TotalEstornoDinheiro: {14} - TotalMasterCredito: {15} - " +
-                        "TotalMasterDebito: {16} - TotalOutrosCredito: {17} - TotalOutrosDebito: {18} - TotalPermuta: {19} - TotalRecDinheiro: {20} - TotalSaidaCheque: {21} - " +
-                        "TotalSaidaDinheiro: {22} - TotalTransfCxGeralDinheiro: {23} - TotalVisaCredito: {24} - TotalVisaDebito: {25}",
-                        idLoja, valorTransf, dataFechamento, fechamentoAtrasado, cxDiario.TotalBoleto, cxDiario.TotalBoletoBancoBrasil, cxDiario.TotalBoletoLumen,
-                        cxDiario.TotalBoletoOutros, cxDiario.TotalBoletoSantander, cxDiario.TotalCartao, cxDiario.TotalCheques, cxDiario.TotalConstrucard,
-                        cxDiario.TotalDeposito, cxDiario.TotalDinheiro, cxDiario.TotalEstornoDinheiro, cxDiario.TotalMasterCredito, cxDiario.TotalMasterDebito,
-                        cxDiario.TotalOutrosCredito, cxDiario.TotalOutrosDebito, cxDiario.TotalPermuta, cxDiario.TotalRecDinheiro, cxDiario.TotalSaidaCheque,
-                        cxDiario.TotalSaidaDinheiro, cxDiario.TotalTransfCxGeralDinheiro, cxDiario.TotalVisaCredito, cxDiario.TotalVisaDebito), ex);
-                    throw new Exception(Glass.MensagemAlerta.FormatErrorMsg(ex.Message, ex));
+                // Transfere o valor em cartão para o caixa geral
+                if (cxDiario.TotalCartao > 0)
+                {
+                    // Transfere o total de cartão de CRÉDITO para o caixa geral
+                    valor = cxDiario.Cartoes.Where(f => f.Tipo == TipoCartaoEnum.Credito).Sum(f => f.Valor);
+
+                    if (valor > 0)
+                    {
+                        CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
+                            null, false, "Cartão de crédito", dataFechamento, false, contadorDataUnica++);
+                        valorTransfTemp -= valor;
+                    }
+
+                    // Transfere o total de cartão de DÉBITO para o caixa geral
+                    valor = cxDiario.TotalCartao - valor;
+                    if (valor > 0)
+                    {
+                        CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao), 1, 0, valor, 0,
+                            null, false, "Cartão de débito", dataFechamento, false, contadorDataUnica++);
+                        valorTransfTemp -= valor;
+                    }
+                }
+
+                // Transfere o valor em depósito para o caixa geral
+                if (cxDiario.TotalDeposito > 0)
+                {
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDeposito), 1, 0,
+                        cxDiario.TotalDeposito, 0, null, false, null, dataFechamento);
+                    valorTransfTemp -= cxDiario.TotalDeposito;
+                }
+
+                // Transfere o valor em construcard para o caixa geral
+                if (cxDiario.TotalConstrucard > 0)
+                {
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioConstrucard), 1, 0,
+                        cxDiario.TotalConstrucard, 0, null, false, null, dataFechamento);
+                    valorTransfTemp -= cxDiario.TotalConstrucard;
+                }
+
+                // Transfere o valor em boleto para o caixa geral
+                if (cxDiario.TotalBoleto > 0)
+                {
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioBoleto), 1, 0,
+                        cxDiario.TotalBoleto, 0, null, false, null, dataFechamento);
+                    valorTransfTemp -= cxDiario.TotalBoleto;
+                }
+
+                // Transfere o valor em permuta para o caixa geral (Não precisa subtrair a permuta de valorTransfTemp, pois este valor não é somado no saldo)
+                if (cxDiario.TotalPermuta > 0)
+                {
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta), 1, 0,
+                        cxDiario.TotalPermuta, 0, null, false, null, dataFechamento);
+                }
+
+                // Transfere o valor em dinheiro para o caixa geral, inseri "- (saldo - valorTransf)" para que
+                // o valor do saldo remanescente não seja transferido para o caixa geral
+                valor = Math.Min(valorTransfTemp, cxDiario.TotalDinheiro - (saldo - valorTransf));
+
+                // Caso o total em dinheiro do caixa de hoje esteja vazio, tenha valor em dinheiro para ser transferido e não
+                // tenha nenhuma movimentação no caixa hoje, força a transferir o valor restante
+                if (cxDiario.TotalDinheiro == 0 && valorTransfTemp > 0 && !existeMovCxDiario)
+                    valor = valorTransfTemp;
+
+                if (valor > 0)
+                {
+                    CaixaGeralDAO.Instance.MovCxGeral(sessao, idLoja, null, null, UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro), 1, 0,
+                        valor, 0, null, true, null, dataFechamento);
+                    valorTransfTemp -= valor;
                 }
             }
         }
@@ -939,47 +911,41 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Reabre o caixa diário.
         /// </summary>
+        /// <param name="sessao"></param>
         /// <param name="idLoja"></param>
-        public void ReabrirCaixa(uint idLoja)
+        public void ReabrirCaixa(GDASession sessao, uint idLoja)
         {
-            if (!CaixaFechado(idLoja))
+            if (!CaixaFechado(sessao, idLoja))
                 throw new Exception("O caixa não está fechado.");
 
-            try
-            {
-                // Apaga a movimentação de transferência para o caixa geral
-                objPersistence.ExecuteCommand("delete from caixa_diario where date(dataCad)=date(now()) and idLoja=" +
-                    idLoja + " and idConta=" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral));
+            // Apaga a movimentação de transferência para o caixa geral
+            objPersistence.ExecuteCommand(sessao, "delete from caixa_diario where date(dataCad)=date(now()) and idLoja=" +
+                idLoja + " and idConta=" + UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfCaixaGeral));
 
-                // Planos de contas usadas no SQL
-                string contas = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDeposito) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioConstrucard) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioBoleto) + "," +
-                    UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta);
+            // Planos de contas usadas no SQL
+            string contas = UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCheque) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDinheiro) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioCartao) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioDeposito) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioConstrucard) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioBoleto) + "," +
+                UtilsPlanoConta.GetPlanoConta(UtilsPlanoConta.PlanoContas.TransfDeCxDiarioPermuta);
 
-                // Variável com o filtro das consultas SQL
-                string where = string.Format("date(dataMov)=date(now()) and idLoja={0} and idConta in ({1}) AND (LancManual IS NULL OR LancManual = 0)", idLoja, contas);
+            // Variável com o filtro das consultas SQL
+            string where = string.Format("date(dataMov)=date(now()) and idLoja={0} and idConta in ({1}) AND (LancManual IS NULL OR LancManual = 0)", idLoja, contas);
 
-                // Ajusta o saldo das movimentações do caixa geral
-                string sql = @"select (select saldo from caixa_geral where idCaixaGeral < all (
-                    select idCaixaGeral from caixa_geral where " + where + @") order by idCaixaGeral desc limit 1)-(
-                    select saldo from caixa_geral where " + where + " limit 1)";
+            // Ajusta o saldo das movimentações do caixa geral
+            string sql = @"select (select saldo from caixa_geral where idCaixaGeral < all (
+                select idCaixaGeral from caixa_geral where " + where + @") order by idCaixaGeral desc limit 1)-(
+                select saldo from caixa_geral where " + where + " limit 1)";
 
-                float valorMov = ExecuteScalar<float>(sql);
-                objPersistence.ExecuteCommand("update caixa_geral set saldo=saldo-?valor where idCaixaGeral > all (" +
-                    "select idCaixaGeral from (select idCaixaGeral from caixa_geral where " + where + ") as temp)",
-                    new GDAParameter("?valor", valorMov));
+            float valorMov = ExecuteScalar<float>(sessao, sql);
+            objPersistence.ExecuteCommand(sessao, "update caixa_geral set saldo=saldo-?valor where idCaixaGeral > all (" +
+                "select idCaixaGeral from (select idCaixaGeral from caixa_geral where " + where + ") as temp)",
+                new GDAParameter("?valor", valorMov));
 
-                // Remove as movimentações do caixa geral
-                objPersistence.ExecuteCommand("delete from caixa_geral where " + where);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Glass.MensagemAlerta.FormatErrorMsg("Falha ao reabrir caixa diário.", ex));
-            }
+            // Remove as movimentações do caixa geral
+            objPersistence.ExecuteCommand(sessao, "delete from caixa_geral where " + where);
         }
 
         #endregion
@@ -1120,7 +1086,7 @@ namespace Glass.Data.DAL
         /// <param name="idLoja"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public bool ExisteMovimentacao(uint idLoja, DateTime data)
+        public bool ExisteMovimentacao(GDASession sessao, uint idLoja, DateTime data)
         {
             string sql = @"
                 Select Count(*) > 0
@@ -1130,7 +1096,7 @@ namespace Glass.Data.DAL
                     And YEAR(c.DataCad)=YEAR(?data) 
                     And c.IdLoja=" + idLoja;
 
-            return ExecuteScalar<bool>(sql, new GDAParameter("?data", data));
+            return ExecuteScalar<bool>(sessao, sql, new GDAParameter("?data", data));
         }
 
         #endregion
@@ -1763,10 +1729,10 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idLoja"></param>
         /// <returns></returns>
-        public DateTime GetDataCaixaAberto(uint idLoja)
+        public DateTime GetDataCaixaAberto(GDASession sessao, uint idLoja)
         {
             // Busca a última movimentação feita no caixa diário anterior à hoje
-            return ExecuteScalar<DateTime>("select dataCad from caixa_diario where idloja=" + idLoja +
+            return ExecuteScalar<DateTime>(sessao, "select dataCad from caixa_diario where idloja=" + idLoja +
                 " order by idcaixadiario desc limit 1");
         }
 

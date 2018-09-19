@@ -4296,8 +4296,8 @@ namespace Glass.Data.DAL
                     {
                         IdProdPedParent = objInsert.IdProdPed,
                         IdProd = (uint)p.IdProdBaixa,
-                        IdProcesso = (uint)p.IdProcesso,
-                        IdAplicacao = (uint)p.IdAplicacao,
+                        IdProcesso = objInsert.IdProcessoFilhas > 0 ? (uint)objInsert.IdProcessoFilhas : (uint)p.IdProcesso,
+                        IdAplicacao = objInsert.IdAplicacaoFilhas > 0 ? (uint)objInsert.IdAplicacaoFilhas : (uint)p.IdAplicacao,
                         IdPedido = objInsert.IdPedido,
                         IdAmbientePedido = objInsert.IdAmbientePedido,
                         Qtde = p.Qtde,
@@ -5180,9 +5180,15 @@ namespace Glass.Data.DAL
             if (idsPedido == null || idsPedido.Count == 0)
                 return null;
 
+            var totalProdComDesconto = !PedidoConfig.RatearDescontoProdutos ?
+                    "ROUND(pp.Total * ( 1 - IF(ped.TipoDesconto = 2, ped.Desconto/(ped.Total + ped.Desconto),ped.Desconto/100)),2) AS Total" :
+                    "pp.Total";
+
+            var idsPedidoString = string.Join(",", idsPedido);
+
             // Busca os produtos de pedido inclusos na ordem de carga informada, com os dados que são utilizados para recuperar os totais da ordem de carga.
-            var sql = string.Format(@"
-                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={3}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, pp.Total,
+            var sql = $@"
+                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
                     pp.ValorIpi, pp.ValorIcms
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -5190,10 +5196,10 @@ namespace Glass.Data.DAL
 	                INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
 	                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
-	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
-                WHERE pp.IdPedido IN ({0})
+	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)            
+                WHERE pp.IdPedido IN ({idsPedidoString})
 	                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
-	                AND gp.IdGrupoProd IN ({1}, {2})
+	                AND gp.IdGrupoProd IN ({(int)NomeGrupoProd.Vidro}, {(int)NomeGrupoProd.MaoDeObra})
 	                AND (sgp.ProdutosEstoque IS NULL OR sgp.ProdutosEstoque = 0)
 	                AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 0
 	                AND pp.IdProdPedParent IS NULL
@@ -5202,7 +5208,7 @@ namespace Glass.Data.DAL
 
                 UNION ALL
 
-                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={3}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, pp.Total,
+                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, 0 AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
                     pp.ValorIpi, pp.ValorIcms
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -5211,9 +5217,9 @@ namespace Glass.Data.DAL
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
 	                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
 	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
-                WHERE pp.IdPedido IN ({0})
+                WHERE pp.IdPedido IN ({idsPedidoString})
                     AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
-                    AND gp.IdGrupoProd IN ({1}, {2})
+                    AND gp.IdGrupoProd IN ({(int)NomeGrupoProd.Vidro}, {(int)NomeGrupoProd.MaoDeObra})
                     AND (sgp.ProdutosEstoque IS NOT NULL AND sgp.ProdutosEstoque = 1)
                     AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 0
                     AND pp.IdProdPedParent IS NULL
@@ -5222,7 +5228,7 @@ namespace Glass.Data.DAL
 
                 UNION ALL
 
-                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={3}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, pp.Qtde AS QtdeVolume, pp.TotM, pp.Peso, pp.Total,
+                SELECT pp.IdProdPed, pp.IdProdPedEsp, pp.IdPedido, poc.IdOrdemCarga, IF(ped.TipoPedido={(int)Pedido.TipoPedidoEnum.MaoDeObra}, ap.Qtde * pp.Qtde, pp.Qtde) AS Qtde, pp.Qtde AS QtdeVolume, pp.TotM, pp.Peso, {totalProdComDesconto},
                     pp.ValorIpi, pp.ValorIcms
                 FROM produtos_pedido pp
                     INNER JOIN pedido ped ON (pp.IdPedido=ped.IdPedido)
@@ -5231,12 +5237,12 @@ namespace Glass.Data.DAL
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
 	                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
 	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
-                WHERE pp.IdPedido IN ({0})
+                WHERE pp.IdPedido IN ({idsPedidoString})
 	                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
 	                AND COALESCE(sgp.GeraVolume, gp.GeraVolume, 0) = 1
 	                AND pp.IdProdPedParent IS NULL
 	                AND pp.Qtde > 0
-                GROUP BY pp.IdProdPed, poc.IdOrdemCarga;", string.Join(",", idsPedido), (int)NomeGrupoProd.Vidro, (int)NomeGrupoProd.MaoDeObra, (int)Pedido.TipoPedidoEnum.MaoDeObra);
+                GROUP BY pp.IdProdPed, poc.IdOrdemCarga;";
 
             // Recupera os produtos de pedido.
             return objPersistence.LoadResult(session, sql).Select(f =>

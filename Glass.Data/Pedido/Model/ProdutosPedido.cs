@@ -198,7 +198,7 @@ namespace Glass.Data.Model
 
         [PersistenceProperty("QtdeBoxImpresso")]
         public int QtdeBoxImpresso { get; set; }
- 
+
         [PersistenceProperty("OBS")]
         public string Obs { get; set; }
 
@@ -613,7 +613,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("AMBIENTEPEDIDO", DirectionParameter.InputOptional)]
         public string AmbientePedido { get; set; }
-        
+
         [XmlIgnore]
         [PersistenceProperty("QTDEPECASVIDRO", DirectionParameter.InputOptional)]
         public double QtdePecasVidro { get; set; }
@@ -621,7 +621,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         [PersistenceProperty("ORDEMCARGAPARCIAL", DirectionParameter.InputOptional)]
         public bool OrdemCargaParcial { get; set; }
- 
+
         [XmlIgnore]
         [PersistenceProperty("IDORDEMCARGA", DirectionParameter.InputOptional)]
         public int IdOrdemCarga { get; set; }
@@ -719,7 +719,7 @@ namespace Glass.Data.Model
             {
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(null, IdPedido);
                 return Glass.Global.CalculosFluxo.CalcM2Calculo(IdCliente, (int)Altura, Largura, Qtde, (int)IdProd, Redondo,
-                    Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0, 
+                    Beneficiamentos.CountAreaMinima, ProdutoDAO.Instance.ObtemAreaMinima((int)IdProd), false, 0,
                     TipoCalc == (int)Glass.Data.Model.TipoCalculoGrupoProd.M2 && !isPedidoProducaoCorte).ToString();
             }
         }
@@ -825,7 +825,7 @@ namespace Glass.Data.Model
                 if ((IdProdPedParent.GetValueOrDefault(0) > 0 && ProdutosPedidoDAO.Instance.IsProdLaminado(IdProdPedParent.Value)) ||
                         PedidoDAO.Instance.GetIdObra(null, IdPedido) > 0)
                     return false;
-                
+
                 return true;
             }
         }
@@ -867,18 +867,18 @@ namespace Glass.Data.Model
                 if (_qtdeLiberados == -1)
                 {
                     _qtdeLiberados = ProdutosLiberarPedidoDAO.Instance.GetQtdeByProdPed(null, IdProdPed, IdProdPedProducaoConsulta);
-                    if (((_qtdeLiberados > 1 && _qtdeLiberados < qtde) || (!TemLiberacaoEtiqueta && _qtdeLiberados != (Qtde * _qtdeAmbiente))) && 
+                    if (((_qtdeLiberados > 1 && _qtdeLiberados < qtde) || (!TemLiberacaoEtiqueta && _qtdeLiberados != (Qtde * _qtdeAmbiente))) &&
                         !String.IsNullOrEmpty(NumEtiquetaConsulta))
                     {
                         string item = NumEtiquetaConsulta.Substring(NumEtiquetaConsulta.IndexOf('.') + 1);
                         item = item.Substring(0, item.IndexOf('/'));
 
-                        _qtdeLiberados = Glass.Conversoes.StrParaInt(item) > _qtdeLiberados ? 
+                        _qtdeLiberados = Glass.Conversoes.StrParaInt(item) > _qtdeLiberados ?
                             usarQtdeEtiquetas ? 0 : _qtdeLiberados :
                             usarQtdeEtiquetas ? (int)QtdeEtiquetas : (int)qtde;
                     }
                 }
-                
+
                 return (usarQtdeEtiquetas ? (float)QtdeEtiquetas.Value : qtde) - _qtdeLiberados;
             }
         }
@@ -990,7 +990,7 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public decimal TotalCalc
         {
-            get 
+            get
             {
                 #region Variaveis Locais
 
@@ -1003,24 +1003,24 @@ namespace Glass.Data.Model
                 // Se for mão de obra, considera o número de ambientes (liberação de mão de obra e não de ambiente)
                 int qtdeAmbiente = _pedidoMaoDeObra && _qtdeAmbiente > 0 ? _qtdeAmbiente : 1;
 
-                // Se for mão de obra e a quantidade de ambientes for > 0 e se a empresa libera produtos prontos, 
+                // Se for mão de obra e a quantidade de ambientes for > 0 e se a empresa libera produtos prontos,
                 // a quantidade a usar deve ser a quantidade de ambientes vezes a quantidade de beneficiamentos do mesmo, caso contrário
                 // o valor de liberação do beneficiamento ficaria maior do que deveria.
                 decimal qtdeUsar = _pedidoMaoDeObra && _qtdeAmbiente > 0 ? qtdeAmbiente : (decimal)Qtde;
 
                 float qtdeDisponivelLiberacao = QtdeDisponivelLiberacao;
 
-                // André 20/02/13: No caso de empresas que não liberam pedidos somente quando estão prontos 
-                // (Atualizanddo 12/09/13: Empresas que liberam somente prontos também), os produtos de pedidos mão de obra com 
-                // beneficiamentos com quantidade maior que 1 estavam sendo liberados incorretamente, a "QtdeDisponivelLiberacao" está retornando a 
-                // quantidade do beneficiamento e utilizando este valor para calcular o total (multiplicando-o) incorretamente, para corrigir esta 
+                // André 20/02/13: No caso de empresas que não liberam pedidos somente quando estão prontos
+                // (Atualizanddo 12/09/13: Empresas que liberam somente prontos também), os produtos de pedidos mão de obra com
+                // beneficiamentos com quantidade maior que 1 estavam sendo liberados incorretamente, a "QtdeDisponivelLiberacao" está retornando a
+                // quantidade do beneficiamento e utilizando este valor para calcular o total (multiplicando-o) incorretamente, para corrigir esta
                 // situação foi necessário recalcular a "QtdeDisponivelLiberacao" considerando a quantidade de ambiente menos a _qtdeLiberados.
                 if (/*!Liberacao.DadosLiberacao.LiberarProdutosProntos &&*/ _pedidoMaoDeObra && _qtdeAmbiente > 0 && Qtde > 1 && qtdeDisponivelLiberacao > 1)
                     qtdeDisponivelLiberacao = qtdeAmbiente - (_qtdeLiberados > 0 ? (int)_qtdeLiberados : 0);
 
                 uint idCliente = IdCliente > 0 ? IdCliente : PedidoDAO.Instance.ObtemIdCliente(null, IdPedido);
 
-                // Calcula o total do produto, considerando beneficiamentos, ICMS e IPI. Soma também o desconto por quantidade, 
+                // Calcula o total do produto, considerando beneficiamentos, ICMS e IPI. Soma também o desconto por quantidade,
                 // para que ao aplicar o desconto do pedido na tela de liberação aplique somente uma vez o desconto
                 decimal total = Total + ValorBenef + (!PedidoConfig.RatearDescontoProdutos ? ValorDescontoQtde : 0);
 
@@ -1084,14 +1084,14 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public Color CorLinha
         {
-            get 
+            get
             {
                 if (IdProdPedEsp == null)
                     return Color.Black;
 
                 return TipoSetorProducao == null ? Color.Black :
                     TipoSetorProducao == (int)SituacaoProdutoProducao.Pronto ? Color.Blue :
-                    TipoSetorProducao == (int)SituacaoProdutoProducao.Entregue ? Color.Green : 
+                    TipoSetorProducao == (int)SituacaoProdutoProducao.Entregue ? Color.Green :
                     Color.Red;
             }
         }
@@ -1170,14 +1170,14 @@ namespace Glass.Data.Model
         [XmlIgnore]
         public bool PodeEditar
         {
-            get 
+            get
             {
                 if (!PedidoConfig.RatearDescontoProdutos)
                     return true;
 
                 float descontoPedido = PedidoDAO.Instance.ObtemValorCampo<float>("desconto", "idPedido=" + IdPedido);
                 float descontoAmbiente = AmbientePedidoDAO.Instance.ObtemValorCampo<float>("desconto", "idAmbientePedido=" + IdAmbientePedido.GetValueOrDefault());
-                return (descontoPedido + descontoAmbiente) == 0; 
+                return (descontoPedido + descontoAmbiente) == 0;
             }
         }
 
@@ -1292,7 +1292,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                var nomeImagem = Utils.GetPecaComercialVirtualPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg"; 
+                var nomeImagem = Utils.GetPecaComercialVirtualPath + IdProdPed.ToString().PadLeft(10, '0') + "_0.jpg";
                 if (Utils.ArquivoExiste(nomeImagem))
                     return nomeImagem;
 
@@ -1308,6 +1308,17 @@ namespace Glass.Data.Model
 
         [XmlIgnore]
         public bool AplicarBenefComposicao { get; set; }
+
+        /// <summary>
+        /// Identificador do processo das peças filhas
+        /// que é informado na insersão do produto no pedido
+        /// </summary>
+        public int? IdProcessoFilhas { get; set; }
+        /// <summary>
+        /// Identificador do processo das peças filhas
+        /// que é informado na insersão do produto no pedido
+        /// </summary>
+        public int? IdAplicacaoFilhas { get; set; }
 
         #endregion
 
@@ -1386,9 +1397,9 @@ namespace Glass.Data.Model
         /// </summary>
         public string ServicosInfoBenef
         {
-            get 
+            get
             {
-                GenericBenefCollection benef = Beneficiamentos.ToProdutosPedido(IdProdPed);                
+                GenericBenefCollection benef = Beneficiamentos.ToProdutosPedido(IdProdPed);
                 benef.GerarServicosInfo = true;
 
                 return benef.ServicosInfo;
@@ -1406,7 +1417,7 @@ namespace Glass.Data.Model
         public bool AlterarProcessoAplicacaoVisible
         {
             get
-            {                
+            {
                 return IsVidro == "true";
             }
         }

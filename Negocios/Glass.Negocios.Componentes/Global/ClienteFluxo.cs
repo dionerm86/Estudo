@@ -11,10 +11,11 @@ namespace Glass.Global.Negocios.Componentes
     /// <summary>
     /// Implementação do fluxo de negócio de clientes.
     /// </summary>
-    public class ClienteFluxo : 
+    public class ClienteFluxo :
         Negocios.IClienteFluxo, Entidades.IValidadorCliente,
         Negocios.Entidades.IDescricaoDescontoAcrescimoCliente,
         Entidades.IValidadorTipoCliente,
+        Entidades.IValidadorGrupoCliente,
         Entidades.IValidadorTabelaDescontoAcrescimoCliente,
         Entidades.IProvedorDescontoAcrescimoCliente
     {
@@ -82,7 +83,7 @@ namespace Glass.Global.Negocios.Componentes
             {
                 consulta.WhereClause
                     .And(string.Format("c.IdTipoCliente IN ({0})", string.Join(",", idsTipoCliente)))
-                    .AddDescription("Tipos de Cliente: {0}", string.Join(", ", 
+                    .AddDescription("Tipos de Cliente: {0}", string.Join(", ",
                         idsTipoCliente.Select(f => SourceContext.Instance.GetDescriptor<Entidades.TipoCliente>(f).Name )));
             }
 
@@ -132,7 +133,7 @@ namespace Glass.Global.Negocios.Componentes
             if (!string.IsNullOrEmpty(uf))
                 consulta.WhereClause
                     .And("c.IdCidade IN (?sqlCidades)")
-                    .Add("?sqlCidades", 
+                    .Add("?sqlCidades",
                             SourceContext.Instance.CreateQuery()
                             .From<Glass.Data.Model.Cidade>()
                             .Where("NomeUf = ?uf")
@@ -263,7 +264,7 @@ namespace Glass.Global.Negocios.Componentes
                     consulta.WhereClause
                         .And(string.Format("IdCli NOT IN ({0})", retornoClientePedidoConfirmado.Count() > 0 ? string.Join(",", retornoClientePedidoConfirmado) : "0"));
                 }
-                
+
                 if (dataSemCompraIni > DateTime.MinValue)
                     consulta.WhereClause
                         .AddDescription(string.Format("Data início sem compra: {0:d}", dataSemCompraIni.Value));
@@ -272,7 +273,7 @@ namespace Glass.Global.Negocios.Componentes
                     consulta.WhereClause
                         .AddDescription(string.Format("Data fim sem compra: {0:d}", dataSemCompraFim.Value.AddHours(23).AddMinutes(59).AddSeconds(59)));
             }
-            
+
             // Adiciona o JOIN para buscar a data de inativação
             if (dataInativadoIni > DateTime.MinValue || dataInativadoFim > DateTime.MinValue)
             {
@@ -318,7 +319,7 @@ namespace Glass.Global.Negocios.Componentes
                     .Add("?tabelaDesconto", idTabelaDescontoAcrescimo.Value)
                     .AddDescription(String.Format("Tabela Desconto/Acréscimo Cliente: {0}",
                         SourceContext.Instance.GetDescriptor<Entidades.TabelaDescontoAcrescimoCliente>(idTabelaDescontoAcrescimo.Value).Name));
-            
+
             if (comCompra)
                 consulta.WhereClause
                     .And("c.TotalComprado>0")
@@ -366,14 +367,14 @@ namespace Glass.Global.Negocios.Componentes
                 .Select(
                     @"c.IdCli, c.Nome, c.NomeFantasia, c.CpfCnpj, c.Endereco, c.Numero, c.Compl, c.Bairro, cid.NomeCidade as Cidade,
                     cid.NomeUf as Uf, c.TelCont, c.TelRes, c.TelCel, c.Situacao, c.Email, c.DtUltCompra, c.Historico,
-                    c.TotalComprado, c.Revenda, fp.Descricao As FormaPagamento, p.Descricao As Parcela, 
+                    c.TotalComprado, c.Revenda, fp.Descricao As FormaPagamento, p.Descricao As Parcela,
                     c.DataCad, c.DataAlt, c.IdTabelaDesconto, fCad.Nome as DescrUsuCad, fAlt.Nome as DescrUsuAlt, c.IdFunc, fVend.Nome as NomeFunc,
                     fAtendente.IdFunc AS IdFuncAtendente, fAtendente.Nome AS NomeAtendente, c.Limite, c.UsoLimite, c.BairroEntrega, c.NumeroEntrega, c.ComplEntrega, c.EnderecoEntrega");
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
                 situacao, codigoRota, idVendedor, tiposFiscais, formasPagto, dataCadastroIni, dataCadastroFim, dataSemCompraIni, dataSemCompraFim,
                 dataInativadoIni, dataInativadoFim, dataNascimentoIni, dataNascimentoFim, idTabelaDescontoAcrescimo, apenasSemRota, limite, uf, tipoPessoa, comCompra);
-                        
+
             return consulta.ToVirtualResultLazy<Entidades.ClientePesquisa>();
         }
 
@@ -506,10 +507,10 @@ namespace Glass.Global.Negocios.Componentes
                       c.Bairro, cid.NomeCidade as Cidade, cid.NomeUf as Uf, c.Cep, c.EnderecoCobranca, c.NumeroCobranca, c.ComplCobranca,
                       c.BairroCobranca, cidCobr.NomeCidade as CidadeCobranca, cidCobr.NomeUf as UfCobranca, c.CepCobranca, c.Limite,
                       c.ValorMediaIni, c.ValorMediaFim, c.Credito, c.PercSinalMinimo, c.Revenda, p.Descricao as Parcela,
-                      c.PagamentoAntesProducao, td.Descricao as TabelaDescontoAcrescimo, c.CobrarIcmsSt, c.CobrarIpi, 
-                      ISNULL(l.NomeFantasia, l.RazaoSocial) as Loja, fVend.Nome as NomeFunc, com.Nome as NomeComissionado, c.PercComissaoFunc, 
-                      r.CodInterno as Rota, c.Login, c.Situacao, tc.Descricao as TipoCliente, c.BloquearPedidoContaVencida, c.IgnorarBloqueioPedPronto, 
-                      c.Obs, c.Contato1, c.CelContato1, c.EmailContato1, c.RamalContato1, c.Contato2, c.CelContato2, c.EmailContato2, c.RamalContato2, 
+                      c.PagamentoAntesProducao, td.Descricao as TabelaDescontoAcrescimo, c.CobrarIcmsSt, c.CobrarIpi,
+                      ISNULL(l.NomeFantasia, l.RazaoSocial) as Loja, fVend.Nome as NomeFunc, com.Nome as NomeComissionado, c.PercComissaoFunc,
+                      r.CodInterno as Rota, c.Login, c.Situacao, tc.Descricao as TipoCliente, c.BloquearPedidoContaVencida, c.IgnorarBloqueioPedPronto,
+                      c.Obs, c.Contato1, c.CelContato1, c.EmailContato1, c.RamalContato1, c.Contato2, c.CelContato2, c.EmailContato2, c.RamalContato2,
                       c.Historico, c.IdLoja, l.CalcularIcmsPedido, l.CalcularIpiPedido");
 
             DefineFiltrosConsulta(ref consulta, idCliente, nomeOuApelido, cpfCnpj, idLoja, telefone, logradouro, bairro, idCidade, idsTipoCliente,
@@ -671,7 +672,7 @@ namespace Glass.Global.Negocios.Componentes
                .FirstOrDefault();
         }
 
-        public Glass.Negocios.Global.SalvarClienteResultado SalvarClienteRetornando(Entidades.Cliente cliente) 
+        public Glass.Negocios.Global.SalvarClienteResultado SalvarClienteRetornando(Entidades.Cliente cliente)
         {
             var resultado = SalvarCliente(cliente);
 
@@ -828,6 +829,110 @@ namespace Glass.Global.Negocios.Componentes
 
         #endregion
 
+        #region Grupo Cliente
+
+        /// <summary>
+        /// Recupera os tipos de clientes do sistema.
+        /// </summary>
+        /// <returns></returns>
+        public IList<Entidades.GrupoCliente> PesquisarGruposCliente()
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.GrupoCliente>()
+                .OrderBy("Descricao")
+                .ToVirtualResult<Entidades.GrupoCliente>();
+        }
+
+        /// <summary>
+        /// Recupera os tipos de clientes cadastrados no sistema.
+        /// </summary>
+        /// <returns></returns>
+        public IList<IEntityDescriptor> ObterDescritoresGrupoCliente()
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.GrupoCliente>()
+                .OrderBy("Descricao")
+                .ProcessResultDescriptor<Entidades.GrupoCliente>()
+                .ToList();
+        }
+
+        /// <summary>
+        /// Recupera os descritores dos tipos de cliente pelos identificadores informados.
+        /// </summary>
+        /// <param name="idsTipoCliente"></param>
+        /// <returns></returns>
+        public IList<IEntityDescriptor> ObterGruposCliente(IEnumerable<int> idsGrupoCliente)
+        {
+            idsGrupoCliente.Require("idGrupoCliente").NotNull();
+
+            var ids = string.Join(",", idsGrupoCliente.Distinct().Select(f => f.ToString()).ToArray());
+
+            if (string.IsNullOrEmpty(ids))
+                return new List<Colosoft.IEntityDescriptor>();
+
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.GrupoCliente>()
+                .Where(string.Format("IdGrupoCliente IN ({0})", ids))
+                .ProcessResultDescriptor<Entidades.TipoCliente>()
+                .ToList();
+        }
+
+        /// <summary>
+        /// Recupera o tipo de cliente pelo identificador informado.
+        /// </summary>
+        /// <param name="idTipoCliente"></param>
+        /// <returns></returns>
+        public Entidades.GrupoCliente ObterGrupoCliente(int idGrupoCliente)
+        {
+            return SourceContext.Instance.CreateQuery()
+                .From<Data.Model.GrupoCliente>()
+                .Where("IdGrupoCliente=?id")
+                .Add("?id", idGrupoCliente)
+                .ProcessLazyResult<Entidades.GrupoCliente>()
+                .FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Salva os dados da entidade.
+        /// </summary>
+        /// <param name="tipoCliente"></param>
+        /// <returns></returns>
+        public Colosoft.Business.SaveResult SalvarGrupoCliente(Entidades.GrupoCliente grupoCliente)
+        {
+            grupoCliente.Require("grupoCliente").NotNull();
+
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                var resultado = grupoCliente.Save(session);
+
+                if (!resultado)
+                    return resultado;
+
+                return session.Execute(false).ToSaveResult();
+            }
+        }
+
+        /// <summary>
+        /// Apaga o tipo de cliente.
+        /// </summary>
+        /// <param name="tipoCliente"></param>
+        /// <returns></returns>
+        public Colosoft.Business.DeleteResult ApagarGrupoCliente(Entidades.GrupoCliente grupoCliente)
+        {
+            grupoCliente.Require("grupoCliente").NotNull();
+
+            using (var session = SourceContext.Instance.CreateSession())
+            {
+                var resultado = grupoCliente.Delete(session);
+                if (!resultado)
+                    return resultado;
+
+                return session.Execute(false).ToDeleteResult();
+            }
+        }
+
+        #endregion
+
         #region Tabela de desconto/acréscimo
 
         /// <summary>
@@ -922,7 +1027,7 @@ namespace Glass.Global.Negocios.Componentes
         /// Pesquisa os descontos/acréscimos do sistema.
         /// </summary>
         /// <returns></returns>
-        public IList<Entidades.DescontoAcrescimoClientePesquisa> PesquisarDescontosAcrescimos(int? idCliente, 
+        public IList<Entidades.DescontoAcrescimoClientePesquisa> PesquisarDescontosAcrescimos(int? idCliente,
             int? idTabelaDesconto, int? idGrupoProd, int? idSubgrupoProd, string codProduto, string produto, Situacao? situacao)
         {
             // Exige a tabela de desconto caso o cliente não seja informado
@@ -951,10 +1056,10 @@ namespace Glass.Global.Negocios.Componentes
                     .From<Data.Model.GrupoProd>("g")
                     .InnerJoin<Data.Model.SubgrupoProd>("g.IdGrupoProd=s.IdGrupoProd", "s")
                     .Select(String.Format(
-                        @"{0}, g.IdGrupoProd, s.IdSubgrupoProd, g.Descricao as Grupo, 
+                        @"{0}, g.IdGrupoProd, s.IdSubgrupoProd, g.Descricao as Grupo,
                           s.Descricao as Subgrupo", idDados))
                     .OrderBy("g.Descricao, s.Descricao");
-                
+
                 consulta.RightJoin(prod, String.Format(@"{0}
 		            AND dados.IdGrupoProd=ISNULL(dc.IdGrupoProd, dados.IdGrupoProd)
 		            AND dados.IdSubgrupoProd=ISNULL(dc.IdSubgrupoProd, dados.IdSubgrupoProd)
@@ -964,7 +1069,7 @@ namespace Glass.Global.Negocios.Componentes
             {
                 idProd = "dados.IdProd";
                 descrProd = ", dados.Produto";
-                
+
                 consulta.OrderBy("dados.Produto");
 
                 var prod = SourceContext.Instance.CreateQuery()
@@ -972,7 +1077,7 @@ namespace Glass.Global.Negocios.Componentes
                     .InnerJoin<Data.Model.GrupoProd>("p.IdGrupoProd=g.IdGrupoProd", "g")
                     .LeftJoin<Data.Model.SubgrupoProd>("p.IdSubgrupoProd=s.IdSubgrupoProd", "s")
                     .Select(String.Format(
-                        @"{0}, p.IdProd, p.IdGrupoProd, p.IdSubgrupoProd, g.Descricao as Grupo, 
+                        @"{0}, p.IdProd, p.IdGrupoProd, p.IdSubgrupoProd, g.Descricao as Grupo,
                           s.Descricao as Subgrupo, p.Descricao as Produto", idDados))
                     .OrderBy("Descricao");
 
@@ -1001,9 +1106,9 @@ namespace Glass.Global.Negocios.Componentes
             }
 
             consulta.Select(String.Format(
-                @"dc.IdDesconto, {2}.IdCliente, {3}.IdTabelaDesconto, dados.IdGrupoProd, 
-                  dados.IdSubgrupoProd, {0} as IdProduto, dc.Desconto, dc.Acrescimo, dc.DescontoAVista, 
-                  dc.AplicarBeneficiamentos, dados.Grupo, dados.Subgrupo {1}", 
+                @"dc.IdDesconto, {2}.IdCliente, {3}.IdTabelaDesconto, dados.IdGrupoProd,
+                  dados.IdSubgrupoProd, {0} as IdProduto, dc.Desconto, dc.Acrescimo, dc.DescontoAVista,
+                  dc.AplicarBeneficiamentos, dados.Grupo, dados.Subgrupo {1}",
 
                 idProd,
                 descrProd,
@@ -1256,6 +1361,40 @@ namespace Glass.Global.Negocios.Componentes
                     .Add("?id", tipoCliente.IdTipoCliente)
                     .Count(),
                     tratarResultado("Este tipo de cliente não pode ser excluído por possuir regras de natureza de operação relacionadas ao mesmo."))
+                .Execute();
+
+            return mensagens.Select(f => f.GetFormatter()).ToArray();
+        }
+
+        #endregion
+
+        #region IValidadorGrupoCliente Members
+
+        /// <summary>
+        /// Valida a existencia do dados do tipo de cliente.
+        /// </summary>
+        /// <returns></returns>
+        public IMessageFormattable[] ValidaExistencia(Entidades.GrupoCliente grupoCliente)
+        {
+            var mensagens = new List<string>();
+
+            // Handler para tratar o resultado da consulta de validação
+            var tratarResultado = new Func<string, Colosoft.Query.QueryCallBack>(mensagem =>
+               (sender, query, result) =>
+               {
+                   if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 &&
+                       !mensagens.Contains(mensagem))
+                       mensagens.Add(mensagem);
+               });
+
+            SourceContext.Instance.CreateMultiQuery()
+                // Verifica se o tipo de cliente possui clientes relacionados à seu id
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.Cliente>()
+                    .Where("IdGrupoCliente=?id")
+                    .Add("?id", grupoCliente.IdGrupoCliente)
+                    .Count(),
+                    tratarResultado("Este grupo de cliente não pode ser excluído por possuir clientes relacionados ao mesmo."))
                 .Execute();
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();

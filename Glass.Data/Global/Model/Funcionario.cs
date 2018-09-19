@@ -165,6 +165,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("HabilitarChat")]
         public bool HabilitarChat { get; set; }
 
+        [PersistenceProperty("HABILITARCONTROLEUSUARIOS")]
+        public bool HabilitarControleUsuarios { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

@@ -74,7 +74,8 @@ namespace Glass.UI.Web.Controls.MDFe
                 var codigoCidade = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.Global.Negocios.ILojaFluxo>()
                     .ObtemLoja((int)Glass.Data.Helper.UserInfo.GetUserInfo.IdLoja).Cidade.IdCidade;
 
-                 drpCidadeCarga.SelectedValue = codigoCidade.ToString();
+                drpCidadeCarga.SelectedValue = codigoCidade.ToString();
+                hdfCidadesCarga.Value = codigoCidade.ToString();
             }
         }
     }

@@ -153,6 +153,50 @@ namespace Glass.Global.Negocios
 
         #endregion
 
+        #region Grupo cliente
+
+        /// <summary>
+        /// Pesquisa os grupos de cliente do sistema.
+        /// </summary>
+        /// <returns></returns>
+        IList<Entidades.GrupoCliente> PesquisarGruposCliente();
+
+        /// <summary>
+        /// Recupera os descritores dos grupo de cliente.
+        /// </summary>
+        /// <returns></returns>
+        IList<Colosoft.IEntityDescriptor> ObterDescritoresGrupoCliente();
+
+        /// <summary>
+        /// Recupera os descritores dos grupos de cliente pelos identificadores informados.
+        /// </summary>
+        /// <param name="idsGrupoCliente"></param>
+        /// <returns></returns>
+        IList<Colosoft.IEntityDescriptor> ObterGruposCliente(IEnumerable<int> idsGrupoCliente);
+
+        /// <summary>
+        /// Recupera os dados do grupo de cliente.
+        /// </summary>
+        /// <param name="idGrupoCliente"></param>
+        /// <returns></returns>
+        Entidades.GrupoCliente ObterGrupoCliente(int idGrupoCliente);
+
+        /// <summary>
+        /// Salva os dados do grupo de cliente.
+        /// </summary>
+        /// <param name="grupoCliente"></param>
+        /// <returns></returns>
+        Colosoft.Business.SaveResult SalvarGrupoCliente(Entidades.GrupoCliente grupoCliente);
+
+        /// <summary>
+        /// Apaga o grupo de cliente.
+        /// </summary>
+        /// <param name="grupoCliente"></param>
+        /// <returns></returns>
+        Colosoft.Business.DeleteResult ApagarGrupoCliente(Entidades.GrupoCliente grupoCliente);
+
+        #endregion
+
         #region Tabela de desconto/acréscimo
 
         /// <summary>

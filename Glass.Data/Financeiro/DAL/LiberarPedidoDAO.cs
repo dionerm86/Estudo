@@ -886,10 +886,9 @@ namespace Glass.Data.DAL
                  * impede que o pedido seja liberado com formas de pagamento que não foram selecionadas no pedido. */
                 if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
                 {
-                    var tipoVenda = PedidoDAO.Instance.ObtemTipoVenda(session, (uint)idPedido);
                     var idFormaPagtoPedido = PedidoDAO.Instance.ObtemFormaPagto(session, (uint)idPedido);
 
-                    if (tipoVenda != (int)Data.Model.Pedido.TipoVendaPedido.AVista || !idsFormaPagamento.Any(f => f > 0) || idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
+                    if (idsFormaPagamento.Any(f => f > 0 && f != idFormaPagtoPedido))
                     {
                         throw new Exception("Não é permitido liberar os pedidos com uma forma de pagamento diferente da forma de pagamento definida no cadastro deles.");
                     }
