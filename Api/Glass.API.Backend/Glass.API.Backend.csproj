@@ -255,6 +255,8 @@
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
+    <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
+    <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -350,6 +352,7 @@
     </Compile>
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
+    <Compile Include="Helper\Acertos\TraducaoOrdenacaoListaAcertos.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
@@ -394,6 +397,8 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Acertos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ProtestoEnum.cs" />
     <Compile Include="Models\Beneficiamentos\Configuracoes\ControleDto.cs" />
     <Compile Include="Models\Beneficiamentos\Filtro\BeneficiamentoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\DadosBeneficiamentosDto.cs" />
@@ -441,6 +446,9 @@
     <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />

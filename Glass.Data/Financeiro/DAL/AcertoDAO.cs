@@ -211,8 +211,12 @@ namespace Glass.Data.DAL
             string sort = String.IsNullOrEmpty(sortExpression) ? "a.idAcerto desc" : sortExpression;
 
             bool temFiltro;
-            var dados = LoadDataWithSortExpression(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), sort, startRow, pageSize, temFiltro, GetParam(dataIni, dataFim));
+            var dados = (IList<Acerto>)objPersistence.LoadDataWithSortExpression(
+                SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), 
+                new InfoSortExpression(sort),
+                new InfoPaging(startRow, pageSize),
+                GetParam(dataIni, dataFim))
+                .ToList();
 
             PreencheIdRefJuros(ref dados);
             return dados;
@@ -222,19 +226,20 @@ namespace Glass.Data.DAL
             uint idCli, string dataIni, string dataFim, uint idFormaPagto, int numNotaFiscal)
         {
             bool temFiltro;
-            var dados = LoadDataWithSortExpression(SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                0, numNotaFiscal, 0, true, out temFiltro), "", 0, 0, GetParam(dataIni, dataFim));
+            var dados = (IList<Acerto>)objPersistence.LoadData(
+                SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, 0, numNotaFiscal, 0, true, out temFiltro)).ToList();
 
             PreencheIdRefJuros(ref dados);
             return dados;
         }
 
-        public int GetByCliListCount(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
+        public int GetByCliListCount(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim,
             uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim,
-                idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), temFiltro, null, GetParam(dataIni, dataFim));
+            return objPersistence.ExecuteSqlQueryCount(
+                SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, false, out temFiltro), 
+                GetParam(dataIni, dataFim));
         }
 
         public int GetCount(int numAcerto, uint idCli, string dataIni, string dataFim)
