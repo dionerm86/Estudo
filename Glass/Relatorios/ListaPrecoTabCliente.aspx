@@ -45,9 +45,9 @@
             }
 
             var ids = ListaPrecoTabCliente.ObtemIdsSubGrupoCliente(idCli.value).value;
-            FindControl("cbdSubgrupo", "select").itens(ids);
-
-            FindControl("txtNome", "input").value = retorno[1];
+            var cdbSubgrupo = FindControl("cbdSubgrupo", "select");
+            if(cdbSubgrupo != null)
+                cdbSubgrupo.itens(ids);
         }
 
         // Carrega dados do produto com base no código do produto passado
@@ -89,20 +89,11 @@
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
-                                OnClientClick="return getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label6" runat="server" Text="Produto" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtCodProd" runat="server" Width="60px" onblur="setProduto();"></asp:TextBox>
-                            <asp:TextBox ID="txtDescr" runat="server" Width="150px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:LinkButton ID="lnkPesq0" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
+                                    OnClientClick="return getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
+                <div id="filtros" runat="server">
                 <table>
                     <tr>
                         <td>
@@ -141,6 +132,16 @@
                     </table>
                     <table>
                         <tr>
+                            <td>
+                                <asp:Label ID="Label6" runat="server" Text="Produto" ForeColor="#0066FF"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtCodProd" runat="server" Width="60px" onblur="setProduto();"></asp:TextBox>
+                                <asp:TextBox ID="txtDescr" runat="server" Width="150px"></asp:TextBox>
+                            </td>
+                            <td>
+                                <asp:LinkButton ID="lnkPesq0" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
+                            </td>
                             <td>
                                 <asp:Label ID="Label7" runat="server" Text="Altura" ForeColor="#0066FF"></asp:Label>
                             </td>
@@ -203,12 +204,16 @@
                              <asp:CheckBox ID="chkExibirValorOriginal" runat="server" Checked="true"  OnCheckedChanged="grdProduto_DataBound" Text="Não exibir a coluna Valor Original"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td colspan="3" align="center">
+                            <asp:Button ID="btnFiltrarNovoCliente" OnClick="btnFiltrarNovoCliente_Click" runat="server" Text="Filtrar novo cliente" />
+                        </td>
+                    </tr>
                 </table>
+            </div>
             </td>
-        </tr>
-        <tr>
             <td>
-                &nbsp;
+                
             </td>
         </tr>
         <tr>
