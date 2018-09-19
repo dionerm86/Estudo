@@ -1271,6 +1271,13 @@ namespace Glass.Data.DAL
 
                 NotaFiscalDAO.Instance.UpdateTotalNf(session, objInsert.IdNf);
 
+                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objInsert.IdNf) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
+                {
+                    decimal valorIpiDevolvidoProdutos = produtosNf.Sum(f => f.ValorIpiDevolvido);
+
+                    NotaFiscalDAO.Instance.AtualizaValorIpiDevolvido(session, objInsert.IdNf, valorIpiDevolvidoProdutos);
+                }
+
                 // Busca observação da CFOP do produto e salva nas informações complementares da nota
                 if (NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf) == (int)NotaFiscal.TipoDoc.Saída && objInsert.IdCfop > 0 &&
                     objInsert.IdCfop != NotaFiscalDAO.Instance.GetIdCfop(session, objInsert.IdNf))
@@ -1458,6 +1465,14 @@ namespace Glass.Data.DAL
 
                     if (!String.IsNullOrEmpty(obsCfop) && (infCompl == null || !infCompl.Contains(obsCfop)))
                         NotaFiscalDAO.Instance.InsereInfCompl(session, objUpdate.IdNf, (!String.IsNullOrEmpty(infCompl) ? ". " : "") + obsCfop);
+                }
+
+                if (NotaFiscalDAO.Instance.ObtemFinalidade(session, objUpdate.IdNf) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
+                {
+                    var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
+                    decimal valorIpiDevolvidoProdutos = produtosNf.Sum(f => f.ValorIpiDevolvido);
+
+                    NotaFiscalDAO.Instance.AtualizaValorIpiDevolvido(session, objUpdate.IdNf, valorIpiDevolvidoProdutos);
                 }
             }
             catch (Exception ex)
