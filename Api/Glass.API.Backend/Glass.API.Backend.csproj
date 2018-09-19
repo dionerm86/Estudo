@@ -403,7 +403,7 @@
     <Compile Include="Models\Sinais\Lista\FiltroDto.cs" />
     <Compile Include="Models\Sinais\Lista\ListaDto.cs" />
     <Compile Include="Models\Sinais\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\Acertos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Acertos\Lista\ProtestoEnum.cs" />
     <Compile Include="Models\Beneficiamentos\Configuracoes\ControleDto.cs" />
     <Compile Include="Models\Beneficiamentos\Filtro\BeneficiamentoDto.cs" />
@@ -434,7 +434,7 @@
     <Compile Include="Models\Cheques\Lista\AdvogadoEnum.cs" />
     <Compile Include="Models\Cheques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cheques\Lista\ListaDto.cs" />
-    <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
