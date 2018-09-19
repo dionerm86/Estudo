@@ -23,11 +23,10 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public LoginUsuario Autenticacao(string login, string senha)
         {
-            string sql = "Select IDFUNC From funcionario Where Login=?login And Senha=?senha And situacao=" + (int)Situacao.Ativo;
-
+            var sql = "Select IDFUNC From funcionario Where Login=?login And Senha=?senha And situacao=" + (int)Situacao.Ativo;
             object idFunc;
 
-            GDAParameter[] param = new GDAParameter[2];
+            var param = new GDAParameter[2];
             param.SetValue(new GDAParameter("?login", login), 0);
             param.SetValue(new GDAParameter("?senha", senha), 1);
 
@@ -41,29 +40,36 @@ namespace Glass.Data.DAL
             }
 
             if (idFunc == null)
+            {
                 throw new Exception("Usuário ou senha inválidos.");
+            }
 
-            uint tipoFunc = ObtemValorCampo<uint>("idTipoFunc", "idFunc=" + idFunc);
+            var tipoFunc = ObtemIdTipoFunc(null, idFunc.ToString().StrParaUint());
 
             // Verifica se funcionário pode logar no sistema pelo dia e hora atuais
             // Regra aplicada somente para os que não forem gerentes
-            if (tipoFunc != (uint)Utils.TipoFuncionario.Administrador &&
-                !HttpContext.Current.Request.Url.ToString().Contains("localhost"))
+            if (tipoFunc != (uint)Utils.TipoFuncionario.Administrador)
             {
                 // Verifica se o usuário possui a permissão de login no sistema a qualquer momento
-                if (Config.PossuiPermissao(Conversoes.StrParaInt(idFunc.ToString()), Config.FuncaoMenuCadastro.EfetuarLoginQualquerMomento))
-                    return GetLogin(Glass.Conversoes.StrParaInt(idFunc.ToString()));
+                if (Config.PossuiPermissao(idFunc.ToString().StrParaInt(), Config.FuncaoMenuCadastro.EfetuarLoginQualquerMomento))
+                {
+                    return GetLogin(idFunc.ToString().StrParaInt());
+                }
 
                 // Usuários da produção podem logar no sistema a qualquer hora
                 if (tipoFunc == (uint)Utils.TipoFuncionario.MarcadorProducao)
-                    return GetLogin(Glass.Conversoes.StrParaInt(idFunc.ToString()));
+                {
+                    return GetLogin(idFunc.ToString().StrParaInt());
+                }
 
                 DateTime horarioInicioLogin;
                 DateTime horarioFimLogin;
 
                 if (!DateTime.TryParse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioInicioLogin)), out horarioInicioLogin) ||
                     !DateTime.TryParse(DateTime.Now.ToString(string.Format("dd/MM/yyyy {0}", Geral.HorarioFimLogin)), out horarioFimLogin))
+                {
                     throw new InvalidOperationException("Não foi possível recuperar a configuração do horário de inicio e fim de login.");
+                }
 
                 if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday) // Domingo
                 {
@@ -75,7 +81,10 @@ namespace Glass.Data.DAL
                 }
                 else if (DateTime.Now < horarioInicioLogin || DateTime.Now > horarioFimLogin) // Configuração.
                 {
-                    throw new Exception("Não é permitido logar no sistema neste horário.");
+                    var excecao = new Exception($"Não é permitido logar no sistema neste horário.");
+
+                    ErroDAO.Instance.InserirFromException($"Autenticacao - Inicio: { horarioInicioLogin } | Fim: { horarioFimLogin }", excecao);
+                    throw excecao;
                 }
             }
 

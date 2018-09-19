@@ -187,10 +187,12 @@ namespace Glass.Fiscal.Negocios.Componentes
 
                         // Se for CST 20: Com redução na BC ICMS
                         // Se for CST 70: Com redução na BC ICMS, considerando o código do valor fiscal = 1
-                        if ((item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculo && item.PercRedBcIcms > 0) || 
-                            (item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculoECobrancaDoIcmsPorSubstituicaoTributaria && 
-                             item.PercRedBcIcms > 0 && item.CodValorFiscal == 1))
+                        if ((item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculo ||
+                            (item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculoECobrancaDoIcmsPorSubstituicaoTributaria && item.CodValorFiscal == 1) ||
+                            item.Referencia.Csosn == Sync.Fiscal.Enumeracao.Cst.CsosnIcms.Outros) && item.PercRedBcIcms > 0)
+                        {
                             item.BcIcms = item.BcIcms * (decimal)(1 - (item.PercRedBcIcms / 100));
+                        }
 
                         // Criado para resolver os chamados 12720, 14223, 14370 e 14646, junto com outra alteração feita logo acima
                         item.BcIcms = Math.Round(item.BcIcms, 2, MidpointRounding.AwayFromZero);
@@ -218,11 +220,17 @@ namespace Glass.Fiscal.Negocios.Componentes
                             (naoIncluirOutrasDespBCIcms ? 0 : item.ValorOutrasDespesas) +
                             item.ValorIof + item.ValorDespesaAduaneira - (percentualDesconto * item.Total));
 
-                        if (item.NaturezaOperacao.IpiIntegraBcIcms) item.BcIcms += item.ValorIpi;
-                        // No Simples Nacional não existe CST e sim CSOSN, necessário verificar qual CSOSN possui redução na BCICMS e ajustar a lógica
-                        // Se CST igual a 20 ou 70, calcula redução da BC ICMS.
-                        //if ((prodNf.Cst == "20" || prodNf.Cst == "70") && prodNf.PercRedBcIcms > 0)
-                        //    prodNf.BcIcms = prodNf.BcIcms * (decimal)(1 - (prodNf.PercRedBcIcms / 100));
+                        if (item.NaturezaOperacao.IpiIntegraBcIcms)
+                        {
+                            item.BcIcms += item.ValorIpi;
+                        }
+                        
+                        if ((item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculo ||
+                            (item.Cst == Sync.Fiscal.Enumeracao.Cst.CstIcms.ComReducaoDeBaseDeCalculoECobrancaDoIcmsPorSubstituicaoTributaria && item.CodValorFiscal == 1) ||
+                            item.Referencia.Csosn == Sync.Fiscal.Enumeracao.Cst.CsosnIcms.Outros) && item.PercRedBcIcms > 0)
+                        {
+                            item.BcIcms = item.BcIcms * (decimal)(1 - (item.PercRedBcIcms / 100));
+                        }
 
                         // É necessário colocar arredondamento pois na nota será arredondado em duas casas decimais,
                         // para que o somatório de icms dos itens fique igual ao total de icms da nota é necessário 

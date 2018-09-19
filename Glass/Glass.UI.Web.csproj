@@ -474,6 +474,7 @@
     <Content Include="Cadastros\CadManifestoEletronico.aspx" />
     <Content Include="Cadastros\CadMovInternaEstoqueFiscal.aspx" />
     <Content Include="Cadastros\CadOtimizacao.aspx" />
+    <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.Filtro.js" />
     <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.js" />
@@ -3413,6 +3414,13 @@
     </Compile>
     <Compile Include="Cadastros\CadTipoCartao.aspx.designer.cs">
       <DependentUpon>CadTipoCartao.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadGrupoCliente.aspx.cs">
+      <DependentUpon>CadGrupoCliente.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadGrupoCliente.aspx.designer.cs">
+      <DependentUpon>CadGrupoCliente.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\Expedicao\CadLeituraCarregamentoMobile.aspx.cs">
       <DependentUpon>CadLeituraCarregamentoMobile.aspx</DependentUpon>

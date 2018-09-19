@@ -3672,12 +3672,19 @@ namespace Glass.Data.DAL
                                 // Calcula ICMS
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "modBC", "0"); // 0-MVA
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vBC", Formatacoes.TrataValorDecimal(calcIcms ? bcIcms : 0, 2));
+                                ManipulacaoXml.SetNode(doc, icmsSn900, "pRedBC", Formatacoes.TrataValorDouble(pnf.PercRedBcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "pICMS", Formatacoes.TrataValorDecimal(calcIcms ? aliqIcms : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vICMS", Formatacoes.TrataValorDecimal(calcIcms ? valorIcms : 0, 2));
 
                                 // Calcula ICMS ST
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "modBCST", "4"); // 4-MVA
                                 if (mva > 0) ManipulacaoXml.SetNode(doc, icmsSn900, "pMVAST", Formatacoes.TrataValorDouble(mva, 2));
+
+                                if (pnf.PercRedBcIcmsSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn900, "pRedBCST", Formatacoes.TrataValorDouble(pnf.PercRedBcIcmsSt, 2));
+                                }
+
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vBCST", Formatacoes.TrataValorDecimal(calcIcmsSt ? bcIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "pICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? aliqIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? valorIcmsSt : 0, 2));
