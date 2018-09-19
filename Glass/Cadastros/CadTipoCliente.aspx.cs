@@ -15,9 +15,9 @@ namespace Glass.UI.Web.Cadastros
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            
-        }  
-    
+
+        }
+
         protected void lnkInserir_Click(object sender, EventArgs e)
         {
             var tipoCliente = new Glass.Global.Negocios.Entidades.TipoCliente();
@@ -39,6 +39,6 @@ namespace Glass.UI.Web.Cadastros
         protected void grdTipoCliente_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             grdTipoCliente.ShowFooter = e.CommandName != "Edit";
-        }  
+        }
     }
 }
