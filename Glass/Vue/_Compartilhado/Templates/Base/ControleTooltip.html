@@ -1,0 +1,24 @@
+﻿<span style="padding: 0">
+    <span ref="botao" v-on:mouseover.prevent="exibirMouse" v-on:mouseout.prevent="esconderMouse"
+        v-on:click.prevent="exibirClick" style="cursor: pointer; display: inline-block">
+        <slot name="botao">
+        </slot>
+    </span>
+    <transition name="fade" v-on:enter="calcularPosicao__" v-on:after-enter="mostrar__" v-on:before-leave="esconder__">
+        <div v-bind:style="estiloPopup" v-if="exibir">
+            <div v-if="titulo || precisaClicar" v-bind:style="estiloTitulo">
+                <span style="color: white; position: relative; top: 1px; white-space: nowrap" v-if="titulo">
+                    {{ titulo }}
+                </span>
+                <span v-else></span>
+                <button v-bind:style="estiloBotaoFechar" v-if="precisaClicar" v-on:click.prevent="fechar"
+                    v-on:mouseover.prevent="fecharAtivo = true" v-on:mouseout.prevent="fecharAtivo = false">
+                    Fechar
+                </button>
+            </div>
+            <div style="padding: 3px; text-align: center">
+                <slot></slot>
+            </div>
+        </div>
+    </transition>
+</span>
