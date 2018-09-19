@@ -25,7 +25,7 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Configuracoes
             this.ControleFinanceiroPagamento = Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
             this.DescricaoContaContabil = FinanceiroConfig.ContasPagarReceber.DescricaoContaContabil;
             this.DescricaoContaNaoContabil = FinanceiroConfig.ContasPagarReceber.DescricaoContaNaoContabil;
-            this.ExibirTotalCumulativo = FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo;
+            this.ExibirTotalCumulativo = FinanceiroConfig.CaixaGeral.CxGeralTotalCumulativo && this.ControleFinanceiroRecebimento && this.ControleFinanceiroPagamento;
             this.PermitirFiltrarFuncionario = !FinanceiroConfig.FinanceiroRec.ApenasFinancGeralAdminSelFuncCxGeral || (this.ControleFinanceiroRecebimento && this.ControleFinanceiroPagamento);
             this.ExibirInformacoesContasRecebidas = FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber;
             this.LojaUsuario = new IdNomeDto

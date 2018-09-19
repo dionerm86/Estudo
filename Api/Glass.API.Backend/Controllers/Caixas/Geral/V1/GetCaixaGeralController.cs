@@ -84,7 +84,7 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
         /// <param name="filtro">Os filtros para a busca dos totalizadores.</param>
         /// <returns>Um item com os totalizadores.</returns>
         [HttpGet]
-        [Route("obterTotaisPorFormaPagamento")]
+        [Route("totaisPorFormaPagamento")]
         [SwaggerResponse(200, "Totais calculados.", Type = typeof(TotalizadoresDto))]
         [SwaggerResponse(204, "Totais não calculados.")]
         public IHttpActionResult ObterTotaisPorFormaPagamento([FromUri] FiltroDto filtro)
@@ -168,7 +168,7 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
         /// </summary>
         /// <returns>Uma lista JSON com os tipos de movimentação.</returns>
         [HttpGet]
-        [Route("obterTiposMovimentacao")]
+        [Route("tiposMovimentacao")]
         [SwaggerResponse(200, "Tipos de movimentação encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Tipos de movimentação não encontrados.")]
         public IHttpActionResult ObterTiposMovimentacao()

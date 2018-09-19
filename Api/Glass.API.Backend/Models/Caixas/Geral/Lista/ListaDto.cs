@@ -44,7 +44,7 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
             this.Valor = caixaGeral.ValorMov;
             this.Juros = caixaGeral.Juros;
             this.Saldo = caixaGeral.Saldo;
-            this.CorLinha = caixaGeral.TipoMov == (int)Data.Model.CaixaDiario.TipoMovimentacaoEnum.Saida ? "Red" : "Black";
+            this.CorLinha = caixaGeral.TipoMov == (int)Data.Model.CaixaDiario.TipoMovimentacaoEnum.Saida && caixaGeral.IdCaixaGeral > 0 ? "Red" : "Black";
         }
 
         /// <summary>

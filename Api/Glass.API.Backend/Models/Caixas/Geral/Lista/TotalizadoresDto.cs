@@ -17,7 +17,7 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
         /// Obtém ou define o valor total recebido.
         /// </summary>
         [DataMember]
-        [JsonProperty("recebido")]
+        [JsonProperty("totaisAcumulados")]
         public TotaisAcumuladosDto Recebido { get; set; }
 
         /// <summary>
