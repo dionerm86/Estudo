@@ -11,31 +11,31 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
     <script type="text/javascript">
-    
+
         function cidadeUf()
         {
             var cidade = FindControl('txtCidade', 'input');
             var nomeUf = FindControl('hdfNomeUf', 'input').value;
-            
+
             if (nomeUf != "" && nomeUf != null) {
                 cidade.value += " - " + nomeUf;
             }
-            
+
             var cidadeCobranca = FindControl('txtCidadeCobranca', 'input');
             var nomeUfCobranca = FindControl('hdfNomeUfCobranca', 'input').value;
-            
+
             if (nomeUfCobranca != "" && nomeUfCobranca != null) {
                 cidadeCobranca.value += " - " + nomeUfCobranca;
             }
-            
+
             var cidadeEntrega = FindControl('txtCidadeEntrega', 'input');
             var nomeUfEntrega = FindControl('hdfNomeUfEntrega', 'input').value;
-            
+
             if (nomeUfEntrega != "" && nomeUfEntrega != null) {
                 cidadeEntrega.value += " - " + nomeUfEntrega;
             }
         }
-        
+
         function getComissionado()
         {
             var idComissionado = FindControl("txtIdComissionado", "input").value;
@@ -50,7 +50,7 @@
         function setComissionado(idComissionado)
         {
             var resposta = MetodosAjax.GetComissionado(idComissionado, "").value.split(';');
-            
+
             if (resposta[0] == "Erro")
             {
                 FindControl("txtIdComissionado", "input").value = "";
@@ -71,43 +71,43 @@
                 var cidade = FindControl("txtCidade", "input");
                 var idCidade = FindControl("hdfCidade", "input");
                 pesquisarCep(cep, null, logradouro, bairro, cidade, null, idCidade);
-                
+
                 if (logradouro != null &&
                     logradouro.value != null &&
                     logradouro.value.length >= 100)
                     logradouro.value = logradouro.value.toString().substring(0, 100);
             }
-            else if (FindControl("hdfCampoCidade", "input").value == "cobranca") 
+            else if (FindControl("hdfCampoCidade", "input").value == "cobranca")
             {
                 var logradouro2 = FindControl("txtEnderecoCobranca", "input");
                 var bairro2 = FindControl("txtBairroCobranca", "input");
                 var cidade2 = FindControl("txtCidadeCobranca", "input");
                 var idCidade2 = FindControl("hdfCidadeCobranca", "input");
                 pesquisarCep(cep, null, logradouro2, bairro2, cidade2, null, idCidade2);
-                
+
                 if (logradouro2 != null &&
                     logradouro2.value != null &&
                     logradouro2.value.length >= 100)
                     logradouro2.value = logradouro2.value.toString().substring(0, 100);
             }
-            else if (FindControl("hdfCampoCidade", "input").value == "entrega") 
+            else if (FindControl("hdfCampoCidade", "input").value == "entrega")
             {
                 var logradouro3 = FindControl("txtEnderecoEntrega", "input");
                 var bairro3 = FindControl("txtBairroEntrega", "input");
                 var cidade3 = FindControl("txtCidadeEntrega", "input");
                 var idCidade3 = FindControl("hdfCidadeEntrega", "input");
                 pesquisarCep(cep, null, logradouro3, bairro3, cidade3, null, idCidade3);
-                
+
                 if (logradouro3 != null &&
                     logradouro3.value != null &&
                     logradouro3.value.length >= 100)
                     logradouro3.value = logradouro3.value.toString().substring(0, 100);
-            }            
+            }
         }
-        
+
         function onInsert(){
             bloquearPagina();
-            
+
             if(!validaInsercao()){
                 desbloquearPagina(true);
                 return false;
@@ -132,7 +132,7 @@
                 alert("Informe o vendedor associado à este cliente.");
                 return false;
             }
-            
+
             if (urlSistema != "" && urlSistema.toUpperCase().indexOf("WEBGLASS") == -1) {
                 alert("A URL do Sistema é inválida.");
                 return false;
@@ -152,7 +152,7 @@
                 alert("Já existe um cliente cadastrado com o CPF/CNPJ informado");
                 return false;
             }
-            
+
             FindControl("txtLimite", "input").value = FindControl("txtLimite", "input").value.replace(".", "");
             FindControl("txtLimiteCheques", "input").value = FindControl("txtLimiteCheques", "input").value.replace(".", "");
 
@@ -160,9 +160,9 @@
         }
 
         function onUpdate(){
-        
+
             bloquearPagina();
-            
+
             if(!validaUpdate()){
                 desbloquearPagina(true);
                 return false;
@@ -172,9 +172,9 @@
                 return true;
             }
         }
-        
+
         function validaUpdate()
-        {            
+        {
             var tipoUsuario = FindControl("hdfTipoUsuario", "input").value;
             var produtorRural = FindControl("chkProdutorRural", "input").checked;
             var urlSistema = FindControl("txtUrlSistema", "input");
@@ -184,9 +184,9 @@
                 if (verificaCampos() == false)
                     return false;
             }
-                        
+
             var cpfCnpj = FindControl("txtCpfCnpj", "input").value;
-            
+
             if ((cpfCnpj == "999.999.999-99" || cpfCnpj == "99.999.999/9999-99") && <%= PermitirCpfCnpjTudo9AoInserir().ToString().ToLower() %>)
                 FindControl("valCpfCnpj", "span").enabled = false;
             else if (cpfCnpj == "")
@@ -195,7 +195,7 @@
                 return false;
             }
             else if (FindControl("valCpfCnpj", "span").style.visibility == "visible")
-                return false;            
+                return false;
             else if (!produtorRural && CadCliente.CheckIfExists(cpfCnpj).value == "true") {
                 var cpfCnpjNovo = FindControl("txtCpfCnpj", "input").value;
                 var cpfCnpjSalvo = FindControl("hdfCNPJ", "input").value;
@@ -205,11 +205,11 @@
                     return false;
                 }
             }
-            
+
             if (FindControl("txtValorMediaIni", "input").value != "" || FindControl("txtValorMediaFim", "input").value != ""){
                 var valorMediaIni = FindControl("txtValorMediaIni", "input");
                 var valorMediaFim = FindControl("txtValorMediaFim", "input");
-                
+
                 if (valorMediaIni.value != "") {
                     while(valorMediaIni.value.indexOf(".") >= 0) {
                         valorMediaIni.value = valorMediaIni.value.replace(".","");
@@ -218,7 +218,7 @@
                 else {
                     valorMediaIni.value = "0";
                 }
-                
+
                 if (valorMediaFim.value != "") {
                     while(valorMediaFim.value.indexOf(".") >= 0) {
                         valorMediaFim.value = valorMediaFim.value.replace(".","");
@@ -227,19 +227,19 @@
                 else {
                     valorMediaFim.value = "0";
                 }
-                
+
                 if (parseFloat(valorMediaIni.value) > parseFloat(valorMediaFim.value)){
                     alert("O valor inicial da média de compra não pode ser maior que o valor final da mesma.");
                     return false;
                 }
             }
 
-            if (FindControl("drpTipoCliente", "select") != null && 
+            if (FindControl("drpTipoCliente", "select") != null &&
                 (FindControl("drpTipoCliente", "select").value == "" || FindControl("drpTipoCliente", "select").value == null)) {
                 alert("Informe o tipo do cliente.");
-                return false;                
+                return false;
             }
-            
+
             if (urlSistema != "" && urlSistema.toUpperCase().indexOf("WEBGLASS") == -1) {
                 alert("A URL do Sistema é inválida.");
                 return false;
@@ -254,7 +254,7 @@
 
             FindControl("txtLimite", "input").value = FindControl("txtLimite", "input").value.replace(".", "");
             FindControl("txtLimiteCheques", "input").value = FindControl("txtLimiteCheques", "input").value.replace(".", "");
-            
+
             return true;
         }
 
@@ -265,7 +265,7 @@
                 alert("Informe o nome do cliente.");
                 return false;
             }
-            
+
             if (!(<%= NaoExigirEnderecoConsumidorFinal().ToString().ToLower() %> && getTipoFiscal() == "1"))
             {
                 if (FindControl("hdfCidade", "input").value == "")
@@ -291,27 +291,27 @@
                     alert("Informe o bairro do Cliente.");
                     return false;
                 }
-            }            
+            }
 
-            if (FindControl("drpTipoCliente", "select") != null && 
+            if (FindControl("drpTipoCliente", "select") != null &&
                 (FindControl("drpTipoCliente", "select").value == "" || FindControl("drpTipoCliente", "select").value == null)) {
                 alert("Informe o tipo do cliente.");
-                return false;                
+                return false;
             }
-            
+
             var exigirEmailCliente = <%= ExigirEmailClienteAoInserirOuAtualizar().ToString().ToLower() %>;
-            
+
             // Email Comercial
             if (FindControl("txtEmail", "textArea") != null)
-            {     
+            {
                 var email = FindControl("txtEmail", "textArea").value;
 
                 if (email == "" && exigirEmailCliente) {
                     alert("Informe o email do cliente.");
                     return false;
                 }
-                
-                if (email != "") 
+
+                if (email != "")
                 {
                     for (var i = 0; i < email.split(';').length; i++)
                         if (email.split(';')[i].trim() != "" && !validaEmail(email.split(';')[i])) {
@@ -323,7 +323,7 @@
 
             // Email Fiscal
             if (FindControl("txtEmailFiscal", "input") != null)
-            {                
+            {
                 var emailFiscal = FindControl("txtEmailFiscal", "input").value;
 
                 if (emailFiscal == "" && <%= ExigirEmailClienteAoInserirOuAtualizar().ToString().ToLower() %>) {
@@ -337,10 +337,10 @@
                         return false;
                     }
             }
-            
+
             // Email Cobrança
             if (FindControl("txtEmailCobranca", "input") != null)
-            {                
+            {
                 var emailCobranca = FindControl("txtEmailCobranca", "input").value;
 
                 if (emailCobranca == "" && exigirEmailCliente) {
@@ -361,7 +361,7 @@
             var telRes = FindControl("txtTelRes", "input").value;
             var telCont = FindControl("txtTelCont", "input").value;
             var telCel = FindControl("txtTelCel", "input").value;
-            
+
             if (telRes == "" && telCont == "" && telCel == "")
             {
                 alert("Informe pelo menos um telefone de contato do Cliente.");
@@ -400,7 +400,7 @@
                     return false;
                 }
         }
-            
+
         // Se for PJ, Inscrição Estadual/Contato não pode ficar em branco
         if (getTipoPessoa() == "J")
         {
@@ -411,7 +411,7 @@
             }
         }
 
-        if (getTipoFiscal() == "") 
+        if (getTipoFiscal() == "")
         {
             alert("Informe o tipo fiscal do cliente.");
             return false;
@@ -422,11 +422,11 @@
             alert("O campo Vendedor deve ser informado porque o cliente possui login.");
             return false;
         }
-            
+
         return true;
         }
 
-        function drpTipoPessoaChanged(apagarCpfCnpj) 
+        function drpTipoPessoaChanged(apagarCpfCnpj)
         {
             if (apagarCpfCnpj){
                 FindControl("txtCpfCnpj", "input").value = "";
@@ -470,18 +470,18 @@
                 FindControl('hdfCidade', 'input').value = idCidade;
                 FindControl('txtCidade', 'input').value = nomeCidade + " - " + nomeUf;
             }
-            else if (FindControl("hdfCampoCidade", "input").value == "cobranca") 
+            else if (FindControl("hdfCampoCidade", "input").value == "cobranca")
             {
                 FindControl('hdfCidadeCobranca', 'input').value = idCidade;
                 FindControl('txtCidadeCobranca', 'input').value = nomeCidade + " - " + nomeUf;
             }
-            else if (FindControl("hdfCampoCidade", "input").value == "entrega") 
+            else if (FindControl("hdfCampoCidade", "input").value == "entrega")
             {
                 FindControl('hdfCidadeEntrega', 'input').value = idCidade;
                 FindControl('txtCidadeEntrega', 'input').value = nomeCidade + " - " + nomeUf;
-            }            
+            }
         }
-             
+
         function setCampoCidade(campo) {
             if (campo == "cliente")
                 FindControl("hdfCampoCidade", "input").value = "cliente";
@@ -524,14 +524,14 @@
                 return e = null, !!d;
             }
         };
-        
+
         function bloquearEspeciais(e)
         {
-            if (!((e.key >= 'a' && e.key <= 'z') || (e.key >= 'A' && e.key <= 'Z')) &&  
-                isNaN(parseFloat(e.key)))     
-            {     
-                e.returnValue = false;     
-            } 
+            if (!((e.key >= 'a' && e.key <= 'z') || (e.key >= 'A' && e.key <= 'Z')) &&
+                isNaN(parseFloat(e.key)))
+            {
+                e.returnValue = false;
+            }
         }
 
     </script>
@@ -1270,6 +1270,15 @@
                                                     <td align="left" style="<%= ExibirNaoEnviarEmailLiberacao() %>">
                                                         <asp:CheckBox ID="chkNaoEnviarEmailLiberacao" runat="server" Checked='<%# Bind("NaoEnviarEmailLiberacao") %>' />
                                                     </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px">
+                                                        <asp:Label ID="lblGrupoCliente" runat="server" Text="Grupo Cliente"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:DropDownList ID="drpGrupoCliente" runat="server" AppendDataBoundItems="True" DataSourceID="odsGrupoCliente"
+                                                            DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdGrupoCliente") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader">
@@ -1360,7 +1369,7 @@
                                                             DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
                                                             SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
                                                         </sync:CheckBoxListDropDown>
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -1999,7 +2008,7 @@
                                                         <asp:Label ID="Label56" runat="server" Text="Parcelas"></asp:Label>
                                                     </td>
                                                     <td align="left">
-                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server" 
+                                                        <uc2:ctrlParcelasUsar ID="ctrlParcelasUsar1" runat="server"
                                                             ParcelasNaoUsar='<%# Bind("Parcelas") %>' FormaPagtoPadrao='<%# Bind("TipoPagto") %>' IdCliente='<%# Eval("IdCli") %>' />
                                                     </td>
                                                 </tr>
@@ -2194,6 +2203,15 @@
                                                             Visible="<%# Glass.Configuracoes.PCPConfig.EmailSMS.EnviarEmailPedidoPronto %>" />
                                                     </td>
                                                     <td align="left" class="dtvHeader" style="width: 160px">
+                                                        <asp:Label ID="lblGrupoCliente" runat="server" Text="Grupo Cliente"></asp:Label>
+                                                    </td>
+                                                    <td align="left">
+                                                        <asp:DropDownList ID="drpGrupoCliente" runat="server" AppendDataBoundItems="True" DataSourceID="odsGrupoCliente"
+                                                            DataTextField="Name" DataValueField="Id" SelectedValue='<%# Bind("IdGrupoCliente") %>'>
+                                                            <asp:ListItem></asp:ListItem>
+                                                        </asp:DropDownList>
+                                                    </td>
+                                                    <td align="left" class="dtvHeader" style="width: 160px">
                                                         <asp:Label ID="lblRota" runat="server" OnLoad="lblRota_Load" Text="Rota"></asp:Label>
                                                     </td>
                                                     <td align="left">
@@ -2305,7 +2323,7 @@
                                                             DataTextField="DescrGrupoSubGrupo" DataValueField="IdSubgrupoProd" Width="300px"
                                                             SelectedValue='<%# Bind("IdsSubgrupoProd") %>'>
                                                         </sync:CheckBoxListDropDown>
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr class="alt">
                                                     <td align="left" class="dtvHeader" style="width: 170px">
@@ -2526,7 +2544,10 @@
     <colo:VirtualObjectDataSource culture="pt-BR" ID="odsSubgrupo" runat="server" SelectMethod="GetForCadCliente"
         TypeName="Glass.Data.DAL.SubgrupoProdDAO">
     </colo:VirtualObjectDataSource>
-  
+    <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsGrupoCliente" runat="server"
+        TypeName="Glass.Global.Negocios.IClienteFluxo"
+        SelectMethod="ObterDescritoresGrupoCliente">
+    </colo:VirtualObjectDataSource>
     <script type="text/javascript">
 
         drpTipoPessoaChanged(false);

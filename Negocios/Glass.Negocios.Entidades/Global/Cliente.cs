@@ -47,14 +47,14 @@ namespace Glass.Global.Negocios.Entidades
                     .Child<Financeiro.Negocios.Entidades.FormaPagtoCliente, Data.Model.FormaPagtoCliente>("FormasPagto", f => f.FormasPagto, f => f.IdCliente)
                     .Log("FormasPagto", "Formas Pagto")
                     .Reference<Comissionado, Data.Model.Comissionado>("Comissionado", f => f.Comissionado, f => f.IdComissionado)
-                    .Reference<TabelaDescontoAcrescimoCliente, Data.Model.TabelaDescontoAcrescimoCliente>("TabelaDescontoAcrescimo", 
+                    .Reference<TabelaDescontoAcrescimoCliente, Data.Model.TabelaDescontoAcrescimoCliente>("TabelaDescontoAcrescimo",
                         f => f.TabelaDescontoAcrescimo, f => f.IdTabelaDesconto)
                     .Reference<Cidade, Data.Model.Cidade>("Cidade", f => f.Cidade, f => f.IdCidade)
                     .Reference<Cidade, Data.Model.Cidade>("CidadeCobranca", f => f.CidadeCobranca, f => f.IdCidadeCobranca)
                     .Reference<Cidade, Data.Model.Cidade>("CidadeEntrega", f => f.CidadeEntrega, f => f.IdCidadeEntrega)
-                    .Reference<RotaCliente, Data.Model.RotaCliente>("RotaCliente", f => f.RotaCliente, () => 
+                    .Reference<RotaCliente, Data.Model.RotaCliente>("RotaCliente", f => f.RotaCliente, () =>
                         new Colosoft.Business.EntityLoaderConditional("IdCliente=?id")
-                            .Add("?id", new Colosoft.Query.ReferenceParameter("IdCli")), 
+                            .Add("?id", new Colosoft.Query.ReferenceParameter("IdCli")),
                         f => f.IdRota)
                     .Reference<Fiscal.Negocios.Entidades.PlanoContaContabil, Data.Model.PlanoContaContabil>("PlanoContaContabil",
                         f => f.PlanoContaContabil, f => f.IdContaContabil)
@@ -251,7 +251,7 @@ namespace Glass.Global.Negocios.Entidades
                 }
             }
         }
- 
+
         /// <summary>
         /// Indicador da IE do destinatário.
         /// </summary>
@@ -2015,6 +2015,23 @@ namespace Glass.Global.Negocios.Entidades
             }
         }
 
+        /// <summary>
+        /// Código do grupo do cliente.
+        /// </summary>
+        public int? IdGrupoCliente
+        {
+            get { return DataModel.IdGrupoCliente; }
+            set
+            {
+                if (DataModel.IdGrupoCliente != value &&
+                    RaisePropertyChanging("IdGrupoCliente", value))
+                {
+                    DataModel.IdGrupoCliente = value;
+                    RaisePropertyChanged("IdGrupoCliente");
+                }
+            }
+        }
+
         #endregion
 
         #region Propriedades referenciadas/filhos
@@ -2241,7 +2258,7 @@ namespace Glass.Global.Negocios.Entidades
                 RgEscinst = RgEscinst.ToUpper().Replace("INSENTO", "ISENTO").Replace("INSENTA", "ISENTO");
 
             // Caso o percentual mínimo esteja zerado e o usuário não tenha permissão de alterá-lo, busca o que estiver configurado
-            if (!ExistsInStorage && PercSinalMinimo.GetValueOrDefault(0) == 0 && Glass.Configuracoes.FinanceiroConfig.PercMinimoSinalPedidoPadrao > 0 && 
+            if (!ExistsInStorage && PercSinalMinimo.GetValueOrDefault(0) == 0 && Glass.Configuracoes.FinanceiroConfig.PercMinimoSinalPedidoPadrao > 0 &&
                 !Glass.Data.Helper.Config.PossuiPermissao(Glass.Data.Helper.Config.FuncaoMenuCadastro.AlterarSinalMinimoCliente))
                 PercSinalMinimo = Glass.Configuracoes.FinanceiroConfig.PercMinimoSinalPedidoPadrao;
 
@@ -2280,7 +2297,7 @@ namespace Glass.Global.Negocios.Entidades
                 if (!res)
                     return new Colosoft.Business.SaveResult(false, res.Message);
             }
-            
+
             // Insere/atualiza a rota se a propriedade for alterada
             // ou se o cliente estiver sendo inserido
             if (IdRota.HasValue && (!exists || ChangedProperties.Contains("IdRota")))

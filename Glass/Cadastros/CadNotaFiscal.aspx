@@ -1188,6 +1188,23 @@
         openWindow(200, 400, "../Utils/SetInfComplProdNf.aspx?idProdNf=" + idProdNf);
     }  
     
+    // Se CSOSN escolhido for o 900, mostra campo para informar o percentual de redução da base de cálculo.
+    function drpCsosn_Changed() {
+        var drpCsosn = FindControl("drpCsosn", "select");
+        
+        if (drpCsosn == null) {
+            return;
+        }
+        var display = drpCsosn.value == "900" ? "inline" : "none";
+        
+        document.getElementById("csosnPercRedIcms").style.display = display;
+        FindControl("txtCsosnPercRedBcIcms", "input").style.display = display;
+        FindControl("lblCsosnPercRedBcIcms", "span").style.display = display;
+        
+        FindControl("txtCsosnPercRedBcIcmsSt", "input").style.display = display;
+        FindControl("lblCsosnPercRedBcIcmsSt", "span").style.display = display;
+    }
+    
     function obterCodValorFiscalPorCst(drpCst){
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select")
         var simplesNacional = FindControl("hdfSimplesNacional", "input").value;
@@ -3883,21 +3900,61 @@
                                 <ItemStyle Wrap="False" />
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="CSOSN" SortExpression="Csosn">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblCsosnCompleto" runat="server" Text='<%# Eval("CsosnCompleto") %>' Style="display: block; white-space: nowrap;"></asp:Label>
+                                    <asp:Label ID="lblCsosnDescrPercRedBcIcms" runat="server" Text='<%# Eval("DescrPercRedBcIcms") %>' Style="display: block; white-space: nowrap;"></asp:Label>
+                                    <asp:Label ID="lblCsosnDescrPercRedBcIcmsSt" runat="server" Text='<%# Eval("DescrPercRedBcIcmsSt") %>' Style="display: block; white-space: nowrap;"></asp:Label>
+                                </ItemTemplate>
                                 <EditItemTemplate>
-                                    <asp:DropDownList ID="drpCsosn" runat="server" DataSourceID="odsCsosn" DataTextField="Descr"
-                                        DataValueField="Id" SelectedValue='<%# Bind("Csosn") %>' AppendDataBoundItems="True"
-                                        Height="16px">
+                                    <asp:DropDownList ID="drpCsosn" runat="server" DataSourceID="odsCsosn" DataTextField="Descr" DataValueField="Id" SelectedValue='<%# Bind("Csosn") %>' Height="16px"
+                                        AppendDataBoundItems="True" onchange="drpCsosn_Changed();">
                                         <asp:ListItem></asp:ListItem>
                                     </asp:DropDownList>
+                                    <br />
+                                    <table id="csosnPercRedIcms" class="pos" style="position: absolute; border: 1px solid silver;
+                                        background-color: White">
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="lblCsosnPercRedBcIcms" runat="server" Text="Perc. Red. BC ICMS" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtCsosnPercRedBcIcms" runat="server" Style="display: none" Text='<%# Bind("PercRedBcIcms") %>' Width="50px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="lblCsosnPercRedBcIcmsSt" runat="server" Text="Perc. Red. BC ICMS ST" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtCsosnPercRedBcIcmsSt" runat="server" Style="display: none" Text='<%# Bind("PercRedBcIcmsSt") %>' Width="50px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </EditItemTemplate>
                                 <FooterTemplate>
-                                    <asp:DropDownList ID="drpCsosnIns" runat="server" DataSourceID="odsCsosn" DataTextField="Descr"
-                                        DataValueField="Id" AppendDataBoundItems="True">
+                                    <asp:DropDownList ID="drpCsosnIns" runat="server" DataSourceID="odsCsosn" DataTextField="Descr" DataValueField="Id" AppendDataBoundItems="True"
+                                        onchange="drpCsosn_Changed();">
                                     </asp:DropDownList>
+                                    <br />
+                                    <table id="csosnPercRedIcms" class="pos" style="position: absolute; border: 1px solid silver; background-color: White">
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="lblCsosnPercRedBcIcms" runat="server" Text="Perc. Red. BC ICMS" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtCsosnPercRedBcIcms" runat="server" Width="50px" Style="display: none"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <asp:Label ID="lblCsosnPercRedBcIcmsSt" runat="server" Text="Perc. Red. BC ICMS ST" Style="display: none"></asp:Label>
+                                            </td>
+                                            <td>
+                                                <asp:TextBox ID="txtCsosnPercRedBcIcmsSt" runat="server" Style="display: none" Text='<%# Bind("PercRedBcIcmsSt") %>' Width="50px"></asp:TextBox>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </FooterTemplate>
-                                <ItemTemplate>
-                                    <asp:Label ID="Label13" runat="server" Text='<%# Bind("CsosnCompleto") %>'></asp:Label>
-                                </ItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Nat. Op." SortExpression="IdNaturezaOperacao">
                                 <EditItemTemplate>
@@ -4859,6 +4916,7 @@
         }
 
         drpCst_Changed();
+        drpCsosn_Changed();
 
         // Mostra/Esconde campos de inserção de impostos
         habilitaTxtImpostos(true);

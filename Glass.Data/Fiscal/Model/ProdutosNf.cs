@@ -659,15 +659,15 @@ namespace Glass.Data.Model
 
         public string DescrPercRedBcIcms
         {
-            get 
+            get
             {
-                return Cst == "20" || Cst == "70" ? " (Perc. Red. BC ICMS: " + PercRedBcIcms + "%)" : ""; 
+                return Cst == "20" || Cst == "70" || Csosn == "900" ? " (Perc. Red. BC ICMS: " + PercRedBcIcms + "%)" : "";
             }
         }
 
         public string DescrPercRedBcIcmsSt
         {
-            get { return Cst == "70" ? " (Perc. Red. BC ICMS ST: " + PercRedBcIcmsSt + "%)" : ""; }
+            get { return Cst == "70" || Csosn == "900" ? " (Perc. Red. BC ICMS ST: " + PercRedBcIcmsSt + "%)" : ""; }
         }
 
         public string DescrCstIpi
