@@ -1357,7 +1357,7 @@ namespace Glass.Data.DAL
                 if (!NaturezaOperacaoDAO.Instance.ValidarCfop((int)objUpdate.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
                     throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
 
-                if (objUpdate.Cst != "20" && objUpdate.Cst != "70")
+                if (objUpdate.Cst != "20" && objUpdate.Cst != "70" && objUpdate.Csosn != "900")
                 {
                     if (objUpdate.CodValorFiscal != 1)
                     {

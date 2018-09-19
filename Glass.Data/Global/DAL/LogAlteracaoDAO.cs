@@ -164,7 +164,7 @@ namespace Glass.Data.DAL
         {
             string campos = GetValoresCampo(Sql(tabela, idRegistroAlt, exibirAdmin, "campo", campo, null,
                 null, true, false), "campo", GetParams(campo, null, null)).ToString();
-            
+
             List<KeyValuePair<string, string>> retorno = new List<KeyValuePair<string, string>>();
 
             if (!String.IsNullOrEmpty(campos))
@@ -186,12 +186,12 @@ namespace Glass.Data.DAL
 
         #region Busca a última data de alteração de uma tabela, registro e campo
 
-        internal string SqlDataAlt(int tabela, string idRegistroAlt, string campo, string sufixoNomeParam, object[] valores, 
+        internal string SqlDataAlt(int tabela, string idRegistroAlt, string campo, string sufixoNomeParam, object[] valores,
             out List<GDAParameter> param, bool apenasUltima)
         {
             param = new List<GDAParameter>();
 
-            string sql = "select " + (String.IsNullOrEmpty(idRegistroAlt) ? "idRegistroAlt, " : "") + 
+            string sql = "select " + (String.IsNullOrEmpty(idRegistroAlt) ? "idRegistroAlt, " : "") +
                 "dataAlt from log_alteracao where tabela=" + tabela + " and campo=?campo" + sufixoNomeParam;
 
             if (!String.IsNullOrEmpty(idRegistroAlt))
@@ -211,7 +211,7 @@ namespace Glass.Data.DAL
 
                 sql += " and valorAtual in (" + sqlValores.TrimEnd(',', ' ') + ")";
             }
-            
+
             if (apenasUltima)
                 sql += " order by dataAlt desc limit 1";
 
@@ -507,7 +507,7 @@ namespace Glass.Data.DAL
             var sql = @"
                 INSERT INTO log_alteracao (Tabela, IdRegistroAlt, NumEvento, Campo, DataAlt, IdFuncAlt, ValorAnterior, ValorAtual)
                 SELECT {0}, c.Id_Cli, (coalesce(max(numEvento), 0) + 1), 'Situacao', Now(), {1}, ELT(c.Situacao, 'Ativo', 'Inativo', 'Cancelado', 'Bloqueado'),  '{2}'
-                FROM cliente c 
+                FROM cliente c
 	                LEFT JOIN log_alteracao la ON (tabela = {0} and idRegistroAlt = c.Id_Cli)
                 WHERE c.Id_Cli IN ({3})
                 GROUP by c.Id_Cli";
@@ -728,7 +728,7 @@ namespace Glass.Data.DAL
                 throw new Exception("Não foi possível recuperar o login do usuário. Efetue o login no sistema novamente.");
 
             /* Chamado 62138. */
-            var codUsuario = UserInfo.GetUserInfo.CodUser;            
+            var codUsuario = UserInfo.GetUserInfo.CodUser;
             if ((!UserInfo.GetUserInfo.IsCliente && codUsuario == 0) || (UserInfo.GetUserInfo.IsCliente && UserInfo.GetUserInfo.IdCliente == 0))
                 throw new Exception("Não foi possível recuperar o login do usuário. Efetue o login no sistema novamente.");
 
@@ -742,7 +742,7 @@ namespace Glass.Data.DAL
         /// Cria o Log de alterações para a obra.
         /// </summary>
         public void LogObra(GDASession sessao, Obra obraAtual)
-        {   
+        {
             var obraNova = ObraDAO.Instance.GetElement(sessao, obraAtual.IdObra);
 
             InserirLog(sessao, UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.Obra, obraAtual.IdObra, obraAtual, obraNova);
@@ -1064,6 +1064,15 @@ namespace Glass.Data.DAL
         {
             TipoCliente atual = TipoClienteDAO.Instance.GetElementByPrimaryKey((uint)tipoCliente.IdTipoCliente);
             InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.TipoCliente, (uint)tipoCliente.IdTipoCliente, atual, tipoCliente);
+        }
+
+        /// <summary>
+        /// Cria o Log de Alterações para o grupo de cliente.
+        /// </summary>
+        public void LogGrupoCliente(GrupoCliente grupoCliente)
+        {
+            TipoCliente atual = TipoClienteDAO.Instance.GetElementByPrimaryKey((uint)grupoCliente.IdGrupoCliente);
+            InserirLog(UserInfo.GetUserInfo.CodUser, LogAlteracao.TabelaAlteracao.GrupoCliente, (uint)grupoCliente.IdGrupoCliente, atual, grupoCliente);
         }
 
         /// <summary>
@@ -2021,6 +2030,15 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Apaga o Log de Alterações para o tipo de cliente.
+        /// </summary>
+        /// <param name="idGrupoCliente"></param>
+        public void ApagaLogGrupoCliente(uint idGrupoCliente)
+        {
+            ApagaLog(LogAlteracao.TabelaAlteracao.GrupoCliente, idGrupoCliente);
+        }
+
+        /// <summary>
         /// Apaga o Log de Alterações para o beneficiamento.
         /// </summary>
         /// <param name="idBenefConfig"></param>
@@ -2122,7 +2140,7 @@ namespace Glass.Data.DAL
         /// <param name="idRegistroNovo"></param>
         public void AtualizaID(int tabela, uint idRegistroAtual, uint idRegistroNovo)
         {
-            string sql = "update log_alteracao set idRegistroAlt=" + idRegistroNovo + " where tabela=" + tabela + 
+            string sql = "update log_alteracao set idRegistroAlt=" + idRegistroNovo + " where tabela=" + tabela +
                 " and idRegistroAlt=" + idRegistroAtual;
 
             objPersistence.ExecuteCommand(sql);
@@ -2276,7 +2294,7 @@ namespace Glass.Data.DAL
             T item = (T)Activator.CreateInstance(tipo);
 
             // Recupera as propriedades do tipo
-            var propriedades = tipo.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | 
+            var propriedades = tipo.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
                 BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.GetProperty);
 
             // Tenta definir a data de cadastro
@@ -2335,7 +2353,7 @@ namespace Glass.Data.DAL
             LogAlteracao.TabelaAlteracao tabela = (LogAlteracao.TabelaAlteracao)alteracoes[0].Tabela;
             Type tipo = GetType(tabela), tipoDAO = GetDAO(tabela);
             MethodInfo metodo = tipoDAO.GetMethod("GetElementByPrimaryKey", new Type[] { typeof(int) });
-            
+
             object instance = tipoDAO.GetProperty("Instance", BindingFlags.Static | BindingFlags.FlattenHierarchy | BindingFlags.Public).GetValue(null, null);
             object atual = metodo.Invoke(instance, new object[] { alteracoes[0].IdRegistroAlt });
 
@@ -2379,9 +2397,9 @@ namespace Glass.Data.DAL
                 {
                     try
                     {
-                        object valorConv = Conversoes.ConverteValor(prop.Propriedade.PropertyType, 
+                        object valorConv = Conversoes.ConverteValor(prop.Propriedade.PropertyType,
                             tipoCampoRetorno == TipoCampoRetorno.Anterior ? l.ValorAnterior : l.ValorAtual);
-                        
+
                         prop.Propriedade.SetValue(retorno[retorno.Count - 1], valorConv, null);
                     }
                     catch { }

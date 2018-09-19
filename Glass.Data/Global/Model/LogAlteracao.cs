@@ -117,7 +117,8 @@ namespace Glass.Data.Model
             ExpressaoRentabilidade = 106,
             ConfigRegistroRentabilidade = 107,
             FaixaRentabilidadeComissao = 108,
-            FaixaRentabilidadeLiberacao = 109
+            FaixaRentabilidadeLiberacao = 109,
+            GrupoCliente,
         }
 
         public static string GetDescrTabela(int tabela)
@@ -215,6 +216,7 @@ namespace Glass.Data.Model
                 case TabelaAlteracao.ConfigRegistroRentabilidade: return "Configuração do Registro de Rentabilidade";
                 case TabelaAlteracao.FaixaRentabilidadeComissao: return "Faixa Rentabilidade Comissão";
                 case TabelaAlteracao.FaixaRentabilidadeLiberacao: return "Faixa Rentabilidade Liberação";
+                case TabelaAlteracao.GrupoCliente: return "Grupo Cliente";
                 default: return string.Empty;
             }
         }
@@ -491,6 +493,9 @@ namespace Glass.Data.Model
                     default:
                         referencia = idRegistroAlt.ToString();
                         break;
+                    case TabelaAlteracao.GrupoCliente:
+                        referencia = GrupoClienteDAO.Instance.GetNome(session, idRegistroAlt);
+                        break;
                 }
 
                 if (!string.IsNullOrEmpty(referencia) && referencia.Length > 100)
@@ -559,7 +564,7 @@ namespace Glass.Data.Model
 
         internal string NomePropriedadeRelacionada
         {
-            get 
+            get
             {
                 if (_nomePropriedadeRelacionada == null)
                     _nomePropriedadeRelacionada = LogAlteracaoDAO.Instance.GetNomePropriedade(Tabela, Campo);

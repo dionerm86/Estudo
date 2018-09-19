@@ -86,6 +86,7 @@
             var idMedidor = FindControl("cbMedidorPedido", "select").value;
             var idOC = FindControl("txtIdOC", "input").value;
             var usuCad = FindControl("drpUsucad", "select").value;
+            var grupoCliente = FindControl("drpGrupoCliente", "select").itens();
 
             var queryString = "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento + "&codCliente=" + codCliente + "&idsRota=" + idsRota + "&IdCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&tipoFiscal=" + tipoFiscal + "&loja=" + loja + "&situacao=" + situacao + "&dtIniSit=" + dtIniSit +
@@ -99,8 +100,8 @@
                 "&tipoCliente=" + tipoCliente + "&trazerPedCliVinculado=" + trazerPedCliVinculado + "&esconderTotal=" + esconderTotal +
                 "&mostrarDescontoTotal=" + mostrarDescontoTotal + "&desconto=" + desconto + "&agrupar=" + agrupar +
                 "&cidade=" + cidade + "&comSemNf=" + comSemNf + "&idMedidor=" + idMedidor +
-                "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento + 
-                "&bairro=" + bairro + "&dataInicioMedicao" + dtIniMed + "&dataFimMedicao" + dtFimMed;;
+                "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento +
+                "&bairro=" + bairro + "&dataInicioMedicao" + dtIniMed + "&dataFimMedicao" + dtFimMed + "&grupoCliente" + grupoCliente;
 
             openWindow(600, 800, 'RelBase.aspx?rel=' + nomeRel + queryString);
             return false;
@@ -316,6 +317,23 @@
                                             ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
                                             OnClick="imgPesq_Click" />
                                     </td>
+                                                                        <td>
+                                        <asp:Label ID="Label32" runat="server" Text="Tipo do Cliente" ForeColor="#0066FF"></asp:Label>
+                                    </td>
+                                    <td>
+                                        <sync:CheckBoxListDropDown ID="drpGrupoCliente" runat="server" DataSourceID="odsGrupoCliente"
+                                            DataTextField="Name" DataValueField="Id" AppendDataBoundItems="True"
+                                            Title="Selecione o grupo do cliente">
+                                        </sync:CheckBoxListDropDown>
+                                        <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsGrupoCliente" runat="server"
+                                            SelectMethod="ObterDescritoresGrupoCliente" TypeName="Glass.Global.Negocios.IClienteFluxo">
+                                        </colo:VirtualObjectDataSource>
+                                    </td>
+                                    <td>
+                                        <asp:ImageButton ID="ImageButton22" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                            ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
+                                            OnClick="imgPesq_Click" />
+                                    </td>
                                     <td>
                                         <asp:CheckBox ID="chkCliVinculado" runat="server" Text="Trazer pedidos de clientes vinculados" />
                                     </td>
@@ -338,7 +356,7 @@
                         <td>
                             <asp:ImageButton ID="ImageButton21" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                 OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
-                        </td>                        
+                        </td>
                         <td>
                             <asp:Label ID="Label27" runat="server" Text="Bairro" ForeColor="#0066FF"></asp:Label>
                         </td>
@@ -695,7 +713,7 @@
                             <asp:CheckBox ID="chkExibirProdutos" runat="server" Text="Exibir Produtos no Relatório (ao agrupar)" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no Relatório" 
+                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no Relatório"
                                 OnCheckedChanged="chkEsconderTotal_CheckedChanged"/>
                         </td>
                         <td>&nbsp;
@@ -877,6 +895,7 @@
                         <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpGrupoCliente" Name="grupoCliente" Type="String" PropertyName="SelectedValue" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
@@ -888,7 +907,7 @@
                         <td align="center">
                             <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="return openRpt();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"><img border="0" 
+                            <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
                         </td>
                     </tr>
@@ -896,7 +915,7 @@
                         <td align="center">
                             <asp:LinkButton ID="lnkImprimirSimples" runat="server" OnClientClick="return openRptSimples();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. m²)</asp:LinkButton>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkExportarExcelSimples" runat="server" OnClientClick="openRptSimples(true); return false;"><img border="0" 
+                            <asp:LinkButton ID="lnkExportarExcelSimples" runat="server" OnClientClick="openRptSimples(true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. m²)</asp:LinkButton>
                         </td>
                     </tr>
@@ -904,7 +923,7 @@
                         <td align="center">
                             <asp:LinkButton ID="lnkImprimirRota" runat="server" OnClientClick="return openRptRota();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. m² por Rota)</asp:LinkButton>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <asp:LinkButton ID="lnkExportarExcelRota" runat="server" OnClientClick="openRptRota(true); return false;"><img border="0" 
+                            <asp:LinkButton ID="lnkExportarExcelRota" runat="server" OnClientClick="openRptRota(true); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. m² por Rota)</asp:LinkButton>
                         </td>
                     </tr>
@@ -964,6 +983,7 @@
                         <asp:ControlParameter ControlID="txtBairro" Name="bairro" PropertyName="Text" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
+                        <asp:ControlParameter ControlID="drpGrupoCliente" Name="grupoCliente" Type="String" PropertyName="SelectedValue" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"

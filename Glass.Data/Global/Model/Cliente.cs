@@ -138,7 +138,7 @@ namespace Glass.Data.Model
         [Log("Tipo Fiscal")]
         [PersistenceProperty("TIPOFISCAL")]
         public int? TipoFiscal { get; set; }
- 
+
         [Log("Indicador da IE do Destinatário")]
         [PersistenceProperty("INDICADORIEDESTINATARIO")]
         public IndicadorIEDestinatario IndicadorIEDestinatario { get; set; }
@@ -435,7 +435,7 @@ namespace Glass.Data.Model
         [Log("Percentual Mínimo Sinal Ped.")]
         [PersistenceProperty("PERCSINALMIN")]
         public float? PercSinalMinimo { get; set; }
-        
+
         [Log("Percentual Comissão")]
         [PersistenceProperty("PERCENTUALCOMISSAO")]
         public float PercentualComissao { get; set; }
@@ -522,7 +522,7 @@ namespace Glass.Data.Model
         }
 
         private string _enderecoEntrega;
-        
+
         [Log("Endereco Entrega", true)]
         [PersistenceProperty("ENDERECOENTREGA")]
         public string EnderecoEntrega
@@ -697,7 +697,12 @@ namespace Glass.Data.Model
         [Log("IgnorarNoSmsResumoDiario")]
         [PersistenceProperty("IgnorarNoSmsResumoDiario")]
         public bool IgnorarNoSmsResumoDiario { get; set; }
-        
+
+        [Log("Grupo do Cliente", "Descricao", typeof(GrupoClienteDAO))]
+        [PersistenceProperty("IDGRUPOCLIENTE")]
+        [PersistenceForeignKey(typeof(GrupoCliente), "IdGrupoCliente")]
+        public int? IdGrupoCliente { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas
@@ -855,8 +860,8 @@ namespace Glass.Data.Model
         [Log("Situação")]
         public string DescrSituacao
         {
-            get 
-            { 
+            get
+            {
                 switch (Situacao)
                 {
                     case (int)SituacaoCliente.Ativo: return "Ativo";
@@ -932,7 +937,7 @@ namespace Glass.Data.Model
 
         public string Telefone
         {
-            get 
+            get
             {
                 if (!String.IsNullOrEmpty(TelCont))
                     return TelCont;
@@ -948,9 +953,9 @@ namespace Glass.Data.Model
         // Apenas administrador/usuário liberado pode excluir cliente
         public bool ExcluirVisible
         {
-            get 
-            { 
-                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente); 
+            get
+            {
+                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarCliente);
             }
         }
 
@@ -966,20 +971,20 @@ namespace Glass.Data.Model
         // Apenas administrador pode dar desconto à cliente
         public bool DescontoVisible
         {
-            get 
+            get
             {
                 LoginUsuario login = UserInfo.GetUserInfo;
 
-                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && IdTabelaDesconto.GetValueOrDefault() == 0; 
+                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.DescontoAcrescimoProdutoCliente) && IdTabelaDesconto.GetValueOrDefault() == 0;
             }
         }
 
         // Apenas administrador pode inativar cliente pela lista
         public bool InativarVisible
         {
-            get 
-            { 
-                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente) && Situacao != (int)SituacaoCliente.Cancelado; 
+            get
+            {
+                return Config.PossuiPermissao(Config.FuncaoMenuCadastro.AtivarInativarCliente) && Situacao != (int)SituacaoCliente.Cancelado;
             }
         }
 

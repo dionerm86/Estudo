@@ -337,6 +337,42 @@ namespace Glass.UI.Web.Relatorios {
         protected global::System.Web.UI.WebControls.ImageButton ImageButton9;
         
         /// <summary>
+        /// Label32 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label32;
+        
+        /// <summary>
+        /// drpGrupoCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Sync.Controls.CheckBoxListDropDown drpGrupoCliente;
+        
+        /// <summary>
+        /// odsGrupoCliente control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Colosoft.WebControls.VirtualObjectDataSource odsGrupoCliente;
+        
+        /// <summary>
+        /// ImageButton22 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton ImageButton22;
+        
+        /// <summary>
         /// chkCliVinculado control.
         /// </summary>
         /// <remarks>
