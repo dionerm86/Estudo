@@ -202,8 +202,18 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.Altura = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text);
                 prodNf.Largura = Conversoes.StrParaInt(((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text);
                 prodNf.TotM = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtTotM2Ins")).Text);
-                prodNf.PercRedBcIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text);
-                prodNf.PercRedBcIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text);
+                
+                if (!string.IsNullOrWhiteSpace(prodNf.Cst))
+                {
+                    prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text.StrParaFloat();
+                    prodNf.PercRedBcIcmsSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text.StrParaFloat();
+                }
+                else if (!string.IsNullOrWhiteSpace(prodNf.Csosn))
+                {
+                    prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcms")).Text.StrParaFloat();
+                    prodNf.PercRedBcIcmsSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcmsSt")).Text.StrParaFloat();
+                }
+
                 prodNf.AliqIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsIns")).Text);
                 prodNf.Mva = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
                 prodNf.AliqIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsStIns")).Text);
@@ -1191,7 +1201,7 @@ namespace Glass.UI.Web.Cadastros
             var linha = (sender as Control).Parent.Parent;
 
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIcms = linha.FindControl("drpCst") ?? linha.FindControl("drpCstIns");
-            (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercReducaoBcIcms = linha.FindControl("txtPercRedBcIcms");
+            (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercReducaoBcIcms = linha.FindControl("txtPercRedBcIcms") ?? linha.FindControl("txtCsosnPercRedBcIcms");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercDiferimento = linha.FindControl("txtPercDiferimento");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIpi = linha.FindControl("selCstIpi").FindControl("txtDescr");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstPisCofins = linha.FindControl("selCstPis").FindControl("txtDescr");
