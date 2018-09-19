@@ -1332,6 +1332,40 @@ namespace Glass.Data.DAL
 
             return idNf;
         }
+        /// <summary>
+        /// Verifica em qual loja o produto deve dar saída.
+        /// Este método foi criado com o intuito de centralizar a decisão da saída do produto conforme a origem da Nota Fiscal.
+        /// Sempre que possível a manutenção do método deve ser feita para garantir que a decisão da movimentação vai ser mantida
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA</param>
+        /// <param name="idLoja">Id da loja que até o momento movimentará o estoque</param>
+        /// <param name="idProdImpressaoChapa"> Id do Produto de Impressao que irá movimentar o estoque</param>
+        /// <param name="idNf">Id da Nota Fiscal</param>
+        /// <param name="idProdPedProducao">Id do Produto Pedido de Produção que irá movimentar o Estoque</param>
+        /// <returns></returns>
+        internal uint ObtemIdLojaParaMovEstoque(GDASession sessao,uint idLoja,uint idProd, uint? idProdImpressaoChapa, uint? idNf, uint? idProdPedProducao)
+        {
+            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)idProd);
+
+            if ((tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado) || EstoqueConfig.EntradaEstoqueManual)
+            {
+                return idLoja;
+            }
+
+            if(idProdImpressaoChapa > 0)
+            {
+                idNf = (uint)ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa);
+            }
+
+            if(idProdPedProducao > 0)
+            {
+                var idProdImpressaoPeca = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<uint>(sessao, "IdProdImpressao", $"IdProdPedProducao={idProdPedProducao}");
+                idProdImpressaoChapa = (uint)ChapaCortePecaDAO.Instance.ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
+                idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa) ?? 0;
+            }
+
+            return idNf > 0 ? ObtemIdLoja(sessao, (uint)idNf) : idLoja;
+        }
 
         /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
