@@ -6597,7 +6597,7 @@ namespace Glass.Data.DAL
                             var idProdChapa = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
                             var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemValorCampo<string>(sessao, "numEtiqueta", $"IdProdImpressao={idProdImpressaoChapa}");
                             var produtoPedidoRevenda = ProdutosPedidoDAO.Instance.GetByPedido(sessao, (uint)idPedidoRevenda)
-                                .FirstOrDefault(f => f.IdProd == idProd.GetValueOrDefault() && f.Qtde > f.QtdSaida);
+                                .FirstOrDefault(f => f.IdProd == idProd.GetValueOrDefault() && f.Qtde >= f.QtdSaida);
                             var idLojaPedidoRevenda = (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedidoRevenda);
                             var idProdQtdeReserva = new Dictionary<int, float>();
 
