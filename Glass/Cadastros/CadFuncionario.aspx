@@ -756,9 +756,13 @@
                                         </td>
                                         <td align="left" class="dtvHeader">
                                             <asp:Label ID="Label21" runat="server" Text="Habilitar Chat WebGlass" Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
+                                            <br />
+                                            <asp:Label ID="Label25" runat="server" Text="Exibir controle de usuários" Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>'></asp:Label>
                                         </td>
                                         <td align="left" class="dtvAlternatingRow">
                                             <asp:CheckBox ID="chkHabilitarChat" runat="server" Checked='<%# Bind("HabilitarChat") %>' Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />
+                                            <br />
+                                            <asp:CheckBox ID="CheckBox3" runat="server" Checked='<%# Bind("HabilitarControleUsuarios") %>' Visible='<%# Glass.Data.Helper.UserInfo.GetUserInfo != null && Glass.Data.Helper.UserInfo.GetUserInfo.IsAdminSync %>' />
                                         </td>
                                     </tr>
                                     <tr >

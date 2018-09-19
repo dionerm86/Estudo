@@ -653,6 +653,32 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
+              <Height>0.6cm</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Subreport Name="Subreport1">
+                      <ReportName>rptItensVolumesPendentes</ReportName>
+                      <Parameters>
+                        <Parameter Name="IdVolume">
+                          <Value>=Fields!IdVolume.Value</Value>
+                        </Parameter>
+                      </Parameters>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                      </Style>
+                    </Subreport>
+                    <ColSpan>4</ColSpan>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell />
+                <TablixCell />
+                <TablixCell />
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
               <Height>0.63492cm</Height>
               <TablixCells>
                 <TablixCell>
@@ -838,6 +864,7 @@
                   </Group>
                   <TablixMembers>
                     <TablixMember />
+                    <TablixMember />
                   </TablixMembers>
                   <DataElementName>Detail_Collection</DataElementName>
                   <DataElementOutput>Output</DataElementOutput>
@@ -853,7 +880,7 @@
         <DataSetName>ItensVolumes</DataSetName>
         <Top>6.3cm</Top>
         <Left>8.15075cm</Left>
-        <Height>2.46984cm</Height>
+        <Height>3.06984cm</Height>
         <Width>12.2cm</Width>
         <ZIndex>13</ZIndex>
         <Visibility>
@@ -1622,7 +1649,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>ItensVenda</DataSetName>
-        <Top>9.935cm</Top>
+        <Top>10.57cm</Top>
         <Height>2.46984cm</Height>
         <Width>28.66775cm</Width>
         <ZIndex>14</ZIndex>
@@ -1958,7 +1985,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -2383,7 +2409,7 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>ItensRevenda</DataSetName>
-        <Top>13.66525cm</Top>
+        <Top>14.30025cm</Top>
         <Height>2.46984cm</Height>
         <Width>28.66775cm</Width>
         <ZIndex>15</ZIndex>
@@ -2449,7 +2475,7 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>9.135cm</Top>
+        <Top>9.77cm</Top>
         <Left>12.5cm</Left>
         <Height>0.7cm</Height>
         <Width>4.2cm</Width>
@@ -2485,7 +2511,7 @@
             </Style>
           </Paragraph>
         </Paragraphs>
-        <Top>12.77cm</Top>
+        <Top>13.405cm</Top>
         <Left>12.25cm</Left>
         <Height>0.7cm</Height>
         <Width>4.2cm</Width>
@@ -2613,7 +2639,7 @@
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>16.13509cm</Height>
+    <Height>16.77009cm</Height>
     <Style />
   </Body>
   <Width>28.7cm</Width>
@@ -2723,6 +2749,132 @@
     </DataSource>
   </DataSources>
   <DataSets>
+    <DataSet Name="ItensVenda">
+          <Query>
+              <DataSourceName>DummyDataSource</DataSourceName>
+              <CommandText />
+              <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+          </Query>
+          <Fields>
+              <Field Name="IdItemCarregamento">
+                  <DataField>IdItemCarregamento</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="IdCarregamento">
+                  <DataField>IdCarregamento</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="IdPedido">
+                  <DataField>IdPedido</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="IdProd">
+                  <DataField>IdProd</DataField>
+                  <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+              </Field>
+              <Field Name="IdVolume">
+                  <DataField>IdVolume</DataField>
+                  <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+              </Field>
+              <Field Name="IdProdPedProducao">
+                  <DataField>IdProdPedProducao</DataField>
+                  <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
+              </Field>
+              <Field Name="Carregado">
+                  <DataField>Carregado</DataField>
+                  <rd:TypeName>System.Boolean</rd:TypeName>
+              </Field>
+              <Field Name="Entregue">
+                  <DataField>Entregue</DataField>
+                  <rd:TypeName>System.Boolean</rd:TypeName>
+              </Field>
+              <Field Name="UsuCad">
+                  <DataField>UsuCad</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="DataCad">
+                  <DataField>DataCad</DataField>
+                  <rd:TypeName>System.DateTime</rd:TypeName>
+              </Field>
+              <Field Name="IdCliente">
+                  <DataField>IdCliente</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="NomeCliente">
+                  <DataField>NomeCliente</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="Etiqueta">
+                  <DataField>Etiqueta</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="Peso">
+                  <DataField>Peso</DataField>
+                  <rd:TypeName>System.Double</rd:TypeName>
+              </Field>
+              <Field Name="Qtde">
+                  <DataField>Qtde</DataField>
+                  <rd:TypeName>System.Double</rd:TypeName>
+              </Field>
+              <Field Name="CodProduto">
+                  <DataField>CodProduto</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="DescProduto">
+                  <DataField>DescProduto</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="Altura">
+                  <DataField>Altura</DataField>
+                  <rd:TypeName>System.Double</rd:TypeName>
+              </Field>
+              <Field Name="Largura">
+                  <DataField>Largura</DataField>
+                  <rd:TypeName>System.Double</rd:TypeName>
+              </Field>
+              <Field Name="M2">
+                  <DataField>M2</DataField>
+                  <rd:TypeName>System.Double</rd:TypeName>
+              </Field>
+              <Field Name="DataFechamento">
+                  <DataField>DataFechamento</DataField>
+                  <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
+              </Field>
+              <Field Name="CorLinha">
+                  <DataField>CorLinha</DataField>
+                  <rd:TypeName>System.Drawing.Color</rd:TypeName>
+              </Field>
+              <Field Name="IdNomeCliente">
+                  <DataField>IdNomeCliente</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="CodInternoDescProd">
+                  <DataField>CodInternoDescProd</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="IdPedidoExterno">
+                  <DataField>IdPedidoExterno</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="IdClienteExterno">
+                  <DataField>IdClienteExterno</DataField>
+                  <rd:TypeName>System.UInt32</rd:TypeName>
+              </Field>
+              <Field Name="ClienteExterno">
+                  <DataField>ClienteExterno</DataField>
+                  <rd:TypeName>System.String</rd:TypeName>
+              </Field>
+              <Field Name="PedidoImportado">
+                  <DataField>PedidoImportado</DataField>
+                  <rd:TypeName>System.Boolean</rd:TypeName>
+              </Field>
+          </Fields>
+          <rd:DataSetInfo>
+              <rd:ObjectDataSourceSelectMethod>GetItensPendentes</rd:ObjectDataSourceSelectMethod>
+              <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.ItemCarregamento] GetItensPendentes(UInt32, UInt32, UInt32, System.String, System.Nullable`1[System.Boolean], System.Nullable`1[System.Boolean], Boolean)</rd:ObjectDataSourceSelectMethodSignature>
+              <rd:ObjectDataSourceType>Glass.Data.DAL.ItemCarregamentoDAO, Glass.Data, Version=4.5.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
+          </rd:DataSetInfo>
+      </DataSet>
     <DataSet Name="Cliente">
       <Query>
         <DataSourceName>DummyDataSource</DataSourceName>
@@ -3333,132 +3485,6 @@
       </rd:DataSetInfo>
     </DataSet>
     <DataSet Name="ItensVolumes">
-      <Query>
-        <DataSourceName>DummyDataSource</DataSourceName>
-        <CommandText />
-        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
-      </Query>
-      <Fields>
-        <Field Name="IdItemCarregamento">
-          <DataField>IdItemCarregamento</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdCarregamento">
-          <DataField>IdCarregamento</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdPedido">
-          <DataField>IdPedido</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdProd">
-          <DataField>IdProd</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdVolume">
-          <DataField>IdVolume</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="IdProdPedProducao">
-          <DataField>IdProdPedProducao</DataField>
-          <rd:TypeName>System.Nullable`1[System.UInt32]</rd:TypeName>
-        </Field>
-        <Field Name="Carregado">
-          <DataField>Carregado</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="Entregue">
-          <DataField>Entregue</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-        <Field Name="UsuCad">
-          <DataField>UsuCad</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="DataCad">
-          <DataField>DataCad</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="IdCliente">
-          <DataField>IdCliente</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="NomeCliente">
-          <DataField>NomeCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Etiqueta">
-          <DataField>Etiqueta</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Peso">
-          <DataField>Peso</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Qtde">
-          <DataField>Qtde</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="CodProduto">
-          <DataField>CodProduto</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="DescProduto">
-          <DataField>DescProduto</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Altura">
-          <DataField>Altura</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="Largura">
-          <DataField>Largura</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="M2">
-          <DataField>M2</DataField>
-          <rd:TypeName>System.Double</rd:TypeName>
-        </Field>
-        <Field Name="DataFechamento">
-          <DataField>DataFechamento</DataField>
-          <rd:TypeName>System.Nullable`1[System.DateTime]</rd:TypeName>
-        </Field>
-        <Field Name="CorLinha">
-          <DataField>CorLinha</DataField>
-          <rd:TypeName>System.Drawing.Color</rd:TypeName>
-        </Field>
-        <Field Name="IdNomeCliente">
-          <DataField>IdNomeCliente</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="CodInternoDescProd">
-          <DataField>CodInternoDescProd</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="IdPedidoExterno">
-          <DataField>IdPedidoExterno</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="IdClienteExterno">
-          <DataField>IdClienteExterno</DataField>
-          <rd:TypeName>System.UInt32</rd:TypeName>
-        </Field>
-        <Field Name="ClienteExterno">
-          <DataField>ClienteExterno</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="PedidoImportado">
-          <DataField>PedidoImportado</DataField>
-          <rd:TypeName>System.Boolean</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:ObjectDataSourceSelectMethod>GetItensPendentes</rd:ObjectDataSourceSelectMethod>
-        <rd:ObjectDataSourceSelectMethodSignature>System.Collections.Generic.List`1[Glass.Data.Model.ItemCarregamento] GetItensPendentes(UInt32, UInt32, UInt32, System.String, System.Nullable`1[System.Boolean], System.Nullable`1[System.Boolean], Boolean)</rd:ObjectDataSourceSelectMethodSignature>
-        <rd:ObjectDataSourceType>Glass.Data.DAL.ItemCarregamentoDAO, Glass.Data, Version=4.5.0.0, Culture=neutral, PublicKeyToken=null</rd:ObjectDataSourceType>
-      </rd:DataSetInfo>
-    </DataSet>
-    <DataSet Name="ItensVenda">
       <Query>
         <DataSourceName>DummyDataSource</DataSourceName>
         <CommandText />

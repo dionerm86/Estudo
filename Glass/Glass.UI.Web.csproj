@@ -8818,6 +8818,7 @@
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptCarregamento.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Relatorios\OrdemCarga\rptItensVolumesPendentes.rdlc" />
     <EmbeddedResource Include="Relatorios\OrdemCarga\rptListaCarregamentos.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

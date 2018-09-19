@@ -902,7 +902,8 @@ namespace Glass.Data.Helper
             GerarReposicao,
             ReposicaoDePeca,
             ExibirRentabilidade,                            // 20
-            EmitirPedidoReposicao
+            EmitirPedidoReposicao,
+            PermitirAlterarProcessoAplicacaoPedidos
         }
 
         [ModuloAttr(Modulo.PCP)]

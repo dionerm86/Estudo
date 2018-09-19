@@ -55,7 +55,7 @@ namespace Glass.Data.Helper
                 if (!IsAdministrador)
                     return false;
 
-                if (_isAdminSync == null) 
+                if (_isAdminSync == null)
                     _isAdminSync = FuncionarioDAO.Instance.IsAdminSync(CodUser);
 
                 return _isAdminSync.GetValueOrDefault();
@@ -69,7 +69,7 @@ namespace Glass.Data.Helper
 
         public bool IsFinanceiroReceb
         {
-            get 
+            get
             {
                 return Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento);
             }
@@ -96,21 +96,6 @@ namespace Glass.Data.Helper
         public bool IsCliente
         {
             get { return IdCliente > 0; }
-        }
-
-        private bool? _habilitarChat;
-        public bool HabilitarChat
-        {
-            get
-            {
-                if (IsCliente)
-                    return false;
-
-                if (_habilitarChat == null)
-                    _habilitarChat = FuncionarioDAO.Instance.ObtemHabilitarChat(CodUser);
-
-                return _habilitarChat.GetValueOrDefault();
-            }
         }
 
         #endregion

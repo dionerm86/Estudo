@@ -194,6 +194,8 @@ namespace Glass.UI.Web
             #endregion
 
             lnkVersao.Text = GetVersion();
+
+            lnkControleUsuario.Visible = UserInfo.GetUserInfo.IsCliente ? false : FuncionarioDAO.Instance.ObtemHabilitarControleUsuarios(UserInfo.GetUserInfo.CodUser);
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -350,7 +352,7 @@ namespace Glass.UI.Web
         protected void divChat_Load(object sender, EventArgs e)
         {
             /* Chamado 45168. */
-            divChat.Visible = !IsPopup() && UserInfo.GetUserInfo.HabilitarChat;
+            divChat.Visible = !IsPopup() && (UserInfo.GetUserInfo.IsCliente ? false : FuncionarioDAO.Instance.ObtemHabilitarChat(UserInfo.GetUserInfo.CodUser));
         }
 
         public string ObterNomeUsuario()
