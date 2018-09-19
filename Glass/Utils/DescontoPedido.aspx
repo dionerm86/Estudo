@@ -1,5 +1,5 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="DescontoPedido.aspx.cs" 
-    Inherits="Glass.UI.Web.Utils.DescontoPedido"
+    Inherits="Glass.UI.Web.Utils.DescontoPedido" EnableEventValidation="false"
     Title="Alterações no Pedido" MasterPageFile="~/Layout.master" %>
 
 <%@ Register Src="../Controls/ctrlParcelasSelecionar.ascx" TagName="ctrlParcelasSelecionar"

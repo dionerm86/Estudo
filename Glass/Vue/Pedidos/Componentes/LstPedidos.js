@@ -12,7 +12,8 @@ const app = new Vue({
       direcao: ''
     },
     configuracoes: {},
-    filtro: {}
+    filtro: {},
+    controleTooltipAtual: null
   },
 
   filters: {
@@ -187,30 +188,16 @@ const app = new Vue({
     },
 
     /**
-     * Exibe uma div como 'popup'.
-     * @param {string} nome O nome da DIV que será exibida.
-     * @param {Object} event O objeto com o evento JavaScript.
-     * @param {Object} item O produto que será atualizado.
-     */
-    exibirObsObsLib: function(nome, event, item) {
-      var botao = event.target;
-
-      TagToTip(nome, FADEIN, 300, COPYCONTENT, false, TITLE, 'Observação do pedido: ' + item.id, CLOSEBTN, true,
-        CLOSEBTNTEXT, 'Fechar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true,
-        FIX, [botao, 320 - getTableWidth(nome), -41 - getTableHeight(nome)]);
-    },
-
-    /**
      * Salva a observação de um produto de pedido.
      * @param {Object} item O produto que será atualizado.
      */
-    alterarObsObsLib: function (item) {
+    alterarObservacaoEObservacaoLiberacao: function (item) {
       var vm = this;
 
-      Servicos.Pedidos.salvarObservacao(item.id, item.observacao, item.observacaoLiberacao)
+      Servicos.Pedidos.salvarObservacao(item.id, item.observacao, item.liberacao.observacao)
         .then(function (resposta) {
           vm.exibirMensagem('Sucesso', resposta.data.mensagem);
-          UnTip();
+          vm.controleTooltipAtual.fechar();
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -262,30 +249,6 @@ const app = new Vue({
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
-    },
-
-    /**
-     * Exibe uma div como 'popup'.
-     * @param {string} nome O nome da DIV que será exibida.
-     * @param {Object} event O objeto com o evento JavaScript.
-     */
-    exibirDivComoPopup: function(nome, event) {
-      var botao = event.target;
-
-      for (var iTip = 0; iTip < 2; iTip++) {
-        TagToTip(
-          nome,
-          FADEIN,
-          300,
-          COPYCONTENT,
-          false,
-          FIX,
-          [
-            botao,
-            9 - getTableWidth(nome),
-            -25 - getTableHeight(nome)
-          ]);
-      }
     },
 
     /**
@@ -435,6 +398,25 @@ const app = new Vue({
      */
     atualizarLista: function () {
       this.$refs.lista.atualizar();
+    },
+
+    /**
+     * Indica que um controle de tooltip está sendo exibido.
+     * @param {!Object} tooltip O controle de tooltip que está sendo exibido.
+     */
+    mostrarTooltip: function (tooltip) {
+      if (this.controleTooltipAtual) {
+        this.controleTooltipAtual.fechar();
+      }
+
+      this.controleTooltipAtual = tooltip;
+    },
+
+    /**
+     * Indica que o controle de tooltip atual está fechado.
+     */
+    esconderTooltip: function () {
+      this.controleTooltipAtual = null;
     }
   },
 

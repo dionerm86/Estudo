@@ -4047,6 +4047,23 @@ namespace Glass.Data.DAL
                     }
 
                     #endregion
+
+                    if (nf.ValorIpiDevolvido > 0 && nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
+                    {
+                        if (pnf.ValorIpiDevolvido > 0)
+                        {
+                            XmlElement impostoDevol = doc.CreateElement("impostoDevol");
+                            det.AppendChild(impostoDevol);
+
+                            var porcentagemValorIpiDevolvido = (pnf.ValorIpiDevolvido / nf.ValorIpiDevolvido) * 100;
+
+                            ManipulacaoXml.SetNode(doc, impostoDevol, "pDevol", Formatacoes.TrataValorDecimal(porcentagemValorIpiDevolvido, 2).PadLeft(3, '0'));
+
+                            XmlElement ipi = doc.CreateElement("IPI");
+                            impostoDevol.AppendChild(ipi);
+                            ManipulacaoXml.SetNode(doc, ipi, "vIPIDevol", Formatacoes.TrataValorDecimal(pnf.ValorIpiDevolvido, 2));
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -7496,6 +7513,15 @@ namespace Glass.Data.DAL
             }
         }
 
+        #endregion
+
+        #region Atualiza o Valor do IPI Devolvido
+        public void AtualizaValorIpiDevolvido(GDASession sessao, uint idNf, decimal valorIpiDevolvido)
+        {
+            var sql = $"UPDATE nota_fiscal set valorIpiDevolvido = {valorIpiDevolvido.ToString().Replace(",", ".")} WHERE idNf = {idNf}";
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
         #endregion
 
         #region Insere informação complementar
