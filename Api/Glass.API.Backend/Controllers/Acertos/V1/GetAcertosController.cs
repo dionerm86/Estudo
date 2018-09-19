@@ -54,7 +54,7 @@ namespace Glass.API.Backend.Controllers.Acertos.V1
             {
                 filtro = filtro ?? new Models.Acertos.Lista.FiltroDto();
 
-                var movimentacoes = AcertoDAO.Instance.GetByCliList(
+                var acertos = AcertoDAO.Instance.GetByCliList(
                     filtro.Id ?? 0,
                     (uint)(filtro.IdPedido ?? 0),
                     (uint)(filtro.IdLiberacao ?? 0),
@@ -70,7 +70,7 @@ namespace Glass.API.Backend.Controllers.Acertos.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    movimentacoes.Select(o => new Models.Acertos.Lista.ListaDto(o)),
+                    acertos.Select(o => new Models.Acertos.Lista.ListaDto(o)),
                     filtro,
                     () => AcertoDAO.Instance.GetByCliListCount(
                         filtro.Id ?? 0,

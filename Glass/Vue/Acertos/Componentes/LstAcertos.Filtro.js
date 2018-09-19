@@ -72,18 +72,6 @@ Vue.component('acertos-filtros', {
         this.filtroAtual.idFormaPagamento = atual ? atual.id : null;
       },
       deep: true
-    },
-
-    /**
-     * Observador para a propriedade 'configuracoes'.
-     * Inicia o filtro de protesto.
-     */
-    configuracoes: {
-      handler: function (atual) {
-        this.filtroAtual.protesto = 0;
-        this.filtrar();
-      },
-      deep: true
     }
   },
 

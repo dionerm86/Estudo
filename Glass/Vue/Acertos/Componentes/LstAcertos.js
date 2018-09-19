@@ -21,10 +21,6 @@ const app = new Vue({
      * @returns {Promise} Uma promise com o resultado da busca de acertos.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      if (!this.configuracoes || !Object.keys(this.configuracoes).length) {
-        return Promise.reject();
-      }
-
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Acertos.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
     },
