@@ -13,6 +13,7 @@
 
     <script type="text/javascript">
         var nomeTabelaChequesOpener = <%= !String.IsNullOrEmpty(Request["tabelaCheque"]) ? Request["tabelaCheque"] : "'tbChequePagto'" %>;
+        var tipoPagto = <%= Request["tipoPagto"] %>;
 
         function validar()
         {
@@ -44,9 +45,9 @@
 
             var dataMax = null;
 
-            if (bloquearVista && (nomeTabelaChequesOpener.indexOf("ctrlFormaPagto1") > -1 || nomeTabelaChequesOpener.indexOf("ctrlFormaPagto2") > -1))
+            if (bloquearVista && tipoPagto == "1")
                 dataMax = "<%= GetDataVencMaxVista() %>";
-            else if (bloquearPrazo && nomeTabelaChequesOpener.indexOf("ctrlFormaPagto3") > -1)
+            else if (bloquearPrazo && tipoPagto == "2")
                 dataMax = "<%= GetDataVencMaxPrazo() %>";
 
             if (dataMax != null)
