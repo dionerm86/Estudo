@@ -24,11 +24,15 @@ namespace Glass.UI.Web.Relatorios
                 {
                     txtNumCli.Text = idCli.ToString();
                     txtNomeCliente.Text = ClienteDAO.Instance.GetNome(idCli);
+                    txtNumCli.Enabled = false;
+                    txtNomeCliente.Enabled = false;
                     grdProduto.DataBind();
                 }
+
+                filtros.Visible = !String.IsNullOrWhiteSpace(txtNumCli.Text);
             }
         }
-    
+
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             lnkPesq_Click(sender, e);
@@ -37,6 +41,14 @@ namespace Glass.UI.Web.Relatorios
         protected void lnkPesq_Click(object sender, EventArgs e)
         {
             grdProduto.PageIndex = 0;
+
+            var clienteVazio = String.IsNullOrWhiteSpace(txtNumCli.Text);
+
+            txtNumCli.Enabled = clienteVazio;
+            txtNomeCliente.Enabled = clienteVazio;
+
+
+            filtros.Visible = !clienteVazio;
         }
     
         protected void drpGrupo_DataBound(object sender, EventArgs e)
@@ -83,6 +95,11 @@ namespace Glass.UI.Web.Relatorios
                 grdProduto.Columns[4].Visible = false;
             else
                 grdProduto.Columns[4].Visible = true;
-        }     
+        }
+
+        protected void btnFiltrarNovoCliente_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("~/Relatorios/ListaPrecoTabCliente.aspx");
+        }
     }
 }
