@@ -32,7 +32,7 @@ namespace Glass.Data.DAL
                         FROM produto_ncm
                     ) as ncm ON (ped.IdLoja = ncm.IdLoja AND p.IdProd = ncm.IdProd)
                 Where pip.idItemProjeto=" + idItemProjeto + @" and coalesce(mip.idItemProjeto, " + idItemProjeto + ")=" + idItemProjeto + @"
-                Order By pip.tipo asc, pip.IdPecaItemProj asc";
+                Order By pip.IdPecaItemProj asc";
 
             List<PecaItemProjeto> lstPecaItem = objPersistence.LoadData(sessao, sql);
             List<PecaProjetoModelo> lstPecaMod = PecaProjetoModeloDAO.Instance.GetByModelo(sessao, idProjetoModelo);
@@ -422,7 +422,7 @@ namespace Glass.Data.DAL
         {
             bool inserirPecas = objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From peca_item_projeto Where idItemProjeto=" + itemProj.IdItemProjeto) == 0;
 
-            foreach (PecaProjetoModelo ppm in lstPecaModelo)
+            foreach (PecaProjetoModelo ppm in lstPecaModelo.OrderBy(f => f.Tipo).ThenBy(f => f.IdPecaProjMod).ToList())
             {
                 /* Chamado 48920. */
                 if (eCommerce && ppm.IdPecaItemProj > 0 && ppm.Tipo != ObtemTipo(sessao, ppm.IdPecaItemProj))
