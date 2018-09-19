@@ -708,6 +708,12 @@
                                         <td align="left" nowrap="nowrap">
                                             <uc1:ctrlTextBoxFloat ID="ctvValorFiscal" runat="server" Value='<%# Bind("ValorFiscal") %>' />
                                         </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="Label30" runat="server" Text="Valor Mínimo"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <uc1:ctrlTextBoxFloat ID="ctvMinimo" runat="server" Value='<%# Bind("ValorMinimo") %>' />
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td align="left" nowrap="nowrap">
@@ -751,6 +757,12 @@
                                         </td>
                                         <td align="left" nowrap="nowrap">
                                             <uc1:ctrlTextBoxFloat ID="ctvValorFiscal" runat="server" Value='<%# Bind("ValorFiscal") %>' />
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <asp:Label ID="Label30" runat="server" Text="Valor Mínimo"></asp:Label>
+                                        </td>
+                                        <td align="left" nowrap="nowrap">
+                                            <uc1:ctrlTextBoxFloat ID="ctvMinimo" runat="server" Value='<%# Bind("ValorMinimo") %>' />
                                         </td>
                                     </tr>
                                     <tr>
