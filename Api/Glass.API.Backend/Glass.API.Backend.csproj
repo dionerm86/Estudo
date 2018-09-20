@@ -401,9 +401,9 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Caixas\Geral\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\ParcelasDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\CreditoDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\ChequesDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisParcelasDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisCreditoDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisChequesDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotaisFormaPagamentoDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotalizadoresDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotaisAcumuladosDto.cs" />

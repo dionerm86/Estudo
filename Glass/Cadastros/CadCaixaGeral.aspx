@@ -190,11 +190,11 @@
                 <section class="credito">
                     <label>Crédito utilizado</label>
                     <span>
-                        {{ totalizadores.credito.recebido | moeda }}                    
+                        {{ totalizadores.totaisCredito.recebido | moeda }}                    
                     </span>
                     <label>Crédito gerado</label>
                     <span>
-                        {{ totalizadores.credito.gerado | moeda }}                    
+                        {{ totalizadores.totaisCredito.gerado | moeda }}                    
                     </span>
                 </section>
             </div>
@@ -203,15 +203,15 @@
                     <template>
                         <label>Notas promissórias geradas</label>
                         <span>
-                            {{ totalizadores.parcelas.gerada | moeda }}                    
+                            {{ totalizadores.totaisParcelas.gerada | moeda }}                    
                         </span>
                         <label title="Este campo considera apenas o filtro de período">Contas recebidas {{ configuracoes.descricaoContaContabil }}</label>
                         <span>
-                            {{ totalizadores.parcelas.recebidaContabil | moeda }}
+                            {{ totalizadores.totaisParcelas.recebidaContabil | moeda }}
                         </span>
                         <label title="Este campo considera apenas o filtro de período">Contas recebidas {{ configuracoes.descricaoContaNaoContabil }}</label>
                         <span>
-                            {{ totalizadores.parcelas.recebidaNaoContabil | moeda }}
+                            {{ totalizadores.totaisParcelas.recebidaNaoContabil | moeda }}
                         </span>
                     </template>
                 </section>
@@ -229,15 +229,15 @@
                         </span>
                         <label>Saldo cumulativo cheque reapres.</label>
                         <span>
-                            {{ totalizadores.cheques.reapresentado | moeda }}                    
+                            {{ totalizadores.totaisCheques.reapresentado | moeda }}                    
                         </span>
                         <label>Total cheque terc. utilizáveis</label>
                         <span>
-                            {{ totalizadores.cheques.terceiro | moeda }}
+                            {{ totalizadores.totaisCheques.terceiro | moeda }}
                         </span>
                         <label>Saldo cumulativo cheque devolv.</label>
                         <span>
-                            {{ totalizadores.cheques.devolvido | moeda }}
+                            {{ totalizadores.totaisCheques.devolvido | moeda }}
                         </span>
                     </template>
                 </section>

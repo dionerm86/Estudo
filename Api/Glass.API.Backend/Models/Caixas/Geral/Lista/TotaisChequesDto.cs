@@ -1,4 +1,4 @@
-﻿// <copyright file="ChequesDto.cs" company="Sync Softwares">
+﻿// <copyright file="TotaisChequesDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -10,8 +10,8 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
     /// <summary>
     /// Classe que encapsula dados dos valores recebido no caixa.
     /// </summary>
-    [DataContract(Name = "Cheques")]
-    public class ChequesDto
+    [DataContract(Name = "TotaisCheques")]
+    public class TotaisChequesDto
     {
         /// <summary>
         /// Obtém ou define o total de cheques devolvidos.

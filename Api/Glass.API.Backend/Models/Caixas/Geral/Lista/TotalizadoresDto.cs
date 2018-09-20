@@ -18,14 +18,14 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("totaisAcumulados")]
-        public TotaisAcumuladosDto Recebido { get; set; }
+        public TotaisAcumuladosDto TotaisAcumulados { get; set; }
 
         /// <summary>
         /// Obtém ou define totais de cheque.
         /// </summary>
         [DataMember]
-        [JsonProperty("cheques")]
-        public ChequesDto Cheques { get; set; }
+        [JsonProperty("totaisCheques")]
+        public TotaisChequesDto TotaisCheques { get; set; }
 
         /// <summary>
         /// Obtém ou define totais de entrada por forma de pagamento.
@@ -52,14 +52,14 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
         /// Obtém ou define totais de crédito.
         /// </summary>
         [DataMember]
-        [JsonProperty("credito")]
-        public CreditoDto Credito { get; set; }
+        [JsonProperty("totaisCredito")]
+        public TotaisCreditoDto TotaisCredito { get; set; }
 
         /// <summary>
         /// Obtém ou define totais de contas a receber/recebidas.
         /// </summary>
         [DataMember]
-        [JsonProperty("parcelas")]
-        public ParcelasDto Parcelas { get; set; }
+        [JsonProperty("totaisParcelas")]
+        public TotaisParcelasDto TotaisParcelas { get; set; }
     }
 }

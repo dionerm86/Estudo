@@ -61,8 +61,8 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
                     (uint)(filtro.IdFuncionario ?? 0),
                     filtro.PeriodoCadastroInicio?.ToShortDateString(),
                     filtro.PeriodoCadastroFim?.ToShortDateString(),
-                    filtro.Valor.ToString().Replace(",", "."),
-                    filtro.Valor.ToString().Replace(",", "."),
+                    filtro.Valor.ToString(),
+                    filtro.Valor.ToString(),
                     filtro.ApenasDinheiro,
                     filtro.ApenasCheque,
                     (int)(filtro.Tipo ?? 0),
@@ -105,13 +105,13 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
 
                 var totalizador = new TotalizadoresDto()
                 {
-                    Recebido = new TotaisAcumuladosDto()
+                    TotaisAcumulados = new TotaisAcumuladosDto()
                     {
-                        Cheque = totais.TotalDinheiro,
-                        Dinheiro = totais.TotalCheque,
+                        Cheque = totais.TotalCheque,
+                        Dinheiro = totais.TotalDinheiro,
                     },
 
-                    Cheques = new ChequesDto()
+                    TotaisCheques = new TotaisChequesDto()
                     {
                         Devolvido = totais.TotalChequeDevolvido,
                         Reapresentado = totais.TotalChequeReapresentado,
@@ -145,13 +145,13 @@ namespace Glass.API.Backend.Controllers.Caixas.Geral.V1
                         Permuta = totais.SaldoPermuta,
                     },
 
-                    Credito = new CreditoDto()
+                    TotaisCredito = new TotaisCreditoDto()
                     {
                         Gerado = totais.TotalCreditoGerado,
                         Recebido = totais.TotalCreditoRecebido,
                     },
 
-                    Parcelas = new ParcelasDto()
+                    TotaisParcelas = new TotaisParcelasDto()
                     {
                         Gerada = totais.ContasReceberGeradas,
                         RecebidaContabil = totais.TotalContasRecebidasContabeis,
