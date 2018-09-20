@@ -44,6 +44,14 @@ namespace Glass.Data.RelDAL
 
         private string SqlVecHoje(string data)
         {
+            //Verifica se é para buscar apenas contas de boletos
+            var apenasContasBoletos = FinanceiroConfig.EnviarEmailCobrancaApenasContasComPlanoContasBoleto;
+            
+            ///Busca todos os plano de contas de boleto
+            var planosContasBoletos = UtilsPlanoConta.ContasTodosTiposBoleto();
+
+            var where = apenasContasBoletos ? $"AND cr.IdConta IN ({planosContasBoletos}) " : string.Empty;
+
             return @"
                 SELECT 0 as NumContasVec, 0 as ValorContasVec,
                     COUNT(*) as NumContasVecHoje, SUM(cr.valorVec) as ValorContasVecHoje,
@@ -55,12 +63,20 @@ namespace Glass.Data.RelDAL
                     AND cr.ValorVec>0
                     AND coalesce(isParcelaCartao,false)=false
                     AND !coalesce(cli.NaoReceberEmailCobrancaVencer, false) 
-                    AND DATE(cr.dataVec) = '" + data + @"'
-                GROUP BY cli.id_Cli";
+                    AND DATE(cr.dataVec) = '" + data + "'" + where + " GROUP BY cli.id_Cli";
+
         }
 
         private string SqlAVec(string data)
         {
+            ///Verifica se é para buscar apenas contas de boletos
+            var apenasContasBoletos = FinanceiroConfig.EnviarEmailCobrancaApenasContasComPlanoContasBoleto;
+            
+            ///Busca todos os plano de contas de boleto
+            var planosContasBoletos = UtilsPlanoConta.ContasTodosTiposBoleto();
+
+            var where = apenasContasBoletos ? $"AND cr.IdConta IN ({planosContasBoletos}) " : string.Empty;
+
             return @"
                 SELECT 0 as NumContasVec, 0 as ValorContasVec,
                     0 as NumContasVecHoje, 0 as ValorContasVecHoje,
@@ -72,8 +88,7 @@ namespace Glass.Data.RelDAL
                     AND cr.ValorVec>0
                     AND coalesce(isParcelaCartao,false)=false
                     AND !coalesce(cli.NaoReceberEmailCobrancaVencer, false) 
-                    AND DATE(cr.dataVec) = '" + data + @"'
-                GROUP BY cli.id_Cli";
+                    AND DATE(cr.dataVec) = '" + data + "'" + where + "  GROUP BY cli.id_Cli";
         }
 
         private string sqlContasReceber()
