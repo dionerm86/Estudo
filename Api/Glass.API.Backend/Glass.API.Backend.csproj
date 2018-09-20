@@ -233,6 +233,8 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
+    <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\BeneficiamentosController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\GetBeneficiamentosController.cs" />
@@ -255,6 +257,8 @@
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
+    <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
+    <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
     <Compile Include="Controllers\Imagens\V1\GetImagensController.cs" />
     <Compile Include="Controllers\Imagens\V1\ImagensController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
@@ -350,8 +354,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
+    <Compile Include="Helper\Acertos\TraducaoOrdenacaoListaAcertos.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
     <Compile Include="Helper\ConversorEnum.cs" />
@@ -400,6 +406,11 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Sinais\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Sinais\Lista\ListaDto.cs" />
+    <Compile Include="Models\Sinais\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ProtestoEnum.cs" />
     <Compile Include="Models\Beneficiamentos\Configuracoes\ControleDto.cs" />
     <Compile Include="Models\Beneficiamentos\Filtro\BeneficiamentoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\DadosBeneficiamentosDto.cs" />
@@ -429,7 +440,7 @@
     <Compile Include="Models\Cheques\Lista\AdvogadoEnum.cs" />
     <Compile Include="Models\Cheques\Lista\FiltroDto.cs" />
     <Compile Include="Models\Cheques\Lista\ListaDto.cs" />
-    <Compile Include="Models\Cheques\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoFiscalDto.cs" />
     <Compile Include="Models\Estoques\CadastroAtualizacao\CadastroAtualizacaoRapidaRealDto.cs" />
@@ -447,6 +458,9 @@
     <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
     <Compile Include="Models\Imagens\Exibicao\DadosImagemDto.cs" />
     <Compile Include="Models\Imagens\Exibicao\TipoItemEnum.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />

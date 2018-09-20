@@ -18,7 +18,7 @@ namespace Glass.Data.DAL
             string criterio = String.Empty;
 
             string campos = selecionar ? @"a.*, (select cast(sum(valorPagto) as decimal(12,2)) from pagto_acerto where idAcerto=a.idAcerto) as TotalAcerto, 
-                cli.Nome as NomeCliente, f.Nome as Funcionario, '$$$' as criterio" : "count(distinct a.idAcerto)";
+                cli.Nome as NomeCliente, f.Nome as Funcionario, '$$$' as criterio" : "a.idAcerto";
 
             string sql = @"
                 Select " + campos + @" From acerto a
@@ -123,6 +123,11 @@ namespace Glass.Data.DAL
 
             sql += " GROUP BY a.IdAcerto";
 
+            if (!selecionar)
+            {
+                sql = $"SELECT COUNT(*) FROM ({sql}) as tbl";
+            }
+
             return sql.Replace("$$$", criterio);
         }
 
@@ -208,33 +213,38 @@ namespace Glass.Data.DAL
         public IList<Acerto> GetByCliList(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
             uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas, string sortExpression, int startRow, int pageSize)
         {
-            string sort = String.IsNullOrEmpty(sortExpression) ? "a.idAcerto desc" : sortExpression;
-
             bool temFiltro;
-            var dados = LoadDataWithSortExpression(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), sort, startRow, pageSize, temFiltro, GetParam(dataIni, dataFim));
+            var dados = (IList<Acerto>)objPersistence.LoadDataWithSortExpression(
+                SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), 
+                new InfoSortExpression(sortExpression),
+                new InfoPaging(startRow, pageSize),
+                GetParam(dataIni, dataFim))
+                .ToList();
 
             PreencheIdRefJuros(ref dados);
             return dados;
         }
 
         public IList<Acerto> GetListRpt(uint idAcerto, uint idPedido, uint idLiberarPedido,
-            uint idCli, string dataIni, string dataFim, uint idFormaPagto, int numNotaFiscal)
+            uint idCli, string dataIni, string dataFim, uint idFormaPagto, int numNotaFiscal, int protesto)
         {
             bool temFiltro;
-            var dados = LoadDataWithSortExpression(SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto,
-                0, numNotaFiscal, 0, true, out temFiltro), "", 0, 0, GetParam(dataIni, dataFim));
+            var dados = (IList<Acerto>)objPersistence.LoadData(
+                SqlList((int)idAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, 0, numNotaFiscal, protesto, true, out temFiltro),
+                GetParam(dataIni, dataFim))
+                .ToList();
 
             PreencheIdRefJuros(ref dados);
             return dados;
         }
 
-        public int GetByCliListCount(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim, 
+        public int GetByCliListCount(int numAcerto, uint idPedido, uint idLiberarPedido, uint idCli, string dataIni, string dataFim,
             uint idFormaPagto, uint idTipoBoleto, int numNotaFiscal, int protestadas)
         {
             bool temFiltro;
-            return GetCountWithInfoPaging(SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim,
-                idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, true, out temFiltro), temFiltro, null, GetParam(dataIni, dataFim));
+            return objPersistence.ExecuteSqlQueryCount(
+                SqlList(numAcerto, idPedido, idLiberarPedido, idCli, dataIni, dataFim, idFormaPagto, idTipoBoleto, numNotaFiscal, protestadas, false, out temFiltro),
+                GetParam(dataIni, dataFim));
         }
 
         public int GetCount(int numAcerto, uint idCli, string dataIni, string dataFim)

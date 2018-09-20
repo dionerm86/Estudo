@@ -184,11 +184,6 @@ namespace Glass.Data.Model
             }
         }
 
-        public bool CancelarVisible
-        {
-            get { return Situacao != (int)SituacaoEnum.Cancelado; }
-        }
-
         [Log("Referência")]
         public string Referencia
         {
@@ -208,11 +203,6 @@ namespace Glass.Data.Model
         public bool Renegociacao
         {
             get { return ContasReceberDAO.Instance.GetCountRenegByAcerto(IdAcerto, false) > 0; }
-        }
-
-        public bool ExibirNotaPromissoria
-        {
-            get { return Renegociacao && FinanceiroConfig.DadosLiberacao.NumeroViasNotaPromissoria > 0; }
         }
 
         [PersistenceProperty("Juros", DirectionParameter.InputOptional)]
