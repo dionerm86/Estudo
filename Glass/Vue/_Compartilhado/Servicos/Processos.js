@@ -40,10 +40,10 @@ Servicos.Processos = (function(http) {
     },
 
     /**
-      * Insere um processo de etiqueta.
-      * @param {!Object} processo O objeto com os dados do processo a ser inserido.
-      * @returns {Promise} Uma promise com o resultado da operação.
-      */
+     * Insere um processo de etiqueta.
+     * @param {!Object} processo O objeto com os dados do processo a ser inserido.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
     inserir: function (processo) {
       return http().post(API.substr(0, API.length - 1), processo);
     },
@@ -96,6 +96,28 @@ Servicos.Processos = (function(http) {
      */
     obterParaControle: function () {
       return http().get(API + 'filtro');
+    },
+
+    /**
+     * Realiza a validação do processo para os subgrupos informados.
+     * @param {!number} idProcesso O identificador do processo de etiqueta que será validado.
+     * @param {number[]} idsSubgruposParaValidar Os identificadores dos subgrupos que serão validados.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    validarSubgrupos: function (idProcesso, idsSubgruposParaValidar) {
+      if (!idProcesso) {
+        throw new Error('Processo é obrigatório.');
+      }
+
+      if (!idsSubgruposParaValidar || !idsSubgruposParaValidar.length) {
+        return Promise.resolve();
+      }
+
+      return http().get(API + idProcesso + '/validarSubgrupos', {
+        params: {
+          idsSubgrupos: idsSubgruposParaValidar
+        }
+      });
     }
   };
 })(function() {

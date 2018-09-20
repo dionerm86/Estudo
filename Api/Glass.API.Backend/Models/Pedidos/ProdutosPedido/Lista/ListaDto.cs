@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Genericas.Venda;
@@ -20,8 +21,9 @@ namespace Glass.API.Backend.Models.Pedidos.ProdutosPedido.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
+        /// <param name="sessao">A transação com o banco de dados.</param>
         /// <param name="produtoPedido">A model de produto de pedido.</param>
-        internal ListaDto(Data.Model.ProdutosPedido produtoPedido)
+        internal ListaDto(GDASession sessao, Data.Model.ProdutosPedido produtoPedido)
         {
             this.Id = (int)produtoPedido.IdProdPed;
             this.IdMaterialProjeto = (int?)produtoPedido.IdMaterItemProj;

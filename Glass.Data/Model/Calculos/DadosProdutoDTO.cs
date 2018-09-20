@@ -12,7 +12,7 @@ namespace Glass.Data.Model.Calculos
     {
         private static readonly CacheMemoria<Produto, int> cacheProdutos;
         private static readonly CacheMemoria<DescontoAcrescimoCliente, KeyValuePair<uint, uint?>> cacheDescontosAcrescimosCliente;
-        
+
         private readonly IProdutoCalculo produtoCalculo;
         private readonly IDadosGrupoSubgrupo dadosGrupoSubgrupo;
         private readonly IDadosChapaVidro dadosChapaVidro;
@@ -143,11 +143,13 @@ namespace Glass.Data.Model.Calculos
                     (int)Pedido.TipoEntregaPedido.Balcao,
                     (int)Pedido.TipoEntregaPedido.Entrega
                 };
-                
+
                 baseCalculo = tiposEntregaValorBalcao.Contains(tipoEntrega)
                     ? produto.Value.ValorBalcao
                     : produto.Value.ValorObra;
             }
+
+            percentualMultiplicar += (decimal)DadosChapaVidro.PercentualAcrescimoAltura();
 
             return Math.Round(baseCalculo * percentualMultiplicar, 2);
         }

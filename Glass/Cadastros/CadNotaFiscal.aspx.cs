@@ -229,6 +229,7 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.ValorTotalTrib = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
                 prodNf.PercDiferimento = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercDiferimento")).Text);
                 prodNf.ValorIcmsDesonerado = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
+                prodNf.ValorIpiDevolvido = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiDevolvidoProd")).Text);
 
                 var motivoDeson = (prodNf.Cst == "20" || prodNf.Cst == "30" || prodNf.Cst == "70" || prodNf.Cst == "90") ?
                     ((DropDownList)grdProdutos.FooterRow.FindControl("drpMotivoIcmsDeson")).SelectedValue : "";
@@ -299,6 +300,11 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao incluir produto na NF.", ex, Page);
                 return;
             }
+        }
+
+        public bool IsNfFinalidadeDevolucao()
+        {
+            return NotaFiscalDAO.Instance.ObtemFinalidade(Request["idNf"].StrParaUint()) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
         }
 
         protected void odsProdutos_Deleted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)

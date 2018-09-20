@@ -13,74 +13,74 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/cappta-tef.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
-    
+
     var chamarCallback = true;
     var buscandoCliente = false;
     var descontoLiberacao = <%= Glass.Configuracoes.Liberacao.DadosLiberacao.DescontoLiberarPedido.ToString().ToLower() %>;
-    
+
     function verificaAlteracaoPedidos()
-    {        
+    {
         var idsPedidos = new Array();
         var idsSinais = new Array();
         var idsPagtoAntecip = new Array();
         var tabela = FindControl("grdPedido", "table");
-        
+
         for (var i = 0; i < tabela.rows.length; i++)
         {
             var idPedido = FindControl("hdfIdPedido", "input", tabela.rows[i].cells[0]);
             if (idPedido != null)
                 idsPedidos.push(idPedido.value);
-            
+
             var idSinal = FindControl("hdfIdSinal", "input", tabela.rows[i].cells[0]);
             if (idSinal != null && idSinal.value != "")
                 idsSinais.push(idSinal.value);
-                
+
             var idPagtoAntecip = FindControl("hdfIdPagtoAntecip", "input", tabela.rows[i].cells[0]);
             if (idPagtoAntecip != null && idPagtoAntecip.value != "")
-                idsPagtoAntecip.push(idPagtoAntecip.value);   
+                idsPagtoAntecip.push(idPagtoAntecip.value);
         }
-        
+
         if (idsPedidos.length == 0)
             return true;
-        
+
         var dataTela = FindControl("hdfDataTela", "input").value;
-        
+
         var recalcular = CadLiberarPedido.IsPedidosAlterados(idsPedidos.join(','), idsSinais.join(','), idsPagtoAntecip.join(','), dataTela);
         if (recalcular.value.split('|')[0] == "true")
         {
             FindControl("lblMensagemRecalcular", "span").innerHTML = recalcular.value.split('|')[1] + "<br /><br />";
             FindControl("hdfRecarregarTabelaPedido", "input").value = "true";
             alterouProduto();
-            
+
             return false;
         }
-        
+
         return true;
     }
-    
+
     function alterouProduto(iniciando)
     {
         iniciando = iniciando == true;
         document.getElementById("pagamento").style.display = iniciando ? "" : "none";
         document.getElementById("recalcular").style.display = iniciando ? "none" : "";
     }
-    
+
     function alteraQtdeLib(tabela, idProdPed)
     {
         var qtde = document.getElementById("qtde_" + idProdPed);
         var qtdeMax = document.getElementById("qtdeMax_" + idProdPed);
-        
+
         if (qtde.value == "")
             qtde.value = 0;
         else if (parseInt(qtde.value, 10) > parseInt(qtdeMax.value, 10))
             qtde.value = qtdeMax.value;
-        
+
         marcaProd(tabela, idProdPed, false);
         marcaProd(tabela, idProdPed, true, parseInt(qtde.value, 10));
-        
+
         document.getElementById("chkProdPed_" + idProdPed).checked = qtde.value == qtdeMax.value;
     }
-    
+
     function escondeDescontoAcrescimo()
     {
         try
@@ -90,48 +90,48 @@
         }
         catch (err) { }
     }
-    
+
     function exibeProd(tabela, idProdPed, botaoExibir)
     {
         var exibir = botaoExibir.src.indexOf("mais") > -1;
         botaoExibir.src = botaoExibir.src.replace(exibir ? "mais" : "menos", exibir ? "menos" : "mais");
         botaoExibir.title = (exibir ? "Esconder" : "Exibir") + " produtos";
-        
+
         tabela = document.getElementById(tabela);
         for (i = 1; i < tabela.rows.length; i++)
         {
             var campoIdProdPed = FindControl("hdfIdProdPed", "input", tabela.rows[i]);
             if (campoIdProdPed == null || campoIdProdPed.value != idProdPed)
                 continue;
-            
+
             tabela.rows[i].style.display = exibir ? "" : "none";
         }
     }
-    
+
     function marcaProd(tabela, idProdPed, marcar, qtdeMarcar)
     {
-        qtdeMarcar = typeof qtdeMarcar == 'number' ? qtdeMarcar : 
+        qtdeMarcar = typeof qtdeMarcar == 'number' ? qtdeMarcar :
             parseInt(document.getElementById("qtdeMax_" + idProdPed).value, 10);
-        
+
         var qtdeMarcados = 0;
         tabela = document.getElementById(tabela);
         for (i = 1; i < tabela.rows.length; i++)
         {
             if (qtdeMarcados >= qtdeMarcar)
                 break;
-            
+
             var campoIdProdPed = FindControl("hdfIdProdPed", "input", tabela.rows[i]);
             if (campoIdProdPed == null || campoIdProdPed.value != idProdPed || FindControl("chkSelProdPed", "input", tabela.rows[i]).disabled)
                 continue;
-            
+
             FindControl("chkSelProdPed", "input", tabela.rows[i]).checked = marcar;
             qtdeMarcados++;
         }
-        
+
         if (qtdeMarcados > 0)
             alterouProduto();
     }
-    
+
     function getBotao(idPedidoBuscar)
     {
         var tabela = document.getElementById("<%= grdPedido.ClientID %>");
@@ -140,46 +140,46 @@
             var idPedido = tabela.rows[i].cells[1].innerHTML;
             if (idPedido != idPedidoBuscar)
                 continue;
-            
+
             var inputs = tabela.rows[i].cells[0].getElementsByTagName("input");
             for (j = 0; j < inputs.length; j++)
                 if (inputs[j].id.indexOf("ImageButton1") > -1)
                     return inputs[j];
         }
-        
+
         return null;
     }
-    
+
     function validaFormaPagtoPrazo(val, args)
     {
         var totalPrazo = parseFloat(document.getElementById("<%= ctrlParcelas1.ClientID %>_txtValorParcelas").value);
         if (isNaN(totalPrazo))
             totalPrazo = 0;
-    
+
         args.IsValid = document.getElementById("tbAPrazo").style.display == "none" ||
             args.Value != "" || totalPrazo == 0;
     }
-    
+
     function getPedidosAbertos()
     {
         var pedidosAbertos = new Array();
         var tabela = document.getElementById("<%= grdPedido.ClientID %>");
-        
+
         for (i = 1; i < tabela.rows.length; i += 2)
         {
             var idPedido = tabela.rows[i].cells[1].innerHTML;
             var aberto = getBotao(idPedido);
             aberto = aberto != null ? aberto.src.toLowerCase().indexOf("menos.gif") > -1 : false;
-            
+
             if (aberto)
                 pedidosAbertos.push(idPedido);
         }
-        
+
         FindControl("hdfPedidosAbertos", "input").value = pedidosAbertos.join(",");
     }
-    
+
      function addOC(){
-    
+
         var idOC = FindControl("txtNumOC", "input").value;
         if (Trim(idOC) == "")
         {
@@ -188,7 +188,7 @@
             FindControl("txtNumOC", "input").focus();
             return;
         }
-        
+
         var idsPedidosNovos = CadLiberarPedido.GetIdsPedidosByOCForLiberacao(idOC).value.split(';');
         if (idsPedidosNovos[0] == "Erro")
         {
@@ -197,12 +197,12 @@
             FindControl("txtNumOC", "input").focus();
             return;
         }
-        
+
         var tipoVenda = FindControl("hdfBloqueioTipoVenda", "input").value;
         var idFormaPagto = FindControl("hdfBloqueioIdFormaPagto", "input").value;
         var cxDiario = FindControl("hdfCxDiario", "input").value;
-        
-        var idsNovos = idsPedidosNovos[1].split(','); 
+
+        var idsNovos = idsPedidosNovos[1].split(',');
         var idsAntigos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
         var retorno = new Array();
 
@@ -214,10 +214,10 @@
             if(idsAntigos[i].length > 0 && idsAntigos[i] != " ")
                 retorno.push(idsAntigos[i]);
         }
-        
+
         for (var i = 0; i < idsNovos.length; i++){
-        
-            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto , cxDiario, "",idOC).value.split('|');        
+
+            var validaPedido = CadLiberarPedido.ValidaPedido(idsNovos[i], tipoVenda, idFormaPagto , cxDiario, "",idOC).value.split('|');
             if (validaPedido[0] == "false")
             {
                 alert(validaPedido[1]);
@@ -225,25 +225,25 @@
                 FindControl("txtNumPedido", "input").focus();
                 return;
             }
-            
+
             for (var j = 0; j < retorno.length; j++){
                 if (retorno[j] == idsNovos[i] && retorno[j].length > 0)
                     continue;
             }
-            
+
             retorno.push(idsNovos[i]);
         }
-                
+
         FindControl("hdfBuscarIdsPedidos", "input").value = retorno.join(',');
         FindControl("txtNumPedido", "input").value = "";
         cOnClick("btnBuscarPedidos", null);
     }
-    
+
     function addPedido()
     {
         if (buscandoCliente)
             return;
-           
+
         var idPedido = FindControl("txtNumPedido", "input").value;
 
         if (Trim(idPedido) == "")
@@ -253,16 +253,16 @@
             FindControl("txtNumPedido", "input").focus();
             return;
         }
-        
+
         idPedido = parseInt(idPedido);
 
         var tipoVenda = FindControl("hdfBloqueioTipoVenda", "input").value;
         var idFormaPagto = FindControl("hdfBloqueioIdFormaPagto", "input").value;
-        var cxDiario = FindControl("hdfCxDiario", "input").value;        
+        var cxDiario = FindControl("hdfCxDiario", "input").value;
         var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value;
-        
+
         var validaPedido = CadLiberarPedido.ValidaPedido(idPedido, tipoVenda, idFormaPagto, cxDiario, (idsPedidos == "" || idsPedidos == null ? "" : idsPedidos + ",") + idPedido, "").value.split('|');
-            
+
         if (validaPedido[0] == "false")
         {
             alert(validaPedido[1]);
@@ -272,11 +272,11 @@
         }
 
         FindControl("hdfIdCliente", "input").value = validaPedido[1];
-        
+
         idsPedidos = idsPedidos.split(',');
-        
+
         var novosIds = new Array();
-        
+
         novosIds.push(idPedido);
         for (i = 0; i < idsPedidos.length; i++)
             if (idsPedidos[i] != idPedido && idsPedidos[i].length > 0)
@@ -289,86 +289,86 @@
             alert(validaPedidosMesmaLoja[1]);
             return;
         }
-        
+
         FindControl("hdfBuscarIdsPedidos", "input").value = novosIds.join(',');
         FindControl("txtNumPedido", "input").value = "";
         cOnClick("btnBuscarPedidos", null);
     }
-    
+
     function removePedido(idPedido)
     {
         var idsPedidos = FindControl("hdfBuscarIdsPedidos", "input").value.split(',');
         var novosIds = new Array();
-        
+
         for (i = 0; i < idsPedidos.length; i++)
             if (idsPedidos[i] != idPedido && idsPedidos[i].length > 0)
                 novosIds.push(idsPedidos[i]);
-        
+
         FindControl("hdfIdsPedidosRem", "input").value += idPedido + ",";
-        
+
         FindControl("hdfBuscarIdsPedidos", "input").value = novosIds.join(',');
         cOnClick("btnBuscarPedidos", null);
     }
-    
+
     function exibirProdutos(botao, idPedido)
     {
         var liberarProdutos = <%= Glass.Configuracoes.Liberacao.DadosLiberacao.LiberarPedidoProdutos.ToString().ToLower() %>;
         var exibirProdutosPedidoAoLiberar = <%= Glass.Configuracoes.PedidoConfig.ExibirProdutosPedidoAoLiberar.ToString().ToLower() %>;
-        
+
         if (!liberarProdutos && !exibirProdutosPedidoAoLiberar)
             return;
-        
+
         var linha = document.getElementById("produtos_" + idPedido);
-        
+
         if (linha == null)
             return;
-        
+
         var exibir = linha.style.display == "none";
         linha.style.display = exibir ? "" : "none";
         botao.src = botao.src.replace(exibir ? "mais" : "menos", exibir ? "menos" : "mais");
         botao.title = (exibir ? "Esconder" : "Exibir") + " produtos";
     }
-    
+
     function buscarPedidos()
     {
         var idCliente = FindControl("txtNumCli", "input").value;
         var nomeCliente = FindControl("txtNomeCliente", "input").value;
         if (idCliente == "" && nomeCliente == "")
             return;
-        
+
         buscandoCliente = true;
-        
+
         if (idCliente == "")
             idCliente = "0";
-            
+
         var idsPedidosRem = FindControl("hdfIdsPedidosRem", "input").value;
         var dataIni = FindControl("ctrlDataIni_txtData", "input").value;
         var dataFim = FindControl("ctrlDataFim_txtData", "input").value;
         var situacaoProd = FindControl("drpSituacaoProd", "select").value;
         var tiposPedidos = FindControl("cbdTipoPedido", "select").itens();
         var idLoja = FindControl("drpLoja", "select").value;
-        
+
         FindControl("hdfBuscarIdsPedidos", "input").value = CadLiberarPedido.GetPedidosByCliente(
             idCliente, nomeCliente, idsPedidosRem, dataIni, dataFim, situacaoProd, tiposPedidos, idLoja).value;
     }
-    
+
     function selecionaTodosProdutos(check)
     {
         var tabela = check;
         while (tabela.nodeName.toLowerCase() != "table")
             tabela = tabela.parentNode;
-        
+
         var checkBoxProdutos = tabela.getElementsByTagName("input");
-        
+
         var i = 0;
         for (i = 0; i < checkBoxProdutos.length; i++)
         {
             if (checkBoxProdutos[i].id.indexOf("chkTodos") > -1 || checkBoxProdutos[i].disabled)
                 continue;
-            
+
             checkBoxProdutos[i].checked = check.checked;
         }
-        
+
         alterouProduto();
     }
 
@@ -386,7 +386,7 @@
             FindControl("txtNomeCliente", "input").value = "";
             return false;
         }
-        
+
         limpar();
 
         FindControl("txtNomeCliente", "input").value = retorno[1];
@@ -398,7 +398,8 @@
 
     // Abre popup para cadastrar cheques
     function queryStringCheques() {
-        return "?LiberarPedido=1&origem=2";
+        var ctrTipoPagto = FindControl("drpTipoPagto", "select");
+        return "?LiberarPedido=1&origem=2&tipoPagto=" + ctrTipoPagto.value;
     }
 
     function tipoPagtoChanged() {
@@ -410,30 +411,30 @@
         FindControl("tbAVista", "table").style.display = ctrTipoPagto.value == 1 ? "inline" : "none";
         FindControl("tbAPrazo", "table").style.display = ctrTipoPagto.value == 2 ? "inline" : "none";
         FindControl("btnConfirmar", "input").style.display = ctrTipoPagto.value != "" ? "inline" : "none";
-        
+
         //alteraFormaPagtoPrazo(FindControl("drpFormaPagtoPrazo", "select"));
         var chkReceberEntrada = FindControl("chkReceberEntrada", "input");
         receberEntrada(chkReceberEntrada ? chkReceberEntrada.checked : false);
-        
+
         // Atualiza os dados da forma de pagamento selecionada
         <%= ctrlFormaPagto1.ClientID %>.Calcular();
         <%= ctrlFormaPagto2.ClientID %>.Calcular();
         <%= ctrlParcelas1.ClientID %>.Calcular();
-        
+
         // Esconde o campo de desconto se for liberação à prazo e se a empresa não permitir
         var descontoPrazo = true;
         if (descontoLiberacao && !descontoPrazo)
         {
             var campoDesconto = FindControl("txtDesconto", "input");
             document.getElementById("dadosDesconto").style.display = ctrTipoPagto.value == 1 ? "" : "none";
-            
+
             if (ctrTipoPagto.value == 2 && campoDesconto != null)
                 campoDesconto.value = "";
         }
-        
+
         if (campoDesconto != null)
             campoDesconto.onblur();
-        
+
         //alteraFormaPagtoPrazo(FindControl("drpFormaPagtoPrazo", "select"));
     }
 
@@ -444,12 +445,12 @@
             if (confirm(control.value + '?') == false)
                 return false;
 
-            if (FindControl("hdfLibParc", "input").value == "true" && 
+            if (FindControl("hdfLibParc", "input").value == "true" &&
                 !confirm("Um ou mais pedidos desta liberação estão sendo liberados PARCIALMENTE, deseja continuar?"))
                 return false;
 
             try {
-                var idCliente = FindControl("hdfIdCliente", "input").value;            
+                var idCliente = FindControl("hdfIdCliente", "input").value;
                 var idsPedido = FindControl("hdfIdsPedido", "input").value;
                 var idsProdutosPedido = FindControl("hdfIdsProdutosPedido", "input").value;
                 var idsProdutosProducao = FindControl("hdfIdsProdutoPedidoProducao", "input").value;
@@ -457,7 +458,7 @@
                 var totalASerPago = FindControl("hdfTotalASerPago", "input").value;
                 var idsOc = FindControl("hdfIdsOc", "input").value;
 
-                // Verifica se algum dos pedidos foi pago antecipado ou recebeu sinal ou teve algum cancelamento do momento que foi 
+                // Verifica se algum dos pedidos foi pago antecipado ou recebeu sinal ou teve algum cancelamento do momento que foi
                 // adicionado na tela até agora.
                 if (!verificaAlteracaoPedidos())
                     return false;
@@ -465,19 +466,19 @@
                 // Se for garantia/reposição
                 if (FindControl("hdfIsGarantiaReposicao", "input").value == "true")
                 {
-                    retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido, 
+                    retorno = CadLiberarPedido.ConfirmarGarantiaReposicao(idCliente, idsPedido, idsProdutosPedido,
                         idsProdutosProducao, qtdeProdutosLiberar).value;
                 }
                 else if (FindControl("hdfIsPedidoFuncionario", "input").value == "true")
                 {
-                    retorno = CadLiberarPedido.ConfirmarPedidoFuncionario(idCliente, idsPedido, idsProdutosPedido, 
-                        idsProdutosProducao, qtdeProdutosLiberar).value;            
+                    retorno = CadLiberarPedido.ConfirmarPedidoFuncionario(idCliente, idsPedido, idsProdutosPedido,
+                        idsProdutosProducao, qtdeProdutosLiberar).value;
                 }
                 else
                 {
                     var isAVista = FindControl("drpTipoPagto", "select").value == 1;
                     var cxDiario = FindControl("hdfCxDiario", "input").value;
-                
+
                     var controle = isAVista ? <%= ctrlFormaPagto1.ClientID %> : <%= ctrlFormaPagto2.ClientID %>;
                     var formasPagto = controle.FormasPagamento();
                     var tiposCartao = controle.TiposCartao();
@@ -519,10 +520,10 @@
                         receberEntrada = receberEntrada ? receberEntrada.checked : false;
                         var diasParcelas = FindControl("ctrlParcelasSelecionar1_hdfDiasParcelas", "input").value;
                         var drpFormaPagtoPrazo = FindControl("drpFormaPagtoPrazo", "select");
-                        var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();                        
+                        var valoresParcelas = <%= ctrlParcelas1.ClientID %>.Valores();
                         var idParcela = drpParcelas != null && drpParcelas.value > 0 ? drpParcelas.value : "";
-                    
-                        retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas, 
+
+                        retorno = CadLiberarPedido.ConfirmarAPrazo(idCliente, idsPedido, idsProdutosPedido, idsProdutosProducao, qtdeProdutosLiberar, totalASerPago, numParcelas, diasParcelas,
                             idParcela, valoresParcelas, receberEntrada, formasPagto, tiposCartao, valores, contas, depositoNaoIdentificado, CNI, utilizarCredito, creditoUtilizado, numAut, cxDiario, parcelasCartao, isDescontarComissao,
                             tipoDesconto, desconto, tipoAcrescimo, acrescimo, drpFormaPagtoPrazo.value, valorUtilizadoObra, cheques, numAutCartao, idsOc).value;
                     }
@@ -569,7 +570,7 @@
                     return false;
 
                 } else {
-            
+
                     openWindow(600, 800, "../Relatorios/RelLiberacao.aspx?idLiberarPedido=" + retorno[3]);
 
                     if (retorno[2] == "true")
@@ -577,7 +578,7 @@
                 }
 
                 desbloquearPagina(true);
-                alert(retorno[1]);  
+                alert(retorno[1]);
                 limpar();
                 cOnClick("btnBuscarPedidos", null);
                 return true;
@@ -607,8 +608,8 @@
                     openWindow(600, 800, "../Relatorios/NFe/RelBase.aspx?rel=Danfe&idNf=" + retEmitirNfce.value);
                 }
             }
-       
-            alert(sucesso ? retorno[1] : msg);  
+
+            alert(sucesso ? retorno[1] : msg);
             limpar();
             cOnClick("btnBuscarPedidos", null);
             return true;
@@ -628,61 +629,61 @@
             FindControl("lblValorASerPago", "span").innerHTML = "";
             FindControl("txtNumCli", "input").value = "";
             FindControl("txtNomeCliente", "input").value = "";
-                
+
             if (FindControl("txtDesconto", "input") != null)
                 FindControl("txtDesconto", "input").value = "";
-                
+
             if (FindControl("lblTotalIcms", "span") != null)
                 FindControl("lblTotalIcms", "span").innerHTML = "";
 
             if (FindControl("lblTotalIpi", "span") != null)
                 FindControl("lblTotalIpi", "span").innerHTML = "";
-                
+
             <%= ctrlFormaPagto1.ClientID %>.Limpar();
             <%= ctrlFormaPagto2.ClientID %>.Limpar();
-            
-        } 
+
+        }
         catch (err) {}
     }
-    
+
     function parcelasChanged()
     {
         Parc_visibilidadeParcelas("<%= ctrlParcelas1.ClientID %>", "atualizarValorTotalPrazo");
     }
-    
+
     function atualizarValorTotalPrazo()
     {
         //var totalEntrada = parseFloat(document.getElementById("<%= ctrlFormaPagto2.ClientID %>_txtValorPago").value);
         //if (isNaN(totalEntrada))
             totalEntrada = 0;
-            
+
         var totalPrazo = parseFloat(document.getElementById("<%= ctrlParcelas1.ClientID %>_txtValorParcelas").value);
         if (isNaN(totalPrazo))
             totalPrazo = 0;
-            
+
         if (totalPrazo == 0)
             totalPrazo = parseFloat(FindControl("hdfValorASerPagoPrazo", "input").value.replace(",", "."));
-        
+
         var totalObra = parseFloat(FindControl("hdfValorObra", "input").value.replace(",", "."));
         if (isNaN(totalObra))
             totalObra = 0;
-            
+
         var totalCredito = parseFloat(FindControl("hdfValorCredito", "input").value.replace(",", "."));
         if (isNaN(totalCredito))
             totalCredito = 0;
-        
+
         document.getElementById("valorTotalPrazo").innerHTML = "Valor a ser Pago: R$ " + (totalEntrada + totalPrazo).toFixed(2).replace('.', ',');
-        
+
         if (document.getElementById("<%= creditoClientePrazo.ClientID %>") != null)
             document.getElementById("<%= creditoClientePrazo.ClientID %>").innerHTML = "O cliente possui R$ " + totalCredito.toFixed(2).replace(".", ",") + " de Crédito.";
-        
+
         if (document.getElementById("<%= valorObraPrazo.ClientID %>") != null)
         {
-            document.getElementById("<%= valorObraPrazo.ClientID %>").innerHTML = totalObra == 0 ? "" : 
+            document.getElementById("<%= valorObraPrazo.ClientID %>").innerHTML = totalObra == 0 ? "" :
                 "Valor utilizado da(s) obra(s): R$ " + totalObra.toFixed(2).replace(".", ",");
         }
     }
-    
+
     function receberEntrada(checked)
     {
         document.getElementById('receberEntrada').style.display = checked ? FindControl("tbAPrazo", "table").style.display : 'none';
@@ -806,7 +807,7 @@
                                     OnClientClick='<%# "removePedido(" + Eval("IdPedido") + "); return false;" %>'
                                     ToolTip="Remover pedido" />
                                 <asp:ImageButton ID="ImageButton1" runat="server" ImageUrl="~/Images/mais.gif" OnClientClick='<%# "exibirProdutos(this, " + Eval("IdPedido") + "); return false" %>'
-                                    Width="10px" ToolTip="Exibir produtos" 
+                                    Width="10px" ToolTip="Exibir produtos"
                                     Visible="<%# Glass.Configuracoes.Liberacao.DadosLiberacao.LiberarPedidoProdutos || Glass.Configuracoes.PedidoConfig.ExibirProdutosPedidoAoLiberar %>" />
                                 <asp:HiddenField ID="hdfIdPedido" runat="server" Value='<%# Eval("IdPedido") %>' />
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCli") %>' />
@@ -842,7 +843,7 @@
                             <ItemTemplate>
                                 <asp:Label runat="server" Text='<%# Math.Round(((decimal)Eval("ValorASerPagoLiberacao")), 2) %>'></asp:Label>
                                 <br/>
-                                <asp:ImageButton ID="imbAviso" runat="server" ImageUrl="~/Images/help.gif" Visible='<%# Math.Round(((decimal)Eval("ValorASerPagoLiberacao")), 2) < 0 %>' 
+                                <asp:ImageButton ID="imbAviso" runat="server" ImageUrl="~/Images/help.gif" Visible='<%# Math.Round(((decimal)Eval("ValorASerPagoLiberacao")), 2) < 0 %>'
                                     ToolTip='<%# Eval("ValorNegativoLiberar") %>' />
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
@@ -886,7 +887,7 @@
                                 <img src="../Images/carregamento.png" alt='<%# "Ordem de Carga: " + Eval("IdsOCs") %>' title='<%# "Ordem de Carga: " + Eval("IdsOCs") %>'
                                     style='<%# string.IsNullOrEmpty((string)Eval("IdsOCs")) ? "display:none;" : "" %>' Width="16" Height="16" />
                             </ItemTemplate>
-                        </asp:TemplateField>  
+                        </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
                                 </td> </tr>
@@ -1034,14 +1035,14 @@
                 <br />
                 <asp:Label ID="lblTotalIpi" runat="server" Font-Size="Medium"></asp:Label>
                 <br />
-                <asp:Label ID="lblDescrTotalM2" runat="server" Text="Total M2 selecionado: " 
+                <asp:Label ID="lblDescrTotalM2" runat="server" Text="Total M2 selecionado: "
                     Font-Size="12pt" ForeColor="Blue" Visible="false"></asp:Label>
-                <asp:Label ID="lblTotalM2" runat="server" Font-Bold="True" Font-Size="12pt" 
+                <asp:Label ID="lblTotalM2" runat="server" Font-Bold="True" Font-Size="12pt"
                     ForeColor="Blue" Visible="false">0.00</asp:Label>
                 &nbsp;&nbsp;
-                <asp:Label ID="lblDescrTotalPeso" runat="server" Text="Total peso selecionado: " 
+                <asp:Label ID="lblDescrTotalPeso" runat="server" Text="Total peso selecionado: "
                     Font-Size="12pt" ForeColor="Blue" Visible="false"></asp:Label>
-                <asp:Label ID="lblTotalPeso" runat="server" Font-Bold="True" Font-Size="12pt" 
+                <asp:Label ID="lblTotalPeso" runat="server" Font-Bold="True" Font-Size="12pt"
                     ForeColor="Blue" Visible="false">0.00</asp:Label>
                 <br />
                 <br />
@@ -1224,11 +1225,11 @@
                                                             </td>
                                                             <td>
                                                                 <asp:DropDownList ID="drpFormaPagtoPrazo" runat="server" DataSourceID="odsFormaPagto"
-                                                                    AppendDataBoundItems="true" DataTextField="Descricao" 
+                                                                    AppendDataBoundItems="true" DataTextField="Descricao"
                                                                     DataValueField="IdFormaPagto" ondatabound="drpFormaPagtoPrazo_DataBound">
                                                                     <asp:ListItem></asp:ListItem>
                                                                 </asp:DropDownList>
-                                                                
+
                                                                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
                                                                     TypeName="Glass.Data.DAL.FormaPagtoDAO">
                                                                     <SelectParameters>

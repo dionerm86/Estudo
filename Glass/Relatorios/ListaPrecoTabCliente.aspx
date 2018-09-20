@@ -1,4 +1,4 @@
-<%@ Page Title="PreÁos de Tabela por Cliente" Language="C#" MasterPageFile="~/Painel.master"
+<%@ Page Title="Pre√ßos de Tabela por Cliente" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="ListaPrecoTabCliente.aspx.cs" Inherits="Glass.UI.Web.Relatorios.ListaPrecoTabCliente" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -45,12 +45,15 @@
             }
 
             var ids = ListaPrecoTabCliente.ObtemIdsSubGrupoCliente(idCli.value).value;
-            FindControl("cbdSubgrupo", "select").itens(ids);
+            var cdbSubgrupo = FindControl("cbdSubgrupo", "select");
+
+            if (cdbSubgrupo != null)
+                cdbSubgrupo.itens(ids);
 
             FindControl("txtNome", "input").value = retorno[1];
         }
 
-        // Carrega dados do produto com base no cÛdigo do produto passado
+        // Carrega dados do produto com base no c√≥digo do produto passado
         function setProduto() {
             var codInterno = FindControl("txtCodProd", "input").value;
 
@@ -89,20 +92,11 @@
                         </td>
                         <td>
                             <asp:ImageButton ID="imgPesq1" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
-                                OnClientClick="return getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
-                        </td>
-                        <td>
-                            <asp:Label ID="Label6" runat="server" Text="Produto" ForeColor="#0066FF"></asp:Label>
-                        </td>
-                        <td>
-                            <asp:TextBox ID="txtCodProd" runat="server" Width="60px" onblur="setProduto();"></asp:TextBox>
-                            <asp:TextBox ID="txtDescr" runat="server" Width="150px"></asp:TextBox>
-                        </td>
-                        <td>
-                            <asp:LinkButton ID="lnkPesq0" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
+                                    OnClientClick="return getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
+                <div id="filtros" runat="server">
                 <table>
                     <tr>
                         <td>
@@ -128,9 +122,9 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpTipoValor" runat="server">
-                                <asp:ListItem Value="0">Padr„o</asp:ListItem>
+                                <asp:ListItem Value="0">Padr√£o</asp:ListItem>
                                 <asp:ListItem Value="1">Atacado</asp:ListItem>
-                                <asp:ListItem Value="2">Balc„o</asp:ListItem>
+                                <asp:ListItem Value="2">Balc√£o</asp:ListItem>
                                 <asp:ListItem Value="3">Obra</asp:ListItem>
                             </asp:DropDownList>
                         </td>
@@ -142,12 +136,22 @@
                     <table>
                         <tr>
                             <td>
+                                <asp:Label ID="Label6" runat="server" Text="Produto" ForeColor="#0066FF"></asp:Label>
+                            </td>
+                            <td>
+                                <asp:TextBox ID="txtCodProd" runat="server" Width="60px" onblur="setProduto();"></asp:TextBox>
+                                <asp:TextBox ID="txtDescr" runat="server" Width="150px"></asp:TextBox>
+                            </td>
+                            <td>
+                                <asp:LinkButton ID="lnkPesq0" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
+                            </td>
+                            <td>
                                 <asp:Label ID="Label7" runat="server" Text="Altura" ForeColor="#0066FF"></asp:Label>
                             </td>
                             <td>
                                 <asp:TextBox ID="txtAlturaInicio" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true);">
                                 </asp:TextBox>
-                                <asp:Label runat="server" Text="AtÈ"></asp:Label>
+                                <asp:Label runat="server" Text="At√©"></asp:Label>
                                 <asp:TextBox ID="txtAlturaFim" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true);">
                                 </asp:TextBox>
                                 <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
@@ -159,7 +163,7 @@
                             <td>
                                 <asp:TextBox ID="txtLarguraInicio" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true);">
                                 </asp:TextBox>
-                                <asp:Label runat="server" Text="AtÈ"></asp:Label>
+                                <asp:Label runat="server" Text="At√©"></asp:Label>
                                 <asp:TextBox ID="txtLarguraFim" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true);">
                                 </asp:TextBox>
                                 <asp:LinkButton ID="LinkButton3" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
@@ -174,7 +178,7 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpOrdenacao" runat="server">
-                                <asp:ListItem Value="0">CÛd. Produto</asp:ListItem>
+                                <asp:ListItem Value="0">C√≥d. Produto</asp:ListItem>
                                 <asp:ListItem Value="1">Descr. Produto</asp:ListItem>
                                 <asp:ListItem Value="2">Grupo</asp:ListItem>
                                 <asp:ListItem Value="3">Subgrupo</asp:ListItem>
@@ -184,7 +188,7 @@
                             <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkExibirPerc" runat="server" Checked="True" Text="Exibir percentual de desconto/ascrÈscimo" />
+                            <asp:CheckBox ID="chkExibirPerc" runat="server" Checked="True" Text="Exibir percentual de desconto/ascr√©scimo" />
                         </td>
                         <td>
                             <asp:LinkButton ID="lnkPesq1" runat="server" OnClientClick="setProduto();" OnClick="lnkPesq_Click"> <img border="0" src="../Images/Pesquisar.gif" /></asp:LinkButton>
@@ -200,15 +204,19 @@
                              <asp:CheckBox ID="chkIncluirBeneficiamento" runat="server" Checked="false" Text="Incluir beneficiamentos no relatorio" />
                         </td>
                         <td>
-                             <asp:CheckBox ID="chkExibirValorOriginal" runat="server" Checked="true"  OnCheckedChanged="grdProduto_DataBound" Text="N„o exibir a coluna Valor Original"/>
+                             <asp:CheckBox ID="chkExibirValorOriginal" runat="server" Checked="true"  OnCheckedChanged="grdProduto_DataBound" Text="N√£o exibir a coluna Valor Original"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" align="center">
+                            <asp:Button ID="btnFiltrarNovoCliente" OnClick="btnFiltrarNovoCliente_Click" runat="server" Text="Filtrar novo cliente" />
                         </td>
                     </tr>
                 </table>
+            </div>
             </td>
-        </tr>
-        <tr>
             <td>
-                &nbsp;
+                
             </td>
         </tr>
         <tr>
@@ -217,8 +225,8 @@
                     CssClass="gridStyle" GridLines="None" AutoGenerateColumns="False" DataSourceID="odsProduto"
                     EmptyDataText="Selecione um cliente">
                     <Columns>
-                        <asp:BoundField DataField="CodInterno" HeaderText="CÛd." SortExpression="CodInterno" />
-                        <asp:BoundField DataField="DescricaoProdutoBeneficiamento" HeaderText="DescriÁ„o" SortExpression="Descricao" />
+                        <asp:BoundField DataField="CodInterno" HeaderText="C√≥d." SortExpression="CodInterno" />
+                        <asp:BoundField DataField="DescricaoProdutoBeneficiamento" HeaderText="Descri√ß√£o" SortExpression="Descricao" />
                         <asp:TemplateField HeaderText="Grupo" SortExpression="DescrGrupo">
                             <ItemTemplate>
                                 <asp:Label ID="Label1" runat="server" Text='<%# Eval("DescrGrupo") + (Eval("DescrSubgrupo") != null && Eval("DescrSubgrupo") != "" ? " " + Eval("DescrSubgrupo") : "") %>'></asp:Label>
@@ -233,7 +241,7 @@
                             SortExpression="ValorOriginalUtilizado" />
                         <asp:BoundField DataField="ValorTabelaUtilizado" DataFormatString="{0:c}" HeaderText="Valor de Tabela"
                             SortExpression="ValorTabelaUtilizado" />
-                        <asp:BoundField DataField="DescrPercDescAcrescimo" HeaderText="Desconto/AcrÈscimo" />
+                        <asp:BoundField DataField="DescrPercDescAcrescimo" HeaderText="Desconto/Acr√©scimo" />
                         <asp:BoundField DataField="Altura" HeaderText="Altura"
                             SortExpression="Altura" />
                         <asp:BoundField DataField="Largura" HeaderText="Largura"
