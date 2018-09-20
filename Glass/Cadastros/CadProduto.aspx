@@ -228,6 +228,21 @@
                 return false;
             }
 
+            if (FindControl("txtAlturaIns", "input").parentNode.parentNode.style.display != "none") {
+                var altura = FindControl("txtAlturaIns", "input").value;
+                if (altura == "") {
+                    alert("Informe a altura do produto.");
+                    return false;
+                }
+            }
+            if (FindControl("txtLarguraIns", "input").parentNode.parentNode.style.display != "none") {
+                var largura = FindControl("txtLarguraIns", "input").value;
+                if (largura == "") {
+                    alert("Informe a largura do produto.");
+                    return false;
+                }
+            }
+
             for (i = 0; i < FindControl("drpGrupoProd", "select").options.length; i++) {
                 if (FindControl("drpGrupoProd", "select").options[i].selected == true &&
                     FindControl("drpGrupoProd", "select").options[i].label.toUpperCase() == "VIDRO" &&
@@ -1121,10 +1136,12 @@
                                 <asp:Label ID="Label18" runat="server" Text='<%# Bind("Altura") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtAltura" runat="server" Text='<%# Bind("Altura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:TextBox ID="txtAlturaIns" runat="server" Text='<%# Bind("Altura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:Label ID="lblObrigatoriedadeAlturaIns" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtAltura" runat="server" Text='<%# Bind("Altura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:TextBox ID="txtAlturaIns" runat="server" Text='<%# Bind("Altura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:Label ID="lblObrigatoriedadeAlturaIns" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>                            
                             </InsertItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Largura" SortExpression="Largura">
@@ -1132,10 +1149,12 @@
                                 <asp:Label ID="Label19" runat="server" Text='<%# Bind("Largura") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtLargura" runat="server" Text='<%# Bind("Largura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:TextBox ID="txtLarguraIns" runat="server" Text='<%# Bind("Largura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:Label ID="lblObrigatoriedadeLarguraIns" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                             <InsertItemTemplate>
-                                <asp:TextBox ID="txtLargura" runat="server" Text='<%# Bind("Largura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:TextBox ID="txtLarguraIns" runat="server" Text='<%# Bind("Largura") %>' onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
+                                <asp:Label ID="lblObrigatoriedadeLarguraIns" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>                            
                             </InsertItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Apl." SortExpression="IdAplicacao">

@@ -200,8 +200,8 @@ namespace Glass.UI.Web.Cadastros
                 hdfIdPrimeiroProduto.Value = ProdutoDAO.Instance.GetFirstProdutoCodInterno();
     
             Glass.UI.Web.Controls.ctrlBenef ctrlBenef = (Glass.UI.Web.Controls.ctrlBenef)sender;
-            ctrlBenef.CampoAltura = (TextBox)dtvProduto.FindControl("txtAltura");
-            ctrlBenef.CampoLargura = (TextBox)dtvProduto.FindControl("txtLargura");
+            ctrlBenef.CampoAltura = (TextBox)dtvProduto.FindControl("txtAlturaIns");
+            ctrlBenef.CampoLargura = (TextBox)dtvProduto.FindControl("txtLarguraIns");
             ctrlBenef.CampoEspessura = (TextBox)dtvProduto.FindControl("txtEspessura");
             ctrlBenef.CampoProdutoID = hdfIdPrimeiroProduto;
             ctrlBenef.ValidarEspessura = false;
