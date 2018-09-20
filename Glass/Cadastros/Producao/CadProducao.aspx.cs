@@ -508,7 +508,7 @@ namespace Glass.UI.Web.Cadastros.Producao
                     {
                         ProdutoImpressaoDAO.TipoEtiqueta tipoEtiqueta = ProdutoImpressaoDAO.Instance.ObtemTipoEtiqueta(numChapa);
                         uint idProdImpressao = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(numChapa, tipoEtiqueta);
-                        uint idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(null, numChapa, tipoEtiqueta);
+                        uint idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(numChapa, tipoEtiqueta);
                         uint? idProd = ProdutoImpressaoDAO.Instance.GetIdProd(idProdImpressao);
 
                         List<RetalhoProducaoAuxiliar> dadosRetalho = new List<RetalhoProducaoAuxiliar>();

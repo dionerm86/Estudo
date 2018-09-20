@@ -887,7 +887,7 @@ namespace Glass.Data.DAL
                                 {
                                     if (etq.ToUpper().Substring(0, 1).Equals("N"))
                                     {
-                                        var chapasUtilizadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(transaction, (int)idTrocaDevolucao);
+                                        var chapasUtilizadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao((int)idTrocaDevolucao);
 
                                         if (!string.IsNullOrEmpty(chapasUtilizadas))
                                             throw new Exception("Não é possivel cancelar essa troca/devolução, pois as etiquetas " + chapasUtilizadas + " vinculada anteriormente a esse pedido foi utilizada em outro pedido.");
