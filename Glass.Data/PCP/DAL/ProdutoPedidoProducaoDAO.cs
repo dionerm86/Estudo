@@ -6597,12 +6597,12 @@ namespace Glass.Data.DAL
                             var idProdChapa = ProdutoImpressaoDAO.Instance.GetIdProd(sessao, idProdImpressaoChapa);
                             var numEtiquetaChapa = ProdutoImpressaoDAO.Instance.ObtemValorCampo<string>(sessao, "numEtiqueta", $"IdProdImpressao={idProdImpressaoChapa}");
                             var produtoPedidoRevenda = ProdutosPedidoDAO.Instance.GetByPedido(sessao, (uint)idPedidoRevenda)
-                                .FirstOrDefault(f => f.IdProd == idProd.GetValueOrDefault() && f.Qtde >= f.QtdSaida);
+                                .FirstOrDefault(f => f.IdProd == idProd.GetValueOrDefault() && f.QtdSaida > 0);
                             var idLojaPedidoRevenda = (int)PedidoDAO.Instance.ObtemIdLoja(sessao, (uint)idPedidoRevenda);
                             var idProdQtdeReserva = new Dictionary<int, float>();
 
                             if (produtoPedidoRevenda.IdProdPed == 0)
-                                throw new Exception("Não foi possível baixar o estoque da chapa no pedido de revenda.");
+                                throw new Exception("Não foi possível estornar o estoque da chapa no pedido de revenda.");
 
                             // Atualiza o Qtd Saída dos produtos do pedido de revenda.
                             ProdutosPedidoDAO.Instance.MarcarSaida(sessao, produtoPedidoRevenda.IdProdPed, -1, 0, System.Reflection.MethodBase.GetCurrentMethod().Name, numEtiquetaChapa);
