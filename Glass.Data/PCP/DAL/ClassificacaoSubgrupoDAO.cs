@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using GDA;
 using Glass.Data.Model;
-using GDA;
+using System;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
@@ -14,9 +12,9 @@ namespace Glass.Data.DAL
         /// </summary>
         public List<ClassificacaoSubgrupo> ObterSubgruposAssociadosClassificacaoRoteiroProducao(int idClassificacaoRoteiroProducao)
         {
-            var sql = @"Select cs.*, s.Descricao 
-                        FROM classificacao_subgrupo cs 
-                        LEFT JOIN subgrupo_prod s ON (cs.IdSubgrupoProd=s.IdSubgrupoProd) 
+            var sql = @"Select cs.*, s.Descricao
+                        FROM classificacao_subgrupo cs
+                        LEFT JOIN subgrupo_prod s ON (cs.IdSubgrupoProd=s.IdSubgrupoProd)
                         WHERE cs.IdClassificacaoRoteiroProducao=" + idClassificacaoRoteiroProducao;
 
             var retorno = objPersistence.LoadData(sql);
@@ -32,9 +30,9 @@ namespace Glass.Data.DAL
             var idClassificacao = chave.ToString().Remove(chave.ToString().Length - 3).StrParaInt();
             var idSubgrupo = chave.ToString().Substring(chave.ToString().Length - 3).StrParaInt();
 
-            var sql = @"Select cs.*, s.Descricao 
-                        FROM classificacao_subgrupo cs 
-                        LEFT JOIN subgrupo_prod s ON (cs.IdSubgrupoProd=s.IdSubgrupoProd) 
+            var sql = @"Select cs.*, s.Descricao
+                        FROM classificacao_subgrupo cs
+                        LEFT JOIN subgrupo_prod s ON (cs.IdSubgrupoProd=s.IdSubgrupoProd)
                         WHERE cs.IdClassificacaoRoteiroProducao = " + idClassificacao + " AND cs.IdsubgrupoProd = " + idSubgrupo;
 
             var retorno = objPersistence.LoadOneData(sql);
@@ -56,8 +54,8 @@ namespace Glass.Data.DAL
             if (ObterSubgrupoAssociadoClassificacao(novaAssociacao.ChaveComposta) != null)
                 throw new Exception("Já foi feita a associação com este subgrupo.");
 
-            var sql = @"SELECT IdClassificacaoRoteiroProducao 
-                        FROM classificacao_subgrupo 
+            var sql = @"SELECT IdClassificacaoRoteiroProducao
+                        FROM classificacao_subgrupo
                         WHERE IdSubgrupoProd = " + idSubgrupo;
 
             var idClassificacaoExistente = ExecuteScalar<int>(sql);
@@ -82,18 +80,45 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se existe associação para o subgrupo passado e o processo
         /// </summary>
-        public bool VerificarAssociacaoExistente(int idSubgrupo, int IdProcesso)
+        public bool VerificarAssociacaoExistente(int idSubgrupo, int idProcesso)
         {
-            if (ExecuteScalar<int>("SELECT COUNT(*) FROM classificacao_subgrupo") == 0)
+            return this.VerificarAssociacaoExistente(null, idProcesso, new[] { idSubgrupo });
+        }
+
+        /// <summary>
+        /// Verifica se existe associação para os subgrupos passados e o processo.
+        /// </summary>
+        /// <param name="sessao">A transação atual com o banco de dados.</param>
+        /// <param name="idProcesso">O identificador do processo.</param>
+        /// <param name="idsSubgrupos">Os identificadores dos subgrupos que serão validados.</param>
+        /// <returns>Verdadeiro, se o </returns>
+        public bool VerificarAssociacaoExistente(GDASession sessao, int idProcesso, IEnumerable<int> idsSubgrupos)
+        {
+            if (this.GetAllForListCount() == 0)
+            {
                 return true;
+            }
 
-            var sql = @"SELECT COUNT(*) 
-                        FROM classificacao_subgrupo 
-                        WHERE IdSubgrupoProd = " + idSubgrupo + 
-                        @" AND IdClassificacaoRoteiroProducao IN 
-                            (Select IdClassificacaoRoteiroProducao FROM roteiro_producao WHERE IdProcesso = " + IdProcesso + ")";
+            var idsSubgruposString = idsSubgrupos != null
+                ? string.Join(",", idsSubgrupos)
+                : string.Empty;
 
-            return ExecuteScalar<int>(sql) > 0;
+            if (string.IsNullOrWhiteSpace(idsSubgruposString))
+            {
+                return false;
+            }
+
+            var sql = $@"
+                SELECT COUNT(*)
+                FROM classificacao_subgrupo
+                WHERE IdSubgrupoProd in ({idsSubgruposString})
+                  AND IdClassificacaoRoteiroProducao IN (
+                    SELECT IdClassificacaoRoteiroProducao
+                    FROM roteiro_producao
+                    WHERE IdProcesso = {idProcesso}
+                )";
+
+            return this.ExecuteScalar<int>(sessao, sql) > 0;
         }
     }
 }

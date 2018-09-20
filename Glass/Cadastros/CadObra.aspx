@@ -42,11 +42,11 @@
                 FindControl("lblDescrProd", "span").innerHTML = "";
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
-        
+
                 alert("Apenas produtos do grupo Vidro podem ser incluídos nesse <%= DescrTipoObra() %>.");
                 return;
             }
-    
+
             var resposta = CadObraNovo.GetProd(codInterno, idCliente).value.split(";");
             if (resposta[0] == "Erro")
             {
@@ -54,11 +54,11 @@
                 FindControl("lblDescrProd", "span").innerHTML = "";
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
-    
+
                 alert(resposta[1]);
                 return;
             }
-    
+
             FindControl("txtCodProd", "input").value = codInterno;
             FindControl("lblDescrProd", "span").innerHTML = resposta[2];
             FindControl("hdfIdProd", "input").value = resposta[1];
@@ -71,37 +71,37 @@
         function onInsertUpdate() {
             if (!validate())
                 return false;
-        
+
             if (clicked)
                 return false;
-        
+
             clicked = true;
-    
+
             var idCliente = FindControl("txtNumCli", "input").value;
             var descricao = FindControl("txtDescricao", "textarea").value;
             var idFunc = FindControl("drpFuncionario", "select").value;
-    
+
             if (descricao == "")
             {
                 alert("Informe a descrição.");
                 clicked = false;
                 return false;
             }
-    
+
             if (idCliente == "")
             {
                 alert("Informe o Cliente.");
                 clicked = false;
                 return false;
             }
-    
+
             if (idFunc == "")
             {
                 alert("Informe o Funcionário.");
                 clicked = false;
                 return false;
             }
-    
+
             return true;
         }
 
@@ -119,7 +119,7 @@
                 return;
 
             var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
-    
+
             if (retorno[0] == "Erro")
             {
                 alert(retorno[1]);
@@ -127,27 +127,28 @@
                 FindControl("txtNome", "input").value = "";
                 return false;
             }
-    
+
             FindControl("txtNome", "input").value = retorno[1];
         }
 
         // Abre popup para cadastrar cheques
         function queryStringCheques() {
-            return "?origem=3";
+            var ctrTipoPagto = FindControl("drpTipoPagto", "select");
+            return "?origem=3&tipoPagto=" + ctrTipoPagto.value;
         }
 
         function tipoPagtoChanged(calcParcelas)
         {
             var tipoPagto = FindControl("drpTipoPagto", "select");
-    
+
             if (tipoPagto == null)
                 return;
             else
                 tipoPagto = tipoPagto.value;
-    
+
             document.getElementById("a_vista").style.display = (tipoPagto == 1) ? "" : "none";
             document.getElementById("a_prazo").style.display = (tipoPagto == 2) ? "" : "none";
-        
+
             FindControl("hdfCalcularParcelas", "input").value = calcParcelas;
             var nomeControle = "<%= dtvObra.ClientID %>_ctrlParcelas1";
             if (typeof <%= dtvObra.ClientID %>_ctrlParcelas1 != "undefined")
@@ -159,14 +160,14 @@
             FindControl("btnEditar", "input").style.display = exibir ? "none" : "";
             FindControl("btnFinalizar", "input").style.display = exibir ? "none" : "";
             FindControl("btnVoltar", "input").style.display = exibir ? "none" : "";
-    
+
             var tabProdutos = FindControl("grdProdutoObra", "table");
             var numLinha = tabProdutos.rows.length - 1;
             if (tabProdutos.rows[numLinha].cells.length == 1)
                 numLinha--;
-    
+
             tabProdutos.rows[numLinha].style.display = exibir ? "none" : "";
-    
+
             document.getElementById("receber").style.display = exibir ? "" : "none";
             FindControl("btnReceber", "input").style.display = exibir ? "" : "none";
             FindControl("btnCancelar", "input").style.display = exibir ? "" : "none";
@@ -177,7 +178,7 @@
             var totalPrazo = parseFloat(document.getElementById("<%= dtvObra.ClientID %>_ctrlParcelas1_txtValorParcelas").value);
             if (isNaN(totalPrazo))
                 totalPrazo = 0;
-    
+
             args.IsValid = document.getElementById("a_prazo").style.display == "none" ||
                 args.Value != "" || totalPrazo == 0;
         }
@@ -226,7 +227,7 @@
 
                 var retornoReceber = CadObra.ReceberAVista(idObra, valores, formasPagto, tiposCartao, parcelasCredito, contas, chequesPagto, creditoUtilizado, dataRecebido, depositoNaoIdentificado,
                     numAutCartao, CNI, isGerarCredito, cxDiario, receberCappta.toString().toLowerCase());
-                
+
                 if(retornoReceber.error != null){
                     desbloquearPagina(true);
                     alert(retornoReceber.error.description);
@@ -257,7 +258,7 @@
 
                 var numParcelas = FindControl("drpNumParcelas", "select");
                 var controle = <%= dtvObra.FindControl("ctrlParcelas1") != null ? dtvObra.FindControl("ctrlParcelas1").ClientID : "''" %>;
-                var formasPagto = FindControl("drpFormaPagtoPrazo", "select"); 
+                var formasPagto = FindControl("drpFormaPagtoPrazo", "select");
                 var valores = controle.Valores();
                 var datas = controle.Datas();
 
@@ -271,7 +272,7 @@
             }
 
             desbloquearPagina(true);
-            alert(retornoReceber.value); 
+            alert(retornoReceber.value);
             var gerarCreditoObra = "<%= GerarCreditoObra().ToString().ToLower() %>";
             redirectUrl('../Listas/LstObra.aspx' + (gerarCreditoObra ? "?gerarCredito=1" : "") + (cxDiario ? (gerarCreditoObra? "&": "?") + "cxDiario=1" : ""));
             return false;
@@ -282,11 +283,11 @@
             desbloquearPagina(true);
 
             if(!sucesso){
-                alert(msg); 
+                alert(msg);
                 return false;
             }
 
-            alert(retorno.value); 
+            alert(retorno.value);
             openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + codigosAdministrativos.join(';'));
             var gerarCreditoObra = "<%= GerarCreditoObra().ToString().ToLower() %>";
             redirectUrl('../Listas/LstObra.aspx' + (gerarCreditoObra ? "?gerarCredito=1" : "") + (cxDiario ? (gerarCreditoObra? "&": "?") + "cxDiario=1" : ""));
@@ -319,7 +320,7 @@
                                         </td>
                                         <td nowrap="nowrap" align="left">
                                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsFuncionario" DataTextField="Nome"
-                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>' 
+                                                DataValueField="IdFunc" AppendDataBoundItems="True" SelectedValue='<%# Bind("IdFunc") %>'
                                                 OnDataBinding="drpFuncionario_DataBinding" OnDataBound="drpFuncionario_DataBound">
                                                 <asp:ListItem></asp:ListItem>
                                             </asp:DropDownList>
@@ -335,7 +336,7 @@
                                         <td nowrap="nowrap" align="left">
                                             <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getCli(this);" Text='<%# Bind("IdCliente") %>'></asp:TextBox>
-                                            <asp:TextBox ID="txtNomeCliente" runat="server" Width="200px" 
+                                            <asp:TextBox ID="txtNomeCliente" runat="server" Width="200px"
                                                 Text='<%# Bind("NomeCliente") %>'></asp:TextBox>
                                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                                 OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx?tipo=obra'); return false;" />
@@ -350,7 +351,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                <asp:HiddenField ID="hdfGerarCredito" runat="server" 
+                                <asp:HiddenField ID="hdfGerarCredito" runat="server"
                                     Value='<%# Bind("GerarCredito") %>' onload="hdfGerarCredito_Load" />
                             </EditItemTemplate>
                             <ItemTemplate>
@@ -413,7 +414,7 @@
                                         <asp:DropDownList ID="drpNumParcelas" runat="server" DataSourceID="odsParcelas" DataTextField="Descr"
                                             DataValueField="Id">
                                         </asp:DropDownList>
-                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsParcelas" runat="server" SelectMethod="GetNumParc" 
+                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsParcelas" runat="server" SelectMethod="GetNumParc"
                                             TypeName="Glass.Data.Helper.DataSources">
                                         </colo:VirtualObjectDataSource>
                                         <asp:HiddenField ID="hdfCalcularParcelas" runat="server" Value="true" />
@@ -427,7 +428,7 @@
                                         <asp:CustomValidator ID="ctvPrazo" runat="server" ClientValidationFunction="validaFormaPagtoPrazo"
                                             ControlToValidate="drpFormaPagtoPrazo" Display="Dynamic" ErrorMessage="Selecione uma forma de pagamento"
                                             ValidateEmptyText="True"></asp:CustomValidator>
-                                        
+
                                         <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFormaPagto" runat="server" SelectMethod="GetForPedido"
                                             TypeName="Glass.Data.DAL.FormaPagtoDAO">
                                             <SelectParameters>
@@ -442,7 +443,7 @@
                                 </asp:Panel>
                                 <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCliente") %>' />
                                 <asp:HiddenField ID="hdfCreditoCliente" runat="server" Value='<%# Eval("CreditoCliente") %>' />
-                                <asp:HiddenField ID="hdfGerarCredito" runat="server" 
+                                <asp:HiddenField ID="hdfGerarCredito" runat="server"
                                     onload="hdfGerarCredito_Load" Value='<%# Bind("GerarCredito") %>' />
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -453,7 +454,7 @@
                                 <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" Text="Atualizar"
                                     OnClientClick="if (!onInsertUpdate()) return false;" />
                                 <asp:Button ID="btnCancelar" runat="server" CausesValidation="False"
-                                    Text="Cancelar" 
+                                    Text="Cancelar"
                                     onclientclick="redirectUrl(window.location.href); return false" />
                                 <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
                             </EditItemTemplate>
@@ -467,14 +468,14 @@
                             <ItemTemplate>
                                 <br />
                                 <asp:Button ID="btnEditar" runat="server" CommandName="Edit" Text="Editar" />
-                                <asp:Button ID="btnFinalizar" runat="server" Text="Finalizar" 
+                                <asp:Button ID="btnFinalizar" runat="server" Text="Finalizar"
                                     onclick="btnFinalizar_Click" OnLoad="btnFinalizar_Load" />
-                                <asp:Button ID="btnVoltar" runat="server" Text="Voltar" 
+                                <asp:Button ID="btnVoltar" runat="server" Text="Voltar"
                                     onclick="btnCancelar_Click" />
                                 <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" OnClientClick="return onReceber();"/>
-                                <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" 
-                                    onclick="btnCancelarReceb_Click" Visible="False" 
-                                    onclientclick="if (!confirm(&quot;Deseja cancelar o recebimento?&quot;)) return false" 
+                                <asp:Button ID="btnCancelar" runat="server" Text="Cancelar"
+                                    onclick="btnCancelarReceb_Click" Visible="False"
+                                    onclientclick="if (!confirm(&quot;Deseja cancelar o recebimento?&quot;)) return false"
                                     CausesValidation="False" />
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -483,7 +484,7 @@
                 </asp:DetailsView>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsObra" runat="server" DataObjectTypeName="Glass.Data.Model.Obra"
                     InsertMethod="Insert" SelectMethod="GetElement" TypeName="Glass.Data.DAL.ObraDAO"
-                    UpdateMethod="Update" OnInserted="odsObra_Inserted" 
+                    UpdateMethod="Update" OnInserted="odsObra_Inserted"
                     onupdated="odsObra_Updated">
                     <SelectParameters>
                         <asp:QueryStringParameter Name="IdObra" QueryStringField="IdObra" Type="UInt32" />

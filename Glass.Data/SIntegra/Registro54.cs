@@ -97,9 +97,7 @@ namespace Glass.Data.SIntegra
         {
             get
             {
-                float qtdeTotal = ProdutosNfDAO.Instance.QtdeTotal(_nf.IdNf);
-                qtdeTotal = qtdeTotal != 0 ? qtdeTotal : 1;
-                return _nf.Desconto / (decimal)qtdeTotal * (decimal)_prodNf.Qtde;
+                return Math.Round((ValorProduto / _nf.TotalProd) * _nf.Desconto, 2);
             }
         }
 

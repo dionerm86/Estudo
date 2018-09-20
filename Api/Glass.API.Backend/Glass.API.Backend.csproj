@@ -253,6 +253,8 @@
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
+    <Compile Include="Controllers\Imagens\V1\GetImagensController.cs" />
+    <Compile Include="Controllers\Imagens\V1\ImagensController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -341,8 +343,8 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
-    <Compile Include="Controllers\Transportadores\TransportadoresController.cs" />
-    <Compile Include="Controllers\Transportadores\GetTransportadoresController.cs" />
+    <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
+    <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -355,6 +357,10 @@
     <Compile Include="Helper\Cheques\TraducaoOrdenacaoListaCheques.cs" />
     <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueFiscal.cs" />
     <Compile Include="Helper\Estoques\ConverterCadastroAtualizacaoParaEstoqueReal.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\BaseExibicaoStrategy.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoProdutoStrategy.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\IExibicao.cs" />
+    <Compile Include="Helper\Imagens\ExibicaoFactory.cs" />
     <Compile Include="Helper\ItemBeneficiamentoExtension.cs" />
     <Compile Include="Helper\Estoques\TraducaoOrdenacaoListaEstoques.cs" />
     <Compile Include="Helper\ContasReceber\TraducaoOrdenacaoListaContasRecebidas.cs" />
@@ -429,6 +435,8 @@
     <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
+    <Compile Include="Models\Imagens\Exibicao\DadosImagemDto.cs" />
+    <Compile Include="Models\Imagens\Exibicao\TipoItemEnum.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />

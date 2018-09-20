@@ -202,8 +202,18 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.Altura = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAlturaIns")).Text);
                 prodNf.Largura = Conversoes.StrParaInt(((TextBox)grdProdutos.FooterRow.FindControl("txtLarguraIns")).Text);
                 prodNf.TotM = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtTotM2Ins")).Text);
-                prodNf.PercRedBcIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text);
-                prodNf.PercRedBcIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text);
+                
+                if (!string.IsNullOrWhiteSpace(prodNf.Cst))
+                {
+                    prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcms")).Text.StrParaFloat();
+                    prodNf.PercRedBcIcmsSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtPercRedBcIcmsSt")).Text.StrParaFloat();
+                }
+                else if (!string.IsNullOrWhiteSpace(prodNf.Csosn))
+                {
+                    prodNf.PercRedBcIcms = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcms")).Text.StrParaFloat();
+                    prodNf.PercRedBcIcmsSt = ((TextBox)grdProdutos.FooterRow.FindControl("txtCsosnPercRedBcIcmsSt")).Text.StrParaFloat();
+                }
+
                 prodNf.AliqIcms = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsIns")).Text);
                 prodNf.Mva = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtMva")).Text);
                 prodNf.AliqIcmsSt = Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtAliqIcmsStIns")).Text);
@@ -219,6 +229,7 @@ namespace Glass.UI.Web.Cadastros
                 prodNf.ValorTotalTrib = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtTotalTrib")).Text);
                 prodNf.PercDiferimento = Glass.Conversoes.StrParaFloat(((TextBox)grdProdutos.FooterRow.FindControl("txtPercDiferimento")).Text);
                 prodNf.ValorIcmsDesonerado = Glass.Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIcmsDeson")).Text);
+                prodNf.ValorIpiDevolvido = Conversoes.StrParaDecimal(((TextBox)grdProdutos.FooterRow.FindControl("txtValorIpiDevolvidoProd")).Text);
 
                 var motivoDeson = (prodNf.Cst == "20" || prodNf.Cst == "30" || prodNf.Cst == "70" || prodNf.Cst == "90") ?
                     ((DropDownList)grdProdutos.FooterRow.FindControl("drpMotivoIcmsDeson")).SelectedValue : "";
@@ -289,6 +300,11 @@ namespace Glass.UI.Web.Cadastros
                 Glass.MensagemAlerta.ErrorMsg("Falha ao incluir produto na NF.", ex, Page);
                 return;
             }
+        }
+
+        public bool IsNfFinalidadeDevolucao()
+        {
+            return NotaFiscalDAO.Instance.ObtemFinalidade(Request["idNf"].StrParaUint()) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao;
         }
 
         protected void odsProdutos_Deleted(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
@@ -1191,7 +1207,7 @@ namespace Glass.UI.Web.Cadastros
             var linha = (sender as Control).Parent.Parent;
 
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIcms = linha.FindControl("drpCst") ?? linha.FindControl("drpCstIns");
-            (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercReducaoBcIcms = linha.FindControl("txtPercRedBcIcms");
+            (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercReducaoBcIcms = linha.FindControl("txtPercRedBcIcms") ?? linha.FindControl("txtCsosnPercRedBcIcms");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoPercDiferimento = linha.FindControl("txtPercDiferimento");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstIpi = linha.FindControl("selCstIpi").FindControl("txtDescr");
             (sender as Glass.UI.Web.Controls.ctrlNaturezaOperacao).CampoCstPisCofins = linha.FindControl("selCstPis").FindControl("txtDescr");

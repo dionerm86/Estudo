@@ -3,6 +3,7 @@
 // </copyright>
 
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Genericas.Venda
@@ -33,5 +34,12 @@ namespace Glass.API.Backend.Models.Genericas.Venda
         [DataMember]
         [JsonProperty("aplicarBeneficiamentosProdutosFilhos")]
         public bool? AplicarBeneficiamentosProdutosFilhos { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica todos os identificadores de subgrupos dos produtos da composição.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idsSubgruposProdutosFilhos")]
+        public IEnumerable<int> IdsSubgruposProdutosFilhos { get; set; }
     }
 }

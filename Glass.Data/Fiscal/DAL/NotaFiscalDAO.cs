@@ -3672,12 +3672,19 @@ namespace Glass.Data.DAL
                                 // Calcula ICMS
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "modBC", "0"); // 0-MVA
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vBC", Formatacoes.TrataValorDecimal(calcIcms ? bcIcms : 0, 2));
+                                ManipulacaoXml.SetNode(doc, icmsSn900, "pRedBC", Formatacoes.TrataValorDouble(pnf.PercRedBcIcms, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "pICMS", Formatacoes.TrataValorDecimal(calcIcms ? aliqIcms : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vICMS", Formatacoes.TrataValorDecimal(calcIcms ? valorIcms : 0, 2));
 
                                 // Calcula ICMS ST
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "modBCST", "4"); // 4-MVA
                                 if (mva > 0) ManipulacaoXml.SetNode(doc, icmsSn900, "pMVAST", Formatacoes.TrataValorDouble(mva, 2));
+
+                                if (pnf.PercRedBcIcmsSt > 0)
+                                {
+                                    ManipulacaoXml.SetNode(doc, icmsSn900, "pRedBCST", Formatacoes.TrataValorDouble(pnf.PercRedBcIcmsSt, 2));
+                                }
+
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vBCST", Formatacoes.TrataValorDecimal(calcIcmsSt ? bcIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "pICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? aliqIcmsSt : 0, 2));
                                 ManipulacaoXml.SetNode(doc, icmsSn900, "vICMSST", Formatacoes.TrataValorDecimal(calcIcmsSt ? valorIcmsSt : 0, 2));
@@ -4040,6 +4047,23 @@ namespace Glass.Data.DAL
                     }
 
                     #endregion
+
+                    if (nf.ValorIpiDevolvido > 0 && nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
+                    {
+                        if (pnf.ValorIpiDevolvido > 0)
+                        {
+                            XmlElement impostoDevol = doc.CreateElement("impostoDevol");
+                            det.AppendChild(impostoDevol);
+
+                            var porcentagemValorIpiDevolvido = (pnf.ValorIpiDevolvido / nf.ValorIpiDevolvido) * 100;
+
+                            ManipulacaoXml.SetNode(doc, impostoDevol, "pDevol", Formatacoes.TrataValorDecimal(porcentagemValorIpiDevolvido, 2).PadLeft(3, '0'));
+
+                            XmlElement ipi = doc.CreateElement("IPI");
+                            impostoDevol.AppendChild(ipi);
+                            ManipulacaoXml.SetNode(doc, ipi, "vIPIDevol", Formatacoes.TrataValorDecimal(pnf.ValorIpiDevolvido, 2));
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -7489,6 +7513,15 @@ namespace Glass.Data.DAL
             }
         }
 
+        #endregion
+
+        #region Atualiza o Valor do IPI Devolvido
+        public void AtualizaValorIpiDevolvido(GDASession sessao, uint idNf, decimal valorIpiDevolvido)
+        {
+            var sql = $"UPDATE nota_fiscal set valorIpiDevolvido = {valorIpiDevolvido.ToString().Replace(",", ".")} WHERE idNf = {idNf}";
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
         #endregion
 
         #region Insere informação complementar

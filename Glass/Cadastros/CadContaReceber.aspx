@@ -252,7 +252,7 @@
             var idLiberarPedido = FindControl("hdfIdLiberarPedido", "input").value;
             //alert(idPedido);
             return (idPedido != "" ? "?IdPedido=" + idPedido : "?IdLiberarPedido=" + idLiberarPedido) +
-                "&IdContaR=" + FindControl("hdfIdContaR", "input").value + "&origem=3";
+                "&IdContaR=" + FindControl("hdfIdContaR", "input").value + "&origem=3&tipoPagto=2";
         }
 
         // Mostra para o usuário o restante que falta ser pago e a data

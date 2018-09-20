@@ -61,7 +61,6 @@ Vue.component('controle-parcelas', {
   data: function () {
     return {
       parcelasAtuais: this.parcelas || {},
-      controlesValor: null,
       invalido: false
     }
   },
@@ -102,7 +101,7 @@ Vue.component('controle-parcelas', {
       return !this.parcelasAtuais
         || !this.parcelasAtuais.detalhes
         || this.parcelasAtuais.detalhes.length !== this.parcelasAtuais.numeroParcelas
-        || this.total.toFixed(2) !== this.totalParcelas.toFixed(2);
+        || this.total.toFixed(2) !== this.totalParcelas().toFixed(2);
     },
 
     /**
@@ -169,25 +168,34 @@ Vue.component('controle-parcelas', {
      * Realiza a validação do valor informado nas parcelas com o valor total.
      */
     validarTotal: function () {
-      this.invalido = this.total !== this.totalParcelas;
+      this.invalido = this.total !== this.totalParcelas();
+      var campos = this.$refs.valor;
 
-      if (this.controlesValor === null) {
-        this.controlesValor = this.$el.querySelector('input[type=number]');
-
-        if (this.controlesValor && !Array.isArray(this.controlesValor)) {
-          this.controlesValor = [this.controlesValor];
-        }
-      }
-
-      if (this.controlesValor) {
+      if (campos && campos.length) {
         var mensagem = this.invalido
           ? 'Valor inválido.'
           : '';
 
-        for (var controleValor of this.controlesValor) {
-          controleValor.setCustomValidity(mensagem);
+        for (var valor of campos) {
+          valor.setCustomValidity(mensagem);
         }
       }
+    },
+
+    /**
+     * Calcula o valor total das parcelas atuais do controle.
+     */
+    totalParcelas: function () {
+      var total = 0;
+
+      if (this.parcelasAtuais && this.parcelasAtuais.detalhes) {
+        total = this.parcelasAtuais.detalhes.reduce(function (acumulador, parcela) {
+          var valor = parcela.valor ? parcela.valor : 0;
+          return acumulador + valor;
+        }, 0);
+      }
+
+      return parseFloat((total + 0.001).toFixed(2));
     }
   },
 
@@ -212,22 +220,6 @@ Vue.component('controle-parcelas', {
      */
     valorMinimoParcela: function () {
       return this.total > 0 ? 0.01 : 0;
-    },
-
-    /**
-     * Propriedade computada que retorna o valor total das parcelas atuais do controle.
-     */
-    totalParcelas: function () {
-      var total = 0;
-
-      if (this.parcelasAtuais && this.parcelasAtuais.detalhes) {
-        total = this.parcelasAtuais.detalhes.reduce(function (acumulador, parcela) {
-          var valor = parcela.valor ? parcela.valor : 0;
-          return acumulador + valor;
-        }, 0);
-      }
-
-      return parseFloat((total + 0.001).toFixed(2));
     }
   },
 
@@ -246,7 +238,6 @@ Vue.component('controle-parcelas', {
      */
     parcelas: {
       handler: function (atual) {
-        this.controlesValor = null;
         this.parcelasAtuais = atual || {};
 
         if (!atual['detalhes']) {
