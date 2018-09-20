@@ -664,9 +664,48 @@ namespace Glass.UI.Web.Relatorios
                 case "CaixaGeral":
                     {
                         report.ReportPath = "Relatorios/rptCaixaGeral.rdlc";
-                        var caixaGeral = CaixaGeralDAO.Instance.GetMovimentacoes(Glass.Conversoes.StrParaUint(Request["id"]), Glass.Conversoes.StrParaUint(Request["idFunc"]),
+                        var caixaGeral = CaixaGeralDAO.Instance.GetMovimentacoes(null, Glass.Conversoes.StrParaUint(Request["id"]), Glass.Conversoes.StrParaUint(Request["idFunc"]),
                             Request["dtIni"], Request["dtFim"], Request["valorIni"], Request["valorFim"], Request["apenasDinheiro"] == "true", Request["apenasCheque"] == "true",
                             Glass.Conversoes.StrParaInt(Request["tipoMov"]), Glass.Conversoes.StrParaInt(Request["tipoConta"]), Request["semEstorno"] == "true", Glass.Conversoes.StrParaUint(Request["idLoja"]), login);
+
+                        var totais = CaixaGeralDAO.Instance.ObterTotalizadores(null, Glass.Conversoes.StrParaUint(Request["idFunc"]), Request["dtIni"], Request["dtFim"], Request["apenasDinheiro"] == "true",
+                            Request["semEstorno"] == "true", Glass.Conversoes.StrParaUint(Request["idLoja"]), login);
+
+                        if (caixaGeral.Length > 0)
+                        {
+                            caixaGeral[0].TotalDinheiro = totais.TotalDinheiro;
+                            caixaGeral[0].SaldoDinheiro = totais.SaldoDinheiro;
+                            caixaGeral[0].TotalSaidaDinheiro = totais.TotalSaidaDinheiro;
+                            caixaGeral[0].TotalEntradaDinheiro = totais.TotalEntradaDinheiro;
+                            caixaGeral[0].TotalCheque = totais.TotalCheque;
+                            caixaGeral[0].TotalChequeDevolvido = totais.TotalChequeDevolvido;
+                            caixaGeral[0].TotalChequeReapresentado = totais.TotalChequeReapresentado;
+                            caixaGeral[0].TotalChequeTerc = totais.TotalChequeTerc;
+                            caixaGeral[0].SaldoCheque = totais.SaldoCheque;
+                            caixaGeral[0].TotalSaidaCheque = totais.TotalSaidaCheque;
+                            caixaGeral[0].TotalEntradaCheque = totais.TotalEntradaCheque;
+                            caixaGeral[0].SaldoCartao = totais.SaldoCartao;
+                            caixaGeral[0].TotalSaidaCartao = totais.TotalSaidaCartao;
+                            caixaGeral[0].TotalEntradaCartao = totais.TotalEntradaCartao;
+                            caixaGeral[0].SaldoConstrucard = totais.SaldoConstrucard;
+                            caixaGeral[0].TotalSaidaConstrucard = totais.TotalSaidaConstrucard;
+                            caixaGeral[0].SaldoPermuta = totais.SaldoPermuta;
+                            caixaGeral[0].TotalSaidaPermuta = totais.TotalSaidaPermuta;
+                            caixaGeral[0].TotalSaidaDeposito = totais.TotalSaidaDeposito;
+                            caixaGeral[0].TotalEntradaDeposito = totais.TotalEntradaDeposito;
+                            caixaGeral[0].SaldoDeposito = totais.SaldoDeposito;
+                            caixaGeral[0].TotalSaidaBoleto = totais.TotalSaidaBoleto;
+                            caixaGeral[0].TotalEntradaBoleto = totais.TotalEntradaBoleto;
+                            caixaGeral[0].SaldoBoleto = totais.SaldoBoleto;
+                            caixaGeral[0].TotalCreditoRecebido = totais.TotalCreditoRecebido;
+                            caixaGeral[0].TotalCreditoGerado = totais.TotalCreditoGerado;
+                            caixaGeral[0].TotalEntradaConstrucard = totais.TotalEntradaPermuta;
+                            caixaGeral[0].TotalEntradaPermuta = totais.TotalEntradaPermuta;
+                            caixaGeral[0].ContasReceberGeradas = totais.ContasReceberGeradas;
+                            caixaGeral[0].TotalContasRecebidasContabeis = totais.TotalContasRecebidasContabeis;
+                            caixaGeral[0].TotalContasRecebidasNaoContabeis = totais.TotalContasRecebidasNaoContabeis;
+                            caixaGeral[0].MostrarTotalGeral = totais.MostrarTotalGeral;
+                        }
 
                         lstParam.Add(new ReportParameter("LiberarPedido", PedidoConfig.LiberarPedido.ToString()));
                         lstParam.Add(new ReportParameter("MostrarResumo", Glass.Conversoes.StrParaInt(Request["tipoConta"]) != 0 ? "false" : "true"));
