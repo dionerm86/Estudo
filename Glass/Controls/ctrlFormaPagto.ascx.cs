@@ -119,7 +119,7 @@ namespace Glass.UI.Web.Controls
         /// </summary>
         public bool ExibirApenasCartaoDebito 
         {
-            get  { return _exibirApenasCartaoDebito && FinanceiroConfig.FormaPagamento.ExibirApenasCartaoDebito; }
+            get { return _exibirApenasCartaoDebito && (FinanceiroConfig.FormaPagamento.ExibirApenasCartaoDebito || FinanceiroConfig.FinanceiroRec.ConsiderarApenasDebitoComoPagtoAvista); }
             set { _exibirApenasCartaoDebito = value; }
         }
     

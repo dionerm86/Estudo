@@ -40,6 +40,7 @@ namespace Glass.Data.Helper
 
             AllDayGlass,
             Alternativa,
+            AlternativaIpatinga,
             AlternativaMOC,
             AlumiTemper,
             AmazonBoxManaus,

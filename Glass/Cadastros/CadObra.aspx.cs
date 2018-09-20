@@ -306,5 +306,12 @@ namespace Glass.UI.Web.Cadastros
                     ((DropDownList)dtvObra.FindControl("drpFuncionario")).Items.Add(new ListItem(FuncionarioDAO.Instance.GetNome(idFunc), idFunc.ToString()));
             }
         }
+
+        protected void ctrlFormaPagto1_Init(object sender, EventArgs e)
+        {
+            Glass.UI.Web.Controls.ctrlFormaPagto ctrlFormaPagto = (Glass.UI.Web.Controls.ctrlFormaPagto)sender;
+
+            ctrlFormaPagto.ExibirApenasCartaoDebito = FinanceiroConfig.FinanceiroRec.ConsiderarApenasDebitoComoPagtoAvista;
+        }
     }
 }
