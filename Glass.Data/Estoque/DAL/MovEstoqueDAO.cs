@@ -685,8 +685,6 @@ namespace Glass.Data.DAL
                 return;
             }
 
-            idLoja = NotaFiscalDAO.Instance.ObtemIdLojaParaMovEstoque(sessao, idLoja, idProd, idProdImpressaoChapa, idNf, idProdPedProducao);
-
             try
             {
                 ProdutoBaixaEstoque[] pbe;
