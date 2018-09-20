@@ -23,7 +23,7 @@ namespace Glass.Data.DAL
             Box
         }
 
-        #region Busca produtos relacionados ‡ uma Impress„o
+        #region Busca produtos relacionados √† uma Impress√£o
 
         private string SqlImpressao(string idImpressao, string planoCorte, uint idPedido, uint numeroNFe, string descrProduto, string etiqueta, float? altura,
             int? largura, bool usarAgrupamentos, DataSources.TipoDataEtiquetaEnum tipoData, bool etiqReposicao,
@@ -133,7 +133,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdPed
+        /// Obt√©m o idImpressao a partir do idProdPed
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
@@ -150,7 +150,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdPed
+        /// Obt√©m o idImpressao a partir do idProdPed
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <returns></returns>
@@ -160,7 +160,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdPed
+        /// Obt√©m o idImpressao a partir do idProdPed
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <param name="apenasImpressoesFinalizadas"></param>
@@ -171,7 +171,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdPed
+        /// Obt√©m o idImpressao a partir do idProdPed
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdPed"></param>
@@ -188,7 +188,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdNf
+        /// Obt√©m o idImpressao a partir do idProdNf
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <returns></returns>
@@ -198,7 +198,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idProdNf
+        /// Obt√©m o idImpressao a partir do idProdNf
         /// </summary>
         /// <param name="idProdNf"></param>
         /// <returns></returns>
@@ -208,7 +208,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idRetalhoProducao
+        /// Obt√©m o idImpressao a partir do idRetalhoProducao
         /// </summary>
         /// <param name="idRetalhoProducao"></param>
         /// <returns></returns>
@@ -233,7 +233,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// ObtÈm o idImpressao a partir do idRetalhoProducao
+        /// Obt√©m o idImpressao a partir do idRetalhoProducao
         /// </summary>
         /// <param name="idRetalhoProducao"></param>
         /// <returns></returns>
@@ -266,10 +266,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se um produtoImpressao j· foi inserido
+        #region Verifica se um produtoImpressao j√° foi inserido
 
         /// <summary>
-        /// Verifica se um produtoImpressao j· foi inserido
+        /// Verifica se um produtoImpressao j√° foi inserido
         /// </summary>
         /// <param name="idProdPed"></param>
         /// <param name="idImpressao"></param>
@@ -289,7 +289,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se o pedido possui alguma peÁa impressa
+        /// Verifica se o pedido possui alguma pe√ßa impressa
         /// </summary>
         /// <param name="idPedido"></param>
         /// <returns></returns>
@@ -305,7 +305,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a nota fiscal possui alguma peÁa impressa
+        /// Verifica se a nota fiscal possui alguma pe√ßa impressa
         /// </summary>
         public bool NfPossuiPecaImpressa(GDASession session, int idNf)
         {
@@ -319,7 +319,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a nota fiscal possui alguma peÁa impressa
+        /// Verifica se a nota fiscal possui alguma pe√ßa impressa
         /// </summary>
         public bool VerificarPossuiImpressao(GDASession session, int idProdNf)
         {
@@ -345,10 +345,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se a etiqueta È de chapa de vidro
+        #region Verifica se a etiqueta √© de chapa de vidro
 
         /// <summary>
-        /// Verifica se a etiqueta È de chapa de vidro
+        /// Verifica se a etiqueta √© de chapa de vidro
         /// </summary>
         public bool IsChapaVidro(GDASession session, string numEtiqueta)
         {
@@ -367,7 +367,7 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca produtos impress„o pelos seus ids
+        #region Busca produtos impress√£o pelos seus ids
 
         public ProdutoImpressao[] GetListByIds(string idsProdImpressao, bool apenasNaoCanceladas)
         {
@@ -389,11 +389,11 @@ namespace Glass.Data.DAL
         #region Busca por etiqueta
         
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Obtem um a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
         /// <returns>O id do campo.</returns>
         public uint ObtemCampoByEtiqueta(string numEtiqueta, TipoEtiqueta tipoEtiqueta, string campo)
         {
@@ -403,8 +403,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtem um a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
         /// <returns>O id do campo.</returns>
         public uint ObtemCampoByEtiqueta(GDASession sessao, string numEtiqueta, TipoEtiqueta tipoEtiqueta, string campo)
         {
@@ -426,7 +426,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o tipo de etiqueta pelo seu n˙mero.
+        /// Retorna o tipo de etiqueta pelo seu n√∫mero.
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -437,12 +437,12 @@ namespace Glass.Data.DAL
         }
         
         /// <summary>
-        /// (APAGAR: quando alterar para utilizar transaÁ„o)
+        /// (APAGAR: quando alterar para utilizar transa√ß√£o)
         /// Obtem o IdProdImpressao a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
-        /// <returns>O id do produto impress„o.</returns>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
+        /// <returns>O id do produto impress√£o.</returns>
         public uint ObtemIdProdImpressao(string numEtiqueta, TipoEtiqueta tipoEtiqueta)
         {
             return ObtemIdProdImpressao(null, numEtiqueta, tipoEtiqueta);
@@ -451,9 +451,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtem o IdProdImpressao a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
-        /// <returns>O id do produto impress„o.</returns>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
+        /// <returns>O id do produto impress√£o.</returns>
         public uint ObtemIdProdImpressao(GDASession sessao, string numEtiqueta, TipoEtiqueta tipoEtiqueta)
         {
             return ObtemCampoByEtiqueta(sessao, numEtiqueta, tipoEtiqueta, "idProdImpressao");
@@ -465,7 +465,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Obtem o IdProdImpressao a partir de uma etiqueta para o carregamento. N„o considera canceladas.
+        /// Obtem o IdProdImpressao a partir de uma etiqueta para o carregamento. N√£o considera canceladas.
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="numEtiqueta"></param>
@@ -476,7 +476,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o produto impress„o para expedicao da chapa
+        /// Busca o produto impress√£o para expedicao da chapa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -486,7 +486,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Busca o produto impress„o para expedicao da chapa
+        /// Busca o produto impress√£o para expedicao da chapa
         /// </summary>
         /// <param name="session"></param>
         /// <param name="numEtiqueta"></param>
@@ -494,18 +494,18 @@ namespace Glass.Data.DAL
         public ProdutoImpressao ObtemProdImpressaoParaExpedicao(GDASession session, string numEtiqueta)
         {
             return objPersistence.LoadOneData(SqlImpressao(session, null, null, 0, 0, null, numEtiqueta, null, null,
-                false, DataSources.TipoDataEtiquetaEnum.F·brica, false, false, true), new GDAParameter("?etiqueta", numEtiqueta));
+                false, DataSources.TipoDataEtiquetaEnum.F√°brica, false, false, true), new GDAParameter("?etiqueta", numEtiqueta));
         }
 
         /// <summary>
         /// Obtem o IdProdNf a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
-        /// <returns>O id do produto impress„o.</returns>
-        public uint ObtemIdProdNf(string numEtiqueta, TipoEtiqueta tipoEtiqueta)
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
+        /// <returns>O id do produto impress√£o.</returns>
+        public uint ObtemIdProdNf(GDASession sessao, string numEtiqueta, TipoEtiqueta tipoEtiqueta)
         {
-            return ObtemCampoByEtiqueta(numEtiqueta, tipoEtiqueta, "idProdNf");
+            return ObtemCampoByEtiqueta(sessao, numEtiqueta, tipoEtiqueta, "idProdNf");
         }
 
         /// <summary>
@@ -521,9 +521,9 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtem o IdProdPed a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
-        /// <returns>O id do produto impress„o.</returns>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
+        /// <returns>O id do produto impress√£o.</returns>
         public uint ObtemIdProdPed(GDASession sessao, string numEtiqueta)
         {
             return ObtemCampoByEtiqueta(numEtiqueta, TipoEtiqueta.Pedido, "idProdPed");
@@ -532,8 +532,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Obtem o IdImpressao a partir de uma etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <returns>O id da impress„o.</returns>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <returns>O id da impress√£o.</returns>
         public uint ObtemIdImpressao(string numEtiqueta)
         {
             TipoEtiqueta tipoEtiqueta = ObtemTipoEtiqueta(numEtiqueta);
@@ -548,8 +548,8 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Retorna um elemento a partir da etiqueta.
         /// </summary>
-        /// <param name="numEtiqueta">O n˙mero da etiqueta.</param>
-        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser· buscada.</param>
+        /// <param name="numEtiqueta">O n√∫mero da etiqueta.</param>
+        /// <param name="tipoEtiqueta">O tipo de etiqueta que ser√° buscada.</param>
         /// <returns>Um objeto ProdutoImpressao.</returns>
         public ProdutoImpressao GetElementByEtiqueta(GDASession session, string numEtiqueta, TipoEtiqueta tipoEtiqueta)
         {
@@ -610,10 +610,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Marca uma peÁa como impressa
+        #region Marca uma pe√ßa como impressa
 
         /// <summary>
-        /// Marcar em qual impressao a peÁa foi impressa
+        /// Marcar em qual impressao a pe√ßa foi impressa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <param name="idImpressao"></param>
@@ -624,7 +624,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Marcar em qual impressao a peÁa foi impressa
+        /// Marcar em qual impressao a pe√ßa foi impressa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <param name="idImpressao"></param>
@@ -639,7 +639,7 @@ namespace Glass.Data.DAL
 
             uint idProdImpressao = ObtemIdProdImpressao(session, numEtiqueta, tipoEtiqueta);
 
-            // Insere um registro nesta tabela, para identificar se a peÁa foi impressa (Caso n„o tenha sido impresso ainda)
+            // Insere um registro nesta tabela, para identificar se a pe√ßa foi impressa (Caso n√£o tenha sido impresso ainda)
             if (idProdImpressao == 0)
             {
                 int[] dadosEtiqueta = Array.ConvertAll(numEtiqueta.Split('-', '.', '/'), x => Glass.Conversoes.StrParaInt(x));
@@ -672,10 +672,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se uma peÁa foi impressa
+        #region Verifica se uma pe√ßa foi impressa
 
         /// <summary>
-        /// Verifica se h· alguma etiqueta otimizada para o produto pedido j· foi impressa
+        /// Verifica se h√° alguma etiqueta otimizada para o produto pedido j√° foi impressa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -685,7 +685,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se h· alguma etiqueta otimizada para o produto pedido j· foi impressa
+        /// Verifica se h√° alguma etiqueta otimizada para o produto pedido j√° foi impressa
         /// </summary>
         /// <param name="session"></param>
         /// <param name="numEtiqueta"></param>
@@ -699,7 +699,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna a quantidade de peÁas impressas para um produto de pedido.
+        /// Retorna a quantidade de pe√ßas impressas para um produto de pedido.
         /// </summary>
         public int QuantidadeImpressa(GDASession session, int idProdPed)
         {
@@ -710,7 +710,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a etiqueta j· foi impressa
+        /// Verifica se a etiqueta j√° foi impressa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -723,7 +723,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Verifica se a etiqueta j· foi impressa
+        /// Verifica se a etiqueta j√° foi impressa
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -737,7 +737,7 @@ namespace Glass.Data.DAL
         #region Busca etiquetas repostas
 
         /// <summary>
-        /// Recupera a lista de etiquetas que foram otimizadas e que s„o repostas.
+        /// Recupera a lista de etiquetas que foram otimizadas e que s√£o repostas.
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <returns></returns>
@@ -753,7 +753,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress„o passada
+        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress√£o passada
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="tipoEtiqueta"></param>
@@ -764,7 +764,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress„o passada
+        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress√£o passada
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="tipoEtiqueta"></param>
@@ -775,7 +775,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress„o passada
+        /// Retorna as etiquetas que foram impressas pela primeira vez e repostas na impress√£o passada
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="tipoEtiqueta"></param>
@@ -822,10 +822,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region ObtÈm campos
+        #region Obt√©m campos
 
         /// <summary>
-        /// Retorna o menor NumSeq da impress„o e do plano de corte passado
+        /// Retorna o menor NumSeq da impress√£o e do plano de corte passado
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="planoCorte"></param>
@@ -878,10 +878,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region PosiÁ„o do arquivo de otimizaÁ„o
+        #region Posi√ß√£o do arquivo de otimiza√ß√£o
 
         /// <summary>
-        /// Retorna a posiÁ„o no arquivo de otimizaÁ„o da etiqueta passada
+        /// Retorna a posi√ß√£o no arquivo de otimiza√ß√£o da etiqueta passada
         /// </summary>
         /// <param name="numEtiqueta"></param>
         /// <returns></returns>
@@ -909,10 +909,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna as peÁas otimizadas de uma impress„o
+        #region Retorna as pe√ßas otimizadas de uma impress√£o
 
         /// <summary>
-        /// Retorna as peÁas otimizadas de uma impress„o
+        /// Retorna as pe√ßas otimizadas de uma impress√£o
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="idProdPedEsp"></param>
@@ -926,7 +926,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna as peÁas otimizadas de uma impress„o
+        /// Retorna as pe√ßas otimizadas de uma impress√£o
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <param name="idProdPedEsp"></param>
@@ -957,10 +957,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Retorna o id dos produtos de impress„o
+        #region Retorna o id dos produtos de impress√£o
         
         /// <summary>
-        /// Retorna o id dos produtos de impress„o de um determinado pedido e plano de corte.
+        /// Retorna o id dos produtos de impress√£o de um determinado pedido e plano de corte.
         /// </summary>
         public string GetByIdPedidoPlanoCorte(GDASession session, uint idImpressao, uint? idPedido, uint? numeroNFe, string planoCorte)
         {
@@ -983,10 +983,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Insere ou atualiza peÁa
+        #region Insere ou atualiza pe√ßa
 
         /// <summary>
-        /// Insere ou atualiza peÁa em relaÁ„o ao seu plano de corte
+        /// Insere ou atualiza pe√ßa em rela√ß√£o ao seu plano de corte
         /// </summary>
         public void InsertOrUpdatePecaComTransacao(string numEtiqueta, string planoCorte, int posicaoArqOtimiz, int numSeq, TipoEtiqueta tipoEtiqueta, string forma)
         {
@@ -1014,7 +1014,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Insere ou atualiza peÁa em relaÁ„o ao seu plano de corte
+        /// Insere ou atualiza pe√ßa em rela√ß√£o ao seu plano de corte
         /// </summary>
         public void InsertOrUpdatePeca(GDASession sessao, string numEtiqueta, string planoCorte, int posicaoArqOtimiz, int numSeq, TipoEtiqueta tipoEtiqueta, string forma)
         {
@@ -1056,18 +1056,18 @@ namespace Glass.Data.DAL
 
             InsertOrUpdate(sessao, dados);
 
-            //Estava ocorrendo um erro onde o plano de corte n„o estava sendo atualizado no produto impressao.
-            //Foi adicionado o codigo abaixo para checar se foi realmente atualizado, e se n„o foi atualiza novamente.
+            //Estava ocorrendo um erro onde o plano de corte n√£o estava sendo atualizado no produto impressao.
+            //Foi adicionado o codigo abaixo para checar se foi realmente atualizado, e se n√£o foi atualiza novamente.
             if (!string.IsNullOrEmpty(planoCorte))
             {
                 if (dados.IdProdImpressao == 0)
-                    ErroDAO.Instance.InserirFromException("Importar arquivo otimizaÁ„o", new Exception("Id do produto impress„o n„o encontrado."));
+                    ErroDAO.Instance.InserirFromException("Importar arquivo otimiza√ß√£o", new Exception("Id do produto impress√£o n√£o encontrado."));
                 else if(string.IsNullOrEmpty(ObtemPlanoCorte(sessao, (uint)dados.IdProdImpressao)))
                     objPersistence.ExecuteCommand(sessao, @"update produto_impressao set planoCorte=?pc
                         where IdProdImpressao=" + dados.IdProdImpressao, new GDAParameter("?pc", planoCorte));
             }
 
-            // Atualiza o plano de corte da etiqueta na produÁ„o
+            // Atualiza o plano de corte da etiqueta na produ√ß√£o
             if (tipoEtiqueta == TipoEtiqueta.Pedido)
             {
                 uint? idProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPedProducao(sessao, numEtiqueta);
@@ -1077,14 +1077,14 @@ namespace Glass.Data.DAL
                 else
                     ErroDAO.Instance.InserirFromException("ProdutoImpressaoDAO(InsertOrUpdatePeca)",
                         new Exception(
-                            string.Format("N„o foi possÌvel recuperar o produto de produÁ„o da etiqueta: {0} e plano de corte: {1}.",
+                            string.Format("N√£o foi poss√≠vel recuperar o produto de produ√ß√£o da etiqueta: {0} e plano de corte: {1}.",
                                 numEtiqueta, planoCorte)));
             }
         }
 
         #endregion
 
-        #region MÈtodos sobrescritos
+        #region M√©todos sobrescritos
 
         internal string GetNumeroEtiqueta(ProdutoImpressao prodImp)
         {
@@ -1150,12 +1150,12 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera o cÛdigo do produto associado a um produto impresso
+        #region Recupera o c√≥digo do produto associado a um produto impresso
 
         /// <summary>
-        /// Recupera o cÛdigo do produto associado a um produto impresso.
+        /// Recupera o c√≥digo do produto associado a um produto impresso.
         /// </summary>
-        /// <param name="idProdImpressao">O cÛdigo do produto impresso.</param>
+        /// <param name="idProdImpressao">O c√≥digo do produto impresso.</param>
         /// <returns></returns>
         public uint? GetIdProd(GDASession sessao, uint idProdImpressao)
         {
@@ -1184,9 +1184,9 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Recupera o cÛdigo do produto associado a um produto impresso.
+        /// Recupera o c√≥digo do produto associado a um produto impresso.
         /// </summary>
-        /// <param name="idProdImpressao">O cÛdigo do produto impresso.</param>
+        /// <param name="idProdImpressao">O c√≥digo do produto impresso.</param>
         /// <returns></returns>
         public uint? GetIdProd(uint idProdImpressao)
         {
@@ -1195,11 +1195,11 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Verifica se uma peÁa foi expedida
+        #region Verifica se uma pe√ßa foi expedida
 
 
         /// <summary>
-        /// Verifica se uma peÁa foi expedida
+        /// Verifica se uma pe√ßa foi expedida
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdImpressao"></param>
@@ -1210,7 +1210,7 @@ namespace Glass.Data.DAL
         }
 
         // <summary>
-        /// Verifica se uma peÁa foi expedida
+        /// Verifica se uma pe√ßa foi expedida
         /// </summary>
         /// <param name="sessao"></param>
         /// <param name="idProdImpressao"></param>
@@ -1223,10 +1223,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Recupera a quantidade impressa de box de um impress„o
+        #region Recupera a quantidade impressa de box de um impress√£o
 
         /// <summary>
-        /// Recupera a quantidade impressa de box de um impress„o
+        /// Recupera a quantidade impressa de box de um impress√£o
         /// </summary>
         /// <param name="idImpressao"></param>
         /// <returns></returns>
@@ -1243,10 +1243,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Atualiza o pedido expediÁ„o
+        #region Atualiza o pedido expedi√ß√£o
 
         /// <summary>
-        /// Atualiza o pedido expediÁ„o
+        /// Atualiza o pedido expedi√ß√£o
         /// </summary>
         public void AtualizaPedidoExpedicao(GDASession sessao, uint? idPedidoExp, uint idProdImpressao)
         {
@@ -1255,7 +1255,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Atualiza o pedido expediÁ„o
+        /// Atualiza o pedido expedi√ß√£o
         /// </summary>
         /// <param name="idPedidoExp"></param>
         /// <param name="idProdImpressao"></param>
@@ -1266,14 +1266,14 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region OtimizaÁ„o
+        #region Otimiza√ß√£o
 
         /// <summary>
-        /// Atualiza a impress„o dos retalhos da soluÁ„o de otimizaÁ„o.
+        /// Atualiza a impress√£o dos retalhos da solu√ß√£o de otimiza√ß√£o.
         /// </summary>
-        /// <param name="sessao">Sess„o que ser· usada na operaÁ„o.</param>
-        /// <param name="idSolucaoOtimizacao">Identificador da soluÁ„o de otimizaÁ„o.</param>
-        /// <param name="idImpressao">Identificador da impress„o criada.</param>
+        /// <param name="sessao">Sess√£o que ser√° usada na opera√ß√£o.</param>
+        /// <param name="idSolucaoOtimizacao">Identificador da solu√ß√£o de otimiza√ß√£o.</param>
+        /// <param name="idImpressao">Identificador da impress√£o criada.</param>
         public void AtualizarImpressaoRetalhosSolucaoOtimizacao(GDASession sessao, int idSolucaoOtimizacao, int idImpressao)
         {
             var planoCortesImpressao = this.CurrentPersistenceObject.LoadResult(
@@ -1342,8 +1342,8 @@ namespace Glass.Data.DAL
                     };
                 })
 
-                // Vamos garantir que ser„o processados somente os retalhos dos planos
-                // de corte da impress„o
+                // Vamos garantir que ser√£o processados somente os retalhos dos planos
+                // de corte da impress√£o
                 .Where(f => planoCortesImpressao.Contains(f.NumeroEtiqueta));
 
             var produtos = ProdutoDAO.Instance.ObterProdutos(sessao, retalhos.Select(f => (uint)f.IdProduto).Distinct()).ToList();
@@ -1352,8 +1352,8 @@ namespace Glass.Data.DAL
             {
                 foreach (var retalho in planoCorte.Retalhos)
                 {
-                    // Se j· existir um retalho de produÁ„o associado, vamos atualiza 
-                    // o produto impress„o associada com o mesmo
+                    // Se j√° existir um retalho de produ√ß√£o associado, vamos atualiza 
+                    // o produto impress√£o associada com o mesmo
                     if (retalho.IdRetalhoProducao.HasValue)
                     {
                         this.CurrentPersistenceObject.ExecuteCommand(
@@ -1369,7 +1369,7 @@ namespace Glass.Data.DAL
                     // Verifica se o produto existe
                     var novoProduto = ProdutoDAO.Instance.ObterProduto(sessao, $"{produto.CodInterno}-{(int)retalho.Altura}x{(int)retalho.Largura}-R");
 
-                    // Se n„o existir cria um novo
+                    // Se n√£o existir cria um novo
                     if (novoProduto == null)
                     {
                         novoProduto = MetodosExtensao.Clonar(produto);
