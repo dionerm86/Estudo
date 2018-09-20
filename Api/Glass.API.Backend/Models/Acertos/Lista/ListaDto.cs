@@ -48,20 +48,6 @@ namespace Glass.API.Backend.Models.Acertos.Lista
             };
         }
 
-        private string ObterCorLinha(bool possuiContaProtestada, bool renegociacao)
-        {
-            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico && possuiContaProtestada)
-            {
-                return Color.FromArgb(225, 200, 0).ToString();
-            }
-            else if (renegociacao)
-            {
-                return Color.Blue.ToString();
-            }
-
-            return Color.Black.ToString();
-        }
-
         /// <summary>
         /// Obtém ou define o identificador do acerto.
         /// </summary>
@@ -131,5 +117,19 @@ namespace Glass.API.Backend.Models.Acertos.Lista
         [DataMember]
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
+
+        private string ObterCorLinha(bool possuiContaProtestada, bool renegociacao)
+        {
+            if (FinanceiroConfig.ContasReceber.UtilizarControleContaReceberJuridico && possuiContaProtestada)
+            {
+                return Color.FromArgb(225, 200, 0).ToString();
+            }
+            else if (renegociacao)
+            {
+                return Color.Blue.ToString();
+            }
+
+            return Color.Black.ToString();
+        }
     }
 }
