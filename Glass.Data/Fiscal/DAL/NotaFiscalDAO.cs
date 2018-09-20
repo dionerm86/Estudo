@@ -1343,25 +1343,13 @@ namespace Glass.Data.DAL
         /// <param name="idNf">Id da Nota Fiscal</param>
         /// <param name="idProdPedProducao">Id do Produto Pedido de Produção que irá movimentar o Estoque</param>
         /// <returns></returns>
-        internal uint ObtemIdLojaParaMovEstoque(GDASession sessao,uint idLoja,uint idProd, uint? idProdImpressaoChapa, uint? idNf, uint? idProdPedProducao, uint? idTrocaDevolucao)
+        internal uint ObtemIdLojaParaMovEstoque(GDASession sessao,uint idLoja,uint idProd, uint? idProdImpressaoChapa, uint? idNf, uint? idProdPedProducao)
         {
             var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)idProd);
 
             if ((tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado) || EstoqueConfig.EntradaEstoqueManual)
             {
                 return idLoja;
-            }
-
-            if (idTrocaDevolucao > 0)
-            {
-                var etiquetasTrocadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(sessao, (int)idTrocaDevolucao).Split(',');
-                foreach(var etiqueta in etiquetasTrocadas)
-                {
-                    var idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
-                    var idProdEtiqueta = ProdutosNfDAO.Instance.GetIdProdByEtiqueta(sessao, etiqueta);
-                    if(idProdEtiqueta == idProd)
-                        idNf = ProdutosNfDAO.Instance.ObtemIdNf(sessao, idProdNf);
-                }
             }
 
             if(idProdImpressaoChapa > 0)
