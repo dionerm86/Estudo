@@ -2106,19 +2106,28 @@ namespace Glass.Data.DAL
                 impressao.Data = DateTime.Now;
                 impressao.Situacao = (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando;
                 impressao.IdSolucaoOtimizacao = idSolucaoOtimizacao;
-                
+
                 uint idImpressao = 0;
 
                 // Gera uma nova impressão
                 idImpressao = Insert(session, impressao);
 
                 ProdutoImpressao prodImp;
+                var produtosImpressaoNaoProcessados = new List<ProdutoImpressao>();
 
                 // Salva quais produtos e com qual qtde foram impressos
                 for (int i = 0; i < vetIdProdPed.Length; i++)
                 {
                     if (vetQtdImpressao[i] == 0)
                     {
+                        prodImp = ProdutoImpressaoDAO.Instance.GetElementByEtiqueta(session, vetEtiqueta[i], ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+
+                        if (prodImp != null)
+                        {
+                            produtosImpressaoNaoProcessados.Add(prodImp);
+                            this.AtualizarPlanoCorteProdutoPedidoProducao(session, prodImp.NumEtiqueta, prodImp.PlanoCorte);
+                        }
+
                         // Atualiza a observação se for peça de reposição
                         ProdutosPedidoEspelhoDAO.Instance.AtualizaObs(session, lstIdProdPed[i], lstObs[i]);
 
@@ -2261,7 +2270,12 @@ namespace Glass.Data.DAL
 
                 if (idSolucaoOtimizacao.HasValue)
                 {
-                    ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(session, idSolucaoOtimizacao.Value, (int)idImpressao);
+                    ProdutoImpressaoDAO.Instance.AtualizarImpressaoRetalhosSolucaoOtimizacao(
+                        session,
+                        idSolucaoOtimizacao.Value,
+                        (int)idImpressao,
+                        produtosImpressaoNaoProcessados);
+
                     AtualizarProdutosPedidoProducao(session, (int)idImpressao);
                 }
 
@@ -2272,7 +2286,7 @@ namespace Glass.Data.DAL
                 // Chamado 13478.
                 // Caso ocorra algum erro ao imprimir etiquetas nós saberemos se o erro ocorreu neste método ou não.
                 ErroDAO.Instance.InserirFromException("NovaImpressaoPedido", ex);
-                    
+
                 throw;
             }
         }
@@ -2292,18 +2306,35 @@ namespace Glass.Data.DAL
                .Select(f => new
                {
                    NumEtiqueta = f.GetString("NumEtiqueta"),
-                   PlanoCorte = f.GetString("PlanoCorte")
+                   PlanoCorte = f.GetString("PlanoCorte"),
                }).ToList();
 
             foreach (var etiquetaPlanoCorte in etiquetasPlanoCorte)
             {
-                this.CurrentPersistenceObject.ExecuteCommand(
-                    sessao,
-                    "UPDATE produto_pedido_producao SET PlanoCorte=?planoCorte WHERE NumEtiqueta=?numEtiqueta AND Situacao=?situacao",
-                    new GDAParameter("?planoCorte", etiquetaPlanoCorte.PlanoCorte),
-                    new GDAParameter("?numEtiqueta", etiquetaPlanoCorte.NumEtiqueta),
-                    new GDAParameter("?situacao", ProdutoPedidoProducao.SituacaoEnum.Producao));
+                var planoCorte = etiquetaPlanoCorte.PlanoCorte;
+                var numEtiqueta = etiquetaPlanoCorte.NumEtiqueta;
+
+                AtualizarPlanoCorteProdutoPedidoProducao(sessao, numEtiqueta, planoCorte);
             }
+        }
+
+        /// <summary>
+        /// Atualiza o plano de corte do produto do pedido produção associado com a etiqueta.
+        /// </summary>
+        /// <param name="sessao">Sessão de conexão com o banco de dados.</param>
+        /// <param name="numEtiqueta">Número da etiqueta.</param>
+        /// <param name="planoCorte">Plano de corte que serão atualizado.</param>
+        private void AtualizarPlanoCorteProdutoPedidoProducao(GDASession sessao, string numEtiqueta, string planoCorte)
+        {
+            this.CurrentPersistenceObject.ExecuteCommand(
+                sessao,
+                @"UPDATE produto_pedido_producao 
+                      SET PlanoCorte=?planoCorte 
+                      WHERE NumEtiqueta=?numEtiqueta AND (Situacao=?situacaoProducao OR Situacao=?situacaoPerda)",
+                new GDAParameter("?planoCorte", planoCorte),
+                new GDAParameter("?numEtiqueta", numEtiqueta),
+                new GDAParameter("?situacaoProducao", ProdutoPedidoProducao.SituacaoEnum.Producao),
+                new GDAParameter("?situacaoPerda", ProdutoPedidoProducao.SituacaoEnum.Perda));
         }
 
         #endregion
