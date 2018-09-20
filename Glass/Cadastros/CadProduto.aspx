@@ -228,6 +228,28 @@
                 return false;
             }
 
+            // Valida os campos de produto base e matéria prima
+            var idSubgrupo = FindControl("hdfIdSubgrupo", "input").value;
+            var tipoSubgrupo = CadProduto.ObterTipoSubgrupoPeloSubgrupo(idSubgrupo).value.split(';');
+
+            if (tipoSubgrupo[0] == "Erro") {
+                alert(tipoSubgrupo[1]);
+                return false;
+            }
+
+            if (FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.style.display != "none") {
+                // Produto Base
+                var produtoBase = FindControl("ctrlSelProd_ctrlSelProdBuscar_txtDescr", "input").value;
+
+                switch (tipoSubgrupo[1]) {
+                    case "ChapasVidro":
+                        if (produtoBase == "") {
+                            alert("Produtos do subgrupo chapa de vidro deve informar o produto base.");
+                            return false;
+                        }
+                }
+            }
+
             if (FindControl("txtAlturaIns", "input").parentNode.parentNode.style.display != "none") {
                 var altura = FindControl("txtAlturaIns", "input").value;
                 if (altura == "") {
@@ -1107,6 +1129,7 @@
                         <asp:TemplateField HeaderText="Produto Base" SortExpression="IdProdBase">
                             <EditItemTemplate>
                                <uc9:ctrlSelProduto runat="server" ID="ctrlSelProd" IdProdInt32='<%# Bind("IdProdBase") %>' />
+                                <asp:Label ID="lblObrigatoriedadeProdutoBase" runat="server" Text="&nbsp;*" ForeColor="Red"></asp:Label>
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Estoque fiscal - Produto para baixa" SortExpression="IdProdBaixaEstoqueFiscal">
@@ -1534,7 +1557,10 @@
     </table>
 
     <script type="text/javascript">
-        alteraVisibilidade(FindControl("drpSubgrupo", "select").value);
+        if (FindControl("drpSubgrupo", "select") != null) {
+            alteraVisibilidade(FindControl("drpSubgrupo", "select").value);
+        }
+
         txtToUpper();
         inicializaValoresPadrao();
     </script>
