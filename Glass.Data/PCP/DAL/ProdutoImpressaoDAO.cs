@@ -503,9 +503,9 @@ namespace Glass.Data.DAL
         /// <param name="numEtiqueta">O número da etiqueta.</param>
         /// <param name="tipoEtiqueta">O tipo de etiqueta que será buscada.</param>
         /// <returns>O id do produto impressão.</returns>
-        public uint ObtemIdProdNf(string numEtiqueta, TipoEtiqueta tipoEtiqueta)
+        public uint ObtemIdProdNf(GDASession sessao,string numEtiqueta, TipoEtiqueta tipoEtiqueta)
         {
-            return ObtemCampoByEtiqueta(numEtiqueta, tipoEtiqueta, "idProdNf");
+            return ObtemCampoByEtiqueta(sessao , numEtiqueta, tipoEtiqueta, "idProdNf");
         }
 
         /// <summary>
