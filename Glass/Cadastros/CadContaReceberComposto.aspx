@@ -21,7 +21,7 @@
             var abrirRpt = <%= AbrirRptFinalizar().ToString().ToLower() %>;
             if (!abrirRpt)
                 return;
-    
+
             openWindow(600, 800, "../Relatorios/RelBase.aspx?rel=Acerto&idAcerto=" + FindControl("hdfIdAcerto", "input").value);
         }
 
@@ -36,19 +36,19 @@
                 if (idContaR == contas[i]) {
                     if (selContasWin != null)
                         selContasWin.alert("Conta já adicionada.");
-                
+
                     return false;
                 }
             }
-    
+
             var valorJuros = parseFloat(juros.replace(',', '.')) + (multa != undefined ? parseFloat(multa.replace(',', '.')) : 0);
-    
+
             addItem([idPedido != "" ? idPedido : pedidosLiberacao, cliente, valor, "R$ " + valorJuros.toFixed(2).replace(".", ","), vencimento, tipo, obsScript],
                 ["Num. Pedido", "Cliente", "Valor", "Juros", "Vencimento", "Tipo", "Obs"], "lstContas", idContaR, "hdfIdContas", 0, null, "itemRemovido", null);
 
             // Incrementa o valor total das contas
             totalContas = parseFloat(totalContas) + parseFloat(valor.replace(".", "").replace(".", "").replace("R$", "").replace(" ", "").replace(",", "."));
-    
+
             // Atualiza o total de juros
             totalJuros += valorJuros;
 
@@ -57,7 +57,7 @@
             // Exibe o valor total das contas até então
             FindControl("lblTotalContas", "span").innerHTML = totalContas.toFixed(2).toString().replace(".", ",");
             FindControl("hdfTotalContas", "input").value = totalContas;
-    
+
             <%= ctrlFormaPagto1.ClientID %>.AdicionarID(idContaR);
             <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
             usarCredito('<%= ctrlFormaPagto1.ClientID %>', "callbackUsarCredito");
@@ -70,30 +70,30 @@
             controlePagto.ExibirApenasCredito(chk.checked);
 
             <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(parseFloat(FindControl("hdfTotalJuros", "input").value.replace(',', '.')));
-    
+
             document.getElementById("tbPagto").style.display = chk.checked ? "none" : "";
-    
+
             document.getElementById("tbRenegociar").style.display = !chk.checked ? "none" : "inline";
-    
+
             var observacao = document.getElementById("observacao");
             var obsReceber = document.getElementById("obsReceber");
             var obsRenegociar = document.getElementById("obsRenegociar");
-    
+
             obsReceber.innerHTML = "";
             obsRenegociar.innerHTML = "";
-    
+
             if (chk.checked)
                 obsRenegociar.appendChild(observacao);
             else
                 obsReceber.appendChild(observacao);
-    
+
             if (chk.checked) setParcelas();
         }
 
         function setParcelas() {
             var controleFormaPagto = <%= ctrlFormaPagto1.ClientID %>;
             FindControl("hdfDescontoParc", "input").value = controleFormaPagto.CreditoUtilizado();
-    
+
             var nomeControleParcelas = "<%= ctrlParcelas.ClientID %>";
             Parc_visibilidadeParcelas(nomeControleParcelas);
         }
@@ -105,49 +105,49 @@
                     return false;
             }
             catch (err) { alert(err); }
-    
+
             var numParc = parseInt(FindControl("drpNumParc", "select").value);
             var parcelas = "";
 
             // Salva os valores das parcelas
-            for (i=0; i<numParc; i++) 
+            for (i=0; i<numParc; i++)
                 parcelas += FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtValor", "input").value + ";" +
                     FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtData", "input").value + ";" +
                     FindControl("ctrlParcelas_Parc" + (i + 1) + "_txtJuros", "input").value+ "|";
-            
+
             var idCliente = FindControl("hdfIdCli", "input").value;
-    
+
             bloquearPagina();
-    
+
             var idContas = FindControl("hdfIdContas", "input").value;
             var idFormaPagto = FindControl("drpPagtoReneg", "select").value;
-    
+
             var multa = FindControl("txtMultaReneg", "input").value;
             var obs = FindControl("txtObs", "textarea").value;
 
             //control.disabled = true;
             //FindControl("loadGif", "img").style.visibility = "visible";
-    
+
             var retornoValidaCnab = CadContaReceberComposto.TemCnabGerado(idContas);
-    
+
             if(retornoValidaCnab.error != null){
                 desbloquearPagina(true);
                 alert(retornoValidaCnab.error.description);
                 return false;
             }
-    
+
             if(retornoValidaCnab.value.toLowerCase() == "true" && !confirm('Uma ou mais contas a receber possuem arquivo remessa gerado. Deseja continuar?'))
             {
                 desbloquearPagina(true);
                 return false;
             }
-    
+
             var creditoUsado = <%= ctrlFormaPagto1.ClientID %>.CreditoUtilizado();
-            var retorno = CadContaReceberComposto.Renegociar(idCliente, idContas, idFormaPagto, 
+            var retorno = CadContaReceberComposto.Renegociar(idCliente, idContas, idFormaPagto,
                 numParc, parcelas, multa, creditoUsado.toString().replace(".", ","), obs).value.split('\t');
 
             desbloquearPagina(true);
-    
+
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 //control.disabled = false;
@@ -165,11 +165,11 @@
         }
 
         // Busca contas a receber de um pedido
-        function getContaRecFromPed() 
+        function getContaRecFromPed()
         {
             var idPedido = FindControl("txtNumPedido", "input").value;
             var idCliente = FindControl("hdfIdCli", "input").value;
-    
+
             if (idPedido == "")
             {
                 alert("Informe o número do pedido.");
@@ -180,34 +180,34 @@
                 idCliente = 0;
 
             var retorno = CadContaReceberComposto.GetContasRecFromPedido(idCliente, idPedido).value;
-    
+
             if (retorno == null)
             {
                 alert("Erro de Ajax.");
                 return false;
             }
-    
+
             retorno = retorno.split('|');
-    
+
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 return false;
             }
-   
+
             // Busca o cliente deste pedido
             if (idCliente == "0") {
                 var txtNumCli = FindControl("txtNumCli", "input");
-                txtNumCli.value = retorno[0];    
+                txtNumCli.value = retorno[0];
                 getCli(txtNumCli);
             }
-    
+
             // Inclui as contas a receber do pedido informado
             var i=1;
             for (i=1; i<retorno.length; i++){
                 var conta = retorno[i].split(';');
                 setContaReceber(conta[0], conta[1], conta[2], conta[3], conta[4], conta[5], conta[6], conta[7], conta[8]);
             }
-    
+
             FindControl("txtNumPedido", "input").value = "";
         }
 
@@ -215,16 +215,16 @@
         {
             // Exibe o valor a ser pago descontado do crédito do cliente
             var totalASerPago = totalContas;
-    
+
             // se o cliente possuir crédito
             if (checked && creditoCliente > 0) {
                 // Se o crédito do cliente for superior ao valor da conta
                 if (parseFloat(creditoCliente) > parseFloat(totalContas))
                     totalASerPago = 0;
-                else 
+                else
                     totalASerPago = totalASerPago - creditoCliente;
             }
-    
+
             if (document.getElementById("<%= chkRenegociar.ClientID %>").checked)
                 setParcelas();
         }
@@ -233,7 +233,7 @@
             // Recupera o total da linha antes de ser excluída
             var totalLinha = new Number(linha.cells[3].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
             var jurosLinha = new Number(linha.cells[4].innerHTML.replace("R$", "").replace(" ", "").replace(".", "").replace(",", ".")).toFixed(2);
-    
+
             var contaAExcluir = linha.getAttribute("idConta");
 
             // Recalcula o valor total das contas
@@ -241,7 +241,7 @@
             totalJuros -= jurosLinha;
             FindControl("lblTotalContas", "span").innerHTML = new Number(totalContas).toFixed(2).toString().replace(".", ",");
             FindControl("hdfTotalContas", "input").value = totalContas;
-    
+
             <%= ctrlFormaPagto1.ClientID %>.AlterarJurosMinimos(totalJuros);
             document.getElementById("<%= ctrlFormaPagto1.ClientID %>_txtJuros").value = totalJuros.toFixed(2).replace(".", ",");
             usarCredito("<%= ctrlFormaPagto1.ClientID %>", "callbackUsarCredito");
@@ -252,7 +252,7 @@
         function onReceber() {
             if (!validate())
                 return false;
-        
+
             var control = FindControl("btnReceber", "input");
             //control.disabled = true;
             //FindControl("loadGif", "img").style.visibility = "visible";
@@ -263,19 +263,19 @@
             var tiposCartao = controle.TiposCartao();
             var tiposBoleto = controle.TiposBoleto();
             var parcelasCredito = controle.ParcelasCartao();
-    
+
             // Se não tiver selecionado pelo menos uma conta
             if (idConta == "" || idConta == null || idConta == "0") {
                 alert("Busque uma conta a receber primeiro");
                 //control.disabled = false;
                 return false;
             }
-    
+
             bloquearPagina();
-    
+
             // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
             var chequesPagto = controle.Cheques();
-    
+
             var cxDiario = FindControl("hdfCxDiario", "input").value;
             var contas = FindControl("hdfIdContas", "input").value;
             var dataRecebido = controle.DataRecebimento();
@@ -300,11 +300,11 @@
             var tipoCartaoCredito = <%= (int)Glass.Data.Model.TipoCartaoEnum.Credito %>;
             var tipoRecebimento = <%= (int)Glass.Data.Helper.UtilsFinanceiro.TipoReceb.Acerto %>;
             var receberCappta = utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1;
-    
+
             retorno = CadContaReceberComposto.Receber(idCliente, contas, dataRecebido, totalASerPago, formasPagto, valores, contasBanco, depositoNaoIdentificado, CNI, tiposCartao, tiposBoleto,
                 taxasAntecipacao, juros, parcial, valorGerarCredito, creditoUtilizado, cxDiario, numAut, parcelasCredito, chequesPagto, isDescontarComissao, obs, numAutCartao,
                 receberCappta.toString().toLowerCase()).value.split('\t');
-        
+
             if (retorno[0] == "Erro") {
                 desbloquearPagina(true);
                 alert(retorno[1]);
@@ -338,7 +338,7 @@
             FindControl("hdfIdAcerto", "input").value = retorno[2];
             openRptFinalizar();
             limpar();
-            
+
         }
 
         //Método chamado ao realizar o pagamento atraves do TEF CAPPTA
@@ -383,9 +383,9 @@
                 return false;
             }
             */
-    
+
             //return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3";
-            return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&IdCli=" + FindControl("txtNumCli","input").value;
+            return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&IdCli=" + FindControl("txtNumCli","input").value + "&tipoPagto=2";
         }
 
         function getCli(idCli) {
@@ -422,7 +422,7 @@
             countContas = 1;
             totalContas = 0;
             creditoCliente = 0;
-    
+
             var btnRenegociar = FindControl("btnRenegociar", "input");
             var chkRenegociar = FindControl("chkRenegociar", "input");
             //var chkGerarCnab = FindControl("chkGerarCnab", "input");
@@ -430,7 +430,7 @@
             if (btnRenegociar != null) btnRenegociar.disabled = false;
             if (chkRenegociar != null) chkRenegociar.checked = false;
             //if (chkGerarCnab != null) chkGerarCnab.checked = false;
-    
+
             //gerarCnab(chkGerarCnab);
 
             FindControl("hdfIdContas", "input").value = "";
@@ -439,21 +439,21 @@
             FindControl("hdfIdPedido", "input").value = "";
             FindControl("hdfTotalASerPago", "input").value = "";
             FindControl("hdfValorCredito", "input").value = "";
-    
+
             if(FindControl("txtObs", "textarea") != null)
                 FindControl("txtObs", "textarea").value = "";
-    
+
             FindControl("txtNumCli", "input").disabled = false;
             FindControl("txtNomeCliente", "input").disabled = false;
             FindControl("imgPesq1", "input").disabled = false;
             FindControl("txtNumCli", "input").value = "";
             FindControl("txtNomeCliente", "input").value = "";
-    
+
             FindControl("lblTotalContas", "span").innerHTML = "0,00";
             FindControl("hdfTotalContas", "input").value = "0";
-    
+
             document.getElementById('lstContas').innerHTML = "";
-    
+
             <%= ctrlFormaPagto1.ClientID %>.Limpar();
         }
 
@@ -667,7 +667,7 @@
         // Esconde opção de buscar contas pelo idPedido se empresa trabalha com liberação
         if ("<%= Glass.Configuracoes.PedidoConfig.LiberarPedido.ToString().ToLower() %>" == "true")
             document.getElementById("tbGetFromPedido").style.display = "none";
-            
+
     </script>
 
 </asp:Content>

@@ -101,7 +101,7 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
                             <img border="0" src="../Images/Clipe.gif">
                         </a>
-                        <a :href="obterLinkSugestoes(item)" title="Sugest�es" v-if="configuracoes.exibirSugestoes">
+                        <a :href="obterLinkSugestoes(item)" title="Sugestões" v-if="configuracoes.exibirSugestoes">
                             <img border="0" src="../Images/Nota.gif">
                         </a>
                         <a href="#" @click.prevent="abrirCancelarPedido(item)" title="Cancelar" v-if="item.permissoes.cancelar">
@@ -122,17 +122,24 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         <a href="#" @click.prevent="abrirRentabilidade(item)" title="Rentabilidade" v-if="configuracoes.exibirRentabilidade">
                             <img border="0" src="../Images/cash_red.png">
                         </a>
-                        <a href="#" @click.prevent="exibirObsObsLib('boxObsObsLib_' + item.id, $event, item)" title="Alterar Obs." 
-                            v-if="item.permissoes.alterarObservacoes">
-                            <img alt="" border="0" src="../Images/blocodenotas.png" />
-                        </a>
-                        <div :id="'boxObsObsLib_' + item.id" style="display: none">
-                            <label>Observação</label><br />     
-                            <textarea id="txtObs" v-model="item.observacao" style="width: 300px"></textarea><br />   
-                            <label>Observação liberação</label><br />   
-                            <textarea id="txtObsLib" v-model="item.observacaoLiberacao" style="width: 300px"></textarea><br />   
-                            <button @click.prevent="alterarObsObsLib(item)">Atualizar</button>
-                        </div>
+                        <controle-tooltip :precisa-clicar="true" :titulo="'Observação do pedido: ' + item.id"
+                            v-if="item.permissoes.alterarObservacoes && item.liberacao" @exibir="mostrarTooltip" @esconder="esconderTooltip">
+                            <template slot="botao">
+                                <img src="../Images/blocodenotas.png" title="Alterar Obs." />
+                            </template>
+
+                            <div>
+                                Observação
+                            </div>
+                            <textarea id="txtObs" v-model="item.observacao" style="width: 300px"></textarea>
+                            <div>
+                                Observação liberação
+                            </div>
+                            <textarea id="txtObsLib" v-model="item.liberacao.observacao" style="width: 300px"></textarea>
+                            <div>
+                                <input type="button" @click.prevent="alterarObservacaoEObservacaoLiberacao(item)" value="Atualizar "/>
+                            </div>
+                        </controle-tooltip>
                     </td>
                     <td :style="{ color: item.corLinha }">{{ item.id }}</td>
                     <td :style="{ color: item.corLinha }">{{ item.idProjeto }}</td>
@@ -207,44 +214,45 @@ Inherits="Glass.UI.Web.Listas.LstPedidos" Title="Pedidos" EnableViewState="false
                         <img src="../Images/cifrao.png" title="Pagamento Antecipado" key="sinalEPagamentoAntecipado" v-else-if="item.sinalEPagamentoAntecipado.temPagamentoAntecipado">
                         <img src="../Images/cifrao.png" :title="item.sinalEPagamentoAntecipado.valorSinal | moeda | textoSinal" v-else-if="item.sinalEPagamentoAntecipado.idSinal"
                             key="sinalEPagamentoAntecipado">
-                        <span v-if="item.liberacao && item.liberacao.observacao" @mouseover="exibirDivComoPopup('obsLiberacao_' + item.id, $event)"
-                            onmouseout="UnTip()">
-                            <img src="../Images/Nota.gif" title="Observação da Liberação">
-                            <div :id="'obsLiberacao_' + item.id" style="display: none">
-                                Observação da Liberação:
-                                <div>
-                                    {{ item.liberacao.observacao }}
-                                </div>
+                        <controle-tooltip v-if="item.liberacao && item.liberacao.observacao">
+                            <template slot="botao">
+                                <img src="../Images/Nota.gif" title="Observação da Liberação" />
+                            </template>
+
+                            Observação da Liberação:
+                            <div>
+                                {{ item.liberacao.observacao }}
                             </div>
-                        </span>
-                        <span v-if="item.permissoes.finalizacoesFinanceiro" @mouseover="exibirDivComoPopup('obsFinFinanc_' + item.id, $event)" onmouseout="UnTip()">
-                            <img src="../Images/money_hist.gif" title="Finalizações financeiro">
-                            <div :id="'obsFinFinanc_' + item.id" style="display: none">
-                                <lista-paginada :funcao-recuperar-itens="buscarObservacoesFinanceiro" :filtro="{ id: item.id }" :ordenacao="ordenacaoObservacoesFinanceiro"
-                                    :numero-registros="5">
-                                    <template slot="cabecalho">
-                                        <th>
-                                            <a href="#" @click.prevent="ordenarObservacoesFinanceiro('motivo')">Ação</a>
-                                        </th>
-                                        <th>
-                                            <a href="#" @click.prevent="ordenarObservacoesFinanceiro('observacao')">Observação</a>
-                                        </th>
-                                        <th>
-                                            <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.funcionario')">Funcionário</a>
-                                        </th>
-                                        <th>
-                                            <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.data')">Data Cadastro</a>
-                                        </th>
-                                    </template>
-                                    <template slot="item" slot-scope="{ item }">
-                                        <td :style="{ color: item.corLinha }">{{ item.motivo }}</td>
-                                        <td :style="{ color: item.corLinha }">{{ item.observacao }}</td>
-                                        <td :style="{ color: item.corLinha }">{{ item.cadastro.data }}</td>
-                                        <td :style="{ color: item.corLinha }">{{ item.cadastro.funcionario }}</td>
-                                    </template>
-                                </lista-paginada>
-                            </div>
-                        </span>
+                        </controle-tooltip>
+                        <controle-tooltip v-if="item.permissoes && item.permissoes.finalizacoesFinanceiro">
+                            <template slot="botao">
+                                <img src="../Images/money_hist.gif" title="Finalizações financeiro">
+                            </template>
+
+                            <lista-paginada :funcao-recuperar-itens="buscarObservacoesFinanceiro" :filtro="{ id: item.id }" :ordenacao="ordenacaoObservacoesFinanceiro"
+                                :numero-registros="5">
+                                <template slot="cabecalho">
+                                    <th>
+                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('motivo')">Ação</a>
+                                    </th>
+                                    <th>
+                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('observacao')">Observação</a>
+                                    </th>
+                                    <th>
+                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.funcionario')">Funcionário</a>
+                                    </th>
+                                    <th>
+                                        <a href="#" @click.prevent="ordenarObservacoesFinanceiro('cadastro.data')">Data Cadastro</a>
+                                    </th>
+                                </template>
+                                <template slot="item" slot-scope="{ item }">
+                                    <td :style="{ color: item.corLinha }">{{ item.motivo }}</td>
+                                    <td :style="{ color: item.corLinha }">{{ item.observacao }}</td>
+                                    <td :style="{ color: item.corLinha }">{{ item.cadastro.data }}</td>
+                                    <td :style="{ color: item.corLinha }">{{ item.cadastro.funcionario }}</td>
+                                </template>
+                            </lista-paginada>
+                        </controle-tooltip>
                         <img src="../Images/carregamento.png" :title="'Ordem de Carga: ' + exibirOrdensDeCarga(item)" v-if="item.idsOrdensDeCarga && item.idsOrdensDeCarga.length > 0"
                             style="width: 16px; height: 16px">
                     </td>

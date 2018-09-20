@@ -8,5 +8,6 @@
         int LarguraMinimaChapaVidro();
         int LarguraChapaVidro();
         float PercentualAcrescimoM2ChapaVidro(float m2);
+        float PercentualAcrescimoAltura();
     }
 }

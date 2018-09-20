@@ -11,18 +11,17 @@
                 v-if="item.produto && item.produto.vidro">
                 <img src="../Images/imagem.gif">
             </button>
-            <button title="Observação da peça" v-on:click.prevent="exibirDivComoPopup('tbObsCalc_' + item.id, 'Observação', $event)"
-                v-if="item.produto && item.produto.vidro">
-                <img src="../Images/blocodenotas.png">
-            </button>
-            <div v-bind:id="'tbObsCalc_' + item.id" class="cadpedido-produtos__observacao" style="display: none;">
+            <controle-tooltip v-bind:precisa-clicar="true" titulo="Observação" v-if="item.produto && item.produto.vidro"
+                v-on:exibir="mostrarTooltip" v-on:esconder="esconderTooltip">
+                <template slot="botao">
+                    <img src="../Images/blocodenotas.png" title="Observação da peça" />
+                </template>
+
                 <textarea v-model="item.observacao" rows="4" style="width: 320px" maxlength="500"></textarea>
                 <div style="text-align: center">
-                    <button v-on:click.prevent="salvarObservacao(item, $event)">
-                        Salvar
-                    </button>
+                    <input type="button" v-on:click.prevent="salvarObservacao(item, $event)" value="Salvar" />
                 </div>
-            </div>
+            </controle-tooltip>
         </template>
     </lista-itens-venda>
 </section>

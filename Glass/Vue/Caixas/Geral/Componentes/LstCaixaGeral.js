@@ -95,8 +95,8 @@ const app = new Vue({
       incluirFiltro('tipoMov', this.filtro.tipo);
       incluirFiltro('DtIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
       incluirFiltro('DtFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('valorIni', this.filtro.valor);
-      incluirFiltro('valorFim', this.filtro.valor);
+      incluirFiltro('valorIni', this.filtro.valor ? this.filtro.valor.toString().replace('.', ',') : null);
+      incluirFiltro('valorFim', this.filtro.valor ? this.filtro.valor.toString().replace('.', ',') : null);
       incluirFiltro('apenasDinheiro', this.filtro.apenasDinheiro);
       incluirFiltro('apenasCheque', this.filtro.apenasCheque);
       incluirFiltro('semEstorno', this.filtro.apenasEntradaExcetoEstorno);

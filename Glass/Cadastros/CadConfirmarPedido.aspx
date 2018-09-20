@@ -16,14 +16,15 @@ function setPedido(idPedido) {
 
 // Abre popup para cadastrar cheques
 function queryStringCheques() {
+    var ctrTipoPagto = FindControl("drpTipoVendaObra", "select");
     var idPedido = FindControl('txtNumPedido', 'input').value;
-    return "?IdPedido=" + idPedido + "&origem=2";
+    return "?IdPedido=" + idPedido + "&origem=2&tipoPagto=" + ctrTipoPagto.value;
 }
 
 function onConfirmVista(control) {
     if (!validate())
         return false;
-        
+
     if (confirm(control.value + '?') == false)
         return false;
 
@@ -31,22 +32,22 @@ function onConfirmVista(control) {
         return false;
 
     control.disabled = true;
-    
+
     var controle = <%= ctrlFormaPagto1.ClientID %>;
     var idPedido = FindControl("txtNumPedido", "input").value;
     var formasPagto = controle.FormasPagamento();
     var tiposCartao = controle.TiposCartao();
     var parcelasCredito = controle.ParcelasCartao();
-    
+
     // Verifica se o pedido foi buscado
     if (idPedido == "") {
         alert("Busque um pedido primeiro.");
         control.disabled = false;
         return false;
     }
-    
+
     bloquearPagina();
-    
+
     var valores = controle.Valores();
     var contasBanco = controle.ContasBanco();
     var creditoUtilizado = controle.CreditoUtilizado();
@@ -55,15 +56,15 @@ function onConfirmVista(control) {
     var isDescontarComissao = controle.DescontarComissao();
     var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
     var numAutCartao = controle.NumeroAutCartao();
-    
+
     // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
     var chequesPagto = controle.Cheques();
 
     var retorno = CadConfirmarPedido.Confirmar(idPedido, formasPagto, tiposCartao, valores, contasBanco, depositoNaoIdentificado,
-        isGerarCredito, creditoUtilizado, numAut, parcelasCredito, chequesPagto, isDescontarComissao, "0", numAutCartao).value;        
-        
+        isGerarCredito, creditoUtilizado, numAut, parcelasCredito, chequesPagto, isDescontarComissao, "0", numAutCartao).value;
+
     desbloquearPagina(true);
-        
+
     if (retorno != null)
         retorno = retorno.split('\t');
     else {
@@ -89,7 +90,7 @@ function onConfirmVista(control) {
         }
 
         redirectUrl(window.location.href);
-        
+
         return true;
     }
 
@@ -113,13 +114,13 @@ function onConfirmPrazo(control) {
         control.disabled = false;
         return false;
     }
-    
+
     bloquearPagina();
 
     var verificarParcelas = FindControl("chkVerificarParcelas", "input");
     verificarParcelas = verificarParcelas != null ? verificarParcelas.checked : true;
     retorno = CadConfirmarPedido.ConfirmarPrazo(idPedido, "0", verificarParcelas).value.split('\t');
-    
+
     desbloquearPagina(true);
 
     if (retorno[0] == "Erro") {
@@ -131,9 +132,9 @@ function onConfirmPrazo(control) {
         alert(retorno[1]);
         control.disabled = true;
     }
-        
+
     redirectUrl(window.location.href);
-        
+
     return true;
 }
 
@@ -141,26 +142,26 @@ function onConfirmObra(control)
 {
     if (!validate())
         return false;
-        
+
     if (confirm(control.value + '?') == false)
         return false;
 
     if(!verificaAlteracaoPedidos())
         return false;
-    
+
     //control.disabled = true;
-    
+
     var idPedido = FindControl("txtNumPedido", "input").value;
-    
+
     // Verifica se o pedido foi buscado
     if (idPedido == "") {
         alert("Busque um pedido primeiro.");
         //control.disabled = false;
         return false;
     }
-    
+
     bloquearPagina();
-    
+
     if (document.getElementById("<%= pagtoObra.ClientID %>") != null)
     {
         var controle = <%= ctrlFormaPagto2.ClientID %>;
@@ -175,32 +176,32 @@ function onConfirmObra(control)
         var isDescontarComissao = controle.DescontarComissao();
         var depositoNaoIdentificado = controle.DepositosNaoIdentificados();
         var numAutCartao = controle.NumeroAutCartao();
-        
+
         // Guarda os cheques proprios ou de terceiros, de acordo com a forma de pagamento, cadastrados/selecionados, separados por |
         var chequesPagto = controle.Cheques();
-        
+
         var tipoVendaObra = FindControl("drpTipoVendaObra", "select");
         tipoVendaObra = tipoVendaObra != null ? tipoVendaObra.value : "0";
-        
+
         var formaPagto = FindControl("drpFormaPagtoObra", "select");
         formaPagto = formaPagto != null ? formaPagto.value : "0";
-        
+
         var tipoCartao = FindControl("drpTipoCartaoObra", "select");
         tipoCartao = tipoCartao != null ? tipoCartao.value : "0";
-        
+
         var controle = <%= ctrlParcelas1.ClientID %>;
         var valoresParc = controle.Valores();
         var datasParc = controle.Datas();
-        
-        retorno = CadConfirmarPedido.ConfirmarObra(idPedido, formasPagto, tiposCartao, valores, contasBanco, depositoNaoIdentificado, 
+
+        retorno = CadConfirmarPedido.ConfirmarObra(idPedido, formasPagto, tiposCartao, valores, contasBanco, depositoNaoIdentificado,
             isGerarCredito, creditoUtilizado, numAut, parcelasCredito, chequesPagto, isDescontarComissao, formaPagto, tipoCartao, valoresParc,
             datasParc, tipoVendaObra, numAutCartao).value.split('\t');
     }
     else
         retorno = CadConfirmarPedido.ConfirmarObra(idPedido, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "0", "").value.split('\t');
-    
+
     desbloquearPagina(true);
-    
+
     if (retorno[0] == "Erro") {
         alert(retorno[1]);
         //control.disabled = false;
@@ -212,7 +213,7 @@ function onConfirmObra(control)
     }
 
     redirectUrl(window.location.href);
-        
+
     return true;
 }
 
@@ -220,28 +221,28 @@ function onConfirmFunc(control)
 {
     if (!validate())
         return false;
-        
+
     if (confirm(control.value + '?') == false)
         return false;
 
     if(!verificaAlteracaoPedidos())
         return false;
-    
+
     //control.disabled = true;
-    
+
     var idPedido = FindControl("txtNumPedido", "input").value;
-    
+
     // Verifica se o pedido foi buscado
     if (idPedido == "") {
         alert("Busque um pedido primeiro.");
         //control.disabled = false;
         return false;
     }
-    
+
     bloquearPagina();
     retorno = CadConfirmarPedido.ConfirmarFunc(idPedido).value.split('\t');
     desbloquearPagina(true);
-    
+
     if (retorno[0] == "Erro") {
         alert(retorno[1]);
         //control.disabled = false;
@@ -253,7 +254,7 @@ function onConfirmFunc(control)
     }
 
     redirectUrl(window.location.href);
-        
+
     return true;
 }
 
@@ -273,23 +274,23 @@ function formaPagtoChange(valor)
 
         function openRpt() {
             openWindow(600, 800, "../Relatorios/RelPedido.aspx?idPedido=" + FindControl("txtNumPedido", "input").value + "&tipo=0");
-                
+
             return false;
         }
 
         function verificaAlteracaoPedidos()
-        {        
+        {
             var dataTela = FindControl("hdfDataTela", "input").value;
-        
+
             var recalcular = CadConfirmarPedido.IsPedidosAlterados(FindControl("txtNumPedido", "input").value, dataTela);
             if (recalcular.value == "true")
             {
                 FindControl("lblMensagemRecalcular", "span").innerHTML = "É necessário atualizar a tela.<br />O pedido sofreu alguma alteração após ser inserido na tela.";
                 window.location.href = window.location.href;
-            
+
                 return false;
             }
-        
+
             return true;
         }
 
@@ -651,13 +652,13 @@ function formaPagtoChange(valor)
     <script type="text/javascript">
         if (<%= (!String.IsNullOrEmpty(Request["IdPedido"]) && divAVista.Visible).ToString().ToLower() %>)
             <%= ctrlFormaPagto1.ClientID %>.AdicionarID(<%= Request["IdPedido"] %>);
-        
+
         if (<%= (pagtoObra.Visible).ToString().ToLower() %>)
         {
             tipoVendaObraChange(FindControl("drpTipoVendaObra", "select").value);
             formaPagtoChange(FindControl("drpFormaPagtoObra", "select").value);
         }
-        
+
         if (FindControl("txtNumPedido", "input").value == "")
             FindControl("txtNumPedido", "input").focus();
     </script>

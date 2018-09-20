@@ -144,7 +144,8 @@ namespace Glass.Data.DAL
             if (objPersistence.ExecuteSqlQueryCount("select count(*) from pedido_exportacao where idPedido=" + idPedido) == 0)
                 return true;
 
-            return GetSituacaoExportacao(idPedido) == PedidoExportacao.SituacaoExportacaoEnum.Cancelado;
+            var situacaoPedidoExportacao = GetSituacaoExportacao(idPedido);
+            return situacaoPedidoExportacao == PedidoExportacao.SituacaoExportacaoEnum.Cancelado || situacaoPedidoExportacao == PedidoExportacao.SituacaoExportacaoEnum.Exportando;
         }
 
         #endregion

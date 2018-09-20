@@ -110,6 +110,29 @@
                 return false;
             }
 
+            var situacao = FindControl("drpSituacao", "select").value;
+            var planoConta = FindControl("drpPlanoConta", "select").value;
+            var contaBanco = FindControl("drpContaBanco", "select").value;
+
+            if (situacao == "1" && planoConta == "") {
+                alert("O plano de contas precisa ser informado")
+                return false;
+            }
+
+            FindControl("chkMovCaixaGeral", "input").checked;
+            FindControl("chkMovBanco", "input").checked;
+
+            if (situacao == "2") {
+                if (FindControl("chkMovBanco", "input").checked && (planoConta == "" || contaBanco == "")) {
+                    alert("O plano de contas ou a conta bancária não foi preenchido")
+                    return false;
+                }
+                else if (FindControl("chkMovCaixaGeral", "input").checked && planoConta == "") {
+                    alert("O plano de contas deve ser informado")
+                    return false;
+                }
+            }
+
             return true;
         }
 

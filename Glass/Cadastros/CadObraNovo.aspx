@@ -42,7 +42,7 @@
                 FindControl("lblDescrProd", "span").innerHTML = "";
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
-        
+
                 alert("Apenas produtos do grupo Vidro podem ser incluídos nesse pagamento antecipado.");
                 return;
             }
@@ -52,11 +52,11 @@
                 FindControl("lblDescrProd", "span").innerHTML = "";
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
-        
+
                 alert("O produto de código " + codInterno + " já foi inserido nesta obra.");
                 return;
             }
-    
+
             var resposta = CadObraNovo.GetProd(codInterno, idCliente).value.split(";");
             if (resposta[0] == "Erro")
             {
@@ -64,11 +64,11 @@
                 FindControl("lblDescrProd", "span").innerHTML = "";
                 FindControl("hdfIdProd", "input").value = "";
                 FindControl("txtValorUnit", "input").value = "";
-    
+
                 alert(resposta[1]);
                 return;
             }
-    
+
             FindControl("txtCodProd", "input").value = codInterno;
             FindControl("lblDescrProd", "span").innerHTML = resposta[2];
             FindControl("hdfIdProd", "input").value = resposta[1];
@@ -79,22 +79,22 @@
         function onInsertUpdate() {
             if (!validate())
                 return false;
-    
+
             var idCliente = FindControl("txtNumCli", "input").value;
             var descricao = FindControl("txtDescricao", "textarea").value;
-    
+
             if (descricao == "")
             {
                 alert("Informe a descrição.");
                 return false;
             }
-    
+
             if (idCliente == "")
             {
                 alert("Informe o Cliente.");
                 return false;
             }
-    
+
             return true;
         }
 
@@ -112,7 +112,7 @@
                 return;
 
             var retorno = MetodosAjax.GetCli(idCli.value).value.split(';');
-    
+
             if (retorno[0] == "Erro")
             {
                 alert(retorno[1]);
@@ -120,27 +120,28 @@
                 FindControl("txtNome", "input").value = "";
                 return false;
             }
-    
+
             FindControl("txtNome", "input").value = retorno[1];
         }
 
         // Abre popup para cadastrar cheques
         function queryStringCheques() {
-            return "?origem=3";
+            var ctrTipoPagto = FindControl("drpTipoPagto", "select");
+            return "?origem=3&tipoPagto=" + ctrTipoPagto.value;
         }
 
         function tipoPagtoChanged(calcParcelas)
         {
             var tipoPagto = FindControl("drpTipoPagto", "select");
-    
+
             if (tipoPagto == null)
                 return;
             else
                 tipoPagto = tipoPagto.value;
-    
+
             document.getElementById("a_vista").style.display = (tipoPagto == 1) ? "" : "none";
             document.getElementById("a_prazo").style.display = (tipoPagto == 2) ? "" : "none";
-        
+
             FindControl("hdfCalcularParcelas", "input").value = calcParcelas;
             var nomeControle = "<%= dtvObra.ClientID %>_ctrlParcelas1";
             if (typeof <%= dtvObra.ClientID %>_ctrlParcelas1 != "undefined")
@@ -152,14 +153,14 @@
             FindControl("btnEditar", "input").style.display = exibir ? "none" : "";
             FindControl("btnFinalizar", "input").style.display = exibir ? "none" : "";
             FindControl("btnVoltar", "input").style.display = exibir ? "none" : "";
-    
+
             var tabProdutos = FindControl("grdProdutoObra", "table");
             var numLinha = tabProdutos.rows.length - 1;
             if (tabProdutos.rows[numLinha].cells.length == 1)
                 numLinha--;
-    
+
             tabProdutos.rows[numLinha].style.display = exibir ? "none" : "";
-    
+
             document.getElementById("receber").style.display = exibir ? "" : "none";
             FindControl("btnReceber", "input").style.display = exibir ? "" : "none";
             FindControl("btnCancelar", "input").style.display = exibir ? "" : "none";
@@ -207,9 +208,9 @@
                 var tipoRecebimento = <%= (int)Glass.Data.Helper.UtilsFinanceiro.TipoReceb.Obra %>;
                 var receberCappta = utilizarTefCappta && formasPagto.split(';').indexOf(idFormaPgtoCartao.toString()) > -1;
 
-                var retornoReceber = CadObraNovo.ReceberAVista(idObra, valores, formasPagto, tiposCartao, parcelasCredito, contas, chequesPagto, creditoUtilizado, dataRecebido, 
+                var retornoReceber = CadObraNovo.ReceberAVista(idObra, valores, formasPagto, tiposCartao, parcelasCredito, contas, chequesPagto, creditoUtilizado, dataRecebido,
                     depositoNaoIdentificado, numAutCartao, CNI, isGerarCredito, cxDiario, receberCappta.toString().toLowerCase());
-                
+
                 if(retornoReceber.error != null){
                     desbloquearPagina(true);
                     alert(retornoReceber.error.description);
@@ -257,7 +258,7 @@
             }
 
             desbloquearPagina(true);
-            alert(retornoReceber.value); 
+            alert(retornoReceber.value);
             redirectUrl('../Listas/LstObra.aspx' + (cxDiario ? "?cxDiario=1" : ""));
             return false;
         }
@@ -267,11 +268,11 @@
             desbloquearPagina(true);
 
             if(!sucesso){
-                alert(msg); 
+                alert(msg);
                 return false;
             }
 
-            alert(retorno.value); 
+            alert(retorno.value);
             openWindow(600, 800, "../Relatorios/Relbase.aspx?rel=ComprovanteTef&codControle=" + codigosAdministrativos.join(';'));
             redirectUrl('../Listas/LstObra.aspx' + (cxDiario ? "?cxDiario=1" : ""));
             return false;
@@ -282,7 +283,7 @@
             var totalPrazo = parseFloat(document.getElementById("<%= dtvObra.ClientID %>_ctrlParcelas1_txtValorParcelas").value);
             if (isNaN(totalPrazo))
                 totalPrazo = 0;
-    
+
             args.IsValid = document.getElementById("a_prazo").style.display == "none" ||
                 args.Value != "" || totalPrazo == 0;
         }
@@ -334,7 +335,7 @@
                                         <td nowrap="nowrap" align="left">
                                             <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getCli(this);" Text='<%# Bind("IdCliente") %>' onchange="onChangeCliente(this)"></asp:TextBox>
-                                            <asp:TextBox ID="txtNomeCliente" runat="server" Width="200px" 
+                                            <asp:TextBox ID="txtNomeCliente" runat="server" Width="200px"
                                                 Text='<%# Bind("NomeCliente") %>'></asp:TextBox>
                                             <asp:ImageButton ID="imgPesq" runat="server" ImageUrl="~/Images/Pesquisar.gif" ToolTip="Pesquisar"
                                                 OnClientClick="openWindow(590, 760, '../Utils/SelCliente.aspx?tipo=obra'); return false;" />
@@ -375,31 +376,31 @@
                                     </tr>
                                 </table>
                                 <br />
-                                <asp:GridView ID="grdProdutoObra" runat="server" AllowPaging="True" 
-                                    AllowSorting="True" AutoGenerateColumns="False" CssClass="gridStyle" 
-                                    DataKeyNames="IdProdObra" DataSourceID="odsProdutoObra" GridLines="None" 
+                                <asp:GridView ID="grdProdutoObra" runat="server" AllowPaging="True"
+                                    AllowSorting="True" AutoGenerateColumns="False" CssClass="gridStyle"
+                                    DataKeyNames="IdProdObra" DataSourceID="odsProdutoObra" GridLines="None"
                                     ondatabound="grdProdutoObra_DataBound" ShowFooter="True">
                                     <Columns>
                                         <asp:TemplateField>
                                             <EditItemTemplate>
-                                                <asp:ImageButton ID="imgAtualizar" runat="server" CommandName="Update" 
+                                                <asp:ImageButton ID="imgAtualizar" runat="server" CommandName="Update"
                                                     ImageUrl="~/Images/ok.gif" />
-                                                <asp:ImageButton ID="imgCancelar" runat="server" CausesValidation="False" 
+                                                <asp:ImageButton ID="imgCancelar" runat="server" CausesValidation="False"
                                                     CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />
                                             </EditItemTemplate>
                                             <ItemTemplate>
-                                                <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit" 
+                                                <asp:ImageButton ID="imgEditar" runat="server" CommandName="Edit"
                                                     ImageUrl="~/Images/EditarGrid.gif" />
-                                                <asp:ImageButton ID="imgExcluir" runat="server" CommandName="Delete" 
-                                                    ImageUrl="~/Images/ExcluirGrid.gif" 
+                                                <asp:ImageButton ID="imgExcluir" runat="server" CommandName="Delete"
+                                                    ImageUrl="~/Images/ExcluirGrid.gif"
                                                     onclientclick="if (!confirm(&quot;Deseja excluir esse produto da obra?&quot;)) return false" />
                                             </ItemTemplate>
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="Produto" SortExpression="DescrProduto">
                                             <EditItemTemplate>
-                                                <asp:TextBox ID="txtCodProd" runat="server" onblur="loadProduto(this.value);" 
-                                                    onkeydown="if (isEnter(event)) loadProduto(this.value);" 
-                                                    onkeypress="return !(isEnter(event));" Text='<%# Eval("CodInterno") %>' 
+                                                <asp:TextBox ID="txtCodProd" runat="server" onblur="loadProduto(this.value);"
+                                                    onkeydown="if (isEnter(event)) loadProduto(this.value);"
+                                                    onkeypress="return !(isEnter(event));" Text='<%# Eval("CodInterno") %>'
                                                     Width="50px"></asp:TextBox>
                                                 <asp:Label ID="lblDescrProd" runat="server" Text='<%# Eval("DescrProduto") %>'></asp:Label>
                                                 <a href="#" onclick="getProduto(); return false;">
@@ -408,9 +409,9 @@
                                                 <asp:HiddenField ID="HidhdfIdObra" runat="server" Value='<%# Bind("IdObra") %>' />
                                             </EditItemTemplate>
                                             <FooterTemplate>
-                                                <asp:TextBox ID="txtCodProd" runat="server" 
-                                                    onblur="loadProduto(this.value);" 
-                                                    onkeydown="if (isEnter(event)) loadProduto(this.value);" 
+                                                <asp:TextBox ID="txtCodProd" runat="server"
+                                                    onblur="loadProduto(this.value);"
+                                                    onkeydown="if (isEnter(event)) loadProduto(this.value);"
                                                     onkeypress="return !(isEnter(event));" Width="50px"></asp:TextBox>
                                                 <asp:Label ID="lblDescrProd" runat="server"></asp:Label>
                                                 <a href="#" onclick="getProduto(); return false;">
@@ -429,24 +430,24 @@
                                                     Text='<%# Bind("ValorUnitario") %>' Width="70px"></asp:TextBox>
                                             </EditItemTemplate>
                                             <FooterTemplate>
-                                                <asp:TextBox ID="txtValorUnit" runat="server" 
-                                                    onkeypress="return soNumeros(event, false, true)" 
+                                                <asp:TextBox ID="txtValorUnit" runat="server"
+                                                    onkeypress="return soNumeros(event, false, true)"
                                                     Text='<%# Bind("ValorUnitario") %>' Width="70px"></asp:TextBox>
                                             </FooterTemplate>
                                             <ItemTemplate>
-                                                <asp:Label ID="Label2" runat="server" 
+                                                <asp:Label ID="Label2" runat="server"
                                                     Text='<%# Bind("ValorUnitario", "{0:C}") %>'></asp:Label>
                                             </ItemTemplate>
                                         </asp:TemplateField>
                                         <asp:TemplateField HeaderText="M² Máximo" SortExpression="TamanhoMaximo">
                                             <EditItemTemplate>
-                                                <asp:TextBox ID="txtTamanhoMax" runat="server" 
-                                                    Text='<%# Bind("TamanhoMaximo") %>' 
+                                                <asp:TextBox ID="txtTamanhoMax" runat="server"
+                                                    Text='<%# Bind("TamanhoMaximo") %>'
                                                     onkeypress="return soNumeros(event, false, true)" Width="70px"></asp:TextBox>
                                             </EditItemTemplate>
                                             <FooterTemplate>
-                                                <asp:TextBox ID="txtTamanhoMax" runat="server" 
-                                                    onkeypress="return soNumeros(event, false, true)" 
+                                                <asp:TextBox ID="txtTamanhoMax" runat="server"
+                                                    onkeypress="return soNumeros(event, false, true)"
                                                     Text='<%# Bind("TamanhoMaximo") %>' Width="70px"></asp:TextBox>
                                             </FooterTemplate>
                                             <ItemTemplate>
@@ -455,7 +456,7 @@
                                         </asp:TemplateField>
                                         <asp:TemplateField>
                                             <FooterTemplate>
-                                                <asp:ImageButton ID="imbAdd" runat="server" ImageUrl="~/Images/ok.gif" 
+                                                <asp:ImageButton ID="imbAdd" runat="server" ImageUrl="~/Images/ok.gif"
                                                     onclick="imbAdd_Click" />
                                             </FooterTemplate>
                                         </asp:TemplateField>
@@ -520,16 +521,16 @@
                                     </div>
                                     <asp:HiddenField ID="hdfTotalObra" runat="server" />
                                 </asp:Panel>
-                                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdutoObra" runat="server" 
-                                    DataObjectTypeName="Glass.Data.Model.ProdutoObra" DeleteMethod="Delete" 
-                                    EnablePaging="True" MaximumRowsParameterName="pageSize" 
-                                    SelectCountMethod="GetCount" SelectMethod="GetList" 
-                                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow" 
+                                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsProdutoObra" runat="server"
+                                    DataObjectTypeName="Glass.Data.Model.ProdutoObra" DeleteMethod="Delete"
+                                    EnablePaging="True" MaximumRowsParameterName="pageSize"
+                                    SelectCountMethod="GetCount" SelectMethod="GetList"
+                                    SortParameterName="sortExpression" StartRowIndexParameterName="startRow"
                                     TypeName="Glass.Data.DAL.ProdutoObraDAO" UpdateMethod="Update" >
                                     <SelectParameters>
-                                        <asp:QueryStringParameter Name="idObra" QueryStringField="idObra" 
+                                        <asp:QueryStringParameter Name="idObra" QueryStringField="idObra"
                                             Type="UInt32" />
-                                    </SelectParameters>                                    
+                                    </SelectParameters>
                                 </colo:VirtualObjectDataSource>
                                 <asp:HiddenField ID="hdfCreditoCliente" runat="server" Value='<%# Eval("CreditoCliente") %>' />
                             </ItemTemplate>
@@ -541,7 +542,7 @@
                                 <asp:Button ID="btnAtualizar" runat="server" CommandName="Update" Text="Atualizar"
                                     OnClientClick="if (!onInsertUpdate()) return false;" />
                                 <asp:Button ID="btnCancelar" runat="server" CausesValidation="False"
-                                    Text="Cancelar" 
+                                    Text="Cancelar"
                                     onclientclick="redirectUrl(window.location.href); return false" />
                                 <asp:HiddenField ID="hdfIdFunc" runat="server" Value='<%# Bind("IdFunc") %>' />
                                 <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
@@ -557,16 +558,16 @@
                             <ItemTemplate>
                                 <br />
                                 <asp:Button ID="btnEditar" runat="server" CommandName="Edit" Text="Editar" />
-                                <asp:Button ID="btnFinalizar" runat="server" Text="Finalizar" 
-                                    onclick="btnFinalizar_Click" 
+                                <asp:Button ID="btnFinalizar" runat="server" Text="Finalizar"
+                                    onclick="btnFinalizar_Click"
                                     onclientclick="if (!confirm(&quot;Deseja finalizar o pagamento antecipado?&quot;)) return false" />
-                                <asp:Button ID="btnVoltar" runat="server" Text="Voltar" 
+                                <asp:Button ID="btnVoltar" runat="server" Text="Voltar"
                                     onclick="btnCancelar_Click" />
                                 <asp:Button ID="btnReceber" runat="server" Text="Receber" Visible="False" OnClientClick="return onReceber();"/>
-                                <asp:Button ID="btnCancelar" runat="server" Text="Cancelar" 
-                                    onclick="btnCancelarReceb_Click" Visible="False" 
-                                    
-                                    onclientclick="if (!confirm(&quot;Deseja cancelar o recebimento?&quot;)) return false" 
+                                <asp:Button ID="btnCancelar" runat="server" Text="Cancelar"
+                                    onclick="btnCancelarReceb_Click" Visible="False"
+
+                                    onclientclick="if (!confirm(&quot;Deseja cancelar o recebimento?&quot;)) return false"
                                     CausesValidation="False" />
                             </ItemTemplate>
                             <ItemStyle HorizontalAlign="Center" />
@@ -575,13 +576,13 @@
                 </asp:DetailsView>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsObra" runat="server" DataObjectTypeName="Glass.Data.Model.Obra"
                     InsertMethod="Insert" SelectMethod="GetElement" TypeName="Glass.Data.DAL.ObraDAO"
-                    UpdateMethod="Update" OnInserted="odsObra_Inserted" 
+                    UpdateMethod="Update" OnInserted="odsObra_Inserted"
                     onupdated="odsObra_Updated" >
                     <SelectParameters>
                         <asp:QueryStringParameter Name="IdObra" QueryStringField="IdObra" Type="UInt32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" 
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server"
                     SelectMethod="ObtemLojasAtivas" TypeName="Glass.Global.Negocios.ILojaFluxo">
                 </colo:VirtualObjectDataSource>
             </td>

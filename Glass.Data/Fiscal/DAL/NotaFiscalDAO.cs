@@ -1334,6 +1334,59 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
+        /// Verifica em qual loja o produto deve dar saída.
+        /// Este método foi criado com o intuito de centralizar a decisão da saída do produto conforme a origem da Nota Fiscal.
+        /// Sempre que possível a manutenção do método deve ser feita para garantir que a decisão da movimentação vai ser mantida
+        /// </summary>
+        /// <param name="sessao">Sessão do GDA</param>
+        /// <param name="idLoja">Id da loja que até o momento movimentará o estoque</param>
+        /// <param name="idProdImpressaoChapa"> Id do Produto de Impressao que irá movimentar o estoque</param>
+        /// <param name="idNf">Id da Nota Fiscal</param>
+        /// <param name="idProdPedProducao">Id do Produto Pedido de Produção que irá movimentar o Estoque</param>
+        /// <returns></returns>
+        internal int ObterIdLojaParaMovEstoque(GDASession sessao, uint idLoja, uint idProd, uint? idProdImpressaoChapa, uint? idNf, uint? idProdPedProducao, uint? idTrocaDevolucao)
+        {
+            var tipoSubgrupo = SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)idProd);
+
+            if ((tipoSubgrupo != TipoSubgrupoProd.ChapasVidro && tipoSubgrupo != TipoSubgrupoProd.ChapasVidroLaminado) || EstoqueConfig.EntradaEstoqueManual)
+            {
+                return (int)idLoja;
+            }
+
+            if (idNf > 0)
+            {
+                return (int)ObtemIdLoja(sessao, (uint)idNf);
+            }
+
+            if (idTrocaDevolucao > 0)
+            {
+                var etiquetasTrocadas = ChapaTrocadaDevolvidaDAO.Instance.BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(sessao, (int)idTrocaDevolucao).Split(',').Where(f => !string.IsNullOrWhiteSpace(f.ToString())).ToList();
+                foreach (var etiqueta in etiquetasTrocadas)
+                {
+                    var idProdNf = ProdutoImpressaoDAO.Instance.ObtemIdProdNf(sessao, etiqueta, ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
+                    var idProdEtiqueta = ProdutosNfDAO.Instance.GetIdProdByEtiqueta(sessao, etiqueta);
+                    if (idProdEtiqueta == idProd)
+                        idNf = ProdutosNfDAO.Instance.ObtemIdNf(sessao, idProdNf);
+                }
+            }
+
+            if (idProdImpressaoChapa > 0)
+            {
+                idNf = (uint)ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa);
+            }
+
+            if (idProdPedProducao > 0)
+            {
+                var numEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemValorCampo<string>(sessao, "NumEtiqueta", $"IdProdPedProducao={idProdPedProducao}");
+                var idProdImpressaoPeca = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(sessao, numEtiqueta, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+                idProdImpressaoChapa = (uint)ChapaCortePecaDAO.Instance.ObtemIdProdImpressaoChapa(sessao, (int)idProdImpressaoPeca);
+                idNf = ProdutoImpressaoDAO.Instance.ObtemIdNf(sessao, (uint)idProdImpressaoChapa) ?? 0;
+            }
+
+            return idNf > 0 ? (int)ObtemIdLoja(sessao, (uint)idNf) : (int)idLoja;
+        }
+
+        /// <summary>
         /// Cria o PagtoNotaFiscal para a NFe ou NFCe.
         /// </summary>
         private void CriarPagtoNotaFiscal(GDATransaction sessao, NotaFiscal notaFiscal, List<int> idsLiberarPedido, ContasReceber[] contasReceber, string idsPedidos)
@@ -4047,6 +4100,23 @@ namespace Glass.Data.DAL
                     }
 
                     #endregion
+
+                    if (nf.ValorIpiDevolvido > 0 && nf.FinalidadeEmissao == (int)NotaFiscal.FinalidadeEmissaoEnum.Devolucao)
+                    {
+                        if (pnf.ValorIpiDevolvido > 0)
+                        {
+                            XmlElement impostoDevol = doc.CreateElement("impostoDevol");
+                            det.AppendChild(impostoDevol);
+
+                            var porcentagemValorIpiDevolvido = (pnf.ValorIpiDevolvido / nf.ValorIpiDevolvido) * 100;
+
+                            ManipulacaoXml.SetNode(doc, impostoDevol, "pDevol", Formatacoes.TrataValorDecimal(porcentagemValorIpiDevolvido, 2).PadLeft(3, '0'));
+
+                            XmlElement ipi = doc.CreateElement("IPI");
+                            impostoDevol.AppendChild(ipi);
+                            ManipulacaoXml.SetNode(doc, ipi, "vIPIDevol", Formatacoes.TrataValorDecimal(pnf.ValorIpiDevolvido, 2));
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -7496,6 +7566,15 @@ namespace Glass.Data.DAL
             }
         }
 
+        #endregion
+
+        #region Atualiza o Valor do IPI Devolvido
+        public void AtualizaValorIpiDevolvido(GDASession sessao, uint idNf, decimal valorIpiDevolvido)
+        {
+            var sql = $"UPDATE nota_fiscal set valorIpiDevolvido = {valorIpiDevolvido.ToString().Replace(",", ".")} WHERE idNf = {idNf}";
+
+            objPersistence.ExecuteCommand(sessao, sql);
+        }
         #endregion
 
         #region Insere informação complementar

@@ -1,4 +1,4 @@
-﻿// <copyright file="ParcelasDto.cs" company="Sync Softwares">
+﻿// <copyright file="TotaisParcelasDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -10,8 +10,8 @@ namespace Glass.API.Backend.Models.Caixas.Geral.Lista
     /// <summary>
     /// Classe que encapsula dados dos valores de parcelas (contas a receber/recebidas).
     /// </summary>
-    [DataContract(Name = "Parcelas")]
-    public class ParcelasDto
+    [DataContract(Name = "TotaisParcelas")]
+    public class TotaisParcelasDto
     {
         /// <summary>
         /// Obtém ou define o total de contas a receber geradas.
