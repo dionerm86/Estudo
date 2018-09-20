@@ -962,10 +962,11 @@ namespace Glass.Data.DAL
 
                 if (prod.IdProduto > 0)
                 {
+                    var valorAtualTabelado = prod.ValorTabela == prod.ValorProd;
                     prod.ValorTabela = (prod as IProdutoCalculo).DadosProduto.ValorTabela();
 
                     var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, orcamento, prod, !somarAcrescimoDesconto);
-                    prod.ValorProd = valorUnitario ?? Math.Max(prod.ValorTabela, prod.ValorProd.GetValueOrDefault());
+                    prod.ValorProd = valorAtualTabelado ? prod.ValorTabela : valorUnitario ?? Math.Max(prod.ValorTabela, prod.ValorProd.GetValueOrDefault());
 
                     ValorTotal.Instance.Calcular(
                         session,
