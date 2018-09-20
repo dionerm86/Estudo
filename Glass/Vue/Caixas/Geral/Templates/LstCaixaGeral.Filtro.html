@@ -1,0 +1,61 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label>Funcionário</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="funcionarioAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroFuncionarios"
+                v-bind:ordenar="false" v-bind:disabled="!permitirAlterarFuncionario"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <template v-if="permitirFiltrarPeriodo">
+                <label>Período</label>
+                <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoCadastroInicio" v-bind:data-hora-final.sync="filtroAtual.periodoCadastroFim"></campo-data-hora-periodo>
+            </template>
+            <template v-else>
+                <label>Data</label>
+                <campo-data-hora v-bind:data-hora.sync="filtroAtual.periodoCadastroInicio" ></campo-data-hora>
+            </template>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Código mov.</label>
+            <input type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Valor</label>
+            <input type="number" v-model.number="filtroAtual.valor" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual" v-bind:ativas="true"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Movimentações</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="tipoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroTiposMovimentacao"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasDinheiro" type="checkbox" v-model="filtroAtual.apenasDinheiro" />
+            <label for="apenasDinheiro">Apenas movimentações em dinheiro</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasEntradaExcetoEstorno" type="checkbox" v-model="filtroAtual.apenasEntradaExcetoEstorno" />
+            <label for="apenasEntradaExcetoEstorno">Movimentações de entrada sem estorno</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasCheque" type="checkbox" v-model="filtroAtual.apenasCheque" />
+            <label for="apenasCheque">Apenas movimentações em cheque</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+</section>

@@ -9,8 +9,8 @@
             <label>
                 Valor
             </label>
-            <input type="number" v-model.number="parcela.valor" step="0.01" v-bind:min="valorMinimoParcela"
-                style="width: 70px" v-bind="$attrs" />
+            <input ref="valor" type="number" v-model.number="parcela.valor" step="0.01" v-bind:min="valorMinimoParcela"
+                v-on:change.prevent="validarTotal" style="width: 70px" v-bind="$attrs" />
         </div>
         <div v-bind:style="obterEstiloParcela(index)">
             <label>
@@ -28,6 +28,6 @@
     <span style="color: red" v-if="invalido">
         Soma das parcelas não coincide com o valor total. <br>
         Valor esperado: {{ total | moeda }} <br>
-        Valor informado: {{ totalParcelas | moeda }}
+        Valor informado: {{ totalParcelas() | moeda }}
     </span>
 </span>

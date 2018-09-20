@@ -348,7 +348,7 @@ Vue.component('lista-itens-venda', {
      * @param {Object} event O objeto com o evento JavaScript.
      */
     inserir_: function (event) {
-      if (!event || !this.validarFormulario_(event.target)) {
+      if (!event || !this.validarFormulario_(event.target, true)) {
         return;
       }
 
@@ -374,7 +374,7 @@ Vue.component('lista-itens-venda', {
      * @param {Object} event O objeto com o evento JavaScript.
      */
     atualizar_: function (event) {
-      if (!event || !this.validarFormulario_(event.target)) {
+      if (!event || !this.validarFormulario_(event.target, true)) {
         return;
       }
 
@@ -477,9 +477,10 @@ Vue.component('lista-itens-venda', {
     /**
      * Função que indica se o formulário de itens de venda possui valores válidos de acordo com os controles.
      * @param {Object} botao O botão que foi disparado no controle.
+     * @param {?boolean} [reportar=false] Indica se a validação deve ser reportada na tela.
      * @returns {boolean} Um valor que indica se o formulário está válido.
      */
-    validarFormulario_: function (botao) {
+    validarFormulario_: function (botao, reportar) {
       var form = botao.form || botao;
       while (form.tagName.toLowerCase() !== 'form') {
         form = form.parentNode;
@@ -501,17 +502,22 @@ Vue.component('lista-itens-venda', {
             : 'Informe a aplicação.';
         }
 
-        const alterarCampo = function (tipo, mensagem, el) {
-          var campo = el.querySelector('.lista-itens-venda__' + tipo + ' input[type=search]');
+        const alterarCampo = function (tipo, mensagem, refs) {
+          try {
+            var campo = refs[tipo].$refs.base.$refs.campoBusca.$refs.campo;
 
-          if (campo) {
-            campo.setCustomValidity(mensagem);
-            campo.reportValidity();
-          }
+            if (campo) {
+              campo.setCustomValidity(mensagem);
+
+              if (reportar) {
+                campo.reportValidity();
+              }
+            }
+          } catch (erro) {}
         }
 
-        alterarCampo('processo', mensagemProcesso, this.$el);
-        alterarCampo('aplicacao', mensagemAplicacao, this.$el);
+        alterarCampo('processo', mensagemProcesso, this.$refs);
+        alterarCampo('aplicacao', mensagemAplicacao, this.$refs);
       }
 
       return form.checkValidity();
@@ -647,6 +653,18 @@ Vue.component('lista-itens-venda', {
     tipoValidacaoProdutoInterno: function () {
       var tipoValidacao = 'Produto' + this.tipoValidacaoProduto;
       return tipoValidacao.replace('ProdutoProduto', 'Produto');
+    },
+
+    /**
+     * Propriedade computada para exibição dos controles de processo e aplicação dos produtos filhos (no caso de composição).
+     * @type {boolean}
+     */
+    vIfProcessoAplicacaoProdutosFilhos: function () {
+      return this.inserindo
+        && this.exibirColunasProcessoEAplicacao
+        && this.produtoAtual
+        && this.produtoAtual.composicao
+        && this.produtoAtual.composicao.possuiFilhos;
     }
   },
 

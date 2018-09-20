@@ -1,4 +1,4 @@
-﻿Vue.component('campo-busca-etiqueta-processo', {
+Vue.component('campo-busca-etiqueta-processo', {
   mixins: [Mixins.Comparar],
   props: {
     /**
@@ -10,6 +10,17 @@
       twoWay: true,
       validator: Mixins.Validacao.validarObjetoOuVazio
     },
+
+    /**
+     * Identificadores dos subgrupos para validar o processo.
+     * @type {number[]}
+     */
+    idsSubgruposParaValidacao: {
+      required: false,
+      twoWay: false,
+      default: null,
+      validator: Mixins.Validacao.validarArrayOuVazio
+    }
   },
 
   data: function() {
@@ -44,6 +55,25 @@
           this.$emit('update:processo', valor);
           this.idProcesso = valor ? valor.id : 0;
           this.codigoProcesso = valor ? valor.codigo : null;
+        }
+
+        if (this.idsSubgruposParaValidacao && this.idsSubgruposParaValidacao.length) {
+          var campo = this.$refs.base.$refs.campoBusca.$refs.campo;
+
+          if (campo) {
+            campo.setCustomValidity('');
+            campo.reportValidity();
+
+            if (valor) {
+              Servicos.Processos.validarSubgrupos(valor.id, this.idsSubgruposParaValidacao)
+                .catch(function (erro) {
+                  if (erro && erro.mensagem && campo) {
+                    campo.setCustomValidity(erro.mensagem);
+                    campo.reportValidity();
+                  }
+                });
+            }
+          }
         }
       }
     }

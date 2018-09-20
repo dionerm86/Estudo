@@ -45,9 +45,13 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
             this.ExibirBeneficiamentos = this.ObterExibirBeneficiamentos(produto, tipoCalculo);
             this.Beneficiamentos = produto.Beneficiamentos?.ObterListaBeneficiamentos();
             this.ExigirProcessoEAplicacao = this.ObterExigirProcessoEAplicacao(produto, tipoCalculo);
+
+            var produtoComposicao = this.IsProdLamComposicao(sessao, produto);
+
             this.Composicao = new ComposicaoDto
             {
-                PossuiFilhos = this.IsProdLamComposicao(produto),
+                PossuiFilhos = produtoComposicao,
+                IdsSubgruposProdutosFilhos = this.ObterSubgruposFilhos(sessao, produtoComposicao, produto),
             };
         }
 
@@ -285,10 +289,17 @@ namespace Glass.API.Backend.Models.Produtos.Filtro
                     || obrigarDadosEtiquetaVidrosBeneficiaveis);
         }
 
-        private bool IsProdLamComposicao(Produto produto)
+        private bool IsProdLamComposicao(GDASession sessao, Produto produto)
         {
             var subGrupos = new List<int>() { (int)TipoSubgrupoProd.VidroLaminado, (int)TipoSubgrupoProd.VidroDuplo };
-            return subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo((int)produto.IdProd));
+            return subGrupos.Contains((int)SubgrupoProdDAO.Instance.ObtemTipoSubgrupo(sessao, (int)produto.IdProd));
+        }
+
+        private IEnumerable<int> ObterSubgruposFilhos(GDASession sessao, bool produtoComposicao, Produto produto)
+        {
+            return produtoComposicao
+                ? ProdutoBaixaEstoqueDAO.Instance.ObterIdsSubgruposProdutosBaixa(sessao, produto.IdProd)
+                : null;
         }
     }
 }

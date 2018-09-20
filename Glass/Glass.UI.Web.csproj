@@ -476,6 +476,9 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.Filtro.js" />
+    <Content Include="Vue\Caixas\Geral\Componentes\LstCaixaGeral.js" />
+    <Content Include="Vue\Caixas\Geral\Templates\LstCaixaGeral.Filtro.html" />
     <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.Filtro.js" />
     <Content Include="Vue\Caixas\Diario\Componentes\LstCaixaDiario.js" />
     <Content Include="Vue\Caixas\Diario\Templates\LstCaixaDiario.Filtro.html" />

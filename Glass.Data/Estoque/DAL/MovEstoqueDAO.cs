@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using Glass.Data.Helper;
@@ -684,6 +684,8 @@ namespace Glass.Data.DAL
             {
                 return;
             }
+
+            idLoja = (uint)NotaFiscalDAO.Instance.ObterIdLojaParaMovEstoque(sessao, idLoja, idProd, idProdImpressaoChapa, idNf, idProdPedProducao, idTrocaDevolucao);
 
             try
             {

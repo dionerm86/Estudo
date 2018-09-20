@@ -236,6 +236,8 @@
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\BeneficiamentosController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\GetBeneficiamentosController.cs" />
+    <Compile Include="Controllers\Caixas\Geral\V1\CaixaGeralController.cs" />
+    <Compile Include="Controllers\Caixas\Geral\V1\GetCaixaGeralController.cs" />
     <Compile Include="Controllers\Caixas\Diario\V1\CaixaDiarioController.cs" />
     <Compile Include="Controllers\Caixas\Diario\V1\GetCaixaDiarioController.cs" />
     <Compile Include="Controllers\Caixas\Diario\V1\PostCaixaDiarioController.cs" />
@@ -348,6 +350,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaClientes.cs" />
     <Compile Include="Helper\ContasReceber\ConverterCadastroAtualizacaoParaContaRecebida.cs" />
@@ -403,6 +406,15 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosEntradaDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisParcelasDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisCreditoDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisChequesDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisFormaPagamentoDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotalizadoresDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisAcumuladosDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\ListaDto.cs" />
     <Compile Include="Models\Caixas\Diario\CadastroAtualizacao\FechamentoDto.cs" />
     <Compile Include="Models\Caixas\Diario\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Caixas\Diario\Lista\DadosDoDiaDto.cs" />

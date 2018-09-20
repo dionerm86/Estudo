@@ -63,6 +63,14 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
+     * Recupera a lista de funcionários do financeiro.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterFinanceiros: function () {
+      return http().get(API + 'financeiros');
+    },
+
+    /**
      * Recupera a lista de funcionários ativos associados à clientes.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
