@@ -28,7 +28,6 @@ Vue.component('campo-beneficiamento-bisote', {
       espessura: ((this.itensSelecionados || [])[0] || {}).espessura || 0,
       selecionando: false,
       itensSelecionadosAtuais: this.itensSelecionados,
-      inputValidar: null,
       lapidacaoValida: false
     };
   },
@@ -39,10 +38,6 @@ Vue.component('campo-beneficiamento-bisote', {
      * @param {?boolean} [lapidacaoValida=null] Informa se o controle de lapidação (interno) está válido. Só é informado pelo controle interno.
      */
     validar: function (lapidacaoValida) {
-      if (!this.inputValidar) {
-        this.inputValidar = this.$el.children[2];
-      }
-
       if (lapidacaoValida !== null && lapidacaoValida !== undefined) {
         this.lapidacaoValida = lapidacaoValida;
       }
@@ -56,8 +51,8 @@ Vue.component('campo-beneficiamento-bisote', {
         mensagem = 'A espessura deve ser diferente de 0.';
       }
 
-      this.inputValidar.setCustomValidity(mensagem);
-      this.inputValidar.reportValidity();
+      this.$refs.espessura.setCustomValidity(mensagem);
+      this.$refs.espessura.reportValidity();
     }
   },
 

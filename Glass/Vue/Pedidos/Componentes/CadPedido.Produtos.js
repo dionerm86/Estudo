@@ -60,7 +60,8 @@ Vue.component('pedido-produtos', {
   data: function() {
     return {
       atualizar_: 0,
-      dadosValidacaoProduto: {}
+      dadosValidacaoProduto: {},
+      controleTooltipAtual: null
     };
   },
 
@@ -175,47 +176,6 @@ Vue.component('pedido-produtos', {
     },
 
     /**
-     * Exibe uma div como 'popup'.
-     * @param {string} nome O nome da DIV que será exibida.
-     * @param {string} titulo O título da DIV que será exibida.
-     * @param {Object} event O objeto com o evento JavaScript.
-     */
-    exibirDivComoPopup: function (nome, titulo, event) {
-      var botao = event.target;
-
-      for (var iTip = 0; iTip < 2; iTip++) {
-        TagToTip(
-          nome,
-          FADEIN,
-          300,
-          COPYCONTENT,
-          false,
-          TITLE,
-          titulo,
-          CLOSEBTN,
-          true,
-          CLOSEBTNTEXT,
-          'Fechar (Não salva as alterações)',
-          CLOSEBTNCOLORS,
-          [
-            '#cc0000',
-            '#ffffff',
-            '#D3E3F6',
-            '#0000cc'
-          ],
-          STICKY,
-          false,
-          FIX,
-          [
-            botao,
-            9 - getTableWidth(nome),
-            7
-          ]
-        );
-      }
-    },
-
-    /**
      * Salva a observação de um produto de pedido.
      * @param {Object} item O produto que será atualizado.
      * @param {Object} event O objeto com o evento JavaScript.
@@ -229,7 +189,9 @@ Vue.component('pedido-produtos', {
 
       Servicos.Pedidos.Produtos.salvarObservacao(this.pedido.id, item.id, item.observacao)
         .then(function (resposta) {
-          UnTip();
+          if (vm.controleTooltipAtual) {
+            vm.controleTooltipAtual.fechar();
+          }
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -252,6 +214,25 @@ Vue.component('pedido-produtos', {
           * '?idProd=' + idProduto
           + "&idPedido=" + this.pedido.id
       );
+    },
+
+    /**
+     * Indica que um controle de tooltip está sendo exibido.
+     * @param {!Object} tooltip O controle de tooltip que está sendo exibido.
+     */
+    mostrarTooltip: function (tooltip) {
+      if (this.controleTooltipAtual) {
+        this.controleTooltipAtual.fechar();
+      }
+
+      this.controleTooltipAtual = tooltip;
+    },
+
+    /**
+     * Indica que o controle de tooltip atual está fechado.
+     */
+    esconderTooltip: function () {
+      this.controleTooltipAtual = null;
     }
   },
 

@@ -56,7 +56,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.ProdutosPedido
                         filtro.NumeroRegistros);
 
                     return this.ListaPaginada(
-                        produtos.Where(p => p.IdProdPed > 0).Select(p => new ListaDto(p)),
+                        produtos.Where(p => p.IdProdPed > 0).Select(p => new ListaDto(sessao, p)),
                         filtro,
                         () => ProdutosPedidoDAO.Instance.GetCount(
                             (uint)idPedido,

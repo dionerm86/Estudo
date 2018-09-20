@@ -1,4 +1,4 @@
-﻿<campo-busca-com-popup v-bind:id.sync="idAplicacao" v-bind:nome.sync="codigoAplicacao"
+<campo-busca-com-popup ref="base" v-bind:id.sync="idAplicacao" v-bind:nome.sync="codigoAplicacao"
     v-bind:item-selecionado.sync="aplicacaoAtual" campo-id="id" campo-nome="codigo"
     v-bind:funcao-buscar-itens="buscarAplicacoes" v-bind:pre-carregar-itens="true"
     url-popup="/Utils/SelEtiquetaAplicacao.aspx" v-bind:largura-popup="700" v-bind:altura-popup="455"

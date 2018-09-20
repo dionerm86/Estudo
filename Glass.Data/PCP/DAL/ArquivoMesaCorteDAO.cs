@@ -11442,7 +11442,7 @@ namespace Glass.Data.DAL
             foreach (var variavel in arquivoCeVar)
             {
                 /* Chamado 24022. */
-                if (variaveisCalcEngine.ContainsKey(variavel.VariavelCalcEngine))
+                if (variaveisCalcEngine.ContainsKey(variavel.VariavelCalcEngine) || variavel.VariavelSistema == null)
                     continue;
 
                 #region Variáveis do sistema

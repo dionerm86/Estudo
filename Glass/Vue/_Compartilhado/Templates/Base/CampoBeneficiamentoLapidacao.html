@@ -1,17 +1,17 @@
 <span style="white-space: nowrap">
     <campo-beneficiamento-lista-selecao v-bind:beneficiamento="beneficiamento"
         v-bind:itens-selecionados.sync="itensSelecionadosAtuais" v-bind="$attrs"></campo-beneficiamento-lista-selecao>
-    <select v-model.number="altura" v-if="empresaTrabalhaComAlturaELargura" v-on:change="validar" v-bind="$attrs">
+    <select ref="campo" v-model.number="altura" v-if="empresaTrabalhaComAlturaELargura" v-on:change="validar" v-bind="$attrs">
         <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
     </select>
-    <select v-model.number="largura" v-on:change="validar" v-bind="$attrs">
+    <select ref="campo" v-model.number="largura" v-on:change="validar" v-bind="$attrs">
         <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>
     </select>
-    <select v-model.number="altura" v-if="!empresaTrabalhaComAlturaELargura" v-on:change="validar" v-bind="$attrs">
+    <select ref="campo" v-model.number="altura" v-if="!empresaTrabalhaComAlturaELargura" v-on:change="validar" v-bind="$attrs">
         <option value="0">0</option>
         <option value="1">1</option>
         <option value="2">2</option>

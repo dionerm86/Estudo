@@ -117,8 +117,8 @@ Vue.component('campo-busca', {
      */
     exibir: function() {
       this.buscando = true;
-      this.$el.children[1].style.minWidth = (this.$el.clientWidth - 2) + 'px';
-      this.$el.children[1].style.maxWidth = (this.$el.clientWidth * 2) + 'px';
+      this.$refs.itens.style.minWidth = (this.$el.clientWidth - 2) + 'px';
+      this.$refs.itens.style.maxWidth = (this.$el.clientWidth * 2) + 'px';
     },
 
     /**
