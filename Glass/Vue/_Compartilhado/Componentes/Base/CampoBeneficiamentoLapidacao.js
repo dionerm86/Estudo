@@ -28,7 +28,6 @@ Vue.component('campo-beneficiamento-lapidacao', {
       altura: ((this.itensSelecionados || [])[0] || {}).altura || 0,
       largura: ((this.itensSelecionados || [])[0] || {}).largura || 0,
       selecionando: false,
-      selectsValidar: [],
       itensSelecionadosAtuais: this.itensSelecionados,
       valido: false
     };
@@ -39,13 +38,6 @@ Vue.component('campo-beneficiamento-lapidacao', {
      * Realiza a validação de item selecionado, garantindo que altura ou largura sejam diferentes de 0.
      */
     validar: function () {
-      if (!this.selectsValidar.length) {
-        this.selectsValidar = [
-          this.$el.children[1],
-          this.$el.children[2]
-        ];
-      }
-
       var mensagem = '';
 
       if (this.itensSelecionadosAtuais
@@ -56,7 +48,7 @@ Vue.component('campo-beneficiamento-lapidacao', {
         mensagem = 'Pelo menos um dos campos deve ter valor diferente de 0.';
       }
 
-      for (var select of this.selectsValidar) {
+      for (var select of this.$refs.campo) {
         select.setCustomValidity(mensagem);
         select.reportValidity();
       }
