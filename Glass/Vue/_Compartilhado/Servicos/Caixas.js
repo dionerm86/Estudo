@@ -81,6 +81,59 @@ Servicos.Caixas = (function(http) {
 
         return http().post(API + 'diario/' + idLoja + '/reabrir');
       }
+    },
+
+    /**
+     * Objeto com os serviços para a API de caixa geral.
+     */
+    Geral: {
+      /**
+       * Recupera a lista de movimentações do caixa geral.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca das movimentações do caixa geral.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+        filtro = filtro || {};
+        filtro.pagina = pagina;
+        filtro.numeroRegistros = numeroRegistros;
+        filtro.ordenacao = ordenacao;
+
+        return http().get(API.substr(0, API.length - 1) + '/geral', {
+          params: filtro
+        });
+      },
+
+      /**
+       * Recupera o objeto com as configurações utilizadas na tela de listagem de movimentações do caixa geral.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterConfiguracoesLista: function () {
+        return http().get(API + 'geral/configuracoes');
+      },
+
+      /**
+       * Recupera o objeto com os totais por forma de pagamento.
+       * @param {?Object} filtro Objeto com os filtros a serem usados para a busca dos totais do caixa geral.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTotaisPorFormaPagamento: function (filtro) {
+        filtro = filtro || {};
+
+        return http().get(API + 'geral/totaisPorFormaPagamento', {
+          params: filtro
+        });
+      },
+
+      /**
+       * Recupera os tipos de movimentação do caixa geral.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterTiposMovimentacao: function () {
+        return http().get(API + 'geral/tiposMovimentacao');
+      }
     }
   };
 })(function() {

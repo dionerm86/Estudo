@@ -3,6 +3,7 @@ using GDA;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Log;
+using System.ComponentModel;
 
 namespace Glass.Data.Model
 {
@@ -16,6 +17,24 @@ namespace Glass.Data.Model
         {
             Dinheiro=1,
             Cheque
+        }
+
+        /// <summary>
+        /// Tipo da movimentação.
+        /// </summary>
+        public enum TipoEnum
+        {
+            /// <summary>
+            /// Entrada.
+            /// </summary>
+            [Description("Entrada")]
+            Entrada = 1,
+
+            /// <summary>
+            /// Saída.
+            /// </summary>
+            [Description("Saída")]
+            Saida,
         }
 
         #endregion
