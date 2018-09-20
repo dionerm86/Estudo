@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using GDA;
 using Glass.Data.Model;
-using GDA;
+using System.Collections.Generic;
 
 namespace Glass.Data.DAL
 {
     public sealed class ProdutoBaixaEstoqueDAO : BaseDAO<ProdutoBaixaEstoque, ProdutoBaixaEstoqueDAO>
     {
         //private ProdutoBaixaEstoqueDAO() { }
-        
+
         /// <summary>
         /// (APAGAR: quando alterar para utilizar transação)
         /// Verifica se um produto é matéria-prima de outro.
@@ -195,6 +195,18 @@ namespace Glass.Data.DAL
                 });
 
             return retorno.ToArray();
+        }
+
+        public List<int> ObterIdsSubgruposProdutosBaixa(GDASession sessao, int idProduto)
+        {
+            var sql = @"SELECT DISTINCT pb.idSubgrupoProd
+                FROM produto p
+                    INNER JOIN produto_baixa_estoque pbe ON (pbe.idProdBaixa = p.idProd)
+                    INNER JOIN produto pb ON (pbe.idProd = pb.idProd)
+                WHERE pb.idSubgrupoProd IS NOT NULL
+                    AND p.idProd = " + idProduto;
+
+            return this.ExecuteMultipleScalar<int>(sessao, sql);
         }
 
         /// <summary>

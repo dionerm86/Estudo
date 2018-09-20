@@ -108,7 +108,7 @@
                         <a href="#" @click.prevent="abrirImpressaoProduto(item)" title="Imprimir" v-if="configuracoes.cadastrarProduto">
                             <img border="0" src="../Images/printer.png">
                         </a>
-                        <!--ctrlImagemPopup ID="ctrlImagemPopup1" ImageUrl='Glass.Global.UI.Web.Process.ProdutoRepositorioImagens.Instance.ObtemUrl((int)Eval("IdProd"))' /-->
+                        <controle-exibicao-imagem :id-item="item.id" tipo-item="Produto"></controle-exibicao-imagem>
                         <log-alteracao tabela="Produto" :id-item="item.id" :atualizar-ao-alterar="false" v-if="item.permissoes.logAlteracoes"></log-alteracao>
                     </td>
                 </template>

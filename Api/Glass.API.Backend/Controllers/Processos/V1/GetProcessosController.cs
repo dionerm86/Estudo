@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Helper;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Processos.Filtro;
 using Glass.API.Backend.Models.Processos.Lista;
@@ -127,6 +128,39 @@ namespace Glass.API.Backend.Controllers.Processos.V1
                     .ObterTraducao();
 
                 return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de situações para controle de filtro na tela de processos de etiqueta.
+        /// </summary>
+        /// <param name="id">O identificador do processo que será validado.</param>
+        /// <param name="idsSubgrupos">Os identificadores dos subgrupos que serão validados.</param>
+        /// <returns>Uma resposta HTTP com o status da operação.</returns>
+        [HttpGet]
+        [Route("{id}/validarSubgrupos")]
+        [SwaggerResponse(200, "Processo pode ser utilizado para os subgrupos.")]
+        [SwaggerResponse(400, "Processo não pode ser utilizado para os subgrupos.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Processo não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ValidarProcessoSubgrupos(int id, [FromUri] IEnumerable<int> idsSubgrupos)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdProcesso(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var valido = ClassificacaoSubgrupoDAO.Instance.VerificarAssociacaoExistente(
+                    sessao,
+                    id,
+                    idsSubgrupos);
+
+                return valido
+                    ? this.Ok() as IHttpActionResult
+                    : this.ErroValidacao($"Pelo menos um dos subgrupos do produto não permite esse processo.");
             }
         }
     }

@@ -19,7 +19,7 @@ namespace Glass.UI.Web.Cadastros
             {
                 txtNumPedido.Text = Request["idPedido"];
                 uint idPedido = Glass.Conversoes.StrParaUint(Request["idPedido"]);
-    
+
                 // Se o pedido não existir
                 if (!PedidoDAO.Instance.PedidoExists(idPedido))
                     grdProdutos.Visible = false;
@@ -27,16 +27,16 @@ namespace Glass.UI.Web.Cadastros
                 {
                     // Busca o pedido
                     Glass.Data.Model.Pedido pedido = PedidoDAO.Instance.GetElementByPrimaryKey(idPedido);
-    
+
                     // Se o pedido já tiver sido cancelado, esconde os produtos
                     grdProdutos.Visible = pedido.Situacao != Glass.Data.Model.Pedido.SituacaoPedido.Cancelado;
-                    
+
                     if (pedido.Situacao == Glass.Data.Model.Pedido.SituacaoPedido.Ativo)
                     {
                         lblViewConfirm.Text += "Pedido está ativo. Só é possível confirmar pedidos conferidos.";
                         imgImprimir.Visible = false;
                     }
-    
+
                     // Se o pedido estiver confirmado, mostra quem confirmou e quando
                     if (pedido.Situacao == Glass.Data.Model.Pedido.SituacaoPedido.Confirmado)
                     {
@@ -48,7 +48,7 @@ namespace Glass.UI.Web.Cadastros
                         lblViewConfirm.Text += pedido.DataConf != null ? " no dia " + pedido.DataConf.Value.ToString("dd/MM/yy") + ". " : ". ";
                         imgImprimir.Visible = true;
                     }
-    
+
                     // Vendido para funcionário
                     if (pedido.VendidoFuncionario)
                     {
@@ -58,7 +58,7 @@ namespace Glass.UI.Web.Cadastros
                         chkVerificarParcelas.Checked = false;
                         btnConfirmarPrazo.Visible = false;
                         tbObra.Visible = false;
-    
+
                         lblNomeFuncVenda.Text += "Funcionário comprador: " + PedidoDAO.Instance.ObtemNomeFuncVenda(idPedido);
                     }
                     // À Prazo
@@ -70,7 +70,7 @@ namespace Glass.UI.Web.Cadastros
                             CaixaDiario caixa = CaixaDiarioDAO.Instance.GetPedidoSinal(pedido.IdPedido);
                             lblViewSinal.Text = "O sinal deste pedido no valor de " + pedido.ValorEntrada.ToString("F2") + " foi recebido por " + caixa.DescrUsuCad + " em " + caixa.DataCad.ToString("dd/MM/yy") + ".";
                         }
-    
+
                         divAVista.Visible = false;
                         chkVerificarParcelas.Checked = true;
                         btnConfirmarPrazo.Visible = true;
@@ -81,18 +81,18 @@ namespace Glass.UI.Web.Cadastros
                     else if (pedido.TipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista)
                     {
                         decimal totalASerPago = pedido.Total;
-    
+
                         #region Crédito cliente
-    
+
                         decimal valorCredito = 0;
                         decimal credito = ClienteDAO.Instance.GetCredito(pedido.IdCli);
-    
+
                         valorCredito = credito;
                         hdfValorCredito.Value = credito.ToString().Replace(',', '.');
                         hdfIdCliente.Value = pedido.IdCli.ToString();
-    
+
                         #endregion
-    
+
                         divAVista.Visible = true;
                         chkVerificarParcelas.Visible = false;
                         btnConfirmarPrazo.Visible = false;
@@ -111,14 +111,14 @@ namespace Glass.UI.Web.Cadastros
                             pagtoObra.Visible = (pedido.Total - obra.Saldo) > 0;
                             hdfIdCliente.Value = obra.IdCliente.ToString();
                         }
-    
+
                         divAVista.Visible = false;
                         chkVerificarParcelas.Visible = false;
                         btnConfirmarPrazo.Visible = false;
                         divFunc.Visible = false;
                         tbObra.Visible = true;
                     }
-    
+
                     if (pedido.Situacao == Glass.Data.Model.Pedido.SituacaoPedido.Confirmado || pedido.Situacao == Glass.Data.Model.Pedido.SituacaoPedido.Ativo)
                     {
                         divAVista.Visible = false;
@@ -133,9 +133,9 @@ namespace Glass.UI.Web.Cadastros
             else if (!IsPostBack)
                 grdProdutos.Visible = false;
         }
-    
+
         #region Eventos Datasource
-    
+
         protected void odsPedido_Selected(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -147,7 +147,7 @@ namespace Glass.UI.Web.Cadastros
             else
                 btnConfirmar.Visible = Request["IdPedido"] != null;
         }
-    
+
         protected void odsProdXPed_Selected(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             if (e.Exception != null)
@@ -156,37 +156,37 @@ namespace Glass.UI.Web.Cadastros
                 e.ExceptionHandled = true;
             }
         }
-    
+
         #endregion
-    
+
         [Ajax.AjaxMethod()]
-        public string Confirmar(string idPedido, string fPagtos, string tpCartoes, string valores, 
+        public string Confirmar(string idPedido, string fPagtos, string tpCartoes, string valores,
             string contasBanco, string depositoNaoIdentificado, string gerarCredito, string creditoUtilizado, string numAutConstrucard,
             string parcCreditos, string chequesPagto, string descontarComissao, string tipoVendaObraStr, string numAutCartao)
         {
-            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarPedido(idPedido, fPagtos, tpCartoes, 
-                valores, contasBanco, depositoNaoIdentificado, gerarCredito, creditoUtilizado, numAutConstrucard, parcCreditos, 
+            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarPedido(idPedido, fPagtos, tpCartoes,
+                valores, contasBanco, depositoNaoIdentificado, gerarCredito, creditoUtilizado, numAutConstrucard, parcCreditos,
                 chequesPagto, descontarComissao, tipoVendaObraStr, numAutCartao);
         }
-    
+
         [Ajax.AjaxMethod()]
         public string ConfirmarPrazo(string idPedidoStr, string tipoVendaObraStr, string verificarParcelas)
         {
-            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarPrazo(idPedidoStr, 
+            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarPrazo(idPedidoStr,
                 tipoVendaObraStr, verificarParcelas);
         }
-    
+
         [Ajax.AjaxMethod]
         public string ConfirmarObra(string idPedidoStr, string fPagtos, string tpCartoes, string valores,
             string contasBanco, string depositoNaoIdentificado, string gerarCredito, string creditoUtilizado, string numAutConstrucard,
             string parcCreditos, string chequesPagto, string descontarComissao, string fPagto, string tipoCartao,
             string valoresParcelas, string datasParcelas, string tipoVendaObraStr, string numAutCartao)
         {
-            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarObra(idPedidoStr, fPagtos, 
-                tpCartoes, valores, contasBanco, depositoNaoIdentificado, gerarCredito, creditoUtilizado, numAutConstrucard, parcCreditos, 
+            return WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Ajax.ConfirmarObra(idPedidoStr, fPagtos,
+                tpCartoes, valores, contasBanco, depositoNaoIdentificado, gerarCredito, creditoUtilizado, numAutConstrucard, parcCreditos,
                 chequesPagto, descontarComissao, fPagto, tipoCartao, valoresParcelas, datasParcelas, tipoVendaObraStr, numAutCartao);
         }
-    
+
         [Ajax.AjaxMethod]
         public string ConfirmarFunc(string idPedidoStr)
         {
@@ -205,7 +205,7 @@ namespace Glass.UI.Web.Cadastros
         {
             ((DropDownList)sender).Visible = FinanceiroConfig.Cartao.PedidoJurosCartao;
         }
-    
+
         protected void ctrlFormaPagto1_Load(object sender, EventArgs e)
         {
             ctrlFormaPagto1.CampoCredito = hdfValorCredito;
@@ -216,29 +216,34 @@ namespace Glass.UI.Web.Cadastros
             if (ctrlFormaPagto1.DataRecebimento == null)
                 ctrlFormaPagto1.DataRecebimento = DateTime.Now;
         }
-    
+
         protected void ctrlFormaPagto2_Load(object sender, EventArgs e)
         {
             ctrlFormaPagto2.CampoCredito = hdfValorCredito;
             ctrlFormaPagto2.CampoValorConta = hdfValorObra;
             ctrlFormaPagto1.CampoClienteID = hdfIdCliente;
         }
-    
+
         protected void ctrlParcelas1_Load(object sender, EventArgs e)
         {
             ctrlParcelas1.CampoValorTotal = hdfValorObra;
             ctrlParcelas1.CampoParcelasVisiveis = drpNumParcelas;
             ctrlParcelas1.CampoCalcularParcelas = hdfCalcularParcelas;
         }
-    
+
         protected void btnBuscarPedido_Click(object sender, EventArgs e)
         {
             Response.Redirect("CadConfirmarPedido.aspx?IdPedido=" + txtNumPedido.Text);
         }
-    
+
         protected int GetCartaoCod()
         {
             return (int)Glass.Data.Model.Pagto.FormaPagto.Cartao;
+        }
+
+        protected void drpTipoVendaObra_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

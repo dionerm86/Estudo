@@ -1,5 +1,5 @@
-﻿<span style="display: inline-block; width: 150px">
-    <campo-busca v-bind:item-selecionado.sync="itemSelecionadoAtual" v-bind:id.sync="idAtual" v-bind:nome.sync="nomeAtual"
+<span style="display: inline-block; width: 150px">
+    <campo-busca ref="campoBusca" v-bind:item-selecionado.sync="itemSelecionadoAtual" v-bind:id.sync="idAtual" v-bind:nome.sync="nomeAtual"
         v-bind:campo-id="campoId" v-bind:campo-nome="campoNome" v-bind:funcao-buscar-itens="funcaoBuscarItens"
         v-bind:pre-carregar-itens="preCarregarItens" v-bind="$attrs"
         v-bind:style="urlPopup ? 'width: calc(100% - 26px)' : 'width: 100%'"></campo-busca>

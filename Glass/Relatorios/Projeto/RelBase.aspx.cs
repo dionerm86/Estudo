@@ -55,23 +55,34 @@ namespace Glass.UI.Web.Relatorios.Projeto
     
                     // Busca o pedido, se houver, relacionado à este projeto
                     projeto.IdPedido = ProjetoDAO.Instance.GetIdPedidoByProjeto(idProjeto);
+
                     if (projeto.IdPedido == 0)
                     {
-                        // Tenta buscar o pedido pelo item projeto do orçamento
-                        uint idPedido = itemProjeto[0].IdPedido > 0 ? itemProjeto[0].IdPedido.Value :
-                            itemProjeto[0].IdPedidoEspelho > 0 ? itemProjeto[0].IdPedidoEspelho.Value :
-                            itemProjeto[0].IdOrcamento > 0 ? PedidoDAO.Instance.GetIdPedidoByOrcamento(itemProjeto[0].IdOrcamento.Value) : 0;
-    
-                        if (idPedido > 0)
+                        // Tenta buscar o pedido pelo item projeto.
+                        if (itemProjeto[0].IdPedido > 0)
                         {
-                            projeto.IdPedido = idPedido;
-                            projeto.NomeCliente = ClienteDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdCliente(null, idPedido));
-                            projeto.NomeFunc = FuncionarioDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdFunc(null, idPedido));
-                            projeto.DataCad = PedidoDAO.Instance.ObtemDataPedido(null, idPedido);
-                            projeto.TipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(idPedido);
+                            projeto.IdPedido = itemProjeto[0].IdPedido.Value;
+                        }
+                        else if (itemProjeto[0].IdPedidoEspelho > 0)
+                        {
+                            projeto.IdPedido = itemProjeto[0].IdPedidoEspelho.Value;
+                        }
+                        else if (itemProjeto[0].IdOrcamento > 0)
+                        {
+                            projeto.IdPedido = PedidoDAO.Instance.GetIdPedidoByOrcamento(itemProjeto[0].IdOrcamento.Value);
                         }
                     }
-    
+
+                    if (projeto.IdPedido > 0)
+                    {
+                        projeto.NomeCliente = ClienteDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdCliente(null, projeto.IdPedido));
+                        projeto.NomeFunc = FuncionarioDAO.Instance.GetNome(PedidoDAO.Instance.ObtemIdFunc(null, projeto.IdPedido));
+                        projeto.DataCad = PedidoDAO.Instance.ObtemDataPedido(null, projeto.IdPedido);
+                        projeto.TipoEntrega = PedidoDAO.Instance.ObtemTipoEntrega(null, projeto.IdPedido);
+                        projeto.Obs = PedidoDAO.Instance.ObtemObs(null, projeto.IdPedido);
+                        projeto.ObsLiberacao = PedidoDAO.Instance.ObtemObsLiberacao(projeto.IdPedido);
+                    }
+
                     for (int i = 0; i < itemProjeto.Length; i++)
                     {
                         var pcp = itemProjeto[i].IdPedidoEspelho.HasValue;

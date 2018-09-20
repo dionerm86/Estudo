@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Glass.Data.Model;
 using GDA;
@@ -40,11 +40,11 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idTrocaDevolucao"></param>
         /// <returns></returns>
-        public string BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(int idTrocaDevolucao)
+        public string BuscarEtiquetasJaEntreguesPelaTrocaDevolucao(GDASession sessao, int idTrocaDevolucao)
         {
             var sql = string.Format("Select NumEtiqueta from chapa_trocada_devolvida where IdTrocaDevolucao={0} AND Situacao={1}", + idTrocaDevolucao, (int)SituacaoChapaTrocadaDevolvida.Utilizada);
 
-            return string.Join(",", ExecuteMultipleScalar<string>(sql));
+            return string.Join(",", ExecuteMultipleScalar<string>(sessao, sql));
         }
 
         /// <summary>

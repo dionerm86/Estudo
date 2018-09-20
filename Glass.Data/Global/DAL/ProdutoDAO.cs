@@ -3272,21 +3272,30 @@ namespace Glass.Data.DAL
             return GetValorMinimo(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, 0, idPedido, idProjeto, idOrcamento);
         }
 
-        private decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao,
-            float percDescontoQtde, decimal valorNegociado, int? idPedido, int? idProjeto, int? idOrcamento)
+        private decimal GetValorMinimo(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, decimal valorNegociado, int? idPedido,
+            int? idProjeto, int? idOrcamento)
         {
-            var idGrupoProd = ObtemValorCampo<int>(sessao, "idGrupoProd", "idProd=" + idProd);
-            var idSubgrupoProd = ObtemValorCampo<int?>(sessao, "idSubgrupoProd", "idProd=" + idProd);
+            var valorMinimoProd = ObtemValorCampo<decimal>(sessao, "Valor_Minimo", $"IdProd = { idProd }");
+            var idGrupoProd = ObtemIdGrupoProd(sessao, idProd);
+            var idSubgrupoProd = ObtemIdSubgrupoProd(sessao, idProd);
+            var desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente.GetValueOrDefault() > 0 ? idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
 
-            var desc = DescontoAcrescimoClienteDAO.Instance.GetDescontoAcrescimo(sessao, idCliente.GetValueOrDefault() > 0 ?
-                idCliente.Value : 0, idGrupoProd, idSubgrupoProd, idProd, idPedido, idProjeto);
-            decimal valorUnitario = GetValorTabela(sessao, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+            if (valorMinimoProd > 0)
+            {
+                return Math.Round((valorMinimoProd * (1 - ((decimal)percDescontoQtde / 100))) * desc.PercMultiplicar, 2);
+            }
+            else
+            {
+                var valorUnitario = GetValorTabela(idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
 
-            if (valorNegociado == 0)
-                return valorUnitario;
+                if (valorNegociado == 0)
+                {
+                    return valorUnitario;
+                }
 
-            // Chamado 60618: Não deve deduzir o percentual de desconto por qtd, pq por algum motivo o desconto por qtd não reduz mais o valor unitário do produto
-            return Math.Round(Math.Min(valorUnitario, valorNegociado) /* * (1 - ((decimal)percDescontoQtde / 100))*/, 2);
+                // Chamado 60618: Não deve deduzir o percentual de desconto por qtd, pq por algum motivo o desconto por qtd não reduz mais o valor unitário do produto
+                return Math.Round(Math.Min(valorUnitario, valorNegociado) /* * (1 - ((decimal)percDescontoQtde / 100))*/, 2);
+            }
         }
 
         #endregion

@@ -2106,7 +2106,7 @@
                                                 Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:TextBox ID="txtValorIpiDevolvido" runat="server" Width="80px"
+                                            <asp:TextBox ID="txtValorIpiDevolvido" runat="server" Width="80px" Enabled="False"
                                                 Visible='<%# (int)Eval("FinalidadeEmissao") == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Devolucao %>'
                                                 onkeypress="return soNumeros(event, false, true);" Text='<%# Bind("ValorIpiDevolvido") %>'></asp:TextBox>
                                         </td>
@@ -4169,6 +4169,17 @@
                                 <ItemTemplate>
                                     <asp:Label ID="lblNumControleFci" runat="server" Text='<%# Bind("NumControleFciStr") %>'></asp:Label>
                                 </ItemTemplate>
+                                </asp:TemplateField>
+                            <asp:TemplateField HeaderText="Valor IPI Devolvido" SortExpression="ValorIpiDevolv">
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtValorIpiDevolvidoProd" runat="server" Font-Bold="True" Visible='<%# IsNfFinalidadeDevolucao() %>'></asp:TextBox>
+                                </FooterTemplate>
+                                <ItemTemplate>
+                                   <asp:Label ID="lblValorIpiDevolvidoProd" runat="server" Text='<%# Eval("ValorIpiDevolvido", "{0:C}") %>' Visible='<%# IsNfFinalidadeDevolucao() %>'></asp:Label>
+                                </ItemTemplate>
+                                <EditItemTemplate>
+                                    <asp:TextBox ID="txtValorIpiDevolvidoProd" runat="server" Text='<%# Bind("ValorIpiDevolvido") %>' Visible='<%# IsNfFinalidadeDevolucao() %>'></asp:TextBox>
+                                </EditItemTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField>
                                 <EditItemTemplate>
