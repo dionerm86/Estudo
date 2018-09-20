@@ -1,11 +1,11 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
       campo: 'id',
-      direcao: 'desc'
+      direcao: 'asc'
     },
     configuracoes: {},
     filtro: {}
@@ -204,40 +204,39 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('idCli', this.filtro.id),
+        this.incluirFiltro('nome', this.filtro.nomeCliente),
+        this.incluirFiltro('cpfCnpj', this.filtro.cpfCnpj),
+        this.incluirFiltro('idLoja', this.filtro.idLoja),
+        this.incluirFiltro('telefone', this.filtro.telefone),
+        this.incluirFiltro('endereco', this.filtro.endereco),
+        this.incluirFiltro('bairro', this.filtro.bairro),
+        this.incluirFiltro('idCidade', this.filtro.idCidade),
+        this.incluirFiltro('idTipoCliente', this.filtro.tipo),
+        this.incluirFiltro('situacao', this.filtro.situacao),
+        this.incluirFiltro('codRota', this.filtro.codigoRota),
+        this.incluirFiltro('idFunc', this.filtro.idVendedor),
+        this.incluirFiltro('tipoFiscal', this.filtro.tipoFiscal),
+        this.incluirFiltro('formasPagto', this.filtro.formasPagamento),
+        this.incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio),
+        this.incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim),
+        this.incluirFiltro('dataSemCompraIni', this.filtro.periodoSemCompraInicio),
+        this.incluirFiltro('dataSemCompraFim', this.filtro.periodoSemCompraFim),
+        this.incluirFiltro('dataInativadoIni', this.filtro.periodoInativadoInicio),
+        this.incluirFiltro('dataInativadoFim', this.filtro.periodoInativadoFim),
+        this.incluirFiltro('idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo),
+        this.incluirFiltro('apenasSemRota', this.filtro.apenasSemRota),
+        this.incluirFiltro('agruparVend', this.filtro.agruparVendedor),
+        this.incluirFiltro('exibirHistorico', this.filtro.exibirHistorico),
+        this.incluirFiltro('uf', this.filtro.uf)
+      ];
 
-      incluirFiltro('idCli', this.filtro.id);
-      incluirFiltro('nome', this.filtro.nomeCliente);
-      incluirFiltro('cpfCnpj', this.filtro.cpfCnpj);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('telefone', this.filtro.telefone);
-      incluirFiltro('endereco', this.filtro.endereco);
-      incluirFiltro('bairro', this.filtro.bairro);
-      incluirFiltro('idCidade', this.filtro.idCidade);
-      incluirFiltro('idTipoCliente', this.filtro.tipo);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('codRota', this.filtro.codigoRota);
-      incluirFiltro('idFunc', this.filtro.idVendedor);
-      incluirFiltro('tipoFiscal', this.filtro.tipoFiscal);
-      incluirFiltro('formasPagto', this.filtro.formasPagamento);
-      incluirFiltro('dataCadIni', (this.filtro.periodoCadastroInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataCadFim', (this.filtro.periodoCadastroFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataSemCompraIni', (this.filtro.periodoSemCompraInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataSemCompraFim', (this.filtro.periodoSemCompraFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataInativadoIni', (this.filtro.periodoInativadoInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataInativadoFim', (this.filtro.periodoInativadoFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo);
-      incluirFiltro('apenasSemRota', this.filtro.apenasSemRota);
-      incluirFiltro('agruparVend', this.filtro.agruparVendedor);
-      incluirFiltro('exibirHistorico', this.filtro.exibirHistorico);
-      incluirFiltro('uf', this.filtro.uf);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -297,46 +297,45 @@ const app = new Vue({
       var maoObraEspecial = usarValoresQueryString ? GetQueryString('maoObraEspecial') : '';
       var producao = usarValoresQueryString ? GetQueryString('producao') : '';
 
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('idPedido', this.filtro.id),
+        this.incluirFiltro('idLoja', this.filtro.idLoja),
+        this.incluirFiltro('idCli', this.filtro.idCliente),
+        this.incluirFiltro('nomeCli', this.filtro.nomeCliente),
+        this.incluirFiltro('codCliente', this.filtro.codigoPedidoCliente),
+        this.incluirFiltro('idCidade', this.filtro.idCidade),
+        this.incluirFiltro('endereco', this.filtro.endereco),
+        this.incluirFiltro('bairro', this.filtro.bairro),
+        this.incluirFiltro('complemento', this.filtro.complemento),
+        this.incluirFiltro('byVend', byVend),
+        this.incluirFiltro('altura', this.filtro.altura),
+        this.incluirFiltro('largura', this.filtro.largura),
+        this.incluirFiltro('situacao', this.filtro.situacao),
+        this.incluirFiltro('situacaoProd', this.filtro.situacaoProducao),
+        this.incluirFiltro('idOrcamento', this.filtro.idOrcamento),
+        this.incluirFiltro('maoObra', maoObra),
+        this.incluirFiltro('maoObraEspecial', maoObraEspecial),
+        this.incluirFiltro('producao', producao),
+        this.incluirFiltro('diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado),
+        this.incluirFiltro('valorDe', this.filtro.valorPedidoMinimo),
+        this.incluirFiltro('valorAte', this.filtro.valorPedidoMaximo),
+        this.incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio),
+        this.incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim),
+        this.incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio),
+        this.incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim),
+        this.incluirFiltro('funcFinalizacao', this.filtro.codigoUsuarioFinalizacao),
+        this.incluirFiltro('tipo', this.filtro.tipo),
+        this.incluirFiltro('fastDelivery', this.filtro.fastDelivery),
+        this.incluirFiltro('tipoVenda', this.filtro.tipoVenda),
+        this.incluirFiltro('origemPedido', this.filtro.origem),
+        this.incluirFiltro('obs', this.filtro.observacao)
+      ];
 
-      incluirFiltro('idPedido', this.filtro.id);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('idCli', this.filtro.idCliente);
-      incluirFiltro('nomeCli', this.filtro.nomeCliente);
-      incluirFiltro('codCliente', this.filtro.codigoPedidoCliente);
-      incluirFiltro('idCidade', this.filtro.idCidade);
-      incluirFiltro('endereco', this.filtro.endereco);
-      incluirFiltro('bairro', this.filtro.bairro);
-      incluirFiltro('complemento', this.filtro.complemento);
-      incluirFiltro('byVend', byVend);
-      incluirFiltro('altura', this.filtro.altura);
-      incluirFiltro('largura', this.filtro.largura);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('situacaoProd', this.filtro.situacaoProducao);
-      incluirFiltro('idOrcamento', this.filtro.idOrcamento);
-      incluirFiltro('maoObra', maoObra);
-      incluirFiltro('maoObraEspecial', maoObraEspecial);
-      incluirFiltro('producao', producao);
-      incluirFiltro('diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado);
-      incluirFiltro('valorDe', this.filtro.valorPedidoMinimo);
-      incluirFiltro('valorAte', this.filtro.valorPedidoMaximo);
-      incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR'));
-      incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR'));
-      incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio.toLocaleDateString('pt-BR'));
-      incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim.toLocaleDateString('pt-BR'));
-      incluirFiltro('funcFinalizacao', this.filtro.codigoUsuarioFinalizacao);
-      incluirFiltro('tipo', this.filtro.tipo);
-      incluirFiltro('fastDelivery', this.filtro.fastDelivery);
-      incluirFiltro('tipoVenda', this.filtro.tipoVenda);
-      incluirFiltro('origemPedido', this.filtro.origem);
-      incluirFiltro('obs', this.filtro.observacao);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
-      var filtroReal = filtros.length > 0
+      var filtroReal = filtros.length
         ? '?' + filtros.join('&')
         : '';
 

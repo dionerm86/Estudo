@@ -42,7 +42,7 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1.AmbientesPedido
 
                 try
                 {
-                    AmbientePedidoDAO.Instance.Delete(sessao, ambiente);
+                    AmbientePedidoDAO.Instance.DeleteByPrimaryKey(sessao, id);
                     sessao.Commit();
 
                     return this.Aceito(string.Format("Ambiente {0} excluído com sucesso do pedido {1}!", id, idPedido));

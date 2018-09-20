@@ -191,9 +191,11 @@ Vue.component('lista-selecao-multipla', {
     atualizarItensSelecionados: function() {
       var itens = [];
 
-      for (var i of this.itens) {
-        if (this.idsAtuais.indexOf(i[this.campoId]) > -1) {
-          itens.push(i[this.campoNome]);
+      if (this.itens) {
+        for (var i of this.itens) {
+          if (this.idsAtuais.indexOf(i[this.campoId]) > -1) {
+            itens.push(i[this.campoNome]);
+          }
         }
       }
 
