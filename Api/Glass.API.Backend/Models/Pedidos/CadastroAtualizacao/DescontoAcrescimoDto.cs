@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -18,13 +19,13 @@ namespace Glass.API.Backend.Models.Pedidos.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public int Tipo { get; set; }
+        public TipoValor? Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define o valor (monetário ou percentual) de desconto/acréscimo.
         /// </summary>
         [DataMember]
         [JsonProperty("valor")]
-        public decimal Valor { get; set; }
+        public decimal? Valor { get; set; }
     }
 }
