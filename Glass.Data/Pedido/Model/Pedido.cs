@@ -964,8 +964,8 @@ namespace Glass.Data.Model
         public bool TemRecebimento { get; set; }
 
         [XmlIgnore]
-        [PersistenceProperty("IdProdPedParentExibirRelatorioPendentesLeitura", DirectionParameter.InputOptional)]
-        public int IdProdPedParentExibirRelatorioPendentesLeitura { get; set; }
+        [PersistenceProperty("PedidoPossuiComposicao", DirectionParameter.InputOptional)]
+        public bool PedidoPossuiComposicao { get; set; }
 
         [XmlIgnore]
         [PersistenceProperty("NOMETRANSPORTADOR", DirectionParameter.InputOptional)]
@@ -3038,11 +3038,11 @@ namespace Glass.Data.Model
         }
 
         [XmlIgnore]
-        public string DataEntregaExibirRelatorioPendentesLeitura
+        public string DataEntregaComposicao
         {
             get
             {
-                if (IdProdPedParentExibirRelatorioPendentesLeitura > 0)
+                if (DataEntregaComposicao)
                 {
                     var dataFabricaComposicao = ProdutosPedidoEspelhoDAO.Instance.CalcularDataComposicao(DataEntrega ?? DateTime.Now);
 
