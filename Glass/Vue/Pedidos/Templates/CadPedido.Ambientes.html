@@ -1,7 +1,7 @@
 ﻿<section v-if="pedido" v-show="exibir">
     <form>
         <lista-paginada v-bind:exibir-inclusao="configuracoes.exibirAmbientes" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarAmbientes"
-            v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="listaAtualizada">
+            v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="listaInternaAtualizada">
             <template slot="cabecalho">
                 <th></th>
                 <th>

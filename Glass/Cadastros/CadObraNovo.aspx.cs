@@ -321,5 +321,12 @@ namespace Glass.UI.Web.Cadastros
             if (!IsPostBack)
                 ((DropDownList)sender).SelectedIndex = (int)UserInfo.GetUserInfo.IdLoja;
         }
+
+        protected void ctrlFormaPagto1_Init(object sender, EventArgs e)
+        {
+            Glass.UI.Web.Controls.ctrlFormaPagto ctrlFormaPagto = (Glass.UI.Web.Controls.ctrlFormaPagto)sender;
+
+            ctrlFormaPagto.ExibirApenasCartaoDebito = FinanceiroConfig.FinanceiroRec.ConsiderarApenasDebitoComoPagtoAvista;
+        }
     }
 }

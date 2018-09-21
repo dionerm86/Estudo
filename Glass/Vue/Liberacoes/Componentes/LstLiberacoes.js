@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -130,28 +130,27 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('idLiberarPedido', this.filtro.id),
+        this.incluirFiltro('idPedido', this.filtro.idPedido),
+        this.incluirFiltro('numeroNfe', this.filtro.numeroNfe),
+        this.incluirFiltro('situacao', this.filtro.situacao),
+        this.incluirFiltro('idCliente', this.filtro.idCliente),
+        this.incluirFiltro('nomeCliente', this.filtro.nomeCliente),
+        this.incluirFiltro('liberacaoNf', this.filtro.liberacaoComSemNotaFiscal),
+        this.incluirFiltro('dataIni', this.filtro.periodoCadastroInicio),
+        this.incluirFiltro('dataFim', this.filtro.periodoCadastroFim),
+        this.incluirFiltro('idFunc', this.filtro.idFuncionario),
+        this.incluirFiltro('idLoja', this.filtro.idLoja),
+        this.incluirFiltro('dataIniCanc', this.filtro.periodoCancelamentoInicio),
+        this.incluirFiltro('dataFimCanc', this.filtro.periodoCancelamentoFim)
+      ];
 
-      incluirFiltro('idLiberarPedido', this.filtro.id);
-      incluirFiltro('idPedido', this.filtro.idPedido);
-      incluirFiltro('numeroNfe', this.filtro.numeroNfe);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('idCliente', this.filtro.idCliente);
-      incluirFiltro('nomeCliente', this.filtro.nomeCliente);
-      incluirFiltro('liberacaoNf', this.filtro.liberacaoComSemNotaFiscal);
-      incluirFiltro('dataIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('idFunc', this.filtro.idFuncionario);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('dataIniCanc', this.filtro.periodoCancelamentoInicio ? this.filtro.periodoCancelamentoInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimCanc', this.filtro.periodoCancelamentoFim ? this.filtro.periodoCancelamentoFim.toLocaleDateString('pt-BR') : null);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

@@ -297,6 +297,8 @@ namespace Glass.Data.RelDAL
                 if (!temProdutoImprimir)
                     throw new Exception("Nenhum produto selecionado para impressão possui quantidade informada.");
 
+                imprimir |= idSolucaoOtimizacao.GetValueOrDefault() > 0;
+
                 if (imprimir)
                 {
                     // Salva na tabela Impressao_Etiqueta esta impressão e quais produtos e qtdes foram impressos

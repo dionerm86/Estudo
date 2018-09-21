@@ -856,24 +856,18 @@ namespace Glass.Data.DAL
                 {
                     // Exclui os dados relacionados com projeto deste ambiente
                     ItemProjetoDAO.Instance.DeleteByPrimaryKey(session, idItemProjeto);
-
-                    // Exclui os produtos deste ambiente
-                    objPersistence.ExecuteCommand(session, @"
-                        Delete From produto_pedido_benef Where idProdPed In (" + idsProdPed + @");
-                        DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPed + @");
-                        Delete From produtos_pedido Where idAmbientePedido=" + Key);
                 }
                 else
                 {
                     if (PossuiProdutos(session, Key))
                         throw new Exception("Esse ambiente possui produtos. Exclua-os antes de excluir o ambiente.");
-
-                    // Exclui os produtos deste ambiente
-                    objPersistence.ExecuteCommand(session, @"
-                        Delete From produto_pedido_benef Where idProdPed In (" + idsProdPed + @");
-                        DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPed + @");
-                        Delete From produtos_pedido Where idAmbientePedido=" + Key);
                 }
+
+                // Exclui os produtos deste ambiente
+                objPersistence.ExecuteCommand(session, @"
+                    Delete From produto_pedido_benef Where idProdPed In (" + idsProdPed + @");
+                    DELETE FROM produto_pedido_rentabilidade WHERE IdProdPed IN (" + idsProdPed + @");
+                    Delete From produtos_pedido Where idAmbientePedido=" + Key);
 
                 var idPedido = ObtemValorCampo<uint>(session, "idPedido", "idAmbientePedido=" + Key);
 

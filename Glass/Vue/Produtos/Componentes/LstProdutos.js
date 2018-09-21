@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -116,10 +116,19 @@ const app = new Vue({
      */
     abrirListaProdutos: function (ficha, exportarExcel) {
       var filtroReal = this.formatarFiltros_();
-      
+
       var url = '../Relatorios/RelBase.aspx?Rel=' + (ficha ? 'Ficha' : '') + 'Produtos' + filtroReal + '&exportarExcel=' + exportarExcel;
 
       this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Gera o relatório de preços de produtos para alteração.
+     */
+    abrirExportacaoPrecosProdutos: function () {
+      this.abrirJanela(600, 800, '../Relatorios/RelBase.aspx?rel=ProdutosPreco'
+        + this.formatarFiltros_()
+        + '&exportarExcel=true');
     },
 
     /**
@@ -148,23 +157,22 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('codInterno', this.filtro.codigo),
+        this.incluirFiltro('descr', this.filtro.descricao),
+        this.incluirFiltro('situacao', this.filtro.situacao),
+        this.incluirFiltro('idGrupo', this.filtro.idGrupo),
+        this.incluirFiltro('idSubgrupo', this.filtro.idSubgrupo),
+        this.incluirFiltro('alturaInicio', this.filtro.valorAlturaInicio),
+        this.incluirFiltro('alturaFim', this.filtro.valorAlturaFim),
+        this.incluirFiltro('larguraInicio', this.filtro.valorLarguraInicio),
+        this.incluirFiltro('larguraFim', this.filtro.valorLarguraFim),
+        this.incluirFiltro('orderBy', this.filtro.ordenacaoFiltro)
+      ];
 
-      incluirFiltro('codInterno', this.filtro.codigo);
-      incluirFiltro('descr', this.filtro.descricao);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('idGrupo', this.filtro.idGrupo);
-      incluirFiltro('idSubgrupo', this.filtro.idSubgrupo);
-      incluirFiltro('alturaInicio', this.filtro.valorAlturaInicio);
-      incluirFiltro('alturaFim', this.filtro.valorAlturaFim);
-      incluirFiltro('larguraInicio', this.filtro.valorLarguraInicio);
-      incluirFiltro('larguraFim', this.filtro.valorLarguraFim);
-      incluirFiltro('orderBy', this.filtro.ordenacaoFiltro);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
       return filtros.length > 0
         ? '&' + filtros.join('&')
