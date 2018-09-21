@@ -157,15 +157,11 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idFunc', this.filtro.idFuncionario),
-        this.incluirFiltro('data', this.filtro.data)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idFuncionario);
+      this.incluirFiltroComLista(filtros, 'data', this.filtro.data);
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

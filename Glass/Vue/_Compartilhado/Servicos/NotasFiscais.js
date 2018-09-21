@@ -186,44 +186,6 @@ Servicos.NotasFiscais = (function(http) {
     },
 
     /**
-     * Valida se um boleto pode ser impresso.
-     * @param {?number} id O identificador da nota fiscal.
-     * @returns {Promise} Uma promise com o resultado da operação.
-     */
-    validarBoleto: function (id) {
-      return http().get(API + (id || 0) + '/validarBoleto');
-    },
-
-    /**
-     * Recupera o id da nota fisal através da conta a receber.
-     * @param {?number} idNotaFiscal O identificador da nota fiscal.
-     * @returns {Promise} Uma promise com o resultado da operação.
-     */
-    obterIdNotaFiscalPeloIdContaReceber: function (idContaReceber) {
-      return http().get(API + '/obterIdNotaFiscalPeloIdContaReceber', {
-        params: {
-          idContaReceber: idContaReceber || 0
-        }
-      });
-    },
-
-    /**
-     * Verifica se o boleto já foi impresso.
-     * @param {?number} idNotaFiscal O identificador da nota fiscal.
-     * @param {?number} idContaReceber O identificador da conta a receber.
-     * @param {?number} idLiberacao O identificador da liberação.
-     * @returns {Promise} Uma promise com o resultado da operação.
-     */
-    obterMensagemBoletoImpresso: function (id, idContaReceber, idLiberacao) {
-      return http().get(API + id + '/obterMensagemBoletoImpresso', {
-        params: {
-          idContaReceber: idContaReceber || 0,
-          idLiberacao: idLiberacao || 0
-        }
-      });
-    },
-
-    /**
      * Recupera o objeto com as situações de nota fiscal.
      * @returns {Promise} Uma promise com o resultado da busca.
      */

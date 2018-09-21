@@ -233,6 +233,8 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
+    <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -257,10 +259,10 @@
     <Compile Include="Controllers\Estoques\V1\GetEstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\EstoquesController.cs" />
     <Compile Include="Controllers\Estoques\V1\PatchEstoquesController.cs" />
-    <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
-    <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
-    <Compile Include="Controllers\Imagens\V1\GetImagensController.cs" />
     <Compile Include="Controllers\Imagens\V1\ImagensController.cs" />
+    <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
+    <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
+    <Compile Include="Controllers\Imagens\V1\GetImagensController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -458,9 +460,9 @@
     <Compile Include="Models\ContasReceber\ListaRecebidas\FiltroDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\ListaDto.cs" />
     <Compile Include="Models\ContasReceber\ListaRecebidas\PermissoesDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
     <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
-    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
     <Compile Include="Models\Imagens\Exibicao\DadosImagemDto.cs" />
     <Compile Include="Models\Imagens\Exibicao\TipoItemEnum.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
@@ -492,8 +494,8 @@
     <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\NotasFiscais\Boleto\BoletoImpressoDto.cs" />
-    <Compile Include="Models\NotasFiscais\Boleto\NotaFiscalDto.cs" />
+    <Compile Include="Models\Boletos\Boleto\BoletoImpressoDto.cs" />
+    <Compile Include="Models\Boletos\Boleto\NotaFiscalDto.cs" />
     <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\NotasFiscais\Contingencia\EntradaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\FiltroDto.cs" />

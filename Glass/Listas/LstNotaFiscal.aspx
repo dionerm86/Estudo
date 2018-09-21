@@ -111,7 +111,7 @@
                         <a href="#" @click.prevent="emitirNotaFiscalFsda(item)" title="Emitir NF-e FS-DA" v-if="item.permissoes.emitirNotaFiscalFsda">
                             <img border="0" src="../Images/arrow_right.gif">
                         </a>
-                        <controle-boleto :id-nota-fiscal="item.id" v-if="item.permissoes.exibirBoleto"></controle-boleto>
+                        <controle-boleto :id-nota-fiscal="item.id" v-if="true || item.permissoes.exibirBoleto"></controle-boleto>
                         <a href="#" @click.prevent="abrirObservacoesLancamentoFiscal(item)" title="Observações do Lançamento Fiscal">
                             <img border="0" src="../Images/Nota.gif">
                         </a>

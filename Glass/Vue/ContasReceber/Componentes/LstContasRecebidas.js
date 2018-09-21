@@ -220,52 +220,48 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idPedido', this.filtro.idPedido),
-        this.incluirFiltro('idLiberarPedido', this.filtro.idLiberarPedido),
-        this.incluirFiltro('idAcerto', this.filtro.idAcerto),
-        this.incluirFiltro('idAcertoParcial', this.filtro.idAcertoParcial),
-        this.incluirFiltro('idTrocaDev', this.filtro.idTrocaDevolucao),
-        this.incluirFiltro('numeroNfe', this.filtro.numeroNfe),
-        this.incluirFiltro('idSinal', this.filtro.idSinal),
-        this.incluirFiltro('numCte', this.filtro.numeroCte),
-        this.incluirFiltro('dtIniVenc', this.filtro.periodoVencimentoInicio),
-        this.incluirFiltro('dtFimVenc', this.filtro.periodoVencimentoFim),
-        this.incluirFiltro('dtIniRec', this.filtro.periodoRecebimentoInicio),
-        this.incluirFiltro('dtFimRec', this.filtro.periodoRecebimentoFim),
-        this.incluirFiltro('dataIniCad', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('dataFimCad', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('idFuncRecebido', this.filtro.recebidaPor),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idFunc', this.filtro.idVendedor),
-        this.incluirFiltro('idCli', this.filtro.idCliente),
-        this.incluirFiltro('nomeCli', this.filtro.nomeCliente),
-        this.incluirFiltro('idVendedorAssociado', this.filtro.idVendedorAssociadoCliente),
-        this.incluirFiltro('idVendedorObra', this.filtro.idVendedorObra),
-        this.incluirFiltro('idsFormaPagto', this.filtro.formasPagamento),
-        this.incluirFiltro('tipoEntrega', this.filtro.tipoEntrega),
-        this.incluirFiltro('valorInicial', this.filtro.valorRecebidoInicio),
-        this.incluirFiltro('valorFinal', this.filtro.valorRecebidoFim),
-        this.incluirFiltro('idRota', this.filtro.idRota),
-        this.incluirFiltro('tipoConta', this.filtro.tiposContabeis),
-        this.incluirFiltro('idComissionado', this.filtro.idComissionado),
-        this.incluirFiltro('obs', this.filtro.observacao),
-        this.incluirFiltro('numAutCartao', this.filtro.numeroAutorizacaoCartao),
-        this.incluirFiltro('numArqRemessa', this.filtro.numeroArquivoRemessa),
-        this.incluirFiltro('contasCnab', this.filtro.buscaArquivoRemessa),
-        this.incluirFiltro('idComissao', this.filtro.idComissao),
-        this.incluirFiltro('tipoContasBuscar', this.filtro.buscaNotaFiscal),
-        this.incluirFiltro('exibirAReceber', this.filtro.buscarContasAReceber),
-        this.incluirFiltro('renegociadas', this.filtro.buscarContasRenegociadas),
-        this.incluirFiltro('refObra', this.filtro.buscarContasDeObra),
-        this.incluirFiltro('protestadas', this.filtro.buscarContasProtestadas),
-        this.incluirFiltro('contasVinculadas', this.filtro.buscarContasVinculadas),
-        this.incluirFiltro('ordenar', this.filtro.ordenacaoFiltro)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtros, 'idLiberarPedido', this.filtro.idLiberarPedido);
+      this.incluirFiltroComLista(filtros, 'idAcerto', this.filtro.idAcerto);
+      this.incluirFiltroComLista(filtros, 'idAcertoParcial', this.filtro.idAcertoParcial);
+      this.incluirFiltroComLista(filtros, 'idTrocaDev', this.filtro.idTrocaDevolucao);
+      this.incluirFiltroComLista(filtros, 'numeroNfe', this.filtro.numeroNfe);
+      this.incluirFiltroComLista(filtros, 'idSinal', this.filtro.idSinal);
+      this.incluirFiltroComLista(filtros, 'numCte', this.filtro.numeroCte);
+      this.incluirFiltroComLista(filtros, 'dtIniVenc', this.filtro.periodoVencimentoInicio);
+      this.incluirFiltroComLista(filtros, 'dtFimVenc', this.filtro.periodoVencimentoFim);
+      this.incluirFiltroComLista(filtros, 'dtIniRec', this.filtro.periodoRecebimentoInicio);
+      this.incluirFiltroComLista(filtros, 'dtFimRec', this.filtro.periodoRecebimentoFim);
+      this.incluirFiltroComLista(filtros, 'dataIniCad', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimCad', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'idFuncRecebido', this.filtro.recebidaPor);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idVendedor);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCli', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'idVendedorAssociado', this.filtro.idVendedorAssociadoCliente);
+      this.incluirFiltroComLista(filtros, 'idVendedorObra', this.filtro.idVendedorObra);
+      this.incluirFiltroComLista(filtros, 'idsFormaPagto', this.filtro.formasPagamento);
+      this.incluirFiltroComLista(filtros, 'tipoEntrega', this.filtro.tipoEntrega);
+      this.incluirFiltroComLista(filtros, 'valorInicial', this.filtro.valorRecebidoInicio);
+      this.incluirFiltroComLista(filtros, 'valorFinal', this.filtro.valorRecebidoFim);
+      this.incluirFiltroComLista(filtros, 'idRota', this.filtro.idRota);
+      this.incluirFiltroComLista(filtros, 'tipoConta', this.filtro.tiposContabeis);
+      this.incluirFiltroComLista(filtros, 'idComissionado', this.filtro.idComissionado);
+      this.incluirFiltroComLista(filtros, 'obs', this.filtro.observacao);
+      this.incluirFiltroComLista(filtros, 'numAutCartao', this.filtro.numeroAutorizacaoCartao);
+      this.incluirFiltroComLista(filtros, 'numArqRemessa', this.filtro.numeroArquivoRemessa);
+      this.incluirFiltroComLista(filtros, 'contasCnab', this.filtro.buscaArquivoRemessa);
+      this.incluirFiltroComLista(filtros, 'idComissao', this.filtro.idComissao);
+      this.incluirFiltroComLista(filtros, 'tipoContasBuscar', this.filtro.buscaNotaFiscal);
+      this.incluirFiltroComLista(filtros, 'exibirAReceber', this.filtro.buscarContasAReceber);
+      this.incluirFiltroComLista(filtros, 'renegociadas', this.filtro.buscarContasRenegociadas);
+      this.incluirFiltroComLista(filtros, 'refObra', this.filtro.buscarContasDeObra);
+      this.incluirFiltroComLista(filtros, 'protestadas', this.filtro.buscarContasProtestadas);
+      this.incluirFiltroComLista(filtros, 'contasVinculadas', this.filtro.buscarContasVinculadas);
+      this.incluirFiltroComLista(filtros, 'ordenar', this.filtro.ordenacaoFiltro);
 
       return filtros.length
         ? '&' + filtros.join('&')

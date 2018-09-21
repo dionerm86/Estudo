@@ -99,11 +99,14 @@
           border-left: none;
         }
 
-    .gridStyle .pgr a {
-      color: #555;
+    .gridStyle .pgr a, .gridStyle .pgr span {
       text-decoration: none;
       font-size: 0.9em;
       text-align: center;
+    }
+
+    .gridStyle .pgr a {
+      color: #555;
     }
 
       .gridStyle .pgr a:hover {
