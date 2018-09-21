@@ -3042,7 +3042,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                if (DataEntregaComposicao)
+                if (PedidoPossuiComposicao)
                 {
                     var dataFabricaComposicao = ProdutosPedidoEspelhoDAO.Instance.CalcularDataComposicao(DataEntrega ?? DateTime.Now);
 
