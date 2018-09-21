@@ -130,25 +130,21 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idLiberarPedido', this.filtro.id),
-        this.incluirFiltro('idPedido', this.filtro.idPedido),
-        this.incluirFiltro('numeroNfe', this.filtro.numeroNfe),
-        this.incluirFiltro('situacao', this.filtro.situacao),
-        this.incluirFiltro('idCliente', this.filtro.idCliente),
-        this.incluirFiltro('nomeCliente', this.filtro.nomeCliente),
-        this.incluirFiltro('liberacaoNf', this.filtro.liberacaoComSemNotaFiscal),
-        this.incluirFiltro('dataIni', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('dataFim', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('idFunc', this.filtro.idFuncionario),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('dataIniCanc', this.filtro.periodoCancelamentoInicio),
-        this.incluirFiltro('dataFimCanc', this.filtro.periodoCancelamentoFim)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtro, 'idLiberarPedido', this.filtro.id);
+      this.incluirFiltroComLista(filtro, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtro, 'numeroNfe', this.filtro.numeroNfe);
+      this.incluirFiltroComLista(filtro, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtro, 'idCliente', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtro, 'nomeCliente', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtro, 'liberacaoNf', this.filtro.liberacaoComSemNotaFiscal);
+      this.incluirFiltroComLista(filtro, 'dataIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtro, 'dataFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtro, 'idFunc', this.filtro.idFuncionario);
+      this.incluirFiltroComLista(filtro, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtro, 'dataIniCanc', this.filtro.periodoCancelamentoInicio);
+      this.incluirFiltroComLista(filtro, 'dataFimCanc', this.filtro.periodoCancelamentoFim);
 
       return filtros.length
         ? '&' + filtros.join('&')

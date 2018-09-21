@@ -204,37 +204,33 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idCli', this.filtro.id),
-        this.incluirFiltro('nome', this.filtro.nomeCliente),
-        this.incluirFiltro('cpfCnpj', this.filtro.cpfCnpj),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('telefone', this.filtro.telefone),
-        this.incluirFiltro('endereco', this.filtro.endereco),
-        this.incluirFiltro('bairro', this.filtro.bairro),
-        this.incluirFiltro('idCidade', this.filtro.idCidade),
-        this.incluirFiltro('idTipoCliente', this.filtro.tipo),
-        this.incluirFiltro('situacao', this.filtro.situacao),
-        this.incluirFiltro('codRota', this.filtro.codigoRota),
-        this.incluirFiltro('idFunc', this.filtro.idVendedor),
-        this.incluirFiltro('tipoFiscal', this.filtro.tipoFiscal),
-        this.incluirFiltro('formasPagto', this.filtro.formasPagamento),
-        this.incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('dataSemCompraIni', this.filtro.periodoSemCompraInicio),
-        this.incluirFiltro('dataSemCompraFim', this.filtro.periodoSemCompraFim),
-        this.incluirFiltro('dataInativadoIni', this.filtro.periodoInativadoInicio),
-        this.incluirFiltro('dataInativadoFim', this.filtro.periodoInativadoFim),
-        this.incluirFiltro('idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo),
-        this.incluirFiltro('apenasSemRota', this.filtro.apenasSemRota),
-        this.incluirFiltro('agruparVend', this.filtro.agruparVendedor),
-        this.incluirFiltro('exibirHistorico', this.filtro.exibirHistorico),
-        this.incluirFiltro('uf', this.filtro.uf)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'nome', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'cpfCnpj', this.filtro.cpfCnpj);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'telefone', this.filtro.telefone);
+      this.incluirFiltroComLista(filtros, 'endereco', this.filtro.endereco);
+      this.incluirFiltroComLista(filtros, 'bairro', this.filtro.bairro);
+      this.incluirFiltroComLista(filtros, 'idCidade', this.filtro.idCidade);
+      this.incluirFiltroComLista(filtros, 'idTipoCliente', this.filtro.tipo);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'codRota', this.filtro.codigoRota);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idVendedor);
+      this.incluirFiltroComLista(filtros, 'tipoFiscal', this.filtro.tipoFiscal);
+      this.incluirFiltroComLista(filtros, 'formasPagto', this.filtro.formasPagamento);
+      this.incluirFiltroComLista(filtros, 'dataCadIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataCadFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'dataSemCompraIni', this.filtro.periodoSemCompraInicio);
+      this.incluirFiltroComLista(filtros, 'dataSemCompraFim', this.filtro.periodoSemCompraFim);
+      this.incluirFiltroComLista(filtros, 'dataInativadoIni', this.filtro.periodoInativadoInicio);
+      this.incluirFiltroComLista(filtros, 'dataInativadoFim', this.filtro.periodoInativadoFim);
+      this.incluirFiltroComLista(filtros, 'idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo);
+      this.incluirFiltroComLista(filtros, 'apenasSemRota', this.filtro.apenasSemRota);
+      this.incluirFiltroComLista(filtros, 'agruparVend', this.filtro.agruparVendedor);
+      this.incluirFiltroComLista(filtros, 'exibirHistorico', this.filtro.exibirHistorico);
+      this.incluirFiltroComLista(filtros, 'uf', this.filtro.uf);
 
       return filtros.length
         ? '&' + filtros.join('&')

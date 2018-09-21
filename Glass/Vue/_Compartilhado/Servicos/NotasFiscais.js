@@ -212,13 +212,15 @@ Servicos.NotasFiscais = (function(http) {
      * @param {?number} idNotaFiscal O identificador da nota fiscal.
      * @param {?number} idContaReceber O identificador da conta a receber.
      * @param {?number} idLiberacao O identificador da liberação.
+     * @param {?number} idConhecimentoTransporte O identificador do conhecimento de transporte.
      * @returns {Promise} Uma promise com o resultado da operação.
      */
-    obterMensagemBoletoImpresso: function (id, idContaReceber, idLiberacao) {
-      return http().get(API + id + '/obterMensagemBoletoImpresso', {
+    obterMensagemBoletoImpresso: function (idNotaFiscal, idContaReceber, idLiberacao, idConhecimentoTransporte) {
+      return http().get(API + idNotaFiscal + '/obterMensagemBoletoImpresso', {
         params: {
-          idContaReceber: idContaReceber || 0,
-          idLiberacao: idLiberacao || 0
+          idContaReceber,
+          idLiberacao,
+          idCte: idConhecimentoTransporte
         }
       });
     },

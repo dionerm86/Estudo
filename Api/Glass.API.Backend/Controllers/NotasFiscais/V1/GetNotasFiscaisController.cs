@@ -233,13 +233,14 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
         /// <param name="id">O identificador da nota fiscal.</param>
         /// <param name="idContaReceber">O identificador da conta a receber.</param>
         /// <param name="idLiberacao">O identificador da liberação.</param>
+        /// <param name="idCte">O identificador do CT-e.</param>
         /// <returns>Uma mensagem indicando se o boleto está impreso.</returns>
         [HttpGet]
         [Route("{id}/obterMensagemBoletoImpresso")]
         [SwaggerResponse(200, "Mensagem indicando se o boleto está impresso.", Type = typeof(BoletoImpressoDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação da obtenção do identificador da nota fiscal.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Nota fiscal não encontrada.", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterMensagemBoletoImpresso(int id, int idContaReceber, int idLiberacao)
+        public IHttpActionResult ObterMensagemBoletoImpresso(int id, int? idContaReceber, int? idLiberacao, int? idCte)
         {
             using (var sessao = new GDATransaction())
             {
@@ -250,7 +251,11 @@ namespace Glass.API.Backend.Controllers.NotasFiscais.V1
                     return validacao;
                 }
 
-                var mensagem = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(idContaReceber, id, idLiberacao);
+                var mensagem = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(
+                    idContaReceber,
+                    id,
+                    idLiberacao,
+                    idCte);
 
                 return this.Item(
                     new BoletoImpressoDto()

@@ -219,42 +219,38 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idPedido', this.filtro.idPedido),
-        this.incluirFiltro('idLiberarPedido', this.filtro.idLiberacao),
-        this.incluirFiltro('idAcerto', this.filtro.idAcerto),
-        this.incluirFiltro('numeroNfe', this.filtro.numeroNfe),
-        this.incluirFiltro('tipo', this.filtro.tipo),
-        this.incluirFiltro('numCheque', this.filtro.numeroCheque),
-        this.incluirFiltro('situacao', this.filtro.situacao),
-        this.incluirFiltro('reapresentado', this.filtro.reapresentado),
-        this.incluirFiltro('advogado', this.filtro.advogado),
-        this.incluirFiltro('titular', this.filtro.titular),
-        this.incluirFiltro('agencia', this.filtro.agencia),
-        this.incluirFiltro('conta', this.filtro.conta),
-        this.incluirFiltro('dataIni', this.filtro.periodoVencimentoInicio),
-        this.incluirFiltro('dataFim', this.filtro.periodoVencimentoFim),
-        this.incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('cpfCnpj', this.filtro.cpfCnpj),
-        this.incluirFiltro('idCli', this.filtro.idCliente),
-        this.incluirFiltro('nomeCli', this.filtro.nomeCliente),
-        this.incluirFiltro('idFornec', this.filtro.idFornecedor),
-        this.incluirFiltro('nomeFornec', this.filtro.nomeFornecedor),
-        this.incluirFiltro('valorInicial', this.filtro.valorChequeInicio),
-        this.incluirFiltro('valorFinal', this.filtro.valorChequeFim),
-        this.incluirFiltro('nomeUsuCad', this.filtro.usuarioCadastro),
-        this.incluirFiltro('chequesCaixaDiario', this.caixaDiario),
-        this.incluirFiltro('idsRotas', this.filtro.idsRota),
-        this.incluirFiltro('obs', this.filtro.observacao),
-        this.incluirFiltro('ordenacao', this.filtro.ordenacaoFiltro),
-        this.incluirFiltro('agrupar', this.filtro.agruparCliente)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtro, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtro, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtro, 'idLiberarPedido', this.filtro.idLiberacao);
+      this.incluirFiltroComLista(filtro, 'idAcerto', this.filtro.idAcerto);
+      this.incluirFiltroComLista(filtro, 'numeroNfe', this.filtro.numeroNfe);
+      this.incluirFiltroComLista(filtro, 'tipo', this.filtro.tipo);
+      this.incluirFiltroComLista(filtro, 'numCheque', this.filtro.numeroCheque);
+      this.incluirFiltroComLista(filtro, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtro, 'reapresentado', this.filtro.reapresentado);
+      this.incluirFiltroComLista(filtro, 'advogado', this.filtro.advogado);
+      this.incluirFiltroComLista(filtro, 'titular', this.filtro.titular);
+      this.incluirFiltroComLista(filtro, 'agencia', this.filtro.agencia);
+      this.incluirFiltroComLista(filtro, 'conta', this.filtro.conta);
+      this.incluirFiltroComLista(filtro, 'dataIni', this.filtro.periodoVencimentoInicio);
+      this.incluirFiltroComLista(filtro, 'dataFim', this.filtro.periodoVencimentoFim);
+      this.incluirFiltroComLista(filtro, 'dataCadIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtro, 'dataCadFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtro, 'cpfCnpj', this.filtro.cpfCnpj);
+      this.incluirFiltroComLista(filtro, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtro, 'nomeCli', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtro, 'idFornec', this.filtro.idFornecedor);
+      this.incluirFiltroComLista(filtro, 'nomeFornec', this.filtro.nomeFornecedor);
+      this.incluirFiltroComLista(filtro, 'valorInicial', this.filtro.valorChequeInicio);
+      this.incluirFiltroComLista(filtro, 'valorFinal', this.filtro.valorChequeFim);
+      this.incluirFiltroComLista(filtro, 'nomeUsuCad', this.filtro.usuarioCadastro);
+      this.incluirFiltroComLista(filtro, 'chequesCaixaDiario', this.caixaDiario);
+      this.incluirFiltroComLista(filtro, 'idsRotas', this.filtro.idsRota);
+      this.incluirFiltroComLista(filtro, 'obs', this.filtro.observacao);
+      this.incluirFiltroComLista(filtro, 'ordenacao', this.filtro.ordenacaoFiltro);
+      this.incluirFiltroComLista(filtro, 'agrupar', this.filtro.agruparCliente);
 
       return filtros.length
         ? '&' + filtros.join('&')

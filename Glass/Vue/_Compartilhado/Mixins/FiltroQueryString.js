@@ -15,15 +15,25 @@ Mixins.FiltroQueryString = {
 
       if (filtro) {
         for (var campo of Object.keys(filtro)) {
-          var item = this.incluirFiltro__(campo, filtro[campo]);
-
-          if (item) {
-            filtros.push(item);
-          }
+          formatarFiltroComLista(filtros, campo, filtro[campo]);
         }
       }
 
       return filtros.join('&');
+    },
+
+    /**
+     * Inclui um filtro na lista para formatação.
+     * @param {String[]} lista A lista que contém os filtros formatados.
+     * @param {String} nome O nome do campo para a querystring.
+     * @param {Object} valor O valor do filtro.
+     */
+    incluirFiltroComLista: function(lista, nome, valor) {
+      var item = this.incluirFiltro(nome, valor);
+
+      if (item) {
+        lista.push(item);
+      }
     },
 
     /**

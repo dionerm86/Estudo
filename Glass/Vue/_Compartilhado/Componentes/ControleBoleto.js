@@ -33,6 +33,16 @@
     },
 
     /**
+     * Identificador do conhecimento de transporte.
+     * @type {?number}
+     */
+    idConhecimentoTransporte: {
+      required: false,
+      twoWay: false,
+      validator: Mixins.Validacao.validarNumeroOuVazio
+    },
+
+    /**
      * Define uma tooltip para o boleto
      * @type {?string}
      */
@@ -90,7 +100,7 @@
     obterMensagemBoletoImpresso: function () {
       var vm = this;
 
-      Servicos.NotasFiscais.obterMensagemBoletoImpresso(this.idNotaFiscal || 0, this.idContaReceber || 0, this.idLiberacao || 0)
+      Servicos.NotasFiscais.obterMensagemBoletoImpresso(this.idNotaFiscal, this.idContaReceber, this.idLiberacao, this.idConhecimentoTransporte)
         .then(function (resposta) {
           vm.tooltipBoleto = 'Boleto' + (resposta.mensagem || '');
         })
