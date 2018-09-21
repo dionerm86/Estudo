@@ -1,6 +1,6 @@
 ﻿Vue.component('controle-boleto', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Comparar, Mixins.FiltroQueryString],
   props: {
     /**
      * Identificador da nota fiscal.
@@ -40,17 +40,12 @@
       required: false,
       twoWay: false,
       validator: Mixins.Validacao.validarNumeroOuVazio
-    },
+    }
+  },
 
-    /**
-     * Define uma tooltip para o boleto
-     * @type {?string}
-     */
-    tooltipBoleto: {
-      required: false,
-      twoWay: true,
-      default: 'Boleto',
-      validator: Mixins.Validacao.validarTextoOuVazio
+  data: function() {
+    return {
+      tooltipBoleto: 'Boleto'
     }
   },
 
@@ -59,11 +54,28 @@
      * Exibe o boleto para impressão
      */
     exibirBoleto: function () {
+      if (!this.idNotaFiscal
+        && !this.idContaReceber
+        && !this.idLiberacao
+        && !this.idConhecimentoTransporte) {
+
+        return false;
+      }
+
       var vm = this;
 
-      Servicos.NotasFiscais.validarBoleto(this.idNotaFiscal)
+      Servicos.Boletos.validarBoleto(this.idNotaFiscal)
         .then(function (resposta) {
-          var url = '../Relatorios/Boleto/Imprimir.aspx?codigoNotaFiscal=' + (vm.idNotaFiscal || 0) + '&codigoContaReceber=' + (vm.idContaReceber || 0) + '&codigoLiberacao=' + (vm.idLiberacao || 0);
+          var filtro = {
+            codigoNotaFiscal: vm.idNotaFiscal,
+            codigoContaReceber: vm.idContaReceber,
+            codigoLiberacao: vm.idLiberacao,
+            codigoCte: vm.idConhecimentoTransporte
+          };
+
+          const url = '../Relatorios/Boleto/Imprimir.aspx?'
+            + vm.formatarFiltro(filtro);
+
           vm.abrirJanela(400, 600, url);
         })
         .catch(function (erro) {
@@ -83,9 +95,9 @@
 
       var vm = this;
 
-      Servicos.NotasFiscais.obterIdNotaFiscalPeloIdContaReceber(this.idContaReceber || 0)
+      Servicos.Boletos.obterIdNotaFiscalPeloIdContaReceber(this.idContaReceber)
         .then(function (resposta) {
-          vm.idNotaFiscal = resposta.idNotaFiscal || null;
+          vm.idNotaFiscal = resposta.idNotaFiscal;
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {
@@ -100,9 +112,14 @@
     obterMensagemBoletoImpresso: function () {
       var vm = this;
 
-      Servicos.NotasFiscais.obterMensagemBoletoImpresso(this.idNotaFiscal, this.idContaReceber, this.idLiberacao, this.idConhecimentoTransporte)
+      Servicos.Boletos.obterMensagemBoletoImpresso(
+        this.idNotaFiscal,
+        this.idContaReceber,
+        this.idLiberacao,
+        this.idConhecimentoTransporte
+      )
         .then(function (resposta) {
-          vm.tooltipBoleto = 'Boleto' + (resposta.mensagem || '');
+          vm.tooltipBoleto = 'Boleto ' + (resposta.data.mensagem || '');
         })
         .catch(function (erro) {
           if (erro && erro.mensagem) {

@@ -1732,6 +1732,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />

@@ -15,7 +15,7 @@ Mixins.FiltroQueryString = {
 
       if (filtro) {
         for (var campo of Object.keys(filtro)) {
-          formatarFiltroComLista(filtros, campo, filtro[campo]);
+          this.incluirFiltroComLista(filtros, campo, filtro[campo]);
         }
       }
 

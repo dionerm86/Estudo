@@ -233,6 +233,8 @@
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
+    <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
+    <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -492,8 +494,8 @@
     <Compile Include="Models\PedidosConferencia\Lista\FiltroDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\ListaDto.cs" />
     <Compile Include="Models\PedidosConferencia\Lista\PermissoesDto.cs" />
-    <Compile Include="Models\NotasFiscais\Boleto\BoletoImpressoDto.cs" />
-    <Compile Include="Models\NotasFiscais\Boleto\NotaFiscalDto.cs" />
+    <Compile Include="Models\Boletos\Boleto\BoletoImpressoDto.cs" />
+    <Compile Include="Models\Boletos\Boleto\NotaFiscalDto.cs" />
     <Compile Include="Models\NotasFiscais\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\NotasFiscais\Contingencia\EntradaDto.cs" />
     <Compile Include="Models\NotasFiscais\Lista\FiltroDto.cs" />
