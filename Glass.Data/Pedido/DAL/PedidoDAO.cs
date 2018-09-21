@@ -5431,7 +5431,7 @@ namespace Glass.Data.DAL
         public List<Pedido> ObterPedidosPendentesLeitura(GDASession sessao, uint idSetor)
         {
             var sql = @"
-                 SELECT  p.*, c.Id_cli as IdCli, c.Nome as NomeCliente
+                 SELECT  p.*, c.Id_cli as IdCli, c.Nome as NomeCliente, pp.IdProdPedParent as IdProdPedParentExibirRelatorioPendentesLeitura
                 FROM pedido p
 	                LEFT JOIN cliente c On (p.IdCli = c.Id_Cli)
                     INNER JOIN produtos_pedido_espelho pp On (p.IdPedido = pp.IdPedido)
