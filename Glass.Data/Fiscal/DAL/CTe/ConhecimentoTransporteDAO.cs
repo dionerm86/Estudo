@@ -655,7 +655,7 @@ namespace Glass.Data.DAL.CTe
                                     IsParcelaCartao = false,
                                     IdContaRCartao = null,
                                     IdCliente = cte.Participantes != null ? cte.Participantes.FirstOrDefault(f => f.Tomador).IdCliente.GetValueOrDefault() : 0,
-                                    IdConta = UtilsPlanoConta.GetPlanoPrazo((uint)Pagto.FormaPagto.Prazo),
+                                    IdConta = UtilsPlanoConta.GetPlanoPrazo((uint)Pagto.FormaPagto.Boleto),
                                     TipoConta = (byte)ContasReceber.TipoContaEnum.NaoContabil,
                                 }) > 0)
 
