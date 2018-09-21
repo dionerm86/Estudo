@@ -1380,6 +1380,8 @@ namespace Glass.Data.DAL
                     if (novoProduto == null)
                     {
                         novoProduto = MetodosExtensao.Clonar(produto);
+                        novoProduto.DadosBaixaEstoque.Clear();
+                        novoProduto.DadosBaixaEstoqueFiscal.Clear();
                         novoProduto.Altura = (int)retalho.Altura;
                         novoProduto.Largura = (int)retalho.Largura;
                         novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
