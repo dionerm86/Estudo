@@ -1928,9 +1928,8 @@
                                     </tr>
                                     <tr>
                                         <td>
-                                            <asp:Label Text="Valor total dos pagamentos antecipados:" runat="server" Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
-                                            <asp:TextBox runat="server" Text='<%# Eval("ValoresPagosAntecipadamente") %>' Enabled="false" Width="80px"
-                                                Visible="<%# Glass.Configuracoes.FinanceiroConfig.SepararValoresFiscaisEReaisContasReceber %>" />
+                                            <asp:Label Text="Valor total dos pagamentos antecipados:" runat="server" />
+                                            <asp:TextBox runat="server" Text='<%# Eval("ValoresPagosAntecipadamente") %>' Enabled="false" Width="80px"/>
                                         </td>
                                     </tr>
                                     <tr>

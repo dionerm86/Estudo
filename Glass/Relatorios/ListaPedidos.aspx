@@ -87,6 +87,7 @@
             var idOC = FindControl("txtIdOC", "input").value;
             var usuCad = FindControl("drpUsucad", "select").value;
             var grupoCliente = FindControl("drpGrupoCliente", "select").itens();
+            var complemento = FindControl("txtComplemento", "input").value;
 
             var queryString = "&idPedido=" + idPedido + "&idOrcamento=" + idOrcamento + "&codCliente=" + codCliente + "&idsRota=" + idsRota + "&IdCli=" + idCli +
                 "&nomeCli=" + nomeCli + "&tipoFiscal=" + tipoFiscal + "&loja=" + loja + "&situacao=" + situacao + "&dtIniSit=" + dtIniSit +
@@ -101,7 +102,7 @@
                 "&mostrarDescontoTotal=" + mostrarDescontoTotal + "&desconto=" + desconto + "&agrupar=" + agrupar +
                 "&cidade=" + cidade + "&comSemNf=" + comSemNf + "&idMedidor=" + idMedidor +
                 "&idOC=" + idOC + "&usuCad=" + usuCad + "&origemPedido=" + origemPedido + "&exportarExcel=" + exportarExcel + "&observacao=" + obs + "&idCarregamento=" + idCarregamento +
-                "&bairro=" + bairro + "&dataInicioMedicao" + dtIniMed + "&dataFimMedicao" + dtFimMed + "&grupoCliente" + grupoCliente;
+                "&bairro=" + bairro + "&dataInicioMedicao=" + dtIniMed + "&dataFimMedicao=" + dtFimMed + "&grupoCliente=" + grupoCliente + "&complemento=" + complemento;
 
             openWindow(600, 800, 'RelBase.aspx?rel=' + nomeRel + queryString);
             return false;
@@ -388,6 +389,15 @@
                 </table>
                 <table>
                     <tr>
+                        <td>
+                            <asp:Label ID="lblComplemento" runat="server" Text="Complemento" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="txtComplemento" runat="server" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);"
+                                MaxLength="50"></asp:TextBox>
+                            <asp:ImageButton ID="imgBtnComplemento" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                ToolTip="Pesquisar" OnClick="imgPesq_Click" />
+                        </td>
                         <td>
                             <asp:Label ID="Label28" runat="server" ForeColor="#0066FF" Text="Origem Pedido"></asp:Label>
                         </td>
@@ -896,6 +906,7 @@
                         <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="drpGrupoCliente" Name="grupoCliente" Type="String" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="txtComplemento" Name="complemento" PropertyName="Text" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
             </td>
@@ -984,6 +995,7 @@
                         <asp:ControlParameter ControlID="ctrlDataMedIni" Name="dataInicioMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="ctrlDataMedFim" Name="dataFimMedicao" PropertyName="DataString" Type="String" />
                         <asp:ControlParameter ControlID="drpGrupoCliente" Name="grupoCliente" Type="String" PropertyName="SelectedValue" />
+                        <asp:ControlParameter ControlID="txtComplemento" Name="complemento" PropertyName="Text" Type="String" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"
