@@ -159,16 +159,16 @@ const app = new Vue({
     formatarFiltros_: function () {
       var filtros = [];
 
-      this.incluirFiltroComLista(filtro, 'codInterno', this.filtro.codigo);
-      this.incluirFiltroComLista(filtro, 'descr', this.filtro.descricao);
-      this.incluirFiltroComLista(filtro, 'situacao', this.filtro.situacao);
-      this.incluirFiltroComLista(filtro, 'idGrupo', this.filtro.idGrupo);
-      this.incluirFiltroComLista(filtro, 'idSubgrupo', this.filtro.idSubgrupo);
-      this.incluirFiltroComLista(filtro, 'alturaInicio', this.filtro.valorAlturaInicio);
-      this.incluirFiltroComLista(filtro, 'alturaFim', this.filtro.valorAlturaFim);
-      this.incluirFiltroComLista(filtro, 'larguraInicio', this.filtro.valorLarguraInicio);
-      this.incluirFiltroComLista(filtro, 'larguraFim', this.filtro.valorLarguraFim);
-      this.incluirFiltroComLista(filtro, 'orderBy', this.filtro.ordenacaoFiltro);
+      this.incluirFiltroComLista(filtros, 'codInterno', this.filtro.codigo);
+      this.incluirFiltroComLista(filtros, 'descr', this.filtro.descricao);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'idGrupo', this.filtro.idGrupo);
+      this.incluirFiltroComLista(filtros, 'idSubgrupo', this.filtro.idSubgrupo);
+      this.incluirFiltroComLista(filtros, 'alturaInicio', this.filtro.valorAlturaInicio);
+      this.incluirFiltroComLista(filtros, 'alturaFim', this.filtro.valorAlturaFim);
+      this.incluirFiltroComLista(filtros, 'larguraInicio', this.filtro.valorLarguraInicio);
+      this.incluirFiltroComLista(filtros, 'larguraFim', this.filtro.valorLarguraFim);
+      this.incluirFiltroComLista(filtros, 'orderBy', this.filtro.ordenacaoFiltro);
 
       return filtros.length
         ? '&' + filtros.join('&')
