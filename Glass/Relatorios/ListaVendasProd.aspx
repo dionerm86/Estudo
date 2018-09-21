@@ -56,6 +56,8 @@
             var semValores = FindControl("chkSemValores", "input").checked;
             var notaFiscal = FindControl("drpNotaFiscal", "select"); notaFiscal = !!notaFiscal ? notaFiscal.value : "0";
             var idLiberacao = FindControl("txtIdLiberacao", "input").value;
+            var liberacaoNf = FindControl("cbLiberarcaoNfe", "select").value;
+            var idFuncLiberacao = FindControl("drpFunc", "select").value;
 
             idCliente = idCliente == "" ? 0 : idCliente;
 
@@ -69,8 +71,8 @@
                 "&tipoVenda=" + tipoVenda + "&idPedido=" + idPedido + "&agruparPedido=" + agruparPedido +
                 "&incluirMateriaPrima=" + incluirMateriaPrima + "&tipoDesconto=" + desconto + "&agrupar=" + agrupar +
                 "&agruparNcm=" + agruparNcm + "&agruparCorEsp=" + agruparCorEsp + "&semValores=" + semValores +
-                "&agruparLiberacao=" + agruparLiberacao + "&buscarNotaFiscal=" + notaFiscal + "&idLiberacao=" + idLiberacao+ 
-                "&agruparAmbiente=" + agruparAmbiente);
+                "&agruparLiberacao=" + agruparLiberacao + "&buscarNotaFiscal=" + notaFiscal + "&idLiberacao=" + idLiberacao+
+                "&agruparAmbiente=" + agruparAmbiente + "&liberacaoNf=" + liberacaoNf + "&idFuncLiberacao=" + idFuncLiberacao);
 
             return false;
         }
@@ -316,6 +318,15 @@
                                 <asp:ListItem Value="2">Sem Desconto</asp:ListItem>
                             </asp:DropDownList>
                         </td>
+                        <td nowrap="nowrap">
+                            <asp:Label ID="Label17" runat="server" Text="Liberado por" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td nowrap="nowrap">
+                            <asp:DropDownList ID="drpFunc" runat="server" AppendDataBoundItems="True" AutoPostBack="True"
+                                DataSourceID="odsFunc" DataTextField="Nome" DataValueField="IdFunc">
+                                <asp:ListItem Value="0">Todos</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
                     </tr>
                 </table>
                 <table>
@@ -349,6 +360,21 @@
                             <asp:DropDownList ID="drpFuncionario" runat="server" DataSourceID="odsVendedor" DataTextField="Nome"
                                 DataValueField="IdFunc" AutoPostBack="True">
                             </asp:DropDownList>
+                        </td>
+                        <td align="right">
+                            <asp:Label ID="Label18" runat="server" Text="Nota Fiscal" ForeColor="#0066FF"></asp:Label>
+                        </td>
+                        <td align="right">
+                            <asp:DropDownList ID="cbLiberarcaoNfe" runat="server" AutoPostBack="True">
+                                <asp:ListItem Value="0" Selected="True">Todas</asp:ListItem>
+                                <asp:ListItem Value="1">Apenas produtos de liberações com nota fiscal</asp:ListItem>
+                                <asp:ListItem Value="2">Apenas produtos de liberações sem nota fiscal</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td nowrap="nowrap">
+                            <asp:ImageButton ID="ImageButton3" runat="server" ImageUrl="~/Images/Pesquisar.gif"
+                                ToolTip="Pesquisar" OnClientClick="getCli(FindControl('txtNumCli', 'input'));"
+                                OnClick="imgPesq_Click" />
                         </td>
                     </tr>
                 </table>
@@ -386,7 +412,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:LinkButton ID="lnkLimparFiltros" runat="server" OnClientClick="return limparFiltros();"><img border="0" 
+                            <asp:LinkButton ID="lnkLimparFiltros" runat="server" OnClientClick="return limparFiltros();"><img border="0"
                                 src="../Images/ExcluirGrid.gif" /> Limpar filtros</asp:LinkButton>
                         </td>
                     </tr>
@@ -458,7 +484,7 @@
                     <Columns>
                         <asp:BoundField DataField="IdPedido" HeaderText="Pedido" SortExpression="IdPedido" />
                          <asp:BoundField DataField="Ambiente" HeaderText="Ambiente"  Visible="False" />
-                        <asp:BoundField DataField="IdLiberarPedido" HeaderText="Liberação" 
+                        <asp:BoundField DataField="IdLiberarPedido" HeaderText="Liberação"
                             SortExpression="IdLiberarPedido" Visible="False" />
                         <asp:BoundField DataField="CodInterno" HeaderText="Cod." SortExpression="CodInterno" />
                         <asp:BoundField DataField="Descricao" HeaderText="Descrição" SortExpression="Descricao" />
@@ -553,6 +579,8 @@
                             Type="Int32" />
                          <asp:ControlParameter ControlID="chkAmbiente" Name="agruparAmbiente" PropertyName="Checked"
                             Type="Boolean" />
+                        <asp:ControlParameter ControlID="drpFunc" Name="idFuncLiberacao" PropertyName="SelectedValue" Type="Int32" />
+                        <asp:ControlParameter ControlID="cbLiberarcaoNfe" Name="liberacaoNf" PropertyName="SelectedValue" Type="Int32" />
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSubgrupo" runat="server" SelectMethod="GetForFilter"
@@ -587,6 +615,9 @@
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsSituacaoProd" runat="server"
                     SelectMethod="GetSituacaoProducao" TypeName="Glass.Data.Helper.DataSources">
                 </colo:VirtualObjectDataSource>
+                <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsFunc" runat="server" SelectMethod="GetFuncLiberacao"
+                    TypeName="Glass.Data.DAL.FuncionarioDAO">
+                </colo:VirtualObjectDataSource>
             </td>
         </tr>
         <tr>
@@ -595,7 +626,7 @@
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="setProduto(); return openRpt(false, false);">
                     <img alt="" border="0" src="../Images/printer.png" /> Imprimir</asp:LinkButton>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true, false); return false;"><img border="0"
                     src="../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
                 <br />
                 <asp:LinkButton ID="lnkImprimirGrupo" runat="server" OnClientClick="setProduto(); return openRpt(false, true);">

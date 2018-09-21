@@ -637,19 +637,19 @@ namespace Glass.Data.DAL
             string codInterno, string descrProd, TipoBuscaMateriaPrima buscaMateriaPrima, string dtIni, string dtFim, string dtIniPed,
             string dtFimPed, string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoPedido, string tipoVendaPedido,
             uint idFunc, uint idFuncCliente, int tipoFastDelivery, uint idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido,
-            bool semValor, bool agruparLiberacao, bool agruparAmbiente, int buscarNotaFiscal, int idLiberacao, ref List<GDAParameter> lstParam, bool selecionar)
+            bool semValor, bool agruparLiberacao, bool agruparAmbiente, int buscarNotaFiscal, int idLiberacao, int? idFuncLiberacao, int? liberacaoNf, ref List<GDAParameter> lstParam, bool selecionar)
         {
             return SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, buscaMateriaPrima,
                 dtIni, dtFim, dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, tipoPedido, tipoVendaPedido, idFunc,
                 idFuncCliente, tipoFastDelivery, idPedido, tipoDesconto, agruparCliente, agruparPedido, semValor, agruparLiberacao,
-                agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, null, selecionar);
+                agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao, liberacaoNf, ref lstParam, null, selecionar);
         }
 
         internal string SqlVendasProd(uint idCliente, string nomeCliente, string codRota, string idLoja, string idsGrupos, string idsSubgrupo,
             string codInterno, string descrProd, TipoBuscaMateriaPrima buscaMateriaPrima, string dtIni, string dtFim, string dtIniPed,
             string dtFimPed, string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoPedido, string tipoVendaPedido,
             uint idFunc, uint idFuncCliente, int tipoFastDelivery, uint idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido,
-            bool semValor, bool agruparLiberacao, bool agruparAmbiente, int buscarNotaFiscal, int idLiberacao, ref List<GDAParameter> lstParam,
+            bool semValor, bool agruparLiberacao, bool agruparAmbiente, int buscarNotaFiscal, int idLiberacao, int? idFuncLiberacao, int? liberacaoNf, ref List<GDAParameter> lstParam,
             LoginUsuario login, bool selecionar)
         {
             string criterio = String.Empty;
@@ -727,6 +727,8 @@ namespace Glass.Data.DAL
             if (String.IsNullOrEmpty(tipoVendaPedido))
                 tipoVendaPedido = (int)Pedido.TipoVendaPedido.AVista + "," + (int)Pedido.TipoVendaPedido.APrazo + "," + (int)Pedido.TipoVendaPedido.Obra;
 
+            var campoLiberacaoNf = liberacaoNf > 0 ? " Left Join pedidos_nota_fiscal pnf on (pnf.idLiberarPedido = lp.idLiberarPedido) " : "";
+
             string sql = @"
                 select " + campos + @"
                 from (
@@ -745,10 +747,11 @@ namespace Glass.Data.DAL
                         Inner Join pedido ped on (pp.idPedido=ped.idPedido)
                         Left Join pedido_espelho pe On (ped.idPedido=pe.idPedido)
                         Left Join cliente c on (ped.idCli=c.id_Cli)
-                        " + (calcularLiberados ? @"Left Join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
+                        " + ((calcularLiberados || liberacaoNf > 0) ? @"Left Join produtos_liberar_pedido plp on (pp.idProdPed=plp.idProdPed)
                         Left Join liberarpedido lp on (plp.idLiberarPedido=lp.idLiberarPedido)" : "") + @"
                         Inner Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
                         Left Join subgrupo_prod s on (p.idSubgrupoProd=s.idSubgrupoProd)
+                        " + campoLiberacaoNf + @"
                     Where 1 ";
 
             if (calcularLiberados)
@@ -1056,6 +1059,17 @@ namespace Glass.Data.DAL
                 criterio += "Liberação: " + idLiberacao + "   ";
             }
 
+            if (idFuncLiberacao > 0)
+            {
+                sql += " And lp.IdFunc=" + idFuncLiberacao;
+                criterio += "Liberado por: " + FuncionarioDAO.Instance.GetNome((uint)idFuncLiberacao) + "    ";
+            }
+            if (liberacaoNf > 0)
+            {
+                sql += " AND pnf.idLiberarPedido IS " + (liberacaoNf == 1 ? "NOT" : "") + " NULL ";
+                criterio += "Apenas produtos " + (liberacaoNf == 1 ? "com" : "sem") + " nota fiscal    ";
+            }
+
             if (lstParam.Count == 0)
                 lstParam = null;
 
@@ -1092,7 +1106,7 @@ namespace Glass.Data.DAL
             string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed,
             string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente,
             int tipoFastDelivery, string idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido, bool agruparLiberacao, bool agruparAmbiente,
-            int buscarNotaFiscal, int idLiberacao, int ordenacao)
+            int buscarNotaFiscal, int idLiberacao, int ordenacao, int? idFuncLiberacao, int? liberacaoNf)
         {
             var lstParam = new List<GDAParameter>();
             var tipoBuscaMP = incluirMateriaPrima ? TipoBuscaMateriaPrima.Ambos : TipoBuscaMateriaPrima.ApenasProduto;
@@ -1106,7 +1120,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPed,
-                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, true) + ordenarPor;
+                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao, liberacaoNf, ref lstParam, true) + ordenarPor;
 
             return objPersistence.LoadData(sql, lstParam != null ? lstParam.ToArray() : null).ToList();
         }
@@ -1115,7 +1129,7 @@ namespace Glass.Data.DAL
             string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed,
             string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente,
             int tipoFastDelivery, uint idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido, bool agruparLiberacao, bool agruparAmbiente,
-            int buscarNotaFiscal, int idLiberacao, int ordenacao, string sortExpression, int startRow, int pageSize)
+            int buscarNotaFiscal, int idLiberacao, int ordenacao, int? idFuncLiberacao, int? liberacaoNf, string sortExpression, int startRow, int pageSize)
         {
             var lstParam = new List<GDAParameter>();
             var tipoBuscaMP = incluirMateriaPrima ? TipoBuscaMateriaPrima.Ambos : TipoBuscaMateriaPrima.ApenasProduto;
@@ -1127,7 +1141,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido, tipoDesconto,
-                agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, true);
+                agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao, liberacaoNf, ref lstParam, true);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, lstParam != null ? lstParam.ToArray() : null);
         }
@@ -1136,14 +1150,14 @@ namespace Glass.Data.DAL
             string codInterno, string descrProd, bool incluirMateriaPrima, string dtIni, string dtFim, string dtIniPed, string dtFimPed,
             string dtIniEnt, string dtFimEnt, string situacao, string situacaoProd, string tipoVendaPedido, uint idFunc, uint idFuncCliente,
             int tipoFastDelivery, uint idPedido, int tipoDesconto, bool agruparCliente, bool agruparPedido, bool agruparLiberacao, bool agruparAmbiente,
-            int buscarNotaFiscal, int idLiberacao, int ordenacao)
+            int buscarNotaFiscal, int idLiberacao, int ordenacao, int? idFuncLiberacao, int? liberacaoNf)
         {
             List<GDAParameter> lstParam = new List<GDAParameter>();
             TipoBuscaMateriaPrima tipoBuscaMP = incluirMateriaPrima ? TipoBuscaMateriaPrima.Ambos : TipoBuscaMateriaPrima.ApenasProduto;
 
             string sql = SqlVendasProd(idCliente, nomeCliente, codRota, idLoja, idsGrupos, idsSubgrupo, codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, null, tipoVendaPedido, idFunc, idFuncCliente, tipoFastDelivery, idPedido,
-                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, ref lstParam, false);
+                tipoDesconto, agruparCliente, agruparPedido, false, agruparLiberacao, agruparAmbiente, buscarNotaFiscal, idLiberacao, idFuncLiberacao, liberacaoNf, ref lstParam, false);
 
             return objPersistence.ExecuteSqlQueryCount(sql, lstParam != null ? lstParam.ToArray() : null);
         }
@@ -1160,7 +1174,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(0, null, null, idLoja, idsGrupos, idSubgrupo.ToString(), codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, tipoPedido, null, 0, idFuncCliente, tipoFastDelivery, idPed,
-                0, false, agruparPedido, true, false, false, 0, 0, ref lstParam, login, true);
+                0, false, agruparPedido, true, false, false, 0, 0, null, null, ref lstParam, login, true);
 
             return objPersistence.LoadData(sql, lstParam != null ? lstParam.ToArray() : null).ToList();
         }
@@ -1175,7 +1189,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(0, null, null, idLoja, idsGrupos, idSubgrupo.ToString(), codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, tipoPedido, null, 0, idFuncCliente, tipoFastDelivery, idPedido,
-                0, false, agruparPedido, true, false, false, 0, 0, ref lstParam, true);
+                0, false, agruparPedido, true, false, false, 0, 0, null, null, ref lstParam, true);
 
             return LoadDataWithSortExpression(sql, sortExpression, startRow, pageSize, lstParam != null ? lstParam.ToArray() : null);
         }
@@ -1190,7 +1204,7 @@ namespace Glass.Data.DAL
 
             string sql = SqlVendasProd(0, null, null, idLoja, idsGrupos, idSubgrupo.ToString(), codInterno, descrProd, tipoBuscaMP, dtIni, dtFim,
                 dtIniPed, dtFimPed, dtIniEnt, dtFimEnt, situacao, situacaoProd, tipoPedido, null, 0, idFuncCliente, tipoFastDelivery, idPedido,
-                0, false, agruparPedido, true, false, false, 0, 0, ref lstParam, false);
+                0, false, agruparPedido, true, false, false, 0, 0, null, null, ref lstParam, false);
 
             return objPersistence.ExecuteSqlQueryCount(sql, lstParam != null ? lstParam.ToArray() : null);
         }
@@ -4863,7 +4877,7 @@ namespace Glass.Data.DAL
             List<GDAParameter> lstParam = new List<GDAParameter>();
 
             string sql = SqlVendasProd(0, null, null, "0", null, null, null, null, TipoBuscaMateriaPrima.ApenasProduto, dataIni, dataFim, null, null, null, null, "5",
-                null, null, "1,2,5", 0, 0, 0, 0, 0, false, false, false, false, false, 0, 0, ref lstParam, true);
+                null, null, "1,2,5", 0, 0, 0, 0, 0, false, false, false, false, false, 0, 0, null, null, ref lstParam, true);
             return sql;//objPersistence.LoadData(sql, new GDAParameter("?dtIni", dataIni), new GDAParameter("?dtFim", dataFim)).ToArray();
         }
 

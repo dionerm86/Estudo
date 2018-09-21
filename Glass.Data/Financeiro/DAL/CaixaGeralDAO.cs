@@ -864,6 +864,7 @@ namespace Glass.Data.DAL
             caixaGeral.LancManual = lancManual;
             caixaGeral.IdCreditoFornecedor = idCredFornec;
             caixaGeral.Usucad = UserInfo.GetUserInfo.CodUser;
+            caixaGeral.MudarSaldo = mudarSaldo;
 
             if (formaSaida > 0)
                 caixaGeral.FormaSaida = formaSaida;

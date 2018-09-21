@@ -35,9 +35,6 @@ namespace Glass.API.Backend.Helper.Sinais
                 case "cliente":
                     return "NomeCliente";
 
-                case "total":
-                    return "TotalSinal";
-
                 case "datacadastro":
                     return "DataCad";
 

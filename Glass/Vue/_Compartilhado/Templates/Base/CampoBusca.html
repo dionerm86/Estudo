@@ -6,14 +6,14 @@
                 {{ item[campoNome] }}
             </a>
         </div>
-        <div v-if='itensFiltrados.length === 0' style='padding: 2px'>
-            <span v-if='pesquisando || executandoBuscaTimeout'>
+        <div v-if='itensFiltrados.length === 0' style='padding: 2px 5px'>
+            <span style="white-space: normal" v-if='pesquisando || executandoBuscaTimeout'>
                 Buscando...
             </span>
-            <span v-else-if='nomeAtual'>
+            <span style="white-space: normal" v-else-if='nomeAtual'>
                 Não foram encontrados itens para a busca.
             </span>
-            <span v-else>
+            <span style="white-space: normal" v-else>
                 Para realizar a busca, digite no campo acima e os resultados serão exibidos aqui para seleção.
             </span>
         </div>

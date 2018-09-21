@@ -82,23 +82,19 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('id', this.filtro.id),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idFunc', this.filtro.idFuncionario),
-        this.incluirFiltro('tipoMov', this.filtro.tipo),
-        this.incluirFiltro('DtIni', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('DtFim', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('valorIni', this.filtro.valor),
-        this.incluirFiltro('valorFim', this.filtro.valor),
-        this.incluirFiltro('apenasDinheiro', this.filtro.apenasDinheiro),
-        this.incluirFiltro('apenasCheque', this.filtro.apenasCheque),
-        this.incluirFiltro('semEstorno', this.filtro.apenasEntradaExcetoEstorno)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'id', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idFuncionario);
+      this.incluirFiltroComLista(filtros, 'tipoMov', this.filtro.tipo);
+      this.incluirFiltroComLista(filtros, 'DtIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'DtFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'valorIni', this.filtro.valor);
+      this.incluirFiltroComLista(filtros, 'valorFim', this.filtro.valor);
+      this.incluirFiltroComLista(filtros, 'apenasDinheiro', this.filtro.apenasDinheiro);
+      this.incluirFiltroComLista(filtros, 'apenasCheque', this.filtro.apenasCheque);
+      this.incluirFiltroComLista(filtros, 'semEstorno', this.filtro.apenasEntradaExcetoEstorno);
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

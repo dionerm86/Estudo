@@ -297,43 +297,39 @@ const app = new Vue({
       var maoObraEspecial = usarValoresQueryString ? GetQueryString('maoObraEspecial') : '';
       var producao = usarValoresQueryString ? GetQueryString('producao') : '';
 
-      var filtros = [
-        this.incluirFiltro('idPedido', this.filtro.id),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idCli', this.filtro.idCliente),
-        this.incluirFiltro('nomeCli', this.filtro.nomeCliente),
-        this.incluirFiltro('codCliente', this.filtro.codigoPedidoCliente),
-        this.incluirFiltro('idCidade', this.filtro.idCidade),
-        this.incluirFiltro('endereco', this.filtro.endereco),
-        this.incluirFiltro('bairro', this.filtro.bairro),
-        this.incluirFiltro('complemento', this.filtro.complemento),
-        this.incluirFiltro('byVend', byVend),
-        this.incluirFiltro('altura', this.filtro.altura),
-        this.incluirFiltro('largura', this.filtro.largura),
-        this.incluirFiltro('situacao', this.filtro.situacao),
-        this.incluirFiltro('situacaoProd', this.filtro.situacaoProducao),
-        this.incluirFiltro('idOrcamento', this.filtro.idOrcamento),
-        this.incluirFiltro('maoObra', maoObra),
-        this.incluirFiltro('maoObraEspecial', maoObraEspecial),
-        this.incluirFiltro('producao', producao),
-        this.incluirFiltro('diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado),
-        this.incluirFiltro('valorDe', this.filtro.valorPedidoMinimo),
-        this.incluirFiltro('valorAte', this.filtro.valorPedidoMaximo),
-        this.incluirFiltro('dataCadIni', this.filtro.periodoCadastroInicio),
-        this.incluirFiltro('dataCadFim', this.filtro.periodoCadastroFim),
-        this.incluirFiltro('dataFinIni', this.filtro.periodoFinalizacaoInicio),
-        this.incluirFiltro('dataFinFim', this.filtro.periodoFinalizacaoFim),
-        this.incluirFiltro('funcFinalizacao', this.filtro.codigoUsuarioFinalizacao),
-        this.incluirFiltro('tipo', this.filtro.tipo),
-        this.incluirFiltro('fastDelivery', this.filtro.fastDelivery),
-        this.incluirFiltro('tipoVenda', this.filtro.tipoVenda),
-        this.incluirFiltro('origemPedido', this.filtro.origem),
-        this.incluirFiltro('obs', this.filtro.observacao)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCli', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'codCliente', this.filtro.codigoPedidoCliente);
+      this.incluirFiltroComLista(filtros, 'idCidade', this.filtro.idCidade);
+      this.incluirFiltroComLista(filtros, 'endereco', this.filtro.endereco);
+      this.incluirFiltroComLista(filtros, 'bairro', this.filtro.bairro);
+      this.incluirFiltroComLista(filtros, 'complemento', this.filtro.complemento);
+      this.incluirFiltroComLista(filtros, 'byVend', byVend);
+      this.incluirFiltroComLista(filtros, 'altura', this.filtro.altura);
+      this.incluirFiltroComLista(filtros, 'largura', this.filtro.largura);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'situacaoProd', this.filtro.situacaoProducao);
+      this.incluirFiltroComLista(filtros, 'idOrcamento', this.filtro.idOrcamento);
+      this.incluirFiltroComLista(filtros, 'maoObra', maoObra);
+      this.incluirFiltroComLista(filtros, 'maoObraEspecial', maoObraEspecial);
+      this.incluirFiltroComLista(filtros, 'producao', producao);
+      this.incluirFiltroComLista(filtros, 'diasProntoLib', this.filtro.diferencaDiasEntreProntoELiberado);
+      this.incluirFiltroComLista(filtros, 'valorDe', this.filtro.valorPedidoMinimo);
+      this.incluirFiltroComLista(filtros, 'valorAte', this.filtro.valorPedidoMaximo);
+      this.incluirFiltroComLista(filtros, 'dataCadIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataCadFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'dataFinIni', this.filtro.periodoFinalizacaoInicio);
+      this.incluirFiltroComLista(filtros, 'dataFinFim', this.filtro.periodoFinalizacaoFim);
+      this.incluirFiltroComLista(filtros, 'funcFinalizacao', this.filtro.codigoUsuarioFinalizacao);
+      this.incluirFiltroComLista(filtros, 'tipo', this.filtro.tipo);
+      this.incluirFiltroComLista(filtros, 'fastDelivery', this.filtro.fastDelivery);
+      this.incluirFiltroComLista(filtros, 'tipoVenda', this.filtro.tipoVenda);
+      this.incluirFiltroComLista(filtros, 'origemPedido', this.filtro.origem);
+      this.incluirFiltroComLista(filtros, 'obs', this.filtro.observacao);
 
       var filtroReal = filtros.length
         ? '?' + filtros.join('&')

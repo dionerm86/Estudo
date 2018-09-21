@@ -307,43 +307,39 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = [
-        this.incluirFiltro('idPedido', this.filtro.idPedido),
-        this.incluirFiltro('idCliente', this.filtro.idCliente),
-        this.incluirFiltro('nomeCliente', this.filtro.nomeCliente),
-        this.incluirFiltro('idLoja', this.filtro.idLoja),
-        this.incluirFiltro('idFunc', this.filtro.idVendedor),
-        this.incluirFiltro('idFuncionarioConferente', this.filtro.idConferente),
-        this.incluirFiltro('situacao', this.filtro.situacao),
-        this.incluirFiltro('situacaoPedOri', this.filtro.situacaoPedidoComercial),
-        this.incluirFiltro('idsProcesso', this.filtro.idsProcesso),
-        this.incluirFiltro('dataIniEnt', this.filtro.periodoEntregaInicio),
-        this.incluirFiltro('dataFimEnt', this.filtro.periodoEntregaFim),
-        this.incluirFiltro('dataIniFab', this.filtro.periodoFabricaInicio),
-        this.incluirFiltro('dataFimFab', this.filtro.periodoFabricaFim),
-        this.incluirFiltro('dataIniFin', this.filtro.periodoFinalizacaoConferenciaInicio),
-        this.incluirFiltro('dataFimFin', this.filtro.periodoFinalizacaoConferenciaFim),
-        this.incluirFiltro('dataIniConf', this.filtro.periodoCadastroConferenciaInicio),
-        this.incluirFiltro('dataFimConf', this.filtro.periodoCadastroConferenciaFim),
-        this.incluirFiltro('dataIniEmis', this.filtro.periodoCadastroPedidoInicio),
-        this.incluirFiltro('dataFimEmis', this.filtro.periodoCadastroPedidoFim),
-        this.incluirFiltro('pedidosSemAnexos', this.filtro.pedidosSemAnexo),
-        this.incluirFiltro('pedidosAComprar', this.filtro.pedidosAComprar),
-        this.incluirFiltro('situacaoCnc', this.filtro.situacaoCnc),
-        this.incluirFiltro('dataIniSituacaoCnc', this.filtro.periodoProjetoCncInicio),
-        this.incluirFiltro('dataFimSituacaoCnc', this.filtro.periodoProjetoCncFim),
-        this.incluirFiltro('tipoPedido', this.filtro.tiposPedido),
-        this.incluirFiltro('idsRotas', this.filtro.idsRota),
-        this.incluirFiltro('origemPedido', this.filtro.origemPedido),
-        this.incluirFiltro('pedidosConferidos', this.filtro.pedidoImportacaoConferido),
-        this.incluirFiltro('tipoVenda', this.filtro.tipoVenda)
-      ];
+      var filtros = [];
 
-      filtros = filtros.filter(function (item) {
-        return !!item;
-      });
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idVendedor);
+      this.incluirFiltroComLista(filtros, 'idFuncionarioConferente', this.filtro.idConferente);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'situacaoPedOri', this.filtro.situacaoPedidoComercial);
+      this.incluirFiltroComLista(filtros, 'idsProcesso', this.filtro.idsProcesso);
+      this.incluirFiltroComLista(filtros, 'dataIniEnt', this.filtro.periodoEntregaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimEnt', this.filtro.periodoEntregaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniFab', this.filtro.periodoFabricaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimFab', this.filtro.periodoFabricaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniFin', this.filtro.periodoFinalizacaoConferenciaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimFin', this.filtro.periodoFinalizacaoConferenciaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniConf', this.filtro.periodoCadastroConferenciaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimConf', this.filtro.periodoCadastroConferenciaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniEmis', this.filtro.periodoCadastroPedidoInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimEmis', this.filtro.periodoCadastroPedidoFim);
+      this.incluirFiltroComLista(filtros, 'pedidosSemAnexos', this.filtro.pedidosSemAnexo);
+      this.incluirFiltroComLista(filtros, 'pedidosAComprar', this.filtro.pedidosAComprar);
+      this.incluirFiltroComLista(filtros, 'situacaoCnc', this.filtro.situacaoCnc);
+      this.incluirFiltroComLista(filtros, 'dataIniSituacaoCnc', this.filtro.periodoProjetoCncInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimSituacaoCnc', this.filtro.periodoProjetoCncFim);
+      this.incluirFiltroComLista(filtros, 'tipoPedido', this.filtro.tiposPedido);
+      this.incluirFiltroComLista(filtros, 'idsRotas', this.filtro.idsRota);
+      this.incluirFiltroComLista(filtros, 'origemPedido', this.filtro.origemPedido);
+      this.incluirFiltroComLista(filtros, 'pedidosConferidos', this.filtro.pedidoImportacaoConferido);
+      this.incluirFiltroComLista(filtros, 'tipoVenda', this.filtro.tipoVenda);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

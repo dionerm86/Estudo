@@ -22,8 +22,8 @@ namespace Glass.Data.RelDAL
 
             var qtde = "if(tipoCalc in (" + tipoCalcM2 + @"), sum(totalM2), sum(totalQtdeLong))";
 
-            var campos = @"p.idProd, p.descricao as DescrProduto, p.idFunc, cast(Sum(p.TotalVend) as decimal(12,2)) as TotalVenda, 
-                (Right(Concat('0', Cast(Month(dataFiltro) as char), '/', Cast(Year(dataFiltro) as char)), 7)) as DataVenda, 
+            var campos = @"p.idProd, p.descricao as DescrProduto, p.idFunc, cast(Sum(p.TotalVend) as decimal(12,2)) as TotalVenda,
+                (Right(Concat('0', Cast(Month(dataFiltro) as char), '/', Cast(Year(dataFiltro) as char)), 7)) as DataVenda,
                 '$$$' as Criterio, (" + qtde + ") as totalQtde, cast(" + tipo + " as signed) as tipo";
 
             var criterio = string.Empty;
@@ -31,14 +31,14 @@ namespace Glass.Data.RelDAL
 
             // Se for para buscar apenas matéria-prima busca apenas produtos que são matéria-prima (ignora codInternoMP e descrMP)
             // Senão busca por produtos que tenham como matéria-prima o produto indicado
-            var tipoBuscaMP = apenasMP ? ProdutoDAO.TipoBuscaMateriaPrima.ApenasProdutoMateriaPrima : 
+            var tipoBuscaMP = apenasMP ? ProdutoDAO.TipoBuscaMateriaPrima.ApenasProdutoMateriaPrima :
                 ProdutoDAO.TipoBuscaMateriaPrima.ApenasMateriaPrima;
 
             var sql = @"
-                Select " + campos + @" 
-                From (" + ProdutoDAO.Instance.SqlVendasProd((uint)idCliente, nomeCliente, null, idLoja.ToString(), idGrupoProd.ToString(), idSubgrupoProd.ToString(), codInternoMP, 
+                Select " + campos + @"
+                From (" + ProdutoDAO.Instance.SqlVendasProd((uint)idCliente, nomeCliente, null, idLoja.ToString(), idGrupoProd.ToString(), idSubgrupoProd.ToString(), codInternoMP,
                     descrMP, tipoBuscaMP, dataIni, dataFim, null, null, null, null, ((int)Pedido.SituacaoPedido.Confirmado).ToString(), null, null, null,
-                    idVendedor, 0, 0, 0, 0, false, false, false, false, false, 0, 0, ref lstParam, true) + @") as p
+                    idVendedor, 0, 0, 0, 0, false, false, false, false, false, 0, 0, null, null, ref lstParam, true) + @") as p
                 Where 1";
 
             if (idLoja > 0)
