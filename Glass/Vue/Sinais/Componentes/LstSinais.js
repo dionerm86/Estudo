@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -84,22 +84,17 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [];
 
-      incluirFiltro('idSinal', this.filtro.id);
-      incluirFiltro('idPedido', this.filtro.idPedido);
-      incluirFiltro('idCli', this.filtro.idCliente);
-      incluirFiltro('dataIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('pagtoAntecipado', this.pagamentoAntecipado);
-      incluirFiltro('ordenacao', this.filtro.ordenacaoFiltro);
+      this.incluirFiltroComLista(filtros, 'idSinal', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'dataIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'pagtoAntecipado', this.pagamentoAntecipado);
+      this.incluirFiltroComLista(filtros, 'ordenacao', this.filtro.ordenacaoFiltro);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },
