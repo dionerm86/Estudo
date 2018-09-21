@@ -261,6 +261,10 @@
     <Compile Include="Controllers\Imagens\V1\ImagensController.cs" />
     <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
     <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
+    <Compile Include="Controllers\Acertos\V1\AcertosController.cs" />
+    <Compile Include="Controllers\Acertos\V1\GetAcertosController.cs" />
+    <Compile Include="Controllers\Imagens\V1\GetImagensController.cs" />
+    <Compile Include="Controllers\Imagens\V1\ImagensController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\LiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\GetLiberacoesController.cs" />
     <Compile Include="Controllers\Liberacoes\V1\PostClientesController.cs" />
@@ -418,9 +422,9 @@
     <Compile Include="Models\Beneficiamentos\Total\DadosCalculoDto.cs" />
     <Compile Include="Models\Beneficiamentos\Total\TotalDto.cs" />
     <Compile Include="Models\Caixas\Geral\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\ParcelasDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\CreditoDto.cs" />
-    <Compile Include="Models\Caixas\Geral\Lista\ChequesDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisParcelasDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisCreditoDto.cs" />
+    <Compile Include="Models\Caixas\Geral\Lista\TotaisChequesDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotaisFormaPagamentoDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotalizadoresDto.cs" />
     <Compile Include="Models\Caixas\Geral\Lista\TotaisAcumuladosDto.cs" />
@@ -463,6 +467,11 @@
     <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Acertos\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Acertos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Acertos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Imagens\Exibicao\DadosImagemDto.cs" />
+    <Compile Include="Models\Imagens\Exibicao\TipoItemEnum.cs" />
     <Compile Include="Models\Liberacoes\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\FiltroDto.cs" />
     <Compile Include="Models\Liberacoes\Lista\ListaDto.cs" />

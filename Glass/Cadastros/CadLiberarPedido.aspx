@@ -1159,8 +1159,8 @@
                                 <tr>
                                     <td>
                                         <uc1:ctrlFormaPagto ID="ctrlFormaPagto1" runat="server" CalcularTroco="False" ParentID="tbAVista"
-                                            TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques"
-                                            OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
+                                            TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques" OnInit="ctrlFormaPagto1_Init"
+                                            OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False" 
                                             ExibirJuros="False" CallbackGerarCredito="callbackGerarCredito" ExibirRecebParcial="True"
                                             PermitirValorPagarNegativo="true" />
 
@@ -1190,7 +1190,7 @@
                                             <br />
                                             <uc1:ctrlFormaPagto ID="ctrlFormaPagto2" runat="server" CalcularTroco="False" ParentID="receberEntrada"
                                                 ExibirValorAPagar="false" TipoModel="Pedido" FuncaoQueryStringCheques="queryStringCheques"
-                                                OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False"
+                                                OnLoad="ctrlFormasPagto_Load" ExibirDataRecebimento="False" OnInit="ctrlFormaPagto1_Init"
                                                 ExibirJuros="False" ExibirGerarCredito="false" CallbackGerarCredito="callbackGerarCredito"
                                                 ExibirRecebParcial="False" PermitirValorPagarNegativo="true" />
 

@@ -228,9 +228,13 @@ namespace Glass.Otimizacao.Negocios.Entidades
                 foreach (var produtoImpressao in produtosImpressao)
                 {
                     if (produtoImpressao.IdProdImpressao > 0)
+                    {
                         session.Update(produtoImpressao);
+                    }
                     else
+                    {
                         session.Insert(produtoImpressao);
+                    }
                 }
 
                 foreach (var retalho in Retalhos)

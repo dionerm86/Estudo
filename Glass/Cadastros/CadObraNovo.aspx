@@ -474,7 +474,7 @@
                                         </asp:DropDownList>
                                     </div>
                                     <div id="a_vista">
-                                        <uc2:ctrlFormaPagto ID="ctrlFormaPagto1" runat="server"
+                                        <uc2:ctrlFormaPagto ID="ctrlFormaPagto1" runat="server"  OnInit="ctrlFormaPagto1_Init"
                                             CobrarJurosCartaoClientes="False" ExibirComissaoComissionado="false" ExibirCredito="True"
                                             ExibirDataRecebimento="false" ExibirGerarCredito="true" ExibirJuros="false"
                                             ExibirRecebParcial="false" ExibirUsarCredito="True" ExibirValorAPagar="True"

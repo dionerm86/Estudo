@@ -135,6 +135,14 @@ namespace Glass.Configuracoes
             {
                 get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ExibirSaldoDevedorRelsRecebimento); }
             }
+
+            /// <summary>
+            /// Define se nos pagamentos avista deve considerar apenas cartões do tipo débito
+            /// </summary>
+            public static bool ConsiderarApenasDebitoComoPagtoAvista
+            {
+                get { return Config.GetConfigItem<bool>(Config.ConfigEnum.ConsiderarApenasDebitoComoPagtoAvista); }
+            }
         }
     }
 }

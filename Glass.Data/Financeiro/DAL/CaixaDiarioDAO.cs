@@ -1926,6 +1926,59 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Validações
+
+        /// <summary>
+        /// Verifica se o saldo do caixa pode ser movimentado.
+        /// </summary>
+        public void ValidarSaldoMovimentacao(GDASession session, CaixaDiario caixaDiario)
+        {
+            // Não permite movimentar o caixa de forma que o mesmo fique negativo (esta validação deve ficar aqui, após a inserção de saldo acima).
+            if (caixaDiario.Saldo < 0)
+            {
+                throw new Exception("Não há saldo suficiente no caixa para esta movimentação.");
+            }
+
+            var formaPagto = UtilsPlanoConta.GetFormaPagtoByIdConta(caixaDiario.IdConta);
+
+            if (caixaDiario.TipoMov == 2)
+            {
+                // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
+                if (caixaDiario.FormaSaida == 1 || formaPagto?.IdFormaPagto == (uint)Pagto.FormaPagto.Dinheiro)
+                {
+                    var saldoDinheiro = GetSaldoByFormaPagto(session, Pagto.FormaPagto.Dinheiro, 0, caixaDiario.IdLoja, 0, DateTime.Now, 1);
+
+                    if (caixaDiario.Valor > saldoDinheiro)
+                    {
+                        throw new Exception($"Não há saldo de dinheiro suficiente para realizar esta retirada. Saldo em dinheiro: { saldoDinheiro }.");
+                    }
+                }
+
+                // Se for saída de cheque, verifica se há saldo em cheque suficiente.
+                if (caixaDiario.FormaSaida == 2 || formaPagto?.IdFormaPagto == (uint)Pagto.FormaPagto.ChequeProprio)
+                {
+                    var saldoCheque = GetSaldoByFormaPagto(session, Pagto.FormaPagto.ChequeProprio, 0, caixaDiario.IdLoja, 0, DateTime.Now, 1);
+
+                    if (caixaDiario.Valor > saldoCheque)
+                    {
+                        throw new Exception($"Não há saldo de cheque suficiente para realizar esta retirada. Saldo em cheque: { saldoCheque }.");
+                    }
+                }
+
+                if (formaPagto?.IdFormaPagto == (int)Pagto.FormaPagto.Deposito)
+                {
+                    var saldoDeposito = GetSaldoByFormaPagto(session, Pagto.FormaPagto.Deposito, 0, caixaDiario.IdLoja, 0, DateTime.Now, 1);
+
+                    if (caixaDiario.Valor > saldoDeposito)
+                    {
+                        throw new Exception($"Não há saldo de depósito suficiente para realizar esta retirada. Saldo em depósito: { saldoDeposito.ToString("C") }");
+                    }
+                }
+            }
+        }
+
+        #endregion
+
         #region Métodos Sobrescritos
 
         /// <summary>
@@ -1970,29 +2023,7 @@ namespace Glass.Data.DAL
                 objInsert.Saldo += saldoRemanescente;
             }
 
-            // Não permite movimentar o caixa de forma que o mesmo fique negativo (esta validação deve ficar aqui, após a inserção de saldo acima).
-            if (objInsert.Saldo < 0)
-            {
-                throw new Exception("Não há saldo suficiente no caixa para esta movimentação.");
-            }
-
-            var formaPato = UtilsPlanoConta.GetFormaPagtoByIdConta(objInsert.IdConta);
-
-            // Se for saída de dinheiro, verifica se há saldo em dinheiro suficiente.
-            if (objInsert.TipoMov == 2 && 
-               (objInsert.FormaSaida == 1 || formaPato?.IdFormaPagto == (uint)Pagto.FormaPagto.Dinheiro) && 
-               objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.Dinheiro, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
-            {
-                throw new Exception("Não há saldo de dinheiro suficiente para realizar esta retirada.");
-            }
-
-            // Se for saída de cheque, verifica se há saldo em cheque suficiente.
-            if (objInsert.TipoMov == 2 && 
-               (objInsert.FormaSaida == 2 || formaPato?.IdFormaPagto == (uint)Pagto.FormaPagto.ChequeProprio) && 
-               objInsert.Valor > GetSaldoByFormaPagto(sessao, Pagto.FormaPagto.ChequeProprio, 0, objInsert.IdLoja, 0, DateTime.Now, 1))
-            {
-                throw new Exception("Não há saldo de cheque suficiente para realizar esta retirada.");
-            }
+            ValidarSaldoMovimentacao(sessao, objInsert);
 
             objInsert.Usucad = UserInfo.GetUserInfo.CodUser;
             objInsert.DataCad = DateTime.Now;
@@ -2059,6 +2090,8 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Cartão não identificado
+
         /// <summary>
         /// Associa um cartão não identificado ao caixa geral
         /// </summary>
@@ -2081,5 +2114,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, sql).ToList();
         }
+
+        #endregion
     }
 }

@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -217,27 +217,26 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('idLoja', this.filtro.idLoja),
+        this.incluirFiltro('codProd', this.filtro.codigoInternoProduto),
+        this.incluirFiltro('descr', this.filtro.descricaoProduto),
+        this.incluirFiltro('idGrupo', this.filtro.idGrupoProduto),
+        this.incluirFiltro('idsSubgrupoProduto', this.filtro.idsSubgrupoProduto),
+        this.incluirFiltro('apenasEstoqueFiscal', this.filtro.apenasComEstoque),
+        this.incluirFiltro('apenasPosseTerceiros', this.filtro.apenasPosseTerceiros),
+        this.incluirFiltro('apenasProdutosProjeto', this.filtro.apenasProdutosProjeto),
+        this.incluirFiltro('idCorVidro', this.filtro.idCorVidro),
+        this.incluirFiltro('idCorFerragem', this.filtro.idCorFerragem),
+        this.incluirFiltro('idCorAluminio', this.filtro.idCorAluminio),
+        this.incluirFiltro('situacao', this.filtro.situacao),
+        this.incluirFiltro('aguardSaidaEstoque', this.filtro.aguardandoSaidaEstoque),
+        this.incluirFiltro('ordenacao', this.filtro.ordenacaoFiltro)
+      ];
 
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('codProd', this.filtro.codigoInternoProduto);
-      incluirFiltro('descr', this.filtro.descricaoProduto);
-      incluirFiltro('idGrupo', this.filtro.idGrupoProduto);
-      incluirFiltro('idsSubgrupoProduto', this.filtro.idsSubgrupoProduto);
-      incluirFiltro('apenasEstoqueFiscal', this.filtro.apenasComEstoque);
-      incluirFiltro('apenasPosseTerceiros', this.filtro.apenasPosseTerceiros);
-      incluirFiltro('apenasProdutosProjeto', this.filtro.apenasProdutosProjeto);
-      incluirFiltro('idCorVidro', this.filtro.idCorVidro);
-      incluirFiltro('idCorFerragem', this.filtro.idCorFerragem);
-      incluirFiltro('idCorAluminio', this.filtro.idCorAluminio);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('aguardSaidaEstoque', this.filtro.aguardandoSaidaEstoque);
-      incluirFiltro('ordenacao', this.filtro.ordenacaoFiltro);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

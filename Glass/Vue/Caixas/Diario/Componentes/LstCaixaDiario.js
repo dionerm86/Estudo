@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -157,16 +157,15 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [
+        this.incluirFiltro('idLoja', this.filtro.idLoja),
+        this.incluirFiltro('idFunc', this.filtro.idFuncionario),
+        this.incluirFiltro('data', this.filtro.data)
+      ];
 
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('idFunc', this.filtro.idFuncionario);
-      incluirFiltro('data', this.filtro.data ? this.filtro.data.toLocaleDateString('pt-BR') : null);
+      filtros = filtros.filter(function (item) {
+        return !!item;
+      });
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

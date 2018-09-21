@@ -1722,6 +1722,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Comparar.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Data.js" />
     <Content Include="Vue\_Compartilhado\Mixins\ExecutarTimeout.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\FiltroQueryString.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Html.js" />
     <Content Include="Vue\_Compartilhado\Mixins\JsonQuerystring.js" />
     <Content Include="Vue\_Compartilhado\Mixins\SistemaOcupado.js" />

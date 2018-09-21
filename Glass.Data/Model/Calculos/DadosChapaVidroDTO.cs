@@ -62,7 +62,13 @@ namespace Glass.Data.Model.Calculos
             {
                 return chapaVidro.Value.PercAcrescimoTotM21 / 100;
             }
-            else if (chapaVidro.Value.AlturaMaxSemAdicional > 0 && produtoCalculo.Altura >= chapaVidro.Value.AlturaMaxSemAdicional * produtoCalculo.Qtde)
+
+            return 0;
+        }
+
+        public float PercentualAcrescimoAltura()
+        {
+            if (chapaVidro.Value.AlturaMaxSemAdicional > 0 && produtoCalculo.Altura >= (chapaVidro.Value.AlturaMaxSemAdicional * produtoCalculo.Qtde))
             {
                 return chapaVidro.Value.ValorAdicional / 100;
             }

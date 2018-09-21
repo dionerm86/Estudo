@@ -1,4 +1,4 @@
-<%@ Page Title="Cheques" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+﻿<%@ Page Title="Cheques" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstCheque.aspx.cs" Inherits="Glass.UI.Web.Listas.LstCheque" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">

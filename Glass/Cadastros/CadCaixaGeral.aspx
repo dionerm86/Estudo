@@ -7,6 +7,56 @@
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Caixas/Geral/Templates/LstCaixaGeral.Filtro.html")
     %>
+    <style>
+        section.totalizadores {
+          display: inline-block;
+          text-align: center;
+        }
+
+          section.totalizadores div {
+            padding-top: 14px;
+          }
+
+            section.totalizadores div:first-child {
+              padding-top: 0;
+            }
+
+          section.totalizadores section.saldo {
+            display: inline-grid;
+            grid-template-columns: repeat(10, max-content);
+            grid-gap: 4px 20px;
+          }
+
+          section.totalizadores section.credito {
+            display: inline-grid;
+            grid-template-columns: repeat(4, max-content);
+            grid-gap: 4px 20px;
+          }
+
+          section.totalizadores section.parcelas {
+            display: inline-grid;
+            grid-template-columns: repeat(6, max-content);
+            grid-gap: 4px 20px;
+          }
+
+          section.totalizadores section.cumulativo {
+            display: inline-grid;
+            grid-template-columns: repeat(6, max-content);
+            grid-gap: 4px 20px;
+          }
+
+            section.totalizadores section.saldo label, section.parcelas label, section.totalizadores section.credito label, section.totalizadores section.cumulativo label {
+              display: block;
+              text-align: left;
+              font-weight: bold;
+              position: initial;
+            }
+
+            section.totalizadores section.saldo span, section.totalizadores section.credito span, section.totalizadores section.parcelas span, section.totalizadores section.cumulativo span {
+              display: block;
+              text-align: right;
+            }
+    </style>
     <div id="app">
         <caixa-geral-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></caixa-geral-filtros>
         <section>
@@ -71,125 +121,126 @@
                 </template>
             </lista-paginada>
         </section>
-        <section v-if="totalizadores && Object.keys(totalizadores).length !== 0">
+        <section class="totalizadores" v-if="totalizadores && Object.keys(totalizadores).length !== 0">
             <div>
-                <span>
+                <section class="saldo">
                     <label>Entrada dinheiro</label>
-                    {{ totalizadores.entrada.dinheiro | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.entrada.dinheiro | moeda }}
+                    </span>
                     <label>Entrada cheque</label>
-                    {{ totalizadores.entrada.cheque | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.entrada.cheque | moeda }}
+                    </span>
                     <label>Entrada cartão</label>
-                    {{ totalizadores.entrada.cartao | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.entrada.cartao | moeda }}
+                    </span>
                     <label>Entrada construcard</label>
-                    {{ totalizadores.entrada.construcard | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.entrada.construcard | moeda }}
+                    </span>
                     <label>Entrada permuta</label>
-                    {{ totalizadores.entrada.permuta | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
+                    <span>
+                        {{ totalizadores.entrada.permuta | moeda }}
+                    </span>
                     <label style="color: red">Estorno/saída dinheiro</label>
-                    {{ totalizadores.saida.dinheiro | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saida.dinheiro | moeda }}
+                    </span>
                     <label style="color: red">Estorno/saída cheque</label>
-                    {{ totalizadores.saida.cheque | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saida.cheque | moeda }}
+                    </span>
                     <label style="color: red">Estorno/saída cartão</label>
-                    {{ totalizadores.saida.cartao | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saida.cartao | moeda }}
+                    </span>
                     <label style="color: red">Estorno/saída construcard</label>
-                    {{ totalizadores.saida.construcard | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saida.construcard | moeda }}
+                    </span>
                     <label style="color: red">Estorno/saída permuta</label>
-                    {{ totalizadores.saida.permuta | moeda }}
-                </span>
-            </div>
-            <div>
-                <span>
+                    <span>
+                        {{ totalizadores.saida.permuta | moeda }}
+                    </span>
                     <label>Saldo dinheiro</label>
-                    {{ totalizadores.saldo.dinheiro | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saldo.dinheiro | moeda }}
+                    </span>
                     <label>Saldo cheque</label>
-                    {{ totalizadores.saldo.cheque | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saldo.cheque | moeda }}
+                    </span>
                     <label>Saldo cartão</label>
-                    {{ totalizadores.saldo.cartao | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saldo.cartao | moeda }}
+                    </span>
                     <label>Saldo construcard</label>
-                    {{ totalizadores.saldo.construcard | moeda }}
-                </span>
-                <span>
+                    <span>
+                        {{ totalizadores.saldo.construcard | moeda }}
+                    </span>
                     <label>Saldo permuta</label>
-                    {{ totalizadores.saldo.permuta | moeda }}
-                </span>
+                    <span>
+                        {{ totalizadores.saldo.permuta | moeda }}
+                    </span>
+                </section>
             </div>
             <div>
-                <span>
+                <section class="credito">
                     <label>Crédito utilizado</label>
-                    {{ totalizadores.credito.recebido | moeda }}                    
-                </span>
-                <span>
-                    <label>Notas promissórias geradas</label>
-                    {{ totalizadores.parcelas.gerada | moeda }}                    
-                </span>
-
-                <span>
+                    <span>
+                        {{ totalizadores.totaisCredito.recebido | moeda }}                    
+                    </span>
                     <label>Crédito gerado</label>
-                    {{ totalizadores.credito.gerado | moeda }}                    
-                </span>
+                    <span>
+                        {{ totalizadores.totaisCredito.gerado | moeda }}                    
+                    </span>
+                </section>
             </div>
             <div>
-                <template v-if="configuracoes && configuracoes.exibirInformacoesContasRecebidas">
-                    <span>
+                <section class="parcelas" v-if="configuracoes && configuracoes.exibirInformacoesContasRecebidas">
+                    <template>
+                        <label>Notas promissórias geradas</label>
+                        <span>
+                            {{ totalizadores.totaisParcelas.gerada | moeda }}                    
+                        </span>
                         <label title="Este campo considera apenas o filtro de período">Contas recebidas {{ configuracoes.descricaoContaContabil }}</label>
-                        {{ totalizadores.parcelas.recebidaContabil | moeda }}
-                    </span>
-                    <span>
+                        <span>
+                            {{ totalizadores.totaisParcelas.recebidaContabil | moeda }}
+                        </span>
                         <label title="Este campo considera apenas o filtro de período">Contas recebidas {{ configuracoes.descricaoContaNaoContabil }}</label>
-                        {{ totalizadores.parcelas.recebidaNaoContabil | moeda }}
-                    </span>
-                </template>
+                        <span>
+                            {{ totalizadores.totaisParcelas.recebidaNaoContabil | moeda }}
+                        </span>
+                    </template>
+                </section>
             </div>
             <div>
-                <template v-if="configuracoes && configuracoes.exibirTotalCumulativo">
-                    <span>
+                <section class="cumulativo">
+                    <template v-if="configuracoes && configuracoes.exibirTotalCumulativo">
                         <label>Saldo cumulativo dinheiro</label>
-                        {{ totalizadores.totaisAcumulados.dinheiro | moeda }}
-                    </span>
-                    <span>
+                        <span>
+                            {{ totalizadores.totaisAcumulados.dinheiro | moeda }}
+                        </span>
                         <label>Saldo cumulativo cheque em aberto</label>
-                        {{ totalizadores.totaisAcumulados.cheque | moeda }}                    
-                    </span>
-                    <span>
+                        <span>
+                            {{ totalizadores.totaisAcumulados.cheque | moeda }}                    
+                        </span>
                         <label>Saldo cumulativo cheque reapres.</label>
-                        {{ totalizadores.cheques.reapresentado | moeda }}                    
-                    </span>
-                </template>
-                <template v-if="configuracoes && configuracoes.exibirTotalCumulativo">
-                    <span>
+                        <span>
+                            {{ totalizadores.totaisCheques.reapresentado | moeda }}                    
+                        </span>
                         <label>Total cheque terc. utilizáveis</label>
-                        {{ totalizadores.cheques.terceiro | moeda }}
-                    </span>
-                    <span>
+                        <span>
+                            {{ totalizadores.totaisCheques.terceiro | moeda }}
+                        </span>
                         <label>Saldo cumulativo cheque devolv.</label>
-                        {{ totalizadores.cheques.devolvido | moeda }}
-                    </span>
-                </template>
+                        <span>
+                            {{ totalizadores.totaisCheques.devolvido | moeda }}
+                        </span>
+                    </template>
+                </section>
             </div>
         </section>
         <section class="links">

@@ -3,8 +3,6 @@
     EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/wz_tooltip.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
             "~/Vue/Pedidos/Templates/CadPedido.Ambientes.html",
@@ -571,11 +569,17 @@
                     </span>
                 </div>
             </section>
-            <pedido-ambientes :pedido="pedido" :ambiente.sync="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"></pedido-ambientes>
+            <pedido-ambientes :pedido="pedido" :ambiente.sync="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"
+                 @lista-atualizada="atualizarPedidoEAmbientes"></pedido-ambientes>
             <pedido-produtos :pedido="pedido" :ambiente="ambiente" :configuracoes="configuracoes" :pedido-mao-de-obra="pedidoMaoDeObra"
                 :pedido-producao-corte="pedidoProducaoCorte" :pedido-mao-de-obra-especial="pedidoMaoDeObraEspecial" @lista-atualizada="atualizarPedidoEAmbientes"></pedido-produtos>
         </div>
     </div>
+    <script type="text/javascript">
+        function refreshPage() {
+            app.atualizarPedidoEAmbientes();
+        }
+    </script>
 
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>

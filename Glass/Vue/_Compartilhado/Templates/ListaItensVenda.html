@@ -1,4 +1,4 @@
-﻿<form>
+<form>
     <lista-paginada ref="lista" v-bind:exibir-inclusao="permitirInserir" v-bind:linha-editando="numeroLinhaEdicao" v-bind:funcao-recuperar-itens="buscarItensVenda"
         v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
         <template slot="cabecalho">
@@ -53,12 +53,12 @@
                     Apl.
                 </a>
             </th>
-            <th v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+            <th v-if="vIfProcessoAplicacaoProdutosFilhos">
                 <a href="#" v-on:click.prevent="ordenar('processo')">
                     Proc. Filhas
                 </a>
             </th>
-            <th v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
+            <th v-if="vIfProcessoAplicacaoProdutosFilhos">
                 <a href="#" v-on:click.prevent="ordenar('aplicacao')">
                     Apl. Filhas
                 </a>
@@ -133,8 +133,8 @@
                     {{ item.aplicacao.codigo }}
                 </span>
             </td>
-            <td v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos"></td>
-            <td v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos"></td>
+            <td v-if="vIfProcessoAplicacaoProdutosFilhos"></td>
+            <td v-if="vIfProcessoAplicacaoProdutosFilhos"></td>
             <td>
                 {{ item.codigoPedidoCliente }}
             </td>
@@ -256,11 +256,11 @@
                 <input type="number" step="0.01" min="produtoAtual ? produtoAtual.valorMinimo : 0" v-model.number="itemVenda.valorUnitario"
                     style="width: 50px" required>
             </td>
-            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao">
-                <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="itemVenda"></campo-busca-etiqueta-processo>
+            <td v-if="exibirColunasProcessoEAplicacao">
+                <campo-busca-etiqueta-processo ref="processo" v-bind:processo.sync="processoAtual" v-bind:ids-subgrupos-para-validacao="[produtoAtual.idSubgrupo]" v-if="itemVenda && produtoAtual"></campo-busca-etiqueta-processo>
             </td>
-            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao">
-                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda"></campo-busca-etiqueta-aplicacao>
+            <td v-if="exibirColunasProcessoEAplicacao">
+                <campo-busca-etiqueta-aplicacao ref="aplicacao" v-bind:aplicacao.sync="aplicacaoAtual" v-if="itemVenda && produtoAtual"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
                 <input type="number" v-model.number="itemVenda.valorUnitario" style="width: 60px" step="0.01" required
@@ -393,17 +393,17 @@
                     {{ itemVenda.valorUnitario | moeda }}
                 </span>
             </td>
-            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao">
-                <campo-busca-etiqueta-processo v-bind:processo.sync="processoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
+            <td v-if="exibirColunasProcessoEAplicacao">
+                <campo-busca-etiqueta-processo ref="processo" v-bind:processo.sync="processoAtual" v-bind:ids-subgrupos-para-validacao="[produtoAtual.idSubgrupo]" v-if="inserindo && itemVenda && produtoAtual"></campo-busca-etiqueta-processo>
             </td>
-            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao">
-                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
+            <td v-if="exibirColunasProcessoEAplicacao">
+                <campo-busca-etiqueta-aplicacao ref="aplicacao" v-bind:aplicacao.sync="aplicacaoAtual" v-if="inserindo && itemVenda && produtoAtual"></campo-busca-etiqueta-aplicacao>
             </td>
-            <td class="lista-itens-venda__processo" v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
-                <campo-busca-etiqueta-processo v-bind:processo.sync="processoFilhasAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-processo>
+            <td v-if="vIfProcessoAplicacaoProdutosFilhos">
+                <campo-busca-etiqueta-processo v-bind:processo.sync="processoFilhasAtual" v-bind:ids-subgrupos-para-validacao="produtoAtual.composicao.idsSubgruposProdutosFilhos" v-if="inserindo && itemVenda && produtoAtual"></campo-busca-etiqueta-processo>
             </td>
-            <td class="lista-itens-venda__aplicacao" v-if="exibirColunasProcessoEAplicacao && produtoAtual && produtoAtual.composicao && inserindo && produtoAtual.composicao.possuiFilhos">
-                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoFilhasAtual" v-if="inserindo && itemVenda"></campo-busca-etiqueta-aplicacao>
+            <td v-if="vIfProcessoAplicacaoProdutosFilhos">
+                <campo-busca-etiqueta-aplicacao v-bind:aplicacao.sync="aplicacaoFilhasAtual" v-if="inserindo && itemVenda && produtoAtual"></campo-busca-etiqueta-aplicacao>
             </td>
             <td>
                 <input type="text" v-model="itemVenda.codigoPedidoCliente" maxlength="50" style="width: 50px" v-if="inserindo && itemVenda">

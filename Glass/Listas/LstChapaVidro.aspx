@@ -42,7 +42,7 @@
             }
         }
 
-        function openRpt() 
+        function openRpt()
         {
             var codInterno = FindControl("txtCodProd", "input").value;
             var descricao = FindControl("txtDescr", "input").value;
@@ -51,12 +51,12 @@
             if (idSubgrupo == "")
                 idSubgrupo = 0;
 
-            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ChapaVidro&codInterno=" + codInterno + 
+            openWindow(600, 800, "../Relatorios/RelBase.aspx?Rel=ChapaVidro&codInterno=" + codInterno +
                 "&descricao=" + descricao + "&idSubgrupo=" + idSubgrupo);
 
             return false;
         }
-        
+
     </script>
 
     <table>
@@ -117,7 +117,7 @@
                             <asp:GridView GridLines="None" ID="grdChapaVidro" runat="server" AllowPaging="True" AllowSorting="True"
                                 AutoGenerateColumns="False" DataKeyNames="IdChapaVidro" OnRowCommand="grdChapaVidro_RowCommand"
                                 DataSourceID="odsChapaVidro" CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt"
-                                EditRowStyle-CssClass="edit" 
+                                EditRowStyle-CssClass="edit"
                                 EmptyDataText="Não há chapa de vidro cadastrada.">
                                 <Columns>
                                     <asp:TemplateField>
@@ -197,87 +197,105 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total m² mín. (1)" SortExpression="TotM2Minimo1">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtTotM2Min1" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtTotM2Min1" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("TotM2Minimo1") %>'></asp:TextBox>
                                         </EditItemTemplate>
                                         <ItemTemplate>
                                             <asp:Label ID="Label7" runat="server" Text='<%# Bind("TotM2Minimo1") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (1)" 
+                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (1)"
                                         SortExpression="PercAcrescimoTotM21">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtPercAcr1" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtPercAcr1" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("PercAcrescimoTotM21") %>'></asp:TextBox>
                                             %
                                         </EditItemTemplate>
                                         <ItemTemplate>
-                                            <asp:Label ID="Label8" runat="server" 
+                                            <asp:Label ID="Label8" runat="server"
                                                 Text='<%# Eval("PercAcrescimoTotM21") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total m² mín. (2)" SortExpression="TotM2Minimo2">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtTotM2Min2" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtTotM2Min2" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("TotM2Minimo2") %>'></asp:TextBox>
                                         </EditItemTemplate>
                                         <ItemTemplate>
                                             <asp:Label ID="Label11" runat="server" Text='<%# Bind("TotM2Minimo2") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (2)" 
+                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (2)"
                                         SortExpression="PercAcrescimoTotM22">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtPercAcr2" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtPercAcr2" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("PercAcrescimoTotM22") %>'></asp:TextBox>
                                             %
                                         </EditItemTemplate>
                                         <ItemTemplate>
-                                            <asp:Label ID="Label12" runat="server" 
+                                            <asp:Label ID="Label12" runat="server"
                                                 Text='<%# Eval("PercAcrescimoTotM22") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Total m² mín. (3)" SortExpression="TotM2Minimo3">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtTotM2Min3" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtTotM2Min3" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("TotM2Minimo3") %>'></asp:TextBox>
                                         </EditItemTemplate>
                                         <ItemTemplate>
                                             <asp:Label ID="Label15" runat="server" Text='<%# Bind("TotM2Minimo3") %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
-                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (3)" 
+                                    <asp:TemplateField HeaderText="Perc. acréscimo m² (3)"
                                         SortExpression="PercAcrescimoTotM23">
                                         <EditItemTemplate>
-                                            <asp:TextBox ID="txtPercAcr3" runat="server" Columns="5" 
-                                                onkeypress="return soNumeros(event, false, true)" 
+                                            <asp:TextBox ID="txtPercAcr3" runat="server" Columns="5"
+                                                onkeypress="return soNumeros(event, false, true)"
                                                 Text='<%# Bind("PercAcrescimoTotM23") %>'></asp:TextBox>
                                             %
                                         </EditItemTemplate>
                                         <ItemTemplate>
-                                            <asp:Label ID="Label16" runat="server" 
+                                            <asp:Label ID="Label16" runat="server"
                                                 Text='<%# Eval("PercAcrescimoTotM23") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                     </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Altura Máxima sem Adicional">
+                                        <ItemTemplate>
+                                            <asp:Label ID="Label16" runat="server" Text='<%# Eval("AlturaMaxSemAdicional") %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:TextBox ID="txtAlturaMaxSemAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"
+                                                Text='<%# Bind("AlturaMaxSemAdicional") %>' Width="60px"></asp:TextBox>
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Percentual Adicional Altura">
+                                        <ItemTemplate>
+                                            <asp:Label ID="Label16" runat="server" Text='<%# Eval("ValorAdicional") + "%" %>'></asp:Label>
+                                        </ItemTemplate>
+                                        <EditItemTemplate>
+                                            <asp:TextBox ID="txtValorAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"
+                                                Text='<%# Bind("ValorAdicional") %>' Width="60px"></asp:TextBox>
+                                        </EditItemTemplate>
+                                    </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Situação">
                                         <ItemTemplate>
-                                            <asp:Label ID="lblSituacao" runat="server" 
+                                            <asp:Label ID="lblSituacao" runat="server"
                                                 Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
                                         </ItemTemplate>
                                         <EditItemTemplate>
-                                            <asp:Label ID="lblSituacao" runat="server" 
+                                            <asp:Label ID="lblSituacao" runat="server"
                                                 Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label>
                                             <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Bind("Situacao") %>' />
                                         </EditItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField>
                                         <ItemTemplate>
-                                            <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server" 
+                                            <uc2:ctrlLogPopup ID="ctrlLogPopup1" runat="server"
                                                 IdRegistro='<%# Eval("IdChapaVidro") %>' Tabela="ChapaVidro" />
                                         </ItemTemplate>
                                     </asp:TemplateField>
@@ -289,7 +307,7 @@
                                 <AlternatingRowStyle />
                             </asp:GridView>
                             <colo:VirtualObjectDataSource culture="pt-BR" ID="odsChapaVidro" runat="server" DataObjectTypeName="Glass.Data.Model.ChapaVidro"
-                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize" 
+                                DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
                                 SelectCountMethod="GetListCount" SelectMethod="GetList" SortParameterName="sortExpression"
                                 StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.ChapaVidroDAO"
                                 UpdateMethod="Update" OnDeleted="odsChapaVidro_Deleted" OnUpdated="odsChapaVidro_Updated">
