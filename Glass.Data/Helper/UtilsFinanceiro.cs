@@ -3700,7 +3700,7 @@ namespace Glass.Data.Helper
         /// </summary>
         /// <param name="idConta"></param>
         /// <param name="cxGeral">A mudança de saldo ocorrerá no caixa geral?</param>
-        private static bool MudarSaldo(uint idConta, bool cxGeral)
+        public static bool MudarSaldo(uint idConta, bool cxGeral)
         {
             if (!cxGeral)
                 return !UtilsPlanoConta.ListContasTipo(Glass.Data.Model.Pagto.FormaPagto.Permuta).Contains(idConta) &&

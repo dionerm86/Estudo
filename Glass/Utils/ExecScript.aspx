@@ -1030,6 +1030,14 @@
                 </td>
             </tr>
         </table>
+        <table>
+              <tr>
+                  <td>
+                      <asp:Button ID="btnAjustaMudarSaldoCaixaGeral" runat="server" Text="Ajustar mudar Saldo caixa geral"
+            OnClick="btnAjustaMudarSaldoCaixaGeral_Click" />
+                  </td>
+              </tr>
+        </table>
     </div>
     </form>
 </body>
