@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Processos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+<%@ Page Title="Processos" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstEtiquetaProcesso.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaProcesso" %>
 
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
@@ -40,7 +40,7 @@
                         <a href="#" @click.prevent="ordenar('tiposPedidos')">Tipo de Pedido</a>
                     </th>
                     <th>
-                        Situação
+                        <a href="#" @click.prevent="ordenar('situacao')">Situação</a>
                     </th>
                     <th></th>
                 </template>

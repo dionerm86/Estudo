@@ -1,4 +1,4 @@
-﻿// <copyright file="PostProcessosController.cs" company="Sync Softwares">
+// <copyright file="PostProcessosController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -21,6 +21,7 @@ namespace Glass.API.Backend.Controllers.Processos.V1
         /// <summary>
         /// Cadastra um processo de etiqueta.
         /// </summary>
+        /// <param name="dadosParaCadastro">Os dados para o cadastro do processo.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPost]
         [Route("")]
