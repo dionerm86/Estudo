@@ -2346,8 +2346,6 @@ namespace Glass.Data.DAL
                 {
                     if (p.Data == null || p.Data.Value.Year == 1)
                         throw new Exception("Informe a data de vencimento das duplicatas.");
-                    else if (DateTime.Parse(p.Data.Value.ToString("dd/MM/yyyy")) < DateTime.Parse(nf.DataEmissao.ToString("dd/MM/yyyy")))
-                        throw new Exception("A data de vencimento das duplicatas não pode ser inferior à data de emissão da nota.");
 
                     if (datasParc.Contains(p.Data.Value))
                         throw new Exception("A data de vencimento " + p.Data.Value.ToString("dd/MM/yyyy") +
