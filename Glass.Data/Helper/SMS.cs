@@ -94,7 +94,7 @@ namespace Glass.Data.Helper
 
             var sqlTotalPedidos =
                 string.Format(@"select sum({0}) from pedido p
-                    Inner Join Cliente c ON (p.IdCli = c.Id_Cli) where c.IgnorarNoSmsResumoDiario = false AND 
+                    Inner Join Cliente c ON (p.IdCli = c.Id_Cli) where IFNULL(c.IgnorarNoSmsResumoDiario, false) = false AND 
                     p.situacao<>{1} and p.dataCad>=?dataIni and p.dataCad<=?dataFim and p.tipoPedido<>{2} {3}",
                     "{0}", (int)Pedido.SituacaoPedido.Cancelado, (int)Pedido.TipoPedidoEnum.Producao, "{1}");
 

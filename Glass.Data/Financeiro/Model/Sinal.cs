@@ -133,7 +133,7 @@ namespace Glass.Data.Model
 
         private decimal _totalSinal;
 
-        [PersistenceProperty("TOTALSINAL", DirectionParameter.InputOptional)]
+        [PersistenceProperty("TotalSinal", DirectionParameter.InputOptional)]
         public decimal TotalSinal
         {
             get { return _totalSinal; }

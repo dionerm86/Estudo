@@ -44,7 +44,7 @@ namespace WebGlass.Business.Boleto.Fluxo
             return BoletoImpressoDAO.Instance.BoletoFoiImpresso(codigoContaReceber, null);
         }
 
-        public string MensagemBoletoImpresso(int? codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao)
+        public string MensagemBoletoImpresso(int? codigoContaReceber, int? codigoNotaFiscal, int? codigoLiberacao, int? codigoCte)
         {
             if (codigoContaReceber > 0)
                 return BoletoFoiImpresso(codigoContaReceber.Value) ? "já impresso" : null;
@@ -56,7 +56,7 @@ namespace WebGlass.Business.Boleto.Fluxo
                 if (idsContasReceber.Count == 0)
                     return null;
                 else if (idsContasReceber.Count == 1)
-                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null);
+                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null, null);
 
                 string mensagem = "{0}/{1} já impresso{2}";
 
@@ -89,7 +89,7 @@ namespace WebGlass.Business.Boleto.Fluxo
                 if (idsContasReceber.Count == 0)
                     return null;
                 else if (idsContasReceber.Count == 1)
-                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null);
+                    return MensagemBoletoImpresso((int)idsContasReceber[0], null, null, null);
 
                 string mensagem = "{0}/{1} já impresso{2}";
 
@@ -99,6 +99,24 @@ namespace WebGlass.Business.Boleto.Fluxo
 
                 return impressos == 0 ? null :
                     String.Format(mensagem, impressos, idsContasReceber.Count, idsContasReceber.Count > 1 ? "s" : String.Empty);
+            }
+            else if (codigoCte > 0)
+            {
+                var idsContasReceberCte = ContasReceberDAO.Instance.ObterIdContaRPeloIdCte((uint)codigoCte);
+
+                if (idsContasReceberCte.Count == 0)
+                    return null;
+                else if (idsContasReceberCte.Count == 1)
+                    return MensagemBoletoImpresso((int)idsContasReceberCte[0], null, null, null);
+
+                string mensagem = "{0}/{1} já impresso{2}";
+
+                int impressos = 0;
+                foreach (var id in idsContasReceberCte)
+                    impressos += BoletoFoiImpresso((int)id) ? 1 : 0;
+
+                return impressos == 0 ? null :
+                    String.Format(mensagem, impressos, idsContasReceberCte.Count, idsContasReceberCte.Count > 1 ? "s" : String.Empty);
             }
 
             return null;

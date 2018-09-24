@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Helper.Clientes
         /// <inheritdoc/>
         protected override string OrdenacaoPadrao
         {
-            get { return "IdCli DESC"; }
+            get { return "IdCli ASC"; }
         }
 
         /// <inheritdoc/>

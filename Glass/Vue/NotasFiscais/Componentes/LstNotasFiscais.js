@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -510,45 +510,40 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [];
 
-      incluirFiltro('numeroNfe', this.filtro.numeroNfe);
-      incluirFiltro('idPedido', this.filtro.idPedido);
-      incluirFiltro('modelo', this.filtro.modelo);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('idCliente', this.filtro.idCliente);
-      incluirFiltro('nomeCliente', this.filtro.nomeCliente);
-      incluirFiltro('tipoFiscal', this.filtro.tipoFiscal);
-      incluirFiltro('idFornec', this.filtro.idFornecedor);
-      incluirFiltro('nomeFornec', this.filtro.nomeFornecedor);
-      incluirFiltro('codRota', this.filtro.codigoRota);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('dataIni', this.filtro.periodoEmissaoInicio ? this.filtro.periodoEmissaoInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFim', this.filtro.periodoEmissaoFim ? this.filtro.periodoEmissaoFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('idsCfop', this.filtro.idsCfop);
-      incluirFiltro('tiposCfop', this.filtro.tiposCfop);
-      incluirFiltro('dataEntSaiIni', this.filtro.periodoEntradaSaidaInicio ? this.filtro.periodoEntradaSaidaInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataEntSaiFim', this.filtro.periodoEntradaSaidaFim ? this.filtro.periodoEntradaSaidaFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('formaPagto', this.filtro.tipoVenda);
-      incluirFiltro('idsFormaPagtoNotaFiscal', this.filtro.idsFormaPagamento);
-      incluirFiltro('tipoNf', this.filtro.tipoDocumento);
-      incluirFiltro('finalidade', this.filtro.finalidade);
-      incluirFiltro('formaEmissao', this.filtro.tipoEmissao);
-      incluirFiltro('infCompl', this.filtro.informacaoComplementar);
-      incluirFiltro('codInternoProd', this.filtro.codigoInternoProduto);
-      incluirFiltro('descrProd', this.filtro.descricaoProduto);
-      incluirFiltro('lote', this.filtro.lote);
-      incluirFiltro('valorInicial', this.filtro.valorNotaFiscalInicio);
-      incluirFiltro('valorFinal', this.filtro.valorNotaFiscalFim);
-      incluirFiltro('ordenar', this.filtro.ordenacaoFiltro);
-      incluirFiltro('agrupar', this.filtro.agrupar);
+      this.incluirFiltroComLista(filtros, 'numeroNfe', this.filtro.numeroNfe);
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtros, 'modelo', this.filtro.modelo);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'tipoFiscal', this.filtro.tipoFiscal);
+      this.incluirFiltroComLista(filtros, 'idFornec', this.filtro.idFornecedor);
+      this.incluirFiltroComLista(filtros, 'nomeFornec', this.filtro.nomeFornecedor);
+      this.incluirFiltroComLista(filtros, 'codRota', this.filtro.codigoRota);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'dataIni', this.filtro.periodoEmissaoInicio);
+      this.incluirFiltroComLista(filtros, 'dataFim', this.filtro.periodoEmissaoFim);
+      this.incluirFiltroComLista(filtros, 'idsCfop', this.filtro.idsCfop);
+      this.incluirFiltroComLista(filtros, 'tiposCfop', this.filtro.tiposCfop);
+      this.incluirFiltroComLista(filtros, 'dataEntSaiIni', this.filtro.periodoEntradaSaidaInicio);
+      this.incluirFiltroComLista(filtros, 'dataEntSaiFim', this.filtro.periodoEntradaSaidaFim);
+      this.incluirFiltroComLista(filtros, 'formaPagto', this.filtro.tipoVenda);
+      this.incluirFiltroComLista(filtros, 'idsFormaPagtoNotaFiscal', this.filtro.idsFormaPagamento);
+      this.incluirFiltroComLista(filtros, 'tipoNf', this.filtro.tipoDocumento);
+      this.incluirFiltroComLista(filtros, 'finalidade', this.filtro.finalidade);
+      this.incluirFiltroComLista(filtros, 'formaEmissao', this.filtro.tipoEmissao);
+      this.incluirFiltroComLista(filtros, 'infCompl', this.filtro.informacaoComplementar);
+      this.incluirFiltroComLista(filtros, 'codInternoProd', this.filtro.codigoInternoProduto);
+      this.incluirFiltroComLista(filtros, 'descrProd', this.filtro.descricaoProduto);
+      this.incluirFiltroComLista(filtros, 'lote', this.filtro.lote);
+      this.incluirFiltroComLista(filtros, 'valorInicial', this.filtro.valorNotaFiscalInicio);
+      this.incluirFiltroComLista(filtros, 'valorFinal', this.filtro.valorNotaFiscalFim);
+      this.incluirFiltroComLista(filtros, 'ordenar', this.filtro.ordenacaoFiltro);
+      this.incluirFiltroComLista(filtros, 'agrupar', this.filtro.agrupar);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -278,7 +278,7 @@ const app = new Vue({
       if (LstPedidosEspelho.PodeImprimirPedidoImportado(idPedido).value.toLowerCase() == "false") {
           alert("O pedido importado ainda não foi conferido, confira o mesmo antes de gerar arquivo");
           return false;
-      }      
+      }
       */
 
       var nomeArquivo = tipoArquivo == 1 ? 'Cnc'
@@ -307,44 +307,39 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [];
 
-      incluirFiltro('idPedido', this.filtro.idPedido);
-      incluirFiltro('idCliente', this.filtro.idCliente);
-      incluirFiltro('nomeCliente', this.filtro.nomeCliente);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('idFunc', this.filtro.idVendedor);
-      incluirFiltro('idFuncionarioConferente', this.filtro.idConferente);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('situacaoPedOri', this.filtro.situacaoPedidoComercial);
-      incluirFiltro('idsProcesso', this.filtro.idsProcesso);
-      incluirFiltro('dataIniEnt', this.filtro.periodoEntregaInicio ? this.filtro.periodoEntregaInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimEnt', this.filtro.periodoEntregaFim ? this.filtro.periodoEntregaFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataIniFab', this.filtro.periodoFabricaInicio ? this.filtro.periodoFabricaInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimFab', this.filtro.periodoFabricaFim ? this.filtro.periodoFabricaFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataIniFin', this.filtro.periodoFinalizacaoConferenciaInicio ? this.filtro.periodoFinalizacaoConferenciaInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimFin', this.filtro.periodoFinalizacaoConferenciaFim ? this.filtro.periodoFinalizacaoConferenciaFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataIniConf', this.filtro.periodoCadastroConferenciaInicio ? this.filtro.periodoCadastroConferenciaInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimConf', this.filtro.periodoCadastroConferenciaFim ? this.filtro.periodoCadastroConferenciaFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataIniEmis', this.filtro.periodoCadastroPedidoInicio ? this.filtro.periodoCadastroPedidoInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimEmis', this.filtro.periodoCadastroPedidoFim ? this.filtro.periodoCadastroPedidoFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('pedidosSemAnexos', this.filtro.pedidosSemAnexo);
-      incluirFiltro('pedidosAComprar', this.filtro.pedidosAComprar);
-      incluirFiltro('situacaoCnc', this.filtro.situacaoCnc);
-      incluirFiltro('dataIniSituacaoCnc', this.filtro.periodoProjetoCncInicio ? this.filtro.periodoProjetoCncInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('dataFimSituacaoCnc', this.filtro.periodoProjetoCncFim ? this.filtro.periodoProjetoCncFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('tipoPedido', this.filtro.tiposPedido);
-      incluirFiltro('idsRotas', this.filtro.idsRota);
-      incluirFiltro('origemPedido', this.filtro.origemPedido);
-      incluirFiltro('pedidosConferidos', this.filtro.pedidoImportacaoConferido);
-      incluirFiltro('tipoVenda', this.filtro.tipoVenda);
+      this.incluirFiltroComLista(filtros, 'idPedido', this.filtro.idPedido);
+      this.incluirFiltroComLista(filtros, 'idCliente', this.filtro.idCliente);
+      this.incluirFiltroComLista(filtros, 'nomeCliente', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idVendedor);
+      this.incluirFiltroComLista(filtros, 'idFuncionarioConferente', this.filtro.idConferente);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'situacaoPedOri', this.filtro.situacaoPedidoComercial);
+      this.incluirFiltroComLista(filtros, 'idsProcesso', this.filtro.idsProcesso);
+      this.incluirFiltroComLista(filtros, 'dataIniEnt', this.filtro.periodoEntregaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimEnt', this.filtro.periodoEntregaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniFab', this.filtro.periodoFabricaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimFab', this.filtro.periodoFabricaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniFin', this.filtro.periodoFinalizacaoConferenciaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimFin', this.filtro.periodoFinalizacaoConferenciaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniConf', this.filtro.periodoCadastroConferenciaInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimConf', this.filtro.periodoCadastroConferenciaFim);
+      this.incluirFiltroComLista(filtros, 'dataIniEmis', this.filtro.periodoCadastroPedidoInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimEmis', this.filtro.periodoCadastroPedidoFim);
+      this.incluirFiltroComLista(filtros, 'pedidosSemAnexos', this.filtro.pedidosSemAnexo);
+      this.incluirFiltroComLista(filtros, 'pedidosAComprar', this.filtro.pedidosAComprar);
+      this.incluirFiltroComLista(filtros, 'situacaoCnc', this.filtro.situacaoCnc);
+      this.incluirFiltroComLista(filtros, 'dataIniSituacaoCnc', this.filtro.periodoProjetoCncInicio);
+      this.incluirFiltroComLista(filtros, 'dataFimSituacaoCnc', this.filtro.periodoProjetoCncFim);
+      this.incluirFiltroComLista(filtros, 'tipoPedido', this.filtro.tiposPedido);
+      this.incluirFiltroComLista(filtros, 'idsRotas', this.filtro.idsRota);
+      this.incluirFiltroComLista(filtros, 'origemPedido', this.filtro.origemPedido);
+      this.incluirFiltroComLista(filtros, 'pedidosConferidos', this.filtro.pedidoImportacaoConferido);
+      this.incluirFiltroComLista(filtros, 'tipoVenda', this.filtro.tipoVenda);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

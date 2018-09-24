@@ -175,6 +175,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("IDCARTAONAOIDENTIFICADO")]
         public uint? IdCartaoNaoIdentificado { get; set; }
 
+        [PersistenceProperty("MUDARSALDO")]
+        public bool MudarSaldo { get; set; }
+
         #endregion
 
         #region Propriedades Estendidas

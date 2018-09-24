@@ -45,7 +45,7 @@ Vue.component('pedido-ambientes', {
 
   data: function() {
     return {
-      refresh_: 0,
+      atualizar_: 0,
       inserindo: false,
       ambientePedido: {},
       ambientePedidoOriginal: {},
@@ -83,7 +83,7 @@ Vue.component('pedido-ambientes', {
      * Método executado quando ocorre a atualização no número de itens da lista interna.
      * @param {!number} numeroItens O número de itens que foram carregados no controle interno.
      */
-    listaAtualizada: function(numeroItens) {
+    listaInternaAtualizada: function(numeroItens) {
       this.numeroItensLista = numeroItens;
     },
 
@@ -165,7 +165,7 @@ Vue.component('pedido-ambientes', {
             vm.ambienteAtual = null;
           }
 
-          vm.refresh_++;
+          vm.listaAtualizada();
         })
         .catch(function(erro) {
           if (erro && erro.mensagem) {
@@ -198,7 +198,7 @@ Vue.component('pedido-ambientes', {
             });
           }
 
-          vm.refresh_++;
+          vm.listaAtualizada();
           vm.cancelar();
         })
         .catch(function(erro) {
@@ -237,7 +237,7 @@ Vue.component('pedido-ambientes', {
 
       Servicos.Pedidos.Ambientes.inserir(this.pedido.id, this.ambientePedido)
         .then(function(resposta) {
-          vm.refresh_++;
+          vm.listaAtualizada();
           vm.inserindo = false;
           vm.exibirProdutos(resposta.data.id, vm.ambientePedido.nome, vm.ambientePedido.produtoMaoDeObra);
         })
@@ -306,6 +306,15 @@ Vue.component('pedido-ambientes', {
       }
 
       return form.checkValidity();
+    },
+
+    /**
+     * Atualiza o filtro de produtos, para recarregar a lista.
+     * Além disso, emite um evento para que o pedido também seja recarregado.
+     */
+    listaAtualizada: function () {
+      this.atualizar_++;
+      this.$emit('lista-atualizada');
     }
   },
 
@@ -346,7 +355,7 @@ Vue.component('pedido-ambientes', {
     filtro: function() {
       return {
         idPedido: this.pedido.id,
-        refresh: this.refresh_
+        atualizar: this.atualizar_
       };
     },
 

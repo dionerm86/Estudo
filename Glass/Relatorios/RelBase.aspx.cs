@@ -383,7 +383,8 @@ namespace Glass.UI.Web.Relatorios
                             Glass.Conversoes.StrParaInt(Request["tipoFastDelivery"]), Request["idPedido"],
                             Glass.Conversoes.StrParaInt(Request["tipoDesconto"]), Request["agruparCli"] == "1" && Request["agrupar"] == "false",
                             Request["agruparPedido"] == "1" && Request["agrupar"] == "false", Request["agruparLiberacao"] == "1", Request["agruparAmbiente"] == "1",
-                            Glass.Conversoes.StrParaInt(Request["buscarNotaFiscal"]), Request["idLiberacao"].StrParaInt(), Glass.Conversoes.StrParaInt(Request["ordenacao"]));
+                            Glass.Conversoes.StrParaInt(Request["buscarNotaFiscal"]), Request["idLiberacao"].StrParaInt(), Glass.Conversoes.StrParaInt(Request["ordenacao"]),
+                            Request["idFuncLiberacao"].StrParaIntNullable(), Request["liberacaoNf"].StrParaIntNullable());
 
                         var lstProdCorEsp = lstProd
                             .Where(f => f.IdGrupoProd == (int)NomeGrupoProd.Vidro)
@@ -807,7 +808,7 @@ namespace Glass.UI.Web.Relatorios
                                 Request["idsSubgrupoProd"], Request["idVendAssoc"].StrParaInt(), Request["largura"].StrParaInt(), login, Request["loja"], Request["nomeCli"],
                                 Request["diasDifProntoLib"].StrParaInt(), Request["observacao"], Request["ordenacao"].StrParaInt(), Request["origemPedido"].StrParaInt(), Request["pedidosSemAnexos"] == "true",
                                 Request["situacao"], Request["situacaoProd"], Request["tipo"], Request["tipoCliente"], Request["tipoEntrega"].StrParaInt(), Request["tipoFiscal"].StrParaInt(),
-                                Request["tipoVenda"], Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt(), Request["grupoCliente"]);
+                                Request["tipoVenda"], Request["trazerPedCliVinculado"] == "true", Request["usuCad"].StrParaInt(), Request["grupoCliente"], Request["complemento"]);
 
                         if (Request["rel"] == "ListaPedidosProd")
                             lstParam.Add(new ReportParameter("FastDelivery", PedidoConfig.Pedido_FastDelivery.FastDelivery.ToString()));
@@ -1036,7 +1037,7 @@ namespace Glass.UI.Web.Relatorios
                         var lstAcerto = AcertoDAO.Instance.GetListRpt(Glass.Conversoes.StrParaUint(Request["idAcerto"]),
                             Glass.Conversoes.StrParaUint(Request["idPedido"]), Glass.Conversoes.StrParaUint(Request["idLiberarPedido"]),
                             Glass.Conversoes.StrParaUint(Request["idCliente"]), Request["dataIni"], Request["dataFim"],
-                            Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Request["numNotaFiscal"].StrParaInt());
+                            Glass.Conversoes.StrParaUint(Request["idFormaPagto"]), Request["numNotaFiscal"].StrParaInt(), Request["protesto"].StrParaInt());
 
                         report.DataSources.Add(new ReportDataSource("Acerto", lstAcerto.ToArray()));
 

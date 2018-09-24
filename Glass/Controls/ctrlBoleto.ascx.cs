@@ -123,7 +123,7 @@ namespace Glass.UI.Web.Controls
             imgBoleto.OnClientClick = "abreBoleto(" + (CodigoNotaFiscal ?? 0) + ", " +
                 (CodigoContaReceber ?? 0) + ", " + (CodigoLiberacao ?? 0) + ", " + (CodigoCte ?? 0) + "); return false";
     
-            string jaImpresso = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(CodigoContaReceber, CodigoNotaFiscal, CodigoLiberacao);
+            string jaImpresso = WebGlass.Business.Boleto.Fluxo.Impresso.Instance.MensagemBoletoImpresso(CodigoContaReceber, CodigoNotaFiscal, CodigoLiberacao, CodigoCte);
             imgBoleto.ToolTip = "Boleto" + (!String.IsNullOrEmpty(jaImpresso) ? String.Format(" ({0})", jaImpresso) : String.Empty);
     
             if (!Page.ClientScript.IsClientScriptBlockRegistered(GetType(), "ctrlBoleto"))

@@ -64,15 +64,15 @@ namespace Glass.Data.DAL
             return ObtemValorCampo<uint?>("idCorFerragem", "descricao=?descr", new GDAParameter("?descr", descricao));
         }
 
-        public override int Delete(CorFerragem objDelete)
+        public override int DeleteByPrimaryKey(GDASession sessao, int key)
         {
-            if (objPersistence.ExecuteSqlQueryCount("Select * From produto where idCorFerragem=" + objDelete.IdCorFerragem) > 0)
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select * From produto where idCorFerragem=" + key) > 0)
                 throw new Exception("Existem produtos associados à esta cor de ferragem, exclua os mesmos antes de excluir esta cor.");
 
-            if (objPersistence.ExecuteSqlQueryCount("Select * From item_projeto where idCorFerragem=" + objDelete.IdCorFerragem) > 0)
+            if (objPersistence.ExecuteSqlQueryCount(sessao, "Select * From item_projeto where idCorFerragem=" + key) > 0)
                 throw new Exception("Esta cor não pode ser excluída, pois existem cálculos de projeto associados à mesma.");
 
-            return base.Delete(objDelete);
+            return base.DeleteByPrimaryKey(sessao, key);
         }
 
         public GenericModel[] GetForConfig()

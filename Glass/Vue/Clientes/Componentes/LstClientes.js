@@ -1,11 +1,11 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
       campo: 'id',
-      direcao: 'desc'
+      direcao: 'asc'
     },
     configuracoes: {},
     filtro: {}
@@ -204,40 +204,35 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [];
 
-      incluirFiltro('idCli', this.filtro.id);
-      incluirFiltro('nome', this.filtro.nomeCliente);
-      incluirFiltro('cpfCnpj', this.filtro.cpfCnpj);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('telefone', this.filtro.telefone);
-      incluirFiltro('endereco', this.filtro.endereco);
-      incluirFiltro('bairro', this.filtro.bairro);
-      incluirFiltro('idCidade', this.filtro.idCidade);
-      incluirFiltro('idTipoCliente', this.filtro.tipo);
-      incluirFiltro('situacao', this.filtro.situacao);
-      incluirFiltro('codRota', this.filtro.codigoRota);
-      incluirFiltro('idFunc', this.filtro.idVendedor);
-      incluirFiltro('tipoFiscal', this.filtro.tipoFiscal);
-      incluirFiltro('formasPagto', this.filtro.formasPagamento);
-      incluirFiltro('dataCadIni', (this.filtro.periodoCadastroInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataCadFim', (this.filtro.periodoCadastroFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataSemCompraIni', (this.filtro.periodoSemCompraInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataSemCompraFim', (this.filtro.periodoSemCompraFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataInativadoIni', (this.filtro.periodoInativadoInicio || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('dataInativadoFim', (this.filtro.periodoInativadoFim || {}).toLocaleDateString('pt-BR'));
-      incluirFiltro('idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo);
-      incluirFiltro('apenasSemRota', this.filtro.apenasSemRota);
-      incluirFiltro('agruparVend', this.filtro.agruparVendedor);
-      incluirFiltro('exibirHistorico', this.filtro.exibirHistorico);
-      incluirFiltro('uf', this.filtro.uf);
+      this.incluirFiltroComLista(filtros, 'idCli', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'nome', this.filtro.nomeCliente);
+      this.incluirFiltroComLista(filtros, 'cpfCnpj', this.filtro.cpfCnpj);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'telefone', this.filtro.telefone);
+      this.incluirFiltroComLista(filtros, 'endereco', this.filtro.endereco);
+      this.incluirFiltroComLista(filtros, 'bairro', this.filtro.bairro);
+      this.incluirFiltroComLista(filtros, 'idCidade', this.filtro.idCidade);
+      this.incluirFiltroComLista(filtros, 'idTipoCliente', this.filtro.tipo);
+      this.incluirFiltroComLista(filtros, 'situacao', this.filtro.situacao);
+      this.incluirFiltroComLista(filtros, 'codRota', this.filtro.codigoRota);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idVendedor);
+      this.incluirFiltroComLista(filtros, 'tipoFiscal', this.filtro.tipoFiscal);
+      this.incluirFiltroComLista(filtros, 'formasPagto', this.filtro.formasPagamento);
+      this.incluirFiltroComLista(filtros, 'dataCadIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'dataCadFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'dataSemCompraIni', this.filtro.periodoSemCompraInicio);
+      this.incluirFiltroComLista(filtros, 'dataSemCompraFim', this.filtro.periodoSemCompraFim);
+      this.incluirFiltroComLista(filtros, 'dataInativadoIni', this.filtro.periodoInativadoInicio);
+      this.incluirFiltroComLista(filtros, 'dataInativadoFim', this.filtro.periodoInativadoFim);
+      this.incluirFiltroComLista(filtros, 'idTabelaDesconto', this.filtro.idTabelaDescontoAcrescimo);
+      this.incluirFiltroComLista(filtros, 'apenasSemRota', this.filtro.apenasSemRota);
+      this.incluirFiltroComLista(filtros, 'agruparVend', this.filtro.agruparVendedor);
+      this.incluirFiltroComLista(filtros, 'exibirHistorico', this.filtro.exibirHistorico);
+      this.incluirFiltroComLista(filtros, 'uf', this.filtro.uf);
 
-      return filtros.length > 0
+      return filtros.length
         ? '&' + filtros.join('&')
         : '';
     },

@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar],
+  mixins: [Mixins.Clonar, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {
@@ -82,24 +82,19 @@ const app = new Vue({
      * Retornar uma string com os filtros selecionados na tela
      */
     formatarFiltros_: function () {
-      var filtros = []
-      const incluirFiltro = function (campo, valor) {
-        if (valor) {
-          filtros.push(campo + '=' + valor);
-        }
-      }
+      var filtros = [];
 
-      incluirFiltro('id', this.filtro.id);
-      incluirFiltro('idLoja', this.filtro.idLoja);
-      incluirFiltro('idFunc', this.filtro.idFuncionario);
-      incluirFiltro('tipoMov', this.filtro.tipo);
-      incluirFiltro('DtIni', this.filtro.periodoCadastroInicio ? this.filtro.periodoCadastroInicio.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('DtFim', this.filtro.periodoCadastroFim ? this.filtro.periodoCadastroFim.toLocaleDateString('pt-BR') : null);
-      incluirFiltro('valorIni', this.filtro.valor ? this.filtro.valor.toString().replace('.', ',') : null);
-      incluirFiltro('valorFim', this.filtro.valor ? this.filtro.valor.toString().replace('.', ',') : null);
-      incluirFiltro('apenasDinheiro', this.filtro.apenasDinheiro);
-      incluirFiltro('apenasCheque', this.filtro.apenasCheque);
-      incluirFiltro('semEstorno', this.filtro.apenasEntradaExcetoEstorno);
+      this.incluirFiltroComLista(filtros, 'id', this.filtro.id);
+      this.incluirFiltroComLista(filtros, 'idLoja', this.filtro.idLoja);
+      this.incluirFiltroComLista(filtros, 'idFunc', this.filtro.idFuncionario);
+      this.incluirFiltroComLista(filtros, 'tipoMov', this.filtro.tipo);
+      this.incluirFiltroComLista(filtros, 'DtIni', this.filtro.periodoCadastroInicio);
+      this.incluirFiltroComLista(filtros, 'DtFim', this.filtro.periodoCadastroFim);
+      this.incluirFiltroComLista(filtros, 'valorIni', this.filtro.valor);
+      this.incluirFiltroComLista(filtros, 'valorFim', this.filtro.valor);
+      this.incluirFiltroComLista(filtros, 'apenasDinheiro', this.filtro.apenasDinheiro);
+      this.incluirFiltroComLista(filtros, 'apenasCheque', this.filtro.apenasCheque);
+      this.incluirFiltroComLista(filtros, 'semEstorno', this.filtro.apenasEntradaExcetoEstorno);
 
       return filtros.length > 0
         ? '&' + filtros.join('&')

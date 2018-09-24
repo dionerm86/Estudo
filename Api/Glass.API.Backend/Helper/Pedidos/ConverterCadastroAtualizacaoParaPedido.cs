@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Pedidos.CadastroAtualizacao;
+using Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo.Enum;
 using System;
 using System.Linq;
 
@@ -52,7 +53,7 @@ namespace Glass.API.Backend.Helper.Pedidos
             destino.CodCliente = this.cadastro.ObterValorNormalizado(c => c.CodigoPedidoCliente, destino.CodCliente);
             destino.DeveTransferir = this.cadastro.ObterValorNormalizado(c => c.DeveTransferir, destino.DeveTransferir);
             destino.TipoPedido = (int)this.cadastro.ObterValorNormalizado(c => c.Tipo, (Data.Model.Pedido.TipoPedidoEnum)destino.TipoPedido);
-            destino.TipoVenda = (int)this.cadastro.ObterValorNormalizado(c => c.TipoVenda, (Data.Model.Pedido.TipoVendaPedido)destino.TipoVenda);
+            destino.TipoVenda = (int)this.cadastro.ObterValorNormalizado(c => c.TipoVenda, (Data.Model.Pedido.TipoVendaPedido?)destino.TipoVenda);
             destino.IdFunc = (uint)this.cadastro.ObterValorNormalizado(c => c.IdVendedor, (int)destino.IdFunc);
             destino.IdMedidor = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdMedidor, (int?)destino.IdMedidor);
             destino.IdFuncVenda = (uint?)this.cadastro.ObterValorNormalizado(c => c.IdFuncionarioComprador, (int?)destino.IdFuncVenda);
@@ -113,8 +114,8 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             if (this.cadastro.Desconto != null)
             {
-                destino.TipoDesconto = this.cadastro.Desconto.Tipo;
-                destino.Desconto = this.cadastro.Desconto.Valor;
+                destino.TipoDesconto = (int)(this.cadastro.Desconto.Tipo ?? TipoValor.Valor);
+                destino.Desconto = this.cadastro.Desconto.Valor.GetValueOrDefault();
             }
         }
 
@@ -122,8 +123,8 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             if (this.cadastro.Acrescimo != null)
             {
-                destino.TipoAcrescimo = this.cadastro.Acrescimo.Tipo;
-                destino.Acrescimo = this.cadastro.Acrescimo.Valor;
+                destino.TipoAcrescimo = (int)(this.cadastro.Acrescimo.Tipo ?? TipoValor.Valor);
+                destino.Acrescimo = this.cadastro.Acrescimo.Valor.GetValueOrDefault();
             }
         }
 
@@ -151,7 +152,7 @@ namespace Glass.API.Backend.Helper.Pedidos
         {
             if (this.cadastro.Sinal != null)
             {
-                destino.ValorEntrada = this.cadastro.Sinal.Valor;
+                destino.ValorEntrada = this.cadastro.Sinal.Valor.GetValueOrDefault();
             }
         }
     }

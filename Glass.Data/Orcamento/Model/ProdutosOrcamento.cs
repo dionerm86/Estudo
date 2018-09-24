@@ -561,7 +561,7 @@ namespace Glass.Data.Model
 
         decimal IProdutoCalculo.ValorTabelaPedido
         {
-            get { return 0; }
+            get { return ValorTabela; }
         }
 
         decimal IProdutoCalculo.CustoProd

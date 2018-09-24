@@ -1369,6 +1369,32 @@ namespace Glass.UI.Web.Utils
         }
     }
 
+    public sealed class tempMudarSaldo : tempBaseDAO<tempMudarSaldo.Model, tempMudarSaldo>
+    {
+        [PersistenceBaseDAO(typeof(tempMudarSaldo))]
+        public class Model
+        {
+            [PersistenceProperty("IDCONTA")]
+            public uint IdConta { get; set; }
+        }
+
+        private string Sql()
+        {
+            return "SELECT IdConta FROM plano_contas";
+        }
+
+        public void alterarMudarSaldo()
+        {
+            var sql = Sql();
+            var idsContasAlterar = objPersistence.LoadData(sql).ToList();
+
+            idsContasAlterar.ToList()
+                .ForEach(f => 
+                    objPersistence.ExecuteCommand($"update caixa_geral set MudarSaldo = {UtilsFinanceiro.MudarSaldo(f.IdConta, true)} where idConta = {f.IdConta}")
+                    );
+        }
+    }
+
     public sealed class tempMaterialProjetoModelo : tempBaseDAO<tempMaterialProjetoModelo.Model, tempMaterialProjetoModelo>
     {
         [PersistenceBaseDAO(typeof(tempMaterialProjetoModelo))]
@@ -6863,6 +6889,11 @@ namespace Glass.UI.Web.Utils
             txtExpressaoCalculoCorrigido.Text = tempMaterialProjetoModelo.Instance.AjustaExpressaoCalculo();
         }
 
+
+        protected void btnAjustaMudarSaldoCaixaGeral_Click(object sender, EventArgs e)
+        {
+            tempMudarSaldo.Instance.alterarMudarSaldo();
+        }
 
         //protected void btnIdProdPedCarregamento_Click(object sender, EventArgs e)
         //{

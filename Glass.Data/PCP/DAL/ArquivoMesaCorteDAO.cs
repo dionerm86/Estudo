@@ -11722,7 +11722,7 @@ namespace Glass.Data.DAL
              * DXF, FML OU FML Básico, então, salva um arquivo de marcação para cada etiqueta. */
             if (numerosEtiqueta != null && numerosEtiqueta.Length > 0 &&
                 !string.IsNullOrWhiteSpace(numerosEtiqueta[0]) && !string.IsNullOrEmpty(numerosEtiqueta[0]) &&
-                (PCPConfig.EmpresaGeraArquivoDxf || PCPConfig.EmpresaGeraArquivoFml) &&
+                (PCPConfig.EmpresaGeraArquivoDxf || PCPConfig.EmpresaGeraArquivoFml || PCPConfig.EmpresaGeraArquivoSGlass) &&
                 (arquivo.TipoArquivo == TipoArquivoMesaCorte.DXF ||
                 arquivo.TipoArquivo == TipoArquivoMesaCorte.FML ||
                 arquivo.TipoArquivo == TipoArquivoMesaCorte.FMLBasico))

@@ -33,13 +33,13 @@ namespace Glass.API.Backend.Models.Orcamentos.Lista
             this.IdsMedicao = !string.IsNullOrEmpty(orcamento.IdsMedicao) ? orcamento.IdsMedicao.Split(',').Select(f => f.StrParaInt()) : new List<int>();
             this.Cliente = new IdNomeDto
             {
-                Id = (int)orcamento.IdCliente.GetValueOrDefault(),
+                Id = (int?)orcamento.IdCliente,
                 Nome = orcamento.NomeCliente,
             };
 
             this.Vendedor = new IdNomeDto
             {
-                Id = (int)orcamento.IdFuncionario,
+                Id = (int?)orcamento.IdFuncionario,
                 Nome = orcamento.NomeFuncAbrv,
             };
 

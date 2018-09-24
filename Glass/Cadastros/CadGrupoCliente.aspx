@@ -4,6 +4,16 @@
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
+     <script>
+        function onSave() {
+            if (FindControl("txtDescricao", "input") == "" || FindControl("txtDescricao", "input").value == "") {
+                alert("A descrição não pode ser vazia!");
+                return false;
+            }
+            return true;
+        }
+    </script>
+    
     <table>
         <tr>
             <td align="center">
@@ -17,7 +27,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <EditItemTemplate>
-                                <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Update"
+                                <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Update" OnClientClick="onSave();return false"
                                     ImageUrl="~/Images/Ok.gif" />
                                 <asp:ImageButton ID="imbExcluir" runat="server" CausesValidation="False"
                                     CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />

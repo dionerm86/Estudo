@@ -1274,13 +1274,20 @@ namespace Glass.Data.DAL
         /// <param name="sessao">Sessão que será usada na operação.</param>
         /// <param name="idSolucaoOtimizacao">Identificador da solução de otimização.</param>
         /// <param name="idImpressao">Identificador da impressão criada.</param>
-        public void AtualizarImpressaoRetalhosSolucaoOtimizacao(GDASession sessao, int idSolucaoOtimizacao, int idImpressao)
+        /// <param name="produtosImpressao">Produtos de impressão que devem ser considerados.</param>
+        public void AtualizarImpressaoRetalhosSolucaoOtimizacao(
+            GDASession sessao,
+            int idSolucaoOtimizacao,
+            int idImpressao,
+            IEnumerable<ProdutoImpressao> produtosImpressao)
         {
             var planoCortesImpressao = this.CurrentPersistenceObject.LoadResult(
                 sessao,
                 "SELECT DISTINCT PlanoCorte FROM produto_impressao pi2 WHERE pi2.IdImpressao=?idImpressao",
                 new GDAParameter("?idImpressao", idImpressao))
                 .Select(f => f.GetString(0))
+                .Concat(produtosImpressao.Select(f => f.PlanoCorte).Distinct())
+                .Distinct()
                 .ToList();
 
             var retalhos = this.CurrentPersistenceObject.LoadResult(
@@ -1373,6 +1380,8 @@ namespace Glass.Data.DAL
                     if (novoProduto == null)
                     {
                         novoProduto = MetodosExtensao.Clonar(produto);
+                        novoProduto.DadosBaixaEstoque.Clear();
+                        novoProduto.DadosBaixaEstoqueFiscal.Clear();
                         novoProduto.Altura = (int)retalho.Altura;
                         novoProduto.Largura = (int)retalho.Largura;
                         novoProduto.IdGrupoProd = (int)Glass.Data.Model.NomeGrupoProd.Vidro;
