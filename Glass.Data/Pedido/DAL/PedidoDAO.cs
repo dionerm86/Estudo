@@ -7421,9 +7421,10 @@ namespace Glass.Data.DAL
                 var mensagem = "";
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
 
+                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro);
+                
                 // Se, bloquear confirmação de pedido com sinal à receber.
-                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && idPedidoOk.Count == 0 &&
-                    !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro))
+                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idPedidoOk.Count == 0)
                 {
                     idsPedidosOk = "";
                     idsPedidosErro = idsPedidos;
