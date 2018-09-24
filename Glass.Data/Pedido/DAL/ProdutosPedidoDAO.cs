@@ -2635,7 +2635,7 @@ namespace Glass.Data.DAL
                             : null;
                         material.Valor = dadosObra != null && dadosObra.ProdutoValido
                             ? dadosObra.ValorUnitProduto
-                            : ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null);
+                            : ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente, ClienteDAO.Instance.IsRevenda(idCliente), itemProj.Reposicao, 0, (int?)prodPed.IdPedido, null, null, mip.Altura);
 
                         MaterialItemProjetoDAO.Instance.CalcTotais(sessao, ref material, false);
                         MaterialItemProjetoDAO.Instance.UpdateBase(sessao, material);
@@ -5196,7 +5196,7 @@ namespace Glass.Data.DAL
 	                INNER JOIN produto prod ON (pp.IdProd = prod.IdProd)
                     LEFT JOIN ambiente_pedido ap ON (pp.IdAmbientePedido=ap.IdAmbientePedido)
 	                LEFT JOIN grupo_prod gp ON (prod.IdGrupoProd = gp.IdGrupoProd)
-	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)            
+	                LEFT JOIN subgrupo_prod sgp ON (prod.IdSubGrupoProd = sgp.IdSubGrupoProd)
                 WHERE pp.IdPedido IN ({idsPedidoString})
 	                AND (pp.InvisivelFluxo IS NULL OR pp.InvisivelFluxo = 0)
 	                AND gp.IdGrupoProd IN ({(int)NomeGrupoProd.Vidro}, {(int)NomeGrupoProd.MaoDeObra})

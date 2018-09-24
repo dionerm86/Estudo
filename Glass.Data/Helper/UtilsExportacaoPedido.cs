@@ -154,7 +154,7 @@ namespace Glass.Data.Helper
                                     #region Arquivo de mesa
 
                                     uint? idArquivoMesaCorte = null;
-                                                                       
+
                                     var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
                                     if (ppe.IdMaterItemProj.GetValueOrDefault() > 0)
@@ -221,8 +221,8 @@ namespace Glass.Data.Helper
 
                                         if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
                                             ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-                                    }                                   
-                                    
+                                    }
+
                                     #endregion
                                 }
                             }
@@ -279,7 +279,7 @@ namespace Glass.Data.Helper
 
                                 #region Arquivo de mesa
 
-                                uint? idArquivoMesaCorte = null;                               
+                                uint? idArquivoMesaCorte = null;
 
                                 var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
@@ -346,8 +346,8 @@ namespace Glass.Data.Helper
 
                                     if (dadosArquivoMesaCorte.Arquivo != null && dadosArquivoMesaCorte.Arquivo.Count() > 0)
                                         ArquivoMesaCorte.Add(dadosArquivoMesaCorte);
-                                }                               
-                                
+                                }
+
                                 #endregion
                             }
                         }
@@ -871,7 +871,8 @@ namespace Glass.Data.Helper
                                             pp.IdProcesso = EtiquetaProcessoDAO.Instance.ObtemIdProcesso(transaction, pp.CodProcesso);
                                         }
 
-                                        pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
+                                        pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega,
+                                            (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null, pp.Altura);
                                         pp.QtdSaida = 0;
                                         /* Chamado 24452. */
                                         pp.ObsProjetoExterno = pp.ObsProjeto;
@@ -950,7 +951,7 @@ namespace Glass.Data.Helper
                                     pp.IdProd = (uint)ProdutoDAO.Instance.ObtemIdProd(transaction, pp.CodInterno);
                                     pp.IdAplicacao = EtiquetaAplicacaoDAO.Instance.ObtemIdAplicacao(transaction, pp.CodAplicacao);
                                     pp.IdProcesso = EtiquetaProcessoDAO.Instance.ObtemIdProcesso(transaction, pp.CodProcesso);
-                                    pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
+                                    pp.ValorVendido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)pp.IdProd, itens[i].Pedido.TipoEntrega, (uint)cliente.IdCli, cliente.Revenda, false, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null, pp.Altura);
                                     pp.QtdSaida = 0;
                                     /* Chamado 24452. */
                                     pp.ObsProjetoExterno = pp.ObsProjeto;

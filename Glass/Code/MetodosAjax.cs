@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 /// <summary>
 /// Summary description for MetodosAjax
@@ -48,7 +49,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetCountCliente();
         }
-    
+
         /// <summary>
         /// Busca o cliente em tempo real
         /// </summary>
@@ -59,7 +60,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetCli(idCli);
         }
-    
+
         [Ajax.AjaxMethod]
         public static string GetObsCli(string idCli)
         {
@@ -86,7 +87,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetEnderecoCli(idCli);
         }
-    
+
         /// <summary>
         /// Retorna o dados do cliente separados por |
         /// </summary>
@@ -97,7 +98,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetDadosCli(idCli);
         }
-    
+
         /// <summary>
         /// Busca o fornecedor em tempo real
         /// </summary>
@@ -108,43 +109,43 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetFornec(idFornec);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string GetFornecConsulta(string idFornec)
         {
             return Glass.Data.Helper.MetodosAjax.GetFornecConsulta(idFornec);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string GetTransportadora(string idTransportadora)
         {
             return Glass.Data.Helper.MetodosAjax.GetTransportadora(idTransportadora);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string GetMedidor(string idFunc)
         {
             return Glass.Data.Helper.MetodosAjax.GetMedidor(idFunc);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string GetConferente(string idFunc)
         {
             return Glass.Data.Helper.MetodosAjax.GetConferente(idFunc);
         }
-    
+
         [Ajax.AjaxMethod]
         public static string GetComissionado(string idComissionado, string idCliente)
         {
             return Glass.Data.Helper.MetodosAjax.GetComissionado(idComissionado, idCliente);
         }
-    
+
         [Ajax.AjaxMethod]
         public static string ComissaoAlteraValor(string idPedido)
         {
             return Glass.Data.Helper.MetodosAjax.ComissaoAlteraValor(idPedido);
         }
-    
+
         /// <summary>
         /// Busca o produto em tempo real
         /// </summary>
@@ -173,13 +174,13 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetSubgrupoProd(idGrupo);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string GetDescMaxPedido(string idFunc, string tipoVendaPedido, string idParcela)
         {
             return Glass.Data.Helper.MetodosAjax.GetDescMaxPedido(idFunc, tipoVendaPedido, idParcela);
         }
-    
+
         /// <summary>
         /// Retorna a descricao da forma de pagamento que possui o id passado
         /// </summary>
@@ -190,7 +191,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetFormaPagto(idFormaPagto);
         }
-    
+
         /// <summary>
         /// Retorna o código da forma de pagamento que possui o nome passado
         /// </summary>
@@ -201,7 +202,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetIdFormaPagto(descrFormaPagto);
         }
-    
+
         /// <summary>
         /// Verifica se a data passada é um dia útil
         /// </summary>
@@ -211,7 +212,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.IsDiaUtil(data);
         }
-    
+
         /// <summary>
         /// Calcula o Metro quadrado do produto em tempo real
         /// </summary>
@@ -274,7 +275,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.IsVidro(idGrupo);
         }
-    
+
         /// <summary>
         /// Retorna o crédito que o cliente possui
         /// </summary>
@@ -285,7 +286,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetClienteCredito(idCli);
         }
-    
+
         /// <summary>
         /// Retorna o crédito que o fornecedor possui
         /// </summary>
@@ -296,7 +297,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetFornecedorCredito(idFornec);
         }
-    
+
         /// <summary>
         /// Retorna a aplicação através de seu cod. interno
         /// </summary>
@@ -382,7 +383,7 @@ namespace Glass.UI.Web
         {
             Glass.Data.Helper.MetodosAjax.ManterLogado();
         }
-    
+
         /// <summary>
         /// Remove o ticket de autenticação do usuário logado
         /// </summary>
@@ -391,19 +392,19 @@ namespace Glass.UI.Web
         {
             Glass.Data.Helper.MetodosAjax.Logout();
         }
-    
+
         [Ajax.AjaxMethod]
         public static string PesquisarCep(string cep)
         {
             return Glass.Data.Helper.MetodosAjax.PesquisarCep(cep);
         }
-    
+
         [Ajax.AjaxMethod]
         public static string IsCidadeExterior(string idCidade)
         {
             return Glass.Data.Helper.MetodosAjax.IsCidadeExterior(idCidade);
         }
-    
+
         [Ajax.AjaxMethod()]
         public static string ObterIdNf(string numeroNFe, string idPedido, string modelo, string idLoja, string idCliente, string nomeCliente, string tipoFiscal, string idFornec,
             string nomeFornec, string codRota, string tipoDoc, string situacao, string dataIni, string dataFim, string idCfop, string idsTiposCfop,
@@ -414,7 +415,7 @@ namespace Glass.UI.Web
                 situacao, dataIni, dataFim, idCfop, idsTiposCfop, dataEntSaiIni, dataEntSaiFim, formaPagto, idsFormaPagtoNotaFiscal, tipoNf, finalidade, formaEmissao,
                 infCompl, codInternoProd, descrProd, valorInicial, valorFinal, lote);
         }
-    
+
         /// <summary>
         /// Busca razão social e cnpj da loja informada
         /// </summary>
@@ -425,7 +426,7 @@ namespace Glass.UI.Web
         {
             return Glass.Data.Helper.MetodosAjax.GetDadosLoja(idLoja);
         }
-    
+
         /// <summary>
         /// Busca razão social e cnpj do fornecedor informado
         /// </summary>
@@ -489,6 +490,23 @@ namespace Glass.UI.Web
         public static string ObterTipoCartao(string idTipoCartao)
         {
             return Data.Helper.MetodosAjax.ObterTipoCartao(idTipoCartao);
+        }
+
+        [Ajax.AjaxMethod()]
+        public static string GetValorTabelaProduto(string idProd, string tipoEntrega, string idCliente, string revenda, string reposicao, string percDescontoQtde,
+            string idPedido, string idProjeto, string idOrcamento, string altura)
+        {
+            return Data.DAL.ProdutoDAO.Instance.GetValorTabela(
+                idProd.StrParaInt(),
+                tipoEntrega.StrParaIntNullable(),
+                idCliente.StrParaUintNullable(),
+                Convert.ToBoolean(revenda),
+                Convert.ToBoolean(reposicao),
+                percDescontoQtde.StrParaFloat(),
+                idPedido.StrParaIntNullable(),
+                idProjeto.StrParaIntNullable(),
+                idOrcamento.StrParaIntNullable(),
+                altura.StrParaFloat()).ToString();
         }
     }
 }

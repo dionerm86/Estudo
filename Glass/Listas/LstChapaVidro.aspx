@@ -266,7 +266,7 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Altura Máxima sem Adicional">
                                         <ItemTemplate>
-                                            <asp:Label ID="Label16" runat="server" Text='<%# Eval("AlturaMaxSemAdicional") %>'></asp:Label>
+                                            <asp:Label ID="Label17" runat="server" Text='<%# Eval("AlturaMaxSemAdicional") %>'></asp:Label>
                                         </ItemTemplate>
                                         <EditItemTemplate>
                                             <asp:TextBox ID="txtAlturaMaxSemAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"
@@ -275,7 +275,7 @@
                                     </asp:TemplateField>
                                     <asp:TemplateField HeaderText="Percentual Adicional Altura">
                                         <ItemTemplate>
-                                            <asp:Label ID="Label16" runat="server" Text='<%# Eval("ValorAdicional") + "%" %>'></asp:Label>
+                                            <asp:Label ID="Label18" runat="server" Text='<%# Eval("ValorAdicional") + "%" %>'></asp:Label>
                                         </ItemTemplate>
                                         <EditItemTemplate>
                                             <asp:TextBox ID="txtValorAdicional" runat="server" onkeypress="return soNumeros(event, false, true)"

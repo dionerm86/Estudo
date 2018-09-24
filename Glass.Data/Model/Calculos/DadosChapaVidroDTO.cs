@@ -68,7 +68,7 @@ namespace Glass.Data.Model.Calculos
 
         public float PercentualAcrescimoAltura()
         {
-            if (chapaVidro.Value.AlturaMaxSemAdicional > 0 && produtoCalculo.Altura >= (chapaVidro.Value.AlturaMaxSemAdicional * produtoCalculo.Qtde))
+            if (chapaVidro != null && chapaVidro.Value.AlturaMaxSemAdicional > 0 && produtoCalculo.Altura >= chapaVidro.Value.AlturaMaxSemAdicional)
             {
                 return chapaVidro.Value.ValorAdicional / 100;
             }

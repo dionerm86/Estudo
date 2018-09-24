@@ -1,4 +1,4 @@
-<%@ Page Title="Emissão de Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
+﻿<%@ Page Title="Emissão de Nota Fiscal" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="CadNotaFiscal.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadNotaFiscal" %>
 
 <%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrlLinkQueryString" TagPrefix="uc1" %>
@@ -19,43 +19,43 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcAluminio.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
-    
+
     var manual = <%= (Request["manual"] == "1").ToString().ToLower() %>;
     var inserindo = <%= (Request["idNf"] == null).ToString().ToLower() %>;
     var isNfEntradaTerceiros = <%= IsNfEntradaTerceiros().ToString().ToLower() %>;
     var serieNf = <%= Glass.Configuracoes.FiscalConfig.NotaFiscalConfig
             .SeriePadraoNFe(null, null, Glass.Conversoes.StrParaIntNullable(Request["finalidade"]).GetValueOrDefault(0) == (int)Glass.Data.Model.NotaFiscal.FinalidadeEmissaoEnum.Ajuste).ToString() %>;
-    
+
     function atualizaTotalParcelas() {
         var nota = FindControl("txtTotalNota", "input");
         var manual = FindControl("txtTotalNotaManual", "input");
         var total = FindControl("hdfTotalParcelas", "input");
-        
-        total.value = manual && manual.value && parseFloat(manual.value.replace(",", ".")) > 0 ? manual.value : 
+
+        total.value = manual && manual.value && parseFloat(manual.value.replace(",", ".")) > 0 ? manual.value :
             nota ? nota.value : "0";
-        
+
         exibeParcelas();
     }
-    
+
     function exibirInfoAdicProdNf(botao, complTabela)
     {
         for (iTip = 0; iTip < 2; iTip++)
         {
-            TagToTip('tbInfoAdicProdNf' + complTabela, FADEIN, 300, COPYCONTENT, false, TITLE, 'Informações Adicionais', CLOSEBTN, true, 
-                CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true, 
+            TagToTip('tbInfoAdicProdNf' + complTabela, FADEIN, 300, COPYCONTENT, false, TITLE, 'Informações Adicionais', CLOSEBTN, true,
+                CLOSEBTNTEXT, 'Aplicar', CLOSEBTNCOLORS, ['#cc0000', '#ffffff', '#D3E3F6', '#0000cc'], STICKY, true,
                 FIX, [botao, 9-getTableWidth('tbInfoAdicProdNf' + complTabela), -41-getTableHeight('tbInfoAdicProdNf' + complTabela)]);
         }
     }
-    
+
     function calcValorPis(atualizaBc)
     {
         if (!isNfEntradaTerceiros) return;
         atualizaBc = atualizaBc == true ? true : false;
-        
+
         var aliq = FindControl("txtAliqPis", "input").value;
         aliq = aliq.replace(",", ".");
         aliq = parseFloat(aliq);
-        
+
         var total = FindControl("txtBcPis", "input");
         if (atualizaBc)
         {
@@ -63,52 +63,52 @@
             totalProd = totalProd.replace(/\./g, "").replace(",", ".");
             totalProd = parseFloat(totalProd);
             if (isNaN(totalProd)) totalProd = 0;
-            
+
             var valorIpi = FindControl("selCstIpi_hdfValor", "input").value == "0" ? "0" :
                 FindControl("txtValorIpi", "input") ? FindControl("txtValorIpi", "input").value :
                 FindControl("lblValorIpiIns", "span").innerHTML.replace("R$", "").replace(" ", "");
             valorIpi = valorIpi.replace(/\./g, "").replace(",", ".");
             valorIpi = parseFloat(valorIpi);
             if (isNaN(valorIpi)) valorIpi = 0;
-            
+
             total.value = (totalProd + valorIpi).toString().replace(".", ",");
         }
         total = total.value.replace(/\./g, "").replace(",", ".");
         total = parseFloat(total);
-        
+
         FindControl("txtValorPis", "input").value = (total * aliq / 100).toFixed(4).replace(".", ",");
     }
-    
+
     function calcValorCofins(atualizaBc)
     {
         if (!isNfEntradaTerceiros) return;
         atualizaBc = atualizaBc == true ? true : false;
-        
+
         var aliq = FindControl("txtAliqCofins", "input").value;
         aliq = aliq.replace(",", ".");
         aliq = parseFloat(aliq);
-        
+
         //var total = FindControl("txtBcCofins", "input");
         var total = FindControl("txtBcPis", "input");
         if (atualizaBc) total.value = FindControl("txtBcPis", "input").value.replace("R$", "").replace(" ", "");
         total = total.value.replace(/\./g, "").replace(",", ".");
         total = parseFloat(total);
-        
+
         FindControl("txtValorCofins", "input").value = (total * aliq / 100).toFixed(4).replace(".", ",");
     }
-    
+
     function openInfoAdic(idProdNf)
     {
         openWindow(600, 800, "../Utils/InfoAdicProdNf.aspx?idProdNf=" + idProdNf);
     }
-    
+
     function infComplProd(idProdNf) {
         openWindow(200, 400, "../Utils/SetInfComplProdNf.aspx?idProdNf=" + idProdNf);
     }
 
     function validarCfop(codCfop)
     {
-        if (codCfop == "" || codCfop == null) 
+        if (codCfop == "" || codCfop == null)
             return;
 
         //Pega o primeiro numero do CFOP
@@ -117,7 +117,7 @@
         //Se o tipo da nota for saida verifica se o CFOP se inicia com 5,6 ou 7
         if (GetQueryString("tipo") == "2") {
             if (comecoCfop == "5" || comecoCfop == "6" || comecoCfop == "7") {
-                return "true"                                
+                return "true"
             }
 
             return "false";
@@ -125,19 +125,19 @@
         ///Se o tipo da nota for entrada ou entrada terceiros verifica se o cfop se inicia com 1,2 ou 3
         if (GetQueryString("tipo") == "1" || GetQueryString("tipo") == "3") {
             if (comecoCfop == 1 || comecoCfop == "2" || comecoCfop == "3") {
-                return "true"             
+                return "true"
             }
             return "false";
         }
 
         return "true";
     }
-    
+
     var cfopDevolucao = null;
-    
+
     function atualizaCfopDevolucao(controle, id) {
         controle = eval(controle);
-        
+
         var retorno = controle ? controle.IsCfopDevolucao() : false;
         if (cfopDevolucao != null && (!!cfopDevolucao) != retorno) {
             limparDestinatario();
@@ -155,7 +155,7 @@
         }
 
         if(CadNotaFiscal.habilitarReferenciaNFe(idNf, idCfop, GetQueryString("tipo")).value == "false")
-        {                        
+        {
             if (FindControl("txtNfReferenciada", "input") != null)
             {
                 FindControl("hdfNfReferenciada", "input").value = "";
@@ -185,65 +185,65 @@
                 FindControl("imbOpenNfReferenciada", "input").style.display = "";
             }
         }
-        
+
         cfopDevolucao = retorno;
     }
-    
+
     function isCfopDevolucao() {
         return cfopDevolucao;
     }
-    
+
     function selLojaDest(tipoDoc) {
         return tipoDoc == 3;
     }
-    
+
     function selClienteDest(tipoDoc) {
         return (tipoDoc == 2 && !isCfopDevolucao()) || (tipoDoc == 1 && isCfopDevolucao()) || tipoDoc == 4;
     }
-    
+
     function selFornecDest(tipoDoc) {
         return (tipoDoc == 1 && !isCfopDevolucao()) || (tipoDoc == 2 && isCfopDevolucao());
     }
-    
+
     function limparDestinatario() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
-        
+
         FindControl("txtRazaoDest", "input").value = "";
         FindControl("txtCnpjDest", "input").value = "";
         FindControl("txtCodDest", "input").value = "";
-        
+
         if (selClienteDest(tipoDoc)) // Saída/NFe cliente - Seleciona cliente
             FindControl("hdfIdCliente", "input").value = "";
         else if (selFornecDest(tipoDoc)) // Entrada (ou devolução) - Seleciona fornecedor
             FindControl("hdfIdFornec", "input").value = "";
         else if (selLojaDest(tipoDoc))
             FindControl("hdfIdLoja", "input").value = "";
-        
+
         PodeConsSitCadContr();
     }
-    
+
     function selLojaEmit(tipoDoc) {
         return tipoDoc != 3 && tipoDoc != 4;
     }
-    
+
     function selClienteEmit(tipoDoc) {
         return isCfopDevolucao() && tipoDoc == 3;
     }
-    
+
     function selFornecEmit(tipoDoc) {
         return !isCfopDevolucao() || tipoDoc == 4;
     }
-    
+
     function limparRemetente() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
-        
+
         // Não pode modificar o remetente se for nota de saída, pois o remetente será sempre a loja
         if (tipoDoc != 2)
         {
             FindControl("txtRazaoEmit", "input").value = "";
             FindControl("txtCnpjEmit", "input").value = "";
             FindControl("txtCodEmit", "input").value = "";
-        
+
             if (selLojaEmit(tipoDoc))
                 FindControl("hdfIdLoja", "input").value = "";
             else if (selFornecEmit(tipoDoc))
@@ -255,7 +255,7 @@
 
     function openDestinatario() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
-        
+
         if (selClienteDest(tipoDoc)) // Saída/NFe cliente - Seleciona cliente
             openWindow(500, 700, '../Utils/SelCliente.aspx?Nfe=1');
         else if (selFornecDest(tipoDoc)) // Entrada (ou devolução) - Seleciona fornecedor
@@ -266,7 +266,7 @@
 
     function abrirEmitente() {
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
-        
+
         if (selLojaEmit(tipoDoc))
             openWindow(600, 700, '../Utils/SelLoja.aspx?Nfe=1');
         else if (selFornecEmit(tipoDoc))
@@ -274,7 +274,7 @@
         else if (selClienteEmit(tipoDoc))
             openWindow(600, 1050, '../Utils/SelCliente.aspx?Nfe=2');
     }
-    
+
     function getDestinatario(control) {
         var cod = control.value;
         var tipoDoc = FindControl("drpTipoDocumento", "select").value;
@@ -377,21 +377,21 @@
 
     // Seta informações do Emitente selecionado no popup
     function setFornecEmit(idFornec, razaoSocial, cnpj, idConta) {
-    
+
         var retorno = CadNotaFiscal.VigenciaPrecoFornec(idFornec).value.split(';');
-        
+
         if(retorno[0]=="Erro"){
             alert(retorno[1]);
             return false;
         }
-        
+
         FindControl("txtRazaoEmit", "input").value = razaoSocial;
         FindControl("txtCnpjEmit", "input").value = cnpj;
         FindControl("hdfIdFornec", "input").value = idFornec;
         if (idConta > 0 && FindControl("drpPlanoContas", "select")) FindControl("drpPlanoContas", "select").value = idConta;
         PodeConsSitCadContr();
     }
-    
+
     // Seta informações do Emitente selecionado no popup
     function setClienteEmit(idCliente, razaoSocial, cnpj) {
         FindControl("txtRazaoEmit", "input").value = razaoSocial;
@@ -423,32 +423,32 @@
             alert(habilitarCpfCnpj.erro.description);
             return false;
         }
-        
+
         FindControl("txtCnpjDest", "input").disabled = !habilitarCpfCnpj.value;
 
         var suframaDisplay = suframa != null && suframa != "" ? "inline" : "none";
         FindControl("lblSuframa", "span").style.display = suframaDisplay;
         FindControl("txtSuframa", "input").style.display = suframaDisplay;
         FindControl("txtSuframa", "input").value = suframa;
-        
+
         if (obsNfe)
         {
             if (FindControl("txtInfCmpl", "textarea").value.indexOf(obsNfe) == -1)
                 FindControl("txtInfCmpl", "textarea").value += obsNfe;
         }
-        
+
         var temTransportador = CadNotaFiscal.ClienteTemTransportador(idCliente);
-        
+
         if(temTransportador.error != null){
             alert(temTransportador.erro.description);
             return false;
         }
-        
+
         if(temTransportador.value == "true"){
             FindControl("drpFrete", "select").value = "2";
         }
-        
-        
+
+
         PodeConsSitCadContr();
     }
 
@@ -459,7 +459,7 @@
         FindControl("hdfIdFornec", "input").value = idFornec;
         PodeConsSitCadContr();
     }
-    
+
     // Atribui as informações da loja ao destinatário
     function setLojaDest(idLoja, razaoSocial, cpfCnpj) {
         FindControl("txtRazaoDest", "input").value = razaoSocial;
@@ -470,47 +470,47 @@
     function tipoPagtoChange(control) {
         if (control == null)
             return;
-        
+
         exibeParcelas();
     }
-    
-    function exibeParcelas() {   
+
+    function exibeParcelas() {
         var drpTipoPagto = FindControl("drpFormaPagto", "select");
         var txtNumParc = FindControl("txtNumParc", "input");
         var lblNumParc = FindControl("lblNumParc", "span");
         var maxNumParc = FindControl("hdfMaxNumParc", "input");
-        
+
         if (drpTipoPagto == null)
             return;
-        
+
         // Esconde o controle de pagamento se o tipo de pagamento for à vista, antecipação ou se o número de parcelas for superior
         var exibirParcelas = drpTipoPagto.value >= 2 && drpTipoPagto.value < 12 && parseInt(txtNumParc.value, 10) <= parseInt(maxNumParc.value, 10);
-        
+
         if (lblNumParc != null) {
-            FindControl("hdfExibirParcelas", "input").value = exibirParcelas;        
+            FindControl("hdfExibirParcelas", "input").value = exibirParcelas;
             lblNumParc.parentNode.style.display = drpTipoPagto.value >= 2 && drpTipoPagto.value < 12 ? "inline" : "none";
             txtNumParc.parentNode.style.display = drpTipoPagto.value >= 2 && drpTipoPagto.value < 12 ? "inline" : "none";
             Parc_visibilidadeParcelas("<%= dtvNf.ClientID %>_ctrlParcelas1");
         }
-        
+
         // Exibe campos de parcelas automáticas se quantidade de parcelas for alto
         if (FindControl("tbParcAut", "table") != null)
             FindControl("tbParcAut", "table").style.display = (drpTipoPagto.value >= 2 && exibirParcelas) || drpTipoPagto.value == 12 || drpTipoPagto.value == 1 ? "none" : "";
-            
+
         // Exibe o campo de fatura, se existir
         var fatura = FindControl("_fatura", "span");
         if (fatura != null)
         {
             fatura.style.display = drpTipoPagto.value >= 2 && drpTipoPagto.value < 12 ? "" : "none";
-            
+
             var tipoFatura = FindControl("drpFatura", "select");
             if (drpTipoPagto.value == 1)
                 tipoFatura.value = "";
-                
+
             alteraFatura(tipoFatura.value);
         }
     }
-    
+
     function alteraFatura(tipoFatura)
     {
         var outros = <%= ((int)Glass.Data.Model.NotaFiscal.TipoFaturaEnum.Outros).ToString() %>;
@@ -523,11 +523,11 @@
     var clicked = false;
 
     function onInsertUpdate() {
-            
+
         if (clicked)
             return false;
 
-        clicked = true;       
+        clicked = true;
 
         return true;
     }
@@ -555,7 +555,7 @@
             //Converte a data de um array de string para uma Data
             var dataDeSaida = new Date(dataSaidaSeparada[2], dataSaidaSeparada[1], dataSaidaSeparada[0], horaSaidaSeparada != null ? horaSaidaSeparada[0] : 0, horaSaidaSeparada != null ? horaSaidaSeparada[1] : 0);
             var dataDeEmissao = new Date(dataEmissaoSeparada[2], dataEmissaoSeparada[1], dataEmissaoSeparada[0], horaEmissaoSeparada != null ? horaEmissaoSeparada[0] : 0, horaEmissaoSeparada != null? horaEmissaoSeparada[1] : 0);
-            
+
             if (dataDeSaida < dataDeEmissao) {
                 alert("Data de saída/entrada não pode ser inferior à data de emissão");
                 return false;
@@ -565,9 +565,9 @@
     }
 
     // Validações realizadas ao inserir NF
-    function onSave() 
+    function onSave()
     {
-        // try...catch() necessário para caso ocorra algum erro de javascript durante a validação, 
+        // try...catch() necessário para caso ocorra algum erro de javascript durante a validação,
         // o usuário não consiga salvar as alterações feitas na nota
         try
         {
@@ -585,7 +585,7 @@
                 clicked = false;
                 return false;
             }
-        
+
             var tipoDoc = FindControl("drpTipoDocumento", "select").value;
 
             // Verifica se o modelo da nota foi selecionado
@@ -594,7 +594,7 @@
                 clicked = false;
                 return false;
             }
-        
+
             // Verifica se a série foi informada
             if (((tipoDoc == 3 && FindControl("txtModelo", "input").value != "22") || tipoDoc != 3) && FindControl("txtSerie", "input").value == "") {
                 alert("Informe a série da nota fiscal.");
@@ -604,7 +604,7 @@
 
             // Verifica se a forma de pagamento foi informada
             if (FindControl("drpFormaPagto", "select").value == "") {
-        
+
                 alert("Informe a forma de pagamento.");
                 clicked = false;
                 return false;
@@ -640,14 +640,14 @@
                     }
                 }
             }
-                
+
             // Verifica se o emitente foi selecionado
             if (FindControl("hdfIdLoja", "input").value == "" && FindControl("hdfIdFornec", "input").value == "") {
                 alert("Informe o emitente.");
                 clicked = false;
                 return false;
             }
-        
+
             // Verifica se o tipo do documento foi informado
             if (tipoDoc == "") {
                 alert("Informe o tipo do documento");
@@ -655,14 +655,14 @@
                 return false;
             }
 
-            // Verifica se o cliente/fornecedor foi informado, deve verificar os dois ao mesmo tempo, pois caso a nota seja de saída, 
+            // Verifica se o cliente/fornecedor foi informado, deve verificar os dois ao mesmo tempo, pois caso a nota seja de saída,
             // pode ser necessário informar o cliente ou fornecedor, caso seja devolução por exemplo
             if (FindControl("hdfIdCliente", "input").value == "" && FindControl("hdfIdFornec", "input").value == "") {
                 alert("Informe o destinatário/remetente.");
                 clicked = false;
                 return false;
             }
-                
+
             // Verifica se o frete foi informado
             if (FindControl("drpFrete", "select").value == "") {
                 alert("Informe a modalidade do frete.");
@@ -687,13 +687,13 @@
             return false;
         }
     }
-    
+
     //Remove os caracteres especiais da string
     function removeCaractereEspecial(texto){
         while(texto.indexOf("&#39;") != -1){
             texto = texto.replace("&#39;", "");
         }
-    
+
         return texto;
     }
 
@@ -704,25 +704,25 @@
 
         try {
             var idNf = FindControl("hdfIdNf", "input").value;
-        
-            var retorno = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value, 
+
+            var retorno = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value,
                 FindControl("hdfIdCliente", "input").value, FindControl("hdfIdFornec", "input").value, idNf).value.split(';');
 
             if (retorno[0] == "Erro") {
                 alert(retorno[1]);
                 return false;
             }
-            
+
             var finalidade = FindControl("hdfFinalidade", "input");
             if (finalidade != null) finalidade = finalidade.value;
-            
+
             FindControl("hdfIdProd", "input").value = idProd;
             FindControl("txtValorIns", "input").value = finalidade == 1 || finalidade == null ? retorno[1] : 0;
             FindControl("hdfValMin", "input").value = finalidade == 1 || finalidade == null ? retorno[1] : 0; // Armazena o valor mínimo
             FindControl("hdfIsVidro", "input").value = retorno[2]; // Informa se o produto é vidro
             FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto é vidro
             FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m² mínimo
-            
+
             var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;
 
             if (retorno[5] != "" && FindControl("drpCst", "select") != null)
@@ -730,22 +730,22 @@
                 FindControl("drpCst", "select").value = retorno[5];
                 obterCodValorFiscalPorCst(FindControl("drpCst", "select"));
             }
-                
+
             if (retorno[19] != "" && FindControl("drpOrigCst", "select") != null)
                 FindControl("drpOrigCst", "select").value = retorno[19];
-                
+
             if (FindControl("drpCsosn", "select") != null)
             {
                 if (retorno[6] != "")
                     FindControl("drpCsosn", "select").value = retorno[6];
-                
+
                 if (FindControl("ddlCodValorFiscal", "select") != null)
                     FindControl("ddlCodValorFiscal", "select").value = "3";
             }
 
             FindControl("txtAliqIcms", "input").value = retorno[7];
             FindControl("txtAliqIpi", "input").value = retorno[9];
-            
+
             if (FindControl("txtAliqIcmsSt", "input") != null)
                 FindControl("txtAliqIcmsSt", "input").value = retorno[15];
 
@@ -755,29 +755,29 @@
 
             if(FindControl("txtAliqFcpSt", "input") != null)
                 FindControl("txtAliqFcpSt", "input").value = retorno[20];
-            
+
             var controle = FindControl("ctrlNaturezaOperacaoProd_selNaturezaOperacao_txtDescr", "input");
             if (controle != null)
             {
                 controle.value = retorno[10];
                 controle.onblur();
             }
-            
+
             if (FindControl("txtNcm", "input") != null)
                 FindControl("txtNcm", "input").value = retorno[11];
-                
+
             if (FindControl("txtMva", "input") != null)
                 FindControl("txtMva", "input").value = retorno[12];
-                
+
             if (retorno[16] != "" && FindControl("selCstIpi_hdfValor", "input") != null)
             {
                 FindControl("selCstIpi_txtDescr", "input").value = retorno[16];
                 FindControl("selCstIpi_txtDescr", "input").onblur();
             }
-                
+
             if (retorno[17] != "" && FindControl("drpContaContabil", "select") != null)
                 FindControl("drpContaContabil", "select").value = retorno[17];
-                
+
             // Define se a opção de mostrar a qtd tributária será mostrada
             var mostrarQtdeTrib = retorno[18] == "true";
             FindControl("txtQtdeTrib", "input").style.display = mostrarQtdeTrib ? "inline" : "none";
@@ -794,7 +794,7 @@
             cAltura.value = "";
             cLargura.value = "";
             FindControl("txtTotM2", "input").disabled = tipoCalc != 2 && tipoCalc != 3 && tipoCalc != 10 && retorno[2] != "true";
-            
+
             var funcaoNumeros = "return soNumeros(event, " + (tipoCalc != 5).toString().toLowerCase() + ", true);";
             FindControl("txtQtde", "input").setAttribute("OnKeyPress", funcaoNumeros);
 
@@ -803,9 +803,9 @@
                 cAltura.value = retorno[13];
                 cLargura.value = retorno[14];
             }
-                
+
             // Limpa os controles abaixo somente se o FCI estiver habilitado
-            if (FindControl("txtParcelaImportada", "input") != null)    
+            if (FindControl("txtParcelaImportada", "input") != null)
             {
                 FindControl("txtParcelaImportada", "input").value = "";
                 FindControl("txtSaidaInterestadual", "input").value = "";
@@ -817,7 +817,7 @@
             alert(err);
         }
     }
-    
+
     function callbackNatOp(nomeControle, id) {
         if (FindControl("drpCst", "select") != null)
             obterCodValorFiscalPorCst(FindControl("drpCst", "select"));
@@ -851,9 +851,9 @@
         var largura = FindControl("txtLarguraIns", "input").value;
         var valMin = FindControl("hdfValMin", "input").value;
         var finalidade = FindControl("hdfFinalidade", "input").value;
-        
+
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
-        
+
         if (codProd == "") {
             alert("Informe o código do produto.");
             botaoInserirProdutoClicado = false;
@@ -882,7 +882,7 @@
             botaoInserirProdutoClicado = false;
             return false;
         }
-        
+
         var usarFci = <%= UtilizaFCI().ToString().ToLower() %>;
 
         if(usarFci){
@@ -892,14 +892,14 @@
                 return false;
             }
         }
-        
+
         codValorFiscalSimples();
-        
-        // Habilita os campos altura e largura para que caso o produto inserido seja um box, os campos altura e largura 
+
+        // Habilita os campos altura e largura para que caso o produto inserido seja um box, os campos altura e largura
         // devem estar desbloqueados no momento do postback para que os valores sejam enviados.
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
-        
+
         return true;
     }
 
@@ -911,9 +911,9 @@
         var idProd = FindControl("hdfIdProd", "input").value;
         var valMin = FindControl("hdfValMin", "input").value;
         var idNf = FindControl("hdfIdNf", "input").value;
-        var finalidade = FindControl("hdfFinalidade", "input").value;     
+        var finalidade = FindControl("hdfFinalidade", "input").value;
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
-        
+
         var retorno = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfIdCliente", "input").value, FindControl("hdfIdFornec", "input").value, idNf).value.split(';');
 
         if (retorno[0] == "Erro") {
@@ -943,15 +943,24 @@
             if(!validaFci(numControleFci))
                 return false;
         }
-        
+
         codValorFiscalSimples();
-        
-        // Habilita os campos altura e largura para que caso o produto inserido seja um box, os campos altura e largura 
+
+        // Habilita os campos altura e largura para que caso o produto inserido seja um box, os campos altura e largura
         // devem estar desbloqueados no momento do postback para que os valores sejam enviados.
         FindControl("txtAlturaIns", "input").disabled = false;
         FindControl("txtLarguraIns", "input").disabled = false;
-        
+
         return true;
+    }
+
+    function GetAdicionalAlturaChapa(){
+        var idProd = FindControl("hdfIdProd", "input").value;
+        var altura = FindControl("txtAlturaIns", "input").value;
+        var idCliente = FindControl("hdfIdFornec", "input").value;
+        var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+
+        FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, false, false, 0, "", "", "", altura).value.replace(".", ",");
     }
 
     // Calcula em tempo real a metragem quadrada do produto
@@ -962,7 +971,7 @@
             var qtde = FindControl("txtQtdeIns", "input").value;
             var isVidro = FindControl("hdfIsVidro", "input").value == "true";
             var tipoCalc = FindControl("hdfTipoCalc", "input").value;
-            
+
             if (altura == "" || largura == "" || qtde == "" || altura == "0" || largura == "0") {
                 if (qtde != "" && qtde != "0")
                     calcTotalProd();
@@ -991,7 +1000,7 @@
             var tipoCalc = FindControl("hdfTipoCalc", "input").value;
             var m2Minimo = FindControl("hdfM2Minimo", "input").value;
             var totM2Calc = totM2;
-            
+
             var calculo = CalcProd_CalcTotalProd(valorIns, totM2, totM2Calc, m2Minimo, total, qtde, altura, FindControl("txtAlturaIns", "input"),
                 largura, 2, tipoCalc, 2, 2);
 
@@ -999,23 +1008,23 @@
                 FindControl("lblTotalIns", "span").innerHTML = calculo;
             else
                 FindControl("txtTotalIns", "input").value = calculo.replace("R$", "").replace(" ", "");
-            
+
             calcValorPis(true);
             calcValorCofins(true);
-            
+
             FindControl("hdfTotalIns", "input").value = calculo.replace("R$", "").replace(" ", "");
         }
         catch (err) {
 
         }
     }
-    
+
     // Se a nota for série U ou a finalidade for NF-e Complementar, abre campos de impostos e do total da nota para edição,
     // e esconde os produtos
     function habilitaTxtImpostos(alterarSerie) {
         if (FindControl("txtSerie", "input") == null)
             return;
-    
+
         var lblBcIcmsSt = FindControl("lblBcIcmsSt", "span");
         var lblValorIcmsSt = FindControl("lblValorIcmsSt", "span");
         var lblValorIpi = FindControl("lblValorIpi", "span");
@@ -1029,7 +1038,7 @@
         var txtValorIcms = FindControl("txtValorIcms", "input");
         var txtValorPis = FindControl("txtValorPis", "input");
         var txtValorCofins = FindControl("txtValorCofins", "input");
-        
+
         // Se for nota de série "U"
         if (FindControl("txtSerie", "input").value == "U") {
             if (lblBcIcmsSt != null) {
@@ -1042,7 +1051,7 @@
                 if (lblTotalProd != null) lblTotalProd.style.display = "none";
                 if (txtTotalProd != null) txtTotalProd.style.display = "none";
             }
-            
+
             txtTotalNota.disabled = false;
             txtBCIcms.disabled = false;
             txtValorIcms.disabled = false;
@@ -1054,7 +1063,7 @@
         else {
             if (alterarSerie && inserindo)
                 FindControl("txtSerie", "input").value = serieNf;
-            
+
             if (lblBcIcmsSt != null) {
                 lblBcIcmsSt.style.display = "inline";
                 lblValorIcmsSt.style.display = "inline";
@@ -1065,7 +1074,7 @@
                 if (lblTotalProd != null) lblTotalProd.style.display = "inline";
                 if (txtTotalProd != null) txtTotalProd.style.display = "inline";
             }
-            
+
             txtTotalNota.disabled = true;
             txtBCIcms.disabled = true;
             txtValorIcms.disabled = true;
@@ -1074,14 +1083,14 @@
             txtValorPis.disabled = !isNfEntradaTerceiros;
             txtValorCofins.disabled = !isNfEntradaTerceiros;
         }
-        
+
         // Libera campos se for NF-e complementar/ajuste ou se for ajuste manual
         var finalidade = FindControl("hdfFinalidade", "input");
         var chkCompl = FindControl("chkCompl", "input");
         if ((finalidade != null && (finalidade.value == 2 || finalidade.value == 3)) || (chkCompl != null && chkCompl.checked) || manual) {
             if (FindControl("txtSerie", "input").value == "")
                 FindControl("txtSerie", "input").value = serieNf;
-        
+
             if (lblBcIcmsSt != null) {
                 lblBcIcmsSt.style.display = "inline";
                 lblValorIcmsSt.style.display = "inline";
@@ -1092,7 +1101,7 @@
                 if (lblTotalProd != null) lblTotalProd.style.display = "inline";
                 if (txtTotalProd != null) txtTotalProd.style.display = "inline";
             }
-        
+
             txtTotalNota.disabled = false;
             txtBCIcms.disabled = false;
             txtValorIcms.disabled = false;
@@ -1105,66 +1114,66 @@
                 txtTotalProd.disabled = false;
         }
     }
-    
+
     // Função chamada ao clicar na check de nf complementar
     function chkComplClick(chkCompl, alterarOutros) {
-        if (chkCompl == null) 
+        if (chkCompl == null)
             return false;
-            
+
         if (alterarOutros)
         {
             var chkServico = FindControl("chkServico", "input");
             chkServico.checked = false;
             chkServicoClick(chkServico, false);
         }
-            
+
         habilitaTxtImpostos(false);
     }
-    
+
     function chkServicoClick(chkServico, alterarOutros)
     {
         if (chkServico == null)
             return false;
-        
+
         if (alterarOutros)
-        {   
+        {
             var chkCompl = FindControl("chkCompl", "input");
             chkCompl.checked = false;
             chkComplClick(chkCompl, false);
         }
-        
+
         FindControl("lblValorISS", "span").style.display = chkServico.checked ? "" : "none";
         FindControl("txtValorISS", "input").style.display = chkServico.checked ? "" : "none";
     }
-    
+
     function serieOnChange(serie) {
         if (manual) return;
-        if (serie == "U") 
+        if (serie == "U")
             habilitaTxtImpostos(true);
     }
-    
+
     // Se cst escolhido for 20, mostra campo para informar o percentual de redução da base de cálculo
     function drpCst_Changed(atualizarOutros) {
         var drpCst = FindControl("drpCst", "select");
-        
+
         if (drpCst == null)
             return;
-            
+
         atualizarOutros = atualizarOutros == false ? false : true;
         if (atualizarOutros)
             obterCodValorFiscalPorCst(drpCst);
-        
+
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select").value;
 
         // Define se será exibido a table com informações adicionais de CST (Redução na BC, Desoneração de ICMS e Perc. de diferimento)
-        var displayInfoCST = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "51" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";                
+        var displayInfoCST = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "51" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         document.getElementById("percRedIcms").style.display = displayInfoCST;
 
         // Define se será exibido o percentual de redução da BC
-        var displayRedBC = drpCst.value == "20" || drpCst.value == "51" || (drpCst.value == "70" && codValorFiscal == "1") ? "inline" : "none";        
+        var displayRedBC = drpCst.value == "20" || drpCst.value == "51" || (drpCst.value == "70" && codValorFiscal == "1") ? "inline" : "none";
         FindControl("txtPercRedBcIcms", "input").style.display = displayRedBC;
         FindControl("lblPercRedBcIcms", "span").style.display = displayRedBC;
-        
+
         // Define se serão exibidos campos de icms desonerado
         var displayDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
         FindControl("txtValorIcmsDeson", "input").style.display = displayDeson;
@@ -1173,43 +1182,43 @@
 
         // Define se será exibido o motivo da desoneração do ICMS
         var displayMotivoDeson = drpCst.value == "20" || drpCst.value == "30" || drpCst.value == "40" || drpCst.value == "41" || drpCst.value == "50" || drpCst.value == "70" || drpCst.value == "90" ? "inline" : "none";
-        FindControl("drpMotivoIcmsDeson", "select").style.display = displayMotivoDeson;        
+        FindControl("drpMotivoIcmsDeson", "select").style.display = displayMotivoDeson;
 
         // Define se serão exibidos campos de percentual de diferimento de ICMS
         var displayPercDiferimento = drpCst.value == "51" ? "inline" : "none";
         FindControl("lblPercDiferimento", "span").style.display = displayPercDiferimento;
         FindControl("txtPercDiferimento", "input").style.display = displayPercDiferimento;
-                
+
         if (atualizarOutros)
             ddlCodValorFiscal_change(FindControl("ddlCodValorFiscal", "select"), false);
     }
-    
+
     function infComplProd(idProdNf) {
         openWindow(200, 400, "../Utils/SetInfComplProdNf.aspx?idProdNf=" + idProdNf);
-    }  
-    
+    }
+
     // Se CSOSN escolhido for o 900, mostra campo para informar o percentual de redução da base de cálculo.
     function drpCsosn_Changed() {
         var drpCsosn = FindControl("drpCsosn", "select");
-        
+
         if (drpCsosn == null) {
             return;
         }
         var display = drpCsosn.value == "900" ? "inline" : "none";
-        
+
         document.getElementById("csosnPercRedIcms").style.display = display;
         FindControl("txtCsosnPercRedBcIcms", "input").style.display = display;
         FindControl("lblCsosnPercRedBcIcms", "span").style.display = display;
-        
+
         FindControl("txtCsosnPercRedBcIcmsSt", "input").style.display = display;
         FindControl("lblCsosnPercRedBcIcmsSt", "span").style.display = display;
     }
-    
+
     function obterCodValorFiscalPorCst(drpCst){
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select")
         var simplesNacional = FindControl("hdfSimplesNacional", "input").value;
         var tipoDocumento = FindControl("hdfTipoDocumento", "input").value;
-        
+
         if(simplesNacional == "False")
         {
              if(drpCst.value == "00")
@@ -1239,12 +1248,12 @@
             codValorFiscal.value = "3";
         }
     }
-    
+
     function codValorFiscalSimples(){
         var codValorFiscal = FindControl("ddlCodValorFiscal", "select");
         var simplesNacional = FindControl("hdfSimplesNacional", "input").value == "True";
         var tipoDocumento = FindControl("hdfTipoDocumento", "input").value;
-        
+
         if(simplesNacional && codValorFiscal.value != 3)
         {
             var msg = tipoDocumento == 3 ? "Esse fornecedor está dentro do Simples Nacional, portanto, o código do valor fiscal deverá ser 3.\nDeseja alterar o código ?" :
@@ -1257,31 +1266,31 @@
     }
 
     function ddlCodValorFiscal_change(sender, atualizarOutros) {
-        
+
         var tipoDocumento = FindControl("hdfTipoDocumento", "input").value;
         var drpCst = FindControl("drpCst", "select");
         var display = sender.value == "1" && drpCst.value == "70" ? "inline" : "none";
-        
+
         FindControl("txtPercRedBcIcmsSt", "input").style.display = display;
         FindControl("lblPercRedBcIcmsSt", "span").style.display = display;
-        
+
         atualizarOutros = atualizarOutros == false ? false : true;
         if (atualizarOutros)
             drpCst_Changed(false);
     }
-    
+
     function PodeConsSitCadContr(){
-        
+
         var idCli = FindControl("hdfIdCliente", "input").value;
         var idFornec = FindControl("hdfIdFornec", "input").value;
-        
+
         if(idCli == "" && idFornec == ""){
             FindControl("ConsultaCadCliSintegra", "div").style.display = 'none';
             return false;
         }
-        
+
         var podeConsultar;
-        
+
         if(idCli != "")
             podeConsultar = CadNotaFiscal.PodeConsultarCadastro(idCli, "cliente").value;
         else
@@ -1291,12 +1300,12 @@
             FindControl("ConsultaCadCliSintegra", "div").style.display = 'inline';
         else
             FindControl("ConsultaCadCliSintegra", "div").style.display = 'none';
-            
+
         return false;
-            
-        
+
+
     }
-    
+
     function formaPagtoChanged(formaPagto){
 
         var txtAntecip = FindControl("txtAntecip", "input");
@@ -1306,10 +1315,10 @@
         {
             txtAntecip.style.display = "";
             imbBuscaAntecip.style.display = "";
-            
+
             var idAntecip = FindControl("hdfIdAntecipFornec", "input").value;
             var descrAntecip = CadNotaFiscal.GetDescrAntecipFornec(idAntecip).value;
-            FindControl("txtAntecip", "input").value = descrAntecip;  
+            FindControl("txtAntecip", "input").value = descrAntecip;
         }
         else
         {
@@ -1320,50 +1329,50 @@
             txtAntecip.style.display = "none";
         }
     }
-    
+
     function openSelAntecipFornec(){
-        
+
         var idFornec = FindControl("hdfIdFornec","input").value;
-        
+
         if (idFornec == "")
         {
             alert("Selecione um fornecedor antes de selecionar a antecipação.");
             return false;
         }
-    
+
         openWindow(560, 650, "../Utils/SelAntecipFornec.aspx?situacao=4&idFornec=" + idFornec);
     }
-    
+
     function setAntecipFornec(idAntecipFornec, descrAntecip){
-    
+
         FindControl("hdfIdAntecipFornec", "input").value = idAntecipFornec;
         FindControl("txtAntecip", "input").value = descrAntecip;
     }
-    
+
     function openSelNfReferenciada(numeros){
-    
+
         var tipo = GetQueryString("tipo");
         var idCfop = FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value;
-        
+
         if(tipo != 1 && tipo != 2)
             return false;
         if (idCfop == "5929") {
-            if(numeros != '')            
+            if(numeros != '')
                 openWindow(560, 1000, "../Utils/SelNotaFiscalConsumidorReferenciada.aspx?numeros=" + numeros);
             else
                 openWindow(560, 1000, "../Utils/SelNotaFiscalConsumidorReferenciada.aspx?");
         }
         else{
-            if(numeros != '')            
+            if(numeros != '')
                 openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?numeros=" + numeros);
             else
                 openWindow(560, 1000, "../Utils/SelNotaFiscalReferenciada.aspx?");
         }
     }
-    
+
     function setNfReferenciada(idNf, numNf){
         var idCfop = FindControl("ctl00_ctl00_Pagina_Conteudo_dtvNf_ctrlNaturezaOperacaoNf_selNaturezaOperacao_txtDescr", "input").value;
-        
+
         if (FindControl("txtNfReferenciada", "input") != null)
         {
             if(CadNotaFiscal.habilitarReferenciaNFe(idNf, idCfop, GetQueryString("tipo")).value == "true")
@@ -1378,19 +1387,19 @@
             }
         }
     }
-    
+
     function validaFci(controle){
-    
+
         var origCst = FindControl("drpOrigCst", "select");
-        
+
         if(origCst == null || origCst.value == null){
             alert("Falha ao validar número de controle da FCI. A origem da mercadoria não foi encontada.");
             controle.value = "";
             return false;
         }
-        
+
         if(origCst.value == 3 || origCst.value == 5 || origCst.value == 8){
-        
+
 //            if(<%= (TipoDocumentoNF() != 2).ToString().ToLower() %>){
 //                if(controle == null || controle.value == ""){
 //                    alert("O número de controle da FCI não foi informado.");
@@ -1398,113 +1407,113 @@
 //                    return false;
 //                }
 //            }
-            
+
             if(controle != null && controle.value != "" && !isGUID(controle.value)){
                 alert("O número de controle da FCI informado não é valido.");
                 controle.value = "";
                 return false;
             }
-            
+
         }
         else if(controle != null && controle.value != ""){
             alert("O número de controle da FCI deve ser informado apenas quando a origem da mercadoria for 3, 5 ou 8.");
             controle.value = "";
             return false;
         }
-        
+
         return true;
     }
-    
+
     function buscarDadosFci(){
-    
+
      if(<%= (TipoDocumentoNF() != 2 || !UtilizaFCI()).ToString().ToLower() %>)
         return false;
-        
+
         var origCst = FindControl("drpOrigCst", "select");
         var txtParcelaImportada = FindControl("txtParcelaImportada", "input");
         var txtSaidaInterestadual = FindControl("txtSaidaInterestadual", "input");
         var txtConteudoImportacao = FindControl("txtConteudoImportacao", "input");
         var txtNumControleFci = FindControl("txtNumControleFci", "input");
-    
-        if(origCst == null || origCst.value == "" || 
+
+        if(origCst == null || origCst.value == "" ||
             (origCst.value != 3 && origCst.value != 5 && origCst.value != 8)){
-            
+
             txtParcelaImportada.value = "";
             txtSaidaInterestadual.value = "";
             txtConteudoImportacao.value = "";
             txtNumControleFci.value = "";
-            
+
             return false;
         }
-        
+
         var idProd = FindControl("hdfIdProd", "input");
-        
+
         if(idProd == null || parseInt(idProd.value) == 0 || idProd.value == "")
             return false;
-        
+
         var dadosFci = CadNotaFiscal.BuscaDadosFci(idProd.value, origCst.value);
-        
+
         if(dadosFci.error != null){
             alert(dadosFci.error.description);
             return false;
         }
-        
+
         if(!confirm('Buscar núm. de controle da FCI?'))
             return false;
-        
+
         txtNumControleFci.value = dadosFci.value.split(';')[0];
         txtParcelaImportada.value = dadosFci.value.split(';')[1];
         txtSaidaInterestadual.value = dadosFci.value.split(';')[2];
         txtConteudoImportacao.value = dadosFci.value.split(';')[3];
     }
-    
+
     function validaFciFinalizarEmitir(){
 
         if(<%= (!UtilizaFCI()).ToString().ToLower() %>)
             return true;
-            
+
         var retorno = CadNotaFiscal.validaFciFinalizarEmitir(<%= Request["idNf"] %>);
-        
+
         if(retorno.error != null){
             alert(retorno.error.description);
             return false;
         }
-        
+
         if(retorno.value == "")
             return true;
-        
+
         var dados = retorno.value.split(';');
-        
+
         var msg = "É necessário informar FCI para o(s) produto(s):\n\n";
-        
+
         for(var i = 0; i < dados.length ; i++)
             msg += dados[i] + "\n";
-            
+
         msg += "\nDeseja prosseguir assim mesmo?";
-        
+
         return confirm(msg);
     }
-    
+
         function confirmarNaturezaOperacaoAlteraEstoqueFiscal(){
             var retornoValidacao = CadNotaFiscal.ValidaNaturezaOperacao(<%= Request["idNf"] %>);
-            
+
             if(retornoValidacao.error != null){
                 alert(retornoValidacao.error.description);
                 return false;
             }
-            
+
             if(retornoValidacao.value == "nao") {
                 alert("Informe a natureza de operação da nota fiscal.");
                 return false;
             }
 
             var retorno = CadNotaFiscal.VerificarNaturezaOperacaoAlteraEstoqueFiscal(<%= Request["idNf"] %>);
-        
+
             if(retorno.error != null){
                 alert(retorno.error.description);
                 return false;
             }
-        
+
             if(retorno.value == "nao")
                 return confirm("A natureza de operação selecionada na nota fiscal não altera o estoque fiscal, deseja finalizá-la assim mesmo?");
 
@@ -1516,10 +1525,10 @@
 
             if (planoConta == null)
                 return false;
-            
+
             planoConta.value = idConta;
         }
-    
+
         function mensagemAlertaCST(){
             var drpCst = FindControl("drpCst", "select");
             var drpOrigCst = FindControl("drpOrigCst", "select");
@@ -1535,7 +1544,7 @@
                 imbAlerta.hidden = true;
                 return false;
             }
-    
+
             var origCst = drpOrigCst.value;
             var cst = drpCst.value;
 
@@ -1578,7 +1587,7 @@
             // Recupera os dados do produto para verificar se os impostos necessários estão informados em seu cadastro.
             var idNf = FindControl("hdfIdNf", "input").value;
             var idProd = FindControl("hdfIdProd", "input").value;
-            var retornoProd = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value, 
+            var retornoProd = CadNotaFiscal.GetProduto(idProd, FindControl("hdfTipoEntrega", "input").value,
                 FindControl("hdfIdCliente", "input").value, FindControl("hdfIdFornec", "input").value, idNf).value.split(';');
 
             if (retornoProd[0] == "Erro") {
@@ -1621,12 +1630,12 @@
         var emitirNFeClicked = false;
 
         function onEmitirNFe() {
-            
+
             if (emitirNFeClicked)
                 return false;
 
-            emitirNFeClicked = true;    
-            
+            emitirNFeClicked = true;
+
             if(!confirm('Tem certeza que deseja emitir esta Nota Fiscal?') || !validaFciFinalizarEmitir()){
                 emitirNFeClicked = false;
                 return false;
@@ -1744,7 +1753,7 @@
                                             <asp:Label ID="Label57" runat="server" Text="Natureza da Operação"></asp:Label>
                                         </td>
                                         <td>
-                                            <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server" 
+                                            <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server"
                                                 CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>' PermitirVazio="False"
                                                 Callback="atualizaCfopDevolucao" />
                                         </td>
@@ -1808,7 +1817,7 @@
                                         <td style="<%= ExibirLojaEstoque() %>">
                                             <asp:Label ID="Label52" runat="server" Text="Loja (estoque)"></asp:Label>
                                         </td>
-                                        <td style="<%= ExibirLojaEstoque() %>">                                            
+                                        <td style="<%= ExibirLojaEstoque() %>">
                                             <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="true"
                                                 SelectedValue='<%# Eval("IdLoja") %>' onchange="FindControl('hdfIdLoja', 'input').value = this.value"
                                                 DataSourceID="odsLoja" DataTextField="NomeFantasia" DataValueField="IdLoja">
@@ -1821,7 +1830,7 @@
                                 <table class="pos" runat="server" id="tbFormaPagto">
                                     <tr>
                                         <td>
-                                            <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>' 
+                                            <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>'
                                                 EnableViewState="true" />
                                         </td>
                                     </tr>
@@ -1955,7 +1964,7 @@
                                         <td>
                                             <asp:TextBox ID="txtCodEmit" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
                                                 onblur="getRemetente(this);"></asp:TextBox>
-                                        </td> 
+                                        </td>
                                         <td>
                                             <asp:Label ID="Label60" runat="server" Text="Razão Social"></asp:Label>
                                         </td>
@@ -2014,12 +2023,12 @@
                                                 ControlToValidate="txtCnpjDest" ErrorMessage="CPF Inválido"></asp:CustomValidator>
                                         </td>
                                         <td>
-                                            <asp:Label ID="lblSuframa" runat="server" 
+                                            <asp:Label ID="lblSuframa" runat="server"
                                                 Text="Suframa"></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:TextBox ID="txtSuframa" runat="server" Enabled="False" 
-                                                Text='<%# Eval("SuframaCliente") %>' Width="150px" 
+                                            <asp:TextBox ID="txtSuframa" runat="server" Enabled="False"
+                                                Text='<%# Eval("SuframaCliente") %>' Width="150px"
                                                 ondatabinding="txtSuframa_DataBinding"></asp:TextBox>
                                         </td>
                                         <td>
@@ -2243,7 +2252,7 @@
                                     </table>
                                 </div>
                                 <br />
-                                
+
                                 <div align="center" class="dtvTitle" style="padding: 3px">
                                     Transportador / Volumes transportados
                                 </div>
@@ -2389,7 +2398,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                               
+
                                 <div style="<%= !IsContingenciaFsda() ? "display: none": "" %>">
                                     <br />
                                     <br />
@@ -2487,7 +2496,7 @@
                                             <asp:Label ID="Label57" runat="server" Text="Natureza da Operação"></asp:Label>
                                         </td>
                                         <td>
-                                            <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server" 
+                                            <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoNf" runat="server"
                                                 CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>' PermitirVazio="False"
                                                 Callback="atualizaCfopDevolucao" />
                                         </td>
@@ -2549,7 +2558,7 @@
                                         <td style="<%= ExibirLojaEstoque() %>">
                                             <asp:Label ID="Label52" runat="server" Text="Loja (estoque)"></asp:Label>
                                         </td>
-                                        <td style="<%= ExibirLojaEstoque() %>">                                            
+                                        <td style="<%= ExibirLojaEstoque() %>">
                                             <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="true"
                                                 SelectedValue='<%# Eval("IdLoja") %>' onchange="FindControl('hdfIdLoja', 'input').value = this.value"
                                                 DataSourceID="odsLoja" DataTextField="NomeFantasia" DataValueField="IdLoja">
@@ -2562,7 +2571,7 @@
                                 <table class="pos" runat="server" id="tbFormaPagto">
                                     <tr>
                                         <td>
-                                            <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>' 
+                                            <uc10:ctrlFormaPagtoNotaFiscal ID="ctrlFormaPagto" runat="server" PagtoNotaFiscal='<%# Bind("PagamentoNfce") %>'
                                                 EnableViewState="true" />
                                         </td>
                                     </tr>
@@ -2975,7 +2984,7 @@
                                         </td>
                                     </tr>
                                 </table>
-                                
+
                                 <div style="<%= !IsContingenciaFsda() ? "display: none": "" %>">
                                     <br />
                                     <br />
@@ -3023,11 +3032,11 @@
                                     </tr>
                                     <tr>
                                         <td align="left">
-                                            <asp:Label ID="Label57" runat="server" Text="Natureza da Operação" 
+                                            <asp:Label ID="Label57" runat="server" Text="Natureza da Operação"
                                                 Font-Bold="True"></asp:Label>
                                         </td>
                                         <td align="left">
-                                            <asp:Label ID="Label321" runat="server" 
+                                            <asp:Label ID="Label321" runat="server"
                                                 Text='<%# Eval("CodNaturezaOperacao") %>'></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
@@ -3093,7 +3102,7 @@
                                                     <td><asp:Label ID="lblGerarEstoqueReal" runat="server" Font-Bold="False" ForeColor="Blue" OnLoad="EntradaTerceiros_Load"
                                                 Text='<%# (bool)Eval("GerarEstoqueReal") ? "Gerar estoque real" : "" %>'></asp:Label></td>
                                                 </tr>
-                                            </table>                                            
+                                            </table>
                                         </td>
                                     </tr>
                                 </table>
@@ -3441,7 +3450,7 @@
                                             <asp:Label ID="Label349" runat="server" Text='<%# Eval("InfCompl") %>'></asp:Label>
                                         </td>
                                         <td>
-                                            <asp:Label ID="Label51" runat="server" 
+                                            <asp:Label ID="Label51" runat="server"
                                                 Text='<%# Eval("MensagemNaturezasOperacao") %>'></asp:Label>
                                         </td>
                                     </tr>
@@ -3468,20 +3477,20 @@
                                 </div>
                                 <table class="pos espaco"
                                        runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadeNotaFiscal %>'>
-                                    <tr > 
+                                    <tr >
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label> 
+                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rent. Financeira"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label> 
+                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label>
                                             <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=notafiscal&id=<%# Eval("IdNf") %>"); return false;'>
-                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a> 
+                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
                                         </td>
                                         <td align="left" nowrap="nowrap" colspan="4"></td>
                                     </tr>
@@ -3514,8 +3523,8 @@
                                 <asp:ImageButton ID="imgAguaGasEnergia" runat="server" ImageUrl="~/Images/page_gear.png"
                                     OnClientClick='<%# "openWindow(600, 800, \"../Utils/InfoAdicNotaFiscal.aspx?idNf=" + Eval("IdNf") + "\"); return false" %>'
                                     ToolTip="Informações adicionais" Visible='<%# Eval("ExibirLinkInfoAdic") %>' />
-                                <asp:ImageButton ID="imgAjustes" runat="server" ImageUrl="~/Images/dinheiro.gif" 
-                                    onclientclick='<%# Eval("IdNf", "openWindow(600, 950, \"../Listas/LstAjusteDocumentoFiscal.aspx?idNf={0}\"); return false;") %>' 
+                                <asp:ImageButton ID="imgAjustes" runat="server" ImageUrl="~/Images/dinheiro.gif"
+                                    onclientclick='<%# Eval("IdNf", "openWindow(600, 950, \"../Listas/LstAjusteDocumentoFiscal.aspx?idNf={0}\"); return false;") %>'
                                     ToolTip="Ajustes do Documento Fiscal" />
                             </ItemTemplate>
                             <EditItemTemplate>
@@ -3554,14 +3563,14 @@
                                 <ItemTemplate>
                                     <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" CausesValidation="false">
                                     <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
-                                    <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" CausesValidation="false" 
+                                    <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" CausesValidation="false"
                                         ImageUrl="~/Images/ExcluirGrid.gif"
                                         ToolTip="Excluir" OnClientClick="if (!confirm('Deseja excluir esse produto?')) return false"
                                         Visible='<%# ExibirRemoverProduto(Eval("IdNf")) && !(bool)Eval("TemMovimentacaoBemAtivoImob") %>' />
                                 </ItemTemplate>
                                 <EditItemTemplate>
                                     <asp:Image ID="imbAlerta" runat="server" ImageUrl="~/Images/alerta.png" />
-                                    <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" CausesValidation="false" 
+                                    <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" CausesValidation="false"
                                         ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick="return onUpdateProd();" />
                                     <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
                                         CausesValidation="false" ToolTip="Cancelar" />
@@ -3586,7 +3595,7 @@
                                     <asp:HiddenField ID="hdfTipoCalc" runat="server" Value='<%# Eval("TipoCalc") %>' />
                                     <asp:HiddenField ID="hdfIsAluminio" runat="server" Value='<%# Eval("IsAluminio") %>' />
                                     <asp:HiddenField ID="hdfM2Minimo" runat="server" Value='<%# Eval("M2Minimo") %>' />
-                                    <asp:HiddenField ID="hdfDescrItemGenerico" runat="server" 
+                                    <asp:HiddenField ID="hdfDescrItemGenerico" runat="server"
                                         Value='<%# Bind("DescricaoItemGenerico") %>' />
                                     <asp:HiddenField ID="hdfPercComissao" runat="server" Value='<%# Bind("PercComissao") %>' />
                                     <asp:HiddenField ID="hdfAlturaBenef" runat="server" Value='<%# Bind("AlturaBenef") %>' />
@@ -3659,13 +3668,13 @@
                                     <asp:Label ID="Label4" runat="server" Text='<%# Bind("Altura") %>'></asp:Label>
                                 </ItemTemplate>
                                 <EditItemTemplate>
-                                    <asp:TextBox ID="txtAlturaIns" runat="server" onblur="calcM2Prod();" Text='<%# Bind("Altura") %>'
+                                    <asp:TextBox ID="txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Text='<%# Bind("Altura") %>'
                                         onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
                                         Enabled='<%# Eval("AlturaEnabled") %>' Width="35px"></asp:TextBox>
                                 </EditItemTemplate>
                                 <FooterTemplate>
                                     <asp:TextBox ID="txtAlturaIns" runat="server" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
-                                        onblur="calcM2Prod();" Width="35px"></asp:TextBox>
+                                        onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Width="35px"></asp:TextBox>
                                 </FooterTemplate>
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Largura" SortExpression="Largura">
@@ -3812,7 +3821,7 @@
                                                     <asp:ListItem Value="3" Text="Produtor Agropecuário"></asp:ListItem>
                                                     <asp:ListItem Value="4" Text="Frotista/Locadora"></asp:ListItem>
                                                     <asp:ListItem Value="5" Text="Diplomático/Consular"></asp:ListItem>
-                                                    <asp:ListItem Value="6" Text="Utilitários e Motocicletas da Amazônia Ocidental e 
+                                                    <asp:ListItem Value="6" Text="Utilitários e Motocicletas da Amazônia Ocidental e
                                                            Áreas de Livre Comércio (Resolução 714/88 e 790/94 – CONTRAN e suas alterações)"></asp:ListItem>
                                                     <asp:ListItem Value="7" Text="SUFRAMA"></asp:ListItem>
                                                     <asp:ListItem Value="8" Text="Venda a Órgão Público"></asp:ListItem>
@@ -3882,7 +3891,7 @@
                                             <td>
                                                 <asp:Label ID="lblMotivoIcmsDeson" runat="server" Text="Motivo Desoneração" Style="display: none"></asp:Label>
                                             </td>
-                                            <td>                                  
+                                            <td>
                                                 <asp:DropDownList ID="drpMotivoIcmsDeson" runat="server" Style="display: none" SelectedValue='<%# Bind("MotivoDesoneracao") %>'
                                                     Width="200px">
                                                     <asp:ListItem Value="0" Text=""></asp:ListItem>
@@ -3957,17 +3966,17 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Nat. Op." SortExpression="IdNaturezaOperacao">
                                 <EditItemTemplate>
-                                    <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoProd" runat="server" 
+                                    <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoProd" runat="server"
                                         CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>' PermitirVazio="True"
                                         OnLoad="ctrlNaturezaOperacaoProd_Load" Callback="callbackNatOp" />
                                 </EditItemTemplate>
                                 <FooterTemplate>
-                                    <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoProd" runat="server" 
+                                    <uc7:ctrlNaturezaOperacao ID="ctrlNaturezaOperacaoProd" runat="server"
                                         CodigoNaturezaOperacao='<%# Bind("IdNaturezaOperacao") %>' PermitirVazio="True"
                                         OnLoad="ctrlNaturezaOperacaoProd_Load" Callback="callbackNatOp" />
                                 </FooterTemplate>
                                 <ItemTemplate>
-                                    <asp:Label ID="Label14" runat="server" 
+                                    <asp:Label ID="Label14" runat="server"
                                         Text='<%# Eval("CodNaturezaOperacao") %>'></asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateField>
@@ -4093,10 +4102,10 @@
                             </asp:TemplateField>
                             <asp:TemplateField HeaderText="Valor IPI" SortExpression="ValorIpi">
                                 <FooterTemplate>
-                                    <asp:Label ID="lblValorIpiIns" runat="server" OnLoad="CamposEditarManual_Load" 
+                                    <asp:Label ID="lblValorIpiIns" runat="server" OnLoad="CamposEditarManual_Load"
                                         Text='<%# Eval("ValorIpi") %>'></asp:Label>
-                                    <asp:TextBox ID="txtValorIpiIns" runat="server" 
-                                        onkeypress="return soNumeros(event, false, true)" 
+                                    <asp:TextBox ID="txtValorIpiIns" runat="server"
+                                        onkeypress="return soNumeros(event, false, true)"
                                         OnLoad="CamposEditarManual_Load" Text='<%# Bind("ValorIpi") %>' Width="40px"></asp:TextBox>
                                 </FooterTemplate>
                                 <ItemTemplate>
@@ -4867,8 +4876,8 @@
                     </SelectParameters>
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsLoja" runat="server" SelectMethod="GetAll"
-                    TypeName="Glass.Data.DAL.LojaDAO" CacheExpirationPolicy="Absolute" 
-                    ConflictDetection="OverwriteChanges" MaximumRowsParameterName="" SkinID="" 
+                    TypeName="Glass.Data.DAL.LojaDAO" CacheExpirationPolicy="Absolute"
+                    ConflictDetection="OverwriteChanges" MaximumRowsParameterName="" SkinID=""
                     StartRowIndexParameterName="" >
                 </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsModalidadeFrete" runat="server"
@@ -4920,7 +4929,7 @@
         if (drpTipoDoc != null && drpTipoDoc.value != "3" && drpTipoDoc.value != "4")
         {
             var txtModelo = FindControl("txtModelo", "input");
-            
+
             txtModelo.value = consumidor? "65" : "55";
             txtModelo.disabled = true;
         }
@@ -4943,7 +4952,7 @@
                 FindControl("txtAliqCofins", "input").disabled = false;
             }
         }
-        
+
         if (!!FindControl("drpFormaPagto", "select"))
             formaPagtoChanged(FindControl("drpFormaPagto", "select").value);
 
