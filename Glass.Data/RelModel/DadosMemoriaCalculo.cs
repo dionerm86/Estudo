@@ -38,7 +38,7 @@ namespace Glass.Data.RelModel
             {
                 ValorTabela = po.ValorTabela > 0
                     ? po.ValorTabela
-                    : ProdutoDAO.Instance.GetValorTabela((int)po.IdProduto.Value, orcamento.TipoEntrega, orcamento.IdCliente, false, false, po.PercDescontoQtde, null, null, (int?)po.IdOrcamento);
+                    : ProdutoDAO.Instance.GetValorTabela((int)po.IdProduto.Value, orcamento.TipoEntrega, orcamento.IdCliente, false, false, po.PercDescontoQtde, null, null, (int?)po.IdOrcamento, Altura);
 
                 CalculaValor(orcamento, po);
                 CustoTotal = po.Custo;
@@ -111,7 +111,7 @@ namespace Glass.Data.RelModel
             _largura = mip.Largura;
             TotM2 = mip.TotM;
             TotM2Calc = mip.TotM2Calc;
-            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)mip.IdProd, orcamento.TipoEntrega, orcamento.IdCliente, false, reposicao, 0F, (int?)idPedido, null, null);
+            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)mip.IdProd, orcamento.TipoEntrega, orcamento.IdCliente, false, reposicao, 0F, (int?)idPedido, null, null, Altura);
             Custo = prod.CustoCompra;
             _valorTabelaCobrado = mip.Valor;
             TipoCalculo = GrupoProdDAO.Instance.TipoCalculo(prod.IdProd);
@@ -123,7 +123,7 @@ namespace Glass.Data.RelModel
             CustoTotal = mip.Custo;
         }
 
-        public DadosMemoriaCalculo(MaterialProjetoBenef mpb, Orcamento.TipoEntregaOrcamento? tipoEntregaOrcamento, 
+        public DadosMemoriaCalculo(MaterialProjetoBenef mpb, Orcamento.TipoEntregaOrcamento? tipoEntregaOrcamento,
             float percComissao, string ambiente, string descrAmbiente, uint? idCliente)
         {
             BenefConfig bc = BenefConfigDAO.Instance.GetElement(mpb.IdBenefConfig);
@@ -176,7 +176,7 @@ namespace Glass.Data.RelModel
             TotM2Calc = pp.TotM2Calc;
             ValorTabela = pp.ValorTabelaPedido > 0
                 ? pp.ValorTabelaPedido
-                : ProdutoDAO.Instance.GetValorTabela((int)pp.IdProd, pedido.TipoEntrega, pedido.IdCli, false, reposicao, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null);
+                : ProdutoDAO.Instance.GetValorTabela((int)pp.IdProd, pedido.TipoEntrega, pedido.IdCli, false, reposicao, pp.PercDescontoQtde, (int?)pp.IdPedido, null, null, Altura);
             Custo = pp.CustoUnit;
             Valor = pp.ValorVendido;
             ValorTotal = pp.Total;// +pp.ValorBenef;
@@ -244,7 +244,7 @@ namespace Glass.Data.RelModel
             _largura = ppe.Largura;
             TotM2 = ppe.TotM;
             TotM2Calc = ppe.TotM2Calc;
-            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)ppe.IdProd, pedido.TipoEntrega, pedido.IdCli, false, reposicao, ppe.PercDescontoQtde, (int?)ppe.IdPedido, null, null);
+            ValorTabela = ProdutoDAO.Instance.GetValorTabela((int)ppe.IdProd, pedido.TipoEntrega, pedido.IdCli, false, reposicao, ppe.PercDescontoQtde, (int?)ppe.IdPedido, null, null, Altura);
             Custo = ppe.CustoCompraProduto;
             Valor = ppe.ValorVendido;
             ValorTotal = ppe.Total;// +pp.ValorBenef;
@@ -290,9 +290,9 @@ namespace Glass.Data.RelModel
         }
 
         #endregion
-    
+
         #endregion
-    
+
         #region Propriedades
 
         public string Ambiente { get; set; }
@@ -305,10 +305,10 @@ namespace Glass.Data.RelModel
 
         public string Descricao
         {
-            get 
+            get
             {
-                return _descricao + (Redondo && !BenefConfigDAO.Instance.CobrarRedondo() && !_descricao.ToLower().Contains("redondo") ? " REDONDO" : "") + 
-                    (TipoCalculo > 0 ? " (" + Glass.Global.CalculosFluxo.GetDescrTipoCalculo(TipoCalculo, true) + ")" : ""); 
+                return _descricao + (Redondo && !BenefConfigDAO.Instance.CobrarRedondo() && !_descricao.ToLower().Contains("redondo") ? " REDONDO" : "") +
+                    (TipoCalculo > 0 ? " (" + Glass.Global.CalculosFluxo.GetDescrTipoCalculo(TipoCalculo, true) + ")" : "");
             }
             set { _descricao = value; }
         }

@@ -85,7 +85,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 // Só exibe a coluna "Obs." para projetos em pedidos espelho
                 grdMaterialProjeto.Columns[12].Visible = !String.IsNullOrEmpty(hdfIdAmbientePedidoEspelho.Value);
-                
+
                 //Se for lite não exibe processo e aplicação
                 if (Glass.Configuracoes.Geral.SistemaLite)
                 {
@@ -199,7 +199,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         protected void odsMaterialItemProjeto_Updated(object sender, Colosoft.WebControls.VirtualObjectDataSourceStatusEventArgs e)
         {
             try
-            {               
+            {
                 ItemProjetoDAO.Instance.UpdateTotalItemProjeto(idItemProjeto);
             }
             catch (Exception ex)
@@ -333,7 +333,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 alterarFigura = alt != null && bool.Parse(alt.Value);
             }
 
-            // Mostra tabela para inserir kit se o projeto não for cálculo de vidro apenas, o modelo do item_projeto for do grupo 
+            // Mostra tabela para inserir kit se o projeto não for cálculo de vidro apenas, o modelo do item_projeto for do grupo
             // Correr com Kit e não houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto
             tbInsKit.Visible = !itemProj.ApenasVidros && !readOnly && (modelo.IdGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit08mm ||
                 modelo.IdGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit10mm ||
@@ -740,7 +740,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
         {
             var idProjetoModelo = ItemProjetoDAO.Instance.ObtemIdProjetoModelo(null, idItemProjeto.StrParaUint());
             var idsCorArr = ProjetoModeloDAO.Instance.ObtemIdsCorVidroArr(null, idProjetoModelo);
-            
+
             if (idsCorArr.Count() == 0)
                 return;
 
@@ -919,7 +919,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             #region Verifica/Insere Tubo e Kit
 
-            // Se o projeto não for cálculo de vidro apenas, o modelo do item_projeto for do grupo Correr com Kit Instalação e 
+            // Se o projeto não for cálculo de vidro apenas, o modelo do item_projeto for do grupo Correr com Kit Instalação e
             // não houver nenhum produto do grupo Kit cadastrado nos materiais deste itemProjeto, obriga a cadastrar um produto do grupo Kit
             if (!ItemProjetoDAO.Instance.ApenasVidros(idItemProjeto) && (idGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit08mm ||
                 idGrupoModelo == (uint)UtilsProjeto.GrupoModelo.CorrerComKit10mm ||
@@ -1073,7 +1073,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     hdfMedidasAlteradas.Value = "false";
 
                 var modelo = ProjetoModeloDAO.Instance.GetElementByPrimaryKey(itemProjeto.IdProjetoModelo);
-                
+
                 // Calcula as medidas das peças, retornando lista
                 var lstPecaModelo = UtilsProjeto.CalcularMedidasPecasComBaseNaTelaComTransacao(modelo, itemProjeto, tbMedInst, tbPecaModelo, true, AlterarMedidasPecas(), false, out retornoValidacao);
 
@@ -1111,7 +1111,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
                 // Monta tabela de peças
                 UtilsProjeto.CreateTablePecasItemProjeto(ref tbPecaModelo, itemProjeto.IdItemProjeto, itemProjeto, AlterarMedidasPecas(), Request["visualizar"] == "1", Request["Parceiro"] == "true");
-                
+
                 // Mostra o total deste item e do projeto
                 CalculaTotalItemProj();
 
@@ -1255,7 +1255,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     hdfMedidasAlteradas.Value = "false";
 
                 // Recarrega a tela no caso do cadastro do item
-                // No orçamento não é necessário verificar se o item foi inserido, 
+                // No orçamento não é necessário verificar se o item foi inserido,
                 // já que o anterior é apagado do banco e o novo é sempre inserido
                 if ((idOrcamento.GetValueOrDefault() > 0 /*&& idAmbienteOrca == 0 */) ||
                     (idPedido.GetValueOrDefault() > 0 && idAmbientePedido.GetValueOrDefault() == 0) ||
@@ -1291,11 +1291,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             return !erroAoConfirmar && !retornoValidacao.ToLower().Contains("erro");
         }
-    
+
         #endregion
-    
+
         #region Exclui projeto
-    
+
         /// <summary>
         /// Calcula Medidas
         /// </summary>
@@ -1305,10 +1305,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
             btnNovoCalculoDupl.Visible = false;
 
             ExcluirProjeto(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
-    
+
             LimpaCalculo();
         }
-    
+
         protected void ExcluirProjeto(uint idItemProjeto)
         {
             try
@@ -1316,29 +1316,29 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 uint? idOrcamento = null;
                 uint? idPedido = null;
                 uint? idPedidoEsp = null;
-    
+
                 if (!String.IsNullOrEmpty(Request["idOrcamento"]))
                     idOrcamento = Glass.Conversoes.StrParaUint(Request["idOrcamento"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdPedido"]))
                     idPedido = Glass.Conversoes.StrParaUint(Request["IdPedido"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdPedidoEspelho"]))
                     idPedidoEsp = Glass.Conversoes.StrParaUint(Request["IdPedidoEspelho"]);
-    
+
                 // Verifica se o itemProjeto existe
                 if (!ItemProjetoDAO.Instance.Exists(idItemProjeto))
                 {
                     Glass.MensagemAlerta.ShowMsg("Este projeto já foi excluído.", Page);
                     return;
                 }
-    
+
                 // Exclui o item_projeto
                 ItemProjetoDAO.Instance.ExcluiProjeto(idItemProjeto, idOrcamento, idPedido, idPedidoEsp);
-    
+
                 grdMaterialProjeto.DataBind();
                 grdItemProjeto.DataBind();
-    
+
                 ClientScript.RegisterClientScriptBlock(typeof(string), "Ok", "window.opener.refreshPage();", true);
             }
             catch (Exception ex)
@@ -1346,24 +1346,24 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 Glass.MensagemAlerta.ErrorMsg("Falha ao excluir projeto.", ex, Page);
             }
         }
-    
+
         #endregion
-    
+
         #region Atualiza o ambiente para modelo "Outros"
-    
+
         /// <summary>
         /// Confirmar somente o projeto de código OTR01. O botão fica visível somente para este projeto.
         /// </summary>
         protected void btnConfAmbiente_Click(object sender, EventArgs e)
         {
-            
+
             // Verifica se o ambiente foi informado
             if (txtAmbiente.Text == String.Empty)
             {
                 Glass.MensagemAlerta.ShowMsg("Informe o ambiente.", Page);
                 return;
             }
-    
+
             uint idItemProjeto = Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value);
             uint? idOrcamento = null;
             uint? idAmbienteOrca = null;
@@ -1371,36 +1371,36 @@ namespace Glass.UI.Web.Cadastros.Projeto
             uint? idAmbientePedido = null;
             uint? idPedidoEsp = null;
             uint? idAmbientePedidoEsp = null;
-    
+
             try
             {
                 if (!String.IsNullOrEmpty(Request["idOrcamento"]))
                     idOrcamento = Glass.Conversoes.StrParaUint(Request["idOrcamento"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdAmbienteOrca"]))
                     idAmbienteOrca = Glass.Conversoes.StrParaUint(Request["IdAmbienteOrca"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdPedido"]))
                     idPedido = Glass.Conversoes.StrParaUint(Request["IdPedido"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdAmbientePedido"]))
                     idAmbientePedido = Glass.Conversoes.StrParaUint(Request["IdAmbientePedido"]);
                 else if (!String.IsNullOrEmpty(hdfIdAmbientePedido.Value))
                     idAmbientePedido = Glass.Conversoes.StrParaUint(hdfIdAmbientePedido.Value);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdPedidoEspelho"]))
                     idPedidoEsp = Glass.Conversoes.StrParaUint(Request["IdPedidoEspelho"]);
-    
+
                 if (!String.IsNullOrEmpty(Request["IdAmbientePedidoEspelho"]))
                     idAmbientePedidoEsp = Glass.Conversoes.StrParaUint(Request["IdAmbientePedidoEspelho"]);
                 else if (!String.IsNullOrEmpty(hdfIdAmbientePedidoEspelho.Value))
                     idAmbientePedidoEsp = Glass.Conversoes.StrParaUint(hdfIdAmbientePedidoEspelho.Value);
-    
+
                 if (!String.IsNullOrEmpty(txtAmbiente.Text))
                     ItemProjetoDAO.Instance.AtualizaAmbiente(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value), txtAmbiente.Text);
-    
+
                 ItemProjeto itemProjeto = ItemProjetoDAO.Instance.GetElement(idItemProjeto);
-    
+
                 if (idOrcamento > 0)
                     ProdutosOrcamentoDAO.Instance.InsereAtualizaProdProj(idOrcamento.Value, idAmbienteOrca, itemProjeto);
 
@@ -1414,11 +1414,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 {
                     ProdutosPedidoEspelhoDAO.Instance.InsereAtualizaProdProj(null, idPedidoEsp.Value, idAmbientePedidoEsp, itemProjeto, true);
                 }
-    
+
                 // Marca que cálculo de projeto foi conferido
                 if (idPedido > 0 || idPedidoEsp > 0)
                     ItemProjetoDAO.Instance.CalculoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
-    
+
                 ClientScript.RegisterClientScriptBlock(typeof(string), "Ok", "window.opener.refreshPage(); alert('Medidas confirmadas'); closeWindow();", true);
             }
             catch (Exception ex)
@@ -1426,33 +1426,33 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 // Marca que cálculo de projeto não foi conferido
                 if (idPedido > 0 || idPedidoEsp > 0)
                     ItemProjetoDAO.Instance.CalculoNaoConferido(Glass.Conversoes.StrParaUint(hdfIdItemProjeto.Value));
-    
+
                 Glass.MensagemAlerta.ErrorMsg("Falha ao confirmar projeto.", ex, Page);
                 return;
             }
         }
-    
+
         #endregion
-    
+
         #region Limpa Cálculos
-    
+
         /// <summary>
         /// Limpa informações relacionadas ao cálculo de projeto atual
         /// </summary>
         protected void LimpaCalculo()
         {
             hdfIdItemProjeto.Value = String.Empty;
-    
+
             dtvImagem.DataBind();
             dtvImagemMini.DataBind();
             tbPecaModelo.Controls.Clear();
             tbInsKit.Visible = false;
             tbInsTubo.Visible = false;
-    
+
             lblSubtotal.Text = "";
             lblM2Vao.Text = "";
             txtAmbiente.Text = "";
-    
+
             // Visibilidade de campos relacionados ao modelo de projeto
             bool visib = false;
             lblMedidas.Visible = visib;
@@ -1461,15 +1461,15 @@ namespace Glass.UI.Web.Cadastros.Projeto
             tbSubtotal.Visible = visib;
             lblMedidasInst.Visible = visib;
             tbAmbiente.Visible = visib;
-    
+
             grdMaterialProjeto.DataBind();
             grdItemProjeto.DataBind();
         }
-    
+
         #endregion
-    
+
         #region Calcula total do item projeto/projeto
-    
+
         /// <summary>
         /// Calcula o total do item do projeto e insere o valor na lblSubtotal
         /// </summary>
@@ -1479,11 +1479,11 @@ namespace Glass.UI.Web.Cadastros.Projeto
             lblSubtotal.Text = ItemProjetoDAO.Instance.GetTotalItemProjeto(idItemProj).ToString("C");
             lblM2Vao.Text = ItemProjetoDAO.Instance.GetM2VaoItemProjeto(idItemProj).ToString(CultureInfo.InvariantCulture) + "m²";
         }
-    
+
         #endregion
-    
+
         #region Beneficiamentos
-    
+
         protected void txtEspessura_DataBinding(object sender, EventArgs e)
         {
             TextBox txt = (TextBox)sender;
@@ -1495,12 +1495,12 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 if (mip != null) txt.Enabled = mip.Espessura <= 0;
             }
         }
-    
+
         protected void ctrlBenef_Load(object sender, EventArgs e)
         {
             Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)sender;
             GridViewRow linhaControle = benef.Parent.Parent as GridViewRow;
-    
+
             Control codProd = null;
             if (linhaControle != null && linhaControle.FindControl("hdfCodInterno") != null)
                 codProd = linhaControle.FindControl("hdfCodInterno");
@@ -1523,7 +1523,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                 HiddenField hdfCliRevendaBenef = hdfCliRevenda;
                 HiddenField hdfIdClienteBenef = hdfIdCliente;
                 HiddenField hdfCustoProd = (HiddenField)linhaControle.FindControl("hdfCustoProd");
-    
+
                 benef.CampoAltura = hdfAltura;
                 benef.CampoEspessura = txtEspessura;
                 benef.CampoLargura = txtLargura;
@@ -1546,76 +1546,76 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
             uint idPedido = !string.IsNullOrEmpty(Request["IdPedido"]) ? Conversoes.StrParaUint(Request["IdPedido"]) :
                 !string.IsNullOrEmpty(Request["IdPedidoEspelho"]) ? Conversoes.StrParaUint(Request["IdPedidoEspelho"]) : 0;
-    
+
             if (idPedido > 0)
             {
                 benef.TipoBenef = PedidoDAO.Instance.GetTipoPedido(null, idPedido) == Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial ?
                     TipoBenef.MaoDeObraEspecial : TipoBenef.Venda;
             }
         }
-    
+
         protected void ctrlBenef_PreRender(object sender, EventArgs e)
         {
             Glass.UI.Web.Controls.ctrlBenef benef = (Glass.UI.Web.Controls.ctrlBenef)sender;
             GridViewRow linhaControle = benef.Parent.Parent as GridViewRow;
-    
+
             if (!benef.CampoQuantidade.Visible)
                 if (linhaControle != null) benef.CampoQuantidade = (Label)linhaControle.FindControl("lblQtde");
         }
-    
+
         #endregion
-    
+
         protected void ctrlCorItemProjeto_CorAlterada(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(hdfIdItemProjeto.Value))
                 MontaModelo(true);
             else
                 LimpaCalculo();
-    
+
             grdMaterialProjeto.DataBind();
             grdItemProjeto.DataBind();
             ClientScript.RegisterClientScriptBlock(typeof(string), "Ok", "window.opener.refreshPage();", true);
         }
-    
+
         public string BuscarKitQueryString()
         {
             return "?idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.KitParaBox;
         }
-    
+
         protected void ctrlCorItemProjeto2_Load(object sender, EventArgs e)
         {
             ctrlCorItemProjeto2.IdOrcamento = Glass.Conversoes.StrParaUintNullable(Request["idOrcamento"]);
             ctrlCorItemProjeto2.IdPedido = Glass.Conversoes.StrParaUintNullable(Request["IdPedido"]);
             ctrlCorItemProjeto2.IdPedidoEspelho = Glass.Conversoes.StrParaUintNullable(Request["IdPedidoEspelho"]);
         }
-    
+
         protected void grdItemProjeto_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (!String.IsNullOrEmpty(Request["idPedidoEspelho"]))
             {
                 HiddenField hdfConferido = (HiddenField)e.Row.Cells[0].FindControl("hdfConferido");
-    
+
                 if (hdfConferido == null)
                     return;
-    
+
                 bool conferido = hdfConferido.Value.ToLower() == "true";
-    
+
                 foreach (TableCell c in e.Row.Cells)
                     c.ForeColor = conferido ? System.Drawing.Color.Green : System.Drawing.Color.Red;
             }
         }
-    
+
         protected void btnImprimir_PreRender(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(Request["idPedidoEspelho"]) && ((Button)sender).OnClientClick.IndexOf("&pcp=1") == -1)
                 ((Button)sender).OnClientClick = ((Button)sender).OnClientClick.Replace("'); ", "&pcp=1'); ");
         }
-    
+
         protected string NomeControleBenef()
         {
             return grdMaterialProjeto.EditIndex == -1 ? "ctrlBenefInserir" : "ctrlBenefEditar";
         }
-    
+
         protected void grdItemProjeto_PageIndexChanged(object sender, EventArgs e)
         {
             if (!FuncoesGerais.IsChrome(Page) && grdItemProjeto.PageIndex > 0)
@@ -1626,7 +1626,7 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     Session["pgIndProj"] = grdItemProjeto.PageIndex.ToString();
             }
         }
-    
+
         protected void grdItemProjeto_DataBound(object sender, EventArgs e)
         {
             if (!!FuncoesGerais.IsChrome(Page) && Session["pgIndProj"] != null && grdItemProjeto.PageCount > 1)
@@ -1636,12 +1636,12 @@ namespace Glass.UI.Web.Cadastros.Projeto
                     grdItemProjeto.PageIndex = pgIndex;
             }
         }
-    
+
         protected void txtValorIns_Load(object sender, EventArgs e)
         {
             ((TextBox)sender).Enabled = PedidoConfig.DadosPedido.AlterarValorUnitarioProduto;
         }
-    
+
         protected void dtvImagem_DataBound(object sender, EventArgs e)
         {
             // Atualiza o botão de imprimir, preenchendo com o idItemProjeto e alterando sua visibilidade
@@ -1649,14 +1649,22 @@ namespace Glass.UI.Web.Cadastros.Projeto
             {
                 ((Button)dtvImagem.FindControl("btnImprimir")).OnClientClick = "openWindow(600, 800, '../../Relatorios/Projeto/RelBase.aspx?rel=imagemProjeto&idOrcamento=" + Request["idOrcamento"] +
                     "&imprAlumFerr=true&idPedido=" + Request["idPedido"] + "&idItemProjeto=" + hdfIdItemProjeto.Value + "'); return false;";
-                ((Button)dtvImagem.FindControl("btnImprimir")).Visible = Request["pcp"] != null || 
+                ((Button)dtvImagem.FindControl("btnImprimir")).Visible = Request["pcp"] != null ||
                     Glass.Configuracoes.ProjetoConfig.TelaCadastroAvulso.ExibirBotaoImprimirProjeto;
             }
         }
-    
+
         protected int CodigoTipoPedidoMaoObraEspecial()
         {
             return (int)Glass.Data.Model.Pedido.TipoPedidoEnum.MaoDeObraEspecial;
+        }
+
+        protected string VerificaPedidoReposicao()
+        {
+            if (PedidoDAO.Instance.ObtemTipoVenda(null, UInt32.Parse(Request["idPedido"])) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+                return "true";
+
+            return "false";
         }
     }
 }

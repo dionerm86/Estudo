@@ -1664,6 +1664,7 @@ namespace Glass.Data.DAL
                     #region Retorno Opty Way
 
                     var planoCorte = string.Empty;
+                    var posTot = new List<string>();
 
                     foreach (XmlNode node in arquivoOtimizado["DATAPACKET"]["ROWDATA"])
                     {
@@ -1729,9 +1730,8 @@ namespace Glass.Data.DAL
 
                         if (etiquetas.Contains(etiqueta.Trim()))
                         {
-                            // Caso a empresa tenha colocado arquivos de tábua ou algo do tipo no arquivo de retorno, deve ser sugerido à eles que 
-                            // preencham o campo NOTES com "ignorar", para não dar erro no arquivo e permitir importar as outras peças
-                            if (etiqueta.Trim().ToLower() != "ignorar")
+                            // Caso a peça seja de modulado, ignora a validação de etiqueta duplicada caso sua POSTOT não tenha se repetido (empresas que trabalham com modulado precisam disso)
+                            if (node.Attributes["POSTOT"] == null || posTot.Contains(node.Attributes["POSTOT"].Value))
                                 throw new Exception("Este arquivo possui etiquetas duplicadas. Etiqueta: " + etiqueta);
 
                             continue;
@@ -1744,6 +1744,7 @@ namespace Glass.Data.DAL
 
                         // Pega a posição de ordenação da peça no arquivo de otimização
                         var numSeq = node.Attributes["POSTOT"] != null ? node.Attributes["POSTOT"].Value.StrParaInt() : 0;
+                        posTot.Add(numSeq.ToString());
 
                         // Pega o campo forma, se houver
                         var forma = node.Attributes["SAGOMA"] != null ? node.Attributes["SAGOMA"].Value : string.Empty;

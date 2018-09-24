@@ -7421,9 +7421,10 @@ namespace Glass.Data.DAL
                 var mensagem = "";
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
 
+                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro);
+                
                 // Se, bloquear confirmação de pedido com sinal à receber.
-                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && idPedidoOk.Count == 0 &&
-                    !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro))
+                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idPedidoOk.Count == 0)
                 {
                     idsPedidosOk = "";
                     idsPedidosErro = idsPedidos;
@@ -16097,7 +16098,7 @@ namespace Glass.Data.DAL
                             Redondo = po.Redondo,
                             ValorTabelaOrcamento = po.ValorTabela,
                             ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(sessao, (int)po.IdProduto.Value, pedido.TipoEntrega, pedido.IdCli, false, false, po.PercDescontoQtde,
-                                (int?)idPedido, null, null),
+                                (int?)idPedido, null, null, po.Altura),
                             TipoCalculoUsadoOrcamento = po.TipoCalculoUsado,
                             TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)po.IdProduto.Value),
                             PercDescontoQtde = po.PercDescontoQtde,
@@ -16242,7 +16243,7 @@ namespace Glass.Data.DAL
                                 prodPed.Redondo = poChild.Redondo;
                                 prodPed.ValorTabelaOrcamento = poChild.ValorTabela;
                                 prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(sessao, (int)prodPed.IdProd, pedido.TipoEntrega, pedido.IdCli, false, false,
-                                    poChild.PercDescontoQtde, (int)prodPed.IdPedido, null, null);
+                                    poChild.PercDescontoQtde, (int)prodPed.IdPedido, null, null, prodPed.Altura);
                                 prodPed.TipoCalculoUsadoOrcamento = poChild.TipoCalculoUsado;
                                 prodPed.TipoCalculoUsadoPedido = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)prodPed.IdProd);
                                 prodPed.PercDescontoQtde = poChild.PercDescontoQtde;
@@ -16304,7 +16305,7 @@ namespace Glass.Data.DAL
                                             Beneficiamentos = p.Beneficiamentos,
                                             Altura = p.Altura > 0 ? p.Altura : prodPed.Altura,
                                             Largura = p.Largura > 0 ? p.Largura : prodPed.Largura,
-                                            ValorVendido = ProdutoDAO.Instance.GetValorTabela(sessao, p.IdProdBaixa, tipoEntrega, prodPed.IdCliente, false, false, 0, (int)prodPed.IdPedido, null, null),
+                                            ValorVendido = ProdutoDAO.Instance.GetValorTabela(sessao, p.IdProdBaixa, tipoEntrega, prodPed.IdCliente, false, false, 0, (int)prodPed.IdPedido, null, null, p.Altura > 0 ? p.Altura : prodPed.Altura),
                                         }, false, true);
 
                                         var repositorioFilho = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Glass.IProdutoBaixaEstoqueRepositorioImagens>();

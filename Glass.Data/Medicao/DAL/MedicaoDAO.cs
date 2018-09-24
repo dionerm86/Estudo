@@ -650,7 +650,30 @@ namespace Glass.Data.DAL
 
         public override uint Insert(Medicao objInsert)
         {
-            return Insert((GDASession)null, objInsert);
+            using (var transaction = new GDA.GDATransaction())
+            {
+                try
+                {
+                    transaction.BeginTransaction();
+
+                    if (objInsert.IdOrcamento > 0 && !OrcamentoDAO.Instance.Exists(transaction, objInsert.IdOrcamento))
+                        throw new Exception($"O orçamento {objInsert.IdOrcamento} informado na medição não existe");
+
+                    uint idMedicao = Insert(transaction, objInsert);
+
+                    transaction.Commit();
+                    transaction.Close();
+
+                    return idMedicao;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    transaction.Close();
+
+                    throw ex;
+                }
+            }
         }
 
         public override uint Insert(GDASession session, Medicao objInsert)

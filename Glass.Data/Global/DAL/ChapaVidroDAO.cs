@@ -20,7 +20,7 @@ namespace Glass.Data.DAL
             string criterio = String.Empty;
 
             string sql = "select " + campos + @"
-                from chapa_vidro c 
+                from chapa_vidro c
                 left join produto p on (c.idProd=p.idProd) where 1";
 
             if (idProd > 0)
@@ -65,7 +65,7 @@ namespace Glass.Data.DAL
         public IList<ChapaVidro> GetList(string codInterno, string produto, uint idSubgrupo, string sortExpression, int startRow, int pageSize)
         {
             bool temFiltro;
-            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro), 
+            return LoadDataWithSortExpression(Sql(0, codInterno, produto, idSubgrupo, false, true, out temFiltro),
                 sortExpression, startRow, pageSize, temFiltro, GetParam(codInterno, produto));
         }
 
@@ -99,7 +99,7 @@ namespace Glass.Data.DAL
         public bool IsProdChapa(string codInterno, string codIgnorar)
         {
             string ignorar = !String.IsNullOrEmpty(codIgnorar) ? " and p.idProd<>'" + codIgnorar + "'" : String.Empty;
-            string sql = @"select Count(*) from chapa_vidro c, produto p 
+            string sql = @"select Count(*) from chapa_vidro c, produto p
                 where c.idProd=p.idProd and p.codInterno=?codInterno" + ignorar;
 
             return objPersistence.ExecuteSqlQueryCount(sql, new GDAParameter("?codInterno", codInterno)) > 0;
@@ -168,7 +168,7 @@ namespace Glass.Data.DAL
 
         public List<ChapaVidro> ObterListaOtimizacao(string ids)
         {
-            string sql = @"select c.*, p.Descricao as DescrProd, p.CodInterno as CodInternoProd from chapa_vidro c 
+            string sql = @"select c.*, p.Descricao as DescrProd, p.CodInterno as CodInternoProd from chapa_vidro c
                 left join produto p on (c.idProd=p.idProd) where c.IdChapaVidro IN(" + ids + ") AND c.Situacao=" + (int)Glass.Situacao.Ativo;
 
             return objPersistence.LoadData(sql);

@@ -1,4 +1,4 @@
-<%@ Page Title="Efetuar Orçamento" Language="C#" MasterPageFile="~/WebGlassParceiros/PainelParceiros.master" 
+<%@ Page Title="Efetuar Orçamento" Language="C#" MasterPageFile="~/WebGlassParceiros/PainelParceiros.master"
     AutoEventWireup="true" CodeBehind="CadProjeto.aspx.cs" Inherits="Glass.UI.Web.WebGlassParceiros.CadProjeto" %>
 
 <%@ Register Src="../Controls/ctrlLinkQueryString.ascx" TagName="ctrllinkquerystring" TagPrefix="uc2" %>
@@ -16,7 +16,7 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
-        
+
         var qtdEstoque = 0;
         var exibirMensagemEstoque = false;
         var qtdEstoqueMensagem = 0;
@@ -24,14 +24,14 @@
         function obrigarProcApl()
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
-            
+
             var nomeControle = "<%= NomeControleBenef() %>";
             nomeControle = FindControl(nomeControle + "_tblBenef", "table").id;
             nomeControle = nomeControle.substr(0, nomeControle.lastIndexOf("_"));
-            
-            var isVidroBenef = exibirControleBenef(nomeControle) && dadosProduto.Grupo == 1;            
+
+            var isVidroBenef = exibirControleBenef(nomeControle) && dadosProduto.Grupo == 1;
             var tipoCalculo = FindControl("hdfTipoCalc", "input") != null && FindControl("hdfTipoCalc", "input") != undefined && FindControl("hdfTipoCalc", "input").value != undefined ? FindControl("hdfTipoCalc", "input").value : "";
-        
+
             /* Chamado 63268. */
             if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
             {
@@ -40,14 +40,14 @@
                     alert("Informe a aplicação.");
                     return false;
                 }
-                
+
                 if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
                 {
                     alert("Informe o processo.");
                     return false;
                 }
             }
-            
+
             return true;
         }
 
@@ -82,7 +82,7 @@
         function setModelo(idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata) {
             var idProjeto = FindControl("hdfIdProjeto", "input").value;
 
-            var retorno = CadProjeto.NovoItemProjeto(idProjeto, idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, 
+            var retorno = CadProjeto.NovoItemProjeto(idProjeto, idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio,
                 idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
@@ -110,7 +110,7 @@
             }
         }
 
-        // Verificaçãoes ao inserir projeto    
+        // Verificaçãoes ao inserir projeto
         function onInsert() {
             // Verifica se o tipo de entrega foi informado.
             if (FindControl("drpTipoEntrega", "select") != null && FindControl("drpTipoEntrega", "select").value == "" &&
@@ -161,7 +161,7 @@
 
             FindControl("txtNomeCliente", "input").value = retorno[1];
             FindControl("hdfCliente", "input").value = idCli.value;
-            FindControl("drpTransportador", "select").value = retorno[3]; 
+            FindControl("drpTransportador", "select").value = retorno[3];
         }
 
         var hdfVidro;
@@ -174,7 +174,7 @@
         function loadVidro(codInterno, hdf, txt) {
             if (codInterno == "")
                 return false;
-            
+
             var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
 
             var retorno = CadProjeto.GetVidro(idProjeto, codInterno, FindControl("hdfIdCliente", "input").value).value.split(';');
@@ -249,6 +249,9 @@
                     FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor mínimo
                 }
                 else if (retorno[0] == "Prod") {
+
+                    valorTabelaProduto = retorno[3];
+
                     FindControl("hdfIdProdMater", "input").value = retorno[1];
                     FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor mínimo
@@ -267,7 +270,7 @@
                         else if (FindControl("lnkBenef", "a") != null) {
                             FindControl("lnkBenef", "a").style.display = "none";
                         }
-                        
+
                         qtdEstoque = retorno[16]; // Pega a quantidade disponível em estoque deste produto
                         exibirMensagemEstoque = retorno[15] == "true";
                         qtdEstoqueMensagem = retorno[17];
@@ -299,7 +302,7 @@
                     }
 
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
-                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);           
+                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
 
                     FindControl("lblDescrProd", "span").innerHTML = retorno[2];
                     FindControl("hdfCustoProd", "input").value = retorno[10];
@@ -320,13 +323,13 @@
         function onSaveProd() {
             if (!validate("produto"))
                 return false;
-            
+
             var codProd = FindControl("txtCodProdIns", "input").value;
             var valor = FindControl("txtValorIns", "input").value;
-            
+
             var qtde = FindControl("txtQtdeIns", "input").value;
             qtde = qtde != "0" && qtde != "" ? qtde : FindControl("lblQtde", "span").innerHTML;
-            
+
             var altura = FindControl("txtAlturaIns", "input").value;
             var largura = FindControl("txtLarguraIns", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
@@ -359,7 +362,7 @@
                 alert("Informe a largura.");
                 return false;
             }
-            
+
             if (!obrigarProcApl())
                 return false;
 
@@ -372,7 +375,7 @@
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
-            
+
             var valor = FindControl("txtValorIns", "input").value;
             var qtde = FindControl("txtQtdeIns", "input") != null ? FindControl("txtQtdeIns", "input").value :
                 FindControl("lblQtde", "span") != null ? FindControl("lblQtde", "span").innerHTML : "";
@@ -380,7 +383,7 @@
             var idProd = FindControl("hdfIdProdMater", "input").value;
             var codInterno = FindControl("hdfCodInterno", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
-            
+
             var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
 
             var retorno = CadProjeto.GetProduto(codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value, idProjeto).value.split(';');
@@ -411,7 +414,7 @@
                     return false;
                 }
             }
-            
+
             if (!obrigarProcApl())
                 return false;
         }
@@ -427,9 +430,9 @@
                 var tipoCalc = FindControl("hdfTipoCalc", "input").value;
                 var esp = FindControl("txtEspessura", "input") != null ? FindControl("txtEspessura", "input").value : 0;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-                
+
                 var redondo = FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked;
-                
+
                 if (altura != "" && largura != "" &&
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
@@ -442,7 +445,7 @@
                 }
 
                 var numBenef = "";
-                
+
                 if (FindControl("Redondo_chkSelecao", "input") != null) {
                     numBenef = FindControl("Redondo_chkSelecao", "input").id;
                     numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -456,7 +459,7 @@
                         FindControl("hdfTotM2Calc", "input").value = MetodosAjax.CalcM2Calculo(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
                         FindControl("lblTotM2Calc", "span").innerHTML = FindControl("hdfTotM2Calc", "input").value.replace('.', ',');
                     }
-                    
+
                     if (qtde != "" && qtde != "0")
                         calcTotalProd();
 
@@ -475,6 +478,20 @@
             catch (err) {
 
             }
+        }
+
+        var valorTabelaProduto = null;
+
+        function GetAdicionalAlturaChapa(){
+            var idProd = FindControl("hdfIdProdMater", "input").value;
+            var altura = FindControl("txtAlturaIns", "input").value;
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+            var idCliente = FindControl("hdfIdCliente", "input").value;
+            var revenda = FindControl("hdfCliRevenda", "input").value;
+            var idProjeto = FindControl("hdfIdProjeto", "input").value;
+
+            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega,
+                idCliente, revenda, false, 0, "", idProjeto, "", altura).value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto
@@ -517,7 +534,7 @@
 
             }
             else{
-  
+
                 aplBenef = aplBenef == true ? true : false;
                 var campo = !aplBenef ? "txtAplIns" : "txtAplicacaoIns";
 
@@ -633,20 +650,20 @@
             else
                 alert("Observação salva.");
         }
-    
+
         function duplicar()
         {
             if (!confirm("Deseja duplicar o projeto atual?"))
                 return;
-            
-            setModelo(FindControl("hdfDuplicarCodigo", "input").value, FindControl("hdfDuplicarEspessura", "input").value, 
-                FindControl("hdfDuplicarCorVidro", "input").value, FindControl("hdfDuplicarCorAluminio", "input").value, 
-                FindControl("hdfDuplicarCorFerragem", "input").value, FindControl("hdfDuplicarApenasVidros", "input").value, 
+
+            setModelo(FindControl("hdfDuplicarCodigo", "input").value, FindControl("hdfDuplicarEspessura", "input").value,
+                FindControl("hdfDuplicarCorVidro", "input").value, FindControl("hdfDuplicarCorAluminio", "input").value,
+                FindControl("hdfDuplicarCorFerragem", "input").value, FindControl("hdfDuplicarApenasVidros", "input").value,
                 FindControl("hdfDuplicarMedidaExata", "input").value);
         }
-        
+
         var click = false;
-        
+
         function gerarPedido()
         {
             if (click) return false;
@@ -658,9 +675,9 @@
         function selProd(produtosEstoque)
         {
             if(produtosEstoque == "1")
-                openWindow(450, 700, "../Utils/SelProd.aspx?Parceiro=1&PRODUTOESTOQUE=true"); 
+                openWindow(450, 700, "../Utils/SelProd.aspx?Parceiro=1&PRODUTOESTOQUE=true");
             else
-                openWindow(450, 700, "../Utils/SelProd.aspx?Parceiro=1"); 
+                openWindow(450, 700, "../Utils/SelProd.aspx?Parceiro=1");
 
             return false;
         }
@@ -669,7 +686,7 @@
             var estaConferido = CadProjeto.EstaConferido(FindControl('hdfIdItemProjeto', 'input').value);
 
             if (estaConferido != null && estaConferido.value == 'false') {
-                alert('Confirme o projeto antes de editar as imagens.'); 
+                alert('Confirme o projeto antes de editar as imagens.');
                 return false;
             }
 
@@ -687,7 +704,7 @@
 
             setTimeout(function(){}, 100);
 
-            openWindow(h, w, projetoCadProject.value);  
+            openWindow(h, w, projetoCadProject.value);
 
             setTimeout(function(){}, 100);
 
@@ -716,11 +733,11 @@
 
         function alteraObs()
         {
-            if (FindControl("txtObsLiberacao", "textArea").value != "" && FindControl("txtObsLiberacao", "textArea").value != null) 
+            if (FindControl("txtObsLiberacao", "textArea").value != "" && FindControl("txtObsLiberacao", "textArea").value != null)
             {
-                FindControl("hdfObsLiberacao", "input").value = FindControl("txtObsLiberacao", "textArea").value; 
+                FindControl("hdfObsLiberacao", "input").value = FindControl("txtObsLiberacao", "textArea").value;
             }
-            else 
+            else
                 FindControl("hdfObsLiberacao", "input").value = "";
         }
 
@@ -729,7 +746,7 @@
             if (isFastDelivery) {
 
                 var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
-            
+
                 var retorno = CadProjeto.PodeMarcarFastDelivery(idProjeto).value;
 
                 var resultado = retorno.split('|');
@@ -749,18 +766,18 @@
             var totM2 = FindControl("lblTotM2Ins", "span").innerHTML;
             var isCalcAluminio = tipoCalc == 4 || tipoCalc == 6 || tipoCalc == 7 || tipoCalc == 9;
             var isCalcM2 = tipoCalc == 2 || tipoCalc == 10;
-    
+
             // Se for cálculo por barra de 6m, multiplica a qtd pela altura
             if (isCalcAluminio)
                 txtQtd = parseInt(txtQtd) * parseFloat(txtAltura.toString().replace(',', '.'));
             else if (isCalcM2)
             {
-                if (totM2 == "") 
+                if (totM2 == "")
                     return;
-            
+
                 txtQtd = totM2;
             }
-    
+
             var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoque);
             if (estoqueMenor)
             {
@@ -768,15 +785,15 @@
                     alert("Não há nenhuma peça deste produto no estoque.");
                 else
                     alert("Há apenas " + qtdEstoque + " " + (isCalcM2 ? "m²" : isCalcAluminio ? "ml (" + parseFloat(qtdEstoque / 6).toFixed(2) + " barras)" : "peça(s)") + " deste produto no estoque.");
-                
+
                 FindControl("txtQtdeIns", "input").value = "";
             }
-        
+
             var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
             if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
                 openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value);
         }
-    
+
     </script>
 
     <table>
@@ -807,46 +824,46 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="lblTipoEntrega" runat="server" onload="lblTipoEntrega_Load" 
+                                                        <asp:Label ID="lblTipoEntrega" runat="server" onload="lblTipoEntrega_Load"
                                                             Text="Tipo Entrega"></asp:Label>
-                                                    </td>                                                  
+                                                    </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:DropDownList ID="drpTipoEntrega" runat="server" 
-                                                            AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr" 
-                                                            DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>' 
+                                                        <asp:DropDownList ID="drpTipoEntrega" runat="server"
+                                                            AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr"
+                                                            DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>'
                                                             ondatabound="drpTipoEntrega_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
-                                                    </td>   
+                                                    </td>
                                                      <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label17" runat="server"
                                                             Text="Calcular apenas vidros"></asp:Label>
-                                                    </td>    
+                                                    </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:CheckBox ID="chkApenasVidro" runat="server" 
-                                                            Checked='<%# Bind("ApenasVidro") %>' Enabled="False" 
+                                                        <asp:CheckBox ID="chkApenasVidro" runat="server"
+                                                            Checked='<%# Bind("ApenasVidro") %>' Enabled="False"
                                                             Text="" />
-                                                    </td>                                               
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    
+
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label22" runat="server" Text="Seu cód. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="30" 
+                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="30"
                                                             Text='<%# Bind("PedCli") %>' Width="80px"></asp:TextBox>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label15" runat="server"
                                                             Text="Fast Delivery"></asp:Label>
-                                                    </td> 
+                                                    </td>
                                                     <td align="left" nowrap="nowrap" class="dtvAlternatingRow">
-                                                        <asp:CheckBox ID="CheckBox1" runat="server" 
+                                                        <asp:CheckBox ID="CheckBox1" runat="server"
                                                             Checked='<%# Bind("FastDelivery") %>' Text="" />
                                                     </td>
                                                 </tr>
-                                                <tr> 
+                                                <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         Tipo Venda
                                                     </td>
@@ -860,7 +877,7 @@
                                                         <asp:Label ID="Label16" runat="server" Text="Total"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtTotal" runat="server" ReadOnly="True" 
+                                                        <asp:TextBox ID="txtTotal" runat="server" ReadOnly="True"
                                                             Text='<%# Eval("Total", "{0:C}") %>' Width="70px"></asp:TextBox>
                                                     </td>
                                                 </tr>
@@ -897,7 +914,7 @@
                                                         Cliente
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:Label ID="lblCliente" runat="server" Text='<%# Eval("NomeCliente") %>' 
+                                                        <asp:Label ID="lblCliente" runat="server" Text='<%# Eval("NomeCliente") %>'
                                                             onload="lblCliente_Load"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">Data
@@ -908,46 +925,46 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="lblTipoEntrega" runat="server" onload="lblTipoEntrega_Load" 
+                                                        <asp:Label ID="lblTipoEntrega" runat="server" onload="lblTipoEntrega_Load"
                                                             Text="Tipo Entrega"></asp:Label>
-                                                    </td>                                                  
+                                                    </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:DropDownList ID="drpTipoEntrega" runat="server" 
-                                                            AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr" 
-                                                            DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>' 
+                                                        <asp:DropDownList ID="drpTipoEntrega" runat="server"
+                                                            AppendDataBoundItems="True" DataSourceID="odsTipoEntrega" DataTextField="Descr"
+                                                            DataValueField="Id" SelectedValue='<%# Bind("TipoEntrega") %>'
                                                             ondatabound="drpTipoEntrega_DataBound">
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
-                                                    </td> 
+                                                    </td>
                                                       <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label14" runat="server"
                                                             Text="Calcular apenas vidros"></asp:Label>
-                                                    </td> 
+                                                    </td>
                                                     <td align="left" nowrap="nowrap" class="dtvAlternatingRow">
-                                                        <asp:CheckBox ID="chkApenasVidro" runat="server" 
-                                                            Checked='<%# Bind("ApenasVidro") %>' Enabled="False" 
+                                                        <asp:CheckBox ID="chkApenasVidro" runat="server"
+                                                            Checked='<%# Bind("ApenasVidro") %>' Enabled="False"
                                                             onload="chkApenasVidro_Load" Text="" />
-                                                    </td>                                                                                  
-                                                </tr>                                                
+                                                    </td>
+                                                </tr>
                                                 <tr>
-                                                  
+
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label23" runat="server" Text="Seu cód. Pedido"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
-                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="20" 
+                                                        <asp:TextBox ID="txtPedCli" runat="server" MaxLength="20"
                                                             Text='<%# Bind("PedCli") %>' Width="80px"></asp:TextBox>
                                                     </td>
                                                       <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         <asp:Label ID="Label15" runat="server"
                                                             Text="Fast Delivery"></asp:Label>
-                                                    </td> 
+                                                    </td>
                                                     <td align="left" nowrap="nowrap" class="dtvAlternatingRow">
-                                                        <asp:CheckBox ID="chkFastDelivery" runat="server" onclick="alteraFastDelivery(this.checked)"  
+                                                        <asp:CheckBox ID="chkFastDelivery" runat="server" onclick="alteraFastDelivery(this.checked)"
                                                             Checked='<%# Bind("FastDelivery") %>' Text="" />
                                                     </td>
                                                 </tr>
-                                                <tr> 
+                                                <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
                                                         Tipo Venda
                                                     </td>
@@ -986,7 +1003,7 @@
                                                     </td>
                                                 </tr>
                                             </table>
-                                            <asp:HiddenField ID="hdfCliente" runat="server" 
+                                            <asp:HiddenField ID="hdfCliente" runat="server"
                                                 Value='<%# Bind("IdCliente") %>' onload="hdfCliente_Load" />
                                             <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />
                                         </InsertItemTemplate>
@@ -1044,8 +1061,8 @@
                                             <asp:HiddenField ID="hdfCliRevenda" runat="server" Value='<%# Eval("CliRevenda") %>' />
                                             <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Bind("Total") %>' />
                                             <asp:HiddenField ID="hdfIdCliente" runat="server" Value='<%# Eval("IdCliente") %>' />
-                                            <asp:HiddenField ID="hdfApenasVidros" runat="server" Value='<%# Eval("ApenasVidro").ToString().ToLower() %>' />    
-                                            <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />                                        
+                                            <asp:HiddenField ID="hdfApenasVidros" runat="server" Value='<%# Eval("ApenasVidro").ToString().ToLower() %>' />
+                                            <asp:HiddenField ID="hdfObsLiberacao" runat="server" Value='<%# Bind("ObsLiberacao") %>' />
                                         </ItemTemplate>
                                     </asp:TemplateField>
                                     <asp:TemplateField ShowHeader="False">
@@ -1067,8 +1084,8 @@
                                             <asp:Button ID="btnEditar" runat="server" CommandName="Edit" Text="Editar" />
                                             <asp:Button ID="btnVoltar" runat="server" OnClick="btnCancelar_Click" Text="Voltar" />
                                             <asp:Button ID="btnGerarOrcamento" runat="server" OnClick="btnGerarOrcamento_Click"
-                                                Text="Gerar Orçamento" 
-                                                OnClientClick="return confirm('Gerar orçamento para este projeto?');" 
+                                                Text="Gerar Orçamento"
+                                                OnClientClick="return confirm('Gerar orçamento para este projeto?');"
                                                 onload="ctrProjeto_Load" />
                                             <asp:Button ID="btnGerarPedido" runat="server" OnClick="btnGerarPedido_Click" OnClientClick="return gerarPedido();"
                                                 Text="Gerar Pedido" />
@@ -1095,7 +1112,7 @@
                     <SelectParameters>
                         <asp:QueryStringParameter Name="idProjeto" QueryStringField="idProjeto" Type="UInt32" />
                     </SelectParameters>
-                </colo:VirtualObjectDataSource>     
+                </colo:VirtualObjectDataSource>
                 <asp:HiddenField ID="hdfIdProjeto" runat="server" />
             </td>
         </tr>
@@ -1152,7 +1169,7 @@
                             <table style="width: 100%">
                                 <tr>
                                     <td align="center">
-                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo Cálculo"  
+                                        <asp:Button ID="btnNovoCalculo" runat="server" Text="Novo Cálculo"
                                             OnClientClick="openWindow(600, 750, 'SelModelo.aspx?idProjeto=' + (FindControl('hdfIdProjeto', 'input') != null ? FindControl('hdfIdProjeto', 'input').value : '0') + '&apenasVidro=' + (FindControl('hdfApenasVidros', 'input') != null ? FindControl('hdfApenasVidros', 'input').value : 'false') + '&Parceiro=true'); return false;" />
                                     </td>
                                 </tr>
@@ -1166,19 +1183,19 @@
                                         <table style="width: 100%">
                                             <tr>
                                                 <td>
-                                                    <asp:DetailsView ID="dtvImagem" runat="server" AutoGenerateRows="False" 
+                                                    <asp:DetailsView ID="dtvImagem" runat="server" AutoGenerateRows="False"
                                                         DataSourceID="odsItemProjetoImagem" GridLines="None">
                                                         <Fields>
                                                             <asp:TemplateField ShowHeader="False">
                                                                 <ItemTemplate>
-                                                                    <asp:Image ID="imgImagemProjeto" runat="server" 
+                                                                    <asp:Image ID="imgImagemProjeto" runat="server"
                                                                         ImageUrl='<%# Eval("ImagemUrl") %>' />
                                                                 </ItemTemplate>
                                                                 <ItemStyle HorizontalAlign="Center" />
                                                             </asp:TemplateField>
                                                             <asp:TemplateField ShowHeader="False">
                                                                 <ItemTemplate>
-                                                                    <asp:Button ID="btnImprimir" runat="server" Text="Imprimir" 
+                                                                    <asp:Button ID="btnImprimir" runat="server" Text="Imprimir"
                                                                         onprerender="btnImprimir_PreRender" />
                                                                 </ItemTemplate>
                                                                 <ItemStyle HorizontalAlign="Center" />
@@ -1361,7 +1378,7 @@
                                                                                 Font-Size="Small" onload="ctrProjeto_Load"></asp:Label>
                                                                         </td>
                                                                         <td>
-                                                                            <asp:Label ID="lblSubtotal" runat="server" Font-Bold="False" Font-Size="Small" 
+                                                                            <asp:Label ID="lblSubtotal" runat="server" Font-Bold="False" Font-Size="Small"
                                                                                 onload="ctrProjeto_Load"></asp:Label>
                                                                         </td>
                                                                     </tr>
@@ -1382,7 +1399,7 @@
                                     <td height="180" valign="top">
                                         <asp:GridView GridLines="None" ID="grdItemProjeto" runat="server" AllowPaging="True"
                                             AllowSorting="True" AutoGenerateColumns="False"
-                                            DataKeyNames="IdItemProjeto" DataSourceID="odsItemProjeto" 
+                                            DataKeyNames="IdItemProjeto" DataSourceID="odsItemProjeto"
                                             OnRowCommand="grdItemProjeto_RowCommand"
                                             CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                                             <Columns>
@@ -1437,8 +1454,8 @@
                                 <tr>
                                     <td>
                                         &nbsp;
-                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo Cálculo ()" 
-                                            OnClientClick="duplicar(); return false" 
+                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo Cálculo ()"
+                                            OnClientClick="duplicar(); return false"
                                             Visible="False" />
                                     </td>
                                 </tr>
@@ -1456,7 +1473,7 @@
                                                         Visible="False" Font-Size="Small" onload="ctrProjeto_Load"></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:Label ID="lblTotalProj" runat="server" Font-Bold="False" Visible="False" 
+                                                    <asp:Label ID="lblTotalProj" runat="server" Font-Bold="False" Visible="False"
                                                         Font-Size="Small" onload="ctrProjeto_Load"></asp:Label>
                                                 </td>
                                             </tr>
@@ -1471,23 +1488,23 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <asp:DetailsView ID="dtvImagemMini" runat="server" AutoGenerateRows="False"  
+                                        <asp:DetailsView ID="dtvImagemMini" runat="server" AutoGenerateRows="False"
                                             DataSourceID="odsItemProjetoImagem" GridLines="None">
                                             <Fields>
                                                 <asp:TemplateField ShowHeader="False">
                                                     <ItemTemplate>
-                                                        <asp:Image ID="imgImagemProjeto0" runat="server" 
+                                                        <asp:Image ID="imgImagemProjeto0" runat="server"
                                                             ImageUrl='<%# Eval("ImagemUrlMini") %>' />
                                                     </ItemTemplate>
                                                     <ItemStyle HorizontalAlign="Center" />
                                                 </asp:TemplateField>
                                             </Fields>
                                         </asp:DetailsView>
-                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsItemProjetoImagem" runat="server" 
-                                            SelectMethod="GetElementForProjetoAvulso" 
+                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsItemProjetoImagem" runat="server"
+                                            SelectMethod="GetElementForProjetoAvulso"
                                             TypeName="Glass.Data.DAL.ItemProjetoDAO">
                                             <SelectParameters>
-                                                <asp:ControlParameter ControlID="hdfIdItemProjeto" Name="idItemProjeto" 
+                                                <asp:ControlParameter ControlID="hdfIdItemProjeto" Name="idItemProjeto"
                                                     PropertyName="Value" Type="UInt32" />
                                             </SelectParameters>
                                         </colo:VirtualObjectDataSource>
@@ -1497,7 +1514,7 @@
                                         <asp:HiddenField ID="hdfDuplicarCorAluminio" runat="server" />
                                         <asp:HiddenField ID="hdfDuplicarCorFerragem" runat="server" />
                                         <asp:HiddenField ID="hdfDuplicarApenasVidros" runat="server" />
-                                        <asp:HiddenField ID="hdfDuplicarMedidaExata" runat="server" />                                        
+                                        <asp:HiddenField ID="hdfDuplicarMedidaExata" runat="server" />
                                     </td>
                                 </tr>
                             </table>
@@ -1514,10 +1531,10 @@
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdMaterialProjeto" runat="server" AllowPaging="True" AllowSorting="True"
-                    AutoGenerateColumns="False" DataSourceID="odsMaterialItemProjeto" 
+                    AutoGenerateColumns="False" DataSourceID="odsMaterialItemProjeto"
                     DataKeyNames="IdMaterItemProj" ShowFooter="True"
                     OnPreRender="grdMaterialProjeto_PreRender" OnRowCommand="grdMaterialProjeto_RowCommand"
-                    CssClass="gridStyle" PagerStyle-CssClass="pgr" 
+                    CssClass="gridStyle" PagerStyle-CssClass="pgr"
                     AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                     <Columns>
                         <asp:TemplateField>
@@ -1533,11 +1550,11 @@
                                 <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
                                     ToolTip="Cancelar" />
                                 <asp:HiddenField ID="hdfIdItemProjetoMater" runat="server" Value='<%# Bind("IdItemProjeto") %>' />
-                                <asp:HiddenField ID="hdfIdPecaItemProj" runat="server" 
+                                <asp:HiddenField ID="hdfIdPecaItemProj" runat="server"
                                     Value='<%# Bind("IdPecaItemProj") %>' />
-                                <asp:HiddenField ID="hdfValorAcrescimo" runat="server" 
+                                <asp:HiddenField ID="hdfValorAcrescimo" runat="server"
                                     Value='<%# Bind("ValorAcrescimo") %>' />
-                                <asp:HiddenField ID="hdfValorDesconto" runat="server" 
+                                <asp:HiddenField ID="hdfValorDesconto" runat="server"
                                     Value='<%# Bind("ValorDesconto") %>' />
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
@@ -1556,9 +1573,9 @@
                                 <asp:HiddenField ID="hdfIsAluminio" runat="server" Value='<%# Eval("IsAluminio") %>' />
                                 <asp:HiddenField ID="hdfM2Minimo" runat="server" Value='<%# Eval("M2Minimo") %>' />
                                 <asp:HiddenField ID="hdfIdMaterProjMod" runat="server" />
-                                <asp:HiddenField ID="hdfCustoProd" runat="server" Value='<%# Eval("CustoCompraProduto") %>' />                               
+                                <asp:HiddenField ID="hdfCustoProd" runat="server" Value='<%# Eval("CustoCompraProduto") %>' />
                             </EditItemTemplate>
-                            <FooterTemplate>                                
+                            <FooterTemplate>
                                 <asp:TextBox ID="txtCodProdIns" runat="server" Width="50px" onkeydown="if (isEnter(event)) loadProduto(this.value);"
                                     onkeypress="return !(isEnter(event));" onblur="loadProduto(this.value);"></asp:TextBox>
                                 <asp:Label ID="lblDescrProd0" runat="server"></asp:Label>
@@ -1843,7 +1860,7 @@
                     <AlternatingRowStyle />
                 </asp:GridView>
             </td>
-        </tr>       
+        </tr>
         <tr>
             <td align="center">
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMaterialItemProjeto" runat="server" DataObjectTypeName="Glass.Data.Model.MaterialItemProjeto"
@@ -1868,13 +1885,13 @@
                 <asp:HiddenField ID="hdfIdProdMater" runat="server" />
                 <asp:HiddenField ID="hdfIdItemProjeto" runat="server" />
                 <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoEntrega" runat="server" SelectMethod="GetTipoEntrega"
-                    TypeName="Glass.Data.Helper.DataSources"></colo:VirtualObjectDataSource>   
+                    TypeName="Glass.Data.Helper.DataSources"></colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
                             TypeName="Glass.Data.Helper.DataSources">
-                </colo:VirtualObjectDataSource>      
+                </colo:VirtualObjectDataSource>
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsTransportador" runat="server"
                     SelectMethod="ObtemDescritoresTransportadores" TypeName="Glass.Global.Negocios.ITransportadorFluxo">
-                </colo:VirtualObjectDataSource>       
+                </colo:VirtualObjectDataSource>
             </td>
         </tr>
     </table>

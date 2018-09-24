@@ -66,7 +66,7 @@ namespace Glass.UI.Web.Cadastros
                     grdProdutosTrocados.Columns[13].Visible = !TrocaDevolucaoDAO.Instance.ObtemUsarPedidoReposicao(idTrocaDevolucao);
                 }
             }
-            
+
             hdfUrlRetorno.Value = "../Listas/LstTrocaDev.aspx" + (Request["popup"] == "1" ? "?popup=1" : "");
         }
 
@@ -148,7 +148,7 @@ namespace Glass.UI.Web.Cadastros
                     if (mensagem.Length > 0)
                     {
                         mensagem = @"
-                            alert('" + mensagem + @"'); 
+                            alert('" + mensagem + @"');
                             openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=TrocaDevolucao&idTrocaDevolucao=" + idTrocaDevolucao + @"');
                             redirectUrl('../Listas/LstTrocaDev.aspx');";
 
@@ -185,8 +185,8 @@ namespace Glass.UI.Web.Cadastros
                 if (mensagem.Length > 0)
                 {
                     mensagem = @"
-                        alert('" + mensagem + @"'); 
-                        openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=TrocaDevolucao&idTrocaDevolucao=" + idTrocaDevolucao + @"'); 
+                        alert('" + mensagem + @"');
+                        openWindow(600, 800, '../Relatorios/RelBase.aspx?rel=TrocaDevolucao&idTrocaDevolucao=" + idTrocaDevolucao + @"');
                         redirectUrl('../Listas/LstTrocaDev.aspx" +
                         (!String.IsNullOrEmpty(Request["popup"]) ? "?popup=1" : "") + "');";
 
@@ -407,8 +407,8 @@ namespace Glass.UI.Web.Cadastros
         }
 
         [Ajax.AjaxMethod]
-        public string Finalizar(string idTrocaDevStr, string valoresRecebStr, string formasPagtoStr, string contasBancoStr, string depositoNaoIdentificado, 
-            string cartaoNaoIdentificado, string tiposCartaoStr, string tiposBoletoStr, string txAntecipStr, string jurosStr, string recebParcial, 
+        public string Finalizar(string idTrocaDevStr, string valoresRecebStr, string formasPagtoStr, string contasBancoStr, string depositoNaoIdentificado,
+            string cartaoNaoIdentificado, string tiposCartaoStr, string tiposBoletoStr, string txAntecipStr, string jurosStr, string recebParcial,
             string gerarCredito, string creditoUtilizado, string numAutConstrucard, string numParcCartoesStr, string chequesPagto, string numAutCartao)
         {
             try

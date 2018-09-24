@@ -1288,7 +1288,7 @@ namespace Glass.Data.DAL
                 materItem.Largura = mpm.Largura;
                 materItem.TotM = mpm.TotM;
                 materItem.Espessura = ProdutoDAO.Instance.ObtemEspessura(sessao, (int)idProd);
-                materItem.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)idProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, idPedido, null, (int?)itemProj.IdOrcamento);
+                materItem.Valor = ProdutoDAO.Instance.GetValorTabela(sessao, (int)idProd, tipoEntrega, idCliente, false, itemProj.Reposicao, 0, idPedido, null, (int?)itemProj.IdOrcamento, mpm.Altura);
                 materItem.GrauCorte = mpm.GrauCorte;
 
                 if (calcularMateriais)

@@ -22,19 +22,21 @@
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/Grid.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript">
-        
+
+        var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
+
         function getNomeControleBenef()
         {
             var nomeControle = "<%= NomeControleBenef() %>";
             nomeControle = FindControl(nomeControle + "_tblBenef", "table");
-            
+
             if (nomeControle == null)
                 return null;
-            
+
             nomeControle = nomeControle.id;
             return nomeControle.substr(0, nomeControle.lastIndexOf("_"));
         }
-        
+
         function obrigarProcApl()
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
@@ -49,14 +51,14 @@
                     alert("Informe a aplicação.");
                     return false;
                 }
-                
+
                 if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
                 {
                     alert("Informe o processo.");
                     return false;
                 }
             }
-            
+
             return true;
         }
 
@@ -86,15 +88,15 @@
                 lblValorBenef.innerHTML = "R$ " + valor.toFixed(2).replace('.', ',');
             }
         }
-        
+
         function duplicar()
         {
             if (!confirm("Deseja duplicar o projeto atual?"))
                 return;
-            
-            setModelo(FindControl("hdfDuplicarCodigo", "input").value, FindControl("hdfDuplicarEspessura", "input").value, 
-                FindControl("hdfDuplicarCorVidro", "input").value, FindControl("hdfDuplicarCorAluminio", "input").value, 
-                FindControl("hdfDuplicarCorFerragem", "input").value, FindControl("hdfDuplicarApenasVidros", "input").value, 
+
+            setModelo(FindControl("hdfDuplicarCodigo", "input").value, FindControl("hdfDuplicarEspessura", "input").value,
+                FindControl("hdfDuplicarCorVidro", "input").value, FindControl("hdfDuplicarCorAluminio", "input").value,
+                FindControl("hdfDuplicarCorFerragem", "input").value, FindControl("hdfDuplicarApenasVidros", "input").value,
                 FindControl("hdfDuplicarMedidaExata", "input").value);
         }
 
@@ -102,7 +104,7 @@
         function setModelo(idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, idCorFerragem, apenasVidros, medidaExata) {
             var idProjeto = FindControl("hdfIdProjeto", "input").value;
 
-            var retorno = CadProjeto.NovoItemProjeto(idProjeto, idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio, 
+            var retorno = CadProjeto.NovoItemProjeto(idProjeto, idProjetoModelo, espessuraVidro, idCorVidro, idCorAluminio,
                 idCorFerragem, apenasVidros, medidaExata).value;
 
             if (retorno == null) {
@@ -130,7 +132,7 @@
             }
         }
 
-        // Verificaçãoes ao inserir projeto    
+        // Verificaçãoes ao inserir projeto
         function onInsert() {
             // Verifica se o cliente foi selecionado
             if ((FindControl("hdfCliente", "input").value == "" || FindControl("hdfCliente", "input").value == null) &&
@@ -138,12 +140,12 @@
                 alert("Informe o cliente.");
                 return false;
             }
-            
+
             // Se for versão WebGlass Projetos, informa o primeiro valor no tipo de entrega
             if (FindControl("ddlTipoEntrega", "select").style.display == "none") {
                 FindControl("ddlTipoEntrega", "select").selectedIndex = 1;
             }
-    
+
             // Verifica se o tipo de entrega foi selecionado
             if (FindControl("ddlTipoEntrega", "select").value == "") {
                 alert("Selecione o tipo de entrega.");
@@ -194,11 +196,11 @@
             {
                 var atualRevenda = isAtualRevenda == "true" ? "" : "não ";
                 var novoRevenda = isAtualRevenda == "true" ? "não " : "";
-                
-                alert("O cliente atual " + atualRevenda + "é revenda e o cliente buscado " + novoRevenda + 
+
+                alert("O cliente atual " + atualRevenda + "é revenda e o cliente buscado " + novoRevenda +
                     "é. Essa alteração não é possível. Para alterar, selecione um novo cliente que " + atualRevenda + "seja revenda.");
-                
-                idCliente.value = FindControl("hdfCliente", "input").value;    
+
+                idCliente.value = FindControl("hdfCliente", "input").value;
                 return false;
             }
 
@@ -219,7 +221,7 @@
         function loadVidro(codInterno, hdf, txt) {
             if (codInterno == "")
                 return false;
-            
+
             var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
 
             var retorno = CadProjeto.GetVidro(idProjeto, codInterno).value.split(';');
@@ -234,7 +236,7 @@
                 hdf.value = retorno[1];
                 txt.value = retorno[2];
             }
-            
+
             FindControl("hdfPecasAlteradas", "input").value = "true";
         }
 
@@ -267,7 +269,7 @@
                 var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
 
                 var retorno = CadProjeto.GetProduto(idProjeto, codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value).value.split(';');
-       
+
                 if (retorno[0] == "Erro") {
                     alert(retorno[1]);
 
@@ -296,6 +298,9 @@
                     FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor mínimo
                 }
                 else if (retorno[0] == "Prod") {
+
+                    valorTabelaProduto = retorno[3];
+
                     FindControl("hdfIdProdMater", "input").value = retorno[1];
                     FindControl("txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor mínimo
@@ -311,8 +316,8 @@
                     if (retorno[4] == "true" && getNomeControleBenef() && FindControl("lnkBenef", "a") != null) {
                         FindControl("txtEspessura", "input").value = retorno[8];
                         FindControl("txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
-                    }                   
-                    
+                    }
+
                     if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                         FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
 
@@ -343,7 +348,7 @@
                     }
 
                     cAltura.disabled = CalcProd_DesabilitarAltura(tipoCalc);
-                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);                   
+                    cLargura.disabled = CalcProd_DesabilitarLargura(tipoCalc);
 
                     FindControl("lblDescrProd", "span").innerHTML = retorno[2];
                 }
@@ -363,7 +368,7 @@
         function onSaveProd() {
             if (!validate("produto"))
                 return false;
-            
+
             var codProd = FindControl("txtCodProdIns", "input").value;
             var valor = FindControl("txtValorIns", "input").value;
             var qtde = FindControl("txtQtdeIns", "input").value;
@@ -399,7 +404,7 @@
                 alert("Informe a largura.");
                 return false;
             }
-            
+
             if (!obrigarProcApl())
                 return false;
 
@@ -412,7 +417,7 @@
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
-            
+
             var valor = FindControl("txtValorIns", "input").value;
             var qtde = FindControl("txtQtdeIns", "input") != null ? FindControl("txtQtdeIns", "input").value :
                 FindControl("lblQtde", "span") != null ? FindControl("lblQtde", "span").innerHTML : "";
@@ -420,8 +425,8 @@
             var idProd = FindControl("hdfIdProdMater", "input").value;
             var codInterno = FindControl("hdfCodInterno", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
-            
-            var idProjeto = <%= Request["idProjeto"] != null ? Request["idProjeto"] : "0" %>;
+
+
 
             var retorno = CadProjeto.GetProduto(idProjeto, codInterno, FindControl("hdfTipoEntrega", "input").value, FindControl("hdfCliRevenda", "input").value, FindControl("hdfIdCliente", "input").value).value.split(';');
 
@@ -451,9 +456,20 @@
                     return false;
                 }
             }
-            
+
             if (!obrigarProcApl())
                 return false;
+        }
+
+        var valorTabelaProduto = null;
+
+        function GetAdicionalAlturaChapa(){
+            var idProd = FindControl("hdfIdProdMater", "input").value;
+            var altura = FindControl("txtAlturaIns", "input").value;
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+            var idCliente = FindControl("hdfIdCliente", "input").value;
+
+            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCli, false, false, 0, "", idProjeto, "", altura).value.replace(".", ",");
         }
 
         // Calcula em tempo real a metragem quadrada do produto
@@ -467,7 +483,7 @@
                 var tipoCalc = FindControl("hdfTipoCalc", "input").value;
                 var esp = FindControl("txtEspessura", "input") != null ? FindControl("txtEspessura", "input").value : 0;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-                
+
                 var redondo = FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked;
 
                 if (altura != "" && largura != "" &&
@@ -482,7 +498,7 @@
                 }
 
                 var numBenef = "";
-                
+
                 if (FindControl("Redondo_chkSelecao", "input") != null) {
                     numBenef = FindControl("Redondo_chkSelecao", "input").id;
                     numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -494,9 +510,9 @@
                     if (altura > 0 && largura > 0 && qtde > 0 && isVidro) {
                         FindControl("lblTotM2Ins", "span").innerHTML = MetodosAjax.CalcM2(tipoCalc, altura, largura, qtde, idProd, redondo, esp, "false").value;
                         FindControl("hdfTotM2Calc", "input").value = MetodosAjax.CalcM2Calculo(idCliente, tipoCalc, altura, largura, qtde, idProd, redondo, esp, numBenef, "false").value;
-                        FindControl("lblTotM2Calc", "span").innerHTML = FindControl("hdfTotM2Calc", "input").value.replace('.', ',');                    
+                        FindControl("lblTotM2Calc", "span").innerHTML = FindControl("hdfTotM2Calc", "input").value.replace('.', ',');
                     }
-                    
+
                     if (qtde != "" && qtde != "0")
                         calcTotalProd();
 
@@ -672,7 +688,7 @@
             var estaConferido = CadProjeto.EstaConferido(FindControl('hdfIdItemProjeto', 'input').value);
 
             if (estaConferido != null && estaConferido.value == 'false') {
-                alert('Confirme o projeto antes de editar as imagens.'); 
+                alert('Confirme o projeto antes de editar as imagens.');
                 return false;
             }
 
@@ -690,7 +706,7 @@
 
             setTimeout(function(){}, 100);
 
-            openWindow(h, w, projetoCadProject.value);  
+            openWindow(h, w, projetoCadProject.value);
 
             setTimeout(function(){}, 100);
 
@@ -716,7 +732,7 @@
             }
             return rtn;
         }
-    
+
     </script>
 
     <table style="width: 100%">
@@ -737,7 +753,7 @@
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <asp:TextBox ID="txtNumCli" runat="server" Width="50px" onkeypress="return soNumeros(event, true, true);"
-                                                            onblur="getCli(this);" Text='<%# Eval("IdCliente") %>' 
+                                                            onblur="getCli(this);" Text='<%# Eval("IdCliente") %>'
                                                             onkeydown="if (isEnter(event)) getCli(this);"></asp:TextBox>
                                                         <asp:TextBox ID="txtNomeCliente" runat="server" Text='<%# Bind("NomeCliente") %>'
                                                             Width="250px"></asp:TextBox>
@@ -753,25 +769,25 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server"  
+                                                        <asp:Label ID="Label14" runat="server"
                                                             Text="Tipo Entrega "></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" valign="middle" class="dtvAlternatingRow">
                                                         <asp:DropDownList ID="ddlTipoEntrega" runat="server" AppendDataBoundItems="True"
-                                                            DataSourceID="odsTipoEntrega" DataTextField="Descr" DataValueField="Id" 
+                                                            DataSourceID="odsTipoEntrega" DataTextField="Descr" DataValueField="Id"
                                                             SelectedValue='<%# Bind("TipoEntrega") %>' >
                                                             <asp:ListItem></asp:ListItem>
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label15" runat="server"  
+                                                        <asp:Label ID="Label15" runat="server"
                                                             Text="Orçamento"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <asp:TextBox ID="txtIdOrcamento" runat="server" onkeypress="return soNumeros(event, true, true);"
                                                             Text='<%# Bind("IdOrcamento") %>' Width="70px" ></asp:TextBox>
-                                                        <asp:LinkButton ID="lnkSelOrcamento" runat="server" 
-                                                            OnClientClick="openWindow(590, 760, '../../Utils/SelOrcamento.aspx'); return false;" 
+                                                        <asp:LinkButton ID="lnkSelOrcamento" runat="server"
+                                                            OnClientClick="openWindow(590, 760, '../../Utils/SelOrcamento.aspx'); return false;"
                                                             >
                                                                      <img border="0" src="../../Images/Pesquisar.gif" /></asp:LinkButton>
                                                     </td>
@@ -805,7 +821,7 @@
                                             </table>
                                             <asp:HiddenField ID="hdfCliente" runat="server" Value='<%# Bind("IdCliente") %>' />
                                             <asp:HiddenField ID="hdfTotal" runat="server" Value='<%# Bind("Total") %>' />
-                                            <asp:HiddenField ID="hdfCliRevenda" runat="server" 
+                                            <asp:HiddenField ID="hdfCliRevenda" runat="server"
                                                 Value='<%# Eval("CliRevenda") %>' />
                                         </EditItemTemplate>
                                         <InsertItemTemplate>
@@ -830,7 +846,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label14" runat="server"  
+                                                        <asp:Label ID="Label14" runat="server"
                                                             Text="Tipo Entrega "></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" valign="middle">
@@ -840,14 +856,14 @@
                                                         </asp:DropDownList>
                                                     </td>
                                                     <td align="left" class="dtvHeader" nowrap="nowrap">
-                                                        <asp:Label ID="Label15" runat="server"  
+                                                        <asp:Label ID="Label15" runat="server"
                                                             Text="Orçamento"></asp:Label>
                                                     </td>
                                                     <td align="left" class="dtvAlternatingRow" nowrap="nowrap">
                                                         <asp:TextBox ID="txtIdOrcamento" runat="server" onkeypress="return soNumeros(event, true, true);"
                                                             Text='<%# Bind("IdOrcamento") %>' Width="70px" ></asp:TextBox>
-                                                        <asp:LinkButton ID="lnkSelOrcamento" runat="server" 
-                                                            OnClientClick="openWindow(590, 760, '../../Utils/SelOrcamento.aspx'); return false;" 
+                                                        <asp:LinkButton ID="lnkSelOrcamento" runat="server"
+                                                            OnClientClick="openWindow(590, 760, '../../Utils/SelOrcamento.aspx'); return false;"
                                                             >
                                                                      <img border="0" src="../../Images/Pesquisar.gif" /></asp:LinkButton>
                                                     </td>
@@ -904,11 +920,11 @@
                                                         <asp:Label ID="lblData" runat="server" Text='<%# Eval("DataCad", "{0:d}") %>'></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold; height: 25px;">
-                                                        <asp:Label ID="Label17" runat="server"  
+                                                        <asp:Label ID="Label17" runat="server"
                                                             Text="Funcionário"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="height: 25px" colspan="3">
-                                                        <asp:Label ID="lblNomeFunc" runat="server"  
+                                                        <asp:Label ID="lblNomeFunc" runat="server"
                                                             Text='<%# Eval("NomeFunc") %>'></asp:Label>
                                                     </td>
                                                 </tr>
@@ -917,26 +933,26 @@
                                                         <asp:Label ID="Label21" runat="server"  Text="Total"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="height: 25px">
-                                                        <asp:Label ID="lblTotal" runat="server" Text='<%# Eval("Total", "{0:C}") %>' 
+                                                        <asp:Label ID="lblTotal" runat="server" Text='<%# Eval("Total", "{0:C}") %>'
                                                             ></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
                                                         <asp:Label ID="Label19" runat="server"  Text="Loja"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
-                                                        <asp:Label ID="lblNomeLoja" runat="server" Text='<%# Eval("NomeLoja") %>' 
+                                                        <asp:Label ID="lblNomeLoja" runat="server" Text='<%# Eval("NomeLoja") %>'
                                                             ></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap" style="font-weight: bold">
-                                                        <asp:Label ID="Label18" runat="server"  
+                                                        <asp:Label ID="Label18" runat="server"
                                                             Text="Tipo Entrega"></asp:Label>
                                                     </td>
                                                     <td align="left" nowrap="nowrap">
-                                                        <asp:Label ID="lblTipoEntrega" runat="server" 
+                                                        <asp:Label ID="lblTipoEntrega" runat="server"
                                                             Text='<%# Eval("DescrTipoEntrega") %>' ></asp:Label>
                                                     </td>
                                                 </tr>
-                                                
+
                                                 <tr>
                                                     <td align="left" nowrap="nowrap" colspan="6">
                                                         <table cellpadding="0" cellspacing="0">
@@ -945,7 +961,7 @@
                                                                     <asp:Label ID="Label20" runat="server"  Text="Valor ICMS"></asp:Label>
                                                                     </td>
                                                                 <td>
-                                                                    <asp:Label ID="lblValorIcms" runat="server" ForeColor="Red" 
+                                                                    <asp:Label ID="lblValorIcms" runat="server" ForeColor="Red"
                                                                          Text='<%# Eval("ValorIcms", "{0:C}") %>'></asp:Label>
                                                                 </td>
                                                             </tr>
@@ -979,8 +995,8 @@
                                             <asp:Button ID="btnEditar" runat="server" CommandName="Edit" Text="Editar" />
                                             <asp:Button ID="btnVoltar" runat="server" OnClick="btnCancelar_Click" Text="Voltar" />
                                             <asp:Button ID="btnGerarOrcamento" runat="server" OnClick="btnGerarOrcamento_Click"
-                                                Text="Gerar Orçamento" 
-                                                OnClientClick="return confirm('Gerar orçamento para este projeto?');" 
+                                                Text="Gerar Orçamento"
+                                                OnClientClick="return confirm('Gerar orçamento para este projeto?');"
                                                  />
                                             <asp:Button ID="btnGerarPedido" runat="server" OnClick="btnGerarPedido_Click" OnClientClick="return confirm('Ao gerar um pedido, este projeto será finalizado e não poderá mais ser alterado, deseja continuar?');"
                                                 Text="Gerar Pedido"  />
@@ -1045,19 +1061,19 @@
                                         <table style="width: 100%">
                                             <tr>
                                                 <td>
-                                                    <asp:DetailsView ID="dtvImagem" runat="server" AutoGenerateRows="False" 
+                                                    <asp:DetailsView ID="dtvImagem" runat="server" AutoGenerateRows="False"
                                                         DataSourceID="odsItemProjetoImagem" GridLines="None">
                                                         <Fields>
                                                             <asp:TemplateField ShowHeader="False">
                                                                 <ItemTemplate>
-                                                                    <asp:Image ID="imgImagemProjeto" runat="server" 
+                                                                    <asp:Image ID="imgImagemProjeto" runat="server"
                                                                         ImageUrl='<%# Eval("ImagemUrl") %>' />
                                                                 </ItemTemplate>
                                                                 <ItemStyle HorizontalAlign="Center" />
                                                             </asp:TemplateField>
                                                             <asp:TemplateField ShowHeader="False">
                                                                 <ItemTemplate>
-                                                                    <asp:Button ID="btnImprimir" runat="server" Text="Imprimir" 
+                                                                    <asp:Button ID="btnImprimir" runat="server" Text="Imprimir"
                                                                         onprerender="btnImprimir_PreRender" />
                                                                 </ItemTemplate>
                                                                 <ItemStyle HorizontalAlign="Center" />
@@ -1237,7 +1253,7 @@
                                                                                 Font-Size="Small" ></asp:Label>
                                                                         </td>
                                                                         <td>
-                                                                            <asp:Label ID="lblSubtotal" runat="server" Font-Bold="False" Font-Size="Small" 
+                                                                            <asp:Label ID="lblSubtotal" runat="server" Font-Bold="False" Font-Size="Small"
                                                                                 ></asp:Label>
                                                                         </td>
                                                                     </tr>
@@ -1256,9 +1272,9 @@
                             <table cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td height="180" valign="top">
-                                        <asp:GridView GridLines="None" ID="grdItemProjeto" runat="server" AllowPaging="True" 
+                                        <asp:GridView GridLines="None" ID="grdItemProjeto" runat="server" AllowPaging="True"
                                             AllowSorting="True" AutoGenerateColumns="False"
-                                            DataKeyNames="IdItemProjeto" DataSourceID="odsItemProjeto" 
+                                            DataKeyNames="IdItemProjeto" DataSourceID="odsItemProjeto"
                                             OnRowCommand="grdItemProjeto_RowCommand"
                                             CssClass="gridStyle" PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                                             <Columns>
@@ -1312,7 +1328,7 @@
 <AlternatingRowStyle CssClass="alt"></AlternatingRowStyle>
                                         </asp:GridView>
                                         <br />
-                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo Cálculo ()" 
+                                        <asp:Button ID="btnNovoCalculoDupl" runat="server" Text="Novo Cálculo ()"
                                             OnClientClick="duplicar(); return false"
                                             Visible="False" />
                                     </td>
@@ -1336,7 +1352,7 @@
                                                         Visible="False" Font-Size="Small" ></asp:Label>
                                                 </td>
                                                 <td>
-                                                    <asp:Label ID="lblTotalProj" runat="server" Font-Bold="False" Visible="False" 
+                                                    <asp:Label ID="lblTotalProj" runat="server" Font-Bold="False" Visible="False"
                                                         Font-Size="Small" ></asp:Label>
                                                 </td>
                                             </tr>
@@ -1348,7 +1364,7 @@
                                             </tr>
                                             <tr>
                                                 <td colspan="2" align="center">
-                                                    <asp:LinkButton ID="lnkRelatorio" runat="server" 
+                                                    <asp:LinkButton ID="lnkRelatorio" runat="server"
                                                         OnClientClick="openRptTotais(); return false;" >Visualizar totais</asp:LinkButton>
                                                 </td>
                                             </tr>
@@ -1357,12 +1373,12 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <asp:DetailsView ID="dtvImagemMini" runat="server" AutoGenerateRows="False" 
+                                        <asp:DetailsView ID="dtvImagemMini" runat="server" AutoGenerateRows="False"
                                             DataSourceID="odsItemProjetoImagem" GridLines="None">
                                             <Fields>
                                                 <asp:TemplateField ShowHeader="False">
                                                     <ItemTemplate>
-                                                        <asp:Image ID="imgImagemProjeto0" runat="server" 
+                                                        <asp:Image ID="imgImagemProjeto0" runat="server"
                                                             ImageUrl='<%# Eval("ImagemUrlMini") %>' />
                                                     </ItemTemplate>
                                                     <ItemStyle HorizontalAlign="Center" />
@@ -1376,11 +1392,11 @@
                                         <asp:HiddenField ID="hdfDuplicarEspessura" runat="server" />
                                         <asp:HiddenField ID="hdfDuplicarApenasVidros" runat="server" />
                                         <asp:HiddenField ID="hdfDuplicarMedidaExata" runat="server" />
-                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsItemProjetoImagem" runat="server" 
-                                            SelectMethod="GetElementForProjetoAvulso" 
+                                        <colo:VirtualObjectDataSource culture="pt-BR" ID="odsItemProjetoImagem" runat="server"
+                                            SelectMethod="GetElementForProjetoAvulso"
                                             TypeName="Glass.Data.DAL.ItemProjetoDAO">
                                             <SelectParameters>
-                                                <asp:ControlParameter ControlID="hdfIdItemProjeto" Name="idItemProjeto" 
+                                                <asp:ControlParameter ControlID="hdfIdItemProjeto" Name="idItemProjeto"
                                                     PropertyName="Value" Type="UInt32" />
                                             </SelectParameters>
                                         </colo:VirtualObjectDataSource>
@@ -1400,10 +1416,10 @@
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdMaterialProjeto" runat="server" AllowPaging="True" AllowSorting="True"
-                    AutoGenerateColumns="False" DataSourceID="odsMaterialItemProjeto" 
+                    AutoGenerateColumns="False" DataSourceID="odsMaterialItemProjeto"
                     DataKeyNames="IdMaterItemProj" ShowFooter="True"
                     OnPreRender="grdMaterialProjeto_PreRender" OnRowCommand="grdMaterialProjeto_RowCommand"
-                    CssClass="gridStyle" PagerStyle-CssClass="pgr" 
+                    CssClass="gridStyle" PagerStyle-CssClass="pgr"
                     AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit">
                     <Columns>
                         <asp:TemplateField>
@@ -1419,11 +1435,11 @@
                                 <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
                                     ToolTip="Cancelar" />
                                 <asp:HiddenField ID="hdfIdItemProjetoMater" runat="server" Value='<%# Bind("IdItemProjeto") %>' />
-                                <asp:HiddenField ID="hdfIdPecaItemProj" runat="server" 
+                                <asp:HiddenField ID="hdfIdPecaItemProj" runat="server"
                                     Value='<%# Bind("IdPecaItemProj") %>' />
-                                <asp:HiddenField ID="hdfValorAcrescimo" runat="server" 
+                                <asp:HiddenField ID="hdfValorAcrescimo" runat="server"
                                     Value='<%# Bind("ValorAcrescimo") %>' />
-                                <asp:HiddenField ID="hdfValorDesconto" runat="server" 
+                                <asp:HiddenField ID="hdfValorDesconto" runat="server"
                                     Value='<%# Bind("ValorDesconto") %>' />
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
@@ -1442,7 +1458,7 @@
                                 <asp:HiddenField ID="hdfIsAluminio" runat="server" Value='<%# Eval("IsAluminio") %>' />
                                 <asp:HiddenField ID="hdfM2Minimo" runat="server" Value='<%# Eval("M2Minimo") %>' />
                                 <asp:HiddenField ID="hdfIdMaterProjMod" runat="server" />
-                                <asp:HiddenField ID="hdfCustoProd" runat="server" 
+                                <asp:HiddenField ID="hdfCustoProd" runat="server"
                                     Value='<%# Eval("CustoCompraProduto") %>' />
                             </EditItemTemplate>
                             <FooterTemplate>
@@ -1466,9 +1482,9 @@
                             </ItemTemplate>
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtQtdeIns" runat="server" onblur="calcM2Prod();" onkeypress="return soNumeros(event, CalcProd_IsQtdeInteira(FindControl('hdfTipoCalc', 'input').value), true);"
-                                    Text='<%# Bind("Qtde") %>' Width="50px" 
+                                    Text='<%# Bind("Qtde") %>' Width="50px"
                                     Visible='<%# Eval("IdPecaItemProj") == null %>'></asp:TextBox>
-                                <asp:Label ID="lblQtde" runat="server" Text='<%# Eval("Qtde") %>' 
+                                <asp:Label ID="lblQtde" runat="server" Text='<%# Eval("Qtde") %>'
                                     Visible='<%# Eval("IdPecaItemProj") != null %>'></asp:Label>
                             </EditItemTemplate>
                             <FooterTemplate>
@@ -1494,7 +1510,7 @@
                                 <asp:Label ID="Label4" runat="server" Text='<%# Eval("AlturaLista") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtAlturaIns" runat="server" onblur="calcM2Prod();" Text='<%# Bind("Altura") %>'
+                                <asp:TextBox ID="txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Text='<%# Bind("Altura") %>'
                                     onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
                                     onchange="FindControl('hdfAlturaCalc', 'input').value = this.value; arredondaAltura(FindControl('hdfAlturaCalc', 'input'));"
                                     Enabled='<%# Eval("AlturaEnabled") %>' Width="50px"></asp:TextBox>
@@ -1503,7 +1519,7 @@
                             <FooterTemplate>
                                 <asp:TextBox ID="txtAlturaIns" runat="server" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
                                     onchange="FindControl('hdfAlturaCalcIns', 'input').value = this.value; arredondaAltura(FindControl('hdfAlturaCalcIns', 'input'));"
-                                    onblur="calcM2Prod();" Width="50px"></asp:TextBox>
+                                    onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Width="50px"></asp:TextBox>
                                 <asp:HiddenField ID="hdfAlturaCalcIns" runat="server" />
                             </FooterTemplate>
                         </asp:TemplateField>
@@ -1536,7 +1552,7 @@
                                 <asp:Label ID="Label2" runat="server" Text='<%# Eval("Valor", "{0:C}") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtValorIns" runat="server" onblur="calcTotalProd();" OnLoad="txtValorIns_Load"  onkeypress="return soNumeros(event, false, true);" 
+                                <asp:TextBox ID="txtValorIns" runat="server" onblur="calcTotalProd();" OnLoad="txtValorIns_Load"  onkeypress="return soNumeros(event, false, true);"
                                     Text='<%# Bind("Valor") %>' Width="50px"></asp:TextBox>
                             </EditItemTemplate>
                             <FooterTemplate>
@@ -1736,7 +1752,7 @@
                     DeleteMethod="Delete" EnablePaging="True" MaximumRowsParameterName="pageSize"
                     SelectCountMethod="GetCount" SelectMethod="GetList" SortParameterName="sortExpression"
                     StartRowIndexParameterName="startRow" TypeName="Glass.Data.DAL.MaterialItemProjetoDAO"
-                    UpdateMethod="Update" OnDeleted="odsMaterialItemProjeto_Deleted" OnDeleting="odsMaterialItemProjeto_Deleting" 
+                    UpdateMethod="Update" OnDeleted="odsMaterialItemProjeto_Deleted" OnDeleting="odsMaterialItemProjeto_Deleting"
                     OnUpdated="odsMaterialItemProjeto_Updated" OnUpdating="odsMaterialItemProjeto_Updating">
                     <SelectParameters>
                         <asp:ControlParameter ControlID="hdfIdItemProjeto" Name="idItemProjeto" PropertyName="Value"

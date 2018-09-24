@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
                             prodPed.AliqIcms = material.AliqIcms;
                             prodPed.ValorIcms = prodPed.Total * (decimal)(prodPed.AliqIcms / 100);
                             prodPed.PedCli = material.PedCli;
-                            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)material.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null);
+                            prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)material.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null, prodPed.Altura);
                             prodPed.ValorVendido = material.Valor;
                             prodPed.ValorDescontoCliente = material.ValorDescontoCliente;
                             prodPed.ValorAcrescimoCliente = material.ValorAcrescimoCliente;
@@ -409,7 +409,7 @@ namespace Glass.Data.DAL
                         prodPed.AliqIcms = item.AliqIcms;
                         prodPed.ValorIcms = prodPed.Total * ((decimal)prodPed.AliqIcms / 100);
                         prodPed.PedCli = item.PedCli;
-                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)item.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null);
+                        prodPed.ValorTabelaPedido = ProdutoDAO.Instance.GetValorTabela(transaction, (int)item.IdProd, projeto.TipoEntrega, projeto.IdCliente, false, false, 0, (int?)idPedido, null, null, prodPed.Altura);
                         prodPed.ValorDescontoCliente = item.ValorDescontoCliente;
                         prodPed.ValorAcrescimoCliente = item.ValorAcrescimoCliente;
                         prodPed.ValorUnitarioBruto = item.ValorUnitarioBruto;
