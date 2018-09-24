@@ -175,7 +175,7 @@ namespace Glass.Data.RelModel
         private void RelatorioLiberacao(Pedido ped)
         {
             IsPedidoGarantia = ped.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia;
-            IsPedidoReposicao = ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição && 
+            IsPedidoReposicao = ped.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição &&
                 !Liberacao.TelaLiberacao.CobrarPedidoReposicao;
 
             IdPedido = ped.IdPedido;
@@ -199,6 +199,7 @@ namespace Glass.Data.RelModel
             BarCodeImage = ped.BarCodeImage;
             ValorEntrega = ped.ValorEntrega;
             CodRota = ped.CodRota;
+            PedCliExterno = ped.PedCliExterno;
 
             //Se for pedido de garantia e estiver marcado para nao mostrar valores.
             if (Liberacao.RelatorioLiberacaoPedido.NaoMostrarValorPedidoGarantia &&
@@ -229,7 +230,7 @@ namespace Glass.Data.RelModel
             RelatorioPedido,
             RelatorioLiberacao,
             TermoAceitacao
-        }           
+        }
 
         public bool TemProdutoLamComposicao { get; set; }
 
@@ -466,6 +467,8 @@ namespace Glass.Data.RelModel
         public string DescricaoParcelas { get; set; }
 
         public byte[] BarCodeImage { get; set; }
+
+        public string PedCliExterno { get; set; }
 
         #region Campos usados no cálculo de totais do pedido na liberação
 

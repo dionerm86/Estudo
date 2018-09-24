@@ -250,14 +250,14 @@ namespace Glass.Data.DAL
         #region Verifica se o produto foi trocado ou devolvido
 
         /// <summary>
-        /// Verifica se o produto foi trocado ou devolvido
+        /// Retorna a quantidade do produto trocado ou devolvido
         /// </summary>
-        public bool IsProdutoTrocadoDevolvido(GDASession session, uint idProdPed)
+        public int ObtemQtdTrocadoDevolvidoFinalizado(GDASession session, uint idProdPed)
         {
             string sql = string.Format(@"SELECT COUNT(*) FROM produto_trocado pt INNER JOIN troca_devolucao td ON (pt.Idtrocadevolucao = td.Idtrocadevolucao)
-                                         WHERE pt.IdProdPed= {0} AND td.situacao= {1}", idProdPed, (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada);            
+                                         WHERE pt.IdProdPed= {0} AND td.situacao= {1}", idProdPed, (int)TrocaDevolucao.SituacaoTrocaDev.Finalizada);
 
-            return objPersistence.ExecuteSqlQueryCount(session, sql) > 0;
+            return objPersistence.ExecuteSqlQueryCount(session, sql);
         }
 
         public float ObtemQtdTrocadoDevolvido(GDASession session, uint idProdPed)
@@ -333,7 +333,9 @@ namespace Glass.Data.DAL
             var qtdeOriginal = prodPed.Qtde;
             List<ProdutoTrocadoBenef> lstProdTrocBenef = new List<ProdutoTrocadoBenef>();
 
-            if(prodPed.Qtde != prodPed.QtdSaida)
+            var qtdProdutoTrocado = ObtemQtdTrocadoDevolvidoFinalizado(session, prodPed.IdProdPed);
+
+            if (prodPed.Qtde != prodPed.QtdSaida + qtdProdutoTrocado)
                 throw new Exception(@"Não é possível inserir os produtos selecionados na troca\Devolução, pois os mesmos não foram entregues totalmente.");
 
             //Verifica se tem quantidade suficiente para troca
