@@ -409,8 +409,7 @@ namespace Glass.Data.Helper
             itens.Add(Config.ConfigEnum.ComissaoPorContasRecebidas);
 
             itens.Add(Config.ConfigEnum.TempoAlertaFaturamentoInoperante);
-            itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);
-            itens.Add(Config.ConfigEnum.ConsiderarApenasDebitoComoPagtoAvista);
+            itens.Add(Config.ConfigEnum.PermitirLiberacaoPedidosLojasDiferentes);            
 
             if (!Geral.SistemaLite)
                 itens.Add(Config.ConfigEnum.ControleCaixaDiario);
