@@ -3060,15 +3060,17 @@ namespace Glass.Data.DAL
         /// <param name="reposicao"></param>
         /// <param name="percDescontoQtde"></param>
         /// <returns></returns>
-        public decimal GetValorTabela(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorTabela(int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde,
+            int? idPedido, int? idProjeto, int? idOrcamento, float altura = 0)
         {
-            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento);
+            return GetValorTabela(null, idProd, tipoEntrega, idCliente, revenda, reposicao, percDescontoQtde, idPedido, idProjeto, idOrcamento, altura);
         }
 
         /// <summary>
         /// Recupera o valor de tabela de um produto.
         /// </summary>
-        public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao, float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento)
+        public decimal GetValorTabela(GDASession sessao, int idProd, int? tipoEntrega, uint? idCliente, bool revenda, bool reposicao,
+            float percDescontoQtde, int? idPedido, int? idProjeto, int? idOrcamento, float altura = 0)
         {
             if ((idCliente ?? 0) == 0)
             {
@@ -3125,7 +3127,8 @@ namespace Glass.Data.DAL
             var produtoCalculo = new ProdutoCalculoDTO()
             {
                 IdProduto = (uint)idProd,
-                PercDescontoQtde = percDescontoQtde
+                PercDescontoQtde = percDescontoQtde,
+                Altura = altura,
             };
 
             produtoCalculo.InicializarParaCalculo(sessao, containerCalculo);

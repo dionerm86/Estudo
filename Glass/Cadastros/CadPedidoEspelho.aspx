@@ -24,12 +24,13 @@
         var produtoAmbiente = false;
         var aplAmbiente = false;
         var procAmbiente = false;
-        
+        var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
+        var pedidoReposicao = <%= VerificaPedidoReposicao() %>;
         // Guarda a quantidade disponível em estoque do produto buscado
         var qtdEstoque = 0;
         var exibirMensagemEstoque = false;
         var qtdEstoqueMensagem = 0;
-        
+
         function limparComissionado()
         {
             FindControl("hdfIdComissionado", "input").value = "";
@@ -43,86 +44,86 @@
             FindControl("hdfIdComissionado", "input").value = id;
             FindControl("txtPercentual", "input").value = percentual;
         }
-        
+
         function finalizar()
         {
             if (!confirm("Finalizar pedido?"))
                 return false;
-            
+
             return checkCapacidadeProducaoSetor();
         }
-        
+
         function atualizaValMin()
         {
             if (parseFloat(FindControl("hdfTamanhoMaximoObra", "input").value.replace(",", ".")) == 0)
             {
                 var codInterno = FindControl("txtCodProdIns", "input");
                 codInterno = codInterno != null ? codInterno.value : FindControl("lblCodProdIns", "span").innerHTML;
-                
+
                 var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-                
+
                 var idProdPed = FindControl("hdfProdPed", "input");
                 idProdPed = idProdPed != null ? idProdPed.value : "";
-                
+
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-                
+
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
-                
+
                 FindControl("hdfValMin", "input").value = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
                     idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido).value;
             }
             else
                 FindControl("hdfValMin", "input").value = FindControl("lblValorIns", "input") != null ? FindControl("lblValorIns", "input").value : "";
         }
-        
+
         function calculaTamanhoMaximo()
         {
             var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
             var codInterno = FindControl("lblCodProdIns", "span").innerHTML;
             var totM2 = FindControl("lblTotM2Ins", "span").innerHTML;
             var idProdPed = FindControl("hdfProdPed", "input").value;
-            
+
             var tamanhoMaximo = CadPedidoEspelho.GetTamanhoMaximoProduto(idPedido, codInterno, totM2, idProdPed).value.split(";");
             tamanhoMaximo = tamanhoMaximo[0] == "Ok" ? parseFloat(tamanhoMaximo[1].replace(",", ".")) : 0;
-            
+
             FindControl("hdfTamanhoMaximoObra", "input").value = tamanhoMaximo;
         }
-        
+
         function validaTamanhoMax()
         {
             var tamanhoMaximo = parseFloat(FindControl("hdfTamanhoMaximoObra", "input").value.replace(",", "."));
             if (tamanhoMaximo > 0)
             {
                 var totM2 = parseFloat(FindControl("lblTotM2Ins", "span").innerHTML.replace(",", "."));
-                
+
                 if (totM2 > tamanhoMaximo)
                 {
                     alert("O total de m² da peça ultrapassa o máximo definido no pagamento antecipado. Tamanho máximo: " + tamanhoMaximo.toString().replace(".", ",") + " m²");
                     return false;
                 }
             }
-            
+
             return true;
         }
-        
+
         function getNomeControleBenef()
         {
             var nomeControle = "<%= NomeControleBenef() %>";
             nomeControle = FindControl(nomeControle + "_tblBenef", "table");
-            
+
             if (nomeControle == null)
                 return null;
-            
+
             nomeControle = nomeControle.id;
             return nomeControle.substr(0, nomeControle.lastIndexOf("_"));
         }
-        
+
         function obrigarProcApl()
         {
             var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
@@ -138,21 +139,21 @@
                     alert("Informe a aplicação.");
                     return false;
                 }
-                
+
                 if (FindControl("txtProcIns", "input") != null && FindControl("txtProcIns", "input").value == "")
                 {
                     alert("Informe o processo.");
                     return false;
                 }
             }
-            
+
             return true;
         }
 
         function desmembrar(idProdPed, qtde)
         {
             var valor = null;
-            
+
             do {
                 valor = prompt("Quantidade do produto: " + qtde + "\nDeseja separar quantos desses produtos?", "");
                 if (valor == null)
@@ -177,7 +178,7 @@
         // do produto existe no estoque
         function verificaEstoque() {
             var txtQtd = FindControl("txtQtdeIns", "input").value;
-            
+
             var estoqueMenor = txtQtd != "" && parseInt(txtQtd) > parseInt(qtdEstoque);
             if (estoqueMenor)
             {
@@ -185,10 +186,10 @@
                     alert("Não há nenhuma peça deste produto no estoque.");
                 else
                     alert("Há apenas " + qtdEstoque + " peça(s) deste produto no estoque.");
-                
+
                 FindControl("txtQtdeIns", "input").value = "";
             }
-            
+
             var exibirPopup = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ExibePopupVidrosEstoque.ToString().ToLower() %>;
             if (exibirPopup && exibirMensagemEstoque && (qtdEstoqueMensagem <= 0 || estoqueMenor))
                 openWindow(400, 600, "../Utils/DadosEstoque.aspx?idProd=" + FindControl("hdfIdProd", "input").value);
@@ -243,7 +244,7 @@
             if (redondo != null) {
                 if (value) {
                     redondo.style.display = "";
-                                        
+
                     if (altura.value != "" && largura != "" &&
                         altura.value != largura.value &&
                         redondo.checked) {
@@ -254,10 +255,10 @@
                 else
                     redondo.style.display = "none";
             }
-            
+
             if (apl != null)
                 apl.style.display = value ? "" : "none";
-            
+
             if (proc != null)
                 proc.style.display = value ? "" : "none";
 
@@ -294,9 +295,7 @@
 
             if (codInterno == "")
                 return false;
-            
-            var idPedido = <%= Request["idPedido"] != null ? Request["idPedido"] : "0" %>;
-        
+
             if(FindControl("txtProcIns", "input") != null)
                 FindControl("txtProcIns", "input").value = "";
 
@@ -311,7 +310,7 @@
             {
                 if (FindControl("txtValorIns", "input") != null)
                     FindControl("txtValorIns", "input").disabled = true;
-                                   
+
                 // Se for edição de produto, chama o método padrão de cálculo da metragem máxima permitida
                 if (FindControl("hdfProdPed", "input") != null)
                     calculaTamanhoMaximo();
@@ -322,32 +321,32 @@
             {
                 if (FindControl("txtValorIns", "input") != null)
                     FindControl("txtValorIns", "input").disabled = verificaProduto[3] == "false";
-                    
+
                 FindControl("hdfTamanhoMaximoObra", "input").value = "0";
             }
 
-            var idLojaSubgrupo = CadPedidoEspelho.ObterLojaSubgrupoProd(codInterno);    
+            var idLojaSubgrupo = CadPedidoEspelho.ObterLojaSubgrupoProd(codInterno);
             var idLoja = FindControl("hdfIdLoja", "input").value;
-            
+
             if(idLojaSubgrupo.error!=null){
-                
+
                 if (FindControl("txtCodProd", "input") != null)
                     FindControl("txtCodProd", "input").value = "";
-                
+
                 alert(idLojaSubgrupo.error.description);
                 return false;
             }
-                  
+
             if(idLojaSubgrupo.value != "" && !idLojaSubgrupo.value.includes(idLoja)){
-                
+
                 if (FindControl("txtCodProd", "input") != null)
                     FindControl("txtCodProd", "input").value = "";
-                
+
                 alert('Esse produto não pode ser utilizado, pois a loja do seu subgrupo é diferente da loja do pedido.');
                 return false;
             }
 
-            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(FindControl("hdfIdCliente", "input").value, codInterno);    
+            var validaClienteSubgrupo = MetodosAjax.ValidaClienteSubgrupo(FindControl("hdfIdCliente", "input").value, codInterno);
             if(validaClienteSubgrupo.error!=null){
 
                 if (FindControl("txtCodProd", "input") != null)
@@ -360,14 +359,14 @@
             try {
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-                
+
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
-            
-                var retorno = CadPedidoEspelho.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente, tipoPedido, 
+
+                var retorno = CadPedidoEspelho.GetProduto(idPedido, codInterno, tipoEntrega, cliRevenda, idCliente, tipoPedido,
                     produtoAmbiente, percDescontoQtde, FindControl("hdfIdLoja", "input").value).value.split(';');
 
                 if (retorno[0] == "Erro") {
@@ -390,11 +389,11 @@
                         FindControl("hdfM2Minimo", "input").value = retorno[6]; // Informa se o produto possui m² mínimo
                         FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                         var tipoCalc = retorno[7];
-                        
+
                         qtdEstoque = retorno[13]; // Pega a quantidade disponível em estoque deste produto
                         exibirMensagemEstoque = retorno[14] == "true";
                         qtdEstoqueMensagem = retorno[15];
-                        
+
                         atualizaValMin();
 
                         // Se o produto for alumínio, mostra link para inserir vários alumínios
@@ -408,9 +407,9 @@
                             FindControl("txtEspessura", "input").value = retorno[8];
                             FindControl("txtEspessura", "input").disabled = retorno[8] != "" && retorno[8] != "0";
                         }
-                        
+
                         var nomeControle = getNomeControleBenef();
-                    
+
                         if (FindControl("lnkBenef", "a") != null && nomeControle != null && nomeControle.indexOf("Inserir") > -1)
                             FindControl("lnkBenef", "a").style.display = exibirControleBenef(nomeControle) ? "" : "none";
 
@@ -424,13 +423,13 @@
                         var larguraAmbiente = FindControl("hdfLarguraAmbiente", "input").value;
                         cAltura.disabled = maoDeObra || CalcProd_DesabilitarAltura(tipoCalc);
                         cLargura.disabled = maoDeObra || CalcProd_DesabilitarLargura(tipoCalc);
-                        
+
                         if (maoDeObra && alturaAmbiente > 0) {
                             cAltura.value = tipoCalc != 1 && tipoCalc != 5 ? alturaAmbiente : "";
                             FindControl("hdfAlturaCalcIns", "input").value = cAltura.value;
                         }
-                            
-                        if (maoDeObra && larguraAmbiente > 0) 
+
+                        if (maoDeObra && larguraAmbiente > 0)
                             cLargura.value = tipoCalc != 1 && tipoCalc != 4 && tipoCalc != 5 && tipoCalc != 6 && tipoCalc != 7 && tipoCalc != 8 ? larguraAmbiente : "";
 
                         FindControl("hdfAliquotaIcmsProd", "input").value = retorno[9].replace(".", ",");
@@ -447,10 +446,10 @@
 
                         if (cAltura.disabled && FindControl("hdfAlturaCalcIns", "input") != null)
                             FindControl("hdfAlturaCalcIns", "input").value = cAltura.value;
-                        
+
                         if (retorno[16] != "")
                             setApl(retorno[16], retorno[17]);
-                        
+
                         if (retorno[18] != "")
                             setProc(retorno[18], retorno[19], "");
                     }
@@ -503,7 +502,7 @@
                 FindControl("txtAmbAplIns", "input").value = codInterno;
                 FindControl("hdfAmbIdAplicacao", "input").value = idAplicacao;
             }
-            
+
             aplAmbiente = false;
         }
 
@@ -588,7 +587,7 @@
                 aplAmbiente = procAmbiente;
                 loadApl(codAplicacao);
             }
-            
+
             procAmbiente = false;
         }
 
@@ -626,7 +625,7 @@
         function onSaveProd() {
             if (!validate("produto"))
                 return false;
-                
+
             atualizaValMin();
 
             var codProd = FindControl("txtCodProdIns", "input").value;
@@ -635,7 +634,7 @@
             var altura = FindControl("txtAlturaIns", "input").value;
             var largura = FindControl("txtLarguraIns", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
-            
+
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var pedidoProducao = FindControl("hdfPedidoProducao", "input").value == "true";
             var pedidoMaoObraEspecial = tipoPedido == "<%= CodigoTipoPedidoMaoObraEspecial() %>";
@@ -680,17 +679,17 @@
                 alert("Informe a largura.");
                 return false;
             }
-            
+
             if (!obrigarProcApl())
                 return false;
-        
+
             if (!validaTamanhoMax())
                 return false;
-            
+
             // Faz verificações do beneficiamento
             //if (!checkBenef(FindControl("txtEspessura", "input").value))
             //    return false;
-                
+
             if (FindControl("txtEspessura", "input") != null)
                 FindControl("txtEspessura", "input").disabled = false;
 
@@ -698,18 +697,18 @@
             var aliquota = FindControl("hdfAliquotaIcmsProd", "input");
             var icms = FindControl("hdfValorIcmsProd", "input");
             icms.value = aliquota.value > 0 ? parseFloat(valor.replace(",", ".")) * (parseFloat(aliquota.value.replace(",", ".")) / 100) : 0;
-            
+
             if (icms.value != null && icms.value != "")
                 icms.value = icms.value.replace(".", ",");
 
             FindControl("txtAlturaIns", "input").disabled = false;
             FindControl("txtLarguraIns", "input").disabled = false;
 
-            var nomeControle = getNomeControleBenef();        
+            var nomeControle = getNomeControleBenef();
 
             if(exibirControleBenef(nomeControle))
             {
-                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);                
+                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
                 return resultadoVerificacaoObrigatoriedade;
             }
 
@@ -720,7 +719,7 @@
         function onUpdateProd() {
             if (!validate("produto"))
                 return false;
-                
+
             atualizaValMin();
 
             var valor = FindControl("lblValorIns", "span").innerHTML;
@@ -730,7 +729,7 @@
             var codInterno = FindControl("hdfCodInterno", "input").value;
             var valMin = FindControl("hdfValMin", "input").value;
             valMin = new Number(valMin.replace(',', '.'));
-            
+
             var tipoPedido = FindControl("hdfTipoPedido", "input").value;
             var pedidoProducao = FindControl("hdfPedidoProducao", "input").value == "true";
             var pedidoMaoObraEspecial = tipoPedido == "<%= CodigoTipoPedidoMaoObraEspecial() %>";
@@ -765,17 +764,17 @@
                     return false;
                 }
             }
-            
+
             if (!obrigarProcApl())
                 return false;
-        
+
             if (!validaTamanhoMax())
                 return false;
-            
+
             // Faz verificações do beneficiamento
             //if (!checkBenef(FindControl("txtEspessura", "input").value))
             //    return false;
-                
+
             if (FindControl("txtEspessura", "input") != null)
                 FindControl("txtEspessura", "input").disabled = false;
 
@@ -783,27 +782,27 @@
             var aliquota = FindControl("hdfAliquotaIcmsProd", "input");
             var icms = FindControl("hdfValorIcmsProd", "input");
             icms.value = aliquota.value > 0 ? parseFloat(valor.replace(",", ".")) * (parseFloat(aliquota.value.replace(",", ".")) / 100) : 0;
-            
+
             if (icms.value != null && icms.value != "")
                 icms.value = icms.value.replace(".", ",");
 
-            var nomeControle = getNomeControleBenef();        
+            var nomeControle = getNomeControleBenef();
 
             if(exibirControleBenef(nomeControle))
             {
-                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);                
+                var resultadoVerificacaoObrigatoriedade = verificarObrigatoriedadeBeneficiamentos(dadosProduto.ID);
                 return resultadoVerificacaoObrigatoriedade;
             }
 
             return true;
         }
-        
+
         function checkCapacidadeProducaoSetor()
         {
             var editPedido = FindControl("grdProdutos", "table") == null;
             var idPedido = '<%= Request["idPedido"] %>';
             var idProcesso = FindControl("hdfIdProcesso", "input").value;
-            
+
             if (!editPedido)
             {
                 if (FindControl("drpFooterVisible", "select") != null)
@@ -817,19 +816,19 @@
             }
             else
                 var diferencaM2 = 0;
-                
+
             if (isNaN(diferencaM2))
                 diferencaM2 = 0;
-            
+
             var resposta = CadPedidoEspelho.VerificarProducaoSetor(idPedido, diferencaM2, idProcesso).value;
             var dadosResposta = resposta.split("|");
-            
+
             if (dadosResposta[0] == "Erro")
             {
                 alert(dadosResposta[1]);
                 return false;
             }
-            
+
             return true;
         }
 
@@ -860,17 +859,17 @@
                     parseInt(altura) > 0 && parseInt(largura) > 0 &&
                     parseInt(altura) != parseInt(largura) && redondo) {
                     alert('O beneficiamento Redondo pode ser marcado somente em peças de medidas iguais.');
-                                        
+
                     if (FindControl("Redondo_chkSelecao", "input") != null && FindControl("Redondo_chkSelecao", "input").checked)
                         FindControl("Redondo_chkSelecao", "input").checked = false;
-                    
+
                     FindControl("hdfRedondoAmbiente", "input").value = false;
-                                        
+
                     return false;
                 }
 
                 var numBenef = "";
-                
+
                 if (FindControl("Redondo_chkSelecao", "input") != null) {
                     numBenef = FindControl("Redondo_chkSelecao", "input").id;
                     numBenef = numBenef.substr(0, numBenef.lastIndexOf("_"));
@@ -905,6 +904,21 @@
             }
         }
 
+        function GetAdicionalAlturaChapa(){
+
+            var idProd = FindControl("hdfIdProd", "input").value;
+            var altura = FindControl("txtAlturaIns", "input").value;
+            var idCliente = FindControl("hdfIdCliente", "input").value
+            var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
+            var cliRevenda = FindControl("hdfCliRevenda", "input").value;
+            var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
+            controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
+            var percDescontoQtde = controleDescQtde.PercDesconto();
+
+            FindControl("lblValorIns", "span").innerHTML = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda == "True",
+                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+        }
+
         // Calcula em tempo real o valor total do produto
         function calcTotalProd() {
             try {
@@ -924,10 +938,10 @@
                 var m2Minimo = FindControl("hdfM2Minimo", "input").value;
                 var alturaBenef = FindControl("drpAltBenef", "select").value;
                 var larguraBenef = FindControl("drpLargBenef", "select").value;
-                
+
                 var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
                 controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-                
+
                 var percDesconto = controleDescQtde.PercDesconto();
                 var percDescontoAtual = controleDescQtde.PercDescontoAtual();
 
@@ -1126,20 +1140,20 @@
                                             <asp:Label ID="lblValorIpi" runat="server" Text='<%# Eval("ValorIpi", "{0:C}") %>'></asp:Label>
                                         </td>
                                     </tr>
-                                    <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedidoEspelho %>'> 
+                                    <tr runat="server" visible='<%# Glass.Configuracoes.RentabilidadeConfig.ExibirRentabilidadePedidoEspelho %>'>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rentabilidade"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label> 
+                                            <asp:Label runat="server" Text='<%# Eval("PercentualRentabilidade", "{0:#0.00}") + "%" %>'></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap" style="font-weight: bold">
                                             <asp:Label runat="server" Text="Rent. Financeira"></asp:Label>
                                         </td>
                                         <td align="left" nowrap="nowrap">
-                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label> 
+                                            <asp:Label runat="server" Text='<%# Eval("RentabilidadeFinanceira", "{0:C}") %>'></asp:Label>
                                             <a href="#" onclick='openWindow(500, 700, "../Relatorios/Rentabilidade/VisualizacaoItemRentabilidade.aspx?tipo=pedidoespelho&id=<%# Eval("IdPedido") %>"); return false;'>
-                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a> 
+                                            <img border="0" src="../Images/cash_red.png" title="Rentabilidade" /></a>
                                         </td>
                                         <td align="left" nowrap="nowrap" colspan="4"></td>
                                     </tr>
@@ -1617,14 +1631,14 @@
                                 <asp:Label ID="Label4" runat="server" Text='<%# Bind("AlturaLista") %>'></asp:Label>
                             </ItemTemplate>
                             <EditItemTemplate>
-                                <asp:TextBox ID="txtAlturaIns" runat="server" onblur="calcM2Prod();" Text='<%# Bind("AlturaReal") %>'
+                                <asp:TextBox ID="txtAlturaIns" runat="server" onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Text='<%# Bind("AlturaReal") %>'
                                     onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
                                     Enabled='<%# Eval("AlturaEnabled") %>' Width="50px"></asp:TextBox>
                                 <asp:HiddenField ID="hdfAlturaCalcIns" runat="server" Value='<%# Bind("Altura") %>' />
                             </EditItemTemplate>
                             <FooterTemplate>
                                 <asp:TextBox ID="txtAlturaIns" runat="server" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"
-                                    onblur="calcM2Prod();" Width="50px"></asp:TextBox>
+                                    onblur="GetAdicionalAlturaChapa(); calcM2Prod();" Width="50px"></asp:TextBox>
                                 <asp:HiddenField ID="hdfAlturaCalcIns" runat="server" />
                             </FooterTemplate>
                         </asp:TemplateField>

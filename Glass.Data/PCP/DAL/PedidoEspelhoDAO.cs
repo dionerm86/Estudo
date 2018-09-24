@@ -2527,7 +2527,7 @@ namespace Glass.Data.DAL
                         Redondo = mip.Redondo,
                         ValorTabela =
                             ProdutoDAO.Instance.GetValorTabela(sessao, (int)mip.IdProd, tipoEntrega, idCliente,
-                                ClienteDAO.Instance.IsRevenda(sessao, idCliente), false, 0, (int?)idPedido, null, null)
+                                ClienteDAO.Instance.IsRevenda(sessao, idCliente), false, 0, (int?)idPedido, null, null, mip.Altura)
                     };
 
                     if (prodOrca.IdProduto != null)

@@ -350,6 +350,14 @@ namespace Glass.UI.Web.Controls
             return PCPConfig.ControlarProducao && Data.Helper.Utils.GetSetores.Count(x => x.SetorPertenceARoteiro) > 0;
         }
 
+        protected string VerificaPedidoReposicao()
+        {
+            if (PedidoDAO.Instance.ObtemTipoVenda(null, UInt32.Parse(Request["idPedido"])) == (int)Glass.Data.Model.Pedido.TipoVendaPedido.Reposição)
+                return "true";
+
+            return "false";
+        }
+
         #endregion
     }
 }

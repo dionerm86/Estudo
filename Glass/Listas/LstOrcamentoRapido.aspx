@@ -8,7 +8,7 @@
 <%@ Register src="../Controls/ctrlSelAplicacao.ascx" tagname="ctrlSelAplicacao" tagprefix="uc5" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
-    <script type="text/javascript" src='<%= ResolveUrl("LstOrcamentoRapido.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script> 
+    <script type="text/javascript" src='<%= ResolveUrl("LstOrcamentoRapido.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
     <script type="text/javascript" src='<%= ResolveUrl("~/Scripts/CalcAluminio.js?v=" + Glass.Configuracoes.Geral.ObtemVersao(true)) %>'></script>
 
@@ -25,16 +25,16 @@
     var usarAltLarg = '<%= Glass.Configuracoes.PedidoConfig.EmpresaTrabalhaAlturaLargura %>'.toLowerCase() == "true";
     var percDescontoAtual = 0;
     var numCasasDecTotM = <%= Glass.Configuracoes.Geral.NumeroCasasDecimaisTotM %>;
-    
+
     function hideThisPopup()
     {
         var itens = new Array("ctl00_ctl00_titulo", "separaTotal", "geracao", "entrega", "textoTaxaJuros");
         for (i = 0; i < itens.length; i++)
             document.getElementById(itens[i]).style.display = "none";
-        
+
         document.getElementById("tabelaPrincipal").style.height = "";
     }
-    
+
     function obrigarProcApl()
     {
         var isObrigarProcApl = <%= Glass.Configuracoes.PedidoConfig.DadosPedido.ObrigarProcAplVidros.ToString().ToLower() %>;
@@ -53,7 +53,7 @@
                     alert("Informe o processo.");
                     return false;
                 }
-            
+
                 if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
                 {
                     alert("Informe a aplicação.");
@@ -63,28 +63,28 @@
          }
         return true;
     }
-    
+
     function atualizaTotalDesc()
     {
         try
         {
             var valor = parseFloat(FindControl("lblTotal", "span").innerHTML.replace("R$", "").replace(" ", "").replace(",", "."));
-            
+
             var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-            
+
             var percDesconto = controleDescQtde.PercDesconto();
             if (percDescontoAtual != percDesconto)
             {
                 valor = valor * (1 / (1 - (percDescontoAtual / 100)));
                 valor = parseFloat(valor.toFixed(2));
             }
-            
+
             callbackSetTotal(valor, 0, false);
         }
         catch (err) { }
     }
-    
+
     function callbackSetTotal(valor, custo, isBenef)
     {
         if (isBenef == "" || isBenef == null)
@@ -92,23 +92,23 @@
 
         var valorItem = FindControl("txtValor", "input").value;
         valorItem = valorItem != "" ? parseFloat(valorItem.replace(',', '.')) : 0;
-        
+
         var totM2 = FindControl("hdfTotM2", "input").value;
         totM2 = totM2 != "" ? parseFloat(totM2.replace(',', '.')) : 0;
-        
+
         var percComissao = FindControl("hdfPercComissao", "input").value;
         percComissao = percComissao != "" ? parseFloat(percComissao.replace(',', '.')) : 0;
-        
+
         var valorProd = 0;
-        
+
         if (dadosProduto.TipoCalculo == 2 || dadosProduto.TipoCalculo == 10)
             valorProd = (valorItem * totM2 / ((100 - percComissao) / 100)) + valor;
         else
             valorProd = valor;
-            
+
         var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
-        
+
         var percDesconto = controleDescQtde.PercDesconto();
         if (percDesconto > 0)
         {
@@ -117,26 +117,26 @@
             else
                 valorProd = valorProd * (1 - (percDesconto / 100));
         }
-        
+
         percDescontoAtual = percDesconto;
-        
+
         FindControl("lblTotal", "span").innerHTML = "R$ " + valorProd.toFixed(2).replace('.', ',');
-        
+
         var aliqIcms = parseFloat(FindControl("hdfAliqIcms", "input").value);
         var valorIcms = parseFloat(FindControl("lblTotal", "span").innerHTML.replace("R$", "").replace(" ", "").replace(",", "."));
         valorIcms = valorIcms * (aliqIcms / 100);
         if (isNaN(valorIcms))
             valorIcms = 0;
-        
+
         FindControl("lblValorIcms", "span").innerHTML = "R$ " + valorIcms.toFixed(2).replace(".", ",");
         FindControl("lblTotalProd", "span").innerHTML = "R$ " + (parseFloat(valorProd.toFixed(2)) + parseFloat(valorIcms.toFixed(2))).toFixed(2).replace(".", ",");
     }
-    
+
     function validaValorMinimo()
     {
         var valor = FindControl("txtValor", "input").value != "" ? parseFloat(FindControl("txtValor", "input").value.replace(',', '.')) : 0;
         var valorMinimo = FindControl("hdfValMin", "input").value != "" ? parseFloat(FindControl("hdfValMin", "input").value.replace(',', '.')) : 0;
-        
+
         if (valor < valorMinimo)
         {
             alert("O valor digitado é menor que o valor mínimo do produto (R$ " + valorMinimo.toFixed(2).replace('.', ',') + ").");
@@ -148,9 +148,9 @@
         var idSubgrupo = MetodosAjax.GetSubgrupoProdByProd(FindControl("hdfIdProd", "input").value);
         openWindow(450, 700, "../Utils/SelEtiquetaProcesso.aspx?idSubgrupo=" + idSubgrupo.value);
     }
-    
+
     // Função chamada pelo popup de escolha da Aplicação do produto
-    function setApl(idAplicacao, codInterno) {    
+    function setApl(idAplicacao, codInterno) {
         FindControl("txtAplIns", "input").value = codInterno;
         FindControl("hdfIdAplicacao", "input").value = idAplicacao;
     }
@@ -187,17 +187,17 @@
 
     // Função chamada pelo popup de escolha do Processo do produto
     function setProc(idProcesso, codInterno, codAplicacao) {
-        
+
         if(!validaProc(idProcesso))
             return false;
 
         FindControl("txtProcIns", "input").value = codInterno;
-        FindControl("hdfIdProcesso", "input").value = idProcesso;       
+        FindControl("hdfIdProcesso", "input").value = idProcesso;
 
         if (codAplicacao && codAplicacao != "")
         {
             loadApl(codAplicacao);
-        }           
+        }
     }
 
     function loadProc(codInterno) {
@@ -242,7 +242,7 @@
         }
 
         return true;
-    }    
+    }
 
     function verificarObrigatoriedadeBenef()
     {
@@ -257,7 +257,7 @@
     }
 
     function getProduto() {
-        openWindow(500, 650, '../Utils/SelProd.aspx?idCliente='+ (GetQueryString('idCliente') != undefined ? GetQueryString('idCliente') : '') + 
+        openWindow(500, 650, '../Utils/SelProd.aspx?idCliente='+ (GetQueryString('idCliente') != undefined ? GetQueryString('idCliente') : '') +
             ((GetQueryString('IdOrca') != undefined ? '&idOrcamento=' + GetQueryString('IdOrca') : "")));
     }
 
@@ -290,7 +290,7 @@
                             <asp:Label ID="Label25" runat="server" Text="Tipo Pedido"></asp:Label>
                         </td>
                         <td>
-                            <asp:DropDownList ID="drpTipoPedido" runat="server" 
+                            <asp:DropDownList ID="drpTipoPedido" runat="server"
                                 DataSourceID="odsTipoPedido" DataTextField="Descr" DataValueField="Id" OnDataBound="drpTipoPedido_DataBound">
                             </asp:DropDownList>
                         </td>
@@ -345,14 +345,14 @@
                                     <td>
                                         <a href="#" onclick="buscarProcessos(); return false;">
                                             <img border="0" src="../Images/Pesquisar.gif" /></a>
-                                    </td>                                    
+                                    </td>
                                     <td style="font-weight: bold;">
                                         <asp:Label ID="Label9" runat="server" Text="Aplicação"></asp:Label>
                                         &nbsp;
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtAplIns" runat="server" onblur="loadApl(this.value);"
-                                            onkeydown="if (isEnter(event)) { loadApl(this.value); }" 
+                                            onkeydown="if (isEnter(event)) { loadApl(this.value); }"
                                             onkeypress="return !(isEnter(event));" Width="30px"></asp:TextBox>
                                     </td>
                                     <td>
@@ -384,7 +384,7 @@
                                         <asp:TextBox ID="txtLargura" runat="server" Width="50px" onblur="calcM2();" onkeypress="return soNumeros(event, true, true);"></asp:TextBox>
                                     </td>
                                     <td>
-                                        <asp:TextBox ID="txtAltura" runat="server" Width="50px" onblur="calcM2();" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"></asp:TextBox>
+                                        <asp:TextBox ID="txtAltura" runat="server" Width="50px" onblur="GetAdicionalAlturaChapa(); calcM2();" onkeypress="return soNumeros(event, CalcProd_IsAlturaInteira(FindControl('hdfTipoCalc', 'input').value), true);"></asp:TextBox>
                                     </td>
                                 </tr>
                             </table>
@@ -438,7 +438,7 @@
                             <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoEntrega" runat="server" SelectMethod="GetTipoEntrega"
                                 TypeName="Glass.Data.Helper.DataSources">
                             </colo:VirtualObjectDataSource>
-                            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido" 
+                            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoPedido" runat="server" SelectMethod="GetTipoPedido"
                                 TypeName="Glass.Data.Helper.DataSources">
                             </colo:VirtualObjectDataSource>
                             <colo:VirtualObjectDataSource culture="pt-BR" ID="odsTipoJato" runat="server" SelectMethod="GetTipoJato"

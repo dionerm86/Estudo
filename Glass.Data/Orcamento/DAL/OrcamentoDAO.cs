@@ -21,7 +21,7 @@ namespace Glass.Data.DAL
         #region Busca orçamentos
 
         private string Sql(uint idOrca, uint idLoja, uint idCliente, string nomeCliente, uint idFunc, string telefone,
-            uint idCidade, string endereco, string complemento, string bairro, IEnumerable<int> situacao, DateTime? dataInicio, DateTime? dataFim,  
+            uint idCidade, string endereco, string complemento, string bairro, IEnumerable<int> situacao, DateTime? dataInicio, DateTime? dataFim,
             bool selecionar, out bool temFiltro)
         {
             temFiltro = false;
@@ -30,7 +30,7 @@ namespace Glass.Data.DAL
             if (!selecionar)
                 campos.Append("Count(*)");
             else
-                campos.Append(@"o.*, f.Nome as NomeFuncionario, l.NomeFantasia as NomeLoja, c.Nome as NomeComissionado, 
+                campos.Append(@"o.*, f.Nome as NomeFuncionario, l.NomeFantasia as NomeLoja, c.Nome as NomeComissionado,
                     fCad.nome as descrUsuCad, fAlt.nome as descrUsuAlt, (select cast(group_concat(distinct idItemProjeto) as char)
                     as idItensProjeto from produtos_orcamento where idOrcamento=o.idOrcamento) as idItensProjeto");
 
@@ -38,9 +38,9 @@ namespace Glass.Data.DAL
             sql.Append(campos);
             sql.Append(@" From orcamento o
                     Left Join cliente cl ON (o.idCliente=cl.id_cli)
-                    Left Join funcionario f On o.IdFunc=f.idFunc 
-                    Left Join funcionario fCad On (o.usuCad=fCad.idFunc) 
-                    Left Join funcionario fAlt On (o.usuAlt=fAlt.idFunc) 
+                    Left Join funcionario f On o.IdFunc=f.idFunc
+                    Left Join funcionario fCad On (o.usuCad=fCad.idFunc)
+                    Left Join funcionario fAlt On (o.usuAlt=fAlt.idFunc)
                     LEFT JOIN comissionado c ON (o.IdComissionado=c.IdComissionado)
                     LEFT JOIN loja l ON (o.IdLoja=l.IdLoja)
                 Where 1 ");
@@ -229,7 +229,7 @@ namespace Glass.Data.DAL
         #region Busca orçamento pelo idMedicao
 
         /// <summary>
-        /// Retorna o orçamento relacionado ao idMedicao passado se existir, 
+        /// Retorna o orçamento relacionado ao idMedicao passado se existir,
         /// senão retorna um novo objeto do tipo orçamento
         /// </summary>
         public Orcamento GetByMedicao(uint idMedicao)
@@ -238,7 +238,7 @@ namespace Glass.Data.DAL
         }
 
         /// <summary>
-        /// Retorna o orçamento relacionado ao idMedicao passado se existir, 
+        /// Retorna o orçamento relacionado ao idMedicao passado se existir,
         /// senão retorna um novo objeto do tipo orçamento
         /// </summary>
         public Orcamento GetByMedicao(GDASession session, uint idMedicao)
@@ -257,7 +257,7 @@ namespace Glass.Data.DAL
         private string SqlOrcamentosMedicao(uint idMedicao, uint idMedidor, string nomeMedidor, IEnumerable<int> situacao, string dataFinIni, string dataFinFim, string nomeCli, bool selecionar)
         {
             string campos = selecionar ? @"o.*, f.Nome as NomeFuncionario, fm.Nome as NomeMedidor, l.NomeFantasia as NomeLoja, group_concat(m.IDMEDICAO) as idsMedicao" : "Count(*)";
-                
+
             string sql = "Select " + campos + @" From orcamento o
                 Inner Join medicao m On (o.idorcamento=m.idorcamento)
                 Left Join funcionario f On o.IdFunc=f.idFunc
@@ -477,7 +477,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public IList<Orcamento> GetForRpt(string cliente, string endereco)
         {
-            string sql = "Select o.*, f.Nome as NomeFuncionario, f.Email as EmailFuncionario, l.NomeFantasia as NomeLoja" + 
+            string sql = "Select o.*, f.Nome as NomeFuncionario, f.Email as EmailFuncionario, l.NomeFantasia as NomeLoja" +
                 "From orcamento o " +
                 "Left Join funcionario f On o.IdFunc=f.idFunc " +
                 "Left Join loja l On o.idLoja=l.idLoja Where 1>0 ";
@@ -507,14 +507,14 @@ namespace Glass.Data.DAL
         public Orcamento GetForRpt(uint idOrca)
         {
             string sql = @"
-                Select o.*, f.Nome as NomeFuncionario, f.Email as EmailFuncionario, f.ramal as ramalFunc, 
-                    l.NomeFantasia as NomeLoja, l.InscEst as InscEstLoja, l.Cnpj as CnpjLoja, l.Endereco as LogradouroLoja, 
-                    l.Compl as ComplLoja, l.Bairro as BairroLoja, cidLoja.NomeCidade as CidadeLoja, cidLoja.NomeUf as UfLoja, l.Cep as CepLoja, 
-                    l.numero as numeroLoja, concat(l.Telefone, if(length(l.telefone2)>0, concat(' / ', l.telefone2), '')) as TelefoneLoja, 
+                Select o.*, f.Nome as NomeFuncionario, f.Email as EmailFuncionario, f.ramal as ramalFunc,
+                    l.NomeFantasia as NomeLoja, l.InscEst as InscEstLoja, l.Cnpj as CnpjLoja, l.Endereco as LogradouroLoja,
+                    l.Compl as ComplLoja, l.Bairro as BairroLoja, cidLoja.NomeCidade as CidadeLoja, cidLoja.NomeUf as UfLoja, l.Cep as CepLoja,
+                    l.numero as numeroLoja, concat(l.Telefone, if(length(l.telefone2)>0, concat(' / ', l.telefone2), '')) as TelefoneLoja,
                     l.Fax as FaxLoja, l.Site as emailLoja, c.cpf_cnpj as cpfCnpjCliente, c.rg_escinst as inscEstCliente, c.ObsNfe
-                From orcamento o Left Join funcionario f On o.IdFunc=f.idFunc 
-                    Left Join loja l On o.idLoja=l.idLoja 
-                    Left Join cidade cidLoja On (cidLoja.idCidade=l.idCidade) 
+                From orcamento o Left Join funcionario f On o.IdFunc=f.idFunc
+                    Left Join loja l On o.idLoja=l.idLoja
+                    Left Join cidade cidLoja On (cidLoja.idCidade=l.idCidade)
                     Left Join cliente c On (o.idCliente=c.id_Cli)
                 Where IdOrcamento=" + idOrca;
 
@@ -528,7 +528,7 @@ namespace Glass.Data.DAL
 
         #region Relatório Lista de Orçamentos
 
-        private string SqlRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit, 
+        private string SqlRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit,
             string dtIni, string dtFim, bool selecionar)
         {
             string criterio = String.Empty, where = String.Empty;
@@ -603,7 +603,7 @@ namespace Glass.Data.DAL
                 "Where 1 " + where;
         }
 
-        public IList<Orcamento> GetForRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit, 
+        public IList<Orcamento> GetForRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit,
             string dtIni, string dtFim)
         {
             string sql = SqlRptLista(idLoja, idVendedor, situacao, dataIniSit, dataFimSit, dtIni, dtFim, true) + " Order By o.DataCad Asc";
@@ -611,19 +611,19 @@ namespace Glass.Data.DAL
             return objPersistence.LoadData(sql, GetParamRptLista(dtIni, dtFim, dataIniSit, dataFimSit)).ToList();
         }
 
-        public IList<Orcamento> GetForLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit, 
+        public IList<Orcamento> GetForLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit,
             string dtIni, string dtFim, string sortExpression, int startRow, int pageSize)
         {
             sortExpression = String.IsNullOrEmpty(sortExpression) ? "o.DataCad Asc" : sortExpression;
 
-            return LoadDataWithSortExpression(SqlRptLista(idLoja, idVendedor, situacao, dataIniSit, dataFimSit, dtIni, dtFim, true), 
+            return LoadDataWithSortExpression(SqlRptLista(idLoja, idVendedor, situacao, dataIniSit, dataFimSit, dtIni, dtFim, true),
                 sortExpression, startRow, pageSize, GetParamRptLista(dtIni, dtFim, dataIniSit, dataFimSit));
         }
 
-        public int GetCountRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit, string dtIni, 
+        public int GetCountRptLista(uint idLoja, uint idVendedor, IEnumerable<int> situacao, string dataIniSit, string dataFimSit, string dtIni,
             string dtFim)
         {
-            return objPersistence.ExecuteSqlQueryCount(SqlRptLista(idLoja, idVendedor, situacao, dataIniSit, dataFimSit, dtIni, dtFim, 
+            return objPersistence.ExecuteSqlQueryCount(SqlRptLista(idLoja, idVendedor, situacao, dataIniSit, dataFimSit, dtIni, dtFim,
                 false), GetParamRptLista(dtIni, dtFim, dataIniSit, dataFimSit));
         }
 
@@ -689,7 +689,7 @@ namespace Glass.Data.DAL
                 set po.peso=coalesce(peso.peso, 0)
                 where po.idOrcamento={0};
 
-                update orcamento set peso=coalesce((select sum(peso) from produtos_orcamento 
+                update orcamento set peso=coalesce((select sum(peso) from produtos_orcamento
                 where idOrcamento={0}), 0) where idOrcamento={0}";
 
             objPersistence.ExecuteCommand(sessao, String.Format(sql, idOrcamento));
@@ -746,7 +746,7 @@ namespace Glass.Data.DAL
 
             if (!forcarAtualizacao && _atualizando[UserInfo.GetUserInfo.CodUser])
                 return;
-            
+
             try
             {
                 // Define que o usuário está atualizando o total
@@ -801,7 +801,7 @@ namespace Glass.Data.DAL
                         Email.EnviaEmailDescontoMaior(sessao, 0, orca.IdOrcamento, idFuncDesc, (float)percDesconto,
                             OrcamentoConfig.Desconto.GetDescMaxOrcamentoConfigurado);
                 }
-                
+
                 var sql = "select coalesce(sum(round(custo, 2)), 0) from produtos_orcamento where idProdParent is null and idOrcamento=" + orca.IdOrcamento;
                 var custo = ExecuteScalar<decimal>(sessao, sql);
 
@@ -812,7 +812,7 @@ namespace Glass.Data.DAL
                     @"-if(TipoDesconto=1, (?total*(o.Desconto/100)), o.Desconto) " : "") + ") where idOrcamento=" + orca.IdOrcamento;
 
                 objPersistence.ExecuteCommand(sessao, sql, new GDAParameter("?custo", custo), new GDAParameter("?total", total));
-                
+
                 string descontoRateadoImpostos = "0";
                 orca.Total = GetTotal(sessao, orca.IdOrcamento);
 
@@ -832,7 +832,7 @@ namespace Glass.Data.DAL
 
                     descontoRateadoImpostos = @"(
                         if(coalesce(o.desconto, 0)=0, 0, if(o.tipoDesconto=1, o.desconto / 100, o.desconto / " + formata(totalSemDesconto) + @") * ({0}.total + coalesce({0}.valorBenef, 0)))) - (
-                        if(coalesce(ppo.desconto, 0)=0, 0, if(ppo.tipoDesconto=1, ppo.desconto / 100, ppo.desconto / (select total from (" + selectAmbientes + @") as amb 
+                        if(coalesce(ppo.desconto, 0)=0, 0, if(ppo.tipoDesconto=1, ppo.desconto / 100, ppo.desconto / (select total from (" + selectAmbientes + @") as amb
                         where idProd=ppo.idProd)) * ({0}.total + coalesce({0}.valorBenef, 0))))";
                 }
 
@@ -868,7 +868,7 @@ namespace Glass.Data.DAL
                     var aliquotaIcmsSt = "mip.AliqIcms";
 
                     sql = @"
-                        update material_item_projeto mip 
+                        update material_item_projeto mip
                             inner join produtos_orcamento ppo on (mip.idItemProjeto=ppo.idItemProjeto)
                             inner join orcamento o on (ppo.idOrcamento=o.idOrcamento)
                         {0}
@@ -886,7 +886,7 @@ namespace Glass.Data.DAL
                     aliquotaIcmsSt = "po.AliquotaIcms";
 
                     sql = @"
-                        update produtos_orcamento po 
+                        update produtos_orcamento po
                             inner join orcamento o on (po.idOrcamento=o.idOrcamento)
                             left join produtos_orcamento ppo on (po.idProdParent=ppo.idProd)
                         {0}
@@ -931,22 +931,22 @@ namespace Glass.Data.DAL
                     string descontoRateadoProduto = String.Format(descontoRateadoImpostos, "po");
 
                     sql = @"
-                        update material_item_projeto mip 
+                        update material_item_projeto mip
                             inner join produtos_orcamento ppo on (mip.idItemProjeto=ppo.idItemProjeto)
                             inner join orcamento o on (ppo.idOrcamento=o.idOrcamento)
-                        set mip.AliquotaIpi=Round((select aliqIpi from produto where idProd=mip.idProd), 2), 
-                            mip.ValorIpi=((mip.Total + coalesce(mip.ValorBenef, 0) - " + descontoRateadoMaterial + @") * 
+                        set mip.AliquotaIpi=Round((select aliqIpi from produto where idProd=mip.idProd), 2),
+                            mip.ValorIpi=((mip.Total + coalesce(mip.ValorBenef, 0) - " + descontoRateadoMaterial + @") *
                                 (Coalesce(mip.AliquotaIpi, 0) / 100))
                         where o.idOrcamento=" + orca.IdOrcamento;
 
                     objPersistence.ExecuteCommand(sessao, sql);
 
                     sql = @"
-                        update produtos_orcamento po 
+                        update produtos_orcamento po
                             inner join orcamento o on (po.idOrcamento=o.idOrcamento)
                             left join produtos_orcamento ppo on (po.idProdParent=ppo.idProd)
-                        set po.AliquotaIpi=Round((select aliqIpi from produto where idProd=po.idProduto), 2), 
-                            po.ValorIpi=((po.Total + coalesce(po.ValorBenef, 0) - " + descontoRateadoProduto + @") * 
+                        set po.AliquotaIpi=Round((select aliqIpi from produto where idProd=po.idProduto), 2),
+                            po.ValorIpi=((po.Total + coalesce(po.ValorBenef, 0) - " + descontoRateadoProduto + @") *
                                 (Coalesce(po.AliquotaIpi, 0) / 100))
                         where po.idOrcamento=" + orca.IdOrcamento + " and po.idProduto is not null and po.idItemProjeto is null";
 
@@ -980,7 +980,7 @@ namespace Glass.Data.DAL
                 objPersistence.ExecuteCommand(sessao, sql);
 
                 int numeroParcelas = ObtemValorCampo<int>(sessao, "numeroParcelas", "idOrcamento=" + orca.IdOrcamento);
-                
+
                 sql = "update orcamento set total=total*(1+(taxaPrazo/100)) where idOrcamento=" + orca.IdOrcamento;
                 objPersistence.ExecuteCommand(sessao, sql);
 
@@ -1146,7 +1146,7 @@ namespace Glass.Data.DAL
 
         public decimal GetComissaoOrcamento(GDASession session, uint idOrcamento)
         {
-            string sql = @"select coalesce(sum(coalesce(valorComissao,0)),0) from produtos_orcamento 
+            string sql = @"select coalesce(sum(coalesce(valorComissao,0)),0) from produtos_orcamento
                 where idOrcamento=" + idOrcamento;
 
             return ExecuteScalar<decimal>(session, sql);
@@ -1348,7 +1348,7 @@ namespace Glass.Data.DAL
                         select coalesce(sum(coalesce(po.total/pp.totalProd*pp.desconto,0)+coalesce(po.valorDescontoQtde,0)),0)
                         from produtos_orcamento po
                             inner join (
-                                select pp.idProd, sum(po.total+coalesce(po.valorBenef,0)) as totalProd, 
+                                select pp.idProd, sum(po.total+coalesce(po.valorBenef,0)) as totalProd,
                                     pp.desconto*if(pp.tipoDesconto=1, sum(po.total+coalesce(po.valorBenef,0))/100, 1) as desconto
                                 from produtos_orcamento po
                                     inner join produtos_orcamento pp on (po.idProdParent=pp.idProd)
@@ -1360,7 +1360,7 @@ namespace Glass.Data.DAL
                         from produto_orcamento_benef pob
                             inner join produtos_orcamento po on (pob.idProd=po.idProd)
                             inner join (
-                                select pp.idProd, sum(po.total+coalesce(po.valorBenef,0)) as totalProd, 
+                                select pp.idProd, sum(po.total+coalesce(po.valorBenef,0)) as totalProd,
                                     pp.desconto*if(pp.tipoDesconto=1, sum(po.total+coalesce(po.valorBenef,0))/100, 1) as desconto
                                 from produtos_orcamento po
                                     inner join produtos_orcamento pp on (po.idProdParent=pp.idProd)
@@ -1370,7 +1370,7 @@ namespace Glass.Data.DAL
                     )";
             }
 
-            return ExecuteScalar<decimal>(sessao, String.Format(sql, idOrcamento +(!Glass.Configuracoes.Geral.NaoVendeVidro() ? 
+            return ExecuteScalar<decimal>(sessao, String.Format(sql, idOrcamento +(!Glass.Configuracoes.Geral.NaoVendeVidro() ?
                 " and (po.idProdParent is not null or po.idItemProjeto is not null)" : "")));
         }
 
@@ -1398,7 +1398,7 @@ namespace Glass.Data.DAL
             else
                 sql = string.Format("SELECT IF(TipoDesconto=2, Desconto, (Total - ValorIcms - ValorIpi) / (1 - (Desconto / 100)) * (Desconto / 100)) FROM orcamento WHERE IdOrcamento={0}", idOrcamento);
 
-            return ExecuteScalar<decimal>(sessao, String.Format(sql, idOrcamento + (!Glass.Configuracoes.Geral.NaoVendeVidro() ? 
+            return ExecuteScalar<decimal>(sessao, String.Format(sql, idOrcamento + (!Glass.Configuracoes.Geral.NaoVendeVidro() ?
                 " and (idProdParent is not null or idItemProjeto is not null)" : "")));
         }
 
@@ -1464,7 +1464,7 @@ namespace Glass.Data.DAL
         public bool EditEnabled(uint idOrcamento)
         {
             string sql = "select count(*) from orcamento where situacao=" + (int)Orcamento.SituacaoOrcamento.NegociadoParcialmente +
-                " and idOrcamento=" + idOrcamento; 
+                " and idOrcamento=" + idOrcamento;
 
             if (objPersistence.ExecuteSqlQueryCount(sql) == 0)
                 return true;
@@ -1481,7 +1481,7 @@ namespace Glass.Data.DAL
         }
 
         public bool VerificarPodeEditarOrcamento(uint? idLoja, uint? idFuncionario, uint? idPedidoGerado, int situacao)
-        { 
+        {
             if (idLoja.GetValueOrDefault(0) == 0)
                 return true;
 
@@ -1557,11 +1557,11 @@ namespace Glass.Data.DAL
         {
             if (dataRecalcular != null)
             {
-                objPersistence.ExecuteCommand(session, "update orcamento set dataRecalcular=?data, idFuncRecalcular=?idFunc where idOrcamento=" + idOrcamento, 
+                objPersistence.ExecuteCommand(session, "update orcamento set dataRecalcular=?data, idFuncRecalcular=?idFunc where idOrcamento=" + idOrcamento,
                     new GDAParameter("?data", dataRecalcular), new GDAParameter("?idFunc", idFuncRecalcular));
             }
             else
-                objPersistence.ExecuteCommand(session, "update orcamento set dataRecalcular=null, idFuncRecalcular=?idFunc where idOrcamento=" + idOrcamento, 
+                objPersistence.ExecuteCommand(session, "update orcamento set dataRecalcular=null, idFuncRecalcular=?idFunc where idOrcamento=" + idOrcamento,
                     new GDAParameter("?idFunc", idFuncRecalcular));
         }
 
@@ -1678,7 +1678,7 @@ namespace Glass.Data.DAL
                     transaction.Rollback();
                     transaction.Close();
 
-                    if(ex.ToString().Contains("BLOQUEIO_ORCAMENTO"))                                         
+                    if(ex.ToString().Contains("BLOQUEIO_ORCAMENTO"))
                         throw new Exception("Foi cadastrado um orçamento com estes mesmos dados recentemente" +
                             " sendo necessário aguardar 1 minuto ou alterar dados do orçamento");
                     else
@@ -1750,7 +1750,7 @@ namespace Glass.Data.DAL
             #region Update Total Item Projeto
 
             ItemProjetoDAO.Instance.UpdateTotalItemProjeto(session, idItemProjetoOrca);
-            
+
             var idProd = ProdutosOrcamentoDAO.Instance.ObtemValorCampo<uint>(session, "idProd", "idItemProjeto=" + idItemProjetoOrca);
             if (idProd > 0)
                 ProdutosOrcamentoDAO.Instance.UpdateTotaisProdutoOrcamento(session, idProd);
@@ -1915,7 +1915,7 @@ namespace Glass.Data.DAL
 
         public int ObtemQuantidadePecas(uint idOrcamento)
         {
-            string sql = @"select cast(sum(coalesce(qtde,0)) as signed integer) from produtos_orcamento pp 
+            string sql = @"select cast(sum(coalesce(qtde,0)) as signed integer) from produtos_orcamento pp
                 left join produto p on (pp.idProd=p.idProd) where idOrcamento=?id and p.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro;
 
             object o = objPersistence.ExecuteScalar(sql, new GDAParameter("?id", idOrcamento));
@@ -1929,14 +1929,14 @@ namespace Glass.Data.DAL
 
         public string GetTotalOrcamentos(uint idLoja, uint idVendedor, int situacao, string dataIni, string dataFim)
         {
-            string campos = @"o.idLoja, o.idFunc, cast(Sum(o.Total) as decimal(12,2)) as TotalVenda, f.Nome as NomeVendedor, coalesce(l.nomeFantasia, l.razaoSocial) as NomeLoja, 
-                (Right(Concat('0', Cast(Month(o.DataCad) as char), '/', Cast(Year(o.DataCad) as char)), 7)) as DataVenda, 
+            string campos = @"o.idLoja, o.idFunc, cast(Sum(o.Total) as decimal(12,2)) as TotalVenda, f.Nome as NomeVendedor, coalesce(l.nomeFantasia, l.razaoSocial) as NomeLoja,
+                (Right(Concat('0', Cast(Month(o.DataCad) as char), '/', Cast(Year(o.DataCad) as char)), 7)) as DataVenda,
                 o.situacao, '$$$' as Criterio";
 
             string criterio = String.Empty;
 
             string sql = @"
-                Select " + campos + @" 
+                Select " + campos + @"
                 From orcamento o
                     left join funcionario f On (o.idFunc=f.idFunc)
                     left join loja l on (o.idLoja=l.idLoja)
@@ -2004,7 +2004,7 @@ namespace Glass.Data.DAL
             if (RemoverDesconto(session, orcamento, produtosOrcamento))
                 removido = true;
 
-            objPersistence.ExecuteCommand(session, @"update orcamento set desconto=0, 
+            objPersistence.ExecuteCommand(session, @"update orcamento set desconto=0,
                 acrescimo=0 where idOrcamento=" + orcamento.IdOrcamento);
 
             FinalizarAplicacaoComissaoAcrescimoDesconto(session, orcamento, produtosOrcamento, removido);
@@ -2075,7 +2075,7 @@ namespace Glass.Data.DAL
 
                 objPersistence.ExecuteCommand(
                     session,
-                    @"update orcamento set idComissionado=?id, percComissao=?pc, tipoDesconto=?td, desconto=?d, 
+                    @"update orcamento set idComissionado=?id, percComissao=?pc, tipoDesconto=?td, desconto=?d,
                         tipoAcrescimo=?ta, acrescimo=?a where idOrcamento=" + orcamento.IdOrcamento,
                     new GDAParameter("?id", idComissionado),
                     new GDAParameter("?pc", percComissao),
@@ -2252,7 +2252,7 @@ namespace Glass.Data.DAL
                 objUpdate.Total = orcaAntigo.Total;
 
                 bool orcaCobrouAreaMinima = objPersistence.ExecuteSqlQueryCount(session, @"
-                    select count(*) from produtos_orcamento po inner join produto p on (po.idProduto=p.idProd) where 
+                    select count(*) from produtos_orcamento po inner join produto p on (po.idProduto=p.idProd) where
                     p.ativarAreaMinima=true and po.idOrcamento=" + objUpdate.IdOrcamento + " and po.totM != po.totMCalc and po.totMCalc=p.areaMinima") > 0;
 
                 if (!PedidoConfig.Comissao.AlterarPercComissionado)
@@ -2296,7 +2296,7 @@ namespace Glass.Data.DAL
                 // Chamado 57404: Manter hora e minuto de cadastro do orçamento
                 if (objUpdate.DataCad.Hour == 0)
                     objUpdate.DataCad.AddHours(orcaAntigo.DataCad.Hour).AddMinutes(orcaAntigo.DataCad.Minute);
-                
+
                 #region Atualiza os valores do orçamento
 
                 /* Chamado 58815. */
@@ -2323,7 +2323,7 @@ namespace Glass.Data.DAL
 
                     FinalizarRecalcular(session, objUpdate, tipoDesconto, desconto, tipoAcrescimo, acrescimo, (int?)idComissionado,
                         percComissao, dadosAmbientes, false);
-                    
+
                     /* Chamado 61744. */
                     if (objUpdate.Desconto > 0 && (objUpdate.Desconto != orcaAntigo.Desconto || objUpdate.TipoDesconto != orcaAntigo.TipoDesconto))
                         objPersistence.ExecuteCommand(session, string.Format("UPDATE orcamento SET IdFuncDesc=?idFuncDesc, DataDesc=?dataDesconto WHERE IdOrcamento={0}", objUpdate.IdOrcamento),
@@ -2636,7 +2636,7 @@ namespace Glass.Data.DAL
                                         idPedidoValidacaoLoja > 0 || idPedidoEspelhoValidacaoLoja > 0 ?
                                             PedidoDAO.Instance.ObtemIdLoja(transaction, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                         idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(transaction, (int)idProjetoValidacaoLoja.Value) : 0;
-                                    
+
                                     if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                         continue;
                                     /* Chamado 48322. */
@@ -2671,7 +2671,7 @@ namespace Glass.Data.DAL
                                         idPedidoValidacaoLoja > 0 || idPedidoEspelhoValidacaoLoja > 0 ?
                                             PedidoDAO.Instance.ObtemIdLoja(transaction, (idPedidoValidacaoLoja ?? idPedidoEspelhoValidacaoLoja).GetValueOrDefault()) :
                                         idProjetoValidacaoLoja > 0 ? (uint?)ProjetoDAO.Instance.ObterIdLoja(transaction, (int)idProjetoValidacaoLoja.Value) : 0;
-                                    
+
                                     if (idLoja > 0 && !idsLojaSubgrupoProd.Contains((int)idLoja))
                                         continue;
                                     /* Chamado 48322. */
@@ -2687,7 +2687,7 @@ namespace Glass.Data.DAL
                             // Atualiza o material se houve alteração do produto
                             if (alterado)
                             {
-                                mip.Valor = ProdutoDAO.Instance.GetValorTabela(transaction, (int)mip.IdProd, tipoEntrega, idCliente, false, item.Reposicao, 0, null, null, (int?)idOrcamentoParam);
+                                mip.Valor = ProdutoDAO.Instance.GetValorTabela(transaction, (int)mip.IdProd, tipoEntrega, idCliente, false, item.Reposicao, 0, null, null, (int?)idOrcamentoParam, mip.Altura);
                                 MaterialItemProjetoDAO.Instance.Update(transaction, mip);
                             }
                         }
@@ -2717,7 +2717,7 @@ namespace Glass.Data.DAL
                     }
 
                     AtualizarOrcaPedido(transaction, idsItensProjeto, idItemProjetoParam, idOrcamentoParam, idPedidoParam, idPedidoEspelhoParam);
-                    
+
                     transaction.Commit();
                     transaction.Close();
                 }
@@ -2753,14 +2753,14 @@ namespace Glass.Data.DAL
             else if (idPedido != null)
             {
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, idPedido.Value);
-                
+
                 /* Chamado 51998.
                  * Remove e aplica acréscimo/desconto/comissão no pedido somente uma vez.
                  * Antes essa atualização estava demorando muito porque era feita para cada ambiente. */
                 #region Remove acréscimo/desconto/comissão do pedido
 
                 var idsAmbientePedido = new List<uint>();
-                
+
                 // Remove acréscimo, desconto e comissão.
                 objPersistence.ExecuteCommand(sessao, "UPDATE PEDIDO SET IdComissionado=NULL WHERE IdPedido=" + idPedido);
                 PedidoDAO.Instance.RemoveComissaoDescontoAcrescimo(sessao, pedido);
@@ -2825,7 +2825,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Recalcular orçamento
-        
+
         public void RecalcularOrcamentoComTransacao(int idOrcamento, int? tipoEntregaNovo, int? idClienteNovo, out int tipoDesconto, out decimal desconto, out int tipoAcrescimo,
             out decimal acrescimo, out uint? idComissionado, out float percComissao, out Dictionary<uint, KeyValuePair<KeyValuePair<int, decimal>, KeyValuePair<int, decimal>>> dadosProd,
             Orcamento orcamento)
@@ -2837,7 +2837,7 @@ namespace Glass.Data.DAL
                     try
                     {
                         transaction.BeginTransaction();
-                        
+
                         RecalcularOrcamento(transaction, orcamento, tipoEntregaNovo, idClienteNovo, out tipoDesconto, out desconto, out tipoAcrescimo, out acrescimo, out idComissionado,
                             out percComissao, out dadosProd);
 
@@ -2890,7 +2890,7 @@ namespace Glass.Data.DAL
 
             RemovePercComissao(session, orcamento.IdOrcamento, true);
             RemoveComissaoDescontoAcrescimo(session, orcamento);
-            
+
             var produtosOrcamento = ProdutosOrcamentoDAO.Instance.GetByOrcamento(session, orcamento.IdOrcamento, true);
 
             foreach (var p in produtosOrcamento.Where(p => !p.IdProdParent.HasValue))
@@ -2970,11 +2970,11 @@ namespace Glass.Data.DAL
                     ProdutosOrcamentoDAO.Instance.UpdateBase(session, p, orcamento);
                 }
             }
-            
+
             /* Chamado 58815. */
             UpdateTotaisOrcamento(session, orcamento);
         }
- 
+
         /// <summary>
         /// Finaliza o recálculo do orçamento.
         /// </summary>
