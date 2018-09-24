@@ -476,6 +476,7 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\CoresFerragem\Componentes\LstCoresFerragem.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
     <Content Include="Vue\Sinais\Templates\LstSinais.Filtro.html" />

@@ -55,6 +55,65 @@ Servicos.Produtos = (function(http) {
     CoresFerragem: {
       /**
        * Recupera a lista de cores de ferragem para uso no controle de busca.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        filtro = filtro || {};
+        filtro.pagina = pagina;
+        filtro.numeroRegistros = numeroRegistros;
+        filtro.ordenacao = ordenacao;
+
+        return http().get(API + 'cores/ferragem', {
+          params: filtro
+        });
+      },
+
+      /**
+       * Remove uma cor de ferragem.
+       * @param {!number} idCorFerragem O identificador da cor de ferragem que será excluída.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (idCorFerragem) {
+        if (!idCorFerragem) {
+          throw new Error('Cor de ferragem é obrigatória.');
+        }
+
+        return http().delete(API + 'cores/ferragem/' + idCorFerragem);
+      },
+
+      /**
+       * Insere uma cor de ferragem.
+       * @param {!Object} corFerragem O objeto com os dados da cor de ferragem a ser inserida.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (corFerragem) {
+        return http().post(API + 'cores/ferragem', corFerragem);
+      },
+
+      /**
+       * Altera os dados de uma cor de ferragem.
+       * @param {!number} idCorFerragem O identificador da cor de ferragem que será alterada.
+       * @param {!Object} corFerragem O objeto com os dados da cor de ferragem a serem alteradas.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (idCorFerragem, corFerragem) {
+        if (!idCorFerragem) {
+          throw new Error('Cor de ferragem é obrigatória.');
+        }
+
+        if (!corFerragem || corFerragem === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'cores/ferragem/' + idCorFerragem, corFerragem);
+      },
+
+      /**
+       * Recupera a lista de cores de ferragem para uso no controle de busca.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function () {
