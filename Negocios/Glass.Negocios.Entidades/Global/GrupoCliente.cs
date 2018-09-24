@@ -13,6 +13,12 @@ namespace Glass.Global.Negocios.Entidades
         /// </summary>
         /// <returns></returns>
         IMessageFormattable[] ValidaExistencia(GrupoCliente GrupoCliente);
+
+        /// <summary>
+        /// Valida a existencia do dados do grupo de cliente.
+        /// </summary>
+        /// <returns></returns>
+        IMessageFormattable[] ValidaInsercao(GrupoCliente GrupoCliente);
     }
 
     /// <summary>
@@ -126,6 +132,21 @@ namespace Glass.Global.Negocios.Entidades
                 return new Colosoft.Business.DeleteResult(false, resultadoValidacao.Join(" "));
 
             return base.Delete(session);
+        }
+
+        /// <summary>
+        /// Sobrescreve o método que adiciona o grupo de cliente.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
+        public override Colosoft.Business.SaveResult Save(Colosoft.Data.IPersistenceSession session)
+        {
+            var validador = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<IValidadorGrupoCliente>();
+            var resultadoValidacao = validador.ValidaInsercao(this);
+            if (resultadoValidacao.Length > 0)
+                return new Colosoft.Business.SaveResult(false, resultadoValidacao.Join(" "));
+            return base.Save(session);
         }
 
         #endregion

@@ -1400,6 +1400,36 @@ namespace Glass.Global.Negocios.Componentes
             return mensagens.Select(f => f.GetFormatter()).ToArray();
         }
 
+        /// <summary>
+        /// Valida a existencia do dados do tipo de cliente.
+        /// </summary>
+        /// <returns></returns>
+        public IMessageFormattable[] ValidaInsercao(Entidades.GrupoCliente grupoCliente)
+        {
+            var mensagens = new List<string>();
+            // Handler para tratar o resultado da consulta de validação
+            var tratarResultado = new Func<string, Colosoft.Query.QueryCallBack>(mensagem =>
+               (sender, query, result) =>
+               {
+                   if (result.Select(f => f.GetInt32(0)).FirstOrDefault() > 0 &&
+                       !mensagens.Contains(mensagem))
+                       mensagens.Add(mensagem);
+               });
+            if (!grupoCliente.Descricao.IsNullOrEmpty())
+                SourceContext.Instance.CreateMultiQuery()
+                    // Verifica se o tipo de cliente possui clientes relacionados à seu id
+                    .Add(SourceContext.Instance.CreateQuery()
+                        .From<Data.Model.GrupoCliente>()
+                        .Where("Descricao Like?descricao")
+                        .Add("?descricao", $"%{grupoCliente.Descricao}%")
+                        .Count(),
+                        tratarResultado("Já existe um grupo de cliente cadastrado com essa descrição"))
+                    .Execute();
+            if (grupoCliente.Descricao.IsNullOrEmpty())
+                mensagens.Add("A descrição não pode ser vazia !");
+            return mensagens.Select(f => f.GetFormatter()).ToArray();
+        }
+
         #endregion
 
         #region IValidadorTabelaDescontoAcrescimoCliente Members
