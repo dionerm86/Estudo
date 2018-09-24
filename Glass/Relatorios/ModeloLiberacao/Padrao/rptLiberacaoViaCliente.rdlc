@@ -281,6 +281,10 @@
           <DataField>CodCliente</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="PedCliExterno">
+          <DataField>PedCliExterno</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="NomeCli">
           <DataField>NomeCli</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -3395,7 +3399,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!CodCliente.Value</Value>
+                                  <Value>=Fields!CodCliente.Value + "-" + Fields!PedCliExterno.Value</Value>
                                   <Style>
                                     <FontSize>9pt</FontSize>
                                   </Style>
@@ -3416,6 +3420,7 @@ IIf(Len(First(Fields!DadosCancelamento.Value, "LiberarPedido")) &gt; 0, vbCrLf +
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
