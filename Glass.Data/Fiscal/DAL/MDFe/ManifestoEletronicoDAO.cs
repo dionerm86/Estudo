@@ -1540,11 +1540,11 @@ namespace Glass.Data.DAL
                 else
                     ManipulacaoXml.SetNode(doc, prop, "CNPJ", Formatacoes.TrataStringDocFiscal(proprietarioVeiculoTracao.Cnpj));
 
-                ManipulacaoXml.SetNode(doc, veicTracao, "RNTRC", proprietarioVeiculoTracao.RNTRC);
-                ManipulacaoXml.SetNode(doc, veicTracao, "xNome", proprietarioVeiculoTracao.Nome);
-                ManipulacaoXml.SetNode(doc, veicTracao, "IE", proprietarioVeiculoTracao.IE);
-                ManipulacaoXml.SetNode(doc, veicTracao, "UF", proprietarioVeiculoTracao.UF);
-                ManipulacaoXml.SetNode(doc, veicTracao, "tpProp", proprietarioVeiculoTracao.TipoProp.ToString());
+                ManipulacaoXml.SetNode(doc, prop, "RNTRC", proprietarioVeiculoTracao.RNTRC);
+                ManipulacaoXml.SetNode(doc, prop, "xNome", proprietarioVeiculoTracao.Nome);
+                ManipulacaoXml.SetNode(doc, prop, "IE", proprietarioVeiculoTracao.IE);
+                ManipulacaoXml.SetNode(doc, prop, "UF", proprietarioVeiculoTracao.UF);
+                ManipulacaoXml.SetNode(doc, prop, "tpProp", proprietarioVeiculoTracao.TipoProp.ToString());
 
                 veicTracao.AppendChild(prop);
             }
