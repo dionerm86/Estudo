@@ -5746,6 +5746,30 @@ namespace Glass.Data.DAL
             return ExecuteMultipleScalar<uint>(session, sql);
         }
 
+        public List<int> ObtemIdsProdPedProducaoPelosIdsProdImpressao(GDASession session, List<int> idsProdImpressao)
+        {
+            if (!idsProdImpressao.Any(f => f > 0))
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT DISTINCT ppp.IdProdPedProducao
+                FROM produto_impressao pi
+                    INNER JOIN produto_pedido_producao ppp ON (pi.IdImpressao = ppp.IdImpressao AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao.Where(f => f > 0).ToList()) }) AND !COALESCE(pi.Cancelado, 0)";
+
+            return ExecuteMultipleScalar<int>(session, sql);
+        }
+
+        public List<int> ObterIdsProdPedProducaoPeloIdImpressao(GDASession session, int idImpressao)
+        {
+            var sql = $@"SELECT DISTINCT ppp.IdProdPedProducao
+                FROM produto_pedido_producao ppp
+                WHERE ppp.IdImpressao = { idImpressao };";
+
+            return ExecuteMultipleScalar<int>(session, sql);
+        }
+
         /// <summary>
         /// Retorna o id da tabela com base na etiqueta.
         /// </summary>
