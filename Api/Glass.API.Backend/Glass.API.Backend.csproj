@@ -365,6 +365,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\TraducaoOrdenacaoListaCoresVidro.cs" />
     <Compile Include="Helper\Produtos\CoresAluminio\ConverterCadastroAtualizacaoParaCorAluminio.cs" />
@@ -423,6 +424,10 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Transportadores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\CoresVidro\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresVidro\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresVidro\Lista\ListaDto.cs" />
