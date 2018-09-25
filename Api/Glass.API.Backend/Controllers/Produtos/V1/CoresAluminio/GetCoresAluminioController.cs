@@ -4,6 +4,7 @@
 
 using GDA;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Produtos.CoresAluminio.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
