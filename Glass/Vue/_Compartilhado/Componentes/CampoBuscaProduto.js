@@ -1,6 +1,6 @@
 Vue.component('campo-busca-produto', {
   inheritAttrs: false,
-  mixins: [Mixins.Clonar, Mixins.JsonQuerystring],
+  mixins: [Mixins.Clonar, Mixins.JsonQuerystring, Mixins.Comparar, Mixins.ExecutarTimeout],
   props: {
     /**
      * Produto selecionado no controle.
@@ -30,7 +30,6 @@ Vue.component('campo-busca-produto', {
     dadosAdicionaisValidacao: {
       required: true,
       twoWay: false,
-      default: null,
       validator: Mixins.Validacao.validarObjetoOuVazio
     }
   },
@@ -84,7 +83,7 @@ Vue.component('campo-busca-produto', {
         return this.produto;
       },
       set: function(valor) {
-        if (valor !== this.produto) {
+        if (!this.equivalentes(valor, this.produto)) {
           this.$emit('update:produto', valor);
           this.descricaoAtual = valor ? valor.descricao : null;
         }
@@ -98,17 +97,15 @@ Vue.component('campo-busca-produto', {
      * Atualiza os dados do produto atual.
      */
     dadosAdicionaisValidacao: {
-      handler: function() {
-        if (this.produtoAtual) {
-          var produto = this.clonar(this.produtoAtual);
-          this.produtoAtual = null;
-
-          var vm = this;
-
-          this.$nextTick(function() {
-            vm.produtoAtual = produto;
-          });
+      handler: function (atual) {
+        if (!this.produtoAtual) {
+          return;
         }
+
+        this.executarTimeout('buscarProdutos', function () {
+          this.$refs.base.$refs.campoBusca
+            .buscar(null, this.produtoAtual.codigo);
+        });
       },
       deep: true
     }
