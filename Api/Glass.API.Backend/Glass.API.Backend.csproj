@@ -235,6 +235,11 @@
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\TiposController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\DeleteTiposController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
@@ -369,6 +374,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
+    <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -429,6 +436,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
