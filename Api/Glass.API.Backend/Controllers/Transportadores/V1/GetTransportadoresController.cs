@@ -42,15 +42,15 @@ namespace Glass.API.Backend.Controllers.Transportadores.V1
         /// <returns>Uma lista JSON com os dados dos itens.</returns>
         [HttpGet]
         [Route("")]
-        [SwaggerResponse(200, "Transportadores encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Transportadores.Lista.ListaDto>))]
+        [SwaggerResponse(200, "Transportadores encontrados sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(204, "Transportadores não encontrados para o filtro informado.")]
-        [SwaggerResponse(206, "Transportadores paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Transportadores.Lista.ListaDto>))]
+        [SwaggerResponse(206, "Transportadores paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<ListaDto>))]
         [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
-        public IHttpActionResult ObterAcertos([FromUri] Models.Transportadores.Lista.FiltroDto filtro)
+        public IHttpActionResult ObterAcertos([FromUri] FiltroDto filtro)
         {
             using (var sessao = new GDATransaction())
             {
-                filtro = filtro ?? new Models.Transportadores.Lista.FiltroDto();
+                filtro = filtro ?? new FiltroDto();
 
                 var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Global.Negocios.ITransportadorFluxo>();

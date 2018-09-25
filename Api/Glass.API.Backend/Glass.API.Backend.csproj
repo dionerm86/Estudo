@@ -360,6 +360,7 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
     <Compile Include="Global.asax.cs">
