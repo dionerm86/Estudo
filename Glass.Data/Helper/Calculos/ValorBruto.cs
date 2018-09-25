@@ -27,7 +27,7 @@ namespace Glass.Data.Helper.Calculos
 
         private void CalcularValorUnitarioBruto(GDASession sessao, IProdutoCalculo produto)
         {
-            var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, produto.Container, produto, true, true);
+            var valorUnitario = ValorUnitario.Instance.RecalcularValor(sessao, produto.Container, produto, true);
 
             if (valorUnitario.HasValue)
                 produto.ValorUnitarioBruto = valorUnitario.Value;
