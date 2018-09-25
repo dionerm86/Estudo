@@ -352,9 +352,6 @@
                     FindControl("hdfTuboValMin", "input").value = retorno[3]; // Armazena o valor mínimo
                 }
                 else if (retorno[0] == "Prod") {
-
-                    valorTabelaProduto = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor mínimo do produto
-
                     FindControl("hdfIdProdMater", "input").value = retorno[1];
                     txtValor.value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfValMin", "input").value = retorno[3]; // Armazena o valor mínimo
@@ -633,8 +630,6 @@
 
             }
         }
-
-        var valorTabelaProduto = null;
 
         function GetAdicionalAlturaChapa(){
             var idProd = FindControl("hdfIdProdMater", "input").value;
