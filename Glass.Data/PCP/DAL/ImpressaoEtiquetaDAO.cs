@@ -2690,50 +2690,68 @@ namespace Glass.Data.DAL
         {
             try
             {
-                string idsProdImpressao;
-
+                var idsProdImpressao = string.Empty;
                 // Define se será necessário efetuar cancelamento peça a peça da impressão (ocorre quando não se deseja cancelar toda a impressão,
                 // somente determinado pedido ou plano de corte ou peça individual)
-                bool cancelarPecaAPeca = idPedido > 0 || numeroNFe > 0 || !String.IsNullOrEmpty(planoCorte) || idProdImpressao > 0;
+                var cancelarPecaAPeca = idPedido > 0 || numeroNFe > 0 || !string.IsNullOrWhiteSpace(planoCorte) || idProdImpressao > 0;
 
                 // Recupera todos os produto_impressao que serão cancelados
                 if (idProdImpressao > 0)
                 {
                     var numEtiqueta = ProdutoImpressaoDAO.Instance.ObtemNumEtiqueta(sessao, idProdImpressao);
+                    var produtoImpressaoCancelado = ProdutoImpressaoDAO.Instance.ObterCancelado(sessao, (int)idProdImpressao);
 
-                    if (ProdutoImpressaoDAO.Instance.ObtemValorCampo<bool>(sessao, "cancelado", "idProdImpressao=" + idProdImpressao))
+                    if (produtoImpressaoCancelado)
+                    {
                         throw new Exception("Etiqueta já está cancelada.");
-                    
+                    }
+
                     if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, idProdImpressao))
+                    {
                         throw new Exception("Matéria-prima associada a peça já foi utilizada.");
+                    }
 
                     idsProdImpressao = idProdImpressao.ToString();
-                    idImpressao = ProdutoImpressaoDAO.Instance.ObtemValorCampo<uint>(sessao, "idImpressao", "idProdImpressao=" + idProdImpressao);
+                    idImpressao = (uint)ProdutoImpressaoDAO.Instance.ObterIdImpressao(sessao, (int)idProdImpressao);
+
+                    if (idImpressao == 0)
+                    {
+                        throw new Exception($"Não foi possível recuperar a impressão de etiquetas do produto de impressão de ID { idProdImpressao }.");
+                    }
                 }
                 else
+                {
                     idsProdImpressao = ProdutoImpressaoDAO.Instance.GetByIdPedidoPlanoCorte(sessao, idImpressao, idPedido, numeroNFe, planoCorte);
+                }
 
-                var situacaoImpressao = ObtemValorCampo<ImpressaoEtiqueta.SituacaoImpressaoEtiqueta>(sessao, "situacao",
-                    "idImpressao=" + idImpressao);
+                var situacaoImpressao = (ImpressaoEtiqueta.SituacaoImpressaoEtiqueta)ObtemSituacao(sessao, (int)idImpressao);
 
                 // Se a impressão esta na situação processando ela deve ser cancelada totalmente.
                 if (situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando && cancelarPecaAPeca)
+                {
                     throw new Exception("Impressões na situação Processando devem ser canceladas toda a impressão.");
+                }
 
                 if (idProdImpressao == 0 && (!Exists(sessao, idImpressao) || situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada))
+                {
                     return;
+                }
 
                 #region Valida cancelamento por pedido/plano de corte
 
                 /* Chamado 16544.
                  * Caso o usuário tente cancelar as etiquetas, já canceladas, de um pedido, lança uma exceção. */
-                if (String.IsNullOrEmpty(idsProdImpressao) && idPedido > 0)
+                if (string.IsNullOrWhiteSpace(idsProdImpressao) && idPedido > 0)
+                {
                     throw new Exception("As etiquetas deste pedido já foram canceladas nesta impressão.");
+                }
 
                 /* Chamado 16544.
                  * Caso o usuário tente cancelar as etiquetas, já canceladas, de um plano de corte, lança uma exceção. */
-                if (String.IsNullOrEmpty(idsProdImpressao) && !String.IsNullOrEmpty(planoCorte))
+                if (string.IsNullOrWhiteSpace(idsProdImpressao) && !string.IsNullOrWhiteSpace(planoCorte))
+                {
                     throw new Exception("As etiquetas deste plano de corte já foram canceladas nesta impressão.");
+                }
 
                 #endregion
 
@@ -2741,11 +2759,10 @@ namespace Glass.Data.DAL
                 // 04/12/2014. Ocorreu na Modelo e na MS Vidros casos em que a impressão não tinha produto, ao tentar cancelar a impressão
                 // o sistema lançava uma exceção, mas o correto é marcar a impressão como cancelada. Alteramos o sistema para que, neste caso,
                 // a impressão seja cancelada e o log de cancelamento seja incluído no banco de dados.
-                if (string.IsNullOrEmpty(idsProdImpressao))
+                if (string.IsNullOrWhiteSpace(idsProdImpressao))
                 {
                     // Altera a situação da impressão de etiqueta.
-                    objPersistence.ExecuteCommand(sessao, "UPDATE impressao_etiqueta ie SET ie.situacao=" +
-                        (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada + " WHERE ie.idImpressao=" + idImpressao);
+                    AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada);
 
                     // Insere o log de cancelamento.
                     LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao), motivo, true);
@@ -2756,43 +2773,53 @@ namespace Glass.Data.DAL
 
                 /* Chamado 63971. */
                 if (ChapaCortePecaDAO.Instance.ChapasPossuemLeitura(sessao, idsProdImpressao.Split(',').Select(f => f.ToString().StrParaInt()).ToList()))
+                {
                     throw new Exception("Uma ou mais matérias-primas a serem canceladas já foram utilizadas.");
+                }
 
                 // Verifica se esta impressão possui algum pedido já liberado e bloqueia
-                if (PedidoConfig.LiberarPedido && ExecuteScalar<bool>(sessao, @"
-                    Select Count(*)>0 
-                    From produto_impressao pi
-                        Inner Join pedido p On (pi.idPedido=p.idPedido)
-                    Where idProdImpressao In (" + idsProdImpressao + @") 
-                        And p.situacao=" + (int)Pedido.SituacaoPedido.Confirmado + @"
-                        And p.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.Producao)
-                    )
-                    throw new Exception("A impressão não pode ser cancelada. Alguns pedidos desta impressão já foram liberados, cancele a liberação antes de cancelar esta impressão.");
+                if (PedidoConfig.LiberarPedido)
+                {
+                    var verificarPedidosLiberados = ExecuteScalar<bool>(sessao, $@"SELECT COUNT(*) > 0
+                        FROM produto_impressao pi
+                            INNER JOIN pedido p ON (pi.IdPedido = p.IdPedido)
+                        WHERE IdProdImpressao IN ({ idsProdImpressao }) 
+                            AND p.Situacao = { (int)Pedido.SituacaoPedido.Confirmado }
+                            AND p.TipoPedido <> { (int)Pedido.TipoPedidoEnum.Producao }");
 
-                ProdutoImpressaoDAO.TipoEtiqueta tipoImpressao = GetTipoImpressao(sessao, idImpressao);
+                    if (verificarPedidosLiberados)
+                    {
+                        throw new Exception("A impressão não pode ser cancelada. Alguns pedidos desta impressão já foram liberados, cancele a liberação antes de cancelar esta impressão.");
+                    }
+                }
 
-                bool temCarregamento = false;
-
-                List<uint> idsProdPedProducao = new List<uint>();
+                var tipoImpressao = GetTipoImpressao(sessao, idImpressao);
+                var temCarregamento = false;
+                var idsProdPedProducao = new List<uint>();
 
                 //Verifica se esta impressão possui algum pedido que esta em um carregamento e bloqueia
                 if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
-                    var sqlCarregamento = @"
+                    var sqlCarregamento = $@"
                         SELECT DISTINCT(ic.IdPedido)
                         FROM item_carregamento ic
-                            INNER JOIN produto_pedido_producao ppp ON (ic.idProdPedProducao = ppp.idProdPedProducao)
-                            INNER JOIN produto_impressao pi ON (ppp.idImpressao = pi.idImpressao AND pi.numEtiqueta = ppp.numEtiqueta)
-                        WHERE pi.idProdImpressao IN (" + idsProdImpressao + ")";
+                            INNER JOIN produto_pedido_producao ppp ON (ic.IdProdPedProducao = ppp.IdProdPedProducao)
+                            INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao })";
 
                     // Verifica se tem pedidos vinculados a Carregamento, e quais são eles.
                     var pedidosVinculadosCarregamento = ExecuteMultipleScalar<uint>(sessao, sqlCarregamento);
+
                     if (pedidosVinculadosCarregamento != null && pedidosVinculadosCarregamento.Count > 0)
+                    {
                         temCarregamento = true;
+                    }
 
                     if (temCarregamento && situacaoImpressao != ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
-                        throw new Exception(string.Format(@"A impressão não pode ser cancelada. O(s) pedido(s) {0} desta impressão está(ão) vinculado(s) a um carregamento, cancele o carregamento antes de cancelar esta impressão.",
-                            string.Join(",", pedidosVinculadosCarregamento)));
+                    {
+                        var mensagemErro = "A impressão não pode ser cancelada. O(s) pedido(s) {0} desta impressão está(ão) vinculado(s) a um carregamento, cancele o carregamento antes de cancelar esta impressão.";
+                        throw new Exception(string.Format(mensagemErro, string.Join(",", pedidosVinculadosCarregamento)));
+                    }
 
                     idsProdPedProducao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoByIdProdImpressao(sessao, idsProdImpressao);
 
@@ -2808,42 +2835,47 @@ namespace Glass.Data.DAL
                                 var numEtiquetaPai = ProdutoPedidoProducaoDAO.Instance.ObterNumEtiqueta(sessao, idProdPedProducaoParent.Value);
 
                                 if (!string.IsNullOrWhiteSpace(numEtiquetaPai) && ProdutoImpressaoDAO.Instance.EstaImpressa(sessao, numEtiquetaPai, ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                                {
                                     throw new Exception("Não é possível cancelar peças de composição que estejam associadas à peças compostas impressas.");
+                                }
                             }
                         }
                     }
                 }
                 else if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal)
                 {
-                    var sqlPerdas = @"
-                        SELECT count(*) > 0
+                    var sqlPerdas = $@"SELECT COUNT(*) > 0
                         FROM perda_chapa_vidro
-                         WHERE IdProdImpressao IN (" + idsProdImpressao + ") and coalesce(cancelado,0) = 0";
+                        WHERE IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(Cancelado, 0) = 0";
 
                     if (ExecuteScalar<bool>(sessao, sqlPerdas))
+                    {
                         throw new Exception("A impressão não pode ser cancelada, pois possui peças que foram marcadas como perda. Cancele as perdas antes de cancelar esta impressão");
+                    }
                 }
 
                 // Marca a impressão como processando, para que caso o processo não seja concluído, não faça nada com esta impressão
-                if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && String.IsNullOrEmpty(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
-                    objPersistence.ExecuteCommand(sessao, "Update impressao_etiqueta Set situacao=" +
-                        (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando + " Where idImpressao=" + idImpressao);
+                if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && string.IsNullOrWhiteSpace(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
+                {
+                    AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando);
+                }
 
-                List<uint> idsProdImpressaoRetalho = new List<uint>();
+                var idsProdImpressaoRetalho = new List<uint>();
 
-                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho ||
-                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
+                if (tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho || tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
                     // Recupera quais produtos impressos são referentes a retalhos
-                    idsProdImpressaoRetalho = ExecuteMultipleScalar<uint>(sessao, @"select idRetalhoProducao from produto_impressao 
-                        where idRetalhoProducao is not null and idProdImpressao in (" + idsProdImpressao + ")").ToList().FindAll(x => x > 0);
+                    idsProdImpressaoRetalho = ExecuteMultipleScalar<uint>(sessao, $@"SELECT IdRetalhoProducao FROM produto_impressao
+                        WHERE IdRetalhoProducao IS NOT NULL AND IdProdImpressao IN ({ idsProdImpressao })").ToList().FindAll(x => x > 0);
 
-                    foreach (uint idRetalhoProducao in idsProdImpressaoRetalho)
+                    foreach (var idRetalhoProducao in idsProdImpressaoRetalho)
+                    {
                         if (!RetalhoProducaoDAO.Instance.PodeCancelar(sessao, idRetalhoProducao))
                         {
-                            RetalhoProducao r = RetalhoProducaoDAO.Instance.Obter(sessao, idRetalhoProducao);
-                            throw new Exception("Não é possível cancelar o retalho " + r.NumeroEtiqueta + " porque ele está em uso.");
+                            var r = RetalhoProducaoDAO.Instance.Obter(sessao, idRetalhoProducao);
+                            throw new Exception($"Não é possível cancelar o retalho { r.NumeroEtiqueta } porque ele está em uso.");
                         }
+                    }
                 }
 
                 // Chamado 11444. Marca os registros produtoPedidoProducao como não repostos para evitar o erro ao imprimir peças
@@ -2851,96 +2883,102 @@ namespace Glass.Data.DAL
                 // pois, o produto de impressão estava reposto e cancelado, e ele é recuperado somente se estiver reposto e ativo.
                 // A peça deve ser marcada como não reposta neste momento para que o campo "QtdImpresso" seja alterado corretamente.
                 if (cancelarPecaAPeca)
-                    objPersistence.ExecuteCommand(sessao, @"
-                        UPDATE produto_pedido_producao ppp
-                            INNER JOIN produto_impressao pi ON (ppp.idImpressao=pi.idImpressao AND pi.idProdPed=ppp.idProdPed AND 
-                                ppp.numEtiqueta=pi.numEtiqueta)
-                        SET ppp.pecaReposta=FALSE
-                        WHERE pi.idProdImpressao IN (" + idsProdImpressao + ")");
+                {
+                    objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                            INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.IdProdPed = ppp.IdProdPed AND ppp.NumEtiqueta = pi.NumEtiqueta)
+                        SET ppp.PecaReposta = 0
+                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao })");
+                }
                 else if (idImpressao > 0)
-                    objPersistence.ExecuteCommand(sessao, @"
-                        UPDATE produto_pedido_producao ppp
-                            INNER JOIN produto_impressao pi ON (ppp.idImpressao=pi.idImpressao AND pi.idProdPed=ppp.idProdPed AND 
-                                ppp.numEtiqueta=pi.numEtiqueta)
-                        SET ppp.pecaReposta=FALSE
-                        Where ppp.idImpressao=" + idImpressao);
+                {
+                    objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                            INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.IdProdPed = ppp.IdProdPed AND ppp.NumEtiqueta = pi.NumEtiqueta)
+                        SET ppp.PecaReposta = 0
+                        WHERE ppp.IdImpressao = { idImpressao }");
+                }
 
                 // Subtrai a qtd impressa de cada item desta impressão no produtoPedidoEspelho que os mesmos estão relacionados.
-                objPersistence.ExecuteCommand(sessao, @"Update produtos_pedido_espelho ppe 
-                    Inner Join (
-                        Select idProdPed, Count(*) As qtdeImpresso
-                        From (
-                            Select pi.idProdPed
-                            From produto_impressao pi
+                objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_pedido_espelho ppe 
+                    INNER JOIN (
+                        SELECT IdProdPed, COUNT(*) AS QtdeImpresso
+                        FROM (
+                            SELECT pi.IdProdPed
+                            FROM produto_impressao pi
                                 /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impressão */
-                                Left Join produto_pedido_producao ppp On (pi.idProdPed=ppp.idProdPed and 
-                                    pi.numEtiqueta=ppp.numEtiqueta)
-                            Where pi.idProdImpressao In (" + idsProdImpressao + @") And Coalesce(ppp.pecaReposta, False)=False
-                                And !Coalesce(pi.cancelado, False) And pi.idImpressao Is Not Null
-                        ) As temp
-                        Group By idProdPed
-                    ) pi On (ppe.idProdPed=pi.idProdPed) 
-                    Set ppe.qtdImpresso=IF(ppe.qtdImpresso=0, 0, ppe.qtdImpresso-Coalesce(pi.qtdeImpresso,0))");
+                                LEFT JOIN produto_pedido_producao ppp ON (pi.IdProdPed = ppp.IdProdPed AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(ppp.PecaReposta, 0) = 0
+                                AND !COALESCE(pi.Cancelado, 0) AND pi.IdImpressao IS NOT NULL
+                        ) AS temp
+                        GROUP BY IdProdPed
+                    ) pi ON (ppe.IdProdPed = pi.IdProdPed) 
+                    SET ppe.QtdImpresso = IF(ppe.QtdImpresso = 0, 0, ppe.QtdImpresso - COALESCE(pi.QtdeImpresso, 0))");
 
                 // Subtrai a qtd impressa de cada item desta impressão nos ambientesPedidoEspelho.
-                objPersistence.ExecuteCommand(sessao, @"Update ambiente_pedido_espelho ape
-                    Inner Join (
-                        Select idAmbientePedido, Count(*) As qtdeImpresso
-                        From (
-                            Select pi.idAmbientePedido
-                            From produto_impressao pi
+                objPersistence.ExecuteCommand(sessao, $@"UPDATE ambiente_pedido_espelho ape
+                    INNER JOIN (
+                        SELECT IdAmbientePedido, COUNT(*) AS QtdeImpresso
+                        FROM (
+                            SELECT pi.IdAmbientePedido
+                            FROM produto_impressao pi
                                 /* Johan - deve ser Left Join para que o cancelamento seja feito se houver erro na impressão */
-                                Left Join produto_pedido_producao ppp On (pi.idProdPed=ppp.idProdPed and 
-                                    pi.numEtiqueta=ppp.numEtiqueta)
-                            Where pi.idProdImpressao In (" + idsProdImpressao + @") And Coalesce(ppp.pecaReposta, False)=False
-                                And !Coalesce(pi.cancelado, False) And pi.idImpressao Is Not Null
-                        ) As temp
-                        Group By idAmbientePedido
-                    ) pi On (ape.idAmbientePedido=pi.idAmbientePedido)
-                    Set ape.qtdeImpresso=ape.qtdeImpresso-Coalesce(pi.qtdeImpresso, 0)");
+                                LEFT JOIN produto_pedido_producao ppp ON (pi.IdProdPed = ppp.IdProdPed AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND COALESCE(ppp.PecaReposta, 0) = 0
+                                AND !COALESCE(pi.Cancelado, 0) AND pi.IdImpressao IS NOT NULL
+                        ) AS temp
+                        GROUP BY IdAmbientePedido
+                    ) pi ON (ape.IdAmbientePedido = pi.IdAmbientePedido)
+                    SET ape.QtdeImpresso = ape.QtdeImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
                 // Subtrai a qtd impressa de cada item desta impressão nos produtos da nota fiscal
-                objPersistence.ExecuteCommand(sessao, @"update produtos_nf pnf
-                    Inner Join (
-                        Select pi.idProdNf, Count(*) as qtdeImpresso
-                        From produto_impressao pi
-                        Where pi.idProdImpressao In (" + idsProdImpressao + @") And !Coalesce(pi.cancelado, False)
-                            And pi.idImpressao Is Not Null
-                        Group By pi.idProdNf
-                    ) pi On (pnf.idProdNf=pi.idProdNf)
-                    Set pnf.qtdImpresso=pnf.qtdImpresso-Coalesce(pi.qtdeImpresso,0)");
+                objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_nf pnf
+                    INNER JOIN (
+                        SELECT pi.IdProdNf, COUNT(*) AS QtdeImpresso
+                        FROM produto_impressao pi
+                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(pi.Cancelado, 0)
+                            AND pi.IdImpressao IS NOT NULL
+                        GROUP BY pi.IdProdNf
+                    ) pi ON (pnf.IdProdNf = pi.IdProdNf)
+                    SET pnf.QtdImpresso = pnf.QtdImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
                 //Subtrai a qtde impressa de cada item desta impressão dos box impressos
-                objPersistence.ExecuteCommand(sessao, @"update produtos_pedido pp
-                    Inner Join (
-                        Select pi.IdProdPedBox, Count(*) as qtdeImpresso
-                        From produto_impressao pi
-                        Where pi.idProdImpressao In (" + idsProdImpressao + @") And !Coalesce(pi.cancelado, False)
-                            And pi.idImpressao Is Not Null
-                        Group By pi.IdProdPedBox
-                    ) pi On (pp.IdProdPed = pi.IdProdPedBox)
-                    Set pp.qtdeBoxImpresso = pp.qtdeBoxImpresso - Coalesce(pi.qtdeImpresso, 0)");
+                objPersistence.ExecuteCommand(sessao, $@"UPDATE produtos_pedido pp
+                    INNER JOIN (
+                        SELECT pi.IdProdPedBox, COUNT(*) AS QtdeImpresso
+                        FROM produto_impressao pi
+                        WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(pi.Cancelado, 0)
+                            AND pi.IdImpressao IS NOT NULL
+                        GROUP BY pi.IdProdPedBox
+                    ) pi ON (pp.IdProdPed = pi.IdProdPedBox)
+                    SET pp.QtdeBoxImpresso = pp.QtdeBoxImpresso - COALESCE(pi.QtdeImpresso, 0)");
 
                 /* Chamado 32174. */
-                if (!string.IsNullOrEmpty(idsProdImpressao) &&
-                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
-                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao,
-                        idsProdImpressao.Split(',').Select(f => f.StrParaInt()).ToList());
+                if (!string.IsNullOrWhiteSpace(idsProdImpressao) && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
+                {
+                    ChapaCortePecaDAO.Instance.DeleteByIdsProdImpressaoPeca(sessao, idsProdImpressao.Split(',').Select(f => f.StrParaInt()).ToList());
+                }
 
-                string ids;
+                var ids = string.Empty;
 
                 // Apaga as datas de leituras das peças dessa impressão, considerando peça por peça da impressão
                 if (cancelarPecaAPeca)
-                    ids = string.Join(",", ExecuteMultipleScalar<uint>(sessao, @"
-                        Select Distinct ppp.idProdPedProducao 
-                        From produto_impressao pi
-                            Inner Join produto_pedido_producao ppp On (pi.idImpressao=ppp.idImpressao And pi.numEtiqueta=ppp.numEtiqueta)
-                        Where pi.idProdImpressao In (" + idsProdImpressao + @") 
-                            And !Coalesce(pi.cancelado,false)"));
+                {
+                    var idsProdPedProducaoPelosIdsProdImpressao = ProdutoPedidoProducaoDAO.Instance.ObtemIdsProdPedProducaoPelosIdsProdImpressao(sessao, idsProdImpressao.Split(',').Select(f => f.StrParaInt()).ToList());
+
+                    if (idsProdPedProducaoPelosIdsProdImpressao.Any(f => f > 0))
+                    {
+                        ids = string.Join(",", idsProdPedProducaoPelosIdsProdImpressao);
+                    }
+                }
                 // Apaga as datas de leituras das peças dessa impressão, considerando todas as peças da impressão
                 else
-                    ids = string.Join(",", ExecuteMultipleScalar<uint>(sessao, @"
-                        Select Distinct ppp.idProdPedProducao From produto_pedido_producao ppp Where ppp.idImpressao=" + idImpressao));
+                {
+                    var idsProdPedProducaoPelaImpressao = ProdutoPedidoProducaoDAO.Instance.ObterIdsProdPedProducaoPeloIdImpressao(sessao, (int)idImpressao);
+
+                    if (idsProdPedProducaoPelaImpressao.Any(f => f > 0))
+                    {
+                        ids = string.Join(",", idsProdPedProducaoPelaImpressao.Where(f => f > 0).ToList());
+                    }
+                }
 
                 if (!string.IsNullOrEmpty(ids))
                 {
@@ -2957,106 +2995,118 @@ namespace Glass.Data.DAL
                     foreach (var id in ids.Split(','))
                     {
                         var idProdPedProducao = id.StrParaInt();
-                        
+
                         if (idProdPedProducao > 0 && PedidoDAO.Instance.IsProducao(sessao, ProdutoPedidoProducaoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdPedProducao)))
                         {
                             var codEtiqueta = ProdutoPedidoProducaoDAO.Instance.ObtemEtiqueta(sessao, (uint)idProdPedProducao);
 
                             if (ProdutoPedidoProducaoDAO.Instance.EntrouEmEstoque(sessao, codEtiqueta))
                             {
-                                LoginUsuario login = UserInfo.GetUserInfo;
-                                ProdutosPedidoEspelho prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null,
-                                    ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdPedProducao), true);
+                                var login = UserInfo.GetUserInfo;
+                                var idProdPed = ProdutoPedidoProducaoDAO.Instance.ObtemIdProdPed(sessao, (uint)idProdPedProducao);
+                                var passouSetorLaminado = !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, codEtiqueta);
+                                var prodPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetProdPedByEtiqueta(sessao, null, idProdPed, true);
+                                var m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
 
-                                float m2Calc = Global.CalculosFluxo.ArredondaM2(sessao, prodPedEsp.Largura, (int)prodPedEsp.Altura, 1, 0, prodPedEsp.Redondo);
-                                
                                 MovEstoqueDAO.Instance.BaixaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, 1, 0, false, false, true);
-
                                 // Só baixa apenas se a peça possuir produto para baixa associado
-                                MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, (decimal)(m2Calc > 0 &&
-                                    !ProdutoPedidoProducaoDAO.Instance.PecaPassouSetorLaminado(sessao, codEtiqueta) ? m2Calc : 1), true, true);
+                                MovEstoqueDAO.Instance.CreditaEstoqueProducao(sessao, prodPedEsp.IdProd, login.IdLoja, (uint)idProdPedProducao, (decimal)(m2Calc > 0 && passouSetorLaminado ? m2Calc : 1), true, true);
 
                                 // Marca que este produto entrou em estoque
-                                objPersistence.ExecuteCommand(sessao, "UPDATE produto_pedido_producao SET EntrouEstoque=0 WHERE IdProdPedProducao=" + idProdPedProducao);
+                                objPersistence.ExecuteCommand(sessao, $"UPDATE produto_pedido_producao SET EntrouEstoque = 0 WHERE IdProdPedProducao = { idProdPedProducao }");
                             }
                         }
                     }
                 }
 
                 // Atualiza as peças repostas na tabela produto_impressao, voltando-as para a impressão anterior.
-                string sqlIdImpressao = ProdutoPedidoProducaoDAO.Instance.SqlIdImpressao("ppp.dadosReposicaoPeca");
-                foreach (ProdutoImpressao pi in ProdutoImpressaoDAO.Instance.GetListByIds(sessao, idsProdImpressao, true))
-                    if (ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(sessao, pi.NumEtiqueta, false))
+                var sqlIdImpressao = ProdutoPedidoProducaoDAO.Instance.SqlIdImpressao("ppp.dadosReposicaoPeca");
+                var produtosImpressao = ProdutoImpressaoDAO.Instance.GetListByIds(sessao, idsProdImpressao, true);
+
+                foreach (var pi in produtosImpressao)
+                {
+                    var pecaReposta = ProdutoPedidoProducaoDAO.Instance.IsPecaReposta(sessao, pi.NumEtiqueta, false);
+
+                    if (pecaReposta)
                     {
                         // Foi necessário recuperar o idImpressao antes de atualizá-lo, 
                         // pois em alguns casos estava ocorreno erro de "truncated INTEGER", pois recuperava um valor vazio
-                        var idImpressaoRep = ExecuteScalar<uint>(sessao, @"
-                            Select Cast((" + sqlIdImpressao + @") As Signed) 
-                            From produto_impressao pi
-                                Inner Join produto_pedido_producao ppp On (pi.idImpressao=ppp.idImpressao And pi.idProdPed=ppp.idProdPed and pi.numEtiqueta=ppp.numEtiqueta)
-                            Where pi.idProdImpressao=" + pi.IdProdImpressao);
+                        var idImpressaoRep = ExecuteScalar<uint>(sessao, $@"SELECT CAST(({ sqlIdImpressao }) AS SIGNED)
+                            FROM produto_impressao pi
+                                INNER JOIN produto_pedido_producao ppp ON (pi.IdImpressao = ppp.IdImpressao AND pi.IdProdPed = ppp.IdProdPed AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                            WHERE pi.IdProdImpressao = { pi.IdProdImpressao }");
 
-                        objPersistence.ExecuteCommand(sessao, @"
-                            Update produto_impressao pi
-                            Set pi.idImpressao=" + idImpressaoRep + @"
-                            Where pi.idProdImpressao=" + pi.IdProdImpressao);
+                        objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_impressao pi
+                            SET pi.IdImpressao = { idImpressaoRep }
+                            WHERE pi.IdProdImpressao = { pi.IdProdImpressao }");
                     }
+                }
 
                 if (temCarregamento && situacaoImpressao == ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Processando)
                 {
                     // Se tiver carregamento e a situacao da impressão for processando, não marca os registros produtoPedidoProducao como cancelados
                     // apenas remove o vinculo da impressão.
                     if (cancelarPecaAPeca)
-                        objPersistence.ExecuteCommand(sessao, @"Update produto_pedido_producao ppp
-                            Inner Join produto_impressao pi On (ppp.idImpressao=pi.idImpressao And pi.idProdPed=ppp.idProdPed and 
-                                ppp.numEtiqueta=pi.numEtiqueta)
-                            Inner Join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
-                            Inner Join pedido ped On (ppe.idPedido=ped.idPedido)
-                        Set ppp.canceladoAdmin=False, ppp.planoCorte=Null, 
-                            ppp.idImpressao = null, ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                        Where pi.idProdImpressao In (" + idsProdImpressao + ") And !Coalesce(ppp.pecaReposta, False)");
+                    {
+                        objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                                INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND pi.IdProdPed = ppp.IdProdPed AND ppp.NumEtiqueta = pi.NumEtiqueta)
+                                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
+                                INNER JOIN pedido ped ON (ppe.IdPedido = ped.IdPedido)
+                            SET ppp.CanceladoAdmin = 0,
+                                ppp.PlanoCorte = NULL,
+                                ppp.IdImpressao = NULL,
+                                ppp.Situacao={ (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(ppp.PecaReposta, 0)");
+                    }
                     else
-                        objPersistence.ExecuteCommand(sessao, @"Update produto_pedido_producao ppp
-                            Inner Join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
-                            Inner Join pedido ped On (ppe.idPedido=ped.idPedido)
-                        Set ppp.canceladoAdmin=False, ppp.planoCorte=Null, 
-                            ppp.idImpressao = null, ppp.situacao=" + (int)ProdutoPedidoProducao.SituacaoEnum.Producao + @"
-                        Where ppp.idImpressao=" + idImpressao + " And !Coalesce(ppp.pecaReposta, False)");
+                    {
+                        objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
+                                INNER JOIN pedido ped ON (ppe.IdPedido = ped.IdPedido)
+                            SET ppp.CanceladoAdmin = 0,
+                                ppp.PlanoCorte = NULL,
+                                ppp.IdImpressao = NULL,
+                                ppp.Situacao = { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
+                            WHERE ppp.IdImpressao = { idImpressao } AND !COALESCE(ppp.PecaReposta, 0)");
+                    }
                 }
                 else
                 {
                     // Marca os registros produtoPedidoProducao como cancelados (Exceto as peças repostas)
                     if (cancelarPecaAPeca)
-                        objPersistence.ExecuteCommand(sessao, @"Update produto_pedido_producao ppp
-                            Inner Join produto_impressao pi On (ppp.idImpressao=pi.idImpressao And 
-                                ppp.numEtiqueta=pi.numEtiqueta)
-                            Inner Join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
-                            Inner Join pedido ped On (ppe.idPedido=ped.idPedido)
-                        Set ppp.canceladoAdmin=False, ppp.planoCorte=Null, 
-                            ppp.numEtiquetaCanc=ppp.numEtiqueta, ppp.numEtiqueta=Null,
-                            ppp.situacao=If(ped.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", " +
-                                    (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda + ", " +
-                                    (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra + @")
-                        Where pi.idProdImpressao In (" + idsProdImpressao + ") And !Coalesce(ppp.pecaReposta, False)");
+                    {
+                        objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                                INNER JOIN produto_impressao pi ON (ppp.IdImpressao = pi.IdImpressao AND ppp.NumEtiqueta = pi.NumEtiqueta)
+                                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
+                                INNER JOIN pedido ped ON (ppe.IdPedido = ped.IdPedido)
+                            SET ppp.CanceladoAdmin = 0,
+                                ppp.PlanoCorte = NULL,
+                                ppp.NumEtiquetaCanc = ppp.NumEtiqueta,
+                                ppp.NumEtiqueta = NULL,
+                                ppp.Situacao = IF(ped.TipoPedido <> { (int)Pedido.TipoPedidoEnum.MaoDeObra }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra })
+                            WHERE pi.IdProdImpressao IN ({ idsProdImpressao }) AND !COALESCE(ppp.PecaReposta, 0)");
+                    }
                     else
-                        objPersistence.ExecuteCommand(sessao, @"Update produto_pedido_producao ppp
-                            Inner Join produtos_pedido_espelho ppe On (ppp.idProdPed=ppe.idProdPed)
-                            Inner Join pedido ped On (ppe.idPedido=ped.idPedido)
-                        Set ppp.canceladoAdmin=False, ppp.planoCorte=Null, 
-                            ppp.numEtiquetaCanc=ppp.numEtiqueta, ppp.numEtiqueta=Null,
-                            ppp.situacao=If(ped.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", " +
-                                    (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda + ", " +
-                                    (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra + @")
-                        Where ppp.idImpressao=" + idImpressao + " And !Coalesce(ppp.pecaReposta, False)");
+                    {
+                        objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                                INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
+                                INNER JOIN pedido ped ON (ppe.IdPedido = ped.IdPedido)
+                            SET ppp.CanceladoAdmin = 0,
+                                ppp.PlanoCorte = NULL,
+                                ppp.NumEtiquetaCanc = ppp.NumEtiqueta,
+                                ppp.NumEtiqueta = NULL,
+                                ppp.Situacao = IF(ped.TipoPedido <> { (int)Pedido.TipoPedidoEnum.MaoDeObra }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra })
+                            WHERE ppp.idImpressao = { idImpressao } AND !COALESCE(ppp.PecaReposta, 0)");
+                    }
                 }
 
                 // Cancela os retalhos associados
-                if ((cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho) ||
-                    tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
+                if ((cancelarRetalhos && tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Retalho) || tipoImpressao == ProdutoImpressaoDAO.TipoEtiqueta.Pedido)
                 {
-                    foreach (uint idRetalhoProducao in idsProdImpressaoRetalho)
-                        RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, "Cancelamento da impressão " + idImpressao,
-                            false, false, false);
+                    foreach (var idRetalhoProducao in idsProdImpressaoRetalho)
+                    {
+                        RetalhoProducaoDAO.Instance.Cancelar(sessao, idFunc, idRetalhoProducao, $"Cancelamento da impressão { idImpressao }", false, false, false);
+                    }
                 }
 
                 // Cancela os retalhos em uso pelas etiquetas de pedido
@@ -3065,8 +3115,11 @@ namespace Glass.Data.DAL
                     foreach (var id in idsProdPedProducao)
                     {
                         var idRetalho = UsoRetalhoProducaoDAO.Instance.ObtemIdRetalhoProducao(sessao, id);
-                        if (idRetalho.GetValueOrDefault(0) > 0)
+
+                        if (idRetalho > 0)
+                        {
                             UsoRetalhoProducaoDAO.Instance.RemoverAssociacao(sessao, idRetalho.Value, id);
+                        }
                     }
                 }
 
@@ -3076,87 +3129,117 @@ namespace Glass.Data.DAL
                 // para que pudessem ser reimpressas.
                 if (idImpressao > 0)
                 {
-                    foreach (string etiqueta in ProdutoImpressaoDAO.Instance.GetEtiquetasRepostasNaImpressao(sessao, idImpressao, idsProdImpressao,
-                        ProdutoImpressaoDAO.TipoEtiqueta.Pedido))
+                    var etiquetasRepostas = ProdutoImpressaoDAO.Instance.GetEtiquetasRepostasNaImpressao(sessao, idImpressao, idsProdImpressao, ProdutoImpressaoDAO.TipoEtiqueta.Pedido);
+
+                    foreach (var etiquetaReposta in etiquetasRepostas)
                     {
-                        string[] vetEtiqueta = etiqueta.Split('-', '.', '/');
-                        if (objPersistence.ExecuteSqlQueryCount(sessao, "Select Count(*) From produto_impressao Where idPedido=" + vetEtiqueta[0] +
-                            " And posicaoProd=" + vetEtiqueta[1] + " And itemEtiqueta=" + vetEtiqueta[2] + " And qtdeProd=" + vetEtiqueta[3] +
-                            " And !Coalesce(cancelado, False) Group By idImpressao") == 1)
+                        var vetEtiqueta = etiquetaReposta.Split('-', '.', '/');
+
+                        if (objPersistence.ExecuteSqlQueryCount(sessao, $@"SELECT COUNT(*) FROM produto_impressao
+                            WHERE IdPedido = { vetEtiqueta[0] }
+                                AND PosicaoProd = { vetEtiqueta[1] }
+                                AND ItemEtiqueta = { vetEtiqueta[2] }
+                                AND QtdeProd = { vetEtiqueta[3] }
+                                AND !COALESCE(Cancelado, 0)
+                            GROUP BY IdImpressao") == 1)
                         {
-                            objPersistence.ExecuteCommand(sessao, @"Update produto_pedido_producao ppp
-                                    Inner Join produtos_pedido_espelho ppe on (ppp.idProdPed=ppe.idProdPed)
-                                    Inner Join pedido ped on (ppe.idPedido=ped.idPedido)
-                                Set ppp.canceladoAdmin=False, ppp.planoCorte=Null, ppp.pecaReposta=Null, ppp.tipoPerdaRepos=Null,
-                                    ppp.idFuncRepos=Null, ppp.dataRepos=Null, ppp.idSetorRepos=Null,
-                                    ppp.numEtiquetaCanc=ppp.numEtiqueta, ppp.numEtiqueta=Null,
-                                    ppp.situacao=If(ped.tipoPedido<>" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", " +
-                                        (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda + ", " +
-                                        (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra + @")
-                                Where ppp.numEtiqueta='" + etiqueta + "'");
+                            objPersistence.ExecuteCommand(sessao, $@"UPDATE produto_pedido_producao ppp
+                                    INNER JOIN produtos_pedido_espelho ppe ON (ppp.IdProdPed = ppe.IdProdPed)
+                                    INNER JOIN pedido ped ON (ppe.IdPedido = ped.IdPedido)
+                                SET ppp.CanceladoAdmin = 0,
+                                    ppp.PlanoCorte = NULL,
+                                    ppp.PecaReposta = NULL,
+                                    ppp.TipoPerdaRepos = NULL,
+                                    ppp.IdFuncRepos = NULL,
+                                    ppp.DataRepos = NULL,
+                                    ppp.IdSetorRepos = NULL,
+                                    ppp.NumEtiquetaCanc = ppp.NumEtiqueta,
+                                    ppp.NumEtiqueta = NULL,
+                                    ppp.Situacao = IF(ped.TipoPedido <> { (int)Pedido.TipoPedidoEnum.MaoDeObra }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaVenda }, { (int)ProdutoPedidoProducao.SituacaoEnum.CanceladaMaoObra })
+                                WHERE ppp.NumEtiqueta = '{ etiquetaReposta }'");
 
                             // Diminui a quantidade impressao desta peça na tabela produtos_pedido_espelho ou ambiente_pedido_espelho.
-                            uint idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetIdProdPedByEtiqueta(sessao, etiqueta, false);
-                            if (!PedidoDAO.Instance.IsMaoDeObra(sessao, vetEtiqueta[0].StrParaUint()))
-                                objPersistence.ExecuteCommand(sessao, "Update produtos_pedido_espelho Set qtdImpresso=IF(QtdImpresso=0, 0, -1) Where idProdPed=" +
-                                    idProdPedEsp);
+                            var idProdPedEsp = ProdutosPedidoEspelhoDAO.Instance.GetIdProdPedByEtiqueta(sessao, etiquetaReposta, false);
+                            var pedidoMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(sessao, vetEtiqueta[0].StrParaUint());
+
+                            if (!pedidoMaoDeObra)
+                            {
+                                objPersistence.ExecuteCommand(sessao, $"UPDATE produtos_pedido_espelho SET QtdImpresso = IF(QtdImpresso = 0, 0, -1) WHERE IdProdPed = { idProdPedEsp }");
+                            }
                             else
-                                objPersistence.ExecuteCommand(sessao, "Update ambiente_pedido_espelho Set qtdeImpresso=IF(QtdeImpresso=0, 0, -1) Where idAmbientePedido=" +
-                                    ProdutosPedidoEspelhoDAO.Instance.ObtemIdAmbientePedido(sessao, idProdPedEsp));
+                            {
+                                var idAmbientePedido = ProdutosPedidoEspelhoDAO.Instance.ObtemIdAmbientePedido(sessao, idProdPedEsp);
+
+                                objPersistence.ExecuteCommand(sessao, $"UPDATE ambiente_pedido_espelho SET QtdeImpresso = IF(QtdeImpresso = 0, 0, -1) WHERE IdAmbientePedido = { idAmbientePedido }");
+                            }
                         }
                     }
                 }
 
-                if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && String.IsNullOrEmpty(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
+                if ((idPedido ?? 0) == 0 && (numeroNFe ?? 0) == 0 && string.IsNullOrWhiteSpace(planoCorte) && idProdImpressao == 0 && idImpressao > 0)
                 {
                     // Marca os produtos da impressão como cancelados.
-                    objPersistence.ExecuteCommand(sessao, "Update produto_impressao Set cancelado=True Where idImpressao=" + idImpressao);
+                    ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, null, (int)idImpressao);
 
                     LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao), motivo, true);
 
                     // Atualiza a situação dos pedidos.
                     AtualizaSituacaoPedidos(sessao, idImpressao, idPedido, planoCorte);
 
-                    objPersistence.ExecuteCommand(sessao, "Update impressao_etiqueta Set situacao=" +
-                        (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada + " Where idImpressao=" + idImpressao);
+                    AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada);
                 }
                 else
                 {
                     // Marca os produtos da impressão como cancelados.
-                    objPersistence.ExecuteCommand(sessao, "Update produto_impressao Set cancelado=True Where idProdImpressao In (" + idsProdImpressao + ")");
+                    ProdutoImpressaoDAO.Instance.MarcarProdutosImpressaoCancelado(sessao, new List<int> { (int)idProdImpressao }, null);
 
                     // Atualiza a situação dos pedidos.
                     if (idImpressao > 0 && (numeroNFe ?? 0) == 0 && idProdImpressao == 0)
+                    {
                         AtualizaSituacaoPedidos(sessao, idImpressao, idPedido, planoCorte);
+                    }
 
                     if (idProdImpressao > 0)
                     {
-                        var idPedidoProdImpressao = ProdutoImpressaoDAO.Instance.ObtemValorCampo<int?>(sessao, "IdPedido", "IdProdImpressao=" + idProdImpressao);
+                        var idPedidoProdImpressao = ProdutoImpressaoDAO.Instance.ObterIdPedido(sessao, (int)idProdImpressao);
 
                         if ((numeroNFe ?? 0) == 0 && idPedidoProdImpressao.GetValueOrDefault() > 0)
+                        {
                             AtualizaSituacaoPedidos(sessao, 0, (uint)idPedidoProdImpressao.Value, planoCorte);
+                        }
 
-                        LogCancelamentoDAO.Instance.LogProdutoImpressao(sessao, ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, idProdImpressao),
-                            motivo, true);
+                        LogCancelamentoDAO.Instance.LogProdutoImpressao(sessao, ProdutoImpressaoDAO.Instance.GetElementByPrimaryKey(sessao, idProdImpressao), motivo, true);
                     }
                     else if (idImpressao > 0)
                     {
-                        string descr = (idPedido > 0 ? " das etiquetas do pedido " + idPedido : "") +
-                            (numeroNFe > 0 ? " das etiquetas da NFe " + numeroNFe : "") +
-                            (!String.IsNullOrEmpty(planoCorte) ? " das etiquetas com plano de corte '" + planoCorte + "'" : "");
+                        var descricaoLogCancelamento = string.Empty;
 
-                        LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao),
-                            "Cancelamento" + descr + " - " + motivo, true);
+                        if (idPedido > 0)
+                        {
+                            descricaoLogCancelamento += $" das etiquetas do pedido { idPedido }";
+                        }
+
+                        if (numeroNFe > 0)
+                        {
+                            descricaoLogCancelamento += $" das etiquetas da NFe { numeroNFe }";
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(planoCorte))
+                        {
+                            descricaoLogCancelamento += $" das etiquetas com plano de corte '{ planoCorte }'";
+                        }
+
+                        LogCancelamentoDAO.Instance.LogImpressaoEtiquetas(sessao, idFunc, GetElementByPrimaryKey(sessao, idImpressao), $"Cancelamento{ descricaoLogCancelamento } - { motivo }", true);
                     }
                 }
 
                 if (idImpressao > 0)
                 {
-                    bool pecasCanceladas = ExecuteScalar<bool>(sessao, "Select IF(count(*) = Sum(cancelado),TRUE,FALSE) from produto_impressao where idImpressao = " + idImpressao);
+                    var pecasCanceladas = ExecuteScalar<bool>(sessao, $"SELECT IF(COUNT(*) = SUM(Cancelado), 1, 0) FROM produto_impressao WHERE IdImpressao = { idImpressao }");
+
                     if (pecasCanceladas)
                     {
-                        objPersistence.ExecuteCommand(sessao, "Update impressao_etiqueta Set situacao=" +
-                        (int)ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada + " Where idImpressao=" + idImpressao);
+                        AtualizaSituacao(sessao, idImpressao, ImpressaoEtiqueta.SituacaoImpressaoEtiqueta.Cancelada);
                     }
                 }
             }
@@ -3317,6 +3400,19 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Recupera dados da impressão
+
+        /// <summary>
+        /// Recupera a situação da impressão.
+        /// </summary>
+        public int ObtemSituacao(GDASession session, int idImpressao)
+        {
+            if (idImpressao == 0)
+            {
+                return 0;
+            }
+
+            return ObtemValorCampo<int>("Situacao", $"IdImpressao = { idImpressao }");
+        }
 
         /// <summary>
         /// Recupera a situação da impressão.

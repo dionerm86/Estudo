@@ -608,6 +608,40 @@ namespace Glass.Data.DAL
             return (int?)ObtemCampoByEtiqueta(sessao, numEtiqueta, TipoEtiqueta.NotaFiscal, "IdPedidoExpedicao");
         }
 
+        /// <summary>
+        /// Obtem o IdPedido associado ao produto de impressão.
+        /// </summary>
+        public int? ObterIdPedido(GDASession sessao, int idProdImpressao)
+        {
+            return ObtemValorCampo<int?>(sessao, "IdPedido", $"IdProdImpressao = { idProdImpressao }");
+        }
+
+        /// <summary>
+        /// Obtém o IdImpressao a partir de um produto de impressão.
+        /// </summary>
+        public int ObterIdImpressao(GDASession session, int idProdImpressao)
+        {
+            if (idProdImpressao == 0)
+            {
+                return 0;
+            }
+
+            return ObtemValorCampo<int>(session, "IdImpressao", $"IdProdImpressao = { idProdImpressao }");
+        }
+
+        /// <summary>
+        /// Obtém o Cancelado a partir de um produto de impressão.
+        /// </summary>
+        public bool ObterCancelado(GDASession session, int idProdImpressao)
+        {
+            if (idProdImpressao == 0)
+            {
+                return false;
+            }
+
+            return ObtemValorCampo<bool>(session, "COALESCE(Cancelado, 0)", $"IdProdImpressao = { idProdImpressao }");
+        }
+
         #endregion
 
         #region Marca uma peça como impressa
@@ -666,6 +700,35 @@ namespace Glass.Data.DAL
             }
 
             string sql = "Update produto_impressao Set idImpressao=" + idImpressao + " Where idProdImpressao=" + idProdImpressao;
+
+            objPersistence.ExecuteCommand(session, sql);
+        }
+
+        #endregion
+
+        #region Marca um produto de impressão como cancelado
+
+        /// <summary>
+        /// Atualiza o produto de impressão para cancelado.
+        /// </summary>
+        public void MarcarProdutosImpressaoCancelado(GDASession session, List<int> idsProdImpressao, int? idImpressao)
+        {
+            if (!(idsProdImpressao?.Any(f => f > 0)).GetValueOrDefault() && idImpressao.GetValueOrDefault() == 0)
+            {
+                return;
+            }
+
+            var sql = "UPDATE produto_impressao SET Cancelado = 1 WHERE 1";
+
+            if ((idsProdImpressao?.Any(f => f > 0)).GetValueOrDefault())
+            {
+                sql += $" AND IdProdImpressao IN ({ string.Join(",", idsProdImpressao.Where(f => f > 0).ToList()) })";
+            }
+
+            if (idImpressao > 0)
+            {
+                sql += $" AND IdImpressao = { idImpressao.Value }";
+            }
 
             objPersistence.ExecuteCommand(session, sql);
         }
