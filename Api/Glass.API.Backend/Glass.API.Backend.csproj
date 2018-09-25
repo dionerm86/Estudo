@@ -360,12 +360,16 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
     <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\TraducaoOrdenacaoListaCoresVidro.cs" />
@@ -425,6 +429,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
     <Compile Include="Models\Transportadores\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Transportadores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Transportadores\Lista\ListaDto.cs" />
