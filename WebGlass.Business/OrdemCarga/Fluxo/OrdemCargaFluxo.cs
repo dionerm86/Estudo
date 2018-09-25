@@ -239,7 +239,9 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 .Insert(trans, new Glass.Data.Model.OrdemCarga(idCliente, idLoja, idRota,
                                     DateTime.Parse(dtEntPedidoIni), DateTime.Parse(dtEntPedidoFin), tipoOC));
 
-                            var idsPedidos = cep.Value.Split(',').Select(p => Glass.Conversoes.StrParaInt(p)).ToList();
+                            OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOrdemCarga, true);
+
+                            var idsPedidos = cep.Value.Split(',').Select(p => Glass.Conversoes.StrParaUint(p)).ToList();
 
                             var pedidosAdicionados = false;
 
@@ -268,7 +270,10 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                             //Marca a OC como finalizada
                             if (pedidosAdicionados)
+                            {
                                 OrdemCargaDAO.Instance.FinalizarOC(trans, idOrdemCarga);
+                                OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOrdemCarga, false);
+                            }
                             else
                                 OrdemCargaDAO.Instance.DeleteByPrimaryKey(trans, idOrdemCarga);
                         }
@@ -500,6 +505,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     trans.BeginTransaction();
 
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, true);
+
                     if (idOC == 0)
                         throw new Exception("Nenhuma ordem de carga informada.");
 
@@ -588,6 +595,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     transaction.BeginTransaction();
 
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(transaction, idOC, true);
+
                     var tipoOC = OrdemCargaDAO.Instance.GetTipoOrdemCarga(transaction, idOC);
                     if (tipoOC == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
                     {
@@ -615,6 +624,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 throw new Exception("Não é possível adicionar um Pedido nesta OC, pois ela possui Pedidos Liberados.");
                     }
 
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(transaction, idOC, false);
+
                     transaction.Commit();
                     transaction.Close();
 
@@ -627,7 +638,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     ErroDAO.Instance.InserirFromException(string.Format("Delete - OrdemCarga: {0}", idOC), ex);
 
-                    throw;
+                    throw ex;
                 }
             }
         }
@@ -642,6 +653,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 try
                 {
                     trans.BeginTransaction();
+
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, true);
 
                     //valida a inclusão
                     ValidaAdicionarPedidos(trans, idOC, pedidos);
@@ -686,6 +699,8 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     }
 
                     LogAlteracaoDAO.Instance.LogOrdemCarga(trans, (int)idOC, string.Format("Pedidos adicionados: {0}", pedidos));
+
+                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, false);
 
                     trans.Commit();
                     trans.Close();
