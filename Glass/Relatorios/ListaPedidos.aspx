@@ -192,7 +192,7 @@
                                 OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="lblIdOrcamento" runat="server" Text="Orçamento" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="lblIdOrcamento" runat="server" Text="OrÃ§amento" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtIdOrcamento" runat="server" onkeypress="return soNumeros(event, true, true);"
@@ -223,10 +223,10 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label12" runat="server" Text="Situação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label12" runat="server" Text="SituaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="cbdSituacao" runat="server" Title="Selecione a situação"
+                            <sync:CheckBoxListDropDown ID="cbdSituacao" runat="server" Title="Selecione a situaÃ§Ã£o"
                                 OpenOnStart="False" AltRowColor="" DataSourceID="odsSituacao" DataTextField="Descr"
                                 DataValueField="Id" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js">
                             </sync:CheckBoxListDropDown>
@@ -319,7 +319,7 @@
                                             OnClick="imgPesq_Click" />
                                     </td>
                                                                         <td>
-                                        <asp:Label ID="Label32" runat="server" Text="Tipo do Cliente" ForeColor="#0066FF"></asp:Label>
+                                        <asp:Label ID="Label32" runat="server" Text="Grupo do Cliente" ForeColor="#0066FF"></asp:Label>
                                     </td>
                                     <td>
                                         <sync:CheckBoxListDropDown ID="drpGrupoCliente" runat="server" DataSourceID="odsGrupoCliente"
@@ -346,7 +346,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label31" runat="server" Text="Período (Medição)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label31" runat="server" Text="PerÃ­odo (MediÃ§Ã£o)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc2:ctrlData ID="ctrlDataMedIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -419,7 +419,7 @@
                             </sync:CheckBoxListDropDown>
                         </td>
                         <td>
-                            <asp:Label ID="lblUsucad" runat="server" ForeColor="#0066FF" Text="Usuário Cad."></asp:Label>
+                            <asp:Label ID="lblUsucad" runat="server" ForeColor="#0066FF" Text="UsuÃ¡rio Cad."></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpUsucad" runat="server" DataSourceID="odsFuncionario"
@@ -460,7 +460,7 @@
                             <asp:DropDownList ID="drpFastDelivery" runat="server">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
                                 <asp:ListItem Value="1">Sim</asp:ListItem>
-                                <asp:ListItem Value="2">Não</asp:ListItem>
+                                <asp:ListItem Value="2">NÃ£o</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -473,7 +473,7 @@
                             </asp:DropDownList>
                         </td>
                         <td style='<%= ExibirInstalacao() %>'>
-                            <asp:Label ID="Label18" runat="server" ForeColor="#0066FF" Text="Período Instalação"></asp:Label>
+                            <asp:Label ID="Label18" runat="server" ForeColor="#0066FF" Text="PerÃ­odo InstalaÃ§Ã£o"></asp:Label>
                         </td>
                         <td style='<%= ExibirInstalacao() %>'>
                             <uc2:ctrlData ID="ctrlDataIniInst" runat="server" />
@@ -490,7 +490,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label14" runat="server" Text="Período (Situação)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label14" runat="server" Text="PerÃ­odo (SituaÃ§Ã£o)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc2:ctrlData ID="ctrlDataSitIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -503,7 +503,7 @@
                                 OnClientClick="getCli(FindControl('txtNumCli', 'input'));" OnClick="imgPesq_Click" />
                         </td>
                         <td>
-                            <asp:Label ID="Label10" runat="server" Text="Período (Pedido)" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label10" runat="server" Text="PerÃ­odo (Pedido)" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <uc2:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -563,7 +563,7 @@
                             <table>
                                 <tr>
                                     <td>
-                                        <asp:Label ID="Label16" runat="server" ForeColor="#0066FF" Text="Período (Pronto)"></asp:Label>
+                                        <asp:Label ID="Label16" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (Pronto)"></asp:Label>
                                     </td>
                                     <td>
                                         <uc2:ctrlData ID="ctrlDataProntoIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" />
@@ -576,7 +576,7 @@
                                             ToolTip="Pesquisar" OnClick="imgPesq_Click" />
                                     </td>
                                     <td>
-                                        <asp:Label ID="Label17" runat="server" ForeColor="#0066FF" Text="Diferença dias entre Pedido Pronto e Liberado"></asp:Label>
+                                        <asp:Label ID="Label17" runat="server" ForeColor="#0066FF" Text="DiferenÃ§a dias entre Pedido Pronto e Liberado"></asp:Label>
                                     </td>
                                     <td>
                                         <asp:TextBox ID="txtDiasProntoLib" runat="server" Width="60px" onkeypress="return soNumeros(event, true, true)"></asp:TextBox>
@@ -593,10 +593,10 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="lblSituacaoProd" runat="server" ForeColor="#0066FF" Text="Situação Prod."></asp:Label>
+                            <asp:Label ID="lblSituacaoProd" runat="server" ForeColor="#0066FF" Text="SituaÃ§Ã£o Prod."></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="cbdSituacaoProd" runat="server" Title="Selecione a situação"
+                            <sync:CheckBoxListDropDown ID="cbdSituacaoProd" runat="server" Title="Selecione a situaÃ§Ã£o"
                                 OpenOnStart="False" AltRowColor="" DataSourceID="odsSituacaoProd" DataTextField="Descr"
                                 DataValueField="Id" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js">
                             </sync:CheckBoxListDropDown>
@@ -696,7 +696,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="Label29" runat="server" Text="Observação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label29" runat="server" Text="ObservaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtObs" runat="server" Width="200px"></asp:TextBox>
@@ -720,10 +720,10 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:CheckBox ID="chkExibirProdutos" runat="server" Text="Exibir Produtos no Relatório (ao agrupar)" />
+                            <asp:CheckBox ID="chkExibirProdutos" runat="server" Text="Exibir Produtos no RelatÃ³rio (ao agrupar)" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no Relatório"
+                            <asp:CheckBox ID="chkEsconderTotal" runat="server" Text="Esconder Total no RelatÃ³rio"
                                 OnCheckedChanged="chkEsconderTotal_CheckedChanged"/>
                         </td>
                         <td>&nbsp;
@@ -772,7 +772,7 @@
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
                         <asp:BoundField DataField="IdPedido" HeaderText="Num. Pedido" SortExpression="IdPedido" ItemStyle-HorizontalAlign="Center" />
-                        <asp:BoundField DataField="IdOrcamento" HeaderText="Num. Orçamento" SortExpression="IdOrcamento" ItemStyle-HorizontalAlign="Center" />
+                        <asp:BoundField DataField="IdOrcamento" HeaderText="Num. OrÃ§amento" SortExpression="IdOrcamento" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField DataField="NomeCliente" HeaderText="Cliente" SortExpression="NomeCliente" />
                         <asp:BoundField DataField="NfeAssociada" HeaderText="Num. NFe" SortExpression="NfeAssociada" ItemStyle-HorizontalAlign="Center" />
                         <asp:BoundField DataField="NomeLoja" HeaderText="Loja" SortExpression="NomeLoja" />
@@ -786,7 +786,7 @@
                         </asp:TemplateField>
                         <asp:BoundField DataField="RptBairro" HeaderText="Bairro" SortExpression="RptBairro" />
                         <asp:BoundField DataField="CodCliente" HeaderText="Pedido Cli." SortExpression="CodCliente" />
-                        <asp:BoundField DataField="NomeFunc" HeaderText="Funcionário" SortExpression="NomeFunc" />
+                        <asp:BoundField DataField="NomeFunc" HeaderText="FuncionÃ¡rio" SortExpression="NomeFunc" />
                         <asp:BoundField DataField="TotalComDescontoConcatenado" HeaderText="Total" SortExpression="TotalComDescontoConcatenado" />
                         <asp:TemplateField HeaderText="Desconto Total" SortExpression="TotalComDescontoConcatenado" Visible="false">
                             <ItemTemplate>
@@ -800,8 +800,8 @@
                         <asp:BoundField DataField="DataEntregaExibicao" HeaderText="Entrega" SortExpression="DataEntrega" />
                         <asp:BoundField DataField="DataConfLib" HeaderText="Conf. / Lib." SortExpression="DataConfLib" />
                         <asp:BoundField DataField="DataPronto" HeaderText="Pronto" SortExpression="DataPronto" />
-                        <asp:BoundField DataField="DescrSituacaoPedido" HeaderText="Situação" SortExpression="DescrSituacaoPedido" />
-                        <asp:TemplateField HeaderText="Situação Prod." SortExpression="DescrSituacaoProducao">
+                        <asp:BoundField DataField="DescrSituacaoPedido" HeaderText="SituaÃ§Ã£o" SortExpression="DescrSituacaoPedido" />
+                        <asp:TemplateField HeaderText="SituaÃ§Ã£o Prod." SortExpression="DescrSituacaoProducao">
                             <ItemTemplate>
                                 <asp:Label ID="lblSitProd" runat="server" OnLoad="lblSitProd_Load" Text='<%# Eval("DescrSituacaoProducao") %>'></asp:Label>
                                 <asp:LinkButton ID="lnkSitProd" runat="server" CommandArgument='<%# Eval("IdPedido") %>'
@@ -812,7 +812,7 @@
                             </EditItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="DescricaoTipoPedido" HeaderText="Tipo" SortExpression="DescricaoTipoPedido" />
-                        <asp:BoundField DataField="TotM" HeaderText="Total m²" SortExpression="TotM" />
+                        <asp:BoundField DataField="TotM" HeaderText="Total mÂ²" SortExpression="TotM" />
                         <asp:BoundField DataField="Peso" HeaderText="Peso total" SortExpression="Peso" />
                     </Columns>
                     <PagerStyle />
@@ -835,7 +835,7 @@
                                         <td>&nbsp;&nbsp;
                                         </td>
                                         <td>
-                                            <asp:Label ID="lblTotM" runat="server" Font-Bold="true" Font-Size="Medium" Text='<%# string.Format("M2: {0:N}m²", Eval("TotM") != null ? Eval("TotM") : "0") %>'></asp:Label>
+                                            <asp:Label ID="lblTotM" runat="server" Font-Bold="true" Font-Size="Medium" Text='<%# string.Format("M2: {0:N}mÂ²", Eval("TotM") != null ? Eval("TotM") : "0") %>'></asp:Label>
                                         </td>
                                         <td>&nbsp;&nbsp;
                                         </td>
@@ -924,18 +924,18 @@
                     </tr>
                     <tr>
                         <td align="center">
-                            <asp:LinkButton ID="lnkImprimirSimples" runat="server" OnClientClick="return openRptSimples();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. m²)</asp:LinkButton>
+                            <asp:LinkButton ID="lnkImprimirSimples" runat="server" OnClientClick="return openRptSimples();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. mÂ²)</asp:LinkButton>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <asp:LinkButton ID="lnkExportarExcelSimples" runat="server" OnClientClick="openRptSimples(true); return false;"><img border="0"
-                    src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. m²)</asp:LinkButton>
+                    src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. mÂ²)</asp:LinkButton>
                         </td>
                     </tr>
                     <tr>
                         <td align="center">
-                            <asp:LinkButton ID="lnkImprimirRota" runat="server" OnClientClick="return openRptRota();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. m² por Rota)</asp:LinkButton>
+                            <asp:LinkButton ID="lnkImprimirRota" runat="server" OnClientClick="return openRptRota();"> <img alt="" border="0" src="../Images/printer.png" /> Imprimir (Peso e Tot. mÂ² por Rota)</asp:LinkButton>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <asp:LinkButton ID="lnkExportarExcelRota" runat="server" OnClientClick="openRptRota(true); return false;"><img border="0"
-                    src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. m² por Rota)</asp:LinkButton>
+                    src="../Images/Excel.gif" /> Exportar para o Excel (Peso e Tot. mÂ² por Rota)</asp:LinkButton>
                         </td>
                     </tr>
                 </table>
