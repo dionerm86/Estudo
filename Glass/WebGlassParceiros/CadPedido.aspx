@@ -401,9 +401,6 @@
             else if (!produtoAmbiente)
             {
                 if (retorno[0] == "Prod") {
-
-                    valorTabelaProduto = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3];
-
                     FindControl("hdfIdProd", "input").value = retorno[1];
                     FindControl("txtValorIns", "input").value = verificaProduto[1] != "0" ? verificaProduto[1] : retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl("hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro
@@ -1185,8 +1182,6 @@
             return true;
         }
     }
-
-    var valorTabelaProduto = null;
 
     function GetAdicionalAlturaChapa(){
         var idProd = FindControl("hdfIdProd", "input").value;

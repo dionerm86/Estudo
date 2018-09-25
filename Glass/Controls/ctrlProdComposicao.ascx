@@ -125,10 +125,8 @@
                         txtValor.value = alterarValor ? verificaProduto[1] : txtValor.value;
                         // O valor do produto deve ser atualizado sempre, para que caso seja buscado um produto, preenchendo automaticamente
                         // o valor unitário e o usuário resolva buscar outro produto sem ter inserido o primeiro, garanta que será buscado o valor deste
-                    else{
+                    else
                         txtValor.value = alterarValor ? retorno[3] : txtValor.value;
-                        valorTabelaProduto = alterarValor ? retorno[3] : txtValor.value;
-                    }
 
                     FindControl("hdf_IsVidroComposicao", "input", table).value = retorno[4]; // Informa se o produto é vidro
                     FindControl("hdf_M2MinimoComposicao", "input", table).value = retorno[5]; // Informa se o produto possui m² mínimo
@@ -526,8 +524,6 @@
             alert(err);
         }
     }
-
-    var valorTabelaProduto = null;
 
     function GetAdicionalAlturaChapa(){
         var idPedido = FindControl("hdfIdPedido", "input").value;

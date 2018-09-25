@@ -316,9 +316,6 @@
                     return false;
                 }
                 else if (retorno[0] == "Prod") {
-
-                    valorTabelaProduto = retorno[3];
-
                     FindControl(tipo + "hdfIdProd", "input").value = retorno[1];
                     FindControl(tipo + "txtValorIns", "input").value = retorno[3]; // Exibe no cadastro o valor mínimo do produto
                     FindControl(tipo + "hdfIsVidro", "input").value = retorno[4]; // Informa se o produto é vidro

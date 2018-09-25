@@ -73,7 +73,6 @@ function loadProduto(orcamentoRapido) {
 
         FindControl("hdfIdProd", "input").value = retorno[1];
         FindControl("lblDescrProd", "span").innerHTML = retorno[2];
-        valorTabelaProduto = retorno[3];
         FindControl("txtValor", "input").value = retorno[3]; // Exibe o valor do produto
         FindControl("hdfValMin", "input").value = retorno[3]; // Salva o valor mínimo
         posValor = retorno[4]; // Posição que deverá ser utilizada para pegar o valor dos itens de transformação do produto
@@ -245,8 +244,6 @@ function calcM2() {
 
     }
 }
-
-var valorTabelaProduto = null;
 
 function GetAdicionalAlturaChapa() {
 
