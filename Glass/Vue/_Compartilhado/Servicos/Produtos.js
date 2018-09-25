@@ -42,6 +42,65 @@ Servicos.Produtos = (function(http) {
     CoresVidro: {
       /**
        * Recupera a lista de cores de vidro para uso no controle de busca.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        filtro = filtro || {};
+        filtro.pagina = pagina;
+        filtro.numeroRegistros = numeroRegistros;
+        filtro.ordenacao = ordenacao;
+
+        return http().get(API + 'cores/vidro', {
+          params: filtro
+        });
+      },
+
+      /**
+       * Remove uma cor de vidro.
+       * @param {!number} idCorVidro O identificador da cor de vidro que será excluída.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (idCorVidro) {
+        if (!idCorVidro) {
+          throw new Error('Cor de vidro é obrigatória.');
+        }
+
+        return http().delete(API + 'cores/vidro/' + idCorVidro);
+      },
+
+      /**
+       * Insere uma cor de vidro.
+       * @param {!Object} corVidro O objeto com os dados da cor de vidro a ser inserida.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (corVidro) {
+        return http().post(API + 'cores/vidro', corVidro);
+      },
+
+      /**
+       * Altera os dados de uma cor de vidro.
+       * @param {!number} idCorVidro O identificador da cor de vidro que será alterada.
+       * @param {!Object} corVidro O objeto com os dados da cor de vidro a serem alteradas.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (idCorVidro, corVidro) {
+        if (!idCorVidro) {
+          throw new Error('Cor de vidro é obrigatória.');
+        }
+
+        if (!corVidro || corVidro === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API + 'cores/vidro/' + idCorVidro, corVidro);
+      },
+
+      /**
+       * Recupera a lista de cores de vidro para uso no controle de busca.
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       obterParaControle: function () {
