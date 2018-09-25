@@ -72,5 +72,11 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
         /// </summary>
         [JsonProperty("areaM2DesconsiderarObra")]
         public double? AreaEmM2DesconsiderarObra { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a altura do produto.
+        /// </summary>
+        [JsonProperty("altura")]
+        public double? Altura { get; set; }
     }
 }

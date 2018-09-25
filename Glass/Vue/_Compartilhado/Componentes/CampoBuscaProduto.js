@@ -1,6 +1,6 @@
 Vue.component('campo-busca-produto', {
   inheritAttrs: false,
-  mixins: [Mixins.JsonQuerystring],
+  mixins: [Mixins.Clonar, Mixins.JsonQuerystring],
   props: {
     /**
      * Produto selecionado no controle.
@@ -89,6 +89,28 @@ Vue.component('campo-busca-produto', {
           this.descricaoAtual = valor ? valor.descricao : null;
         }
       }
+    }
+  },
+
+  watch: {
+    /**
+     * Observador para a propriedade 'dadosAdicionaisValidacao'.
+     * Atualiza os dados do produto atual.
+     */
+    dadosAdicionaisValidacao: {
+      handler: function() {
+        if (this.produtoAtual) {
+          var produto = this.clonar(this.produtoAtual);
+          this.produtoAtual = null;
+
+          var vm = this;
+
+          this.$nextTick(function() {
+            vm.produtoAtual = produto;
+          });
+        }
+      },
+      deep: true
     }
   },
 
