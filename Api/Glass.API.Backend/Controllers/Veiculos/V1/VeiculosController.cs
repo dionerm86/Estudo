@@ -24,11 +24,14 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
             return null;
         }
 
-        private IHttpActionResult ValidarExistenciaPlacaVeiculo(GDASession sessao, string placa)
+        private IHttpActionResult ValidarExistenciaPlacaVeiculo(string placa)
         {
             var validacao = this.ValidarPlaca(placa);
 
-            if (validacao == null && !VeiculoDAO.Instance.Exists(sessao, placa))
+            var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                .Current.GetInstance<Global.Negocios.IVeiculoFluxo>();
+
+            if (validacao == null && fluxo.ObtemVeiculo(placa) == null)
             {
                 return this.NaoEncontrado("Veículo não encontrado.");
             }

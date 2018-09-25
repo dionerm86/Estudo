@@ -476,6 +476,7 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
     <Content Include="Vue\Transportadores\Templates\LstTransportadores.Filtro.html" />
@@ -1777,6 +1778,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Producao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoLapidacao.html" />

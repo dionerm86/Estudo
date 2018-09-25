@@ -21,17 +21,17 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
         /// <param name="placa">O identificador do veículo que será excluído.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{placa}")]
         [SwaggerResponse(202, "Veículo excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
-        [SwaggerResponse(404, "Veículo não encontrado para o id informado.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Veículo não encontrado para a placa informado.", Type = typeof(MensagemDto))]
         public IHttpActionResult ExcluirVeiculo(string placa)
         {
             using (var sessao = new GDATransaction())
             {
                 try
                 {
-                    var validacao = this.ValidarExistenciaPlacaVeiculo(sessao, placa);
+                    var validacao = this.ValidarExistenciaPlacaVeiculo(placa);
 
                     if (validacao != null)
                     {
@@ -43,7 +43,12 @@ namespace Glass.API.Backend.Controllers.Veiculos.V1
 
                     var veiculo = fluxo.ObtemVeiculo(placa);
 
-                    fluxo.ApagarVeiculo(veiculo);
+                    var resultado = fluxo.ApagarVeiculo(veiculo);
+
+                    if (!resultado)
+                    {
+                        return this.ErroValidacao($"Falha ao excluir veículo. {resultado.Message.ToString()}");
+                    }
 
                     return this.Aceito($"Veículo excluído.");
                 }
