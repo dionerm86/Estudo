@@ -842,7 +842,7 @@ namespace Glass.Global.Negocios.Componentes
                     })
                     .ToList();
 
-                if(produtosLoja?.Count() <= 0)
+                if (produtosLoja?.Count() <= 0)
                     return new Colosoft.Business.SaveResult(false, "Falha ao incluir produto loja.".GetFormatter());
             }
             else

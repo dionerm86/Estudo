@@ -8653,657 +8653,657 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Relatorios\Administrativos\rptAlteracoesSistema.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptBeneficiamentos.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptCentroCustosPlanoConta.rdlc">
+    <Content Include="Relatorios\Administrativos\rptAlteracoesSistema.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptBeneficiamentos.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptCentroCustosPlanoConta.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Administrativos\rptCentroCustosMes.rdlc">
+    </Content>
+    <Content Include="Relatorios\Administrativos\rptCentroCustosMes.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Administrativos\rptContasPagarReceber.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptDescParc.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptDescParcPag.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptFluxoCaixa.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptFluxoCaixaSintetico.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoDRE.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoOrcamento.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoOrcaVendas.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoProduto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoVendas.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptGraficoVendas2.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptIFD.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptLucroAproximado.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptMovimentacoesFinanceiras.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptMovimentacoesFinanceirasDet.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptPrevisaoFinanceira.rdlc">
+    </Content>
+    <Content Include="Relatorios\Administrativos\rptContasPagarReceber.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptDescParc.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptDescParcPag.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptFluxoCaixa.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptFluxoCaixaSintetico.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoDRE.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoOrcamento.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoOrcaVendas.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoProduto.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoVendas.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptGraficoVendas2.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptIFD.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptLucroAproximado.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptMovimentacoesFinanceiras.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptMovimentacoesFinanceirasDet.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptPrevisaoFinanceira.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Administrativos\rptPrevisaoFinanRecebPedidos.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptRecebimentosDetalhados.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptRecebimentosTipo.rdlc">
+    </Content>
+    <Content Include="Relatorios\Administrativos\rptPrevisaoFinanRecebPedidos.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptRecebimentosDetalhados.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptRecebimentosTipo.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Administrativos\rptRecebimentosTipoGrafico.rdlc" />
-    <EmbeddedResource Include="Relatorios\Administrativos\rptRelacaoVendas.rdlc" />
-    <EmbeddedResource Include="Relatorios\CTe\rptCTeTerceiros.rdlc" />
-    <EmbeddedResource Include="Relatorios\CTe\rptCTeTerceirosRod.rdlc" />
-    <EmbeddedResource Include="Relatorios\CTe\rptDacteRetrato.rdlc">
+    </Content>
+    <Content Include="Relatorios\Administrativos\rptRecebimentosTipoGrafico.rdlc" />
+    <Content Include="Relatorios\Administrativos\rptRelacaoVendas.rdlc" />
+    <Content Include="Relatorios\CTe\rptCTeTerceiros.rdlc" />
+    <Content Include="Relatorios\CTe\rptCTeTerceirosRod.rdlc" />
+    <Content Include="Relatorios\CTe\rptDacteRetrato.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\CTe\rptDacteRetratoFracionado.rdlc">
+    </Content>
+    <Content Include="Relatorios\CTe\rptDacteRetratoFracionado.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Dinamicos\rptDinamico.rdlc">
+    </Content>
+    <Content Include="Relatorios\Dinamicos\rptDinamico.rdlc">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\DIPJ\rptDIPJ.rdlc" />
-    <EmbeddedResource Include="Relatorios\Genericos\ModeloRecibo\rptRecibo.rdlc">
+    </Content>
+    <Content Include="Relatorios\DIPJ\rptDIPJ.rdlc" />
+    <Content Include="Relatorios\Genericos\ModeloRecibo\rptRecibo.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Genericos\rptAceitacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\Genericos\rptRiscoQuebra.rdlc" />
-    <EmbeddedResource Include="Relatorios\MDFe\rptDamdfeRetrato.rdlc">
+    </Content>
+    <Content Include="Relatorios\Genericos\rptAceitacao.rdlc" />
+    <Content Include="Relatorios\Genericos\rptRiscoQuebra.rdlc" />
+    <Content Include="Relatorios\MDFe\rptDamdfeRetrato.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloEtiquetaBox\rptEtiquetaBox.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloEtiquetaBox\rptEtiquetaBox.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloEtiquetaCavalete\rptEtiquetaCavalete.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloEtiquetaCavalete\rptEtiquetaCavalete.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloEtiquetaVolume\rptEtiquetaVolume.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiqueta.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloEtiquetaVolume\rptEtiquetaVolume.rdlc" />
+    <Content Include="Relatorios\ModeloEtiqueta\rptEtiqueta.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloEtiqueta\rptEtiquetaLib.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloEtiqueta\rptEtiquetaLib.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacao.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacao.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoPecasCanc.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoPecasCanc.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutos.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutos.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutosCorte.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoProdutosCorte.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaAlmoxarife.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaAlmoxarife.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaCliente.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaCliente.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaExpedicao.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaEmpresa.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido.rdlc" />
+    <Content Include="Relatorios\ModeloLiberacao\Padrao\rptLiberacaoViaEmpresa.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido4Vias.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedido4Vias.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoCheques.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoCheques.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoParcelas4Vias.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoParcelas4Vias.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPecasCanc.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPecasCanc.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPedidos.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPedidos.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPedidos4Vias.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoPedidos4Vias.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutos.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutos.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutos4Vias.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutos4Vias.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutosSemVidro.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoProdutosSemVidro.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoResumo.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoResumo.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoResumo4Vias.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloLiberacao\rptLiberacaoPedidoResumo4Vias.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloMedicao\rptMedicao.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloNotaPromissoria\rptNotaProm.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamento.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloMedicao\rptMedicao.rdlc" />
+    <Content Include="Relatorios\ModeloNotaPromissoria\rptNotaProm.rdlc" />
+    <Content Include="Relatorios\ModeloOrcamento\rptOrcamento.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloOrcamento\rptOrcamentoLib.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloOrcamento\rptOrcamentoLib.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcp.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloPedidoPcp\rptPedidoPcp.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpProdutos.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpResumoCorte.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloPedidoReposicao\rptPedidoReposicao.rdlc" />
-    <EmbeddedResource Include="Relatorios\ModeloPedido\rptPedido.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpProdutos.rdlc" />
+    <Content Include="Relatorios\ModeloPedidoPcp\rptPedidoPcpResumoCorte.rdlc" />
+    <Content Include="Relatorios\ModeloPedidoReposicao\rptPedidoReposicao.rdlc" />
+    <Content Include="Relatorios\ModeloPedido\rptPedido.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloPedido\rptPedidoA4.rdlc">
+    </Content>
+    <Content Include="Relatorios\ModeloPedido\rptPedidoA4.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\ModeloTrocaDevolucao\rptTrocaDevolucao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptApuracaoICMS.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoEncerramentoApuracaoICMSJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoEncerramentoApuracaoICMSSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptApuracaoIPI.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoAberturaApuracaoIPIJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoAberturaApuracaoIPISEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoEncerramentoApuracaoIPIJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoEncerramentoApuracaoIPISEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Entrada\rptLivroRegistroEntrada.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoAberturaLivroRegEntJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoAberturaLivroRegEntSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoEncerramentoLivroRegEntJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoEncerramentoLivroRegEntSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Saida\rptLivroRegistroSaida.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoAberturaLivroRegSaidaSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoAberturaLivroSaidaJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoEncerramentoLivroRegSaidaJUCEMG.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoEncerramentoLivroRegSaidaSEF.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptDanfeNFCe.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\rptDanfeRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\rptDanfeRetratoFS.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptDanfeSemLogo.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\rptDanfeSemLogoFS.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptFiscal.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptFiscalAutFin.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\rptFiscalAutFinProd.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptFiscalAutFinVM.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\NFe\rptLivroRegistroEntrada.rdlc" />
-    <EmbeddedResource Include="Relatorios\NFe\rptNFTerceiros.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptCarregamento.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptItensVolumesPendentes.rdlc" />
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptListaCarregamentos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptListaOrdemCarga.rdlc" />
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptListaPendenciaCarregamento.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptOrdemCarga.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptPedidosOrdemCarga.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptPendenciaCarregamento.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptVolume.rdlc" />
-    <EmbeddedResource Include="Relatorios\OrdemCarga\rptVolumesPedido.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComprovanteCapptaTef.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptFichaCliente.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptFichaProduto.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaClientes.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptLstPedidos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Producao\rptGraficoProdPerdaDiaria.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptGraficoProdPerdaProduto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptPecasPendentes.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptPedidosCapacidadeProducao.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptPerdas.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptPerdasRepos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Producao\rptPlanilhaMetragem.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptPlanilhaMetragemAgrupada.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoAgrupado.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoAltLarg.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoContagem.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoData.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoDiaria.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoForno.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoFornoResumo.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoPersonalGlass.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoRoteiro.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetor.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetores.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetoresFiltrado.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetoresTitulos.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetorPassou.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSetorPassouTitulos.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSituacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptProducaoSituacaoData.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptRelacaoBoxProducao.rdlc" />
-    <EmbeddedResource Include="Relatorios\Producao\rptRoteiroProducao.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoImagensAltUmaImg.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjeto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoImagensAlt.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoMateriais.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoMedidasInst.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoAplProc.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecas.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecasAplProc.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImagemProjetoPecasTotal.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptImpressaoModeloProjeto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptLstModeloProjeto.rdlc" />
-    <EmbeddedResource Include="Relatorios\Projeto\rptTotaisProjeto.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptAberturaFornada.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptAcerto.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptAcertoCheque.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptAcertoChequesDevolvidosAbertos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptAgendamentoInstalacoes.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptAntecipContaRec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptAntecipFornec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptCaixaDiario.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCaixaGeral.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptChapaVidro.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptChequesPaisagem.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCheques.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptClienteDescAcresc.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptComissao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComissaoCalcular.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComissaoContasRecebidas.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptComissaoDetalhada.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptComissaoDetalhadaDebitos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComissaoDetalhadaDet.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCompra.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCompraComBenef.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCompraNaoVendeVidro.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptComprasProd.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptComprasProdDet.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptConciliacaoBancaria.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptConsultaRapidaCliente.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContaRecAntecip.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContaRecebida.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasPagarRetrato.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasPagar.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasPagasRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasPagas.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasReceberRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasReceber.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasReceberPedidos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasReceberResumido.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasReceberSemObs.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasReceberTotal.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptContasRecebidasRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasRecebidas.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptContasRecebidasLocal.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptControlePerdasExt.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCorEspessura.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptCotacaoCompraCalculadaFornec.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCotacaoCompraCalculada.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCreditoFornecedor.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptCustoFixo.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDebitoLimiteCliente.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptDebitosCliente.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDeclaracaoCheque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDefinicaoCargaRota.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDeposito.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptDevolucaoPagto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEncontroContas.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEntradaEstoque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEquipesInst.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEstoqueFiscal.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEstoqueMinimo.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEstoqueProdutos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEstoqueProdutosLib.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptEstoqueReal.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptEtiquetaBig.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptExportacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptExtratoBancario.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptExtratoEstoque.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptExtratoEstoqueCliente.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptExtratoEstoqueFiscal.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptFichaFornecedor.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptFornadaSintetico.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptFornadaAnalitico.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptHistoricoCliente.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptHistoricoFornec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptImpostoServ.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptImpressoesPendentes.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptInventarioEstoque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptItemPontoEquilibrio.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptLiberacaoPedidoMov.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptLiberacaoPedidoMovSemValor.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptLimiteCliente.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaAcerto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaAntecipContaRec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaAntecipFornec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaArquivoCartaoNaoIdentificado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaCartaoNaoIdentificado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaCfop.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaCfopNatOp.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaClientesCredito.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaClienteTabelaDesconto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaChapasDisponiveis.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaCompras.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaComprasTotalVidros.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaConferencia.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaCreditoFornecedor.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaCTeVidroValle.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaCTe.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaDeposito.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaDepositoNaoIdentificado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaDevolucaoPagto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaEncontroContas.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaEntradaEstoque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaEntregaPorRota.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaFinalizarPedidoFinanceiro.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaFornecedoresCredito.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaImpostoServ.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaInstalacao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaLiberacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaLiberacaoIcms.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaMedicao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaOrcamentos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaOrcamentoSite.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaOrdemInst.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPassivos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPedidoInterno.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPedidoInternoAnalitico.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPedidos.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosPaisagem.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosPaisagemPronto.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosProd.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosPronto.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosRota.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPedidosSimples.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContas.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContasAjustado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContasDesc.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContasDet.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContasDetAgrupar.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaPlanoContasMes.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaProducao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaProdutosInterno.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaSaidaEstoque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaSubgrupo.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptListaTrocaDev.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptListaVolumes.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMemoriaCalculo.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptMolde.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMotivoFinalizacaoFinanceiro.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovFuncTotais.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptObraGerarCredito.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptParcCartaoQuitadas.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptParcelas.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptMovCredito.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovCreditoFornec.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovEstoque.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptMovEstoqueSemValor.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovEstoqueTotal.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptMovEstoqueTotalComparativo.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovFunc.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptObra.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptObraDetalhada.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptObraGerarCreditoAgrupado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptObraPagtoAntecipado.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptObraProdutos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptOrcamentoRapido.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPagto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPagtoCreditoFornecedor.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPecasFornada.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPecasOtimizacao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPecasSemEntrada.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPecasSemEntradaSemVidro.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPecasSemSaida.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPecasSemSaidaSemVidro.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPedidoA4.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPedidoEspelho.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPedidoInstalacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPedidoInterno.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPedidoPcpAgrupado.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPendenciaCarregamento.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPontoEquilibrio.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptMovChapa.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptMovChapaDetalhes.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPrecoTabCliente.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPrecoTabClienteRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPrecoTabRetrato.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptProducaoInst.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProducaoInstDetalhada.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProducaoProd.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptDetalheRegImpArqRemessa.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptQuitarParcCartao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptRegImpArqRemessa.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptResultadoOtimizacao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptResultadoOtimizacaoPecas.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptResumoDiarioCreditoGerado.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptRetalhosProducaoCorEspessura.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptTempoGastoParaLiberacao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptProdutoPedidoInterno.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutoProjeto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutosCaixa.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptProdutosComprar.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutosExportacao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutosLiberar.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptProdutosPreco.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptResumoDiario.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptRetalhosAssociados.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptRetalhosProducao.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptRetCartaCorrecao.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSaidaEstoque.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSinaisPagar.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptSinaisPagos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSinaisReceber.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSinaisRecebidos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSinal.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptSinalCompra.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSubDescAcresConsultaRapida.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptSugestaoCompra.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptVendasClienteComissionado.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptVendasComLucr.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptVendasProd.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptVendasSemImposto.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptPosicaoMateriaPrima.rdlc">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Relatorios\rptPosicaoMateriaPrimaProdutos.rdlc" />
-    <EmbeddedResource Include="Relatorios\rptVendasSemLucr.rdlc" />
+    </Content>
+    <Content Include="Relatorios\ModeloTrocaDevolucao\rptTrocaDevolucao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptApuracaoICMS.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoAberturaApuracaoICMSSEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoEncerramentoApuracaoICMSJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\ICMS\rptTermoEncerramentoApuracaoICMSSEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptApuracaoIPI.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoAberturaApuracaoIPIJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoAberturaApuracaoIPISEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoEncerramentoApuracaoIPIJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Apuracao\IPI\rptTermoEncerramentoApuracaoIPISEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Entrada\rptLivroRegistroEntrada.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoAberturaLivroRegEntJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoAberturaLivroRegEntSEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoEncerramentoLivroRegEntJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Entrada\rptTermoEncerramentoLivroRegEntSEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Saida\rptLivroRegistroSaida.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoAberturaLivroRegSaidaSEF.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoAberturaLivroSaidaJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoEncerramentoLivroRegSaidaJUCEMG.rdlc" />
+    <Content Include="Relatorios\NFe\LivroRegistro\Saida\rptTermoEncerramentoLivroRegSaidaSEF.rdlc" />
+    <Content Include="Relatorios\NFe\rptDanfeNFCe.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\rptDanfeRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\rptDanfeRetratoFS.rdlc" />
+    <Content Include="Relatorios\NFe\rptDanfeSemLogo.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\rptDanfeSemLogoFS.rdlc" />
+    <Content Include="Relatorios\NFe\rptFiscal.rdlc" />
+    <Content Include="Relatorios\NFe\rptFiscalAutFin.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\rptFiscalAutFinProd.rdlc" />
+    <Content Include="Relatorios\NFe\rptFiscalAutFinVM.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\NFe\rptLivroRegistroEntrada.rdlc" />
+    <Content Include="Relatorios\NFe\rptNFTerceiros.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptCarregamento.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptItensVolumesPendentes.rdlc" />
+    <Content Include="Relatorios\OrdemCarga\rptListaCarregamentos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptListaOrdemCarga.rdlc" />
+    <Content Include="Relatorios\OrdemCarga\rptListaPendenciaCarregamento.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptOrdemCarga.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptPedidosOrdemCarga.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptPendenciaCarregamento.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\OrdemCarga\rptVolume.rdlc" />
+    <Content Include="Relatorios\OrdemCarga\rptVolumesPedido.rdlc" />
+    <Content Include="Relatorios\rptComprovanteCapptaTef.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptFichaCliente.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptFichaProduto.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptLimiteChequeCpfCnpj.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaClientes.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptLstPedidos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\Producao\rptGraficoProdPerdaDiaria.rdlc" />
+    <Content Include="Relatorios\Producao\rptGraficoProdPerdaProduto.rdlc" />
+    <Content Include="Relatorios\Producao\rptPecasPendentes.rdlc" />
+    <Content Include="Relatorios\Producao\rptPedidosCapacidadeProducao.rdlc" />
+    <Content Include="Relatorios\Producao\rptPerdas.rdlc" />
+    <Content Include="Relatorios\Producao\rptPerdasRepos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\Producao\rptPlanilhaMetragem.rdlc" />
+    <Content Include="Relatorios\Producao\rptPlanilhaMetragemAgrupada.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\Producao\rptProducaoAgrupado.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoAltLarg.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoContagem.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoData.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoDiaria.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoForno.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoFornoResumo.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoPersonalGlass.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoRoteiro.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetor.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetores.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetoresFiltrado.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetoresTitulos.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetorPassou.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSetorPassouTitulos.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSituacao.rdlc" />
+    <Content Include="Relatorios\Producao\rptProducaoSituacaoData.rdlc" />
+    <Content Include="Relatorios\Producao\rptRelacaoBoxProducao.rdlc" />
+    <Content Include="Relatorios\Producao\rptRoteiroProducao.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoImagensAltUmaImg.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjeto.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoImagensAlt.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoMateriais.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoMedidasInst.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoAplProc.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\Projeto\rptImagemProjetoPecas.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoPecasAplProc.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImagemProjetoPecasTotal.rdlc" />
+    <Content Include="Relatorios\Projeto\rptImpressaoModeloProjeto.rdlc" />
+    <Content Include="Relatorios\Projeto\rptLstModeloProjeto.rdlc" />
+    <Content Include="Relatorios\Projeto\rptTotaisProjeto.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptAberturaFornada.rdlc" />
+    <Content Include="Relatorios\rptAcerto.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptAcertoCheque.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptAcertoChequesDevolvidosAbertos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptAgendamentoInstalacoes.rdlc" />
+    <Content Include="Relatorios\rptAntecipContaRec.rdlc" />
+    <Content Include="Relatorios\rptAntecipFornec.rdlc" />
+    <Content Include="Relatorios\rptCaixaDiario.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCaixaGeral.rdlc" />
+    <Content Include="Relatorios\rptChapaVidro.rdlc" />
+    <Content Include="Relatorios\rptChequesPaisagem.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCheques.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptClienteDescAcresc.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptComissao.rdlc" />
+    <Content Include="Relatorios\rptComissaoCalcular.rdlc" />
+    <Content Include="Relatorios\rptComissaoContasRecebidas.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptComissaoDetalhada.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptComissaoDetalhadaDebitos.rdlc" />
+    <Content Include="Relatorios\rptComissaoDetalhadaDet.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCompra.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCompraComBenef.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCompraNaoVendeVidro.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptComprasProd.rdlc" />
+    <Content Include="Relatorios\rptComprasProdDet.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptConciliacaoBancaria.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptConsultaRapidaCliente.rdlc" />
+    <Content Include="Relatorios\rptContaRecAntecip.rdlc" />
+    <Content Include="Relatorios\rptContaRecebida.rdlc" />
+    <Content Include="Relatorios\rptContasPagarRetrato.rdlc" />
+    <Content Include="Relatorios\rptContasPagar.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasPagasRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasPagas.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasReceberRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasReceber.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasReceberPedidos.rdlc" />
+    <Content Include="Relatorios\rptContasReceberResumido.rdlc" />
+    <Content Include="Relatorios\rptContasReceberSemObs.rdlc" />
+    <Content Include="Relatorios\rptContasReceberTotal.rdlc" />
+    <Content Include="Relatorios\rptContasRecebidasRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasRecebidas.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptContasRecebidasLocal.rdlc" />
+    <Content Include="Relatorios\rptControlePerdasExt.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCorEspessura.rdlc" />
+    <Content Include="Relatorios\rptCotacaoCompraCalculadaFornec.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCotacaoCompraCalculada.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCreditoFornecedor.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptCustoFixo.rdlc" />
+    <Content Include="Relatorios\rptDebitoLimiteCliente.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptDebitosCliente.rdlc" />
+    <Content Include="Relatorios\rptDeclaracaoCheque.rdlc" />
+    <Content Include="Relatorios\rptDefinicaoCargaRota.rdlc" />
+    <Content Include="Relatorios\rptDeposito.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptDevolucaoPagto.rdlc" />
+    <Content Include="Relatorios\rptEncontroContas.rdlc" />
+    <Content Include="Relatorios\rptEntradaEstoque.rdlc" />
+    <Content Include="Relatorios\rptEquipesInst.rdlc" />
+    <Content Include="Relatorios\rptEstoqueFiscal.rdlc" />
+    <Content Include="Relatorios\rptEstoqueMinimo.rdlc" />
+    <Content Include="Relatorios\rptEstoqueProdutos.rdlc" />
+    <Content Include="Relatorios\rptEstoqueProdutosLib.rdlc" />
+    <Content Include="Relatorios\rptEstoqueReal.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptEtiquetaBig.rdlc" />
+    <Content Include="Relatorios\rptExportacao.rdlc" />
+    <Content Include="Relatorios\rptExtratoBancario.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptExtratoEstoque.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptExtratoEstoqueCliente.rdlc" />
+    <Content Include="Relatorios\rptExtratoEstoqueFiscal.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptFichaFornecedor.rdlc" />
+    <Content Include="Relatorios\rptFornadaSintetico.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptFornadaAnalitico.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptHistoricoCliente.rdlc" />
+    <Content Include="Relatorios\rptHistoricoFornec.rdlc" />
+    <Content Include="Relatorios\rptImpostoServ.rdlc" />
+    <Content Include="Relatorios\rptImpressoesPendentes.rdlc" />
+    <Content Include="Relatorios\rptInventarioEstoque.rdlc" />
+    <Content Include="Relatorios\rptItemPontoEquilibrio.rdlc" />
+    <Content Include="Relatorios\rptLiberacaoPedidoMov.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptLiberacaoPedidoMovSemValor.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptLimiteCliente.rdlc" />
+    <Content Include="Relatorios\rptListaAcerto.rdlc" />
+    <Content Include="Relatorios\rptListaAntecipContaRec.rdlc" />
+    <Content Include="Relatorios\rptListaAntecipFornec.rdlc" />
+    <Content Include="Relatorios\rptListaArquivoCartaoNaoIdentificado.rdlc" />
+    <Content Include="Relatorios\rptListaCartaoNaoIdentificado.rdlc" />
+    <Content Include="Relatorios\rptListaCfop.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaCfopNatOp.rdlc" />
+    <Content Include="Relatorios\rptListaClientesCredito.rdlc" />
+    <Content Include="Relatorios\rptListaClienteTabelaDesconto.rdlc" />
+    <Content Include="Relatorios\rptListaChapasDisponiveis.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaCompras.rdlc" />
+    <Content Include="Relatorios\rptListaComprasTotalVidros.rdlc" />
+    <Content Include="Relatorios\rptListaConferencia.rdlc" />
+    <Content Include="Relatorios\rptListaCreditoFornecedor.rdlc" />
+    <Content Include="Relatorios\rptListaCTeVidroValle.rdlc" />
+    <Content Include="Relatorios\rptListaCTe.rdlc" />
+    <Content Include="Relatorios\rptListaDeposito.rdlc" />
+    <Content Include="Relatorios\rptListaDepositoNaoIdentificado.rdlc" />
+    <Content Include="Relatorios\rptListaDevolucaoPagto.rdlc" />
+    <Content Include="Relatorios\rptListaEncontroContas.rdlc" />
+    <Content Include="Relatorios\rptListaEntradaEstoque.rdlc" />
+    <Content Include="Relatorios\rptListaEntregaPorRota.rdlc" />
+    <Content Include="Relatorios\rptListaFinalizarPedidoFinanceiro.rdlc" />
+    <Content Include="Relatorios\rptListaFornecedoresCredito.rdlc" />
+    <Content Include="Relatorios\rptListaImpostoServ.rdlc" />
+    <Content Include="Relatorios\rptListaInstalacao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaLiberacao.rdlc" />
+    <Content Include="Relatorios\rptListaLiberacaoIcms.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaMedicao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaOrcamentos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaOrcamentoSite.rdlc" />
+    <Content Include="Relatorios\rptListaOrdemInst.rdlc" />
+    <Content Include="Relatorios\rptListaPassivos.rdlc" />
+    <Content Include="Relatorios\rptListaPedidoInterno.rdlc" />
+    <Content Include="Relatorios\rptListaPedidoInternoAnalitico.rdlc" />
+    <Content Include="Relatorios\rptListaPedidos.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosPaisagem.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosPaisagemPronto.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosProd.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosPronto.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosRota.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPedidosSimples.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaPlanoContas.rdlc" />
+    <Content Include="Relatorios\rptListaPlanoContasAjustado.rdlc" />
+    <Content Include="Relatorios\rptListaPlanoContasDesc.rdlc" />
+    <Content Include="Relatorios\rptListaPlanoContasDet.rdlc" />
+    <Content Include="Relatorios\rptListaPlanoContasDetAgrupar.rdlc" />
+    <Content Include="Relatorios\rptListaPlanoContasMes.rdlc" />
+    <Content Include="Relatorios\rptListaProducao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaProdutosInterno.rdlc" />
+    <Content Include="Relatorios\rptListaSaidaEstoque.rdlc" />
+    <Content Include="Relatorios\rptListaSubgrupo.rdlc" />
+    <Content Include="Relatorios\rptListaTrocaDev.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptListaVolumes.rdlc" />
+    <Content Include="Relatorios\rptMemoriaCalculo.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptMolde.rdlc" />
+    <Content Include="Relatorios\rptMotivoFinalizacaoFinanceiro.rdlc" />
+    <Content Include="Relatorios\rptMovFuncTotais.rdlc" />
+    <Content Include="Relatorios\rptObraGerarCredito.rdlc" />
+    <Content Include="Relatorios\rptParcCartaoQuitadas.rdlc" />
+    <Content Include="Relatorios\rptParcelas.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptMovCredito.rdlc" />
+    <Content Include="Relatorios\rptMovCreditoFornec.rdlc" />
+    <Content Include="Relatorios\rptMovEstoque.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptMovEstoqueSemValor.rdlc" />
+    <Content Include="Relatorios\rptMovEstoqueTotal.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptMovEstoqueTotalComparativo.rdlc" />
+    <Content Include="Relatorios\rptMovFunc.rdlc" />
+    <Content Include="Relatorios\rptObra.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptObraDetalhada.rdlc" />
+    <Content Include="Relatorios\rptObraGerarCreditoAgrupado.rdlc" />
+    <Content Include="Relatorios\rptObraPagtoAntecipado.rdlc" />
+    <Content Include="Relatorios\rptObraProdutos.rdlc" />
+    <Content Include="Relatorios\rptOrcamentoRapido.rdlc" />
+    <Content Include="Relatorios\rptPagto.rdlc" />
+    <Content Include="Relatorios\rptPagtoCreditoFornecedor.rdlc" />
+    <Content Include="Relatorios\rptPecasFornada.rdlc" />
+    <Content Include="Relatorios\rptPecasOtimizacao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPecasSemEntrada.rdlc" />
+    <Content Include="Relatorios\rptPecasSemEntradaSemVidro.rdlc" />
+    <Content Include="Relatorios\rptPecasSemSaida.rdlc" />
+    <Content Include="Relatorios\rptPecasSemSaidaSemVidro.rdlc" />
+    <Content Include="Relatorios\rptPedidoA4.rdlc" />
+    <Content Include="Relatorios\rptPedidoEspelho.rdlc" />
+    <Content Include="Relatorios\rptPedidoInstalacao.rdlc" />
+    <Content Include="Relatorios\rptPedidoInterno.rdlc" />
+    <Content Include="Relatorios\rptPedidoPcpAgrupado.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPendenciaCarregamento.rdlc" />
+    <Content Include="Relatorios\rptPontoEquilibrio.rdlc" />
+    <Content Include="Relatorios\rptMovChapa.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptMovChapaDetalhes.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPrecoTabCliente.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPrecoTabClienteRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPrecoTabRetrato.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptProducaoInst.rdlc" />
+    <Content Include="Relatorios\rptProducaoInstDetalhada.rdlc" />
+    <Content Include="Relatorios\rptProducaoProd.rdlc" />
+    <Content Include="Relatorios\rptDetalheRegImpArqRemessa.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptQuitarParcCartao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptRegImpArqRemessa.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptResultadoOtimizacao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptResultadoOtimizacaoPecas.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptResumoDiarioCreditoGerado.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptRetalhosProducaoCorEspessura.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptTempoGastoParaLiberacao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptProdutoPedidoInterno.rdlc" />
+    <Content Include="Relatorios\rptProdutoProjeto.rdlc" />
+    <Content Include="Relatorios\rptProdutos.rdlc" />
+    <Content Include="Relatorios\rptProdutosCaixa.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptProdutosComprar.rdlc" />
+    <Content Include="Relatorios\rptProdutosExportacao.rdlc" />
+    <Content Include="Relatorios\rptProdutosLiberar.rdlc" />
+    <Content Include="Relatorios\rptProdutosPreco.rdlc" />
+    <Content Include="Relatorios\rptResumoDiario.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptRetalhosAssociados.rdlc" />
+    <Content Include="Relatorios\rptRetalhosProducao.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptRetCartaCorrecao.rdlc" />
+    <Content Include="Relatorios\rptSaidaEstoque.rdlc" />
+    <Content Include="Relatorios\rptSinaisPagar.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptSinaisPagos.rdlc" />
+    <Content Include="Relatorios\rptSinaisReceber.rdlc" />
+    <Content Include="Relatorios\rptSinaisRecebidos.rdlc" />
+    <Content Include="Relatorios\rptSinal.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptSinalCompra.rdlc" />
+    <Content Include="Relatorios\rptSubDescAcresConsultaRapida.rdlc" />
+    <Content Include="Relatorios\rptSugestaoCompra.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptVendasClienteComissionado.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptVendasComLucr.rdlc" />
+    <Content Include="Relatorios\rptVendasProd.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptVendasSemImposto.rdlc" />
+    <Content Include="Relatorios\rptPosicaoMateriaPrima.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Relatorios\rptPosicaoMateriaPrimaProdutos.rdlc" />
+    <Content Include="Relatorios\rptVendasSemLucr.rdlc" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Relatorios\CFe\" />

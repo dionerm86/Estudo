@@ -332,7 +332,8 @@ namespace Glass.API.Backend.Helper.Produtos.Estrategias.Filtro
                 (float)dadosAdicionais.PercentualDescontoPorQuantidade,
                 dadosAdicionais.IdPedido,
                 null,
-                null);
+                null,
+                (float)dadosAdicionais.Altura.GetValueOrDefault());
         }
 
         private bool AlterarProdutoParaObraPedido(GDASession sessao, ProdutoDto produto, DadosAdicionaisFiltroPedidoDto dadosAdicionais)

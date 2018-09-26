@@ -781,8 +781,14 @@ Vue.component('lista-itens-venda', {
      * Valida o estoque para o produto atual.
      */
     'itemVenda.altura': {
-      handler: function() {
+      handler: function(atual) {
         this.validarEstoque();
+
+        if (!this.dadosValidacaoProdutoAtual) {
+          return;
+        }
+
+        this.dadosValidacaoProdutoAtual.altura = atual ? atual.real : null;
       },
       deep: true
     },
