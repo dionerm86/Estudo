@@ -1209,7 +1209,7 @@ namespace Glass.Data.DAL
                                 {
                                     contasReceber = ContasReceberDAO.Instance.GetByLiberacaoPedido(transaction, (uint)idLiberarPedido, true)?.ToArray();
 
-                                    if (contasReceber?.Count() > 0)
+                                    if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
                                     {
                                         break;
                                     }
@@ -1222,14 +1222,14 @@ namespace Glass.Data.DAL
                                 {
                                     contasReceber = ContasReceberDAO.Instance.GetByPedido(transaction, (uint)idPedido, false, false)?.ToArray();
 
-                                    if (contasReceber?.Count() > 0)
+                                    if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
                                     {
                                         break;
                                     }
                                 }
                             }
 
-                            if ((contasReceber?.Count()).GetValueOrDefault() == 0)
+                            if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
                             {
                                 var idsNotaFiscal = PedidosNotaFiscalDAO.Instance.ObterIdsNf(transaction, idsLiberarPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList() ?? new List<int>(),
                                     idsPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList(), NotaFiscal.SituacaoEnum.Autorizada);
@@ -1239,7 +1239,8 @@ namespace Glass.Data.DAL
                                     foreach (var idNotaFiscal in idsNotaFiscal)
                                     {
                                         contasReceber = ContasReceberDAO.Instance.GetByNf(transaction, (uint)idNotaFiscal)?.ToArray();
-                                        if (contasReceber?.Count() > 0)
+
+                                        if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
                                         {
                                             break;
                                         }
@@ -1269,7 +1270,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            if ((nf.DatasParcelas?.Count()).GetValueOrDefault() == 0)
+                            if (nf.DatasParcelas?.Any(f => f > DateTime.MinValue) ?? false)
                             {
                                 nf.NumParc = 1;
                                 nf.DatasParcelas = new DateTime[1];
