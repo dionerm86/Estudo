@@ -1,9 +1,69 @@
-<%@ Page Title="AplicaÁıes" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+Ôªø<%@ Page Title="Aplica√ß√µes" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstEtiquetaAplicacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaAplicacao" %>
 
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
 
+    <div id="app">
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum processo encontrado"
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('codigo')">C√≥digo</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('decricao')">Descri√ß√£o</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('destacarNaEtiqueta')">Destacar na Etiqueta?</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('gerarFormaInexistente')">Gerar Forma Inexistente</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('naoPermitirFastDelivery')">N√£o Permitir Fast Delivery</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('diasMinimosEntrega')">Dias minimos p/ Entrega</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('tiposPedido')">Tipo de Pedido</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('situacao')">Situa√ß√£o</a>
+                    </th>
+                    <th></th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                      <a href="#">Editar</a>
+                      <a href="#">Excluir</a>
+                    </td>
+                    <td>{{ item.codigo }}</td>
+                    <td>{{ item.descricao }}</td>
+                    <td>{{ item.destacarNaEtiqueta }}</td>
+                    <td>{{ item.gerarFormaInexistente }}</td>
+                    <td>{{ item.naoPermitirFastDelivery }}</td>
+                    <td>{{ item.tiposPedido }}</td>
+                    <td>{{ item.situacao }}</td>
+                    <td>Log</td>
+                </template>
+                <template slot="itemEditando">
+
+                </template>
+                <template slot="itemIncluir">
+
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+    <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Aplicacoes/Componentes/LstAplicacoes.js" />
+        </Scripts>
+    </asp:ScriptManager>
     <script type="text/javascript">
 
         function onSave(insert) {
@@ -11,12 +71,12 @@
             var codInterno = FindControl(insert ? "txtCodInternoIns" : "txtCodInterno", "input").value;
 
             if (descricao == "") {
-                alert("Informe a descriÁ„o.");
+                alert("Informe a descri√ß√£o.");
                 return false;
             }
 
             if (codInterno == "") {
-                alert("Informe o cÛdigo.");
+                alert("Informe o c√≥digo.");
                 return false;
             }
         }
@@ -44,7 +104,7 @@
                             </EditItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="CÛdigo" SortExpression="CodInterno">
+                        <asp:TemplateField HeaderText="C√≥digo" SortExpression="CodInterno">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtCodInterno" runat="server" MaxLength="10" Text='<%# Bind("CodInterno") %>'
                                     Width="50px"></asp:TextBox>
@@ -57,7 +117,7 @@
                                 <asp:Label ID="Label3" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="DescriÁ„o" SortExpression="Descricao">
+                        <asp:TemplateField HeaderText="Descri√ß√£o" SortExpression="Descricao">
                             <EditItemTemplate>
                                 <asp:TextBox ID="txtDescricao" runat="server" MaxLength="30" Text='<%# Bind("Descricao") %>'
                                     Width="150px"></asp:TextBox>
@@ -102,7 +162,7 @@
                                     Checked='<%# Eval("GerarFormaInexistente") %>' Enabled="False" />
                             </ItemTemplate>
                         </asp:TemplateField>
-                        <asp:TemplateField HeaderText="N„o Permitir Fast Deliver"
+                        <asp:TemplateField HeaderText="N√£o Permitir Fast Deliver"
                             SortExpression="NaoPermitirFastDelivery">
                             <EditItemTemplate>
                                 <asp:CheckBox ID="chkFast" runat="server"
@@ -125,7 +185,7 @@
                             <FooterTemplate>
                                 <asp:TextBox ID="txtDiasMinimos" runat="server" MaxLength="10" Text='<%# Bind("DiasMinimos") %>'
                                     Width="50px"></asp:TextBox>
-                                <asp:Image ID="imgConta" runat="server" ImageUrl="~/Images/Help.gif" ToolTip="Numero de dias minimos para entrega do pedido com produtos dessa aplicaÁ„o."/>
+                                <asp:Image ID="imgConta" runat="server" ImageUrl="~/Images/Help.gif" ToolTip="Numero de dias minimos para entrega do pedido com produtos dessa aplica√ß√£o."/>
                                 
                             </FooterTemplate>
                             <ItemTemplate>
@@ -142,8 +202,8 @@
                                     ImageURL="~/Images/DropDown.png" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"
                                     OpenOnStart="False" SelectedValue='<%# Bind("TipoPedido") %>'>
                                     <asp:ListItem Value="1">Venda</asp:ListItem>
-                                    <asp:ListItem Value="3">M„o-de-obra</asp:ListItem>
-                                    <asp:ListItem Value="4">ProduÁ„o</asp:ListItem>
+                                    <asp:ListItem Value="3">M√£o-de-obra</asp:ListItem>
+                                    <asp:ListItem Value="4">Produ√ß√£o</asp:ListItem>
                                 </sync:CheckBoxListDropDown>
                             </EditItemTemplate>
                             <FooterTemplate>
@@ -151,14 +211,14 @@
                                     ImageURL="~/Images/DropDown.png" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"
                                     OpenOnStart="False"  SelectedValue='<%# Bind("TipoPedido") %>'>
                                     <asp:ListItem Value="1">Venda</asp:ListItem>
-                                    <asp:ListItem Value="3">M„o-de-obra</asp:ListItem>
-                                    <asp:ListItem Value="4">ProduÁ„o</asp:ListItem>
+                                    <asp:ListItem Value="3">M√£o-de-obra</asp:ListItem>
+                                    <asp:ListItem Value="4">Produ√ß√£o</asp:ListItem>
                                 </sync:CheckBoxListDropDown>
                             </FooterTemplate>
                             <HeaderStyle HorizontalAlign="Left" />
                         </asp:TemplateField>
 
-                        <asp:TemplateField HeaderText="SituaÁ„o" SortExpression="DescrSituacao">
+                        <asp:TemplateField HeaderText="Situa√ß√£o" SortExpression="DescrSituacao">
                             <ItemTemplate>
                                 <asp:Label ID="Label1" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label> &nbsp&nbsp&nbsp
                                 <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="Aplicacao" IdRegistro='<%# (uint)(int)Eval("IdAplicacao") %>' />
