@@ -1797,7 +1797,7 @@ namespace Glass.Data.DAL
             {
                 var idsPedidoPelaLiberacao = PedidoDAO.Instance.GetIdsByLiberacao(null, (uint)idLiberarPedido);
 
-                if (idsPedidoPelaLiberacao?.Count() > 0)
+                if (idsPedidoPelaLiberacao?.Any(f => f > 0) ?? false)
                 {
                     sql += string.Format(" AND ped.IdPedido IN ({0})", string.Join(",", idsPedidoPelaLiberacao));
                 }
@@ -1844,7 +1844,7 @@ namespace Glass.Data.DAL
                 sql += " AND (ped.CodCliente LIKE ?codigoPedidoCliente OR pp.PedCli LIKE ?codigoPedidoCliente OR a.Ambiente LIKE ?codigoPedidoCliente)";
             }
 
-            if (idsRota?.Count() > 0)
+            if (idsRota?.Any(f => f > 0) ?? false)
             {
                 sql += string.Format(" AND ped.IdCli IN (SELECT * FROM (SELECT IdCliente FROM rota_cliente WHERE IdRota IN ({0})) AS temp1)", string.Join(",", idsRota));
             }
@@ -1872,7 +1872,7 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND ped.IdFunc={0}", idFuncionario);
             }
 
-            if (situacoes?.Count() > 0)
+            if (situacoes?.Any(f => f > 0) ?? false)
             {
                 var sqlSituacoes = " AND (0=1 ";
 
@@ -1976,7 +1976,7 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (idsBeneficiamento?.Count() > 0)
+            if (idsBeneficiamento?.Any(f => f > 0) ?? false)
             {
                 var redondo = BenefConfigDAO.Instance.TemBenefRedondo(idsBeneficiamento) ? " OR pp.Redondo=1" : string.Empty;
 
@@ -1994,7 +1994,7 @@ namespace Glass.Data.DAL
                 sql += string.Format(" AND ped.TipoEntrega={0}", tipoEntrega);
             }
 
-            if (tiposPedido?.Count() > 0)
+            if (tiposPedido?.Any(f => f > 0) ?? false)
             {
                 var filtroTiposPedido = new List<Pedido.TipoPedidoEnum>();
 
@@ -2246,7 +2246,7 @@ namespace Glass.Data.DAL
 
             // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
             if (listaVazia && FiltrosVazios(idCarregamento, (uint)idLiberarPedido, (uint)idPedido, idPedidoImportado.ToString(), (uint)idImpressao,
-                idsRota?.Count() > 0 ? string.Join(",", idsRota) : string.Empty, codigoPedidoCliente, (uint)idCliente, nomeCliente, codigoEtiqueta,
+                idsRota?.Any(f => f > 0) ?? false ? string.Join(",", idsRota) : string.Empty, codigoPedidoCliente, (uint)idCliente, nomeCliente, codigoEtiqueta,
                 dataLeituraInicio > DateTime.MinValue ? dataLeituraInicio.Value.ToString("dd/MM/yyyy") : string.Empty,
                 dataLeituraFim > DateTime.MinValue ? dataLeituraFim.Value.ToString("dd/MM/yyyy"): string.Empty,
                 dataEntregaInicio > DateTime.MinValue ? dataEntregaInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
@@ -2255,10 +2255,10 @@ namespace Glass.Data.DAL
                 dataFabricaFim > DateTime.MinValue ? dataFabricaFim.Value.ToString("dd/MM/yyyy"): string.Empty,
                 dataConfirmacaoPedidoInicio > DateTime.MinValue ? dataConfirmacaoPedidoInicio.Value.ToString("dd/MM/yyyy"): string.Empty,
                 dataConfirmacaoPedidoFim > DateTime.MinValue ? dataConfirmacaoPedidoFim.Value.ToString("dd/MM/yyyy"): string.Empty,
-                idSetor, string.Join(",", situacoes), situacaoPedido, tipoSituacao, idsSubgrupo?.Count() > 0 ? string.Join(",", idsSubgrupo) : string.Empty, (uint)tipoEntrega, pecasProducaoCanceladas,
+                idSetor, string.Join(",", situacoes), situacaoPedido, tipoSituacao, idsSubgrupo?.Any(f => f > 0) ?? false ? string.Join(",", idsSubgrupo) : string.Empty, (uint)tipoEntrega, pecasProducaoCanceladas,
                 (uint)idFuncionario, tiposPedido.Count() > 0 ? string.Join(",", tiposPedido) : string.Empty, (uint)idCorVidro, altura, largura, espessura,
-                idsProcesso?.Count() > 0 ? string.Join(",", idsProcesso) : string.Empty, idsAplicacao?.Count() > 0 ? string.Join(",", idsAplicacao) : string.Empty, aguardandoExpedicao,
-                aguardandoEntradaEstoque, idsBeneficiamento?.Count() > 0 ? string.Join(",", idsBeneficiamento) : string.Empty, planoCorte, codigoEtiquetaChapa, (uint)fastDelivery, pecaParadaProducao,
+                idsProcesso?.Any(f => f > 0) ?? false ? string.Join(",", idsProcesso) : string.Empty, idsAplicacao?.Count() > 0 ? string.Join(",", idsAplicacao) : string.Empty, aguardandoExpedicao,
+                aguardandoEntradaEstoque, idsBeneficiamento?.Any(f => f > 0) ?? false ? string.Join(",", idsBeneficiamento) : string.Empty, planoCorte, codigoEtiquetaChapa, (uint)fastDelivery, pecaParadaProducao,
                 pecasRepostas, (uint)idLoja, 0))
             {
                 return new List<int>();
@@ -5744,6 +5744,30 @@ namespace Glass.Data.DAL
                 WHERE ccp.IdChapaCortePeca IS NULL AND pi.IdProdImpressao IN (" + idsProdImpressao + ")";
 
             return ExecuteMultipleScalar<uint>(session, sql);
+        }
+
+        public List<int> ObtemIdsProdPedProducaoPelosIdsProdImpressao(GDASession session, List<int> idsProdImpressao)
+        {
+            if (!idsProdImpressao.Any(f => f > 0))
+            {
+                return new List<int>();
+            }
+
+            var sql = $@"SELECT DISTINCT ppp.IdProdPedProducao
+                FROM produto_impressao pi
+                    INNER JOIN produto_pedido_producao ppp ON (pi.IdImpressao = ppp.IdImpressao AND pi.NumEtiqueta = ppp.NumEtiqueta)
+                WHERE pi.IdProdImpressao IN ({ string.Join(",", idsProdImpressao.Where(f => f > 0).ToList()) }) AND !COALESCE(pi.Cancelado, 0)";
+
+            return ExecuteMultipleScalar<int>(session, sql);
+        }
+
+        public List<int> ObterIdsProdPedProducaoPeloIdImpressao(GDASession session, int idImpressao)
+        {
+            var sql = $@"SELECT DISTINCT ppp.IdProdPedProducao
+                FROM produto_pedido_producao ppp
+                WHERE ppp.IdImpressao = { idImpressao };";
+
+            return ExecuteMultipleScalar<int>(session, sql);
         }
 
         /// <summary>
