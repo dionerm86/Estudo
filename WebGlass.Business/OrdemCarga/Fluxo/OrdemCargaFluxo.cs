@@ -505,8 +505,6 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 {
                     trans.BeginTransaction();
 
-                    OrdemCargaDAO.Instance.ForcarTransacaoOC(trans, idOC, true);
-
                     if (idOC == 0)
                         throw new Exception("Nenhuma ordem de carga informada.");
 
