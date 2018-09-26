@@ -4,7 +4,6 @@
 
 using Glass.API.Backend.Models.Datas.Feriados.CadastroAtualizacao;
 using System;
-using System.Linq;
 
 namespace Glass.API.Backend.Helper.Datas.Feriados
 {

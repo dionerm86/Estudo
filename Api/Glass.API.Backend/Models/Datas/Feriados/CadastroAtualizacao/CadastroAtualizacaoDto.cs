@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Models.Datas.Feriados.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("dia")]
-        public string Dia
+        public int Dia
         {
             get { return this.ObterValor(c => c.Dia); }
             set { this.AdicionarValor(c => c.Dia, value); }
@@ -41,7 +41,7 @@ namespace Glass.API.Backend.Models.Datas.Feriados.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("mes")]
-        public string Mes
+        public int Mes
         {
             get { return this.ObterValor(c => c.Mes); }
             set { this.AdicionarValor(c => c.Mes, value); }

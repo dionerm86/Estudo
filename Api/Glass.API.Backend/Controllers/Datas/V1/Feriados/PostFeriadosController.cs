@@ -36,7 +36,7 @@ namespace Glass.API.Backend.Controllers.Datas.V1.Feriados
                     var feriado = new ConverterCadastroAtualizacaoParaFeriado(dadosParaCadastro)
                         .ConverterParaFeriado();
 
-                    var idFeriado = CorVidroDAO.Instance.Insert(sessao, feriado);
+                    var idFeriado = FeriadoDAO.Instance.Insert(sessao, feriado);
                     sessao.Commit();
 
                     return this.Criado("Feriado inserido com sucesso!", idFeriado);
