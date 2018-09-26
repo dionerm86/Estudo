@@ -42,10 +42,13 @@ namespace Glass.API.Backend.Helper.Comissionados
                     return "RgInscEst";
 
                 case "telefoneresidencial":
-                    return "telres";
+                    return "TelRes";
 
                 case "telefonecelular":
-                    return "telcel";
+                    return "TelCel";
+
+                case "percentual":
+                    return "Percentual";
 
                 default:
                     return this.OrdenacaoPadrao;
