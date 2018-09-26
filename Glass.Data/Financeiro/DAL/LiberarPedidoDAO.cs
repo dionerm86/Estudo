@@ -423,6 +423,9 @@ namespace Glass.Data.DAL
                 totalPagar = acrescimoAplicar - descontoAplicar;
             }
 
+            if (PedidoConfig.Desconto.DescontoMaximoLiberacao < descontoAplicar)
+                throw new Exception("O desconto dado não é permitido, desconto aplicado: " + descontoAplicar + "% desconto máximo permitido: " + PedidoConfig.Desconto.DescontoMaximoLiberacao + "%");
+
             totalPago = valoresPagos.Sum(f => f);
             totalPagar -= valorUtilizadoObra;
 
