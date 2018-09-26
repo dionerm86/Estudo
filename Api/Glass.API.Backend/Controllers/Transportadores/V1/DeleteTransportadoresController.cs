@@ -44,7 +44,12 @@ namespace Glass.API.Backend.Controllers.Transportadores.V1
 
                     var transportador = fluxo.ObtemTransportador(id);
 
-                    fluxo.ApagarTransportador(transportador);
+                    var resultado = fluxo.ApagarTransportador(transportador);
+
+                    if (!resultado)
+                    {
+                        return this.ErroValidacao(resultado.Message.ToString());
+                    }
 
                     return this.Aceito($"Transportador excluído.");
                 }
