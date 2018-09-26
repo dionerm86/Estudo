@@ -14990,7 +14990,7 @@ namespace Glass.Data.DAL
             }
 
             /* Chamado 28243. */
-            if ((objUpdate.Desconto > 0 || objUpdate.Acrescimo > 0) && (produtosPedido?.Count()).GetValueOrDefault() == 0)
+            if ((objUpdate.Desconto > 0 || objUpdate.Acrescimo > 0) && !(produtosPedido?.Any(f => f.IdProdPed > 0) ?? false))
             {
                 throw new Exception("Não é possível definir o percentual/valor de desconto/acréscimo no pedido caso o mesmo não possua produtos.");
             }

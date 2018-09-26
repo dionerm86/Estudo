@@ -88,7 +88,7 @@ namespace Glass.Data.DAL
             var sql = $"SELECT * FROM fila_email WHERE NumTentativas < { FilaEmail.MAX_NUMERO_TENTATIVAS } AND DataEnvio IS NULL ORDER BY IdEmail ASC LIMIT 1;";
             var email = objPersistence.LoadData(sql)?.ToList();
 
-            return email?.Count() > 0 ? email[0] : null;
+            return email?.Any(f => f.IdEmail > 0) ?? false ? email[0] : null;
         }
 
         /// <summary>

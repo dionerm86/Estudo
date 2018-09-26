@@ -2322,7 +2322,7 @@ namespace Glass.Data.DAL
             }
 
             if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray()) &&
-                (dadosChequesRecebimento?.Count()).GetValueOrDefault() == 0)
+                !(dadosChequesRecebimento?.Any(f => !string.IsNullOrWhiteSpace(f)) ?? false))
             {
                 throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
             }
