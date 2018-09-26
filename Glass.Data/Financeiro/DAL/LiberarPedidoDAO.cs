@@ -4112,8 +4112,26 @@ namespace Glass.Data.DAL
             if (String.IsNullOrEmpty(idsLiberacao))
                 return 0;
 
-            string sql = "Select Sum(Coalesce(desconto, 0)) From liberarpedido Where idLiberarPedido In (" + idsLiberacao.Trim(',') + ")";
-            return ExecuteScalar<decimal>(sql);
+            var liberacoes = objPersistence.LoadData($"SELECT * FROM liberarPedido WHERE idLiberarPedido IN ({idsLiberacao})").ToList();
+
+            decimal desconto = 0;
+            decimal totalLiberacaoSemDesconto = 0;
+
+            foreach (var liberacao in liberacoes)
+            {
+                if (liberacao.TipoDesconto == 1)
+                {
+                    totalLiberacaoSemDesconto = (liberacao.Total / (1 - (liberacao.Desconto / 100)));
+                    desconto += (totalLiberacaoSemDesconto * (liberacao.Desconto / 100));
+                }
+                else
+                {
+                    desconto += liberacao.Desconto;
+                }
+
+            }
+
+            return Math.Round(desconto, 2);
         }
 
         #endregion
