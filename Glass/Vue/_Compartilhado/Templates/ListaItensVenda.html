@@ -171,7 +171,7 @@
                 <td v-bind:colspan="numeroColunasLista() - 1">
                     <lista-itens-venda v-bind:mao-de-obra="maoDeObra" v-bind:producao-corte="producaoCorte" v-bind:mao-de-obra-especial="maoDeObraEspecial"
                         v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }" v-bind:id-cliente="idCliente" v-bind:cliente-revenda="clienteRevenda" v-bind:tipo-entrega="tipoEntrega"
-                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProduto" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno" v-bind:id-ambiente="idAmbiente"
+                        v-bind:percentual-comissao="percentualComissao" v-bind:dados-validacao-produto="dadosValidacaoProdutoAtual" v-bind:tipo-validacao-produto="tipoValidacaoProdutoInterno" v-bind:id-ambiente="idAmbiente"
                         v-bind:quantidade-ambiente="quantidadeAmbiente" v-bind:obrigar-processo-e-aplicacao-roteiro="obrigarProcessoEAplicacaoRoteiro" v-bind:buscar-itens-venda="buscarFilhos"
                         v-bind:editar="editar" v-bind:excluir="excluir" v-bind:atualizar="atualizar" v-bind:inserir="inserir" v-bind:permitir-inserir="item.composicao.permitirInserirFilhos"
                         v-bind:exibir-colunas-processo-e-aplicacao="exibirColunasProcessoEAplicacao" v-bind:empresa-vende-vidro="empresaVendeVidro" v-on:lista-atualizada="listaAtualizada">
@@ -212,7 +212,7 @@
                 </span>
                 <div style="display: none">
                     <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="itemVenda && itemVenda.produto"
-                        v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                        v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                         required></campo-busca-produto>
                 </div>
             </td>
@@ -244,7 +244,7 @@
                 <campo-area-m2 v-bind:area-m2.sync="itemVenda.areaEmM2.real" v-bind:area-calculada-m2.sync="itemVenda.areaEmM2.paraCalculo" v-bind:tamanho-maximo-produto="produtoAtual.tamanhoMaximoObra"
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
-                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                     v-if="itemVenda && itemVenda.areaEmM2 && itemVenda.descontoPorQuantidade && produtoAtual"></campo-area-m2>
             </td>
             <td>
@@ -274,7 +274,7 @@
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
-                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                     v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
             <td v-if="empresaVendeVidro">
@@ -352,7 +352,7 @@
             </td>
             <td colspan="2">
                 <campo-busca-produto v-bind:produto.sync="produtoAtual" v-if="inserindo && itemVenda && itemVenda.produto"
-                    v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                     required></campo-busca-produto>
             </td>
             <td>
@@ -378,7 +378,7 @@
                 <campo-area-m2 v-bind:area-m2.sync="itemVenda.areaEmM2.real" v-bind:area-calculada-m2.sync="itemVenda.areaEmM2.paraCalculo" v-bind:tamanho-maximo-produto="produtoAtual.tamanhoMaximoObra"
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
-                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:tipo-validacao="tipoValidacaoProduto" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                     v-if="inserindo && itemVenda && itemVenda.areaEmM2 && itemVenda.descontoPorQuantidade && produtoAtual"></campo-area-m2>
             </td>
             <td>
@@ -413,7 +413,7 @@
                     v-bind:id-produto="itemVenda.produto.id" v-bind:id-cliente="idCliente" v-bind:altura="itemVenda.altura.paraCalculo" v-bind:largura="itemVenda.largura"
                     v-bind:quantidade="itemVenda.quantidade" v-bind:redondo="itemVenda.beneficiamentos.redondo" v-bind:espessura="itemVenda.produto.espessura" v-bind:calcular-multiplo-de-5="producaoCorte"
                     v-bind:numero-beneficiamentos-para-area-minima="numeroBeneficiamentosParaAreaMinima" v-bind:valor-unitario="itemVenda.valorUnitario" v-bind:tipo-validacao="tipoValidacaoProduto"
-                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProduto"
+                    v-bind:percentual-desconto-por-quantidade="itemVenda.descontoPorQuantidade.percentual" v-bind:dados-adicionais-validacao="dadosValidacaoProdutoAtual"
                     v-bind:quantidade-ambiente="quantidadeAmbiente || 0" v-if="inserindo && itemVenda && itemVenda.areaEmM2"></campo-total>
             </td>
             <td v-if="empresaVendeVidro">

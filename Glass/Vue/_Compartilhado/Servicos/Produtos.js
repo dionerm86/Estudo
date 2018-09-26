@@ -113,7 +113,7 @@ Servicos.Produtos = (function(http) {
      */
     CoresFerragem: {
       /**
-       * Recupera a lista de cores de ferragem para uso no controle de busca.
+       * Recupera a lista de cores de ferragem.
        * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
        * @param {number} pagina O número da página de resultados a ser exibida.
        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
@@ -185,7 +185,7 @@ Servicos.Produtos = (function(http) {
      */
     CoresAluminio: {
       /**
-       * Recupera a lista de cores de alumínio para uso no controle de busca.
+       * Recupera a lista de cores de alumínio.
        * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
        * @param {number} pagina O número da página de resultados a ser exibida.
        * @param {number} numeroRegistros O número de registros que serão exibidos na página.
