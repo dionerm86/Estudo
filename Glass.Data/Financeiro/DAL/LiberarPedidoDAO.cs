@@ -4111,9 +4111,24 @@ namespace Glass.Data.DAL
 
             var liberacoes = objPersistence.LoadData($"SELECT * FROM liberarPedido WHERE idLiberarPedido IN ({idsLiberacao})").ToList();
 
-            var desconto = liberacoes.Sum(f => (f.TipoDesconto == 1 ? f.Total * (f.Desconto / 100) : f.Desconto));
+            decimal desconto = 0;
+            decimal totalLiberacaoSemDesconto = 0;
 
-            return desconto;
+            foreach (var liberacao in liberacoes)
+            {
+                if (liberacao.TipoDesconto == 1)
+                {
+                    totalLiberacaoSemDesconto = (liberacao.Total / (1 - (liberacao.Desconto / 100)));
+                    desconto += (totalLiberacaoSemDesconto * (liberacao.Desconto / 100));
+                }
+                else
+                {
+                    desconto += liberacao.Desconto;
+                }
+
+            }
+
+            return Math.Round(desconto, 2);
         }
 
         #endregion
