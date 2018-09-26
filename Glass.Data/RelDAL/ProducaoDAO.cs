@@ -277,7 +277,7 @@ namespace Glass.Data.RelDAL
                 criterio += string.Format("Data Entrega término: {0}    ", dataEntregaFim.Value.ToString(formatoCriterioDataEntregaFim));
             }
 
-            if (idsSubgrupo?.Count() > 0)
+            if (idsSubgrupo?.Any(f => f > 0) ?? false)
             {
                 filtro += string.Format(" AND p.IdSubgrupoProd IN ({0})", string.Join(",", idsSubgrupo));
                 filtroInterno += string.Format(" AND p1.IdSubgrupoProd IN ({0})", string.Join(",", idsSubgrupo));
@@ -329,7 +329,7 @@ namespace Glass.Data.RelDAL
                 criterio += "Aguardando expedição    ";
             }
 
-            if (tiposPedido?.Count() > 0)
+            if (tiposPedido?.Any(f => f > 0) ?? false)
             {
                 var critetioTipoPedido = new List<string>();
                 var tiposPedidoFiltrar = new List<Pedido.TipoPedidoEnum>();

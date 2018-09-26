@@ -51,7 +51,7 @@ namespace Glass.UI.Web.Controls
                             .Where(f => f.IdPedido.GetValueOrDefault(0) > 0 && f.IdNf.ToString() != codigoNotaFiscal)
                             .Select(f => f.IdNf).ToList();
 
-                        if (notasPedido?.Count() > 0)
+                        if (notasPedido?.Any(f => f > 0) ?? false)
                             throw new Exception(string.Format("Não é possível gerar o boleto desta NF-e, pois o pedido: {0} da Liberação: {1} esta vinculado a outras Notas Fiscais. NF-e's: {2}.", idPedLib, idLiberarPedido, NotaFiscalDAO.Instance.ObtemNumerosNFePeloIdNf(String.Join(",", notasPedido))));
                     }
                 }

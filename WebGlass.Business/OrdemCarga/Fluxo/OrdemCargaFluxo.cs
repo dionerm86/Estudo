@@ -1,9 +1,9 @@
+using GDA;
+using Glass.Configuracoes;
+using Glass.Data.DAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Glass.Data.DAL;
-using Glass.Configuracoes;
-using GDA;
 
 namespace WebGlass.Business.OrdemCarga.Fluxo
 {
@@ -85,7 +85,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                     return retorno.Where(c => c.NumPedidosParaGerar == 0).OrderBy(p => p.NomeCliente).ToArray();
                 else
                     return retorno.Where(c => c.NumPedidosParaGerar > 0).OrderBy(p => p.NomeCliente).ToArray();
-            }            
+            }
         }
 
         #endregion
@@ -106,7 +106,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             return OrdemCargaDAO.Instance.GetList(idCliente, idLoja, 0, dtEntPedidoIni, dtEntPedidoFin, tipoOC,
                 ((int)Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Finalizado).ToString());
         }
-        
+
         /// <summary>
         /// Recupera uma ordem de carga para o relatório individual
         /// </summary>
@@ -207,7 +207,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         public void FinalizarOC(uint idCliente, uint idLoja, Glass.Data.Model.OrdemCarga.TipoOCEnum tipoOC, uint idRota,
             string dtEntPedidoIni, string dtEntPedidoFin, string pedidos)
         {
-            lock(_finalizarOcLock)
+            lock (_finalizarOcLock)
             {
                 var lstErros = new List<string>();
 
@@ -254,7 +254,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                 try
                                 {
                                     //Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                                    if (PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
+                                    if (PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, (int)idPedido))
                                         throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
                                     //Adiciona o pedido a OC.
@@ -309,7 +309,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
             var sitCliente = ClienteDAO.Instance.GetSituacao(sessao, idCliente);
 
             if (OrdemCargaConfig.SituacoesClienteNaoGerarOC.Contains(sitCliente))
-                throw new Exception("O cliente " + idCliente + " esta " + Enum.GetName(typeof(Glass.Data.Model.SituacaoCliente), sitCliente) + ".");            
+                throw new Exception("O cliente " + idCliente + " esta " + Enum.GetName(typeof(Glass.Data.Model.SituacaoCliente), sitCliente) + ".");
 
             if (idLoja == 0)
                 throw new Exception("Loja não infomada.");
@@ -493,7 +493,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         #region Alterações OC
 
         #region Retira OC carregamento
-        
+
         /// <summary>
         /// Retira uma OC do carregamento
         /// </summary>
@@ -518,7 +518,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
 
                     var oc = OrdemCargaDAO.Instance.GetElementByPrimaryKey(trans, idOC);
 
-                    // Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar 
+                    // Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
                     // a de venda primeiro.
                     if (oc.TipoOrdemCarga == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
                     {
@@ -640,7 +640,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                 }
             }
         }
-        
+
         /// <summary>
         /// Adiciona pedidos a uma oc que já foi finalizada
         /// </summary>
@@ -678,7 +678,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             continue;
 
                         // Verifica se o pedido informado ja possui uma ordem de carga que não seja parcial
-                        if(PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
+                        if (PedidoOrdemCargaDAO.Instance.VerificarSePedidoPossuiOrdemCarga(trans, tipoOC, idPedido))
                             throw new Exception("O pedido " + idPedido + " já esta vinculado a uma ordem de carga");
 
 
@@ -759,7 +759,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
         /// </summary>
         public void Delete(Glass.Data.Model.OrdemCarga objDelete)
         {
-            lock(_apagarOcLock)
+            lock (_apagarOcLock)
             {
                 using (var transaction = new GDATransaction())
                 {
@@ -777,7 +777,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                             situacaoOC == Glass.Data.Model.OrdemCarga.SituacaoOCEnum.Carregado)
                             throw new Exception("A OC " + objDelete.IdOrdemCarga + " já esta vinculada a um carregamento.");
 
-                        //Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar 
+                        //Se for OC de transferência é ja tiver gerado uma OC de venda, tem que deletar
                         //a de venda primeiro.
                         var tipoOC = OrdemCargaDAO.Instance.GetTipoOrdemCarga(transaction, objDelete.IdOrdemCarga);
                         if (tipoOC == Glass.Data.Model.OrdemCarga.TipoOCEnum.Transferencia)
@@ -797,7 +797,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                                     var qtdOrdemCarga = PedidoOrdemCargaDAO.Instance.ObtemQtdeOrdemCarga(transaction, idPedido);
                                     var qtdLib = LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count;
 
-                                    if (qtdLib > 0 &&  qtdLib == qtdOrdemCarga)
+                                    if (qtdLib > 0 && qtdLib == qtdOrdemCarga)
                                         throw new Exception("Não é possível excluir esta OC, pois ela possui Pedidos liberados.");
                                 }
                                 else if (LiberarPedidoDAO.Instance.GetIdsLiberacaoAtivaByPedido(transaction, idPedido).Count > 0)
@@ -814,7 +814,7 @@ namespace WebGlass.Business.OrdemCarga.Fluxo
                         transaction.Commit();
                         transaction.Close();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         transaction.Rollback();
                         transaction.Close();

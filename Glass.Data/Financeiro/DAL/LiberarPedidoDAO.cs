@@ -1462,7 +1462,7 @@ namespace Glass.Data.DAL
             idsPedidoLiberacao.AddRange(ExecuteMultipleScalar<int>(session, string.Format("SELECT DISTINCT CAST(IdPedido AS CHAR) FROM produtos_liberar_pedido WHERE IdLiberarPedido={0}",
                 idLiberarPedido))?.Where(f => f > 0).ToList() ?? new List<int>());
 
-            if ((idsPedidoLiberacao?.Count()).GetValueOrDefault() > 0)
+            if (idsPedidoLiberacao?.Any(f => f > 0) ?? false)
             {
                 var sqlAtualizarDadosPedido = string.Format(@"UPDATE pedido p SET IdLiberarPedido=NULL, NumAutConstrucard=NULL, Situacao = IF(
                         (SELECT COUNT(*) FROM liberarpedido lp 
