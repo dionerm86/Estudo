@@ -813,8 +813,8 @@ namespace Glass.Data.DAL
                             temFiltro = true;
                         }
 
-                        // Retorna apenas as peças de roteiro se o setor for de roteiro
-                        if (Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
+                        // Retorna apenas as peças de roteiro se o setor for de roteiro e que não seja Etiqueta não impressa
+                        if (idSetor != -1 && Utils.ObtemSetor((uint)idSetor).SetorPertenceARoteiro)
                         {
                             sql += " and exists (select * from roteiro_producao_etiqueta where idProdPedProducao=ppp.idProdPedProducao and idSetor=" + idSetor + ")";
                             temFiltro = true;
