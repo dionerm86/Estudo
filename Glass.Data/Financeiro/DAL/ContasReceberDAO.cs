@@ -7966,6 +7966,17 @@ namespace Glass.Data.DAL
 
                 numDocCnab = numeroDocumento;
             }
+            else if (codbanco == (int)Sync.Utils.CodigoBanco.CaixaEconomicaFederal)
+            {
+                idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
+                numDocCnab = numeroDocumento;
+
+                if(idContaR == 0 && !string.IsNullOrEmpty(usoEmpresa))
+                {
+                    idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc",
+                        new GDAParameter("?numDoc", usoEmpresa.Substring(usoEmpresa.Length > 10 ? -10 : 0)));
+                }
+            }
             else
             {
                 idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
