@@ -4,7 +4,6 @@
 
 using GDA;
 using Glass.API.Backend.Helper.Respostas;
-using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Web.Http;
@@ -14,7 +13,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     /// <summary>
     /// Controller de tipos de cliente.
     /// </summary>
-    public partial class TiposController : BaseController
+    public partial class TiposClienteController : BaseController
     {
         /// <summary>
         /// Exclui uma cor de vidro.
@@ -48,7 +47,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
 
                     if (!resultado)
                     {
-                        return this.ErroValidacao($"Falha ao excluir tipo de cliente. {resultado.Message.ToString()}");
+                        return this.ErroValidacao($"Falha ao excluir tipo de cliente. {resultado.Message.Format()}");
                     }
 
                     return this.Aceito($"Tipo de cliente excluído.");

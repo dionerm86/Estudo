@@ -16,7 +16,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     /// <summary>
     /// Controller de tipos de cliente.
     /// </summary>
-    public partial class TiposController : BaseController
+    public partial class TiposClienteController : BaseController
     {
         /// <summary>
         /// Cadastra um tipo de cliente.

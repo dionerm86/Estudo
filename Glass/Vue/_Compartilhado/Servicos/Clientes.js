@@ -5,8 +5,89 @@ var Servicos = Servicos || {};
  */
 Servicos.Clientes = (function(http) {
   const API = '/api/v1/clientes/';
+  const API_TIPOS = '/api/v1/tiposCliente/';
 
   return {
+    /**
+     * Objeto com os serviços para a API de tipos de cliente.
+     */
+    Tipos: {
+      /**
+       * Recupera a lista de tipos de cliente para uso no controle de busca.
+       * @param {Object} filtro O filtro que foi informado na tela de pesquisa.
+       * @param {number} pagina O número da página de resultados a ser exibida.
+       * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+       * @param {string} ordenacao A ordenação para o resultado.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      obter: function (filtro, pagina, numeroRegistros, ordenacao) {
+        filtro = filtro || {};
+        filtro.pagina = pagina;
+        filtro.numeroRegistros = numeroRegistros;
+        filtro.ordenacao = ordenacao;
+
+        return http().get(API_TIPOS, {
+          params: filtro
+        });
+      },
+
+      /**
+       * Remove um tipo de cliente.
+       * @param {!number} idTipoCliente O identificador do tipo de cliente que será excluído.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      excluir: function (idTipoCliente) {
+        if (!idTipoCliente) {
+          throw new Error('Tipo de cliente é obrigatório.');
+        }
+
+        return http().delete(API_TIPOS + idTipoCliente);
+      },
+
+      /**
+       * Insere um tipo de cliente.
+       * @param {!Object} tipoCliente O objeto com os dados do tipo de cliente a ser inserido.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      inserir: function (tipoCliente) {
+        return http().post(API_TIPOS, tipoCliente);
+      },
+
+      /**
+       * Altera os dados de um tipo de cliente.
+       * @param {!number} idTipoCliente O identificador do tipo de cliente que será alterado.
+       * @param {!Object} tipoCliente O objeto com os dados do tipo de cliente a serem alteradas.
+       * @returns {Promise} Uma promise com o resultado da operação.
+       */
+      atualizar: function (idTipoCliente, tipoCliente) {
+        if (!idTipoCliente) {
+          throw new Error('Tipo de cliente é obrigatório.');
+        }
+
+        if (!tipoCliente || tipoCliente === {}) {
+          return Promise.resolve();
+        }
+
+        return http().patch(API_TIPOS + idTipoCliente, tipoCliente);
+      },
+
+      /**
+       * Retorna os itens para o controle de tipos de cliente.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterParaControle: function () {
+        return http().get(API_TIPOS + 'filtro');
+      },
+
+      /**
+       * Retorna os itens para o controle de tipos fiscal de cliente.
+       * @returns {Promise} Uma promise com o resultado da busca.
+       */
+      obterParaControleFiscal: function () {
+        return http().get(API_TIPOS + 'fiscal/filtro');
+      }
+    },
+
     /**
      * Recupera a lista de clientes.
      * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de clientes.
@@ -57,22 +138,6 @@ Servicos.Clientes = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
-    },
-
-    /**
-     * Retorna os itens para o controle de tipos de cliente.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterTipos: function () {
-      return http().get(API + 'tipos');
-    },
-
-    /**
-     * Retorna os itens para o controle de tipos fiscal de cliente.
-     * @returns {Promise} Uma promise com o resultado da busca.
-     */
-    obterTiposFiscal: function () {
-      return http().get(API + 'tiposFiscal');
     },
 
     /**

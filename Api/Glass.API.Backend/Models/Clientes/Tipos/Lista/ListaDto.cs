@@ -3,6 +3,7 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas;
+using Glass.Data.DAL;
 using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
@@ -24,6 +25,11 @@ namespace Glass.API.Backend.Models.Clientes.Tipos.Lista
             this.Id = tipoCliente.IdTipoCliente;
             this.Descricao = tipoCliente.Descricao;
             this.CobrarAreaMinima = tipoCliente.CobrarAreaMinima;
+
+            this.Permissoes = new PermissoesDto
+            {
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(Data.Model.LogAlteracao.TabelaAlteracao.TipoCartao, (uint)tipoCliente.IdTipoCliente, null),
+            };
         }
 
         /// <summary>
@@ -39,5 +45,12 @@ namespace Glass.API.Backend.Models.Clientes.Tipos.Lista
         [DataMember]
         [JsonProperty("cobrarAreaMinima")]
         public bool CobrarAreaMinima { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a lista de permissões concedidas no tipo de cliente.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("permissoes")]
+        public PermissoesDto Permissoes { get; set; }
     }
 }

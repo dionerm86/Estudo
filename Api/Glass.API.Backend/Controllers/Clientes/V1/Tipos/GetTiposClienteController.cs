@@ -4,6 +4,8 @@
 
 using GDA;
 using Glass.API.Backend.Models.Clientes.Tipos.Lista;
+using Glass.API.Backend.Models.Genericas;
+using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     /// <summary>
     /// Controller de tipos de cliente.
     /// </summary>
-    public partial class TiposController : BaseController
+    public partial class TiposClienteController : BaseController
     {
         /// <summary>
         /// Recupera a lista de tipos de cliente para a tela de listagem.
@@ -45,6 +47,51 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
                         .Select(entidade => new ListaDto(entidade)),
                     filtro,
                     () => tipos.Count);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de cliente.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos de cliente.</returns>
+        [HttpGet]
+        [Route("filtro")]
+        [SwaggerResponse(200, "Tipos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos não encontrados.")]
+        public IHttpActionResult ObterTipos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = TipoClienteDAO.Instance.GetAll(sessao)
+                    .Select(s => new IdNomeDto
+                    {
+                        Id = s.IdTipoCliente,
+                        Nome = s.Descricao,
+                    });
+
+                return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos fiscal de cliente.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos fiscal de cliente.</returns>
+        [HttpGet]
+        [Route("fiscal/filtro")]
+        [SwaggerResponse(200, "Tipos fiscal encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos fiscal não encontrados.")]
+        public IHttpActionResult ObterTiposFiscal()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposFiscal = new List<IdNomeDto>()
+                    {
+                        new IdNomeDto() { Id = 1, Nome = "Consumidor final" },
+                        new IdNomeDto() { Id = 2, Nome = "Revenda" },
+                    };
+
+                return this.Lista(tiposFiscal);
             }
         }
     }
