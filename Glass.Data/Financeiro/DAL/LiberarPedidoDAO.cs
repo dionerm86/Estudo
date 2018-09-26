@@ -4109,8 +4109,11 @@ namespace Glass.Data.DAL
             if (String.IsNullOrEmpty(idsLiberacao))
                 return 0;
 
-            string sql = "Select Sum(Coalesce(desconto, 0)) From liberarpedido Where idLiberarPedido In (" + idsLiberacao.Trim(',') + ")";
-            return ExecuteScalar<decimal>(sql);
+            var liberacoes = objPersistence.LoadData($"SELECT * FROM liberarPedido WHERE idLiberarPedido IN ({idsLiberacao})").ToList();
+
+            var desconto = liberacoes.Sum(f => (f.TipoDesconto == 1 ? f.Total * (f.Desconto / 100) : f.Desconto));
+
+            return desconto;
         }
 
         #endregion
