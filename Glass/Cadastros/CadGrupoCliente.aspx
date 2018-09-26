@@ -27,7 +27,7 @@
                     <Columns>
                         <asp:TemplateField>
                             <EditItemTemplate>
-                                <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Update" OnClientClick="onSave();return false"
+                                <asp:ImageButton ID="ImageButton1" runat="server" CommandName="Update" OnClientClick="if (!onSave()) return false;"
                                     ImageUrl="~/Images/Ok.gif" />
                                 <asp:ImageButton ID="imbExcluir" runat="server" CausesValidation="False"
                                     CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif" />

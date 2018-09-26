@@ -313,7 +313,9 @@ Vue.component('pedido-produtos', {
           cliente: {
             id: atual && atual.cliente ? atual.cliente.id : null,
             revenda: atual && atual.cliente ? atual.cliente.revenda : null
-          }
+          },
+          altura: null,
+          percentualDescontoQuantidade: null
         };
       },
       deep: true
