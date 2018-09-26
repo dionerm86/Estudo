@@ -7,7 +7,6 @@ using GDA;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Fornecedores.Lista;
 using Glass.API.Backend.Models.Genericas;
-using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
@@ -58,14 +57,14 @@ namespace Glass.API.Backend.Controllers.Fornecedores.V1
                     .Current.GetInstance<Global.Negocios.IFornecedorFluxo>();
 
                 var fornecedores = fluxo.PesquisarFornecedores(
-                    filtro.id ?? 0,
+                    filtro.Id ?? 0,
                     filtro.Nome,
                     filtro.Situacao,
                     filtro.CpfCnpj,
                     filtro.ComCredito,
                     null,
-                    filtro.IdPlanoConta,
-                    filtro.IdParcela,
+                    filtro.IdPlanoConta ?? 0,
+                    filtro.IdParcela ?? 0,
                     filtro.Endereco,
                     filtro.Vendedor);
 
@@ -94,11 +93,16 @@ namespace Glass.API.Backend.Controllers.Fornecedores.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new List<GenericModel>();
+                var situacoes = new List<IdNomeDto>();
 
                 foreach (var situacao in Enum.GetValues(typeof(Data.Model.SituacaoFornecedor)))
                 {
-                    situacoes.Add(new GenericModel((int)((Data.Model.SituacaoFornecedor)situacao), ((Data.Model.SituacaoFornecedor)situacao).Translate().ToString()));
+                    situacoes.Add(
+                        new IdNomeDto
+                        {
+                            Id = (int)(Data.Model.SituacaoFornecedor)situacao,
+                            Nome = ((Data.Model.SituacaoFornecedor)situacao).Translate().ToString(),
+                        });
                 }
 
                 return this.Lista(situacoes);

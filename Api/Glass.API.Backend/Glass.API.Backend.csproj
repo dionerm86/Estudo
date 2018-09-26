@@ -391,6 +391,7 @@
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
+    <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -462,7 +463,12 @@
     <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\VendedorDto.cs" />
     <Compile Include="Models\PlanosConta\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Fornecedores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />

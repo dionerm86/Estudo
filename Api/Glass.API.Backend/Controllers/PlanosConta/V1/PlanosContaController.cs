@@ -1,16 +1,16 @@
-﻿// <copyright file="ParcelasController.cs" company="Sync Softwares">
+﻿// <copyright file="PlanosContaController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.Parcelas.V1
+namespace Glass.API.Backend.Controllers.PlanosConta.V1
 {
     /// <summary>
-    /// Controller de parcelas.
+    /// Controller de planos de conta.
     /// </summary>
-    [RoutePrefix("api/v1/parcelas")]
-    public partial class ParcelasController : BaseController
+    [RoutePrefix("api/v1/planosConta")]
+    public partial class PlanosContaController : BaseController
     {
     }
 }
