@@ -1313,6 +1313,11 @@ namespace Glass.Global.Negocios.Componentes
 
                 .Execute();
 
+            if (cliente.Credito > 0)
+            {
+                mensagens.Add($"O cliente possui R${cliente.Credito} de crédito ");
+            }
+
             return mensagens.Select(f => f.GetFormatter()).ToArray();
         }
 
