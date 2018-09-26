@@ -7,10 +7,10 @@ using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Produtos.CoresFerragem.Lista
+namespace Glass.API.Backend.Models.Produtos.CoresAluminio.Lista
 {
     /// <summary>
-    /// Classe que encapsula um item para a lista de cores de ferragem.
+    /// Classe que encapsula um item para a lista de cores de alumínio.
     /// </summary>
     [DataContract(Name = "Lista")]
     public class ListaDto : IdDto
@@ -18,23 +18,23 @@ namespace Glass.API.Backend.Models.Produtos.CoresFerragem.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
-        /// <param name="corFerragem">A cor da ferragem que será retornada.</param>
-        public ListaDto(CorFerragem corFerragem)
+        /// <param name="corAluminio">A cor da alumínio que será retornada.</param>
+        public ListaDto(CorAluminio corAluminio)
         {
-            this.Id = corFerragem.IdCorFerragem;
-            this.Descricao = corFerragem.Descricao;
-            this.Sigla = corFerragem.Sigla;
+            this.Id = corAluminio.IdCorAluminio;
+            this.Descricao = corAluminio.Descricao;
+            this.Sigla = corAluminio.Sigla;
         }
 
         /// <summary>
-        /// Obtém ou define a descrição da cor da ferragem.
+        /// Obtém ou define a descrição da cor do alumínio.
         /// </summary>
         [DataMember]
         [JsonProperty("descricao")]
         public string Descricao { get; set; }
 
         /// <summary>
-        /// Obtém ou define a sigla da cor da ferragem.
+        /// Obtém ou define a sigla da cor do alumínio.
         /// </summary>
         [DataMember]
         [JsonProperty("sigla")]
