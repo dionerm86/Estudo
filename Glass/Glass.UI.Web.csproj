@@ -476,6 +476,9 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
+    <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
+    <Content Include="Vue\Transportadores\Templates\LstTransportadores.Filtro.html" />
     <Content Include="Vue\CoresVidro\Componentes\LstCoresVidro.js" />
     <Content Include="Vue\CoresAluminio\Componentes\LstCoresAluminio.js" />
     <Content Include="Vue\CoresFerragem\Componentes\LstCoresFerragem.js" />
