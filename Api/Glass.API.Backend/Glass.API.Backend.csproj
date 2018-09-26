@@ -241,6 +241,9 @@
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\DeleteCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PatchCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PostCoresFerragemController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\DeleteCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\PatchCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\PostCoresVidroController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -362,6 +365,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
+    <Compile Include="Helper\Produtos\CoresVidro\TraducaoOrdenacaoListaCoresVidro.cs" />
     <Compile Include="Helper\Produtos\CoresAluminio\ConverterCadastroAtualizacaoParaCorAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresAluminio\TraducaoOrdenacaoListaCoresAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
@@ -418,6 +423,9 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\Lista\ListaDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\Lista\ListaDto.cs" />
