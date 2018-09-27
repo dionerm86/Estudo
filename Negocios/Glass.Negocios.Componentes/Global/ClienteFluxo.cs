@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Colosoft;
@@ -1315,7 +1315,7 @@ namespace Glass.Global.Negocios.Componentes
 
             if (cliente.Credito > 0)
             {
-                mensagens.Add($"O cliente possui R${cliente.Credito} de crédito ");
+                mensagens.Add($"O cliente possui {cliente.Credito.ToString("C")} de crédito ");
             }
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();
