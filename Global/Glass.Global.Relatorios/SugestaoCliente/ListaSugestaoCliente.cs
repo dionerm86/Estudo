@@ -133,10 +133,10 @@ namespace Glass.Global.Relatorios.SugestaoCliente
         /// </summary>
         public override void RefreshDataSources()
         {
-            var situacoes2 = new Situacao[0];
+            var situacoes2 = new int[0];
 
             if (!string.IsNullOrEmpty(Situacao))
-                situacoes2 = Situacao.Split(',').Select(f => (Situacao)int.Parse(f)).ToArray();
+                situacoes2 = Situacao.Split(',').Select(f => int.Parse(f)).ToArray();
 
             var sugestoes = _sugestaoFluxo.PesquisarSugestoes(
                 IdSugestao, IdCliente, IdFunc, null, NomeCliente, DataInicio, DataFim, Tipo, Descricao, situacoes2, IdRota, IdPedido, IdOrcamento, IdVendedorAssoc);

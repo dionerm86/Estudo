@@ -235,6 +235,9 @@
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
+    <Compile Include="Controllers\Clientes\V1\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\PostSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\SugestaoClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\DeleteCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PatchCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PostCoresFerragemController.cs" />
@@ -359,6 +362,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaTraducaoOrdenacaoListaCoresFerragem.cs" />
     <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
@@ -413,6 +417,11 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\CadastroDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\SugestoesCliente\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresFerragem\Lista\ListaDto.cs" />
