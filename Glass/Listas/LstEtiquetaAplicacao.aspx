@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Aplicações" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
+<%@ Page Title="Aplicações" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="LstEtiquetaAplicacao.aspx.cs" Inherits="Glass.UI.Web.Listas.LstEtiquetaAplicacao" %>
 
 <%@ Register Src="../Controls/ctrlLogPopup.ascx" TagName="ctrlLogPopup" TagPrefix="uc1" %>
@@ -38,24 +38,108 @@
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
                     <td style="white-space: nowrap">
-                      <a href="#">Editar</a>
-                      <a href="#">Excluir</a>
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
                     </td>
                     <td>{{ item.codigo }}</td>
                     <td>{{ item.descricao }}</td>
-                    <td>{{ item.destacarNaEtiqueta }}</td>
-                    <td>{{ item.gerarFormaInexistente }}</td>
-                    <td>{{ item.naoPermitirFastDelivery }}</td>
-                    <td>{{ item.tiposPedido }}</td>
-                    <td>{{ item.situacao }}</td>
-                    <td>Log</td>
+                    <td>{{ item.destacarNaEtiqueta | indicaMarcado }}</td>
+                    <td>{{ item.gerarFormaInexistente | indicaMarcado}}</td>
+                    <td>{{ item.naoPermitirFastDelivery | indicaMarcado}}</td>
+                    <td>{{ item.numeroDiasUteisDataEntrega }}</td>
+                    <td>{{ obterDescricaoTiposPedidos(item) }}</td>
+                    <td>
+                        <span v-if="item.situacao">
+                            {{ item.situacao.nome }}
+                        </span>
+                    </td>
+                    <td>
+                        <log-alteracao tabela="Aplicacao" :id-item="item.id" :atualizar-ao-alterar="false"
+                            v-if="item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                    </td>
                 </template>
                 <template slot="itemEditando">
-
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="aplicacao.codigo" maxlength="10" style="width: 50px" required />
+                    </td>
+                    <td>
+                        <input type="text" v-model="aplicacao.descricao" maxlength="30" style="width: 150px" required />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.destacarNaEtiqueta" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.gerarFormaInexistente" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.naoPermitirFastDelivery" />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="aplicacao.numeroDiasUteisDataEntrega" maxlength="10"
+                            style="width: 60px" />
+                    </td>
+                    <td>
+                        <lista-selecao-multipla :ids-selecionados.sync="aplicacao.tiposPedidos"
+                            :funcao-recuperar-itens="obterTiposPedido"></lista-selecao-multipla>
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
+                            :funcao-recuperar-itens="obterSituacoes" required></lista-selecao-id-valor>
+                    </td>
+                    <td></td>
                 </template>
                 <template slot="itemIncluir">
-
-                </template>
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo produto..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="aplicacao.codigo" maxlength="10" style="width: 50px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="text" v-model="aplicacao.descricao" maxlength="30" style="width: 150px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.destacarNaEtiqueta" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.gerarFormaInexistente" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="checkbox" v-model="aplicacao.naoPermitirFastDelivery" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="aplicacao.numeroDiasUteisDataEntrega" maxlength="10"
+                            style="width: 60px" v-if="inserindo" />
+                    </td>
+                    <td>
+                        <lista-selecao-multipla :ids-selecionados.sync="aplicacao.tiposPedidos"
+                            :funcao-recuperar-itens="obterTiposPedido" v-if="inserindo"></lista-selecao-multipla>
+                    </td>
+                    <td>
+                        <lista-selecao-id-valor :item-selecionado.sync="situacaoAtual"
+                            :funcao-recuperar-itens="obterSituacoes" required v-if="inserindo"></lista-selecao-id-valor>
+                    </td>
+                    <td></td>
             </lista-paginada>
         </section>
     </div>
@@ -64,204 +148,4 @@
             <asp:ScriptReference Path="~/Vue/Aplicacoes/Componentes/LstAplicacoes.js" />
         </Scripts>
     </asp:ScriptManager>
-    <script type="text/javascript">
-
-        function onSave(insert) {
-            var descricao = FindControl(insert ? "txtDescricaoIns" : "txtDescricao", "input").value;
-            var codInterno = FindControl(insert ? "txtCodInternoIns" : "txtCodInterno", "input").value;
-
-            if (descricao == "") {
-                alert("Informe a descrição.");
-                return false;
-            }
-
-            if (codInterno == "") {
-                alert("Informe o código.");
-                return false;
-            }
-        }
-
-    </script>
-
-    <table>
-        <tr>
-            <td align="center">
-                <asp:GridView ID="grdAplicacao" runat="server" SkinID="gridViewEditable"
-                              DataSourceID="odsAplicacao" DataKeyNames="IdAplicacao" AutoGenerateColumns="false">
-                    <Columns>
-                        <asp:TemplateField>
-                            <ItemTemplate>
-                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
-                                    <img border="0" src="../Images/Edit.gif" /></asp:LinkButton>
-                                <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    ToolTip="Excluir" />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" Height="16px"
-                                    ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick="return onSave(false);" />
-                                <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
-                                    ToolTip="Cancelar" />
-                            </EditItemTemplate>
-                            <ItemStyle Wrap="False" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Código" SortExpression="CodInterno">
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtCodInterno" runat="server" MaxLength="10" Text='<%# Bind("CodInterno") %>'
-                                    Width="50px"></asp:TextBox>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtCodInternoIns" runat="server" MaxLength="10" Text='<%# Bind("CodInterno") %>'
-                                    Width="50px"></asp:TextBox>
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="Label3" runat="server" Text='<%# Bind("CodInterno") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtDescricao" runat="server" MaxLength="30" Text='<%# Bind("Descricao") %>'
-                                    Width="150px"></asp:TextBox>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtDescricaoIns" runat="server" MaxLength="30" Text='<%# Bind("Descricao") %>'
-                                    Width="150px"></asp:TextBox>
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="Label2" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Destacar na Etiqueta?" 
-                            SortExpression="DestacarEtiqueta">
-                            <ItemTemplate>
-                                <asp:CheckBox ID="CheckBox2" runat="server" 
-                                    Checked='<%# Bind("DestacarEtiqueta") %>' Enabled="False" />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:CheckBox ID="CheckBox2" runat="server" 
-                                    Checked='<%# Bind("DestacarEtiqueta") %>' />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:CheckBox ID="chkDestacar" runat="server" 
-                                    Checked='<%# Bind("DestacarEtiqueta") %>' />
-                            </FooterTemplate>
-                            <FooterStyle HorizontalAlign="Center" />
-                            <ItemStyle HorizontalAlign="Center" />
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Gerar forma inexistente" 
-                            SortExpression="GerarFormaInexistente">
-                            <EditItemTemplate>
-                                <asp:CheckBox ID="chkGerarForma" runat="server" 
-                                    Checked='<%# Bind("GerarFormaInexistente") %>' />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:CheckBox ID="chkGerarForma" runat="server" 
-                                    Checked='<%# Bind("GerarFormaInexistente") %>' />
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:CheckBox ID="chkGerarForma" runat="server" 
-                                    Checked='<%# Eval("GerarFormaInexistente") %>' Enabled="False" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Não Permitir Fast Deliver"
-                            SortExpression="NaoPermitirFastDelivery">
-                            <EditItemTemplate>
-                                <asp:CheckBox ID="chkFast" runat="server"
-                                    Checked='<%# Bind("NaoPermitirFastDelivery") %>' />
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:CheckBox ID="chkFast" runat="server"
-                                    Checked='<%# Bind("NaoPermitirFastDelivery") %>' />
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:CheckBox ID="chkFast" runat="server"
-                                    Checked='<%# Eval("NaoPermitirFastDelivery") %>' Enabled="False" />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Dias minimos p/ Entrega" SortExpression="DiasMinimos">
-                            <EditItemTemplate>
-                                <asp:TextBox ID="txtDiasMinimos" runat="server" MaxLength="10" Text='<%# Bind("DiasMinimos") %>'
-                                    Width="50px"></asp:TextBox>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:TextBox ID="txtDiasMinimos" runat="server" MaxLength="10" Text='<%# Bind("DiasMinimos") %>'
-                                    Width="50px"></asp:TextBox>
-                                <asp:Image ID="imgConta" runat="server" ImageUrl="~/Images/Help.gif" ToolTip="Numero de dias minimos para entrega do pedido com produtos dessa aplicação."/>
-                                
-                            </FooterTemplate>
-                            <ItemTemplate>
-                                <asp:Label ID="LblDiasMinimos" runat="server" Text='<%# Bind("DiasMinimos") %>'></asp:Label>
-                            </ItemTemplate>
-                        </asp:TemplateField>
-
-                        <asp:TemplateField HeaderText="Tipo de Pedido">
-                            <ItemTemplate>
-                            <asp:Label ID="LabelTipoPedido" runat="server" Text='<%# Bind("DescricaoTipoPedido") %>'></asp:Label>
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <sync:CheckBoxListDropDown ID="drpTipoPedido" runat="server" CheckAll="False" OnLoad="drpTipoPedido_Load"
-                                    ImageURL="~/Images/DropDown.png" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"
-                                    OpenOnStart="False" SelectedValue='<%# Bind("TipoPedido") %>'>
-                                    <asp:ListItem Value="1">Venda</asp:ListItem>
-                                    <asp:ListItem Value="3">Mão-de-obra</asp:ListItem>
-                                    <asp:ListItem Value="4">Produção</asp:ListItem>
-                                </sync:CheckBoxListDropDown>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <sync:CheckBoxListDropDown ID="drpTipoPedido" runat="server" CheckAll="False" OnLoad="drpTipoPedido_Load"
-                                    ImageURL="~/Images/DropDown.png" JQueryURL="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"
-                                    OpenOnStart="False"  SelectedValue='<%# Bind("TipoPedido") %>'>
-                                    <asp:ListItem Value="1">Venda</asp:ListItem>
-                                    <asp:ListItem Value="3">Mão-de-obra</asp:ListItem>
-                                    <asp:ListItem Value="4">Produção</asp:ListItem>
-                                </sync:CheckBoxListDropDown>
-                            </FooterTemplate>
-                            <HeaderStyle HorizontalAlign="Left" />
-                        </asp:TemplateField>
-
-                        <asp:TemplateField HeaderText="Situação" SortExpression="DescrSituacao">
-                            <ItemTemplate>
-                                <asp:Label ID="Label1" runat="server" Text='<%# Colosoft.Translator.Translate(Eval("Situacao")).Format() %>'></asp:Label> &nbsp&nbsp&nbsp
-                                <uc1:ctrlLogPopup ID="ctrlLogPopup1" runat="server" Tabela="Aplicacao" IdRegistro='<%# (uint)(int)Eval("IdAplicacao") %>' />
-                            </ItemTemplate>
-                            <EditItemTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server" 
-                                    SelectedValue='<%# Bind("Situacao") %>'>
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
-                            </EditItemTemplate>
-                            <FooterTemplate>
-                                <asp:DropDownList ID="drpSituacao" runat="server">
-                                    <asp:ListItem Value="Ativo">Ativo</asp:ListItem>
-                                    <asp:ListItem Value="Inativo">Inativo</asp:ListItem>
-                                </asp:DropDownList>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField>
-                            <FooterTemplate>
-                                <asp:LinkButton ID="lnkInserir" runat="server" OnClientClick="return onSave(true);"
-                                    OnClick="lnkInserir_Click"><img border="0" src="../Images/insert.gif" /></asp:LinkButton>
-                            </FooterTemplate>
-                        </asp:TemplateField>
-                    </Columns>
-                </asp:GridView>
-            </td>
-        </tr>
-        <tr>
-            <td align="center">
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsAplicacao" runat="server" 
-                    DeleteMethod="ApagarEtiquetaAplicacao" EnablePaging="True"
-                    DeleteStrategy="GetAndDelete"
-                    MaximumRowsParameterName="pageSize" 
-                    SelectMethod="PesquisarEtiquetaAplicacoes" 
-                    SelectByKeysMethod="ObtemEtiquetaAplicacao"
-                    SortParameterName="sortExpression"
-                    TypeName="Glass.Global.Negocios.IEtiquetaFluxo" 
-                    DataObjectTypeName="Glass.Global.Negocios.Entidades.EtiquetaAplicacao"
-                    UpdateMethod="SalvarEtiquetaAplicacao"
-                    UpdateStrategy="GetAndUpdate">
-                </colo:VirtualObjectDataSource>
-            </td>
-        </tr>
-    </table>
 </asp:Content>

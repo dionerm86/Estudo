@@ -22,6 +22,7 @@
     <TargetFrameworkProfile />
     <UseGlobalApplicationHostFile />
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -476,6 +477,7 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Aplicacoes\Componentes\LstAplicacoes.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.Filtro.js" />
     <Content Include="Vue\Sinais\Componentes\LstSinais.js" />
     <Content Include="Vue\Sinais\Templates\LstSinais.Filtro.html" />
