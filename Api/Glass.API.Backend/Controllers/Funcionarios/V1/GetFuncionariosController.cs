@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -258,6 +259,87 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                 };
 
                 return this.Item(dataTrabalho);
+            }
+        }
+
+        /// <summary>
+        /// Recupera as configurações usadas pela tela de listagem de funcionários.
+        /// </summary>
+        /// <returns>Um objeto JSON com as configurações da tela.</returns>
+        [HttpGet]
+        [Route("configuracoes")]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Funcionarios.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesListaFuncionarios()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Funcionarios.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de funcionários.
+        /// </summary>
+        /// <param name="filtro">Os filtros para a busca dos funcionários.</param>
+        /// <returns>Uma lista JSON com os dados dos funcionários.</returns>
+        [HttpGet]
+        [Route("")]
+        [SwaggerResponse(200, "Funcionários sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<Models.Funcionarios.Lista.ListaDto>))]
+        [SwaggerResponse(204, "Funcionários não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Funcionários paginados (qualquer página, exceto a última).", Type = typeof(IEnumerable<Models.Funcionarios.Lista.ListaDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterListaFuncionarios([FromUri] Models.Funcionarios.Lista.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                filtro = filtro ?? new Models.Funcionarios.Lista.FiltroDto();
+
+                var funcionarios = Microsoft.Practices.ServiceLocation.ServiceLocator
+                    .Current.GetInstance<Global.Negocios.IFuncionarioFluxo>()
+                    .PesquisarFuncionarios(
+                        filtro.IdLoja,
+                        filtro.Nome,
+                        filtro.Situacao,
+                        filtro.ApenasRegistrados,
+                        filtro.IdTipoFuncionario,
+                        filtro.IdSetor,
+                        filtro.PeriodoDataNascimentoInicio,
+                        filtro.PeriodoDataNascimentoFim);
+
+                ((Colosoft.Collections.IVirtualList)funcionarios).Configure(filtro.NumeroRegistros);
+                ((Colosoft.Collections.ISortableCollection)funcionarios).ApplySort(filtro.ObterTraducaoOrdenacao());
+
+                return this.ListaPaginada(
+                    funcionarios
+                        .Skip(filtro.ObterPrimeiroRegistroRetornar())
+                        .Take(filtro.NumeroRegistros)
+                        .Select(f => new Models.Funcionarios.Lista.ListaDto(f)),
+                    filtro,
+                    () => funcionarios.Count);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de funcionários.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos de tipos de funcionários.</returns>
+        [HttpGet]
+        [Route("tiposFuncionario")]
+        [SwaggerResponse(200, "Tipos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos não encontrados.")]
+        public IHttpActionResult ObterTipos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tipos = TipoFuncDAO.Instance.GetAll(sessao)
+                    .Select(s => new IdNomeDto
+                    {
+                        Id = s.IdTipoFuncionario,
+                        Nome = s.Descricao,
+                    });
+
+                return this.Lista(tipos);
             }
         }
     }

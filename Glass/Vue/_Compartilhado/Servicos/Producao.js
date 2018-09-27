@@ -13,6 +13,14 @@ Servicos.Producao = (function(http) {
      */
     obterSituacoes: function () {
       return http().get(API + 'situacoes');
+    },
+
+    /**
+     * Recupera a lista de setores de produção.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSetores: function () {
+      return http().get("api/v1/producao/setores");
     }
   };
 })(function() {

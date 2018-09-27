@@ -52,7 +52,7 @@
                         <a :href="obterLinkEditarCliente(item)" title="Editar" v-if="configuracoes.cadastrarCliente">
                             <img border="0" src="../Images/EditarGrid.gif">
                         </a>
-                        <a href="#" @click.prevent="excluir(item)" title="Cancelar" v-if="configuracoes.cadastrarCliente">
+                        <a href="#" @click.prevent="excluir(item)" title="Excluir" v-if="configuracoes.cadastrarCliente">
                             <img border="0" src="../Images/ExcluirGrid.gif">
                         </a>
                         <a href="#" @click.prevent="abrirTabelaDescontoAcrescimo(item)" title="Descontos/Acréscimos" v-if="item.permissoes.cadastrarDescontoTabela">

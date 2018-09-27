@@ -10,7 +10,7 @@ namespace Glass.Data.DAL
     public abstract class BaseDAO<Model, DAO> : GDA.BaseDAO<Model>, IDisposable
         where Model : new()
         where DAO : BaseDAO<Model, DAO>, new()
-    {        
+    {
         #region Enumerações
 
         protected enum TipoSql
@@ -45,7 +45,7 @@ namespace Glass.Data.DAL
             get
             {
                 //return Glass.Pool.PoolableObject<DAO>.Instance;
-                return GDA.GDAOperations.GetDAO<Model, DAO>(); 
+                return GDA.GDAOperations.GetDAO<Model, DAO>();
             }
         }
 
@@ -157,7 +157,7 @@ namespace Glass.Data.DAL
             string where, bool semFiltro, bool utilizarSortComFiltro, out int numeroRegistros, params GDAParameter[] parameters)
         {
             bool temp;
-            return GetSqlWithLimit(session, sql, sort, startRow, pageSize, aliasTabelaOrdenar, where, semFiltro, utilizarSortComFiltro, 
+            return GetSqlWithLimit(session, sql, sort, startRow, pageSize, aliasTabelaOrdenar, where, semFiltro, utilizarSortComFiltro,
                 out temp, out numeroRegistros, parameters);
         }
 
@@ -205,7 +205,7 @@ namespace Glass.Data.DAL
                     bool chaveComposta;
                     string campo = GetCampoChave(session, tabela, out chaveComposta);
 
-                    // Formata o WHERE do SQL para ser usado 
+                    // Formata o WHERE do SQL para ser usado
                     string whereInterno = where;
                     whereInterno = string.IsNullOrEmpty(whereInterno) || (" " + whereInterno.ToLower().Trim()).IndexOf(" and ") == 0 ? whereInterno : " and " + whereInterno.Trim();
 
@@ -218,7 +218,7 @@ namespace Glass.Data.DAL
                     }
 
                     // Recupera os valores dos campos chave usando o WHERE e LIMIT
-                    string retorno = GetValoresCampo(session, "select " + campo + " from " + tabela + " where 1" + whereInterno + 
+                    string retorno = GetValoresCampo(session, "select " + campo + " from " + tabela + " where 1" + whereInterno +
                         ordenar.Replace(alias + ".", string.Empty) + limitar, campo, parameters);
 
                     numeroRegistros = retorno.Split(',').Length;
@@ -332,7 +332,7 @@ namespace Glass.Data.DAL
 
             // Otimiza o SQL e salva as informações de ordenação e paginação nas variáveis privadas
             int numeroRegistros;
-            sql = GetSqlWithLimit(session, sql, sortExpression, startRow, pageSize, GetAliasTabela(sql), where, 
+            sql = GetSqlWithLimit(session, sql, sortExpression, startRow, pageSize, GetAliasTabela(sql), where,
                 !temFiltro, out numeroRegistros, parameters);
 
             SetInfoPaging(sortExpression, startRow, pageSize);
@@ -365,7 +365,7 @@ namespace Glass.Data.DAL
         {
             return GetCountWithInfoPaging(sqlSelecionar, false, parameters);
         }
-        
+
         /// <summary>
         /// Retorna o número de registros de um SQL de seleção.
         /// Usado em conjunto com o método LoadDataWithSortExpression, ou após chamar SetInfoPaging.
@@ -531,7 +531,7 @@ namespace Glass.Data.DAL
             alias = "'" + (!String.IsNullOrEmpty(alias) ? alias.TrimEnd(' ', '.') + "." : "") + "'";
 
             // Busca os campos que compõe a chave primária da tabela
-            string campo = "select cast(group_concat(concat(" + alias + @", column_name)) as char) from information_schema.key_column_usage 
+            string campo = "select cast(group_concat(concat(" + alias + @", column_name)) as char) from information_schema.key_column_usage
                 where table_schema='" + DBUtils.GetDBName + "' and table_name='" + nomeTabela + "' and constraint_name='primary'";
 
             // Recupera os campos
@@ -650,7 +650,7 @@ namespace Glass.Data.DAL
         {
             // Verifica se há algum alias no Sort
             string[] dadosSort = sort != null ? sort.Split('.', ' ') : new string[0];
-            
+
             // Define o alias usado
             alias = sort != null && sort.IndexOf('.') > -1 ? dadosSort[0] : aliasTabelaOrdenar;
             if (!string.IsNullOrEmpty(alias) && alias.Contains("("))
@@ -681,7 +681,7 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         private bool IsCampoChave(string nomeCampo, string nomeTabela)
         {
-            string sql = @"select count(*) from information_schema.key_column_usage 
+            string sql = @"select count(*) from information_schema.key_column_usage
                 where table_schema='" + DBUtils.GetDBName + @"' and table_name='" + nomeTabela + @"'
                 and column_name='" + nomeCampo + "'";
 
@@ -717,7 +717,7 @@ namespace Glass.Data.DAL
         {
             return objPersistence.TableNameInfo.Name;
         }
-        
+
         /// <summary>
         /// Insere os dados no BD.
         /// </summary>
@@ -786,7 +786,7 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException is MySqlException && 
+                if (ex.InnerException != null && ex.InnerException is MySqlException &&
                     ex.InnerException.Message.ToLower().Contains("cannot delete or update a parent row: a foreign key constraint fails"))
                     throw new Exception("Não é possível remover o item: há outros itens vinculados a ele. Remova-os antes de continuar.", ex.InnerException);
 
@@ -965,10 +965,10 @@ namespace Glass.Data.DAL
             {
                 uint key = GetKey(objUpdate);
                 uint id = Insert(sessao, objUpdate);
-                
+
                 if (key > 0 && id > 0)
                 {
-                    objPersistence.ExecuteCommand(sessao, "update " + objPersistence.TableNameInfo.Name + " set " + 
+                    objPersistence.ExecuteCommand(sessao, "update " + objPersistence.TableNameInfo.Name + " set " +
                         objPersistence.Keys[0].Name + "=" + key + " where " + objPersistence.Keys[0].Name + "=" + id);
                 }
             }
@@ -1031,7 +1031,7 @@ namespace Glass.Data.DAL
 
             string sql = "select * from " + objPersistence.TableNameInfo.Name +
                          " where " + listKeys[0].Name + "=" + key.ToString();
-            
+
             return objPersistence.LoadOneData(sessao, sql);
         }
 

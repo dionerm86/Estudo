@@ -5,30 +5,30 @@
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
-namespace Glass.API.Backend.Models.Clientes.Lista
+namespace Glass.API.Backend.Models.Funcionarios.Lista
 {
     /// <summary>
-    /// Classe que encapsula os dados de permissão do cliente.
+    /// Classe que encapsula os dados de permissão do funcionário.
     /// </summary>
     [DataContract(Name = "Permissoes")]
     public class PermissoesDto
     {
         /// <summary>
-        /// Obtém ou define um valor que indica se o cliente pode ser ativado/inativado.
+        /// Obtém ou define um valor que indica se o funcioário pode ser editado.
         /// </summary>
         [DataMember]
-        [JsonProperty("alterarSituacao")]
-        public bool AlterarSituacao { get; set; }
+        [JsonProperty("editar")]
+        public bool Editar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se poderá cadastrar/alterar desconto de tabela para o cliente.
+        /// Obtém ou define um valor que indica se o funcionário pode ser apagado.
         /// </summary>
         [DataMember]
-        [JsonProperty("cadastrarDescontoTabela")]
-        public bool CadastrarDescontoTabela { get; set; }
+        [JsonProperty("apagar")]
+        public bool Apagar { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o cliente possui log de alterações.
+        /// Obtém ou define um valor que indica se o funcionário possui log de alterações..
         /// </summary>
         [DataMember]
         [JsonProperty("logAlteracoes")]

@@ -30,6 +30,8 @@ namespace Glass.API.Backend.Helper.Imagens
             {
                 case TipoItem.Produto:
                     return new ExibicaoProdutoStrategy(sessao, apiController);
+                case TipoItem.Funcionario:
+                    return new ExibicaoFuncionarioStrategy(sessao, apiController);
             }
 
             return null;

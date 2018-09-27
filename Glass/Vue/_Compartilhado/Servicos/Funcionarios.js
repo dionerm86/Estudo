@@ -97,6 +97,72 @@ Servicos.Funcionarios = (function(http) {
      */
     obterFinalizacaoPedidos: function () {
       return http().get(API + 'finalizacao');
+    },
+    /**
+     * Recupera a lista de funcionários.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de funcionários.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      filtro = filtro || {};
+      filtro.pagina = pagina;
+      filtro.numeroRegistros = numeroRegistros;
+      filtro.ordenacao = ordenacao;
+
+      return http().get(API.substr(0, API.length - 1), {
+        params: filtro
+      });
+    },
+
+    /**
+     * Recupera o objeto com as configurações utilizadas na tela de listagem de funcionários.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterConfiguracoesLista: function () {
+      return http().get(API + 'configuracoes');
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos fiscal de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterSituacoes: function () {
+      return Promise.resolve({
+        "data": [
+          {
+            "id": "1",
+            "nome": "Ativo"
+          },
+          {
+            "id": "2",
+            "nome": "Inativo"
+          }
+        ]
+      });
+    },
+
+    /**
+     * Retorna os itens para o controle de tipos fiscal de cliente.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterTiposFuncionario: function () {
+      return http().get(API + 'tiposFuncionario');
+    },
+        
+    /**
+     * Remove um cliente.
+     * @param {!number} idFuncionario O identificador do funcionário que será excluído.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    excluir: function (idFuncionario) {
+      if (!idFuncionario) {
+        throw new Error('Funcionário é obrigatório.');
+      }
+
+      return http().delete(API + idFuncionario);
     }
   };
 })(function() {

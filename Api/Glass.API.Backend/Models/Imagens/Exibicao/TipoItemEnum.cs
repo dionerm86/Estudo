@@ -16,5 +16,11 @@ namespace Glass.API.Backend.Models.Imagens.Exibicao
         /// </summary>
         [Description("Produto")]
         Produto,
+
+        /// <summary>
+        /// Dados para exibição de imagens de funcionário.
+        /// </summary>
+        [Description("Funcionario")]
+        Funcionario,
     }
 }

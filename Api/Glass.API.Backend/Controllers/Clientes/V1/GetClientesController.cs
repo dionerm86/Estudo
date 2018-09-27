@@ -57,14 +57,14 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                 var clientes = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Global.Negocios.IClienteFluxo>()
                     .PesquisarClientes(
-                        filtro.Id ?? 0,
+                        filtro.Id,
                         filtro.NomeCliente,
                         filtro.CpfCnpj,
-                        filtro.IdLoja ?? 0,
+                        filtro.IdLoja,
                         filtro.Telefone,
                         filtro.Endereco,
                         filtro.Bairro,
-                        filtro.IdCidade ?? 0,
+                        filtro.IdCidade,
                         filtro.Tipo,
                         filtro.Situacao != null ? filtro.Situacao.Select(f => (int)f).ToArray() : null,
                         filtro.CodigoRota,

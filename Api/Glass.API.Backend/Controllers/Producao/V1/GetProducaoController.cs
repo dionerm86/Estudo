@@ -39,5 +39,28 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                 return this.Lista(situacoes);
             }
         }
+
+        /// <summary>
+        /// Recupera a lista de setores de produção.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das setores de produção.</returns>
+        [HttpGet]
+        [Route("setores")]
+        [SwaggerResponse(200, "Setores de produção encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Setores de produção não encontrados.")]
+        public IHttpActionResult ObterSetores()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = Glass.Data.DAL.SetorDAO.Instance.GetAll()
+                    .Select(s => new IdNomeDto
+                    {
+                        Id = s.IdSetor,
+                        Nome = s.Descricao,
+                    });
+
+                return this.Lista(situacoes);
+            }
+        }
     }
 }
