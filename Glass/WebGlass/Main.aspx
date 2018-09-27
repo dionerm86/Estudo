@@ -152,7 +152,7 @@
         </tr>
         <tr>
             <td align="center">
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMensagem" runat="server" 
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMensagem" runat="server"
                     DeleteMethod="ApagarMensagemRecebida"
                     SelectMethod="PesquisarMensagensRecebidas"
                     TypeName="Glass.Global.UI.Web.Process.Mensagens.LeituraMensagens" EnablePaging="True"
@@ -161,9 +161,9 @@
                         <asp:Parameter Name="idMensagem" Type="Int32" />
                     </DeleteParameters>
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMensagemParceiro" runat="server" 
+                <colo:VirtualObjectDataSource culture="pt-BR" ID="odsMensagemParceiro" runat="server"
                     SelectMethod="PesquisarMensagensParceirosRecebidasFuncionario"
-                    TypeName="Glass.Global.UI.Web.Process.Mensagens.LeituraMensagens" EnablePaging="True" 
+                    TypeName="Glass.Global.UI.Web.Process.Mensagens.LeituraMensagens" EnablePaging="True"
                     MaximumRowsParameterName="pageSize"
                     SortParameterName="sortExpression" DeleteMethod="ApagarMensagemParceiroRecebidaFuncionario">
                     <DeleteParameters>
