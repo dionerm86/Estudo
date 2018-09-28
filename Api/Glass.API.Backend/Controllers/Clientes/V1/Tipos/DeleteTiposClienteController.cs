@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteTiposController.cs" company="Sync Softwares">
+﻿// <copyright file="DeleteTiposClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -16,7 +16,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     public partial class TiposClienteController : BaseController
     {
         /// <summary>
-        /// Exclui uma cor de vidro.
+        /// Exclui um tipo de cliente.
         /// </summary>
         /// <param name="id">O identificador do tipo de cliente que será excluído.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
