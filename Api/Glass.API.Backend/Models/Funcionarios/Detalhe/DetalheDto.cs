@@ -24,13 +24,13 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
             this.Nome = funcionario.Nome;
             this.IdTipoFuncionario = funcionario.IdTipoFunc;
             this.IdsSetores = funcionario.Setores.Select(f => f.IdSetor);
-            this.Endereco = new EnderecoDto
+            this.Endereco = new Genericas.EnderecoDto
             {
                 Logradouro = funcionario.Endereco,
                 Bairro = funcionario.Bairro,
                 Cep = funcionario.Cep,
                 Complemento = funcionario.Compl,
-                Cidade = new CidadeDto
+                Cidade = new Genericas.CidadeDto
                 {
                     Id = 1,
                     Nome = funcionario.Cidade,
@@ -66,7 +66,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
                 Foto = string.Empty,
             };
 
-            this.Situacao = (int)funcionario.Situacao;
+            this.Situacao = funcionario.Situacao;
             this.Acesso = new AcessoDto
             {
                 Login = funcionario.Login,
@@ -111,7 +111,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("endereco")]
-        public EnderecoDto Endereco { get; set; }
+        public Genericas.EnderecoDto Endereco { get; set; }
 
         /// <summary>
         /// Obtém ou define o identificador da loja.
@@ -139,7 +139,7 @@ namespace Glass.API.Backend.Models.Funcionarios.Detalhe
         /// </summary>
         [DataMember]
         [JsonProperty("situacao")]
-        public int Situacao { get; set; }
+        public Glass.Situacao Situacao { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de acesso do funcionário.

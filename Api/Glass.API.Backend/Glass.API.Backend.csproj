@@ -418,13 +418,11 @@
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
     <Compile Include="Models\Funcionarios\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Funcionarios\Configuracoes\DetalheDto.cs" />
-    <Compile Include="Models\Funcionarios\Detalhe\CidadeDto.cs" />
     <Compile Include="Models\Funcionarios\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Funcionarios\Detalhe\AcessoDto.cs" />
     <Compile Include="Models\Funcionarios\Detalhe\ContatosDto.cs" />
     <Compile Include="Models\Funcionarios\Detalhe\DetalheDto.cs" />
     <Compile Include="Models\Funcionarios\Detalhe\DocumentosEDadosPessoaisDto.cs" />
-    <Compile Include="Models\Funcionarios\Detalhe\EnderecoDto.cs" />
     <Compile Include="Models\Funcionarios\Detalhe\PermisoesDto.cs" />
     <Compile Include="Models\Funcionarios\Lista\ContatosDto.cs" />
     <Compile Include="Models\Funcionarios\Lista\DocumentosDto.cs" />
