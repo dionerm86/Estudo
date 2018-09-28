@@ -7,6 +7,7 @@ using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -45,7 +46,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// Obtém uma lista de vendedores.
         /// </summary>
         /// <param name="idVendedorAtual">Identificador do vendedor já selecionado no pedido/orçamento/PCP.</param>
-        /// <param name="orcamento">O resultado deve considerar os emissores de orçamentos?</param>
+        /// <param name="orcamento">O resultado deve considerar os emissores de orçamentos?.</param>
         /// <returns>Uma lista JSON com os dados básicos dos vendedores.</returns>
         [HttpGet]
         [Route("vendedores")]
@@ -340,6 +341,48 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
                     });
 
                 return this.Lista(tipos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera os detalhes de um funcionário.
+        /// </summary>
+        /// <param name="id">O identificador do funcionário.</param>
+        /// <returns>Um objeto JSON com os dados do funcionário.</returns>
+        [HttpGet]
+        [Route("{id:int}")]
+        [SwaggerResponse(200, "Funcionário encontrado.", Type = typeof(Models.Funcionarios.Detalhe.DetalheDto))]
+        [SwaggerResponse(400, "Erro de validação ou de valor ou formato inválido do campo id.", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Funcionário não encontrado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterFuncionario(int id)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarIdFuncionario(id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var funcionarioFluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Glass.Global.Negocios.IFuncionarioFluxo>();
+
+                var funcionario = funcionarioFluxo.ObtemFuncionario(id);
+
+                if (funcionario == null)
+                {
+                    return this.NaoEncontrado(string.Format("Funcionário {0} não encontrado.", id));
+                }
+
+                try
+                {
+                    return this.Item(new Models.Funcionarios.Detalhe.DetalheDto(funcionario));
+                }
+                catch (Exception e)
+                {
+                    return this.ErroInternoServidor("Erro ao recuperar o funcionário.", e);
+                }
             }
         }
     }
