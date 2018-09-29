@@ -89,7 +89,6 @@ Servicos.Aplicacoes = (function(http) {
     obterParaControle: function () {
       return http().get(API + 'filtro');
     }
-    }
   };
 })(function() {
   return Vue.prototype.$http;
