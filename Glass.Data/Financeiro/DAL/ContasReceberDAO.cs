@@ -2322,7 +2322,7 @@ namespace Glass.Data.DAL
             }
 
             if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray()) &&
-                (dadosChequesRecebimento?.Count()).GetValueOrDefault() == 0)
+                !(dadosChequesRecebimento?.Any(f => !string.IsNullOrWhiteSpace(f)) ?? false))
             {
                 throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
             }
@@ -7965,6 +7965,17 @@ namespace Glass.Data.DAL
                     idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
 
                 numDocCnab = numeroDocumento;
+            }
+            else if (codbanco == (int)Sync.Utils.CodigoBanco.CaixaEconomicaFederal)
+            {
+                idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
+                numDocCnab = numeroDocumento;
+
+                if(idContaR == 0 && !string.IsNullOrEmpty(usoEmpresa))
+                {
+                    idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc",
+                        new GDAParameter("?numDoc", usoEmpresa.Substring(usoEmpresa.Length > 10 ? -10 : 0)));
+                }
             }
             else
             {
