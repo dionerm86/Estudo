@@ -437,24 +437,25 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, String.Format(sql, usarEspelho ? "Fluxo" : "Pedido")).ToList();
         }
-
+        
         /// <summary>
         /// Busca os ids dos produtos de vários pedidos.
         /// </summary>
-        public IList<uint> ObtemIdsPedidoExcetoProducao(GDASession sessao, string idsPedidos)
+        public IList<int> ObterIdsProdPedExcetoProducao(GDASession sessao, List<int> idsPedidos)
         {
-            string sql = string.Format(@"
-                Select pp.idProdPed
-                From produtos_pedido pp
-                    Left Join pedido p On (pp.idPedido=p.idPedido)
-                Where pp.idPedido in ({0})
-                    And (invisivelPedido=false or invisivelPedido is null)
-                    And p.TipoPedido Not In ({1})",
+            if (!idsPedidos?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
 
-                idsPedidos,
-                (int)Pedido.TipoPedidoEnum.Producao);
+            var sql = $@"SELECT pp.IdProdPed 
+                FROM produtos_pedido pp
+                    LEFT JOIN pedido p ON (pp.IdPedido = p.IdPedido)
+                WHERE pp.IdPedido IN ({ string.Join(",", idsPedidos) })
+                    AND (InvisivelPedido IS NULL OR InvisivelPedido = 0)
+                    AND p.TipoPedido NOT IN ({ (int)Pedido.TipoPedidoEnum.Producao })";
 
-            return objPersistence.LoadResult(sessao, sql, null).Select(f => f.GetUInt32(0)).ToList();
+            return ExecuteMultipleScalar<int>(sessao, sql);
         }
 
         /// <summary>

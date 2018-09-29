@@ -757,10 +757,10 @@ namespace Glass.Data.DAL
             #region Declaração de variáveis
 
             // Variável criada para retornar a mensagem de validação de sinal e pagamento antecipado dos pedidos.
-            var mensagemSinalPagamentoAntecipado = string.Empty;
+            var mensagemSinalPagamentoAntecipado = new List<string>();
             // Variável criada para retornar a mensagem de validação de estoque dos pedidos.
             var mensagemEstoque = string.Empty;
-            var pedidosPossuemSinalPagamentoAntecipadoAReceber = !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, string.Join(",", idsPedido), out mensagemSinalPagamentoAntecipado);
+            var pedidosPossuemSinalPagamentoAntecipadoAReceber = !PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido.ToList(), out mensagemSinalPagamentoAntecipado);
             var pedidosPossuemEstoque = PedidoPossuiEstoque(session, idsProdutoPedido.Select(f => (uint)f).ToArray(), quantidadesLiberar.ToArray(), out mensagemEstoque);
             var indiceCheques = UtilsFinanceiro.IndexFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => (uint)f).ToArray());
             var idSetorEntregue = (int)Utils.ObtemIdSetorEntregue().GetValueOrDefault();
@@ -1791,9 +1791,12 @@ namespace Glass.Data.DAL
                     throw new Exception("As peças destes pedidos já foram liberadas.");
             }
 
-            string mensagem;
-            if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido, out mensagem))
-                throw new Exception("Falha ao liberar pedidos. Erro: " + mensagem);
+            var mensagem = new List<string>();
+
+            if (!PedidoDAO.Instance.VerificaSinalPagamentoReceber(session, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), out mensagem))
+            {
+                throw new Exception($"Falha ao liberar pedidos. Erro: { mensagem }");
+            }
 
             // Verifica se cliente possui limite disponível para liberar os pedidos, desde que os mesmos já não estejam debitando do limite
             var debitosCliente = ContasReceberDAO.Instance.GetDebitos(session, idCliente, idsPedido);
@@ -1856,9 +1859,13 @@ namespace Glass.Data.DAL
                         "Valor pago é inferior ao total a ser pago. Total pago: {0} Total a ser pago: {1}",
                         totalPago.ToString("C"), valorPagar.ToString("C")));
 
+            var mensagemEstoque = string.Empty;
+
             // Verifica se há estoque disponível para os produtos sendo liberados
-            if (!PedidoPossuiEstoque(session, idsProdutosPedido, qtdeLiberar, out mensagem))
-                throw new Exception(mensagem);
+            if (!PedidoPossuiEstoque(session, idsProdutosPedido, qtdeLiberar, out mensagemEstoque))
+            {
+                throw new Exception(mensagemEstoque);
+            }
 
             uint idLoja = 0;
 

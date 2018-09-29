@@ -678,12 +678,13 @@ namespace Glass.Data.DAL
                 try
                 {
                     // Deixa o pedido Confirmado.
-                    var idsPedidos = string.Empty;
-                    var idsPedidosErro = string.Empty;
-
-                    /* Chamado 47326. */
-                    if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda &&
-                        PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    var idsPedidos = new List<int>();
+                    var idsPedidosErro = new List<int>();
+                    
+                    if (GetTipoVenda(null, idProjeto) != (uint)Pedido.TipoPedidoEnum.Revenda && PedidoDAO.Instance.ObtemSituacao(null, idPedido) != Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                    {
+                        PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(new List<int> { (int)idPedido }, out idsPedidos, out idsPedidosErro, true, false);
+                    }
                     {
                         if (PedidoConfig.PodeEditarPedidoGeradoParceiro)
                         {
@@ -695,7 +696,7 @@ namespace Glass.Data.DAL
                             catch (ValidacaoPedidoFinanceiroException f)
                             {
                                 string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                                PedidoDAO.Instance.DisponibilizaFinalizacaoFinanceiro(null, idPedido, mensagem);
+                                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, f.IdsPedido, mensagem);
                                 return idPedido;
                             }
                             catch (Exception ex)
@@ -706,13 +707,13 @@ namespace Glass.Data.DAL
                             }
                         }
 
-                        PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(idPedido.ToString(), out idsPedidos, out idsPedidosErro, true, false);
+                        PedidoDAO.Instance.ConfirmarLiberacaoPedidoComTransacao(new List<int> { (int)idPedido }, out idsPedidos, out idsPedidosErro, true, false);
                     }
                 }
                 catch (ValidacaoPedidoFinanceiroException f)
                 {
                     string mensagem = MensagemAlerta.FormatErrorMsg("", f);
-                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idPedido.ToString(), mensagem);
+                    PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, new List<int> { (int)idPedido }, mensagem);
                     return idPedido;
                 }
                 catch (Exception ex)

@@ -1011,8 +1011,10 @@ namespace Glass.Data.Helper
 
                                 PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, false);
 
-                                string idsPedidos = dados[i].idPedido.ToString(), idsPedidosErro;
-                                PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, idsPedidos, out idsPedidos, out idsPedidosErro, false);
+                                var idsPedidoOk = new List<int>();
+                                var idsPedidoErro = new List<int>();
+
+                                PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, new List<int> { dados[i].idPedido.ToString().StrParaInt() }, out idsPedidoOk, out idsPedidoErro, false);
 
                                 PedidoEspelhoDAO.Instance.GeraEspelho(transaction, dados[i].idPedido);
                                 espelhosGerados.Add(i);
