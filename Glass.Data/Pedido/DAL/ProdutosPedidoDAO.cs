@@ -4948,6 +4948,15 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
+            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+
+            ValorTotal.Instance.Calcular(session,
+                container,
+                produto,
+                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                calcMult5,
+                produto.Beneficiamentos.CountAreaMinima);
+
             ValorBruto.Instance.Calcular(session, container, produto);
         }
 
