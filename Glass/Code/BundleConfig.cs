@@ -104,7 +104,6 @@ namespace Glass.UI.Web
             return new ScriptBundle("~/Scripts/Vue")
                 .IncludeDirectory("~/Vue/_Compartilhado/Filtros", "*.js")
                 .IncludeDirectory("~/Vue/_Compartilhado/Mixins", "*.js")
-                .IncludeDirectory("~/Vue/_Compartilhado/Diretivas", "*.js")
                 .IncludeDirectory("~/Vue/_Compartilhado/Servicos", "*.js")
                 .IncludeDirectory("~/Vue/_Compartilhado/Componentes/Base", "*.js")
                 .IncludeDirectory("~/Vue/_Compartilhado/Componentes", "*.js");
