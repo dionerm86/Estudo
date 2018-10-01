@@ -163,10 +163,10 @@ namespace Glass.API.Backend.Models.Funcionarios.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("string")]
-        public string Obsercavao
+        public string Observacao
         {
-            get { return this.ObterValor(c => c.Obsercavao); }
-            set { this.AdicionarValor(c => c.Obsercavao, value); }
+            get { return this.ObterValor(c => c.Observacao); }
+            set { this.AdicionarValor(c => c.Observacao, value); }
         }
     }
 }
