@@ -466,6 +466,7 @@
     <Compile Include="Models\Producao\V1\Lista\PedidoDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ImagemPecaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\PerdaDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ProdutoPedidoDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoDto.cs" />

@@ -1,6 +1,5 @@
 Vue.component('pedido-filtros', {
   mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
-
   props: {
     /**
      * Filtros selecionados para a lista de pedidos.
