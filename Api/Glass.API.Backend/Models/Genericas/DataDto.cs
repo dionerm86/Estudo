@@ -19,6 +19,6 @@ namespace Glass.API.Backend.Models.Genericas
         /// </summary>
         [DataMember]
         [JsonProperty("data")]
-        public DateTime Data { get; set; }
+        public DateTime? Data { get; set; }
     }
 }
