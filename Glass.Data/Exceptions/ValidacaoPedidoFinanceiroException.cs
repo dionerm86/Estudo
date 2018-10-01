@@ -1,20 +1,19 @@
 ﻿using System;
 using Glass.Data.Model;
+using System.Collections.Generic;
 
 namespace Glass.Data.Exceptions
 {
     public class ValidacaoPedidoFinanceiroException : Exception
     {
-        public string IdsPedidos { get; private set; }
-        public uint IdPedido { get; private set; }
+        public List<int> IdsPedido { get; private set; }
+
         public ObservacaoFinalizacaoFinanceiro.MotivoEnum Motivo { get; private set; }
 
-        public ValidacaoPedidoFinanceiroException(string message, uint idPedido, string idsPedidos,
-            ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
+        public ValidacaoPedidoFinanceiroException(List<int> idsPedido, string message, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
             : base(message)
         {
-            IdPedido = idPedido;
-            IdsPedidos = idsPedidos;
+            IdsPedido = idsPedido;
             Motivo = motivo;
         }
     }

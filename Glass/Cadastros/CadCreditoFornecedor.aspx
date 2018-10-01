@@ -39,6 +39,13 @@
             return true;
         }
 
+        function onInsertUpdate() {
+            if (!validate())
+                return false;
+
+            return true;
+        }
+
         // Abre popup para cadastrar cheques
         function queryStringCheques() {
             return "?origem=5";

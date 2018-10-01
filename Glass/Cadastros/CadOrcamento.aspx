@@ -500,11 +500,7 @@
             }
 
             dados = dados.split("|");
-            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[12]);
-
-            var drpFuncionario = FindControl("drpFuncionario", "select");
-            if (drpFuncionario != null && dados[9] != "0")
-                drpFuncionario.value = dados[9];
+            setDadosCliente(dados[0], dados[1], dados[2], dados[3], dados[4], dados[5], dados[6], dados[7], idCli.value, dados[8], dados[9], dados[12]);            
 
             if (usarComissionado)
             {
@@ -513,7 +509,7 @@
             }
         }
 
-        function setDadosCliente(nome, telRes, telCel, email, endereco, bairro, cidade, cep, idCliente, compl, obs) {
+        function setDadosCliente(nome, telRes, telCel, email, endereco, bairro, cidade, cep, idCliente, compl, idFunc, obs) {
             FindControl("txtNomeCliente", "input").value = nome;
             FindControl("txtTelRes", "input").value = telRes;
             FindControl("txtTelCel", "input").value = telCel;
@@ -526,6 +522,10 @@
 
             FindControl("txtIdCliente", "input").value = idCliente;
             FindControl("hdfIdCliente", "input").value = idCliente;
+
+            var drpFuncionario = FindControl("drpFuncionario", "select");
+            if (drpFuncionario != null && idFunc != "0")
+                drpFuncionario.value = dados[9];
         }
 
         function openProdutos(idProd, editar)

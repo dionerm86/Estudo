@@ -112,14 +112,22 @@ namespace Glass.Data.DAL
         {
             const string ALFABETO = "ABCDEFGHIJLMNOPQRSTUVXZ";
 
+            var numDoc = idContaR.ToString();
+
+            var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<string>("numeroDocumentoCnab", "idContaR=" + idContaR);
+
+            if (!string.IsNullOrEmpty(numDocContaReceber) && numDocContaReceber != "0")
+            {
+                numDoc = numDocContaReceber;
+                return numDoc.ToString().FormataNumero("numDoc", 10, false);
+            }
+
             var numParc = ContasReceberDAO.Instance.ObtemValorCampo<int>("numParc", "idContaR=" + idContaR);
             if (numParc < 1) numParc = 1;
 
             var idNf = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idNf", "idContaR=" + idContaR);
 
             var idCte = ContasReceberDAO.Instance.ObtemValorCampo<uint>("idCte", "idContaR=" + idContaR);
-
-            var numDoc = idContaR.ToString();
 
             if (buscarComNf && idNf == 0 &&
                 (Glass.Configuracoes.FinanceiroConfig.FinanceiroRec.GerarNotaApenasDeLiberacao || FinanceiroConfig.UsarNumNfBoletoSemSeparacao))
@@ -287,7 +295,7 @@ namespace Glass.Data.DAL
             else if (codigoBanco == (int)CodigoBanco.CaixaEconomicaFederal)
             {
                 numero = "14" + idContaR.ToString().FormataNumero("ID Conta Receber", 15, false);
-                digito = "1";
+                digito = numero.Mod11Caixa(false).ToString();
             }
 
             #endregion
