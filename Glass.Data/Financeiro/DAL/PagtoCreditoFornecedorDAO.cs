@@ -52,7 +52,7 @@ namespace Glass.Data.DAL
                 from pagto_credito_fornecedor pcf
                 Left Join formapagto fp On(pcf.IdFormaPagto=fp.IdFormaPagto)
                 Left Join conta_banco cb On(pcf.IdContaBanco=cb.IdContaBanco)
-                {(idCreditoFornecedor > 0 ? $" Where idCreditoFornecedor={idCreditoFornecedor}" : string.Empty)}";
+                Where idCreditoFornecedor={idCreditoFornecedor}";
 
             return objPersistence.LoadData(session, sql).ToList().ToArray();
         }
