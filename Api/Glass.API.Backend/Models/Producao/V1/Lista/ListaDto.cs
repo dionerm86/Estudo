@@ -90,7 +90,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
                 PararPecaProducao = peca.ExibirPararPecaProducao,
             };
 
-            this.CorLinha = this.ObterCorLinha(peca);
+            this.CorLinha = peca.CorLinha;
         }
 
         /// <summary>
@@ -252,11 +252,6 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
                     };
                 })
                 .Where(leitura => leitura.Setor != null);
-        }
-
-        private string ObterCorLinha(ProdutoPedidoProducao peca)
-        {
-            return null;
         }
     }
 }
