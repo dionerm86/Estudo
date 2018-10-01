@@ -456,6 +456,7 @@
     <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />

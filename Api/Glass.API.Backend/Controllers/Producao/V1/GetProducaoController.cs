@@ -1,8 +1,9 @@
-﻿// <copyright file="GetProducaoController.cs" company="Sync Softwares">
+// <copyright file="GetProducaoController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
@@ -17,6 +18,21 @@ namespace Glass.API.Backend.Controllers.Producao.V1
     /// </summary>
     public partial class ProducaoController : BaseController
     {
+        /// <summary>
+        /// Recupera a lista de peças para a tela de consulta de produção.
+        /// </summary>
+        /// <returns>Uma lista JSON com as peças em produção.</returns>
+        [HttpGet]
+        [Route("situacoes")]
+        [SwaggerResponse(200, "Peças em produção sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Peças em produção não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Peças em produção paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterPecasProducao([FromUri] FiltroDto filtro)
+        {
+
+        }
+
         /// <summary>
         /// Recupera a lista de situações de produção possíveis.
         /// </summary>
