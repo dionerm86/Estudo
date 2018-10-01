@@ -305,15 +305,16 @@ namespace Glass.UI.Web.WebGlassParceiros
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string idProdPedStr, string percDescontoQtdeStr)
+            string reposicao, string idProdPedStr, string percDescontoQtdeStr, string alturaSTR)
         {
             float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float altura = !string.IsNullOrEmpty(alturaSTR) ? float.Parse(alturaSTR.Replace(".", ",")) : 0;
             uint idProdPed;
 
             if (uint.TryParse(idProdPedStr, out idProdPed))
             {
                 return ProdutoDAO.Instance.GetValorMinimo(idProdPed, ProdutoDAO.TipoBuscaValorMinimo.ProdutoPedido,
-                    revenda.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null).ToString();
+                    revenda.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null, altura).ToString();
             }
             else
             {
@@ -323,7 +324,7 @@ namespace Glass.UI.Web.WebGlassParceiros
                 int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
                 uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda.ToLower() == "true",
-                    reposicao.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null).ToString();
+                    reposicao.ToLower() == "true", percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), null, null, altura).ToString();
             }
         }
 

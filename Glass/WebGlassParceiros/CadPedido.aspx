@@ -38,7 +38,7 @@
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
-
+            var altura = FindControl("txtAlturaIns", "input").value;
             var idProdPed = FindControl("hdfProdPed", "input");
             idProdPed = idProdPed != null ? idProdPed.value : "";
 
@@ -49,7 +49,7 @@
 
             var reposicao = FindControl("hdfIsReposicao", "input").value;
 
-            FindControl("hdfValMin", "input").value = CadPedido.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido).value;
+            FindControl("hdfValMin", "input").value = CadPedido.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido, altura).value;
         }
         else if (FindControl("hdfValMin", "input") != null && FindControl("txtValorIns", "input") != null)
         {
@@ -1194,8 +1194,19 @@
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
         var percDescontoQtde = controleDescQtde.PercDesconto();
 
-        FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda,
-                    reposicao, percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), "", "").value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda,
+            reposicao, percDescontoQtde, Conversoes.StrParaInt(Request["idPedido"]), "", "");
+
+        if (retorno.error != null) {
+            alert(retorno.error.description);
+            return;
+        }
+        else if (retorno == null) {
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
     }
 
     // Função chamada ao clicar no botão Em Conferência

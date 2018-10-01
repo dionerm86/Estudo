@@ -65,6 +65,7 @@
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
+                var altura = FindControl("txtAlturaIns", "input");
 
                 var idProdPed = FindControl("hdfProdPed", "input");
                 idProdPed = idProdPed != null ? idProdPed.value : "";
@@ -76,7 +77,7 @@
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
 
                 FindControl("hdfValMin", "input").value = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
-                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido).value;
+                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido, altura).value;
             }
             else
                 FindControl("hdfValMin", "input").value = FindControl("lblValorIns", "input") != null ? FindControl("lblValorIns", "input").value : "";
@@ -915,8 +916,19 @@
             controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl("lblValorIns", "span").innerHTML = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda == "True",
-                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda == "True",
+                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("lblValorIns", "span").innerHTML = retorno.value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto

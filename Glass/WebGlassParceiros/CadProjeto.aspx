@@ -35,7 +35,7 @@
             /* Chamado 63268. */
             if ((tipoCalculo != "" && (tipoCalculo == "2" || tipoCalculo == "10")) && isObrigarProcApl && isVidroBenef)
             {
-                if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == "")
+                if (FindControl("txtAplIns", "input") != null && FindControl("txtAplIns", "input").value == dControl("txtValorIns", "input").value = retorno.value.repl"")
                 {
                     alert("Informe a aplicação.");
                     return false;
@@ -485,8 +485,20 @@
             var revenda = FindControl("hdfCliRevenda", "input").value;
             var idProjeto = FindControl("hdfIdProjeto", "input").value;
 
-            FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega,
-                idCliente, revenda, false, 0, "", idProjeto, "", altura).value.replace(".", ",");
+            var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega,
+                idCliente, revenda, false, 0, "", idProjeto, "", altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if (retorno == null) {
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("hdfValMin", "input").value = retorno.value.replace(".", ",");
+            FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
         }
 
         // Calcula em tempo real o valor total do produto

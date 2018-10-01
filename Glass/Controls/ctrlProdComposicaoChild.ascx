@@ -526,8 +526,19 @@
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
         var percDescontoQtde = controleDescQtde.PercDesconto();
 
-        FindControl("txtChild_ValorComposicaoIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda,
-                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, cliRevenda,
+                pedidoReposicao, percDescontoQtde, idPedido, "", "", altura);
+
+        if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+        }
+        else if(retorno == null){
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        FindControl("txtChild_ValorComposicaoIns", "input").value = retorno.value.replace(".", ",");
     }
 
     // Calcula em tempo real o valor total do produto

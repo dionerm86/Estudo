@@ -257,7 +257,7 @@
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
             var tipoVenda = FindControl("hdfTipoVenda", "input").value;
-
+            var altura = FindControl("txt_AlturaComposicaoIns", "input", table).value;
             var idProdPed = FindControl("hdf_ProdPedComposicao", "input", table);
             idProdPed = idProdPed != null ? idProdPed.value : "";
 
@@ -267,7 +267,7 @@
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
             FindControl("hdf_ValMinComposicao", "input", table).value = CadPedido.GetValorMinimo(codInterno, tipoPedido, tipoEntrega, tipoVenda,
-                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido).value;
+                idCliente, cliRevenda, idProdPed, percDescontoQtde, idPedido, altura).value;
         }
         else
             FindControl("hdf_ValMinComposicao", "input", table).value = FindControl("txt_ValorComposicaoIns", "input", table).value;
@@ -536,8 +536,19 @@
         controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
         var percDescontoQtde = controleDescQtde.PercDesconto();
 
-        FindControl("txt_ValorComposicaoIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente,
-            cliRevenda, pedidoReposicao, percDescontoQtde, idPedido, "", "", altura).value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente,
+            cliRevenda, pedidoReposicao, percDescontoQtde, idPedido, "", "", altura);
+
+        if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+        }
+        else if(retorno == null){
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        FindControl("txt_ValorComposicaoIns", "input").value = retorno.value.replace(".", ",");
     }
 
     // Calcula em tempo real o valor total do produto

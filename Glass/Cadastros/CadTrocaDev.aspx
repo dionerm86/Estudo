@@ -132,7 +132,7 @@
 
             var codInterno = FindControl(tipo + "txtCodProdIns", "input");
             codInterno = codInterno != null ? codInterno.value : FindControl(tipo + "lblCodProdIns", "span").innerHTML;
-
+            var altura = FindControl(tipo + "txtAlturaIns", "input").value;
             var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
             var cliRevenda = FindControl("hdfCliRevenda", "input").value;
             var idCliente = FindControl("hdfIdCliente", "input").value;
@@ -143,7 +143,7 @@
             var controleDescQtde = getControleDescQtde(tipo);
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML).value;
+            FindControl(tipo + "hdfValMin", "input").value = CadTrocaDev.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, id, percDescontoQtde, tipo, FindControl("lblIdPedido", "span").innerHTML, altura).value;
         }
 
         function getCli(idCli)

@@ -29,13 +29,13 @@ function atualizaValMin()
     var cliRevenda = FindControl("chkRevenda", "input").checked;
     var idCliente = FindControl("hdfIdCliente", "input") != null && FindControl("hdfIdCliente", "input") != undefined ?
         FindControl("hdfIdCliente", "input").value : "0";
-
+    var altura = FindControl("txtAltura", "input").value;
     var controleDescQtde = FindControl("_divDescontoQtde", "div").id;
     controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
 
     var percDescontoQtde = controleDescQtde.PercDesconto();
 
-    FindControl("hdfValMin", "input").value = LstOrcamentoRapido.GetValorMinimo(codInterno.value, idCliente, tipoEntrega, cliRevenda, percDescontoQtde).value;
+    FindControl("hdfValMin", "input").value = LstOrcamentoRapido.GetValorMinimo(codInterno.value, idCliente, tipoEntrega, cliRevenda, percDescontoQtde, altura).value;
 }
 
 // Carrega dados do produto com base no código do produto passado
@@ -257,7 +257,18 @@ function GetAdicionalAlturaChapa() {
   controleDescQtde = eval(controleDescQtde.substr(0, controleDescQtde.lastIndexOf("_")));
   var percDescontoQtde = controleDescQtde.PercDesconto();
 
-  FindControl("txtValor", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda, false, percDescontoQtde, "", "", idOrca, altura).value.replace(".", ",");
+  var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, revenda, false, percDescontoQtde, "", "", idOrca, altura);
+
+  if (retorno.error != null) {
+    alert(retorno.error.description);
+    return;
+  }
+  else if (retorno == null) {
+    alert("Erro na recuperação do valor de tabela do produto.");
+    return;
+  }
+
+  FindControl("txtValor", "input").value = retorno.value.replace(".", ",");
 }
 
 // Calcula o total mostrando mensagem de erro se houver

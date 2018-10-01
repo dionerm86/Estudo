@@ -960,7 +960,19 @@
         var idCliente = FindControl("hdfIdFornec", "input").value;
         var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
 
-        FindControl("txtValorIns", "input").value = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, false, false, 0, "", "", "", altura).value.replace(".", ",");
+        var retorno = MetodosAjax.GetValorTabelaProduto(idProd, tipoEntrega, idCliente, false, false, 0, "", "", "", altura);
+
+        if (retorno.error != null) {
+            alert(retorno.error.description);
+            return;
+        }
+        else if(retorno == null){
+            alert("Erro na recuperação do valor de tabela do produto.");
+            return;
+        }
+
+        FindControl("hdfValMin", "input").value = retorno.value.replace(".", ",");
+        FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
     }
 
     // Calcula em tempo real a metragem quadrada do produto

@@ -38,7 +38,7 @@
                 var tipoEntrega = FindControl("hdfTipoEntrega", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-
+                var altura = FindControl("txtAlturaIns", "input").value;
                 var idMaterItemProj = FindControl("hdfIdMaterItemProj", "input");
                 idMaterItemProj = idMaterItemProj != null ? idMaterItemProj.value : "";
 
@@ -53,7 +53,7 @@
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
 
-                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido).value;
+                FindControl("hdfValMin", "input").value = CadProjetoAvulso.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, reposicao, tipoPedido, idMaterItemProj, "0", idPedido, altura).value;
             }
             else
             {
