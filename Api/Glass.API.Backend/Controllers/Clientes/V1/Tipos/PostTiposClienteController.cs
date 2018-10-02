@@ -1,4 +1,4 @@
-﻿// <copyright file="PostTiposController.cs" company="Sync Softwares">
+// <copyright file="PostTiposClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

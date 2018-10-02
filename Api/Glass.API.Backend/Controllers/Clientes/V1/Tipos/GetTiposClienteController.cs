@@ -1,8 +1,9 @@
-// <copyright file="GetTiposController.cs" company="Sync Softwares">
+// <copyright file="GetTiposClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Clientes.Tipos.Lista;
 using Glass.API.Backend.Models.Genericas;
 using Glass.Data.DAL;
@@ -85,11 +86,8 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
         {
             using (var sessao = new GDATransaction())
             {
-                var tiposFiscal = new List<IdNomeDto>()
-                    {
-                        new IdNomeDto() { Id = 1, Nome = "Consumidor final" },
-                        new IdNomeDto() { Id = 2, Nome = "Revenda" },
-                    };
+                var tiposFiscal = new ConversorEnum<Data.Model.TipoFiscalCliente>()
+                    .ObterTraducao();
 
                 return this.Lista(tiposFiscal);
             }

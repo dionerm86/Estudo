@@ -394,7 +394,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            //LiberarPedidoDAO.Instance.CancelarLiberacao(session, (uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false);
+                            LiberarPedidoDAO.Instance.CancelarLiberacao(session, (uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false, false);
 
                             break;
                         }
@@ -402,7 +402,7 @@ namespace Glass.Data.DAL
                         {
                             if (AcertoDAO.Instance.ObtemValorCampo<Situacao>(session, "Situacao", "IdAcerto = " + dados.IdReferencia) == Situacao.Ativo)
                             {
-                                //ContasReceberDAO.Instance.CancelarAcerto(session, (uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false);
+                                ContasReceberDAO.Instance.CancelarAcerto(session, (uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false, false);
                             }
 
                             break;
@@ -411,7 +411,7 @@ namespace Glass.Data.DAL
                         {
                             if (AcertoChequeDAO.Instance.ObtemValorCampo<Situacao>(session, "Situacao", "IdAcertoCheque = " + dados.IdReferencia) == Situacao.Ativo)
                             {
-                                //AcertoChequeDAO.Instance.CancelarAcertoCheque((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false);
+                                AcertoChequeDAO.Instance.CancelarAcertoCheque((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false, false);
                             }
 
                             break;
@@ -420,7 +420,7 @@ namespace Glass.Data.DAL
                         {
                             if (ContasReceberDAO.Instance.ObtemValorCampo<bool>(session, "Recebida", "idContaR = " + dados.IdReferencia))
                             {
-                                //ContasReceberDAO.Instance.CancelarConta((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false);
+                                ContasReceberDAO.Instance.CancelarConta((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false, false);
                             }
 
                             break;
@@ -429,7 +429,7 @@ namespace Glass.Data.DAL
                         {
                             if (SinalDAO.Instance.ObtemValorCampo<Situacao>(session, "Situacao", "IdSinal = " + dados.IdReferencia) == Situacao.Ativo)
                             {
-                                //SinalDAO.Instance.Cancelar(session, (uint)dados.IdReferencia, null, false, false, "Cancelamento da transação TEF", DateTime.Now, false);
+                                SinalDAO.Instance.Cancelar(session, (uint)dados.IdReferencia, null, false, false, "Cancelamento da transação TEF", DateTime.Now, false, false);
                             }
 
                             break;
@@ -440,7 +440,7 @@ namespace Glass.Data.DAL
 
                             if (situacao == Obra.SituacaoObra.Confirmada || situacao == Obra.SituacaoObra.Finalizada)
                             {
-                                //ObraDAO.Instance.CancelaObra((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false);
+                                ObraDAO.Instance.CancelaObra((uint)dados.IdReferencia, "Cancelamento da transação TEF", DateTime.Now, false, false);
                             }
 
                             break;
@@ -488,11 +488,11 @@ namespace Glass.Data.DAL
                             {
                                 if (temRecebimento)
                                 {
-                                    //ContasReceberDAO.Instance.FinalizarPreRecebimentoAcerto(transacation, idReferencia);
+                                    ContasReceberDAO.Instance.FinalizarPreRecebimentoAcerto(transacation, idReferencia);
                                 }
                                 else
                                 {
-                                    //ContasReceberDAO.Instance.CancelarPreRecebimentoAcerto(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
+                                    ContasReceberDAO.Instance.CancelarPreRecebimentoAcerto(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
                                 }
 
                                 break;
@@ -501,11 +501,11 @@ namespace Glass.Data.DAL
                             {
                                 if (temRecebimento)
                                 {
-                                    //ChequesDAO.Instance.FinalizarPreQuitacaoChequeDevolvido(transacation, idReferencia);
+                                    ChequesDAO.Instance.FinalizarPreQuitacaoChequeDevolvido(transacation, idReferencia);
                                 }
                                 else
                                 {
-                                    //ChequesDAO.Instance.CancelarPreQuitacaoChequeDevolvido(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
+                                    ChequesDAO.Instance.CancelarPreQuitacaoChequeDevolvido(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
                                 }
 
                                 break;
@@ -514,11 +514,11 @@ namespace Glass.Data.DAL
                             {
                                 if (temRecebimento)
                                 {
-                                    //ContasReceberDAO.Instance.FinalizarPreRecebimentoConta(transacation, idReferencia);
+                                    ContasReceberDAO.Instance.FinalizarPreRecebimentoConta(transacation, idReferencia);
                                 }
                                 else
                                 {
-                                    //ContasReceberDAO.Instance.CancelarPreRecebimentoConta(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
+                                    ContasReceberDAO.Instance.CancelarPreRecebimentoConta(transacation, DateTime.Now, idReferencia, "Cancelamento de liberação em situação processando.");
                                 }
 
                                 break;
@@ -527,11 +527,11 @@ namespace Glass.Data.DAL
                             {
                                 if (temRecebimento)
                                 {
-                                    //SinalDAO.Instance.FinalizarPreRecebimentoSinalPagamentoAntecipado(transacation, idReferencia);
+                                    SinalDAO.Instance.FinalizarPreRecebimentoSinalPagamentoAntecipado(transacation, idReferencia);
                                 }
                                 else
                                 {
-                                    //SinalDAO.Instance.CancelarPreRecebimentoSinalPagamentoAntecipado(transacation, idReferencia, "Cancelamento de liberação em situação processando.");
+                                    SinalDAO.Instance.CancelarPreRecebimentoSinalPagamentoAntecipado(transacation, idReferencia, "Cancelamento de liberação em situação processando.");
                                 }
 
                                 break;
@@ -540,11 +540,11 @@ namespace Glass.Data.DAL
                             {
                                 if (temRecebimento)
                                 {
-                                    //ObraDAO.Instance.FinalizarPrePagamentoVista(transacation, idReferencia);
+                                    ObraDAO.Instance.FinalizarPrePagamentoVista(transacation, idReferencia, string.Empty);
                                 }
                                 else
                                 {
-                                    //ObraDAO.Instance.CancelarPrePagamentoVista(transacation, idReferencia, "Cancelamento de liberação em situação processando.");
+                                    ObraDAO.Instance.CancelarPrePagamentoVista(transacation, idReferencia, "Cancelamento de liberação em situação processando.");
                                 }
 
                                 break;

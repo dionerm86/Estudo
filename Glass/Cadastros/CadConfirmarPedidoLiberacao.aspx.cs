@@ -1,11 +1,13 @@
+using Glass.Configuracoes;
+using Glass.Data.DAL;
+using Glass.Data.Exceptions;
+using Glass.Data.Model;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Glass.Data.DAL;
-using Glass.Data.Model;
-using System.Drawing;
-using Glass.Data.Exceptions;
-using Glass.Configuracoes;
 
 namespace Glass.UI.Web.Cadastros
 {
@@ -15,7 +17,7 @@ namespace Glass.UI.Web.Cadastros
         {
             Ajax.Utility.RegisterTypeForAjax(typeof(MetodosAjax));
             Ajax.Utility.RegisterTypeForAjax(typeof(CadConfirmarPedidoLiberacao));
-    
+
             if (!IsPostBack)
             {
                 //Caso o sistema seja Lite a Opção "Conferência dos pedidos já realizada" é oculta 
@@ -31,94 +33,102 @@ namespace Glass.UI.Web.Cadastros
                 ((TextBox)ctrlDataFim.FindControl("txtData")).Text = DateTime.Now.ToString("dd/MM/yyyy");
             }
         }
-    
+
         protected void btnConfirmar_Click(object sender, EventArgs e)
         {
             try
             {
-                if (chkAlterarDataEntrega.Checked && ((TextBox)ctrlDataEntrega.FindControl("txtData")).Text == "")
+                if (chkAlterarDataEntrega.Checked && string.IsNullOrWhiteSpace(((TextBox)ctrlDataEntrega.FindControl("txtData")).Text))
+                {
                     throw new Exception("Informe a data de entrega dos pedidos.");
-    
-                var idsPedidos = string.Empty;
+                }
+
+                var idsPedido = new List<int>();
+
                 for (var i = 0; i < grdPedido.Rows.Count; i++)
                 {
                     var chkMarcar = grdPedido.Rows[i].Cells[0].FindControl("chkMarcar") as CheckBox;
                     var hdfIdPedido = grdPedido.Rows[i].Cells[0].FindControl("hdfIdPedido") as HiddenField;
-    
+
                     if (chkMarcar != null && chkMarcar.Checked)
-                        if (hdfIdPedido != null) idsPedidos += "," + hdfIdPedido.Value;
-                }
-    
-                if (idsPedidos.Length == 0)
-                    throw new Exception("Informe os pedidos que serão confirmados.");
-                
-                // Motido da retirada: Com o substring a vírgula era desconsiderada normalmente, porém no método ConfirmarPedidoLiberacao havia outro
-                // substring que fazia o número do pedido ficar incorreto, de qualquer forma utilizar o TrimStart é mais seguro.
-                // idsPedidos = idsPedidos.Substring(1);
-                idsPedidos = idsPedidos.TrimStart(',');
-    
-                var data = ((TextBox)ctrlDataEntrega.FindControl("txtData")).Text;
-    
-                string script;
-
-                if(chkGerarEspelho.Checked)
-                {
-                    // Verifica se o usuário possui permissão para gerar espelho de pedido
-                    if (Data.Helper.UserInfo.GetUserInfo.IdCliente == null || Glass.Data.Helper.UserInfo.GetUserInfo.IdCliente == 0)
                     {
-                        var ids = idsPedidos.Split(',');
-                        foreach (var s in ids)
+                        if (hdfIdPedido != null)
                         {
-                            var idPedido = Conversoes.StrParaUint(s);
-
-                            bool isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, idPedido);
-                            if (!Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.GerarConferenciaPedido))
-                            {
-                                if (Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) && !isMaoDeObra)
-                                    throw new Exception("Você pode gerar conferência apenas de pedidos mão de obra.");
-                                else
-                                    throw new Exception("Você não possui permissão para gerar Conferências de Pedidos.");
-                            }
+                            idsPedido.Add(hdfIdPedido.Value.StrParaInt());
                         }
-                       
                     }
                 }
 
-                WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Instance.ConfirmarPedidoLiberacao(idsPedidos,
-                    chkAlterarDataEntrega.Checked, !string.IsNullOrEmpty(data) ? (DateTime?)DateTime.Parse(data) : null,
-                    chkGerarEspelho.Checked, out script);
-    
+                if (idsPedido.Count == 0)
+                {
+                    throw new Exception("Informe os pedidos que serão confirmados.");
+                }
+
+                var data = ((TextBox)ctrlDataEntrega.FindControl("txtData")).Text;
+
+                string script;
+
+                if (chkGerarEspelho.Checked)
+                {
+                    // Verifica se o usuário possui permissão para gerar espelho de pedido
+                    if (Data.Helper.UserInfo.GetUserInfo.IdCliente == null || Data.Helper.UserInfo.GetUserInfo.IdCliente == 0)
+                    {
+                        foreach (var idPedido in idsPedido)
+                        {
+                            var isMaoDeObra = PedidoDAO.Instance.IsMaoDeObra(null, (uint)idPedido);
+
+                            if (!Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.GerarConferenciaPedido))
+                            {
+                                if (Data.Helper.Config.PossuiPermissao(Data.Helper.Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra) && !isMaoDeObra)
+                                {
+                                    throw new Exception("Você pode gerar conferência apenas de pedidos mão de obra.");
+                                }
+                                else
+                                {
+                                    throw new Exception("Você não possui permissão para gerar Conferências de Pedidos.");
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                WebGlass.Business.Pedido.Fluxo.ConfirmarPedido.Instance.ConfirmarPedidoLiberacao(idsPedido, chkAlterarDataEntrega.Checked,
+                    !string.IsNullOrEmpty(data) ? (DateTime?)DateTime.Parse(data) : null, chkGerarEspelho.Checked, out script);
+
                 grdPedido.DataBind();
-    
+
                 if (!string.IsNullOrEmpty(script))
+                {
                     ClientScript.RegisterStartupScript(typeof(string), "ok", script, true);
+                }
             }
             catch (ValidacaoPedidoFinanceiroException f)
             {
-                var mensagem = MensagemAlerta.FormatErrorMsg("", f);
-    
-                var script = @"
-                    var resposta = CadConfirmarPedidoLiberacao.EnviarConfirmarFinanceiro('" + f.IdsPedidos + "', '" + mensagem + @"').value.split('|');
+                var mensagem = MensagemAlerta.FormatErrorMsg(string.Empty, f);
+
+                var script = $@"var resposta = CadConfirmarPedidoLiberacao.EnviarConfirmarFinanceiro('{ string.Join(",", f.IdsPedido) }', '{ mensagem }').value.split('|');
                     
                     if (resposta[0] == 'Ok')
                         redirectUrl(window.location.href);
                     else
-                        alert(resposta[1]);
-                ";
-    
+                        alert(resposta[1]);";
+
                 if (FinanceiroConfig.PerguntarVendedorConfirmacaoFinanceiro)
                 {
-                    script = string.Format("if (confirm('Não foi possível confirmar o{0} pedido{0} {1}. Erro: ",
-                        f.IdsPedidos.Contains(",") ? "s" : "", f.IdsPedidos) + mensagem.TrimEnd(' ', '.') +
-                        ".\\nDeseja enviar esse pedido para confirmar pelo Financeiro?')) {" + script + "}";
+                    var incluirS = f.IdsPedido.Count > 1 ? "s" : string.Empty;
+
+                    script = $"if (confirm('Não foi possível confirmar o{ incluirS } pedido{ incluirS } { string.Join(", ", f.IdsPedido) }. Erro: { mensagem.TrimEnd(' ', '.') }." +
+                        $"\\nDeseja enviar esse pedido para confirmar pelo Financeiro?')) { "{" }{ script }{ "}" }";
                 }
                 else
                 {
-                    script = string.Format("alert('Houve um erro ao confirmar o{0} pedido{0} {1}. " +
-                        "Eles foram disponibilizados para confirmação pelo Financeiro.');", 
-                        f.IdsPedidos.Contains(",") ? "s" : "", f.IdsPedidos) + script;
+                    var incluirS = f.IdsPedido.Count > 1 ? "s" : string.Empty;
+
+                    script = $"alert('Houve um erro ao confirmar o{ incluirS } pedido{ incluirS } { string.Join(", ", f.IdsPedido) }. " +
+                        $"Eles foram disponibilizados para confirmação pelo Financeiro.'); { "{" }{ script }{ "}" }";
                 }
-    
+
                 Page.ClientScript.RegisterStartupScript(GetType(), "btnFinalizar", script, true);
             }
             catch (Exception ex)
@@ -126,13 +136,13 @@ namespace Glass.UI.Web.Cadastros
                 MensagemAlerta.ErrorMsg("Falha ao confirmar pedido.", ex, Page);
             }
         }
-    
+
         [Ajax.AjaxMethod]
-        public string EnviarConfirmarFinanceiro(string idsPedidos, string mensagem)
+        public string EnviarConfirmarFinanceiro(string idsPedido, string mensagem)
         {
             try
             {
-                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idsPedidos, mensagem);
+                PedidoDAO.Instance.DisponibilizaConfirmacaoFinanceiro(null, idsPedido?.Split(',')?.Select(f => f.StrParaInt())?.ToList(), mensagem);
                 return "Ok";
             }
             catch (Exception ex)
@@ -140,12 +150,12 @@ namespace Glass.UI.Web.Cadastros
                 return "Erro|" + ex.Message;
             }
         }
-    
+
         protected void grdPedido_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (e.Row.RowType != DataControlRowType.DataRow)
                 return;
-    
+
             var item = e.Row.DataItem as Glass.Data.Model.Pedido;
             if (item == null)
                 return;
@@ -175,15 +185,15 @@ namespace Glass.UI.Web.Cadastros
 
             if (corLinha == Color.Black)
                 corLinha = item.CorLinhaLista;
-    
+
             if (corLinha != Color.Black)
                 foreach (TableCell c in e.Row.Cells)
                 {
                     if (e.Row.Cells.GetCellIndex(c) == 0)
                         continue;
-    
+
                     c.ForeColor = corLinha;
-    
+
                     foreach (Control c1 in c.Controls)
                     {
                         var control = c1 as WebControl;
@@ -192,7 +202,7 @@ namespace Glass.UI.Web.Cadastros
                     }
                 }
         }
-    
+
         protected void imgPesq_Click(object sender, ImageClickEventArgs e)
         {
             grdPedido.PageIndex = 0;
