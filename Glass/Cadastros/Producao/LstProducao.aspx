@@ -83,7 +83,7 @@
 
             var relatorio = roteiro ? "RelBase.aspx?rel=ProducaoPassou" : pedidos ? "RelBase.aspx?rel=ProducaoPedidos" :
                 agrupar == "3" ? "Producao/RelBase.aspx?rel=ProducaoContagem" : "RelBase.aspx?rel=Producao";
-                
+
             openWindow(600, 800, "../../Relatorios/" + relatorio + "&idCarregamento=" + idCarregamento + "&idLiberarPedido=" + idLiberarPedido + "&idPedido=" + idPedido +
                 "&idPedidoImportado=" + idPedidoImportado + "&idCliente=" + idCliente + "&nomeCliente=" + nomeCliente + "&dataIni=" + dataIni +
                 "&dataFim=" + dataFim + "&dataIniEnt=" + dataIniEnt + "&espessura=" + espessura + "&dataIniFabr=" + dataIniFabr +
@@ -144,9 +144,9 @@
 
             if (!confirm("Tem certeza que deseja" + (pecaParadaProducao ? " retornar esta peça para " : " parar esta peça na ") + "produção?\n" + prod.value))
                 return false;
-                
+
             openWindow(200, 405, "../../Utils/SetMotivoPararPecaProducao.aspx?popup=true&idProdPedProducao=" + idProdPedProducao, null, true, false);
- 
+
             return false;
         }
 
@@ -200,7 +200,7 @@
             document.location = 'LstProducao.aspx';
             return false;
         }
-    
+
     </script>
 
     <style>
@@ -227,11 +227,12 @@
     <asp:HiddenField ID="hdfRefresh" runat="server" />
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Producao/Templates/LstProducao.Filtro.html")
+            "~/Vue/Producao/Templates/LstProducao.Filtros.html")
     %>
     <div id="app">
         <producao-filtros :filtro="filtro" :configuracoes="configuracoes"></producao-filtros>
     </div>
+    <br /><br /><br /><br />
     <table width="100%">
         <tr runat="server" id="trFiltros">
             <td align="center">
@@ -389,7 +390,7 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpLoja" runat="server" AppendDataBoundItems="True"
-                                DataSourceID="odsLoja" DataTextField="NomeFantasia" 
+                                DataSourceID="odsLoja" DataTextField="NomeFantasia"
                                 DataValueField="IdLoja" QueryString="idLoja">
                                 <asp:ListItem Value="0">Todas</asp:ListItem>
                             </asp:DropDownList>
@@ -736,7 +737,7 @@
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <a href="javascript:limparFiltros();" class="button"><img border="0" 
+                            <a href="javascript:limparFiltros();" class="button"><img border="0"
                                 src="../../Images/ExcluirGrid.gif" /> Limpar filtros</a>
                             <input type="hidden" runat="server" ID="hdfPageIndex" QueryString="pageIndex" />
                         </td>
@@ -753,7 +754,7 @@
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdPecas" runat="server" AllowPaging="True" AutoGenerateColumns="False"
                     DataKeyNames="IdProdPedProducao" DataSourceID="odsPecas" EmptyDataText="Nenhuma peça encontrada."
-                    OnDataBound="grdPecas_DataBound" OnLoad="grdPecas_Load" CssClass="gridStyle" 
+                    OnDataBound="grdPecas_DataBound" OnLoad="grdPecas_Load" CssClass="gridStyle"
                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" OnPageIndexChanging="grdPecas_PageIndexChanging"
                     AllowSorting="True">
                     <Columns>
@@ -785,7 +786,7 @@
                                     <img border="0px" src="../../Images/Clipe.gif" /></a></asp:PlaceHolder>
                                 <uc1:ctrlImagemPopup ID="ctrlImagemPopup1" runat="server" ImageUrl='<%# Eval("ImagemPecaUrl") != null ? Eval("ImagemPecaUrl").ToString().Replace("../", "~/") : null %>'
                                     Visible='<%# !(bool)Eval("TemSvgAssociado") %>' />
-                                <uc5:ctrlImageCadProject ID="ctrlImageCadProject" DiminuirMedidasPopUp="false" runat="server" IdProdPedEsp='<%# Glass.Conversoes.StrParaIntNullable(Eval("IdProdPed").ToString()).GetValueOrDefault(0) %>' 
+                                <uc5:ctrlImageCadProject ID="ctrlImageCadProject" DiminuirMedidasPopUp="false" runat="server" IdProdPedEsp='<%# Glass.Conversoes.StrParaIntNullable(Eval("IdProdPed").ToString()).GetValueOrDefault(0) %>'
                                     Visible='<%# Eval("TemSvgAssociado") %>'/>
                                 <asp:ImageButton ID="imgPararPecaProducao" runat="server" ImageUrl='<%# (bool)Eval("PecaParadaProducao") ? "~/Images/stop_red.png" : "~/Images/stop_blue.png" %>'
                                     OnClientClick='<%# "openSetMotivPararPecaProducao(" + Eval("IdProdPedProducao") + ", " + Eval("PecaParadaProducao").ToString().ToLower() + "); return false" %>'
@@ -963,14 +964,14 @@
                 <colo:VirtualObjectDataSource Culture="pt-BR" ID="odsAplicacao" runat="server" SelectMethod="GetForFilter"
                     TypeName="Glass.Data.DAL.EtiquetaAplicacaoDAO">
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource ID="odsRota" runat="server" 
-                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
-                    Culture="" MaximumRowsParameterName="" SelectMethod="GetRptRota" SkinID="" 
+                <colo:VirtualObjectDataSource ID="odsRota" runat="server"
+                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges"
+                    Culture="" MaximumRowsParameterName="" SelectMethod="GetRptRota" SkinID=""
                     StartRowIndexParameterName="" TypeName="Glass.Data.DAL.RotaDAO">
                 </colo:VirtualObjectDataSource>
-                <colo:VirtualObjectDataSource runat="server" ID="odsLoja" 
-                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges" 
-                    Culture="" MaximumRowsParameterName="" SelectMethod="GetAll" SkinID="" 
+                <colo:VirtualObjectDataSource runat="server" ID="odsLoja"
+                    CacheExpirationPolicy="Absolute" ConflictDetection="OverwriteChanges"
+                    Culture="" MaximumRowsParameterName="" SelectMethod="GetAll" SkinID=""
                     StartRowIndexParameterName="" TypeName="Glass.Data.DAL.LojaDAO">
                 </colo:VirtualObjectDataSource>
             </td>
@@ -1110,7 +1111,7 @@
                 <asp:LinkButton ID="lnkImprimir" runat="server" OnClientClick="openRpt(false,false,false,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true,false,false,false); return false;"><img border="0" 
+                <asp:LinkButton ID="lnkExportarExcel" runat="server" OnClientClick="openRpt(true,false,false,false); return false;"><img border="0"
                     src="../../Images/Excel.gif" /> Exportar para o Excel</asp:LinkButton>
             </td>
         </tr>
@@ -1119,7 +1120,7 @@
                 <asp:LinkButton ID="LinkButton1" runat="server" OnClientClick="openRpt(false,true,false,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Setor Selecionado)</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="openRpt(true,true,false); return false;"><img border="0" 
+                <asp:LinkButton ID="LinkButton2" runat="server" OnClientClick="openRpt(true,true,false); return false;"><img border="0"
                     src="../../Images/Excel.gif" /> Exportar para o Excel (Setor Selecionado)</asp:LinkButton>
             </td>
         </tr>
@@ -1128,7 +1129,7 @@
                 <asp:LinkButton ID="LinkButton3" runat="server" OnClientClick="openRpt(false,false,true,false); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Roteiro)</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="LinkButton4" runat="server" OnClientClick="openRpt(true,false,true,false); return false;"><img border="0" 
+                <asp:LinkButton ID="LinkButton4" runat="server" OnClientClick="openRpt(true,false,true,false); return false;"><img border="0"
                     src="../../Images/Excel.gif" /> Exportar para o Excel (Roteiro)</asp:LinkButton>
             </td>
         </tr>
@@ -1137,7 +1138,7 @@
                 <asp:LinkButton ID="LinkButton5" runat="server" OnClientClick="openRpt(false,false,false,true); return false;"> <img border="0" src="../../Images/Printer.png" /> Imprimir (Pedidos)</asp:LinkButton>
             </td>
             <td>
-                <asp:LinkButton ID="LinkButton6" runat="server" OnClientClick="openRpt(true,false,false,true); return false;"><img border="0" 
+                <asp:LinkButton ID="LinkButton6" runat="server" OnClientClick="openRpt(true,false,false,true); return false;"><img border="0"
                     src="../../Images/Excel.gif" /> Exportar para o Excel (Pedidos)</asp:LinkButton>
             </td>
         </tr>
@@ -1157,7 +1158,7 @@
 
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.Filtros.js" />
             <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.js" />
         </Scripts>
     </asp:ScriptManager>

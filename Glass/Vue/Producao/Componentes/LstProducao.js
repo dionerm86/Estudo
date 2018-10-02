@@ -2,7 +2,7 @@
   el: '#app',
 
   data: {
-    filtro: null,
-    configuracoes: null
+    filtro: {},
+    configuracoes: {}
   }
 });

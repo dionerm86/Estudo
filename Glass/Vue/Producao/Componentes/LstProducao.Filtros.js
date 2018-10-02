@@ -84,6 +84,13 @@
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }
+    },
+
+    /**
+     * Busca as rotas para o controle de filtro.
+     */
+    obterRotas: function () {
+      return Servicos.Rotas.obterFiltro();
     }
   },
 

@@ -10,5 +10,26 @@
             <input id="idLiberacaoPedido" type="number" v-model.number="filtroAtual.idLiberacaoPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
+        <span class="form-group">
+            <label for="idCarregamento">Carregamento</label>
+            <input id="idCarregamento" type="number" v-model.number="filtroAtual.idCarregamento" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idPedidoImportado">Ped. Importado</label>
+            <input id="idPedidoImportado" type="number" v-model.number="filtroAtual.idPedidoImportado" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="codigoPedidoCliente">Pedido Cli./Ambiente</label>
+            <input id="codigoPedidoCliente" type="number" v-model.number="filtroAtual.codigoPedidoCliente" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idsRotas">Rota</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsRotas" v-bind:funcao-recuperar-itens="obterRotas"
+                texto-selecionar="Selecione a rota"></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
     </div>
 </section>
