@@ -8,7 +8,7 @@ Servicos.Lojas = (function(http) {
 
   return {
     /**
-     * Recupera a lista de aplicações (etiqueta) para uso no controle de busca.
+     * Recupera a lista de lojas para uso no controle de busca.
      * @param {?boolean} [ativas=null] Indica se apenas lojas ativas devem ser retornadas (pode ser null para que o filtro seja ignorado).
      * @returns {Promise} Uma promise com o resultado da operação.
      */

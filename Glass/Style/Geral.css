@@ -31,7 +31,8 @@ input, button, textarea, select, .ui-dropdownchecklist-text {
 }
 
 .ui-dropdownchecklist-text {
-  line-height: 19px;
+  line-height: 19px !important;
+  height: 19px !important;
 }
 
 body {

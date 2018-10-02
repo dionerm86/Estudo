@@ -91,7 +91,7 @@ Vue.component('pedido-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSituacoesProducao: function() {
-      return Servicos.Producao.obterSituacoes();
+      return Servicos.Pedidos.obterSituacoesProducao();
     },
 
     /**

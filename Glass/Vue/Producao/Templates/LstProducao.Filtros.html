@@ -31,5 +31,47 @@
                 texto-selecionar="Selecione a rota"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
+        <span class="form-group">
+            <label for="idCliente">Cliente</label>
+            <input id="idCliente" type="number" v-model.number="filtroAtual.idCliente" style="width: 60px" />
+            <input type="text" v-model="filtroAtual.nomeCliente" style="width: 150px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="idImpressao">Num. Impressao</label>
+            <input id="idImpressao" type="number" v-model.number="filtroAtual.idImpressao" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="numeroEtiqueta">Num. Impressao</label>
+            <input id="numeroEtiqueta" type="text" v-model="filtroAtual.numeroEtiqueta" style="width: 100px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="situacoesProducao">Situação</label>
+            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesProducao" v-bind:funcao-recuperar-itens="obterSituacoesProducao"
+                texto-selecionar=""></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idSetor">Setor</label>
+            <lista-selecao-setores v-bind:setor.sync="setorAtual" v-bind:incluir-etiqueta-nao-impressa="true"></lista-selecao-setores>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="setorAtual">
+            <label for="periodoSetor">
+                Período ({{ setorAtual.nome }})
+            </label>
+            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoSetorInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoSetorFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idLoja">Loja</label>
+            <lista-selecao-lojas v-bind:loja.sync="lojaAtual"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
     </div>
 </section>

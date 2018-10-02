@@ -246,6 +246,8 @@
     <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
+    <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />

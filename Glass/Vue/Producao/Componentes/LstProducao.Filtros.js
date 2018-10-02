@@ -71,7 +71,9 @@
           tipoFastDelivery: null
         },
         this.filtro
-      )
+      ),
+      setorAtual: null,
+      lojaAtual: null
     };
   },
 
@@ -91,6 +93,34 @@
      */
     obterRotas: function () {
       return Servicos.Rotas.obterFiltro();
+    },
+
+    /**
+     * Busca as situações de produção para o filtro.
+     */
+    obterSituacoesProducao: function () {
+      return Servicos.Producao.obterSituacoes();
+    }
+  },
+
+  watch: {
+    setorAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idSetor = atual ? atual.id : null;
+
+        if (!atual) {
+          this.filtroAtual.periodoSetorInicio = null;
+          this.filtroAtual.periodoSetorFim = null;
+        }
+      },
+      deep: true
+    },
+
+    lojaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idLoja = atual ? atual.id : null;
+      },
+      deep: true
     }
   },
 

@@ -3,11 +3,11 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Producao.V1.Lista;
 using Glass.Data.DAL;
-using Glass.Data.Helper;
 using Swashbuckle.Swagger.Annotations;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
         /// <param name="filtro">Os dados informados para filtro na tela.</param>
         /// <returns>Uma lista JSON com as peças em produção.</returns>
         [HttpGet]
-        [Route("situacoes")]
+        [Route("")]
         [SwaggerResponse(200, "Peças em produção sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Peças em produção não encontradas para o filtro informado.")]
         [SwaggerResponse(206, "Peças em produção paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<IdNomeDto>))]
@@ -151,12 +151,8 @@ namespace Glass.API.Backend.Controllers.Producao.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = DataSources.Instance.GetSituacaoProducao()
-                    .Select(s => new IdNomeDto
-                    {
-                        Id = (int)(s.Id ?? 0),
-                        Nome = s.Descr,
-                    });
+                var situacoes = new ConversorEnum<SituacaoProducao>()
+                    .ObterTraducao();
 
                 return this.Lista(situacoes);
             }

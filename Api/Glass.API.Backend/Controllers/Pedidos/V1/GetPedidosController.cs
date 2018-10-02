@@ -527,6 +527,29 @@ namespace Glass.API.Backend.Controllers.Pedidos.V1
             }
         }
 
+        /// <summary>
+        /// Recupera a lista de situações de produção possíveis.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos das situações de produção.</returns>
+        [HttpGet]
+        [Route("situacoesProducao")]
+        [SwaggerResponse(200, "Situações de produção encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Situações de produção não encontradas.")]
+        public IHttpActionResult ObterSituacoesProducao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var situacoes = DataSources.Instance.GetSituacaoProducao()
+                    .Select(s => new IdNomeDto
+                    {
+                        Id = (int)(s.Id ?? 0),
+                        Nome = s.Descr,
+                    });
+
+                return this.Lista(situacoes);
+            }
+        }
+
         private decimal ObterDescontoFormaPagamentoDadosProduto(GDASession sessao, int idPedido, Data.Model.Pedido.TipoVendaPedido? tipoVenda, int? idFormaPagamento, int? idTipoCartao, int? idParcela)
         {
             if (!FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto || idPedido == 0 || idFormaPagamento.GetValueOrDefault() == 0)
