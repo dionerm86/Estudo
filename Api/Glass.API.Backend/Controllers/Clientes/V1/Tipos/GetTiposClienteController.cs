@@ -2,13 +2,12 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Colosoft;
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Models.Clientes.Tipos.Lista;
 using Glass.API.Backend.Models.Genericas;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -87,17 +86,8 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
         {
             using (var sessao = new GDATransaction())
             {
-                var tiposFiscal = new List<IdNomeDto>();
-
-                foreach (var situacao in Enum.GetValues(typeof(Data.Model.TipoFiscalCliente)))
-                {
-                    tiposFiscal.Add(
-                        new IdNomeDto
-                        {
-                            Id = (int)(Data.Model.TipoFiscalCliente)situacao,
-                            Nome = ((Data.Model.TipoFiscalCliente)situacao).Translate().ToString(),
-                        });
-                }
+                var tiposFiscal = new ConversorEnum<Data.Model.TipoFiscalCliente>()
+                    .ObterTraducao();
 
                 return this.Lista(tiposFiscal);
             }
