@@ -1,6 +1,7 @@
 ﻿using Glass.Data.DAL;
 using Glass.Data.Helper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace WebGlass.Business.Pedido.Fluxo
@@ -108,8 +109,10 @@ namespace WebGlass.Business.Pedido.Fluxo
                                 .EnviarMensagemVendedorAoAlterarDataEntrega((int)idRemetente, idVendedorCad, (int)idPedido, dataEntrega);
                         }
 
-                        string idsOk, idsErro;
-                        PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, idPedido.ToString(), out idsOk, out idsErro, true, false);
+                        var idsPedidoOk = new List<int>();
+                        var idsPediodErro = new List<int>();
+
+                        PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, new List<int> { (int)idPedido }, out idsPedidoOk, out idsPediodErro, true, false);
 
                         if (PedidoDAO.Instance.IsGeradoParceiro(transaction, idPedido) &&
                             Glass.Configuracoes.ProjetoConfig.TelaCadastroParceiros.ConfirmarPedidoGerarPCPFinalizarPCPAoGerarPedido)

@@ -5493,22 +5493,28 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Lança uma ValidacaoPedidoFinanceiroException, se o funcionário não for Financeiro.
         /// </summary>
-        private void LancarExceptionValidacaoPedidoFinanceiro(string mensagem, uint idPedido, bool finalizarPedido, string idsPedidos, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
+        private void LancarExceptionValidacaoPedidoFinanceiro(List<int> idsPedido, List<string> mensagem, bool finalizarPedido, ObservacaoFinalizacaoFinanceiro.MotivoEnum motivo)
         {
             if (FinanceiroConfig.PermitirFinalizacaoPedidoPeloFinanceiro && finalizarPedido)
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                    throw new ValidacaoPedidoFinanceiroException(mensagem, idPedido, idsPedidos, motivo);
+                {
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                }
             }
             // Chamado 13112.
             // A finalização do pedido pelo financeiro deveria estar separada da confirmação do pedido pelo financeiro.
             else if (FinanceiroConfig.PermitirConfirmacaoPedidoPeloFinanceiro && !finalizarPedido)
             {
                 if (!Config.PossuiPermissao(Config.FuncaoMenuFinanceiro.ControleFinanceiroRecebimento))
-                    throw new ValidacaoPedidoFinanceiroException(mensagem, idPedido, idsPedidos, motivo);
+                {
+                    throw new ValidacaoPedidoFinanceiroException(idsPedido, string.Join("\n", mensagem), motivo);
+                }
             }
             else
-                throw new Exception(mensagem);
+            {
+                throw new Exception(string.Join("\n", mensagem));
+            }
         }
 
         #endregion
@@ -5534,34 +5540,35 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Disponibiliza os pedidos para serem confirmados pelo financeiro.
         /// </summary>
-        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, string idsPedidos, string mensagem)
+        public void DisponibilizaConfirmacaoFinanceiro(GDASession sessao, List<int> idsPedido, string mensagem)
         {
-            var pedidos = idsPedidos.Split(',');
-            var idsPedidosErro = new List<uint>();
+            var idsPedidosErro = new List<int>();
 
-            foreach (var idPedido in pedidos)
+            foreach (var idPedido in idsPedido)
             {
-                string erro = "";
-                var idCliente = PedidoDAO.Instance.ObtemIdCliente(sessao, idPedido.StrParaUint());
-                if ((!VerificaSinalPagamentoReceber(sessao, idPedido, out erro) && !string.IsNullOrWhiteSpace(erro)) ||
-                   (ClienteDAO.Instance.ObtemLimite(sessao, idCliente) - (ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null) + PedidoDAO.Instance.GetTotal(sessao, idPedido.StrParaUint())) < 0))
+                var mensagemErro = new List<string>();
+                var idCliente = ObtemIdCliente(sessao, (uint)idPedido);
+                var limiteCliente = ClienteDAO.Instance.ObtemLimite(sessao, idCliente);
+                var debitosCliente = ContasReceberDAO.Instance.GetDebitos(sessao, idCliente, null);
+                var totalPedido = GetTotal(sessao, (uint)idPedido);
+
+                if ((!VerificaSinalPagamentoReceber(sessao, new List<int> { idPedido }, out mensagemErro) && mensagemErro.Count > 0) ||
+                    (limiteCliente - (debitosCliente + totalPedido) < 0))
                 {
-                    idsPedidosErro.Add(Conversoes.StrParaUint(idPedido));
+                    idsPedidosErro.Add(idPedido);
                 }
             }
 
-            var sql = @"
-                UPDATE pedido SET
-                    situacao=" + (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro + @",
-                    idFuncConfirmarFinanc=" + UserInfo.GetUserInfo.CodUser + @"
-                WHERE idPedido IN(" + string.Join(",", idsPedidosErro) + ")";
+            var sql = $@"UPDATE pedido SET
+                    Situacao = { (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro },
+                    IdFuncConfirmarFinanc = { UserInfo.GetUserInfo.CodUser }
+                WHERE IdPedido IN ({ string.Join(",", idsPedidosErro) })";
 
             objPersistence.ExecuteCommand(sessao, sql);
 
             foreach (var idPedido in idsPedidosErro)
             {
-                ObservacaoFinalizacaoFinanceiroDAO.Instance
-                    .InsereItem(sessao, idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
             }
         }
 
@@ -6153,8 +6160,11 @@ namespace Glass.Data.DAL
                     throw new Exception("Você não possui permissão para liberar o pedido com base no percentual de rentabilidade.");
 
                 if (!podeLiberar)
-                    LancarExceptionValidacaoPedidoFinanceiro("O percentual de rentabilidade do pedido deve ser verificado.", idPedido, true,
-                        null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                {
+                    var mensagem = new List<string> { "O percentual de rentabilidade do pedido deve ser verificado." };
+
+                    LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagem, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                }
             }
 
             // Garante que o pedido possa ser finalizado
@@ -6244,6 +6254,7 @@ namespace Glass.Data.DAL
             var clientePossuiContaVencida = ContasReceberDAO.Instance.ClientePossuiContasVencidas(session, pedido.IdCli);
             var quantidadeParcelasCliente = ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Todos);
             var quantidadeParcelasPrazoCliente = ParcelasDAO.Instance.GetCountByCliente(session, pedido.IdCli, ParcelasDAO.TipoConsulta.Prazo);
+            var mensagemErro = new List<string>();
 
             // Verifica se o cliente deve pagar um percentual mínimo de sinal
             if (pedido.ValorPagamentoAntecipado == 0 && percSinalMinimo != null && (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.APrazo ||
@@ -6253,8 +6264,8 @@ namespace Glass.Data.DAL
 
                 if (pedido.ValorEntrada < valorMinimoSinal)
                 {
-                    LancarExceptionValidacaoPedidoFinanceiro($@"Esse cliente deve pagar um percentual mínimo de { percSinalMinimo }% como sinal.\\nValor mínimo para o sinal: { valorMinimoSinal.ToString("C") }",
-                        idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                    mensagemErro.Add($"Esse cliente deve pagar um percentual mínimo de { percSinalMinimo }% como sinal.\\nValor mínimo para o sinal: { valorMinimoSinal.ToString("C") }");
+                    LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagemErro, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
                 }
             }
 
@@ -6264,15 +6275,16 @@ namespace Glass.Data.DAL
                 var inicio = numPedidosBloqueio > 1 ? "Os pedidos " : "O pedido ";
                 var fim = numPedidosBloqueio > 1 ? $" estão prontos { dias } e ainda não foram liberados" : $" está pronto { dias } e ainda não foi liberado";
                 var idsPedidoBloqueioEmissao = GetIdsBloqueioEmissao(session, pedido.IdCli);
+                mensagemErro.Add($"Não é possível finalizar esse pedido. { inicio }{ idsPedidoBloqueioEmissao }{ fim } para o cliente.");
 
-                LancarExceptionValidacaoPedidoFinanceiro($"Não é possível finalizar esse pedido. { inicio }{ idsPedidoBloqueioEmissao }{ fim } para o cliente.", idPedido, true, null,
-                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagemErro, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
             }
 
             // Verifica se o cliente está inativo
             if (situacaoCliente != (int)SituacaoCliente.Ativo)
             {
-                LancarExceptionValidacaoPedidoFinanceiro($"O cliente selecionado está inativo. Motivo: { obsCliente }", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                mensagemErro.Add($"O cliente selecionado está inativo. Motivo: { obsCliente }");
+                LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagemErro, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
             }
 
             // Bloqueia a forma de pagamento se o cliente não puder usá-la
@@ -6280,15 +6292,16 @@ namespace Glass.Data.DAL
             {
                 if (quantidadeParcelasPrazoCliente == 0 && pedido.TipoVenda == 2)
                 {
-                    LancarExceptionValidacaoPedidoFinanceiro($@"O cliente { pedido.IdCli } - { nomeCliente } não pode fazer compras à prazo.", idPedido, true, null,
-                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                    mensagemErro.Add($"O cliente { pedido.IdCli } - { nomeCliente } não pode fazer compras à prazo.");
+                    LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagemErro, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
                 }
             }
 
             //Verifica se o cliente possui contas a receber vencidas se nao for garantia
             if (bloquearPedidoClienteContaVencida && clientePossuiContaVencida && pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Garantia)
             {
-                LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", idPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                mensagemErro.Add("Cliente bloqueado. Motivo: Contas a receber em atraso.");
+                LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagemErro, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
             }
 
             #endregion
@@ -6325,7 +6338,7 @@ namespace Glass.Data.DAL
                     try
                     {
                         //PedidoDAO.Instance.AlteraSituacao(pedido.IdPedido, Pedido.SituacaoPedido.ConfirmadoLiberacao);
-                        ConfirmarLiberacaoPedido(session, idPedido.ToString(), true);
+                        ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
                     }
                     catch (ValidacaoPedidoFinanceiroException f)
                     {
@@ -6379,7 +6392,7 @@ namespace Glass.Data.DAL
                     {
                         try
                         {
-                            ConfirmarLiberacaoPedido(session, idPedido.ToString(), true);
+                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
                         {
@@ -6395,18 +6408,17 @@ namespace Glass.Data.DAL
                         AlteraSituacao(session, pedido.IdPedido, Pedido.SituacaoPedido.Conferido);
                 }
             }
-            else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra ||
-                pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Funcionario)
+            else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.AVista || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra || pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Funcionario)
             {
                 // Altera a situação do pedido para Conferido
                 if (pedido.Situacao != Pedido.SituacaoPedido.Confirmado)
                 {
                     // Verifica se cliente possui limite disponível para realizar a compra, mesmo pedido à vista
-                    if (FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite &&
-                        (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.AVista ||
-                        !PedidoConfig.EmpresaPermiteFinalizarPedidoAVistaSemVerificarLimite) &&
-                        pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Obra)
+                    if (FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite && pedido.TipoVenda != (int)Pedido.TipoVendaPedido.Obra &&
+                        (pedido.TipoVenda != (int)Pedido.TipoVendaPedido.AVista || !PedidoConfig.EmpresaPermiteFinalizarPedidoAVistaSemVerificarLimite))
+                    {
                         VerificaLimite(session, pedido, true);
+                    }
 
                     // Se for liberação e o pedido não possuir produtos do grupo vidro calculado por m², muda para Confirmado
                     if (PedidoConfig.LiberarPedido && !ProdutosPedidoDAO.Instance.PossuiVidroCalcM2(session, idPedido))
@@ -6414,30 +6426,35 @@ namespace Glass.Data.DAL
                         try
                         {
                             //PedidoDAO.Instance.AlteraSituacao(pedido.IdPedido, Pedido.SituacaoPedido.ConfirmadoLiberacao);
-                            ConfirmarLiberacaoPedido(session, idPedido.ToString(), true);
+                            ConfirmarLiberacaoPedido(session, new List<int> { (int)idPedido }, true);
                         }
                         catch (ValidacaoPedidoFinanceiroException f)
                         {
                             AlteraSituacao(session, pedido.IdPedido, Pedido.SituacaoPedido.Conferido);
-                            throw new ValidacaoPedidoFinanceiroException(f.Message, pedido.IdPedido, f.IdsPedidos, f.Motivo);
+                            throw new ValidacaoPedidoFinanceiroException(f.IdsPedido, f.Message, f.Motivo);
                         }
                         catch (Exception ex)
                         {
                             if (Geral.NaoVendeVidro())
+                            {
                                 throw ex;
+                            }
 
                             AlteraSituacao(session, pedido.IdPedido, Pedido.SituacaoPedido.Conferido);
                         }
                     }
                     else
+                    {
                         AlteraSituacao(session, pedido.IdPedido, Pedido.SituacaoPedido.Conferido);
+                    }
                 }
             }
             else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Reposição)
             {
-                if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
+                if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoReposicao))
+                {
                     throw new Exception("Apenas o gerente pode emitir pedido de reposição.");
+                }
 
                 #region Valida produtos reposição
 
@@ -6474,30 +6491,33 @@ namespace Glass.Data.DAL
             }
             else if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Garantia)
             {
-                if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor &&
-                    !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
+                if (UserInfo.GetUserInfo.TipoUsuario == (int)Utils.TipoFuncionario.Vendedor && !Config.PossuiPermissao(Config.FuncaoMenuPedido.EmitirPedidoGarantia))
+                {
                     throw new Exception("Apenas o gerente pode emitir pedido de garantia.");
+                }
 
                 // Confirma o pedido
                 ConfirmaGarantiaReposicao(session, pedido.IdPedido, financeiro);
             }
-
+            
             /* Chamado 22658. */
             if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
             {
                 if (pedido.Total != pedido.ValorPagamentoAntecipado)
-                    throw new Exception("O valor do pagamento antecipado do pedido difere do total do mesmo." +
-                        " Recalcule o pedido para que os valores fiquem corretos.");
+                {
+                    throw new Exception("O valor do pagamento antecipado do pedido difere do total do mesmo. Recalcule o pedido para que os valores fiquem corretos.");
+                }
             }
 
             // Salva a data e usuário de finalização
             var usuConf = UserInfo.GetUserInfo.CodUser;
 
             if (financeiro)
+            {
                 usuConf = ObtemValorCampo<uint>(session, "idFuncFinalizarFinanc", "idPedido=" + idPedido);
+            }
 
-            objPersistence.ExecuteCommand(session, "update pedido set dataFin=?data, usuFin=?usu where idPedido=" + idPedido,
-                new GDAParameter("?data", DateTime.Now), new GDAParameter("?usu", usuConf));
+            objPersistence.ExecuteCommand(session, "update pedido set dataFin=?data, usuFin=?usu where idPedido=" + idPedido, new GDAParameter("?data", DateTime.Now), new GDAParameter("?usu", usuConf));
 
             PedidoComissaoDAO.Instance.Create(session, pedido);
 
@@ -6505,7 +6525,9 @@ namespace Glass.Data.DAL
             foreach (var p in lstProd)
             {
                 if (ProdutoDAO.Instance.IsVidro(session, (int)p.IdProd))
+                {
                     MovMateriaPrimaDAO.Instance.MovimentaMateriaPrimaPedido(session, (int)p.IdProdPed, (decimal)p.TotM, MovEstoque.TipoMovEnum.Saida);
+                }
             }
 
             LogAlteracaoDAO.Instance.LogPedido(session, pedido, GetElementByPrimaryKey(session, pedido.IdPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
@@ -6561,18 +6583,12 @@ namespace Glass.Data.DAL
             if (limite > 0 && (debitos + pedido.Total - totalJaPagoPedido > limite) && (pedido.Total - totalJaPagoPedido > 0))
             {
                 var limiteDisp = limite - debitos;
+                var mensagem = new List<string> { "O cliente não possui limite disponível para realizar esta compra. Contate o setor Financeiro.\n" +
+                        $"Limite total: { limite.ToString("C") } Limite disponível: { (limiteDisp > 0 ? limiteDisp : 0).ToString("C") }" +
+                        $"\nDébitos: { (debitos + pedido.Total - totalJaPagoPedido).ToString("C") }" };
+                var tipoMotivo = finalizarPedido ? ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao : ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao;
 
-                var mensagem =
-                    string.Format(
-                        @"O cliente não possui limite disponível para realizar esta compra. Contate o setor Financeiro.\n
-                        Limite total: {0} Limite disponível: {1}
-                        \nDébitos: {2}", limite.ToString("C"),
-                        (limiteDisp > 0 ? limiteDisp : 0).ToString("C"), (debitos + pedido.Total - totalJaPagoPedido).ToString("C"));
-
-                LancarExceptionValidacaoPedidoFinanceiro(mensagem,
-                    pedido.IdPedido, finalizarPedido, null,
-                    finalizarPedido ? ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao :
-                    ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)pedido.IdPedido }, mensagem, finalizarPedido, tipoMotivo);
             }
         }
 
@@ -6641,8 +6657,10 @@ namespace Glass.Data.DAL
                             throw new Exception("O pedido ainda não foi conferido, portanto não pode ser confirmado.");
 
                         if (TemSinalReceber(trans, idPedido))
-                            LancarExceptionValidacaoPedidoFinanceiro("O pedido tem sinal a receber. Receba-o para confirmar o pedido.",
-                                idPedido, false, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                        {
+                            var mensagem = new List<string> { "O pedido tem sinal a receber. Receba-o para confirmar o pedido." };
+                            LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                        }
 
                         else if (ProdutosPedidoDAO.Instance.GetCount(trans, idPedido, 0, false, 0) < 1)
                             throw new Exception("O pedido não pode ser confirmado por não haver nenhum Produto associado ao mesmo.");
@@ -6849,10 +6867,12 @@ namespace Glass.Data.DAL
 
                                 // Determina o valor que será somado aos débitos do cliente para verificar se ficará tudo dentro do limite
                                 decimal valorAConsiderar = FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? 0 : totalPedido - ObtemValorEntrada(trans, idPedido);
-
+                                
                                 if (limite > 0 && ContasReceberDAO.Instance.GetDebitos(trans, idCliente, null) + valorAConsiderar > limite)
-                                    LancarExceptionValidacaoPedidoFinanceiro("O cliente não possui limite disponível para realizar esta compra. Contate o setor Financeiro.",
-                                        idPedido, false, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                                {
+                                    var mensagem = new List<string> { "O cliente não possui limite disponível para realizar esta compra. Contate o setor Financeiro." };
+                                    LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)idPedido }, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                                }
                             }
 
                             #endregion
@@ -7244,7 +7264,7 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        public void ConfirmarLiberacaoPedidoComTransacao(string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando, bool financeiro)
+        public void ConfirmarLiberacaoPedidoComTransacao(List<int> idsPedidos, out List<int> idsPedidosOk, out List<int> idsPedidosErro, bool finalizando, bool financeiro)
         {
             lock (_confirmarLiberacaoPedidoLock)
             {
@@ -7290,67 +7310,89 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        private void ConfirmarLiberacaoPedido(GDASession session, string idsPedidos, bool finalizando)
+        private void ConfirmarLiberacaoPedido(GDASession session, List<int> idsPedido, bool finalizando)
         {
-            string temp, temp1;
-            ConfirmarLiberacaoPedido(session, idsPedidos, out temp, out temp1, finalizando, false);
+            var temp = new List<int>();
+            var temp1 = new List<int>();
+
+            ConfirmarLiberacaoPedido(session, idsPedido, out temp, out temp1, finalizando, false);
         }
 
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        public void ConfirmarLiberacaoPedido(GDASession sessao, string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool financeiro)
+        public void ConfirmarLiberacaoPedido(GDASession sessao, List<int> idsPedido, out List<int> idsPedidoOk, out List<int> idsPedidoErro, bool financeiro)
         {
-            ConfirmarLiberacaoPedido(sessao, idsPedidos, out idsPedidosOk, out idsPedidosErro, false, financeiro);
+            ConfirmarLiberacaoPedido(sessao, idsPedido, out idsPedidoOk, out idsPedidoErro, false, financeiro);
         }
 
         /// <summary>
         /// Confirma pedido, utilizado apenas na Tempera
         /// </summary>
-        public void ConfirmarLiberacaoPedido(GDASession sessao, string idsPedidos, out string idsPedidosOk, out string idsPedidosErro, bool finalizando, bool financeiro)
+        public void ConfirmarLiberacaoPedido(GDASession sessao, List<int> idsPedido, out List<int> idsPedidoOk, out List<int> idsPedidoErro, bool finalizando, bool financeiro)
         {
             try
             {
-                uint tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
-                bool confApenasMaoDeObra = false;
+                var tipoUsuario = UserInfo.GetUserInfo.TipoUsuario;
+                var confApenasMaoDeObra = false;
+                var mensagem = new List<string>();
 
                 if (!finalizando)
                 {
                     if (UserInfo.GetUserInfo.IdCliente == null || UserInfo.GetUserInfo.IdCliente == 0)
+                    {
                         if (!Config.PossuiPermissao(Config.FuncaoMenuPedido.ConfirmarPedidoLiberacao))
                         {
                             // Verifica se o usuário pode imprimir pedidos de mão de obra
                             if (Config.PossuiPermissao(Config.FuncaoMenuPCP.ImprimirEtiquetasMaoDeObra))
+                            {
                                 confApenasMaoDeObra = true;
+                            }
                             else
+                            {
                                 throw new Exception("Apenas o Gerente pode confirmar pedidos.");
+                            }
                         }
+                    }
                 }
+                
+                var pedidos = GetByString(sessao, string.Join(",", idsPedido));
+                var idsCliente = new List<int>();
 
-                Pedido[] pedidos = GetByString(sessao, idsPedidos);
-
-                string idsClientes = ",";
-                foreach (Pedido p in pedidos)
+                foreach (var pedido in pedidos)
                 {
                     if (!finalizando)
                     {
                         // Se o pedido não estiver conferido ou não tiver produtos associados, não pode ser confirmado
-                        if (p.Situacao == Pedido.SituacaoPedido.ConfirmadoLiberacao)
-                            throw new Exception("Pedido '" + p.IdPedido + "' já confirmado.");
-                        else if (p.Situacao == Pedido.SituacaoPedido.Confirmado)
-                            throw new Exception("Pedido '" + p.IdPedido + "' já liberado.");
-                        else if (p.Situacao != Pedido.SituacaoPedido.Conferido && p.Situacao != Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro)
-                            throw new Exception("O pedido '" + p.IdPedido + "' ainda não foi conferido, portanto não pode ser confirmado.");
+                        if (pedido.Situacao == Pedido.SituacaoPedido.ConfirmadoLiberacao)
+                        {
+                            throw new Exception($"Pedido { pedido.IdPedido } já confirmado.");
+                        }
+                        else if (pedido.Situacao == Pedido.SituacaoPedido.Confirmado)
+                        {
+                            throw new Exception($"Pedido { pedido.IdPedido } já liberado.");
+                        }
+                        else if (pedido.Situacao != Pedido.SituacaoPedido.Conferido && pedido.Situacao != Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro)
+                        {
+                            throw new Exception($"O pedido { pedido.IdPedido } ainda não foi conferido, portanto não pode ser confirmado.");
+                        }
 
-                        if (ProdutosPedidoDAO.Instance.GetCount(sessao, p.IdPedido, 0, false, 0) < 1)
-                            throw new Exception("O pedido '" + p.IdPedido + "' não pode ser confirmado por não haver nenhum Produto associado ao mesmo.");
+                        if (ProdutosPedidoDAO.Instance.GetCount(sessao, pedido.IdPedido, 0, false, 0) < 1)
+                        {
+                            throw new Exception($"O pedido { pedido.IdPedido } não pode ser confirmado por não haver nenhum Produto associado ao mesmo.");
+                        }
 
-                        if (!p.MaoDeObra && confApenasMaoDeObra)
+                        if (!pedido.MaoDeObra && confApenasMaoDeObra)
+                        {
                             throw new Exception("Você pode confirmar apenas pedidos de mão de obra.");
+                        }
                     }
 
                     // Salva o id dos clientes para a consulta do limite
-                    idsClientes += !idsClientes.Contains("," + p.IdCli + ",") ? p.IdCli + "," : "";
+                    if (!idsCliente.Contains((int)pedido.IdCli))
+                    {
+                        idsCliente.Add((int)pedido.IdCli);
+                    }
                 }
 
                 var consideraPedidoConferido = FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite;
@@ -7359,111 +7401,108 @@ namespace Glass.Data.DAL
                 // Verifica se a empresa considera pedidos conferidos (todos ou apenas à vista) no limite do cliente
                 if (!consideraPedidoConferido || naoVerificaPedidoAVista)
                 {
-                    foreach (var id in idsClientes.TrimStart(',').TrimEnd(',').Split(','))
+                    foreach (var idCliente in idsCliente)
                     {
+                        var nomeCliente = ClienteDAO.Instance.GetNome(sessao, (uint)idCliente);
+                        // Recupera os débitos do cliente
+                        var debitos = ContasReceberDAO.Instance.GetDebitos(sessao, (uint)idCliente, null);
+                        // Recupera o limite do cliente
+                        var limite = ClienteDAO.Instance.ObtemLimite(sessao, (uint)idCliente);
                         // Se a empresa não considera pedidos conferidos no limite, soma o total de todos os pedidos sendo confirmados,
                         // mas caso a empresa apenas não verifique o limite ao finalizar pedido à vista, puxa o total de todos os pedidos
                         // sendo confirmados que forem à vista e que não foi recebido antecipado
-                        var whereTotal = !consideraPedidoConferido ?
-                            "idCli=" + id + " And idPedido In (" + idsPedidos + ")" :
-                            "idCli=" + id + " And idPedido In (" + idsPedidos + ") And (Coalesce(idPagamentoAntecipado, 0)=0 Or Coalesce(valorPagamentoAntecipado, 0)=0)  And tipoVenda=" + (int)Pedido.TipoVendaPedido.AVista;
-
+                        var filtroTotal = string.Empty;
                         // Quando a empresa considera pedido conferido no limite, os débitos do pedido já são buscados no método GetDebitos, por isso foi removido dos totais e do pagoAntecipado.
-                        // Recupera o valor de todos os pedidos do cliente que estão sendo confirmados
-                        var totaisPedidos = PedidoDAO.Instance.ObtemValorCampo<decimal>(sessao, "Sum(total)", !consideraPedidoConferido ? whereTotal : whereTotal + " And Situacao != " + (int)Pedido.SituacaoPedido.Conferido);
-
+                        // Recupera o valor de todos os pedidos do cliente que estão sendo confirmados.
+                        decimal totalPedidos;
                         // Total pago antecipado
-                        var totalPagoAntecipado = PedidoDAO.Instance.ObtemValorCampo<decimal>(sessao, "Sum(Coalesce(valorPagamentoAntecipado,0))",
-                            !consideraPedidoConferido ? whereTotal : whereTotal + " And Situacao != " + (int)Pedido.SituacaoPedido.Conferido);
+                        decimal totalPagoAntecipado;
 
-                        // Recupera os débitos do cliente
-                        var debitos = ContasReceberDAO.Instance.GetDebitos(sessao, id.StrParaUint(), null);
+                        if (consideraPedidoConferido)
+                        {
+                            filtroTotal = $@"IdCli = { idCliente }
+                                AND IdPedido IN ({ string.Join(",", idsPedido) })
+                                AND (COALESCE(IdPagamentoAntecipado, 0) = 0 OR COALESCE(ValorPagamentoAntecipado, 0) = 0)
+                                AND TipoVenda = { (int)Pedido.TipoVendaPedido.AVista }";
 
-                        // Recupera o limite do cliente
-                        var limite = ClienteDAO.Instance.ObtemValorCampo<decimal>(sessao, "limite", "id_cli=" + id, null);
+                            totalPedidos = ObtemValorCampo<decimal>(sessao, "SUM(Total)", $"{ filtroTotal } AND Situacao != { (int)Pedido.SituacaoPedido.Conferido }");
+                            totalPagoAntecipado = ObtemValorCampo<decimal>(sessao, "SUM(COALESCE(ValorPagamentoAntecipado, 0))", $@"{ filtroTotal } AND Situacao != { (int)Pedido.SituacaoPedido.Conferido }");
+                        }
+                        else
+                        {
+                            filtroTotal = $@"IdCli = { idCliente }
+                                AND IdPedido IN ({ string.Join(",", idsPedido) })";
+
+                            totalPedidos = ObtemValorCampo<decimal>(sessao, "SUM(Total)", filtroTotal);
+                            totalPagoAntecipado = ObtemValorCampo<decimal>(sessao, "SUM(COALESCE(ValorPagamentoAntecipado, 0))", filtroTotal);
+                        }
 
                         // Verifica se o total dos pedidos mais o total de débitos ultrapassa o limite do cliente, se sim é lançada uma exceção
-                        if (limite > 0 && (totaisPedidos + debitos - totalPagoAntecipado) > limite &&
-                            /* Chamado 45457. */
-                            totaisPedidos - totalPagoAntecipado > 0)
+                        if (limite > 0 && (totalPedidos + debitos - totalPagoAntecipado) > limite && totalPedidos - totalPagoAntecipado > 0)
                         {
                             // Passa somente os pedidos do cliente desta iteração
-                            var idsPedidoCliente = string.Join(",", ExecuteMultipleScalar<string>(sessao, "Select Cast(idPedido as char) From pedido Where " + whereTotal).ToArray());
+                            var idsPedidoCliente = ExecuteMultipleScalar<int>(sessao, $"SELECT CAST(IdPedido AS CHAR) FROM pedido WHERE { filtroTotal }")?.ToList() ?? new List<int>();
+                            mensagem.Clear();
+                            mensagem.Add($"O cliente { idCliente } - { nomeCliente } não possui limite suficiente. \nLimite disponível: R$ { limite }\nLimite necessário: R$ { (totalPedidos + debitos) }");
 
-                            if (!string.IsNullOrWhiteSpace(idsPedidoCliente) && !idsPedidoCliente.Contains(","))
+                            if (idsPedidoCliente.Count == 1)
                             {
                                 //Cria um log no pedido caso ocorra problema com o limite do cliente
                                 // Feito pois ao finalizar pedido de revenda não é lancada uma exceção, sendo assim será salvo um log no pedido.
                                 var logConfirmacao = new LogAlteracao();
                                 logConfirmacao.Tabela = (int)LogAlteracao.TabelaAlteracao.Pedido;
-                                logConfirmacao.IdRegistroAlt = idsPedidoCliente.StrParaInt();
-                                logConfirmacao.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idsPedidoCliente.StrParaInt());
+                                logConfirmacao.IdRegistroAlt = idsPedidoCliente[0];
+                                logConfirmacao.NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(sessao, LogAlteracao.TabelaAlteracao.Pedido, idsPedidoCliente[0]);
                                 logConfirmacao.Campo = "Falha ao finalizar/Confirmar Pedido";
                                 logConfirmacao.DataAlt = DateTime.Now;
                                 logConfirmacao.IdFuncAlt = UserInfo.GetUserInfo != null ? UserInfo.GetUserInfo.CodUser : 0;
                                 logConfirmacao.ValorAnterior = null;
-                                logConfirmacao.ValorAtual = @"O cliente '" + id + " - " + ClienteDAO.Instance.ObtemValorCampo<string>(sessao, "nome", "id_cli=" + id) +
-                                    " não possui limite suficiente. " + "\nLimite disponível: R$ " + limite + "\nLimite necessário: R$ " + (totaisPedidos + debitos);
-                                logConfirmacao.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, idsPedidoCliente.StrParaUint());
+                                logConfirmacao.ValorAtual = mensagem[0];
+                                logConfirmacao.Referencia = LogAlteracao.GetReferencia(sessao, (int)LogAlteracao.TabelaAlteracao.Pedido, (uint)idsPedidoCliente[0]);
 
                                 //Salva o log no pedido
                                 LogAlteracaoDAO.Instance.Insert(sessao, logConfirmacao);
                             }
-                            LancarExceptionValidacaoPedidoFinanceiro("O cliente '" + id + " - " + ClienteDAO.Instance.ObtemValorCampo<string>(sessao, "nome", "id_cli=" + id) +
-                                " não possui limite suficiente. " + "\nLimite disponível: R$ " + limite + "\nLimite necessário: R$ " + (totaisPedidos + debitos),
-                                !string.IsNullOrWhiteSpace(idsPedidoCliente) && !idsPedidoCliente.Contains(",") ? idsPedidoCliente.StrParaUint() : 0, false, idsPedidoCliente,
-                                ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+
+                            LancarExceptionValidacaoPedidoFinanceiro(idsPedidoCliente, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
                         }
                     }
                 }
 
-                List<uint> idPedidoOk = new List<uint>(), idPedidoErro = new List<uint>();
-                var mensagem = "";
+                idsPedidoOk = new List<int>();
+                idsPedidoErro = new List<int>();
                 var situacaoCliente = ClienteDAO.Instance.GetSituacao(pedidos[0].IdCli);
+                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idsPedidoOk, out idsPedidoErro);
 
-                var possuiSinalPagamentoReceber = !VerificaSinalPagamentoReceber(sessao, pedidos, out mensagem, out idPedidoOk, out idPedidoErro);
-                
                 // Se, bloquear confirmação de pedido com sinal à receber.
-                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idPedidoOk.Count == 0)
+                if (PedidoConfig.ImpedirConfirmacaoPedidoPagamento && possuiSinalPagamentoReceber && idsPedidoOk.Count == 0)
                 {
-                    idsPedidosOk = "";
-                    idsPedidosErro = idsPedidos;
-
-                    LancarExceptionValidacaoPedidoFinanceiro(mensagem, !string.IsNullOrWhiteSpace(idsPedidos) && !idsPedidos.Contains(",") ? idsPedidos.StrParaUint() : 0, false, idsPedidos,
-                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                    LancarExceptionValidacaoPedidoFinanceiro(idsPedido, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
 
                     // Permite que os pedidos sejam liberados pelo funcionário do Financeiro
-                    idPedidoOk.Clear();
-                    idPedidoOk.AddRange(idPedidoErro);
-                    idPedidoErro.Clear();
+                    idsPedidoOk.AddRange(idsPedidoErro);
+                    idsPedidoErro.Clear();
                 }
                 // Se, pedido gerado pelo Parceiro e cliente Inativo ou Bloqueado.
                 else if (FinanceiroConfig.ClienteInativoBloqueadoEmitirPedidoComConfirmacaoPeloFinanceiro &&
                     pedidos[0].GeradoParceiro && (situacaoCliente == (int)SituacaoCliente.Inativo || situacaoCliente == (int)SituacaoCliente.Bloqueado))
                 {
-                    idsPedidosOk = "";
-                    idsPedidosErro = idsPedidos;
-                    mensagem = "Pedido emitido no e-commerce por cliente inativo ou bloqueado";
-                    LancarExceptionValidacaoPedidoFinanceiro(mensagem, !string.IsNullOrWhiteSpace(idsPedidos) && !idsPedidos.Contains(",") ? idsPedidos.StrParaUint() : 0, false, idsPedidos,
-                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                    mensagem.Add("Pedido emitido no e-commerce por cliente inativo ou bloqueado");
+                    LancarExceptionValidacaoPedidoFinanceiro(idsPedido, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
 
                     // Permite que os pedidos sejam liberados pelo funcionário do Financeiro
-                    idPedidoOk.Clear();
-                    idPedidoOk.AddRange(idPedidoErro);
-                    idPedidoErro.Clear();
-                }
-
-                if (idPedidoErro.Count > 0)
-                {
-                    idsPedidosOk = string.Join(",", Array.ConvertAll<uint, string>(idPedidoOk.ToArray(), x => x.ToString()));
-                    idsPedidosErro = string.Join(",", Array.ConvertAll<uint, string>(idPedidoErro.ToArray(), x => x.ToString()));
-
-                    pedidos = GetByString(sessao, idsPedidosOk);
+                    idsPedidoOk.AddRange(idsPedidoErro);
+                    idsPedidoErro.Clear();
                 }
                 else
                 {
-                    idsPedidosOk = idsPedidos;
-                    idsPedidosErro = "";
+                    idsPedidoOk.AddRange(idsPedidoErro);
+                    idsPedidoErro.Clear();
+                }
+
+                if (idsPedidoOk.Any(f => f > 0))
+                {
+                    pedidos = GetByString(sessao, string.Join(",", idsPedidoOk));
                 }
 
                 var idsProdQtde = new Dictionary<int, float>();
@@ -7475,12 +7514,12 @@ namespace Glass.Data.DAL
 
                 try
                 {
-                    foreach (var idProdPed in ProdutosPedidoDAO.Instance.ObtemIdsPedidoExcetoProducao(sessao, idsPedidosOk))
+                    foreach (var idProdPed in ProdutosPedidoDAO.Instance.ObterIdsProdPedExcetoProducao(sessao, idsPedidoOk))
                     {
-                        var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(sessao, idProdPed);
-                        var totM = ProdutosPedidoDAO.Instance.ObtemTotM(sessao, idProdPed);
-                        var qtde = ProdutosPedidoDAO.Instance.ObtemQtde(sessao, idProdPed);
-                        var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(sessao, idProdPed);
+                        var idProd = ProdutosPedidoDAO.Instance.ObtemIdProd(sessao, (uint)idProdPed);
+                        var totM = ProdutosPedidoDAO.Instance.ObtemTotM(sessao, (uint)idProdPed);
+                        var qtde = ProdutosPedidoDAO.Instance.ObtemQtde(sessao, (uint)idProdPed);
+                        var idPedido = ProdutosPedidoDAO.Instance.ObtemIdPedido(sessao, (uint)idProdPed);
                         var idLoja = PedidoDAO.Instance.ObtemIdLoja(sessao, idPedido);
                         var idGrupo = ProdutoDAO.Instance.ObtemIdGrupoProd(sessao, (int)idProd);
                         var idSubGrupo = ProdutoDAO.Instance.ObtemIdSubgrupoProd(sessao, (int)idProd);
@@ -7491,12 +7530,17 @@ namespace Glass.Data.DAL
                         var tipoCalc = GrupoProdDAO.Instance.TipoCalculo(sessao, (int)idProd);
 
                         if (tipoCalc == (int)TipoCalculoGrupoProd.M2 || tipoCalc == (int)TipoCalculoGrupoProd.M2Direto)
+                        {
                             qtdProd += totM;
-                        else if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 ||
-                            tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
+                        }
+                        else if (tipoCalc == (int)TipoCalculoGrupoProd.MLAL0 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL05 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL1 || tipoCalc == (int)TipoCalculoGrupoProd.MLAL6)
+                        {
                             qtdProd += qtde * alturaProd;
+                        }
                         else
+                        {
                             qtdProd += qtde;
+                        }
 
                         if (!produtosPedidosEstoque.ContainsKey(idPedido))
                         {
@@ -7514,7 +7558,7 @@ namespace Glass.Data.DAL
                         if (idGrupo == 0 || idSubGrupo.GetValueOrDefault() == 0)
                         {
                             var descricaoProd = ProdutoDAO.Instance.ObtemDescricao(sessao, (int)idProd);
-                            throw new Exception(string.Format("Verifique o cadastro do produto {0} sem {1}", descricaoProd, idGrupo == 0 ? "Grupo" : "Subgrupo"));
+                            throw new Exception($"Verifique o cadastro do produto { descricaoProd } sem { (idGrupo == 0 ? "Grupo" : "Subgrupo") }");
                         }
 
                         //Verifica se o produto possui estoque para inserir na reserva
@@ -7525,15 +7569,19 @@ namespace Glass.Data.DAL
                             if (estoque < produtosPedidosEstoque[idPedido][idProd])
                             {
                                 var descricaoProd = ProdutoDAO.Instance.ObtemDescricao((int)idProd);
-                                throw new Exception("O produto " + descricaoProd + " possui apenas " + estoque + " em estoque.");
+                                throw new Exception($"O produto { descricaoProd } possui apenas { estoque } em estoque.");
                             }
                         }
 
                         // Salva produto e qtd de saída para executar apenas um sql de atualização de estoque
                         if (!idsProdQtde.ContainsKey((int)idProd))
+                        {
                             idsProdQtde.Add((int)idProd, produtosPedidosEstoque[idPedido][idProd]);
+                        }
                         else
+                        {
                             idsProdQtde[(int)idProd] += produtosPedidosEstoque[idPedido][idProd];
+                        }
                     }
                 }
                 catch (Exception e)
@@ -7550,13 +7598,13 @@ namespace Glass.Data.DAL
                 try
                 {
                     /* Chamado 37030. */
-                    foreach (var id in idsPedidosOk.Split(','))
+                    foreach (var id in idsPedidoOk?.Where(f => f > 0)?.ToList())
                     {
                         // Recupera o pedido
-                        var ped = pedidos.Where(f => f.IdPedido == id.StrParaUint()).FirstOrDefault();
+                        var ped = pedidos.Where(f => f.IdPedido == id).FirstOrDefault();
 
                         // Atualiza para confirmado PCP
-                        AlteraSituacao(sessao, id.StrParaUint(), Pedido.SituacaoPedido.ConfirmadoLiberacao);
+                        AlteraSituacao(sessao, (uint)id, Pedido.SituacaoPedido.ConfirmadoLiberacao);
 
                         // Chamado 59179: Atualiza o saldo da obra (Deve ser feito neste momento)
                         AtualizaSaldoObra(sessao, ped.IdPedido, null, ped.IdObra, ped.Total, ped.Total, true);
@@ -7570,7 +7618,7 @@ namespace Glass.Data.DAL
 
                     if (financeiro)
                     {
-                        foreach (var idPedido in idsPedidos.Split(','))
+                        foreach (var idPedido in idsPedido)
                         {
                             // Salva o usuário atual que estiver confirmando o pedido (Chamado 12100)
                             var usuConf = UserInfo.GetUserInfo.CodUser;//ObtemValorCampo<uint>("idFuncConfirmarFinanc", "idPedido=" + idPedido);
@@ -7579,8 +7627,11 @@ namespace Glass.Data.DAL
                     }
                     else
                     {
-                        // Confirma somente os pedidos que estiverem ok
-                        objPersistence.ExecuteCommand(sessao, string.Format(sql, UserInfo.GetUserInfo.CodUser, idsPedidosOk));
+                        if (idsPedidoOk.Count > 0)
+                        {
+                            // Confirma somente os pedidos que estiverem ok
+                            objPersistence.ExecuteCommand(sessao, string.Format(sql, UserInfo.GetUserInfo.CodUser, string.Join(",", idsPedidoOk)));
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -7596,18 +7647,25 @@ namespace Glass.Data.DAL
                     var idsLojaReserva = new List<int>();
 
                     foreach (var pedido in pedidos)
+                    {
                         if (!idsLojaReserva.Contains((int)pedido.IdLoja))
+                        {
                             idsLojaReserva.Add((int)pedido.IdLoja);
+                        }
+                    }
 
                     foreach (var idLojaReserva in idsLojaReserva)
+                    {
                         ProdutoLojaDAO.Instance.ColocarReserva(sessao, idLojaReserva, idsProdQtde, null, null, null, null, null,
-                            string.Join(",", pedidos.Select(f => f.IdPedido).ToList()), null, "PedidoDAO - ConfirmarLiberacaoPedido");
+                              string.Join(",", pedidos.Select(f => f.IdPedido).ToList()), null, "PedidoDAO - ConfirmarLiberacaoPedido");
+                    }
                 }
 
-                if (!string.IsNullOrEmpty(mensagem))
-                    LancarExceptionValidacaoPedidoFinanceiro(mensagem + "\n\nOs demais pedidos foram confirmados com sucesso.",
-                        !string.IsNullOrWhiteSpace(idsPedidosErro) && !idsPedidosErro.Contains(",") ? idsPedidosErro.StrParaUint() : 0, false, idsPedidosErro,
-                        ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                if (mensagem.Count > 0)
+                {
+                    mensagem.Add("Os demais pedidos foram confirmados com sucesso.");
+                    LancarExceptionValidacaoPedidoFinanceiro(idsPedidoErro, mensagem, false, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Confirmacao);
+                }
             }
             catch (ValidacaoPedidoFinanceiroException f)
             {
@@ -7615,7 +7673,7 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                ErroDAO.Instance.InserirFromException(string.Format("PedidoDAO - ConfirmarLiberacaoPedido. Pedidos: {0}", idsPedidos), ex);
+                ErroDAO.Instance.InserirFromException(string.Format("PedidoDAO - ConfirmarLiberacaoPedido. Pedidos: {0}", idsPedido), ex);
                 throw ex;
             }
         }
@@ -13855,68 +13913,81 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Verifica se os pedidos tem sinal/pagamento antecipado a receber.
         /// </summary>
-        public bool VerificaSinalPagamentoReceber(GDASession sessao, string idsPedidos, out string mensagemErro)
+        public bool VerificaSinalPagamentoReceber(GDASession sessao, List<int> idsPedidos, out List<string> mensagemErro)
         {
-            return VerificaSinalPagamentoReceber(sessao, GetByString(null, idsPedidos), out mensagemErro);
+            mensagemErro = new List<string>();
+
+            if (!(idsPedidos?.Any(f => f > 0) ?? false))
+            {
+                return true;
+            }
+
+            return VerificaSinalPagamentoReceber(sessao, GetByString(null, string.Join(",", idsPedidos)), out mensagemErro);
         }
 
         /// <summary>
         /// Verifica se os pedidos tem sinal/pagamento antecipado a receber.
         /// </summary>
-        public bool VerificaSinalPagamentoReceber(GDASession sessao, IEnumerable<Pedido> pedidos, out string mensagemErro)
+        public bool VerificaSinalPagamentoReceber(GDASession sessao, IEnumerable<Pedido> pedidos, out List<string> mensagemErro)
         {
-            List<uint> temp1 = new List<uint>(), temp2 = new List<uint>();
+            var temp1 = new List<int>();
+            var temp2 = new List<int>();
+
             return VerificaSinalPagamentoReceber(sessao, pedidos, out mensagemErro, out temp1, out temp2);
         }
 
         /// <summary>
         /// Verifica se os pedidos tem sinal/pagamento antecipado a receber.
         /// </summary>
-        public bool VerificaSinalPagamentoReceber(GDASession sessao, IEnumerable<Pedido> pedidos, out string mensagemErro,
-            out List<uint> idsPedidosOk, out List<uint> idsPedidosErro)
+        public bool VerificaSinalPagamentoReceber(GDASession sessao, IEnumerable<Pedido> pedidos, out List<string> mensagemErro, out List<int> idsPedidosOk, out List<int> idsPedidosErro)
         {
-            string idsSinal = "";
-            string idsPagtoAntecipado = "";
-            idsPedidosOk = new List<uint>();
-            idsPedidosErro = new List<uint>();
+            var idsPedidoSinal = new List<int>();
+            var idsPedidoPagtoAntecipado = new List<int>();
+            idsPedidosOk = new List<int>();
+            idsPedidosErro = new List<int>();
 
             // Verifica, em cada pedido, se há sinal/pagamento antecipado a receber
-            foreach (Pedido p in pedidos)
+            foreach (var pedido in pedidos)
             {
-                string erro = "";
-                if (!VerificaSinalPagamentoReceber(sessao, p, out erro))
+                var erro = string.Empty;
+
+                if (!VerificaSinalPagamentoReceber(sessao, pedido, out erro))
                 {
                     if (erro.IndexOf("sinal") > -1)
-                        idsSinal += p.IdPedido + ", ";
+                    {
+                        idsPedidoSinal.Add((int)pedido.IdPedido);
+                    }
                     else
-                        idsPagtoAntecipado += p.IdPedido + ", ";
+                    {
+                        idsPedidoPagtoAntecipado.Add((int)pedido.IdPedido);
+                    }
 
-                    idsPedidosErro.Add(p.IdPedido);
+                    idsPedidosErro.Add((int)pedido.IdPedido);
                 }
                 else
-                    idsPedidosOk.Add(p.IdPedido);
+                {
+                    idsPedidosOk.Add((int)pedido.IdPedido);
+                }
             }
 
-            idsSinal = idsSinal.TrimEnd(',', ' ');
-            idsPagtoAntecipado = idsPagtoAntecipado.TrimEnd(',', ' ');
+            mensagemErro = new List<string>();
 
-            mensagemErro = "";
-            if (!String.IsNullOrEmpty(idsSinal))
+            if (idsPedidoSinal?.Any(f => f > 0) ?? false)
             {
-                bool plural = idsSinal.IndexOf(',') > -1;
-                mensagemErro += String.Format("O{1} pedido{1} {0} tem sinal a receber.\n",
-                    idsSinal, plural ? "s" : "");
+                var incluirS = idsPedidoSinal.Count > 1 ? "s" : string.Empty;
+
+                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { idsPedidoSinal } tem sinal a receber.\n");
             }
 
-            if (!String.IsNullOrEmpty(idsPagtoAntecipado))
+            if (idsPedidoPagtoAntecipado?.Any(f => f > 0) ?? false)
             {
-                bool plural = idsPagtoAntecipado.IndexOf(',') > -1;
-                mensagemErro += String.Format("O{1} pedido{1} {0} deve{2} ser pago{1} antecipadamente.\n",
-                    idsPagtoAntecipado, plural ? "s" : "", plural ? "m" : "");
+                var incluirS = idsPedidoPagtoAntecipado.Count > 1 ? "s" : string.Empty;
+                var incluirM = idsPedidoPagtoAntecipado.Count > 1 ? "m" : string.Empty;
+
+                mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoPagtoAntecipado.ToList()) } deve{ incluirM } ser pago{ incluirS } antecipadamente.\n");
             }
 
-            mensagemErro = mensagemErro.TrimEnd('\n');
-            return String.IsNullOrEmpty(mensagemErro);
+            return !(mensagemErro.Count > 0);
         }
 
         #endregion
@@ -14853,7 +14924,8 @@ namespace Glass.Data.DAL
 
                 if (clienteBloqueiaPedidoContaVencida && clientePossuiContaVencida)
                 {
-                    LancarExceptionValidacaoPedidoFinanceiro("Cliente bloqueado. Motivo: Contas a receber em atraso.", objUpdate.IdPedido, true, null, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
+                    var mensagem = new List<string> { "Cliente bloqueado. Motivo: Contas a receber em atraso." };
+                    LancarExceptionValidacaoPedidoFinanceiro(new List<int> { (int)objUpdate.IdPedido }, mensagem, true, ObservacaoFinalizacaoFinanceiro.MotivoEnum.Finalizacao);
                 }
             }
 

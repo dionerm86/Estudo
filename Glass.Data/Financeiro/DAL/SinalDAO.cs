@@ -872,8 +872,8 @@ namespace Glass.Data.DAL
             var recebimentoGerarCredito = sinal.RecebimentoGerarCredito.GetValueOrDefault();
             decimal saldoDevedor;
             decimal saldoCredito;
-            var idsPedidoConfirmados = string.Empty;
-            var idsPedidoNaoConfirmados = string.Empty;
+            var idsPedidoConfirmados = new List<int>();
+            var idsPedidoNaoConfirmados = new List<int>();
             // Recupera os cheques que foram selecionados no momento do recebimento do sinal.
             var chequesRecebimento = ChequesSinalDAO.Instance.ObterStringChequesPeloSinal(session, (int)sinal.IdSinal);
             var pagamentosSinal = PagtoSinalDAO.Instance.GetBySinal(session, sinal.IdSinal);
@@ -1087,7 +1087,7 @@ namespace Glass.Data.DAL
                 // Muda a situação para confirmado liberação caso seja pagto antecip. e não possua vidros para produção.
                 if (PedidoConfig.LiberarPedido && !PedidoDAO.Instance.PossuiVidrosProducao(session, pedido.IdPedido))
                 {
-                    try { PedidoDAO.Instance.ConfirmarLiberacaoPedido(session, pedido.IdPedido.ToString(), out idsPedidoConfirmados, out idsPedidoNaoConfirmados, false); } catch { }
+                    try { PedidoDAO.Instance.ConfirmarLiberacaoPedido(session, new List<int> { (int)pedido.IdPedido }, out idsPedidoConfirmados, out idsPedidoNaoConfirmados, false); } catch { }
                 }
                 // Muda a situação para AtivoConferencia caso a situação atual seja Ativo ou EmConferencia
                 else if (pedido.Situacao == Pedido.SituacaoPedido.Ativo || pedido.Situacao == Pedido.SituacaoPedido.EmConferencia)

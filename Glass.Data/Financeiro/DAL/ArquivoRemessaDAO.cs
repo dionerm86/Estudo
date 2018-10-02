@@ -114,8 +114,9 @@ namespace Glass.Data.DAL
 
             var numDoc = idContaR.ToString();
 
-            var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<uint>("numeroDocumentoCnab", "idContaR=" + idContaR).ToString();
-            if (!string.IsNullOrEmpty(numDocContaReceber))
+            var numDocContaReceber = ContasReceberDAO.Instance.ObtemValorCampo<string>("numeroDocumentoCnab", "idContaR=" + idContaR);
+
+            if (!string.IsNullOrEmpty(numDocContaReceber) && numDocContaReceber != "0")
             {
                 numDoc = numDocContaReceber;
                 return numDoc.ToString().FormataNumero("numDoc", 10, false);

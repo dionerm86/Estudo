@@ -388,6 +388,9 @@ namespace Glass.Data.Model
                         refer += string.Format("Encontro contas: {0} ", idEncontroContas);
                 }
 
+                if (string.IsNullOrEmpty(refer) && IdPagtoRestante > 0)
+                    refer = "Rest. Pagto: " + IdPagtoRestante + " ";
+
                 return refer;
             }
         }

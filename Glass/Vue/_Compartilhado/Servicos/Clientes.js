@@ -5,7 +5,6 @@ var Servicos = Servicos || {};
  */
 Servicos.Clientes = (function(http) {
   const API = '/api/v1/clientes/';
-  const API_TIPOS = '/api/v1/tiposCliente/';
 
   return {
     /**
@@ -26,7 +25,7 @@ Servicos.Clientes = (function(http) {
         filtro.numeroRegistros = numeroRegistros;
         filtro.ordenacao = ordenacao;
 
-        return http().get(API_TIPOS, {
+        return http().get(API + 'tipos', {
           params: filtro
         });
       },
@@ -41,7 +40,7 @@ Servicos.Clientes = (function(http) {
           throw new Error('Tipo de cliente é obrigatório.');
         }
 
-        return http().delete(API_TIPOS + idTipoCliente);
+        return http().delete(API + 'tipos/' + idTipoCliente);
       },
 
       /**
@@ -50,7 +49,7 @@ Servicos.Clientes = (function(http) {
        * @returns {Promise} Uma promise com o resultado da operação.
        */
       inserir: function (tipoCliente) {
-        return http().post(API_TIPOS, tipoCliente);
+        return http().post(API + 'tipos', tipoCliente);
       },
 
       /**
@@ -68,7 +67,7 @@ Servicos.Clientes = (function(http) {
           return Promise.resolve();
         }
 
-        return http().patch(API_TIPOS + idTipoCliente, tipoCliente);
+        return http().patch(API + 'tipos/' + idTipoCliente, tipoCliente);
       },
 
       /**
@@ -76,7 +75,7 @@ Servicos.Clientes = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterParaControle: function () {
-        return http().get(API_TIPOS + 'filtro');
+        return http().get(API + 'tipos/filtro');
       },
 
       /**
@@ -84,7 +83,7 @@ Servicos.Clientes = (function(http) {
        * @returns {Promise} Uma promise com o resultado da busca.
        */
       obterParaControleFiscal: function () {
-        return http().get(API_TIPOS + 'fiscal/filtro');
+        return http().get(API + 'tipos/fiscal/filtro');
       }
     },
 

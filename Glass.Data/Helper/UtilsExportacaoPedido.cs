@@ -157,7 +157,7 @@ namespace Glass.Data.Helper
 
                                     var tiposArquivo = new List<KeyValuePair<bool, TipoArquivoMesaCorte>>();
 
-                                    if (ppe.IdMaterItemProj.GetValueOrDefault() > 0)
+                                    if (ppe?.IdMaterItemProj.GetValueOrDefault() > 0)
                                     {
                                         var pecaItemProjeto =
                                             PecaItemProjetoDAO.Instance.GetByMaterial(ppe.IdMaterItemProj.Value);
@@ -365,18 +365,22 @@ namespace Glass.Data.Helper
 
             private static KeyValuePairSerializable<int, List<string>> RecuperarEtiquetasProdutoPedido(ProdutosPedido produtoPedido, ProdutosPedidoEspelho produtoPedidoEspelho)
             {
-                // Busca as etiquetas associadas ao produto de pedido espelho.
-                var etiquetasProdutoPedidoEspelho = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPed(produtoPedidoEspelho.IdProdPed);
                 var etiquetasExportacao = new KeyValuePairSerializable<int, List<string>>();
-                etiquetasExportacao.Value = new List<string>();
 
-                // Verifica se o produto possui etiquetas.
-                if (!string.IsNullOrWhiteSpace(etiquetasProdutoPedidoEspelho))
+                if (produtoPedidoEspelho != null)
                 {
-                    // Variável criada para salvar o ID do produto de pedido e as etiquetas dele.
-                    etiquetasExportacao.Key = (int)produtoPedido.IdProdPed;
-                    // Salva as etiquetas do produto de pedido na variável criada acima.
-                    etiquetasExportacao.Value.AddRange(etiquetasProdutoPedidoEspelho.Split(','));
+                    // Busca as etiquetas associadas ao produto de pedido espelho.
+                    var etiquetasProdutoPedidoEspelho = ProdutoPedidoProducaoDAO.Instance.GetEtiquetasByIdProdPed(produtoPedidoEspelho.IdProdPed);
+                    etiquetasExportacao.Value = new List<string>();
+
+                    // Verifica se o produto possui etiquetas.
+                    if (!string.IsNullOrWhiteSpace(etiquetasProdutoPedidoEspelho))
+                    {
+                        // Variável criada para salvar o ID do produto de pedido e as etiquetas dele.
+                        etiquetasExportacao.Key = (int)produtoPedido.IdProdPed;
+                        // Salva as etiquetas do produto de pedido na variável criada acima.
+                        etiquetasExportacao.Value.AddRange(etiquetasProdutoPedidoEspelho.Split(','));
+                    }
                 }
 
                 return etiquetasExportacao;
@@ -1011,8 +1015,10 @@ namespace Glass.Data.Helper
 
                                 PedidoDAO.Instance.FinalizarPedido(transaction, dados[i].idPedido, false);
 
-                                string idsPedidos = dados[i].idPedido.ToString(), idsPedidosErro;
-                                PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, idsPedidos, out idsPedidos, out idsPedidosErro, false);
+                                var idsPedidoOk = new List<int>();
+                                var idsPedidoErro = new List<int>();
+
+                                PedidoDAO.Instance.ConfirmarLiberacaoPedido(transaction, new List<int> { dados[i].idPedido.ToString().StrParaInt() }, out idsPedidoOk, out idsPedidoErro, false);
 
                                 PedidoEspelhoDAO.Instance.GeraEspelho(transaction, dados[i].idPedido);
                                 espelhosGerados.Add(i);
