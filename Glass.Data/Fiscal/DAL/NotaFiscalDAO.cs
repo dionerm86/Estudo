@@ -10344,43 +10344,18 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(idCsc) || string.IsNullOrEmpty(csc))
                 throw new Exception("Código de Segurança do Contribuinte (CSC) não foi informado no cadastro da loja.");
 
-            var link = "";
+            var link = string.Empty;
 
-            //Chave de Acesso
-            link += @"chNFe=" + nfe.ChaveAcesso.Replace(" ", "");
+            /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<identificador_csc>|<codigo_hash>
+            /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<dia_data_emissao>|<valor_total_nfce>|<digVal>|<identificador_csc>|<codigo_hash>
 
-            //Versão Qr Code
-            link += @"&nVersao=100";
+            var offline = nfe.Situacao == (int)SituacaoEnum.ContingenciaOffline
+                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{nfe.TotalNota.ToString().Replace(",", ".")}|{digestValue}"
+                : string.Empty;
 
-            //Tipo Ambiente
-            link += "&tpAmb=" + nfe.TipoAmbiente;
-
-            //Identificação do Destinatario
-            if (!ClienteDAO.Instance.IsConsumidorFinal(nfe.IdCliente.GetValueOrDefault(0)) || !string.IsNullOrEmpty(nfe.Cpf))
-                link += @"&cDest=" + nfe.CpfCnpjDestRem.Replace(".", "").Replace("/", "").Replace("-", "");
-
-            //Data de Emissão
-            link += @"&dhEmi=" + dtEmissHex;
-
-            //Valor total da NFC-e
-            link += @"&vNF=" + Math.Round(nfe.TotalNota, 2).ToString().Replace(",", ".");
-
-            //Valor de ICMS
-            link += @"&vICMS=" + Math.Round(nfe.Valoricms, 2).ToString().Replace(",", ".");
-
-            //Digest Value da NFC-e
-            link += @"&digVal=" + digValHex.PadLeft(56, '0');
-
-            //Identificador do token
-            link += @"&cIdToken=" + idCsc.PadLeft(6, '0');
-
-            //Hash da primeira parte do link
-            var linkHash = (link + csc).CodificaParaSHA1();
-
-            //Hash
-            link += @"&cHashQRCode=" + linkHash;
-
-            link = GetWebService.UrlQrCode(loja.Uf, (ConfigNFe.TipoAmbienteNfe)nfe.TipoAmbiente) + link;
+            link = $@"{chaveAcesso}|2|{nfe.TipoAmbiente}{offline}|{Conversoes.StrParaInt(idCsc)}";
+            link = $"{link}|{(link + csc).CodificaParaSHA1()}";
+            link = $"{GetWebService.UrlQrCode(loja.Uf, (ConfigNFe.TipoAmbienteNfe)nfe.TipoAmbiente)}p={link}";
 
             return link;
         }
