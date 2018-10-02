@@ -30,13 +30,9 @@ namespace Glass.API.Backend.Helper.Datas.Feriados
             switch (campo.ToLowerInvariant())
             {
                 case "descricao":
-                    return "Descricao";
-
                 case "mes":
-                    return "Mes";
-
                 case "ano":
-                    return "Ano";
+                    return campo;
 
                 default:
                     return this.OrdenacaoPadrao;
