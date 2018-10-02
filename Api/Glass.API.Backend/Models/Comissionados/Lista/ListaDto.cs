@@ -3,9 +3,6 @@
 // </copyright>
 
 using Glass.API.Backend.Models.Genericas;
-using Glass.Data.DAL;
-using Glass.Data.Model;
-using Glass.Global.Negocios.Entidades;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -37,7 +34,7 @@ namespace Glass.API.Backend.Models.Comissionados.Lista
         }
 
         /// <summary>
-        /// Obtém ou define o CFP/CNPJ do comissionado.
+        /// Obtém ou define o CPF/CNPJ do comissionado.
         /// </summary>
         [DataMember]
         [JsonProperty("cpfCnpj")]

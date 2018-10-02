@@ -1,4 +1,4 @@
-﻿// <copyright file="TiposController.cs" company="Sync Softwares">
+// <copyright file="TiposClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -11,7 +11,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1.Tipos
     /// <summary>
     /// Controller de tipos de cliente.
     /// </summary>
-    [RoutePrefix("api/v1/tiposCliente")]
+    [RoutePrefix("api/v1/cliente/tipos")]
     public partial class TiposClienteController : BaseController
     {
         private IHttpActionResult ValidarIdTipoCliente(int idTipoCliente)

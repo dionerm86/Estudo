@@ -1,4 +1,4 @@
-// <copyright file="PatchCoresVidroController.cs" company="Sync Softwares">
+// <copyright file="PatchTiposClienteController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 

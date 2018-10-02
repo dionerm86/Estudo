@@ -372,6 +372,17 @@ namespace Glass.Data.Model
                     
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(IdPedido);
 
+                    var calcMult5 = ProdutoDAO.Instance.IsVidro(null, (int)ProdutoPedido.IdProd) && ProdutoPedido.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+
+                    ValorTotal.Instance.Calcular(null, 
+                        pedido, 
+                        ProdutoPedido, 
+                        Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo, 
+                        calcMult5, 
+                        ProdutoPedido.Beneficiamentos.CountAreaMinima);
+
+                    TotalProd = ProdutoPedido.Total;
+
                     decimal? valorUnitario = ProdutoPedido != null ? ValorUnitario.Instance.CalcularValor(null, pedido, ProdutoPedido, ValorProd - ValorBenefProd) : null;
                     if (valorUnitario.HasValue)
                     {

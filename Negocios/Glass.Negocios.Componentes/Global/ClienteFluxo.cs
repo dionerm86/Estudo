@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Colosoft;
@@ -1312,6 +1312,11 @@ namespace Glass.Global.Negocios.Componentes
                     tratarResultado("Há notas fiscais associados ao mesmo."))
 
                 .Execute();
+
+            if (cliente.Credito > 0)
+            {
+                mensagens.Add($"O cliente possui {cliente.Credito.ToString("C")} de crédito ");
+            }
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();
         }
