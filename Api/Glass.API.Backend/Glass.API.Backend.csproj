@@ -240,6 +240,11 @@
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\FeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\DeleteFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
@@ -376,6 +381,8 @@
     </Compile>
     <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
     <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
+    <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -440,6 +447,9 @@
     <Compile Include="Models\Clientes\Tipos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Clientes\Tipos\Lista\ListaDto.cs" />
     <Compile Include="Models\Clientes\Tipos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Datas\Feriados\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Datas\Feriados\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Datas\Feriados\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
