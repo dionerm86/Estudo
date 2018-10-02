@@ -45,6 +45,8 @@ namespace Glass.Data.Helper
                 case TipoProdutoBeneficiamento.PecaModeloProjeto: return "peca_modelo_benef";
                 case TipoProdutoBeneficiamento.PecaItemProjeto: return "peca_item_proj_benef";
                 case TipoProdutoBeneficiamento.ProdutoTrocado: return "produto_trocado_benef";
+                case TipoProdutoBeneficiamento.ProdutoBaixaEst: return "produto_baixa_estoque_benef";
+
                 default: throw new ArgumentException("Tipo desconhecido.");
             }
         }
