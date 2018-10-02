@@ -371,6 +371,8 @@ namespace WebGlass.Business.NotaFiscal.Fluxo
                 nfe.Modelo = nfeRoot["infNFe"]["ide"]["mod"].InnerText;
                 nfe.Serie = nfeRoot["infNFe"]["ide"]["serie"].InnerText;
                 nfe.TipoDocumento = 3;
+                nfe.NumParc = dadosImportar?.Parcelas?.Count;
+
                 try { nfe.TipoImpressao = Glass.Conversoes.StrParaInt(nfeRoot["infNFe"]["ide"]["tpImp"].InnerText); }
                 catch (Exception) { throw new Exception("Erro na propriedade TipoImpressao"); }
 
