@@ -2,13 +2,12 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Colosoft;
 using GDA;
+using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Fornecedores.Lista;
 using Glass.API.Backend.Models.Genericas;
 using Swashbuckle.Swagger.Annotations;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -93,17 +92,8 @@ namespace Glass.API.Backend.Controllers.Fornecedores.V1
         {
             using (var sessao = new GDATransaction())
             {
-                var situacoes = new List<IdNomeDto>();
-
-                foreach (var situacao in Enum.GetValues(typeof(Data.Model.SituacaoFornecedor)))
-                {
-                    situacoes.Add(
-                        new IdNomeDto
-                        {
-                            Id = (int)(Data.Model.SituacaoFornecedor)situacao,
-                            Nome = ((Data.Model.SituacaoFornecedor)situacao).Translate().ToString(),
-                        });
-                }
+                var situacoes = new ConversorEnum<Data.Model.SituacaoFornecedor>()
+                    .ObterTraducao();
 
                 return this.Lista(situacoes);
             }
