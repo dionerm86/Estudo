@@ -478,6 +478,9 @@
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
     <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
     <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
+    <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
+    <Content Include="Vue\Comissionados\Componentes\LstComissionados.js" />
+    <Content Include="Vue\Comissionados\Templates\LstComissionados.Filtro.html" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
