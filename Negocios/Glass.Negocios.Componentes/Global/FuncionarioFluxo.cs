@@ -71,12 +71,12 @@ namespace Glass.Global.Negocios.Componentes
         public IList<Colosoft.IEntityDescriptor> ObtemFuncionariosAtivos()
         {
             return SourceContext.Instance.CreateQuery()
-                .From<Data.Model.Funcionario>()
-                .Where("Situacao=?situacao")
-                .Add("?situacao", Glass.Situacao.Ativo)
-                .OrderBy("Nome")
-                .ProcessResultDescriptor<Entidades.Funcionario>()
-                .ToList();
+             .From<Data.Model.Funcionario>()
+             .Where("Situacao=?situacao")
+             .Add("?situacao", Glass.Situacao.Ativo)
+             .OrderBy("Nome")
+             .ProcessResultDescriptor<Entidades.Funcionario>()
+             .ToList();
         }
 
         /// <summary>
@@ -367,6 +367,14 @@ namespace Glass.Global.Negocios.Componentes
             if (funcionario.ExistsInStorage)
             {
                 var original = (Entidades.Funcionario)funcionario.Instance;
+
+                if (funcionario.AdminSync && !UserInfo.GetUserInfo.IsAdminSync)
+                {
+                    return new IMessageFormattable[]
+                    {
+                        ("Não é possível efetuar alterações no funcionário").GetFormatter()
+                    };
+                }
 
                 if ((original.IdTipoFunc == (int)Utils.TipoFuncionario.InstaladorComum ||
                     original.IdTipoFunc == (int)Utils.TipoFuncionario.InstaladorTemperado ||

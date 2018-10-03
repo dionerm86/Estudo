@@ -15,16 +15,16 @@ namespace Glass.Data.DAL
             string idsSubgrupoProd, uint idCorVidro, uint idCorFerragem, uint idCorAluminio, bool naoBuscarEstoqueZero, bool apenasLancManual, bool selecionar)
         {
             var criterio = string.Empty;
-            var campos = selecionar ? @"me.*, p.Descricao as DescrProduto, g.Descricao as DescrGrupo, sg.Descricao as DescrSubgrupo, 
+            var campos = selecionar ? @"me.*, p.Descricao as DescrProduto, g.Descricao as DescrGrupo, sg.Descricao as DescrSubgrupo,
                 u.codigo as codUnidade, f.nome as nomeFunc,
                 (Select Coalesce(fnf.nomeFantasia, fnf.razaoSocial, '') From fornecedor fnf Where fnf.idFornec=nf.idFornec) As nomeFornec, '$$$' as criterio" :
                 "Count(*)";
 
             var sql = $@"
                 Select { campos } From mov_estoque me
-                    Left Join produto p On (me.idProd=p.idProd) 
-                    Left Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd) 
-                    Left Join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd) 
+                    Left Join produto p On (me.idProd=p.idProd)
+                    Left Join grupo_prod g on (p.idGrupoProd=g.idGrupoProd)
+                    Left Join subgrupo_prod sg on (p.idSubgrupoProd=sg.idSubgrupoProd)
                     Left Join unidade_medida u On (p.idUnidadeMedida=u.idUnidadeMedida)
                     Left Join loja l on (me.idLoja=l.idLoja)
                     Left Join funcionario f On (me.idFunc=f.idFunc)
@@ -647,7 +647,7 @@ namespace Glass.Data.DAL
         #endregion
 
         #region Verifica se o estoque deve ser alterado
-        
+
         /// <summary>
         /// Verifica se o estoque deve ser alterado
         /// </summary>
@@ -686,6 +686,8 @@ namespace Glass.Data.DAL
             }
 
             idLoja = (uint)NotaFiscalDAO.Instance.ObterIdLojaParaMovEstoque(sessao, idLoja, idProd, idProdImpressaoChapa, idNf, idProdPedProducao, idTrocaDevolucao);
+
+            uint idMovEstoque = 0;
 
             try
             {
@@ -814,6 +816,8 @@ namespace Glass.Data.DAL
 
                     movEstoque.IdMovEstoque = Insert(sessao, movEstoque);
 
+                    idMovEstoque = movEstoque.IdMovEstoque;
+
                     AtualizaSaldo(sessao, movEstoque.IdMovEstoque);
                     ProdutoLojaDAO.Instance.AtualizarProdutoLoja(sessao, (int)movEstoque.IdProd, (int)movEstoque.IdLoja);
 
@@ -828,7 +832,7 @@ namespace Glass.Data.DAL
             }
             catch (Exception ex)
             {
-                ErroDAO.Instance.InserirFromException("MovEstoque", ex);
+                ErroDAO.Instance.InserirFromException($"MovEstoque - IdMovEstoque:{idMovEstoque}' IdProd:{idProd}' IdLoja:{idLoja}", ex);
                 throw ex;
             }
         }
@@ -927,7 +931,7 @@ namespace Glass.Data.DAL
                 SET @saldo := COALESCE((SELECT SaldoQtdeMov FROM mov_estoque
                     WHERE (DataMov<?data OR (DataMov=?data AND IdMovEstoque<?id)) AND IdProd=?idProd AND IdLoja=?idLoja
                     ORDER BY DataMov DESC, IdMovEstoque DESC LIMIT 1), 0);
-                
+
                 UPDATE mov_estoque SET SaldoQtdeMov=(@saldo := @saldo + IF(TipoMov=1, QtdeMov, -QtdeMov))
                 WHERE (DataMov>?data OR (DataMov=?data AND IdMovEstoque>=?id)) AND IdProd=?idProd AND IdLoja=?idLoja
                 ORDER BY DataMov ASC, IdMovEstoque ASC";
@@ -954,64 +958,64 @@ namespace Glass.Data.DAL
                 set @saldo := coalesce((
                     select if(saldoQtdeMov<0, 0, Coalesce(saldoValorMov, 0))
                     from mov_estoque where idMovEstoque=?idAnt
-                ), 0), 
+                ), 0),
 
                 @valorUnit := coalesce((
                     select if(saldoQtdeMov<0, 0, abs(coalesce(saldoValorMov/if(saldoQtdeMov<>0, saldoQtdeMov, 1), 0)))
                     from mov_estoque where idMovEstoque=?idAnt
-                ), 0), 
+                ), 0),
 
                 @valorProd := 0 /* Removido - erro no cálculo de produtos com valor muito baixo - coalesce((
                     select greatest(valorAtacado, valorBalcao, valorObra, custoCompra, custoFabBase)
                     from produto where idProd=?idProd
                 ), 0) */;
-                
+
                 update mov_estoque
                 set valorMov=abs(
-                    
+
                     /**
-                     * Verifica se a movimentação é de entrada: se for, o valor da movimentação é o próprio valor (calcula o 
+                     * Verifica se a movimentação é de entrada: se for, o valor da movimentação é o próprio valor (calcula o
                      * valor unitário com base no saldo anterior, no valor da movimentação e no saldo de quantidade);
                      * caso não seja, o valor é calculado com base no valor unitário anterior * a quantidade movimentada -
                      * esse valor é armazenado para o próximo cálculo
                      */
-                    if(tipoMov=1, (@valorUnit := (@saldo + coalesce(valorMov, 0)) / if(saldoQtdeMov <> 0, saldoQtdeMov, 1)) * 0 + coalesce(valorMov, 0), (@valorUnit := 
-                        
+                    if(tipoMov=1, (@valorUnit := (@saldo + coalesce(valorMov, 0)) / if(saldoQtdeMov <> 0, saldoQtdeMov, 1)) * 0 + coalesce(valorMov, 0), (@valorUnit :=
+
                         /**
                          * Verifica se o saldo da movimentação atual é negativo: caso seja, o valor fica zerado (evita saldo negativo);
                          * se não for, o valor unitário é calculado com base no saldo de valor e no saldo de quantidade
                          */
                         if(saldoQtdeMov<0, 0,
-                            
+
                             /**
-                             * Verifica se o saldo da movimentação é menor que a quantidade da movimentação (apenas para movimentações 
-                             * de entrada): calcula o valor da movimentação apenas do percentual que ficou positivo, desprezando o 
+                             * Verifica se o saldo da movimentação é menor que a quantidade da movimentação (apenas para movimentações
+                             * de entrada): calcula o valor da movimentação apenas do percentual que ficou positivo, desprezando o
                              * restante (o saldo anterior era negativo); caso contrário, calcula o valor integral da movimentação
                              */
-                            if(saldoQtdeMov<qtdeMov and tipoMov=1, 
-                                
+                            if(saldoQtdeMov<qtdeMov and tipoMov=1,
+
                                 /**
-                                 * Soma o saldo anterior (variável @saldo) ao valor da movimentação atual, dividindo pelo saldo de 
-                                 * quantidade (valor vendido), dividindo novamente pela quantidade da movimentação (valor unitário) e 
+                                 * Soma o saldo anterior (variável @saldo) ao valor da movimentação atual, dividindo pelo saldo de
+                                 * quantidade (valor vendido), dividindo novamente pela quantidade da movimentação (valor unitário) e
                                  * multiplicando pelo saldo de quantidade
                                  */
                                 ((@saldo+coalesce(valorMov,0)) / if(saldoQtdeMov<>0, saldoQtdeMov, 1)) / if(qtdeMov<>0, qtdeMov, 1) * saldoQtdeMov,
-                                
+
                                 /**
                                  * Calcula um valor unitário (temporário) para uso no cálculo
                                  */
                                 if((@valorUnit := abs(coalesce((
-                                        
+
                                         /**
                                          * Ao calcular o valor da movimentação, é verificado o seu tipo: caso seja movimentação de entrada
-                                         * é somado o saldo anterior (variável @saldo) com o valor da movimentação atual, dividindo pelo 
-                                         * saldo de quantidade (valor vendido); mas se a movimentação for de saída, utiliza-se o valor 
+                                         * é somado o saldo anterior (variável @saldo) com o valor da movimentação atual, dividindo pelo
+                                         * saldo de quantidade (valor vendido); mas se a movimentação for de saída, utiliza-se o valor
                                          * unitário calculado anteriormente
                                          */
                                         if(tipoMov=1, (@saldo+coalesce(valorMov,0))/if(saldoQtdeMov<>0, saldoQtdeMov, 1), @valorUnit)
-                                        
-                                    ), 0))) > 
-                                    
+
+                                    ), 0))) >
+
                                     /**
                                      * Garante que o valor calculado seja, no máximo, 5 vezes o maior valor de tabela do produto
                                      * (tentativa de que não haja valores exorbitantes durante o cálculo - apenas se houver algum valor
@@ -1020,46 +1024,46 @@ namespace Glass.Data.DAL
                                     if(@valorProd>0, @valorProd*5, @valorUnit), @valorProd, @valorUnit)
                                 )
                             )
-                            
+
                         /**
                          * Multiplica o valor calculado (unitário) pela quantidade movimentada
                          */
                         ) * qtdeMov
                     )),
-                    
+
                     /**
-                     * Atualiza o novo saldo na variável @saldo para que esse valor seja usado para o cálculo do valor da 
+                     * Atualiza o novo saldo na variável @saldo para que esse valor seja usado para o cálculo do valor da
                      * próxima movimentação
                      */
-                    saldoValorMov=(@saldo := 
-                        
+                    saldoValorMov=(@saldo :=
+
                         /**
                          * Verifica se o saldo da movimentação ficou negativo, alterando para 0.
-                         */   
-                        if(saldoQtdeMov<0, 0, 
-                            
+                         */
+                        if(saldoQtdeMov<0, 0,
+
                             /**
                              * Verifica se o saldo da movimentação é menor que a quantidade movimentada (apenas para
                              * movimentações de entrada): caso seja, calcula o novo valor com base no percentual da movimentação
                              * que ficou positiva; se não, apenas soma/subtrai o valor da movimentação ao saldo
                              */
-                            if(saldoQtdeMov<qtdeMov and tipoMov=1, 
-                                
+                            if(saldoQtdeMov<qtdeMov and tipoMov=1,
+
                                 /**
                                  * Divide o valor da movimentação pela quantidade (valor unitário) e então multiplica
                                  * pelo saldo atual de quantidade (apenas a parte positiva)
                                  */
-                                valorMov / if(qtdeMov<>0, qtdeMov, 1) * saldoQtdeMov, 
-                                
+                                valorMov / if(qtdeMov<>0, qtdeMov, 1) * saldoQtdeMov,
+
                                 /**
                                  * Soma ou subtrai o valor da movimentação ao saldo anterior, com base no tipo de movimentação
                                  * realizada (soma para movimentação de entrada, subtrai para movimentação de saída)
-                                 */                                
+                                 */
                                 @saldo + if(tipoMov=1, valorMov, -valorMov)
                             )
                         )
                     )
-                    
+
                 where (dataMov>?data or (dataMov=?data and idMovEstoque>=?id)) and idProd=?idProd and idLoja=?idLoja
                 order by dataMov asc, idMovEstoque asc";
 

@@ -2522,16 +2522,16 @@ namespace Glass.Data.DAL
         /// <returns></returns>
         public uint GetClienteProducao()
         {
-            // Busca o cliente mais usado dos pedidos para produção
-            string sql = "select idCli from pedido where tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + " group by idCli order by count(*) desc limit 1";
+            // Tenta buscar um cliente com o mesmo CNPJ
+            var sql = @"select id_Cli from cliente where replace(replace(replace(cpf_Cnpj, '.', ''), '-', ''), '/', '') in (
+                select replace(replace(replace(cnpj, '.', ''), '-', ''), '/', '') from loja) limit 1";
+
             uint? retorno = ExecuteScalar<uint?>(sql);
             if (retorno > 0)
                 return retorno.Value;
 
-            // Tenta buscar um cliente com o mesmo CNPJ
-            sql = @"select id_Cli from cliente where replace(replace(replace(cpf_Cnpj, '.', ''), '-', ''), '/', '') in (
-                select replace(replace(replace(cnpj, '.', ''), '-', ''), '/', '') from loja) limit 1";
-
+            // Busca o cliente mais usado dos pedidos para produção
+            sql = "select idCli from pedido where tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + " group by idCli order by count(*) desc limit 1";
             retorno = ExecuteScalar<uint?>(sql);
             if (retorno > 0)
                 return retorno.Value;

@@ -13987,7 +13987,7 @@ namespace Glass.Data.DAL
                 mensagemErro.Add($"O{ incluirS } pedido{ incluirS } { string.Join(", ", idsPedidoPagtoAntecipado.ToList()) } deve{ incluirM } ser pago{ incluirS } antecipadamente.\n");
             }
 
-            return mensagemErro.Count > 0;
+            return !(mensagemErro.Count > 0);
         }
 
         #endregion
