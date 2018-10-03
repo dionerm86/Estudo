@@ -119,6 +119,14 @@
                     </label>
             </span>
             <span>
+                    <input type="text" v-model="funcionario.acesso.senha" required v-if="inserindo" />
+            </span>
+                <span class="cabecalho">
+                    <label>
+                        Senha
+                    </label>
+            </span>
+            <span>
                     <input type="text" v-model="funcionario.acesso.login" required />
             </span>
                 <span class="cabecalho">
@@ -247,13 +255,13 @@
                             Tipo
                         </label>
                 </span>
-        <span class="form-group">            
+        <span class="form-group">
             <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.tipo"
                 v-bind:funcao-recuperar-itens="obterItensTipoPedido" v-bind:ordenar="false"></lista-selecao-multipla>
         </span>
         <span class="cabecalho">
                     <label>
-                        Habilitar Chat WebGlass 
+                        Habilitar Chat WebGlass
                     </label>
                 </span>
                 <span>
@@ -271,18 +279,39 @@
                         <input type="checkbox" id="exibirControleUsuarios" v-model="funcionario.documentacaoEDadosPessoais.registrado" />
                     </span>
                 </span>
-        <span class="botoes" v-if="pedido && pedido.permissoes">
+        <span class="cabecalho">
+                    <label>
+                        Obs
+                    </label>
+            </span>
+            <span>
+                    <input type="text" v-model="funcionario.observacao" required />
+            </span>
+        <span class="botoes">
+            <button @click.prevent="inserirPedido" v-if="inserindo">
+                            Inserir
+                        </button>
                     <span>
-                        <button @click.prevent="editar">
-                            Editar
+                        <button @click.prevent="atualizar" v-else-if="editando">
+                            Atualizar
+                        </button>
+                    </span>
+            <span>
+                        <button @click.prevent="alterarSenha">
+                            Alterar Senha
+                        </button>
+                    </span>
+            <span>
+                        <button @click.prevent="cancelar">
+                            Cancelar
                         </button>
                     </span>
                 </span>
-        </section>                
+        </section>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
-            <asp:ScriptReference Path="~/Vue/Pedidos/Componentes/CadFuncionario.js" />
+            <asp:ScriptReference Path="~/Vue/Funcionarios/Componentes/CadFuncionario.js" />
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>
