@@ -211,14 +211,14 @@ namespace Glass.Data.DAL
             uint idProcesso = ProdutosPedidoEspelhoDAO.Instance.ObtemIdProcesso(session, idProdPedEsp);
 
             var etiquetaProcesso =  EtiquetaProcessoDAO.Instance.GetElementByPrimaryKey(idProcesso);
-            if (!etiquetaProcesso.GerarArquivoDeMesa)
+            if (etiquetaProcesso != null && !etiquetaProcesso.GerarArquivoDeMesa)
             {
                 idArquivoMesaCorte = null;
                 return false;
             }
 
             // Caso o processo exija a geração de SAG o sistema verifica se foi chamado da tela "imprimir etiqueta"
-            if (etiquetaProcesso.ForcarGerarSag)
+            if (etiquetaProcesso != null && etiquetaProcesso.ForcarGerarSag)
             {
                 // Caso tenha sido chamado da tela imprimir etiqueta
                 // Remove todas as flags e adiciona apenas a de SAG e define o tipo arqiivo como SAG

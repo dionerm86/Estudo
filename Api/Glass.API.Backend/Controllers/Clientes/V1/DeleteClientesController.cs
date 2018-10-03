@@ -1,4 +1,4 @@
-﻿// <copyright file="DeleteClientesController.cs" company="Sync Softwares">
+// <copyright file="DeleteClientesController.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
         /// <param name="id">O identificador do cliente que será excluído.</param>
         /// <returns>Um status HTTP indicando se o cliente foi excluído.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Cliente excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de valor ou formato do campo id ou de validação na exclusão do cliente.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Cliente não encontrado para o filtro informado.", Type = typeof(MensagemDto))]

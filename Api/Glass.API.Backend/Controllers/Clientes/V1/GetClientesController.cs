@@ -170,50 +170,5 @@ namespace Glass.API.Backend.Controllers.Clientes.V1
                 return this.Lista(situacoes);
             }
         }
-
-        /// <summary>
-        /// Recupera a lista de tipos de cliente.
-        /// </summary>
-        /// <returns>Uma lista JSON com os dados básicos de tipos de cliente.</returns>
-        [HttpGet]
-        [Route("tipos")]
-        [SwaggerResponse(200, "Tipos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Tipos não encontrados.")]
-        public IHttpActionResult ObterTipos()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var tipos = TipoClienteDAO.Instance.GetAll(sessao)
-                    .Select(s => new IdNomeDto
-                    {
-                        Id = s.IdTipoCliente,
-                        Nome = s.Descricao,
-                    });
-
-                return this.Lista(tipos);
-            }
-        }
-
-        /// <summary>
-        /// Recupera a lista de tipos fiscal de cliente.
-        /// </summary>
-        /// <returns>Uma lista JSON com os dados básicos de tipos fiscal de cliente.</returns>
-        [HttpGet]
-        [Route("tiposFiscal")]
-        [SwaggerResponse(200, "Tipos fiscal encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
-        [SwaggerResponse(204, "Tipos fiscal não encontrados.")]
-        public IHttpActionResult ObterTiposFiscal()
-        {
-            using (var sessao = new GDATransaction())
-            {
-                var tiposFiscal = new List<IdNomeDto>()
-                    {
-                        new IdNomeDto() { Id = 1, Nome = "Consumidor final" },
-                        new IdNomeDto() { Id = 2, Nome = "Revenda" },
-                    };
-
-                return this.Lista(tiposFiscal);
-            }
-        }
     }
 }

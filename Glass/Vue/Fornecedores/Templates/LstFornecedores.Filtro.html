@@ -1,0 +1,55 @@
+<section class="filtros">
+    <div>
+        <span class="form-group">
+            <label for="id">Cód. fornecedor</label>
+            <input id="id" type="number" v-model.number="filtroAtual.id" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idCliente">Nome</label>
+            <input id="nomeCliente" type="text" v-model="filtroAtual.nome" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="cpfCnpj">CPF/CNPJ</label>
+            <input id="cpfCnpj" type="text" v-model="filtroAtual.cpfCnpj" style="width: 120px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idCliente">Endereço</label>
+            <input id="nomeCliente" type="text" v-model="filtroAtual.endereco" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idCliente">Vendedor</label>
+            <input id="nomeCliente" type="text" v-model="filtroAtual.vendedor" style="width: 200px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Plano de conta</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="planoContaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroPlanosConta"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label>Parcela padrão</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="parcelaAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroParcelas"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label>Situação</label>
+            <lista-selecao-id-valor v-bind:item-selecionado.sync="situacaoAtual" texto-selecionar="Todos" v-bind:funcao-recuperar-itens="obterItensFiltroSituacoes"
+                v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group" v-if="configuracoes && configuracoes.usarCreditoFornecedor">
+            <input id="comCredito" type="checkbox" v-model="filtroAtual.comCredito" />
+            <label for="comCredito">Fornecedores com crédito</label>
+        </span>
+    </div>
+</section>
