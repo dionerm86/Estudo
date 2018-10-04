@@ -11,8 +11,24 @@ var Mixins = Mixins || {};
  * Objeto com o mixin para controles de beneficiamentos.
  */
 Mixins.Beneficiamentos = {
+  props: {
+    /**
+     * Tipo de beneficiamentos para exibição no controle.
+     * @type {!string}
+     */
+    tipoBeneficiamentos: {
+      required: false,
+      twoWay: false,
+      default: 'Venda',
+      validator: function (valor) {
+        return Mixins.Validacao.validarValores('Todos', 'Venda', 'MaoDeObraEspecial')(valor);
+      }
+    },
+  },
+
   data: function() {
     return {
+      pronto: false,
       beneficiamentos: null
     };
   },

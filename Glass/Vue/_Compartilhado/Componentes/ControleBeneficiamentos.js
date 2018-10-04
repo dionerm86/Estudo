@@ -215,17 +215,6 @@ Vue.component('controle-beneficiamentos', {
     },
 
     /**
-     * Tipo de beneficiamentos para exibição no controle.
-     * @type {!string}
-     */
-    tipoBeneficiamentos: {
-      required: false,
-      twoWay: false,
-      default: 'Venda',
-      validator: Mixins.Validacao.validarValores('Todos', 'Venda', 'MaoDeObraEspecial')
-    },
-
-    /**
      * Número de colunas para exibição dos beneficiamentos.
      * @type {!number}
      */
@@ -265,7 +254,6 @@ Vue.component('controle-beneficiamentos', {
     return {
       uuid: null,
       beneficiamentosAgrupados: null,
-      pronto: false,
       timeoutAtualizacaoItensSelecionados: null,
       estiloControles,
       estiloValor,

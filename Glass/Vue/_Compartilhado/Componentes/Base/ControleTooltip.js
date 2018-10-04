@@ -123,20 +123,24 @@
 
     /**
      * Calcula a posição do tooltip para exibição na tela.
-     * @param {Object} elemento O elemento HTML que está sendo exibido.
      */
-    calcularPosicao__: function (elemento) {
+    calcularPosicao__: function () {
       var posicoesBotao = this.$refs.botao.getBoundingClientRect();
+      var elemento = this.$refs.popup;
 
       var xElemento = posicoesBotao.left + window.pageXOffset;
       var yElemento = posicoesBotao.top - elemento.offsetHeight + window.pageYOffset;
 
+      if (window.innerWidth <= (xElemento + elemento.offsetWidth)) {
+        xElemento = posicoesBotao.right - elemento.offsetWidth + window.pageXOffset;
+      }
+
+      if (yElemento <= 10) {
+        yElemento = posicoesBotao.bottom + window.pageYOffset;
+      }
+
       elemento.style.left = xElemento + 'px';
       elemento.style.top = yElemento + 'px';
-
-      if (window.innerWidth <= (xElemento + elemento.offsetWidth)) {
-        elemento.style.left = (posicoesBotao.right - elemento.offsetWidth + window.pageXOffset) + 'px';
-      }
     }
   },
 
@@ -152,13 +156,13 @@
 
       return this.merge(
         {
-          backgroundColor: null,
-          color: null,
           position: 'relative',
           left: '3px',
           padding: '0 2px',
           border: 0,
-          cursor: 'pointer'
+          cursor: 'pointer',
+          fontWeight: 'bold',
+          fontSize: '8.5pt'
         },
         estilo
       );
@@ -180,6 +184,11 @@
         }
       }
     }
+  },
+
+  mounted: function () {
+    var popup = this.$refs.popup;
+    new ResizeObserver(this.calcularPosicao__).observe(popup);
   },
 
   template: '#ControleTooltip-template'

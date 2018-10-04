@@ -12,15 +12,17 @@ Mixins.Objetos = {
      * @returns {Object} O novo objeto, que contém a destino informada e com os dados do objeto origem.
      */
     merge: function(destino, origem) {
-      if (!destino || !origem) {
+      if (!origem) {
         throw new Error('Ambos os parâmetros são obrigatórios para a função merge.');
       }
 
+      destino = destino || {};
+
       const verificarEVazio = function (item) {
-        return item === null || item === undefined || item === ''
+        return item === null || item === undefined || item === '';
       };
 
-      for (var campo in destino) {
+      for (var campo of Object.keys(origem)) {
         if (typeof origem[campo] === 'object' && !verificarEVazio(origem[campo]) && !(origem[campo] instanceof Date)) {
           destino[campo] = this.merge(destino[campo], origem[campo]);
         } else {
@@ -48,7 +50,10 @@ Mixins.Objetos = {
      * @returns {Object} O objeto com as diferenças entre o objeto alterado e o original.
      */
     patch: function (alterado, original) {
-      const verificarEVazio = item => item === null || item === undefined || item === '';
+      const verificarEVazio = function (item) {
+        return item === null || item === undefined || item === '';
+      };
+
       var destino = Array.isArray(alterado) ? [] : {};
 
       if (!original) {
