@@ -1,6 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString],
 
   data: {
     dadosOrdenacao_: {

@@ -1,6 +1,6 @@
 Vue.component('campo-busca', {
   inheritAttrs: false,
-  mixins: [Mixins.Comparar, Mixins.ExecutarTimeout],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout],
   props: {
     /**
      * O item que está selecionado atualmente no controle.

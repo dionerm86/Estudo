@@ -1,5 +1,5 @@
 Vue.component('pedido-ambientes', {
-  mixins: [Mixins.Clonar, Mixins.Patch, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
 
   props: {
     /**

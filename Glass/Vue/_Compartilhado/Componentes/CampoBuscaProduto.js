@@ -1,6 +1,6 @@
 Vue.component('campo-busca-produto', {
   inheritAttrs: false,
-  mixins: [Mixins.Clonar, Mixins.JsonQuerystring, Mixins.Comparar, Mixins.ExecutarTimeout],
+  mixins: [Mixins.Objetos, Mixins.JsonQuerystring, Mixins.ExecutarTimeout],
   props: {
     /**
      * Produto selecionado no controle.

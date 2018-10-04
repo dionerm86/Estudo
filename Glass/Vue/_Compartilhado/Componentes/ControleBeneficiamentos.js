@@ -1,13 +1,6 @@
-var Beneficiamentos = Beneficiamentos || {};
-Beneficiamentos.configuracoes = null;
-Beneficiamentos.controle = {
-  itens: null,
-  carregando: true
-};
-
 Vue.component('controle-beneficiamentos', {
   inheritAttrs: false,
-  mixins: [Mixins.Clonar, Mixins.ExecutarTimeout, Mixins.UUID],
+  mixins: [Mixins.Objetos, Mixins.ExecutarTimeout, Mixins.UUID, Mixins.Beneficiamentos],
   props: {
     /**
      * Beneficiamentos selecionados no controle.
@@ -271,7 +264,6 @@ Vue.component('controle-beneficiamentos', {
 
     return {
       uuid: null,
-      beneficiamentos: null,
       beneficiamentosAgrupados: null,
       pronto: false,
       timeoutAtualizacaoItensSelecionados: null,
@@ -528,59 +520,6 @@ Vue.component('controle-beneficiamentos', {
 
   created: function () {
     this.uuid = this.gerarUuid();
-    var vm = this;
-
-    if (Beneficiamentos.configuracoes === null) {
-      Beneficiamentos.configuracoes = [this];
-
-      Servicos.Beneficiamentos.obterConfiguracoes()
-        .then(function (resposta) {
-          var controles = Beneficiamentos.configuracoes;
-          Beneficiamentos.configuracoes = resposta.data;
-
-          for (var controle of controles) {
-            controle.pronto = true;
-          }
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-
-          Beneficiamentos.configuracoes = {};
-        });
-    } else if (Array.isArray(Beneficiamentos.configuracoes)) {
-      Beneficiamentos.configuracoes.push(this);
-    } else {
-      this.pronto = true;
-    }
-
-    if (Beneficiamentos.controle.itens === null) {
-      Beneficiamentos.controle.itens = [this];
-
-      Servicos.Beneficiamentos.obterParaControle(this.tipoBeneficiamentos)
-        .then(function (resposta) {
-          var controles = Beneficiamentos.controle.itens;
-
-          Beneficiamentos.controle.carregando = false;
-          Beneficiamentos.controle.itens = resposta.data;
-
-          for (var controle of controles) {
-            controle.beneficiamentos = Beneficiamentos.controle.itens;
-          }
-        })
-        .catch(function (erro) {
-          if (erro && erro.mensagem) {
-            vm.exibirMensagem('Erro', erro.mensagem);
-          }
-
-          Beneficiamentos.controle.itens = {};
-        });
-    } else if (Beneficiamentos.controle.carregando && Array.isArray(Beneficiamentos.controle.itens)) {
-      Beneficiamentos.controle.itens.push(this);
-    } else {
-      this.beneficiamentos = Beneficiamentos.controle.itens;
-    }
   },
 
   computed: {

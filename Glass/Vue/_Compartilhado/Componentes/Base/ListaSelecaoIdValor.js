@@ -1,5 +1,5 @@
 ﻿Vue.component('lista-selecao-id-valor', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Item selecionado no controle.

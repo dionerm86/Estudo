@@ -1716,6 +1716,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoTotal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentos.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ControleBeneficiamentosSetor.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleBoleto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleExibicaoImagem.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
@@ -1733,9 +1734,8 @@
     <Content Include="Vue\_Compartilhado\Filtros\Percentual.js" />
     <Content Include="Vue\_Compartilhado\Filtros\IndicaMarcado.js" />
     <Content Include="Vue\_Compartilhado\Filtros\SimNao.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Beneficiamentos.js" />
     <Content Include="Vue\_Compartilhado\Mixins\CampoBeneficiamento.js" />
-    <Content Include="Vue\_Compartilhado\Mixins\Clonar.js" />
-    <Content Include="Vue\_Compartilhado\Mixins\Comparar.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Data.js" />
     <Content Include="Vue\_Compartilhado\Mixins\ExecutarTimeout.js" />
     <Content Include="Vue\_Compartilhado\Mixins\FiltroQueryString.js" />
@@ -1743,9 +1743,8 @@
     <Content Include="Vue\_Compartilhado\Mixins\JsonQuerystring.js" />
     <Content Include="Vue\_Compartilhado\Mixins\SistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Mensagens.js" />
-    <Content Include="Vue\_Compartilhado\Mixins\Merge.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\Objetos.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Modal.js" />
-    <Content Include="Vue\_Compartilhado\Mixins\Patch.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
@@ -1823,6 +1822,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoTotal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentos.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ControleBeneficiamentosSetor.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleBoleto.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleExibicaoImagem.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />

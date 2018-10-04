@@ -1,7 +1,6 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Clonar, Mixins.Patch],
-
+  mixins: [Mixins.Objetos],
   data: {
     dadosOrdenacao_: {
       campo: 'id',

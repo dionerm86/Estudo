@@ -50,7 +50,7 @@ Busca.Popup = {
 
 Vue.component('campo-busca-com-popup', {
   inheritAttrs: false,
-  mixins: [Mixins.UUID, Mixins.Comparar],
+  mixins: [Mixins.UUID, Mixins.Objetos],
   props: {
     /**
      * O item que está selecionado atualmente no controle.

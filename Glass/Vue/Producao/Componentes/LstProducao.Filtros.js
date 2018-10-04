@@ -1,5 +1,5 @@
 ﻿Vue.component('producao-filtros', {
-  mixins: [Mixins.Clonar, Mixins.Merge, Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Filtros selecionados para a lista de produção.
@@ -82,7 +82,7 @@
      * Atualiza o filtro com os dados selecionados na tela.
      */
     filtrar: function () {
-      var novoFiltro = this.clonar(this.filtroAtual, true);
+      var novoFiltro = this.clonar(this.filtroAtual);
       if (!this.equivalentes(this.filtro, novoFiltro)) {
         this.$emit('update:filtro', novoFiltro);
       }

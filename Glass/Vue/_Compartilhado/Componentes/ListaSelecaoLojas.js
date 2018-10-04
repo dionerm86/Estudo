@@ -1,5 +1,5 @@
 ﻿Vue.component('lista-selecao-lojas', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Loja selecionada.

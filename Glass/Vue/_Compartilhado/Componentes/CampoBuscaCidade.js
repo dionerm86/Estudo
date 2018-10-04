@@ -1,5 +1,5 @@
 Vue.component('campo-busca-cidade', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * ID da cidade selecionada.
@@ -101,7 +101,7 @@ Vue.component('campo-busca-cidade', {
      */
     ufAtual: function(atual) {
       this.cidadeAtual = null;
-      
+
       if (atual !== this.uf) {
         this.$emit("update:uf", atual);
       }

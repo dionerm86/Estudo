@@ -1,5 +1,5 @@
 ﻿Vue.component('lista-selecao-setores', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Setor selecionado.

@@ -1,4 +1,5 @@
 ﻿Vue.component('controle-tooltip', {
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Indica se o botão precisa de um clique (ao invés de só ter o mouse sobre ele) para exibir o tooltip.
@@ -26,18 +27,12 @@
   data: function () {
     const estiloBotaoFecharNormal = {
       backgroundColor: '#cc0000',
-      color: 'white',
-      position: 'relative',
-      left: '3px',
-      padding: '0 2px'
+      color: 'white'
     };
 
     const estiloBotaoFecharAtivo = {
       backgroundColor: '#d3e3f6',
-      color: '#0000cc',
-      position: 'relative',
-      left: '3px',
-      padding: '0 2px'
+      color: '#0000cc'
     };
 
     const estiloTitulo = {
@@ -151,9 +146,22 @@
      * @type {Object}
      */
     estiloBotaoFechar: function () {
-      return this.fecharAtivo
+      var estilo = this.fecharAtivo
         ? this.estiloBotaoFecharAtivo
         : this.estiloBotaoFecharNormal;
+
+      return this.merge(
+        {
+          backgroundColor: null,
+          color: null,
+          position: 'relative',
+          left: '3px',
+          padding: '0 2px',
+          border: 0,
+          cursor: 'pointer'
+        },
+        estilo
+      );
     },
 
     /**

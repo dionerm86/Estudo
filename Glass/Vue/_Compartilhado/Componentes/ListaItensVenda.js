@@ -1,5 +1,5 @@
 Vue.component('lista-itens-venda', {
-  mixins: [Mixins.Clonar, Mixins.Patch],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Indica se a venda atual é de mão-de-obra.

@@ -1,5 +1,5 @@
 Vue.component('campo-busca-etiqueta-processo', {
-  mixins: [Mixins.Comparar],
+  mixins: [Mixins.Objetos],
   props: {
     /**
      * Processo selecionado.

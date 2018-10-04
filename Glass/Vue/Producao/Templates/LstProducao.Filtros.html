@@ -27,7 +27,7 @@
         </span>
         <span class="form-group">
             <label for="idsRotas">Rota</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.idsRotas" v-bind:funcao-recuperar-itens="obterRotas"
+            <lista-selecao-multipla id="idsRotas" v-bind:ids-selecionados.sync="filtroAtual.idsRotas" v-bind:funcao-recuperar-itens="obterRotas"
                 texto-selecionar="Selecione a rota"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -45,19 +45,19 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label for="numeroEtiqueta">Num. Impressao</label>
+            <label for="numeroEtiqueta">Num. Impressão</label>
             <input id="numeroEtiqueta" type="text" v-model="filtroAtual.numeroEtiqueta" style="width: 100px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="situacoesProducao">Situação</label>
-            <lista-selecao-multipla v-bind:ids-selecionados.sync="filtroAtual.situacoesProducao" v-bind:funcao-recuperar-itens="obterSituacoesProducao"
+            <lista-selecao-multipla id="situacoesProducao" v-bind:ids-selecionados.sync="filtroAtual.situacoesProducao" v-bind:funcao-recuperar-itens="obterSituacoesProducao"
                 texto-selecionar=""></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="idSetor">Setor</label>
-            <lista-selecao-setores v-bind:setor.sync="setorAtual" v-bind:incluir-etiqueta-nao-impressa="true"></lista-selecao-setores>
+            <lista-selecao-setores id="idSetor" v-bind:setor.sync="setorAtual" v-bind:incluir-etiqueta-nao-impressa="true"></lista-selecao-setores>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group" v-if="setorAtual">
@@ -70,7 +70,40 @@
         </span>
         <span class="form-group">
             <label for="idLoja">Loja</label>
-            <lista-selecao-lojas v-bind:loja.sync="lojaAtual"></lista-selecao-lojas>
+            <lista-selecao-lojas id="idLoja" v-bind:loja.sync="lojaAtual"></lista-selecao-lojas>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="tipoSituacaoProducao">Pedidos por etapa</label>
+            <lista-selecao-id-valor id="tipoSituacaoProducao" v-bind:item-selecionado.sync="tipoSituacaoProducaoAtual"
+                v-bind:funcao-recuperar-itens="obterTiposSituacaoProducao" v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="situacaoPedido">Situação Pedido</label>
+            <lista-selecao-id-valor id="situacaoPedido" v-bind:item-selecionado.sync="situacaoPedidoAtual"
+                v-bind:funcao-recuperar-itens="obterSituacoesPedido" v-bind:ordenar="false"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="subgrupos">Subgrupo</label>
+            <lista-selecao-multipla id="subgrupos" v-bind:ids-selecionados.sync="filtroAtual.idsSubgrupos"
+                v-bind:funcao-recuperar-itens="obterSubgrupos" texto-selecionar=""></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="beneficiamentos">Beneficiamentos</label>
+            <controle-tooltip id="beneficiamentos" v-bind:precisa-clicar="true" titulo="Beneficiamentos">
+                <template slot="botao">
+                    <img src="../../Images/gear_add.gif" />
+                </template>
+
+                <controle-beneficiamentos-setor v-bind:ids-selecionados.sync="filtroAtual.idsBeneficiamentos"></controle-beneficiamentos-setor>
+            </controle-tooltip>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
