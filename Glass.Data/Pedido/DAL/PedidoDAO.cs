@@ -65,7 +65,7 @@ namespace Glass.Data.DAL
             Pedido.PesoOC = pedido.IdPedido > 0 ? peso : 0;
             IdOrdemCarga = idOrdemCarga;
             QtdePecasVidro = Math.Round(qtdePecasVidro, 2, MidpointRounding.AwayFromZero);
-            QtdePendente = Math.Round(qtdePendente, 2, MidpointRounding.AwayFromZero);
+            QtdePendente = Pedido.QtdePecaPendenteProducao = Math.Round(qtdePendente, 2, MidpointRounding.AwayFromZero);
             TotM = Math.Round(totM, 2, MidpointRounding.AwayFromZero);
             TotM2Pendente = Math.Round(totM2Pendente, 2, MidpointRounding.AwayFromZero);
             Peso = peso;
