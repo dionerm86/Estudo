@@ -4863,7 +4863,6 @@ namespace Glass.Data.DAL
                 if (objUpdate.Beneficiamentos.Count == 0 && ProdutoBenefDAO.Instance.ProdutoPossuiBenef(sessao, objUpdate.IdProd))
                     objUpdate.Beneficiamentos = ProdutoDAO.Instance.GetElementByPrimaryKey(sessao, objUpdate.IdProd).Beneficiamentos;
 
-                objUpdate.ValorDescontoQtde = 0;
                 UpdateBase(sessao, objUpdate, pedido);
 
                 //Chamado 54616
