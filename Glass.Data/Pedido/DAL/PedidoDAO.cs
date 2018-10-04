@@ -5559,16 +5559,19 @@ namespace Glass.Data.DAL
                 }
             }
 
-            var sql = $@"UPDATE pedido SET
+            if (idsPedidosErro.Any(f => f > 0))
+            {
+                var sql = $@"UPDATE pedido SET
                     Situacao = { (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro },
                     IdFuncConfirmarFinanc = { UserInfo.GetUserInfo.CodUser }
                 WHERE IdPedido IN ({ string.Join(",", idsPedidosErro) })";
 
-            objPersistence.ExecuteCommand(sessao, sql);
+                objPersistence.ExecuteCommand(sessao, sql);
 
-            foreach (var idPedido in idsPedidosErro)
-            {
-                ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                foreach (var idPedido in idsPedidosErro)
+                {
+                    ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                }
             }
         }
 
