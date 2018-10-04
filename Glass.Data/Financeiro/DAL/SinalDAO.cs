@@ -1618,8 +1618,8 @@ namespace Glass.Data.DAL
 
                         ClienteDAO.Instance.ObterSaldoDevedor(transaction, idCliente, out saldoDevedor, out saldoCredito);
 
-                        var sqlUpdate = @"UPDATE sinal SET SaldoDevedor = ?saldoDevedor, SaldoCredito = ?saldoCredito WHERE IdSinal = {0}";
-                        objPersistence.ExecuteCommand(transaction, string.Format(sqlUpdate, idSinal), new GDAParameter("?saldoDevedor", saldoDevedor), new GDAParameter("?saldoCredito", saldoCredito));
+                        var sqlUpdate = $@"UPDATE sinal SET SaldoDevedor = {saldoDevedor.ToString().Replace(",", ".")}, SaldoCredito = {saldoCredito.ToString().Replace(",", ".")} WHERE IdSinal = {idSinal}";
+                        objPersistence.ExecuteCommand(transaction, sqlUpdate);
 
                         #endregion
 
