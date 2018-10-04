@@ -945,7 +945,8 @@ namespace Glass.Data.DAL
 
             var camposVolume = @"
                 v.IdPedido, p.CodCliente as CodPedCliente, CONCAT('Volume: ', v.idVolume, '  Data de Fechamento: ', v.dataFechamento) as DescrProduto,
-                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso";
+                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso,
+                NULL AS CodAplicacao, NULL AS CodProcesso";
 
             var sql = $@"
                 SELECT { camposVolume }
