@@ -752,7 +752,7 @@ namespace Glass.Data.Model
         {
             get
             {
-                return Glass.Data.DAL.NotaFiscalDAO.Instance.PodeEditar(IdNf);
+                return Glass.Data.DAL.NotaFiscalDAO.Instance.PodeEditar(null, IdNf);
             }
         }
 
