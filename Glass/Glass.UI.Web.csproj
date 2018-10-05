@@ -440,6 +440,7 @@
     <Content Include="Cadastros\CadClassificacaoRoteiroProducao.aspx" />
     <Content Include="Cadastros\CadCliente.aspx" />
     <Content Include="Cadastros\CadClienteMulti.aspx" />
+    <Content Include="Cadastros\CadCondutores.aspx" />
     <Content Include="Cadastros\CadExpressaoRentabilidade.aspx" />
     <Content Include="Cadastros\CadFornecedorVinculos.aspx" />
     <Content Include="Cadastros\CadClienteVinculos.aspx" />
@@ -476,6 +477,7 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Condutores\Componentes\CadCondutores.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -1740,6 +1742,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Condutores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -3164,6 +3167,13 @@
     </Compile>
     <Compile Include="Cadastros\CadClienteMulti.aspx.designer.cs">
       <DependentUpon>CadClienteMulti.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Cadastros\CadCondutores.aspx.designer.cs">
+      <DependentUpon>CadCondutores.aspx</DependentUpon>
     </Compile>
     <Compile Include="Cadastros\CadExpressaoRentabilidade.aspx.cs">
       <DependentUpon>CadExpressaoRentabilidade.aspx</DependentUpon>
