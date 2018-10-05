@@ -4496,10 +4496,10 @@ namespace Glass.Data.DAL
 
         #endregion
 
-        #region Busca pedidos para informações de produção
+        #region Busca pedidos para informaÃ§Ãµes de produÃ§Ã£o
 
         /// <summary>
-        /// Retorna os pedidos para informações de produção.
+        /// Retorna os pedidos para informaÃ§Ãµes de produÃ§Ã£o.
         /// </summary>
         public Pedido[] GetForInfoPedidos(string dataIni, string dataFim, uint idPedido, uint idCliente, string nomeCliente, int tipo)
         {
@@ -4511,12 +4511,12 @@ namespace Glass.Data.DAL
             bool temFiltro;
             string filtroAdicional;
 
-            var sql = Sql(idPedido, 0, null, null, 0, idCliente, nomeCliente, 0, null, 0, null, null, null, null, null, 
-                vendas, maoDeObra, maoDeObraEspecial, producao, null, null, null,null, null, 0, false, true, 0, 0, 0, 0, 0, null, 
+            var sql = Sql(idPedido, 0, null, null, 0, idCliente, nomeCliente, 0, null, 0, null, null, null, null, null,
+                vendas, maoDeObra, maoDeObraEspecial, producao, null, null, null,null, null, 0, false, true, 0, 0, 0, 0, 0, null,
                 0, 0, 0, null, true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
 
             sql += " and p.DataEntrega>=?inicio And p.DataEntrega<=?fim and p.Situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
-                and prod.idSubgrupoProd<>" + (int)Utils.SubgrupoProduto.LevesDefeitos + @" and if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @", true, 
+                and prod.idSubgrupoProd<>" + (int)Utils.SubgrupoProduto.LevesDefeitos + @" and if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @", true,
                 prod.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" and (s1.TipoCalculo<>" + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @" || s1.TipoCalculo is null))
                 and p.totM>0 AND p.FastDelivery = 1";
 
@@ -6531,7 +6531,7 @@ namespace Glass.Data.DAL
                 // Confirma o pedido
                 ConfirmaGarantiaReposicao(session, pedido.IdPedido, financeiro);
             }
-            
+
             /* Chamado 22658. */
             if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
             {
@@ -6899,7 +6899,7 @@ namespace Glass.Data.DAL
 
                                 // Determina o valor que serÃ¡ somado aos dÃ©bitos do cliente para verificar se ficarÃ¡ tudo dentro do limite
                                 decimal valorAConsiderar = FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? 0 : totalPedido - ObtemValorEntrada(trans, idPedido);
-                                
+
                                 if (limite > 0 && ContasReceberDAO.Instance.GetDebitos(trans, idCliente, null) + valorAConsiderar > limite)
                                 {
                                     var mensagem = new List<string> { "O cliente nÃ£o possui limite disponÃ­vel para realizar esta compra. Contate o setor Financeiro." };
@@ -7387,7 +7387,7 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
-                
+
                 var pedidos = GetByString(sessao, string.Join(",", idsPedido));
                 var idsCliente = new List<int>();
 
