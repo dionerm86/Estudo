@@ -17232,5 +17232,14 @@ namespace Glass.Data.DAL
 
             objPersistence.ExecuteCommand(sessao, sql);
         }
+
+        public Pedido ObterDataEntregaEDataEntregaSistema(GDASession sessao, int idPedido)
+        {
+            string sql = "Select DataEntrega, DataEntregaSistema From pedido Where idPedido=" + idPedido;
+
+            var pedido = objPersistence.LoadOneData(sessao, sql);
+
+            return pedido;
+        }
     }
 }
