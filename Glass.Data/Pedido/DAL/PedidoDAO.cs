@@ -6499,7 +6499,7 @@ namespace Glass.Data.DAL
                 // Confirma o pedido
                 ConfirmaGarantiaReposicao(session, pedido.IdPedido, financeiro);
             }
-            
+
             /* Chamado 22658. */
             if (pedido.TipoVenda == (int)Pedido.TipoVendaPedido.Obra)
             {
@@ -6867,7 +6867,7 @@ namespace Glass.Data.DAL
 
                                 // Determina o valor que será somado aos débitos do cliente para verificar se ficará tudo dentro do limite
                                 decimal valorAConsiderar = FinanceiroConfig.DebitosLimite.EmpresaConsideraPedidoConferidoLimite ? 0 : totalPedido - ObtemValorEntrada(trans, idPedido);
-                                
+
                                 if (limite > 0 && ContasReceberDAO.Instance.GetDebitos(trans, idCliente, null) + valorAConsiderar > limite)
                                 {
                                     var mensagem = new List<string> { "O cliente não possui limite disponível para realizar esta compra. Contate o setor Financeiro." };
@@ -7355,7 +7355,7 @@ namespace Glass.Data.DAL
                         }
                     }
                 }
-                
+
                 var pedidos = GetByString(sessao, string.Join(",", idsPedido));
                 var idsCliente = new List<int>();
 
@@ -9939,6 +9939,9 @@ namespace Glass.Data.DAL
                     LogAlteracaoDAO.Instance.Insert(session, logData);
                 }
             }
+
+            objPersistence.ExecuteCommand(session, string.Format("UPDATE pedido SET DataEntregaSistema=?dataEntregaSistema WHERE IdPedido={0}",
+                   pedido.IdPedido), new GDAParameter("?dataEntregaSistema", dataEntrega));
         }
 
         #endregion
@@ -10311,7 +10314,7 @@ namespace Glass.Data.DAL
         {
             var pedidoAtual = GetElementByPrimaryKey(sessao, idPedido);
 
-            objPersistence.ExecuteCommand(sessao, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega WHERE IdPedido={0}", idPedido), new GDAParameter("?dataEntrega", dataEntrega));
+            objPersistence.ExecuteCommand(sessao, string.Format("UPDATE pedido SET DataEntrega=?dataEntrega, DataEntregaSistema=?dataEntrega WHERE IdPedido={0}", idPedido), new GDAParameter("?dataEntrega", dataEntrega));
 
             LogAlteracaoDAO.Instance.LogPedido(sessao, pedidoAtual, GetElementByPrimaryKey(sessao, idPedido), LogAlteracaoDAO.SequenciaObjeto.Atual);
         }
@@ -15237,6 +15240,16 @@ namespace Glass.Data.DAL
                 objUpdate.DataPedido = objUpdate.DataPedido.AddHours(ped.DataCad.Hour).AddMinutes(ped.DataCad.Minute).AddSeconds(ped.DataCad.Second);
             }
 
+            DateTime dataEntregaPedido, dataFastDelivery;
+            var desabilitarCampo = false;
+
+            // Calcula a data de entrega mínima.
+            GetDataEntregaMinima(session, objUpdate.IdCli, objUpdate.IdPedido, objUpdate.TipoPedido, objUpdate.TipoEntrega,
+                objUpdate.DataPedido, out dataEntregaPedido, out dataFastDelivery, out desabilitarCampo);
+
+            //Salva a data de entrega calculada pelo sistema na propriedade caso ela seja nula.
+            objUpdate.DataEntregaSistema = objUpdate.DataEntregaSistema != null ? ped.DataEntregaSistema.Value : dataEntregaPedido;
+
             if (objUpdate.FastDelivery)
             {
                 var totalM2pedido = ProdutosPedidoDAO.Instance.GetTotalM2ByPedido(session, objUpdate.IdPedido);
@@ -16080,6 +16093,11 @@ namespace Glass.Data.DAL
 
                 #region Insere o pedido
 
+                DateTime? dateEntregaPedido = (GetDataEntregaMinima(sessao, orcamento.IdCliente.Value, null, orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda), orcamento.TipoEntrega,
+                        out dataEntrega, out dataFastDelivery) ?
+                        dataEntrega : RotaDAO.Instance.GetDataRota(sessao, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now,
+                        (Pedido.TipoPedidoEnum)orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda))) ?? orcamento.DataEntrega;
+
                 var pedido = new Pedido
                 {
                     IdLoja = orcamento.IdLoja > 0 ? orcamento.IdLoja.Value : login.IdLoja,
@@ -16105,10 +16123,8 @@ namespace Glass.Data.DAL
                     NumParc = orcamento.NumParc,
                     IdParcela = orcamento.IdParcela,
                     PrazoEntrega = orcamento.PrazoEntrega,
-                    DataEntrega = (GetDataEntregaMinima(sessao, orcamento.IdCliente.Value, null, orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda), orcamento.TipoEntrega,
-                        out dataEntrega, out dataFastDelivery) ?
-                        dataEntrega : RotaDAO.Instance.GetDataRota(sessao, orcamento.IdCliente.Value, orcamento.DataEntrega != null ? orcamento.DataEntrega.Value : DateTime.Now,
-                        (Pedido.TipoPedidoEnum)orcamento.TipoOrcamento.GetValueOrDefault((int)Pedido.TipoPedidoEnum.Venda))) ?? orcamento.DataEntrega,
+                    DataEntrega = dateEntregaPedido,
+                    DataEntregaSistema = dateEntregaPedido,
                     IdMedidor = idMedicaoMaisRecente > 0 ? MedicaoDAO.Instance.GetMedidor(sessao, (uint)idMedicaoMaisRecente) : null,
                     PercentualComissao = PedidoConfig.Comissao.PerComissaoPedido ? ClienteDAO.Instance.ObtemPercentualComissao(sessao, orcamento.IdCliente.Value) : 0,
 

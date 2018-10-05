@@ -2705,7 +2705,7 @@ namespace Glass.Data.DAL
                     PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
                 }
 
-                if (atualizaDataEntrega)
+                if (atualizaDataEntrega && pedido.DataEntregaSistema != null && !(pedido.DataEntregaSistema.Value.Date != pedido.DataEntrega.Value.Date && Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega)))
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
@@ -4003,7 +4003,9 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Insert(transaction, objInsert, false, true);
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objInsert.IdPedido);
+                    var atualizarDataEntrega = pedido.DataEntregaSistema != null && !(pedido.DataEntregaSistema.Value.Date != pedido.DataEntrega.Value.Date) && Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
+                    var retorno = Insert(transaction, objInsert, false, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4408,7 +4410,16 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Delete(transaction, objDelete, true, true);
+                    var prodPed = GetElement(transaction, objDelete.IdProdPed, false, false, false);
+
+                    if (prodPed == null)
+                        prodPed = GetElement(transaction, objDelete.IdProdPed, false, false, true);
+
+                    var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, prodPed.IdPedido);
+
+                    var atualizarDataEntrega = pedido.DataEntregaSistema != null && !(pedido.DataEntregaSistema.Value.Date != pedido.DataEntrega.Value.Date) && Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
+
+                    var retorno = Delete(transaction, objDelete, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4660,7 +4671,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
-                    var retorno = Update(transaction, objUpdate, pedido);
+                    var atualizarDataEntrega = pedido.DataEntregaSistema != null && !(pedido.DataEntregaSistema.Value.Date != pedido.DataEntrega.Value.Date) && Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
+
+                    var retorno = Update(transaction, objUpdate, pedido, true, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4687,7 +4700,8 @@ namespace Glass.Data.DAL
             try
             {
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, (int)objUpdate.IdPedido);
-                return Update(sessao, objUpdate, pedido);
+                var atualizarDataEntrega = pedido.DataEntregaSistema != null && !(pedido.DataEntregaSistema.Value.Date != pedido.DataEntrega.Value.Date) && Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega);
+                return Update(sessao, objUpdate, pedido, true, true, atualizarDataEntrega);
             }
             finally
             {
