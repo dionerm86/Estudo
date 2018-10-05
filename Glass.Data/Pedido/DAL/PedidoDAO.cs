@@ -1,4 +1,4 @@
-using Colosoft;
+﻿using Colosoft;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Exceptions;
