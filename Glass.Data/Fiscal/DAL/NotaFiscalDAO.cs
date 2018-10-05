@@ -9299,7 +9299,7 @@ namespace Glass.Data.DAL
                 (situacao == (int)NotaFiscal.SituacaoEnum.FalhaEmitir && !lstCodNaoEditavel.Contains(ultCodEvento));
 
             bool flagManual = (situacao == (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros ||
-                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(null, idNf))) &&
+                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(session, idNf))) &&
                 Config.PossuiPermissao(Config.FuncaoMenuFiscal.AlteracaoManualNFe);
 
             return (flagSituacao || flagManual);
