@@ -476,6 +476,14 @@
     <Content Include="Cadastros\CadOtimizacao.aspx" />
     <Content Include="Cadastros\CadGrupoCliente.aspx" />
     <Content Include="Scripts\jquery\jquery-ajuste.js" />
+    <Content Include="Vue\Clientes\Tipos\Componentes\LstTipos.js" />
+    <Content Include="Vue\Feriados\Componentes\LstFeriados.js" />
+    <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
+    <Content Include="Vue\Comissionados\Componentes\LstComissionados.js" />
+    <Content Include="Vue\Comissionados\Templates\LstComissionados.Filtro.html" />
+    <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
+    <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
+    <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />
@@ -1740,6 +1748,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\Uuid.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Validacao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Boletos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\PlanosConta.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Sinais.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Acertos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\CoresFerragem.js" />
@@ -1778,6 +1787,7 @@
     <Content Include="Vue\_Compartilhado\Servicos\Producao.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Produtos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Publicos.js" />
+    <Content Include="Vue\_Compartilhado\Servicos\Fornecedores.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Veiculos.js" />
     <Content Include="Vue\_Compartilhado\Servicos\Transportadores.js" />
     <Content Include="Vue\_Compartilhado\Templates\Base\CampoBeneficiamentoBisote.html" />

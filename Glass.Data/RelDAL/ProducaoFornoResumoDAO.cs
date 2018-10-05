@@ -16,32 +16,46 @@ namespace Glass.Data.RelDAL
 
         private string Sql(int setor, DateTime dataIni, DateTime dataFim, bool relatorio, int idTurno, bool selecionar)
         {
-            List<Turno> turnos = TurnoDAO.Instance.GetList();
+            var turnos = TurnoDAO.Instance.GetList();
 
             if (idTurno > 0)
-                turnos = turnos.Where(f => f.IdTurno == (uint)idTurno).ToList();
-
-            string campoTurno = "case";
-            string m2QtdeTurno = "";
-            string campoTotM2 = (PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? "pp.TotM2Calc" : "pp.TotM") + 
-                "/(pp.qtde*if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.MaoDeObra + ", a.qtde, 1))";
-
-            foreach (Turno t in turnos)
             {
-                TimeSpan inicio = new TimeSpan(Glass.Conversoes.StrParaInt(t.Inicio.Substring(0, 2)), Glass.Conversoes.StrParaInt(t.Inicio.Substring(3)), 0);
-                TimeSpan termino = new TimeSpan(Glass.Conversoes.StrParaInt(t.Termino.Substring(0, 2)), Glass.Conversoes.StrParaInt(t.Termino.Substring(3)), 0);
-
-                if (inicio.Ticks <= termino.Ticks)
-                    campoTurno += " when dataLeitura>=cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Inicio + "') as datetime) and dataLeitura<cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Termino + "') as datetime) then " + t.IdTurno + Environment.NewLine;
-                else
-                    campoTurno += " when dataLeitura>=cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Inicio + "') as datetime) or dataLeitura<cast(concat(date_format(dataLeitura, '%Y-%m-%d'), ' " + t.Termino + "') as datetime) then " + t.IdTurno + Environment.NewLine;
-
-                m2QtdeTurno += "sum(if(lp.turno=" + t.IdTurno + ", " + campoTotM2 + ", 0)) as TotM2" + t.NumSeq + ", " + "sum(if(lp.turno=" + t.IdTurno + ", 1, 0)) AS Qtde" + t.NumSeq + ", " + Environment.NewLine;
+                turnos = turnos.Where(f => f.IdTurno == (uint)idTurno).ToList();
             }
 
-            campoTurno += " end";
+            var campoTurno = "case";
+            var campoM2ProdutoPedido = PedidoConfig.RelatorioPedido.ExibirM2CalcRelatorio ? "pp.TotM2Calc" : "pp.TotM";
+            var m2QtdeTurno = string.Empty;
+            var campoTotM2 = $@"ROUND(IF(p.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra },
+                ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
+                ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, { campoM2ProdutoPedido }) /
+                (pp.Qtde * IF(p.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4)";
 
-            string sqlBase = @"
+            foreach (var turno in turnos)
+            {
+                var inicio = new TimeSpan(turno.Inicio.Substring(0, 2).StrParaInt(), turno.Inicio.Substring(3).StrParaInt(), 0);
+                var termino = new TimeSpan(turno.Termino.Substring(0, 2).StrParaInt(), turno.Termino.Substring(3).StrParaInt(), 0);
+
+                if (inicio.Ticks <= termino.Ticks)
+                {
+                    campoTurno += $@" WHEN DataLeitura >= CAST(CONCAT(DATE_FORMAT(DataLeitura, '%Y-%m-%d'), ' { turno.Inicio }') AS DateTime) AND
+                        DataLeitura < CAST(CONCAT(DATE_FORMAT(DataLeitura, '%Y-%m-%d'), ' { turno.Termino }') AS DATETIME)
+                        THEN { turno.IdTurno }{ Environment.NewLine }";
+                }
+                else
+                {
+                    campoTurno += $@" WHEN DataLeitura >= CAST(CONCAT(DATE_FORMAT(DataLeitura, '%Y-%m-%d'), ' { turno.Inicio }') AS DATETIME) OR
+                        DATALEITURA < CAST(CONCAT(DATE_FORMAT(DataLeitura, '%Y-%m-%d'), ' { turno.Termino }') AS DATETIME)
+                        THEN { turno.IdTurno }{ Environment.NewLine }";
+                }
+
+                m2QtdeTurno += $@"SUM(IF(lp.Turno = { turno.IdTurno }, { campoTotM2 }, 0)) AS TotM2{ turno.NumSeq },
+                    SUM(IF(lp.Turno = { turno.IdTurno }, 1, 0)) AS Qtde{ turno.NumSeq }, { Environment.NewLine }";
+            }
+
+            campoTurno += " END";
+
+            var sqlBase = @"
                 select lp.DataLeitura as Data, prod.idCorVidro, cv.Descricao as DescrCorVidro, prod.espessura, 
                     (p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @") as Producao,
                     " + m2QtdeTurno + @"t.descricao as Turno, t.numSeq as numSeqTurno, '$$$' as Criterio {0}

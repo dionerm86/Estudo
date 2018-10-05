@@ -489,7 +489,7 @@ namespace Glass.Data.DAL
                  * Caso a configuração UsarControleDescontoFormaPagamentoDadosProduto esteja habilitada, o método não deve recuperar a forma de pagamento Prazo para o tipo de venda À Vista
                  * e não deve recuperar a forma de pagamento Dinheiro para o tipo de venda À Prazo.
                  * Com a configuração, citada acima, desabilitada, o método não deve retornar a forma de pagamento Dinheiro, pois a forma de pagamento não será exibida para o tipo de venda À Vista. */
-                FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto ? (tipoVenda <= 1 ? (uint)Pagto.FormaPagto.Prazo : (uint)Pagto.FormaPagto.Dinheiro) :
+                FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto ? (tipoVenda == 1 ? (uint)Pagto.FormaPagto.Prazo : (tipoVenda == 2 ? (uint)Pagto.FormaPagto.Dinheiro : 0)) :
                 (uint)Pagto.FormaPagto.Dinheiro);
 
             if (idCliente > 0)

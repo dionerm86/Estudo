@@ -97,6 +97,11 @@ namespace Glass.Data.SIntegra
         {
             get
             {
+                if (_nf.TotalProd == 0)
+                {
+                    return 0;
+                }
+
                 return Math.Round((ValorProduto / _nf.TotalProd) * _nf.Desconto, 2);
             }
         }
