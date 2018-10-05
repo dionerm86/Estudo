@@ -235,9 +235,9 @@
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
-    <Compile Include="Controllers\Clientes\V1\GetSugestaoClienteController.cs" />
-    <Compile Include="Controllers\Clientes\V1\PostSugestaoClienteController.cs" />
-    <Compile Include="Controllers\Clientes\V1\SugestaoClienteController.cs" />
+    <Compile Include="Controllers\SugestoesCliente\V1\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\SugestoesCliente\V1\PostSugestaoClienteController.cs" />
+    <Compile Include="Controllers\SugestoesCliente\V1\SugestaoClienteController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\DeleteCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PatchCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PostCoresFerragemController.cs" />
