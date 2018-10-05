@@ -548,6 +548,9 @@
     <Compile Include="Global\DAL\GrupoClienteDAO.cs" />
     <Compile Include="Global\DAL\TipoInstalacaoDAO.cs" />
     <Compile Include="Global\DAL\TipoEntregaDAO.cs" />
+    <Compile Include="Global\Domain\ProdutoAtualizado.cs" />
+    <Compile Include="Global\Domain\EventoComSessaoArgs.cs" />
+    <Compile Include="Global\Domain\ProdutoEventoArgs.cs" />
     <Compile Include="Global\Model\AvaliacaoAtendimento.cs" />
     <Compile Include="Global\Model\DeviceApp.cs" />
     <Compile Include="Global\Model\FlagArqMesaProduto.cs" />
