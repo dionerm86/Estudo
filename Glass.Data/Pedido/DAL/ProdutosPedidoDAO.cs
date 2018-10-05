@@ -4847,7 +4847,8 @@ namespace Glass.Data.DAL
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
                     objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
-                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
+                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao),
+                    primeiroCalculo: true
                 );
 
                 objUpdate.TipoCalculoUsadoPedido = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)objUpdate.IdProd);

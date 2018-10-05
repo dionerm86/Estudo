@@ -128,9 +128,9 @@ namespace Glass.Data.Helper.Calculos.Estrategia.DescontoAcrescimo
         {
             foreach (var produto in produtos)
             {
-                CalcularTotalBrutoProduto(sessao, produto);
                 RemoverBeneficiamentos(produto);
                 RemoverProduto(produto);
+                CalcularTotalBrutoProduto(sessao, produto);
                 acoesAdicionais(produto);
             }
         }

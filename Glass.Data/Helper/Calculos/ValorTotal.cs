@@ -12,7 +12,7 @@ namespace Glass.Data.Helper.Calculos
 
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, int numeroBeneficiamentos,
-            bool usarChapaVidro = true, bool valorBruto = false)
+            bool usarChapaVidro = true, bool valorBruto = false, bool primeiroCalculo = false)
         {
             Calcular(
                 sessao,
@@ -24,7 +24,8 @@ namespace Glass.Data.Helper.Calculos
                 false,
                 numeroBeneficiamentos,
                 usarChapaVidro,
-                valorBruto);
+                valorBruto,
+                primeiroCalculo);
         }
 
         /// <summary>
@@ -32,7 +33,7 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public void Calcular(GDASession sessao, IContainerCalculo container, IProdutoCalculo produto,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, bool compra, int numeroBeneficiamentos,
-            bool usarChapaVidro = true, bool valorBruto = false)
+            bool usarChapaVidro = true, bool valorBruto = false, bool primeiroCalculo = false)
         {
             produto.InicializarParaCalculo(sessao, container);
 
@@ -52,7 +53,8 @@ namespace Glass.Data.Helper.Calculos
                 alturaBeneficiamento,
                 larguraBeneficiamento,
                 usarChapaVidro,
-                valorBruto
+                valorBruto,
+                primeiroCalculo
             );
 
             this.IncluirDescontoPorQuantidade(produto);
