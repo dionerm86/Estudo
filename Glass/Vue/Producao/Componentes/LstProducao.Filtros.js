@@ -41,7 +41,6 @@
       situacaoPedidoAtual: null,
       funcionarioAtual: null,
       tipoEntregaAtual: null,
-      tipoPedidoAtual: null,
       tipoProdutosComposicaoAtual: null
     };
   },
@@ -134,7 +133,6 @@
       this.situacaoPedidoAtual = null;
       this.funcionarioAtual = null;
       this.tipoEntregaAtual = null;
-      this.tipoPedidoAtual = null;
       this.tipoProdutosComposicaoAtual = null;
       this.filtrar();
     }
@@ -159,7 +157,8 @@
 
   watch: {
     /**
-     *
+     * Observador para a variável 'setorAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
      */
     setorAtual: {
       handler: function (atual) {
@@ -173,9 +172,68 @@
       deep: true
     },
 
+    /**
+     * Observador para a variável 'lojaAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
     lojaAtual: {
       handler: function (atual) {
         this.filtroAtual.idLoja = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoSituacaoProducaoAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    tipoSituacaoProducaoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipoSituacaoProducao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'situacaoPedidoAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    situacaoPedidoAtual: {
+      handler: function (atual) {
+        this.filtroAtual.situacaoPedido = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'funcionarioAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    funcionarioAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idVendedorPedido = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoEntregaAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    tipoEntregaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipoEntregaPedido = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoEntregaAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    tipoEntregaAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipoEntregaPedido = atual ? atual.id : null;
       },
       deep: true
     }

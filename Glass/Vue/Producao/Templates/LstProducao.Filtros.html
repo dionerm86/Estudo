@@ -137,9 +137,9 @@
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label for="tipoPedido">Tipo Pedido</label>
-            <lista-selecao-id-valor id="tipoPedido" v-bind:item-selecionado.sync="tipoPedidoAtual"
-                v-bind:funcao-recuperar-itens="obterTiposPedido"></lista-selecao-id-valor>
+            <label for="tiposPedidos">Tipo Pedido</label>
+            <lista-selecao-multipla id="tiposPedidos" v-bind:ids-selecionados.sync="filtroAtual.tiposPedidos"
+                v-bind:funcao-recuperar-itens="obterTiposPedido" texto-selecionar=""></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
