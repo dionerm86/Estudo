@@ -4496,6 +4496,38 @@ namespace Glass.Data.DAL
 
         #endregion
 
+        #region Busca pedidos para informações de produção
+
+        /// <summary>
+        /// Retorna os pedidos para informações de produção.
+        /// </summary>
+        public Pedido[] GetForInfoPedidos(string dataIni, string dataFim, uint idPedido, uint idCliente, string nomeCliente, int tipo)
+        {
+            var vendas = tipo == 1 ? "1" : string.Empty;
+            var maoDeObra = tipo == 2 ? "1" : string.Empty;
+            var producao = tipo == 3 ? "1" : string.Empty;
+            var maoDeObraEspecial = tipo == 4 ? "1" : string.Empty;
+
+            bool temFiltro;
+            string filtroAdicional;
+
+            var sql = Sql(idPedido, 0, null, null, 0, idCliente, nomeCliente, 0, null, 0, null, null, null, null, null, 
+                vendas, maoDeObra, maoDeObraEspecial, producao, null, null, null,null, null, 0, false, true, 0, 0, 0, 0, 0, null, 
+                0, 0, 0, null, true, out filtroAdicional, out temFiltro).Replace("?filtroAdicional?", filtroAdicional);
+
+            sql += " and p.DataEntrega>=?inicio And p.DataEntrega<=?fim and p.Situacao<>" + (int)Pedido.SituacaoPedido.Cancelado + @"
+                and prod.idSubgrupoProd<>" + (int)Utils.SubgrupoProduto.LevesDefeitos + @" and if(p.tipoPedido=" + (int)Pedido.TipoPedidoEnum.Producao + @", true, 
+                prod.idGrupoProd=" + (int)Glass.Data.Model.NomeGrupoProd.Vidro + @" and (s1.TipoCalculo<>" + (int)Glass.Data.Model.TipoCalculoGrupoProd.Qtd + @" || s1.TipoCalculo is null))
+                and p.totM>0 AND p.FastDelivery = 1";
+
+            sql += " group by p.idPedido";
+
+            return objPersistence.LoadData(sql, new GDAParameter("?inicio", DateTime.Parse(dataIni + " 00:00:00")),
+                new GDAParameter("?fim", DateTime.Parse(dataFim + " 23:59:59")), new GDAParameter("?nomeCli", "%" + nomeCliente + "%")).ToArray();
+        }
+
+        #endregion
+
         #region Volumes do pedido
 
         #region Busca pedidos para geraÃ§Ã£o de volumes
