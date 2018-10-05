@@ -3,6 +3,7 @@
 // </copyright>
 
 using GDA;
+using Glass.API.Backend.Models.Genericas;
 using Glass.API.Backend.Models.Parcelas.Filtro;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -18,6 +19,29 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
     public partial class ParcelasController : BaseController
     {
         /// <summary>
+        /// Recupera as parcelas do sistema para os controles de filtro das telas.
+        /// </summary>
+        /// <returns>Uma lista JSON com as parcelas encontradas.</returns>
+        [HttpGet]
+        [Route("filtro")]
+        [SwaggerResponse(200, "Parcelas encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Parcelas não encontradas.")]
+        public IHttpActionResult ObterParcelas()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var parcelas = ParcelasDAO.Instance.GetAll()
+                    .Select(p => new IdNomeDto
+                    {
+                        Id = p.IdParcela,
+                        Nome = p.Descricao,
+                    });
+
+                return this.Lista(parcelas);
+            }
+        }
+
+        /// <summary>
         /// Recupera as parcelas que o cliente tem acesso para os controles de filtro das telas.
         /// </summary>
         /// <param name="idCliente">Identificador do cliente que será usado para buscar as parcelas.</param>
@@ -26,7 +50,7 @@ namespace Glass.API.Backend.Controllers.Parcelas.V1
         [Route("cliente")]
         [SwaggerResponse(200, "Parcelas encontradas.", Type = typeof(IEnumerable<ParcelaDto>))]
         [SwaggerResponse(204, "Parcelas não encontradas.")]
-        public IHttpActionResult ObterParcelas(int? idCliente)
+        public IHttpActionResult ObterParcelasCliente(int? idCliente)
         {
             using (var sessao = new GDATransaction())
             {

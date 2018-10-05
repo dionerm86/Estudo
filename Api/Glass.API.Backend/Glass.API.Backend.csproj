@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -235,12 +235,35 @@
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
-    <Compile Include="Controllers\SugestoesCliente\V1\GetSugestaoClienteController.cs" />
-    <Compile Include="Controllers\SugestoesCliente\V1\PostSugestaoClienteController.cs" />
-    <Compile Include="Controllers\SugestoesCliente\V1\SugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\PostSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\SugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\TiposClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\DeleteTiposClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\PatchTiposClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Tipos\PostTiposClienteController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\FornecedoresController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\DeleteFornecedoresController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\GetFornecedoresController.cs" />
+    <Compile Include="Controllers\Comissionados\V1\DeleteComissionadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\FeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\DeleteFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
+    <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\Fornecedores\V1\PostFornecedoresController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\GetPlanosContaController.cs" />
+    <Compile Include="Controllers\PlanosConta\V1\PlanosContaController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresAluminio\PatchCoresAluminioController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresAluminio\PostCoresAluminioController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\DeleteCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PatchCoresFerragemController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresFerragem\PostCoresFerragemController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\DeleteCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\PatchCoresVidroController.cs" />
+    <Compile Include="Controllers\Produtos\V1\CoresVidro\PostCoresVidroController.cs" />
     <Compile Include="Controllers\Sinais\V1\SinaisController.cs" />
     <Compile Include="Controllers\Sinais\V1\GetSinaisController.cs" />
     <Compile Include="Controllers\Beneficiamentos\V1\PostBeneficiamentosController.cs" />
@@ -357,14 +380,30 @@
     <Compile Include="Atributos\AuthorizationAttribute.cs" />
     <Compile Include="Controllers\TiposCartao\V1\GetTiposCartaoController.cs" />
     <Compile Include="Controllers\TiposCartao\V1\TiposCartaoController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\DeleteVeiculosController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\GetVeiculosController.cs" />
+    <Compile Include="Controllers\Veiculos\V1\VeiculosController.cs" />
+    <Compile Include="Controllers\Transportadores\V1\DeleteTransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\TransportadoresController.cs" />
     <Compile Include="Controllers\Transportadores\V1\GetTransportadoresController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\Clientes\TraducaoOrdenacaoListaSugestoesClientes.cs" />
+    <Compile Include="Helper\Clientes\Tipos\ConverterCadastroAtualizacaoParaTipo.cs" />
+    <Compile Include="Helper\Clientes\Tipos\TraducaoOrdenacaoListaTipos.cs" />
+    <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
+    <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
+    <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
+    <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
+    <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
+    <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
+    <Compile Include="Helper\Produtos\CoresVidro\TraducaoOrdenacaoListaCoresVidro.cs" />
+    <Compile Include="Helper\Produtos\CoresAluminio\ConverterCadastroAtualizacaoParaCorAluminio.cs" />
+    <Compile Include="Helper\Produtos\CoresAluminio\TraducaoOrdenacaoListaCoresAluminio.cs" />
     <Compile Include="Helper\Produtos\CoresFerragem\ConverterCadastroAtualizacaoParaCorFerragem.cs" />
-    <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaTraducaoOrdenacaoListaCoresFerragem.cs" />
+    <Compile Include="Helper\Produtos\CoresFerragem\TraducaoOrdenacaoListaCoresFerragem.cs" />
     <Compile Include="Helper\Sinais\TraducaoOrdenacaoListaSinais.cs" />
     <Compile Include="Helper\Caixas\Geral\TraducaoOrdenacaoListaCaixaGeral.cs" />
     <Compile Include="Helper\Caixas\Diario\TraducaoOrdenacaoListaCaixaDiario.cs" />
@@ -417,6 +456,36 @@
     <Compile Include="Helper\Respostas\SemConteudo.cs" />
     <Compile Include="Helper\Respostas\CriadoDto.cs" />
     <Compile Include="Helper\Respostas\MensagemDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Clientes\Tipos\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Comissionados\Lista\TelefonesDto.cs" />
+    <Compile Include="Models\Datas\Feriados\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Datas\Feriados\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Datas\Feriados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\VendedorDto.cs" />
+    <Compile Include="Models\PlanosConta\Lista\TipoEnum.cs" />
+    <Compile Include="Models\Fornecedores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\ListaDto.cs" />
+    <Compile Include="Models\Transportadores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\CoresVidro\Lista\ListaDto.cs" />
+    <Compile Include="Models\Produtos\CoresAluminio\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\Produtos\CoresAluminio\Lista\FiltroDto.cs" />
+    <Compile Include="Models\Produtos\CoresAluminio\Lista\ListaDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Lista\CadastroDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Lista\FiltroDto.cs" />
@@ -766,7 +835,7 @@
     <PropertyGroup>
       <ErrorText>Este projeto faz referência a pacotes do NuGet que não estão presentes neste computador. Use a Restauração de Pacotes do NuGet para baixá-los.  Para obter mais informações, consulte http://go.microsoft.com/fwlink/?LinkID=322105. O arquivo ausente é {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.8.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Net.Compilers.2.4.0\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
   </Target>
 </Project>

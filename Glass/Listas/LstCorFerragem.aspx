@@ -77,5 +77,3 @@
         </Scripts>
     </asp:ScriptManager>
 </asp:Content>
-
-

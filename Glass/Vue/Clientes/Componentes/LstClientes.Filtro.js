@@ -80,7 +80,7 @@ Vue.component('cliente-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroTipo: function () {
-      return Servicos.Clientes.obterTipos();
+      return Servicos.Clientes.Tipos.obterParaControle();
     },
 
     /**
@@ -88,7 +88,7 @@ Vue.component('cliente-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroTipoFiscal: function () {
-      return Servicos.Clientes.obterTiposFiscal();
+      return Servicos.Clientes.Tipos.obterParaControleFiscal();
     },
 
     /**

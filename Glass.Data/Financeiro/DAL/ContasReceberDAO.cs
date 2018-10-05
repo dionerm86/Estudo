@@ -968,9 +968,10 @@ namespace Glass.Data.DAL
                         // Tipo de cartão.
                         (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)f.IdTipoCartao) : string.Empty) +
                         // Número de parcelas
-                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s)" : string.Empty) +
+                        (f.IdFormaPagto == 5 && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(session, (int)f.IdTipoCartao) == TipoCartaoEnum.Debito ? " " :
+                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s) " : string.Empty)) +
                         // Valor.
-                        " R$ " + f.ValorPagto.ToString("C") + 
+                        f.ValorPagto.ToString("C") +
                         // Descrição conta bancária.
                         (f.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetDescricao(session, (uint)f.IdContaBanco) : string.Empty)).ToList());
 
@@ -2322,7 +2323,7 @@ namespace Glass.Data.DAL
             }
 
             if (UtilsFinanceiro.ContemFormaPagto(Pagto.FormaPagto.ChequeProprio, idsFormaPagamento.Select(f => ((uint?)f).GetValueOrDefault()).ToArray()) &&
-                (dadosChequesRecebimento?.Count()).GetValueOrDefault() == 0)
+                !(dadosChequesRecebimento?.Any(f => !string.IsNullOrWhiteSpace(f)) ?? false))
             {
                 throw new Exception("Cadastre o(s) cheque(s) referente(s) ao pagamento da conta.");
             }
@@ -7965,6 +7966,17 @@ namespace Glass.Data.DAL
                     idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
 
                 numDocCnab = numeroDocumento;
+            }
+            else if (codbanco == (int)Sync.Utils.CodigoBanco.CaixaEconomicaFederal)
+            {
+                idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc", new GDAParameter("?numDoc", numeroDocumento));
+                numDocCnab = numeroDocumento;
+
+                if(idContaR == 0 && !string.IsNullOrEmpty(usoEmpresa))
+                {
+                    idContaR = ObtemValorCampo<uint>(session, "idContaR", "numeroDocumentoCnab=?numDoc",
+                        new GDAParameter("?numDoc", usoEmpresa.Substring(usoEmpresa.Length > 10 ? -10 : 0)));
+                }
             }
             else
             {

@@ -13,7 +13,7 @@ namespace Glass.API.Backend.Models.Produtos.CoresFerragem.Lista
     /// Classe que encapsula um item para a lista de cores de ferragem.
     /// </summary>
     [DataContract(Name = "Lista")]
-    public class ListaDto : IdCodigoDto
+    public class ListaDto : IdDto
     {
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
@@ -25,13 +25,6 @@ namespace Glass.API.Backend.Models.Produtos.CoresFerragem.Lista
             this.Descricao = corFerragem.Descricao;
             this.Sigla = corFerragem.Sigla;
         }
-
-        /// <summary>
-        /// Obtém ou define o identificador da cor da ferragem.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("id")]
-        public int Id { get; set; }
 
         /// <summary>
         /// Obtém ou define a descrição da cor da ferragem.

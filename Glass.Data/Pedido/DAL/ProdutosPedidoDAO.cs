@@ -437,24 +437,25 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, String.Format(sql, usarEspelho ? "Fluxo" : "Pedido")).ToList();
         }
-
+        
         /// <summary>
         /// Busca os ids dos produtos de vários pedidos.
         /// </summary>
-        public IList<uint> ObtemIdsPedidoExcetoProducao(GDASession sessao, string idsPedidos)
+        public IList<int> ObterIdsProdPedExcetoProducao(GDASession sessao, List<int> idsPedidos)
         {
-            string sql = string.Format(@"
-                Select pp.idProdPed
-                From produtos_pedido pp
-                    Left Join pedido p On (pp.idPedido=p.idPedido)
-                Where pp.idPedido in ({0})
-                    And (invisivelPedido=false or invisivelPedido is null)
-                    And p.TipoPedido Not In ({1})",
+            if (!idsPedidos?.Any(f => f > 0) ?? false)
+            {
+                return new List<int>();
+            }
 
-                idsPedidos,
-                (int)Pedido.TipoPedidoEnum.Producao);
+            var sql = $@"SELECT pp.IdProdPed 
+                FROM produtos_pedido pp
+                    LEFT JOIN pedido p ON (pp.IdPedido = p.IdPedido)
+                WHERE pp.IdPedido IN ({ string.Join(",", idsPedidos) })
+                    AND (InvisivelPedido IS NULL OR InvisivelPedido = 0)
+                    AND p.TipoPedido NOT IN ({ (int)Pedido.TipoPedidoEnum.Producao })";
 
-            return objPersistence.LoadResult(sessao, sql, null).Select(f => f.GetUInt32(0)).ToList();
+            return ExecuteMultipleScalar<int>(sessao, sql);
         }
 
         /// <summary>
@@ -939,7 +940,8 @@ namespace Glass.Data.DAL
             var campos = $@"pp.IdPedido, p.CodCliente AS CodPedCliente, CONCAT(prod.CodInterno, ' - ', prod.Descricao) AS DescrProduto, CAST(({campoQtde}) AS DECIMAL(12, 2)) AS Qtde,
                 pp.Altura, pp.Largura, CAST(ROUND(((pp.TotM2Calc / pp.Qtde) * {campoQtde}), 2) AS DECIMAL(12, 2)) AS TotM2Calc,
                 CAST(ROUND(IF(sgp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.VidroDuplo},{(int)TipoSubgrupoProd.VidroLaminado}),
-                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({campoQtde}), 2) AS DECIMAL(12, 2)) AS Peso";
+                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({campoQtde}), 2) AS DECIMAL(12, 2)) AS Peso,
+                apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso";
 
             var camposVolume = @"
                 v.IdPedido, p.CodCliente as CodPedCliente, CONCAT('Volume: ', v.idVolume, '  Data de Fechamento: ', v.dataFechamento) as DescrProduto,
@@ -986,6 +988,8 @@ namespace Glass.Data.DAL
 		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN ({ idsPedidos }) AND IdOrdemCarga = { idOrdemCarga }
 		                GROUP BY IdProdPed
                     ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN etiqueta_aplicacao apl ON (pp.IdAplicacao = apl.IdAplicacao)
+                    LEFT JOIN etiqueta_processo prc ON (pp.IdProcesso = prc.IdProcesso)
                 WHERE COALESCE(sgp.geraVolume, gp.geraVolume, FALSE) = FALSE
                     AND COALESCE(pp.invisivelFluxo, FALSE) = FALSE
                     AND COALESCE(ppp.situacao, { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }) = { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
@@ -4947,6 +4951,15 @@ namespace Glass.Data.DAL
             {
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
+
+            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+
+            ValorTotal.Instance.Calcular(session,
+                container,
+                produto,
+                Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
+                calcMult5,
+                produto.Beneficiamentos.CountAreaMinima);
 
             ValorBruto.Instance.Calcular(session, container, produto);
         }
