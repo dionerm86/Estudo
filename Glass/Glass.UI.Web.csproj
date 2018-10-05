@@ -482,6 +482,8 @@
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.Filtro.js" />
     <Content Include="Vue\Comissionados\Componentes\LstComissionados.js" />
     <Content Include="Vue\Comissionados\Templates\LstComissionados.Filtro.html" />
+    <Content Include="Vue\Pedidos\Componentes\LstPedidos.FinalizacaoFinanceiro.js" />
+    <Content Include="Vue\Pedidos\Templates\LstPedidos.FinalizacaoFinanceiro.html" />
     <Content Include="Vue\Producao\Componentes\LstProducao.Filtros.js" />
     <Content Include="Vue\Producao\Componentes\LstProducao.js" />
     <Content Include="Vue\Producao\Templates\LstProducao.Filtros.html" />
@@ -1723,6 +1725,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\ControleParcelas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ControleSelecaoParticipanteFiscal.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaItensVenda.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoFuncionarios.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoSetores.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoLojas.js" />
     <Content Include="Vue\_Compartilhado\Componentes\ListaSelecaoParcelas.js" />
@@ -1742,6 +1745,7 @@
     <Content Include="Vue\_Compartilhado\Mixins\FiltroQueryString.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Html.js" />
     <Content Include="Vue\_Compartilhado\Mixins\JsonQuerystring.js" />
+    <Content Include="Vue\_Compartilhado\Mixins\OrdenacaoLista.js" />
     <Content Include="Vue\_Compartilhado\Mixins\SistemaOcupado.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Mensagens.js" />
     <Content Include="Vue\_Compartilhado\Mixins\Objetos.js" />
@@ -1829,6 +1833,7 @@
     <Content Include="Vue\_Compartilhado\Templates\ControleParcelas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ControleSelecaoParticipanteFiscal.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaItensVenda.html" />
+    <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoFuncionarios.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoSetores.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoLojas.html" />
     <Content Include="Vue\_Compartilhado\Templates\ListaSelecaoParcelas.html" />

@@ -19,61 +19,30 @@
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarObjeto
+    },
+
+    /**
+     * Define o tipo de agrupamento (numérico) para a impressão do relatório.
+     * @type {?number}
+     */
+    agruparImpressao: {
+      required: true,
+      twoWay: true,
+      validator: Mixins.Validacao.validarNumeroOuVazio
     }
   },
 
   data: function () {
     return {
-      filtroAtual: this.merge(
-        {
-          idPedido: null,
-          idLiberacaoPedido: null,
-          idCarregamento: null,
-          idPedidoImportado: null,
-          codigoPedidoCliente: null,
-          idsRotas: null,
-          idCliente: null,
-          nomeCliente: null,
-          idImpressao: null,
-          numeroEtiquetaPeca: null,
-          situacoesProducao: null,
-          idSetor: null,
-          periodoSetorInicio: null,
-          periodoSetorFim: null,
-          idLoja: null,
-          tipoSituacaoProducao: null,
-          situacaoPedido: null,
-          idsSubgrupos: null,
-          idsBeneficiamentos: null,
-          idVendedorPedido: null,
-          tipoEntregaPedido: null,
-          periodoEntregaInicio: null,
-          periodoEntregaFim: null,
-          parguraPeca: null,
-          alturaPeca: null,
-          tiposPedidos: null,
-          tiposPecasExibir: null,
-          periodoFabricaInicio: null,
-          periodoFabricaFim: null,
-          espessuraPeca: null,
-          idCorVidro: null,
-          idsProcessos: null,
-          idsAplicacoes: null,
-          planoCorte: null,
-          numeroEtiquetaChapa: null,
-          tipoProdutosComposicao: null,
-          apenasPecasAguardandoExpedicao: null,
-          apenasPecasAguardandoEntradaEstoque: null,
-          apenasPecasParadasNaProducao: null,
-          apenasPecasRepostas: null,
-          periodoConferenciaPedidoInicio: null,
-          periodoConferenciaPedidoFim: null,
-          tipoFastDelivery: null
-        },
-        this.filtro
-      ),
+      filtroAtual: this.merge(this.filtroVazio(), this.filtro),
       setorAtual: null,
-      lojaAtual: null
+      lojaAtual: null,
+      tipoSituacaoProducaoAtual: null,
+      situacaoPedidoAtual: null,
+      funcionarioAtual: null,
+      tipoEntregaAtual: null,
+      tipoPedidoAtual: null,
+      tipoProdutosComposicaoAtual: null
     };
   },
 
@@ -100,10 +69,98 @@
      */
     obterSituacoesProducao: function () {
       return Servicos.Producao.obterSituacoes();
+    },
+
+    /**
+     * Função que retorna o objeto com o filtro vazio.
+     * @returns {Object} O objeto com o filtro vazio.
+     */
+    filtroVazio: function () {
+      return {
+        idPedido: null,
+        idLiberacaoPedido: null,
+        idCarregamento: null,
+        idPedidoImportado: null,
+        codigoPedidoCliente: null,
+        idsRotas: null,
+        idCliente: null,
+        nomeCliente: null,
+        idImpressao: null,
+        numeroEtiquetaPeca: null,
+        situacoesProducao: null,
+        idSetor: null,
+        periodoSetorInicio: null,
+        periodoSetorFim: null,
+        idLoja: null,
+        tipoSituacaoProducao: null,
+        situacaoPedido: null,
+        idsSubgrupos: null,
+        idsBeneficiamentos: null,
+        idVendedorPedido: null,
+        tipoEntregaPedido: null,
+        periodoEntregaInicio: null,
+        periodoEntregaFim: null,
+        larguraPeca: null,
+        alturaPeca: null,
+        tiposPedidos: null,
+        tiposPecasExibir: null,
+        periodoFabricaInicio: null,
+        periodoFabricaFim: null,
+        espessuraPeca: null,
+        idCorVidro: null,
+        idsProcessos: null,
+        idsAplicacoes: null,
+        planoCorte: null,
+        numeroEtiquetaChapa: null,
+        tipoProdutosComposicao: null,
+        apenasPecasAguardandoExpedicao: null,
+        apenasPecasAguardandoEntradaEstoque: null,
+        apenasPecasParadasNaProducao: null,
+        apenasPecasRepostas: null,
+        periodoConferenciaPedidoInicio: null,
+        periodoConferenciaPedidoFim: null,
+        tipoFastDelivery: null
+      };
+    },
+
+    /**
+     * Limpa os filtros atuais e recarrega a lista de produção.
+     */
+    limparFiltros: function () {
+      this.filtroAtual = this.filtroVazio();
+      this.setorAtual = null;
+      this.lojaAtual = null;
+      this.tipoSituacaoProducaoAtual = null;
+      this.situacaoPedidoAtual = null;
+      this.funcionarioAtual = null;
+      this.tipoEntregaAtual = null;
+      this.tipoPedidoAtual = null;
+      this.tipoProdutosComposicaoAtual = null;
+      this.filtrar();
+    }
+  },
+
+  computed: {
+    /**
+     * Propriedade computada que retorna o valor do agrupamento de impressão e que
+     * atualiza a propriedade principal ao ser alterada.
+     */
+    agruparImpressaoAtual: {
+      get: function () {
+        return this.agruparImpressao;
+      },
+      set: function (valor) {
+        if (valor !== this.agruparImpressao) {
+          this.$emit('update:agruparImpressao', valor);
+        }
+      }
     }
   },
 
   watch: {
+    /**
+     *
+     */
     setorAtual: {
       handler: function (atual) {
         this.filtroAtual.idSetor = atual ? atual.id : null;

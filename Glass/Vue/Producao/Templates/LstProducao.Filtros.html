@@ -40,12 +40,12 @@
     </div>
     <div>
         <span class="form-group">
-            <label for="idImpressao">Num. Impressao</label>
+            <label for="idImpressao">Num. Impressão</label>
             <input id="idImpressao" type="number" v-model.number="filtroAtual.idImpressao" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label for="numeroEtiqueta">Num. Impressão</label>
+            <label for="numeroEtiqueta">Num. Etiqueta</label>
             <input id="numeroEtiqueta" type="text" v-model="filtroAtual.numeroEtiqueta" style="width: 100px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -64,7 +64,7 @@
             <label for="periodoSetor">
                 Período ({{ setorAtual.nome }})
             </label>
-            <campo-data-hora-periodo v-bind:data-hora-inicial.sync="filtroAtual.periodoSetorInicio"
+            <campo-data-hora-periodo id="periodoSetor" v-bind:data-hora-inicial.sync="filtroAtual.periodoSetorInicio"
                 v-bind:data-hora-final.sync="filtroAtual.periodoSetorFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
@@ -106,6 +106,136 @@
                 <controle-beneficiamentos-setor v-bind:ids-selecionados.sync="filtroAtual.idsBeneficiamentos"></controle-beneficiamentos-setor>
             </controle-tooltip>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="vendedor">Vendedor</label>
+            <lista-selecao-funcionarios id="vendedor" v-bind:funcionario.sync="funcionarioAtual" tipo="Vendedores"></lista-selecao-funcionarios>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="tipoEntrega">Tipo Entrega</label>
+            <lista-selecao-id-valor id="tipoEntrega" v-bind:item-selecionado.sync="tipoEntregaAtual"
+                v-bind:funcao-recuperar-itens="obterTiposEntregasPedido"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="periodoEntrega">Período Entrega</label>
+            <campo-data-hora-periodo id="periodoEntrega" v-bind:data-hora-inicial.sync="filtroAtual.periodoEntregaInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoEntregaFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="largura">Largura</label>
+            <input id="largura" type="number" v-model.number="filtroAtual.larguraPeca" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="altura">Altura</label>
+            <input id="altura" type="number" v-model.number="filtroAtual.alturaPeca" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="tipoPedido">Tipo Pedido</label>
+            <lista-selecao-id-valor id="tipoPedido" v-bind:item-selecionado.sync="tipoPedidoAtual"
+                v-bind:funcao-recuperar-itens="obterTiposPedido"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="tiposPecasExibir">Exibir peças</label>
+            <lista-selecao-multipla id="tiposPecasExibir" v-bind:ids-selecionados.sync="filtroAtual.tiposPecasExibir"
+                v-bind:funcao-recuperar-itens="obterTiposPecasExibir" texto-selecionar=""></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="espessuraPeca">Espessura</label>
+            <input id="espessuraPeca" type="number" v-model.number="filtroAtual.espessuraPeca" style="width: 60px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idCorVidro">Cor</label>
+            <lista-selecao-id-valor id="idCorVidro" v-bind:item-selecionado.sync="corVidroAtual"
+                v-bind:funcao-recuperar-itens="obterCoresVidro"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idsProcessos">Processo</label>
+            <lista-selecao-multipla id="idsProcessos" v-bind:ids-selecionados.sync="filtroAtual.idsProcessos"
+                v-bind:funcao-recuperar-itens="obterProcessos" texto-selecionar=""></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="idsAplicacoes">Aplicação</label>
+            <lista-selecao-multipla id="idsAplicacoes" v-bind:ids-selecionados.sync="filtroAtual.idsAplicacoes"
+                v-bind:funcao-recuperar-itens="obterAplicacoes" texto-selecionar=""></lista-selecao-multipla>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="planoCorte">Plano de Corte</label>
+            <input id="planoCorte" type="text" v-model.number="filtroAtual.planoCorte" style="width: 80px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="numeroEtiquetaChapa">Etiqueta da Chapa</label>
+            <input id="numeroEtiquetaChapa" type="text" v-model.number="filtroAtual.numeroEtiquetaChapa" style="width: 80px" />
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="tipoProdutosComposicao">Produto composto</label>
+            <lista-selecao-id-valor id="tipoProdutosComposicao" v-bind:item-selecionado.sync="tipoProdutosComposicaoAtual"
+                v-bind:funcao-recuperar-itens="obterTiposProdutosComposicao"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasPecasAguardandoExpedicao" type="checkbox" v-model="filtroAtual.apenasPecasAguardandoExpedicao" />
+            <label for="apenasPecasAguardandoExpedicao">Peças aguardando expedição</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasPecasAguardandoEntradaEstoque" type="checkbox" v-model="filtroAtual.apenasPecasAguardandoEntradaEstoque" />
+            <label for="apenasPecasAguardandoEntradaEstoque">Peças aguardando entrada no estoque</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasPecasParadasNaProducao" type="checkbox" v-model="filtroAtual.apenasPecasParadasNaProducao" />
+            <label for="apenasPecasParadasNaProducao">Peças com produção parada</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <input id="apenasPecasRepostas" type="checkbox" v-model="filtroAtual.apenasPecasRepostas" />
+            <label for="apenasPecasRepostas">Peças que foram repostas</label>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+    </div>
+    <div>
+        <span class="form-group">
+            <label for="periodoConferenciaPedido">Período (Conf. Ped.)</label>
+            <campo-data-hora-periodo id="periodoConferenciaPedido" v-bind:data-hora-inicial.sync="filtroAtual.periodoConferenciaPedidoInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoConferenciaPedidoFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="tipoFastDelivery">Período (Conf. Ped.)</label>
+            <lista-selecao-id-valor id="tipoFastDelivery" v-bind:item-selecionado.sync="tipoFastDeliveryAtual"
+                v-bind:funcao-recuperar-itens="obterTiposFastDelivery"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <label for="agruparImpressao">Agrupar impressão</label>
+            <lista-selecao-id-valor id="agruparImpressao" v-bind:item-selecionado.sync="agruparImpressaoAtual"
+                v-bind:funcao-recuperar-itens="obterAgruparImpressao"></lista-selecao-id-valor>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
+        <span class="form-group">
+            <a href="#" v-on:click.prevent="limparFiltros">
+                <img src="../../Images/ExcluirGrid.gif" />
+                Limpar filtros
+            </a>
         </span>
     </div>
 </section>

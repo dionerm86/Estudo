@@ -388,6 +388,10 @@ section {
       top: 3px;
     }
 
+    div.filtros span > input[type="checkbox"] + label, section.filtros span > input[type="checkbox"] + label {
+      color: initial;
+    }
+
     div.filtros .botaoPesquisar, section.filtros .botaoPesquisar {
       position: relative;
       top: 2px;

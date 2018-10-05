@@ -1,16 +1,8 @@
 const app = new Vue({
   el: '#app',
-  mixins: [Mixins.Objetos, Mixins.FiltroQueryString],
+  mixins: [Mixins.Objetos, Mixins.FiltroQueryString, Mixins.OrdenacaoLista('id', 'desc')],
 
   data: {
-    dadosOrdenacao_: {
-      campo: 'id',
-      direcao: 'desc'
-    },
-    dadosOrdenacaoObservacoesFinanceiro_: {
-      campo: '',
-      direcao: ''
-    },
     configuracoes: {},
     filtro: {},
     controleTooltipAtual: null
@@ -37,19 +29,6 @@ const app = new Vue({
     atualizarPedidos: function(filtro, pagina, numeroRegistros, ordenacao) {
       var filtroUsar = this.clonar(filtro || {});
       return Servicos.Pedidos.obterLista(filtroUsar, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista de pedidos.
-     * @param {string} campo O nome do campo pelo qual o resultado será ordenado.
-     */
-    ordenar: function(campo) {
-      if (campo !== this.dadosOrdenacao_.campo) {
-        this.dadosOrdenacao_.campo = campo;
-        this.dadosOrdenacao_.direcao = '';
-      } else {
-        this.dadosOrdenacao_.direcao = this.dadosOrdenacao_.direcao === '' ? 'desc' : '';
-      }
     },
 
     /**
@@ -252,32 +231,6 @@ const app = new Vue({
     },
 
     /**
-     * Realiza a busca de observações do financeiro de um pedido.
-     * @param {!Object} filtroOriginal O filtro usado para a busca.
-     * @param {!number} pagina O número da página atual na lista.
-     * @param {!number} numeroRegistros O número de registros a serem exibidos na lista.
-     * @param {string} ordenacao A ordenação a ser usada na busca.
-     * @returns {Promise} Uma Promise com o resultado da busca.
-     */
-    buscarObservacoesFinanceiro: function(filtroOriginal, pagina, numeroRegistros, ordenacao) {
-      return Servicos.Pedidos.obterListaObservacoesFinanceiro(filtroOriginal.id, pagina, numeroRegistros, ordenacao);
-    },
-
-    /**
-     * Realiza a ordenação da lista de observações do financeiro.
-     * @param {!string} campo O campo que será usado na ordenação.
-     */
-    ordenarObservacoesFinanceiro: function(campo) {
-      if (campo !== this.dadosOrdenacaoObservacoesFinanceiro_.campo) {
-        this.dadosOrdenacaoObservacoesFinanceiro_.campo = campo;
-        this.dadosOrdenacaoObservacoesFinanceiro_.direcao = '';
-      } else {
-        this.dadosOrdenacaoObservacoesFinanceiro_.direcao =
-          this.dadosOrdenacaoObservacoesFinanceiro_.direcao === '' ? 'desc' : '';
-      }
-    },
-
-    /**
      * Exibe a tela de anexar arquivos a vários pedidos.
      */
     anexarArquivosAVariosPedidos: function() {
@@ -416,26 +369,6 @@ const app = new Vue({
   },
 
   computed: {
-    /**
-     * Propriedade computada que indica a ordenação para a lista.
-     * @type {string}
-     */
-    ordenacao: function() {
-      var direcao = this.dadosOrdenacao_.direcao ? ' ' + this.dadosOrdenacao_.direcao : '';
-      return this.dadosOrdenacao_.campo + direcao;
-    },
-
-    /**
-     * Propriedade computada que indica a ordenação para as observações do financeiro.
-     * @type {string}
-     */
-    ordenacaoObservacoesFinanceiro: function() {
-      var direcao = this.dadosOrdenacaoObservacoesFinanceiro_.direcao
-        ? ' ' + this.dadosOrdenacaoObservacoesFinanceiro_.direcao
-        : '';
-      return this.dadosOrdenacaoObservacoesFinanceiro_.campo + direcao;
-    },
-
     /**
      * Propriedade computada que indica se o tipo de pedido é fixo ou não.
      * @type {boolean}

@@ -48,6 +48,44 @@
      */
     temFilhos: function(beneficiamento) {
       return beneficiamento && beneficiamento.filhos && beneficiamento.filhos.length;
+    },
+
+    /**
+     * Atualiza a lista de 'pais' selecionados, para que os beneficiamentos 'filhos' sejam exibidos corretamente.
+     * @param {number[]} ids Os identificadores de todos os beneficiamentos selecionados atualmente.
+     */
+    atualizarPais: function (ids) {
+      if (!ids || !ids.length) {
+        this.pais = [];
+        return;
+      }
+
+      var pais = new Set(ids.concat(this.pais || [])
+        .map(function (id) {
+          var beneficiamento = this.beneficiamentos.find(function (item) {
+            if (item.id === id) {
+              return true;
+            }
+
+            if (item.filhos && item.filhos.length) {
+              for (var filho of item.filhos) {
+                if (filho.id === id) {
+                  return true;
+                }
+              }
+            }
+
+            return false;
+          });
+
+          return beneficiamento ? beneficiamento.id : null;
+        }, this)
+        .filter(function (id) {
+          return id;
+        })
+      );
+
+      this.pais = [...pais];
     }
   },
 
@@ -67,43 +105,24 @@
       set: function (valor) {
         if (!this.equivalentes(valor, this.idsSelecionados)) {
           this.$emit('update:idsSelecionados', valor);
-
-          if (valor && valor.length) {
-            var pais = new Set(valor.concat(this.pais)
-              .map(function (id) {
-                var beneficiamento = this.beneficiamentos.find(function (item) {
-                  if (item.id === id) {
-                    return true;
-                  }
-
-                  if (item.filhos && item.filhos.length) {
-                    for (var filho of item.filhos) {
-                      if (filho.id === id) {
-                        return true;
-                      }
-                    }
-                  }
-
-                  return false;
-                });
-
-                return beneficiamento ? beneficiamento.id : null;
-              }, this)
-              .filter(function (id) {
-                return id;
-              })
-            );
-
-            this.pais = [...pais];
-          } else {
-            this.pais = [];
-          }
+          this.atualizarPais(valor);
         }
       }
     }
   },
 
   watch: {
+    /**
+     * Observador para a variável 'idsSelecionados'.
+     * Carrega os 'pais' dos beneficiamentos que estão selecionados, para que sejam exibidos no controle.
+     */
+    idsSelecionados: {
+      handler: function(atual) {
+        this.atualizarPais(atual);
+      },
+      deep: true
+    },
+
     /**
      * Observador para a variável 'pais'.
      * Atualiza a lista de beneficiamentos selecionados se houver remoção de um pai.
