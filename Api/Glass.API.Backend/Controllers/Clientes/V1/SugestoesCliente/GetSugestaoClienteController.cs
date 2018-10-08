@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.SugestoesCliente.V1
+namespace Glass.API.Backend.Controllers.V1.SugestoesCliente
 {
     /// <summary>
     /// Controller de sugestões de clientes.
