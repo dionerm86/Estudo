@@ -16679,7 +16679,7 @@ namespace Glass.Data.DAL
                 #region Validações do pagamento antecipado
 
                 // Verifica se o pagto antecipado do pedido é válido
-                if (ObtemIdPagamentoAntecipado(session, idPedido) > 0 && ObtemValorPagtoAntecipado(session, idPedido) == 0)
+                if (ObtemIdPagamentoAntecipado(session, idPedido) > 0 && ObtemValorPagtoAntecipado(session, idPedido) == 0 && GetTotal(session, idPedido) > 0)
                     return "false|O pedido possui pagamento antecipado mas o valor recebido está zerado, será necessário receber o valor novamente.";
 
                 #endregion
