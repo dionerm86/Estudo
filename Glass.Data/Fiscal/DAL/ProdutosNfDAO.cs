@@ -1276,15 +1276,15 @@ namespace Glass.Data.DAL
                     var isCfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(session, idCfop);
 
                     var saida = (tipoDoc == (int)NotaFiscal.TipoDoc.Saída ||
-                                    (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada && isCfopDevolucao));
+                        (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada && isCfopDevolucao));
 
                     objInsert.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(
-                                   session,
-                                   (int)objInsert.IdProd,
-                                   NotaFiscalDAO.Instance.ObtemIdLoja(session, objInsert.IdNf),
-                                   (int?)NotaFiscalDAO.Instance.ObtemIdFornec(session, objInsert.IdNf),
-                                   NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf),
-                                   saida);
+                        session,
+                        (int)objInsert.IdProd,
+                        NotaFiscalDAO.Instance.ObtemIdLoja(session, objInsert.IdNf),
+                        (int?)NotaFiscalDAO.Instance.ObtemIdFornec(session, objInsert.IdNf),
+                        NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf),
+                        saida);
                 }
 
                 objInsert.Mva = (float)Math.Round((decimal)objInsert.Mva, 2);
