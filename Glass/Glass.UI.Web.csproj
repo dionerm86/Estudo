@@ -9279,11 +9279,15 @@
     <Content Include="Relatorios\rptProdutosComprar.rdlc" />
     <Content Include="Relatorios\rptProdutosExportacao.rdlc" />
     <Content Include="Relatorios\rptProdutosLiberar.rdlc" />
-    <Content Include="Relatorios\rptProdutosPreco.rdlc" />
+    <Content Include="Relatorios\rptProdutosPreco.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Relatorios\rptResumoDiario.rdlc">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Relatorios\rptRetalhosAssociados.rdlc" />
+    <Content Include="Relatorios\rptRetalhosAssociados.rdlc">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Relatorios\rptRetalhosProducao.rdlc">
       <SubType>Designer</SubType>
     </Content>
@@ -9325,6 +9329,11 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.0-beta007\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Relatorios\rptUtilizacaoSistema.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
