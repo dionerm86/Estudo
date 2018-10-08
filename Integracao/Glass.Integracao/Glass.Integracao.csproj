@@ -56,10 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfiguracaoIntegrador.cs" />
     <Compile Include="IIntegrador.cs" />
     <Compile Include="InicializadorIntegradores.cs" />
     <Compile Include="IProvedorIntegradores.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProvedorIntegradores.cs" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include="..\..\.editorconfig">

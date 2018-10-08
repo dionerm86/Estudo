@@ -17,9 +17,14 @@ namespace Glass.Integracao
         string Nome { get; }
 
         /// <summary>
-        /// Obtém um valor que indica se o integrador está ativo.
+        /// Obtém a configuração do integrador.
         /// </summary>
-        bool Ativo { get; }
+        ConfiguracaoIntegrador Configuracao { get; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o integrador está ativo.
+        /// </summary>
+        bool Ativo { get; set; }
 
         /// <summary>
         /// Realiza o setup do integrador.
