@@ -12,7 +12,7 @@
                         <a href="#" @click.prevent="ordenar('Nome')">Nome</a>
                     </th>
                     <th>
-                        <a href="#">Cpf / Cnpj</a>
+                        <a href="#">Cpf</a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
@@ -25,7 +25,7 @@
                         </button>
                     </td>
                     <td :style="{ color: item.corLinha }">{{ item.nome }}</td>
-                    <td :style="{ color: item.corLinha }">{{ item.cpfCnpj }}</td>
+                    <td :style="{ color: item.corLinha }">{{ item.cpf }}</td>
                 </template>
                 <template slot="itemEditando">
                     <td style="white-space: nowrap">
@@ -40,7 +40,7 @@
                         <input v-model="condutor.nome" />
                     </td>
                     <td>
-                        <input v-model="condutor.cpfCnpj" />
+                        <input v-model="condutor.cpf" />
                     </td>
                 </template>
                 <template slot="itemIncluir">
@@ -59,7 +59,7 @@
                         <input type="text" v-model="condutor.nome" maxlength="14" style="width: 150px" v-if="inserindo" required />
                     </td>
                     <td>
-                        <input type="text" v-model="condutor.cpfCnpj" maxlength="14" style="width: 150px" v-if="inserindo" required />
+                        <input type="text" v-model="condutor.cpf" maxlength="14" style="width: 150px" v-if="inserindo" required />
                     </td>
                 </template>
             </lista-paginada>

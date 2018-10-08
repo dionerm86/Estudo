@@ -26,14 +26,14 @@ namespace Glass.API.Backend.Models.Condutores.CadastroAtualizacao
         }
 
         /// <summary>
-        /// Obtém ou define o cpfCnpj do condutor.
+        /// Obtém ou define o cpf do condutor.
         /// </summary>
         [DataMember]
-        [JsonProperty("cpfCnpj")]
-        public string CpfCnpj
+        [JsonProperty("cpf")]
+        public string Cpf
         {
-            get { return this.ObterValor(c => c.CpfCnpj); }
-            set { this.AdicionarValor(c => c.CpfCnpj, value); }
+            get { return this.ObterValor(c => c.Cpf); }
+            set { this.AdicionarValor(c => c.Cpf, value); }
         }
     }
 }

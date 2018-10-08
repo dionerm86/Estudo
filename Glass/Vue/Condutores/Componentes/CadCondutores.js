@@ -147,7 +147,7 @@
       this.condutor = {
         id: condutor ? condutor.id : null,
         nome: condutor ? condutor.nome : null,
-        cpfCnpj: condutor ? condutor.cpfCnpj : null,
+        cpf: condutor ? condutor.cpf : null,
       };
 
       this.condutorOriginal = this.clonar(this.condutor);

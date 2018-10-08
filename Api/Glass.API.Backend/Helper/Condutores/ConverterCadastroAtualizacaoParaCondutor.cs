@@ -46,7 +46,7 @@ namespace Glass.API.Backend.Helper.Condutores
         private void ConverterDtoParaModelo(Data.Model.Condutores destino)
         {
             destino.Nome = this.cadastro.ObterValorNormalizado(c => c.Nome, destino.Nome);
-            destino.CpfCnpj = this.cadastro.ObterValorNormalizado(c => c.CpfCnpj, destino.CpfCnpj);
+            destino.Cpf = this.cadastro.ObterValorNormalizado(c => c.Cpf, destino.Cpf);
         }
     }
 }

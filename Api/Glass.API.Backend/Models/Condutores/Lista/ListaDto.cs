@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Models.Condutores.Lista
         {
             this.IdCondutor = condutor.IdCondutor;
             this.Nome = condutor.Nome;
-            this.CpfCnpj = condutor.CpfCnpj;
+            this.Cpf = condutor.Cpf;
         }
 
         [JsonProperty("id")]
@@ -30,7 +30,7 @@ namespace Glass.API.Backend.Models.Condutores.Lista
         [JsonProperty("nome")]
         public string Nome { get; set; }
 
-        [JsonProperty("cpfCnpj")]
-        public string CpfCnpj { get; set; }
+        [JsonProperty("cpf")]
+        public string Cpf { get; set; }
     }
 }

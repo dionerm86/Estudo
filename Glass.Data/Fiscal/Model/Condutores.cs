@@ -13,7 +13,7 @@ namespace Glass.Data.Model
         [PersistenceProperty("NOME")]
         public string Nome { get; set; }
 
-        [PersistenceProperty("CPFCNPJ")]
-        public string CpfCnpj { get; set; }
+        [PersistenceProperty("CPF")]
+        public string Cpf { get; set; }
     }
 }
