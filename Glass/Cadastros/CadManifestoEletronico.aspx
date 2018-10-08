@@ -172,8 +172,13 @@
             FindControl(idControle + '_txtNumNfIns', 'input').value = numNf;
             FindControl(idControle + '_hdfIdNf', 'input').value = idNf;
 
-            var retorno = CadManifestoEletronico.BuscarInfoNfe(idNf).value;
-            var resultado = retorno.split('|');
+            var retorno = CadManifestoEletronico.BuscarInfoNfe(idNf);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            var resultado = retorno.value.split('|');
 
             FindControl(idControle + '_txtChaveAcesso', 'input').value = resultado[0];
             FindControl(idControle + '_txtChaveAcesso', 'input').disabled = true;
@@ -191,9 +196,14 @@
             var chaveAcesso = FindControl('txtChaveAcesso', 'input').value;
             var fsda = FindControl('txtFsda', 'input').value;
 
-            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, chaveAcesso, fsda).value;
+            var retorno = CadManifestoEletronico.InserirNfeCidadeDescarga(idCidadeDescarga, idNf, chaveAcesso, fsda);
 
-            var resultado = retorno.split('|');
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            var resultado = retorno.value.split('|');
 
             if (resultado[0] == "Erro") {
                 alert(resultado[1]);
@@ -229,9 +239,16 @@
             FindControl(idControle + '_txtNumCTeIns', 'input').value = numCTe;
             FindControl(idControle + '_hdfIdCTe', 'input').value = idCTe;
 
-            var retorno = CadManifestoEletronico.BuscarInfoCte(idCTe).value;
+            var retorno = CadManifestoEletronico.BuscarInfoCte(idCTe);
 
-            FindControl(idControle + '_txtChaveAcessoCte', 'input').value = retorno;
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            var resultado = retorno.value;
+
+            FindControl(idControle + '_txtChaveAcessoCte', 'input').value = resultado;
             FindControl(idControle + '_txtChaveAcessoCte', 'input').disabled = true;
 
             //Utilizar quando implementar FDSA no CTe
@@ -248,9 +265,14 @@
             var chaveAcesso = FindControl('txtChaveAcessoCte', 'input').value;
             var fsda = FindControl('txtFsdaCTe', 'input').value;
 
-            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda).value;
+            var retorno = CadManifestoEletronico.InserirCteCidadeDescarga(idCidadeDescarga, idCTe, chaveAcesso, fsda);
 
-            var resultado = retorno.split('|');
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+
+            var resultado = retorno.value.split('|');
 
             if (resultado[0] == "Erro") {
                 alert(resultado[1]);
