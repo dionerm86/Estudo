@@ -296,6 +296,7 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 }
 
                 peca.Rotacionada = etiqueta.Rotacionada;
+                peca.PosicaoGeral = etiqueta.PosicaoPeca;
                 peca.Posicao = etiqueta.Posicao;
                 peca.Forma = etiqueta.Forma;
 

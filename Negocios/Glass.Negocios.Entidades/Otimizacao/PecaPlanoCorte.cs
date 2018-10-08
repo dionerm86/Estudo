@@ -79,6 +79,23 @@ namespace Glass.Otimizacao.Negocios.Entidades
         }
 
         /// <summary>
+        /// Obtém ou define a posição geral da peça.
+        /// </summary>
+        public int PosicaoGeral
+        {
+            get { return DataModel.PosicaoGeral; }
+            set
+            {
+                if (DataModel.PosicaoGeral != value &&
+                    RaisePropertyChanging(nameof(PosicaoGeral), value))
+                {
+                    DataModel.PosicaoGeral = value;
+                    RaisePropertyChanged(nameof(PosicaoGeral));
+                }
+            }
+        }
+
+        /// <summary>
         /// Obtém ou define a posição da peça.
         /// </summary>
         public int Posicao
