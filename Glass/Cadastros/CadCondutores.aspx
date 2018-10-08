@@ -1,4 +1,4 @@
-﻿<%@ Page Title="Condutores" Language="C#"  MasterPageFile="~/Painel.master" AutoEventWireup="true" 
+﻿<%@ Page Title="Condutores" Language="C#"  MasterPageFile="~/Painel.master" AutoEventWireup="true"
     CodeBehind="CadCondutores.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadCondutores" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
@@ -12,7 +12,7 @@
                         <a href="#" @click.prevent="ordenar('Nome')">Nome</a>
                     </th>
                     <th>
-                        <a href="#">Cpf  / Cnpj</a>
+                        <a href="#">Cpf / Cnpj</a>
                     </th>
                 </template>
                 <template slot="item" slot-scope="{ item, index }">
