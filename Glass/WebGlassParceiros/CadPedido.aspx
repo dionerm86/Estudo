@@ -409,6 +409,9 @@
 
                     atualizaValMin();
 
+                    if(FindControl("txtAlturaIns", "input").value != "")
+                        GetAdicionalAlturaChapa();
+
                     qtdEstoque = retorno[6]; // Pega a quantidade disponível em estoque deste produto
                     var tipoCalc = retorno[7];
 

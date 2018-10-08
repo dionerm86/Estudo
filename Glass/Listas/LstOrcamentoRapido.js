@@ -82,6 +82,9 @@ function loadProduto(orcamentoRapido) {
         FindControl("hdfTipoCalc", "input").value = retorno[10]; // Armazena o tipo de cálculo que será feito no produto
         FindControl("hdfCustoProd", "input").value = retorno[11]; // Armazena o custo do produto
 
+        if (FindControl("txtAltura", "input").value != "")
+          GetAdicionalAlturaChapa();
+
         var esp = retorno[5] != "" ? parseFloat(retorno[5].replace(",", ".")) : 0;
         if (FindControl("txtEspessura", "input") != null)
         {

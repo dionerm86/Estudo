@@ -139,6 +139,9 @@
                     exibirMensagemEstoqueComposicaoChild = retorno[14] == "true";
                     qtdEstoqueMensagemComposicaoChild = retorno[15];
 
+                    if(FindControl("txtChild_AlturaComposicaoIns", "input", table).value != "")
+                        GetAdicionalAlturaChapa();
+
                     var tipoCalc = retorno[7];
 
                     // Se o produto não for vidro, desabilita os textboxes largura e altura,

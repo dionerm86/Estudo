@@ -391,6 +391,9 @@
                         FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                         var tipoCalc = retorno[7];
 
+                        if(FindControl("txtAlturaIns", "input").value != "")
+                            GetAdicionalAlturaChapa();
+
                         qtdEstoque = retorno[13]; // Pega a quantidade disponível em estoque deste produto
                         exibirMensagemEstoque = retorno[14] == "true";
                         qtdEstoqueMensagem = retorno[15];

@@ -258,6 +258,9 @@
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
 
+                    if(FindControl("txtAlturaIns", "input").value != "")
+                        GetAdicionalAlturaChapa();
+
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                     if (retorno[4] == "true" && FindControl("lnkBenef", "a") != null) {
                         FindControl("lnkBenef", "a").style.display = "inline";

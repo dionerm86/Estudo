@@ -723,6 +723,9 @@
             FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto é vidro
             FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m² mínimo
 
+            if(FindControl("txtAlturaIns", "input").value != "")
+                GetAdicionalAlturaChapa();
+
             var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;
 
             if (retorno[5] != "" && FindControl("drpCst", "select") != null)
