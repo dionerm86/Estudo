@@ -188,14 +188,6 @@ namespace Glass.Data.DAL
         /// <summary>
         /// Recupera o valor adicional de chapas de vidro com base na altura.
         /// </summary>
-        public float GetAdicionalAlturaChapaVidro(uint idProd, float altura)
-        {
-            return GetAdicionalAlturaChapaVidro(null, idProd, altura);
-        }
-
-        /// <summary>
-        /// Recupera o valor adicional de chapas de vidro com base na altura.
-        /// </summary>
         public float GetAdicionalAlturaChapaVidro(GDASession session, uint idProd, float altura)
         {
             var chapaVidro = GetElement(session, idProd);

@@ -248,10 +248,10 @@ namespace Glass.UI.Web.Cadastros
         #region Métodos Ajax
 
         [Ajax.AjaxMethod]
-        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idStr, string percDescontoQtdeStr, string tipo, string idPedido, string alturaSTR)
+        public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda, string idStr, string percDescontoQtdeStr, string tipo, string idPedido, string alturaStr)
         {
-            float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-            float altura = !string.IsNullOrEmpty(alturaSTR) ? float.Parse(alturaSTR.Replace(".", ",")) : 0;
+            float percDescontoQtde = !string.IsNullOrWhiteSpace(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float altura = !string.IsNullOrWhiteSpace(alturaStr) ? float.Parse(alturaStr.Replace(".", ",")) : 0;
             uint id;
 
             if (uint.TryParse(idStr, out id))
@@ -264,8 +264,8 @@ namespace Glass.UI.Web.Cadastros
                 Produto prod = ProdutoDAO.Instance.GetByCodInterno(codInterno);
 
                 // Recupera o valor mínimo do produto
-                int? tipoEntr = !String.IsNullOrEmpty(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
-                uint? idCli = !String.IsNullOrEmpty(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
+                int? tipoEntr = !string.IsNullOrWhiteSpace(tipoEntrega) ? (int?)Glass.Conversoes.StrParaInt(tipoEntrega) : null;
+                uint? idCli = !string.IsNullOrWhiteSpace(idCliente) ? (uint?)Glass.Conversoes.StrParaUint(idCliente) : null;
                 return ProdutoDAO.Instance.GetValorMinimo(prod.IdProd, tipoEntr, idCli, revenda == "true", false, percDescontoQtde, idPedido.StrParaIntNullable(), null, null, altura).ToString();
             }
         }

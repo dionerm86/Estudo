@@ -35,7 +35,26 @@ function atualizaValMin()
 
     var percDescontoQtde = controleDescQtde.PercDesconto();
 
-    FindControl("hdfValMin", "input").value = LstOrcamentoRapido.GetValorMinimo(codInterno.value, idCliente, tipoEntrega, cliRevenda, percDescontoQtde, altura).value;
+    var retorno = LstOrcamentoRapido.GetValorMinimo(codInterno.value, idCliente, tipoEntrega, cliRevenda, percDescontoQtde, altura);
+
+    if (retorno.error != null) {
+      alert(retorno.error.description);
+      return;
+    }
+    else if (retorno == null) {
+      alert("Erro na recuperação do valor de tabela do produto.");
+      return;
+    }
+
+    var valMin = FindControl("hdfValMin", "input");
+
+    if(valMin != null){
+      valMin.value = retorno.value;
+    }
+    else{
+      alert("Não foi possível encontrar o controle 'hdfValMin'");
+      return false;
+    }
 }
 
 // Carrega dados do produto com base no código do produto passado
@@ -82,8 +101,9 @@ function loadProduto(orcamentoRapido) {
         FindControl("hdfTipoCalc", "input").value = retorno[10]; // Armazena o tipo de cálculo que será feito no produto
         FindControl("hdfCustoProd", "input").value = retorno[11]; // Armazena o custo do produto
 
-        if (FindControl("txtAltura", "input").value != "")
+        if (FindControl("txtAltura", "input") != null && FindControl("txtAltura", "input").value != "") {
           GetAdicionalAlturaChapa();
+        }
 
         var esp = retorno[5] != "" ? parseFloat(retorno[5].replace(",", ".")) : 0;
         if (FindControl("txtEspessura", "input") != null)
@@ -271,7 +291,15 @@ function GetAdicionalAlturaChapa() {
     return;
   }
 
-  FindControl("txtValor", "input").value = retorno.value.replace(".", ",");
+  var valorIns = FindControl("txtValor", "input");
+
+  if (valorIns != null) {
+    valorIns.value = retorno.value.replace(".", ",");
+  }
+  else {
+    alert("Não foi possível encontrar o controle 'txtValorIns'");
+    return false;
+  }
 }
 
 // Calcula o total mostrando mensagem de erro se houver

@@ -448,10 +448,10 @@ namespace Glass.UI.Web.Cadastros.Projeto
 
         [Ajax.AjaxMethod]
         public string GetValorMinimo(string codInterno, string tipoEntrega, string idCliente, string revenda,
-            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr, string idPedido, string alturaSTR)
+            string reposicao, string tipoPedido, string idMaterItemProjStr, string percDescontoQtdeStr, string idPedido, string alturaStr)
         {
-            float percDescontoQtde = !String.IsNullOrEmpty(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
-            float altura = !string.IsNullOrEmpty(alturaSTR) ? float.Parse(alturaSTR.Replace(".", ",")) : 0;
+            float percDescontoQtde = !String.IsNullOrWhiteSpace(percDescontoQtdeStr) ? float.Parse(percDescontoQtdeStr.Replace(".", ",")) : 0;
+            float altura = !string.IsNullOrWhiteSpace(alturaStr) ? float.Parse(alturaStr.Replace(".", ",")) : 0;
             uint idMaterItemProj;
 
             if (uint.TryParse(idMaterItemProjStr, out idMaterItemProj))

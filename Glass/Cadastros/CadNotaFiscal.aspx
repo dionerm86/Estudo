@@ -723,8 +723,9 @@
             FindControl("hdfIsAluminio", "input").value = retorno[3]; // Informa se o produto é vidro
             FindControl("hdfM2Minimo", "input").value = retorno[4]; // Informa se o produto possui m² mínimo
 
-            if(FindControl("txtAlturaIns", "input").value != "")
+            if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != "") {
                 GetAdicionalAlturaChapa();
+            }
 
             var tipoCalc = eval(nomeControle).DadosProduto().TipoCalculo;
 
@@ -974,8 +975,25 @@
             return;
         }
 
-        FindControl("hdfValMin", "input").value = retorno.value.replace(".", ",");
-        FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
+        var valMin = FindControl("hdfValMin", "input");
+
+        if(valMin != null) {
+            valMin.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'hdfValMin'");
+            return false;
+        }
+
+        var valorIns = FindControl("txtValorIns", "input");
+
+        if(valorIns != null){
+            valorIns.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'txtValorIns'");
+            return false;
+        }
     }
 
     // Calcula em tempo real a metragem quadrada do produto

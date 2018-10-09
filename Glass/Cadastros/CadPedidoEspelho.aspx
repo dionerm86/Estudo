@@ -76,8 +76,19 @@
                 var percDescontoQtde = controleDescQtde.PercDesconto();
                 var reposicao = FindControl("hdfIsReposicao", "input").value;
 
-                FindControl("hdfValMin", "input").value = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
-                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido, altura).value;
+                var retorno = CadPedidoEspelho.GetValorMinimo(codInterno, tipoPedido, tipoEntrega,
+                    idCliente, cliRevenda, reposicao, idProdPed, percDescontoQtde, idPedido, altura);
+
+                if (retorno.error != null) {
+                    alert(retorno.error.description);
+                    return;
+                }
+                else if(retorno == null){
+                    alert("Erro na recuperação do valor de tabela do produto.");
+                    return;
+                }
+
+                FindControl("hdfValMin", "input").value = retorno.value;
             }
             else
                 FindControl("hdfValMin", "input").value = FindControl("lblValorIns", "input") != null ? FindControl("lblValorIns", "input").value : "";
@@ -391,8 +402,9 @@
                         FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como deve ser calculado o produto
                         var tipoCalc = retorno[7];
 
-                        if(FindControl("txtAlturaIns", "input").value != "")
+                        if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
                             GetAdicionalAlturaChapa();
+                        }
 
                         qtdEstoque = retorno[13]; // Pega a quantidade disponível em estoque deste produto
                         exibirMensagemEstoque = retorno[14] == "true";
@@ -931,7 +943,15 @@
                 return;
             }
 
-            FindControl("lblValorIns", "span").innerHTML = retorno.value.replace(".", ",");
+            var valorIns = FindControl("lblValorIns", "span");
+
+            if(valorIns != null){
+                valorIns.innerHTML = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'lblValorIns'");
+                return false;
+            }
         }
 
         // Calcula em tempo real o valor total do produto

@@ -258,8 +258,9 @@
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
 
-                    if(FindControl("txtAlturaIns", "input").value != "")
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
                         GetAdicionalAlturaChapa();
+                    }
 
                     // Se produto for do grupo vidro, habilita campos de beneficiamento e mostra a espessura
                     if (retorno[4] == "true" && FindControl("lnkBenef", "a") != null) {
@@ -500,8 +501,25 @@
                 return;
             }
 
-            FindControl("hdfValMin", "input").value = retorno.value.replace(".", ",");
-            FindControl("txtValorIns", "input").value = retorno.value.replace(".", ",");
+            var valMin = FindControl("hdfValMin", "input");
+
+            if(valMin != null) {
+                valMin.value = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'hdfValMin'");
+                return false;
+            }
+
+            var valorIns = FindControl("txtValorIns", "input");
+
+            if(valorIns != null) {
+                valorIns.value = retorno.value.replace(".", ",");
+            }
+            else{
+                alert("Não foi possível encontrar o controle 'txtValorIns'");
+                return false;
+            }
         }
 
         // Calcula em tempo real o valor total do produto

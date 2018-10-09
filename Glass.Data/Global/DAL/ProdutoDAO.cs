@@ -3299,7 +3299,7 @@ namespace Glass.Data.DAL
 
             if (valorMinimoProd > 0)
             {
-                var adicionalChapaVidro = ChapaVidroDAO.Instance.GetAdicionalAlturaChapaVidro((uint)idProd, altura);
+                var adicionalChapaVidro = ChapaVidroDAO.Instance.GetAdicionalAlturaChapaVidro(null, (uint)idProd, altura);
                 return Math.Round(((valorMinimoProd * (1 - ((decimal)percDescontoQtde / 100))) * desc.PercMultiplicar) * (1 + ((decimal)adicionalChapaVidro / 100)), 2);
             }
             else

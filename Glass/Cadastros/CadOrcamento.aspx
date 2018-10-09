@@ -115,7 +115,18 @@
 
             var percDescontoQtde = controleDescQtde.PercDesconto();
 
-            FindControl("hdfValMin", "input").value = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento, altura).value;
+            var retorno = CadOrcamento.GetValorMinimo(codInterno, tipoEntrega, idCliente, cliRevenda, idProdOrca, percDescontoQtde, idOrcamento, altura);
+
+            if (retorno.error != null) {
+                alert(retorno.error.description);
+                return;
+            }
+            else if(retorno == null){
+                alert("Erro na recuperação do valor de tabela do produto.");
+                return;
+            }
+
+            FindControl("hdfValMin", "input").value = retorno.value;
         }
 
         // Função chamada após selecionar produto pelo popup

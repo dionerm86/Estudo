@@ -160,7 +160,7 @@ namespace Glass.UI.Web.Utils
             string revenda, string idProdPedStr, string percDescontoQtdeStr, string idPedido)
         {
             return WebGlass.Business.Produto.Fluxo.Valor.Ajax.GetValorMinimoPedido(codInterno, tipoPedido, tipoEntrega,
-                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr, idPedido, "");
+                tipoVenda, idCliente, revenda, idProdPedStr, percDescontoQtdeStr, idPedido, string.Empty);
         }
 
         /// <summary>

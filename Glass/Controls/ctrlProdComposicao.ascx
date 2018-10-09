@@ -140,8 +140,9 @@
                     exibirMensagemEstoqueComposicao = retorno[14] == "true";
                     qtdEstoqueMensagemComposicao = retorno[15];
 
-                    if(FindControl("txt_AlturaComposicaoIns", "input", table).value != "")
+                    if(FindControl("txt_AlturaComposicaoIns", "input", table) != null && FindControl("txt_AlturaComposicaoIns", "input", table).value != ""){
                         GetAdicionalAlturaChapa();
+                    }
 
                     var tipoCalc = retorno[7];
 
@@ -551,7 +552,15 @@
             return;
         }
 
-        FindControl("txt_ValorComposicaoIns", "input").value = retorno.value.replace(".", ",");
+        var valorIns = FindControl("txt_ValorComposicaoIns", "input");
+
+        if(valorIns != null){
+            valorIns.value = retorno.value.replace(".", ",");
+        }
+        else{
+            alert("Não foi possível encontrar o controle 'txt_ValorComposicaoIns'");
+            return false;
+        }
     }
 
     // Calcula em tempo real o valor total do produto
