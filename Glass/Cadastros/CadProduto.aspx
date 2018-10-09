@@ -189,17 +189,17 @@
             var tabela = document.getElementById("<%= dtvProduto.ClientID %>");
 
             // Recortes X1-Y2
-            tabela.rows[34].style.display = visivel ? "" : "none";
-            // Transversal Max X/Y
             tabela.rows[35].style.display = visivel ? "" : "none";
-            // Desperdício Min X/Y
+            // Transversal Max X/Y
             tabela.rows[36].style.display = visivel ? "" : "none";
-            // Distância Mínima
+            // Desperdício Min X/Y
             tabela.rows[37].style.display = visivel ? "" : "none";
-            // Recorte automático da forma
+            // Distância Mínima
             tabela.rows[38].style.display = visivel ? "" : "none";
-            // Ângulo recorte automático
+            // Recorte automático da forma
             tabela.rows[39].style.display = visivel ? "" : "none";
+            // Ângulo recorte automático
+            tabela.rows[40].style.display = visivel ? "" : "none";
         }
 
         function setBaixaEstFiscal(codInterno) {
