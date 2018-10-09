@@ -385,7 +385,7 @@
             */
 
             //return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3";
-            return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&IdCli=" + FindControl("txtNumCli","input").value + "&tipoPagto=2";
+            return "?idAcerto=" + FindControl("hdfIdAcerto", "input").value + "&origem=3&idCliente=" + FindControl("txtNumCli","input").value + "&tipoPagto=2";
         }
 
         function getCli(idCli) {

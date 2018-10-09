@@ -1255,6 +1255,8 @@
     <Content Include="Listas\LstInfoAdicCredito.aspx" />
     <Content Include="Listas\LstInfoAdicNFEExtemporanea.aspx" />
     <Content Include="Listas\LstInfoDiferimento.aspx" />
+    <Content Include="Listas\LstInfoPedidos.aspx" />
+    <Content Include="Listas\LstInfoPedidosPeriodo.aspx" />
     <Content Include="Listas\LstInfoValorAgregado.aspx" />
     <Content Include="Listas\LstInstalacao.aspx" />
     <Content Include="Listas\LstInventarioEstoque.aspx" />
@@ -5893,6 +5895,20 @@
     <Compile Include="Listas\LstInfoDiferimento.aspx.designer.cs">
       <DependentUpon>LstInfoDiferimento.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Listas\LstInfoPedidos.aspx.cs">
+      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidos.aspx.designer.cs">
+      <DependentUpon>LstInfoPedidos.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.cs">
+      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Listas\LstInfoPedidosPeriodo.aspx.designer.cs">
+      <DependentUpon>LstInfoPedidosPeriodo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Listas\LstInfoValorAgregado.aspx.cs">
       <DependentUpon>LstInfoValorAgregado.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -9334,6 +9350,10 @@
     <EmbeddedResource Include="Relatorios\rptUtilizacaoSistema.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Relatorios\rptInfoPedidos.rdlc" />
+    <EmbeddedResource Include="Relatorios\rptInfoPedidosPeriodo.rdlc" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

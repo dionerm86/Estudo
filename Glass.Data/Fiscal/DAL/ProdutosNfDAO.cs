@@ -1185,27 +1185,46 @@ namespace Glass.Data.DAL
 
             try
             {
-                /* Chamado 34268. */
-                if (ProdutoImpressaoDAO.Instance.NfPossuiPecaImpressa(session, (int)objInsert.IdNf))
-                    throw new Exception("Não é possível inserir produtos nesta nota fiscal porque existem etiquetas associadas à ela.");
+                PodeEditar(session, objInsert.IdNf);
 
-                // Se esta NF não puder ser editada, emite o erro.
-                int situacao = NotaFiscalDAO.Instance.ObtemSituacao(session, objInsert.IdNf);
-                if (situacao != (int)NotaFiscal.SituacaoEnum.Aberta && situacao != (int)NotaFiscal.SituacaoEnum.FalhaEmitir &&
-                    situacao != (int)NotaFiscal.SituacaoEnum.NaoEmitida && situacao != (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros)
-                    throw new Exception("Apenas Notas Fiscais nas situações: Aberta, Não Emitida e Falha ao emitir podem ser alteradas.");
+                /* Chamado 34268. */
+
+                if (ProdutoImpressaoDAO.Instance.NfPossuiPecaImpressa(session, (int)objInsert.IdNf))
+                {
+                    throw new Exception("Não é possível inserir produtos nesta nota fiscal porque existem etiquetas associadas à ela.");
+                }
 
                 var tipoDocumentoNotaFiscal = NotaFiscalDAO.Instance.GetTipoDocumento(session, objInsert.IdNf);
 
                 if (!NaturezaOperacaoDAO.Instance.ValidarCfop(session, (int)objInsert.IdNaturezaOperacao.GetValueOrDefault(0), tipoDocumentoNotaFiscal))
+                {
                     throw new Exception("A Natureza de operação selecionada não pode ser utilizada em notas desse tipo.");
+                }
 
                 uint idCliente = NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf).GetValueOrDefault();
                 float totM2 = objInsert.TotM, altura = objInsert.Altura, totM2Calc = 0;
                 decimal total = objInsert.Total, custoProd = 0;
 
-                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(session, idCliente, (int)objInsert.IdProd, objInsert.Largura, objInsert.Qtde, 1, objInsert.ValorUnitario, 0, false, 0,
-                    false, false, ref custoProd, ref altura, ref totM2, ref totM2Calc, ref total, true, 0);
+                Glass.Data.DAL.ProdutoDAO.Instance.CalcTotaisItemProd(
+                    session,
+                    idCliente,
+                    (int)objInsert.IdProd,
+                    objInsert.Largura,
+                    objInsert.Qtde,
+                    1,
+                    objInsert.ValorUnitario,
+                    0,
+                    false,
+                    0,
+                    false,
+                    false,
+                    ref custoProd,
+                    ref altura,
+                    ref totM2,
+                    ref totM2Calc,
+                    ref total,
+                    true,
+                    0);
 
                 objInsert.TotM = totM2;
 
@@ -1213,7 +1232,14 @@ namespace Glass.Data.DAL
                 objInsert.Total = Math.Round(total, 2);
 
                 // Calcula o peso do produto
-                objInsert.Peso = Utils.CalcPeso(session, (int)objInsert.IdProd, objInsert.Espessura, objInsert.TotM, objInsert.Qtde, objInsert.Altura, true);
+                objInsert.Peso = Utils.CalcPeso(
+                    session,
+                    (int)objInsert.IdProd,
+                    objInsert.Espessura,
+                    objInsert.TotM,
+                    objInsert.Qtde,
+                    objInsert.Altura,
+                    true);
 
                 // Se o NCM não tiver sido informado, busca do produto
                 if (string.IsNullOrEmpty(objInsert.Ncm))
@@ -1228,31 +1254,47 @@ namespace Glass.Data.DAL
                     Glass.Data.DAL.GrupoProdDAO.Instance.IsVidro(ProdutoDAO.Instance.ObtemIdGrupoProd(session, (int)objInsert.IdProd)))
                 {
                     if (FiscalConfig.NotaFiscalConfig.ExibirLarguraEAlturaInfAdicProduto)
+                    {
                         objInsert.InfAdic = objInsert.Largura + "x" + objInsert.Altura;
+                    }
                     else if (FiscalConfig.NotaFiscalConfig.ExibirQtdLarguraEAlturaInfAdicProduto &&
                         !Glass.Configuracoes.FiscalConfig.NotaFiscalConfig.AgruparProdutosGerarNFe)
+                    {
                         objInsert.InfAdic = objInsert.Qtde + " - " + objInsert.Altura + "x" + objInsert.Largura;
+                    }
                 }
 
                 if (objInsert.IdNaturezaOperacao.GetValueOrDefault() == 0)
+                {
                     objInsert.IdNaturezaOperacao = NotaFiscalDAO.Instance.ObtemIdNaturezaOperacao(session, objInsert.IdNf);
 
+                }
                 // Se o MVA não tiver sido informado, busca do produto
                 if (objInsert.Mva == 0)
-                    objInsert.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(session, (int)objInsert.IdProd,
+                {
+                    var idCfop = NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objInsert.IdNaturezaOperacao.Value);
+                    var isCfopDevolucao = CfopDAO.Instance.IsCfopDevolucao(session, idCfop);
+
+                    var saida = (tipoDoc == (int)NotaFiscal.TipoDoc.Saída ||
+                        (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada && isCfopDevolucao));
+
+                    objInsert.Mva = MvaProdutoUfDAO.Instance.ObterMvaPorProduto(
+                        session,
+                        (int)objInsert.IdProd,
                         NotaFiscalDAO.Instance.ObtemIdLoja(session, objInsert.IdNf),
                         (int?)NotaFiscalDAO.Instance.ObtemIdFornec(session, objInsert.IdNf),
                         NotaFiscalDAO.Instance.ObtemIdCliente(session, objInsert.IdNf),
-                        (tipoDoc == (int)NotaFiscal.TipoDoc.Saída ||
-                        /* Chamado 32984 e 39660. */
-                        (tipoDoc == (int)NotaFiscal.TipoDoc.Entrada &&
-                        CfopDAO.Instance.IsCfopDevolucao(session, NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objInsert.IdNaturezaOperacao.Value)))));
+                        saida);
+                }
 
                 objInsert.Mva = (float)Math.Round((decimal)objInsert.Mva, 2);
 
                 //Se nao for cst de origem 3, 5 ou 8 apaga o numero de controle da FCI caso esteja preenchido
+
                 if (objInsert.CstOrig != 3 && objInsert.CstOrig != 5 && objInsert.CstOrig != 8)
+                {
                     objInsert.NumControleFciStr = null;
+                }
 
                 objInsert.CstCofins = objInsert.CstPis;
                 objInsert.BcCofins = objInsert.BcPis;
@@ -1283,11 +1325,21 @@ namespace Glass.Data.DAL
                     objInsert.IdCfop != NotaFiscalDAO.Instance.GetIdCfop(session, objInsert.IdNf))
                 {
                     string obsCfop = CfopDAO.Instance.GetObs(session, objInsert.IdCfop.Value);
-                    string infCompl = NotaFiscalDAO.Instance.ObtemValorCampo<string>(session, "infCompl", "idNf=" + objInsert.IdNf);
+                    string infCompl = NotaFiscalDAO.Instance.ObtemValorCampo<string>(
+                        session, 
+                        "infCompl", 
+                        $"idNf={objInsert.IdNf}");
 
                     if (!String.IsNullOrEmpty(obsCfop) && (infCompl == null || !infCompl.Contains(obsCfop)))
-                        NotaFiscalDAO.Instance.InsereInfCompl(session, objInsert.IdNf, (!String.IsNullOrEmpty(infCompl) ? ". " : "") + obsCfop);
+                    {
+                        NotaFiscalDAO.Instance.InsereInfCompl(
+                            session, 
+                            objInsert.IdNf, 
+                            (!String.IsNullOrEmpty(infCompl) ? ". " : "") + obsCfop);
+                    }
                 }
+
+                PodeEditar(session, objInsert.IdNf);
             }
             catch (Exception ex)
             {
@@ -1334,6 +1386,9 @@ namespace Glass.Data.DAL
         {
             try
             {
+                // Se esta NF não puder ser editada, emite o erro.
+                PodeEditar(session, objUpdate.IdNf);
+
                 // Recuperar possíveis valores referente à nota de importação, para não perdê-los
                 ProdutosNf prodNfOld = GetElement(session, objUpdate.IdProdNf);
                 /* Chamado 34268. */
@@ -1351,13 +1406,6 @@ namespace Glass.Data.DAL
                             "M2, lote ou tipo de mercadoria do produto, pois, existem etiquetas associadas à nota fiscal. " +
                             "Cancele as etiquetas da nota para conseguir alterá-lo.");
                 }
-
-                // Se esta NF não puder ser editada, emite o erro.
-                int situacao = NotaFiscalDAO.Instance.ObtemSituacao(session, objUpdate.IdNf);
-                if (situacao != (int)NotaFiscal.SituacaoEnum.Aberta && situacao != (int)NotaFiscal.SituacaoEnum.FalhaEmitir &&
-                    situacao != (int)NotaFiscal.SituacaoEnum.NaoEmitida && situacao != (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros &&
-                    (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && !NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(session, objUpdate.IdNf)))
-                    throw new Exception("Apenas Notas Fiscais nas situações: Aberta, Não Emitida e Falha ao emitir podem ser alteradas.");
 
                 var tipoDocumentoNotaFiscal = NotaFiscalDAO.Instance.GetTipoDocumento(session, objUpdate.IdNf);
 
@@ -1407,7 +1455,7 @@ namespace Glass.Data.DAL
                     objUpdate.TotM = totM2;
 
                     // Chamado 15025: Arredondamento criado para resolver diferença da BC ICMS para o Total Prod
-                    objUpdate.Total = Math.Round(total, 2);                    
+                    objUpdate.Total = Math.Round(total, 2);
                     //objUpdate.Total = Math.Round(total,4);
 
                     // Se o NCM não tiver sido informado, busca de produto
@@ -1431,7 +1479,7 @@ namespace Glass.Data.DAL
                             CfopDAO.Instance.IsCfopDevolucao(NaturezaOperacaoDAO.Instance.ObtemIdCfop(session, objUpdate.IdNaturezaOperacao.Value)))));
 
                     objUpdate.Mva = (float)Math.Round((decimal)objUpdate.Mva, 2);
-                    
+
                     var produtosNf = GetByNf(session, objUpdate.IdNf).ToList();
 
                     //Remove o produto da lista que foi adicionado para o calculo do imposto.
@@ -1480,6 +1528,8 @@ namespace Glass.Data.DAL
                 throw new Exception("Falha ao atualizar Produto da NF. Erro: " + ex.Message);
             }
 
+            PodeEditar(session, objUpdate.IdNf);
+
             return 1;
         }
 
@@ -1517,10 +1567,8 @@ namespace Glass.Data.DAL
             var prod = GetElement(sessao, idProdNf);
 
             // Se esta NF não puder ser editada, emite o erro.
-            int situacao = NotaFiscalDAO.Instance.ObtemSituacao(sessao, idNf);
-            if (situacao != (int)NotaFiscal.SituacaoEnum.Aberta && situacao != (int)NotaFiscal.SituacaoEnum.FalhaEmitir &&
-                situacao != (int)NotaFiscal.SituacaoEnum.NaoEmitida && situacao != (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros)
-                throw new Exception("Apenas Notas Fiscais nas situações: Aberta, Não Emitida e Falha ao emitir podem ser alteradas.");
+
+            PodeEditar(sessao, idNf);
 
             try
             {
@@ -1547,7 +1595,9 @@ namespace Glass.Data.DAL
             {
                 throw new Exception("Falha ao atualizar Valor da NF. Erro: " + ex.Message);
             }
-            
+
+            PodeEditar(sessao, idNf);
+
             return returnValue;
         }
 
@@ -2041,6 +2091,21 @@ namespace Glass.Data.DAL
                 new GDA.GDAParameter("?id", idProdNf));
         }
 
+        #endregion
+
+        #region Valida alterações no produto_nf
+        /// <summary>
+        /// Método para verificar se um produto de Nota fiscal pode ser alterado.
+        /// </summary>
+        /// <param name="session">Sessão do GDA</param>
+        /// <param name="idNf">Id da nota que possuí o produto</param>
+        private static void PodeEditar(GDASession session, uint idNf)
+        {
+            if (!NotaFiscalDAO.Instance.PodeEditar(session, idNf))
+            {
+                throw new Exception("Apenas Notas Fiscais nas situações: Aberta, Não Emitida e Falha ao emitir podem ser alteradas.");
+            }
+        }
         #endregion
     }
 }
