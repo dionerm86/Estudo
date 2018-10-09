@@ -136,7 +136,7 @@
             var idCli = FindControl("txtNumCli", "input").value;
 
             if (idCli != null && idCli != "") {
-                FindControl("hdfIdCliente", "input").value = parseInt(idCli);
+                FindControl("hdfIdCliente", "input").value = idCli;
             }
 
             return true;
