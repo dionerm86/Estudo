@@ -512,6 +512,9 @@ namespace Glass.Data.Model
         [PersistenceProperty("TRANSACAO")]
         public bool Transacao { get; set; }
 
+        [PersistenceProperty("DATAENTREGASISTEMA")]
+        public DateTime? DataEntregaSistema { get; set; }
+
         #region Dados para exportação
 
         [PersistenceProperty("IdPedidoExterno")]
