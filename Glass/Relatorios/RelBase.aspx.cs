@@ -165,6 +165,34 @@ namespace Glass.UI.Web.Relatorios
 
                         break;
                     }
+                case "InfoPedidos":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidos.rdlc";
+                        var fastDelivery = Glass.Conversoes.StrParaFloat(Request["fastDelivery"]);
+                        var idPedido = !String.IsNullOrEmpty(Request["idPedido"]) ? Glass.Conversoes.StrParaUint(Request["idPedido"]) : 0;
+                        var idCliente = !String.IsNullOrEmpty(Request["idCliente"]) ? Glass.Conversoes.StrParaUint(Request["idCliente"]) : 0;
+                        var tipo = !String.IsNullOrEmpty(Request["tipo"]) ? Glass.Conversoes.StrParaInt(Request["tipo"]) : 0;
+
+                        lstParam.Add(new ReportParameter("Data", Request["data"]));
+                        lstParam.Add(new ReportParameter("FastDelivery", fastDelivery.ToString()));
+                        lstParam.Add(new ReportParameter("TextoAdicionalProducao", ""));
+
+                        report.DataSources.Add(new ReportDataSource("PedidoRpt", Glass.Data.RelDAL.PedidoRptDAL.Instance.CopiaLista(PedidoDAO.Instance.GetForInfoPedidos(Request["data"],
+                            Request["data"], idPedido, idCliente, Request["nomeCliente"], tipo), PedidoRpt.TipoConstrutor.ListaPedidos, false, login)));
+
+                        break;
+                    }
+                case "InfoPedidosPeriodo":
+                    {
+                        report.ReportPath = "Relatorios/rptInfoPedidosPeriodo.rdlc";
+
+                        report.DataSources.Add(new ReportDataSource("InfoPedidos", Glass.Data.RelDAL.InfoPedidosDAO.Instance.GetInfoPedidos(Request["dataIni"], Request["dataFim"])));
+
+                        lstParam.Add(new ReportParameter("DataInicio", Request["dataIni"]));
+                        lstParam.Add(new ReportParameter("DataFim", Request["dataFim"]));
+
+                        break;
+                    }
                 case "LiberarPedidoMov":
                 case "LiberarPedidoMovSemValor":
                     {
