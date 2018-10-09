@@ -133,6 +133,12 @@
                 }
             }
 
+            var idCli = FindControl("txtNumCli", "input").value;
+
+            if (idCli != null && idCli != "") {
+                FindControl("hdfIdCliente", "input").value = parseInt(idCli);
+            }
+
             return true;
         }
 
