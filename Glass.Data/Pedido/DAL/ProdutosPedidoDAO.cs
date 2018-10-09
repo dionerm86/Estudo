@@ -3760,14 +3760,15 @@ namespace Glass.Data.DAL
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
-                bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var calcMult5 = prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedido,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -4259,14 +4260,15 @@ namespace Glass.Data.DAL
             if (!objInsert.Redondo && objInsert.IdAmbientePedido > 0 && AmbientePedidoDAO.Instance.IsRedondo(session, objInsert.IdAmbientePedido.Value))
                 objInsert.Redondo = true;
 
-            bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var calcMult5 = objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(
                 session,
                 pedido,
                 objInsert,
                 Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                calcMult5,
                 objInsert.Beneficiamentos.CountAreaMinimaSession(session)
             );
 
@@ -4840,13 +4842,14 @@ namespace Glass.Data.DAL
                     objUpdate.Redondo = true;
 
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, objUpdate.IdPedido);
+                var calcMult5 = objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     sessao,
                     pedido,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 
@@ -4953,7 +4956,8 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
-            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+            var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, produto.IdPedido);
+            var calcMult5 = produto.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(session,
                 container,
