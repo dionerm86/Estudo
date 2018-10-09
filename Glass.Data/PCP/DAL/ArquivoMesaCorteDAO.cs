@@ -12385,6 +12385,12 @@ namespace Glass.Data.DAL
                 // Altera o ReferenceValueProvider para buscar os Valores das Constantes da ferragem cadastrada no WebGlass
                 projeto.ReferenceValueProvider = Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<CalcEngine.IReferenceValueProvider>();
 
+                // Fixa os valores padrão de referência
+                foreach (var referenceValue in projeto.Variables.OfType<ReferenceValue>())
+                {
+                    referenceValue.DefaultValue = referenceValue.Value;
+                }
+
                 /* Chamado 23500. */
                 //Variáveis Compilador
                 PreencheVariaveisCompilador(pecaItemProjeto, variaveisCalcEngine, descontoLap, tipoArquivo);
