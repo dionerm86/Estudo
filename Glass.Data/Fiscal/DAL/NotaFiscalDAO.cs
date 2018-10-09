@@ -9286,11 +9286,11 @@ namespace Glass.Data.DAL
         /// </summary>
         /// <param name="idNf"></param>
         /// <returns></returns>
-        public bool PodeEditar(uint idNf)
+        public bool PodeEditar(GDASession session, uint idNf)
         {
-            int situacao = ObtemSituacao(idNf);
+            int situacao = ObtemSituacao(session, idNf);
             LoginUsuario login = UserInfo.GetUserInfo;
-            int ultCodEvento = LogNfDAO.Instance.ObtemUltimoCodigo(idNf);
+            int ultCodEvento = LogNfDAO.Instance.ObtemUltimoCodigo(session, idNf);
 
             // Códigos de retorno da receita que não pode permitir edição de NFe, pela possibilidade da mesma já estar autorizada
             List<int> lstCodNaoEditavel = new List<int>() { 100, 101, 102, 103, 104, 105, 108, 110, 204, 205, 206, 218, 219, 220, 221, 256, 420, 563 };
@@ -9299,7 +9299,7 @@ namespace Glass.Data.DAL
                 (situacao == (int)NotaFiscal.SituacaoEnum.FalhaEmitir && !lstCodNaoEditavel.Contains(ultCodEvento));
 
             bool flagManual = (situacao == (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros ||
-                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(null, idNf))) &&
+                (situacao == (int)NotaFiscal.SituacaoEnum.Autorizada && NotaFiscalDAO.Instance.ExisteCartaCorrecaoRegistrada(session, idNf))) &&
                 Config.PossuiPermissao(Config.FuncaoMenuFiscal.AlteracaoManualNFe);
 
             return (flagSituacao || flagManual);
@@ -10344,43 +10344,18 @@ namespace Glass.Data.DAL
             if (string.IsNullOrEmpty(idCsc) || string.IsNullOrEmpty(csc))
                 throw new Exception("Código de Segurança do Contribuinte (CSC) não foi informado no cadastro da loja.");
 
-            var link = "";
+            var link = string.Empty;
 
-            //Chave de Acesso
-            link += @"chNFe=" + nfe.ChaveAcesso.Replace(" ", "");
+            /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<identificador_csc>|<codigo_hash>
+            /// <WS>?p=<chave_acesso>|<versao_qrcode>|<tipo_ambiente>|<dia_data_emissao>|<valor_total_nfce>|<digVal>|<identificador_csc>|<codigo_hash>
 
-            //Versão Qr Code
-            link += @"&nVersao=100";
+            var offline = nfe.Situacao == (int)SituacaoEnum.ContingenciaOffline
+                ? $"|{DateTime.Now.Day.ToString().PadLeft(2, '0')}|{nfe.TotalNota.ToString().Replace(",", ".")}|{digestValue}"
+                : string.Empty;
 
-            //Tipo Ambiente
-            link += "&tpAmb=" + nfe.TipoAmbiente;
-
-            //Identificação do Destinatario
-            if (!ClienteDAO.Instance.IsConsumidorFinal(nfe.IdCliente.GetValueOrDefault(0)) || !string.IsNullOrEmpty(nfe.Cpf))
-                link += @"&cDest=" + nfe.CpfCnpjDestRem.Replace(".", "").Replace("/", "").Replace("-", "");
-
-            //Data de Emissão
-            link += @"&dhEmi=" + dtEmissHex;
-
-            //Valor total da NFC-e
-            link += @"&vNF=" + Math.Round(nfe.TotalNota, 2).ToString().Replace(",", ".");
-
-            //Valor de ICMS
-            link += @"&vICMS=" + Math.Round(nfe.Valoricms, 2).ToString().Replace(",", ".");
-
-            //Digest Value da NFC-e
-            link += @"&digVal=" + digValHex.PadLeft(56, '0');
-
-            //Identificador do token
-            link += @"&cIdToken=" + idCsc.PadLeft(6, '0');
-
-            //Hash da primeira parte do link
-            var linkHash = (link + csc).CodificaParaSHA1();
-
-            //Hash
-            link += @"&cHashQRCode=" + linkHash;
-
-            link = GetWebService.UrlQrCode(loja.Uf, (ConfigNFe.TipoAmbienteNfe)nfe.TipoAmbiente) + link;
+            link = $@"{chaveAcesso}|2|{nfe.TipoAmbiente}{offline}|{Conversoes.StrParaInt(idCsc)}";
+            link = $"{link}|{(link + csc).CodificaParaSHA1()}";
+            link = $"{GetWebService.UrlQrCode(loja.Uf, (ConfigNFe.TipoAmbienteNfe)nfe.TipoAmbiente)}p={link}";
 
             return link;
         }

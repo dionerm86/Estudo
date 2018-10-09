@@ -940,11 +940,13 @@ namespace Glass.Data.DAL
             var campos = $@"pp.IdPedido, p.CodCliente AS CodPedCliente, CONCAT(prod.CodInterno, ' - ', prod.Descricao) AS DescrProduto, CAST(({campoQtde}) AS DECIMAL(12, 2)) AS Qtde,
                 pp.Altura, pp.Largura, CAST(ROUND(((pp.TotM2Calc / pp.Qtde) * {campoQtde}), 2) AS DECIMAL(12, 2)) AS TotM2Calc,
                 CAST(ROUND(IF(sgp.TipoSubgrupo IN ({(int)TipoSubgrupoProd.VidroDuplo},{(int)TipoSubgrupoProd.VidroLaminado}),
-                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({campoQtde}), 2) AS DECIMAL(12, 2)) AS Peso";
+                    (SELECT SUM(Peso) FROM produtos_pedido WHERE IdProdPedParent = pp.IdProdPed) * pp.Qtde, (pp.Peso / pp.Qtde)) * ({campoQtde}), 2) AS DECIMAL(12, 2)) AS Peso,
+                apl.CodInterno AS CodAplicacao, prc.CodInterno AS CodProcesso";
 
             var camposVolume = @"
                 v.IdPedido, p.CodCliente as CodPedCliente, CONCAT('Volume: ', v.idVolume, '  Data de Fechamento: ', v.dataFechamento) as DescrProduto,
-                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso";
+                null as Qtde, null as Altura, null as Largura, null as TotM2Calc, CAST(ROUND(SUM(pp.peso / if(pp.qtde <> 0, pp.qtde, 1) * vpp.qtde), 2) as decimal(12, 2)) as Peso,
+                NULL AS CodAplicacao, NULL AS CodProcesso";
 
             var sql = $@"
                 SELECT { camposVolume }
@@ -987,6 +989,8 @@ namespace Glass.Data.DAL
 		                WHERE COALESCE(IdProdPed, 0) > 0 AND idPedido IN ({ idsPedidos }) AND IdOrdemCarga = { idOrdemCarga }
 		                GROUP BY IdProdPed
                     ) as ic1 ON (ic1.IdProdPed = pp.IdProdPed)
+                    LEFT JOIN etiqueta_aplicacao apl ON (pp.IdAplicacao = apl.IdAplicacao)
+                    LEFT JOIN etiqueta_processo prc ON (pp.IdProcesso = prc.IdProcesso)
                 WHERE COALESCE(sgp.geraVolume, gp.geraVolume, FALSE) = FALSE
                     AND COALESCE(pp.invisivelFluxo, FALSE) = FALSE
                     AND COALESCE(ppp.situacao, { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }) = { (int)ProdutoPedidoProducao.SituacaoEnum.Producao }
@@ -3756,14 +3760,15 @@ namespace Glass.Data.DAL
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
-                bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var calcMult5 = prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedido,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -4255,14 +4260,15 @@ namespace Glass.Data.DAL
             if (!objInsert.Redondo && objInsert.IdAmbientePedido > 0 && AmbientePedidoDAO.Instance.IsRedondo(session, objInsert.IdAmbientePedido.Value))
                 objInsert.Redondo = true;
 
-            bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var calcMult5 = objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(
                 session,
                 pedido,
                 objInsert,
                 Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                calcMult5,
                 objInsert.Beneficiamentos.CountAreaMinimaSession(session)
             );
 
@@ -4836,13 +4842,14 @@ namespace Glass.Data.DAL
                     objUpdate.Redondo = true;
 
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, objUpdate.IdPedido);
+                var calcMult5 = objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     sessao,
                     pedido,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 
@@ -4949,7 +4956,8 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
-            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+            var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, produto.IdPedido);
+            var calcMult5 = produto.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(session,
                 container,

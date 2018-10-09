@@ -1,127 +1,83 @@
 <%@ Page Title="Lista de Feriados" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="LstFeriado.aspx.cs" Inherits="Glass.UI.Web.Listas.LstFeriado" %>
+    CodeBehind="LstFeriado.aspx.cs" Inherits="Glass.UI.Web.Listas.LstFeriado" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
-
-    <script type="text/javascript">
-
-        function onSave(insert) {
-            var descricao = FindControl(insert ? "txtDescricaoIns" : "txtDescricao", "input").value;
-            var dia = FindControl(insert ? "txtDiaIns" : "txtDia", "input").value;
-            var mes = FindControl(insert ? "txtMesIns" : "txtMes", "input").value;
-
-            if (descricao == "") {
-                alert("Informe a descrição do feriado.");
-                return false;
-            }
-
-            if (dia == "") {
-                alert("Informe o dia.");
-                return false;
-            }
-            else {
-                if (parseInt(dia) < 1 || parseInt(dia) > 31)
-                {
-                    alert("Dia inválido.");
-                    return false;
-                }
-            }
-
-            if (mes == "") {
-                alert("Informe o Mês.");
-                return false;
-            }
-            else {
-                if (parseInt(mes) < 1 || parseInt(mes) > 12)
-                {
-                    alert("Mês inválido.");
-                    return false;
-                }
-            }
-        }
-
-    </script>
-
-    <section>
-        <div>
-            <asp:GridView ID="grdFeriado" runat="server" SkinID="gridViewEditable"
-                          DataKeyNames="IdFeriado" DataSourceID="odsFeriado" 
-                          Width="378px">
-                <Columns>
-                    <asp:TemplateField>
-                        <ItemTemplate>
-                            <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit">
-                                    <img border="0" src="../Images/Edit.gif"></img></asp:LinkButton>
-                            <asp:ImageButton ID="imbExcluir" runat="server" CommandName="Delete" ImageUrl="~/Images/ExcluirGrid.gif"
-                                ToolTip="Excluir" />
-                        </ItemTemplate>
-                        <EditItemTemplate>
-                            <asp:ImageButton ID="imbAtualizar" runat="server" CommandName="Update" Height="16px"
-                                ImageUrl="~/Images/ok.gif" ToolTip="Atualizar" OnClientClick="return onSave(false);" />
-                            <asp:ImageButton ID="imbCancelar" runat="server" CommandName="Cancel" ImageUrl="~/Images/ExcluirGrid.gif"
-                                ToolTip="Cancelar" />
-                        </EditItemTemplate>
-                        <ItemStyle Wrap="False" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Descrição" SortExpression="Descricao">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="txtDescricao" runat="server" MaxLength="40" Text='<%# Bind("Descricao") %>'
-                                Width="200px"></asp:TextBox>
-                        </EditItemTemplate>
-                        <FooterTemplate>
-                            <asp:TextBox ID="txtDescricaoIns" runat="server" MaxLength="40" Text='<%# Bind("Descricao") %>'
-                                Width="200px"></asp:TextBox>
-                        </FooterTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label1" runat="server" Text='<%# Bind("Descricao") %>'></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Left" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Dia" SortExpression="Dia">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="txtDia" runat="server" MaxLength="30" Text='<%# Bind("Dia") %>'
-                                Width="40px"></asp:TextBox>
-                        </EditItemTemplate>
-                        <FooterTemplate>
-                            <asp:TextBox ID="txtDiaIns" runat="server" MaxLength="30" Text='<%# Bind("Dia") %>'
-                                Width="40px"></asp:TextBox>
-                        </FooterTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label2" runat="server" Text='<%# Bind("Dia") %>'></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center" />
-                    </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Mês" SortExpression="Mes">
-                        <EditItemTemplate>
-                            <asp:TextBox ID="txtMes" runat="server" MaxLength="30" Text='<%# Bind("Mes") %>'
-                                Width="40px"></asp:TextBox>
-                        </EditItemTemplate>
-                        <FooterTemplate>
-                            <asp:TextBox ID="txtMesIns" runat="server" MaxLength="30" Text='<%# Bind("Mes") %>'
-                                Width="40px"></asp:TextBox>
-                        </FooterTemplate>
-                        <ItemTemplate>
-                            <asp:Label ID="Label3" runat="server" Text='<%# Bind("Mes") %>'></asp:Label>
-                        </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center" />
-                    </asp:TemplateField>
-                    <asp:TemplateField>
-                        <FooterTemplate>
-                            <asp:LinkButton ID="lnkInserir" runat="server" OnClientClick="return onSave(true);"
-                                OnClick="lnkInserir_Click"><img border="0" src="../Images/insert.gif" /></asp:LinkButton>
-                        </FooterTemplate>
-                    </asp:TemplateField>
-                </Columns>
-            </asp:GridView>
-            <colo:VirtualObjectDataSource culture="pt-BR" ID="odsFeriado" runat="server" EnablePaging="True"
-                DeleteMethod="ApagarFeriado"  MaximumRowsParameterName="pageSize"
-                SelectMethod="PesquisarFeriados" 
-                SelectByKeysMethod="ObtemFeriado"
-                UpdateStrategy="GetAndUpdate" DeleteStrategy="GetAndDelete"
-                SortParameterName="sortExpression"
-                TypeName="Glass.Global.Negocios.IDataFluxo" DataObjectTypeName="Glass.Global.Negocios.Entidades.Feriado"
-                UpdateMethod="SalvarFeriado" InsertMethod="SalvarFeriado">
-            </colo:VirtualObjectDataSource>
-        </div>
-    </section>
+    <div id="app">
+        <section>
+            <lista-paginada ref="lista" :funcao-recuperar-itens="obterLista" :ordenacao="ordenacao" mensagem-lista-vazia="Nenhum feriado encontrado."
+                :numero-registros="15" :exibir-inclusao="true" :linha-editando="numeroLinhaEdicao">
+                <template slot="cabecalho">
+                    <th></th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('descricao')">Descrição</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('dia')">Dia</a>
+                    </th>
+                    <th>
+                        <a href="#" @click.prevent="ordenar('mes')">Mês</a>
+                    </th>
+                </template>
+                <template slot="item" slot-scope="{ item, index }">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="editar(item, index)" title="Editar" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/Edit.gif">
+                        </button>
+                        <button @click.prevent="excluir(item)" title="Excluir" v-if="!inserindo && numeroLinhaEdicao === -1">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>{{ item.descricao }}</td>
+                    <td>{{ item.dia }}</td>
+                    <td>{{ item.mes }}</td>
+                </template>
+                <template slot="itemEditando">
+                    <td style="white-space: nowrap">
+                        <button @click.prevent="atualizar" title="Atualizar">
+                            <img src="../Images/ok.gif">
+                        </button>
+                        <button @click.prevent="cancelar" title="Cancelar">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="feriado.descricao" maxlength="30" style="width: 150px" required />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="feriado.dia" style="width: 50px" v-bind:min="1" v-bind:max="31" required />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="feriado.mes" style="width: 50px" v-bind:min="1" v-bind:max="12" required />
+                    </td>
+                </template>
+                <template slot="itemIncluir">
+                    <td style="white-space: nowrap">
+                        <button v-on:click.prevent="iniciarCadastro" title="Novo feriado..." v-if="!inserindo">
+                            <img src="../Images/Insert.gif">
+                        </button>
+                        <button v-on:click.prevent="inserir" title="Inserir" v-if="inserindo">
+                            <img src="../Images/Ok.gif">
+                        </button>
+                        <button v-on:click.prevent="cancelar" title="Cancelar" v-if="inserindo">
+                            <img src="../Images/ExcluirGrid.gif">
+                        </button>
+                    </td>
+                    <td>
+                        <input type="text" v-model="feriado.descricao" maxlength="30" style="width: 150px" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="feriado.dia" style="width: 50px" v-bind:min="1" v-bind:max="31" v-if="inserindo" required />
+                    </td>
+                    <td>
+                        <input type="number" v-model.number="feriado.mes" style="width: 50px" v-bind:min="1" v-bind:max="12" v-if="inserindo" required />
+                    </td>
+                </template>
+            </lista-paginada>
+        </section>
+    </div>
+     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Feriados/Componentes/LstFeriados.js" />
+        </Scripts>
+    </asp:ScriptManager>
 </asp:Content>

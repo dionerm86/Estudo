@@ -67,16 +67,15 @@ namespace Glass.Data.DAL
 
         public override int Delete(TipoCliente objDelete)
         {
-            return DeleteByPrimaryKey((uint)objDelete.IdTipoCliente);
+            return DeleteByPrimaryKey(null, objDelete.IdTipoCliente);
         }
 
-        public override int DeleteByPrimaryKey(uint Key)
+        public override int DeleteByPrimaryKey(GDASession session, int Key)
         {
-            if (CurrentPersistenceObject.ExecuteSqlQueryCount("Select * From cliente where idTipoCliente=" + Key) > 0)
+            if (CurrentPersistenceObject.ExecuteSqlQueryCount(session, "Select * From cliente where idTipoCliente=" + Key) > 0)
                 throw new Exception("Existem clientes associados à esse tipo. É necessário desassociar todos os clientes antes de excluir o tipo.");
-
-            LogAlteracaoDAO.Instance.ApagaLogTipoCliente(Key);
-            return GDAOperations.Delete(new TipoCliente { IdTipoCliente = (int)Key });
+            
+            return GDAOperations.Delete(session, new TipoCliente { IdTipoCliente = Key });
         }
 	}
 }

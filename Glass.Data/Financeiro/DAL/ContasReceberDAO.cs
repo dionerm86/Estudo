@@ -968,9 +968,10 @@ namespace Glass.Data.DAL
                         // Tipo de cartão.
                         (f.IdTipoCartao > 0 ? " " + TipoCartaoCreditoDAO.Instance.ObterDescricao(session, (int)f.IdTipoCartao) : string.Empty) +
                         // Número de parcelas
-                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s)" : string.Empty) +
+                        (f.IdFormaPagto == 5 && TipoCartaoCreditoDAO.Instance.ObterTipoCartao(session, (int)f.IdTipoCartao) == TipoCartaoEnum.Debito ? " " :
+                        (f.IdFormaPagto == 5 && ObterNumParcMaxContaR(session, f.IdContaR) > 0 ? " " + ObterNumParcMaxContaR(session, f.IdContaR) + " parcela(s) " : string.Empty)) +
                         // Valor.
-                        " R$ " + f.ValorPagto.ToString("C") + 
+                        f.ValorPagto.ToString("C") +
                         // Descrição conta bancária.
                         (f.IdContaBanco > 0 ? " " + ContaBancoDAO.Instance.GetDescricao(session, (uint)f.IdContaBanco) : string.Empty)).ToList());
 

@@ -430,6 +430,17 @@ namespace Glass.Data.RelDAL
 
             #endregion
 
+            foreach (var item in lstFluxoCaixa)
+            {
+                var idTipoCartao = item.IdConta != null ? Helper.UtilsPlanoConta.ObterTipoCartaoPorConta((uint)item.IdConta) : null;
+                item.Data = idTipoCartao == null ? item.Data.AddDays(1) : item.Data;
+
+                while (!FuncoesData.DiaUtil(item.Data))
+                {
+                    item.Data = item.Data.AddDays(1);
+                }
+            }
+
             if (lstFluxoCaixa.Count > 0)
             {
                 DateTime currDate = lstFluxoCaixa[0].Data.Date;
@@ -472,7 +483,7 @@ namespace Glass.Data.RelDAL
 
         public FluxoCaixa[] GetList(string dataIni, string dataFim, bool prevCustoFixo, string tipoConta)
         {
-            FluxoCaixa[] itens = GetForRpt(dataIni, dataFim, prevCustoFixo, tipoConta);
+            FluxoCaixa[] itens = GetForRpt(dataIni, dataFim, prevCustoFixo, tipoConta).OrderBy(f => f.Data).ToArray();
 
             List<FluxoCaixa> retorno = new List<FluxoCaixa>();
 

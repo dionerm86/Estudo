@@ -1,4 +1,4 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -63,7 +63,7 @@ namespace Glass.API.Backend.Models.NotasFiscais.Lista
 
             this.Permissoes = new PermissoesDto
             {
-                Editar = NotaFiscalDAO.Instance.PodeEditar(notaFiscal.IdNf),
+                Editar = NotaFiscalDAO.Instance.PodeEditar(null, notaFiscal.IdNf),
                 CancelarNotasFiscaisDeTerceiros = notaFiscal.TerceirosEmAbertoVisible,
                 ExibirLogDeEventos = notaFiscal.Situacao != (int)NotaFiscal.SituacaoEnum.FinalizadaTerceiros,
                 ImprimirDanfe = notaFiscal.PrintDanfeVisible,

@@ -65,7 +65,7 @@ namespace Glass.Data.DAL
             Pedido.PesoOC = pedido.IdPedido > 0 ? peso : 0;
             IdOrdemCarga = idOrdemCarga;
             QtdePecasVidro = Math.Round(qtdePecasVidro, 2, MidpointRounding.AwayFromZero);
-            QtdePendente = Math.Round(qtdePendente, 2, MidpointRounding.AwayFromZero);
+            QtdePendente = Pedido.QtdePecaPendenteProducao = Math.Round(qtdePendente, 2, MidpointRounding.AwayFromZero);
             TotM = Math.Round(totM, 2, MidpointRounding.AwayFromZero);
             TotM2Pendente = Math.Round(totM2Pendente, 2, MidpointRounding.AwayFromZero);
             Peso = peso;
@@ -5559,16 +5559,19 @@ namespace Glass.Data.DAL
                 }
             }
 
-            var sql = $@"UPDATE pedido SET
+            if (idsPedidosErro.Any(f => f > 0))
+            {
+                var sql = $@"UPDATE pedido SET
                     Situacao = { (int)Pedido.SituacaoPedido.AguardandoConfirmacaoFinanceiro },
                     IdFuncConfirmarFinanc = { UserInfo.GetUserInfo.CodUser }
                 WHERE IdPedido IN ({ string.Join(",", idsPedidosErro) })";
 
-            objPersistence.ExecuteCommand(sessao, sql);
+                objPersistence.ExecuteCommand(sessao, sql);
 
-            foreach (var idPedido in idsPedidosErro)
-            {
-                ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                foreach (var idPedido in idsPedidosErro)
+                {
+                    ObservacaoFinalizacaoFinanceiroDAO.Instance.InsereItem(sessao, (uint)idPedido, mensagem, ObservacaoFinalizacaoFinanceiro.TipoObs.Confirmacao);
+                }
             }
         }
 
@@ -15205,6 +15208,8 @@ namespace Glass.Data.DAL
             objUpdate.TipoVenda = objUpdate.TipoVenda.GetValueOrDefault((int)Pedido.TipoVendaPedido.AVista);
             objUpdate.IdProjeto = ped.IdProjeto;
 
+            objUpdate.GeradoParceiro = ped.GeradoParceiro;
+
             if (ped.Situacao == Pedido.SituacaoPedido.Confirmado)
             {
                 objUpdate.Situacao = Pedido.SituacaoPedido.Confirmado;
@@ -16679,7 +16684,7 @@ namespace Glass.Data.DAL
                 #region Validações do pagamento antecipado
 
                 // Verifica se o pagto antecipado do pedido é válido
-                if (ObtemIdPagamentoAntecipado(session, idPedido) > 0 && ObtemValorPagtoAntecipado(session, idPedido) == 0)
+                if (ObtemIdPagamentoAntecipado(session, idPedido) > 0 && ObtemValorPagtoAntecipado(session, idPedido) == 0 && GetTotal(session, idPedido) > 0)
                     return "false|O pedido possui pagamento antecipado mas o valor recebido está zerado, será necessário receber o valor novamente.";
 
                 #endregion

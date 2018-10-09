@@ -518,39 +518,35 @@ namespace Glass.UI.Web.Relatorios
                         {
                             lstParam.Add(new ReportParameter("ExibirColunaDataLib", PedidoConfig.LiberarPedido.ToString()));
                             lstParam.Add(new ReportParameter("Agrupar", Request["agrupar"].ToString())); // 1-Cliente, 2-Data Venc, 3-Data Cad, 4-Comissionado
+                            
+                            decimal creditoTotal = 0;
+                            decimal chequeDevolvidoTotal = 0;
+                            var idCliContasRec = new List<uint>();
 
-                            if (report.ReportPath == "Relatorios/rptContasReceber.rdlc" ||
-                                report.ReportPath == "Relatorios/rptContasReceberRetrato.rdlc")
-                            {
-                                decimal creditoTotal = 0;
-                                decimal chequeDevolvidoTotal = 0;
-                                var idCliContasRec = new List<uint>();
+                            foreach (var contaRec in contasReceber)
+                                if (!idCliContasRec.Contains(contaRec.IdCliente))
+                                {
+                                    idCliContasRec.Add(contaRec.IdCliente);
+                                    creditoTotal += contaRec.CreditoCliente;
 
-                                foreach (var contaRec in contasReceber)
-                                    if (!idCliContasRec.Contains(contaRec.IdCliente))
-                                    {
-                                        idCliContasRec.Add(contaRec.IdCliente);
-                                        creditoTotal += contaRec.CreditoCliente;
+                                    var chequesDev = ChequesDAO.Instance.GetDevolvidosPorCliente(contaRec.IdCliente);
+                                    if (chequesDev != null)
+                                        contaRec.TotalChequeDevolvido = chequesDev.Sum(f => f.Valor - f.ValorReceb);
 
-                                        var chequesDev = ChequesDAO.Instance.GetDevolvidosPorCliente(contaRec.IdCliente);
-                                        if (chequesDev != null)
-                                            contaRec.TotalChequeDevolvido = chequesDev.Sum(f => f.Valor - f.ValorReceb);
+                                    chequeDevolvidoTotal += contaRec.TotalChequeDevolvido;
+                                }
 
-                                        chequeDevolvidoTotal += contaRec.TotalChequeDevolvido;
-                                    }
+                            lstParam.Add(new ReportParameter("CreditoTotal", creditoTotal.ToString()));
+                            lstParam.Add(new ReportParameter("ChequeDevolvidoTotal", chequeDevolvidoTotal.ToString()));
+                            lstParam.Add(new ReportParameter("ExibirPedidos", (FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos).ToString()));
 
-                                lstParam.Add(new ReportParameter("CreditoTotal", creditoTotal.ToString()));
-                                lstParam.Add(new ReportParameter("ChequeDevolvidoTotal", chequeDevolvidoTotal.ToString()));
-                                lstParam.Add(new ReportParameter("ExibirPedidos", (FinanceiroConfig.RelatorioContasRecebidas.ExibirPedidos).ToString()));
+                            var idCli = Request["idCli"].StrParaUintNullable();
+                            var cheques = new List<Cheques>();
 
-                                var idCli = Request["idCli"].StrParaUintNullable();
-                                var cheques = new List<Cheques>();
+                            if (idCli.GetValueOrDefault(0) > 0)
+                                cheques = ChequesDAO.Instance.GetDevolvidosPorCliente(idCli.Value).ToList();
 
-                                if (idCli.GetValueOrDefault(0) > 0)
-                                    cheques = ChequesDAO.Instance.GetDevolvidosPorCliente(idCli.Value).ToList();
-
-                                report.DataSources.Add(new ReportDataSource("Cheques", cheques));
-                            }
+                            report.DataSources.Add(new ReportDataSource("Cheques", cheques));
                         }
                         else
                         {

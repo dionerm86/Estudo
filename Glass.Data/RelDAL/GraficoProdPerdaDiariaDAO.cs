@@ -155,95 +155,103 @@ namespace Glass.Data.RelDAL
         {
             // Verifica se a empresa considera como pronto o setor "Depósito".
             var idsSetorPronto = ExecuteScalar<string>(string.Format("SELECT GROUP_CONCAT(s.IdSetor) FROM setor s WHERE s.Tipo={0}", (int)TipoSetor.Pronto));
-            var where = string.Empty;
+            var filtroSetorPronto = string.Empty;
+            var filtroClassificacaoRoteiro = string.Empty;
+            var filtro = string.Empty;
 
-            var sql = string.Format(@"SELECT Dia, IdSetor, '' AS Descricao, CAST(ROUND(SUM(TotM2), 2) AS DECIMAL(12, 2)) AS TotProdM2, 0 AS TotPerdaM2, '' AS Criterio, 0 AS DesafioPerda,
-                    0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
-                FROM (
-                    SELECT ROUND(IF(ped.TipoPedido={0}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
-                        ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, ppo.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={0}, a.Qtde, 1)), 4) AS TotM2,
-                        s.IdSetor, DAY(lp.DataLeitura) AS Dia
-                FROM pedido ped
-                    INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido = pp.IdPedido)
-	                INNER JOIN produtos_pedido ppo On (pp.IdProdPed=ppo.IdProdPedEsp)
-                    INNER JOIN produto_pedido_producao ppp ON (pp.IdProdPed = ppp.IdProdPed)
-                    INNER JOIN setor s ON (ppp.IdSetor = s.IdSetor)
-                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
-                    LEFT JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-                WHERE ppp.Situacao IN ({2},{3}) {4} {5} {1}
-                GROUP BY ppp.IdProdPedProducao) AS temp;",
-                // Posição 7.
-                (int)Pedido.TipoPedidoEnum.MaoDeObra,
-                // Posição 1.
-                "{0}",
-                // Posição 2.
-                (int)ProdutoPedidoProducao.SituacaoEnum.Producao,
-                // Posição 3.
-                (int)ProdutoPedidoProducao.SituacaoEnum.Perda,
-                // Posição 4.
-                idsSetorPronto.IsNullOrEmpty() ? string.Format(" AND ppp.SituacaoProducao = {0}", (int)SituacaoProdutoProducao.Pronto) : string.Format(" AND lp.IdSetor IN ({0}) ", idsSetorPronto),
-                // Posição 5.
-                idClassificacao > 0 ? string.Format(" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao={0}) ", idClassificacao.Value) : string.Empty);
+            if (!string.IsNullOrWhiteSpace(idsSetorPronto))
+            {
+                filtroSetorPronto = $" AND lp.IdSetor IN ({ idsSetorPronto }) ";
+            }
+            else
+            {
+                filtroSetorPronto = $" AND ppp.SituacaoProducao = { (int)SituacaoProdutoProducao.Pronto }";
+            }
+
+            if (idClassificacao > 0)
+            {
+                filtroClassificacaoRoteiro = $" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao = { idClassificacao.Value }) ";
+            }
+
+            filtro += filtroSetorPronto;
+            filtro += filtroClassificacaoRoteiro;
 
             if (dataIni > DateTime.MinValue)
             {
-                where += " AND lp.DataLeitura>=?dataIni";
+                filtro += " AND lp.DataLeitura >= ?dataIni";
             }
 
             if (dataFim > DateTime.MinValue)
             {
-                where += " AND lp.DataLeitura<=?dataFim";
+                filtro += " AND lp.DataLeitura <= ?dataFim";
             }
 
-            return string.Format(sql, where);
+            var sql = $@"SELECT Dia, IdSetor, '' AS Descricao, CAST(ROUND(SUM(TotM2), 2) AS DECIMAL(12, 2)) AS TotProdM2, 0 AS TotPerdaM2, '' AS Criterio, 0 AS DesafioPerda,
+                    0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
+                FROM (
+                    SELECT ROUND(IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
+                        ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, ppo.TotM2Calc) /
+                        (pp.Qtde * IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2,
+                        s.IdSetor, DAY(lp.DataLeitura) AS Dia
+                FROM pedido ped
+                    INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido = pp.IdPedido)
+	                INNER JOIN produtos_pedido ppo On (pp.IdProdPed = ppo.IdProdPedEsp)
+                    INNER JOIN produto_pedido_producao ppp ON (pp.IdProdPed = ppp.IdProdPed)
+                    INNER JOIN setor s ON (ppp.IdSetor = s.IdSetor)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                    LEFT JOIN leitura_producao lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
+                WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao },{ (int)ProdutoPedidoProducao.SituacaoEnum.Perda })
+                    { filtro }
+                GROUP BY ppp.IdProdPedProducao) AS temp;";
+
+            return sql;
         }
 
         private string SqlProducaoPorRoteiro(int? idClassificacao, DateTime? dataIni, DateTime? dataFim)
         {
             var filtro = string.Empty;
+            var sqlClassificacaoRoteiro = string.Empty;
 
-            var sql = string.Format(@"SELECT Dia, IdSetor, '' AS Descricao, CAST(ROUND(SUM(TotM2), 2) AS DECIMAL(12, 2)) AS TotProdM2, 0 AS TotPerdaM2, '' AS Criterio, 0 AS DesafioPerda,
-                    0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
-                FROM (
-                    SELECT ROUND(IF(ped.TipoPedido={0}, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
-                        ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, ppo.TotM2Calc) / (pp.Qtde * IF(ped.TipoPedido={0}, a.Qtde, 1)), 4) AS TotM2,
-                        lpr.IdSetor, DAY(lpr.DataLeitura) AS Dia
-                FROM pedido ped
-                    INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido=pp.IdPedido)
-	                INNER JOIN produtos_pedido ppo On (pp.IdProdPed=ppo.IdProdPedEsp)
-                    INNER JOIN
-                        (
-                            SELECT ppp.IdProdPedProducao, ppp.IdProdPed
-                            FROM produto_pedido_producao ppp
-                                INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao=lp.IdProdPedProducao)
-                            WHERE ppp.Situacao IN ({2},{3}) AND lp.ProntoRoteiro IS NOT NULL AND lp.ProntoRoteiro=1 {1}
-                        ) ppp ON (pp.IdProdPed=ppp.IdProdPed)
-                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido=a.IdAmbientePedido)
-                    INNER JOIN leitura_producao lpr ON (ppp.IdProdPedProducao=lpr.IdProdPedProducao )
-                WHERE 1 {4}
-                GROUP BY ppp.IdProdPedProducao) AS temp;",
-                // Posição 0.
-                (int)Pedido.TipoPedidoEnum.MaoDeObra,
-                // Posição 1.
-                "{0}",
-                // Posição 2.
-                (int)ProdutoPedidoProducao.SituacaoEnum.Producao,
-                // Posição 3.
-                (int)ProdutoPedidoProducao.SituacaoEnum.Perda,
-                // Posição 4.
-                idClassificacao > 0 ? string.Format(" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao={0}) ", idClassificacao.Value) : string.Empty);
+            if (idClassificacao > 0)
+            {
+                sqlClassificacaoRoteiro = $" AND pp.IdProcesso IN (SELECT IdProcesso FROM roteiro_producao WHERE IdClassificacaoRoteiroProducao = { idClassificacao.Value }) ";
+            }
 
             if (dataIni > DateTime.MinValue)
             {
-                filtro += " AND lp.DataLeitura>=?dataIni";
+                filtro += " AND lp.DataLeitura >= ?dataIni";
             }
 
             if (dataFim > DateTime.MinValue)
             {
-                filtro += " AND lp.DataLeitura<=?dataFim";
+                filtro += " AND lp.DataLeitura <= ?dataFim";
             }
 
-            return string.Format(sql, filtro);
+            var sql = $@"SELECT Dia, IdSetor, '' AS Descricao, CAST(ROUND(SUM(TotM2), 2) AS DECIMAL(12, 2)) AS TotProdM2, 0 AS TotPerdaM2, '' AS Criterio, 0 AS DesafioPerda,
+                    0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
+                FROM (
+                    SELECT ppp.IdSetor, DAY(ppp.DataLeitura) AS Dia,
+                        ROUND(IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
+                            ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, ppo.TotM2Calc) / (pp.Qtde *
+                            IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
+                FROM pedido ped
+                    INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido = pp.IdPedido)
+	                INNER JOIN produtos_pedido ppo On (pp.IdProdPed = ppo.IdProdPedEsp)
+                    INNER JOIN
+                        (
+                            SELECT ppp.IdProdPedProducao, ppp.IdProdPed, lp.IdSetor, lp.DataLeitura
+                            FROM produto_pedido_producao ppp
+                                INNER JOIN leitura_producao lp ON (ppp.IdProdPedProducao = lp.IdProdPedProducao)
+                            WHERE ppp.Situacao IN ({ (int)ProdutoPedidoProducao.SituacaoEnum.Producao },{ (int)ProdutoPedidoProducao.SituacaoEnum.Perda }) AND
+                                lp.ProntoRoteiro IS NOT NULL AND
+                                lp.ProntoRoteiro = 1
+                                { filtro }
+                        ) ppp ON (pp.IdProdPed = ppp.IdProdPed)
+                    LEFT JOIN ambiente_pedido_espelho a ON (pp.IdAmbientePedido = a.IdAmbientePedido)
+                WHERE 1 { sqlClassificacaoRoteiro }
+                GROUP BY ppp.IdProdPedProducao) AS temp;";
+
+            return sql;
         }
 
         private string SqlPerdaSetores(string mes, string ano, bool selecionar)

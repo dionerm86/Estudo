@@ -161,10 +161,10 @@ namespace WebGlass.Business.Pedido.Fluxo
 
                 scriptExecutar = $"alert('{ mensagemFinal }');";
 
-                if (UserInfo.GetUserInfo.IsFinanceiroReceb)
+                if (UserInfo.GetUserInfo.IsFinanceiroReceb && idPedidoErro > 0)
                 {
-                    scriptExecutar += $@"if ({ idPedidoErro } > 0 && confirm('Deseja receber o { (pedidoTemSinalReceber ? "sinal" : "pagamento antecipado") } do pedido { idPedidoErro }?'))
-                    redirectUrl('../Cadastros/CadReceberSinal.aspx?idPedido={ idPedidoErro }{ (!pedidoTemSinalReceber ? "&antecipado=1" : string.Empty) }');\n";
+                    scriptExecutar += $@" if (confirm('Deseja receber o { (pedidoTemSinalReceber ? "sinal" : "pagamento antecipado") } do pedido { idPedidoErro } ?'))
+                             redirectUrl('../Cadastros/CadReceberSinal.aspx?idPedido={ idPedidoErro }{ (!pedidoTemSinalReceber ? "&antecipado=1" : string.Empty) }'); ";
                 }
             }
         }
