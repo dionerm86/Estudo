@@ -15208,6 +15208,8 @@ namespace Glass.Data.DAL
             objUpdate.TipoVenda = objUpdate.TipoVenda.GetValueOrDefault((int)Pedido.TipoVendaPedido.AVista);
             objUpdate.IdProjeto = ped.IdProjeto;
 
+            objUpdate.GeradoParceiro = ped.GeradoParceiro;
+
             if (ped.Situacao == Pedido.SituacaoPedido.Confirmado)
             {
                 objUpdate.Situacao = Pedido.SituacaoPedido.Confirmado;
