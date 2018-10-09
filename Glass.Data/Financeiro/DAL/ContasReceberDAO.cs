@@ -97,13 +97,13 @@ namespace Glass.Data.DAL
                     retorno += "inner join produtos_liberar_pedido plp on (pnf.idPedido=plp.idPedido)";
                     campo = "plp.idLiberarPedido";
                     campoContasReceber = "idLiberarPedido";
-                    where = "Where 1" + (!usarJoin ? " and plp.idLiberarPedido={0}.idLiberarPedido" : "");
+                    where = "Where 1" + (!usarJoin ? " AND nf.situacao <> 4  and plp.idLiberarPedido={0}.idLiberarPedido" : "");
                 }
 
                 if (usarJoin && numeroNFe > 0)
                 {
                     var idsNf = string.Join(",", NotaFiscalDAO.Instance.ExecuteMultipleScalar<string>(session,
-                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2}", numeroNFe,
+                        string.Format("Select Cast(idNf as char) From nota_fiscal Where numeroNfe={0}{1}{2} AND situacao <> 4 ", numeroNFe,
                             idLoja > 0 ? " AND IdLoja=" + idLoja : string.Empty, !string.IsNullOrEmpty(modelo) ? " AND modelo=?modelo" : string.Empty),
                         new GDAParameter("?modelo", modelo)));
                     where += " And nf.idNf In (" + (string.IsNullOrEmpty(idsNf) ? "0" : idsNf) + ")";
