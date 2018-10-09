@@ -62,19 +62,28 @@ namespace Glass.Otimizacao.Negocios.Componentes
                 .From<Data.Model.Produto>()
                 .Where($"CodOtimizacao IN ({string.Join(",", parametros.Select(f => f.Name))})")
                 .Add(parametros)
-                .Select("CodOtimizacao, IdProd")
+                .Select("CodOtimizacao, IdProd, TipoMercadoria")
                 .Execute()
                 .Select(f => new
                 {
                     CodOtimizacao = f.GetString(0),
                     IdProd = f.GetInt32(1),
+                    TipoMercadoria = (Glass.Data.Model.TipoMercadoria?)(int?)f[2],
                 }).ToList();
 
             var processados = new List<Entidades.PlanoOtimizacao>();
 
             foreach (var etiqueta in documentoEtiquetas.PlanosOtimizacao)
             {
-                var produto = produtos.FirstOrDefault(f => f.CodOtimizacao == etiqueta.CodigoMaterial);
+                var produto = produtos.FirstOrDefault(f => 
+                    f.CodOtimizacao == etiqueta.CodigoMaterial &&
+                    f.TipoMercadoria == Data.Model.TipoMercadoria.MateriaPrima);
+
+                if (produto == null)
+                {
+                    produto = produtos.FirstOrDefault(f => f.CodOtimizacao == etiqueta.CodigoMaterial);
+                }
+
                 if (produto == null)
                 {
                     continue;
