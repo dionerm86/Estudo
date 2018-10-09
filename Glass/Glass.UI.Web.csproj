@@ -1704,6 +1704,7 @@
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaEtiquetaProcesso.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoBuscaProduto.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoCep.js" />
+    <Content Include="Vue\_Compartilhado\Componentes\CampoCpf.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoDescontoQuantidade.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoEndereco.js" />
     <Content Include="Vue\_Compartilhado\Componentes\CampoLargura.js" />
@@ -1811,6 +1812,7 @@
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaEtiquetaProcesso.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoBuscaProduto.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoCep.html" />
+    <Content Include="Vue\_Compartilhado\Templates\CampoCpf.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoDescontoQuantidade.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoEndereco.html" />
     <Content Include="Vue\_Compartilhado\Templates\CampoLargura.html" />
