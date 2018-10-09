@@ -4014,6 +4014,14 @@ namespace Glass.UI.Web.Relatorios
                         report.DataSources.Add(new ReportDataSource("Transacao", transacoes));
                         break;
                     }
+                case "UtilizacaoSistema":
+                    {
+                        var utilizacao = LoginSistemaDAO.Instance.GetForRpt(Request["idFuncionario"].StrParaUint(), Request["tipoAtividade"].StrParaInt(), Request["periodoIni"], Request["periodoFim"]);
+                        report.ReportPath = "Relatorios/rptUtilizacaoSistema.rdlc";
+                        report.DataSources.Add(new ReportDataSource("Utilizacao", utilizacao));
+                        lstParam.Add(new ReportParameter("Criterio",  ""));
+                        break;
+                    }
 
                 default:
                     throw new Exception("Nenhum relatório especificado.");

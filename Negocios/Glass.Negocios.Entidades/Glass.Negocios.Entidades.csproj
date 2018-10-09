@@ -371,6 +371,7 @@
     <None Include="Properties\DataSources\Glass.Data.Model.Fornada.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ItemCarregamento.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.LiberarPedido.datasource" />
+    <None Include="Properties\DataSources\Glass.Data.Model.LoginSistema.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.Pedido.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ProdutoPedidoProducao.datasource" />
     <None Include="Properties\DataSources\Glass.Data.Model.ProdutosPedido.datasource" />
