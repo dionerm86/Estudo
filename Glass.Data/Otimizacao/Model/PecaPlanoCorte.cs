@@ -49,5 +49,11 @@ namespace Glass.Data.Model
         /// </summary>
         [PersistenceProperty("Forma")]
         public string Forma { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a posição geral da peça.
+        /// </summary>
+        [PersistenceProperty("PosicaoGeral")]
+        public int PosicaoGeral { get; set; }
     }
 }
