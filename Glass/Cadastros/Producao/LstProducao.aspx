@@ -230,13 +230,13 @@
             "~/Vue/Producao/Templates/LstProducao.Filtros.html")
     %>
     <div id="app">
-        <producao-filtros :filtro="filtro" :configuracoes="configuracoes"></producao-filtros>
+        <producao-filtros :filtro="filtro" :configuracoes="configuracoes" :agrupar-impressao="agruparImpressao"></producao-filtros>
     </div>
     <br /><br /><br /><br />
 
 
     <table width="100%">
-        <tr runat="server" id="trFiltros">
+        <!--<tr runat="server" id="trFiltros">
             <td align="center">
                 <table>
                     <tr>
@@ -746,7 +746,7 @@
                     </tr>
                 </table>
             </td>
-        </tr>
+        </tr>-->
         <tr>
             <td>
                 &nbsp;

@@ -65,11 +65,11 @@ Vue.component('produtos-filtros', {
 
     /**
      * Retorna os itens para o controle de subgrupos de produto.
-     * @param {?number} idGrupoProduto O ID do grupo de produto.
+     * @param {?Object} filtro O filtro para a busca de subgrupos de produto.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterItensFiltroSubgrupos: function (idGrupoProduto) {
-      return Servicos.Produtos.Subgrupos.obterParaControle(idGrupoProduto);
+    obterItensFiltroSubgrupos: function (filtro) {
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
     }
   },
 

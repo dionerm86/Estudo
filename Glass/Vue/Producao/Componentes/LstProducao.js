@@ -4,10 +4,20 @@
 
   data: {
     filtro: {},
-    configuracoes: {}
+    configuracoes: {},
+    agruparImpressao: null
   },
 
   methods: {
 
+  },
+
+  mounted: function () {
+    var vm = this;
+
+    Servicos.Producao.obterConfiguracoesConsulta()
+      .then(function (resposta) {
+        vm.configuracoes = resposta.data;
+      });
   }
 });

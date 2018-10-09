@@ -20,13 +20,13 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// <summary>
         /// Canceladas (mão-de-obra).
         /// </summary>
-        [Description("Canceladas(mão-de-obra)")]
+        [Description("Canceladas (mão-de-obra)")]
         CanceladasMaoDeObra,
 
         /// <summary>
         /// Canceladas (venda).
         /// </summary>
-        [Description("Canceladas(venda)")]
+        [Description("Canceladas (venda)")]
         CanceladasVenda,
     }
 }

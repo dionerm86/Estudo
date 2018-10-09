@@ -101,7 +101,7 @@ Vue.component('lista-selecao-multipla', {
         .then(function(resposta) {
           if (vm.ordenar) {
             resposta.data.sort(function(a, b) {
-              return a.nome.localeCompare(b.nome);
+              return a[vm.campoNome].localeCompare(b[vm.campoNome]);
             });
           }
 

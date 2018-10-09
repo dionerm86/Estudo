@@ -5,12 +5,12 @@
             <input id="idPedido" type="number" v-model.number="filtroAtual.idPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
+        <span class="form-group" v-if="configuracoes && configuracoes.empresaLiberaPedido">
             <label for="idLiberacaoPedido">Liberação</label>
             <input id="idLiberacaoPedido" type="number" v-model.number="filtroAtual.idLiberacaoPedido" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
+        <span class="form-group" v-if="configuracoes && configuracoes.usarOrdemDeCarga">
             <label for="idCarregamento">Carregamento</label>
             <input id="idCarregamento" type="number" v-model.number="filtroAtual.idCarregamento" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
@@ -76,9 +76,10 @@
     </div>
     <div>
         <span class="form-group">
-            <label for="tipoSituacaoProducao">Pedidos por etapa</label>
+            <label for="tipoSituacaoProducao">Produtos por etapa</label>
             <lista-selecao-id-valor id="tipoSituacaoProducao" v-bind:item-selecionado.sync="tipoSituacaoProducaoAtual"
-                v-bind:funcao-recuperar-itens="obterTiposSituacaoProducao" v-bind:ordenar="false"></lista-selecao-id-valor>
+                v-bind:funcao-recuperar-itens="obterTiposSituacoesProducao" v-bind:ordenar="false"
+                v-bind:incluir-item-vazio="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -90,7 +91,7 @@
         <span class="form-group">
             <label for="subgrupos">Subgrupo</label>
             <lista-selecao-multipla id="subgrupos" v-bind:ids-selecionados.sync="filtroAtual.idsSubgrupos"
-                v-bind:funcao-recuperar-itens="obterSubgrupos" texto-selecionar=""></lista-selecao-multipla>
+                v-bind:funcao-recuperar-itens="obterSubgrupos" texto-selecionar="" v-bind:filtro-recuperar-itens="filtroSubgrupos"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
@@ -145,7 +146,8 @@
         <span class="form-group">
             <label for="tiposPecasExibir">Exibir peças</label>
             <lista-selecao-multipla id="tiposPecasExibir" v-bind:ids-selecionados.sync="filtroAtual.tiposPecasExibir"
-                v-bind:funcao-recuperar-itens="obterTiposPecasExibir" texto-selecionar=""></lista-selecao-multipla>
+                v-bind:funcao-recuperar-itens="obterTiposPecasExibir" texto-selecionar=""
+                v-bind:ordenar="false" style="min-width: 175px"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
@@ -164,13 +166,13 @@
         <span class="form-group">
             <label for="idsProcessos">Processo</label>
             <lista-selecao-multipla id="idsProcessos" v-bind:ids-selecionados.sync="filtroAtual.idsProcessos"
-                v-bind:funcao-recuperar-itens="obterProcessos" texto-selecionar=""></lista-selecao-multipla>
+                v-bind:funcao-recuperar-itens="obterProcessos" texto-selecionar="" campo-nome="codigo"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="idsAplicacoes">Aplicação</label>
             <lista-selecao-multipla id="idsAplicacoes" v-bind:ids-selecionados.sync="filtroAtual.idsAplicacoes"
-                v-bind:funcao-recuperar-itens="obterAplicacoes" texto-selecionar=""></lista-selecao-multipla>
+                v-bind:funcao-recuperar-itens="obterAplicacoes" texto-selecionar="" campo-nome="codigo"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -188,7 +190,7 @@
         <span class="form-group">
             <label for="tipoProdutosComposicao">Produto composto</label>
             <lista-selecao-id-valor id="tipoProdutosComposicao" v-bind:item-selecionado.sync="tipoProdutosComposicaoAtual"
-                v-bind:funcao-recuperar-itens="obterTiposProdutosComposicao"></lista-selecao-id-valor>
+                v-bind:funcao-recuperar-itens="obterTiposProdutosComposicao" v-bind:incluir-item-vazio="false"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
@@ -206,29 +208,34 @@
             <label for="apenasPecasParadasNaProducao">Peças com produção parada</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
-        <span class="form-group">
+        <span class="form-group" v-if="configuracoes && configuracoes.controleReposicaoPorPeca">
             <input id="apenasPecasRepostas" type="checkbox" v-model="filtroAtual.apenasPecasRepostas" />
             <label for="apenasPecasRepostas">Peças que foram repostas</label>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
     </div>
     <div>
-        <span class="form-group">
+        <span class="form-group" v-if="configuracoes && configuracoes.empresaLiberaPedido">
             <label for="periodoConferenciaPedido">Período (Conf. Ped.)</label>
             <campo-data-hora-periodo id="periodoConferenciaPedido" v-bind:data-hora-inicial.sync="filtroAtual.periodoConferenciaPedidoInicio"
                 v-bind:data-hora-final.sync="filtroAtual.periodoConferenciaPedidoFim"></campo-data-hora-periodo>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
-            <label for="tipoFastDelivery">Período (Conf. Ped.)</label>
+            <label for="tipoFastDelivery">Fast Delivery</label>
             <lista-selecao-id-valor id="tipoFastDelivery" v-bind:item-selecionado.sync="tipoFastDeliveryAtual"
                 v-bind:funcao-recuperar-itens="obterTiposFastDelivery"></lista-selecao-id-valor>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">
             <label for="agruparImpressao">Agrupar impressão</label>
-            <lista-selecao-id-valor id="agruparImpressao" v-bind:item-selecionado.sync="agruparImpressaoAtual"
-                v-bind:funcao-recuperar-itens="obterAgruparImpressao"></lista-selecao-id-valor>
+            <select id="agruparImpressao" v-model.number="agruparImpressaoAtual">
+                <option></option>
+                <option value="1">Cliente</option>
+                <option value="2">Pedido</option>
+                <option value="3">Número de peças</option>
+                <option value="4">Prev. entrega</option>
+            </select>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

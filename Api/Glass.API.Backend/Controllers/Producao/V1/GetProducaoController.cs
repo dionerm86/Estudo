@@ -21,6 +21,22 @@ namespace Glass.API.Backend.Controllers.Producao.V1
     public partial class ProducaoController : BaseController
     {
         /// <summary>
+        /// Recupera as configurações para a listagem de produção.
+        /// </summary>
+        /// <returns>Um objeto JSON </returns>
+        [HttpGet]
+        [Route("configuracoes/consulta")]
+        [SwaggerResponse(200, "Configurações encontradas.", Type = typeof(Models.Producao.V1.Configuracoes.ListaDto))]
+        public IHttpActionResult ObterConfiguracoesConsulta()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var configuracoes = new Models.Producao.V1.Configuracoes.ListaDto();
+                return this.Item(configuracoes);
+            }
+        }
+
+        /// <summary>
         /// Recupera a lista de peças para a tela de consulta de produção.
         /// </summary>
         /// <param name="filtro">Os dados informados para filtro na tela.</param>
@@ -155,6 +171,101 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                     .ObterTraducao();
 
                 return this.Lista(situacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de situações de produção possíveis.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipso de situações de produção.</returns>
+        [HttpGet]
+        [Route("tiposSituacoes")]
+        [SwaggerResponse(200, "Tipos de situações de produção encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de situações de produção não encontradas.")]
+        public IHttpActionResult ObterTiposSituacoes()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposSituacoes = new ConversorEnum<TipoSituacaoProducao>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposSituacoes);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de pedidos possíveis.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de pedido.</returns>
+        [HttpGet]
+        [Route("tiposPedidos")]
+        [SwaggerResponse(200, "Tipos de pedidos encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de pedidos não encontrados.")]
+        public IHttpActionResult ObterTiposPedidos()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposPedidos = new ConversorEnum<TipoPedido>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposPedidos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de peças que podem ser exibidas.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de peças a exibir.</returns>
+        [HttpGet]
+        [Route("tiposPecasExibir")]
+        [SwaggerResponse(200, "Tipos de peças a exibir encontradas.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de peças a exibir não encontradas.")]
+        public IHttpActionResult ObterTiposPecasExibir()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposPedidos = new ConversorEnum<TipoPecaExibir>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposPedidos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de produtos de composição que podem ser utilizados para filtro.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de produtos de composição.</returns>
+        [HttpGet]
+        [Route("tiposProdutosComposicao")]
+        [SwaggerResponse(200, "Tipos de produtos de composição encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de produtos de composição não encontrados.")]
+        public IHttpActionResult ObterTiposProdutosComposicao()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposProdutos = new ConversorEnum<TipoProdutoComposicao>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposProdutos);
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de tipos de 'fast delivery' que podem ser utilizados para filtro.
+        /// </summary>
+        /// <returns>Uma lista JSON com os dados básicos dos tipos de produtos de composição.</returns>
+        [HttpGet]
+        [Route("tiposFastDelivery")]
+        [SwaggerResponse(200, "Tipos de 'fast delivery' encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Tipos de 'fast delivery' não encontrados.")]
+        public IHttpActionResult ObterTiposFastDelivery()
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var tiposProdutos = new ConversorEnum<TipoFastDelivery>()
+                    .ObterTraducao();
+
+                return this.Lista(tiposProdutos);
             }
         }
     }

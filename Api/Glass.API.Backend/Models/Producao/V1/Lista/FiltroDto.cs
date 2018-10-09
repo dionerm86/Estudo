@@ -151,7 +151,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// <summary>
         /// Obtém ou define os tipos de pedidos.
         /// </summary>
-        public IEnumerable<TipoPedidoEnum> TiposPedidos { get; set; }
+        public IEnumerable<TipoPedido> TiposPedidos { get; set; }
 
         /// <summary>
         /// Obtém ou define os tipos de peças a serem exibidas.

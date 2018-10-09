@@ -41,7 +41,9 @@
       situacaoPedidoAtual: null,
       funcionarioAtual: null,
       tipoEntregaAtual: null,
-      tipoProdutosComposicaoAtual: null
+      tipoProdutosComposicaoAtual: null,
+      corVidroAtual: null,
+      tipoFastDeliveryAtual: null
     };
   },
 
@@ -68,6 +70,56 @@
      */
     obterSituacoesProducao: function () {
       return Servicos.Producao.obterSituacoes();
+    },
+
+    /**
+     * Busca os tipos de situações de produção para o filtro.
+     */
+    obterTiposSituacoesProducao: function () {
+      return Servicos.Producao.obterTiposSituacoes();
+    },
+
+    /**
+     * Busca as situações de pedido.
+     */
+    obterSituacoesPedido: function () {
+      return Servicos.Pedidos.obterSituacoes();
+    },
+
+    obterSubgrupos: function (filtro) {
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
+    },
+
+    obterTiposEntregasPedido: function () {
+      return Servicos.Pedidos.obterTiposEntrega();
+    },
+
+    obterTiposPedido: function () {
+      return Servicos.Producao.obterTiposPedido();
+    },
+
+    obterTiposPecasExibir: function () {
+      return Servicos.Producao.obterTiposPecasExibir();
+    },
+
+    obterCoresVidro: function () {
+      return Servicos.Produtos.CoresVidro.obterParaControle();
+    },
+
+    obterProcessos: function () {
+      return Servicos.Processos.obterParaControle();
+    },
+
+    obterAplicacoes: function () {
+      return Servicos.Aplicacoes.obterParaControle();
+    },
+
+    obterTiposProdutosComposicao: function () {
+      return Servicos.Producao.obterTiposProdutosComposicao();
+    },
+
+    obterTiposFastDelivery: function () {
+      return Servicos.Producao.obterTiposFastDelivery();
     },
 
     /**
@@ -134,7 +186,25 @@
       this.funcionarioAtual = null;
       this.tipoEntregaAtual = null;
       this.tipoProdutosComposicaoAtual = null;
+      this.corVidroAtual = null;
+      this.tipoFastDeliveryAtual = null;
+
+      this.carregarFiltrosPadrao();
       this.filtrar();
+    },
+
+    /**
+     * Carrega os filtros padrão da tela.
+     */
+    carregarFiltrosPadrao: function () {
+      this.tipoSituacaoProducaoAtual = this.configuracoes
+          ? { id: this.configuracoes.tipoSituacaoProducao }
+          : null;
+
+      this.filtroAtual.tiposPecasExibir = this.configuracoes ? this.configuracoes.tiposPecasExibir : [];
+      this.tipoProdutosComposicaoAtual = this.configuracoes
+        ? { id: this.configuracoes.tipoProdutoComposicao }
+        : null;
     }
   },
 
@@ -152,10 +222,31 @@
           this.$emit('update:agruparImpressao', valor);
         }
       }
+    },
+
+    /**
+     * Propriedade computada com o valor do filtro para a busca de subgrupos.
+     */
+    filtroSubgrupos: function() {
+      return {
+        idGrupoProduto: this.configuracoes ? this.configuracoes.idGrupoProdutoVidro : 0
+      }
     }
   },
 
   watch: {
+    /**
+     * Observador para a propriedade 'configuracoes'.
+     * Atualiza os filtros padronizados.
+     */
+    configuracoes: {
+      handler: function () {
+        this.carregarFiltrosPadrao();
+        this.filtrar();
+      },
+      deep: true
+    },
+
     /**
      * Observador para a variável 'setorAtual'.
      * Atualiza o filtro com os dados do item selecionado.
@@ -228,12 +319,34 @@
     },
 
     /**
-     * Observador para a variável 'tipoEntregaAtual'.
+     * Observador para a variável 'tipoProdutosComposicaoAtual'.
      * Atualiza o filtro com os dados do item selecionado.
      */
-    tipoEntregaAtual: {
+    tipoProdutosComposicaoAtual: {
       handler: function (atual) {
-        this.filtroAtual.tipoEntregaPedido = atual ? atual.id : null;
+        this.filtroAtual.tipoProdutosComposicao = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'corVidroAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    corVidroAtual: {
+      handler: function (atual) {
+        this.filtroAtual.idCorVidro = atual ? atual.id : null;
+      },
+      deep: true
+    },
+
+    /**
+     * Observador para a variável 'tipoFastDeliveryAtual'.
+     * Atualiza o filtro com os dados do item selecionado.
+     */
+    tipoFastDeliveryAtual: {
+      handler: function (atual) {
+        this.filtroAtual.tipoFastDelivery = atual ? atual.id : null;
       },
       deep: true
     }

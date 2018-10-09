@@ -113,7 +113,7 @@ Vue.component('estoque-filtros', {
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterItensFiltroSubgruposProduto: function (filtro) {
-      return Servicos.Produtos.Subgrupos.obterParaControle(filtro);
+      return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
     },
 
     /**

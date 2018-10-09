@@ -459,6 +459,8 @@
     <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Configuracoes\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ChapaVidroDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\DataEntregaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\FiltroDto.cs" />
@@ -472,6 +474,7 @@
     <Compile Include="Models\Producao\V1\Lista\ProdutoPedidoDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\SituacaoProducaoDto.cs" />
+    <Compile Include="Models\Producao\V1\Lista\TipoPedidoEnum.cs" />
     <Compile Include="Models\Producao\V1\Lista\TipoFastDeliveryEnum.cs" />
     <Compile Include="Models\Producao\V1\Lista\TipoPecaExibirEnum.cs" />
     <Compile Include="Models\Producao\V1\Lista\TipoProdutoComposicaoEnum.cs" />
