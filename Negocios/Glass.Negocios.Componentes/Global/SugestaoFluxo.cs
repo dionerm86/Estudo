@@ -27,7 +27,7 @@ namespace Glass.Global.Negocios.Componentes
         public IList<Entidades.SugestaoClientePesquisa> PesquisarSugestoes(
             int? idSugestao, int? idCliente, int? idFunc, string nomeFuncionario, string nomeCliente,
             DateTime? dataInicio, DateTime? dataFim, int? tipo,
-            string descricao, int[] situacoes, int? idRota, int? idPedido, uint? idOrcamento, int? idVendedorAssoc)
+            string descricao, Situacao[] situacoes, int? idRota, int? idPedido, uint? idOrcamento, int? idVendedorAssoc)
         {
             var descrNomeCliente = Configuracoes.Geral.ExibirRazaoSocialTelaSugestao ?
                 "ISNULL(c.Nome, c.NomeFantasia)" : "ISNULL(c.NomeFantasia, c.Nome)";
@@ -141,16 +141,16 @@ namespace Glass.Global.Negocios.Componentes
                 {
                     whereClause
                         .And(string.Format("Cancelada IN ({0})",
-                            string.Join(",", situacoes.Select(f => f == (int)Situacao.Ativo ? "0" : "1").ToArray())));
+                            string.Join(",", situacoes.Select(f => f == Situacao.Ativo ? "0" : "1").ToArray())));
 
                     if (situacoes.Length > 1)
                         whereClause.AddDescription(" Situação: Ativas e Canceladas");
 
                     else
                     {
-                        if (situacoes.Any(f => f == (int)Situacao.Ativo))
+                        if (situacoes.Any(f => f == Situacao.Ativo))
                             whereClause.AddDescription(" Situação: Ativas");
-                        if (situacoes.Any(f => f == (int)Situacao.Inativo))
+                        if (situacoes.Any(f => f == Situacao.Inativo))
                             whereClause.AddDescription(" Situação: Canceladas");
                     }
                 }

@@ -235,9 +235,9 @@
     <Compile Include="Atributos\CacheFilterAttribute.cs" />
     <Compile Include="Controllers\Boletos\V1\GetBoletosController.cs" />
     <Compile Include="Controllers\Boletos\V1\BoletosController.cs" />
-    <Compile Include="Controllers\Clientes\V1\SugestoesCliente\GetSugestaoClienteController.cs" />
-    <Compile Include="Controllers\Clientes\V1\SugestoesCliente\PostSugestaoClienteController.cs" />
-    <Compile Include="Controllers\Clientes\V1\SugestoesCliente\SugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\GetSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\DeleteSugestaoClienteController.cs" />
+    <Compile Include="Controllers\Clientes\V1\Sugestoes\SugestaoClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\TiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\DeleteTiposClienteController.cs" />
     <Compile Include="Controllers\Clientes\V1\Tipos\GetTiposClienteController.cs" />
@@ -487,7 +487,6 @@
     <Compile Include="Models\Produtos\CoresAluminio\Lista\FiltroDto.cs" />
     <Compile Include="Models\Produtos\CoresAluminio\Lista\ListaDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Configuracoes\ListaDto.cs" />
-    <Compile Include="Models\Clientes\SugestoesCliente\Lista\CadastroDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Lista\FiltroDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Lista\ListaDto.cs" />
     <Compile Include="Models\Clientes\SugestoesCliente\Lista\PermissoesDto.cs" />

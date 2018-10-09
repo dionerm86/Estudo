@@ -79,11 +79,11 @@ Servicos.Funcionarios = (function(http) {
     },
 
     /**
-     * Recupera a lista de funcionários ativos associados à sugestões de clientes.
+     * Recupera a lista de funcionários associados à sugestões de clientes.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
-    obterAtivosAssociadosASugestoesClientes: function () {
-      return http().get(API + 'ativosAssociadosASugestoesClientes');
+    obterSugestoesCliente: function () {
+      return http().get(API + 'sugestoesCliente');
     },
 
     /**

@@ -266,7 +266,7 @@ namespace Glass.API.Backend.Controllers.Funcionarios.V1
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos dos funcionários ativos associados à clientes.</returns>
         [HttpGet]
-        [Route("ativosAssociadosASugestoesClientes")]
+        [Route("sugestoesCliente")]
         [SwaggerResponse(200, "Funcionários encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "Funcionários não encontrados.")]
         public IHttpActionResult ObterFuncionariosSugestao()

@@ -25,7 +25,7 @@
     },
 
     voltar: function(){
-      return "../../LstCliente.aspx";
+      return '../../LstCliente.aspx';
     },
 
     /**
@@ -34,8 +34,9 @@
     obterTitulo: function(){
       var idCliente = GetQueryString('idCliente');
 
-      if (idCliente)
-        return "Cliente: ";
+      if (idCliente) {
+        return 'Cliente: ';
+      }
     },
 
     /**
@@ -59,14 +60,15 @@
       var idPedido = GetQueryString('idPedido');
       var idOrcamento = GetQueryString('idOrcamento');
 
-      if (idCliente)
-        return "../Cadastros/CadSugestaoCliente.aspx?idCliente=" + idCliente;
-      else if (idPedido)
-        return "../Cadastros/CadSugestaoCliente.aspx?idPedido=" + idPedido;
-      else if (idOrcamento)
-        return "../Cadastros/CadSugestaoCliente.aspx?idOrcamento=" + idOrcamento;
-      else
-        return "../Cadastros/CadSugestaoCliente.aspx";
+      if (idCliente) {
+        return '../Cadastros/CadSugestaoCliente.aspx?idCliente=' + idCliente;
+      } else if (idPedido) {
+        return '../Cadastros/CadSugestaoCliente.aspx?idPedido=' + idPedido;
+      } else if (idOrcamento) {
+        return '../Cadastros/CadSugestaoCliente.aspx?idOrcamento=' + idOrcamento;
+      } else {
+        return '../Cadastros/CadSugestaoCliente.aspx';
+      }
     },
 
     /**
@@ -91,11 +93,7 @@
      */
     verificarOrigemCliente: function () {
       var idCliente = GetQueryString('idCliente');
-
-      if (idCliente)
-        return false;
-
-      return true;
+      return !!!idCliente;
     },
 
     /**
@@ -107,7 +105,7 @@
 
       Servicos.SugestaoCliente.cancelar(item.id)
         .then(function (resposta) {
-          alert(resposta.data.mensagem);
+          vm.exibirMensagem(resposta.data.mensagem);
           vm.atualizarLista();
         })
         .catch(function (erro) {

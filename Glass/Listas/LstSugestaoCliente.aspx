@@ -12,11 +12,11 @@
             "~/Vue/Clientes/Templates/LstSugestaoCliente.Filtro.html")
     %>
     <div id="app">
-        <a v-if="verificarOrigemCliente()">
+        <label v-if="verificarOrigemCliente()">
             {{ obterTitulo() }}
-        </a>
+        </label>
         <sugestao-cliente-filtros :filtro.sync="filtro" :configuracoes="configuracoes"></sugestao-cliente-filtros>
-        <section>
+        <section v-if="configuracoes.cadastrarSugestaoCliente">
             <a :href="obterLinkInserirSugestao()">
                 Inserir Sugestão
             </a>
@@ -58,7 +58,7 @@
                         <a href="#" @click.prevent="cancelarSugestao(item)" title="Cancelar" v-if="item.permissoes.cancelar">
                             <img border="0" src="../Images/ExcluirGrid.gif">
                         </a>
-                        <a href="#" @click.prevent="abrirAnexos(item)" title="¨Anexos">
+                        <a href="#" @click.prevent="abrirAnexos(item)" title="Anexos">
                             <img border="0" src="../Images/Clipe.gif">
                         </a>
                     </td>
@@ -97,9 +97,9 @@
         </section>
     </div>
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
-    <Scripts>
-        <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.Filtro.js" />
-        <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.js" />
-    </Scripts>
+        <Scripts>
+            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.Filtro.js" />
+            <asp:ScriptReference Path="~/Vue/Clientes/Componentes/LstSugestaoCliente.js" />
+        </Scripts>
     </asp:ScriptManager>
 </asp:Content>

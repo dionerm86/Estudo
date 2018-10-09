@@ -4,7 +4,7 @@
  * Objeto com os serviços para a API de Sugestão de Clientes.
  */
 Servicos.SugestaoCliente = (function (http) {
-  const API = '/api/v1/sugestaoCliente/';
+  const API = '/api/v1/clientes/sugestoes/';
 
   return {
 
@@ -32,7 +32,7 @@ Servicos.SugestaoCliente = (function (http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterTiposSugestaoCliente: function () {
-      return http().get(API + 'tipos');
+      return http().get(API + 'tipos/filtro');
     },
 
     /**
@@ -53,8 +53,27 @@ Servicos.SugestaoCliente = (function (http) {
         throw new Error('Sugestão é obrigatória.');
       }
 
-      return http().post(API + idSugestao + '/cancelar');
+      return http().delete(API + idSugestao);
     },
+
+    /**
+     * Retorna os itens para o filtro de situação.
+     * @returns {Promise} Uma Promise com o resultado da busca.
+     */
+    situacoes: function () {
+      return Promise.resolve({
+        "data": [
+          {
+            "id": "1",
+            "nome": "Ativas"
+          },
+          {
+            "id": "2",
+            "nome": "Canceladas"
+          }
+        ]
+      });
+    }
 
   };
 })(function () {

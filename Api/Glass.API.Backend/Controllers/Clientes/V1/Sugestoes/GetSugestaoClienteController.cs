@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.V1.SugestoesCliente
+namespace Glass.API.Backend.Controllers.V1.Sugestoes
 {
     /// <summary>
     /// Controller de sugestões de clientes.
@@ -63,7 +63,7 @@ namespace Glass.API.Backend.Controllers.V1.SugestoesCliente
                         filtro.PeriodoCadastroFim,
                         filtro.Tipo,
                         filtro.Descricao,
-                        filtro.Situacao != null ? new[] { filtro.Situacao.Value } : new int[] { },
+                        filtro.Situacao != null ? new[] { (Situacao)filtro.Situacao.Value } : new Situacao[] { },
                         filtro.IdRota,
                         filtro.IdPedido,
                         filtro.IdOrcamento,
@@ -87,7 +87,7 @@ namespace Glass.API.Backend.Controllers.V1.SugestoesCliente
         /// </summary>
         /// <returns>Uma lista JSON com os dados básicos de tipos de sugestões de clientes.</returns>
         [HttpGet]
-        [Route("tipos")]
+        [Route("tipos/filtro")]
         [SwaggerResponse(200, "Tipos de sugestão encontrados.", Type = typeof(IEnumerable<IdNomeDto>))]
         [SwaggerResponse(204, "tipos de sugestão não encontrados.")]
         public IHttpActionResult ObterTiposSugestaoCliente()

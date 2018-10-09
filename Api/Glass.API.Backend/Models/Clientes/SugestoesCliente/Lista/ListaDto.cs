@@ -37,15 +37,16 @@ namespace Glass.API.Backend.Models.Clientes.SugestoesCliente.Lista
                 Id = sugestaoCliente.IdCliente.GetValueOrDefault(),
                 Nome = sugestaoCliente.Cliente,
             };
-            this.Cadastro = new CadastroDto
+
+            this.Cadastro = new DataFuncionarioDto
             {
-                DataCadastro = sugestaoCliente.DataCad,
-                NomeFuncionario = sugestaoCliente.Funcionario,
+                Data = sugestaoCliente.DataCad,
+                Funcionario = sugestaoCliente.Funcionario,
             };
+
             this.Permissoes = new PermissoesDto
             {
                 Cancelar = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes) && !sugestaoCliente.Cancelada,
-                PodeInserirNova = Config.PossuiPermissao(Config.FuncaoMenuCadastro.CadastrarSugestoesClientes),
             };
         }
 
@@ -96,7 +97,7 @@ namespace Glass.API.Backend.Models.Clientes.SugestoesCliente.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("cadastro")]
-        public CadastroDto Cadastro { get; set; }
+        public DataFuncionarioDto Cadastro { get; set; }
 
         /// <summary>
         /// Obtém ou define o tipo da sugestão.

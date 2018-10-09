@@ -29,7 +29,7 @@ namespace Glass.API.Backend.Models.Clientes.SugestoesCliente.Configuracoes
         /// Obtém ou define um valor que indica se o usuário tem permissão de cadastrar sugestões de clientes.
         /// </summary>
         [DataMember]
-        [JsonProperty("cadastrarSugestoesCliente")]
+        [JsonProperty("cadastrarSugestaoCliente")]
         public bool CadastrarSugestoesCliente { get; set; }
     }
 }

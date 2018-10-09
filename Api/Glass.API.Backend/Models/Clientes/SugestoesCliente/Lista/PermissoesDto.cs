@@ -19,12 +19,5 @@ namespace Glass.API.Backend.Models.Clientes.SugestoesCliente.Lista
         [DataMember]
         [JsonProperty("cancelar")]
         public bool Cancelar { get; set; }
-
-        /// <summary>
-        /// Obtém ou define um valor que indica se a o cliente pode inserir uma nova sugestão.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("podeInserirNova")]
-        public bool PodeInserirNova { get; set; }
     }
 }

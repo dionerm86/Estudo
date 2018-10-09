@@ -6,12 +6,12 @@ using GDA;
 using Glass.Data.DAL;
 using System.Web.Http;
 
-namespace Glass.API.Backend.Controllers.V1.SugestoesCliente
+namespace Glass.API.Backend.Controllers.V1.Sugestoes
 {
     /// <summary>
     /// Controller de sugestão de clientes.
     /// </summary>
-    [RoutePrefix("api/v1/sugestaoCliente")]
+    [RoutePrefix("api/v1/clientes/sugestoes")]
     public partial class SugestaoClienteController : BaseController
     {
         private IHttpActionResult ValidarIdSugestao(int id)

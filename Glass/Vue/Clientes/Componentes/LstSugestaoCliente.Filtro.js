@@ -20,7 +20,7 @@
       required: true,
       twoWay: false,
       validator: Mixins.Validacao.validarObjeto
-    }
+    },
   },
 
   data: function () {
@@ -63,47 +63,29 @@
     },
 
     /**
-      * Recupera se a tela foi aberta a partir de um pedido
-      */
+     * Recupera se a tela foi aberta a partir de um pedido
+     */
     verificarOrigemPedido: function () {
       var idPedido = GetQueryString('idPedido');
 
-      if(idPedido)
-        return true;
-
-      return false;
+      return !!idPedido;
     },
 
     /**
-      * Recupera se a tela foi aberta a partir de um orçamento
-      */
+     * Recupera se a tela foi aberta a partir de um orçamento
+     */
     verificarOrigemOrcamento: function () {
       var idOrcamento = GetQueryString('idOrcamento');
 
-      if (idOrcamento)
-        return true;
-
-      return false;
-    },
-
-    /**
-     * Recupera se a tela foi aberta a partir de um Cliente
-     */
-    verificarOrigemCliente: function () {
-      var idCliente = GetQueryString('idCliente');
-
-      if (idCliente)
-        return false;
-
-      return true;
+      return !!idOrcamento;
     },
 
     /**
      * Retorna os itens para filtro de funcionários.
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
-    obterAtivosAssociadosASugestoesClientes: function () {
-      return Servicos.Funcionarios.obterAtivosAssociadosASugestoesClientes();
+    obterFuncionariosAssociadosASugestoesClientes: function () {
+      return Servicos.Funcionarios.obterSugestoesCliente();
     },
 
     /**
@@ -135,33 +117,28 @@
      * @returns {Promise} Uma Promise com o resultado da busca.
      */
     obterSituacoes: function () {
-      return Promise.resolve({
-        "data": [
-          {
-            "id": "1",
-            "nome": "Ativas"
-          },
-          {
-            "id": "2",
-            "nome": "Canceladas"
-          }
-        ]
-      });
+      return Servicos.SugestaoCliente.situacoes();
     }
   },
 
   mounted: function () {
     var idPedido = GetQueryString('idPedido');
-    if (idPedido)
+
+    if (idPedido) {
       this.filtroAtual.idPedido = idPedido;
+    }
 
     var idOrcamento = GetQueryString('idOrcamento');
-    if (idOrcamento)
+
+    if (idOrcamento) {
       this.filtroAtual.idOrcamento = idOrcamento;
+    }
 
     var idCliente = GetQueryString('idCliente');
-    if(idCliente)
+
+    if (idCliente) {
       this.filtroAtual.idCliente = idCliente;
+    }
   },
 
   watch: {

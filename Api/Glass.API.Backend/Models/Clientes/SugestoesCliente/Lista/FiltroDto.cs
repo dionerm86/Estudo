@@ -20,7 +20,6 @@ namespace Glass.API.Backend.Models.Clientes.SugestoesCliente.Lista
         public FiltroDto()
             : base(item => new TraducaoOrdenacaoListaSugestoesClientes(item.Ordenacao))
         {
-
         }
 
         /// <summary>
