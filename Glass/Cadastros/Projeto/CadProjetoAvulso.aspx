@@ -372,8 +372,9 @@
                     FindControl("hdfTipoCalc", "input").value = retorno[7]; // Verifica como produto é calculado
                     var tipoCalc = retorno[7];
 
-                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != "")
+                    if(FindControl("txtAlturaIns", "input") != null && FindControl("txtAlturaIns", "input").value != ""){
                         GetAdicionalAlturaChapa();
+                    }
 
                     var nomeControle = getNomeControleBenef();
 
