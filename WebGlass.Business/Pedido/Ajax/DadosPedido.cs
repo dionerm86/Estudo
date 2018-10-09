@@ -2,6 +2,7 @@
 using Glass.Configuracoes;
 using Glass.Data.DAL;
 using Glass.Data.Helper;
+using Glass.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,22 @@ namespace WebGlass.Business.Pedido.Ajax
             var formasPagto = FormaPagtoDAO.Instance.GetForPedido(null, idCliente, tipoVenda);
 
             foreach (var f in formasPagto)
-                retorno += string.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ? " selected='selected'" : string.Empty);
+            {
+                /*Caso a config UsarControleDescontoFormaPagamentoDadosProduto estiver habilitada, não deve recuperar a forma de pagamento Prazo para o tipo de venda À Vista
+                e não deve recuperar a forma de pagamento Dinheiro para o tipo de venda À Prazo.*/
+                if (FinanceiroConfig.UsarControleDescontoFormaPagamentoDadosProduto)
+                {
+                    if ((tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.AVista && f.IdFormaPagto != (uint)Pagto.FormaPagto.Prazo)
+                        || (tipoVenda == (int)Glass.Data.Model.Pedido.TipoVendaPedido.APrazo && f.IdFormaPagto != (uint)Pagto.FormaPagto.Dinheiro))
+                    {
+                        retorno += string.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ? " selected='selected'" : string.Empty);
+                    }
+                }
+                else
+                {
+                    retorno += string.Format(formato, f.IdFormaPagto, f.Descricao, idFormaPagto > 0 && f.IdFormaPagto == idFormaPagto ? " selected='selected'" : string.Empty);
+                }
+            }
 
             return retorno;
         }
