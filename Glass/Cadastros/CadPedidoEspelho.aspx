@@ -942,10 +942,20 @@
                 alert("Erro na recuperação do valor de tabela do produto.");
                 return;
             }
+            
+            var hdfValorIns = FindControl('hdfValorIns', 'input');
 
-            var valorIns = FindControl("lblValorIns", "span");
+            if(hdfValorIns != null) {
+                hdfValorIns.value = retorno.value.replace(".", ",");
+            } 
+            else {
+                alert("Não foi possível encontrar o controle 'hdfValorIns'");
+                return false;
+            }
+            
+            var valorIns = FindControl('lblValorIns', 'span');
 
-            if(valorIns != null){
+            if(valorIns != null) {
                 valorIns.innerHTML = retorno.value.replace(".", ",");
             }
             else{
