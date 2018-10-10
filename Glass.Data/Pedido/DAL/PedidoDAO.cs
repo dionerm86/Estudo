@@ -1,4 +1,4 @@
-﻿using Colosoft;
+using Colosoft;
 using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Exceptions;
@@ -4579,9 +4579,10 @@ namespace Glass.Data.DAL
                 sql += $" And p.tipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
             }
 
-
             if (idPedido > 0)
+            {
                 sql += $" AND p.idPedido={idPedido}";
+            }
 
             if (idCli > 0)
             {
