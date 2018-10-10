@@ -230,10 +230,10 @@ namespace Glass.Data.RelDAL
             var sql = $@"SELECT Dia, IdSetor, '' AS Descricao, CAST(ROUND(SUM(TotM2), 2) AS DECIMAL(12, 2)) AS TotProdM2, 0 AS TotPerdaM2, '' AS Criterio, 0 AS DesafioPerda,
                     0 AS MetaPerda, 0 AS Espessura, '' AS CorVidro
                 FROM (
-                    SELECT ppp.IdSetor, DAY(ppp.DataLeitura) AS Dia
+                    SELECT ppp.IdSetor, DAY(ppp.DataLeitura) AS Dia,
                         ROUND(IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, ((((50 - IF(MOD(a.Altura, 50) > 0, MOD(a.Altura, 50), 50)) + a.Altura) *
                             ((50 - IF(MOD(a.Largura, 50) > 0, MOD(a.Largura, 50), 50)) + a.Largura)) / 1000000) * a.Qtde, ppo.TotM2Calc) / (pp.Qtde *
-                            IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2,
+                            IF(ped.TipoPedido = { (int)Pedido.TipoPedidoEnum.MaoDeObra }, a.Qtde, 1)), 4) AS TotM2
                 FROM pedido ped
                     INNER JOIN produtos_pedido_espelho pp ON (ped.IdPedido = pp.IdPedido)
 	                INNER JOIN produtos_pedido ppo On (pp.IdProdPed = ppo.IdProdPedEsp)
