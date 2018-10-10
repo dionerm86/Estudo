@@ -4299,8 +4299,7 @@ namespace Glass.Data.DAL
             if (!IsLiberacaoAberta(idLiberacao))
                 throw new Exception("A liberação informada esta cancelada.");
 
-            //Apenas se o controle de ordem de carga estiver ativo
-            //deve -se verificar o tipo entrega dos pedidos da liberação. (Chamado 77987).
+            //Apenas se o controle de ordem de carga estiver ativo deve-se verificar o tipo entrega dos pedidos da liberação.
             if (OrdemCargaConfig.UsarControleOrdemCarga)
             {
                 //Verifica se a liberação possui apenas pedidos do tipo entrega balcão
