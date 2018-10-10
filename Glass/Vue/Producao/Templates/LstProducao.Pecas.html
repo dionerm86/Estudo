@@ -1,0 +1,111 @@
+﻿<section>
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPecas"
+        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
+        <template slot="cabecalho">
+            <th></th>
+            <th>Pedido</th>
+            <th>Tipo Ped.</th>
+            <th>Pedido Cli.</th>
+            <th>Cliente</th>
+            <th>Produto</th>
+            <th>Apl.</th>
+            <th>Proc.</th>
+            <th v-for="setor in setoresExibir">
+                {{ setor.nome }}
+            </th>
+            <th>Perda</th>
+            <th>Pronto Fábrica</th>
+            <th>Prev. Entrega</th>
+            <th>Data Lib.</th>
+            <th>Plano Corte</th>
+            <th>Etiqueta</th>
+            <th>Cavalete</th>
+        </template>
+        <template slot="item" slot-scope="{ item, index }">
+            <td></td>
+            <td>
+                <template v-if="item.pedido">
+                    {{ item.pedido.idExibir }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.pedido">
+                    {{ item.pedido.siglaTipoPedido }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.pedido">
+                    {{ item.pedido.codigoPedidoCliente }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.pedido && item.pedido.cliente">
+                    {{ item.pedido.cliente.id }} - {{ item.pedido.cliente.nome }}
+                </template>
+            </td>
+            <td>
+                <span v-if="item.produtoPedido">
+                    {{ item.produtoPedido.descricao }}
+                    {{ item.produtoPedido.descricaoBeneficiamentos }}
+                </span>
+                <b v-if="configuracoes.empresaTrabalhaComAlturaELargura">
+                    {{ item.altura }}x{{ item.largura }}
+                </b>
+                <b v-else>
+                    {{ item.largura }}x{{ item.altura }}
+                </b>
+                <div v-if="item.situacaoProducao && item.situacaoProducao.perda" style="font-size: 90%">
+                    {{ item.situacaoProducao.perda.tipo }}
+                </div>
+            </td>
+            <td>{{ item.codigoAplicacao }}</td>
+            <td>{{ item.codigoProcesso }}</td>
+            <td v-for="leitura in ordenarLeituras(item)">
+                <template v-if="leitura.data">
+                    {{ leitura.data | dataHora }}
+                    Func.: {{ leitura.funcionario }}
+                    <div v-if="leitura.chapa && configuracoes.usarControleDeChapaDeCorte">
+                        <b v-if="leitura.chapa.numeroEtiqueta">
+                            Matéria-prima: {{ leitura.chapa.numeroEtiqueta }}
+                        </b>
+                        <i v-if="leitura.chapa.numeroNotaFiscal">
+                            NFe: {{ leitura.chapa.numeroNotaFiscal }}
+                        </i>
+                        <i v-if="leitura.chapa.lote">
+                            Lote: {{ leitura.chapa.lote }}
+                        </i>
+                    </div>
+                </template>
+                <div v-else-if="leitura.setor && !leitura.setor.obrigatorio" style="text-align: center; opacity: 0.5; filter: alpha(opacity=50)">
+                    <img src="/Images/alerta.png" alt="Setor não faz parte do roteiro de produção"
+                        title="Setor não faz parte do roteiro de produção, portanto não necessita ser lido" />
+                </div>
+            </td>
+            <td>
+                <template v-if="item.situacaoProducao && item.situacaoProducao.perda">
+                    {{ item.situacaoPerda.perda.data | dataHora }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.dataEntrega">
+                    {{ item.dataEntrega.fabrica | data }}
+                </template>
+            </td>
+            <td>
+                <template v-if="item.dataEntrega">
+                    {{ item.dataEntrega.exibicao | data }}
+                </template>
+            </td>
+        </template>
+        <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
+            v-if="item.produtoPedido.composto && exibindoFilhos(index)">
+            <tr v-bind:class="classe" style="border-top: none">
+                <td></td>
+                <td v-bind:colspan="numeroColunasLista() - 1">
+                    <producao-pecas v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }"
+                        v-bind:configuracoes="configuracoes" v-bind:buscar-pecas="buscarFilhos"></producao-pecas>
+                </td>
+            </tr>
+        </template>
+    </lista-paginada>
+</section>

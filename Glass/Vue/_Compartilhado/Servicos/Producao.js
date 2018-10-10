@@ -28,7 +28,27 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Recupera a lista de peças para a tela de consulta de produção.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a busca de peças.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
+      filtro = filtro || {};
+      filtro.pagina = pagina;
+      filtro.numeroRegistros = numeroRegistros;
+      filtro.ordenacao = ordenacao;
+
+      return http().get(API.substr(0, API.length - 1), {
+        params: filtro
+      });
+    },
+
+    /**
      * Recupera as configurações para a tela de consulta de produção.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterConfiguracoesConsulta: function () {
       return http().get(API + 'configuracoes/consulta');

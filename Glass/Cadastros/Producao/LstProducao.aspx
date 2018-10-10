@@ -227,10 +227,12 @@
     <asp:HiddenField ID="hdfRefresh" runat="server" />
     <%=
         Glass.UI.Web.IncluirTemplateTela.Script(
-            "~/Vue/Producao/Templates/LstProducao.Filtros.html")
+            "~/Vue/Producao/Templates/LstProducao.Filtros.html",
+            "~/Vue/Producao/Templates/LstProducao.Pecas.html")
     %>
     <div id="app">
-        <producao-filtros :filtro="filtro" :configuracoes="configuracoes" :agrupar-impressao="agruparImpressao"></producao-filtros>
+        <producao-filtros :filtro.sync="filtro" :configuracoes="configuracoes" :agrupar-impressao="agruparImpressao"></producao-filtros>
+        <producao-pecas :filtro="filtro" :configuracoes="configuracoes" :buscar-pecas="buscarPecas"></producao-pecas>
     </div>
     <br /><br /><br /><br />
 
@@ -1161,6 +1163,7 @@
     <asp:ScriptManager runat="server" LoadScriptsBeforeUI="False">
         <Scripts>
             <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.Filtros.js" />
+            <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.Pecas.js" />
             <asp:ScriptReference Path="~/Vue/Producao/Componentes/LstProducao.js" />
         </Scripts>
     </asp:ScriptManager>

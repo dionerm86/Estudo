@@ -23,7 +23,8 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
         /// </summary>
         public ListaDto()
         {
-            this.PermitirImpressaoRelatorios = UserInfo.GetUserInfo.TipoUsuario != (int)Data.Helper.Utils.TipoFuncionario.Vendedor
+            this.EmpresaTrabalhaComAlturaELargura = PedidoConfig.EmpresaTrabalhaAlturaLargura;
+            this.PermitirImpressaoRelatorios = UserInfo.GetUserInfo.TipoUsuario != (int)Utils.TipoFuncionario.Vendedor
                 || !ProducaoConfig.TelaConsulta.EsconderLinksImpressaoParaVendedores;
 
             this.ExibirNumeroEtiquetaNoInicioDaTabela = ProducaoConfig.TelaConsulta.ExibirNumeroEtiquetaNoInicioDaTabela;
@@ -39,6 +40,13 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
             this.TiposPecasExibir = new[] { TipoPecaExibir.EmProducao };
             this.TipoProdutoComposicao = Lista.TipoProdutoComposicao.NaoIncluirProdutosComposicao;
         }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se o usuário atual pode imprimir relatórios.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("empresaTrabalhaComAlturaELargura")]
+        public bool EmpresaTrabalhaComAlturaELargura { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o usuário atual pode imprimir relatórios.

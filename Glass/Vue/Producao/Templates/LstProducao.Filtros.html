@@ -150,6 +150,13 @@
                 v-bind:ordenar="false" style="min-width: 175px"></lista-selecao-multipla>
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
+        <span class="form-group">
+            <label for="periodoFabrica" v-if="configuracoes.usarDataFabrica">Período (Fábrica)</label>
+            <label for="periodoFabrica" v-else>Período (Pronto Fábrica)</label>
+            <campo-data-hora-periodo id="periodoFabrica" v-bind:data-hora-inicial.sync="filtroAtual.periodoFabricaInicio"
+                v-bind:data-hora-final.sync="filtroAtual.periodoFabricaFim"></campo-data-hora-periodo>
+            <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
+        </span>
     </div>
     <div>
         <span class="form-group">

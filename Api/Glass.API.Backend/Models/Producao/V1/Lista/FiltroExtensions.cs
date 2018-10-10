@@ -16,12 +16,21 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// <summary>
         /// Recupera uma string com os inteiros separados por vírgula, caso a lista esteja preenchida.
         /// </summary>
+        /// <typeparam name="T">O tipo do enumerable.</typeparam>
         /// <param name="lista">A lista com os números.</param>
         /// <returns>Uma string com os números separados por vírgula.</returns>
-        public static string ObterComoString(this IEnumerable<int> lista)
+        public static string ObterComoString<T>(this IEnumerable<T> lista)
+            where T : struct
         {
+            Func<IEnumerable<object>> converterLista = () =>
+            {
+                return typeof(T).IsEnum
+                    ? lista.Cast<int>().Cast<object>()
+                    : lista.Cast<object>();
+            };
+
             return lista != null && lista.Any()
-                ? string.Join(",", lista)
+                ? string.Join(",", converterLista())
                 : null;
         }
 

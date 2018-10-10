@@ -486,7 +486,9 @@
     <Content Include="Vue\Pedidos\Templates\LstPedidos.FinalizacaoFinanceiro.html" />
     <Content Include="Vue\Producao\Componentes\LstProducao.Filtros.js" />
     <Content Include="Vue\Producao\Componentes\LstProducao.js" />
+    <Content Include="Vue\Producao\Componentes\LstProducao.Pecas.js" />
     <Content Include="Vue\Producao\Templates\LstProducao.Filtros.html" />
+    <Content Include="Vue\Producao\Templates\LstProducao.Pecas.html" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />

@@ -190,7 +190,11 @@
       this.tipoFastDeliveryAtual = null;
 
       this.carregarFiltrosPadrao();
-      this.filtrar();
+
+      var vm = this;
+      this.$nextTick(function () {
+        vm.filtrar();
+      });
     },
 
     /**
@@ -198,10 +202,13 @@
      */
     carregarFiltrosPadrao: function () {
       this.tipoSituacaoProducaoAtual = this.configuracoes
-          ? { id: this.configuracoes.tipoSituacaoProducao }
-          : null;
+        ? { id: this.configuracoes.tipoSituacaoProducao }
+        : null;
 
-      this.filtroAtual.tiposPecasExibir = this.configuracoes ? this.configuracoes.tiposPecasExibir : [];
+      this.filtroAtual.tiposPecasExibir = this.configuracoes
+        ? this.configuracoes.tiposPecasExibir
+        : [];
+
       this.tipoProdutosComposicaoAtual = this.configuracoes
         ? { id: this.configuracoes.tipoProdutoComposicao }
         : null;
@@ -242,7 +249,11 @@
     configuracoes: {
       handler: function () {
         this.carregarFiltrosPadrao();
-        this.filtrar();
+
+        var vm = this;
+        this.$nextTick(function () {
+          vm.filtrar();
+        });
       },
       deep: true
     },

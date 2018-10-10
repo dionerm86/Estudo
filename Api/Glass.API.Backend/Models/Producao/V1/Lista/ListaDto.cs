@@ -237,11 +237,11 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
                         {
                             Id = setor.IdSetor,
                             Nome = setor.Descricao,
-                            Obrigatorio = peca.SetorNaoObrigatorio[posicaoSetor]?.Length > 0,
+                            Obrigatorio = peca.SetorNaoObrigatorio[posicaoSetor]?.Length == 0,
                         },
                         Data = dataLeitura,
                         Funcionario = peca.VetNomeFuncLeitura[posicaoSetor],
-                        Chapa = !peca.VetSetorCorte[posicaoSetor]
+                        Chapa = !(dataLeitura.HasValue && peca.VetSetorCorte[posicaoSetor])
                             ? null
                             : new ChapaVidroDto
                             {
