@@ -42,27 +42,35 @@ namespace Glass.Data.Helper.Calculos
 
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
 
-            estrategia.Calcular(
-                sessao,
-                produto,
-                arredondarAluminio,
-                calcularMultiploDe5,
-                compra,
-                nf,
-                numeroBeneficiamentos,
-                alturaBeneficiamento,
-                larguraBeneficiamento,
-                usarChapaVidro,
-                valorBruto,
-                primeiroCalculo
-            );
+            try
+            {
+                DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, container, produto);
+
+                estrategia.Calcular(
+                    sessao,
+                    produto,
+                    arredondarAluminio,
+                    calcularMultiploDe5,
+                    compra,
+                    nf,
+                    numeroBeneficiamentos,
+                    alturaBeneficiamento,
+                    larguraBeneficiamento,
+                    usarChapaVidro,
+                    valorBruto
+                );
+            }
+            finally
+            {
+                DescontoAcrescimo.Instance.AplicarDescontoQtde(sessao, container, produto);
+            }
 
             this.IncluirDescontoPorQuantidade(produto);
         }
 
         private int NormalizarAlturaLarguraBeneficiamento(int? valor, IContainerCalculo container, int tipoCalc)
         {
-            if (container?.MaoDeObra ?? false && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
+            if ((container?.MaoDeObra ?? false) && tipoCalc == (int)TipoCalculoGrupoProd.Perimetro)
                 return valor.Value;
 
             return 2;
