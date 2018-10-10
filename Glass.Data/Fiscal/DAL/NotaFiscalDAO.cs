@@ -1229,7 +1229,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            if (contasReceber?.Any(f => f.IdContaR > 0) ?? false)
+                            if ((contasReceber?.Count()).GetValueOrDefault() == 0)
                             {
                                 var idsNotaFiscal = PedidosNotaFiscalDAO.Instance.ObterIdsNf(transaction, idsLiberarPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList() ?? new List<int>(),
                                     idsPedidos?.Split(',')?.Select(f => (f?.StrParaInt()).GetValueOrDefault())?.ToList(), NotaFiscal.SituacaoEnum.Autorizada);
@@ -1270,7 +1270,7 @@ namespace Glass.Data.DAL
                                 }
                             }
 
-                            if (nf.DatasParcelas?.Any(f => f > DateTime.MinValue) ?? false)
+                            if ((nf.DatasParcelas?.Count()).GetValueOrDefault() == 0)
                             {
                                 nf.NumParc = 1;
                                 nf.DatasParcelas = new DateTime[1];
