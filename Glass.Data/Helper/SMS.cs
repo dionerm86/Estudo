@@ -138,7 +138,7 @@ namespace Glass.Data.Helper
 
             decimal totalLiberados = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>
                 (@"select sum(total) from liberarpedido lp
-                   Inner Join Cliente c ON (lp.IdCliente = c.Id_Cli) where c.IgnorarNoSmsResumoDiario = false AND lp.situacao=" +
+                   Inner Join Cliente c ON (lp.IdCliente = c.Id_Cli) where IFNULL(c.IgnorarNoSmsResumoDiario, false) = false AND lp.situacao=" +
                 (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " and lp.dataLiberacao>=?dataIni and lp.dataLiberacao<=?dataFim", lstParam.ToArray());
 
             // Verifica se será enviado SMS hoje
