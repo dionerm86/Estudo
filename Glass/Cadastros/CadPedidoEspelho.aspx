@@ -65,7 +65,7 @@
                 var tipoPedido = FindControl("hdfTipoPedido", "input").value;
                 var cliRevenda = FindControl("hdfCliRevenda", "input").value;
                 var idCliente = FindControl("hdfIdCliente", "input").value;
-                var altura = FindControl("txtAlturaIns", "input");
+                var altura = FindControl("txtAlturaIns", "input").value;
 
                 var idProdPed = FindControl("hdfProdPed", "input");
                 idProdPed = idProdPed != null ? idProdPed.value : "";
