@@ -522,6 +522,12 @@ namespace Glass.Global.Negocios.Componentes
                     .Add("?id", funcionario.IdFunc)
                     .Count(),
                     tratarResultado("Este funcionário não pode ser excluído por possuir movimentações bancárias relacionadas ao mesmo. Para impedir seu login no sistema, inative-o."))
+                .Add(SourceContext.Instance.CreateQuery()
+                    .From<Data.Model.Cliente>()
+                    .Where("IdFunc=?id")
+                    .Add("?id", funcionario.IdFunc)
+                    .Count(),
+                    tratarResultado("Este funcionário não pode ser excluído por possuir clientes vinculado ao mesmo. Para impedir seu login no sistema, inative-o."))
                 .Execute();
 
             return mensagens.Select(f => f.GetFormatter()).ToArray();

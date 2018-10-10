@@ -437,7 +437,7 @@ namespace Glass.Data.DAL
 
             return objPersistence.LoadData(sessao, String.Format(sql, usarEspelho ? "Fluxo" : "Pedido")).ToList();
         }
-        
+
         /// <summary>
         /// Busca os ids dos produtos de vários pedidos.
         /// </summary>
@@ -448,7 +448,7 @@ namespace Glass.Data.DAL
                 return new List<int>();
             }
 
-            var sql = $@"SELECT pp.IdProdPed 
+            var sql = $@"SELECT pp.IdProdPed
                 FROM produtos_pedido pp
                     LEFT JOIN pedido p ON (pp.IdPedido = p.IdPedido)
                 WHERE pp.IdPedido IN ({ string.Join(",", idsPedidos) })
@@ -2709,7 +2709,9 @@ namespace Glass.Data.DAL
                     PedidoDAO.Instance.UpdateTotalPedido(sessao, pedido);
                 }
 
-                if (atualizaDataEntrega)
+                var deveAtualizar = VerificarDeveAtualizarDataEntrega(sessao, (int)pedido.IdPedido);
+
+                if (atualizaDataEntrega && deveAtualizar)
                 {
                     // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                     bool enviarMensagem;
@@ -3760,14 +3762,15 @@ namespace Glass.Data.DAL
                 var valorUnitario = ValorUnitario.Instance.RecalcularValor(session, pedido, prodPed, !somarAcrescimoDesconto);
                 prodPed.ValorVendido = valorUnitario ?? Math.Max(prodPed.ValorTabelaPedido, prodPed.ValorVendido);
 
-                bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+                var calcMult5 = prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     session,
                     pedido,
                     prodPed,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    prodPed.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                    calcMult5,
                     prodPed.Beneficiamentos.CountAreaMinimaSession(session)
                 );
 
@@ -4007,7 +4010,8 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Insert(transaction, objInsert, false, true);
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)objInsert.IdPedido);
+                    var retorno = Insert(transaction, objInsert, false, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4259,14 +4263,15 @@ namespace Glass.Data.DAL
             if (!objInsert.Redondo && objInsert.IdAmbientePedido > 0 && AmbientePedidoDAO.Instance.IsRedondo(session, objInsert.IdAmbientePedido.Value))
                 objInsert.Redondo = true;
 
-            bool isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var isPedidoProducaoCorte = (pedido as IContainerCalculo).IsPedidoProducaoCorte;
+            var calcMult5 = objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(
                 session,
                 pedido,
                 objInsert,
                 Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                objInsert.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
+                calcMult5,
                 objInsert.Beneficiamentos.CountAreaMinimaSession(session)
             );
 
@@ -4356,7 +4361,9 @@ namespace Glass.Data.DAL
                 }
             }
 
-            if (atualizaDataEntrega)
+            var deveAtualizar = VerificarDeveAtualizarDataEntrega(session, (int)objInsert.IdPedido);
+
+            if (atualizaDataEntrega && deveAtualizar)
             {
                 // Atualiza a data de entrega do pedido para considerar o número de dias mínimo de entrega do subgrupo ao informar o produto.
                 bool enviarMensagem;
@@ -4412,7 +4419,11 @@ namespace Glass.Data.DAL
                 {
                     transaction.BeginTransaction();
 
-                    var retorno = Delete(transaction, objDelete, true, true);
+                    var idPedido = ObtemIdPedido(transaction, objDelete.IdProdPed);
+
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)idPedido);
+
+                    var retorno = Delete(transaction, objDelete, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4664,7 +4675,9 @@ namespace Glass.Data.DAL
                     transaction.BeginTransaction();
 
                     var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(transaction, (int)objUpdate.IdPedido);
-                    var retorno = Update(transaction, objUpdate, pedido);
+                    var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(transaction, (int)objUpdate.IdPedido);
+
+                    var retorno = Update(transaction, objUpdate, pedido, true, true, atualizarDataEntrega);
 
                     transaction.Commit();
                     transaction.Close();
@@ -4691,7 +4704,8 @@ namespace Glass.Data.DAL
             try
             {
                 var pedido = PedidoDAO.Instance.GetElementByPrimaryKey(sessao, (int)objUpdate.IdPedido);
-                return Update(sessao, objUpdate, pedido);
+                var atualizarDataEntrega = VerificarDeveAtualizarDataEntrega(sessao, (int)objUpdate.IdPedido);
+                return Update(sessao, objUpdate, pedido, true, true, atualizarDataEntrega);
             }
             finally
             {
@@ -4840,15 +4854,15 @@ namespace Glass.Data.DAL
                     objUpdate.Redondo = true;
 
                 var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(sessao, objUpdate.IdPedido);
+                var calcMult5 = objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
                 ValorTotal.Instance.Calcular(
                     sessao,
                     pedido,
                     objUpdate,
                     Helper.Calculos.Estrategia.ValorTotal.Enum.ArredondarAluminio.ArredondarApenasCalculo,
-                    objUpdate.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte,
-                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao),
-                    primeiroCalculo: true
+                    calcMult5,
+                    objUpdate.Beneficiamentos.CountAreaMinimaSession(sessao)
                 );
 
                 objUpdate.TipoCalculoUsadoPedido = Glass.Data.DAL.GrupoProdDAO.Instance.TipoCalculo(sessao, (int)objUpdate.IdProd);
@@ -4953,7 +4967,8 @@ namespace Glass.Data.DAL
                 DiferencaCliente.Instance.Calcular(session, container, produto);
             }
 
-            var calcMult5 = ProdutoDAO.Instance.IsVidro(session ,(int)produto.IdProd) && produto.TipoCalc != (int)TipoCalculoGrupoProd.M2Direto;
+            var isPedidoProducaoCorte = PedidoDAO.Instance.IsPedidoProducaoCorte(session, produto.IdPedido);
+            var calcMult5 = produto.TipoCalc != (int)Glass.Data.Model.TipoCalculoGrupoProd.M2Direto && !isPedidoProducaoCorte;
 
             ValorTotal.Instance.Calcular(session,
                 container,
@@ -5526,6 +5541,19 @@ namespace Glass.Data.DAL
                 Referencia = "Imagem do Produto Pedido " + idProdPedFilho,
                 NumEvento = LogAlteracaoDAO.Instance.GetNumEvento(session, LogAlteracao.TabelaAlteracao.ImagemProdPed, (int)idProdPedFilho)
             });
+        }
+
+        /// <summary>
+        /// Valida se o sistema deverá recalcular a data de entrega do pedido
+        /// </summary>
+        /// <param name="sessao"></param>
+        /// <param name="idPedido"></param>
+        /// <returns></returns>
+        private bool VerificarDeveAtualizarDataEntrega(GDASession sessao, int idPedido)
+        {
+            var pedido = PedidoDAO.Instance.ObterDataEntregaEDataEntregaSistema(sessao, (int)idPedido);
+
+            return pedido.DataEntregaSistema != null && (pedido.DataEntregaSistema.Value.Date == pedido.DataEntrega.Value.Date || !Config.PossuiPermissao(Config.FuncaoMenuPedido.IgnorarBloqueioDataEntrega));
         }
     }
 }

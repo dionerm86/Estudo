@@ -199,7 +199,7 @@ namespace Glass.Data.Helper
                     }
                     // Os usuários que não são da Sync, devem poder alterar as configurações caso tenham acesso ao menu.
                     else
-                        loginUsuario.PodeAlterarConfiguracao = Utils.IsLocalUrl(HttpContext.Current) || !loginUsuario.IsAdminSync;
+                        loginUsuario.PodeAlterarConfiguracao = (HttpContext.Current != null && Utils.IsLocalUrl(HttpContext.Current)) || !loginUsuario.IsAdminSync;
                 }
 
                 return loginUsuario;

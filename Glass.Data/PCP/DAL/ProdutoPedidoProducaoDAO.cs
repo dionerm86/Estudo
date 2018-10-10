@@ -4710,12 +4710,12 @@ namespace Glass.Data.DAL
             }
 
             //Verifica se a etiqueta ja foi expedida
-            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, prodImpressao.IdProdImpressao))
+            if (ProdutoImpressaoDAO.Instance.EstaExpedida(sessao, (uint)prodImpressao.IdProdImpressao))
             {
                 throw new Exception("Esta etiqueta ja foi expedida no sistema.");
             }
 
-            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, prodImpressao.IdProdImpressao))
+            if (ChapaCortePecaDAO.Instance.ChapaPossuiLeitura(sessao, (uint)prodImpressao.IdProdImpressao))
             {
                 throw new Exception("Esta etiqueta já foi utilizada no setor de corte.");
             }
@@ -4787,7 +4787,7 @@ namespace Glass.Data.DAL
             ProdutoImpressaoDAO.Instance.AtualizaPedidoExpedicao(
                 sessao,
                 idPedidoExpedicao,
-                prodImpressao.IdProdImpressao);
+                (uint)prodImpressao.IdProdImpressao);
 
             //Faz o vinculo da chapa no corte para que a mesma não possa ser usada novamente
             ChapaCortePecaDAO.Instance.Inserir(
@@ -4815,7 +4815,10 @@ namespace Glass.Data.DAL
                 System.Reflection.MethodBase.GetCurrentMethod().Name,
                 string.Empty);
 
-            var obs = $"Etiqueta de chapa: {codEtiquetaChapa}";
+            var idProdImpressaoChapa = ProdutoImpressaoDAO.Instance.ObtemIdProdImpressao(
+                sessao,
+                codEtiquetaChapa,
+                ProdutoImpressaoDAO.TipoEtiqueta.NotaFiscal);
 
             //Baixa o estoque da peça
             MovEstoqueDAO.Instance.BaixaEstoquePedido(
@@ -4827,7 +4830,9 @@ namespace Glass.Data.DAL
                 1,
                 0,
                 false,
-                obs);
+                null,
+                null,
+                idProdImpressaoChapa);
 
             //Atualiza a situação do pedido
             PedidoDAO.Instance.AtualizaSituacaoProducao(
