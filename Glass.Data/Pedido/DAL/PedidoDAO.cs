@@ -4544,8 +4544,15 @@ namespace Glass.Data.DAL
                 CAST(SUM(pp.qtde) as SIGNED) as QuantidadePecasPedido, COALESCE(vpp.qtde, 0) as QtdePecasVolume, SUM(pp.TotM) as TotMVolume,
                 SUM(pp.peso) as PesoVolume";
 
-            var sql = @"
-                SELECT " + campos + @"
+            var situacoesPedidoNaoConsiderar = new List<Pedido.SituacaoPedido>
+                {
+                    Pedido.SituacaoPedido.ConfirmadoLiberacao,
+                    Pedido.SituacaoPedido.Confirmado,
+                    Pedido.SituacaoPedido.LiberadoParcialmente
+                };
+
+            var sql = $@"
+                SELECT {campos}
                 FROM pedido p
                     INNER JOIN produtos_pedido pp ON (p.idPedido = pp.idPedido)
                     INNER JOIN produto prod ON (pp.idProd = prod.idProd)
@@ -4553,100 +4560,161 @@ namespace Glass.Data.DAL
                     LEFT JOIN funcionario f On (p.idFunc=f.idFunc)
                     LEFT JOIN loja l On (p.IdLoja = l.IdLoja)
                     LEFT JOIN grupo_prod gp ON (prod.idGrupoProd = gp.idGrupoProd)
-                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
+                    LEFT JOIN subgrupo_prod sgp ON (prod.idSubGrupoProd = sgp.idSubGrupoProd 
+                        AND (sgp.PermitirItemRevendaNaVenda IS NULL OR sgp.PermitirItemRevendaNaVenda = 0))
                     LEFT JOIN (
                                     SELECT v1.idPedido, SUM(vpp1.qtde) as qtde
                                     FROM volume v1
 	                                    INNER JOIN volume_produtos_pedido vpp1 ON (vpp1.idVolume = v1.idVolume)
                                     GROUP BY v1.idPedido
                              ) vpp ON (p.idPedido = vpp.idPedido)
-                WHERE p.situacao IN(" + (int)Pedido.SituacaoPedido.ConfirmadoLiberacao + @" {0})
+                WHERE p.situacao IN({string.Join(",", situacoesPedidoNaoConsiderar.Select(f => (int)f).ToArray())})
+                    AND pp.QtdSaida < pp.Qtde
+                    AND p.SituacaoProducao <> {(int)Pedido.SituacaoProducaoEnum.Entregue}
                     AND COALESCE(sgp.GeraVolume, gp.GeraVolume, false) = true
-                    AND COALESCE(sgp.TipoSubgrupo, 0) <> " + (int)TipoSubgrupoProd.ChapasVidro;
-
-            sql = string.Format(sql, "," + (int)Pedido.SituacaoPedido.Confirmado + "," + (int)Pedido.SituacaoPedido.LiberadoParcialmente);
+                    AND COALESCE(sgp.TipoSubgrupo, 0) <> {(int)TipoSubgrupoProd.ChapasVidro}";
 
             if (OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega)
-                sql += " And p.tipoEntrega<>" + (int)Pedido.TipoEntregaPedido.Balcao;
+            {
+                sql += $" And p.tipoEntrega<>{(int)Pedido.TipoEntregaPedido.Balcao}";
+            }
+
 
             if (idPedido > 0)
-                sql += " AND p.idPedido=" + idPedido;
+                sql += $" AND p.idPedido={idPedido}";
 
             if (idCli > 0)
             {
-                sql += " AND p.idcli=" + idCli;
+                sql += $" AND p.idcli={idCli}";
             }
             else if (!string.IsNullOrEmpty(nomeCli))
             {
-                string ids = ClienteDAO.Instance.GetIds(null, nomeCli, null, 0, null, null, null, null, 0);
-                sql += " AND p.idCli IN(" + ids + ")";
+                string ids = ClienteDAO.Instance.GetIds(
+                    null,
+                    nomeCli,
+                    null,
+                    0,
+                    null,
+                    null,
+                    null,
+                    null,
+                    0);
+
+                sql += $" AND p.idCli IN({ids})";
             }
 
             if (idCliExterno > 0)
             {
-                sql += " AND p.IdClienteExterno=" + idCliExterno;
+                sql += $" AND p.IdClienteExterno={idCliExterno}";
             }
             else if (!string.IsNullOrEmpty(nomeCliExterno))
             {
                 var ids = ClienteDAO.Instance.ObtemIdsClientesExternos(nomeCliExterno);
 
                 if (!string.IsNullOrEmpty(ids))
-                    sql += " AND p.IdClienteExterno IN(" + ids + ")";
+                    sql += $" AND p.IdClienteExterno IN({ids})";
             }
 
             if (idLoja > 0)
-                sql += " AND p.idLoja=" + idLoja;
+            {
+                sql += $" AND p.idLoja={idLoja}";
+            }
 
             if (!string.IsNullOrEmpty(dataEntIni))
+            {
                 sql += " AND p.DataEntrega>=?dtEntIni";
+            }
 
             if (!string.IsNullOrEmpty(dataEntFim))
+            {
                 sql += " AND p.DataEntrega<=?dtEntFim";
+            }
 
             if (!string.IsNullOrEmpty(dataLibIni))
-                sql += " AND p.IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido IN (SELECT IdLiberarPedido FROM liberarpedido WHERE DataLiberacao>=?dataLibIni))";
+            {
+                sql += @" AND p.IdPedido IN (
+                                SELECT IdPedido FROM 
+                                produtos_liberar_pedido WHERE 
+                                IdLiberarPedido IN (
+                                    SELECT IdLiberarPedido FROM
+                                    liberarpedido WHERE DataLiberacao>=?dataLibIni))";
+            }
 
             if (!string.IsNullOrEmpty(dataLibFim))
-                sql += " AND p.IdPedido IN (SELECT IdPedido FROM produtos_liberar_pedido WHERE IdLiberarPedido IN (SELECT IdLiberarPedido FROM liberarpedido WHERE DataLiberacao<=?dataLibFim))";
+            {
+                sql += @" AND p.IdPedido IN (
+                                SELECT IdPedido FROM 
+                                produtos_liberar_pedido WHERE
+                                IdLiberarPedido IN (
+                                    SELECT IdLiberarPedido FROM
+                                    liberarpedido WHERE DataLiberacao<=?dataLibFim))";
+            }
 
             if (!string.IsNullOrEmpty(codRota))
-                sql += " And c.id_Cli In (Select idCliente From rota_cliente Where idRota In " +
-                    "(Select idRota From rota where codInterno like ?codRota))";
+            {
+                sql += @" And c.id_Cli In (Select idCliente From rota_cliente Where idRota In 
+                    (Select idRota From rota where codInterno like ?codRota))";
+            }
 
             if (!string.IsNullOrEmpty(codRotaExterna))
             {
-                var rotas = string.Join(",", codRotaExterna.Split(',').Select(f => "'" + f + "'").ToArray());
-                sql += " AND p.RotaExterna IN (" + rotas + ")";
+                var rotas = string.Join(",",
+                    codRotaExterna
+                    .Split(',')
+                    .Select(f => "'" + f + "'")
+                    .ToArray());
+
+                sql += $" AND p.RotaExterna IN ({rotas})";
             }
 
             if (tipoEntrega > 0)
-                sql += " AND p.tipoEntrega=" + tipoEntrega;
+            {
+                sql += $" AND p.tipoEntrega={tipoEntrega}";
+            }
 
             if (!PCPConfig.UsarConferenciaFluxo)
+            {
                 sql += " AND COALESCE(pp.InvisivelPedido, false) = false";
+            }
             else
+            {
                 sql += " AND COALESCE(pp.InvisivelFluxo, false) = false";
+            }
 
             sql += " GROUP BY p.idpedido";
 
-            situacao = "," + situacao + ",";
+            situacao = $",{situacao},";
             var filtroSituacao = new List<string>();
             if (situacao != ",1,2,3,")
             {
                 if (situacao.Contains(",1,"))
+                {
                     filtroSituacao.Add("QtdePecasVolume = 0");
+                }
 
                 if (situacao.Contains(",2,"))
+                {
                     filtroSituacao.Add("(QtdePecasVolume > 0 AND QuantidadePecasPedido > QtdePecasVolume)");
+                }
 
                 if (situacao.Contains(",3,"))
+                {
                     filtroSituacao.Add("QuantidadePecasPedido = QtdePecasVolume");
+                }
             }
 
-            return @"
-                SELECT " + (selecionar ? "*" : "COUNT(*)") + @"
-                FROM (" + sql + ") as tmp " +
-                (filtroSituacao.Count > 0 ? "WHERE " + string.Join(" OR ", filtroSituacao.ToArray()) : "");
+            string filtroSqlSituacao = filtroSituacao.Count > 0
+                ? $"WHERE {string.Join(" OR ", filtroSituacao.ToArray())}"
+                : string.Empty;
+
+            string select = selecionar 
+                ? "*" 
+                : "COUNT(*)";
+
+            return $@"
+                SELECT {select}
+                FROM ({sql}) as tmp
+                {filtroSqlSituacao}";
         }
 
         /// <summary>
