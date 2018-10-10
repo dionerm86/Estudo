@@ -181,9 +181,9 @@ namespace Glass.Data.Helper
 
                 var nomeLoja = LojaDAO.Instance.GetNome(sessao, idLoja);
                 var dataEntrega = PedidoDAO.Instance.ObtemDataEntrega(sessao, idPedido).GetValueOrDefault();
-                
+
                 var texto = TextoEmailPedidoFinalizadoPcp((int)idPedido, codCliente, nomeLoja, dataEntrega);
-                
+
                 List<AnexoEmail> anexos = new List<AnexoEmail>();
                 if (EmailConfig.EnviarPedidoAnexoEmail == DataSources.TipoEnvioAnexoPedidoEmail.Ambos ||
                     EmailConfig.EnviarPedidoAnexoEmail == DataSources.TipoEnvioAnexoPedidoEmail.PCP)
@@ -203,7 +203,7 @@ namespace Glass.Data.Helper
         public static void EnviaEmailPedidoPcpVendedor(GDASession sessao, uint idPedido, string emailVendedor, string nomeVendedor)
         {
             try
-            {                
+            {
                 if (String.IsNullOrEmpty(emailVendedor))
                     throw new Exception("e-mail do vendedor vazio.");
 
@@ -216,7 +216,7 @@ namespace Glass.Data.Helper
                     throw new Exception("Não foi possível recuperar a loja do pedido ao salvar o e-mail a ser enviado.");
                 }
 
-                string texto = nomeVendedor + " ,\n\nSegue em anexo o pedido "+ idPedido + " do seu cliente " + 
+                string texto = nomeVendedor + " ,\n\nSegue em anexo o pedido "+ idPedido + " do seu cliente " +
                     idCliente.ToString() +" - " +  nomeCliente;
 
                 var anexos = new List<AnexoEmail>
@@ -224,7 +224,7 @@ namespace Glass.Data.Helper
                     new AnexoEmail("~/Relatorios/RelPedido.aspx?tipo=2&semThread=true&idPedido=" + idPedido,
                         "Pedido " + idPedido + ".pdf")
                 };
-                
+
                 EnviaEmailAsync(sessao, idLoja, emailVendedor, "Pedido confirmado", texto, Email.EmailEnvio.Comercial, false, anexos.ToArray());
             }
             catch (Exception ex)
@@ -260,16 +260,16 @@ namespace Glass.Data.Helper
                 string nomeFuncDesconto = FuncionarioDAO.Instance.GetNome(sessao, idFuncDesconto);
 
                 string tipo = idPedido > 0 ? "pedido" :
-                    idOrcamento > 0 ? "orçamento" : 
+                    idOrcamento > 0 ? "orçamento" :
                     "(tipo desconhecido)";
 
                 uint numero = idPedido > 0 ? idPedido :
                     idOrcamento > 0 ? idOrcamento :
                     0;
 
-                string texto = "Prezado(a) " + nomeAdmin + ",\n\nInformamos que o " + tipo + " de número " + numero + 
-                    " possui um percentual de desconto " + percentualDesconto.ToString("0.###") + "%, que é maior que o percentual configurado (" + 
-                    percentualConfigurado.ToString("0.###") + "%).\nEsse desconto foi concedido pelo funcionário " + nomeFuncDesconto + 
+                string texto = "Prezado(a) " + nomeAdmin + ",\n\nInformamos que o " + tipo + " de número " + numero +
+                    " possui um percentual de desconto " + percentualDesconto.ToString("0.###") + "%, que é maior que o percentual configurado (" +
+                    percentualConfigurado.ToString("0.###") + "%).\nEsse desconto foi concedido pelo funcionário " + nomeFuncDesconto +
                     " no dia " + DateTime.Now.ToString("dd/MM/yyyy") + " às " + DateTime.Now.ToString("HH:mm:ss") + ".";
 
                 EnviaEmailAsync(sessao, idLoja, email, "Desconto maior que o configurado", texto, Email.EmailEnvio.Comercial, false);
@@ -296,8 +296,8 @@ namespace Glass.Data.Helper
                 if (ClienteDAO.Instance.NaoReceberEmailLiberacao(sessao, idCli))
                     return;
 
-                bool pedidoEntrega = LiberarPedidoDAO.Instance.ExecuteScalar<int>(sessao, @"select count(*) from pedido 
-                    where idPedido in (select idPedido from produtos_liberar_pedido where idLiberarPedido=" + idLiberarPedido + 
+                bool pedidoEntrega = LiberarPedidoDAO.Instance.ExecuteScalar<int>(sessao, @"select count(*) from pedido
+                    where idPedido in (select idPedido from produtos_liberar_pedido where idLiberarPedido=" + idLiberarPedido +
                     ") and tipoEntrega=" + DataSources.Instance.GetTipoEntregaEntrega().GetValueOrDefault()) > 0;
 
                 if (!pedidoEntrega)
@@ -462,7 +462,7 @@ namespace Glass.Data.Helper
         /// enviando o e-mail imediatamente.
         /// </summary>
         /// <returns>true - Email enviado, false - Falha no envio do email</returns>
-        internal static void EnviaEmail(HttpContext context, uint idLoja, string emailDestinatario, string assunto, string mensagem, 
+        internal static void EnviaEmail(HttpContext context, uint idLoja, string emailDestinatario, string assunto, string mensagem,
             EmailEnvio emailEnvio, params AnexoEmail[] anexos)
         {
             if (idLoja == 0)
@@ -509,19 +509,19 @@ namespace Glass.Data.Helper
             if (context == null)
                 throw new Exception("HttpContext não identificado.");
 
-            // Cria novo objeto MailMessage  
+            // Cria novo objeto MailMessage
             MailMessage mailMessage = new MailMessage {From = new MailAddress(emailRemet)};
 
-            // Define o remetente    
+            // Define o remetente
 
             // Define o endereço de resposta
             if (!String.IsNullOrEmpty(loja.EmailContato))
                 mailMessage.ReplyToList.Add(new MailAddress(loja.EmailContato));
 
-            // Define primeiro destinatário  
+            // Define primeiro destinatário
             mailMessage.To.Add(emailDestinatario);
 
-            // Define assunto do e-mail  
+            // Define assunto do e-mail
             mailMessage.Subject = assunto;
 
             bool temPdf = false;
@@ -560,7 +560,7 @@ namespace Glass.Data.Helper
             // Apenas se houver PDF anexado
             mailMessage.IsBodyHtml = temPdf;
 
-            // Seta o corpo do e-mail com a estrutura HTML gravada na stringbuilder sbBody  
+            // Seta o corpo do e-mail com a estrutura HTML gravada na stringbuilder sbBody
             mailMessage.Body = mensagem;
             if (temPdf)
             {
@@ -576,14 +576,14 @@ namespace Glass.Data.Helper
             if (mailMessage.IsBodyHtml)
                 mailMessage.Body = mailMessage.Body.Replace("\n", "<br />");
 
-            // Cria novo SmtpCliente e seta o endereço  
+            // Cria novo SmtpCliente e seta o endereço
             SmtpClient smtpClient = new SmtpClient(servidorEmailRemet)
             {
                 Credentials = new NetworkCredential(loginEmailRemet, senhaEmailRemet)
             };
 
             // Credencial para envio por SMTP Seguro (APENAS QUANDO O SERVIDOR EXIGE AUTENTICAÇÃO)
-            
+
             if (ControleSistema.PortaEnvioEmail > 0)
                 smtpClient.Port = ControleSistema.PortaEnvioEmail.Value;
 
@@ -594,7 +594,7 @@ namespace Glass.Data.Helper
 
             try
             {
-                // Envia a mensagem     
+                // Envia a mensagem
                 smtpClient.Send(mailMessage);
             }
             catch (Exception ex)
@@ -608,7 +608,7 @@ namespace Glass.Data.Helper
         /// Método utilizado para enviar email para os administradores,
         /// informando o valor total de pedidos diário e cumulativo do mês, valor total de metro quadrado diário e cumulativo do mês,
         /// total de m2 pronto diário e cumulativo do mês, total liberado diário e cumulativo do mês.
-        /// </summary>  
+        /// </summary>
         public static void EnviaEmailAdministradores()
         {
             using (var trans = new GDATransaction())
@@ -659,10 +659,10 @@ namespace Glass.Data.Helper
                                     string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)));
 
                         double totMPedidosMes = PedidoDAO.Instance.ExecuteScalar<double>(trans, string.Format(sqlMes, "totM", ""));
-                                                
+
                         // Cálculo de peças prontas baseadas em roteiro
                         var totMProntoMes = ProducaoDAO.Instance.ExecuteScalar<double>(trans, @"
-                            SELECT SUM(ppe.totM/ppe.qtde) 
+                            SELECT SUM(ppe.totM/ppe.qtde)
                             FROM produtos_pedido_espelho ppe
                             INNER JOIN (
 	                            SELECT ppp.idprodped
@@ -677,7 +677,7 @@ namespace Glass.Data.Helper
                         var idsSetorPronto = SetorDAO.Instance.GetValoresCampo(trans, "Select idSetor From setor Where tipo=" + (int)TipoSetor.Pronto, "idSetor");
                         if (!string.IsNullOrEmpty(idsSetorPronto))
                             totMProntoMes += ProducaoDAO.Instance.ExecuteScalar<double>(trans, string.Format(@"
-                                SELECT SUM(ppe.totM/ppe.qtde) 
+                                SELECT SUM(ppe.totM/ppe.qtde)
                                 FROM produtos_pedido_espelho ppe
                                 INNER JOIN (
 	                                SELECT ppp.idprodped
@@ -686,7 +686,7 @@ namespace Glass.Data.Helper
 	                                WHERE DATE_FORMAT(lp.dataLeitura, '%m, %Y')=DATE_FORMAT(NOW(), '%m, %Y')
 		                                AND lp.IdSetor In ({0})
                                 ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", idsSetorPronto));
-                        
+
                         decimal totalLiberadosMes = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, "Select Sum(total) From liberarpedido Where situacao=" +
                             (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " And Date_Format(dataLiberacao, '%m, %Y')=Date_Format(now(), '%m, %Y')");
 
@@ -700,12 +700,12 @@ namespace Glass.Data.Helper
                                 EmailConfig.ConsiderarReposicaoGarantiaTotalPedidosEmitidos ?
                                     string.Empty :
                                     string.Format("AND TipoVenda NOT IN ({0},{1})", (int)Pedido.TipoVendaPedido.Garantia, (int)Pedido.TipoVendaPedido.Reposição)), lstParam.ToArray());
-                        
+
                         double totMPedidosDia = PedidoDAO.Instance.ExecuteScalar<double>(trans, String.Format(sqlDia, "totM", ""), lstParam.ToArray());
 
                         // Cálculo de peças prontas baseadas em roteiro
                         var totMProntoDia = ProducaoDAO.Instance.ExecuteScalar<double>(trans, @"
-                            SELECT SUM(ppe.totM/ppe.qtde) 
+                            SELECT SUM(ppe.totM/ppe.qtde)
                             FROM produtos_pedido_espelho ppe
                             INNER JOIN (
 	                            SELECT ppp.idprodped
@@ -719,7 +719,7 @@ namespace Glass.Data.Helper
                         // Cálculo de peças prontas baseada em setor pronto (se a empresa tiver)
                         if (!string.IsNullOrEmpty(idsSetorPronto))
                             totMProntoDia += ProducaoDAO.Instance.ExecuteScalar<double>(trans, string.Format(@"
-                                SELECT SUM(ppe.totM/ppe.qtde) 
+                                SELECT SUM(ppe.totM/ppe.qtde)
                                 FROM produtos_pedido_espelho ppe
                                 INNER JOIN (
 	                                SELECT ppp.idprodped
@@ -728,7 +728,7 @@ namespace Glass.Data.Helper
 	                                WHERE DATE(lp.dataLeitura)>=?dataIni AND DATE(lp.dataLeitura)<=?dataFim
 		                                AND lp.IdSetor In ({0})
                                 ) AS tbl ON (ppe.idProdPed=tbl.IdProdPed)", idsSetorPronto), lstParam.ToArray());
-                        
+
                         decimal totalLiberadosDia = LiberarPedidoDAO.Instance.ExecuteScalar<decimal>(trans, "Select Sum(total) From liberarpedido Where situacao=" +
                             (int)LiberarPedido.SituacaoLiberarPedido.Liberado + " and dataLiberacao>=?dataIni and dataLiberacao<=?dataFim", lstParam.ToArray());
 
@@ -745,13 +745,18 @@ namespace Glass.Data.Helper
                             }
                         }
 
+                        var totalRecebidoDia = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+                        var totalRecebidoMes = RecebimentoDAO.Instance.GetRecebimentosTipo(DateTime.Now.ObtemPrimeiroDiaMesAtual().ToString("dd/MM/yyyy"), DateTime.Now.ToString("dd/MM/yyyy"), 0, 0).Where(f => f.Descricao == "TOTAL").First().Valor;
+
                         string mensagem =
                             "\nPedidos emitidos " + textoDiaConsiderado + ": " + totalPedidosDia.ToString("C") + " (" + totMPedidosDia.ToString("0.##") + " m2) (Todos pedidos cadastrados hoje que não estejam cancelados e não sejam de produção)." +
                             "\nPedidos emitidos no mês: " + totalPedidosMes.ToString("C") + " (" + totMPedidosMes.ToString("0.##") + " m2)." +
                             "\n\nM2 pronto " + textoDiaConsiderado + ": " + totMProntoDia.ToString("0.##") + " m2." +
                             "\nM2 pronto no mês: " + totMProntoMes.ToString("0.##") + " m2." +
                             "\n\nTotal faturado " + textoDiaConsiderado + ": " + totalLiberadosDia.ToString("C") + "(Soma de todas liberações realizadas " + textoDiaConsiderado + ")." +
-                            "\nTotal faturado no mês: " + totalLiberadosMes.ToString("C") + ".";
+                            "\nTotal faturado no mês: " + totalLiberadosMes.ToString("C") + "." +
+                            "\nTotal recebido no dia: " + totalRecebidoDia.ToString("C") + "." +
+                            "\nTotal recebido no mês: " + totalRecebidoMes.ToString("C") + ".";
 
                         // Verifica mais uma vez se pode enviar email
                         if (!FilaEmailDAO.Instance.PodeEnviarEmailAdmin())
