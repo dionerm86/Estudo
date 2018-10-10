@@ -1,8 +1,9 @@
-﻿using GDA;
+using GDA;
 using Glass.Data.Helper.Calculos.Estrategia;
 using Glass.Data.Helper.Calculos.Estrategia.ValorTotal.Enum;
 using Glass.Data.Model;
 using Glass.Pool;
+using System.Collections.Generic;
 
 namespace Glass.Data.Helper.Calculos
 {
@@ -44,6 +45,7 @@ namespace Glass.Data.Helper.Calculos
 
             try
             {
+                DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, container, new List <IProdutoCalculo> { produto });
                 DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, container, produto);
 
                 estrategia.Calcular(
@@ -62,6 +64,7 @@ namespace Glass.Data.Helper.Calculos
             }
             finally
             {
+                DescontoAcrescimo.Instance.AplicarAcrescimo(sessao, container, 1, produto.ValorAcrescimo, new List<IProdutoCalculo> { produto });
                 DescontoAcrescimo.Instance.AplicarDescontoQtde(sessao, container, produto);
             }
 
