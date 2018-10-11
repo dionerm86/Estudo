@@ -246,6 +246,7 @@
     <Compile Include="Controllers\Datas\V1\Feriados\GetFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PatchFeriadosController.cs" />
     <Compile Include="Controllers\Datas\V1\Feriados\PostFeriadosController.cs" />
+    <Compile Include="Controllers\Producao\V1\DeleteProducaoController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\GetSetoresController.cs" />
     <Compile Include="Controllers\Producao\V1\Setores\SetoresController.cs" />
     <Compile Include="Controllers\Produtos\V1\CoresAluminio\DeleteCoresAluminioController.cs" />
@@ -459,6 +460,7 @@
     <Compile Include="Models\Comissionados\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Comissionados\Lista\FiltroDto.cs" />
     <Compile Include="Models\Comissionados\Lista\ListaDto.cs" />
+    <Compile Include="Models\Producao\V1\Composicao\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\SetorDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ChapaVidroDto.cs" />

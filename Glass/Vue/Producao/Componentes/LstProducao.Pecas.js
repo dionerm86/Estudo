@@ -53,10 +53,7 @@
      * @returns {Promise} Uma Promise com a busca das peças, de acordo com o filtro.
      */
     buscarFilhos: function (filtro, pagina, numeroRegistros, ordenacao) {
-      var novoFiltro = this.clonar(this.filtro || {});
-      novoFiltro.idProdutoPai = filtro.idProdutoPai;
-
-      return this.buscarPecas(novoFiltro, pagina, numeroRegistros, ordenacao);
+      return Servicos.Producao.obterProdutosComposicao(filtro.idPecaPai, pagina, numeroRegistros, ordenacao);
     },
 
     /**
@@ -78,11 +75,33 @@
             setor: {
               id: setor.id,
               nome: setor.nome,
-              obrigatorio: false
+              obrigatorio: true
             },
             data: null
           };
         }, this);
+    },
+
+    /**
+     * Desfaz a última leitura de produção da peça informada.
+     * @param {!Object} peca A peça de produção que terá a leitura desfeita.
+     */
+    desfazerUltimaLeituraPeca: function (peca) {
+      if (!peca || !this.confirmar('Voltar peça', 'Confirma remoção desta peça desta situação?')) {
+        return;
+      }
+
+      var vm = this;
+
+      Servicos.Producao.desfazerUltimaLeituraPeca(peca.id)
+        .then(function () {
+          vm.atualizarLista();
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Erro', erro.mensagem);
+          }
+        });
     },
 
     /**

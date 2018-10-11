@@ -97,7 +97,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                     filtro.ApenasPecasRepostas,
                     (uint)filtro.IdLoja.GetValueOrDefault(),
                     (int?)filtro.TipoProdutosComposicao,
-                    (uint)filtro.IdPecaPai.GetValueOrDefault(),
+                    0,
                     filtro.Pagina,
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
@@ -150,8 +150,48 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                         filtro.ApenasPecasRepostas,
                         (uint)filtro.IdLoja.GetValueOrDefault(),
                         (int?)filtro.TipoProdutosComposicao,
-                        (uint)filtro.IdPecaPai.GetValueOrDefault(),
+                        0,
                         filtro.Pagina));
+            }
+        }
+
+        /// <summary>
+        /// Recupera a lista de peças de composição para a tela de consulta de produção.
+        /// </summary>
+        /// <param name="id">O identificador do produto 'pai'.</param>
+        /// <param name="filtro">Os dados informados para filtro na tela.</param>
+        /// <returns>Uma lista JSON com as peças em produção.</returns>
+        [HttpGet]
+        [Route("{id:int}/composicao")]
+        [SwaggerResponse(200, "Produtos de composição em produção sem paginação (apenas uma página de retorno) ou última página retornada.", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(204, "Produtos de composição em produção não encontradas para o filtro informado.")]
+        [SwaggerResponse(206, "Produtos de composição em produção paginadas (qualquer página, exceto a última).", Type = typeof(IEnumerable<IdNomeDto>))]
+        [SwaggerResponse(400, "Filtro ou id inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        [SwaggerResponse(404, "Peça de produção não encontrada para o id informado.", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterPecasComposicao(int id, [FromUri] Models.Producao.V1.Composicao.FiltroDto filtro)
+        {
+            using (var sessao = new GDATransaction())
+            {
+                var validacao = this.ValidarExistenciaIdProdutoProducao(sessao, id);
+
+                if (validacao != null)
+                {
+                    return validacao;
+                }
+
+                var produtosComposicao = ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoFilho(
+                    sessao,
+                    id,
+                    filtro.ObterTraducaoOrdenacao(),
+                    filtro.ObterPrimeiroRegistroRetornar(),
+                    filtro.NumeroRegistros);
+
+                return this.ListaPaginada(
+                    produtosComposicao.Select(p => new ListaDto(p)),
+                    filtro,
+                    () => ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoFilhoCount(
+                        sessao,
+                        id));
             }
         }
 

@@ -24,7 +24,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
         public ListaDto()
         {
             this.EmpresaTrabalhaComAlturaELargura = PedidoConfig.EmpresaTrabalhaAlturaLargura;
-            this.PermitirImpressaoRelatorios = UserInfo.GetUserInfo.TipoUsuario != (int)Utils.TipoFuncionario.Vendedor
+            this.ExibirSetores = UserInfo.GetUserInfo.TipoUsuario != (int)Utils.TipoFuncionario.Vendedor
                 || !ProducaoConfig.TelaConsulta.EsconderLinksImpressaoParaVendedores;
 
             this.ExibirNumeroEtiquetaNoInicioDaTabela = ProducaoConfig.TelaConsulta.ExibirNumeroEtiquetaNoInicioDaTabela;
@@ -37,23 +37,24 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
             this.SetoresExibicao = this.ObterSetoresExibicao();
             this.IdGrupoProdutoVidro = Data.Model.NomeGrupoProd.Vidro;
             this.TipoSituacaoProducao = Lista.TipoSituacaoProducao.ApenasProdutosSetorAtual;
-            this.TiposPecasExibir = new[] { TipoPecaExibir.EmProducao };
+            this.TiposPecasExibir = this.ObterTiposPecasExibir();
             this.TipoProdutoComposicao = Lista.TipoProdutoComposicao.NaoIncluirProdutosComposicao;
         }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o usuário atual pode imprimir relatórios.
+        /// Obtém ou define um valor que indica se a empresa trabalha com altura e largura
+        /// (ao invés de largura e altura).
         /// </summary>
         [DataMember]
         [JsonProperty("empresaTrabalhaComAlturaELargura")]
         public bool EmpresaTrabalhaComAlturaELargura { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o usuário atual pode imprimir relatórios.
+        /// Obtém ou define um valor que indica se o usuário atual pode visualizar os setores.
         /// </summary>
         [DataMember]
-        [JsonProperty("permitirImpressaoRelatorios")]
-        public bool PermitirImpressaoRelatorios { get; set; }
+        [JsonProperty("exibirSetores")]
+        public bool ExibirSetores { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se o número de etiqueta da peça será
@@ -141,6 +142,11 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
 
         private IEnumerable<SetorDto> ObterSetoresExibicao()
         {
+            if (!this.ExibirSetores)
+            {
+                return new SetorDto[0];
+            }
+
             return Utils.GetSetores
                 .Where(s => s.ExibirRelatorio)
                 .Select(s => new SetorDto
@@ -149,6 +155,18 @@ namespace Glass.API.Backend.Models.Producao.V1.Configuracoes
                     Nome = s.Descricao,
                     Ordem = s.NumeroSequencia,
                 });
+        }
+
+        private IEnumerable<TipoPecaExibir> ObterTiposPecasExibir()
+        {
+            var retorno = new List<TipoPecaExibir> { TipoPecaExibir.EmProducao };
+
+            if (PCPConfig.ExibirPecasCancMaoObraPadrao)
+            {
+                retorno.Add(TipoPecaExibir.CanceladasMaoDeObra);
+            }
+
+            return retorno;
         }
     }
 }

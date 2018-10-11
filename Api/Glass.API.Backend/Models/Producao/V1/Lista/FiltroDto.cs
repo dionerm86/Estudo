@@ -2,8 +2,6 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
-using Glass.API.Backend.Helper.Producao;
-using Glass.API.Backend.Models.Genericas;
 using System;
 using System.Collections.Generic;
 using static Glass.Data.Model.Pedido;
@@ -13,16 +11,8 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
     /// <summary>
     /// Classe com os filtros para a tela de consulta de produção.
     /// </summary>
-    public class FiltroDto : PaginacaoDto
+    public class FiltroDto : Composicao.FiltroDto
     {
-        /// <summary>
-        /// Inicia uma nova instância da classe <see cref="FiltroDto"/>.
-        /// </summary>
-        public FiltroDto()
-            : base(item => new TraducaoOrdenacaoListaProducao(item.Ordenacao))
-        {
-        }
-
         /// <summary>
         /// Obtém ou define o identificador do pedido.
         /// </summary>
@@ -240,10 +230,5 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// Obtém ou define o tipo de fast delivery.
         /// </summary>
         public TipoFastDelivery? TipoFastDelivery { get; set; }
-
-        /// <summary>
-        /// Obtém ou define o identificador da peça "pai" na produção.
-        /// </summary>
-        public int? IdPecaPai { get; set; }
     }
 }

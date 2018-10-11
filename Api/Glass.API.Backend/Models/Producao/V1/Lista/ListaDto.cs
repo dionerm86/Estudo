@@ -33,6 +33,7 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
                 SiglaTipoPedido = peca.SiglaTipoPedido,
                 Cancelado = peca.PedidoCancelado,
                 CodigoPedidoCliente = peca.CodCliente,
+                DataLiberacao = peca.DataLiberacaoPedido,
                 Cliente = new IdNomeDto
                 {
                     Id = (int?)peca.IdCliente,

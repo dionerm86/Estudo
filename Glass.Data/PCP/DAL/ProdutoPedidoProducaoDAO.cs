@@ -2422,17 +2422,24 @@ namespace Glass.Data.DAL
         /// </summary>
         public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
         {
-            var sql = string.Empty;
-            var numeroRegistros = 0;
-            ProdutoPedidoProducao[] produtosPedidoProducao;
+            return PesquisarProdutosProducaoFilho(null, idProdPedProducaoParent, sortExpression, startRow, pageSize);
+        }
 
+        /// <summary>
+        /// Consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public IList<ProdutoPedidoProducao> PesquisarProdutosProducaoFilho(GDASession sessao, int idProdPedProducaoParent, string sortExpression, int startRow, int pageSize)
+        {
             // Caso não seja utilizado nenhum filtro, retornar uma listagem vazia, para a tela carregar mais rápido.
             if (idProdPedProducaoParent <= 0)
             {
                 return new List<ProdutoPedidoProducao>();
             }
 
-            produtosPedidoProducao = objPersistence.LoadData(GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
+            int numeroRegistros;
+            ProdutoPedidoProducao[] produtosPedidoProducao;
+
+            produtosPedidoProducao = objPersistence.LoadData(sessao, GetSqlWithLimit(SqlProdutosProducaoFilho(idProdPedProducaoParent, true), sortExpression, 0, pageSize, "ppp", string.Empty, false,
                 !string.IsNullOrEmpty(sortExpression), out numeroRegistros)).ToArray();
 
             SetInfoPaging(sortExpression, 0, pageSize);
@@ -2447,13 +2454,21 @@ namespace Glass.Data.DAL
         /// </summary>
         public int PesquisarProdutosProducaoFilhoCount(int idProdPedProducaoParent)
         {
+            return PesquisarProdutosProducaoFilhoCount(null, idProdPedProducaoParent);
+        }
+
+        /// <summary>
+        /// Quantidade de registros retornados através da consulta que retorna os produtos de produção filhos para a tela de consulta de produção.
+        /// </summary>
+        public int PesquisarProdutosProducaoFilhoCount(GDASession sessao, int idProdPedProducaoParent)
+        {
             if (idProdPedProducaoParent <= 0)
             {
                 return 10000;
             }
 
             // Fica muito mais rápido sem usar a otimização (GetCountWithInfoPaging())
-            return objPersistence.ExecuteSqlQueryCount(SqlProdutosProducaoFilho(idProdPedProducaoParent, false));
+            return objPersistence.ExecuteSqlQueryCount(sessao, SqlProdutosProducaoFilho(idProdPedProducaoParent, false));
         }
 
         #endregion

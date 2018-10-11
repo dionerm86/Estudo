@@ -5,6 +5,9 @@
             <th></th>
             <th>Pedido</th>
             <th>Tipo Ped.</th>
+            <th v-if="configuracoes.exibirNumeroEtiquetaNoInicioDaTabela">
+                Etiqueta
+            </th>
             <th>Pedido Cli.</th>
             <th>Cliente</th>
             <th>Produto</th>
@@ -13,37 +16,59 @@
             <th v-for="setor in setoresExibir">
                 {{ setor.nome }}
             </th>
-            <th>Perda</th>
-            <th>Pronto Fábrica</th>
-            <th>Prev. Entrega</th>
-            <th>Data Lib.</th>
+            <th v-if="!configuracoes.controleReposicaoPorPeca">
+                Perda
+            </th>
+            <th v-if="configuracoes.usarDataFabrica">
+                Pronto Fábrica
+            </th>
+            <th v-else>
+                Prev. Entrega
+            </th>
+            <th v-if="configuracoes.empresaLiberaPedido">
+                Data Lib.
+            </th>
             <th>Plano Corte</th>
-            <th>Etiqueta</th>
-            <th>Cavalete</th>
+            <th v-if="!configuracoes.exibirNumeroEtiquetaNoInicioDaTabela">
+                Etiqueta
+            </th>
+            <th v-if="configuracoes.empresaControlaCavaletes">
+                Cavalete
+            </th>
         </template>
         <template slot="item" slot-scope="{ item, index }">
-            <td></td>
-            <td>
+            <td style="white-space: nowrap">
+                <button v-on:click.prevent="alternarExibicaoFilhos(index)" v-if="item.produtoPedido && item.produtoPedido.composicao">
+                    <img src="/Images/mais.gif" title="Exibir Produtos da Composição" />
+                </button>
+                <button v-on:click.prevent="desfazerUltimaLeituraPeca(item)" v-if="item.permissoes && item.permissoes.desfazerLeitura">
+                    <img src="/Images/arrow_undo.gif" title="Remover peça desta situação" />
+                </button>
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido">
                     {{ item.pedido.idExibir }}
                 </template>
             </td>
-            <td>
+            <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido">
                     {{ item.pedido.siglaTipoPedido }}
                 </template>
             </td>
-            <td>
+            <td v-if="configuracoes.exibirNumeroEtiquetaNoInicioDaTabela" v-bind:style="{ color: item.corLinha }">
+                {{ item.numeroEtiqueta }}
+            </td>
+            <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido">
                     {{ item.pedido.codigoPedidoCliente }}
                 </template>
             </td>
-            <td>
+            <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido && item.pedido.cliente">
                     {{ item.pedido.cliente.id }} - {{ item.pedido.cliente.nome }}
                 </template>
             </td>
-            <td>
+            <td v-bind:style="{ color: item.corLinha }">
                 <span v-if="item.produtoPedido">
                     {{ item.produtoPedido.descricao }}
                     {{ item.produtoPedido.descricaoBeneficiamentos }}
@@ -58,9 +83,9 @@
                     {{ item.situacaoProducao.perda.tipo }}
                 </div>
             </td>
-            <td>{{ item.codigoAplicacao }}</td>
-            <td>{{ item.codigoProcesso }}</td>
-            <td v-for="leitura in ordenarLeituras(item)">
+            <td v-bind:style="{ color: item.corLinha }">{{ item.codigoAplicacao }}</td>
+            <td v-bind:style="{ color: item.corLinha }">{{ item.codigoProcesso }}</td>
+            <td v-for="leitura in ordenarLeituras(item)" v-bind:style="{ color: item.corLinha }">
                 <template v-if="leitura.data">
                     {{ leitura.data | dataHora }}
                     Func.: {{ leitura.funcionario }}
@@ -81,28 +106,42 @@
                         title="Setor não faz parte do roteiro de produção, portanto não necessita ser lido" />
                 </div>
             </td>
-            <td>
+            <td v-if="!configuracoes.controleReposicaoPorPeca" v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.situacaoProducao && item.situacaoProducao.perda">
                     {{ item.situacaoPerda.perda.data | dataHora }}
                 </template>
             </td>
-            <td>
+            <td v-if="configuracoes.usarDataFabrica" v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.dataEntrega">
                     {{ item.dataEntrega.fabrica | data }}
                 </template>
             </td>
-            <td>
+            <td v-else v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.dataEntrega">
-                    {{ item.dataEntrega.exibicao | data }}
+                    {{ item.dataEntrega.exibicao }}
                 </template>
+            </td>
+            <td v-if="configuracoes.empresaLiberaPedido" v-bind:style="{ color: item.corLinha }">
+                <template v-if="item.pedido">
+                    {{ item.pedido.dataLiberacao | data }}
+                </template>
+            </td>
+            <td v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.planoCorte }}
+            </td>
+            <td v-if="!configuracoes.exibirNumeroEtiquetaNoInicioDaTabela" v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.numeroEtiqueta }}
+            </td>
+            <td v-if="configuracoes.empresaControlaCavaletes" v-bind:style="{ color: item.corLinha, whiteSpace: 'nowrap' }">
+                {{ item.numeroCavalete }}
             </td>
         </template>
         <template slot="novaLinhaItem" slot-scope="{ item, index, classe }"
-            v-if="item.produtoPedido.composto && exibindoFilhos(index)">
+            v-if="item.produtoPedido && item.produtoPedido.composto && exibindoFilhos(index)">
             <tr v-bind:class="classe" style="border-top: none">
                 <td></td>
                 <td v-bind:colspan="numeroColunasLista() - 1">
-                    <producao-pecas v-bind:filtro="{ idProdutoPai: item.id, item, controleAtualizacao }"
+                    <producao-pecas v-bind:filtro="{ idPecaPai: item.id, item, controleAtualizacao }"
                         v-bind:configuracoes="configuracoes" v-bind:buscar-pecas="buscarFilhos"></producao-pecas>
                 </td>
             </tr>

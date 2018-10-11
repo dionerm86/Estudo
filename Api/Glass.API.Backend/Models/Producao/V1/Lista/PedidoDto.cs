@@ -4,6 +4,7 @@
 
 using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
+using System;
 using System.Runtime.Serialization;
 
 namespace Glass.API.Backend.Models.Producao.V1.Lista
@@ -41,6 +42,13 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         [DataMember]
         [JsonProperty("codigoPedidoCliente")]
         public string CodigoPedidoCliente { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a data de liberação do pedido.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("dataLiberacao")]
+        public DateTime? DataLiberacao { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de cliente do pedido.

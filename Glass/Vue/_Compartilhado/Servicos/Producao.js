@@ -47,6 +47,30 @@ Servicos.Producao = (function(http) {
     },
 
     /**
+     * Recupera a lista de produtos de composição para a tela de consulta de produção.
+     * @param {!number} id O identificador da peça 'pai' para a busca dos produtos de composição.
+     * @param {number} pagina O número da página de resultados a ser exibida.
+     * @param {number} numeroRegistros O número de registros que serão exibidos na página.
+     * @param {string} ordenacao A ordenação para o resultado.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterProdutosComposicao: function (id, pagina, numeroRegistros, ordenacao) {
+      if (!id) {
+        throw new Error('Produto pai é obrigatório.');
+      }
+
+      var filtro =  {
+        pagina,
+        numeroRegistros,
+        ordenacao
+      };
+
+      return http().get(API + id + '/composicao', {
+        params: filtro
+      });
+    },
+
+    /**
      * Recupera as configurações para a tela de consulta de produção.
      * @returns {Promise} Uma promise com o resultado da busca.
      */
@@ -100,6 +124,19 @@ Servicos.Producao = (function(http) {
      */
     obterTiposFastDelivery: function () {
       return http().get(API + 'tiposFastDelivery');
+    },
+
+    /**
+     * Desfaz a última leitura de produção da peça informada.
+     * @param {!number} id O identificador da peça que terá a leitura desfeita.
+     * @returns {Promise} Uma promise com o resultado da operação.
+     */
+    desfazerUltimaLeituraPeca: function (id) {
+      if (!id) {
+        throw new Error('Produto pai é obrigatório.');
+      }
+
+      return http().delete(API + id + '/leituras');
     }
   };
 })(function() {

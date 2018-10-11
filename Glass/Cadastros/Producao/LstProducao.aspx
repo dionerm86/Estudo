@@ -246,7 +246,7 @@
                             <asp:Label ID="Label3" runat="server" Text="Pedido" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <asp:TextBox ID="txtNumPedido" runat="server" Width="45px" onkeypress="return soNumeros(event, true, true);"
+                            <asp:TextBox ID="txtNumPedido" runat="server" Width="45px" onkeypress="return soNumeros(event, true, true);" Value="6"
                                 onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);" MaxLength="6" QueryString="idPedido"></asp:TextBox>
                         </td>
                         <td>
