@@ -42,11 +42,14 @@ namespace Glass.Data.Helper.Calculos
             var larguraBeneficiamento = NormalizarAlturaLarguraBeneficiamento(produto.LarguraBenef, container, produto.TipoCalc);
 
             var estrategia = ValorTotalStrategyFactory.Instance.RecuperaEstrategia(produto, nf, compra);
+            var acrescimo = 0.00M;
 
             try
             {
-                DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, container, new List <IProdutoCalculo> { produto });
+                DescontoAcrescimo.Instance.RemoverAcrescimo(sessao, container, new List <IProdutoCalculo>{ produto });
                 DescontoAcrescimo.Instance.RemoverDescontoQtde(sessao, container, produto);
+                acrescimo = produto.ValorAcrescimo;
+                produto.ValorAcrescimo = 0.00M;
 
                 estrategia.Calcular(
                     sessao,
@@ -64,7 +67,7 @@ namespace Glass.Data.Helper.Calculos
             }
             finally
             {
-                DescontoAcrescimo.Instance.AplicarAcrescimo(sessao, container, 1, produto.ValorAcrescimo, new List<IProdutoCalculo> { produto });
+                produto.ValorAcrescimo = acrescimo;
                 DescontoAcrescimo.Instance.AplicarDescontoQtde(sessao, container, produto);
             }
 
