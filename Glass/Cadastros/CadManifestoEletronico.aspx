@@ -295,7 +295,10 @@
             }
 
             alert(resultado[0])
-            window.location.reload();
+
+            //Realiza o postBack da página.
+            __doPostBack(null, null);
+
             return true;
         }
 

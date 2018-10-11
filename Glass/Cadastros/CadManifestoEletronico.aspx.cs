@@ -258,9 +258,14 @@ namespace Glass.UI.Web.Cadastros
                 var idNFe = Conversoes.StrParaIntNullable(idNf);
                 var numeroDocumentoFsda = string.IsNullOrWhiteSpace(numeroDocumentoFsdaStr) ? (long?)null : long.Parse(numeroDocumentoFsdaStr);
 
-                if (idCidadeDescarga == 0 || string.IsNullOrEmpty(chaveAcesso) || chaveAcesso.Length != 44)
+                if (idCidadeDescarga == 0)
                 {
                     return "Erro|Falha ao recuperar dados da cidade.";
+                }
+
+                if (string.IsNullOrWhiteSpace(chaveAcesso) || chaveAcesso.Length != 44)
+                {
+                    return "Erro|A chave de acesso precisa ter 44 caracteres.";
                 }
 
                 if (NFeCidadeDescargaMDFeDAO.Instance.VerificarNfeJaInclusa(chaveAcesso))
@@ -298,8 +303,15 @@ namespace Glass.UI.Web.Cadastros
                 var idCTeDesc = Conversoes.StrParaIntNullable(idCte);
                 var numeroDocumentoFsda = string.IsNullOrWhiteSpace(numeroDocumentoFsdaStr) ? (long?)null : long.Parse(numeroDocumentoFsdaStr);
 
-                if (idCidadeDescarga == 0 || string.IsNullOrWhiteSpace(chaveAcesso) || chaveAcesso.Length != 44)
+                if (idCidadeDescarga == 0)
+                {
                     return "Erro|Falha ao recuperar dados da cidade.";
+                }
+
+                if(string.IsNullOrWhiteSpace(chaveAcesso) || chaveAcesso.Length != 44)
+                {
+                    return "Erro|A chave de acesso precisa ter 44 caracteres.";
+                }
 
                 if (CTeCidadeDescargaMDFeDAO.Instance.VerificarCteJaIncluso(chaveAcesso))
                 {
