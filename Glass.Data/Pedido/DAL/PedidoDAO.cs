@@ -4704,9 +4704,14 @@ namespace Glass.Data.DAL
                 }
             }
 
-            string filtroSqlSituacao = filtroSituacao.Count > 0
+            string filtroExterno = filtroSituacao.Count > 0
                 ? $"WHERE {string.Join(" OR ", filtroSituacao.ToArray())}"
                 : string.Empty;
+
+            if (!OrdemCargaConfig.GerarVolumeApenasDePedidosEntrega)
+            {
+                filtroExterno += $" AND IdPedido NOT IN ({string.Join(",", ObterIdsPedidosBalcaoJaEntregueSemVolume(null))})"; 
+            }
 
             string select = selecionar 
                 ? "*" 
@@ -4714,8 +4719,8 @@ namespace Glass.Data.DAL
 
             return $@"
                 SELECT {select}
-                FROM ({sql}) as tmp
-                {filtroSqlSituacao}";
+                FROM ({sql}) AS tmp
+                {filtroExterno}";
         }
 
         /// <summary>
@@ -4735,6 +4740,26 @@ namespace Glass.Data.DAL
                 GetParametersVolume(dataEntIni, dataEntFim, dataLibIni, dataLibFim, codRota, idsRotasExternas)).ToArray();
 
             return pedidos;
+        }
+
+        /// <summary>
+        /// Verifica se o Pedido da lista recuperada pode ser removidos
+        /// </summary>
+        /// <param name="session">Sessao do GDA</param>
+        /// <param name="idPedido">Pedido a ser verificado</param>
+        /// <returns>Retorna se o pedido é Balcão e já foi entregue sem volumes</returns>
+        private List<int> ObterIdsPedidosBalcaoJaEntregueSemVolume(GDASession session)
+        {
+            var sql = $@"SELECT 
+                        	p.IdPedido
+                        FROM pedido p
+                        WHERE
+                        	p.SituacaoProducao IN ({(int)Pedido.SituacaoProducaoEnum.Entregue},{(int)Pedido.SituacaoProducaoEnum.Instalado})
+                            AND p.TipoEntrega = {(int)Pedido.TipoEntregaPedido.Balcao}
+                        	AND p.IdPedido NOT IN 
+                        		(SELECT DISTINCT IdPedido FROM volume) ORDER BY p.IdPedido DESC;";
+
+            return ExecuteMultipleScalar<int>(session, sql);
         }
 
         /// <summary>
