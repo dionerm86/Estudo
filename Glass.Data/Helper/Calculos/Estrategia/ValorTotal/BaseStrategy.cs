@@ -16,7 +16,7 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
 
         public void Calcular(GDASession sessao, IProdutoCalculo produto, ArredondarAluminio arredondarAluminio,
             bool calcularMultiploDe5, bool compra, bool nf, int numeroBeneficiamentos, int alturaBeneficiamento,
-            int larguraBeneficiamento, bool usarChapaVidro, bool valorBruto = false)
+            int larguraBeneficiamento, bool usarChapaVidro, bool valorBruto = false, bool primeiroCalculo = false)
         {
             /* Chamado 41410. */
             if (ValidarQuantidadeDecimal && produto.Qtde % 1 > 0)
@@ -43,11 +43,21 @@ namespace Glass.Data.Helper.Calculos.Estrategia.ValorTotal
                 usarChapaVidro,
                 valorBruto
             );
+
+            if (!valorBruto && primeiroCalculo)
+            {
+                CorrigirValorCalculado(produto);
+            }
         }
 
         protected abstract void Calcular(GDASession sessao, IProdutoCalculo produto, int qtdeAmbiente,
             ArredondarAluminio arredondarAluminio, bool calcularMultiploDe5, bool nf, int numeroBeneficiamentos,
             int alturaBeneficiamento, int larguraBeneficiamento, bool compra, decimal custoCompra, bool usarChapaVidro,
             bool valorBruto);
+
+        private void CorrigirValorCalculado(IProdutoCalculo produto)
+        {
+            produto.Total += produto.ValorDescontoQtde;
+        }
     }
 }

@@ -12,22 +12,24 @@ namespace Glass.Data.Helper.Calculos
         {
             produto.InicializarParaCalculo(sessao, container);
 
-            produto.TotalBruto = produto.Total
-                - produto.ValorAcrescimo
-                - produto.ValorAcrescimoCliente
-                - produto.ValorComissao
-                - produto.ValorAcrescimoProd
-                + produto.ValorDesconto
-                + produto.ValorDescontoCliente
-                + produto.ValorDescontoQtde
-                + produto.ValorDescontoProd;
-
+            produto.TotalBruto = produto.Total - DescontoValorBruto(produto);
             CalcularValorUnitarioBruto(sessao, produto);
+        }
+
+        public decimal DescontoValorBruto(IProdutoCalculo produto)
+        {
+            return produto.ValorAcrescimo
+                + produto.ValorAcrescimoCliente
+                + produto.ValorComissao
+                + produto.ValorAcrescimoProd
+                - produto.ValorDesconto
+                - produto.ValorDescontoCliente
+                - produto.ValorDescontoQtde
+                - produto.ValorDescontoProd;
         }
 
         private void CalcularValorUnitarioBruto(GDASession sessao, IProdutoCalculo produto)
         {
-
             var valorUnitario = ValorUnitario.Instance.CalcularValor(sessao, produto.Container, produto, produto.TotalBruto);
 
             if (valorUnitario.HasValue)

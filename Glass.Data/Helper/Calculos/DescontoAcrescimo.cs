@@ -24,15 +24,15 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
-                TipoAplicacao.Geral
-            );
+                TipoAplicacao.Geral);
 
-            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoAcrescimo, acrescimo);
-
-            aplicado = ReaplicarDesconto(sessao, container, produtos, aplicado)
-                || aplicado;
-
-            return aplicado;
+            return AplicarAcrescimoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                (TipoValor)tipoAcrescimo,
+                acrescimo);
         }
 
         /// <summary>
@@ -43,15 +43,29 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
-                TipoAplicacao.Ambiente
-            );
+                TipoAplicacao.Ambiente);
 
-            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoAcrescimo, acrescimo);
+            return AplicarAcrescimoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                (TipoValor)tipoAcrescimo,
+                acrescimo);
+        }
 
-            aplicado = ReaplicarComissao(sessao, container, produtos, aplicado)
-                || aplicado;
-
-            return aplicado;
+        private bool AplicarAcrescimoComOrdem(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos, TipoValor tipoAcrescimo, decimal acrescimo)
+        {
+            try
+            {
+                RemoverDescontosEComissao(sessao, container, produtos);
+                return Aplicar(sessao, estrategia, container, produtos, tipoAcrescimo, acrescimo);
+            }
+            finally
+            {
+                ReaplicarDescontosEComissao(sessao, container, produtos);
+            }
         }
 
         #endregion
@@ -63,17 +77,15 @@ namespace Glass.Data.Helper.Calculos
         /// </summary>
         public bool RemoverAcrescimo(GDASession sessao, IContainerCalculo container, IEnumerable<IProdutoCalculo> produtos)
         {
-           var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
-                TipoCalculo.Acrescimo,
-                TipoAplicacao.Geral
-            );
+            var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
+                 TipoCalculo.Acrescimo,
+                 TipoAplicacao.Geral);
 
-            bool removido = Remover(sessao, estrategia, container, produtos);
-
-            removido = ReaplicarDesconto(sessao, container, produtos, removido)
-                || removido;
-
-            return removido;
+            return RemoverAcrescimoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos);
         }
 
         /// <summary>
@@ -83,15 +95,27 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Acrescimo,
-                TipoAplicacao.Ambiente
-            );
+                TipoAplicacao.Ambiente);
 
-            bool removido = Remover(sessao, estrategia, container, produtos);
+            return RemoverAcrescimoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos);
+        }
 
-            removido = ReaplicarDesconto(sessao, container, produtos, removido)
-                || removido;
-
-            return removido;
+        private bool RemoverAcrescimoComOrdem(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos)
+        {
+            try
+            {
+                RemoverDescontosEComissao(sessao, container, produtos);
+                return Remover(sessao, estrategia, container, produtos);
+            }
+            finally
+            {
+                ReaplicarDescontosEComissao(sessao, container, produtos);
+            }
         }
 
         #endregion
@@ -104,10 +128,7 @@ namespace Glass.Data.Helper.Calculos
         public bool AplicarDesconto(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
-            var aplicado = AplicarDesconto(sessao, container, tipoDesconto, desconto, produtos, true);
-            RemoverDescontosConfiguracao(sessao, container, produtos);
-
-            return aplicado;
+            return AplicarDesconto(sessao, container, tipoDesconto, desconto, produtos, true);
         }
 
         private bool AplicarDesconto(GDASession sessao, IContainerCalculo container, int tipoDesconto,
@@ -115,15 +136,16 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Geral
-            );
+                TipoAplicacao.Geral);
 
-            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoDesconto, desconto);
-
-            aplicado = ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado)
-                || aplicado;
-
-            return aplicado;
+            return AplicarDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                (TipoValor)tipoDesconto,
+                desconto,
+                reaplicarComissao);
         }
 
         /// <summary>
@@ -132,10 +154,7 @@ namespace Glass.Data.Helper.Calculos
         public bool AplicarDescontoAmbiente(GDASession sessao, IContainerCalculo container, int tipoDesconto,
             decimal desconto, IEnumerable<IProdutoCalculo> produtos)
         {
-            var aplicado = AplicarDescontoAmbiente(sessao, container, tipoDesconto, desconto, produtos, true);
-            RemoverDescontosConfiguracao(sessao, container, produtos);
-
-            return aplicado;
+            return AplicarDescontoAmbiente(sessao, container, tipoDesconto, desconto, produtos, true);
         }
 
         private bool AplicarDescontoAmbiente(GDASession sessao, IContainerCalculo container, int tipoDesconto,
@@ -143,15 +162,16 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Ambiente
-            );
+                TipoAplicacao.Ambiente);
 
-            bool aplicado = Aplicar(sessao, estrategia, container, produtos, (TipoValor)tipoDesconto, desconto);
-
-            aplicado = ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado)
-                || aplicado;
-
-            return aplicado;
+            return AplicarDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                (TipoValor)tipoDesconto,
+                desconto,
+                reaplicarComissao);
         }
 
         /// <summary>
@@ -167,19 +187,37 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Quantidade
-            );
+                TipoAplicacao.Quantidade);
 
             var produtosAplicar = produtos
                 .Where(p => p.PercDescontoQtde > 0)
                 .ToList();
 
-            bool aplicado = Aplicar(sessao, estrategia, container, produtosAplicar, TipoValor.Percentual, 1);
+            return AplicarDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtosAplicar,
+                TipoValor.Percentual,
+                1,
+                reaplicarComissao);
+        }
 
-            aplicado = ReaplicarComissao(sessao, container, produtos, reaplicarComissao && aplicado)
-                || aplicado;
-
-            return aplicado;
+        private bool AplicarDescontoComOrdem(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos, TipoValor tipoDesconto, decimal desconto, bool reaplicarComissao)
+        {
+            try
+            {
+                RemoverComissao(sessao, container, produtos);
+                return Aplicar(sessao, estrategia, container, produtos, tipoDesconto, desconto);
+            }
+            finally
+            {
+                if (reaplicarComissao)
+                {
+                    ReaplicarComissao(sessao, container, produtos);
+                }
+            }
         }
 
         #endregion
@@ -199,16 +237,14 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Geral
-            );
+                TipoAplicacao.Geral);
 
-            bool removido = Remover(sessao, estrategia, container, produtos);
-
-            removido = ReaplicarComissao(sessao, container, produtos,
-                reaplicarComissao && (removido || !PedidoConfig.RatearDescontoProdutos))
-                || removido;
-
-            return removido;
+            return RemoverDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                reaplicarComissao);
         }
 
         /// <summary>
@@ -224,16 +260,14 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Ambiente
-            );
+                TipoAplicacao.Ambiente);
 
-            bool removido = Remover(sessao, estrategia, container, produtos);
-
-            removido = ReaplicarComissao(sessao, container, produtos,
-                reaplicarComissao && (removido || !PedidoConfig.RatearDescontoProdutos))
-                || removido;
-
-            return removido;
+            return RemoverDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                reaplicarComissao);
         }
 
         /// <summary>
@@ -249,15 +283,31 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Desconto,
-                TipoAplicacao.Quantidade
-            );
-            
-            bool removido = Remover(sessao, estrategia, container, produtos);
+                TipoAplicacao.Quantidade);
 
-            removido = ReaplicarComissao(sessao, container, produtos, reaplicarComissao && removido)
-                || removido;
+            return RemoverDescontoComOrdem(
+                sessao,
+                estrategia,
+                container,
+                produtos,
+                reaplicarComissao);
+        }
 
-            return removido;
+        private bool RemoverDescontoComOrdem(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos, bool reaplicarComissao)
+        {
+            try
+            {
+                RemoverComissao(sessao, container, produtos);
+                return Remover(sessao, estrategia, container, produtos);
+            }
+            finally
+            {
+                if (reaplicarComissao)
+                {
+                    ReaplicarComissao(sessao, container, produtos);
+                }
+            }
         }
 
         #endregion
@@ -275,13 +325,15 @@ namespace Glass.Data.Helper.Calculos
                 TipoAplicacao.Geral
             );
 
-            AplicarDescontosConfiguracao(sessao, container, produtos);
-
-            bool aplicado = Aplicar(sessao, estrategia, container, produtos, TipoValor.Percentual, (decimal)percentualComissao);
-
-            RemoverDescontosConfiguracao(sessao, container, produtos);
-
-            return aplicado;
+            try
+            {
+                AplicarDescontosConfiguracao(sessao, container, produtos);
+                return Aplicar(sessao, estrategia, container, produtos, TipoValor.Percentual, (decimal)percentualComissao);
+            }
+            finally
+            {
+                RemoverDescontosConfiguracao(sessao, container, produtos);
+            }
         }
 
         #endregion
@@ -295,15 +347,14 @@ namespace Glass.Data.Helper.Calculos
         {
             var estrategia = DescontoAcrescimoStrategyFactory.Instance.RecuperaEstrategia(
                 TipoCalculo.Comissao,
-                TipoAplicacao.Geral
-            );
+                TipoAplicacao.Geral);
 
             return Remover(sessao, estrategia, container, produtos);
         }
 
         #endregion
 
-        #region Métodos privados
+        #region Métodos de suporte
 
         private bool Aplicar(GDASession sessao, IDescontoAcrescimoStrategy estrategia, IContainerCalculo container,
             IEnumerable<IProdutoCalculo> produtos, TipoValor tipoValor, decimal valor)
@@ -317,34 +368,29 @@ namespace Glass.Data.Helper.Calculos
             return estrategia.Remover(sessao, container, produtos);
         }
 
-        private bool ReaplicarDesconto(GDASession sessao, IContainerCalculo container,
-            IEnumerable<IProdutoCalculo> produtos, bool reaplicar)
-        {
-            if (reaplicar)
-            {
-                bool reaplicado = ReaplicarDescontosProdutos(sessao, container, produtos);
-                reaplicado = AplicarDescontoQtde(sessao, container, produtos, false)
-                    || reaplicado;
-
-                reaplicado = ReaplicarComissao(sessao, container, produtos, true)
-                    || reaplicado;
-
-                RemoverDescontosConfiguracao(sessao, container, produtos);
-
-                return reaplicado;
-            }
-
-            return false;
-        }
-
-        private bool ReaplicarDescontosProdutos(GDASession sessao, IContainerCalculo container,
+        private void RemoverDescontosEComissao(GDASession sessao, IContainerCalculo container,
             IEnumerable<IProdutoCalculo> produtos)
         {
-            bool reaplicar = false;
+            RemoverDesconto(sessao, container, produtos, false);
+            RemoverDescontoAmbiente(sessao, container, produtos, false);
+            RemoverDescontoQtde(sessao, container, produtos, false);
+            RemoverComissao(sessao, container, produtos);
+        }
 
+        private void ReaplicarDescontosEComissao(GDASession sessao, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos)
+        {
+            ReaplicarDescontosProdutos(sessao, container, produtos);
+            AplicarDescontoQtde(sessao, container, produtos, false);
+            ReaplicarComissao(sessao, container, produtos);
+        }
+
+        private void ReaplicarDescontosProdutos(GDASession sessao, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos)
+        {
             if (container.Desconto > 0)
             {
-                reaplicar = AplicarDesconto(sessao, container, container.TipoDesconto, container.Desconto, produtos, false);
+                AplicarDesconto(sessao, container, container.TipoDesconto, container.Desconto, produtos, false);
             }
 
             if (container.Ambientes != null)
@@ -358,26 +404,20 @@ namespace Glass.Data.Helper.Calculos
                         .Where(produto => produto.IdAmbiente == ambiente.Id)
                         .ToList();
 
-                    reaplicar = AplicarDescontoAmbiente(sessao, container, ambiente.TipoDesconto, ambiente.Desconto, produtosAmbiente, false)
-                        || reaplicar;
+                    AplicarDescontoAmbiente(sessao, container, ambiente.TipoDesconto, ambiente.Desconto, produtosAmbiente, false);
                 }
             }
-
-            return reaplicar;
         }
 
-        private bool ReaplicarComissao(GDASession sessao, IContainerCalculo container,
-            IEnumerable<IProdutoCalculo> produtos, bool reaplicar)
+        private void ReaplicarComissao(GDASession sessao, IContainerCalculo container,
+            IEnumerable<IProdutoCalculo> produtos)
         {
-            if (reaplicar && container?.PercComissao > 0)
+            if (container?.PercComissao > 0)
             {
-                bool aplicado = AplicarComissao(sessao, container, container.PercComissao, produtos);
-                RemoverDescontosConfiguracao(sessao, container, produtos);
-
-                return aplicado;
+                AplicarComissao(sessao, container, container.PercComissao, produtos);
             }
 
-            return false;
+            RemoverDescontosConfiguracao(sessao, container, produtos);
         }
 
         private void AplicarDescontosConfiguracao(GDASession sessao, IContainerCalculo container,
