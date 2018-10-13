@@ -21,6 +21,8 @@ namespace Glass.API.Backend.Models.Produtos.GruposProduto.Configuracoes
         {
             this.DescricaoMlal = Global.CalculosFluxo.NOME_MLAL;
             this.UsarControleOrdemDeCarga = OrdemCargaConfig.UsarControleOrdemCarga;
+            this.SituacaoAtiva = Situacao.Ativo;
+            this.SituacaoInativa = Situacao.Inativo;
         }
 
         /// <summary>
@@ -36,5 +38,19 @@ namespace Glass.API.Backend.Models.Produtos.GruposProduto.Configuracoes
         [DataMember]
         [JsonProperty("usarControleOrdemDeCarga")]
         public bool UsarControleOrdemDeCarga { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o valor da situação "ativa" no sistema.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacaoAtiva")]
+        public Situacao SituacaoAtiva { get; set; }
+
+        /// <summary>
+        /// Obtém ou define o valor da situação "inativa" no sistema.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("situacaoInativa")]
+        public Situacao SituacaoInativa { get; set; }
     }
 }

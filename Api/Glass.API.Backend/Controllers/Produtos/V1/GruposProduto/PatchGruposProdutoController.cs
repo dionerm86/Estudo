@@ -24,7 +24,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
         /// <param name="dadosParaAlteracao">Os novos dados que serão alterados no grupo de produto indicado.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpPatch]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Grupo de produto alterado.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Grupo de produto não encontrado para o id informado.", Type = typeof(MensagemDto))]
@@ -41,14 +41,17 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
                         return validacao;
                     }
 
-                    var grupo = new ConverterCadastroAtualizacaoParaGrupoProduto(dadosParaAlteracao)
+                    var fluxo = Microsoft.Practices.ServiceLocation.ServiceLocator
+                        .Current.GetInstance<Global.Negocios.IGrupoProdutoFluxo>();
+
+                    var grupoAtual = fluxo.ObtemGrupoProduto(id);
+
+                    var grupo = new ConverterCadastroAtualizacaoParaGrupoProduto(dadosParaAlteracao, grupoAtual)
                         .ConverterParaGrupoProduto();
 
                     grupo.IdGrupoProd = id;
 
-                    var resultado = Microsoft.Practices.ServiceLocation.ServiceLocator
-                        .Current.GetInstance<Global.Negocios.IGrupoProdutoFluxo>()
-                        .SalvarGrupoProduto(grupo);
+                    var resultado = fluxo.SalvarGrupoProduto(grupo);
 
                     if (!resultado)
                     {

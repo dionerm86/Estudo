@@ -1,11 +1,11 @@
-﻿// <copyright file="TraducaoOrdenacaoListaCoresVidro.cs" company="Sync Softwares">
+﻿// <copyright file="TraducaoOrdenacaoListaGruposProduto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
 namespace Glass.API.Backend.Helper.Produtos.GruposProduto
 {
     /// <summary>
-    /// Classe que realiza a tradução dos campos de ordenação para a lista de cores de vidro.
+    /// Classe que realiza a tradução dos campos de ordenação para a lista de grupos de produto.
     /// </summary>
     internal class TraducaoOrdenacaoListaGruposProduto : BaseTraducaoOrdenacao
     {

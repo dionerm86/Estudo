@@ -475,6 +475,7 @@
     <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\Produtos\CadastroAtualizacao\SituacaoDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Produtos\GruposProduto\Lista\EstoqueDto.cs" />

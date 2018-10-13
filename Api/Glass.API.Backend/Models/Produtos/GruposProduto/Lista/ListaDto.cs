@@ -24,11 +24,24 @@ namespace Glass.API.Backend.Models.Produtos.GruposProduto.Lista
         {
             this.Id = grupoProduto.IdGrupoProd;
             this.Nome = grupoProduto.Descricao;
-            this.Tipo = grupoProduto.TipoGrupo;
+            this.Tipo = new IdNomeDto()
+            {
+                Id = (int)grupoProduto.TipoGrupo,
+                Nome = Colosoft.Translator.Translate(grupoProduto.TipoGrupo).Format(),
+            };
+
             this.TiposCalculo = new TiposCalculoDto()
             {
-                Pedido = grupoProduto.TipoCalculo,
-                NotaFiscal = grupoProduto.TipoCalculoNf,
+                Pedido = new IdNomeDto()
+                {
+                    Id = (int?)grupoProduto.TipoCalculo,
+                    Nome = Colosoft.Translator.Translate(grupoProduto.TipoCalculo).Format(),
+                },
+                NotaFiscal = new IdNomeDto()
+                {
+                    Id = (int?)grupoProduto.TipoCalculoNf,
+                    Nome = Colosoft.Translator.Translate(grupoProduto.TipoCalculoNf).Format(),
+                },
             };
 
             this.Estoque = new EstoqueDto()
@@ -52,7 +65,7 @@ namespace Glass.API.Backend.Models.Produtos.GruposProduto.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("tipo")]
-        public TipoGrupoProd Tipo { get; set; }
+        public IdNomeDto Tipo { get; set; }
 
         /// <summary>
         /// Obtém ou define os tipos de cálculo do grupo de produto.

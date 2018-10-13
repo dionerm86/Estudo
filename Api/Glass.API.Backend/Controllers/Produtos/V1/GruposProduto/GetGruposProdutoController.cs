@@ -128,7 +128,13 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
             {
                 var tipos = Microsoft.Practices.ServiceLocation.ServiceLocator
                     .Current.GetInstance<Global.Negocios.IGrupoProdutoFluxo>()
-                    .ObtemTiposCalculo(true, notaFiscal);
+                    .ObtemTiposCalculo(true, notaFiscal)
+                    .ToList()
+                    .Select(f => new IdNomeDto()
+                    {
+                        Id = (int)f,
+                        Nome = Colosoft.Translator.Translate(f).Format(),
+                    });
 
                 return this.Lista(tipos);
             }

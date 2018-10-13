@@ -21,7 +21,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.GruposProduto
         /// <param name="id">O identificador do grupo de produto que será excluído.</param>
         /// <returns>O status HTTP que representa o resultado da operação.</returns>
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         [SwaggerResponse(202, "Grupo de produto excluído.", Type = typeof(MensagemDto))]
         [SwaggerResponse(400, "Erro de validação.", Type = typeof(MensagemDto))]
         [SwaggerResponse(404, "Grupo de produto não encontrado para o id informado.", Type = typeof(MensagemDto))]
