@@ -1,4 +1,4 @@
-﻿Vue.component('producao-pecas', {
+Vue.component('producao-pecas', {
   mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
   props: {
     /**
@@ -102,6 +102,50 @@
             vm.exibirMensagem('Erro', erro.mensagem);
           }
         });
+    },
+
+    /**
+     * Abre o relatório de pedido de uma peça de produção.
+     * @param {!Object} peca A peça de produção que terá o relatório de pedido aberto.
+     */
+    abrirRelatorioPedido: function (peca) {
+      const url = "../../Relatorios/RelPedido.aspx?idPedido=" + peca.pedido.id;
+      this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Exibe o botão de relatório de pedido de uma peça de produção.
+     * @param {!Object} peca A peça de produção que será verificada.
+     */
+    exibirRelatorioPedido: function (peca) {
+      const producao = GetQueryString("producao") == "1";
+      return !producao && this.exibirRelatorioPedidoPcp(peca) && peca.permissoes.relatorioPedido;
+    },
+
+    /**
+     * Abre o relatório de pedido de uma peça de produção.
+     * @param {!Object} peca A peça de produção que terá o relatório de pedido aberto.
+     */
+    abrirRelatorioPedidoPcp: function (peca) {
+      const url = "../../Relatorios/RelBase.aspx?rel=PedidoPcp&idPedido=" + peca.pedido.id;
+      this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Exibe o botão de relatório de pedido de conferência de uma peça de produção.
+     * @param {!Object} peca A peça de produção que será verificada.
+     */
+    exibirRelatorioPedidoPcp: function (peca) {
+      return peca.pedido && peca.permissoes;
+    },
+
+    /**
+     * Exibe os anexos do pedido de uma peça.
+     * @param {!Object} peca A peça de produção que terá os anexos de pedido exibidos.
+     */
+    abrirAnexosPedido(peca) {
+      const url = '../CadFotos.aspx?id=' + peca.pedido.id + '&tipo=pedido';
+      this.abrirJanela(600, 700, url);
     },
 
     /**

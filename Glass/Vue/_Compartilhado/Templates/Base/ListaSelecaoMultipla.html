@@ -1,5 +1,5 @@
-﻿<span style="cursor: default; display: inline-grid; min-width: 110px" class="lista-selecao-multipla">
-    <div style="-appearance: searchfield; overflow: hidden; padding: 1px 0 0 2px" v-on:click="alternarOpcoes">
+<span style="cursor: default; display: inline-grid; min-width: 110px" class="lista-selecao-multipla">
+    <div style="-moz-appearance: menulist; -webkit-appearance: searchfield; overflow: hidden; padding: 1px 0 0 2px" v-on:click="alternarOpcoes">
         <span style="min-width: 110px;">
             <div style="float: right; -appearance: menulist-button; width: 16px; height: 21px"></div>
             <span style="display: inline-block; text-align: left; white-space: nowrap; width: calc(100% - 26px); margin: 0px; padding: 1px 5px 1px 3px" class="ui-dropdownchecklist-text">
@@ -8,7 +8,7 @@
         </span>
     </div>
     <div style="display: none; position: absolute; margin-top: 21px; background-color: white; z-index: 1">
-        <div style="-appearance: searchfield; padding: 1px">
+        <div style="-moz-appearance: listbox; -webkit-appearance: searchfield; padding: 1px">
             <div style="overflow-x: hidden; overflow-y: auto; max-height: 170px; padding: 1px 0; text-align: left">
                 <div v-for="item in itens" style="padding: 0 3px">
                     <input v-bind:id="idUnico(item)" type="checkbox" v-model="idsAtuais" v-bind:value="item[campoId]" v-on:click="selecionarItem">

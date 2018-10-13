@@ -1,4 +1,4 @@
-﻿Vue.component('producao-filtros', {
+Vue.component('producao-filtros', {
   mixins: [Mixins.Objetos],
   props: {
     /**
@@ -128,7 +128,7 @@
      */
     filtroVazio: function () {
       return {
-        idPedido: null,
+        idPedido: 15,
         idLiberacaoPedido: null,
         idCarregamento: null,
         idPedidoImportado: null,

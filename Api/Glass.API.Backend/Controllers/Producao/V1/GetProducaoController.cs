@@ -98,7 +98,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                     (uint)filtro.IdLoja.GetValueOrDefault(),
                     (int?)filtro.TipoProdutosComposicao,
                     0,
-                    filtro.Pagina,
+                    filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.ObterTraducaoOrdenacao(),
                     filtro.ObterPrimeiroRegistroRetornar(),
                     filtro.NumeroRegistros);
@@ -151,7 +151,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                         (uint)filtro.IdLoja.GetValueOrDefault(),
                         (int?)filtro.TipoProdutosComposicao,
                         0,
-                        filtro.Pagina));
+                        filtro.ObterPrimeiroRegistroRetornar()));
             }
         }
 

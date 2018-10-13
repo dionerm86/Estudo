@@ -1,4 +1,4 @@
-﻿Vue.component('controle-exibicao-imagem', {
+Vue.component('controle-exibicao-imagem', {
   mixins: [Mixins.ExecutarTimeout],
   props: {
     /**
@@ -18,7 +18,7 @@
     tipoItem: {
       required: true,
       twoWay: false,
-      validator: Mixins.Validacao.validarValores('Produto')
+      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao')
     },
 
     /**

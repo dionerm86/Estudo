@@ -1,4 +1,4 @@
-﻿<section>
+<section>
     <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPecas"
         v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
         <template slot="cabecalho">
@@ -44,6 +44,17 @@
                 <button v-on:click.prevent="desfazerUltimaLeituraPeca(item)" v-if="item.permissoes && item.permissoes.desfazerLeitura">
                     <img src="/Images/arrow_undo.gif" title="Remover peça desta situação" />
                 </button>
+                <button v-on:click.prevent="abrirRelatorioPedido(item)" v-if="exibirRelatorioPedido(item)">
+                    <img src="/Images/Relatorio.gif" title="Relatório de pedido" />
+                </button>
+                <button v-on:click.prevent="abrirRelatorioPedidoPcp(item)" v-if="exibirRelatorioPedidoPcp(item)">
+                    <img src="/Images/script_go.gif" title="Relatório de pedido conferência" />
+                </button>
+                <button v-on:click.prevent="abrirAnexosPedido(item)" v-if="item.pedido">
+                    <img src="/Images/Clipe.gif" title="Anexos do pedido" />
+                </button>
+                <controle-exibicao-imagem v-bind:id-item="item.id" tipo-item="PecaProducao" v-if="item.imagemPeca && !item.imagemPeca.possuiSvg"></controle-exibicao-imagem>
+                <log-alteracao v-bind:id-item="item.id" tabela="ProdPedProducao" v-bind:atualizar-ao-alterar="false"></log-alteracao>
             </td>
             <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido">
