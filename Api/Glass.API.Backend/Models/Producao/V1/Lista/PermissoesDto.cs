@@ -1,4 +1,4 @@
-﻿// <copyright file="PermissoesDto.cs" company="Sync Softwares">
+// <copyright file="PermissoesDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -13,6 +13,13 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
     [DataContract(Name = "Permissoes")]
     public class PermissoesDto
     {
+        /// <summary>
+        /// Obtém ou define um valor que indica se a peça possui log de alterações.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("logAlteracoes")]
+        public bool LogAlteracoes { get; set; }
+
         /// <summary>
         /// Obtém ou define um valor que indica se a última leitura pode ser desfeita na peça.
         /// </summary>
@@ -33,5 +40,12 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         [DataMember]
         [JsonProperty("pararPecaProducao")]
         public bool PararPecaProducao { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se a peça possui log de estorno de carregamento.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("logEstornoCarregamento")]
+        public bool LogEstornoCarregamento { get; set; }
     }
 }

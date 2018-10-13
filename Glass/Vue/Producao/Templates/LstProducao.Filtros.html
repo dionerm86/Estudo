@@ -1,4 +1,4 @@
-﻿<section class="filtros">
+<section class="filtros">
     <div>
         <span class="form-group">
             <label for="idPedido">Pedido</label>
@@ -22,7 +22,7 @@
         </span>
         <span class="form-group">
             <label for="codigoPedidoCliente">Pedido Cli./Ambiente</label>
-            <input id="codigoPedidoCliente" type="number" v-model.number="filtroAtual.codigoPedidoCliente" style="width: 60px" />
+            <input id="codigoPedidoCliente" type="text" v-model="filtroAtual.codigoPedidoCliente" style="width: 60px" />
             <button class="botaoPesquisar" v-on:click.prevent="filtrar" title="Pesquisar"></button>
         </span>
         <span class="form-group">

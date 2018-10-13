@@ -109,7 +109,7 @@ Vue.component('producao-pecas', {
      * @param {!Object} peca A peça de produção que terá o relatório de pedido aberto.
      */
     abrirRelatorioPedido: function (peca) {
-      const url = "../../Relatorios/RelPedido.aspx?idPedido=" + peca.pedido.id;
+      const url = '../../Relatorios/RelPedido.aspx?idPedido=' + peca.pedido.id;
       this.abrirJanela(600, 800, url);
     },
 
@@ -118,7 +118,7 @@ Vue.component('producao-pecas', {
      * @param {!Object} peca A peça de produção que será verificada.
      */
     exibirRelatorioPedido: function (peca) {
-      const producao = GetQueryString("producao") == "1";
+      const producao = GetQueryString('producao') == '1';
       return !producao && this.exibirRelatorioPedidoPcp(peca) && peca.permissoes.relatorioPedido;
     },
 
@@ -127,7 +127,7 @@ Vue.component('producao-pecas', {
      * @param {!Object} peca A peça de produção que terá o relatório de pedido aberto.
      */
     abrirRelatorioPedidoPcp: function (peca) {
-      const url = "../../Relatorios/RelBase.aspx?rel=PedidoPcp&idPedido=" + peca.pedido.id;
+      const url = '../../Relatorios/RelBase.aspx?rel=PedidoPcp&idPedido=' + peca.pedido.id;
       this.abrirJanela(600, 800, url);
     },
 
@@ -136,7 +136,7 @@ Vue.component('producao-pecas', {
      * @param {!Object} peca A peça de produção que será verificada.
      */
     exibirRelatorioPedidoPcp: function (peca) {
-      return peca.pedido && peca.permissoes;
+      return peca && peca.pedido && peca.permissoes;
     },
 
     /**
@@ -146,6 +146,45 @@ Vue.component('producao-pecas', {
     abrirAnexosPedido(peca) {
       const url = '../CadFotos.aspx?id=' + peca.pedido.id + '&tipo=pedido';
       this.abrirJanela(600, 700, url);
+    },
+
+    /**
+     * Exibe a tela para realizar a parada de produção da peça desejada.
+     * @param {!Object} peca A peça de produção que poderá ser parada na produção.
+     */
+    pararPecaProducao: function (peca) {
+      if (!peca || !peca.situacaoProducao || !peca.produtoPedido) {
+        return;
+      }
+
+      const pergunta = 'Tem certeza que deseja '
+        + (peca.situacaoProducao.pecaParada ? 'retornar esta peça para' : 'parar esta peça na')
+        + ' produção?\n'
+        + peca.produtoPedido.descricaoCompleta;
+
+      if (!this.perguntar(pergunta)) {
+        return;
+      }
+
+      this.abrirJanela(200, 405, '../../Utils/SetMotivoPararPecaProducao.aspx?popup=true&idProdPedProducao=' + peca.id, null, true, false);
+    },
+
+    /**
+     * Exibe os detalhes de reposição de uma peça de produção.
+     * @param {!Object} peca A peça de produção que terá os detalhes de reposição exibidos.
+     */
+    abrirDetalhesReposicao: function (peca) {
+      const url = '../../Utils/DetalhesReposicaoPeca.aspx?idProdPedProducao=' + peca.id;
+      this.abrirJanela(600, 800, url);
+    },
+
+    /**
+     * Exibe o log de estorno de carregamentos para uma peça.
+     * @param {!Object} peca A peça de produção que terá o log exibido.
+     */
+    abrirLogEstornoCarregamento: function (peca) {
+      const url = '../../Utils/ShowEstornoCarregamento.aspx?idProdPedProducao=' + peca.id;
+      this.abrirJanela(600, 800, url);
     },
 
     /**

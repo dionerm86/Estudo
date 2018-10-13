@@ -104,7 +104,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    pecas.Select(p => new ListaDto(p)),
+                    pecas.Select(p => new ListaDto(sessao, p)),
                     filtro,
                     () => ProdutoPedidoProducaoDAO.Instance.GetCountConsulta(
                         filtro.IdCarregamento.GetValueOrDefault(),
@@ -187,7 +187,7 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                     filtro.NumeroRegistros);
 
                 return this.ListaPaginada(
-                    produtosComposicao.Select(p => new ListaDto(p)),
+                    produtosComposicao.Select(p => new ListaDto(sessao, p)),
                     filtro,
                     () => ProdutoPedidoProducaoDAO.Instance.PesquisarProdutosProducaoFilhoCount(
                         sessao,

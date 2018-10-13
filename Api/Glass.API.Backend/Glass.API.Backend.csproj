@@ -388,6 +388,7 @@
     <Compile Include="Helper\Datas\Feriados\ConverterCadastroAtualizacaoParaFeriado.cs" />
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
+    <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoSvgProjetoStrategy.cs" />
     <Compile Include="Helper\Imagens\Estrategias\Exibicao\ExibicaoPecaProducaoStrategy.cs" />
     <Compile Include="Helper\Producao\TraducaoOrdenacaoListaProducao.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
@@ -471,7 +472,6 @@
     <Compile Include="Models\Producao\V1\Lista\LeituraDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\PedidoDto.cs" />
-    <Compile Include="Models\Producao\V1\Lista\ImagemPecaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\PerdaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\PermissoesDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ProdutoPedidoDto.cs" />

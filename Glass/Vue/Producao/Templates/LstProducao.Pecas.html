@@ -39,7 +39,7 @@
         <template slot="item" slot-scope="{ item, index }">
             <td style="white-space: nowrap">
                 <button v-on:click.prevent="alternarExibicaoFilhos(index)" v-if="item.produtoPedido && item.produtoPedido.composicao">
-                    <img src="/Images/mais.gif" title="Exibir Produtos da Composição" />
+                    <img src="/Images/mais.gif" v-bind:title="(exibindoFilhos(index) ? 'Esconder' : 'Exibir') + ' Produtos da Composição'" />
                 </button>
                 <button v-on:click.prevent="desfazerUltimaLeituraPeca(item)" v-if="item.permissoes && item.permissoes.desfazerLeitura">
                     <img src="/Images/arrow_undo.gif" title="Remover peça desta situação" />
@@ -50,11 +50,24 @@
                 <button v-on:click.prevent="abrirRelatorioPedidoPcp(item)" v-if="exibirRelatorioPedidoPcp(item)">
                     <img src="/Images/script_go.gif" title="Relatório de pedido conferência" />
                 </button>
-                <button v-on:click.prevent="abrirAnexosPedido(item)" v-if="item.pedido">
+                <button v-on:click.prevent="abrirAnexosPedido(item)" v-if="item && item.pedido">
                     <img src="/Images/Clipe.gif" title="Anexos do pedido" />
                 </button>
-                <controle-exibicao-imagem v-bind:id-item="item.id" tipo-item="PecaProducao" v-if="item.imagemPeca && !item.imagemPeca.possuiSvg"></controle-exibicao-imagem>
-                <log-alteracao v-bind:id-item="item.id" tabela="ProdPedProducao" v-bind:atualizar-ao-alterar="false"></log-alteracao>
+                <controle-exibicao-imagem v-bind:id-item="item.id" tipo-item="PecaProducao" v-if="!item.possuiImagemSvg"></controle-exibicao-imagem>
+                <controle-imagem-projeto v-bind:id-item="item.produtoPedido.id" v-else-if="item.produtoPedido && item.possuiImagemSvg"></controle-imagem-projeto>
+                <log-alteracao v-bind:id-item="item.id" tabela="ProdPedProducao" v-bind:atualizar-ao-alterar="false" v-if="item && item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
+                <button v-on:click.prevent="pararPecaProducao(item)" v-if="item && item.permissoes && item.permissoes.pararPecaProducao">
+                    <img src="/Images/stop_red.png" title="Retornar peça para produção" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaParada" />
+                    <img src="/Images/stop_blue.png" title="Parar peça na produção" v-else />
+                </button>
+                <button v-on:click.prevent="abrirDetalhesReposicao(item)" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaReposta">
+                    <img src="/Images/Nota.gif" title="Detalhes Reposição Peça" />
+                </button>
+                <button v-on:click.prevent="abrirLogEstornoCarregamento(item)" v-if="item && item.permissoes && item.permissoes.logEstornoCarregamento">
+                    <img src="/Images/log_delete.jpg" title="Exibir log de estorno de carregamento" />
+                </button>
+                <img src="/Images/exclamation.gif" title="Essa peça tem leitura em ao menos um setor oculto (Não exibido na consulta)"
+                    v-if="item && item.situacaoProducao && item.situacaoProducao.possuiLeituraSetorOculto" />
             </td>
             <td v-bind:style="{ color: item.corLinha }">
                 <template v-if="item.pedido">

@@ -18,7 +18,7 @@ Vue.component('controle-exibicao-imagem', {
     tipoItem: {
       required: true,
       twoWay: false,
-      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao')
+      validator: Mixins.Validacao.validarValores('Produto', 'PecaProducao', 'SvgProjeto')
     },
 
     /**
@@ -41,6 +41,7 @@ Vue.component('controle-exibicao-imagem', {
     return {
       uuid: null,
       urlImagem: null,
+      svgImagem: null,
       legenda: null
     }
   },
@@ -73,13 +74,17 @@ Vue.component('controle-exibicao-imagem', {
      * Exibe um popup com a imagem em tamanho real.
      */
     abrirJanelaImagem: function () {
-      const urlFormatada = this.urlImagem
-        .replace(/..\/..\//g, '../')
-        .replace(/\?/g, '$')
-        .replace(/&/g, '@')
-        .replace(/\\/g, '!')
+      if (this.urlImagem) {
+        const urlFormatada = this.urlImagem
+          .replace(/..\/..\//g, '../')
+          .replace(/\?/g, '$')
+          .replace(/&/g, '@')
+          .replace(/\\/g, '!')
 
-      this.abrirJanela(600, 800, '../Utils/ShowFoto.aspx?path=' + urlFormatada);
+        this.abrirJanela(600, 800, '/Utils/ShowFoto.aspx?path=' + urlFormatada);
+      } else {
+        this.abrirJanela(600, 800, '/Handlers/LoadSvg.ashx?idProdPedEsp=' + this.idItem);
+      }
     },
   },
 

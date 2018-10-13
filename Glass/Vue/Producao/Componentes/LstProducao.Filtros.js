@@ -60,6 +60,7 @@ Vue.component('producao-filtros', {
 
     /**
      * Busca as rotas para o controle de filtro.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterRotas: function () {
       return Servicos.Rotas.obterFiltro();
@@ -67,6 +68,7 @@ Vue.component('producao-filtros', {
 
     /**
      * Busca as situações de produção para o filtro.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterSituacoesProducao: function () {
       return Servicos.Producao.obterSituacoes();
@@ -74,6 +76,7 @@ Vue.component('producao-filtros', {
 
     /**
      * Busca os tipos de situações de produção para o filtro.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterTiposSituacoesProducao: function () {
       return Servicos.Producao.obterTiposSituacoes();
@@ -81,43 +84,80 @@ Vue.component('producao-filtros', {
 
     /**
      * Busca as situações de pedido.
+     * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterSituacoesPedido: function () {
       return Servicos.Pedidos.obterSituacoes();
     },
 
+    /**
+     * Busca os subgrupos de 'vidro'.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterSubgrupos: function (filtro) {
       return Servicos.Produtos.Subgrupos.obterParaControle((filtro || {}).idGrupoProduto);
     },
 
+    /**
+     * Busca os tipos de entregas de pedido.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterTiposEntregasPedido: function () {
       return Servicos.Pedidos.obterTiposEntrega();
     },
 
+    /**
+     * Busca os tipos de pedido.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterTiposPedido: function () {
       return Servicos.Producao.obterTiposPedido();
     },
 
+    /**
+     * Busca os tipos de peças a exibir.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterTiposPecasExibir: function () {
       return Servicos.Producao.obterTiposPecasExibir();
     },
 
+    /**
+     * Busca as cores de vidros.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterCoresVidro: function () {
       return Servicos.Produtos.CoresVidro.obterParaControle();
     },
 
+    /**
+     * Busca os processos de etiqueta.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterProcessos: function () {
       return Servicos.Processos.obterParaControle();
     },
 
+    /**
+     * Busca as aplicações de etiqueta.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterAplicacoes: function () {
       return Servicos.Aplicacoes.obterParaControle();
     },
 
+    /**
+     * Busca os tipos de produtos de composição.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterTiposProdutosComposicao: function () {
       return Servicos.Producao.obterTiposProdutosComposicao();
     },
 
+    /**
+     * Busca os tipos de 'fast delivery'.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
     obterTiposFastDelivery: function () {
       return Servicos.Producao.obterTiposFastDelivery();
     },
@@ -128,7 +168,7 @@ Vue.component('producao-filtros', {
      */
     filtroVazio: function () {
       return {
-        idPedido: 15,
+        idPedido: null,
         idLiberacaoPedido: null,
         idCarregamento: null,
         idPedidoImportado: null,

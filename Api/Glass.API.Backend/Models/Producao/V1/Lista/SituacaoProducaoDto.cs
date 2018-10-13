@@ -1,4 +1,4 @@
-﻿// <copyright file="SituacaoProducaoDto.cs" company="Sync Softwares">
+// <copyright file="SituacaoProducaoDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -18,8 +18,14 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("pecaParada")]
-
         public bool PecaParada { get; set; }
+
+        /// <summary>
+        /// Obtém ou define um valor que indica se a peça foi reposta.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("pecaReposta")]
+        public bool PecaReposta { get; set; }
 
         /// <summary>
         /// Obtém ou define um valor que indica se a peça possui leitura em algum setor

@@ -12,6 +12,12 @@ namespace Glass.API.Backend.Models.Imagens.Exibicao
     public enum TipoItem
     {
         /// <summary>
+        /// Dados para exibição de imagens SVG de projetos.
+        /// </summary>
+        [Description("SVG de Projeto")]
+        SvgProjeto,
+
+        /// <summary>
         /// Dados para exibição de imagens de produtos.
         /// </summary>
         [Description("Produto")]

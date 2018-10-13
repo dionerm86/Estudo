@@ -33,6 +33,9 @@ namespace Glass.API.Backend.Helper.Imagens
 
                 case TipoItem.PecaProducao:
                     return new ExibicaoPecaProducaoStrategy(sessao, apiController);
+
+                case TipoItem.SvgProjeto:
+                    return new ExibicaoSvgProjetoStrategy(sessao, apiController);
             }
 
             return null;

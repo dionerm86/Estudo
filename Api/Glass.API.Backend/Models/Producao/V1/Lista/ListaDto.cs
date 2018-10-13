@@ -1,8 +1,10 @@
-﻿// <copyright file="ListaDto.cs" company="Sync Softwares">
+// <copyright file="ListaDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using GDA;
 using Glass.API.Backend.Models.Genericas;
+using Glass.Data.DAL;
 using Glass.Data.Helper;
 using Glass.Data.Model;
 using Newtonsoft.Json;
@@ -22,8 +24,9 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         /// <summary>
         /// Inicia uma nova instância da classe <see cref="ListaDto"/>.
         /// </summary>
+        /// <param name="sessao">A sessão atual com o banco de dados.</param>
         /// <param name="peca">A peça que será representada pelo DTO.</param>
-        public ListaDto(ProdutoPedidoProducao peca)
+        public ListaDto(GDASession sessao, ProdutoPedidoProducao peca)
         {
             this.Id = (int)peca.IdProdPedProducao;
             this.Pedido = new PedidoDto
@@ -47,17 +50,14 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
                 Composto = peca.IsProdutoLaminadoComposicao,
                 Descricao = peca.DescrProduto,
                 DescricaoBeneficiamentos = peca.DescrBeneficiamentos,
+                DescricaoCompleta = ProdutoPedidoProducaoDAO.Instance.ObterDescrProdEtiqueta(sessao, peca.IdProdPedProducao),
             };
 
-            this.ImagemPeca = new ImagemPecaDto
-            {
-                Url = peca.ImagemPecaUrl,
-                PossuiSvg = peca.TemSvgAssociado,
-            };
-
+            this.PossuiImagemSvg = peca.TemSvgAssociado;
             this.SituacaoProducao = new SituacaoProducaoDto
             {
                 PecaParada = peca.PecaParadaProducao,
+                PecaReposta = peca.PecaReposta,
                 PossuiLeituraSetorOculto = peca.TemLeituraSetorOculto,
                 Perda = !peca.DataPerda.HasValue
                     ? null
@@ -86,9 +86,11 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
             this.Leituras = this.ObterLeituras(peca);
             this.Permissoes = new PermissoesDto
             {
+                LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(LogAlteracao.TabelaAlteracao.ProdPedProducao, peca.IdProdPedProducao, null),
                 DesfazerLeitura = peca.RemoverSituacaoVisible,
                 RelatorioPedido = peca.ExibirRelatorioPedido,
                 PararPecaProducao = peca.ExibirPararPecaProducao,
+                LogEstornoCarregamento = peca.EstornoCarregamentoVisible,
             };
 
             this.CorLinha = peca.CorLinha;
@@ -109,11 +111,11 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         public ProdutoPedidoDto ProdutoPedido { get; set; }
 
         /// <summary>
-        /// Obtém ou define os dados da imagem da peça.
+        /// Obtém ou define um valor que indica se a peça possui arquivo SVG associado.
         /// </summary>
         [DataMember]
-        [JsonProperty("imagemPeca")]
-        public ImagemPecaDto ImagemPeca { get; set; }
+        [JsonProperty("possuiImagemSvg")]
+        public bool PossuiImagemSvg { get; set; }
 
         /// <summary>
         /// Obtém ou define os dados de situação de produção da peça.

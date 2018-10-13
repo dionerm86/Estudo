@@ -1,4 +1,4 @@
-﻿// <copyright file="ProdutoPedidoDto.cs" company="Sync Softwares">
+// <copyright file="ProdutoPedidoDto.cs" company="Sync Softwares">
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
@@ -34,5 +34,12 @@ namespace Glass.API.Backend.Models.Producao.V1.Lista
         [DataMember]
         [JsonProperty("descricaoBeneficiamentos")]
         public string DescricaoBeneficiamentos { get; set; }
+
+        /// <summary>
+        /// Obtém ou define a descrição completa da peça.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("descricaoCompleta")]
+        public string DescricaoCompleta { get; set; }
     }
 }
