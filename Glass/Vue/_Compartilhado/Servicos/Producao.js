@@ -1,4 +1,4 @@
-var Servicos = Servicos || {};
+﻿var Servicos = Servicos || {};
 
 /**
  * Objeto com os serviços para a API de produção.
@@ -36,12 +36,18 @@ Servicos.Producao = (function(http) {
      * @returns {Promise} Uma promise com o resultado da busca.
      */
     obterLista: function (filtro, pagina, numeroRegistros, ordenacao) {
-      filtro = filtro || {};
-      filtro.pagina = pagina;
-      filtro.numeroRegistros = numeroRegistros;
-      filtro.ordenacao = ordenacao;
-
       return http().get(API.substr(0, API.length - 1), {
+        params: Servicos.criarFiltroPaginado(filtro, pagina, numeroRegistros, ordenacao)
+      });
+    },
+
+    /**
+     * Recupera a contagem de peças por situação para a tela de consulta de produção.
+     * @param {?Object} filtro Objeto com os filtros a serem usados para a contagem de peças.
+     * @returns {Promise} Uma promise com o resultado da busca.
+     */
+    obterContagemPecas: function (filtro) {
+      return http().get(API + 'contagemPecas', {
         params: filtro
       });
     },

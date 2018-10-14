@@ -1,11 +1,11 @@
 ﻿const app = new Vue({
   el: '#app',
-  mixins: [Mixins.OrdenacaoLista('id', 'desc')],
-
   data: {
     filtro: {},
     configuracoes: {},
-    agruparImpressao: null
+    agruparImpressao: null,
+    contagem: null,
+    exibirContagem: false
   },
 
   methods: {
@@ -23,6 +23,36 @@
       }
 
       return Servicos.Producao.obterLista(filtro, pagina, numeroRegistros, ordenacao);
+    },
+
+    /**
+     * Busca os dados de contagem de peças com base no filtro atual.
+     */
+    realizarContagemPecas: function () {
+      this.contagem = null;
+
+      if (!this.filtro || !Object.keys(this.filtro).length) {
+        return;
+      }
+
+      var vm = this;
+
+      Servicos.Producao.obterContagemPecas(this.filtro)
+        .then(function (resposta) {
+          vm.contagem = resposta.data;
+        })
+        .catch(function (erro) {
+          if (erro && erro.mensagem) {
+            vm.exibirMensagem('Contagem de peças', erro.mensagem);
+          }
+        });
+    },
+
+    /**
+     * Define a exibição da contagem de peças apenas se houver peças em exibição.
+     */
+    atualizouItens: function (numeroItens) {
+      this.exibirContagem = numeroItens > 0;
     }
   },
 
@@ -33,5 +63,18 @@
       .then(function (resposta) {
         vm.configuracoes = resposta.data;
       });
+  },
+
+  watch: {
+    /**
+     * Observador para a variável 'filtro'.
+     * Realiza a contagem de peças ao alterar o filtro atual.
+     */ 
+    filtro: {
+      handler: function () {
+        this.realizarContagemPecas();
+      },
+      deep: true
+    }
   }
 });

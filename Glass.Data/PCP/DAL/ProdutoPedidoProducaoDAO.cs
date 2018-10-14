@@ -1,4 +1,4 @@
-using GDA;
+﻿using GDA;
 using Glass.Configuracoes;
 using Glass.Data.Helper;
 using Glass.Data.Helper.Calculos;
@@ -440,14 +440,12 @@ namespace Glass.Data.DAL
 
             if (idProdPedParent > 0)
             {
-                sql += " AND pp.IdProdPedParent =" + idProdPedParent;
-                temFiltro = true;
+                filtroAdicional += " AND pp.IdProdPedParent =" + idProdPedParent;
             }
 
             if (idProdPedProducaoParent > 0)
             {
-                sql += " AND ppp.IdProdPedProducaoParent =" + idProdPedProducaoParent;
-                temFiltro = true;
+                filtroAdicional += " AND ppp.IdProdPedProducaoParent =" + idProdPedProducaoParent;
             }
 
             string descricaoSetor = idSetor > 0 ? Utils.ObtemSetor((uint)idSetor).Descricao :
@@ -730,9 +728,8 @@ namespace Glass.Data.DAL
 
             if (!String.IsNullOrEmpty(planoCorte))
             {
-                sql += " AND ppp.PlanoCorte=?planoCorte";
+                filtroAdicional += " AND ppp.PlanoCorte=?planoCorte";
                 criterio += "Plano de corte: " + planoCorte + "    ";
-                temFiltro = true;
             }
 
             if (!String.IsNullOrEmpty(numEtiquetaChapa))
@@ -757,14 +754,12 @@ namespace Glass.Data.DAL
 
             if (pecaParadaProducao)
             {
-                sql += " AND ppp.pecaParadaProducao = true";
-                temFiltro = true;
+                filtroAdicional += " AND ppp.pecaParadaProducao = true";
             }
 
             if (pecasRepostas)
             {
-                sql += " and ppp.pecaReposta";
-                temFiltro = true;
+                filtroAdicional += " and ppp.pecaReposta";
             }
 
             /* Chamado 45622. */

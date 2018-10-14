@@ -1,6 +1,5 @@
 <section>
-    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPecas"
-        v-bind:ordenacao="ordenacao" v-bind:filtro="filtro">
+    <lista-paginada ref="lista" v-bind:funcao-recuperar-itens="buscarPecas" v-bind:ordenacao="ordenacao" v-bind:filtro="filtro" v-on:atualizou-itens="atualizouItens">
         <template slot="cabecalho">
             <th></th>
             <th>Pedido</th>
@@ -57,8 +56,8 @@
                 <controle-imagem-projeto v-bind:id-item="item.produtoPedido.id" v-else-if="item.produtoPedido && item.possuiImagemSvg"></controle-imagem-projeto>
                 <log-alteracao v-bind:id-item="item.id" tabela="ProdPedProducao" v-bind:atualizar-ao-alterar="false" v-if="item && item.permissoes && item.permissoes.logAlteracoes"></log-alteracao>
                 <button v-on:click.prevent="pararPecaProducao(item)" v-if="item && item.permissoes && item.permissoes.pararPecaProducao">
-                    <img src="/Images/stop_red.png" title="Retornar peça para produção" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaParada" />
-                    <img src="/Images/stop_blue.png" title="Parar peça na produção" v-else />
+                    <img src="/Images/stop_red.png" title="Retornar peça para produção" style="height: 16px" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaParada" />
+                    <img src="/Images/stop_blue.png" title="Parar peça na produção" style="height: 16px" v-else />
                 </button>
                 <button v-on:click.prevent="abrirDetalhesReposicao(item)" v-if="item && item.situacaoProducao && item.situacaoProducao.pecaReposta">
                     <img src="/Images/Nota.gif" title="Detalhes Reposição Peça" />
@@ -165,7 +164,7 @@
             <tr v-bind:class="classe" style="border-top: none">
                 <td></td>
                 <td v-bind:colspan="numeroColunasLista() - 1">
-                    <producao-pecas v-bind:filtro="{ idPecaPai: item.id, item, controleAtualizacao }"
+                    <producao-pecas v-bind:filtro="{ idPecaPai: item.id, item }"
                         v-bind:configuracoes="configuracoes" v-bind:buscar-pecas="buscarFilhos"></producao-pecas>
                 </td>
             </tr>

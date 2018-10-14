@@ -1,4 +1,4 @@
-Vue.component('controle-exibicao-imagem', {
+﻿Vue.component('controle-exibicao-imagem', {
   mixins: [Mixins.ExecutarTimeout],
   props: {
     /**
@@ -59,8 +59,9 @@ Vue.component('controle-exibicao-imagem', {
 
         Servicos.Imagens.obterDados(this.idItem, this.tipoItem)
           .then(function (resposta) {
-            vm.urlImagem = resposta.data.urlImagem;
-            vm.legenda = resposta.data.legenda;
+            vm.urlImagem = resposta.data ? resposta.data.urlImagem : null;
+            vm.svgImagem = resposta.data ? resposta.data.svgImagem : null;
+            vm.legenda = resposta.data ? resposta.data.legenda : null;
           })
           .catch(function (erro) {
             if (erro && erro.mensagem) {

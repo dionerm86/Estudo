@@ -465,6 +465,9 @@
     <Compile Include="Models\Producao\V1\Composicao\FiltroDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Producao\V1\Configuracoes\SetorDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\ContagemPecasDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\DadosContagemDto.cs" />
+    <Compile Include="Models\Producao\V1\ContagemPecas\TotalAreaM2Dto.cs" />
     <Compile Include="Models\Producao\V1\Lista\ChapaVidroDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\DataEntregaDto.cs" />
     <Compile Include="Models\Producao\V1\Lista\FiltroDto.cs" />

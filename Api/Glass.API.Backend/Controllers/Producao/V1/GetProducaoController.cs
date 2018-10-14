@@ -6,6 +6,7 @@ using GDA;
 using Glass.API.Backend.Helper;
 using Glass.API.Backend.Helper.Respostas;
 using Glass.API.Backend.Models.Genericas;
+using Glass.API.Backend.Models.Producao.V1.ContagemPecas;
 using Glass.API.Backend.Models.Producao.V1.Lista;
 using Glass.Data.DAL;
 using Swashbuckle.Swagger.Annotations;
@@ -152,6 +153,70 @@ namespace Glass.API.Backend.Controllers.Producao.V1
                         (int?)filtro.TipoProdutosComposicao,
                         0,
                         filtro.ObterPrimeiroRegistroRetornar()));
+            }
+        }
+
+        /// <summary>
+        /// Recupera a contagem de peças por situação para a tela de consulta de produção.
+        /// </summary>
+        /// <param name="filtro">Os dados informados para filtro na tela.</param>
+        /// <returns>Uma lista JSON com as peças em produção.</returns>
+        [HttpGet]
+        [Route("contagemPecas")]
+        [SwaggerResponse(200, "Contagem de peças realizada.", Type = typeof(ContagemPecasDto))]
+        [SwaggerResponse(400, "Filtro inválido informado (campo com valor ou formato inválido).", Type = typeof(MensagemDto))]
+        public IHttpActionResult ObterContagemPecas([FromUri] FiltroDto filtro)
+        {
+            filtro = filtro ?? new FiltroDto();
+
+            using (var sessao = new GDATransaction())
+            {
+                var contagem = ProdutoPedidoProducaoDAO.Instance.GetCountBySituacao(
+                    filtro.IdCarregamento.GetValueOrDefault(),
+                    (uint)filtro.IdLiberacaoPedido.GetValueOrDefault(),
+                    (uint)filtro.IdPedido.GetValueOrDefault(),
+                    filtro.IdPedidoImportado.ToString(),
+                    (uint)filtro.IdImpressao.GetValueOrDefault(),
+                    filtro.IdsRotas.ObterComoString(),
+                    filtro.CodigoPedidoCliente,
+                    (uint)filtro.IdCliente.GetValueOrDefault(),
+                    filtro.NomeCliente,
+                    filtro.NumeroEtiquetaPeca,
+                    filtro.PeriodoSetorInicio.FormatarData(),
+                    filtro.PeriodoSetorFim.FormatarData(),
+                    filtro.PeriodoEntregaInicio.FormatarData(),
+                    filtro.PeriodoEntregaFim.FormatarData(),
+                    filtro.PeriodoFabricaInicio.FormatarData(),
+                    filtro.PeriodoFabricaFim.FormatarData(),
+                    filtro.PeriodoConferenciaPedidoInicio.FormatarData(),
+                    filtro.PeriodoConferenciaPedidoFim.FormatarData(),
+                    filtro.IdSetor.GetValueOrDefault(),
+                    filtro.SituacoesProducao.ObterComoString(),
+                    (int)filtro.SituacaoPedido.GetValueOrDefault(),
+                    (int)filtro.TipoSituacaoProducao.GetValueOrDefault(),
+                    filtro.IdsSubgrupos.ObterComoString(),
+                    (uint)filtro.TipoEntregaPedido.GetValueOrDefault(),
+                    filtro.TiposPecasExibir.ObterComoString(),
+                    (uint)filtro.IdVendedorPedido.GetValueOrDefault(),
+                    filtro.TiposPedidos.ObterComoString(),
+                    (uint)filtro.IdCorVidro.GetValueOrDefault(),
+                    (int)filtro.AlturaPeca.GetValueOrDefault(),
+                    filtro.LarguraPeca.GetValueOrDefault(),
+                    (float)filtro.EspessuraPeca.GetValueOrDefault(),
+                    filtro.IdsProcessos.ObterComoString(),
+                    filtro.IdsAplicacoes.ObterComoString(),
+                    filtro.ApenasPecasAguardandoExpedicao,
+                    filtro.ApenasPecasAguardandoEntradaEstoque,
+                    filtro.IdsBeneficiamentos.ObterComoString(),
+                    filtro.PlanoCorte,
+                    filtro.NumeroEtiquetaChapa,
+                    (uint)filtro.TipoFastDelivery.GetValueOrDefault(),
+                    filtro.ApenasPecasParadasNaProducao,
+                    filtro.ApenasPecasRepostas,
+                    (uint)filtro.IdLoja.GetValueOrDefault(),
+                    (int?)filtro.TipoProdutosComposicao);
+
+                return this.Item(new ContagemPecasDto(contagem));
             }
         }
 

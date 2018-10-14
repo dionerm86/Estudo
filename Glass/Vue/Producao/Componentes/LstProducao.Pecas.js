@@ -1,5 +1,5 @@
-Vue.component('producao-pecas', {
-  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista()],
+﻿Vue.component('producao-pecas', {
+  mixins: [Mixins.Objetos, Mixins.OrdenacaoLista('id', 'desc')],
   props: {
     /**
      * Filtros selecionados para a lista de produção.
@@ -38,7 +38,6 @@ Vue.component('producao-pecas', {
 
   data: function() {
     return {
-      controleAtualizacao: 0,
       filhosEmExibicao: []
     }
   },
@@ -188,10 +187,10 @@ Vue.component('producao-pecas', {
     },
 
     /**
-     * Recarrega os produtos de composição ao realizar uma alteração na lista.
+     * Indica externamente que os itens em exibição foram atualizados.
      */
-    listaAtualizada: function () {
-      this.controleAtualizacao++;
+    atualizouItens: function (numeroItens) {
+      this.$emit('atualizou-itens', numeroItens);
     },
 
     /**
@@ -226,6 +225,10 @@ Vue.component('producao-pecas', {
   },
 
   computed: {
+    /**
+     * Propriedade computada que retorna os setores para exibição ordenados.
+     * @type {Object[]}
+     */
     setoresExibir: function () {
       if (!this.configuracoes || !this.configuracoes.setoresExibicao) {
         return [];

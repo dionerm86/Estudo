@@ -1,4 +1,4 @@
-<%@ Page Title="Consulta Produção" Language="C#" MasterPageFile="~/Painel.master"
+ï»¿<%@ Page Title="Consulta ProduÃ§Ã£o" Language="C#" MasterPageFile="~/Painel.master"
     AutoEventWireup="true" CodeBehind="LstProducao.aspx.cs" Inherits="Glass.UI.Web.Cadastros.Producao.LstProducao" %>
 
 <%@ Register Src="../../Controls/ctrlImagemPopup.ascx" TagName="ctrlImagemPopup" TagPrefix="uc1" %>
@@ -131,7 +131,7 @@
         function openSetMotivPararPecaProducao(idProdPedProducao, pecaParadaProducao) {
 
             if (idProdPedProducao == null || idProdPedProducao == 0) {
-                alert("Nenhuma peça foi informada.")
+                alert("Nenhuma peÃ§a foi informada.")
                 return false;
             }
 
@@ -142,7 +142,7 @@
                 return false;
             }
 
-            if (!confirm("Tem certeza que deseja" + (pecaParadaProducao ? " retornar esta peça para " : " parar esta peça na ") + "produção?\n" + prod.value))
+            if (!confirm("Tem certeza que deseja" + (pecaParadaProducao ? " retornar esta peÃ§a para " : " parar esta peÃ§a na ") + "produÃ§Ã£o?\n" + prod.value))
                 return false;
 
             openWindow(200, 405, "../../Utils/SetMotivoPararPecaProducao.aspx?popup=true&idProdPedProducao=" + idProdPedProducao, null, true, false);
@@ -161,7 +161,7 @@
             var exibir = linha.style.display == "none";
             linha.style.display = exibir ? "" : "none";
             botao.src = botao.src.replace(exibir ? "mais" : "menos", exibir ? "menos" : "mais");
-            botao.title = (exibir ? "Esconder" : "Exibir") + " Produtos da Composição";
+            botao.title = (exibir ? "Esconder" : "Exibir") + " Produtos da ComposiÃ§Ã£o";
         }
 
         var voltarPecaClicado = false;
@@ -172,7 +172,7 @@
             else
                 return false;
 
-            if (!confirm('Confirma remoção desta peça desta situação?'))
+            if (!confirm('Confirma remoÃ§Ã£o desta peÃ§a desta situaÃ§Ã£o?'))
             {
                 voltarPecaClicado = false;
                 return false;
@@ -232,7 +232,69 @@
     %>
     <div id="app">
         <producao-filtros :filtro.sync="filtro" :configuracoes="configuracoes" :agrupar-impressao="agruparImpressao"></producao-filtros>
-        <producao-pecas :filtro="filtro" :configuracoes="configuracoes" :buscar-pecas="buscarPecas"></producao-pecas>
+        <producao-pecas :filtro="filtro" :configuracoes="configuracoes" :buscar-pecas="buscarPecas" @atualizou-itens="atualizouItens"></producao-pecas>
+        <section style="font-size: medium" v-if="exibirContagem">
+            <span>
+                <label style="color: blue; font-weight: bold">PeÃ§as Prontas:</label>
+                <label>
+                    <template v-if="contagem && contagem.prontas">
+                        {{ contagem.prontas.numero }}
+                        ({{ contagem.prontas.areaEmM2.real }} / {{ contagem.prontas.areaEmM2.paraCalculo }} mÂ²)
+                    </template>
+                    <template v-else>
+                        0 (0 / 0 mÂ²)
+                    </template>
+                </label>
+            </span>
+            <span>
+                <label style="color: red; font-weight: bold">PeÃ§as Pendentes:</label>
+                <label>
+                    <template v-if="contagem && contagem.pendentes">
+                        {{ contagem.pendentes.numero }}
+                        ({{ contagem.pendentes.areaEmM2.real }} / {{ contagem.pendentes.areaEmM2.paraCalculo }} mÂ²)
+                    </template>
+                    <template v-else>
+                        0 (0 / 0 mÂ²)
+                    </template>
+                </label>
+            </span>
+            <span>
+                <label style="color: #009933; font-weight: bold">PeÃ§as Entregues:</label>
+                <label>
+                    <template v-if="contagem && contagem.entregues">
+                        {{ contagem.entregues.numero }}
+                        ({{ contagem.entregues.areaEmM2.real }} / {{ contagem.entregues.areaEmM2.paraCalculo }} mÂ²)
+                    </template>
+                    <template v-else>
+                        0 (0 / 0 mÂ²)
+                    </template>
+                </label>
+            </span>
+            <span>
+                <label style="color: gray; font-weight: bold">PeÃ§as Perdidas:</label>
+                <label>
+                    <template v-if="contagem && contagem.perdidas">
+                        {{ contagem.perdidas.numero }}
+                        ({{ contagem.perdidas.areaEmM2.real }} / {{ contagem.perdidas.areaEmM2.paraCalculo }} mÂ²)
+                    </template>
+                    <template v-else>
+                        0 (0 / 0 mÂ²)
+                    </template>
+                </label>
+            </span>
+            <span>
+                <label style="color: black; font-weight: bold">PeÃ§as Canceladas:</label>
+                <label>
+                    <template v-if="contagem && contagem.canceladas">
+                        {{ contagem.canceladas.numero }}
+                        ({{ contagem.canceladas.areaEmM2.real }} / {{ contagem.canceladas.areaEmM2.paraCalculo }} mÂ²)
+                    </template>
+                    <template v-else>
+                        0 (0 / 0 mÂ²)
+                    </template>
+                </label>
+            </span>
+        </section>
     </div>
     <br /><br /><br /><br />
 
@@ -254,7 +316,7 @@
                                 ToolTip="Pesquisar" />
                         </td>
                         <td style='<%= IsLiberacao() ? "": "display: none" %>'>
-                            <asp:Label ID="Label19" runat="server" Text="Liberação" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label19" runat="server" Text="LiberaÃ§Ã£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td style='<%= IsLiberacao() ? "": "display: none" %>'>
                             <asp:TextBox ID="txtNumLiberarPedido" runat="server" Width="45px" onkeypress="return soNumeros(event, true, true);"
@@ -324,7 +386,7 @@
                 <table>
                     <tr>
                         <td>
-                            <asp:Label ID="Label173" runat="server" Text="Num. Impressão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label173" runat="server" Text="Num. ImpressÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:TextBox ID="txtNumImpressao" runat="server" Width="60px" onkeydown="if (isEnter(event)) cOnClick('imgPesq', null);" QueryString="idImpressao"></asp:TextBox>
@@ -344,7 +406,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label11" runat="server" ForeColor="#0066FF" Text="Situação"></asp:Label>
+                            <asp:Label ID="Label11" runat="server" ForeColor="#0066FF" Text="SituaÃ§Ã£o"></asp:Label>
                         </td>
                         <td>
                             <%--<asp:DropDownList ID="drpSituacao" runat="server" OnSelectedIndexChanged="drpSetor_SelectedIndexChanged">
@@ -373,11 +435,11 @@
                                 DataTextField="Descricao" DataValueField="IdSetor" OnSelectedIndexChanged="drpSetor_SelectedIndexChanged"
                                  QueryString="idSetor">
                                 <asp:ListItem Value="0">Todos</asp:ListItem>
-                                <asp:ListItem Value="-1">Etiqueta não impressa</asp:ListItem>
+                                <asp:ListItem Value="-1">Etiqueta nÃ£o impressa</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
-                            <asp:Label ID="lblPeriodoSetor" runat="server" ForeColor="#0066FF" Text="Período (Setor)"></asp:Label>
+                            <asp:Label ID="lblPeriodoSetor" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (Setor)"></asp:Label>
                         </td>
                         <td>
                             <uc3:ctrlData ID="ctrlDataIni" runat="server" ReadOnly="ReadWrite" ExibirHoras="True" QueryString="dataIni"/>
@@ -413,9 +475,9 @@
                         <td>
                             <asp:DropDownList ID="drpTipoSituacoes" runat="server" QueryString="tipoSituacoes">
                                 <asp:ListItem Value="0">Apenas os produtos do setor atual</asp:ListItem>
-                                <asp:ListItem Value="1">Apenas produtos que ainda não passaram por este setor</asp:ListItem>
-                                <asp:ListItem Value="2">Incluir produtos que já passaram por este setor</asp:ListItem>
-                                <asp:ListItem Value="3">Apenas produtos disponíveis para leitura neste setor no momento</asp:ListItem>
+                                <asp:ListItem Value="1">Apenas produtos que ainda nÃ£o passaram por este setor</asp:ListItem>
+                                <asp:ListItem Value="2">Incluir produtos que jÃ¡ passaram por este setor</asp:ListItem>
+                                <asp:ListItem Value="3">Apenas produtos disponÃ­veis para leitura neste setor no momento</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -423,7 +485,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label29" runat="server" Text="Situação Pedido" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label29" runat="server" Text="SituaÃ§Ã£o Pedido" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpSituacaoPedido" runat="server" AppendDataBoundItems="True"
@@ -493,7 +555,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td align="left" nowrap="nowrap">
-                            <asp:Label ID="lblPeriodoEntrega" runat="server" ForeColor="#0066FF" Text="Período (Entrega)"></asp:Label>
+                            <asp:Label ID="lblPeriodoEntrega" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (Entrega)"></asp:Label>
                         </td>
                         <td align="left" nowrap="nowrap">
                             <uc3:ctrlData ID="ctrlDataIniEnt" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" QueryString="dataIniEnt" />
@@ -537,8 +599,8 @@
                         <td>
                             <sync:CheckBoxListDropDown ID="drpTipoPedido" runat="server" QueryString="tipoPedido" OnLoad="drpTipoPedido_Load">
                                 <asp:ListItem Value="1">Venda</asp:ListItem>
-                                <asp:ListItem Value="2">Produção</asp:ListItem>
-                                <asp:ListItem Value="3">Mão-de-obra</asp:ListItem>
+                                <asp:ListItem Value="2">ProduÃ§Ã£o</asp:ListItem>
+                                <asp:ListItem Value="3">MÃ£o-de-obra</asp:ListItem>
                             </sync:CheckBoxListDropDown>
                         </td>
                         <td>
@@ -546,13 +608,13 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label9" runat="server" Text="Exibir peças" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label9" runat="server" Text="Exibir peÃ§as" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
-                            <sync:CheckBoxListDropDown ID="cbdExibirPecas" runat="server" CheckAll="False" Title="Tipo de peça"
+                            <sync:CheckBoxListDropDown ID="cbdExibirPecas" runat="server" CheckAll="False" Title="Tipo de peÃ§a"
                                 Width="180px" QueryString="pecasProdCanc">
-                                <asp:ListItem Value="0" Selected="True">Em produção</asp:ListItem>
-                                <asp:ListItem Value="1">Canceladas (mão-de-obra)</asp:ListItem>
+                                <asp:ListItem Value="0" Selected="True">Em produÃ§Ã£o</asp:ListItem>
+                                <asp:ListItem Value="1">Canceladas (mÃ£o-de-obra)</asp:ListItem>
                                 <asp:ListItem Value="2">Canceladas (venda)</asp:ListItem>
                             </sync:CheckBoxListDropDown>
                         </td>
@@ -561,7 +623,7 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="lblPeriodoFabrica" runat="server" ForeColor="#0066FF" Text="Período (Fábrica)"></asp:Label>
+                            <asp:Label ID="lblPeriodoFabrica" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (FÃ¡brica)"></asp:Label>
                         </td>
                         <td>
                             <uc3:ctrlData ID="ctrlDataIniFabr" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" QueryString="dataIniFabr" />
@@ -614,7 +676,7 @@
                                 ToolTip="Pesquisar" OnClick="imgPesq_Click" CausesValidation="False" />
                         </td>
                         <td>
-                            <asp:Label ID="Label8" runat="server" ForeColor="#0066FF" Text="Aplicação"></asp:Label>
+                            <asp:Label ID="Label8" runat="server" ForeColor="#0066FF" Text="AplicaÃ§Ã£o"></asp:Label>
                         </td>
                         <td>
                             <sync:CheckBoxListDropDown ID="cbdAplicacao" runat="server" CheckAll="False" DataSourceID="odsAplicacao"
@@ -660,9 +722,9 @@
                         </td>
                         <td>
                             <asp:DropDownList ID="drpProdutoComposicao" runat="server" QueryString="produtoComposicao">
-                                <asp:ListItem Value="0">Incluir produtos de composição</asp:ListItem>
-                                <asp:ListItem Value="1">Somente produtos de composição</asp:ListItem>
-                                <asp:ListItem Value="2" Selected="True">Não incluir produtos de composição</asp:ListItem>
+                                <asp:ListItem Value="0">Incluir produtos de composiÃ§Ã£o</asp:ListItem>
+                                <asp:ListItem Value="1">Somente produtos de composiÃ§Ã£o</asp:ListItem>
+                                <asp:ListItem Value="2" Selected="True">NÃ£o incluir produtos de composiÃ§Ã£o</asp:ListItem>
                             </asp:DropDownList>
                         </td>
                         <td>
@@ -670,28 +732,28 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkAguardExpedicao" runat="server" Text="Peças aguardando expedição" QueryString="aguardExpedicao"/>
+                            <asp:CheckBox ID="chkAguardExpedicao" runat="server" Text="PeÃ§as aguardando expediÃ§Ã£o" QueryString="aguardExpedicao"/>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton5" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkAguardEntrEstoque" runat="server" Text="Peças aguardando entrada no estoque" QueryString="aguardEntrEstoque"/>
+                            <asp:CheckBox ID="chkAguardEntrEstoque" runat="server" Text="PeÃ§as aguardando entrada no estoque" QueryString="aguardEntrEstoque"/>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton17" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:CheckBox ID="chkPecaParadaProducao" runat="server" Text="Peças com produção parada" QueryString="pecaParadaProducao"/>
+                            <asp:CheckBox ID="chkPecaParadaProducao" runat="server" Text="PeÃ§as com produÃ§Ã£o parada" QueryString="pecaParadaProducao"/>
                         </td>
                         <td>
                             <asp:ImageButton ID="ImageButton6" runat="server" ImageUrl="~/Images/Pesquisar.gif"
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td style='<%= ExibirPecasRepostas() %>'>
-                            <asp:CheckBox ID="chkPecasRepostas" runat="server" Text="Peças que foram repostas" QueryString="pecasRepostas"/>
+                            <asp:CheckBox ID="chkPecasRepostas" runat="server" Text="PeÃ§as que foram repostas" QueryString="pecasRepostas"/>
                         </td>
                         <td style='<%= ExibirPecasRepostas() %>'>
                             <asp:ImageButton ID="ImageButton18" runat="server" ImageUrl="~/Images/Pesquisar.gif"
@@ -702,7 +764,7 @@
                 <table>
                     <tr>
                         <td style='<%= IsLiberacao() ? "": "display: none" %>'>
-                            <asp:Label ID="Label42" runat="server" ForeColor="#0066FF" Text="Período (Conf. Ped.)"></asp:Label>
+                            <asp:Label ID="Label42" runat="server" ForeColor="#0066FF" Text="PerÃ­odo (Conf. Ped.)"></asp:Label>
                         </td>
                         <td style='<%= IsLiberacao() ? "": "display: none" %>'>
                             <uc3:ctrlData ID="ctrlDataIniConfPed" runat="server" ReadOnly="ReadWrite" ExibirHoras="False" QueryString="dataIniConfPed"/>
@@ -729,14 +791,14 @@
                                 OnClick="imgPesq_Click" ToolTip="Pesquisar" />
                         </td>
                         <td>
-                            <asp:Label ID="Label30" runat="server" Text="Agrupar impressão" ForeColor="#0066FF"></asp:Label>
+                            <asp:Label ID="Label30" runat="server" Text="Agrupar impressÃ£o" ForeColor="#0066FF"></asp:Label>
                         </td>
                         <td>
                             <asp:DropDownList ID="drpAgrupar" runat="server">
                                 <asp:ListItem Text="" Value="0"></asp:ListItem>
                                 <asp:ListItem Value="1">Cliente</asp:ListItem>
                                 <asp:ListItem Value="2">Pedido</asp:ListItem>
-                                <asp:ListItem Value="3">Número de peças</asp:ListItem>
+                                <asp:ListItem Value="3">NÃºmero de peÃ§as</asp:ListItem>
                                 <asp:ListItem Value="4">Prev. entrega</asp:ListItem>
                             </asp:DropDownList>
                         </td>
@@ -748,7 +810,7 @@
                     </tr>
                 </table>
             </td>
-        </tr>-->
+        </tr>
         <tr>
             <td>
                 &nbsp;
@@ -757,14 +819,14 @@
         <tr>
             <td align="center">
                 <asp:GridView GridLines="None" ID="grdPecas" runat="server" AllowPaging="True" AutoGenerateColumns="False"
-                    DataKeyNames="IdProdPedProducao" DataSourceID="odsPecas" EmptyDataText="Nenhuma peça encontrada."
+                    DataKeyNames="IdProdPedProducao" DataSourceID="odsPecas" EmptyDataText="Nenhuma peÃ§a encontrada."
                     OnDataBound="grdPecas_DataBound" OnLoad="grdPecas_Load" CssClass="gridStyle"
                     PagerStyle-CssClass="pgr" AlternatingRowStyle-CssClass="alt" EditRowStyle-CssClass="edit" OnPageIndexChanging="grdPecas_PageIndexChanging"
                     AllowSorting="True">
                     <Columns>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:ImageButton ID="imgProdsComposto" runat="server" ImageUrl="~/Images/mais.gif" ToolTip="Exibir Produtos da Composição"
+                                <asp:ImageButton ID="imgProdsComposto" runat="server" ImageUrl="~/Images/mais.gif" ToolTip="Exibir Produtos da ComposiÃ§Ã£o"
                                     Visible='<%# Eval("IsProdutoLaminadoComposicao") %>' OnClientClick='<%# "exibirProdsComposicao(this, " + Eval("IdProdPedProducao") + "); return false"%>' />
                             </ItemTemplate>
                             <EditItemTemplate></EditItemTemplate>
@@ -772,7 +834,7 @@
                         </asp:TemplateField>
                         <asp:TemplateField>
                             <ItemTemplate>
-                                <asp:ImageButton ID="imgExcluir" runat="server" ImageUrl="~/Images/arrow_undo.gif" ToolTip="Remover peça desta situação" Visible='<%# Eval("RemoverSituacaoVisible") %>'
+                                <asp:ImageButton ID="imgExcluir" runat="server" ImageUrl="~/Images/arrow_undo.gif" ToolTip="Remover peÃ§a desta situaÃ§Ã£o" Visible='<%# Eval("RemoverSituacaoVisible") %>'
                                     OnClientClick='<%# "voltarPeca(" + Eval("IdProdPedProducao") + "); return false;"%>' />
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -794,7 +856,7 @@
                                     Visible='<%# Eval("TemSvgAssociado") %>'/>
                                 <asp:ImageButton ID="imgPararPecaProducao" runat="server" ImageUrl='<%# (bool)Eval("PecaParadaProducao") ? "~/Images/stop_red.png" : "~/Images/stop_blue.png" %>'
                                     OnClientClick='<%# "openSetMotivPararPecaProducao(" + Eval("IdProdPedProducao") + ", " + Eval("PecaParadaProducao").ToString().ToLower() + "); return false" %>'
-                                    Visible='<%# Eval("ExibirPararPecaProducao") %>' Width="16" Height="16" ToolTip=<%# (bool)Eval("PecaParadaProducao") ? "Retornar peça para produção?" : "Parar peça na produção?" %>/>
+                                    Visible='<%# Eval("ExibirPararPecaProducao") %>' Width="16" Height="16" ToolTip=<%# (bool)Eval("PecaParadaProducao") ? "Retornar peÃ§a para produÃ§Ã£o?" : "Parar peÃ§a na produÃ§Ã£o?" %>/>
                                 <uc4:ctrllogpopup ID="ctrlLogPopup1" runat="server" Tabela="ProdPedProducao" IdRegistro='<%# Eval("idProdPedProducao") %>' />
                                 <asp:HiddenField ID="hdfIdSetor" runat="server" Value='<%# Eval("IdSetor") %>' />
                                 <asp:HiddenField ID="hdfSituacao" runat="server" Value='<%# Eval("Situacao") %>' />
@@ -802,11 +864,11 @@
                                 <asp:HiddenField ID="hdfCorLinha" runat="server" Value='<%# Eval("CorLinha") %>' />
                                 <asp:ImageButton runat="server" ID="imgPopup" ImageUrl="~/Images/Nota.gif" Visible='<%# Eval("PecaReposta") %>'
                                     OnClientClick='<%# Eval("IdProdPedProducao", "abrirDetalhesReposicao({0}); return false") %>'
-                                    ToolTip="Detalhes Reposição Peça" />
+                                    ToolTip="Detalhes ReposiÃ§Ã£o PeÃ§a" />
                                 <asp:ImageButton ID="imgLogEstornoCarregamento" runat="server" OnClientClick='<%# "openLogEstornoCarregamento(" + Eval("IdProdPedProducao") + "); return false" %>'
                                     ImageUrl="~/Images/log_delete.jpg" ToolTip="Exibir log de estorno de carregamento" Visible='<%# Eval("EstornoCarregamentoVisible") %>' />
                                 <asp:ImageButton id="imbTemLeituraSetorOculto" runat="server" ImageUrl="~/Images/exclamation.gif" OnClientClick="return false;"
-                                    Visible='<%# Eval("TemLeituraSetorOculto") %>' ToolTip="Essa peça tem leitura em ao menos um setor oculto (Não exibido na consulta)." />
+                                    Visible='<%# Eval("TemLeituraSetorOculto") %>' ToolTip="Essa peÃ§a tem leitura em ao menos um setor oculto (NÃ£o exibido na consulta)." />
                             </ItemTemplate>
                             <ItemStyle Wrap="False" />
                         </asp:TemplateField>
@@ -996,55 +1058,55 @@
                                     <tr>
                                         <td>
                                             <asp:Label ID="Label13" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="Blue"
-                                                Text="Peças Prontas:"></asp:Label>
+                                                Text="PeÃ§as Prontas:"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblPecasProntas" runat="server" Font-Size="Medium" Text='<%# Eval("Prontas") %>'></asp:Label>
-                                            <asp:Label ID="Label37" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} m²)", Eval("TotMProntas"), Eval("TotMProntasCalc")) %>'></asp:Label>
+                                            <asp:Label ID="Label37" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} mÂ²)", Eval("TotMProntas"), Eval("TotMProntasCalc")) %>'></asp:Label>
                                         </td>
                                         <td>
                                             &nbsp;&nbsp;
                                         </td>
                                         <td>
                                             <asp:Label ID="Label12" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="Red"
-                                                Text="Peças Pendentes:"></asp:Label>
+                                                Text="PeÃ§as Pendentes:"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblPecasPendentes" runat="server" Font-Size="Medium" Text='<%# Eval("Pendentes") %>'></asp:Label>
-                                            <asp:Label ID="Label38" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} m²)", Eval("TotMPendentes"), Eval("TotMPendentesCalc")) %>'></asp:Label>
+                                            <asp:Label ID="Label38" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} mÂ²)", Eval("TotMPendentes"), Eval("TotMPendentesCalc")) %>'></asp:Label>
                                         </td>
                                         <td>
                                             &nbsp;&nbsp;
                                         </td>
                                         <td>
                                             <asp:Label ID="Label16" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="#009933"
-                                                Text="Peças Entregues:"></asp:Label>
+                                                Text="PeÃ§as Entregues:"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblPecasEntregues" runat="server" Font-Size="Medium" Text='<%# Eval("Entregues") %>'></asp:Label>
-                                            <asp:Label ID="Label39" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} m²)", Eval("TotMEntregues"), Eval("TotMEntreguesCalc")) %>'></asp:Label>
+                                            <asp:Label ID="Label39" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} mÂ²)", Eval("TotMEntregues"), Eval("TotMEntreguesCalc")) %>'></asp:Label>
                                         </td>
                                         <td>
                                             &nbsp;&nbsp;
                                         </td>
                                         <td>
                                             <asp:Label ID="Label2" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="Gray"
-                                                Text="Peças Perdidas:"></asp:Label>
+                                                Text="PeÃ§as Perdidas:"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblPecasPerdidas" runat="server" Font-Size="Medium" Text='<%# Eval("Perdidas") %>'></asp:Label>
-                                            <asp:Label ID="Label40" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} m²)", Eval("TotMPerdidas"), Eval("TotMPerdidasCalc")) %>'></asp:Label>
+                                            <asp:Label ID="Label40" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} mÂ²)", Eval("TotMPerdidas"), Eval("TotMPerdidasCalc")) %>'></asp:Label>
                                         </td>
                                         <td>
                                             &nbsp;&nbsp;
                                         </td>
                                         <td>
                                             <asp:Label ID="Label10" runat="server" Font-Bold="True" Font-Size="Medium" ForeColor="Black"
-                                                Text="Peças Canceladas:"></asp:Label>
+                                                Text="PeÃ§as Canceladas:"></asp:Label>
                                         </td>
                                         <td>
                                             <asp:Label ID="lblPecasCanceladas" runat="server" Font-Size="Medium" Text='<%# Eval("Canceladas") %>'></asp:Label>
-                                            <asp:Label ID="Label41" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} m²)", Eval("TotMCanceladas"), Eval("TotMCanceladasCalc")) %>'></asp:Label>
+                                            <asp:Label ID="Label41" runat="server" Font-Size="Medium" Text='<%# string.Format("({0} / {1} mÂ²)", Eval("TotMCanceladas"), Eval("TotMCanceladasCalc")) %>'></asp:Label>
                                         </td>
                                     </tr>
                                 </table>
@@ -1108,7 +1170,7 @@
                     ForeColor="Red"></asp:Label>
             </td>
         </tr>
-    </table>
+    </table>-->
     <table>
         <tr>
             <td align="right">
