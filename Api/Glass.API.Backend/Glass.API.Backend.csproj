@@ -324,6 +324,9 @@
     <Compile Include="Controllers\Produtos\V1\DeleteProdutosController.cs" />
     <Compile Include="Controllers\Rotas\V1\RotasController.cs" />
     <Compile Include="Controllers\Rotas\V1\GetRotasController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\DeleteTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PatchTabelasDescontoAcrescimoClienteController.cs" />
+    <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\PostTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\TabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\TabelasDescontoAcrescimoCliente\V1\GetTabelasDescontoAcrescimoClienteController.cs" />
     <Compile Include="Controllers\Obras\V1\ObrasController.cs" />
@@ -392,6 +395,8 @@
     <Compile Include="Helper\Datas\Feriados\TraducaoOrdenacaoListaFeriados.cs" />
     <Compile Include="Helper\Comissionados\TraducaoOrdenacaoListaComissionados.cs" />
     <Compile Include="Helper\Fornecedores\TraducaoOrdenacaoListaFornecedores.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\ConverterCadastroAtualizacaoParaTabelaDescontoAcrescimoCliente.cs" />
+    <Compile Include="Helper\TabelasDescontoAcrescimoCliente\TraducaoOrdenacaoListaTabelasDescontoAcrescimoCliente.cs" />
     <Compile Include="Helper\Veiculos\TraducaoOrdenacaoListaVeiculos.cs" />
     <Compile Include="Helper\Transportadores\TraducaoOrdenacaoListaTransportadores.cs" />
     <Compile Include="Helper\Produtos\CoresVidro\ConverterCadastroAtualizacaoParaCorVidro.cs" />
@@ -469,6 +474,9 @@
     <Compile Include="Models\Fornecedores\Lista\FiltroDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\ListaDto.cs" />
     <Compile Include="Models\Fornecedores\Lista\PermissoesDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\CadastroAtualizacao\CadastroAtualizacaoDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\Lista\FiltroDto.cs" />
+    <Compile Include="Models\TabelasDescontoAcrescimoCliente\Lista\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Configuracoes\ListaDto.cs" />
     <Compile Include="Models\Veiculos\Lista\FiltroDto.cs" />
     <Compile Include="Models\Veiculos\Lista\ListaDto.cs" />
