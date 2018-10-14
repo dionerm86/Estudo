@@ -2,6 +2,7 @@
 // Copyright (c) Sync Softwares. Todos os direitos reservados.
 // </copyright>
 
+using Glass.API.Backend.Models.Genericas;
 using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
@@ -17,14 +18,14 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         /// Obtém ou define a quantidade de dias mínimos para entrega dos produtos deste subgrupo.
         /// </summary>
         [DataMember]
-        [JsonProperty("diasMinimoEntrega")]
-        public int? DiasMinimoEntrega { get; set; }
+        [JsonProperty("diasMinimo")]
+        public int? DiasMinimo { get; set; }
 
         /// <summary>
         /// Obtém ou define o dia da semana para entrega dos produtos deste subgrupo.
         /// </summary>
         [DataMember]
-        [JsonProperty("diaSemanaEntrega")]
-        public int? DiaSemanaEntrega { get; set; }
+        [JsonProperty("diaSemana")]
+        public IdNomeDto DiaSemana { get; set; }
     }
 }

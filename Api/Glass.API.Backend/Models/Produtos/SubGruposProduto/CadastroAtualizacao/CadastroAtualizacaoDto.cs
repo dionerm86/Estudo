@@ -17,6 +17,17 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
     public class CadastroAtualizacaoDto : BaseCadastroAtualizacaoDto<CadastroAtualizacaoDto>
     {
         /// <summary>
+        /// Obtém ou define o identificador do grupo do subgrupo de produto.
+        /// </summary>
+        [DataMember]
+        [JsonProperty("idGrupoProduto")]
+        public int IdGrupoProduto
+        {
+            get { return this.ObterValor(c => c.IdGrupoProduto); }
+            set { this.AdicionarValor(c => c.IdGrupoProduto, value); }
+        }
+
+        /// <summary>
         /// Obtém ou define o nome do subgrupo de produto.
         /// </summary>
         [DataMember]
@@ -78,8 +89,8 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         [JsonProperty("produtoParaEstoque")]
         public bool ProdutoParaEstoque
         {
-            get { return this.ObterValor(c => c.BloquearEstoque); }
-            set { this.AdicionarValor(c => c.BloquearEstoque, value); }
+            get { return this.ObterValor(c => c.ProdutoParaEstoque); }
+            set { this.AdicionarValor(c => c.ProdutoParaEstoque, value); }
         }
 
         /// <summary>
@@ -142,7 +153,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("diasMinimoEntrega")]
-        public int DiasMinimoEntrega
+        public int? DiasMinimoEntrega
         {
             get { return this.ObterValor(c => c.DiasMinimoEntrega); }
             set { this.AdicionarValor(c => c.DiasMinimoEntrega, value); }
@@ -153,7 +164,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("diaSemanaEntrega")]
-        public int DiaSemanaEntrega
+        public int? DiaSemanaEntrega
         {
             get { return this.ObterValor(c => c.DiaSemanaEntrega); }
             set { this.AdicionarValor(c => c.DiaSemanaEntrega, value); }
@@ -208,7 +219,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.CadastroAtualizacao
         /// </summary>
         [DataMember]
         [JsonProperty("idsLojaAssociadas")]
-        public IEnumerable<int> IdsLojaAssociadas
+        public int[] IdsLojaAssociadas
         {
             get { return this.ObterValor(c => c.IdsLojaAssociadas); }
             set { this.AdicionarValor(c => c.IdsLojaAssociadas, value); }

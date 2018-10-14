@@ -68,7 +68,7 @@ namespace Glass.API.Backend.Helper.Produtos.SubgruposProduto
                 case "permitiritemrevendanavenda":
                     return "PermitirItemRevendaNaVenda";
 
-                case "diasminimoentrega":
+                case "minimodiasentrega":
                     return "NumeroDiasMinimoEntrega";
 
                 case "diasemanaentrega":
@@ -78,7 +78,7 @@ namespace Glass.API.Backend.Helper.Produtos.SubgruposProduto
                     return "TipoSubgrupo";
 
                 case "cliente":
-                    return "IdCliente";
+                    return "IdCli";
 
                 case "loja":
                     return "IdLoja";

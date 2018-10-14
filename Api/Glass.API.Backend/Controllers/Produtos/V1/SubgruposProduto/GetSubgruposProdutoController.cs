@@ -64,6 +64,7 @@ namespace Glass.API.Backend.Controllers.Produtos.V1.SubgruposProduto
                     subgruposProduto
                         .Skip(filtro.ObterPrimeiroRegistroRetornar())
                         .Take(filtro.NumeroRegistros)
+                        .ToList()
                         .Select(s => new Models.Produtos.SubgruposProduto.Lista.ListaDto(s)),
                     filtro,
                     () => subgruposProduto.Count);

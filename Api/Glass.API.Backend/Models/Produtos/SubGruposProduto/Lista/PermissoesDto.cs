@@ -21,13 +21,6 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         public bool Excluir { get; set; }
 
         /// <summary>
-        /// Obtém ou define um valor que indica se o subgrupo pertence ao grupo vidro.
-        /// </summary>
-        [DataMember]
-        [JsonProperty("grupoVidro")]
-        public bool GrupoVidro { get; set; }
-
-        /// <summary>
         /// Obtém ou define um valor que indica se o subgrupo de produto possui log de alterações.
         /// </summary>
         [DataMember]

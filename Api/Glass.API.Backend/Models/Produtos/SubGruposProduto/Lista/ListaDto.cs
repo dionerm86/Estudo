@@ -37,15 +37,22 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
             this.Cliente = new IdNomeDto()
             {
                 Id = subgrupoProduto.IdCli,
-                Nome = subgrupoProduto.IdCli > 0 ? ClienteDAO.Instance.GetNome((uint)subgrupoProduto.IdCli.Value) : string.Empty,
+                Nome = subgrupoProduto.IdCli > 0
+                    ? ClienteDAO.Instance.GetNome((uint)subgrupoProduto.IdCli.Value)
+                    : string.Empty,
             };
 
             this.LojasAssociadas = this.ObterLojasAssociadas(subgrupoProduto.IdsLojaAssociacao, subgrupoProduto.Lojas);
 
             this.Entrega = new EntregaDto()
             {
-                DiaSemanaEntrega = subgrupoProduto.DiaSemanaEntrega,
-                DiasMinimoEntrega = subgrupoProduto.NumeroDiasMinimoEntrega,
+                DiaSemana = new IdNomeDto()
+                {
+                    Id = subgrupoProduto.DiaSemanaEntrega,
+                    Nome = subgrupoProduto.DiaSemanaEntrega > 0 ? FuncoesData.ObtemNomeDiaSemana(subgrupoProduto.DiaSemanaEntrega.Value).Format() : string.Empty,
+                },
+
+                DiasMinimo = subgrupoProduto.NumeroDiasMinimoEntrega,
             };
 
             this.TiposCalculo = new TiposCalculoDto()
@@ -76,7 +83,6 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
             this.Permissoes = new PermissoesDto()
             {
                 Excluir = !subgrupoProduto.SubgrupoSistema,
-                GrupoVidro = subgrupoProduto.IdGrupoProd == (int)Glass.Data.Model.NomeGrupoProd.Vidro,
                 LogAlteracoes = LogAlteracaoDAO.Instance.TemRegistro(Data.Model.LogAlteracao.TabelaAlteracao.SubgrupoProduto, (uint)subgrupoProduto.IdSubgrupoProd, null),
             };
         }
@@ -121,7 +127,7 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         /// </summary>
         [DataMember]
         [JsonProperty("lojasAssociadas")]
-        public IEnumerable<IdNomeDto> LojasAssociadas { get; set; }
+        public IdNomeDto[] LojasAssociadas { get; set; }
 
         /// <summary>
         /// Obtém ou define dados de entrega do subgrupo de produto.
@@ -151,18 +157,27 @@ namespace Glass.API.Backend.Models.Produtos.SubgruposProduto.Lista
         [JsonProperty("permissoes")]
         public PermissoesDto Permissoes { get; set; }
 
-        private IEnumerable<IdNomeDto> ObterLojasAssociadas(int[] idsLojaAssociacao, string lojas)
+        private IdNomeDto[] ObterLojasAssociadas(int[] idsLojaAssociacao, string lojas)
         {
+            if (lojas == null)
+            {
+                return new IdNomeDto[0];
+            }
+
+            var retorno = new List<IdNomeDto>();
+
             var listaLojas = lojas?.Split(',');
 
             for (var i = 0; i < idsLojaAssociacao.Length; i++)
             {
-                yield return new IdNomeDto()
+                retorno.Add(new IdNomeDto()
                 {
                     Id = idsLojaAssociacao[i],
                     Nome = listaLojas[i],
-                };
+                });
             }
+
+            return retorno.ToArray();
         }
     }
 }

@@ -45,10 +45,10 @@ namespace Glass.API.Backend.Helper.Produtos.GruposProduto
                     return "BloquearEstoque";
 
                 case "alterarestoque":
-                    return "AlterarEstoque";
+                    return "NaoAlterarEstoque";
 
                 case "alterarestoquefiscal":
-                    return "AlterarEstoqueFiscal";
+                    return "NaoAlterarEstoqueFiscal";
 
                 case "exibirmensagemestoque":
                     return "ExibirMensagemEstoque";

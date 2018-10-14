@@ -47,7 +47,7 @@ const app = new Vue({
      * Retorna o link para a tela de subgrupos deste grupo.
      */
     obterLinkSubgrupos: function (item) {
-      return 'CadSubgrupoProduto.aspx?IdGrupoProd=' + item.id + '&DescrGrupo=' + item.nome;
+      return 'CadSubgrupoProduto.aspx?IdGrupoProduto=' + item.id + '&DescrGrupo=' + item.nome;
     },
 
     /**

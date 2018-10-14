@@ -261,7 +261,7 @@ namespace Glass.Global.Negocios.Componentes
                     }
             }
 
-            return retorno.ToList();
+            return retorno;
         }
 
         /// <summary>

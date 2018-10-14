@@ -485,6 +485,7 @@
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.Filtro.js" />
     <Content Include="Vue\Fornecedores\Componentes\LstFornecedores.js" />
     <Content Include="Vue\Fornecedores\Templates\LstFornecedores.Filtro.html" />
+    <Content Include="Vue\Produtos\SubgruposProduto\Componentes\LstSubgruposProduto.js" />
     <Content Include="Vue\Veiculos\Componentes\LstVeiculos.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.Filtro.js" />
     <Content Include="Vue\Transportadores\Componentes\LstTransportadores.js" />

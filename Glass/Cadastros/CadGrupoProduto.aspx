@@ -1,5 +1,5 @@
 <%@ Page Title="Grupos de Produto" Language="C#" MasterPageFile="~/Painel.master" AutoEventWireup="true"
-    CodeBehind="CadGrupoProduto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGrupoProduto" %>
+    CodeBehind="CadGrupoProduto.aspx.cs" Inherits="Glass.UI.Web.Cadastros.CadGrupoProduto" EnableViewState="false" EnableViewStateMac="false" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Conteudo" runat="Server">
     <div id="app">
